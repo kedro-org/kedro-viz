@@ -119,7 +119,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-         at: ./build
+         at: ./
       - setup
       - run:
           name: Run all end to end tests
@@ -133,7 +133,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-         at: ./build
+         at: ./
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -150,7 +150,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-         at: ./build
+         at: ./
       - setup
       - run:
           name: Run Python tests
@@ -164,7 +164,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-         at: ./build
+         at: ./
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -223,7 +223,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - build/*
+            - package/kedro_viz/html/*
       - run:
           name: Run secret scan
           command: make secret-scan
