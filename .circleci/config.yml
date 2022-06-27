@@ -97,7 +97,7 @@ commands:
         type: string
     executor:
     steps:
-      # - checkout
+      - checkout
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
@@ -117,7 +117,7 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-       - checkout
+      - checkout
       - attach_workspace:
          at: ./build
       - setup
@@ -131,7 +131,7 @@ jobs:
         type: string
     executor: win/default
     steps:
-       - checkout
+      - checkout
       - attach_workspace:
          at: ./build
       - win_setup:
