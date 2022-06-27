@@ -79,6 +79,8 @@ commands:
   setup:
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
@@ -91,6 +93,10 @@ commands:
             - node_modules
           key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
       - npm_build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - builds/*
 
   win_setup:
     parameters:
@@ -99,6 +105,8 @@ commands:
     executor:
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
