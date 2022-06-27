@@ -96,7 +96,7 @@ commands:
       - persist_to_workspace:
           root: .
           paths:
-            - builds/*
+            - build/*
 
   win_setup:
     parameters:
