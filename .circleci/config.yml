@@ -80,7 +80,7 @@ commands:
     steps:
       - checkout
       - attach_workspace:
-          at: ./
+          at: ./build
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
@@ -106,7 +106,7 @@ commands:
     steps:
       - checkout
       - attach_workspace:
-          at: ./
+          at: ./build
       - restore_cache:
           keys:
             - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
