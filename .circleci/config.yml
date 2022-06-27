@@ -309,14 +309,10 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
       - win_e2e_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
           filters:
             branches:
               only:
@@ -326,14 +322,10 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
       - win_unit_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
           filters:
             branches:
               only:
