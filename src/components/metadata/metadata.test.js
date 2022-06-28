@@ -51,7 +51,7 @@ describe('MetaData', () => {
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
 
   describe('All nodes', () => {
-    it('when parameters are returned an array and displayed as a list - it limits parameters to 10 values and expands when button clicked', () => {
+    it('when parameters are returned an array and displayed as a list - it limits parameters to 10 values and expands when buttongit  clicked', () => {
       // Get metadata for a sample
       const metadata = {};
       metadata.parameters = Array.from({ length: 20 }, (_, i) => `Test: ${i}`);

@@ -80,7 +80,7 @@ class DataAccessManager:
             pipelines: All registered pipelines in a Kedro project.
         """
         for registered_pipeline_id, pipeline in pipelines.items():
-            # Add the registered pipeline and its components to their repositories.
+            # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):

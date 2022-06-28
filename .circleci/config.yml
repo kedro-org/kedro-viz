@@ -17,4 +17,4 @@ workflows:
           # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
           mapping: |
             src/.* frontend_change true
-            [^((?!src/).)]*$ non_frontend_change true
+            ^((?!src/).)*$ non_frontend_change true
