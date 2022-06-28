@@ -78,7 +78,7 @@ describe('MetaData', () => {
       expect(parametersRow().find('.pipeline-metadata__value').length).toBe(20);
     });
 
-    it('when pretty name is turned off the metadata title displays the full node name', () => {
+    it('when pretty name is turned off the metadata title displays the full node names', () => {
       const props = {
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
