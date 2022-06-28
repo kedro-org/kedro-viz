@@ -28,7 +28,6 @@ commands:
           command: |
             python -V
             pip freeze
-
   install_node_dependencies:
     steps:
       - run:
@@ -78,17 +77,9 @@ commands:
 
   setup:
     steps:
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
+      - checkout
       - setup_python_env
       - install_node_dependencies
-      - save_cache:
-          paths:
-            - node_modules
-          key: v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
       - npm_build
 
   win_setup:
@@ -98,11 +89,6 @@ commands:
     executor:
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
       - install_node_dependencies
@@ -117,9 +103,6 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-      - checkout
-      - attach_workspace:
-         at: ./
       - setup
       - run:
           name: Run all end to end tests
@@ -131,9 +114,6 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - checkout
-      - attach_workspace:
-         at: ./
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -148,9 +128,6 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-      - checkout
-      - attach_workspace:
-         at: ./
       - setup
       - run:
           name: Run Python tests
@@ -162,9 +139,6 @@ jobs:
         type: string
     executor: win/default
     steps:
-      - checkout
-      - attach_workspace:
-         at: ./
       - win_setup:
           python_version: <<parameters.python_version>>
       - run:
@@ -191,11 +165,6 @@ jobs:
       python_version: '3.8'
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v${CACHE_VERSION}-{{ arch }}-dependencies-
       - install_node_dependencies
       - run:
           name: Test lib transpilation
@@ -218,12 +187,7 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
-      - checkout
       - setup
-      - persist_to_workspace:
-          root: .
-          paths:
-            - package/kedro_viz/html/*
       - run:
           name: Run secret scan
           command: make secret-scan
@@ -293,7 +257,6 @@ jobs:
             # install lightsail cli
             # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
             aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
-
   all_circleci_checks_succeeded:
     docker:
       - image: circleci/python # any light-weight image
@@ -317,14 +280,10 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
       - win_e2e_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
           filters:
             branches:
               only:
@@ -334,14 +293,10 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
       - win_unit_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-          requires:
-            - build_app
           filters:
             branches:
               only:
