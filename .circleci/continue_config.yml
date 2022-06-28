@@ -283,7 +283,7 @@ release_filter: &release_filter
 workflows:
   version: 2.1
 
-  build_front_end_only:
+  build_frontend_only:
     when:
       and:
         - <<pipeline.parameters.frontend_change>>
