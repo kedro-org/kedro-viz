@@ -5,7 +5,7 @@
 .kui-theme--light {
   --color-default-alt: #{$color-dark};
   --color-text: #{$color-text-light};
-  --color-text-alt: #{$color-text-light-alt};
+  --color-text-alt: #{$color-text-dark-alt};
   --color-text-faded: rgba(0, 0, 0, 0.55);
   --color-bg-1: #{$color-bg-dev-light-1};
   --color-bg-2: #{$color-bg-light-4};
@@ -25,7 +25,7 @@
 .kui-theme--dark {
   --color-default-alt: #{$color-light};
   --color-text: #{$color-text-dark};
-  --color-text-alt: #{$color-text-dark-alt};
+  --color-text-alt: #{$color-text-light-alt};
   --color-text-faded: rgba(255, 255, 255, 0.55);
   --color-bg-1: #{$color-bg-dark-1};
   --color-bg-2: #{$color-bg-dark-2};

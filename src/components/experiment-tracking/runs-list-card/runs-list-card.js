@@ -29,6 +29,11 @@ const RunsListCard = ({
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(id);
 
+  /**
+   * Use localstate for hovering the bookmark icons and switching accordingly.
+   */
+  const [isBookmarkHovered, setIsBookmarkHovered] = useState(bookmark);
+
   const isMatchSearchValue = (text) =>
     searchValue ? textMatchesSearch(text, searchValue) : false;
 
@@ -56,6 +61,14 @@ const RunsListCard = ({
     }
 
     onRunSelection(id);
+  };
+
+  const onBookmarkIconHover = () => {
+    setIsBookmarkHovered(!bookmark);
+  };
+
+  const onBookmarkIconLeave = () => {
+    setIsBookmarkHovered(bookmark);
   };
 
   useEffect(() => {
@@ -102,17 +115,25 @@ const RunsListCard = ({
           />
         )}
       </div>
-      {bookmark ? (
-        <BookmarkIcon
-          className={'runs-list-card__bookmark runs-list-card__bookmark--solid'}
-        />
-      ) : (
-        <BookmarkStrokeIcon
-          className={
-            'runs-list-card__bookmark runs-list-card__bookmark--stroke'
-          }
-        />
-      )}
+      <div
+        className={'runs-list-card__bookmark-icon'}
+        onMouseLeave={onBookmarkIconLeave}
+        onMouseOver={onBookmarkIconHover}
+      >
+        {isBookmarkHovered ? (
+          <BookmarkIcon
+            className={
+              'runs-list-card__bookmark runs-list-card__bookmark--solid'
+            }
+          />
+        ) : (
+          <BookmarkStrokeIcon
+            className={
+              'runs-list-card__bookmark runs-list-card__bookmark--stroke'
+            }
+          />
+        )}
+      </div>
     </div>
   );
 };
