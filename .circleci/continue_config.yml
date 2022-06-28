@@ -4,6 +4,9 @@ parameters:
   frontend_change:
     type: boolean
     default: false
+  non_frontend_change:
+    type: boolean
+    default: false
 
 orbs:
   win: circleci/windows@2.4.1
