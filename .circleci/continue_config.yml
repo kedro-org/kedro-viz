@@ -282,7 +282,7 @@ release_filter: &release_filter
 
 workflows:
   version: 2.1
-  
+
   build_front_end_only:
     when:
       and:
@@ -290,7 +290,7 @@ workflows:
         - not: <<pipeline.parameters.non_frontend_change>>
     jobs:
       - javascript_lint_and_tests
-       - all_circleci_checks_succeeded:
+      - all_circleci_checks_succeeded:
           requires:
             - javascript_lint_and_tests
 
