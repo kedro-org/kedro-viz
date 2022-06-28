@@ -284,6 +284,7 @@ workflows:
     when:
       and:
         - <<pipeline.parameters.frontend_change>>
+        - not: <<pipeline.parameters.non_frontend_change>>
     jobs:
       - javascript_lint_and_tests
       - all_circleci_checks_succeeded:
@@ -293,7 +294,7 @@ workflows:
   build:
     when:
       and:
-        - not: <<pipeline.parameters.frontend_change>>
+        - <<pipeline.parameters.non_frontend_change>>
     jobs:
       - e2e_tests:
           matrix:
