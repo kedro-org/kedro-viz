@@ -14,7 +14,7 @@ workflows:
           name: check-updated-files
           base-revision: main
           config-path: .circleci/continue_config.yml
-          # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>/
+          # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
           mapping: |
             src/.* frontend_change true
             [^((?!src/).)]*$ non_frontend_change true
