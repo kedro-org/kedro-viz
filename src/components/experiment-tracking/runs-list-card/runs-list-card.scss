@@ -17,7 +17,7 @@
 
   &--active {
     background: var(--color-run-list-hover);
-    border-right: solid #00bcff;
+    border-right: solid $color-accent-blue;
   }
 
   &--disabled {
@@ -27,7 +27,7 @@
 
   &:hover {
     background: var(--color-run-list-hover);
-    border-right: solid #00bcff;
+    border-right: solid $color-accent-blue;
     cursor: pointer;
 
     .runs-list-card__bookmark--stroke {
