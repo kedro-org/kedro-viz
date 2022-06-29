@@ -84,23 +84,16 @@
   }
 }
 
-.runs-list-card__bookmark-icon {
+.runs-list-card__bookmark {
+  fill: var(--color-text-alt);
   height: 24px;
   margin-left: auto;
   opacity: 1;
   transition: opacity 300ms ease;
   width: 24px;
 
-  & svg:hover {
-    fill: var(--color-default-alt);
-  }
-}
-
-.runs-list-card__bookmark {
-  fill: var(--color-text-alt);
-
   &:hover {
-    opacity: 1;
+    fill: var(--color-default-alt);
   }
 
   &--stroke {
