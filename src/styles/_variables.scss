@@ -12,13 +12,13 @@ $font-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
 
 $color-dark: black;
 $color-light: white;
-$color-accent-blue: #00b0f5;
-
+$color-accent-blue: #00bcff;
 $color-primary: $color-accent-blue;
 $color-primary-2: #107da5;
 $color-link: rgba($color-primary, 0.85);
 $color-button: #003464;
 $color-button-hovered: #005d92;
+$color-divider: #21333d;
 $color-button-disabled: rgba($color-light, 0.3);
 
 //-- Theme colours as SCSS variables --//

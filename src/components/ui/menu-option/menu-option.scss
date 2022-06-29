@@ -5,26 +5,19 @@
 /* the height of each item/row */
 $menu-item-height: 40px;
 
-/* padding at the top and bottom of each group of items */
-$menu-group-padding: 4px;
-
-/* the padding of each item (either side of the text ) */
-$menu-item-padding: 12px;
-
 .kui-theme--light {
-  --menu-option-border-width: 1px 0 0 2px;
-  --menu-option-border-color: #{rgba(black, 0.06)};
-  --menu-option-bg-hover: #{rgba(white, 0.3)};
+  --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
-  --menu-option-border-width: 0 0 1px 2px;
-  --menu-option-border-color: #{rgba(white, 0.06)};
-  --menu-option-bg-hover: #{rgba(white, 0.03)};
+  --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-text-color: #{$color-text-light-alt};
 }
 
 .menu-option {
   align-items: center;
+  border-bottom: solid $color-divider;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -35,20 +28,23 @@ $menu-item-padding: 12px;
   user-select: none;
   white-space: nowrap;
 
-  &.menu-option--focused,
-  &:focus,
   &:hover {
     background: var(--menu-option-bg-hover);
+  }
+
+  &:last-of-type {
+    border-bottom: none;
   }
 }
 
 .menu-option__content {
-  position: relative;
-  display: flex;
   align-items: center;
-  width: 100%;
-  text-overflow: ellipsis;
+  color: var(--menu-option-text-color);
+  display: flex;
   font-size: 1.6em;
   letter-spacing: 0.1px;
   line-height: 1.25;
+  position: relative;
+  text-overflow: ellipsis;
+  width: 100%;
 }
