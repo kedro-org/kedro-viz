@@ -16,10 +16,10 @@ const sanitizedPathname = replaceMatches(pathname, {
 
 const wsHost = process.env.NODE_ENV === 'development' ? 'localhost:4142' : host;
 
-const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
+const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 const wsLink = new WebSocketLink({
-  uri: `${wsProtocol}://${wsHost}${sanitizedPathname}graphql`,
+  uri: `${wsProtocol}//${wsHost}${sanitizedPathname}graphql`,
   options: {
     reconnect: true,
   },
