@@ -2,26 +2,24 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --pipeline-list-option-border-width: 1px 0 0 2px;
-  --pipeline-list-option-border-color: #{rgba(black, 0.06)};
-  --pipeline-list-option-bg-hover: #{rgba(white, 0.3)};
+  --pipeline-list-option-bg-active: #{$color-bg-light-4};
+  --pipeline-list-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
-  --pipeline-list-option-border-width: 0 0 1px 2px;
-  --pipeline-list-option-border-color: #{rgba(white, 0.06)};
-  --pipeline-list-option-bg-hover: #{rgba(white, 0.03)};
+  --pipeline-list-option-bg-active: #{$color-bg-dark-4};
+  --pipeline-list-option-text-color: #{$color-text-light-alt};
 }
 
 .pipeline-list {
   .dropdown__label,
   .menu-option {
     height: 58px;
-  }
 
-  .menu-option {
     &.pipeline-list__option--active {
-      border-left-color: $color-primary;
+      background: var(--pipeline-list-option-bg-active);
+      border-left: solid $color-primary;
+      color: var(--pipeline-list-option-text-color);
     }
   }
 }
