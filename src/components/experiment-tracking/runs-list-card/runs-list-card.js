@@ -29,9 +29,6 @@ const RunsListCard = ({
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(id);
 
-  /**
-   * Use localstate for hovering the bookmark icons and switching accordingly.
-   */
   const [isBookmarkHovered, setIsBookmarkHovered] = useState(bookmark);
 
   const isMatchSearchValue = (text) =>
