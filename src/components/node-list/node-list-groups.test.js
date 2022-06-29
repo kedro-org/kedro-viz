@@ -26,9 +26,12 @@ describe('NodeListGroups', () => {
     const toggle = () => wrapper.find('.pipeline-type-group-toggle').first();
     expect(nodeList().length).toBe(1);
     expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(false);
-    toggle().simulate('click');
-    expect(nodeList().length).toBe(1);
-    expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(true);
+    expect(() => {
+      toggle().hasClass('pipeline-type-group-toggle--disabled').toBe(false);
+      toggle().simulate('click');
+      expect(nodeList().length).toBe(1);
+      expect(toggle().hasClass('pipeline-type-group-toggle--alt')).toBe(true);
+    }).toThrow();
   });
 
   it('handles group checkbox change events', () => {
