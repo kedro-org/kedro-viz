@@ -6,18 +6,20 @@
 $menu-item-height: 40px;
 
 .kui-theme--light {
-  --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-bg-hover: #{$color-bg-light-5};
+  --menu-option-divider: #{$color-bg-dev-light-1};
   --menu-option-text-color: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
   --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-divider: #21333d;
   --menu-option-text-color: #{$color-text-light-alt};
 }
 
 .menu-option {
   align-items: center;
-  border-bottom: solid $color-divider;
+  border-bottom: 1px solid var(--menu-option-divider);
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
