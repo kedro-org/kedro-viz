@@ -6,6 +6,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.7.1
+
 ## Bug fixes and other changes
 
 - General design-debt fixes. (#933, #934, #936, #939, #940)
