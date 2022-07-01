@@ -2,10 +2,12 @@
 
 .kui-theme--light {
   --color-run-list-highlight: #{darken($color-primary, 10%)};
+  --color-run-list-bookmark: #{$color-text-dark-alt};
 }
 
 .kui-theme--dark {
   --color-run-list-highlight: #{$color-primary};
+  --color-run-list-bookmark: #{$color-text-light-alt};
 }
 
 .runs-list-card {
@@ -61,8 +63,8 @@
 }
 
 .runs-list-card__notes {
-  padding-top: 24px;
   font-size: 1.3em;
+  padding-top: 24px;
 
   b {
     color: var(--color-run-list-highlight);
@@ -85,19 +87,19 @@
 }
 
 .runs-list-card__bookmark {
-  fill: var(--color-default-alt);
+  fill: var(--color-run-list-bookmark);
   height: 24px;
   margin-left: auto;
-  opacity: 0.7;
-  transition: opacity 300ms ease;
+  opacity: 1;
+  transition: fill 300ms ease;
   width: 24px;
 
   &:hover {
-    opacity: 1;
+    fill: var(--color-default-alt);
   }
 
   &--stroke {
     opacity: 0;
-    transition: opacity 0ms ease;
+    transition: fill 300ms ease;
   }
 }
