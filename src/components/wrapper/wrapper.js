@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { replaceMatches } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
@@ -18,6 +19,11 @@ import './wrapper.css';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ displayGlobalToolbar, theme }) => {
+  const { pathname } = window.location;
+  const sanitizedPathname = replaceMatches(pathname, {
+    'experiment-tracking': '',
+  });
+
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar,
@@ -57,10 +63,10 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               />
             )}
             <Switch>
-              <Route exact path={['/']}>
+              <Route exact path={sanitizedPathname}>
                 <FlowChartWrapper />
               </Route>
-              <Route path={['/experiment-tracking']}>
+              <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
               </Route>
             </Switch>

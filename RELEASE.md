@@ -10,6 +10,7 @@ Please follow the established format:
 
 - General design-debt fixes. (#933, #934, #936, #939, #940)
 - Ensure `Created by` is set in experiment tracking metadata. (#937)
+- Fix for running Kedro-Viz with a proxy server or different base paths. (#941)
 
 # Release 4.7.0
 

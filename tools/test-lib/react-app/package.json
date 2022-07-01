@@ -19,7 +19,9 @@
   "dependencies": {
     "@quantumblack/kedro-viz": "file:kedro-viz.tgz",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-router": "^6.3.0",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
