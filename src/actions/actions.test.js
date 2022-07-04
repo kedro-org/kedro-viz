@@ -147,7 +147,7 @@ describe('actions', () => {
     expect(toggleNodesDisabled(nodeIDs, isDisabled)).toEqual(expectedAction);
   });
 
-  it('should create an action to toggle whether to show pretty names on/off.', () => {
+  it('should create an action to toggle whether to show pretty names on/off', () => {
     const prettyName = false;
     const expectedAction = {
       type: TOGGLE_PRETTY_NAME,
