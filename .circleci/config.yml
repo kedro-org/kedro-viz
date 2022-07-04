@@ -198,6 +198,19 @@ jobs:
           command: make security-scan
       - python_package
 
+   release_to_npm_no_publish_temp:
+    executor:
+      name: docker
+      python_version: '3.8'
+    steps:
+      - checkout
+      - install_node_dependencies
+      - npm_build
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+
+
   release_to_npm:
     executor:
       name: docker
@@ -279,59 +292,60 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - win_e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
-      - unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - win_unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
-      - lint:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - javascript_lint_and_tests
-      - build_app
-      - deploy_demo:
-          context:
-            - kedro-ecr-publish
-          requires:
-            - e2e_tests
-            - win_e2e_tests
-            - unit_tests
-            - win_unit_tests
-            - lint
-            - javascript_lint_and_tests
-            - build_app
-          filters:
-            branches:
-              only: demo
-      - all_circleci_checks_succeeded:
-          requires:
-            - e2e_tests
-            - unit_tests
-            - lint
-            - javascript_lint_and_tests
-            - build_app
+      - release_to_npm_no_publish_temp
+      # - e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.7', '3.8', '3.9', '3.10']
+      # - win_e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.7', '3.8', '3.9', '3.10']
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - demo
+      # - unit_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.7', '3.8', '3.9', '3.10']
+      # - win_unit_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.7', '3.8', '3.9', '3.10']
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - demo
+      # - lint:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.7', '3.8', '3.9', '3.10']
+      # - javascript_lint_and_tests
+      # - build_app
+      # - deploy_demo:
+      #     context:
+      #       - kedro-ecr-publish
+      #     requires:
+      #       - e2e_tests
+      #       - win_e2e_tests
+      #       - unit_tests
+      #       - win_unit_tests
+      #       - lint
+      #       - javascript_lint_and_tests
+      #       - build_app
+      #     filters:
+      #       branches:
+      #         only: demo
+      # - all_circleci_checks_succeeded:
+      #     requires:
+      #       - e2e_tests
+      #       - unit_tests
+      #       - lint
+      #       - javascript_lint_and_tests
+      #       - build_app
 
   release:
     jobs:
