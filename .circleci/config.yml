@@ -198,7 +198,6 @@ jobs:
           command: make security-scan
       - python_package
 
-
   release_to_npm:
     executor:
       name: docker
