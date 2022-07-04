@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
+import { replaceMatches } from '../../utils';
 import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
@@ -22,6 +23,11 @@ export const GlobalToolbar = ({
   onToggleTheme,
   theme,
 }) => {
+  const { pathname } = window.location;
+  const sanitizedPathname = replaceMatches(pathname, {
+    'experiment-tracking': '',
+  });
+
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -32,7 +38,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: '/' }}>
+          <NavLink exact to={{ pathname: sanitizedPathname }}>
             <IconButton
               ariaLabel={'View your pipeline'}
               className={
@@ -43,7 +49,10 @@ export const GlobalToolbar = ({
               labelText="Flowchart"
             />
           </NavLink>
-          <NavLink exact to={{ pathname: '/experiment-tracking' }}>
+          <NavLink
+            exact
+            to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
+          >
             <IconButton
               ariaLabel={'View your experiments'}
               className={
