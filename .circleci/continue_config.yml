@@ -1,10 +1,10 @@
 version: 2.1
 
 parameters:
-  frontend_change:
+  backend_change:
     type: boolean
     default: false
-  non_frontend_change:
+  non_backend_change:
     type: boolean
     default: false
 
@@ -20,6 +20,7 @@ executors:
         type: string
     docker:
       - image: cimg/python:<<parameters.python_version>>-node
+    working_directory: ~/repo
 
 commands:
   setup_python_env:
@@ -286,8 +287,8 @@ workflows:
   build_frontend_only:
     when:
       and:
-        - <<pipeline.parameters.frontend_change>>
-        - not: <<pipeline.parameters.non_frontend_change>>
+        - <<pipeline.parameters.non_backend_change>>
+        - not: <<pipeline.parameters.backend_change>>
     jobs:
       - javascript_lint_and_tests
       - all_circleci_checks_succeeded:
@@ -297,7 +298,7 @@ workflows:
   build:
     when:
       and:
-        - <<pipeline.parameters.non_frontend_change>>
+        - <<pipeline.parameters.backend_change>>
     jobs:
       - e2e_tests:
           matrix:

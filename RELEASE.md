@@ -6,10 +6,13 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.7.1
+
 ## Bug fixes and other changes
 
 - General design-debt fixes. (#933, #934, #936, #939, #940)
 - Ensure `Created by` is set in experiment tracking metadata. (#937)
+- Fix for running Kedro-Viz with a proxy server or different base paths. (#941)
 
 # Release 4.7.0
 
@@ -27,7 +30,7 @@ Please follow the established format:
 - Enable clicks on the flowchart to expand modular pipelines. (#879)
 - Add --params option to `kedro viz` CLI command. (#883)
 - Improve bundle size of the JavaScript package. (#906)
-- General design-debt fixes. (#896, #898, #899, #904, #908, #915)
+- General design-debt fixes. (#896, #898, #899, #904, #908, #915, #944)
 
 # Release 4.6.0
 
