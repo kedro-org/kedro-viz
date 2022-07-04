@@ -198,18 +198,6 @@ jobs:
           command: make security-scan
       - python_package
 
-   release_to_npm_no_publish_temp:
-    executor:
-      name: docker
-      python_version: '3.8'
-    steps:
-      - checkout
-      - install_node_dependencies
-      - npm_build
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-
 
   release_to_npm:
     executor:
