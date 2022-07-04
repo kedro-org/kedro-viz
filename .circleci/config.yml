@@ -198,7 +198,7 @@ jobs:
           command: make security-scan
       - python_package
 
-   release_to_npm_no_publish_temp:
+  release_to_npm_no_publish_temp:
     executor:
       name: docker
       python_version: '3.8'
