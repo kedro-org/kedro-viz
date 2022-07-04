@@ -325,12 +325,14 @@ workflows:
           filters:
             branches:
               only: demo
+      - release_to_npm
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
             - unit_tests
             - lint
             - javascript_lint_and_tests
+            - release_to_npm 
             - build_app
 
   release:
