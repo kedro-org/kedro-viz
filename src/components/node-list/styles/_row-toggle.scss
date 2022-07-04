@@ -76,9 +76,9 @@
 /*
  | row-hover | icon-hover | checked | opacity |
  |    🚫     |     🚫      |    🚫   |    0    |
- |    🚫     |     🚫      |    ✅   |    0    |
+ |    🚫     |     🚫      |    ✅   |    1    |
  |    ✅     |     🚫      |    🚫   |   0.55  |
- |    ✅     |     🚫      |    ✅   |   0.55  |
+ |    ✅     |     🚫      |    ✅   |    1    |
  |    ✅     |     ✅      |    🚫   |    1    |
  |    ✅     |     ✅      |    ✅   |    1    |
  */
@@ -97,6 +97,12 @@ $element-icon-opacity-2: 1;
   .pipeline-nodelist__row:hover & {
     > * {
       opacity: $element-icon-opacity-1;
+    }
+
+    &.pipeline-row__toggle-icon--focus-checked {
+      > * {
+        opacity: $element-icon-opacity-2;
+      }
     }
   }
 
@@ -120,7 +126,7 @@ $element-icon-opacity-2: 1;
 
   &.pipeline-row__toggle-icon--focus-checked {
     > * {
-      opacity: $element-icon-opacity-1;
+      opacity: $element-icon-opacity-2;
     }
   }
 }
