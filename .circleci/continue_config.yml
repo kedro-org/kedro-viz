@@ -12,7 +12,7 @@ orbs:
   win: circleci/windows@2.4.1
 
 # No windows executor is listed here since windows builds use win/default and modify
-# the Python version through the conda environment.
+# the Python version through the conda environment..
 executors:
   docker:
     parameters:
