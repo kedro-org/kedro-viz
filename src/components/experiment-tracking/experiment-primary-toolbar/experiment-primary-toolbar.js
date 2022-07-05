@@ -8,7 +8,10 @@ import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
 
-import { SlidingLeftToRight, SlindingRightToLeft } from './sliding-animation';
+import {
+  SlideFromLeftToRight,
+  SlideFromRightToLeft,
+} from './sliding-animation';
 
 import './experiment-primary-toolbar.css';
 
@@ -42,7 +45,7 @@ export const ExperimentPrimaryToolbar = ({
       visible={{ sidebar: sidebarVisible }}
     >
       <div className="pipeline-menu-button--wrapper">
-        <SlidingLeftToRight state={enableComparisonView} duration={duration}>
+        <SlideFromLeftToRight state={enableComparisonView} duration={duration}>
           <IconButton
             active={enableShowChanges}
             ariaLabel="Toggle show changes"
@@ -63,8 +66,8 @@ export const ExperimentPrimaryToolbar = ({
             labelText="Export run data"
             onClick={() => setShowRunExportModal(true)}
           />
-        </SlidingLeftToRight>
-        <SlindingRightToLeft state={!enableComparisonView} duration={duration}>
+        </SlideFromLeftToRight>
+        <SlideFromRightToLeft state={!enableComparisonView} duration={duration}>
           <IconButton
             active={selectedRunData?.bookmark}
             ariaLabel="Toggle run bookmark"
@@ -89,7 +92,7 @@ export const ExperimentPrimaryToolbar = ({
             labelText="Export run data"
             onClick={() => setShowRunExportModal(true)}
           />
-        </SlindingRightToLeft>
+        </SlideFromRightToLeft>
       </div>
     </PrimaryToolbar>
   );

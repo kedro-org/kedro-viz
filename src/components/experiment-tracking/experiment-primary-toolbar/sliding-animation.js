@@ -48,7 +48,7 @@ const directions = {
   },
 };
 
-export const SlidingLeftToRight = ({ state, duration, children }) => {
+export const SlideFromLeftToRight = ({ state, duration, children }) => {
   const defaultStyle = {
     transition: `transform ${duration}ms ease-in-out`,
   };
@@ -69,7 +69,7 @@ export const SlidingLeftToRight = ({ state, duration, children }) => {
   );
 };
 
-export const SlindingRightToLeft = ({ state, duration, children }) => {
+export const SlideFromRightToLeft = ({ state, duration, children }) => {
   const defaultStyle = {
     transition: `transform ${duration}ms ease-in-out`,
   };
