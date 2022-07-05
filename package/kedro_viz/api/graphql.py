@@ -2,7 +2,7 @@
 # pylint: disable=no-self-use, too-few-public-methods, unnecessary-lambda
 
 from __future__ import annotations
-
+import base64
 import asyncio
 import json
 import logging
@@ -208,6 +208,7 @@ def format_run_tracking_data(
     return JSONObject(formatted_tracking_data)
 
 
+
 def get_run_tracking_data(
     run_ids: List[ID], show_diff: Optional[bool] = False
 ) -> List[TrackingDataset]:
@@ -226,35 +227,61 @@ def get_run_tracking_data(
     """
     # TODO: this logic should be moved to the data access layer.
     from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
+    from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet, PlotlyDataSet
+    from kedro.extras.datasets.matplotlib import MatplotlibWriter
 
     all_datasets = []
+    tracking_datasets = []
     catalog = data_access_manager.catalog.get_catalog()
-    tracking_datasets = [
-        (ds_name, ds_value)
-        for ds_name, ds_value in catalog._data_sets.items()
-        if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
-    ]
+    for ds_name, ds_value in catalog._data_sets.items():
+        ds_type=''
+        if isinstance(ds_value, MetricsDataSet):
+            ds_type = 'Metrics'
+        elif isinstance(ds_value, JSONDataSet):
+            ds_type = 'JSON Data'
+        elif isinstance(ds_value,(PlotlyJSONDataSet, PlotlyDataSet)):
+            ds_type = 'Plots'
+        elif isinstance(ds_value, (MatplotlibWriter)):
+            ds_type = 'Plot Images'
+        else:
+            continue
+        tracking_datasets.append((ds_name, ds_value, ds_type))
+    
+    print(tracking_datasets)
 
-    for name, dataset in tracking_datasets:
+    for name, dataset, type in tracking_datasets:
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
             # Set the load_version to run_id
             dataset._version = DataSetVersion(run_id, None)
             load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+            dataset_description = dataset._describe()
+            filepath = (dataset_description.get("filepath") or dataset_description.get("path")).name
             if dataset.exists():
-                with dataset._fs.open(
-                    load_path, **dataset._fs_open_args_load
-                ) as fs_file:
-                    json_data = json.load(fs_file)
-                    all_runs[run_id] = json_data
+                if type =='Plot Images':
+                    with open(load_path, "rb") as img_file:
+                        base64_bytes = base64.b64encode(img_file.read())
+                        all_runs[run_id]= {filepath: base64_bytes.decode("utf-8")}
+                elif type =='Plots':
+                     with dataset._fs.open(
+                        load_path, **dataset._fs_open_args_load
+                    ) as fs_file:
+                        json_data = json.load(fs_file)
+                        all_runs[run_id] = {filepath:json_data}
+                else: 
+                    with dataset._fs.open(
+                        load_path, **dataset._fs_open_args_load
+                    ) as fs_file:
+                        json_data = json.load(fs_file)
+                        all_runs[run_id] = json_data
             else:
                 all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", load_path)
 
         tracking_dataset = TrackingDataset(
             datasetName=name,
-            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
+            datasetType=type,
             data=format_run_tracking_data(all_runs, show_diff),
         )
         all_datasets.append(tracking_dataset)
