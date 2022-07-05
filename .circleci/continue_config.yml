@@ -1,10 +1,15 @@
 version: 2.1
 
+# Backend CI jobs are the heavy ones, so we only run them if the backend
+# or CI config has changed.
 parameters:
   backend_change:
     type: boolean
     default: false
-  non_backend_change:
+  ci_change:
+    type: boolean
+    default: false
+  frontend_change:
     type: boolean
     default: false
 
@@ -12,7 +17,7 @@ orbs:
   win: circleci/windows@2.4.1
 
 # No windows executor is listed here since windows builds use win/default and modify
-# the Python version through the conda environment..
+# the Python version through the conda environment.
 executors:
   docker:
     parameters:
@@ -47,12 +52,6 @@ commands:
       - run:
           name: Build React application
           command: make build
-
-  python_package:
-    steps:
-      - run:
-          name: Make Python package
-          command: make package
 
   win_setup_python_env:
     # Miniconda3 is pre-installed on the machine:
@@ -190,19 +189,17 @@ jobs:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
 
-  build_app:
-    executor:
-      name: docker
-      python_version: '3.8'
-    steps:
-      - setup
+    scans:
+      - executor:
+          name: docker
+          python_version: '3.8'
+      - checkout
       - run:
           name: Run secret scan
           command: make secret-scan
       - run:
           name: Run security scan
           command: make security-scan
-      - python_package
 
   release_to_npm:
     executor:
@@ -224,10 +221,10 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
-      - checkout
-      - setup_python_env
-      - install_node_dependencies
-      - python_package
+      - setup
+      - run:
+          name: Make Python package
+          command: make package
       - run:
           name: Install twine
           command: python -m pip install -U twine
@@ -284,21 +281,24 @@ release_filter: &release_filter
 workflows:
   version: 2.1
 
-  build_frontend_only:
+  build_frontend:
     when:
-      and:
-        - <<pipeline.parameters.non_backend_change>>
-        - not: <<pipeline.parameters.backend_change>>
+      or:
+        - <<pipeline.parameters.frontend_change>>
+        - <<pipeline.parameters.ci_change>>
     jobs:
       - javascript_lint_and_tests
+      - scans
       - all_circleci_checks_succeeded:
           requires:
             - javascript_lint_and_tests
+            - scans
 
-  build:
+  build_backend:
     when:
-      and:
+      or:
         - <<pipeline.parameters.backend_change>>
+        - <<pipeline.parameters.ci_change>>
     jobs:
       - e2e_tests:
           matrix:
@@ -330,8 +330,7 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-      - javascript_lint_and_tests
-      - build_app
+      - scans
       - deploy_demo:
           context:
             - kedro-ecr-publish
@@ -341,8 +340,7 @@ workflows:
             - unit_tests
             - win_unit_tests
             - lint
-            - javascript_lint_and_tests
-            - build_app
+            - scans
           filters:
             branches:
               only: demo
@@ -351,19 +349,14 @@ workflows:
             - e2e_tests
             - unit_tests
             - lint
-            - javascript_lint_and_tests
-            - build_app
+            - scans
 
   release:
     jobs:
-      - build_app:
-          <<: *release_filter
       - release_to_npm:
           <<: *release_filter
       - release_to_pypi:
           <<: *release_filter
-          requires:
-            - build_app
 
   daily:
     triggers:
@@ -395,4 +388,4 @@ workflows:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
       - javascript_lint_and_tests
-      - build_app
+      - scans
