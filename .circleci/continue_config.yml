@@ -163,6 +163,12 @@ jobs:
       - checkout
       - setup_python_env
       - run:
+          name: Run secret scan
+          command: make secret-scan
+      - run:
+          name: Run security scan
+          command: make security-scan
+      - run:
           name: Run Python formatters and linters
           command: make format-check lint-check
 
@@ -188,19 +194,6 @@ jobs:
       - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
-
-  scans:
-    executor:
-      name: docker
-      python_version: '3.8'
-    steps:
-      - checkout
-      - run:
-          name: Run secret scan
-          command: make secret-scan
-      - run:
-          name: Run security scan
-          command: make security-scan
 
   release_to_npm:
     executor:
@@ -289,11 +282,9 @@ workflows:
         - <<pipeline.parameters.ci_change>>
     jobs:
       - javascript_lint_and_tests
-      - scans
       - all_circleci_checks_succeeded:
           requires:
             - javascript_lint_and_tests
-            - scans
 
   build_backend:
     when:
@@ -331,7 +322,6 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-      - scans
       - deploy_demo:
           context:
             - kedro-ecr-publish
@@ -341,7 +331,6 @@ workflows:
             - unit_tests
             - win_unit_tests
             - lint
-            - scans
           filters:
             branches:
               only: demo
@@ -350,7 +339,6 @@ workflows:
             - e2e_tests
             - unit_tests
             - lint
-            - scans
 
   release:
     jobs:
@@ -389,4 +377,3 @@ workflows:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
       - javascript_lint_and_tests
-      - scans
