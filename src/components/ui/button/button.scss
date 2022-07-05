@@ -75,8 +75,9 @@ $secondary-underline-offset-hover: 4px;
   }
 
   &:hover:not(:disabled) {
-    color: var(--color-button__text--hover);
     background: var(--color-button--outline);
+    color: var(--color-button__text--hover);
+    outline: none;
   }
 
   &:disabled {
@@ -131,7 +132,7 @@ $secondary-underline-offset-hover: 4px;
   animation: scale 0.35s ease;
   background-color: $color-success;
   color: $color-dark;
-  outline: 2px solid $color-success;
+  outline: none;
   width: 172px; // Match the `Apply and close` width to avoid a layout shift.
 }
 
@@ -146,12 +147,15 @@ $secondary-underline-offset-hover: 4px;
   0% {
     transform: scaleX(1);
   }
+
   50% {
     transform: scaleX(1.15);
   }
+
   75% {
     transform: scaleX(0.9);
   }
+
   100% {
     transform: scaleX(1);
   }
@@ -161,9 +165,11 @@ $secondary-underline-offset-hover: 4px;
   0% {
     transform: scale(0);
   }
+
   80% {
     transform: scale(1.25);
   }
+
   100% {
     transform: scale(1);
   }
