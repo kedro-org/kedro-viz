@@ -8,7 +8,6 @@ $toggle-width: 1.15em;
 
 .accordion__heading {
   align-items: center;
-  background-color: var(--color-black-10);
   display: flex;
   justify-content: space-between;
 
@@ -36,20 +35,20 @@ $toggle-width: 1.15em;
 }
 
 .accordion__toggle {
-  width: $toggle-width;
-  height: $toggle-height;
-  padding: 0;
-  color: var(--color-default-alt);
-  font-size: inherit;
-  font-family: inherit;
-  line-height: 1em;
-  text-align: center;
   background: none;
-  border: none;
   border-radius: 50%;
+  border: none;
   box-shadow: none;
+  color: var(--color-default-alt);
   cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  height: $toggle-height;
+  line-height: 1em;
+  padding: 0;
+  text-align: center;
   transition: transform ease 0.1s;
+  width: $toggle-width;
 
   &:focus {
     outline: none;
@@ -60,9 +59,9 @@ $toggle-width: 1.15em;
   }
 
   &:before {
+    content: '▾';
     font-size: 1.8em;
     opacity: 0.55;
-    content: '▾';
   }
 
   &:hover:before {
