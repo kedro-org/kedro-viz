@@ -90,8 +90,9 @@
 }
 
 .pipeline-settings-modal__upgrade-reminder {
-  display: inline;
   color: var(--color-upgrade-reminder-text);
+  display: inline;
+  font-size: 1.3em;
 
   a {
     color: var(--color-upgrade-reminder-text);

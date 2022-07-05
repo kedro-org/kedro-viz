@@ -7,8 +7,8 @@
 }
 
 .search-bar-wrapper {
-  padding-top: 24px;
   background: var(--color-bg-3);
+  padding-top: 24px;
   position: sticky;
   top: 0;
   z-index: 1;
@@ -19,6 +19,7 @@
 }
 
 .runs-list__accordion-header {
+  background-color: var(--color-black-10);
   padding: 0.8em 3.5em 0.8em 3em;
 }
 
