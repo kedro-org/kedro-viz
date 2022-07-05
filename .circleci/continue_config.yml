@@ -189,17 +189,17 @@ jobs:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
 
-    scans:
-      - executor:
-          name: docker
-          python_version: '3.8'
-      - checkout
-      - run:
-          name: Run secret scan
-          command: make secret-scan
-      - run:
-          name: Run security scan
-          command: make security-scan
+  scans:
+    - executor:
+        name: docker
+        python_version: '3.8'
+    - checkout
+    - run:
+        name: Run secret scan
+        command: make secret-scan
+    - run:
+        name: Run security scan
+        command: make security-scan
 
   release_to_npm:
     executor:
