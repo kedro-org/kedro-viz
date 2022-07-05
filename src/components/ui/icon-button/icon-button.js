@@ -17,7 +17,6 @@ const IconButton = ({
   container: Container = 'li',
   dataHeapEvent,
   disabled,
-  hasReminder,
   icon,
   labelText,
   labelTextPosition = 'right',
@@ -45,7 +44,7 @@ const IconButton = ({
         disabled={disabled}
         onClick={onClick}
       >
-        {Icon && <Icon className="pipeline-icon" hasReminder={hasReminder} />}
+        {Icon && <Icon className="pipeline-icon" />}
         {labelText && (
           <span
             className={classnames(
@@ -69,7 +68,6 @@ IconButton.propTypes = {
   children: PropTypes.node,
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
-  hasReminder: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
@@ -83,7 +81,6 @@ IconButton.defaultProps = {
   children: null,
   dataHeapEvent: null,
   disabled: false,
-  hasReminder: false,
   icon: null,
   labelText: null,
   onClick: null,
