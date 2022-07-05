@@ -51,3 +51,13 @@
 .pipeline-global-routes-toolbar a.active .pipeline-menu-button--link svg {
   opacity: 1;
 }
+
+.update-reminder-dot {
+  background-color: $color-accent-yellow;
+  border-radius: 50%;
+  height: 8px;
+  position: absolute;
+  right: 28px;
+  top: 31px;
+  width: 8px;
+}

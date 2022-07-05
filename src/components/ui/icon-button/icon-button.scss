@@ -3,6 +3,10 @@
 
 $triangle-size: 7px;
 
+.pipeline-icon--container {
+  position: relative;
+}
+
 .pipeline-icon-toolbar__button {
   background: none;
   border: none;
