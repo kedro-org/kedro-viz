@@ -211,7 +211,7 @@ def format_run_tracking_data(
 
 def get_run_tracking_data(
     run_ids: List[ID], show_diff: Optional[bool] = False
-) -> List[GroupedDataset]:
+) -> List[GroupedTrackingDataset]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -284,23 +284,18 @@ def get_run_tracking_data(
             datasetType=type,
             data=format_run_tracking_data(all_runs, show_diff),
         )
-
-        all_grouped_datasets.setdefault(type,[]).append(tracking_dataset)
+        grouped_type = 'Plots' if type == 'Plot Images' else type 
+        all_grouped_datasets.setdefault(grouped_type,[]).append(tracking_dataset)
 
     for type, datasets in all_grouped_datasets.items():
-        grouped_dataset = GroupedDataset(
-            datasetType= type,
+        grouped_dataset = GroupedTrackingDataset(
+            groupedDatasetType= type,
             datasets= datasets,
         )
         grouped_dataset_list.append(grouped_dataset)
     
     return grouped_dataset_list
     
-
-
- 
-
-
 
 
 @strawberry.type
@@ -326,10 +321,10 @@ class TrackingDataset:
     datasetType: Optional[str]
 
 @strawberry.type
-class GroupedDataset:
+class GroupedTrackingDataset:
     """GroupedData object to structure list of tracking data of a particular type."""
 
-    datasetType: Optional[str]
+    groupedDatasetType: Optional[str]
     datasets: Optional[List[TrackingDataset]]
 
 @strawberry.type
@@ -380,7 +375,7 @@ class Query:
     @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
-    ) -> List[GroupedDataset]:
+    ) -> List[GroupedTrackingDataset]:
         """Query to get data for specific runs from the session store"""
         return get_run_tracking_data(run_ids, show_diff)
 
