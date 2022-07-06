@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SettingsIcon = ({ className, hasReminder }) => (
+const SettingsIcon = ({ className }) => (
   <svg className={className} viewBox="-4 -4 24 24">
     <g>
       <path d="M14.75 7L16.25 7 16.5 10 14.5 10z" />
@@ -12,9 +12,6 @@ const SettingsIcon = ({ className, hasReminder }) => (
       <path d="M2.8 2.05L4.3 2.05 4.55 5.05 2.55 5.05z" />
       <path d="M12.7 11.95L14.2 11.95 14.45 14.95 12.45 14.95z" />
       <path d="M15.5 8.389c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7zm-2 0c0-2.762-2.239-5-5-5s-5 2.238-5 5c0 2.761 2.239 5 5 5s5-2.239 5-5z" />
-      {hasReminder && (
-        <circle id="Oval" fill="#FFBC00" cx="16" cy="4" r="4"></circle>
-      )}
     </g>
   </svg>
 );
