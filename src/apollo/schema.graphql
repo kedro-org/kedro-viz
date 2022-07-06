@@ -1,3 +1,8 @@
+type GroupedTrackingDataset {
+  groupedDatasetType: String
+  datasets: [TrackingDataset!]
+}
+
 """Generic scalar type representing a JSON object"""
 scalar JSONObject
 
@@ -8,7 +13,7 @@ type Mutation {
 type Query {
   runMetadata(runIds: [ID!]!): [Run!]!
   runsList: [Run!]!
-  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [GroupedTrackingDataset!]!
   version: Version!
 }
 

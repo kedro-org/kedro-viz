@@ -73,7 +73,7 @@ class TestQueryWithRuns:
             json={
                 "query": f"""{{runTrackingData
                 (runIds:["{example_run_id}"])
-                {{datasetName, datasetType, data}}}}"""
+                {{groupedDatasetType, datasets{{ datasetName, datasetType, data}}}}}}"""
             },
         )
 
@@ -81,38 +81,90 @@ class TestQueryWithRuns:
             "data": {
                 "runTrackingData": [
                     {
-                        "datasetName": "metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
-                        "data": {
-                            "col1": [{"runId": example_run_id, "value": 1.0}],
-                            "col2": [{"runId": example_run_id, "value": 2.0}],
-                            "col3": [{"runId": example_run_id, "value": 3.0}],
-                        },
+                        "groupedDatasetType": "Metrics",
+                        "datasets": [
+                            {
+                                "datasetName": "metrics",
+                                "datasetType": "Metrics",
+                                "data": {
+                                    "col1": [{"runId": example_run_id, "value": 1.0}],
+                                    "col2": [{"runId": example_run_id, "value": 2.0}],
+                                    "col3": [{"runId": example_run_id, "value": 3.0}],
+                                },
+                            },
+                            {
+                                "datasetName": "more_metrics",
+                                "datasetType": "Metrics",
+                                "data": {
+                                    "col4": [{"runId": example_run_id, "value": 4.0}],
+                                    "col5": [{"runId": example_run_id, "value": 5.0}],
+                                    "col6": [{"runId": example_run_id, "value": 6.0}],
+                                },
+                            },
+                        ],
                     },
                     {
-                        "datasetName": "more_metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
-                        "data": {
-                            "col4": [{"runId": example_run_id, "value": 4.0}],
-                            "col5": [{"runId": example_run_id, "value": 5.0}],
-                            "col6": [{"runId": example_run_id, "value": 6.0}],
-                        },
+                        "groupedDatasetType": "JSON Data",
+                        "datasets": [
+                            {
+                                "datasetName": "json_tracking",
+                                "datasetType": "JSON Data",
+                                "data": {
+                                    "col2": [{"runId": example_run_id, "value": True}],
+                                    "col3": [{"runId": example_run_id, "value": 3}],
+                                    "col7": [
+                                        {
+                                            "runId": example_run_id,
+                                            "value": "column_seven",
+                                        }
+                                    ],
+                                },
+                            }
+                        ],
                     },
                     {
-                        "datasetName": "json_tracking",
-                        "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                        "data": {
-                            "col2": [{"runId": example_run_id, "value": True}],
-                            "col3": [{"runId": example_run_id, "value": 3}],
-                            "col7": [
-                                {
-                                    "runId": example_run_id,
-                                    "value": "column_seven",
-                                }
-                            ],
-                        },
+                        "groupedDatasetType": "Plots",
+                        "datasets": [
+                            {
+                                "datasetName": "plotly_dataset",
+                                "datasetType": "Plotly",
+                                "data": {
+                                    "plotly.json": [
+                                        {
+                                            "runId": example_run_id,
+                                            "value": {
+                                                "data": [
+                                                    {
+                                                        "x": [
+                                                            "giraffes",
+                                                            "orangutans",
+                                                            "monkeys",
+                                                        ],
+                                                        "y": [20, 14, 23],
+                                                        "type": "bar",
+                                                    }
+                                                ]
+                                            },
+                                        }
+                                    ]
+                                },
+                            },
+                            {
+                                "datasetName": "matplotlib_dataset",
+                                "datasetType": "Matplotlib",
+                                "data": {
+                                    "matplotlib.png": [
+                                        {
+                                            "runId": example_run_id,
+                                            "value": "iVBORw0KGgoAAAANSUhEUg"
+                                            "AAAAEAAAABCAQAAAC1HAwCAA"
+                                            "AAC0lEQVQYV2NgYAAAAAM"
+                                            "AAWgmWQ0AAAAASUVORK5CYII=",
+                                        }
+                                    ]
+                                },
+                            },
+                        ],
                     },
                 ]
             }

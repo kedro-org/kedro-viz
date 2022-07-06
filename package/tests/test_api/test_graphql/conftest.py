@@ -1,8 +1,11 @@
+import base64
 import json
 from pathlib import Path
 
 import pytest
+from kedro.extras.datasets.matplotlib import MatplotlibWriter
 from kedro.extras.datasets.pandas import CSVDataSet
+from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from kedro.io import DataCatalog, Version
 
@@ -91,7 +94,10 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     )
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
 
-    dataset = CSVDataSet(filepath="dataset.csv")
+    dataset = CSVDataSet(
+        Path(tmp_path / "metrics.json").as_posix(),
+        version=Version(None, example_run_id),
+    )
 
     more_metrics = MetricsDataSet(
         filepath=Path(tmp_path / "metrics.json").as_posix(),
@@ -105,12 +111,55 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     )
     json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
 
+    plotly_dataset = PlotlyJSONDataSet(
+        filepath=Path(tmp_path / "plotly.json").as_posix(),
+        version=Version(None, example_run_id),
+    )
+
+    class MockPlotlyData:
+        data = {
+            "data": [
+                {
+                    "x": ["giraffes", "orangutans", "monkeys"],
+                    "y": [20, 14, 23],
+                    "type": "bar",
+                }
+            ]
+        }
+
+        @classmethod
+        def write_json(cls, fs_file, **kwargs):
+            json.dump(cls.data, fs_file, **kwargs)
+
+    plotly_dataset.save(MockPlotlyData)
+
+    matplotlib_dataset = MatplotlibWriter(
+        filepath=Path(tmp_path / "matplotlib.png").as_posix(),
+        version=Version(None, example_run_id),
+    )
+
+    class MockMatplotData:
+        data = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUg"
+            "AAAAEAAAABCAQAAAC1HAwCAA"
+            "AAC0lEQVQYV2NgYAAAAAM"
+            "AAWgmWQ0AAAAASUVORK5CYII="
+        )
+
+        @classmethod
+        def savefig(cls, bytes_buffer, **kwargs):
+            bytes_buffer.write(cls.data)
+
+    matplotlib_dataset.save(MockMatplotData)
+
     catalog = DataCatalog(
         data_sets={
             "metrics": metrics_dataset,
             "csv": dataset,
             "more_metrics": more_metrics,
             "json_tracking": json_dataset,
+            "plotly_dataset": plotly_dataset,
+            "matplotlib_dataset": matplotlib_dataset,
         }
     )
 

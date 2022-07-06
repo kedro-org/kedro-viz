@@ -9,6 +9,7 @@ from strawberry import ID
 from strawberry.printer import print_schema
 
 from kedro_viz.api.graphql import (
+    GroupedTrackingDataset,
     JSONObject,
     TrackingDataset,
     get_run_tracking_data,
@@ -24,44 +25,69 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject(
-                            {
-                                "col1": [
-                                    {"runId": "2021-11-03T18.24.24.379Z", "value": 3.0},
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
-                                ],
-                                "col2": [
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject(
                                     {
-                                        "runId": "2021-11-03T18.24.24.379Z",
-                                        "value": 3.23,
-                                    },
-                                ],
-                                "col3": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0},
-                                ],
-                            }
-                        ),
+                                        "col1": [
+                                            {
+                                                "runId": "2021-11-03T18.24.24.379Z",
+                                                "value": 3.0,
+                                            },
+                                            {
+                                                "runId": "2021-11-02T18.24.24.379Z",
+                                                "value": 1.0,
+                                            },
+                                        ],
+                                        "col2": [
+                                            {
+                                                "runId": "2021-11-03T18.24.24.379Z",
+                                                "value": 3.23,
+                                            },
+                                        ],
+                                        "col3": [
+                                            {
+                                                "runId": "2021-11-02T18.24.24.379Z",
+                                                "value": 3.0,
+                                            },
+                                        ],
+                                    }
+                                ),
+                            )
+                        ],
                     )
                 ],
             ),
             (
                 False,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject(
-                            {
-                                "col1": [
-                                    {"runId": "2021-11-03T18.24.24.379Z", "value": 3.0},
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
-                                ]
-                            }
-                        ),
-                    )
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject(
+                                    {
+                                        "col1": [
+                                            {
+                                                "runId": "2021-11-03T18.24.24.379Z",
+                                                "value": 3.0,
+                                            },
+                                            {
+                                                "runId": "2021-11-02T18.24.24.379Z",
+                                                "value": 1.0,
+                                            },
+                                        ]
+                                    }
+                                ),
+                            )
+                        ],
+                    ),
                 ],
             ),
         ],
@@ -88,30 +114,46 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject(
-                            {
-                                "col1": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 1.0},
-                                ],
-                                "col3": [
-                                    {"runId": "2021-11-02T18.24.24.379Z", "value": 3.0},
-                                ],
-                            }
-                        ),
-                    )
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject(
+                                    {
+                                        "col1": [
+                                            {
+                                                "runId": "2021-11-02T18.24.24.379Z",
+                                                "value": 1.0,
+                                            },
+                                        ],
+                                        "col3": [
+                                            {
+                                                "runId": "2021-11-02T18.24.24.379Z",
+                                                "value": 3.0,
+                                            },
+                                        ],
+                                    }
+                                ),
+                            ),
+                        ],
+                    ),
                 ],
             ),
             (
                 False,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject({}),
-                    )
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject({}),
+                            )
+                        ],
+                    ),
                 ],
             ),
         ],
@@ -141,21 +183,31 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject({}),
-                    )
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject({}),
+                            )
+                        ],
+                    ),
                 ],
             ),
             (
                 False,
                 [
-                    TrackingDataset(
-                        datasetName="new_metrics",
-                        datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                        data=JSONObject({}),
-                    )
+                    GroupedTrackingDataset(
+                        groupedDatasetType="Metrics",
+                        datasets=[
+                            TrackingDataset(
+                                datasetName="new_metrics",
+                                datasetType="Metrics",
+                                data=JSONObject({}),
+                            )
+                        ],
+                    ),
                 ],
             ),
         ],
@@ -199,10 +251,15 @@ class TestTrackingData:
         data_access_manager_with_runs.add_catalog(catalog)
 
         assert get_run_tracking_data([ID(example_run_ids[0])], False) == [
-            TrackingDataset(
-                datasetName="json_tracking",
-                datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
-                data=JSONObject({}),
+            GroupedTrackingDataset(
+                groupedDatasetType="JSON Data",
+                datasets=[
+                    TrackingDataset(
+                        datasetName="json_tracking",
+                        datasetType="JSON Data",
+                        data=JSONObject({}),
+                    )
+                ],
             )
         ]
 
