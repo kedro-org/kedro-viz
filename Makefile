@@ -1,4 +1,4 @@
-package: build
+package:
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	cd package && python setup.py clean --all
