@@ -15,21 +15,21 @@
   @extend %sidebar;
 
   $margin: 24px;
-  position: absolute;
-  top: -1px; /* Avoids pixel rounding gaps */
-  right: 0;
   bottom: -1px;
+  position: absolute;
+  right: 0;
+  top: -1px; /* Avoids pixel rounding gaps */
 
   // On small screens anchor to the left side of the screen
-  left: 0;
 
-  z-index: 2;
+  background: var(--color-metadata-code-bg);
   display: flex;
   flex-direction: column;
+  left: 0;
   padding: 0 $metadata-sidebar-width-open 0 0;
-  background: var(--color-metadata-code-bg);
   transform: translateX(100vw);
   transition: transform ease 0.5s 0.1s, left ease 0.5s;
+  z-index: 2;
 
   &--visible {
     transform: translateX(0);
@@ -71,19 +71,19 @@
 
 .pipeline-metadata-code__title {
   flex-grow: 0;
-  margin: 2.1em 36px 1.8em 36px;
+  font-size: 1.8em;
   font-weight: normal;
-  font-size: 1.7em;
   line-height: 1.6;
+  margin: 2.1em 36px 1.8em 36px;
 }
 
 .pipeline-metadata-code__code {
   display: block;
   flex-grow: 1;
-  overflow: auto;
   font-size: 1.25em;
   line-height: 1.8;
   opacity: 1;
+  overflow: auto;
   transition: opacity 0.4s ease 0.4s;
 
   .pipeline-metadata-code--no-visible & {
