@@ -94,8 +94,8 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     )
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
 
-    dataset = CSVDataSet(
-        Path(tmp_path / "metrics.json").as_posix(),
+    csv_dataset = CSVDataSet(
+        Path(tmp_path / "metrics.csv").as_posix(),
         version=Version(None, example_run_id),
     )
 
@@ -155,7 +155,7 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     catalog = DataCatalog(
         data_sets={
             "metrics": metrics_dataset,
-            "csv": dataset,
+            "csv_dataset": csv_dataset,
             "more_metrics": more_metrics,
             "json_tracking": json_dataset,
             "plotly_dataset": plotly_dataset,
@@ -223,6 +223,23 @@ def example_multiple_run_tracking_catalog_all_empty_runs(example_run_ids, tmp_pa
     catalog = DataCatalog(
         data_sets={
             "new_metrics": new_metrics_dataset,
+        }
+    )
+
+    yield catalog
+
+
+@pytest.fixture
+def example_run_tracking_no_tracking_datasets(example_run_ids, tmp_path):
+    example_run_id = example_run_ids[0]
+    csv_dataset = CSVDataSet(
+        Path(tmp_path / "metrics.csv").as_posix(),
+        version=Version(None, example_run_id),
+    )
+
+    catalog = DataCatalog(
+        data_sets={
+            "csv_dataset": csv_dataset,
         }
     )
 

@@ -231,6 +231,23 @@ class TestTrackingData:
             == run_tracking_output
         )
 
+    def test_graphql_run_tracking_data_no_tracking_dataset(
+        self,
+        example_run_ids,
+        example_run_tracking_no_tracking_datasets,  
+        data_access_manager: DataAccessManager,
+        mocker,
+    ):
+        mocker.patch("kedro_viz.api.graphql.data_access_manager", data_access_manager)
+        data_access_manager.add_catalog(
+            example_run_tracking_no_tracking_datasets
+        )
+
+        assert (
+            get_run_tracking_data([ID(run_id) for run_id in example_run_ids], True)
+            == []
+        )
+
     def test_graphql_run_tracking_no_filepath_query(
         self,
         example_run_ids,
