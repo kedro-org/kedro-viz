@@ -4,37 +4,37 @@ import { Transition } from 'react-transition-group';
 const directions = {
   leftToRight: {
     entering: {
-      transform: 'translateX(50%)',
+      transform: 'translateX(0)',
       visibility: 'visible',
     },
     entered: {
-      transform: 'translateX(50%)',
+      transform: 'translateX(0)',
       visibility: 'visible',
     },
     exiting: {
-      transform: 'translateX(-50%)',
+      transform: 'translateX(-34%)',
       visibility: 'hidden',
     },
     exited: {
-      transform: 'translateX(-50%)',
+      transform: 'translateX(-34%)',
       visibility: 'hidden',
     },
   },
   rightToLeft: {
     entering: {
-      transform: 'translateX(-50%)',
+      transform: 'translateX(0)',
       visibility: 'visible',
     },
     entered: {
-      transform: 'translateX(-50%)',
+      transform: 'translateX(0)',
       visibility: 'visible',
     },
     exiting: {
-      transform: 'translateX(50%)',
+      transform: 'translateX(34%)',
       visibility: 'hidden',
     },
     exited: {
-      transform: 'translateX(50%)',
+      transform: 'translateX(34%)',
       visibility: 'hidden',
     },
   },

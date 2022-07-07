@@ -37,21 +37,6 @@ export const Sidebar = ({
   setShowRunExportModal,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
-  const [toolbarOverflowVisible, setToolbarOverflowVisible] = useState(false);
-
-  // HACK: to ensure it always resets to overflow:visible whenever enableComparisonView is changed
-  // CONTEXT: currently pipeline - toolbar has the overflow: hidden as a default
-  // it is to allow the buttons sliding in and out when toggle the comparision view
-  // but this makes the tooltip to be hidden too.
-  useEffect(() => {
-    const setVisibleState = setTimeout(() => {
-      setToolbarOverflowVisible(true);
-    }, 200);
-
-    return () => {
-      clearTimeout(setVisibleState);
-    };
-  }, [enableComparisonView]);
 
   if (isExperimentView) {
     return (
@@ -66,19 +51,12 @@ export const Sidebar = ({
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
-              onToggleComparisonView={() => {
-                onToggleComparisonView();
-                setToolbarOverflowVisible(false);
-              }}
+              onToggleComparisonView={onToggleComparisonView}
               runData={runsListData}
               selectedRunIds={selectedRunIds}
             />
           </div>
-          <nav
-            className={classnames('pipeline-toolbar', {
-              'pipeline-toolbar--visible': toolbarOverflowVisible,
-            })}
-          >
+          <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
               displaySidebar={displaySidebar}
               enableComparisonView={enableComparisonView}

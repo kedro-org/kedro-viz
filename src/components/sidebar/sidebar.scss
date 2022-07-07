@@ -70,14 +70,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
   position: relative;
   width: $sidebar-width-closed;
   z-index: 2;
-}
-
-.pipeline-toolbar--visible {
-  overflow: visible;
 }
 
 .compare-switch-wrapper__text {
