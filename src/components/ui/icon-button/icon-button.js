@@ -12,11 +12,11 @@ const IconButton = ({
   active,
   ariaLabel,
   ariaLive,
+  children,
   className,
   container: Container = 'li',
   dataHeapEvent,
   disabled,
-  hasReminder,
   icon,
   labelText,
   labelTextPosition = 'right',
@@ -32,7 +32,7 @@ const IconButton = ({
     : 'right';
 
   return visible ? (
-    <Container>
+    <Container className="pipeline-icon--container">
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -44,7 +44,7 @@ const IconButton = ({
         disabled={disabled}
         onClick={onClick}
       >
-        {Icon && <Icon className="pipeline-icon" hasReminder={hasReminder} />}
+        {Icon && <Icon className="pipeline-icon" />}
         {labelText && (
           <span
             className={classnames(
@@ -56,6 +56,7 @@ const IconButton = ({
           </span>
         )}
       </button>
+      {children}
     </Container>
   ) : null;
 };
@@ -64,9 +65,9 @@ IconButton.propTypes = {
   active: PropTypes.bool,
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
+  children: PropTypes.node,
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
-  hasReminder: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
@@ -77,9 +78,9 @@ IconButton.defaultProps = {
   active: false,
   ariaLabel: null,
   ariaLive: null,
+  children: null,
   dataHeapEvent: null,
   disabled: false,
-  hasReminder: false,
   icon: null,
   labelText: null,
   onClick: null,

@@ -84,11 +84,12 @@ export const GlobalToolbar = ({
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
             disabled={false}
-            hasReminder={isOutdated}
             icon={SettingsIcon}
             labelText={'Settings'}
             onClick={() => onToggleSettingsModal(true)}
-          />
+          >
+            {isOutdated && <span className="update-reminder-dot"></span>}
+          </IconButton>
         </ul>
       </div>
     </>
