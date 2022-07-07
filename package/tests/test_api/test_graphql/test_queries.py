@@ -85,7 +85,7 @@ class TestQueryWithRuns:
                         "datasets": [
                             {
                                 "datasetName": "metrics",
-                                "datasetType": "Metrics",
+                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                                 "data": {
                                     "col1": [{"runId": example_run_id, "value": 1.0}],
                                     "col2": [{"runId": example_run_id, "value": 2.0}],
@@ -94,7 +94,7 @@ class TestQueryWithRuns:
                             },
                             {
                                 "datasetName": "more_metrics",
-                                "datasetType": "Metrics",
+                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                                 "data": {
                                     "col4": [{"runId": example_run_id, "value": 4.0}],
                                     "col5": [{"runId": example_run_id, "value": 5.0}],
@@ -108,7 +108,7 @@ class TestQueryWithRuns:
                         "datasets": [
                             {
                                 "datasetName": "json_tracking",
-                                "datasetType": "JSON Data",
+                                "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
                                 "data": {
                                     "col2": [{"runId": example_run_id, "value": True}],
                                     "col3": [{"runId": example_run_id, "value": 3}],
@@ -127,7 +127,7 @@ class TestQueryWithRuns:
                         "datasets": [
                             {
                                 "datasetName": "plotly_dataset",
-                                "datasetType": "Plotly",
+                                "datasetType": "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
                                 "data": {
                                     "plotly.json": [
                                         {
@@ -151,7 +151,7 @@ class TestQueryWithRuns:
                             },
                             {
                                 "datasetName": "matplotlib_dataset",
-                                "datasetType": "Matplotlib",
+                                "datasetType": "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter",
                                 "data": {
                                     "matplotlib.png": [
                                         {

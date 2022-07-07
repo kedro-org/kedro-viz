@@ -10,17 +10,23 @@ import logging
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
+    Any,
     AsyncGenerator,
     Dict,
     Iterable,
     List,
     NewType,
     Optional,
+    Tuple,
     cast,
 )
 
 import strawberry
 from fastapi import APIRouter
+from kedro.extras.datasets.matplotlib import MatplotlibWriter
+from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet
+from kedro.extras.datasets.plotly import PlotlyDataSet
+from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
 from kedro.io.core import Version as DataSetVersion
 from kedro.io.core import get_filepath_str
 from semver import VersionInfo
@@ -209,7 +215,7 @@ def format_run_tracking_data(
     return JSONObject(formatted_tracking_data)
 
 
-def get_tracking_datasets() -> list:
+def get_tracking_datasets() -> List[Tuple[Any, Any]]:
 
     """Gets all the versioned datasets from the catalog that need to be tracked in experiments; i.e.
     plot datasets such as Plotly, Matplotlib, and tracking datasets such as Metrics, JSON Datasets
@@ -218,28 +224,26 @@ def get_tracking_datasets() -> list:
         List of all versioned datasets
     """
 
-    # pylint: disable=import-outside-toplevel
-    from kedro.extras.datasets.matplotlib import MatplotlibWriter
-    from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet
-    from kedro.extras.datasets.plotly import PlotlyDataSet
-    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
-
     tracking_datasets = []
 
     catalog = data_access_manager.catalog.get_catalog()
-    for ds_name, ds_value in catalog._data_sets.items():
-        ds_type = ""
-        if isinstance(ds_value, MetricsDataSet):
-            ds_type = "Metrics"
-        elif isinstance(ds_value, JSONDataSet):
-            ds_type = "JSON Data"
-        elif isinstance(ds_value, (PlotlyJSONDataSet, PlotlyDataSet)):
-            ds_type = "Plotly"
-        elif isinstance(ds_value, (MatplotlibWriter)):
-            ds_type = "Matplotlib"
-        else:
-            continue  # pragma: no cover
-        tracking_datasets.append((ds_name, ds_value, ds_type))
+
+    tracking_datasets = [
+        (ds_name, ds_value)
+        for ds_name, ds_value in catalog._data_sets.items()
+        if (
+            isinstance(
+                ds_value,
+                (
+                    MetricsDataSet,
+                    JSONDataSet,
+                    PlotlyDataSet,
+                    PlotlyJSONDataSet,
+                    MatplotlibWriter,
+                ),
+            )
+        )
+    ]
     return tracking_datasets
 
 
@@ -266,7 +270,7 @@ def get_run_tracking_data(
 
     tracking_datasets = get_tracking_datasets()
 
-    for name, dataset, dataset_type in tracking_datasets:
+    for name, dataset in tracking_datasets:
         all_runs = {}
         for run_id in run_ids:
             run_id = ID(run_id)
@@ -278,11 +282,11 @@ def get_run_tracking_data(
                 dataset_description.get("filepath") or dataset_description.get("path")
             ).name
             if dataset.exists():
-                if dataset_type == "Matplotlib":
+                if isinstance(dataset, MatplotlibWriter):
                     with open(load_path, "rb") as img_file:
                         base64_bytes = base64.b64encode(img_file.read())
                         all_runs[run_id] = {filepath: base64_bytes.decode("utf-8")}
-                elif dataset_type == "Plotly":
+                elif isinstance(dataset, (PlotlyJSONDataSet, PlotlyDataSet)):
                     with dataset._fs.open(
                         load_path, **dataset._fs_open_args_load
                     ) as fs_file:
@@ -300,11 +304,15 @@ def get_run_tracking_data(
 
         tracking_dataset = TrackingDataset(
             datasetName=name,
-            datasetType=dataset_type,
+            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             data=format_run_tracking_data(all_runs, show_diff),
         )
         grouped_type = (
-            "Plots" if dataset_type in ("Plotly" "Matplotlib") else dataset_type
+            "Plots"
+            if isinstance(dataset, (PlotlyJSONDataSet, PlotlyDataSet, MatplotlibWriter))
+            else "Metrics"
+            if isinstance(dataset, MetricsDataSet)
+            else "JSON Data"
         )
         all_grouped_datasets.setdefault(grouped_type, []).append(tracking_dataset)
 
