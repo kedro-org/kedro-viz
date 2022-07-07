@@ -6,43 +6,52 @@ const directions = {
     entering: {
       transform: 'translateX(0)',
       visibility: 'visible',
+      opacity: '0.5',
     },
     entered: {
       transform: 'translateX(0)',
       visibility: 'visible',
+      opacity: '1',
     },
     exiting: {
       transform: 'translateX(-34%)',
       visibility: 'hidden',
+      opacity: '1',
     },
     exited: {
       transform: 'translateX(-34%)',
       visibility: 'hidden',
+      opacity: '0',
     },
   },
   rightToLeft: {
     entering: {
       transform: 'translateX(0)',
       visibility: 'visible',
+      opacity: '0.5',
     },
     entered: {
       transform: 'translateX(0)',
       visibility: 'visible',
+      opacity: '1',
     },
     exiting: {
       transform: 'translateX(34%)',
       visibility: 'hidden',
+      opacity: '1',
     },
     exited: {
       transform: 'translateX(34%)',
       visibility: 'hidden',
+      opacity: '0',
     },
   },
 };
 
 export const Animation = ({ children, direction, duration, state }) => {
   const defaultStyle = {
-    transition: `transform ${duration}ms ease-in-out`,
+    transition: `transform 0.7s ease-out 0s`,
+    opacity: '0',
   };
 
   return (
