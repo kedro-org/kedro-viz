@@ -76,6 +76,10 @@
   z-index: 2;
 }
 
+.pipeline-toolbar--visible {
+  overflow: visible;
+}
+
 .compare-switch-wrapper__text {
   font-size: 14px;
 }

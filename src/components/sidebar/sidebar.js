@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
@@ -37,6 +37,21 @@ export const Sidebar = ({
   setShowRunExportModal,
 }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
+  const [toolbarOverflowVisible, setToolbarOverflowVisible] = useState(false);
+
+  // HACK: to ensure it always resets to overflow:visible whenever enableComparisonView is changed
+  // CONTEXT: currently pipeline - toolbar has the overflow: hidden as a default
+  // it is to allow the buttons sliding in and out when toggle the comparision view
+  // but this makes the tooltip to be hidden too.
+  useEffect(() => {
+    const setVisibleState = setTimeout(() => {
+      setToolbarOverflowVisible(true);
+    }, 200);
+
+    return () => {
+      clearTimeout(setVisibleState);
+    };
+  }, [enableComparisonView]);
 
   if (isExperimentView) {
     return (
@@ -51,12 +66,19 @@ export const Sidebar = ({
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               onRunSelection={onRunSelection}
-              onToggleComparisonView={onToggleComparisonView}
+              onToggleComparisonView={() => {
+                onToggleComparisonView();
+                setToolbarOverflowVisible(false);
+              }}
               runData={runsListData}
               selectedRunIds={selectedRunIds}
             />
           </div>
-          <nav className="pipeline-toolbar">
+          <nav
+            className={classnames('pipeline-toolbar', {
+              'pipeline-toolbar--visible': toolbarOverflowVisible,
+            })}
+          >
             <ExperimentPrimaryToolbar
               displaySidebar={displaySidebar}
               enableComparisonView={enableComparisonView}
