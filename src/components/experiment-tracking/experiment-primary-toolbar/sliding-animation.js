@@ -4,51 +4,43 @@ import { Transition } from 'react-transition-group';
 const directions = {
   leftToRight: {
     entering: {
-      opacity: 0.5,
       transform: 'translateX(50%)',
       visibility: 'visible',
     },
     entered: {
-      opacity: 1,
       transform: 'translateX(50%)',
       visibility: 'visible',
     },
     exiting: {
       transform: 'translateX(-50%)',
-      opacity: 0.5,
       visibility: 'hidden',
     },
     exited: {
       transform: 'translateX(-50%)',
-      opacity: 0,
       visibility: 'hidden',
     },
   },
   rightToLeft: {
     entering: {
-      opacity: 0.5,
       transform: 'translateX(-50%)',
       visibility: 'visible',
     },
     entered: {
-      opacity: 1,
       transform: 'translateX(-50%)',
       visibility: 'visible',
     },
     exiting: {
       transform: 'translateX(50%)',
-      opacity: 0.5,
       visibility: 'hidden',
     },
     exited: {
       transform: 'translateX(50%)',
-      opacity: 0,
       visibility: 'hidden',
     },
   },
 };
 
-export const SlideFromLeftToRight = ({ state, duration, children }) => {
+export const Animation = ({ children, direction, duration, state }) => {
   const defaultStyle = {
     transition: `transform ${duration}ms ease-in-out`,
   };
@@ -59,7 +51,7 @@ export const SlideFromLeftToRight = ({ state, duration, children }) => {
         <div
           style={{
             ...defaultStyle,
-            ...directions['leftToRight'][state],
+            ...directions[direction][state],
           }}
         >
           {children}
@@ -69,23 +61,24 @@ export const SlideFromLeftToRight = ({ state, duration, children }) => {
   );
 };
 
-export const SlideFromRightToLeft = ({ state, duration, children }) => {
-  const defaultStyle = {
-    transition: `transform ${duration}ms ease-in-out`,
-  };
-
+export const SlideFromLeftToRight = ({ state, duration, children }) => {
   return (
-    <Transition in={state} timeout={duration}>
-      {(state) => (
-        <div
-          style={{
-            ...defaultStyle,
-            ...directions['rightToLeft'][state],
-          }}
-        >
-          {children}
-        </div>
-      )}
-    </Transition>
+    <Animation
+      children={children}
+      direction="leftToRight"
+      duration={duration}
+      state={state}
+    />
+  );
+};
+
+export const SlideFromRightToLeft = ({ state, duration, children }) => {
+  return (
+    <Animation
+      children={children}
+      direction="rightToLeft"
+      duration={duration}
+      state={state}
+    />
   );
 };
