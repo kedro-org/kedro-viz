@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
