@@ -30,7 +30,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject(
                                     {
                                         "col1": [
@@ -70,7 +71,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject(
                                     {
                                         "col1": [
@@ -119,7 +121,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject(
                                     {
                                         "col1": [
@@ -149,7 +152,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject({}),
                             )
                         ],
@@ -188,7 +192,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject({}),
                             )
                         ],
@@ -203,7 +208,8 @@ class TestTrackingData:
                         datasets=[
                             TrackingDataset(
                                 datasetName="new_metrics",
-                                datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                datasetType="kedro.extras.datasets.tracking."
+                                "metrics_dataset.MetricsDataSet",
                                 data=JSONObject({}),
                             )
                         ],
@@ -271,7 +277,8 @@ class TestTrackingData:
                 datasets=[
                     TrackingDataset(
                         datasetName="json_tracking",
-                        datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
+                        datasetType="kedro.extras.datasets.tracking."
+                        "json_dataset.JSONDataSet",
                         data=JSONObject({}),
                     )
                 ],
