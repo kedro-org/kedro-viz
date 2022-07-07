@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
+import { replaceMatches } from '../../utils';
 import ExperimentsIcon from '../icons/experiments';
-import IconButton from '../icon-button';
+import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
@@ -17,11 +18,16 @@ import './global-toolbar.css';
  * @param {string} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
+  isOutdated,
   onToggleSettingsModal,
   onToggleTheme,
   theme,
-  visible,
 }) => {
+  const { pathname } = window.location;
+  const sanitizedPathname = replaceMatches(pathname, {
+    'experiment-tracking': '',
+  });
+
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -32,7 +38,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: '/' }}>
+          <NavLink exact to={{ pathname: sanitizedPathname }}>
             <IconButton
               ariaLabel={'View your pipeline'}
               className={
@@ -40,9 +46,13 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={TreeIcon}
+              labelText="Flowchart"
             />
           </NavLink>
-          <NavLink exact to={{ pathname: '/runsList' }}>
+          <NavLink
+            exact
+            to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
+          >
             <IconButton
               ariaLabel={'View your experiments'}
               className={
@@ -50,32 +60,36 @@ export const GlobalToolbar = ({
               }
               disabled={false}
               icon={ExperimentsIcon}
+              labelText="Experiment tracking"
             />
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
-            ariaLive="polite"
             ariaLabel={`Change to ${
               theme === 'light' ? 'dark' : 'light'
             } theme`}
+            ariaLive="polite"
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
-            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
+            dataHeapEvent={`theme.${theme}`}
             icon={ThemeIcon}
             labelText="Toggle theme"
+            onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
           <IconButton
             ariaLabel={'Change the settings flags'}
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            onClick={() => onToggleSettingsModal(true)}
-            icon={SettingsIcon}
             disabled={false}
+            icon={SettingsIcon}
             labelText={'Settings'}
-          />
+            onClick={() => onToggleSettingsModal(true)}
+          >
+            {isOutdated && <span className="update-reminder-dot"></span>}
+          </IconButton>
         </ul>
       </div>
     </>

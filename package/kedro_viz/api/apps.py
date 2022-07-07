@@ -53,7 +53,7 @@ def create_api_app_from_project(
     app_etag = _create_etag()
 
     @app.get("/")
-    @app.get("/runsList")
+    @app.get("/experiment-tracking")
     async def index():
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()

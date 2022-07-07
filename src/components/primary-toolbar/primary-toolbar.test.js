@@ -41,6 +41,7 @@ describe('PrimaryToolbar', () => {
       const props = {
         textLabels: mockState.spaceflights.textLabels,
         visible: mockState.spaceflights.visible,
+        displaySidebar: true,
         [callback]: mockFn,
       };
       const wrapper = setup.mount(<PrimaryToolbar {...props} />);

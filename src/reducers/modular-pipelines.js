@@ -1,6 +1,7 @@
 import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
-  TOGGLE_MODULAR_PIPELINE_EXPANDED,
+  TOGGLE_MODULAR_PIPELINES_EXPANDED,
+  TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
 } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
@@ -28,6 +29,20 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
       });
     }
 
+    case TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED: {
+      const newVisibleState = { ...modularPipelineState.visible };
+
+      newVisibleState[action.modularPipelineID] = false;
+      modularPipelineState.tree[action.modularPipelineID].children.forEach(
+        (child) => (newVisibleState[child.id] = true)
+      );
+
+      return updateState({
+        expanded: [...modularPipelineState.expanded, action.modularPipelineID],
+        visible: newVisibleState,
+      });
+    }
+
     // The expanded IDs for tree nodes directly emitted from modular pipelines
     // are not directly usable for our purpose. For example, for a tree a -> b -> c,
     // when a is collapsed, [b,c] are passed to the action payload as expanded.
@@ -39,7 +54,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
     // as invisible recursively.
     // - When a modular pipeline is expanded, we have to mark all of its children
     // as visible, but not recursively.
-    case TOGGLE_MODULAR_PIPELINE_EXPANDED: {
+    case TOGGLE_MODULAR_PIPELINES_EXPANDED: {
       const newVisibleState = { ...modularPipelineState.visible };
       const isExpanding =
         action.expandedIDs.length > modularPipelineState.expanded.length;

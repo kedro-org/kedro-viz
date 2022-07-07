@@ -3,7 +3,7 @@ import MetaData, { mapDispatchToProps } from './metadata';
 import { togglePrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
-import { toggleModularPipelineExpanded } from '../../actions/modular-pipelines';
+import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
 import { setup } from '../../utils/state.mock';
 import nodePlot from '../../utils/data/node_plot.mock.json';
 import nodeParameters from '../../utils/data/node_parameters.mock.json';
@@ -27,7 +27,7 @@ describe('MetaData', () => {
         () => toggleTypeDisabled('parameters', false),
         // expand a modular pipeline
         () =>
-          toggleModularPipelineExpanded([
+          toggleModularPipelinesExpanded([
             dataScienceNodeId,
             dataProcessingNodeId,
           ]),
@@ -152,7 +152,7 @@ describe('MetaData', () => {
         mockMetadata: nodeTask,
       });
       const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['task']);
+      expect(textOf(rowValue(row))).toEqual(['node']);
     });
 
     it('does not display the node parameter row when there are no parameters', () => {
@@ -258,9 +258,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTask,
         });
 
-        const copyButton = wrapper.find(
-          'button.pipeline-metadata__copy-button'
-        );
+        const copyButton = wrapper.find('button.copy-button');
 
         copyButton.simulate('click');
 
@@ -296,7 +294,7 @@ describe('MetaData', () => {
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Type:');
-      expect(textOf(rowValue(row))).toEqual(['data']);
+      expect(textOf(rowValue(row))).toEqual(['dataset']);
     });
 
     it('shows the node dataset type', () => {
@@ -362,9 +360,7 @@ describe('MetaData', () => {
           mockMetadata: nodeData,
         });
 
-        const copyButton = wrapper.find(
-          'button.pipeline-metadata__copy-button'
-        );
+        const copyButton = wrapper.find('button.copy-button');
 
         copyButton.simulate('click');
 
@@ -548,12 +544,12 @@ describe('MetaData', () => {
       });
     });
 
-    it('onTogglePlotModal', () => {
+    it('onToggleMetadataModal', () => {
       const dispatch = jest.fn();
-      mapDispatchToProps(dispatch).onTogglePlotModal(true);
+      mapDispatchToProps(dispatch).onToggleMetadataModal(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
         visible: true,
-        type: 'TOGGLE_PLOT_MODAL',
+        type: 'TOGGLE_METADATA_MODAL',
       });
     });
   });

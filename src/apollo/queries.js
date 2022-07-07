@@ -7,7 +7,6 @@ export const GET_RUNS = gql`
       bookmark
       gitSha
       id
-      timestamp
       title
       notes
     }
@@ -25,7 +24,6 @@ export const GET_RUN_METADATA = gql`
       gitSha
       notes
       runCommand
-      timestamp
       title
     }
   }
@@ -38,6 +36,17 @@ export const GET_RUN_TRACKING_DATA = gql`
       datasetName
       datasetType
       data
+    }
+  }
+`;
+
+/** query for obtaining installed and latest Kedro-Viz versions */
+export const GET_VERSIONS = gql`
+  query getVersion {
+    version {
+      installed
+      isOutdated
+      latest
     }
   }
 `;

@@ -3,10 +3,10 @@ kedro>=0.16.0
 ipython>=7.0.0, <8.0
 fastapi>=0.63.0, <0.67.0
 aiofiles==0.6.0
-uvicorn[standard]~=0.13.4
-watchgod~=0.7
+uvicorn[standard]~=0.17.0
+watchgod~=0.8.0
 plotly>=4.0
 pandas>=0.24
 sqlalchemy~=1.2
-strawberry-graphql~=0.93.14
+strawberry-graphql>=0.93.14, <1.0
 networkx>=1.0

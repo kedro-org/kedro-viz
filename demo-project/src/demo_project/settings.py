@@ -1,9 +1,4 @@
 """Project settings."""
-from demo_project.hooks import ProjectHooks
-
-# Instantiate and list your project hooks here
-HOOKS = (ProjectHooks(),)
-
 # List the installed plugins for which to disable auto-registry
 # DISABLE_HOOKS_FOR_PLUGINS = ("kedro-viz",)
 
@@ -20,3 +15,7 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 
 # Define the configuration folder. Defaults to `conf`
 # CONF_ROOT = "conf"
+
+from kedro.config import TemplatedConfigLoader
+CONFIG_LOADER_CLASS = TemplatedConfigLoader
+CONFIG_LOADER_ARGS = {"globals_pattern": "*globals.yml", "globals_dict": {}}

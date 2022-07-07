@@ -58,10 +58,8 @@
 }
 
 .pipeline-metadata__label,
-.pipeline-metadata__row,
-.pipeline-metadata__header-toolbox {
-  margin: 1.9em 36px;
-  font-size: 1.48em;
+.pipeline-metadata__row {
+  margin: 2.285em 36px;
 }
 
 .pipeline-metadata__header {
@@ -75,7 +73,7 @@
   display: flex;
   flex-direction: column-reverse;
   justify-content: space-between;
-  margin-top: 1.7em;
+  margin: 3em 3.6em;
   padding-right: 24px;
 }
 
@@ -89,11 +87,15 @@
   fill: var(--color-text);
 }
 
+.pipeline-metadata__header-toolbox .pipeline-toggle-label {
+  font-size: 1.4em;
+}
+
 .pipeline-metadata__title {
   flex-grow: 1;
   margin: 0;
   font-weight: normal;
-  font-size: 1.3em;
+  font-size: 1.8em;
   line-height: 1.6;
   word-break: break-word;
 }
@@ -106,14 +108,16 @@
 }
 
 .pipeline-metadata__label {
-  margin-bottom: 0.7em;
+  margin-bottom: 0.572em;
+  font-size: 1.3em;
   font-weight: normal;
   opacity: 0.65;
   user-select: none;
 }
 
 .pipeline-metadata__row {
-  margin-top: 0.7em;
+  font-size: 1.4em;
+  margin-top: 0.572em;
 }
 
 .pipeline-metadata__value {
@@ -203,74 +207,33 @@ $list-inline-spacing: 0.2em;
   content: ', ';
 }
 
-.pipeline-metadata__toolbox-container {
-  position: relative;
-  display: flex;
-}
-
-.pipeline-metadata__toolbox {
-  display: block;
-  width: 26px;
-  height: 34px;
-  margin: -0.5em 0 0 auto;
-  padding: 0;
-  list-style: none;
-}
-
-.pipeline-metadata__run-command-value {
-  display: flex;
-  flex-grow: 1;
-  align-items: center;
-  font-family: $font-monospace;
-  font-size: 0.9em;
-
-  &--no-visible {
-    opacity: 0;
-  }
-}
-
-.pipeline-metadata__copy-button {
-  width: auto;
-  height: auto;
-  margin-top: 0.3em;
-  margin-right: -0.6em;
-  opacity: 0.55;
-
-  .pipeline-icon {
-    width: 26px;
-    height: 26px;
-  }
-
-  &:hover {
-    opacity: 1;
-  }
-
-  &:active {
-    transform: translateY(1px);
-    opacity: 0.85;
-  }
-}
-
-.pipeline-metadata__copy-message {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  &--no-visible {
-    display: none;
-  }
-}
-
 .pipeline-metadata__plot {
   display: flex;
   height: 300px;
   cursor: pointer;
 }
 
+.pipeline-metadata__plot-image-container {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.pipeline-metadata__plot-image {
+  width: 100%;
+}
+
+.pipeline-metadata__plot-image--expanded {
+  height: 100%;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
 .pipeline-metadata__properties {
   flex-grow: 1;
   height: 0px;
-  margin-top: -1.9em;
+  margin-top: -3em;
   overflow-y: auto;
 }
 

@@ -2,7 +2,6 @@
 
 import os
 import shutil
-import sys
 import tempfile
 import venv
 from pathlib import Path
@@ -22,17 +21,10 @@ def call(cmd, env, verbose=False):
     assert res.returncode == 0
 
 
-def _should_exclude_scenario(scenario):
-    pre_16_scenario = any(key in scenario.name for key in "0.15")
-    return sys.version_info >= (3, 8) and pre_16_scenario
-
-
 def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
-    if _should_exclude_scenario(scenario):
-        scenario.skip()
 
     # make a venv
     kedro_install_venv_dir = _create_new_venv()
@@ -78,18 +70,18 @@ def _setup_context_with_venv(context, venv_dir):
             "pip",
             "install",
             "-U",
-            "pip>=20.0,<21.3",
+            "pip>=21.2",
             "setuptools>=38.0",
             "cookiecutter>=1.7.2",
             "wheel",
             "botocore",
             "PyYAML>=4.2, <6.0",
-            "click<8.0",
+            "click<9.0",
         ],
         env=context.env,
     )
 
-    call([context.python, "setup.py", "install"], env=context.env)
+    call([context.python, "-m", "pip", "install", "."], env=context.env)
     return context
 
 

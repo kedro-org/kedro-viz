@@ -1,5 +1,4 @@
 //--- Useful JS utility functions ---//
-import utils from '@quantumblack/kedro-ui/lib/utils';
 import { pathRoot } from '../config';
 
 /**
@@ -61,17 +60,20 @@ export const changed = (props, objectA, objectB) => {
   );
 };
 
-const { escapeRegExp } = utils;
 /**
- * Check whether a piece of text matches the search value
- * @param {object} text
- * @param {string} searchValue
- * @return {boolean} True if node matches or no search value given
+ * Replace any parts of a string that match the keys in the toReplace object
+ * @param {string} str The string to check
+ * @param {object} toReplace The object of strings to replace and their replacements
+ * @returns {string} The string with or without replaced values
  */
-export const textMatchesSearch = (text, searchValue) => {
-  if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(text);
-  }
+export const replaceMatches = (str, toReplace) => {
+  if (str?.length > 0) {
+    const regex = new RegExp(Object.keys(toReplace).join('|'), 'gi');
 
-  return true;
+    return str.replace(regex, (matched) => {
+      return toReplace[matched];
+    });
+  } else {
+    return str;
+  }
 };

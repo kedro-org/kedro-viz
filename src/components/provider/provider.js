@@ -8,7 +8,7 @@ import {
   runTrackingDataMock,
 } from '../../apollo/mocks';
 
-export const Provider = ({ useMocks = false, children }) => {
+export const GraphQLProvider = ({ useMocks = false, children }) => {
   if (useMocks) {
     return (
       <MockedProvider

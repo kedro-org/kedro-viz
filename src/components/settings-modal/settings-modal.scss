@@ -8,6 +8,7 @@
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
   --color-toggle--off: #{$color-bg-dark-5};
   --color-toggle-bar--off: #{rgba($color-bg-dark-5, 0.3)};
+  --color-upgrade-reminder-text: #{$color-accent-blue};
 }
 
 .kui-theme--dark {
@@ -16,6 +17,7 @@
   --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
   --color-toggle--off: #{$color-bg-light-3};
   --color-toggle-bar--off: #{$color-bg-dark-2};
+  --color-upgrade-reminder-text: #{$color-accent-yellow};
 }
 
 .pipeline-settings-modal {
@@ -36,8 +38,6 @@
 
 .pipeline-settings-modal__content {
   width: 100%;
-  margin-bottom: 4em;
-  font-size: 1.25em;
 
   &--short {
     margin-bottom: 2.4em;
@@ -46,13 +46,25 @@
   .button {
     margin: 0 10px;
   }
+
+  .pipeline-toggle {
+    margin-bottom: 0;
+  }
+}
+
+.pipeline-settings-modal__group:nth-of-type(2) {
+  margin-top: 50px;
+}
+
+.pipeline-settings-modal__column {
+  margin-bottom: 1.145em;
 }
 
 .pipeline-settings-modal__column,
 .pipeline-settings-modal__header {
   display: flex;
   flex-wrap: wrap;
-  font-size: 1.2em;
+  font-size: 1.4em;
 }
 
 .pipeline-settings-modal__header {
@@ -61,8 +73,8 @@
 }
 
 .pipeline-settings-modal__subtitle {
-  margin-bottom: 10px;
-  font-size: 1.5em;
+  margin-bottom: 24px;
+  font-size: 1.8em;
 }
 
 .pipeline-settings-modal__name {
@@ -75,4 +87,20 @@
 
 .pipeline-settings-modal__state {
   @include flexColumn(3);
+}
+
+.pipeline-settings-modal__upgrade-reminder {
+  color: var(--color-upgrade-reminder-text);
+  display: inline;
+  font-size: 1.3em;
+
+  a {
+    color: var(--color-upgrade-reminder-text);
+  }
+}
+
+.pipeline-settings-modal__already-latest {
+  color: var(--color-modal-header-text);
+  font-size: 1.3em;
+  margin: 2em 0 2.4em;
 }

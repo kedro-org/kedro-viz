@@ -17,19 +17,15 @@ def register_pipelines() -> Dict[str, Pipeline]:
         A mapping from a pipeline name to a ``Pipeline`` object.
 
     """
-    ingestion_pipeline = di.new_ingestion_pipeline(namespace="data_ingestion")
+    ingestion_pipeline = di.create_pipeline()
 
-    feature_pipeline = fe.new_feature_pipeline()
+    feature_pipeline = fe.create_pipeline()
 
-    modelling_pipeline = mod.new_modeling_pipeline(
+    modelling_pipeline = mod.create_pipeline(
         model_types=["linear_regression", "random_forest"]
     )
 
-    reporting_pipeline = pipeline(
-        rep.create_pipeline(),
-        inputs=["prm_shuttle_company_reviews"],
-        namespace="reporting",
-    )
+    reporting_pipeline = rep.create_pipeline()
 
     return {
         "__default__": (

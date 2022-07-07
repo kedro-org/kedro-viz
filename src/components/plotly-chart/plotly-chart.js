@@ -1,6 +1,6 @@
 import React from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly from 'plotly.js-cartesian-dist';
+import Plotly from 'plotly.js-dist-min';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import './plotly-chart.css';

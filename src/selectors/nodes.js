@@ -23,7 +23,6 @@ const getPrettyName = (state) => state.prettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
-const getFontLoaded = (state) => state.fontLoaded;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
@@ -245,11 +244,8 @@ export const getGroupedNodes = createSelector([getNodeData], (nodes) =>
  * measure its width with getBBox, then delete the container and store the value
  */
 export const getNodeTextWidth = createSelector(
-  [getPipelineNodeIDs, getNodeLabel, getFontLoaded],
-  (nodeIDs, nodeLabel, fontLoaded) => {
-    if (!fontLoaded) {
-      return {};
-    }
+  [getPipelineNodeIDs, getNodeLabel],
+  (nodeIDs, nodeLabel) => {
     const nodeTextWidth = {};
     const svg = select(document.body)
       .append('svg')
@@ -299,17 +295,8 @@ export const getPadding = (showLabels, nodeType) => {
  * Calculate node width/height and icon/text positioning
  */
 export const getNodeSize = createSelector(
-  [
-    getPipelineNodeIDs,
-    getNodeTextWidth,
-    getTextLabels,
-    getNodeType,
-    getFontLoaded,
-  ],
-  (nodeIDs, nodeTextWidth, textLabels, nodeType, fontLoaded) => {
-    if (!fontLoaded) {
-      return {};
-    }
+  [getPipelineNodeIDs, getNodeTextWidth, getTextLabels, getNodeType],
+  (nodeIDs, nodeTextWidth, textLabels, nodeType) => {
     return arrayToObject(nodeIDs, (nodeID) => {
       const iconSize = textLabels ? 24 : 28;
       const padding = getPadding(textLabels, nodeType[nodeID]);
@@ -342,7 +329,6 @@ export const getVisibleNodes = createSelector(
     getNodeSize,
     getNodeLayer,
     getNodeRank,
-    getFontLoaded,
   ],
   (
     nodeIDs,
@@ -352,21 +338,18 @@ export const getVisibleNodes = createSelector(
     nodeFullName,
     nodeSize,
     nodeLayer,
-    nodeRank,
-    fontLoaded
+    nodeRank
   ) =>
-    fontLoaded
-      ? nodeIDs.map((id) => ({
-          id,
-          name: nodeLabel[id],
-          fullName: nodeFullName[id],
-          icon: getShortType([nodeDatasetType[id]], nodeType[id]),
-          type: nodeType[id],
-          layer: nodeLayer[id],
-          rank: nodeRank[id],
-          ...nodeSize[id],
-        }))
-      : []
+    nodeIDs.map((id) => ({
+      id,
+      name: nodeLabel[id],
+      fullName: nodeFullName[id],
+      icon: getShortType([nodeDatasetType[id]], nodeType[id]),
+      type: nodeType[id],
+      layer: nodeLayer[id],
+      rank: nodeRank[id],
+      ...nodeSize[id],
+    }))
 );
 
 /**

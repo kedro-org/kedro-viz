@@ -50,7 +50,14 @@ class CatalogRepository:
         dataset_obj: Optional[AbstractDataSet]
         if KEDRO_VERSION.match(">=0.16.0"):
             try:
-                dataset_obj = self._catalog._get_dataset(dataset_name)
+                # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
+                # fuzzy-matching process.
+                if KEDRO_VERSION.match(">=0.18.1"):
+                    dataset_obj = self._catalog._get_dataset(
+                        dataset_name, suggest=False
+                    )
+                else:  # pragma: no cover
+                    dataset_obj = self._catalog._get_dataset(dataset_name)
             except DataSetNotFoundError:  # pragma: no cover
                 dataset_obj = None
         else:

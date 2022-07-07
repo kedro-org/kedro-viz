@@ -1,11 +1,12 @@
 """
 This is a boilerplate pipeline 'reporting'
-generated using Kedro 0.17.6
+generated using Kedro 0.18.1
 """
 
-from kedro.pipeline import Pipeline, node
+from kedro.pipeline import Pipeline, node, pipeline
 
 from demo_project.pipelines.reporting.nodes import (
+    create_matplotlib_chart,
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
@@ -14,7 +15,7 @@ from demo_project.pipelines.reporting.nodes import (
 
 def create_pipeline(**kwargs) -> Pipeline:
     """This is a simple pipeline which generates a series of plots"""
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=make_cancel_policy_bar_chart,
@@ -31,5 +32,12 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="prm_shuttle_company_reviews",
                 outputs="cancellation_policy_grid",
             ),
-        ]
+            node(
+                func=create_matplotlib_chart,
+                inputs="prm_shuttle_company_reviews",
+                outputs="matplotlib_image",
+            ),
+        ],
+        inputs=["prm_shuttle_company_reviews"],
+        namespace="reporting",
     )

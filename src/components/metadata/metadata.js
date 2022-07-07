@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
-import IconButton from '../../components/icon-button';
+import IconButton from '../../components/ui/icon-button';
+import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
-import CopyIcon from '../icons/copy';
 import CloseIcon from '../icons/close';
 import ExpandIcon from '../icons/expand';
 import MetaDataRow from './metadata-row';
-import MetaDataValue from './metadata-value';
 import MetaDataCode from './metadata-code';
-import Toggle from '../toggle';
+import Toggle from '../ui/toggle';
 import {
   getVisibleMetaSidebar,
   getClickedNodeMetaData,
@@ -30,23 +29,28 @@ const MetaData = ({
   visibleCode,
   onToggleCode,
   onToggleNodeSelected,
-  onTogglePlotModal,
+  onToggleMetadataModal,
 }) => {
-  const [showCopied, setShowCopied] = useState(false);
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
-  useEffect(() => onTogglePlotModal(false), [metadata, onTogglePlotModal]);
+  useEffect(
+    () => onToggleMetadataModal(false),
+    [metadata, onToggleMetadataModal]
+  );
+
   const isTaskNode = metadata?.type === 'task';
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = Boolean(metadata?.plot);
+  const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
+
   let runCommand = metadata?.runCommand;
   if (!runCommand) {
     // provide a help text for user to know why the run command is not available for the task node
@@ -55,10 +59,15 @@ const MetaData = ({
       : null;
   }
 
-  const onCopyClick = () => {
-    window.navigator.clipboard.writeText(runCommand);
-    setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 1500);
+  // translates the naming for the different types of nodes
+  const translateMetadataType = (metaDataType) => {
+    if (metaDataType === 'task') {
+      return 'node';
+    } else if (metaDataType === 'data') {
+      return 'dataset';
+    }
+
+    return metaDataType;
   };
 
   const onCloseClick = () => {
@@ -67,7 +76,7 @@ const MetaData = ({
   };
 
   const onExpandPlotClick = () => {
-    onTogglePlotModal(true);
+    onToggleMetadataModal(true);
   };
 
   return (
@@ -82,17 +91,14 @@ const MetaData = ({
                   className="pipeline-metadata__icon"
                   icon={nodeTypeIcon}
                 />
-                <h2
-                  className="pipeline-metadata__title"
-                  dangerouslySetInnerHTML={{ __html: metadata.name }}
-                />
+                <h2 className="pipeline-metadata__title">{metadata.name}</h2>
               </div>
               <IconButton
-                container={React.Fragment}
                 ariaLabel="Close Metadata Panel"
                 className={modifiers('pipeline-metadata__close-button', {
                   hasCode,
                 })}
+                container={React.Fragment}
                 icon={CloseIcon}
                 onClick={onCloseClick}
               />
@@ -110,7 +116,10 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                <MetaDataRow label="Type:" value={metadata.type} />
+                <MetaDataRow
+                  label="Type:"
+                  value={translateMetadataType(metadata.type)}
+                />
                 {!isTranscoded && (
                   <MetaDataRow
                     label="Dataset Type:"
@@ -183,40 +192,7 @@ const MetaData = ({
                   value={metadata.pipeline}
                 />
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
-                  <div className="pipeline-metadata__toolbox-container">
-                    <MetaDataValue
-                      container={'code'}
-                      className={modifiers(
-                        'pipeline-metadata__run-command-value',
-                        {
-                          visible: !showCopied,
-                        }
-                      )}
-                      value={runCommand}
-                    />
-                    {window.navigator.clipboard && metadata.runCommand && (
-                      <>
-                        <span
-                          className={modifiers(
-                            'pipeline-metadata__copy-message',
-                            {
-                              visible: showCopied,
-                            }
-                          )}
-                        >
-                          Copied to clipboard.
-                        </span>
-                        <ul className="pipeline-metadata__toolbox">
-                          <IconButton
-                            ariaLabel="Copy run command to clipboard."
-                            className="pipeline-metadata__copy-button"
-                            icon={CopyIcon}
-                            onClick={onCopyClick}
-                          />
-                        </ul>
-                      </>
-                    )}
-                  </div>
+                  <CommandCopier command={runCommand} />
                 </MetaDataRow>
               </dl>
               {hasPlot && (
@@ -238,6 +214,29 @@ const MetaData = ({
                     <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
                     <span className="pipeline-metadata__expand-plot-text">
                       Expand Plotly Visualization
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasImage && (
+                <>
+                  <div
+                    className="pipeline-metadata__plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <img
+                      alt="Matplotlib rendering"
+                      className="pipeline-metadata__plot-image"
+                      src={`data:image/png;base64,${metadata.image}`}
+                    />
+                  </div>
+                  <button
+                    className="pipeline-metadata__expand-plot"
+                    onClick={onExpandPlotClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__expand-plot-text">
+                      Expand Matplotlib Image
                     </span>
                   </button>
                 </>
@@ -265,7 +264,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleCode: (visible) => {
     dispatch(toggleCode(visible));
   },
-  onTogglePlotModal: (visible) => {
+  onToggleMetadataModal: (visible) => {
     dispatch(togglePlotModal(visible));
   },
 });

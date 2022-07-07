@@ -1,5 +1,3 @@
-# Upcoming release
-
 <!--
 Use the sections below to add notes for the next release.
 Please follow the established format:
@@ -7,9 +5,84 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
 ## Bug fixes and other changes
-- Migrate Kedro-UI buttons to Kedro-viz as Kedro-UI is now deprecated. (#716)
+
+- General design-debt fixes. (#955, #956)
+
+# Release 4.7.1
+
+## Bug fixes and other changes
+
+- General design-debt fixes. (#933, #934, #936, #939, #940)
+- Ensure `Created by` is set in experiment tracking metadata. (#937)
+- Fix for running Kedro-Viz with a proxy server or different base paths. (#941)
+
+# Release 4.7.0
+
+## Major features and improvements
+
+- Allow the display of Matplotlib images in the metadata panel and modal. (#887)
+
+## Bug fixes and other changes
+
+- Added warning message when filtered pipeline is empty. (#864)
+- Improve telemetry to track flowchart events. (#865)
+- Disable Uvicorn's logger so that log messages are no longer duplicated. (#870)
+- Fix namespace collision when two different registered pipelines have a modular pipeline with the same name. (#871)
+- Enhance _Apply and close_ behavior of modals. (#875)
+- Enable clicks on the flowchart to expand modular pipelines. (#879)
+- Add --params option to `kedro viz` CLI command. (#883)
+- Improve bundle size of the JavaScript package. (#906)
+- General design-debt fixes. (#896, #898, #899, #904, #908, #915, #944)
+
+# Release 4.6.0
+
+## Major features and improvements
+
+- Added support for all Plotly chart types. (#853)
+
+## Bug fixes and other changes
+
+- Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
+- Add tooltip label text to page-navigation links. (#846)
+- Change `Type` naming on Metadata Side Panel. (#852)
+- Improve Heap event tracking. (#556)
+
+# Release 4.5.0
+
+## Major features and improvements
+
+- Added support for Python 3.9 and 3.10. (#815)
+
+## Bug fixes and other changes
+
+- Change route name from `runsList` to `experiment-tracking`. (#820)
+- Update feature flag description to remind the user of the need for page refresh to apply settings. (#823)
+- Fix experiment tracking not showing run details bug on Windows. (#809)
+- Fix rendering of React component instance with custom routes. (#838)
+- Improve performance when many datasets are missing (requires `kedro>=0.18.1`). (#832)
+- Fix flowchart not showing on initial load for static data inputs. (#843)
+
+# Release 4.4.0
+
+## Major features and improvements
+
+- Set up a pop-up reminder to nudge users to upgrade Kedro-Viz when a new version is released. (#746)
+- Set up the 'export run' button to allow exporting of selected run data into a csv file for download. (#757)
+- Set up new display props to standalone React component. (#786)
+- Set up 'expandAllPipelines' flag to allow the expanded display of all modular pipelines on initial load. (#786)
+
+## Bug fixes and other changes
+
+- Migrate Kedro-UI buttons to Kedro-Viz as Kedro-UI is now deprecated. (#716)
+- Migrate Kedro-UI dropdown and menu-options to Kedro-Viz as Kedro-UI is now deprecated. (#721)
 - Add a Husky pre-push hook. (#723)
+- Create a `version` GraphQL query to get versions of Kedro-Viz. (#727)
+- Fix Kedro-Viz to work with projects that have no `__default__` registered pipeline. This also fixes the `--pipeline` CLI option. (#729)
+- Fix lazy pipelines loading causes `get_current_session` to throw an error. (#726, #727)
+- Fix experiment tracking not showing all metrics. (#798)
+- Fix experiment tracking not display the correct empty table cells. (#798)
 
 # Release 4.3.1
 
@@ -119,8 +192,8 @@ Please follow the established format:
 
 - Overwrite material UI selected row defaults. (#568)
 - Fix URI param parsing for data source. (#578)
-- Add a graphql test endpoint on Kedro-viz server. (#570)
-- Update the demo dataset on Kedro-viz. (#574)
+- Add a graphql test endpoint on Kedro-Viz server. (#570)
+- Update the demo dataset on Kedro-Viz. (#574)
 - Fix auto-reload for metrics run data. (#572)
 - Refactor tests for metadata panel. (#580)
 - Fix metrics tree to get latest metrics data. (#573)

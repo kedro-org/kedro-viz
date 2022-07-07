@@ -12,18 +12,19 @@ $font-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
 
 $color-dark: black;
 $color-light: white;
-$color-accent-blue: #00b0f5;
-
+$color-accent-blue: #00bcff;
 $color-primary: $color-accent-blue;
 $color-primary-2: #107da5;
 $color-link: rgba($color-primary, 0.85);
 $color-button: #003464;
 $color-button-hovered: #005d92;
+$color-button-disabled: rgba($color-light, 0.3);
 
 //-- Theme colours as SCSS variables --//
 
 // Light:
 $color-text-light: rgba(black, 0.85);
+$color-text-light-2: rgba(black, 0.55);
 $color-text-light-alt: rgba(white, 0.85);
 $color-accent-purple: #a000bc;
 $color-bg-light-1: #ffffff;
@@ -36,6 +37,7 @@ $color-bg-light-alt: #242525;
 
 // Dark:
 $color-text-dark: rgba(white, 0.85);
+$color-text-dark-2: rgba(white, 0.55);
 $color-text-dark-alt: rgba(black, 0.85);
 $color-accent-yellow: #ffbc00;
 $color-bg-dark-1: #001521;
@@ -63,7 +65,7 @@ $metadata-sidebar-code-open: 480px;
 $metadata-sidebar-code-closed: 0;
 $metadata-sidebar-code-breakpoint: 1200px;
 
-$plotly-modal-breakpoint: 700px;
+$metadata-modal-breakpoint: 700px;
 
 $global-toolbar-width: 80px;
 

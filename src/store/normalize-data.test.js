@@ -57,6 +57,15 @@ describe('normalizeData', () => {
     expect(normalizeData(data).modularPipeline.ids).toHaveLength(0);
   });
 
+  it('should add all mmodualr pipeliens and nodes if expandAllPipelines is true', () => {
+    const data = Object.assign({}, spaceflights);
+
+    const { modularPipeline } = normalizeData(data, true);
+
+    expect(modularPipeline.expanded).toHaveLength(3);
+    expect(Object.keys(modularPipeline.visible)).toHaveLength(19);
+  });
+
   it('should not add layers if layers are not supplied', () => {
     const data = Object.assign({}, spaceflights, { layers: undefined });
     data.nodes.forEach((node) => {

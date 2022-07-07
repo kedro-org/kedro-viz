@@ -1,0 +1,52 @@
+@import '../../../styles/variables';
+
+/** Variables */
+
+/* the height of each item/row */
+$menu-item-height: 40px;
+
+.kui-theme--light {
+  --menu-option-bg-hover: #{$color-bg-light-5};
+  --menu-option-divider: #{$color-bg-dev-light-1};
+  --menu-option-text-color: #{$color-text-dark-alt};
+}
+
+.kui-theme--dark {
+  --menu-option-bg-hover: #{$color-bg-dark-3};
+  --menu-option-divider: #21333d;
+  --menu-option-text-color: #{$color-text-light-alt};
+}
+
+.menu-option {
+  align-items: center;
+  border-bottom: 1px solid var(--menu-option-divider);
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: $menu-item-height;
+  outline: none;
+  overflow: hidden;
+  padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--menu-option-bg-hover);
+  }
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.menu-option__content {
+  align-items: center;
+  color: var(--menu-option-text-color);
+  display: flex;
+  font-size: 1.6em;
+  letter-spacing: 0.1px;
+  line-height: 1.25;
+  position: relative;
+  text-overflow: ellipsis;
+  width: 100%;
+}

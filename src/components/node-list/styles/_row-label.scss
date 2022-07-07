@@ -46,7 +46,7 @@
 
 .pipeline-nodelist__row__label {
   overflow: hidden;
-  font-size: 1.48em;
+  font-size: 1.4em;
   white-space: nowrap;
   text-overflow: ellipsis;
 
@@ -55,7 +55,7 @@
   }
 
   &--disabled {
-    opacity: 0.3;
+    opacity: 0.3 !important;
   }
 
   b {

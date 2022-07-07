@@ -78,6 +78,9 @@ function nodeReducer(nodeState = {}, action) {
         plot: Object.assign({}, nodeState.plot, {
           [id]: data.plot,
         }),
+        image: Object.assign({}, nodeState.image, {
+          [id]: data.image,
+        }),
         trackingData: Object.assign({}, nodeState.trackingData, {
           [id]: data.tracking_data,
         }),
