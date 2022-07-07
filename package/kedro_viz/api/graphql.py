@@ -7,6 +7,8 @@ import asyncio
 import json
 import logging
 from collections import defaultdict
+
+from strawberry.tools import merge_types
 from typing import (
     TYPE_CHECKING,
     AsyncGenerator,
@@ -16,6 +18,7 @@ from typing import (
     NewType,
     Optional,
     cast,
+    Union,
 )
 
 import strawberry
@@ -41,6 +44,8 @@ if TYPE_CHECKING:  # pragma: no cover
         https://github.com/python/mypy/issues/2477
         """
 
+
+## TODO: is this needed compared to built in one?
 else:
     JSONObject = strawberry.scalar(
         NewType("JSONObject", dict),
@@ -49,7 +54,7 @@ else:
         description="Generic scalar type representing a JSON object",
     )
 
-
+# TODO: where should format functions go?
 def format_run(
     run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
 ) -> Run:
@@ -106,48 +111,6 @@ def format_runs(
         )
         for run in runs
     ]
-
-
-def get_runs(run_ids: List[ID]) -> List[Run]:
-    """Get a run by id from the session store.
-    Args:
-        run_ids: ID of the run to fetch
-    Returns:
-        list of Run objects
-    """
-    return format_runs(
-        data_access_manager.runs.get_runs_by_ids(run_ids),
-        data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
-    )
-
-
-def get_version() -> Version:
-    """Get the user's installed Viz version and the latest version on PyPI.
-    Returns:
-        the currently installed and most-recent released version of Viz.
-    """
-    installed_version = VersionInfo.parse(__version__)
-    latest_version = get_latest_version()
-    return Version(
-        installed=installed_version,
-        isOutdated=is_running_outdated_version(installed_version, latest_version),
-        latest=latest_version or "",
-    )
-
-
-def get_all_runs() -> List[Run]:
-    """Get all runs from the session store.
-
-    Returns:
-        list of Run objects
-    """
-    all_runs = data_access_manager.runs.get_all_runs()
-    if not all_runs:
-        return []
-    all_run_ids = [run.id for run in all_runs]
-    return format_runs(
-        all_runs, data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids)
-    )
 
 
 def format_run_tracking_data(
@@ -261,6 +224,7 @@ def get_run_tracking_data(
     return all_datasets
 
 
+# TODO: better docstrings
 @strawberry.type
 class Run:
     """Run object format"""
@@ -284,65 +248,36 @@ class TrackingDataset:
     datasetType: Optional[str]
 
 
+# TODO: better names
 @strawberry.type
-class Version:
-    """The installed and latest Kedro Viz versions."""
-
-    installed: str
-    isOutdated: bool
-    latest: str
-
-
-@strawberry.type
-class Subscription:
-    """Subscription object to track runs added in real time"""
-
-    @strawberry.subscription
-    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
-        """Subscription to new runs in real-time"""
-        while True:
-            new_runs = data_access_manager.runs.get_new_runs()
-            if new_runs:
-                data_access_manager.runs.last_run_id = new_runs[0].id
-                yield [
-                    format_run(
-                        run.id,
-                        json.loads(run.blob),
-                        data_access_manager.runs.get_user_run_details(run.id),
-                    )
-                    for run in new_runs
-                ]
-            await asyncio.sleep(3)  # pragma: no cover
-
-
-@strawberry.type
-class Query:
-    """Query endpoint to get data from the session store"""
-
+class RunsQuery:
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Query to get data for specific run metadata from the session store"""
-        return get_runs(run_ids)
+        """Gets data for specified run_ids from the session store."""
+        return format_runs(
+            data_access_manager.runs.get_runs_by_ids(run_ids),
+            data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+        )
 
     @strawberry.field
     def runs_list(self) -> List[Run]:
-        """Query to get data for all the runs from the session store"""
-        return get_all_runs()
+        """Gets data for all runs from the session store."""
+        all_runs = data_access_manager.runs.get_all_runs()
+        if not all_runs:
+            return []
+        all_run_ids = [run.id for run in all_runs]
+        return format_runs(
+            all_runs,
+            data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids),
+        )
 
     @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
-        """Query to get data for specific runs from the session store"""
+        """Gets tracking data for specified run_ids from session store."""
+        # TODO: does it use session store??
         return get_run_tracking_data(run_ids, show_diff)
-
-    @strawberry.field
-    def version(self) -> Version:
-        """Query to get Kedro-Viz version"""
-        return get_version()
-
-
-schema = strawberry.Schema(query=Query, subscription=Subscription)
 
 
 @strawberry.input
@@ -354,6 +289,7 @@ class RunInput:
     title: Optional[str] = None
 
 
+# TODO: do we need these?
 @strawberry.type
 class UpdateRunDetailsSuccess:
     """Response type for successful update of runs"""
@@ -369,17 +305,14 @@ class UpdateRunDetailsFailure:
     error_message: str
 
 
-Response = strawberry.union(
-    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, UpdateRunDetailsFailure)
-)
-
-
 @strawberry.type
 class Mutation:
     """Mutation to update run details with run inputs"""
 
     @strawberry.mutation
-    def update_run_details(self, run_id: ID, run_input: RunInput) -> Response:
+    def update_run_details(
+        self, run_id: ID, run_input: RunInput
+    ) -> Union[UpdateRunDetailsSuccess, UpdateRunDetailsFailure]:
         """Updates run details based on run inputs provided by user"""
         run = data_access_manager.runs.get_run_by_id(run_id)
         if not run:
@@ -411,10 +344,70 @@ class Mutation:
         return UpdateRunDetailsSuccess(updated_run)
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation, subscription=Subscription)
+@strawberry.type
+class Subscription:
+    """Subscription object to track runs added in real time"""
+
+    @strawberry.subscription
+    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
+        """Subscription to new runs in real-time"""
+        while True:
+            new_runs = data_access_manager.runs.get_new_runs()
+            if new_runs:
+                data_access_manager.runs.last_run_id = new_runs[0].id
+                yield [
+                    format_run(
+                        run.id,
+                        json.loads(run.blob),
+                        data_access_manager.runs.get_user_run_details(run.id),
+                    )
+                    for run in new_runs
+                ]
+            await asyncio.sleep(3)  # pragma: no cover
+
+
+@strawberry.type
+class Version:
+    """The installed and latest Kedro Viz versions."""
+
+    installed: str
+    isOutdated: bool
+    latest: str
+
+
+@strawberry.type
+class VersionQuery:
+    @strawberry.field
+    def version(self) -> Version:
+        installed_version = VersionInfo.parse(__version__)
+        latest_version = get_latest_version()
+        return Version(
+            installed=installed_version,
+            isOutdated=is_running_outdated_version(installed_version, latest_version),
+            latest=latest_version or "",
+        )
+
+
+schema = strawberry.Schema(
+    query=(merge_types("Query", (RunsQuery, VersionQuery))),
+    mutation=Mutation,
+    subscription=Subscription,
+)
 
 router = APIRouter()
 
 graphql_app = GraphQL(schema)
 router.add_route("/graphql", graphql_app)
 router.add_websocket_route("/graphql", graphql_app)
+
+# TODO:
+# rename data -> artifacts??
+# Make enum for datasetGroups?
+# our data structures don't need to match query schema - keep structures flat and do nesting with query
+# new schema.py file?
+# generate schema from strawberry and write to schema.graphql
+# move models?
+# move responses?
+# fine to leave gets here, which should use data access manager
+# move version query etc. to another file?
+# `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.
