@@ -6,169 +6,29 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections import defaultdict
 
 from strawberry.tools import merge_types
 from typing import (
-    TYPE_CHECKING,
     AsyncGenerator,
-    Dict,
-    Iterable,
     List,
-    NewType,
     Optional,
-    cast,
-    Union,
 )
 
 import strawberry
-from fastapi import APIRouter
 from kedro.io.core import Version as DataSetVersion
 from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
-from strawberry.asgi import GraphQL
 
 from kedro_viz import __version__
+from .serializers import format_run, format_runs, \
+    format_run_tracking_data
+from .types import Run, TrackingDataset, RunInput, \
+    UpdateRunDetailsSuccess, UpdateRunDetailsFailure, UpdateRunDetailsResponse, Version
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
-
-if TYPE_CHECKING:  # pragma: no cover
-
-    class JSONObject(dict):
-        """Stub for JSONObject during type checking since mypy
-         doesn't support dynamic base.
-        https://github.com/python/mypy/issues/2477
-        """
-
-
-## TODO: is this needed compared to built in one?
-else:
-    JSONObject = strawberry.scalar(
-        NewType("JSONObject", dict),
-        serialize=lambda v: v,
-        parse_value=lambda v: json.loads(v),
-        description="Generic scalar type representing a JSON object",
-    )
-
-# TODO: where should format functions go?
-def format_run(
-    run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
-) -> Run:
-    """Convert blob data in the correct Run format.
-    Args:
-        run_id: ID of the run to fetch
-        run_blob: JSON blob of run metadata and tracking data
-        user_run_details: The user run details associated with this run
-    Returns:
-        Run object
-    """
-    git_data = run_blob.get("git")
-    bookmark = user_run_details.bookmark if user_run_details else False
-    title = (
-        user_run_details.title
-        if user_run_details and user_run_details.title
-        else run_id
-    )
-    notes = (
-        user_run_details.notes if user_run_details and user_run_details.notes else ""
-    )
-    run = Run(
-        author=run_blob.get("username"),
-        bookmark=bookmark,
-        gitBranch=git_data.get("branch") if git_data else None,
-        gitSha=git_data.get("commit_sha") if git_data else None,
-        id=ID(run_id),
-        notes=notes,
-        runCommand=run_blob.get("cli", {}).get("command_path"),
-        title=title,
-    )
-    return run
-
-
-def format_runs(
-    runs: Iterable[RunModel],
-    user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
-) -> List[Run]:
-    """Format a list of RunModel objects into a list of GraphQL Run
-
-    Args:
-        runs: The collection of RunModels to format.
-        user_run_details: the collection pf user_run_details associated with the given runs.
-    Returns:
-        The list of formatted Runs.
-    """
-    if not runs:
-        return []
-    return [
-        format_run(
-            run.id,
-            json.loads(cast(str, run.blob)),
-            user_run_details.get(run.id) if user_run_details else None,
-        )
-        for run in runs
-    ]
-
-
-def format_run_tracking_data(
-    tracking_data: Dict, show_diff: Optional[bool] = False
-) -> JSONObject:
-    """Convert tracking data in the front-end format.
-
-    Args:
-        tracking_data: JSON blob of tracking data for selected runs
-        show_diff: If false, show runs with only common tracking
-            data; else show all available tracking data
-    Returns:
-        Dictionary with formatted tracking data for selected runs
-
-    Example:
-        >>> from kedro.extras.datasets.tracking import MetricsDataSet
-        >>> tracking_data = {
-        >>>     'My Favorite Sprint': {
-        >>>         'bootstrap':0.8
-        >>>         'classWeight":23
-        >>>     },
-        >>>     'Another Favorite Sprint': {
-        >>>         'bootstrap':0.5
-        >>>         'classWeight":21
-        >>>     },
-        >>>     'Slick test this one': {
-        >>>         'bootstrap':1
-        >>>         'classWeight":21
-        >>>     },
-        >>> }
-        >>> format_run_tracking_data(tracking_data, False)
-        {
-            bootstrap: [
-                { runId: 'My Favorite Run', value: 0.8 },
-                { runId: 'Another favorite run', value: 0.5 },
-                { runId: 'Slick test this one', value: 1 },
-            ],
-            classWeight: [
-                { runId: 'My Favorite Run', value: 23 },
-                { runId: 'Another favorite run', value: 21 },
-                { runId: 'Slick test this one', value: 21 },
-            ]
-        }
-
-    """
-    formatted_tracking_data = defaultdict(list)
-
-    for run_id, run_tracking_data in tracking_data.items():
-        for tracking_name, data in run_tracking_data.items():
-            formatted_tracking_data[tracking_name].append(
-                {"runId": run_id, "value": data}
-            )
-    if not show_diff:
-        for tracking_key, run_tracking_data in list(formatted_tracking_data.items()):
-            if len(run_tracking_data) != len(tracking_data):
-                del formatted_tracking_data[tracking_key]
-
-    return JSONObject(formatted_tracking_data)
 
 
 def get_run_tracking_data(
@@ -224,30 +84,6 @@ def get_run_tracking_data(
     return all_datasets
 
 
-# TODO: better docstrings
-@strawberry.type
-class Run:
-    """Run object format"""
-
-    author: Optional[str]
-    bookmark: Optional[bool]
-    gitBranch: Optional[str]
-    gitSha: Optional[str]
-    id: ID
-    notes: Optional[str]
-    runCommand: Optional[str]
-    title: str
-
-
-@strawberry.type
-class TrackingDataset:
-    """TrackingDataset object to structure tracking data for a Run."""
-
-    data: Optional[JSONObject]
-    datasetName: Optional[str]
-    datasetType: Optional[str]
-
-
 # TODO: better names
 @strawberry.type
 class RunsQuery:
@@ -280,39 +116,13 @@ class RunsQuery:
         return get_run_tracking_data(run_ids, show_diff)
 
 
-@strawberry.input
-class RunInput:
-    """Run input to update bookmark, title and notes"""
-
-    bookmark: Optional[bool] = None
-    notes: Optional[str] = None
-    title: Optional[str] = None
-
-
-# TODO: do we need these?
-@strawberry.type
-class UpdateRunDetailsSuccess:
-    """Response type for successful update of runs"""
-
-    run: Run
-
-
-@strawberry.type
-class UpdateRunDetailsFailure:
-    """Response type for failed update of runs"""
-
-    id: ID
-    error_message: str
-
-
 @strawberry.type
 class Mutation:
     """Mutation to update run details with run inputs"""
 
     @strawberry.mutation
     def update_run_details(
-        self, run_id: ID, run_input: RunInput
-    ) -> Union[UpdateRunDetailsSuccess, UpdateRunDetailsFailure]:
+        self, run_id: ID, run_input: RunInput) -> UpdateRunDetailsResponse:
         """Updates run details based on run inputs provided by user"""
         run = data_access_manager.runs.get_run_by_id(run_id)
         if not run:
@@ -367,15 +177,6 @@ class Subscription:
 
 
 @strawberry.type
-class Version:
-    """The installed and latest Kedro Viz versions."""
-
-    installed: str
-    isOutdated: bool
-    latest: str
-
-
-@strawberry.type
 class VersionQuery:
     @strawberry.field
     def version(self) -> Version:
@@ -387,27 +188,18 @@ class VersionQuery:
             latest=latest_version or "",
         )
 
-
 schema = strawberry.Schema(
     query=(merge_types("Query", (RunsQuery, VersionQuery))),
     mutation=Mutation,
     subscription=Subscription,
 )
 
-router = APIRouter()
 
-graphql_app = GraphQL(schema)
-router.add_route("/graphql", graphql_app)
-router.add_websocket_route("/graphql", graphql_app)
 
 # TODO:
 # rename data -> artifacts??
 # Make enum for datasetGroups?
 # our data structures don't need to match query schema - keep structures flat and do nesting with query
-# new schema.py file?
 # generate schema from strawberry and write to schema.graphql
-# move models?
-# move responses?
 # fine to leave gets here, which should use data access manager
-# move version query etc. to another file?
 # `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.

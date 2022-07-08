@@ -15,7 +15,7 @@ from kedro_viz import __version__
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql import router as graphql_router
-from .router import router
+from .rest import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
@@ -44,7 +44,7 @@ def create_api_app_from_project(
         The FastAPI app
     """
     app = _create_base_api_app()
-    app.include_router(router)
+    app.include_router(rest_router)
     app.include_router(graphql_router)
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
