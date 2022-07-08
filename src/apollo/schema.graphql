@@ -15,7 +15,7 @@ type Query {
 type Run {
   author: String
   bookmark: Boolean
-  gitBranch: String
+  gitBranch: Stringf
   gitSha: String
   id: ID!
   notes: String

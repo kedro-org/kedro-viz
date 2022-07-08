@@ -37,6 +37,12 @@ lint-check:
 	flake8 --config=package/.flake8 package
 	mypy --config-file=package/mypy.ini package
 
+schema-fix:
+	strawberry export-schema --app-dir=package/kedro_viz api.graphql.schema > src/apollo/schema.graphql
+
+schema-check:
+	strawberry export-schema --app-dir=package/kedro_viz api.graphql.schema | diff src/apollo/schema.graphql -
+
 secret-scan:
 	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
 

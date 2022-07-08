@@ -207,12 +207,3 @@ class TestTrackingData:
         ]
 
         patched_warning.assert_has_calls([call("`%s` could not be found", load_path)])
-
-
-class TestGraphQLSchema:
-    def test_apollo_schema(self):
-        schema_file = Path(__file__).parents[4] / "src" / "apollo" / "schema.graphql"
-        with schema_file.open() as data:
-            apollo_schema = data.read()
-
-        assert apollo_schema.strip() == print_schema(schema)
