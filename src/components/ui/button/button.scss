@@ -90,8 +90,6 @@ $secondary-underline-offset-hover: 4px;
 }
 
 .button__btn--secondary {
-  outline: 4px solid transparent;
-
   &::after {
     display: block;
     content: '';
@@ -107,10 +105,6 @@ $secondary-underline-offset-hover: 4px;
     background: none;
   }
 
-  &:focus {
-    outline: 4px solid $color-accent-blue;
-  }
-
   &:hover::after {
     background: var(--color-button--border);
     transform: translateY($secondary-underline-offset-hover);
@@ -118,11 +112,6 @@ $secondary-underline-offset-hover: 4px;
 
   &:active {
     background-color: $color-secondary-active;
-    outline-color: $color-secondary-active;
-  }
-
-  [data-whatinput='mouse'] &:focus {
-    outline: none;
   }
 }
 
