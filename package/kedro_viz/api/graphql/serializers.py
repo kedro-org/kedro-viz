@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from collections import defaultdict
-
 import json
+from collections import defaultdict
+from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
-from typing import Dict, Optional, Iterable, List, cast
 
-from .types import Run, JSONObject
-from kedro_viz.models.experiments_tracking import UserRunDetailsModel, RunModel
+from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
+
+from .types import JSONObject, Run
 
 
 def format_run(

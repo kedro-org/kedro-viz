@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import json
-
-from strawberry import ID
-from typing import Optional, TYPE_CHECKING, NewType
+from typing import TYPE_CHECKING, NewType, Optional
 
 import strawberry
-
+from strawberry import ID
 
 if TYPE_CHECKING:  # pragma: no cover
 
@@ -27,8 +25,8 @@ else:
     )
 
 
-
 # TODO: better docstrings
+
 
 @strawberry.type
 class Run:

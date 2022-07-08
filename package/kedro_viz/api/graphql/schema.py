@@ -6,27 +6,29 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-
-from strawberry.tools import merge_types
-from typing import (
-    AsyncGenerator,
-    List,
-    Optional,
-)
+from typing import AsyncGenerator, List, Optional
 
 import strawberry
 from kedro.io.core import Version as DataSetVersion
 from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
+from strawberry.tools import merge_types
 
 from kedro_viz import __version__
-from .serializers import format_run, format_runs, \
-    format_run_tracking_data
-from .types import Run, TrackingDataset, RunInput, \
-    UpdateRunDetailsSuccess, UpdateRunDetailsFailure, UpdateRunDetailsResponse, Version
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
+
+from .serializers import format_run, format_run_tracking_data, format_runs
+from .types import (
+    Run,
+    RunInput,
+    TrackingDataset,
+    UpdateRunDetailsFailure,
+    UpdateRunDetailsResponse,
+    UpdateRunDetailsSuccess,
+    Version,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +124,8 @@ class Mutation:
 
     @strawberry.mutation
     def update_run_details(
-        self, run_id: ID, run_input: RunInput) -> UpdateRunDetailsResponse:
+        self, run_id: ID, run_input: RunInput
+    ) -> UpdateRunDetailsResponse:
         """Updates run details based on run inputs provided by user"""
         run = data_access_manager.runs.get_run_by_id(run_id)
         if not run:
@@ -188,6 +191,7 @@ class VersionQuery:
             latest=latest_version or "",
         )
 
+
 schema = strawberry.Schema(
     query=(merge_types("Query", (RunsQuery, VersionQuery))),
     mutation=Mutation,
@@ -195,8 +199,8 @@ schema = strawberry.Schema(
 )
 
 
-
 # TODO:
+# move tests?
 # rename data -> artifacts??
 # Make enum for datasetGroups?
 # our data structures don't need to match query schema - keep structures flat and do nesting with query
