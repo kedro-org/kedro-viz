@@ -49,7 +49,7 @@ $secondary-underline-offset-hover: 4px;
   letter-spacing: 0.1px;
   line-height: 1.3;
   margin: 2px;
-  outline: 2px solid var(--color-button--outline);
+  border: 2px solid var(--color-button--outline);
   padding: 0.7em 0.8em 0.8em;
   transition: background ease $timing-primary,
     outline-color ease $timing-primary, color ease $timing-primary;
@@ -64,10 +64,9 @@ $secondary-underline-offset-hover: 4px;
 
 .button__btn--primary {
   &:active:not(:disabled) {
-    transition: none;
-    outline-width: 0;
+    background: var(--color-button--outline);
     color: var(--color-button__text--hover);
-    background: var(--color-button--active);
+    transition: none;
   }
 
   &:focus {
@@ -77,13 +76,12 @@ $secondary-underline-offset-hover: 4px;
   &:hover:not(:disabled) {
     background: var(--color-button--outline);
     color: var(--color-button__text--hover);
-    outline: none;
   }
 
   &:disabled {
+    border: 2px solid var(--color-button--outline--disabled);
     color: var(--color-button--outline--disabled);
     cursor: not-allowed;
-    outline: 2px solid var(--color-button--outline--disabled);
   }
 
   [data-whatinput='mouse'] &:focus {
@@ -131,8 +129,8 @@ $secondary-underline-offset-hover: 4px;
 .button__btn--success {
   animation: scale 0.35s ease;
   background-color: $color-success;
+  border: 2px solid $color-success;
   color: $color-dark;
-  outline: none;
   width: 172px; // Match the `Apply and close` width to avoid a layout shift.
 }
 
