@@ -70,4 +70,6 @@ export const shortTypeMapping = {
   'kedro.extras.datasets.plotly.json_dataset.JSONDataSet': 'plotly',
   'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter':
     'image',
+  'kedro.extras.datasets.tracking.json_dataset.JSONDataSet': 'tracking',
+  'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet': 'tracking',
 };

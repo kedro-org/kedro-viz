@@ -33,9 +33,12 @@ export const GET_RUN_METADATA = gql`
 export const GET_RUN_TRACKING_DATA = gql`
   query getRunTrackingData($runIds: [ID!]!, $showDiff: Boolean) {
     runTrackingData(runIds: $runIds, showDiff: $showDiff) {
-      datasetName
-      datasetType
-      data
+      groupedDatasetType
+      datasets {
+        datasetName
+        data
+        datasetType
+      }
     }
   }
 `;

@@ -1,8 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
+import PlotlyChart from '../../plotly-chart';
 import PinArrowIcon from '../../icons/pin-arrow';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
+import getShortType from '../../../utils/short-type';
 
 import './run-dataset.css';
 
@@ -52,33 +54,47 @@ const RunDataset = ({
         'details-dataset--single': isSingleRun,
       })}
     >
-      {trackingData.map((dataset) => {
-        const { data, datasetName } = dataset;
-
+      {trackingData.map((groupedDataset) => {
+        const { groupedDatasetType, datasets } = groupedDataset;
         return (
           <Accordion
             className="details-dataset__accordion"
-            heading={datasetName}
+            heading={groupedDatasetType}
             headingClassName="details-dataset__accordion-header"
-            key={dataset.datasetName}
+            key={groupedDatasetType}
             layout="left"
-            size="large"
+            size="vlarge"
           >
-            {Object.keys(data)
-              .sort((a, b) => {
-                return a.localeCompare(b);
-              })
-              .map((key, rowIndex) => {
-                return buildDatasetDataMarkup(
-                  key,
-                  dataset.data[key],
-                  rowIndex,
-                  isSingleRun,
-                  pinnedRun,
-                  enableShowChanges,
-                  selectedRunIds
-                );
-              })}
+            {datasets.map((dataset) => {
+              const { datasetName, datasetType, data } = dataset;
+              return (
+                <Accordion
+                  className="details-dataset__accordion"
+                  heading={datasetName}
+                  headingClassName="details-dataset__accordion-header"
+                  key={dataset.datasetName}
+                  layout="left"
+                  size="large"
+                >
+                  {Object.keys(data)
+                    .sort((a, b) => {
+                      return a.localeCompare(b);
+                    })
+                    .map((key, rowIndex) => {
+                      return buildDatasetDataMarkup(
+                        key,
+                        dataset.data[key],
+                        datasetType,
+                        rowIndex,
+                        isSingleRun,
+                        pinnedRun,
+                        enableShowChanges,
+                        selectedRunIds
+                      );
+                    })}
+                </Accordion>
+              );
+            })}
           </Accordion>
         );
       })}
@@ -99,6 +115,7 @@ const RunDataset = ({
 function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
+  datasetType,
   rowIndex,
   isSingleRun,
   pinnedRun,
@@ -107,7 +124,8 @@ function buildDatasetDataMarkup(
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
-
+  const isPlotly = getShortType(datasetType) === 'plotly';
+  const isTracking = getShortType(datasetType) === 'tracking';
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
@@ -139,17 +157,41 @@ function buildDatasetDataMarkup(
         >
           {datasetKey}
         </span>
-        {runDataWithPin.map((data, index) => (
-          <span
-            className={classnames('details-dataset__value', {
-              'details-dataset__value--single': isSingleRun,
-            })}
-            key={data.runId + index}
-          >
-            {sanitizeValue(data.value)}
-            {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
-          </span>
-        ))}
+        {isTracking &&
+          runDataWithPin.map((data, index) => (
+            <span
+              className={classnames('details-dataset__value', {
+                'details-dataset__value--single': isSingleRun,
+              })}
+              key={data.runId + index}
+            >
+              {sanitizeValue(data.value)}
+              {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
+            </span>
+          ))}
+        {isPlotly &&
+          runDataWithPin.map((data, index) => (
+            <>
+              <div
+                className={classnames(
+                  'details-dataset__plot',
+                  'details-dataset__value',
+                  {
+                    'details-dataset__value--single': isSingleRun,
+                  }
+                )}
+                key={data.runId + index}
+              >
+                {data.value.data && (
+                  <PlotlyChart
+                    data={data.value.data}
+                    layout={data.value.layout}
+                    view="preview"
+                  />
+                )}
+              </div>
+            </>
+          ))}
       </div>
     </React.Fragment>
   );

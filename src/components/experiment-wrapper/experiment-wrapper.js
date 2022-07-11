@@ -45,6 +45,10 @@ const ExperimentWrapper = ({ theme }) => {
       skip: selectedRunIds.length === 0,
       variables: { runIds: selectedRunIds, showDiff: true },
     });
+  console.log('******');
+  console.log(selectedRunIds);
+  console.log(runTrackingData);
+  console.log('#####');
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {

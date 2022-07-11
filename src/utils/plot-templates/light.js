@@ -179,15 +179,15 @@ const lightTemplate = {
 
 export const lightPreviewTemplate = {
   ...lightTemplate,
-  height: 300,
+  height: 180,
   margin: {
-    l: 70,
-    r: 40,
-    t: 60,
-    b: 70,
+    l: 10,
+    r: 10,
+    t: 30,
+    b: 10,
   },
   showlegend: false,
-  width: 400,
+  width: 250,
   title: {
     font: {
       size: 12,
