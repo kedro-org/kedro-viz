@@ -636,6 +636,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
+    # TODO: refactor
     @staticmethod
     def load_latest_tracking_data(
         dataset: Union["JSONDataSet", "MetricsDataSet"],
@@ -658,6 +659,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
             return json.load(fs_file)
 
+    # TODO: refactor
     @staticmethod
     def load_versioned_tracking_data(
         filepath: str, num_versions: int = 10

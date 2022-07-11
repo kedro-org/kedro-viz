@@ -10,7 +10,7 @@ from strawberry.printer import print_schema
 
 from kedro_viz.api.graphql import (
     JSONObject,
-    TrackingDataSet,
+    TrackingDataset,
     get_run_tracking_data,
     schema,
 )
@@ -24,7 +24,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -50,7 +50,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -88,7 +88,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject(
@@ -107,7 +107,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -141,7 +141,7 @@ class TestTrackingData:
             (
                 True,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -151,7 +151,7 @@ class TestTrackingData:
             (
                 False,
                 [
-                    TrackingDataSet(
+                    TrackingDataset(
                         datasetName="new_metrics",
                         datasetType="kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
                         data=JSONObject({}),
@@ -199,7 +199,7 @@ class TestTrackingData:
         data_access_manager_with_runs.add_catalog(catalog)
 
         assert get_run_tracking_data([ID(example_run_ids[0])], False) == [
-            TrackingDataSet(
+            TrackingDataset(
                 datasetName="json_tracking",
                 datasetType="kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
                 data=JSONObject({}),

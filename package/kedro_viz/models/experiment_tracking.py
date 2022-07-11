@@ -34,3 +34,9 @@ class UserRunDetailsModel(Base):
 
     class Config:
         orm_mode = True
+
+
+# class TrackingDatasetModel:
+#     data:
+#     dataset_name:
+#     datase_type: str  # TODO: change to enum

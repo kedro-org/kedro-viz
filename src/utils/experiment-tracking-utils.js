@@ -42,8 +42,8 @@ export const constructExportData = (runMetadata, runTrackingData) => {
     // create empty line between metadata fields and tracking data fields
     csvData.push([]);
 
-    runTrackingData.forEach((trackingDataset) => {
-      const { datasetName, data } = trackingDataset;
+    runTrackingData.forEach((TrackingDataset) => {
+      const { datasetName, data } = TrackingDataset;
       const dataKeyNames = Object.keys(data);
 
       csvData.push([datasetName]);

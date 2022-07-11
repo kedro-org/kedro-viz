@@ -8,7 +8,7 @@ type Mutation {
 type Query {
   runMetadata(runIds: [ID!]!): [Run!]!
   runsList: [Run!]!
-  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataSet!]!
+  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
   version: Version!
 }
 
@@ -33,7 +33,7 @@ type Subscription {
   runsAdded: [Run!]!
 }
 
-type TrackingDataSet {
+type TrackingDataset {
   data: JSONObject!
   datasetName: String!
   datasetType: String!

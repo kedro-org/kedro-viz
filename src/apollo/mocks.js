@@ -15,7 +15,7 @@ export const RunMock = Factory.define(({ sequence }) => {
   };
 });
 
-const TrackingDataSetMock = Factory.define(() => {
+const TrackingDatasetMock = Factory.define(() => {
   return {
     runId: faker.random.words(3),
     value: faker.datatype.number(),
@@ -27,7 +27,7 @@ export const TrackingDataMock = Factory.define(() => {
     datasetName: faker.random.words(2),
     datasetType: faker.random.words(2),
     data: {
-      [faker.random.words(1)]: TrackingDataSetMock.buildList(1),
+      [faker.random.words(1)]: TrackingDatasetMock.buildList(1),
     },
   };
 });

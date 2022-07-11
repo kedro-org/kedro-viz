@@ -1,11 +1,18 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
-from typing import Optional
+import logging
+
+from typing import Optional, List
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
+from kedro_viz.api.graphql.types import TrackingDataset
 
 from kedro_viz.constants import KEDRO_VERSION
+
+from kedro.io.core import Version as DataSetVersion
+
+logger = logging.getLogger(__name__)
 
 
 class CatalogRepository:
@@ -66,6 +73,45 @@ class CatalogRepository:
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(self.strip_encoding(dataset_name))
+
+    # TODO: test
+    def get_tracking_dataset_by_run_ids(self, run_ids: List[str]):
+        all_runs_for_all_datasets = {}
+        for dataset_name, dataset in self.get_tracking_datasets():
+            all_runs_for_one_dataset = {}
+            for run_id in run_ids:
+                # Set the load_version to run_id
+                dataset._version = DataSetVersion(run_id, None)
+                if dataset.exists():
+                    data = dataset.load()
+                    all_runs_for_one_dataset[run_id] = data
+                else:
+                    all_runs_for_one_dataset[run_id] = {}
+                    logger.warning(
+                        "'%s' with version '%s' could not be found",
+                        dataset_name,
+                        run_id,
+                    )
+            all_runs_for_all_datasets[dataset_name] = all_runs_for_one_dataset
+            # TODO: define TrackingDatasetModel?
+        return all_runs_for_all_datasets
+
+    def get_tracking_datasets(self):
+        return {
+            dataset_name: dataset
+            for dataset_name, dataset in self._catalog._data_sets.items()
+            if self.is_tracking_dataset(dataset)
+        }
+
+    @staticmethod
+    def is_tracking_dataset(dataset):
+        # TODO: think about where this import goes
+        from kedro.extras.datasets import tracking, json
+
+        tracking.JSONDataSet.load = json.JSONDataSet.load
+        tracking.MetricsDataSet.load = json.JSONDataSet.load
+
+        return isinstance(dataset, (tracking.JSONDataSet, tracking.MetricsDataSet))
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:

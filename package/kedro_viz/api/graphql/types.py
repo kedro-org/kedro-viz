@@ -40,8 +40,8 @@ class Run:
 
 
 @strawberry.type
-class TrackingDataSet:
-    """TrackingDataSet object to structure tracking data for a Run."""
+class TrackingDataset:
+    """TrackingDataset object to structure tracking data for a Run."""
 
     data: JSONObject
     datasetName: str

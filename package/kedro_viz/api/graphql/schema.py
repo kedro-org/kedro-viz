@@ -19,11 +19,11 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 
-from .serializers import format_run, format_run_tracking_data, format_runs
+from .serializers import format_run, format_run_tracking_data_old, format_runs
 from .types import (
     Run,
     RunInput,
-    TrackingDataSet,
+    TrackingDataset,
     UpdateRunDetailsFailure,
     UpdateRunDetailsResponse,
     UpdateRunDetailsSuccess,
@@ -33,65 +33,12 @@ from .types import (
 logger = logging.getLogger(__name__)
 
 
-def get_run_tracking_data(
-    run_ids: List[ID], show_diff: Optional[bool] = False
-) -> List[TrackingDataSet]:
-    # pylint: disable=protected-access,import-outside-toplevel
-    """Get all tracking data for a list of runs. Tracking data contains the data from the
-    tracking MetricsDataSet and JSONDataSet instances that have been logged
-    during that specific `kedro run`.
-    Args:
-        run_ids:  List of IDs of runs to fetch the tracking data for.
-        show_diff: If false, show runs with only common tracking
-            data; else show all available tracking data
-
-    Returns:
-        List of TrackingDataSets
-
-    """
-    # TODO: this logic should be moved to the data access layer.
-    from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet  # noqa: F811
-
-    all_datasets = []
-    catalog = data_access_manager.catalog.get_catalog()
-    tracking_datasets = [
-        (ds_name, ds_value)
-        for ds_name, ds_value in catalog._data_sets.items()
-        if (isinstance(ds_value, (MetricsDataSet, JSONDataSet)))
-    ]
-
-    for name, dataset in tracking_datasets:
-        all_runs = {}
-        for run_id in run_ids:
-            run_id = ID(run_id)
-            # Set the load_version to run_id
-            dataset._version = DataSetVersion(run_id, None)
-            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-            if dataset.exists():
-                with dataset._fs.open(
-                    load_path, **dataset._fs_open_args_load
-                ) as fs_file:
-                    json_data = json.load(fs_file)
-                    all_runs[run_id] = json_data
-            else:
-                all_runs[run_id] = {}
-                logger.warning("`%s` could not be found", load_path)
-
-        tracking_dataset = TrackingDataSet(
-            datasetName=name,
-            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            data=format_run_tracking_data(all_runs, show_diff),
-        )
-        all_datasets.append(tracking_dataset)
-    return all_datasets
-
-
 @strawberry.type
 class RunsQuery:
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
         """Gets metadata (blob, title, bookmark, etc.)  for specified run_ids from
-         the session store."""
+        the session store."""
         return format_runs(
             data_access_manager.runs.get_runs_by_ids(run_ids),
             data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
@@ -112,9 +59,13 @@ class RunsQuery:
     @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
-    ) -> List[TrackingDataSet]:
+    ) -> List[TrackingDataset]:
         """Gets tracking datasets for specified run_ids."""
-        return get_run_tracking_data(run_ids, show_diff)
+        # return get_run_tracking_data(run_ids, show_diff)
+        return format_tracking_data(
+            data_access_manager.catalog.get_tracking_dataset_by_run_ids(run_ids),
+            show_diff,
+        )
 
 
 @strawberry.type
