@@ -172,24 +172,20 @@ function buildDatasetDataMarkup(
         {isPlotly &&
           runDataWithPin.map((data, index) => (
             <>
-              <div
-                className={classnames(
-                  'details-dataset__plot',
-                  'details-dataset__value',
-                  {
-                    'details-dataset__value--single': isSingleRun,
-                  }
-                )}
+              <span
+                className={classnames('details-dataset__value', {
+                  'details-dataset__value--single': isSingleRun,
+                })}
                 key={data.runId + index}
               >
-                {data.value.data && (
+                {data.value && (
                   <PlotlyChart
                     data={data.value.data}
                     layout={data.value.layout}
                     view="preview"
                   />
                 )}
-              </div>
+              </span>
             </>
           ))}
       </div>
