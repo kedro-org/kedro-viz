@@ -39,7 +39,7 @@ lint-check:
 
 schema-fix:
 	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema > src/apollo/schema.graphql
-	graphqlviz src/apollo/schema.graphql | dot -Tpng > schema.png
+	graphqlviz src/apollo/schema.graphql | dot -Tpng -o .github/img/schema.graphql.png
 
 schema-check:
 	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema | diff src/apollo/schema.graphql -

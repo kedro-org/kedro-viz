@@ -207,3 +207,10 @@ schema = strawberry.Schema(
 # generate schema from strawberry and write to schema.graphql
 # fine to leave gets here, which should use data access manager
 # `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.
+# Completely abstract database logic inside repositories within the data access layer and hide it from the API layer.
+# runs list -> experiment tracking
+# When does get_all_runs get called? Just wondering why this is the right place to update the last_run_id
+# > t's the first call when user visits experimentation tracking tab.
+# get_new_runs vs. get_all_runs: I prefer to keep these interfaces separate in case we need to add more logic to each use case. It's an old habit, e.g. if we end up caching all runs somewhere we won't need to go to the DB to fetch them. We will almost always have to do it for new runs.
+# graph -> flowchart or something
+# pytest and graphql

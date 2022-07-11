@@ -57,7 +57,7 @@ def format_runs(
     Returns:
         The list of formatted Runs.
     """
-    if not runs:
+    if not runs: # it could be None in case the db isn't there.
         return []
     return [
         format_run(
