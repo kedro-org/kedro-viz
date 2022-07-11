@@ -17,7 +17,7 @@ from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.io.core import Version
 from kedro.pipeline.node import node
 
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     DataNode,
     DataNodeMetadata,
     GraphNode,

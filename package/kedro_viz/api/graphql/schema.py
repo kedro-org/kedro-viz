@@ -91,7 +91,8 @@ def get_run_tracking_data(
 class RunsQuery:
     @strawberry.field
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Gets data for specified run_ids from the session store."""
+        """Gets metadata (blob, title, bookmark, etc.)  for specified run_ids from
+         the session store."""
         return format_runs(
             data_access_manager.runs.get_runs_by_ids(run_ids),
             data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
@@ -99,7 +100,7 @@ class RunsQuery:
 
     @strawberry.field
     def runs_list(self) -> List[Run]:
-        """Gets data for all runs from the session store."""
+        """Gets metadata for all runs from the session store."""
         all_runs = data_access_manager.runs.get_all_runs()
         if not all_runs:
             return []
@@ -113,8 +114,7 @@ class RunsQuery:
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
-        """Gets tracking data for specified run_ids from session store."""
-        # TODO: does it use session store??
+        """Gets tracking dataset for specified run_ids."""
         return get_run_tracking_data(run_ids, show_diff)
 
 
@@ -200,12 +200,15 @@ schema = strawberry.Schema(
 
 
 # TODO:
-# move tests?
+# move tests? Pytest etc. # pytest and graphql
+
 # rename data -> artifacts??
 # Make enum for datasetGroups?
 # our data structures don't need to match query schema - keep structures flat and do nesting with query
-# generate schema from strawberry and write to schema.graphql
+
 # fine to leave gets here, which should use data access manager
+
+
 # `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.
 # Completely abstract database logic inside repositories within the data access layer and hide it from the API layer.
 # runs list -> experiment tracking
@@ -213,4 +216,3 @@ schema = strawberry.Schema(
 # > t's the first call when user visits experimentation tracking tab.
 # get_new_runs vs. get_all_runs: I prefer to keep these interfaces separate in case we need to add more logic to each use case. It's an old habit, e.g. if we end up caching all runs somewhere we won't need to go to the DB to fetch them. We will almost always have to do it for new runs.
 # graph -> flowchart or something
-# pytest and graphql

@@ -8,7 +8,7 @@ from kedro.io import DataCatalog, Version
 
 from kedro_viz.api.graphql import Run
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiments_tracking import Base, RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import Base, RunModel, UserRunDetailsModel
 
 
 @pytest.fixture

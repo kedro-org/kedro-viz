@@ -6,7 +6,7 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
 
-from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 from .types import JSONObject, Run
 
@@ -17,7 +17,7 @@ def format_run(
     """Convert blob data in the correct Run format.
     Args:
         run_id: ID of the run to fetch
-        run_blob: JSON blob of run metadata and tracking data
+        run_blob: JSON blob of run metadata
         user_run_details: The user run details associated with this run
     Returns:
         Run object
@@ -44,16 +44,16 @@ def format_run(
     )
     return run
 
-
+# TODO: needed?
 def format_runs(
     runs: Iterable[RunModel],
     user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
 ) -> List[Run]:
-    """Format a list of RunModel objects into a list of GraphQL Run
+    """Format a list of RunModel objects into a list of GraphQL Run.
 
     Args:
         runs: The collection of RunModels to format.
-        user_run_details: the collection pf user_run_details associated with the given runs.
+        user_run_details: the collection of user_run_details associated with the given runs.
     Returns:
         The list of formatted Runs.
     """

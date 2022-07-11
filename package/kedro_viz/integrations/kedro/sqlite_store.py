@@ -11,7 +11,7 @@ from kedro.framework.session.store import BaseSessionStore
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiments_tracking import Base, RunModel
+from kedro_viz.models.experiment_tracking import Base, RunModel
 
 logger = logging.getLogger(__name__)
 

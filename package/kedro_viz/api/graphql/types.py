@@ -25,9 +25,6 @@ else:
     )
 
 
-# TODO: better docstrings
-
-
 @strawberry.type
 class Run:
     """Run object format"""

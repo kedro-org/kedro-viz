@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from kedro_viz.api import apps
-from kedro_viz.models.graph import TaskNode
+from kedro_viz.models.flowchart import TaskNode
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):

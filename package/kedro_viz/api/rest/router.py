@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     DataNode,
     DataNodeMetadata,
     ParametersNodeMetadata,
