@@ -23,7 +23,7 @@ const typeDefs = gql`
     runTrackingData(
       runIds: [ID!]!
       showDiff: Boolean = false
-    ): [TrackingDataset!]!
+    ): [TrackingDataSet!]!
   }
 
   type Run {
@@ -43,7 +43,7 @@ const typeDefs = gql`
     notes: String = null
   }
 
-  type TrackingDataset {
+  type TrackingDataSet {
     datasetName: String
     datasetType: String
     data: JSONObject

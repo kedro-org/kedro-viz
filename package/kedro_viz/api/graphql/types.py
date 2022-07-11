@@ -40,12 +40,12 @@ class Run:
 
 
 @strawberry.type
-class TrackingDataset:
-    """TrackingDataset object to structure tracking data for a Run."""
+class TrackingDataSet:
+    """TrackingDataSet object to structure tracking data for a Run."""
 
-    data: Optional[JSONObject]
-    datasetName: Optional[str]
-    datasetType: Optional[str]
+    data: JSONObject
+    datasetName: str
+    datasetType: str  # TODO: change to enum
 
 
 @strawberry.input

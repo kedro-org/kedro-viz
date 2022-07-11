@@ -23,7 +23,7 @@ from .serializers import format_run, format_run_tracking_data, format_runs
 from .types import (
     Run,
     RunInput,
-    TrackingDataset,
+    TrackingDataSet,
     UpdateRunDetailsFailure,
     UpdateRunDetailsResponse,
     UpdateRunDetailsSuccess,
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 def get_run_tracking_data(
     run_ids: List[ID], show_diff: Optional[bool] = False
-) -> List[TrackingDataset]:
+) -> List[TrackingDataSet]:
     # pylint: disable=protected-access,import-outside-toplevel
     """Get all tracking data for a list of runs. Tracking data contains the data from the
     tracking MetricsDataSet and JSONDataSet instances that have been logged
@@ -46,7 +46,7 @@ def get_run_tracking_data(
             data; else show all available tracking data
 
     Returns:
-        List of TrackingDatasets
+        List of TrackingDataSets
 
     """
     # TODO: this logic should be moved to the data access layer.
@@ -77,7 +77,7 @@ def get_run_tracking_data(
                 all_runs[run_id] = {}
                 logger.warning("`%s` could not be found", load_path)
 
-        tracking_dataset = TrackingDataset(
+        tracking_dataset = TrackingDataSet(
             datasetName=name,
             datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
             data=format_run_tracking_data(all_runs, show_diff),
@@ -86,7 +86,6 @@ def get_run_tracking_data(
     return all_datasets
 
 
-# TODO: better names
 @strawberry.type
 class RunsQuery:
     @strawberry.field
@@ -113,8 +112,8 @@ class RunsQuery:
     @strawberry.field
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
-    ) -> List[TrackingDataset]:
-        """Gets tracking dataset for specified run_ids."""
+    ) -> List[TrackingDataSet]:
+        """Gets tracking datasets for specified run_ids."""
         return get_run_tracking_data(run_ids, show_diff)
 
 
@@ -202,8 +201,6 @@ schema = strawberry.Schema(
 # TODO:
 # move tests? Pytest etc. # pytest and graphql
 
-# rename data -> artifacts??
-# Make enum for datasetGroups?
 # our data structures don't need to match query schema - keep structures flat and do nesting with query
 
 # fine to leave gets here, which should use data access manager
