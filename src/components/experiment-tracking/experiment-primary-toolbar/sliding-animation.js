@@ -50,7 +50,7 @@ const directions = {
 
 export const Animation = ({ children, direction, duration, state }) => {
   const defaultStyle = {
-    transition: `transform 0.1s ease-out 0s, opacity 0.1s linear 0s`,
+    transition: `transform 0.15s ease-out 0s, opacity 0.15s linear 0s`,
     opacity: '0',
   };
 
