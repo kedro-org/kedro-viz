@@ -9,6 +9,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - General design-debt fixes. (#930, #955, #956, #959, #960)
+- Remove `@faker-js/faker`. (#968)
 
 # Release 4.7.1
 
