@@ -1,30 +1,32 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --color-header-bg: #{$color-accent-yellow};
   --color-detail-bg: #{$color-bg-light-4};
-  --color-text: #{$color-bg-light-2};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #076e9c;
   --color-subtext: #{$color-text-light-2};
+  --color-text: #{$color-bg-light-2};
 }
 
 .kui-theme--dark {
-  --color-header-bg: #{$color-accent-yellow};
   --color-detail-bg: #{$color-bg-dark-4};
-  --color-text: #{$color-bg-dark-2};
+  --color-header-bg: #{$color-accent-yellow};
+  --color-link: #{$color-accent-blue};
   --color-subtext: #{$color-text-dark-2};
+  --color-text: #{$color-bg-dark-2};
 }
 
 .update-reminder-unexpanded {
+  background-color: var(--color-header-bg);
+  display: flex;
+  font-size: 12px;
   height: 32px;
-  width: 296px;
+  justify-content: space-around;
   position: absolute;
   right: 0px;
   top: 0px;
-  background-color: var(--color-header-bg);
+  width: 296px;
   z-index: 2;
-  font-size: 12px;
-  display: flex;
-  justify-content: space-around;
 
   p {
     color: $color-bg-dark-2;
@@ -38,25 +40,31 @@
   }
 
   button {
-    color: $color-bg-dark-2;
-    border: none;
     background-color: var(--color-header-bg);
-    font-size: 12px;
+    border: none;
+    color: $color-text-light-2;
     cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-text-dark-alt;
+    }
   }
 }
 
 .update-reminder-expanded-header {
+  background-color: var(--color-header-bg);
+  display: flex;
+  font-size: 12px;
   height: 48px;
-  width: 484px;
+  justify-content: space-between;
   position: absolute;
   right: 0px;
   top: 0px;
-  background-color: var(--color-header-bg);
+  width: 484px;
   z-index: 2;
-  font-size: 12px;
-  display: flex;
-  justify-content: space-between;
 
   .close-button-container {
     margin-right: 20px;
@@ -64,9 +72,9 @@
 
   p {
     color: $color-bg-dark-2;
-    padding: 6px 48px;
-    margin-top: 6px;
     font-size: 16px;
+    margin-top: 6px;
+    padding: 6px 48px;
   }
 
   button {
@@ -80,42 +88,48 @@
 }
 
 .update-reminder-expanded-detail {
-  height: 340px;
-  width: 484px;
+  background-color: var(--color-detail-bg);
   position: absolute;
   right: 0px;
   top: 48px;
+  width: 484px;
   z-index: 2;
-  background-color: var(--color-detail-bg);
 
   p {
-    padding-top: 30px;
-    padding-left: 48px;
     font-size: 14px;
+    padding-left: 48px;
+    padding-top: 30px;
     width: 430px;
 
     a {
-      color: $color-primary-2;
+      color: var(--color-link);
     }
   }
 
   .subtext {
-    padding-top: 20px;
-    font-size: 12px;
     color: var(--color-subtext);
+    font-size: 13px;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 20px;
+
+    &--small {
+      font-size: 12px;
+      margin: 0 0 50px;
+    }
   }
 
   .command-copier {
-    padding-left: 48px;
     font-size: 14px;
+    padding-left: 48px;
     width: 400px;
   }
 }
 
 .close-button {
   svg {
-    width: 24px;
-    height: 24px;
     fill: $color-text-dark-alt;
+    height: 24px;
+    width: 24px;
   }
 }

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.css';
 
+const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
+
 /**
  * Icon button component
  */
@@ -10,20 +12,27 @@ const IconButton = ({
   active,
   ariaLabel,
   ariaLive,
+  children,
   className,
   container: Container = 'li',
   dataHeapEvent,
   disabled,
-  hasReminder,
   icon,
   labelText,
+  labelTextPosition = 'right',
   onClick,
   visible,
 }) => {
   const Icon = icon;
 
+  const labelPosition = labelPositionTypes.includes(
+    labelTextPosition.toLowerCase()
+  )
+    ? labelTextPosition.toLocaleLowerCase()
+    : 'right';
+
   return visible ? (
-    <Container>
+    <Container className="pipeline-icon--container">
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -35,11 +44,19 @@ const IconButton = ({
         disabled={disabled}
         onClick={onClick}
       >
-        {Icon && <Icon className="pipeline-icon" hasReminder={hasReminder} />}
+        {Icon && <Icon className="pipeline-icon" />}
         {labelText && (
-          <span className="pipeline-toolbar__label">{labelText}</span>
+          <span
+            className={classnames(
+              'pipeline-toolbar__label',
+              `pipeline-toolbar__label-${labelPosition}`
+            )}
+          >
+            {labelText}
+          </span>
         )}
       </button>
+      {children}
     </Container>
   ) : null;
 };
@@ -48,9 +65,9 @@ IconButton.propTypes = {
   active: PropTypes.bool,
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
+  children: PropTypes.node,
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
-  hasReminder: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.string,
   onClick: PropTypes.func,
@@ -61,9 +78,9 @@ IconButton.defaultProps = {
   active: false,
   ariaLabel: null,
   ariaLive: null,
+  children: null,
   dataHeapEvent: null,
   disabled: false,
-  hasReminder: false,
   icon: null,
   labelText: null,
   onClick: null,

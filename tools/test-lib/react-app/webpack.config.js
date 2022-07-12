@@ -12,13 +12,14 @@ module.exports = {
       openBrowser && openBrowser('http://localhost:1337');
     },
     contentBase: path.join(__dirname, 'dist'),
-    port: 1337
+    port: 1337,
+    historyApiFallback: true,
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader']
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.m?js$/,
@@ -26,20 +27,21 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
-          }
-        }
-      }
-    ]
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+          },
+        },
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
-      title: 'Kedro-Viz import test'
-    })
+      title: 'Kedro-Viz import test',
+    }),
   ],
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, '.temp')
-  }
+    path: path.resolve(__dirname, '.temp'),
+    publicPath: '/',
+  },
 };

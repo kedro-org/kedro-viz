@@ -5,14 +5,14 @@ import NodeListGroup from './node-list-group';
 const storedState = loadState();
 
 const NodeListGroups = ({
-  items,
   groups,
-  searchValue,
+  items,
   onGroupToggleChanged,
+  onItemChange,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
-  onItemChange,
+  searchValue,
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
 
@@ -32,23 +32,23 @@ const NodeListGroups = ({
       <ul className="pipeline-nodelist__list">
         {Object.values(groups).map((group) => (
           <NodeListGroup
+            allUnchecked={group.allUnchecked}
+            checked={group.checked}
+            collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
             group={group}
+            id={group.id}
+            invisibleIcon={group.invisibleIcon}
             items={items[group.id] || []}
             key={group.id}
-            id={group.id}
-            name={group.name}
             kind={group.kind}
-            checked={group.checked}
-            allUnchecked={group.allUnchecked}
-            visibleIcon={group.visibleIcon}
-            invisibleIcon={group.invisibleIcon}
-            collapsed={Boolean(searchValue) ? false : collapsed[group.id]}
-            onToggleCollapsed={onToggleGroupCollapsed}
-            onToggleChecked={onGroupToggleChanged}
-            onItemClick={onItemClick}
+            name={group.name}
             onItemChange={onItemChange}
+            onItemClick={onItemClick}
             onItemMouseEnter={onItemMouseEnter}
             onItemMouseLeave={onItemMouseLeave}
+            onToggleChecked={onGroupToggleChanged}
+            onToggleCollapsed={onToggleGroupCollapsed}
+            visibleIcon={group.visibleIcon}
           />
         ))}
       </ul>

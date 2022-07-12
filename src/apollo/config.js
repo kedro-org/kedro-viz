@@ -7,16 +7,19 @@ import {
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
+import { replaceMatches } from '../utils';
 
-const wsHost =
-  process.env.NODE_ENV === 'development'
-    ? 'localhost:4142'
-    : window.location.host;
+const { host, pathname, protocol } = window.location;
+const sanitizedPathname = replaceMatches(pathname, {
+  'experiment-tracking': '',
+});
 
-const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const wsHost = process.env.NODE_ENV === 'development' ? 'localhost:4142' : host;
+
+const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
 
 const wsLink = new WebSocketLink({
-  uri: `${wsProtocol}://${wsHost}/graphql`,
+  uri: `${wsProtocol}//${wsHost}${sanitizedPathname}graphql`,
   options: {
     reconnect: true,
   },
@@ -24,7 +27,7 @@ const wsLink = new WebSocketLink({
 
 const httpLink = createHttpLink({
   // our graphql endpoint, normally here: http://localhost:4141/graphql
-  uri: '/graphql',
+  uri: `${sanitizedPathname}graphql`,
   fetch,
 });
 
