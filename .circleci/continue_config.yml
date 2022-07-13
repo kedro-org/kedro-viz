@@ -275,7 +275,7 @@ release_filter: &release_filter
 workflows:
   version: 2.1
 
-  build:
+  deploy_demo:
     jobs:
       - deploy_demo:
           context:
