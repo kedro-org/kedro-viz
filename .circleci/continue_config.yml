@@ -283,9 +283,6 @@ workflows:
           filters:
             branches:
               only: demo
-      - all_circleci_checks_succeeded:
-          requires:
-            - deploy_demo
 
   build_frontend:
     when:
