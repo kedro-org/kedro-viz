@@ -89,56 +89,22 @@
   fill: var(--color-text);
 }
 
-.pipeline-run-viz-modal__bottom {
+.pipeline-run-viz__image_oneChart {
+  width: calc(98% - 400px - #{$global-toolbar-width});
+  height: calc(92% - 50px);
+  left: 45%;
   position: relative;
-  display: flex;
-  flex-direction: row;
-  flex-grow: 0;
-  flex-shrink: 0;
-  align-content: center;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 100%;
+  transform: translateX(-50%);
 }
 
-.pipeline-run-viz-modal__collapse-plot {
-  @extend %button;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  align-self: flex-end;
-  width: $metadata-sidebar-width-open;
-  background-color: var(--color-button-plot);
-
-  &:hover {
-    background-color: var(--color-button-plot-hovered);
-  }
+.pipeline-run-viz__image_twoChart {
+  height: 520px;
+  width: 600px;
+  margin: 3em;
 }
 
-.pipeline-run-viz-modal__collapse-plot-icon {
-  width: 1.9em;
-  height: 1.9em;
-  margin: 0 6px -0.1em 36px;
-  fill: var(--color-button-text);
-}
-
-.pipeline-run-viz-modal__collapse-plot-text {
-  margin: 12px 10px 12px 5px;
-  color: var(--color-button-text);
-  font-size: 1.6em;
-}
-
-@media (max-width: $metadata-modal-breakpoint) {
-  .pipeline-run-viz-modal__collapse-plot {
-    width: auto;
-  }
-
-  .pipeline-run-viz-modal__collapse-plot-text {
-    display: none;
-  }
-
-  .pipeline-run-viz-modal__collapse-plot-icon {
-    margin: 10px;
-  }
+.pipeline-run-viz__image_threeChart {
+  height: 320px;
+  width: 400px;
+  margin: 2.5em;
 }

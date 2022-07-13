@@ -4,12 +4,12 @@ import BackIcon from '../../icons/back';
 import NodeIcon from '../../icons/node-icon';
 import './run-viz-modal.css';
 import getShortType from '../../../utils/short-type';
+import classNames from 'classnames';
 
 const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
   if (!visible) {
     return null;
   }
-
   const { datasetKey, datasetType, runDataWithPin } = runDatasetToShow;
   const numDatasets = runDataWithPin.length;
   const plotView =
@@ -19,6 +19,7 @@ const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
       ? 'twoChart'
       : 'oneChart';
   const isPlotly = getShortType(datasetType) === 'plotly';
+  const isImage = getShortType(datasetType) === 'image';
   const nodeTypeIcon = getShortType(datasetType);
 
   return (
@@ -51,19 +52,15 @@ const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
                 />
               )
           )}
-      </div>
-
-      {/* {hasImage && (
-        <div className="pipeline-matplotlib-chart">
-          <div className="pipeline-run-viz__plot-image-container">
+        {isImage &&
+          runDataWithPin.map((data, index) => (
             <img
               alt="Matplotlib rendering"
-              className="pipeline-run-viz__plot-image--expanded"
-              src={`data:image/png;base64,${metadata.image}`}
+              className={classNames(`pipeline-run-viz__image_${plotView}`)}
+              src={`data:image/png;base64,${data.value}`}
             />
-          </div>
-        </div>
-      )} */}
+          ))}
+      </div>
     </div>
   );
 };

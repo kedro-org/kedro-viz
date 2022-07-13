@@ -29,6 +29,12 @@
   width: 100%; /* Full width (cover the whole page) */
   height: 100%; /* Full height (cover the whole page) */
   background-color: var(--color-bg-plot);
+
+  .pipeline-matplotlib-chart {
+    width: calc(98% - 80px - #{$global-toolbar-width});
+    height: calc(92% - 80px);
+    margin: auto;
+  }
 }
 
 .pipeline-metadata-modal__top {

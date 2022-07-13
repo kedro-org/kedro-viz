@@ -133,6 +133,7 @@ function buildDatasetDataMarkup(
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
   const isPlotly = getShortType(datasetType) === 'plotly';
+  const isImage = getShortType(datasetType) === 'image';
   const isTracking = getShortType(datasetType) === 'tracking';
 
   const onExpandVizClick = () => {
@@ -184,26 +185,51 @@ function buildDatasetDataMarkup(
             </span>
           ))}
         {isPlotly &&
-          runDataWithPin.map((data, index) => (
-            <>
-              <span
-                className={classnames('details-dataset__value', {
-                  'details-dataset__value--single': isSingleRun,
-                })}
-                key={data.runId + index}
-              >
-                <div onClick={onExpandVizClick}>
-                  {data.value && (
-                    <PlotlyChart
-                      data={data.value.data}
-                      layout={data.value.layout}
-                      view="experiment_preview"
-                    />
-                  )}
-                </div>
-              </span>
-            </>
-          ))}
+          runDataWithPin.map((data, index) => {
+            return (
+              <>
+                <span
+                  className={classnames('details-dataset__value', {
+                    'details-dataset__value--single': isSingleRun,
+                  })}
+                  key={data.runId + index}
+                >
+                  <div onClick={onExpandVizClick}>
+                    {data.value && (
+                      <PlotlyChart
+                        data={data.value.data}
+                        layout={data.value.layout}
+                        view="experiment_preview"
+                      />
+                    )}
+                  </div>
+                </span>
+              </>
+            );
+          })}
+        {isImage &&
+          runDataWithPin.map((data, index) => {
+            return (
+              <>
+                <span
+                  className={classnames('details-dataset__value', {
+                    'details-dataset__value--single': isSingleRun,
+                  })}
+                  key={data.runId + index}
+                >
+                  <div onClick={onExpandVizClick}>
+                    {data.value && (
+                      <img
+                        alt="Matplotlib rendering"
+                        className="details-dataset__image"
+                        src={`data:image/png;base64,${data.value}`}
+                      />
+                    )}
+                  </div>
+                </span>
+              </>
+            );
+          })}
       </div>
     </React.Fragment>
   );

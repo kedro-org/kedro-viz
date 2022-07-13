@@ -11,6 +11,9 @@ build:
 
 PROJECT_PATH ?= demo-project
 
+install: build
+	cd package && python setup.py install
+
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
