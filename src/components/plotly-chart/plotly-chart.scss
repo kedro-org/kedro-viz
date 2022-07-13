@@ -11,3 +11,33 @@
     align-items: center;
   }
 }
+
+.pipeline-plotly__oneChart {
+  width: calc(98% - 80px - #{$global-toolbar-width});
+  height: calc(92% - 80px);
+  margin: auto;
+}
+
+.pipeline-plotly__twoChart {
+  display: flex;
+  width: calc(98% - 800px - #{$global-toolbar-width});
+  height: calc(92% - 100px);
+  margin: 5em;
+
+  .js-plotly-plot {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.pipeline-plotly__threeChart {
+  display: flex;
+  width: calc(98% - 940px - #{$global-toolbar-width});
+  height: calc(92% - 100px);
+  margin-left: 5em;
+
+  .js-plotly-plot {
+    display: flex;
+    align-items: center;
+  }
+}

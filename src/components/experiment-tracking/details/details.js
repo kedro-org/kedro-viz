@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
+import RunVizModal from '../run-viz-modal';
 import RunExportModal from '../run-export-modal.js';
 import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
 
@@ -20,6 +21,8 @@ const Details = ({
   setPinnedRun,
   setShowRunDetailsModal,
   showRunDetailsModal,
+  setShowRunVizModal,
+  showRunVizModal,
   sidebarVisible,
   theme,
   trackingDataError,
@@ -27,6 +30,8 @@ const Details = ({
   setShowRunExportModal,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
+
+  const [runDatasetToShow, setRunDatasetToShow] = useState({});
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -59,6 +64,12 @@ const Details = ({
           theme={theme}
           visible={showRunExportModal}
         />
+        <RunVizModal
+          runDatasetToShow={runDatasetToShow}
+          theme={theme}
+          visible={showRunVizModal}
+          setShowRunVizModal={setShowRunVizModal}
+        />
       </ButtonTimeoutContextProvider>
       <div
         className={classnames('kedro', 'details-mainframe', {
@@ -81,6 +92,8 @@ const Details = ({
           pinnedRun={pinnedRun}
           selectedRunIds={selectedRunIds}
           trackingData={runTrackingData}
+          setRunDatasetToShow={setRunDatasetToShow}
+          setShowRunVizModal={setShowRunVizModal}
         />
       </div>
     </>

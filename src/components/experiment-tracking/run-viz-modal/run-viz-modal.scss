@@ -1,5 +1,5 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
+@import '../../../styles/variables';
+@import '../../../styles/extends';
 
 .kui-theme--light {
   --color-bg-plot: #{$color-bg-light-4};
@@ -15,7 +15,7 @@
   --color-button-text: #{$color-light};
 }
 
-.pipeline-metadata-modal {
+.pipeline-run-viz-modal {
   position: absolute;
   top: 0;
   right: 0;
@@ -31,7 +31,7 @@
   background-color: var(--color-bg-plot);
 }
 
-.pipeline-metadata-modal__top {
+.pipeline-run-viz-modal__top {
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -40,13 +40,13 @@
   padding: 1.5em;
 }
 
-.pipeline-metadata-modal__header {
+.pipeline-run-viz-modal__header {
   display: flex;
   margin: 0 auto;
   padding: 0 32px;
 }
 
-.pipeline-metadata-modal__icon {
+.pipeline-run-viz-modal__icon {
   display: inline-block;
   width: 2.9em;
   height: 2.8em;
@@ -54,12 +54,12 @@
   fill: var(--color-text);
 }
 
-.pipeline-metadata-modal__title {
+.pipeline-run-viz-modal__title {
   margin-top: 1px;
   font-size: 1.8em;
 }
 
-.pipeline-metadata-modal__back {
+.pipeline-run-viz-modal__back {
   @extend %button;
 
   position: relative;
@@ -69,18 +69,27 @@
   padding: 6px 12px;
 }
 
-.pipeline-metadata-modal__back-text {
+.pipeline-run-viz-modal__content {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+}
+
+.pipeline-run-viz-modal__back-text {
   font-size: 1.6em;
 }
 
-.pipeline-metadata-modal__back-icon {
+.pipeline-run-viz-modal__back-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 12px 0 0;
   fill: var(--color-text);
 }
 
-.pipeline-metadata-modal__bottom {
+.pipeline-run-viz-modal__bottom {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -92,7 +101,7 @@
   min-width: 100%;
 }
 
-.pipeline-metadata-modal__collapse-plot {
+.pipeline-run-viz-modal__collapse-plot {
   @extend %button;
 
   display: flex;
@@ -107,29 +116,29 @@
   }
 }
 
-.pipeline-metadata-modal__collapse-plot-icon {
+.pipeline-run-viz-modal__collapse-plot-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 6px -0.1em 36px;
   fill: var(--color-button-text);
 }
 
-.pipeline-metadata-modal__collapse-plot-text {
+.pipeline-run-viz-modal__collapse-plot-text {
   margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
 }
 
 @media (max-width: $metadata-modal-breakpoint) {
-  .pipeline-metadata-modal__collapse-plot {
+  .pipeline-run-viz-modal__collapse-plot {
     width: auto;
   }
 
-  .pipeline-metadata-modal__collapse-plot-text {
+  .pipeline-run-viz-modal__collapse-plot-text {
     display: none;
   }
 
-  .pipeline-metadata-modal__collapse-plot-icon {
+  .pipeline-run-viz-modal__collapse-plot-icon {
     margin: 10px;
   }
 }

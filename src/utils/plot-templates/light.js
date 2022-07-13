@@ -179,15 +179,15 @@ const lightTemplate = {
 
 export const lightPreviewTemplate = {
   ...lightTemplate,
-  height: 180,
+  height: 300,
   margin: {
-    l: 10,
-    r: 10,
-    t: 30,
-    b: 10,
+    l: 70,
+    r: 40,
+    t: 60,
+    b: 70,
   },
   showlegend: false,
-  width: 250,
+  width: 400,
   title: {
     font: {
       size: 12,
@@ -226,6 +226,42 @@ export const lightPreviewTemplate = {
   },
 };
 
-export const lightModalTemplate = {
+export const lightOneChartTemplate = {
   ...lightTemplate,
+};
+
+export const lightTwoChartTemplate = {
+  ...lightTemplate,
+  height: 520,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 600,
+};
+
+export const lightThreeChartTemplate = {
+  ...lightTemplate,
+  height: 320,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 400,
+};
+
+export const lightExpPreviewTemplate = {
+  ...lightPreviewTemplate,
+  height: 180,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 250,
 };

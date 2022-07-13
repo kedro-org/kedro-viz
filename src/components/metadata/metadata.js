@@ -15,7 +15,7 @@ import {
   getClickedNodeMetaData,
 } from '../../selectors/metadata';
 import { toggleNodeClicked } from '../../actions/nodes';
-import { toggleCode, togglePlotModal } from '../../actions';
+import { toggleCode, toggleMetadataModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import './styles/metadata.css';
 
@@ -265,7 +265,7 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleCode(visible));
   },
   onToggleMetadataModal: (visible) => {
-    dispatch(togglePlotModal(visible));
+    dispatch(toggleMetadataModal(visible));
   },
 });
 

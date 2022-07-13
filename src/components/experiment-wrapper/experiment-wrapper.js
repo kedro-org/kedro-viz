@@ -10,6 +10,7 @@ import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
+import ExperimentModal from '../experiment-tracking/run-viz-modal';
 import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
@@ -26,6 +27,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
+  const [showRunVizModal, setShowRunVizModal] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -45,10 +47,6 @@ const ExperimentWrapper = ({ theme }) => {
       skip: selectedRunIds.length === 0,
       variables: { runIds: selectedRunIds, showDiff: true },
     });
-  console.log('******');
-  console.log(selectedRunIds);
-  console.log(runTrackingData);
-  console.log('#####');
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -192,6 +190,8 @@ const ExperimentWrapper = ({ theme }) => {
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
+              setShowRunVizModal={setShowRunVizModal}
+              showRunVizModal={showRunVizModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
               trackingDataError={trackingDataError}
@@ -218,6 +218,7 @@ const ExperimentWrapper = ({ theme }) => {
           </a>
         </div>
       )}
+      <ExperimentModal runTrackingData={runTrackingData} />
     </>
   );
 };

@@ -1,9 +1,9 @@
 import React from 'react';
-import MetadataModal from './metadata-modal';
-import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
-import { setup } from '../../utils/state.mock';
-import { toggleMetadataModal } from '../../actions';
-import nodePlot from '../../utils/data/node_plot.mock.json';
+import MetadataModal from './run-viz-modal';
+import { toggleNodeClicked, addNodeMetadata } from '../../../actions/nodes';
+import { setup } from '../../../utils/state.mock';
+import { toggleMetadataModal } from '../../../actions';
+import nodePlot from '../../../utils/data/node_plot.mock.json';
 
 const metricsNodeID = '966b9734';
 

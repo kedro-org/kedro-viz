@@ -47,6 +47,9 @@ const RunDataset = ({
   pinnedRun,
   selectedRunIds,
   trackingData = [],
+  setRunDatasetToShow,
+  setShowRunVizModal,
+  setRunDatasetType,
 }) => {
   return (
     <div
@@ -89,7 +92,10 @@ const RunDataset = ({
                         isSingleRun,
                         pinnedRun,
                         enableShowChanges,
-                        selectedRunIds
+                        selectedRunIds,
+                        setRunDatasetToShow,
+                        setShowRunVizModal,
+                        setRunDatasetType
                       );
                     })}
                 </Accordion>
@@ -120,12 +126,20 @@ function buildDatasetDataMarkup(
   isSingleRun,
   pinnedRun,
   enableShowChanges,
-  selectedRunIds
+  selectedRunIds,
+  setRunDatasetToShow,
+  setShowRunVizModal
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
   const isPlotly = getShortType(datasetType) === 'plotly';
   const isTracking = getShortType(datasetType) === 'tracking';
+
+  const onExpandVizClick = () => {
+    setShowRunVizModal(true);
+    setRunDatasetToShow({ datasetKey, datasetType, runDataWithPin });
+  };
+
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
@@ -178,13 +192,15 @@ function buildDatasetDataMarkup(
                 })}
                 key={data.runId + index}
               >
-                {data.value && (
-                  <PlotlyChart
-                    data={data.value.data}
-                    layout={data.value.layout}
-                    view="preview"
-                  />
-                )}
+                <div onClick={onExpandVizClick}>
+                  {data.value && (
+                    <PlotlyChart
+                      data={data.value.data}
+                      layout={data.value.layout}
+                      view="experiment_preview"
+                    />
+                  )}
+                </div>
               </span>
             </>
           ))}

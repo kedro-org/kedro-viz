@@ -56,7 +56,7 @@ export const TOGGLE_METADATA_MODAL = 'TOGGLE_METADATA_MODAL';
  * Toggle whether to show the plot modal
  * @param {Boolean} visible True if the modal is to be shown
  */
-export function togglePlotModal(visible) {
+export function toggleMetadataModal(visible) {
   return {
     type: TOGGLE_METADATA_MODAL,
     visible,

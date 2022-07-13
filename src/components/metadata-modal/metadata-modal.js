@@ -4,7 +4,7 @@ import PlotlyChart from '../plotly-chart';
 import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
-import { togglePlotModal } from '../../actions';
+import { toggleMetadataModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.css';
@@ -25,24 +25,29 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
 
   return (
     <div className="pipeline-metadata-modal">
-      <div className="pipeline-plot-modal__top">
+      <div className="pipeline-metadata-modal__top">
         <button
-          className="pipeline-plot-modal__back"
+          className="pipeline-metadata-modal__back"
           onClick={onCollapsePlotClick}
         >
-          <BackIcon className="pipeline-plot-modal__back-icon"></BackIcon>
-          <span className="pipeline-plot-modal__back-text">Back</span>
+          <BackIcon className="pipeline-metadata-modal__back-icon"></BackIcon>
+          <span className="pipeline-metadata-modal__back-text">Back</span>
         </button>
-        <div className="pipeline-plot-modal__header">
-          <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
-          <span className="pipeline-plot-modal__title">{metadata.name}</span>
+        <div className="pipeline-metadata-modal__header">
+          <NodeIcon
+            className="pipeline-metadata-modal__icon"
+            icon={nodeTypeIcon}
+          />
+          <span className="pipeline-metadata-modal__title">
+            {metadata.name}
+          </span>
         </div>
       </div>
       {hasPlot && (
         <PlotlyChart
           data={metadata.plot.data}
           layout={metadata.plot.layout}
-          view="modal"
+          view="oneChart"
         />
       )}
       {hasImage && (
@@ -56,13 +61,13 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
           </div>
         </div>
       )}
-      <div className="pipeline-plot-modal__bottom">
+      <div className="pipeline-metadata-modal__bottom">
         <button
-          className="pipeline-plot-modal__collapse-plot"
+          className="pipeline-metadata-modal__collapse-plot"
           onClick={onCollapsePlotClick}
         >
-          <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
-          <span className="pipeline-plot-modal__collapse-plot-text">
+          <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
+          <span className="pipeline-metadata-modal__collapse-plot-text">
             {hasPlot
               ? 'Collapse Plotly Visualization'
               : 'Collapse Matplotlib Image'}
@@ -81,7 +86,7 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = (dispatch) => ({
   onToggle: (value) => {
-    dispatch(togglePlotModal(value));
+    dispatch(toggleMetadataModal(value));
   },
 });
 

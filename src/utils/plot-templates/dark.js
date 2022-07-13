@@ -179,12 +179,12 @@ const darkTemplate = {
 
 export const darkPreviewTemplate = {
   ...darkTemplate,
-  height: 180,
+  height: 300,
   margin: {
-    l: 10,
-    r: 10,
-    t: 30,
-    b: 10,
+    l: 70,
+    r: 40,
+    t: 60,
+    b: 70,
   },
   title: {
     font: {
@@ -193,7 +193,7 @@ export const darkPreviewTemplate = {
     x: 0.09,
   },
   showlegend: false,
-  width: 250,
+  width: 400,
   xaxis: {
     ...darkTemplate.xaxis,
     title: {
@@ -226,6 +226,42 @@ export const darkPreviewTemplate = {
   },
 };
 
-export const darkModalTemplate = {
+export const darkOneChartTemplate = {
   ...darkTemplate,
+};
+
+export const darkTwoChartTemplate = {
+  ...darkTemplate,
+  height: 520,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 600,
+};
+
+export const darkThreeChartTemplate = {
+  ...darkTemplate,
+  height: 320,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 400,
+};
+
+export const darkExpPreviewTemplate = {
+  ...darkPreviewTemplate,
+  height: 180,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 250,
 };
