@@ -256,7 +256,7 @@ jobs:
             # install lightsail cli
             # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
             aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
-            
+
   all_circleci_checks_succeeded:
     docker:
       - image: circleci/python # any light-weight image
@@ -274,6 +274,15 @@ release_filter: &release_filter
 
 workflows:
   version: 2.1
+
+  deploy_demo:
+    jobs:
+      - deploy_demo:
+          context:
+            - kedro-ecr-publish
+          filters:
+            branches:
+              only: demo
 
   build_frontend:
     when:
@@ -322,18 +331,6 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
-      - deploy_demo:
-          context:
-            - kedro-ecr-publish
-          requires:
-            - e2e_tests
-            - win_e2e_tests
-            - unit_tests
-            - win_unit_tests
-            - lint
-          filters:
-            branches:
-              only: demo
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
