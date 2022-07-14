@@ -6,10 +6,12 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
 
-from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import (
+    RunModel,
+    UserRunDetailsModel,
+)
 
-from .types import JSONObject, Run, TrackingDataset
-
+from .types import JSONObject, Run
 
 # TODO: move to static methods?
 def format_run(
@@ -71,7 +73,7 @@ def format_runs(
     ]
 
 
-def format_run_tracking_data_old(
+def format_run_tracking_data(
     tracking_data: Dict, show_diff: Optional[bool] = False
 ) -> JSONObject:
     """Convert tracking data in the front-end format.
@@ -99,7 +101,7 @@ def format_run_tracking_data_old(
         >>>         'classWeight":21
         >>>     },
         >>> }
-        >>> format_run_tracking_data_old(tracking_data, False)
+        >>> format_run_tracking_data(tracking_data, False)
         {
             bootstrap: [
                 { runId: 'My Favorite Run', value: 0.8 },
@@ -129,28 +131,4 @@ def format_run_tracking_data_old(
     return JSONObject(formatted_tracking_data)
 
 
-def format_tracking_data(
-    all_runs_for_all_datasets, show_diff: Optional[bool] = False
-) -> List[TrackingDataset]:
-    # pylint: disable=protected-access,import-outside-toplevel
-    """Get all tracking data for a list of runs. Tracking data contains the data from the
-    tracking MetricsDataSet and JSONDataSet instances that have been logged
-    during that specific `kedro run`.
-    Args:
-        run_ids:  List of IDs of runs to fetch the tracking data for.
-        show_diff: If false, show runs with only common tracking
-            data; else show all available tracking data
-
-    Returns:
-        List of TrackingDatasets
-
-    """
-    all_datasets = []
-    for dataset_name, all_runs_for_one_dataset in all_runs_for_all_datasets.items():
-        tracking_dataset = TrackingDataset(
-            datasetName=dataset_name,
-            datasetType=f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}",
-            data=format_run_tracking_data_old(all_runs_for_one_dataset, show_diff),
-        )
-        all_datasets.append(tracking_dataset)
-    return all_datasets
+# Note go from model to types - docstring this

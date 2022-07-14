@@ -1,11 +1,22 @@
-"""Data model to represent run data from a Kedro Session."""
+"""kedro_viz.models.experiment_tracking` defines data models to represent run data
+ from a Kedro Session."""
 # pylint: disable=too-few-public-methods,missing-class-docstring
+import logging
+
+from typing import Dict, Any
+
+from dataclasses import field, dataclass
+
+from enum import Enum
 
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
+from kedro.io import AbstractVersionedDataSet, Version
+
+logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
@@ -36,7 +47,65 @@ class UserRunDetailsModel(Base):
         orm_mode = True
 
 
-# class TrackingDatasetModel:
-#     data:
-#     dataset_name:
-#     datase_type: str  # TODO: change to enum
+class TrackingDatasetGroup(str, Enum):
+    """Represent all possible node types in the graph representation of a Kedro pipeline.
+    The type needs to inherit from str as well so FastAPI can serialise it. See:
+    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
+    """
+
+    # PLOT = "plot"
+    METRIC = "metric"
+    JSON = "json"
+
+
+@dataclass
+class TrackingDatasetModel:
+    dataset_name: str
+    dataset: AbstractVersionedDataSet
+    dataset_type: str = field(init=False)
+    dataset_group: TrackingDatasetGroup = field(init=False)
+    runs: Dict[str, Any] = field(
+        init=False, default_factory=dict
+    )  # map from run_id to data
+
+    def __post_init__(self):
+        self.dataset_name = self.dataset
+        self.dataset_type = get_dataset_type(self.dataset)
+        self.dataset_group = TRACKING_DATASET_GROUPS[self.dataset_type]
+
+    def load_tracking_data(self, run_id: str):
+        if run_id in self.runs:
+            return
+
+        self.dataset._version = Version(run_id, None)  # set load version
+
+        try:
+            from kedro.extras.datasets import tracking, json
+
+            tracking.JSONDataSet.load = json.JSONDataSet.load
+            tracking.MetricsDataSet.load = json.JSONDataSet.load
+            self.runs[run_id] = self.dataset.load()
+        except Exception as exc:
+            logger.warning(
+                "'%s' with version '%s' could not be loaded. Full exception: %s",
+                self.dataset_name,
+                run_id,
+                exc,
+            )
+            self.runs[run_id] = {}
+
+        self.dataset._version = None
+
+
+# TODO: tidy into enum somehow? Where to put this?
+TRACKING_DATASET_GROUPS = {
+    # "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    # "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+}
+
+
+# TODO: where does this belong?
+def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
+    return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"

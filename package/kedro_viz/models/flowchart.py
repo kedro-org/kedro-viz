@@ -1,4 +1,4 @@
-"""`kedro_viz.models.graph` defines data models to represent Kedro entities in a viz graph."""
+"""`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
 import base64
@@ -470,6 +470,7 @@ class DataNode(GraphNode):
             self._get_namespace(self.full_name)
         )
 
+    # TODO: improve
     def is_plot_node(self):
         """Check if the current node is a plot node.
         Currently it only recognises one underlying dataset as a plot node.
@@ -576,6 +577,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
+    # TODO: refactor
     def __post_init__(self, data_node: DataNode):
         # pylint: disable=import-outside-toplevel
         self.type = data_node.dataset_type

@@ -3,16 +3,12 @@ centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
 
-from typing import Optional, List
+from typing import Optional, Dict
 
-from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
-from kedro_viz.api.graphql.types import TrackingDataset
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, Version
+
 
 from kedro_viz.constants import KEDRO_VERSION
-
-from kedro.io.core import Version as DataSetVersion
-
-logger = logging.getLogger(__name__)
 
 
 class CatalogRepository:
@@ -53,65 +49,33 @@ class CatalogRepository:
                 )
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
+    def get_dataset(
+        self, dataset_name: str, version: Version = None
+    ) -> Optional[AbstractDataSet]:
         dataset_obj: Optional[AbstractDataSet]
-        if KEDRO_VERSION.match(">=0.16.0"):
-            try:
-                # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
-                # fuzzy-matching process.
-                if KEDRO_VERSION.match(">=0.18.1"):
-                    dataset_obj = self._catalog._get_dataset(
-                        dataset_name, suggest=False
-                    )
-                else:  # pragma: no cover
-                    dataset_obj = self._catalog._get_dataset(dataset_name)
-            except DataSetNotFoundError:  # pragma: no cover
-                dataset_obj = None
-        else:
-            dataset_obj = self._catalog._data_sets.get(dataset_name)  # pragma: no cover
+        try:
+            # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
+            # fuzzy-matching process.
+            if KEDRO_VERSION.match(">=0.18.1"):
+                dataset_obj = self._catalog._get_dataset(
+                    dataset_name, version, suggest=False
+                )
+            else:  # pragma: no cover
+                dataset_obj = self._catalog._get_dataset(dataset_name, version)
+        except DataSetNotFoundError:  # pragma: no cover
+            dataset_obj = None
+
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
     # TODO: test
-    def get_tracking_dataset_by_run_ids(self, run_ids: List[str]):
-        all_runs_for_all_datasets = {}
-        for dataset_name, dataset in self.get_tracking_datasets():
-            all_runs_for_one_dataset = {}
-            for run_id in run_ids:
-                # Set the load_version to run_id
-                dataset._version = DataSetVersion(run_id, None)
-                if dataset.exists():
-                    data = dataset.load()
-                    all_runs_for_one_dataset[run_id] = data
-                else:
-                    all_runs_for_one_dataset[run_id] = {}
-                    logger.warning(
-                        "'%s' with version '%s' could not be found",
-                        dataset_name,
-                        run_id,
-                    )
-            all_runs_for_all_datasets[dataset_name] = all_runs_for_one_dataset
-            # TODO: define TrackingDatasetModel?
-        return all_runs_for_all_datasets
-
-    def get_tracking_datasets(self):
+    def as_dict(self) -> Dict[str, AbstractDataSet]:
         return {
-            dataset_name: dataset
-            for dataset_name, dataset in self._catalog._data_sets.items()
-            if self.is_tracking_dataset(dataset)
+            dataset_name: self.get_dataset(dataset_name)
+            for dataset_name in self._catalog.list()
         }
-
-    @staticmethod
-    def is_tracking_dataset(dataset):
-        # TODO: think about where this import goes
-        from kedro.extras.datasets import tracking, json
-
-        tracking.JSONDataSet.load = json.JSONDataSet.load
-        tracking.MetricsDataSet.load = json.JSONDataSet.load
-
-        return isinstance(dataset, (tracking.JSONDataSet, tracking.MetricsDataSet))
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:

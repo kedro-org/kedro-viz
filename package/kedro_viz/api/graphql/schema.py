@@ -9,8 +9,6 @@ import logging
 from typing import AsyncGenerator, List, Optional
 
 import strawberry
-from kedro.io.core import Version as DataSetVersion
-from kedro.io.core import get_filepath_str
 from semver import VersionInfo
 from strawberry import ID
 from strawberry.tools import merge_types
@@ -19,7 +17,11 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 
-from .serializers import format_run, format_run_tracking_data_old, format_runs
+from .serializers import (
+    format_run,
+    format_run_tracking_data,
+    format_runs,
+)
 from .types import (
     Run,
     RunInput,
@@ -61,11 +63,17 @@ class RunsQuery:
         self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
         """Gets tracking datasets for specified run_ids."""
-        # return get_run_tracking_data(run_ids, show_diff)
-        return format_tracking_data(
-            data_access_manager.catalog.get_tracking_dataset_by_run_ids(run_ids),
-            show_diff,
+        tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids
         )
+        return [
+            TrackingDataset(
+                datasetName=dataset.dataset_name,
+                datasetType=dataset.dataset_type,
+                data=format_run_tracking_data(dataset.runs, show_diff),
+            )
+            for dataset in tracking_dataset_models
+        ]
 
 
 @strawberry.type
@@ -158,9 +166,6 @@ schema = strawberry.Schema(
 
 
 # `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.
-# Completely abstract database logic inside repositories within the data access layer and hide it from the API layer.
-# runs list -> experiment tracking
 # When does get_all_runs get called? Just wondering why this is the right place to update the last_run_id
 # > t's the first call when user visits experimentation tracking tab.
 # get_new_runs vs. get_all_runs: I prefer to keep these interfaces separate in case we need to add more logic to each use case. It's an old habit, e.g. if we end up caching all runs somewhere we won't need to go to the DB to fetch them. We will almost always have to do it for new runs.
-# graph -> flowchart or something
