@@ -1,9 +1,8 @@
 @import '../../styles/variables';
 @import '../../styles/mixins';
 
-$total-sidebar-toolbar-width-closed: $sidebar-width-closed +
-  $global-toolbar-width;
-$total-sidebar-toolbar-width-open: $sidebar-width-open + $global-toolbar-width;
+$sidebar-toolbar-width-closed: $sidebar-width-closed + $global-toolbar-width;
+$sidebar-toolbar-width-open: $sidebar-width-open + $global-toolbar-width;
 
 .pipeline-wrapper {
   height: 100%;
@@ -17,14 +16,14 @@ $total-sidebar-toolbar-width-open: $sidebar-width-open + $global-toolbar-width;
   justify-content: center;
   position: absolute;
   top: 0;
-  transform: translateX($total-sidebar-toolbar-width-closed);
+  transform: translateX($sidebar-toolbar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
-  width: calc((100% - #{$total-sidebar-toolbar-width-closed}));
+  width: calc((100% - #{sidebar-toolbar-width-closed}));
 
   @media (min-width: $sidebar-width-breakpoint) {
     &--sidebar-visible {
-      transform: translateX($total-sidebar-toolbar-width-open);
-      width: calc((100% - #{$total-sidebar-toolbar-width-open}));
+      transform: translateX($sidebar-toolbar-width-open);
+      width: calc((100% - #{$sidebar-toolbar-width-open}));
     }
   }
 }
