@@ -18,16 +18,16 @@ from kedro_viz.models.experiment_tracking import (
 class TrackingDatasetsRepository:
     def __init__(self):
         self.tracking_datasets_by_group: Dict[
-            TrackingDatasetGroup, Set[TrackingDatasetModel]
-        ] = defaultdict(set)
+            TrackingDatasetGroup, List[TrackingDatasetModel]
+        ] = defaultdict(list)
 
     def get_tracking_datasets_by_group_by_run_ids(
         self, run_ids: List[str], group: TrackingDatasetGroup = None
-    ) -> Set[TrackingDatasetModel]:
+    ) -> List[TrackingDatasetModel]:
         tracking_datasets = (
             self.tracking_datasets_by_group.get(group, [])
             if group is not None
-            else set().union(*self.tracking_datasets_by_group.values())
+            else sum(self.tracking_datasets_by_group.values(), [])
             # NOTE this will be tidied with only groups
         )
 
@@ -41,7 +41,7 @@ class TrackingDatasetsRepository:
     ) -> None:
         tracking_dataset = TrackingDatasetModel(dataset_name, dataset)
         tracking_dataset_group = TRACKING_DATASET_GROUPS[tracking_dataset.dataset_type]
-        self.tracking_datasets_by_group[tracking_dataset_group].add(tracking_dataset)
+        self.tracking_datasets_by_group[tracking_dataset_group].append(tracking_dataset)
 
     def is_tracking_dataset(self, dataset) -> bool:
         # TODO: make sure check for versioned works correctly

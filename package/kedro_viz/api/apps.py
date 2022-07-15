@@ -14,8 +14,8 @@ from jinja2 import Environment, FileSystemLoader
 from kedro_viz import __version__
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
-from .graphql import router as graphql_router
-from .rest import router as rest_router
+from .graphql.router import router as graphql_router
+from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 

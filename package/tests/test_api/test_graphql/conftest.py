@@ -6,7 +6,7 @@ from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.extras.datasets.tracking import JSONDataSet, MetricsDataSet
 from kedro.io import DataCatalog, Version
 
-from kedro_viz.api.graphql import Run
+from kedro_viz.api.graphql.types import Run
 from kedro_viz.database import create_db_engine
 from kedro_viz.models.experiment_tracking import Base, RunModel, UserRunDetailsModel
 
@@ -64,7 +64,9 @@ def example_db_session_with_runs(example_db_session, example_run_ids):
 @pytest.fixture
 def data_access_manager_with_no_run(data_access_manager, example_db_session, mocker):
     data_access_manager.set_db_session(example_db_session)
-    mocker.patch("kedro_viz.api.graphql.data_access_manager", data_access_manager)
+    mocker.patch(
+        "kedro_viz.api.graphql.schema.data_access_manager", data_access_manager
+    )
     yield data_access_manager
 
 
@@ -73,7 +75,9 @@ def data_access_manager_with_runs(
     data_access_manager, example_db_session_with_runs, mocker
 ):
     data_access_manager.set_db_session(example_db_session_with_runs)
-    mocker.patch("kedro_viz.api.graphql.data_access_manager", data_access_manager)
+    mocker.patch(
+        "kedro_viz.api.graphql.schema.data_access_manager", data_access_manager
+    )
     yield data_access_manager
 
 

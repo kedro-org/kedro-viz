@@ -1,6 +1,6 @@
 import json
 
-from kedro_viz.api.graphql import schema
+from kedro_viz.api.graphql.schema import schema
 from kedro_viz.models.experiment_tracking import RunModel
 
 

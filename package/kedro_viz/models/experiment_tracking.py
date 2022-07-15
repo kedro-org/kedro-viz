@@ -2,6 +2,7 @@
  from a Kedro Session."""
 # pylint: disable=too-few-public-methods,missing-class-docstring
 import logging
+import types
 
 from typing import Dict, Any
 
@@ -79,8 +80,8 @@ class TrackingDatasetModel:
         try:
             from kedro.extras.datasets import tracking, json
 
-            tracking.JSONDataSet.load = json.JSONDataSet.load
-            tracking.MetricsDataSet.load = json.JSONDataSet.load
+            tracking.JSONDataSet._load = json.JSONDataSet._load
+            tracking.MetricsDataSet._load = json.JSONDataSet._load
             self.runs[run_id] = self.dataset.load()
         except Exception as exc:
             logger.warning(
