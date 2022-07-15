@@ -73,7 +73,7 @@ class TrackingDatasetModel:
 
     def load_tracking_data(self, run_id: str):
         if run_id in self.runs:
-            return
+            return  # pragma: no cover
 
         self.dataset._version = Version(run_id, None)  # set load version
 
