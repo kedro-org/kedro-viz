@@ -1,10 +1,11 @@
+from collections import defaultdict
+
 from typing import List, Dict, Set, Any
 
 from kedro.io import AbstractVersionedDataSet
 from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup,
     TrackingDatasetModel,
-    TRACKING_DATASET_GROUPS,
     get_dataset_type,
 )
 
@@ -16,28 +17,31 @@ from kedro_viz.models.experiment_tracking import (
 
 class TrackingDatasetsRepository:
     def __init__(self):
-        self.tracking_datasets: Set[TrackingDatasetModel] = set()
+        self.tracking_datasets_by_group: Dict[
+            TrackingDatasetGroup, Set[TrackingDatasetModel]
+        ] = defaultdict(set)
 
     def get_tracking_datasets_by_group_by_run_ids(
         self, run_ids: List[str], group: TrackingDatasetGroup = None
     ) -> Set[TrackingDatasetModel]:
-        if group is None:
-            datasets = self.tracking_datasets
-        else:
-            datasets = {
-                dataset
-                for dataset in self.tracking_datasets
-                if dataset.dataset_group == group
-            }
-        for dataset in datasets:
+        tracking_datasets = (
+            self.tracking_datasets_by_group.get(group, [])
+            if group is not None
+            else set().union(*self.tracking_datasets_by_group.values())
+            # NOTE this will be tidied with only groups
+        )
+
+        for dataset in tracking_datasets:
             for run_id in run_ids:
                 dataset.load_tracking_data(run_id)
-        return datasets
+        return tracking_datasets
 
     def add_tracking_dataset(
         self, dataset_name: str, dataset: AbstractVersionedDataSet
     ) -> None:
-        self.tracking_datasets.add(TrackingDatasetModel(dataset_name, dataset))
+        tracking_dataset = TrackingDatasetModel(dataset_name, dataset)
+        tracking_dataset_group = TRACKING_DATASET_GROUPS[tracking_dataset.dataset_type]
+        self.tracking_datasets_by_group[tracking_dataset_group].add(tracking_dataset)
 
     def is_tracking_dataset(self, dataset) -> bool:
         # TODO: make sure check for versioned works correctly
@@ -46,3 +50,12 @@ class TrackingDatasetsRepository:
             get_dataset_type(dataset) in TRACKING_DATASET_GROUPS
             and dataset._version is not None
         )
+
+
+# TODO: tidy into enum somehow? Where to put this?
+TRACKING_DATASET_GROUPS = {
+    # "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    # "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+}

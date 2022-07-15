@@ -63,15 +63,12 @@ class TrackingDatasetModel:
     dataset_name: str
     dataset: AbstractVersionedDataSet
     dataset_type: str = field(init=False)
-    dataset_group: TrackingDatasetGroup = field(init=False)
     runs: Dict[str, Any] = field(
         init=False, default_factory=dict
     )  # map from run_id to data
 
     def __post_init__(self):
-        self.dataset_name = self.dataset
         self.dataset_type = get_dataset_type(self.dataset)
-        self.dataset_group = TRACKING_DATASET_GROUPS[self.dataset_type]
 
     def load_tracking_data(self, run_id: str):
         if run_id in self.runs:
@@ -95,15 +92,6 @@ class TrackingDatasetModel:
             self.runs[run_id] = {}
 
         self.dataset._version = None
-
-
-# TODO: tidy into enum somehow? Where to put this?
-TRACKING_DATASET_GROUPS = {
-    # "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
-    # "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
-    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
-}
 
 
 # TODO: where does this belong?
