@@ -8,6 +8,13 @@ import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
 
+import {
+  SlideFromLeftToRight,
+  SlideFromRightToLeft,
+} from './sliding-animation';
+
+const duration = 300;
+
 export const ExperimentPrimaryToolbar = ({
   displaySidebar,
   enableComparisonView,
@@ -35,44 +42,64 @@ export const ExperimentPrimaryToolbar = ({
       onToggleSidebar={setSidebarVisible}
       visible={{ sidebar: sidebarVisible }}
     >
-      <IconButton
-        active={selectedRunData?.bookmark}
-        ariaLabel="Toggle run bookmark"
-        className={'pipeline-menu-button--labels'}
-        icon={selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon}
-        labelText={`${selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'}`}
-        onClick={() => toggleBookmark()}
-        visible={!enableComparisonView}
-      />
-      <IconButton
-        ariaLabel="Edit run details"
-        className={'pipeline-menu-button--labels'}
-        icon={PencilIcon}
-        labelText={`Edit details`}
-        onClick={() => showRunDetailsModal(true)}
-        visible={!enableComparisonView}
-      />
-      <IconButton
-        active={enableShowChanges}
-        ariaLabel="Toggle show changes"
-        className={'pipeline-menu-button--labels'}
-        disabled={showChangesIconDisabled}
-        icon={ShowChangesIcon}
-        labelText={
-          !showChangesIconDisabled
-            ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
-            : null
-        }
-        onClick={() => setEnableShowChanges(!enableShowChanges)}
-        visible={enableComparisonView}
-      />
-      <IconButton
-        ariaLabel="Export Run Data"
-        className={'pipeline-menu-button--export-runs'}
-        icon={ExportIcon}
-        labelText="Export run data"
-        onClick={() => setShowRunExportModal(true)}
-      />
+      <SlideFromLeftToRight state={enableComparisonView} duration={duration}>
+        {enableComparisonView && (
+          <>
+            <IconButton
+              active={enableShowChanges}
+              ariaLabel="Toggle show changes"
+              className={'pipeline-menu-button--labels'}
+              disabled={showChangesIconDisabled}
+              icon={ShowChangesIcon}
+              labelText={
+                !showChangesIconDisabled
+                  ? `${enableShowChanges ? 'Disable' : 'Enable'} show changes`
+                  : null
+              }
+              onClick={() => setEnableShowChanges(!enableShowChanges)}
+            />
+            <IconButton
+              ariaLabel="Export Run Data"
+              className={'pipeline-menu-button--export-runs'}
+              icon={ExportIcon}
+              labelText="Export run data"
+              onClick={() => setShowRunExportModal(true)}
+            />
+          </>
+        )}
+      </SlideFromLeftToRight>
+      <SlideFromRightToLeft state={!enableComparisonView} duration={duration}>
+        {!enableComparisonView && (
+          <>
+            <IconButton
+              active={selectedRunData?.bookmark}
+              ariaLabel="Toggle run bookmark"
+              className={'pipeline-menu-button--labels'}
+              icon={
+                selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon
+              }
+              labelText={`${
+                selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'
+              }`}
+              onClick={() => toggleBookmark()}
+            />
+            <IconButton
+              ariaLabel="Edit run details"
+              className={'pipeline-menu-button--labels'}
+              icon={PencilIcon}
+              labelText={`Edit details`}
+              onClick={() => showRunDetailsModal(true)}
+            />
+            <IconButton
+              ariaLabel="Export Run Data"
+              className={'pipeline-menu-button--export-runs'}
+              icon={ExportIcon}
+              labelText="Export run data"
+              onClick={() => setShowRunExportModal(true)}
+            />
+          </>
+        )}
+      </SlideFromRightToLeft>
     </PrimaryToolbar>
   );
 };
