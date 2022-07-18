@@ -40,6 +40,7 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {array} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
+  enableComparisonView,
   enableShowChanges,
   isSingleRun,
   pinnedRun,
@@ -47,11 +48,7 @@ const RunDataset = ({
   trackingData = [],
 }) => {
   return (
-    <div
-      className={classnames('details-dataset', {
-        'details-dataset--single': isSingleRun,
-      })}
-    >
+    <div className="details-dataset">
       {trackingData.map((dataset) => {
         const { data, datasetName } = dataset;
 
@@ -73,9 +70,9 @@ const RunDataset = ({
                   key,
                   dataset.data[key],
                   rowIndex,
-                  isSingleRun,
                   pinnedRun,
                   enableShowChanges,
+                  enableComparisonView,
                   selectedRunIds
                 );
               })}
@@ -91,7 +88,7 @@ const RunDataset = ({
  * @param {string} datasetKey The row label of the data.
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
- * @param {boolean} isSingleRun Whether or not this is a single run.
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
  * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
  * @param {array} selectedRunIds Array of strings of runIds.
@@ -100,9 +97,9 @@ function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
   rowIndex,
-  isSingleRun,
   pinnedRun,
   enableShowChanges,
+  enableComparisonView,
   selectedRunIds
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
@@ -112,17 +109,12 @@ function buildDatasetDataMarkup(
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
         <div className="details-dataset__row">
-          <span
-            className={classnames('details-dataset__name-header', {
-              'details-dataset__value-header--single': isSingleRun,
-            })}
-          >
-            Name
-          </span>
+          <span className="details-dataset__name-header">Name</span>
           {datasetValues.map((value, index) => (
             <span
               className={classnames('details-dataset__value-header', {
-                'details-dataset__value-header--single': isSingleRun,
+                'details-dataset__value-header--comparision-view':
+                  enableComparisonView,
               })}
               key={value.runId + index}
             >
@@ -134,7 +126,7 @@ function buildDatasetDataMarkup(
       <div className="details-dataset__row">
         <span
           className={classnames('details-dataset__label', {
-            'details-dataset__label--single': isSingleRun,
+            'details-dataset__label--comparision-view': enableComparisonView,
           })}
         >
           {datasetKey}
@@ -142,7 +134,7 @@ function buildDatasetDataMarkup(
         {runDataWithPin.map((data, index) => (
           <span
             className={classnames('details-dataset__value', {
-              'details-dataset__value--single': isSingleRun,
+              'details-dataset__value--comparision-view': enableComparisonView,
             })}
             key={data.runId + index}
           >
