@@ -1,21 +1,16 @@
-"""kedro_viz.models.experiment_tracking` defines data models to represent run data
- from a Kedro Session."""
-# pylint: disable=too-few-public-methods,missing-class-docstring
+"""kedro_viz.models.experiment_tracking` defines data models to represent run data and
+tracking datasets."""
+# pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
 import logging
-import types
-
-from typing import Dict, Any
-
-from dataclasses import field, dataclass
-
+from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Dict
 
+from kedro.io import AbstractVersionedDataSet, Version
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
-
-from kedro.io import AbstractVersionedDataSet, Version
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
@@ -49,10 +44,7 @@ class UserRunDetailsModel(Base):
 
 
 class TrackingDatasetGroup(str, Enum):
-    """Represent all possible node types in the graph representation of a Kedro pipeline.
-    The type needs to inherit from str as well so FastAPI can serialise it. See:
-    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
-    """
+    """Different groups to present together on the frontend."""
 
     # PLOT = "plot"
     METRIC = "metric"
@@ -61,40 +53,49 @@ class TrackingDatasetGroup(str, Enum):
 
 @dataclass
 class TrackingDatasetModel:
+    """Data model to represent a tracked dataset."""
+
     dataset_name: str
+    # dataset is the actual dataset instance, whereas dataset_type is a string.
+    # e.g. "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
     dataset: AbstractVersionedDataSet
     dataset_type: str = field(init=False)
-    runs: Dict[str, Any] = field(
-        init=False, default_factory=dict
-    )  # map from run_id to data
+    # runs is a mapping from run_id to loaded data.
+    runs: Dict[str, Any] = field(init=False, default_factory=dict)
 
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
 
     def load_tracking_data(self, run_id: str):
+        # No need to reload data that has already been loaded.
         if run_id in self.runs:
             return  # pragma: no cover
 
-        self.dataset._version = Version(run_id, None)  # set load version
+        # Set the load version.
+        self.dataset._version = Version(run_id, None)
 
         try:
-            from kedro.extras.datasets import tracking, json
+            # tracking datasets do not have load methods defined yet but would be the
+            # same as json loader.
+            # pylint: disable=import-outside-toplevel
+            from kedro.extras.datasets import json, tracking
 
             tracking.JSONDataSet._load = json.JSONDataSet._load
             tracking.MetricsDataSet._load = json.JSONDataSet._load
             self.runs[run_id] = self.dataset.load()
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s",
                 self.dataset_name,
                 run_id,
                 exc,
             )
+            # TODO: ideally this would be None when we load things that aren't just
+            # json.
             self.runs[run_id] = {}
 
         self.dataset._version = None
 
 
-# TODO: where does this belong?
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"

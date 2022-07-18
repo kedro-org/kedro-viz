@@ -1,20 +1,15 @@
 import json
-
-from semver import VersionInfo
-
-from kedro_viz import __version__
 from unittest.mock import call
 
 import pytest
 from kedro.extras.datasets.tracking import JSONDataSet
 from kedro.io import DataCatalog, Version
 from kedro.io.core import get_filepath_str
+from semver import VersionInfo
 from strawberry import ID
 
-from kedro_viz.api.graphql.types import (
-    JSONObject,
-    TrackingDataset,
-)
+from kedro_viz import __version__
+from kedro_viz.api.graphql.types import JSONObject, TrackingDataset
 from kedro_viz.data_access.managers import DataAccessManager
 
 

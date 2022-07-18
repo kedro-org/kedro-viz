@@ -1,3 +1,4 @@
+"""`kedro_viz.api.graphql.router` defines GraphQL routes."""
 from fastapi import APIRouter
 from strawberry.asgi import GraphQL
 

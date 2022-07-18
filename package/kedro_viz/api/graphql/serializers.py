@@ -1,3 +1,6 @@
+"""`kedro_viz.api.graphql.serializers` defines serializers to create strawberry types
+from the underlying data models."""
+
 from __future__ import annotations
 
 import json
@@ -6,14 +9,11 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
 
-from kedro_viz.models.experiment_tracking import (
-    RunModel,
-    UserRunDetailsModel,
-)
+from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 from .types import JSONObject, Run
 
-# TODO: move to static methods?
+
 def format_run(
     run_id: str, run_blob: Dict, user_run_details: Optional[UserRunDetailsModel] = None
 ) -> Run:
@@ -38,17 +38,16 @@ def format_run(
     run = Run(
         author=run_blob.get("username"),
         bookmark=bookmark,
-        gitBranch=git_data.get("branch") if git_data else None,
-        gitSha=git_data.get("commit_sha") if git_data else None,
+        git_branch=git_data.get("branch") if git_data else None,
+        git_sha=git_data.get("commit_sha") if git_data else None,
         id=ID(run_id),
         notes=notes,
-        runCommand=run_blob.get("cli", {}).get("command_path"),
+        run_command=run_blob.get("cli", {}).get("command_path"),
         title=title,
     )
     return run
 
 
-# TODO: needed?
 def format_runs(
     runs: Iterable[RunModel],
     user_run_details: Optional[Dict[str, UserRunDetailsModel]] = None,
@@ -129,6 +128,3 @@ def format_run_tracking_data(
                 del formatted_tracking_data[tracking_key]
 
     return JSONObject(formatted_tracking_data)
-
-
-# Note go from model to types - docstring this

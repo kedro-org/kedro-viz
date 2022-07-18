@@ -1,12 +1,9 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
-import logging
-
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, Version
-
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -70,7 +67,6 @@ class CatalogRepository:
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
-    # TODO: test
     def as_dict(self) -> Dict[str, AbstractDataSet]:
         return {
             dataset_name: self.get_dataset(dataset_name)

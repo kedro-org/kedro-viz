@@ -193,9 +193,9 @@ def example_runs(example_run_ids):
             notes="Hello World",
             title="Hello Kedro",
             author="",
-            gitBranch="",
-            gitSha="",
-            runCommand="",
+            git_branch="",
+            git_sha="",
+            run_command="",
         )
         for run_id in example_run_ids
     ]

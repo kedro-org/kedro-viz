@@ -1,4 +1,4 @@
-"""`kedro_viz.api.rest.router` defines routes and handling logic for the API."""
+"""`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse

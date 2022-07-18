@@ -50,6 +50,9 @@ secret-scan:
 security-scan:
 	bandit -ll -q -r kedro_viz
 
+strawberry-server:
+	strawberry server --app-dir=package kedro_viz.api.graphql.schema --host 127.0.0.1
+
 version:
 	python3 tools/versioning.py $(VERSION)
 

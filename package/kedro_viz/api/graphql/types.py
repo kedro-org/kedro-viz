@@ -1,3 +1,6 @@
+"""`kedro_viz.api.graphql.types` defines strawberry types."""
+
+# pylint: disable=too-few-public-methods, unnecessary-lambda,missing-class-docstring
 from __future__ import annotations
 
 import json
@@ -24,63 +27,62 @@ else:
         description="Generic scalar type representing a JSON object",
     )
 
+# TODO: docs using description ARGUMENT
 
-@strawberry.type
+
+@strawberry.type(description="Run metadata")
 class Run:
-    """Run object format"""
-
     author: Optional[str]
     bookmark: Optional[bool]
-    gitBranch: Optional[str]
-    gitSha: Optional[str]
+    git_branch: Optional[str]
+    git_sha: Optional[str]
     id: ID
     notes: Optional[str]
-    runCommand: Optional[str]
+    run_command: Optional[str]
     title: str
 
 
-@strawberry.type
+@strawberry.type(description="Tracking data for a Run")
 class TrackingDataset:
-    """TrackingDataset object to structure tracking data for a Run."""
-
     data: JSONObject
-    datasetName: str
-    datasetType: str  # TODO: change to enum
+    dataset_name: str
+    dataset_type: str
 
 
-@strawberry.input
+# TODO: something like this when we query by group.
+# from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
+# @strawberry.enum
+# class TrackingDatasetGroup(TrackingDatasetGroup):
+#     ...
+
+
+@strawberry.input(description="Input to update run metadata")
 class RunInput:
-    """Run input to update bookmark, title and notes"""
-
     bookmark: Optional[bool] = None
     notes: Optional[str] = None
     title: Optional[str] = None
 
 
-@strawberry.type
+@strawberry.type(description="Response for successful update of run metadata")
 class UpdateRunDetailsSuccess:
-    """Response type for successful update of runs"""
-
     run: Run
 
 
-@strawberry.type
+@strawberry.type(description="Response for unsuccessful update of run metadata")
 class UpdateRunDetailsFailure:
-    """Response type for failed update of runs"""
-
     id: ID
     error_message: str
 
 
 UpdateRunDetailsResponse = strawberry.union(
-    "UpdateRunDetailsResponse", (UpdateRunDetailsSuccess, UpdateRunDetailsFailure)
+    "UpdateRunDetailsResponse",
+    (UpdateRunDetailsSuccess, UpdateRunDetailsFailure),
+    description="Response for update of run metadata",
 )
 
 
-@strawberry.type
+@strawberry.type(description="Installed and latest Kedro-Viz versions")
 class Version:
-    """The installed and latest Kedro Viz versions."""
-
     installed: str
-    isOutdated: bool
+    is_outdated: bool
     latest: str

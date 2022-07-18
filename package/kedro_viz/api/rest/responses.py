@@ -1,4 +1,4 @@
-"""`kedro_viz.api.rest.responses` defines API response types"""
+"""`kedro_viz.api.rest.responses` defines REST response types."""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
 from typing import Dict, List, Optional, Union

@@ -1,5 +1,6 @@
-"""`kedro_viz.api.graphql` defines graphql API endpoint."""
-# pylint: disable=no-self-use, too-few-public-methods, unnecessary-lambda
+"""`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries, mutations
+ and subscriptions.."""
+# pylint: disable=no-self-use
 
 from __future__ import annotations
 
@@ -17,11 +18,7 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 
-from .serializers import (
-    format_run,
-    format_run_tracking_data,
-    format_runs,
-)
+from .serializers import format_run, format_run_tracking_data, format_runs
 from .types import (
     Run,
     RunInput,
@@ -37,18 +34,18 @@ logger = logging.getLogger(__name__)
 
 @strawberry.type
 class RunsQuery:
-    @strawberry.field
+    @strawberry.field(
+        description="Get metadata (blob, title, bookmark, etc.) for specified"
+        " run_ids from the session store"
+    )
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        """Gets metadata (blob, title, bookmark, etc.)  for specified run_ids from
-        the session store."""
         return format_runs(
             data_access_manager.runs.get_runs_by_ids(run_ids),
             data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
         )
 
-    @strawberry.field
+    @strawberry.field(description="Get metadata for all runs from the session store")
     def runs_list(self) -> List[Run]:
-        """Gets metadata for all runs from the session store."""
         all_runs = data_access_manager.runs.get_all_runs()
         if not all_runs:
             return []
@@ -58,18 +55,18 @@ class RunsQuery:
             data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids),
         )
 
-    @strawberry.field
+    @strawberry.field(description="Get tracking datasets for specified run_ids")
     def run_tracking_data(
         self, run_ids: List[ID], show_diff: Optional[bool] = False
     ) -> List[TrackingDataset]:
-        """Gets tracking datasets for specified run_ids."""
+        # pylint: disable=line-too-long
         tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids
         )
         return [
             TrackingDataset(
-                datasetName=dataset.dataset_name,
-                datasetType=dataset.dataset_type,
+                dataset_name=dataset.dataset_name,
+                dataset_type=dataset.dataset_type,
                 data=format_run_tracking_data(dataset.runs, show_diff),
             )
             for dataset in tracking_dataset_models
@@ -78,13 +75,10 @@ class RunsQuery:
 
 @strawberry.type
 class Mutation:
-    """Mutation to update run details with run inputs"""
-
-    @strawberry.mutation
+    @strawberry.mutation(description="Update run metadata")
     def update_run_details(
         self, run_id: ID, run_input: RunInput
     ) -> UpdateRunDetailsResponse:
-        """Updates run details based on run inputs provided by user"""
         run = data_access_manager.runs.get_run_by_id(run_id)
         if not run:
             return UpdateRunDetailsFailure(
@@ -117,9 +111,7 @@ class Mutation:
 
 @strawberry.type
 class Subscription:
-    """Subscription object to track runs added in real time"""
-
-    @strawberry.subscription
+    @strawberry.subscription(description="Add new runs in real time")
     async def runs_added(self) -> AsyncGenerator[List[Run], None]:
         """Subscription to new runs in real-time"""
         while True:
@@ -137,15 +129,14 @@ class Subscription:
             await asyncio.sleep(3)  # pragma: no cover
 
 
-@strawberry.type
 class VersionQuery:
-    @strawberry.field
+    @strawberry.field(description="Get the installed and latest Kedro-Viz versions")
     def version(self) -> Version:
         installed_version = VersionInfo.parse(__version__)
         latest_version = get_latest_version()
         return Version(
             installed=installed_version,
-            isOutdated=is_running_outdated_version(installed_version, latest_version),
+            is_outdated=is_running_outdated_version(installed_version, latest_version),
             latest=latest_version or "",
         )
 
@@ -155,17 +146,3 @@ schema = strawberry.Schema(
     mutation=Mutation,
     subscription=Subscription,
 )
-
-
-# TODO:
-# move tests? Pytest etc. # pytest and graphql
-
-# our data structures don't need to match query schema - keep structures flat and do nesting with query
-
-# fine to leave gets here, which should use data access manager
-
-
-# `format_run` is serialisation logic. It shouldn't have data loading logic. Make it easier to unit test.
-# When does get_all_runs get called? Just wondering why this is the right place to update the last_run_id
-# > t's the first call when user visits experimentation tracking tab.
-# get_new_runs vs. get_all_runs: I prefer to keep these interfaces separate in case we need to add more logic to each use case. It's an old habit, e.g. if we end up caching all runs somewhere we won't need to go to the DB to fetch them. We will almost always have to do it for new runs.

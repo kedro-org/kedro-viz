@@ -470,7 +470,7 @@ class DataNode(GraphNode):
             self._get_namespace(self.full_name)
         )
 
-    # TODO: improve
+    # TODO: improve this scheme.
     def is_plot_node(self):
         """Check if the current node is a plot node.
         Currently it only recognises one underlying dataset as a plot node.
@@ -577,7 +577,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
-    # TODO: refactor
+    # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         # pylint: disable=import-outside-toplevel
         self.type = data_node.dataset_type
@@ -638,7 +638,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
-    # TODO: refactor
+    # TODO: improve this scheme.
     @staticmethod
     def load_latest_tracking_data(
         dataset: Union["JSONDataSet", "MetricsDataSet"],
@@ -661,7 +661,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
             return json.load(fs_file)
 
-    # TODO: refactor
+    # TODO: improve this scheme.
     @staticmethod
     def load_versioned_tracking_data(
         filepath: str, num_versions: int = 10
