@@ -15,7 +15,7 @@
   --color-button-text: #{$color-light};
 }
 
-.pipeline-run-viz-modal {
+.pipeline-run-plots-modal {
   position: absolute;
   top: 0;
   right: 0;
@@ -31,7 +31,7 @@
   background-color: var(--color-bg-plot);
 }
 
-.pipeline-run-viz-modal__top {
+.pipeline-run-plots-modal__top {
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -40,13 +40,13 @@
   padding: 1.5em;
 }
 
-.pipeline-run-viz-modal__header {
+.pipeline-run-plots-modal__header {
   display: flex;
   margin: 0 auto;
   padding: 0 32px;
 }
 
-.pipeline-run-viz-modal__icon {
+.pipeline-run-plots-modal__icon {
   display: inline-block;
   width: 2.9em;
   height: 2.8em;
@@ -54,12 +54,12 @@
   fill: var(--color-text);
 }
 
-.pipeline-run-viz-modal__title {
+.pipeline-run-plots-modal__title {
   margin-top: 1px;
   font-size: 1.8em;
 }
 
-.pipeline-run-viz-modal__back {
+.pipeline-run-plots-modal__back {
   @extend %button;
 
   position: relative;
@@ -69,7 +69,7 @@
   padding: 6px 12px;
 }
 
-.pipeline-run-viz-modal__content {
+.pipeline-run-plots-modal__content {
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -78,11 +78,11 @@
   height: 100%; /* Full height (cover the whole page) */
 }
 
-.pipeline-run-viz-modal__back-text {
+.pipeline-run-plots-modal__back-text {
   font-size: 1.6em;
 }
 
-.pipeline-run-viz-modal__back-icon {
+.pipeline-run-plots-modal__back-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 12px 0 0;

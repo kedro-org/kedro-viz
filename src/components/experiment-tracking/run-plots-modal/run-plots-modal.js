@@ -2,11 +2,11 @@ import React from 'react';
 import PlotlyChart from '../../plotly-chart';
 import BackIcon from '../../icons/back';
 import NodeIcon from '../../icons/node-icon';
-import './run-viz-modal.css';
+import './run-plots-modal.css';
 import getShortType from '../../../utils/short-type';
 import classNames from 'classnames';
 
-const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
+const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
   if (!visible) {
     return null;
   }
@@ -23,24 +23,24 @@ const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
   const nodeTypeIcon = getShortType(datasetType);
 
   return (
-    <div className="pipeline-run-viz-modal">
-      <div className="pipeline-run-viz-modal__top">
+    <div className="pipeline-run-plots-modal">
+      <div className="pipeline-run-plots-modal__top">
         <button
-          className="pipeline-run-viz-modal__back"
-          onClick={() => setShowRunVizModal(false)}
+          className="pipeline-run-plots-modal__back"
+          onClick={() => setShowRunPlotsModal(false)}
         >
-          <BackIcon className="pipeline-run-viz-modal__back-icon"></BackIcon>
-          <span className="pipeline-run-viz-modal__back-text">Back</span>
+          <BackIcon className="pipeline-run-plots-modal__back-icon"></BackIcon>
+          <span className="pipeline-run-plots-modal__back-text">Back</span>
         </button>
-        <div className="pipeline-run-viz-modal__header">
+        <div className="pipeline-run-plots-modal__header">
           <NodeIcon
-            className="pipeline-run-viz-modal__icon"
+            className="pipeline-run-plots-modal__icon"
             icon={nodeTypeIcon}
           />
-          <span className="pipeline-run-viz-modal__title">{datasetKey}</span>
+          <span className="pipeline-run-plots-modal__title">{datasetKey}</span>
         </div>
       </div>
-      <div className="pipeline-run-viz-modal__content">
+      <div className="pipeline-run-plots-modal__content">
         {isPlotly &&
           runDataWithPin.map(
             (data, index) =>
@@ -65,4 +65,4 @@ const RunVizModal = ({ runDatasetToShow, visible, setShowRunVizModal }) => {
   );
 };
 
-export default RunVizModal;
+export default RunPlotsModal;

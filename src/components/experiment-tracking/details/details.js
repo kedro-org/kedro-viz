@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
-import RunVizModal from '../run-viz-modal';
+import RunPlotsModal from '../run-plots-modal';
 import RunExportModal from '../run-export-modal.js';
 import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
 
@@ -21,8 +21,8 @@ const Details = ({
   setPinnedRun,
   setShowRunDetailsModal,
   showRunDetailsModal,
-  setShowRunVizModal,
-  showRunVizModal,
+  setShowRunPlotsModal,
+  showRunPlotsModal,
   sidebarVisible,
   theme,
   trackingDataError,
@@ -64,11 +64,11 @@ const Details = ({
           theme={theme}
           visible={showRunExportModal}
         />
-        <RunVizModal
+        <RunPlotsModal
           runDatasetToShow={runDatasetToShow}
+          setShowRunPlotsModal={setShowRunPlotsModal}
           theme={theme}
-          visible={showRunVizModal}
-          setShowRunVizModal={setShowRunVizModal}
+          visible={showRunPlotsModal}
         />
       </ButtonTimeoutContextProvider>
       <div
@@ -91,9 +91,9 @@ const Details = ({
           isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
           selectedRunIds={selectedRunIds}
-          trackingData={runTrackingData}
           setRunDatasetToShow={setRunDatasetToShow}
-          setShowRunVizModal={setShowRunVizModal}
+          setShowRunPlotsModal={setShowRunPlotsModal}
+          trackingData={runTrackingData}
         />
       </div>
     </>

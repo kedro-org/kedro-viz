@@ -1,5 +1,5 @@
 import React from 'react';
-import MetadataModal from './run-viz-modal';
+import MetadataModal from './run-plots-modal';
 import { toggleNodeClicked, addNodeMetadata } from '../../../actions/nodes';
 import { setup } from '../../../utils/state.mock';
 import { toggleMetadataModal } from '../../../actions';

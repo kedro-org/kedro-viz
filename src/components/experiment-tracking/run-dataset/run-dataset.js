@@ -46,10 +46,10 @@ const RunDataset = ({
   isSingleRun,
   pinnedRun,
   selectedRunIds,
-  trackingData = [],
   setRunDatasetToShow,
-  setShowRunVizModal,
   setRunDatasetType,
+  setShowRunPlotsModal,
+  trackingData = [],
 }) => {
   return (
     <div
@@ -59,6 +59,7 @@ const RunDataset = ({
     >
       {trackingData.map((groupedDataset) => {
         const { groupedDatasetType, datasets } = groupedDataset;
+
         return (
           <Accordion
             className="details-dataset__accordion"
@@ -66,10 +67,11 @@ const RunDataset = ({
             headingClassName="details-dataset__accordion-header"
             key={groupedDatasetType}
             layout="left"
-            size="vlarge"
+            size="x-large"
           >
             {datasets.map((dataset) => {
               const { datasetName, datasetType, data } = dataset;
+
               return (
                 <Accordion
                   className="details-dataset__accordion"
@@ -94,7 +96,7 @@ const RunDataset = ({
                         enableShowChanges,
                         selectedRunIds,
                         setRunDatasetToShow,
-                        setShowRunVizModal,
+                        setShowRunPlotsModal,
                         setRunDatasetType
                       );
                     })}
@@ -128,16 +130,15 @@ function buildDatasetDataMarkup(
   enableShowChanges,
   selectedRunIds,
   setRunDatasetToShow,
-  setShowRunVizModal
+  setShowRunPlotsModal
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
-  const isPlotly = getShortType(datasetType) === 'plotly';
-  const isImage = getShortType(datasetType) === 'image';
-  const isTracking = getShortType(datasetType) === 'tracking';
-
+  const isPlotlyDataset = getShortType(datasetType) === 'plotly';
+  const isImageDataset = getShortType(datasetType) === 'image';
+  const isTrackingDataset = getShortType(datasetType) === 'tracking';
   const onExpandVizClick = () => {
-    setShowRunVizModal(true);
+    setShowRunPlotsModal(true);
     setRunDatasetToShow({ datasetKey, datasetType, runDataWithPin });
   };
 
@@ -172,27 +173,27 @@ function buildDatasetDataMarkup(
         >
           {datasetKey}
         </span>
-        {isTracking &&
-          runDataWithPin.map((data, index) => (
+        {isTrackingDataset &&
+          runDataWithPin.map((data) => (
             <span
               className={classnames('details-dataset__value', {
                 'details-dataset__value--single': isSingleRun,
               })}
-              key={data.runId + index}
+              key={data.runId}
             >
               {sanitizeValue(data.value)}
               {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
             </span>
           ))}
-        {isPlotly &&
-          runDataWithPin.map((data, index) => {
+        {isPlotlyDataset &&
+          runDataWithPin.map((data) => {
             return (
-              <>
+              <React.Fragment key={data.runId}>
                 <span
                   className={classnames('details-dataset__value', {
                     'details-dataset__value--single': isSingleRun,
                   })}
-                  key={data.runId + index}
+                  key={data.runId}
                 >
                   <div onClick={onExpandVizClick}>
                     {data.value && (
@@ -204,18 +205,17 @@ function buildDatasetDataMarkup(
                     )}
                   </div>
                 </span>
-              </>
+              </React.Fragment>
             );
           })}
-        {isImage &&
-          runDataWithPin.map((data, index) => {
+        {isImageDataset &&
+          runDataWithPin.map((data) => {
             return (
-              <>
+              <React.Fragment key={data.runId}>
                 <span
                   className={classnames('details-dataset__value', {
                     'details-dataset__value--single': isSingleRun,
                   })}
-                  key={data.runId + index}
                 >
                   <div onClick={onExpandVizClick}>
                     {data.value && (
@@ -227,7 +227,7 @@ function buildDatasetDataMarkup(
                     )}
                   </div>
                 </span>
-              </>
+              </React.Fragment>
             );
           })}
       </div>

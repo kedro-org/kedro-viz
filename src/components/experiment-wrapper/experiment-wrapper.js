@@ -10,7 +10,6 @@ import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
-import ExperimentModal from '../experiment-tracking/run-viz-modal';
 import Sidebar from '../sidebar';
 
 import './experiment-wrapper.css';
@@ -27,7 +26,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
-  const [showRunVizModal, setShowRunVizModal] = useState(false);
+  const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -190,8 +189,8 @@ const ExperimentWrapper = ({ theme }) => {
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
-              setShowRunVizModal={setShowRunVizModal}
-              showRunVizModal={showRunVizModal}
+              setShowRunPlotsModal={setShowRunPlotsModal}
+              showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
               trackingDataError={trackingDataError}
@@ -218,7 +217,6 @@ const ExperimentWrapper = ({ theme }) => {
           </a>
         </div>
       )}
-      <ExperimentModal runTrackingData={runTrackingData} />
     </>
   );
 };
