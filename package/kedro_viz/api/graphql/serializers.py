@@ -1,5 +1,5 @@
 """`kedro_viz.api.graphql.serializers` defines serializers to create strawberry types
-from the underlying data models."""
+from the underlying domain models."""
 
 from __future__ import annotations
 
