@@ -43,19 +43,38 @@
   fill: #{$color-accent-blue};
 }
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 13em;
+
+  &:first-of-type {
+    margin-right: 0;
+  }
 
   &:last-of-type {
     margin-right: 5em;
   }
 }
 
+.details-metadata__run--other {
+  animation: fadein 0.2s ease-in-out;
+}
+
 .details-metadata__table {
   border-collapse: collapse;
   max-width: 75em;
-  margin-left: -1px; // For exact alignment with content below.
   width: 100%;
 }
 
@@ -80,7 +99,7 @@
   }
 }
 
-.details-metadata__run--comparision-view {
+.details-metadata__run--baseline-comparision-view {
   .details-metadata__table-label {
     width: 375px;
   }

@@ -160,7 +160,9 @@ const RunMetadata = ({
         return (
           <div
             className={classnames('details-metadata__run', {
-              'details-metadata__run--comparision-view': enableComparisonView,
+              'details-metadata__run--baseline-comparision-view':
+                i === 0 && enableComparisonView,
+              'details-metadata__run--other': i > 0,
             })}
             key={run.id}
           >
