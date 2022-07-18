@@ -27,7 +27,7 @@ export const FlowChartWrapper = ({ loading, sidebarVisible }) => (
           'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
         })}
       >
-        <LoadingIcon visible={true} />
+        <LoadingIcon visible={loading} />
       </div>
     </div>
     <ExportModal />
