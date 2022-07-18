@@ -64,16 +64,20 @@
   flex-shrink: 0;
   width: 310px;
   word-break: break-all;
-  min-height: 1.8em;
+  min-height: 20px;
 
   &--single {
     width: 50%;
   }
 }
 
+.details-dataset__image-container {
+  height: 188px;
+}
+
 .details-dataset__image {
-  height: 180px;
-  width: 250px;
+  max-width: 250px;
+  width: 100%;
 }
 
 .dataset-arrow-icon {

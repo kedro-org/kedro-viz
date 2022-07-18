@@ -217,7 +217,10 @@ function buildDatasetDataMarkup(
                     'details-dataset__value--single': isSingleRun,
                   })}
                 >
-                  <div onClick={onExpandVizClick}>
+                  <div
+                    className="details-dataset__image-container"
+                    onClick={onExpandVizClick}
+                  >
                     {data.value && (
                       <img
                         alt="Matplotlib rendering"

@@ -16,19 +16,17 @@
 }
 
 .pipeline-run-plots-modal {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: $global-toolbar-width;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
   align-content: center;
   align-items: center;
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
   background-color: var(--color-bg-plot);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  left: $global-toolbar-width;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
 }
 
 .pipeline-run-plots-modal__top {
@@ -64,18 +62,24 @@
 
   position: relative;
   display: flex;
-  flex-direction: row;
   align-items: center;
   padding: 6px 12px;
 }
 
 .pipeline-run-plots-modal__content {
-  display: flex;
-  flex-direction: row;
-  align-content: center;
   align-items: center;
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
+  display: flex;
+  height: calc(92% - 80px);
+  margin: auto;
+  width: calc(100% - 116px);
+
+  &--oneChart {
+    justify-content: center;
+  }
+
+  &--twoChart {
+    justify-content: space-between;
+  }
 }
 
 .pipeline-run-plots-modal__back-text {
@@ -89,22 +93,31 @@
   fill: var(--color-text);
 }
 
-.pipeline-run-viz__image_oneChart {
-  width: calc(98% - 400px - #{$global-toolbar-width});
-  height: calc(92% - 50px);
-  left: 45%;
-  position: relative;
-  transform: translateX(-50%);
+.pipeline-run-viz__wrapper {
+  &--oneChart {
+    height: 100%;
+    max-height: 615px;
+    max-width: 815px;
+  }
+
+  &--twoChart {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
-.pipeline-run-viz__image_twoChart {
+.pipeline-run-viz__image--oneChart {
+  height: 100%;
+}
+
+.pipeline-run-viz__image--twoChart {
   height: 520px;
   width: 600px;
-  margin: 3em;
+  // margin: 3em;
 }
 
-.pipeline-run-viz__image_threeChart {
+.pipeline-run-viz__image--threeChart {
   height: 320px;
   width: 400px;
-  margin: 2.5em;
+  // margin: 2.5em;
 }

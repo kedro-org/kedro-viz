@@ -256,7 +256,7 @@ export const lightThreeChartTemplate = {
 
 export const lightExpPreviewTemplate = {
   ...lightPreviewTemplate,
-  height: 180,
+  height: 188,
   margin: {
     l: 30,
     r: 10,

@@ -40,10 +40,15 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
           <span className="pipeline-run-plots-modal__title">{datasetKey}</span>
         </div>
       </div>
-      <div className="pipeline-run-plots-modal__content">
+      <div
+        className={classNames(
+          'pipeline-run-plots-modal__content',
+          `pipeline-run-plots-modal__content--${plotView}`
+        )}
+      >
         {isPlotly &&
           runDataWithPin.map(
-            (data, index) =>
+            (data) =>
               data.value && (
                 <PlotlyChart
                   data={data.value.data}
@@ -53,13 +58,21 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
               )
           )}
         {isImage &&
-          runDataWithPin.map((data, index) => (
-            <img
-              alt="Matplotlib rendering"
-              className={classNames(`pipeline-run-viz__image_${plotView}`)}
-              src={`data:image/png;base64,${data.value}`}
-            />
-          ))}
+          runDataWithPin.map((data) => {
+            return (
+              <div
+                className={`pipeline-run-viz__wrapper--${plotView}`}
+                key={data.runId}
+              >
+                <img
+                  alt="Matplotlib rendering"
+                  className={classNames(`pipeline-run-viz__image--${plotView}`)}
+                  src={`data:image/png;base64,${data.value}`}
+                />
+                <div>{data.runId}</div>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
