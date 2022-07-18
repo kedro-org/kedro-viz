@@ -1,1 +1,1 @@
-"""`kedro_viz.api.rest` defines the GraphQL API."""
+"""`kedro_viz.api.graphql` defines the GraphQL API."""
