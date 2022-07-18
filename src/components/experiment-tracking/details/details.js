@@ -66,6 +66,7 @@ const Details = ({
         })}
       >
         <RunMetadata
+          enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
           onRunSelection={onRunSelection}
@@ -76,6 +77,7 @@ const Details = ({
           setShowRunDetailsModal={setShowRunDetailsModal}
         />
         <RunDataset
+          enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
