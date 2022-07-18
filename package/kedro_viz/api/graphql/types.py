@@ -9,6 +9,10 @@ import strawberry
 from strawberry import ID
 from strawberry.scalars import JSON
 
+from kedro_viz.models.experiment_tracking import (
+    TrackingDatasetGroup as TrackingDatasetGroupModel,
+)
+
 
 @strawberry.type(description="Run metadata")
 class Run:
@@ -29,9 +33,9 @@ class TrackingDataset:
     dataset_type: str
 
 
-# TODO: something like this when we query by group.
-# from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
-# TrackingDatasetGroup = @strawberry.enum(TrackingDatasetGroup)
+TrackingDatasetGroup = strawberry.enum(
+    TrackingDatasetGroupModel, description="Group to show kind of tracking data"
+)
 
 
 @strawberry.input(description="Input to update run metadata")

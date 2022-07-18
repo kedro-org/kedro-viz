@@ -23,6 +23,7 @@ from .types import (
     Run,
     RunInput,
     TrackingDataset,
+    TrackingDatasetGroup,
     UpdateRunDetailsFailure,
     UpdateRunDetailsResponse,
     UpdateRunDetailsSuccess,
@@ -54,13 +55,18 @@ class RunsQuery:
             data_access_manager.runs.get_user_run_details_by_run_ids(all_run_ids),
         )
 
-    @strawberry.field(description="Get tracking datasets for specified run_ids")
+    @strawberry.field(
+        description="Get tracking datasets for specified group and run_ids"
+    )
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: Optional[bool] = True
+        self,
+        run_ids: List[ID],
+        group: TrackingDatasetGroup = None,
+        show_diff: Optional[bool] = True,
     ) -> List[TrackingDataset]:
         # pylint: disable=line-too-long
         tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
-            run_ids
+            run_ids, group
         )
         # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
         #  proper query parameter instead of filtering to right run_ids here.

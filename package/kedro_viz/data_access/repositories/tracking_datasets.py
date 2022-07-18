@@ -2,7 +2,7 @@
 centralise access to datasets used in experiment tracking."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from kedro.io import AbstractVersionedDataSet
 
@@ -28,7 +28,7 @@ class TrackingDatasetsRepository:
         ] = defaultdict(list)
 
     def get_tracking_datasets_by_group_by_run_ids(
-        self, run_ids: List[str], group: TrackingDatasetGroup = None
+        self, run_ids: List[str], group: Optional[TrackingDatasetGroup]
     ) -> List[TrackingDatasetModel]:
         # TODO: group should become required argument when we query by
         # metric and json.

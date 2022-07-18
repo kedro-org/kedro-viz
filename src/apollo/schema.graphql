@@ -9,16 +9,14 @@ type Mutation {
 }
 
 type Query {
-  """
-  Get metadata (blob, title, bookmark, etc.) for specified run_ids from the session store
-  """
+  """Get metadata for specified run_ids from the session store"""
   runMetadata(runIds: [ID!]!): [Run!]!
 
   """Get metadata for all runs from the session store"""
   runsList: [Run!]!
 
-  """Get tracking datasets for specified run_ids"""
-  runTrackingData(runIds: [ID!]!, showDiff: Boolean = false): [TrackingDataset!]!
+  """Get tracking datasets for specified group and run_ids"""
+  runTrackingData(runIds: [ID!]!, group: TrackingDatasetGroup!, showDiff: Boolean = true): [TrackingDataset!]!
 
   """Get the installed and latest Kedro-Viz versions"""
   version: Version!
@@ -53,6 +51,12 @@ type TrackingDataset {
   data: JSON!
   datasetName: String!
   datasetType: String!
+}
+
+"""Group to show kind of tracking data"""
+enum TrackingDatasetGroup {
+  METRIC
+  JSON
 }
 
 """Response for unsuccessful update of run metadata"""
