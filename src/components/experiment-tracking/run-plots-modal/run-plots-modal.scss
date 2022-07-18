@@ -108,8 +108,12 @@
 
   &--threeChart {
     display: flex;
-    padding: 2%;
     flex-direction: column;
+
+    &:nth-of-type(2),
+    &:nth-of-type(3) {
+      margin-left: 35px;
+    }
   }
 }
 
