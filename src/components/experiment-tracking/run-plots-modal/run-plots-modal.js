@@ -4,6 +4,7 @@ import BackIcon from '../../icons/back';
 import NodeIcon from '../../icons/node-icon';
 import './run-plots-modal.css';
 import getShortType from '../../../utils/short-type';
+import { toHumanReadableTime } from '../../../utils/date-utils';
 import classNames from 'classnames';
 
 const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
@@ -71,7 +72,14 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
                   )}
                   src={`data:image/png;base64,${data.value}`}
                 />
-                <div>{data.runId}</div>
+                <div className="pipeline-run-plots-image-text">
+                  <span className="pipeline-run-plots-image-text-timestamp">
+                    {data.runId}
+                  </span>
+                  <span className="pipeline-run-plots-image-text-relative_timestamp">
+                    {toHumanReadableTime(data.runId)}
+                  </span>
+                </div>
               </div>
             );
           })}

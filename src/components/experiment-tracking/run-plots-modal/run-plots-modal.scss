@@ -115,12 +115,24 @@
 
 .pipeline-run-plots__image--oneChart {
   height: 100%;
+  padding-bottom: 10px;
 }
 
 .pipeline-run-plots__image--twoChart {
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .pipeline-run-plots__image--threeChart {
   width: 100%;
+  padding-bottom: 30px;
+}
+
+.pipeline-run-plots-image-text-timestamp {
+  font-size: 1.6em;
+  padding-right: 1.6em;
+}
+
+.pipeline-run-plots-image-text-relative_timestamp {
+  font-size: 1.3em;
 }
