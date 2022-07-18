@@ -7,12 +7,9 @@
   flex-shrink: 0;
   min-height: 350px;
   min-width: 100%;
-  padding: 5em 0 0.8em 5em;
-  width: max-content;
+  padding: 5em 0 0 9em;
 
-  &--single {
-    padding: 5em 0 0 9em;
-  }
+  width: max-content;
 }
 
 .details-metadata__buttons {
@@ -67,25 +64,32 @@
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
+}
 
-  &:first-of-type {
-    width: 230px;
+.details-metadata__run {
+  .details-metadata__table-label {
+    min-width: 375px;
   }
 
-  &:last-of-type {
-    width: 310px;
+  .details-metadata__table-value {
+    min-width: 375px;
+
+    transform: translateX(0);
+
+    transition: transform 0.3s ease-out;
   }
 }
 
-.details-metadata__run--single td {
-  &:first-of-type {
-    min-width: 375px;
-    width: 50%;
+.details-metadata__run--comparision-view {
+  .details-metadata__table-label {
+    width: 375px;
   }
 
-  &:last-of-type {
-    min-width: 375px;
-    width: 50%;
+  .details-metadata__table-value {
+    transform: translateX(-40%);
+    transition: transform 0.3s ease-out;
+
+    width: 375px;
   }
 }
 
@@ -93,6 +97,30 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.details-metadata__title--empty {
+  opacity: 1;
+}
+
+.details-metadata__title--empty-comparision-mode {
+  opacity: 0;
+
+  transition: opacity linear 0.1s;
+}
+
+.details-metadata__title-baseline {
+  opacity: 0;
+  transform: translateX(0);
+
+  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
+}
+
+.details-metadata__title--baseline-comparision-mode {
+  opacity: 1;
+  transform: translateX(-40%);
+
+  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
 
 .details-metadata__title-detail {
