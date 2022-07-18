@@ -35,8 +35,7 @@ logger = logging.getLogger(__name__)
 @strawberry.type
 class RunsQuery:
     @strawberry.field(
-        description="Get metadata (blob, title, bookmark, etc.) for specified"
-        " run_ids from the session store"
+        description="Get metadata for specified run_ids from the session store"
     )
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
         return format_runs(
@@ -57,17 +56,26 @@ class RunsQuery:
 
     @strawberry.field(description="Get tracking datasets for specified run_ids")
     def run_tracking_data(
-        self, run_ids: List[ID], show_diff: Optional[bool] = False
+        self, run_ids: List[ID], show_diff: Optional[bool] = True
     ) -> List[TrackingDataset]:
         # pylint: disable=line-too-long
         tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids
         )
+        # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
+        #  proper query parameter instead of filtering to right run_ids here.
         return [
             TrackingDataset(
                 dataset_name=dataset.dataset_name,
                 dataset_type=dataset.dataset_type,
-                data=format_run_tracking_data(dataset.runs, show_diff),
+                data=format_run_tracking_data(
+                    {
+                        run_id: data
+                        for run_id, data in dataset.runs.items()
+                        if run_id in run_ids
+                    },
+                    show_diff,
+                ),
             )
             for dataset in tracking_dataset_models
         ]

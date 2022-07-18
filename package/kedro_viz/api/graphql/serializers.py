@@ -73,7 +73,7 @@ def format_runs(
 
 
 def format_run_tracking_data(
-    tracking_data: Dict, show_diff: Optional[bool] = False
+    tracking_data: Dict, show_diff: Optional[bool] = True
 ) -> Dict:
     """Convert tracking data in the front-end format.
 
