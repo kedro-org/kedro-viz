@@ -61,12 +61,14 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
           runDataWithPin.map((data) => {
             return (
               <div
-                className={`pipeline-run-viz__wrapper--${plotView}`}
+                className={`pipeline-run-plots__wrapper--${plotView}`}
                 key={data.runId}
               >
                 <img
                   alt="Matplotlib rendering"
-                  className={classNames(`pipeline-run-viz__image--${plotView}`)}
+                  className={classNames(
+                    `pipeline-run-plots__image--${plotView}`
+                  )}
                   src={`data:image/png;base64,${data.value}`}
                 />
                 <div>{data.runId}</div>
