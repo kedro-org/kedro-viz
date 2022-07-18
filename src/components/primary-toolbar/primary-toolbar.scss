@@ -5,6 +5,11 @@
   @extend %listReset;
 }
 
+.pipeline-primary-toolbar li {
+  display: flex;
+  justify-content: center;
+}
+
 .pipeline-menu-button svg {
   transition: transform ease 0.4s;
 }
