@@ -1,6 +1,6 @@
 """`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries, mutations
  and subscriptions.."""
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations
 
@@ -111,7 +111,7 @@ class Mutation:
 
 @strawberry.type
 class Subscription:
-    @strawberry.subscription(description="Add new runs in real time")
+    @strawberry.subscription(description="Add new runs in real time")  # type: ignore
     async def runs_added(self) -> AsyncGenerator[List[Run], None]:
         """Subscription to new runs in real-time"""
         while True:
@@ -129,6 +129,7 @@ class Subscription:
             await asyncio.sleep(3)  # pragma: no cover
 
 
+@strawberry.type
 class VersionQuery:
     @strawberry.field(description="Get the installed and latest Kedro-Viz versions")
     def version(self) -> Version:

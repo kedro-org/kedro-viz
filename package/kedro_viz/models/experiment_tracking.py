@@ -80,8 +80,8 @@ class TrackingDatasetModel:
             # pylint: disable=import-outside-toplevel
             from kedro.extras.datasets import json, tracking
 
-            tracking.JSONDataSet._load = json.JSONDataSet._load
-            tracking.MetricsDataSet._load = json.JSONDataSet._load
+            tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
+            tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
             self.runs[run_id] = self.dataset.load()
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(

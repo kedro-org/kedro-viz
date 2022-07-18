@@ -11,7 +11,7 @@ from strawberry import ID
 
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
-from .types import JSONObject, Run
+from .types import Run
 
 
 def format_run(
@@ -74,7 +74,7 @@ def format_runs(
 
 def format_run_tracking_data(
     tracking_data: Dict, show_diff: Optional[bool] = False
-) -> JSONObject:
+) -> Dict:
     """Convert tracking data in the front-end format.
 
     Args:
@@ -127,4 +127,4 @@ def format_run_tracking_data(
             if len(run_tracking_data) != len(tracking_data):
                 del formatted_tracking_data[tracking_key]
 
-    return JSONObject(formatted_tracking_data)
+    return formatted_tracking_data

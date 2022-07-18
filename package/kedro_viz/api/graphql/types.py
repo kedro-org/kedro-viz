@@ -8,26 +8,7 @@ from typing import TYPE_CHECKING, NewType, Optional
 
 import strawberry
 from strawberry import ID
-
-if TYPE_CHECKING:  # pragma: no cover
-
-    class JSONObject(dict):
-        """Stub for JSONObject during type checking since mypy
-         doesn't support dynamic base.
-        https://github.com/python/mypy/issues/2477
-        """
-
-
-# TODO: is this needed compared to built in one?
-else:
-    JSONObject = strawberry.scalar(
-        NewType("JSONObject", dict),
-        serialize=lambda v: v,
-        parse_value=lambda v: json.loads(v),
-        description="Generic scalar type representing a JSON object",
-    )
-
-# TODO: docs using description ARGUMENT
+from strawberry.scalars import JSON
 
 
 @strawberry.type(description="Run metadata")
@@ -44,16 +25,14 @@ class Run:
 
 @strawberry.type(description="Tracking data for a Run")
 class TrackingDataset:
-    data: JSONObject
+    data: JSON
     dataset_name: str
     dataset_type: str
 
 
 # TODO: something like this when we query by group.
 # from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
-# @strawberry.enum
-# class TrackingDatasetGroup(TrackingDatasetGroup):
-#     ...
+# TrackingDatasetGroup = @strawberry.enum(TrackingDatasetGroup)
 
 
 @strawberry.input(description="Input to update run metadata")
