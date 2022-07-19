@@ -88,7 +88,7 @@ const RunDataset = ({
  * @param {string} datasetKey The row label of the data.
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
  * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
  * @param {array} selectedRunIds Array of strings of runIds.
