@@ -40,11 +40,21 @@ const ExperimentWrapper = ({ theme }) => {
   );
 
   // Fetch all tracking data for selected runs.
-  const { data: { runTrackingData } = [], error: trackingDataError } =
+  const { data: { metric = [], json = [] } = [], error: trackingDataError } =
     useApolloQuery(GET_RUN_TRACKING_DATA, {
       skip: selectedRunIds.length === 0,
       variables: { runIds: selectedRunIds, showDiff: true },
     });
+
+  let runTrackingData = {};
+
+  if (metric.length > 0) {
+    runTrackingData['Metrics'] = metric;
+  }
+
+  if (json.length > 0) {
+    runTrackingData['JSON Data'] = json;
+  }
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {

@@ -52,33 +52,45 @@ const RunDataset = ({
         'details-dataset--single': isSingleRun,
       })}
     >
-      {trackingData.map((dataset) => {
-        const { data, datasetName } = dataset;
-
+      {Object.keys(trackingData).map((key) => {
         return (
           <Accordion
             className="details-dataset__accordion"
-            heading={datasetName}
             headingClassName="details-dataset__accordion-header"
-            key={dataset.datasetName}
+            heading={key}
             layout="left"
-            size="large"
+            size="x-large"
           >
-            {Object.keys(data)
-              .sort((a, b) => {
-                return a.localeCompare(b);
-              })
-              .map((key, rowIndex) => {
-                return buildDatasetDataMarkup(
-                  key,
-                  dataset.data[key],
-                  rowIndex,
-                  isSingleRun,
-                  pinnedRun,
-                  enableShowChanges,
-                  selectedRunIds
-                );
-              })}
+            {trackingData[key].map((dataset) => {
+              const { data, datasetName } = dataset;
+
+              return (
+                <Accordion
+                  className="details-dataset__accordion"
+                  heading={datasetName}
+                  headingClassName="details-dataset__accordion-header"
+                  key={dataset.datasetName}
+                  layout="left"
+                  size="large"
+                >
+                  {Object.keys(data)
+                    .sort((a, b) => {
+                      return a.localeCompare(b);
+                    })
+                    .map((key, rowIndex) => {
+                      return buildDatasetDataMarkup(
+                        key,
+                        dataset.data[key],
+                        rowIndex,
+                        isSingleRun,
+                        pinnedRun,
+                        enableShowChanges,
+                        selectedRunIds
+                      );
+                    })}
+                </Accordion>
+              );
+            })}
           </Accordion>
         );
       })}
