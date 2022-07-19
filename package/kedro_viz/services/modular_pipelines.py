@@ -4,7 +4,7 @@ The service layer consist of pure functions operating on domain models.
 from typing import Dict
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     GraphNode,
     GraphNodeType,
     ModularPipelineChild,

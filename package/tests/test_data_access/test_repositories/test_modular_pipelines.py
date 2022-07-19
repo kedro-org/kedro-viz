@@ -4,7 +4,7 @@ from kedro.pipeline import node
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
-from kedro_viz.models.graph import GraphNode
+from kedro_viz.models.flowchart import GraphNode
 
 
 class TestModularPipelinesRepository:

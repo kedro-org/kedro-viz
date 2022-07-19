@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from kedro_viz.models.experiments_tracking import RunModel
+from kedro_viz.models.experiment_tracking import RunModel
 
 
 @pytest.mark.usefixtures("data_access_manager_with_runs")
