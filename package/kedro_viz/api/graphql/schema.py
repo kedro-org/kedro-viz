@@ -39,10 +39,17 @@ class RunsQuery:
         description="Get metadata for specified run_ids from the session store"
     )
     def run_metadata(self, run_ids: List[ID]) -> List[Run]:
-        return format_runs(
-            data_access_manager.runs.get_runs_by_ids(run_ids),
-            data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
-        )
+        # TODO: this is hacky and should be improved together with reworking the format
+        #  functions.
+        # Note we keep the order here the same as the queried run_ids.
+        runs = {
+            run.id: run
+            for run in format_runs(
+                data_access_manager.runs.get_runs_by_ids(run_ids),
+                data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
+            )
+        }
+        return [runs[run_id] for run_id in run_ids]
 
     @strawberry.field(description="Get metadata for all runs from the session store")
     def runs_list(self) -> List[Run]:
@@ -70,7 +77,7 @@ class RunsQuery:
         )
         # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
         #  proper query parameter instead of filtering to right run_ids here.
-        # Note we keep the order here the same as the query run_ids.
+        # Note we keep the order here the same as the queried run_ids.
         return [
             TrackingDataset(
                 dataset_name=dataset.dataset_name,
