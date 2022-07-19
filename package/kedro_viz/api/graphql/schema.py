@@ -70,16 +70,13 @@ class RunsQuery:
         )
         # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
         #  proper query parameter instead of filtering to right run_ids here.
+        # Note we keep the order here the same as the query run_ids.
         return [
             TrackingDataset(
                 dataset_name=dataset.dataset_name,
                 dataset_type=dataset.dataset_type,
                 data=format_run_tracking_data(
-                    {
-                        run_id: data
-                        for run_id, data in dataset.runs.items()
-                        if run_id in run_ids
-                    },
+                    {run_id: dataset.runs[run_id] for run_id in run_ids},
                     show_diff,
                 ),
             )
