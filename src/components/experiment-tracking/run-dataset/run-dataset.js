@@ -46,6 +46,7 @@ const RunDataset = ({
   selectedRunIds,
   trackingData,
 }) => {
+  console.log('trackingData: ', trackingData);
   return (
     <div
       className={classnames('details-dataset', {
