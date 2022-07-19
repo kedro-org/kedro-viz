@@ -44,7 +44,7 @@ const RunDataset = ({
   isSingleRun,
   pinnedRun,
   selectedRunIds,
-  trackingData = [],
+  trackingData,
 }) => {
   return (
     <div
@@ -52,16 +52,17 @@ const RunDataset = ({
         'details-dataset--single': isSingleRun,
       })}
     >
-      {Object.keys(trackingData).map((key) => {
+      {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
             className="details-dataset__accordion"
             headingClassName="details-dataset__accordion-header"
-            heading={key}
+            heading={group}
+            key={group}
             layout="left"
-            size="x-large"
+            size="large"
           >
-            {trackingData[key].map((dataset) => {
+            {trackingData[group].map((dataset) => {
               const { data, datasetName } = dataset;
 
               return (
@@ -69,9 +70,9 @@ const RunDataset = ({
                   className="details-dataset__accordion"
                   heading={datasetName}
                   headingClassName="details-dataset__accordion-header"
-                  key={dataset.datasetName}
+                  key={datasetName}
                   layout="left"
-                  size="large"
+                  size="medium"
                 >
                   {Object.keys(data)
                     .sort((a, b) => {

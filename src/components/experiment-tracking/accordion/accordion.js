@@ -64,7 +64,6 @@ const Accordion = ({
           className={classnames('accordion__title', {
             'accordion__title--medium': size === 'medium',
             'accordion__title--large': size === 'large',
-            'accordion__title--x-large': size === 'x-large',
           })}
         >
           {heading}
