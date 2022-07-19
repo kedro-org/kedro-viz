@@ -1,4 +1,5 @@
 import React from 'react';
+import lodash from 'lodash';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
@@ -46,7 +47,6 @@ const RunDataset = ({
   selectedRunIds,
   trackingData,
 }) => {
-  console.log('trackingData: ', trackingData);
   return (
     <div
       className={classnames('details-dataset', {
@@ -58,7 +58,7 @@ const RunDataset = ({
           <Accordion
             className="details-dataset__accordion"
             headingClassName="details-dataset__accordion-header"
-            heading={group}
+            heading={lodash.startCase(group)}
             key={group}
             layout="left"
             size="large"
