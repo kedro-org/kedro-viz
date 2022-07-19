@@ -49,7 +49,7 @@ class RunsQuery:
                 data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
             )
         }
-        return [runs[run_id] for run_id in run_ids]
+        return [runs[run_id] for run_id in run_ids if run_id in runs]
 
     @strawberry.field(description="Get metadata for all runs from the session store")
     def runs_list(self) -> List[Run]:
