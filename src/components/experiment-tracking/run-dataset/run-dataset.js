@@ -1,4 +1,5 @@
 import React from 'react';
+import lodash from 'lodash';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
@@ -44,7 +45,7 @@ const RunDataset = ({
   isSingleRun,
   pinnedRun,
   selectedRunIds,
-  trackingData = [],
+  trackingData,
 }) => {
   return (
     <div
@@ -52,33 +53,46 @@ const RunDataset = ({
         'details-dataset--single': isSingleRun,
       })}
     >
-      {trackingData.map((dataset) => {
-        const { data, datasetName } = dataset;
-
+      {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
             className="details-dataset__accordion"
-            heading={datasetName}
             headingClassName="details-dataset__accordion-header"
-            key={dataset.datasetName}
+            heading={lodash.startCase(group)}
+            key={group}
             layout="left"
             size="large"
           >
-            {Object.keys(data)
-              .sort((a, b) => {
-                return a.localeCompare(b);
-              })
-              .map((key, rowIndex) => {
-                return buildDatasetDataMarkup(
-                  key,
-                  dataset.data[key],
-                  rowIndex,
-                  isSingleRun,
-                  pinnedRun,
-                  enableShowChanges,
-                  selectedRunIds
-                );
-              })}
+            {trackingData[group].map((dataset) => {
+              const { data, datasetName } = dataset;
+
+              return (
+                <Accordion
+                  className="details-dataset__accordion"
+                  heading={datasetName}
+                  headingClassName="details-dataset__accordion-header"
+                  key={datasetName}
+                  layout="left"
+                  size="medium"
+                >
+                  {Object.keys(data)
+                    .sort((a, b) => {
+                      return a.localeCompare(b);
+                    })
+                    .map((key, rowIndex) => {
+                      return buildDatasetDataMarkup(
+                        key,
+                        dataset.data[key],
+                        rowIndex,
+                        isSingleRun,
+                        pinnedRun,
+                        enableShowChanges,
+                        selectedRunIds
+                      );
+                    })}
+                </Accordion>
+              );
+            })}
           </Accordion>
         );
       })}
