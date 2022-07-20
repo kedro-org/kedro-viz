@@ -4,7 +4,7 @@ import { runs, trackingData } from '../../experiment-wrapper/mock-data';
 import { shallow, mount } from 'enzyme';
 
 const booleanTrackingData = {
-  json: [
+  JSONData: [
     {
       datasetName: 'Data Analysis',
       data: {
@@ -15,7 +15,7 @@ const booleanTrackingData = {
 };
 
 const objectTrackingData = {
-  json: [
+  JSONData: [
     {
       datasetName: 'Data Analysis',
       data: {
@@ -26,7 +26,7 @@ const objectTrackingData = {
 };
 
 const comparisonTrackingData = {
-  json: [
+  metrics: [
     {
       datasetName: 'Data Analysis',
       data: {
@@ -40,7 +40,7 @@ const comparisonTrackingData = {
 };
 
 const showDiffTrackingData = {
-  json: [
+  metrics: [
     {
       datasetName: 'Data Analysis',
       data: {
