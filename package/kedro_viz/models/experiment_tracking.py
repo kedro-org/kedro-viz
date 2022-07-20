@@ -2,15 +2,22 @@
 tracking datasets."""
 # pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
 import logging
+import base64
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict
 
 from kedro.io import AbstractVersionedDataSet, Version
+from kedro.io.core import get_filepath_str
+
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
+
+from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet
+from kedro.extras.datasets.plotly import PlotlyDataSet
+from kedro.extras.datasets.matplotlib import MatplotlibWriter
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
@@ -46,7 +53,7 @@ class UserRunDetailsModel(Base):
 class TrackingDatasetGroup(str, Enum):
     """Different groups to present together on the frontend."""
 
-    # PLOT = "plot"
+    PLOT = "plot"
     METRIC = "metric"
     JSON = "json"
 
@@ -78,11 +85,18 @@ class TrackingDatasetModel:
             # tracking datasets do not have load methods defined yet but would be the
             # same as json loader.
             # pylint: disable=import-outside-toplevel
-            from kedro.extras.datasets import json, tracking
+            from kedro.extras.datasets import json, tracking, plotly, matplotlib
 
             tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
             tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
-            self.runs[run_id] = self.dataset.load()
+            plotly.JSONDataSet._load =  json.JSONDataSet._load  # type: ignore
+            plotly.PlotlyDataSet._load = json.JSONDataSet._load 
+            matplotlib.MatplotlibWriter._load = matplotlib_writer_load
+
+            if isinstance(self.dataset, (PlotlyJSONDataSet, PlotlyDataSet, MatplotlibWriter)):
+                self.runs[run_id] = {get_filename(self.dataset): self.dataset.load()}
+            else:
+                self.runs[run_id] = self.dataset.load()
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s",
@@ -99,3 +113,19 @@ class TrackingDatasetModel:
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
+
+
+def get_filename(dataset: AbstractVersionedDataSet) -> str:
+     dataset_description = dataset._describe()
+     return (dataset_description.get("filepath") or dataset_description.get("path")
+            ).name
+
+
+def matplotlib_writer_load(dataset: AbstractVersionedDataSet) -> str:
+    load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+    with open(load_path, "rb") as img_file:
+        base64_bytes = base64.b64encode(img_file.read())
+    return base64_bytes.decode("utf-8")
+
+
+
