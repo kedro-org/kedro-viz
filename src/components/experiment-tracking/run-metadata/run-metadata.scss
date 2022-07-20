@@ -74,14 +74,6 @@
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
-
-  &:first-of-type {
-    width: 50%;
-  }
-
-  &:last-of-type {
-    width: 50%;
-  }
 }
 
 .details-metadata__run {
@@ -98,7 +90,7 @@
   }
 }
 
-// a single baseline run when it's in comparison mode
+// a single run when comparison view is on
 .details-metadata__run--baseline-comparision-view {
   .details-metadata__table-label {
     width: 375px;
@@ -122,27 +114,7 @@
   }
 }
 
-// animation for when other run gets added to compare with the baseline
-.details-metadata__run--other {
-  animation: fadein 0.2s ease-in-out;
-}
-
-.details-metadata__table {
-  border-collapse: collapse;
-  max-width: 75em;
-  margin-left: -1px; // For exact alignment with content below.
-  width: 100%;
-}
-
-// style for the first type of the table tr
-.details-metadata__table tr {
-  &:first-of-type {
-    display: grid;
-    grid-template-columns: 100% 100%;
-  }
-}
-
-// styling for title of the baseline when comparison mode is on
+// animation for the title of the baseline when comparison mode is on
 .details-metadata__title {
   align-items: center;
   display: flex;
@@ -181,6 +153,18 @@
   transform: translateX(-40%);
 
   transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
+}
+
+// other runs get added to compare with the baseline run
+.details-metadata__run--other {
+  animation: fadein 0.2s ease-in-out;
+}
+
+.details-metadata__table {
+  border-collapse: collapse;
+  max-width: 75em;
+  margin-left: -1px; // For exact alignment with content below.
+  width: 100%;
 }
 
 .details-metadata__title-detail {
