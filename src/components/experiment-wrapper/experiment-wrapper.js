@@ -206,7 +206,7 @@ const ExperimentWrapper = ({ theme }) => {
             enable experiment tracking in your projects from our docs.{' '}
           </p>
           <a
-            href="https://github.com/kedro-org/kedro-viz"
+            href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
             rel="noreferrer"
             target="_blank"
           >

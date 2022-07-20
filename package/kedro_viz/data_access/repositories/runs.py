@@ -1,5 +1,5 @@
-"""`kedro_viz.data_access.repositories.tags` defines repository to
-centralise access to runs data."""
+"""`kedro_viz.data_access.repositories.runs` defines repository to
+centralise access to runs data from the session store."""
 # pylint: disable=missing-class-docstring,missing-function-docstring
 import logging
 from functools import wraps
@@ -7,7 +7,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 
 from sqlalchemy.orm import sessionmaker
 
-from kedro_viz.models.experiments_tracking import RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
