@@ -1,6 +1,8 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
+$max-width: 375px;
+
 @keyframes fadein {
   from {
     opacity: 0;
@@ -78,11 +80,11 @@
 
 .details-metadata__run {
   .details-metadata__table-label {
-    min-width: 375px;
+    min-width: $max-width;
   }
 
   .details-metadata__table-value {
-    min-width: 375px;
+    min-width: $max-width;
 
     transform: translateX(0);
 
@@ -93,14 +95,14 @@
 // a single run when comparison view is on
 .details-metadata__run--baseline-comparision-view {
   .details-metadata__table-label {
-    width: 375px;
+    width: $max-width;
   }
 
   .details-metadata__table-value {
     transform: translateX(-40%);
     transition: transform 0.3s ease-out;
 
-    width: 375px;
+    width: $max-width;
   }
 }
 
@@ -112,6 +114,11 @@
   &:last-of-type {
     width: 100%;
   }
+}
+
+.details-metadata__table tr {
+  display: grid;
+  grid-template-columns: $max-width $max-width;
 }
 
 // animation for the title of the baseline when comparison mode is on
@@ -158,6 +165,8 @@
 // other runs get added to compare with the baseline run
 .details-metadata__run--other {
   animation: fadein 0.2s ease-in-out;
+
+  width: $max-width;
 }
 
 .details-metadata__table {
