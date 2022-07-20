@@ -43,18 +43,6 @@
   fill: #{$color-accent-blue};
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 13em;
@@ -65,6 +53,18 @@
 
   &:last-of-type {
     margin-right: 5em;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -84,6 +84,7 @@
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
+  width: 310px;
 }
 
 .details-metadata__run {
@@ -121,17 +122,27 @@
 
 .details-metadata__title--empty {
   opacity: 1;
+  transform: translateX(0);
+
+  transition: transform 0.1s ease-in-out opacity 0.1s ease-in-out;
 }
 
 .details-metadata__title--empty-comparision-mode {
   opacity: 0;
+  transform: translateX(-40%);
 
-  transition: opacity linear 0.1s;
+  // as this empty will be moved to the right, the width gets squeezed
+  // remove padding bottom to make it align with the other run
+  padding: 0 0 !important;
+
+  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
 
 .details-metadata__title-baseline {
   opacity: 0;
   transform: translateX(0);
+
+  display: none;
 
   transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
@@ -139,6 +150,8 @@
 .details-metadata__title--baseline-comparision-mode {
   opacity: 1;
   transform: translateX(-40%);
+
+  display: flex;
 
   transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }

@@ -67,7 +67,7 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
   );
 };
 
-const MetadataTitle = ({
+export const MetadataTitle = ({
   className,
   enableShowChanges,
   isSingleRun,
@@ -172,6 +172,7 @@ const RunMetadata = ({
                   {i === 0 ? (
                     <MetadataTitle
                       className={classnames('details-metadata__title--empty', {
+                        'details-metadata__title': !enableComparisonView,
                         'details-metadata__title--empty-comparision-mode':
                           enableComparisonView,
                       })}
