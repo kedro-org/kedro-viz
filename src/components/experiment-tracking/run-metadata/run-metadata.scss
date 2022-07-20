@@ -1,6 +1,18 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
@@ -43,6 +55,7 @@
   fill: #{$color-accent-blue};
 }
 
+// a single run when it's not in comparison mode
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 13em;
@@ -56,35 +69,19 @@
   }
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.details-metadata__run--other {
-  animation: fadein 0.2s ease-in-out;
-}
-
-.details-metadata__table {
-  border-collapse: collapse;
-  max-width: 75em;
-  margin-left: -1px; // For exact alignment with content below.
-  width: 100%;
-}
-
 .details-metadata__run td {
   font-size: 1.4em;
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
-  width: 310px;
+
+  &:first-of-type {
+    width: 50%;
+  }
+
+  &:last-of-type {
+    width: 50%;
+  }
 }
 
 .details-metadata__run {
@@ -101,6 +98,7 @@
   }
 }
 
+// a single baseline run when it's in comparison mode
 .details-metadata__run--baseline-comparision-view {
   .details-metadata__table-label {
     width: 375px;
@@ -114,6 +112,37 @@
   }
 }
 
+.details-metadata__run--baseline-comparision-view td {
+  &:first-of-type {
+    width: 100%;
+  }
+
+  &:last-of-type {
+    width: 100%;
+  }
+}
+
+// animation for when other run gets added to compare with the baseline
+.details-metadata__run--other {
+  animation: fadein 0.2s ease-in-out;
+}
+
+.details-metadata__table {
+  border-collapse: collapse;
+  max-width: 75em;
+  margin-left: -1px; // For exact alignment with content below.
+  width: 100%;
+}
+
+// style for the first type of the table tr
+.details-metadata__table tr {
+  &:first-of-type {
+    display: grid;
+    grid-template-columns: 100% 100%;
+  }
+}
+
+// styling for title of the baseline when comparison mode is on
 .details-metadata__title {
   align-items: center;
   display: flex;
@@ -121,6 +150,8 @@
 }
 
 .details-metadata__title--empty {
+  width: 365px;
+
   opacity: 1;
   transform: translateX(0);
 
@@ -142,16 +173,12 @@
   opacity: 0;
   transform: translateX(0);
 
-  display: none;
-
   transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
 
 .details-metadata__title--baseline-comparision-mode {
   opacity: 1;
   transform: translateX(-40%);
-
-  display: flex;
 
   transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
