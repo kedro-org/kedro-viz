@@ -114,7 +114,9 @@ The GraphQL schema is defined on the backend by Strawberry and automatically con
 
 ![Kedro-Viz GraphQL schema](.github/img/schema.graphql.png)
 
-You can see documentation for the schema and run mock queries using GraphiQL, the GraphQL integrated development environment. This is possible without launching the full backend server: run `make strawberry-server` and then go to [http://127.0.0.1:8000/graphql](http://127.0.0.1:8000/graphql). 
+You can see documentation for the schema and run mock queries using GraphiQL, the GraphQL integrated development environment. This is possible without launching the full backend server: run `make strawberry-server` and then go to [http://127.0.0.1:8000/graphql](http://127.0.0.1:8000/graphql).
+
+⚠️ When a query supplies an ordered argument, the backend response must maintain the same ordering. For example, a the response to a query that calls for `runIds = [2, 3, 1]` should respond with runs in that same order. 
 
 ## Utils
 

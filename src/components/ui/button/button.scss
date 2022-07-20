@@ -85,6 +85,10 @@ $secondary-underline-offset-hover: 4px;
     cursor: not-allowed;
   }
 
+  &:focus-visible {
+    outline: none;
+  }
+
   [data-whatinput='mouse'] &:focus {
     box-shadow: none;
   }
@@ -133,6 +137,10 @@ $secondary-underline-offset-hover: 4px;
   border: 2px solid $color-success;
   color: $color-dark;
   width: 172px; // Match the `Apply and close` width to avoid a layout shift.
+
+  &:focus-visible {
+    outline: none;
+  }
 }
 
 .success-check-mark {
