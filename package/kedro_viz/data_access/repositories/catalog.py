@@ -1,7 +1,7 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
-from typing import Optional
+from typing import Dict, Optional
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError
 
@@ -48,24 +48,27 @@ class CatalogRepository:
 
     def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
         dataset_obj: Optional[AbstractDataSet]
-        if KEDRO_VERSION.match(">=0.16.0"):
-            try:
-                # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
-                # fuzzy-matching process.
-                if KEDRO_VERSION.match(">=0.18.1"):
-                    dataset_obj = self._catalog._get_dataset(
-                        dataset_name, suggest=False
-                    )
-                else:  # pragma: no cover
-                    dataset_obj = self._catalog._get_dataset(dataset_name)
-            except DataSetNotFoundError:  # pragma: no cover
-                dataset_obj = None
-        else:
-            dataset_obj = self._catalog._data_sets.get(dataset_name)  # pragma: no cover
+        try:
+            # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
+            # fuzzy-matching process.
+            if KEDRO_VERSION.match(">=0.18.1"):
+                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
+            else:  # pragma: no cover
+                dataset_obj = self._catalog._get_dataset(dataset_name)
+        except DataSetNotFoundError:  # pragma: no cover
+            dataset_obj = None
+
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(self.strip_encoding(dataset_name))
+
+    def as_dict(self) -> Dict[str, Optional[AbstractDataSet]]:
+        return {
+            dataset_name: self.get_dataset(dataset_name)
+            for dataset_name in self._catalog.list()
+            if self.get_dataset(dataset_name) is not None
+        }
 
     @staticmethod
     def is_dataset_param(dataset_name: str) -> bool:

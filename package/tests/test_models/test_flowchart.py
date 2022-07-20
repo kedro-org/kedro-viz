@@ -17,7 +17,7 @@ from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.io.core import Version
 from kedro.pipeline.node import node
 
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     DataNode,
     DataNodeMetadata,
     GraphNode,
@@ -461,9 +461,9 @@ class TestGraphNodeMetadata:
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert not hasattr(image_node_metadata, "image")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.create_metrics_plot")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.create_metrics_plot")
     def test_metrics_data_node_metadata(
         self,
         patched_metrics_plot,
@@ -508,7 +508,7 @@ class TestGraphNodeMetadata:
         assert metrics_node_metadata.tracking_data == mock_metrics_data
         assert metrics_node_metadata.plot == mock_plot_data
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
     def test_json_data_node_metadata(
         self,
         patched_latest_json,
@@ -539,7 +539,7 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
     def test_data_node_metadata_latest_tracking_data_not_exist(
         self,
         patched_latest_tracking_data,
@@ -553,8 +553,8 @@ class TestGraphNodeMetadata:
         assert not hasattr(tracking_data_node_metadata, "metrics")
         assert not hasattr(tracking_data_node_metadata, "plot")
 
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_latest_tracking_data")
-    @patch("kedro_viz.models.graph.DataNodeMetadata.load_versioned_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
     def test_tracking_data_node_metadata_versioned_dataset_not_exist(
         self,
         patched_data_loader,

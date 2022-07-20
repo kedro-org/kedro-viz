@@ -3,7 +3,7 @@ defines repository to centralise access to modular pipelines data."""
 from typing import Dict, Optional, Union
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     DataNode,
     GraphNode,
     GraphNodeType,
