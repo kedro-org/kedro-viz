@@ -52,13 +52,9 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRunIds(
-          // Runs need to be sorted by time to ensure runIDs get sent to the
-          // graphql endpoint in correct order.
-          sortRunByTime(selectedRunIds.filter((run) => run !== id))
-        );
+        setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
       } else {
-        setSelectedRunIds(sortRunByTime([...selectedRunIds, id]));
+        setSelectedRunIds([...selectedRunIds, id]);
       }
     } else {
       if (selectedRunIds.includes(id)) {
