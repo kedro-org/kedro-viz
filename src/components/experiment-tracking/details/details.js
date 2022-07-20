@@ -19,12 +19,12 @@ const Details = ({
   selectedRunIds,
   setPinnedRun,
   setShowRunDetailsModal,
+  setShowRunExportModal,
   showRunDetailsModal,
+  showRunExportModal,
   sidebarVisible,
   theme,
   trackingDataError,
-  showRunExportModal,
-  setShowRunExportModal,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
 

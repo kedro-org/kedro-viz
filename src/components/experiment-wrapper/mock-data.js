@@ -34,50 +34,52 @@ export const runs = [
   },
 ];
 
-export const trackingData = [
-  {
-    datasetName: 'Data Analysis',
-    data: {
-      classWeight: [
-        { runId: 'My Favorite Sprint', value: 23 },
-        { runId: 'Another favorite sprint', value: 21 },
-        { runId: 'Slick test this one', value: 21 },
-      ],
-      bootstrap: [
-        { runId: 'My Favorite Sprint', value: 0.8 },
-        { runId: 'Another favorite sprint', value: 0.5 },
-        { runId: 'Slick test this one', value: 1 },
-      ],
+export const trackingData = {
+  json: [
+    {
+      datasetName: 'Data Analysis',
+      data: {
+        classWeight: [
+          { runId: 'My Favorite Sprint', value: 23 },
+          { runId: 'Another favorite sprint', value: 21 },
+          { runId: 'Slick test this one', value: 21 },
+        ],
+        bootstrap: [
+          { runId: 'My Favorite Sprint', value: 0.8 },
+          { runId: 'Another favorite sprint', value: 0.5 },
+          { runId: 'Slick test this one', value: 1 },
+        ],
+      },
     },
-  },
-  {
-    datasetName: 'Shopper Spend Raw',
-    data: {
-      maxFeatures: [
-        { runId: 'My Favorite Sprint', value: 'auto' },
-        { runId: 'Another favorite sprint', value: 'min' },
-        { runId: 'Slick test this one', value: 'max' },
-      ],
-      minSamplesLeaf: [
-        { runId: 'My Favorite Sprint', value: 12564 },
-        { runId: 'Another favorite sprint', value: 34524 },
-        { runId: 'Slick test this one', value: 23987 },
-      ],
+    {
+      datasetName: 'Shopper Spend Raw',
+      data: {
+        maxFeatures: [
+          { runId: 'My Favorite Sprint', value: 'auto' },
+          { runId: 'Another favorite sprint', value: 'min' },
+          { runId: 'Slick test this one', value: 'max' },
+        ],
+        minSamplesLeaf: [
+          { runId: 'My Favorite Sprint', value: 12564 },
+          { runId: 'Another favorite sprint', value: 34524 },
+          { runId: 'Slick test this one', value: 23987 },
+        ],
+      },
     },
-  },
-  {
-    datasetName: 'Classical Analysis',
-    data: {
-      AU_SSID_NULLS: [
-        { runId: 'My Favorite Sprint', value: 54.3 },
-        { runId: 'Another favorite sprint', value: 55.1 },
-        { runId: 'Slick test this one', value: 54.7 },
-      ],
-      AR_ARM_NULLS: [
-        { runId: 'My Favorite Sprint', value: 123 },
-        { runId: 'Another favorite sprint', value: 345 },
-        { runId: 'Slick test this one', value: 456 },
-      ],
+    {
+      datasetName: 'Classical Analysis',
+      data: {
+        AU_SSID_NULLS: [
+          { runId: 'My Favorite Sprint', value: 54.3 },
+          { runId: 'Another favorite sprint', value: 55.1 },
+          { runId: 'Slick test this one', value: 54.7 },
+        ],
+        AR_ARM_NULLS: [
+          { runId: 'My Favorite Sprint', value: 123 },
+          { runId: 'Another favorite sprint', value: 345 },
+          { runId: 'Slick test this one', value: 456 },
+        ],
+      },
     },
-  },
-];
+  ],
+};

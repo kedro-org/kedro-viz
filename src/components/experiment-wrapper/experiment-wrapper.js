@@ -40,11 +40,22 @@ const ExperimentWrapper = ({ theme }) => {
   );
 
   // Fetch all tracking data for selected runs.
-  const { data: { runTrackingData } = [], error: trackingDataError } =
-    useApolloQuery(GET_RUN_TRACKING_DATA, {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds, showDiff: true },
-    });
+  const {
+    data: { metrics = [], JSONData = [] } = [],
+    error: trackingDataError,
+  } = useApolloQuery(GET_RUN_TRACKING_DATA, {
+    skip: selectedRunIds.length === 0,
+    variables: { runIds: selectedRunIds, showDiff: true },
+  });
+
+  let runTrackingData = {};
+  if (metrics.length > 0) {
+    runTrackingData['Metrics'] = metrics;
+  }
+
+  if (JSONData.length > 0) {
+    runTrackingData['JSON Data'] = JSONData;
+  }
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -206,7 +217,7 @@ const ExperimentWrapper = ({ theme }) => {
             enable experiment tracking in your projects from our docs.{' '}
           </p>
           <a
-            href="https://github.com/kedro-org/kedro-viz"
+            href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
             rel="noreferrer"
             target="_blank"
           >

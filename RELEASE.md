@@ -8,7 +8,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- General design-debt fixes. (#955, #956)
+- General design-debt fixes. (#930, #955, #956, #959, #960, #970, #977)
 
 # Release 4.7.1
 

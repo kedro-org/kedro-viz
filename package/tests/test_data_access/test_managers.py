@@ -9,7 +9,7 @@ from kedro.pipeline.modular_pipeline import pipeline
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
-from kedro_viz.models.graph import (
+from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
     ParametersNode,

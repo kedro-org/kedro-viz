@@ -3,48 +3,56 @@ import RunDataset from '.';
 import { runs, trackingData } from '../../experiment-wrapper/mock-data';
 import { shallow, mount } from 'enzyme';
 
-const booleanTrackingData = [
-  {
-    datasetName: 'Data Analysis',
-    data: {
-      classWeight: [{ runId: 'My Favorite Sprint', value: false }],
+const booleanTrackingData = {
+  JSONData: [
+    {
+      datasetName: 'Data Analysis',
+      data: {
+        classWeight: [{ runId: 'My Favorite Sprint', value: false }],
+      },
     },
-  },
-];
+  ],
+};
 
-const objectTrackingData = [
-  {
-    datasetName: 'Data Analysis',
-    data: {
-      classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
+const objectTrackingData = {
+  JSONData: [
+    {
+      datasetName: 'Data Analysis',
+      data: {
+        classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
+      },
     },
-  },
-];
+  ],
+};
 
-const comparisonTrackingData = [
-  {
-    datasetName: 'Data Analysis',
-    data: {
-      classWeight: [
-        { runId: 'My Favorite Sprint', value: 12 },
-        { runId: 'My second Favorite Sprint', value: 13 },
-      ],
+const comparisonTrackingData = {
+  metrics: [
+    {
+      datasetName: 'Data Analysis',
+      data: {
+        classWeight: [
+          { runId: 'My Favorite Sprint', value: 12 },
+          { runId: 'My second Favorite Sprint', value: 13 },
+        ],
+      },
     },
-  },
-];
+  ],
+};
 
-const showDiffTrackingData = [
-  {
-    datasetName: 'Data Analysis',
-    data: {
-      classWeight: [
-        { runId: 'My Favorite Sprint', value: 12 },
-        { runId: 'My second Favorite Sprint', value: 13 },
-      ],
-      r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
+const showDiffTrackingData = {
+  metrics: [
+    {
+      datasetName: 'Data Analysis',
+      data: {
+        classWeight: [
+          { runId: 'My Favorite Sprint', value: 12 },
+          { runId: 'My second Favorite Sprint', value: 13 },
+        ],
+        r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
+      },
     },
-  },
-];
+  ],
+};
 
 describe('RunDataset', () => {
   it('renders without crashing', () => {
@@ -57,7 +65,7 @@ describe('RunDataset', () => {
     );
 
     expect(wrapper.find('.details-dataset').length).toBe(1);
-    expect(wrapper.find('.details-dataset__accordion').length).toBe(3);
+    expect(wrapper.find('.details-dataset__accordion').length).toBe(4);
   });
 
   it('renders a boolean value as a string', () => {

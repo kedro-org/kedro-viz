@@ -1,5 +1,5 @@
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.models.graph import GraphNode, GraphNodeType, ModularPipelineChild
+from kedro_viz.models.flowchart import GraphNode, GraphNodeType, ModularPipelineChild
 from kedro_viz.services import modular_pipelines_services
 
 

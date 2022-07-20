@@ -91,7 +91,7 @@ class TestServer:
 
     def test_save_file(self, tmp_path, mocker):
         mocker.patch(
-            "kedro_viz.server.responses.get_default_response",
+            "kedro_viz.server.get_default_response",
             return_value=ExampleAPIResponse(content="test"),
         )
         save_file = tmp_path / "save.json"
