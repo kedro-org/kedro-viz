@@ -1,16 +1,14 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
 # pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
-import logging
 import base64
+import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 from kedro.io import AbstractVersionedDataSet, Version
 from kedro.io.core import get_filepath_str
-from kedro.io.core import Version as DataSetVersion
-
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
@@ -54,10 +52,12 @@ class TrackingDatasetGroup(str, Enum):
     METRIC = "metric"
     JSON = "json"
 
+
 TRACKING_DATASET_GROUPS = {
     "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.matplotlib.matplotlib_writer"
+    ".MatplotlibWriter": TrackingDatasetGroup.PLOT,
     "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
     "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
@@ -78,13 +78,6 @@ class TrackingDatasetModel:
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
 
-    def has_tracking_data(self, run_id: str):
-        self.dataset._version = DataSetVersion(run_id, None)
-        if self.dataset.exists():
-            return True
-        else:
-            return False
-            
     def load_tracking_data(self, run_id: str):
         # No need to reload data that has already been loaded.
         if run_id in self.runs:
@@ -97,17 +90,16 @@ class TrackingDatasetModel:
             # tracking datasets do not have load methods defined yet but would be the
             # same as json loader.
             # pylint: disable=import-outside-toplevel
-            from kedro.extras.datasets import json, tracking, plotly, matplotlib
+            from kedro.extras.datasets import json, matplotlib, plotly, tracking
 
             tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
             tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
-            plotly.JSONDataSet._load =  json.JSONDataSet._load  # type: ignore
-            plotly.PlotlyDataSet._load = json.JSONDataSet._load 
-            matplotlib.MatplotlibWriter._load = matplotlib_writer_load
-
+            plotly.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
+            plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type: ignore
+            matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type: ignore
 
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
-                self.runs[run_id] = {self.dataset._filepath.name : self.dataset.load()}
+                self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()
         except Exception as exc:  # pylint: disable=broad-except
@@ -127,12 +119,15 @@ class TrackingDatasetModel:
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
 
+
 # "MatplotlibWriter" is in quotes to avoid importing it.
+# also so it doesn't blow up if user doesn't have the dataset dependencies installed.
+if TYPE_CHECKING:  # pragma: no cover
+    from kedro.extras.datasets.matplotlib.matplotlib_writer import MatplotlibWriter
+
+
 def matplotlib_writer_load(dataset: "MatplotlibWriter") -> str:
     load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
     with open(load_path, "rb") as img_file:
         base64_bytes = base64.b64encode(img_file.read())
     return base64_bytes.decode("utf-8")
-
-
-
