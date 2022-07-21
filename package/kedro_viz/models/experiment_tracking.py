@@ -9,15 +9,12 @@ from typing import Any, Dict
 
 from kedro.io import AbstractVersionedDataSet, Version
 from kedro.io.core import get_filepath_str
+from kedro.io.core import Version as DataSetVersion
 
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
-
-from kedro.extras.datasets.plotly import JSONDataSet as PlotlyJSONDataSet
-from kedro.extras.datasets.plotly import PlotlyDataSet
-from kedro.extras.datasets.matplotlib import MatplotlibWriter
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
@@ -57,6 +54,14 @@ class TrackingDatasetGroup(str, Enum):
     METRIC = "metric"
     JSON = "json"
 
+TRACKING_DATASET_GROUPS = {
+    "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+}
+
 
 @dataclass
 class TrackingDatasetModel:
@@ -73,6 +78,13 @@ class TrackingDatasetModel:
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
 
+    def has_tracking_data(self, run_id: str):
+        self.dataset._version = DataSetVersion(run_id, None)
+        if self.dataset.exists():
+            return True
+        else:
+            return False
+            
     def load_tracking_data(self, run_id: str):
         # No need to reload data that has already been loaded.
         if run_id in self.runs:
@@ -93,8 +105,9 @@ class TrackingDatasetModel:
             plotly.PlotlyDataSet._load = json.JSONDataSet._load 
             matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
-            if isinstance(self.dataset, (PlotlyJSONDataSet, PlotlyDataSet, MatplotlibWriter)):
-                self.runs[run_id] = {get_filename(self.dataset): self.dataset.load()}
+
+            if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
+                self.runs[run_id] = {self.dataset._filepath.name : self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()
         except Exception as exc:  # pylint: disable=broad-except
@@ -114,14 +127,8 @@ class TrackingDatasetModel:
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
 
-
-def get_filename(dataset: AbstractVersionedDataSet) -> str:
-     dataset_description = dataset._describe()
-     return (dataset_description.get("filepath") or dataset_description.get("path")
-            ).name
-
-
-def matplotlib_writer_load(dataset: AbstractVersionedDataSet) -> str:
+# "MatplotlibWriter" is in quotes to avoid importing it.
+def matplotlib_writer_load(dataset: "MatplotlibWriter") -> str:
     load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
     with open(load_path, "rb") as img_file:
         base64_bytes = base64.b64encode(img_file.read())

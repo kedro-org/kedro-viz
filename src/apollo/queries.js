@@ -32,6 +32,10 @@ export const GET_RUN_METADATA = gql`
 /** query for collapsable run details component */
 export const GET_RUN_TRACKING_DATA = gql`
   query getRunTrackingData($runIds: [ID!]!, $showDiff: Boolean) {
+    plots: runTrackingData(runIds: $runIds, showDiff: $showDiff, group: PLOT) {
+      ...trackingDatasetFields
+    }
+
     metrics: runTrackingData(
       runIds: $runIds
       showDiff: $showDiff

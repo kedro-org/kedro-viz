@@ -78,17 +78,26 @@ class RunsQuery:
         # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
         #  proper query parameter instead of filtering to right run_ids here.
         # Note we keep the order here the same as the queried run_ids.
-        return [
-            TrackingDataset(
-                dataset_name=dataset.dataset_name,
-                dataset_type=dataset.dataset_type,
-                data=format_run_tracking_data(
-                    {run_id: dataset.runs[run_id] for run_id in run_ids},
-                    show_diff,
-                ),
-            )
-            for dataset in tracking_dataset_models
-        ]
+
+        
+
+        all_tracking_datasets = []
+
+        for dataset in tracking_dataset_models:
+            runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
+            formatted_tracking_data = format_run_tracking_data(runs, show_diff)
+            if len(formatted_tracking_data)>0:
+                    tracking_data = TrackingDataset(
+                    dataset_name=dataset.dataset_name,
+                    dataset_type=dataset.dataset_type,
+                    data = formatted_tracking_data
+                    )
+                    all_tracking_datasets.append(tracking_data)
+
+        return all_tracking_datasets
+
+
+
 
 
 @strawberry.type

@@ -117,8 +117,6 @@ describe('RunDataset', () => {
       />
     );
 
-    console.log(wrapper.debug());
-
     expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
   });
 });

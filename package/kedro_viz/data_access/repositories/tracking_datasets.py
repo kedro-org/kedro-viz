@@ -9,17 +9,10 @@ from kedro.io import AbstractVersionedDataSet
 from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup,
     TrackingDatasetModel,
+    TRACKING_DATASET_GROUPS,
     get_dataset_type,
 )
 
-TRACKING_DATASET_GROUPS = {
-    # TODO: add these.
-    "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
-    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
-}
 
 
 class TrackingDatasetsRepository:
@@ -29,14 +22,10 @@ class TrackingDatasetsRepository:
         ] = defaultdict(list)
 
     def get_tracking_datasets_by_group_by_run_ids(
-        self, run_ids: List[str], group: Optional[TrackingDatasetGroup]
+        self, run_ids: List[str], group: TrackingDatasetGroup
     ) -> List[TrackingDatasetModel]:
-        # TODO: group should become required argument when we query by
-        # metric and json.
         tracking_datasets = (
             self.tracking_datasets_by_group.get(group, [])
-            if group is not None
-            else sum(self.tracking_datasets_by_group.values(), [])
         )
 
         for dataset in tracking_datasets:

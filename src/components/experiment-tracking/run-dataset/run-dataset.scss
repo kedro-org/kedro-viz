@@ -64,7 +64,7 @@
   flex-shrink: 0;
   width: 310px;
   word-break: break-all;
-  min-height: 1.8em;
+  min-height: 20px;
 
   &--single {
     width: 50%;
@@ -76,4 +76,13 @@
   width: 1.8em;
   height: 1.8em;
   fill: #{$color-accent-blue};
+}
+
+.details-dataset__image-container {
+  height: 188px;
+}
+
+.details-dataset__image {
+  max-width: 250px;
+  width: 100%;
 }

@@ -1,10 +1,10 @@
 import React from 'react';
-import lodash from 'lodash';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
+import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
-
+import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
@@ -45,6 +45,9 @@ const RunDataset = ({
   isSingleRun,
   pinnedRun,
   selectedRunIds,
+  setRunDatasetToShow,
+  setRunDatasetType,
+  setShowRunPlotsModal,
   trackingData,
 }) => {
   return (
@@ -58,13 +61,13 @@ const RunDataset = ({
           <Accordion
             className="details-dataset__accordion"
             headingClassName="details-dataset__accordion-header"
-            heading={lodash.startCase(group)}
+            heading={group}
             key={group}
             layout="left"
             size="large"
           >
             {trackingData[group].map((dataset) => {
-              const { data, datasetName } = dataset;
+              const { data, datasetType, datasetName } = dataset;
 
               return (
                 <Accordion
@@ -83,11 +86,15 @@ const RunDataset = ({
                       return buildDatasetDataMarkup(
                         key,
                         dataset.data[key],
+                        datasetType,
                         rowIndex,
                         isSingleRun,
                         pinnedRun,
                         enableShowChanges,
-                        selectedRunIds
+                        selectedRunIds,
+                        setRunDatasetToShow,
+                        setShowRunPlotsModal,
+                        setRunDatasetType
                       );
                     })}
                 </Accordion>
@@ -113,14 +120,26 @@ const RunDataset = ({
 function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
+  datasetType,
   rowIndex,
   isSingleRun,
   pinnedRun,
   enableShowChanges,
-  selectedRunIds
+  selectedRunIds,
+  setRunDatasetToShow,
+  setShowRunPlotsModal
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
+
+  const isPlotlyDataset = getShortType(datasetType) === 'plotly';
+  const isImageDataset = getShortType(datasetType) === 'image';
+  const isTrackingDataset = getShortType(datasetType) === 'tracking';
+
+  const onExpandVizClick = () => {
+    setShowRunPlotsModal(true);
+    setRunDatasetToShow({ datasetKey, datasetType, runDataWithPin });
+  };
 
   return (
     <React.Fragment key={datasetKey + rowIndex}>
@@ -153,17 +172,66 @@ function buildDatasetDataMarkup(
         >
           {datasetKey}
         </span>
-        {runDataWithPin.map((data, index) => (
-          <span
-            className={classnames('details-dataset__value', {
-              'details-dataset__value--single': isSingleRun,
-            })}
-            key={data.runId + index}
-          >
-            {sanitizeValue(data.value)}
-            {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
-          </span>
-        ))}
+        {isTrackingDataset &&
+          runDataWithPin.map((data) => (
+            <span
+              className={classnames('details-dataset__value', {
+                'details-dataset__value--single': isSingleRun,
+              })}
+              key={data.runId}
+            >
+              {sanitizeValue(data.value)}
+              {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
+            </span>
+          ))}
+        {isPlotlyDataset &&
+          runDataWithPin.map((data) => {
+            return (
+              <React.Fragment key={data.runId}>
+                <span
+                  className={classnames('details-dataset__value', {
+                    'details-dataset__value--single': isSingleRun,
+                  })}
+                  key={data.runId}
+                >
+                  <div onClick={onExpandVizClick}>
+                    {data.value && (
+                      <PlotlyChart
+                        data={data.value.data}
+                        layout={data.value.layout}
+                        view="experiment_preview"
+                      />
+                    )}
+                  </div>
+                </span>
+              </React.Fragment>
+            );
+          })}
+        {isImageDataset &&
+          runDataWithPin.map((data) => {
+            return (
+              <React.Fragment key={data.runId}>
+                <span
+                  className={classnames('details-dataset__value', {
+                    'details-dataset__value--single': isSingleRun,
+                  })}
+                >
+                  <div
+                    className="details-dataset__image-container"
+                    onClick={onExpandVizClick}
+                  >
+                    {data.value && (
+                      <img
+                        alt="Matplotlib rendering"
+                        className="details-dataset__image"
+                        src={`data:image/png;base64,${data.value}`}
+                      />
+                    )}
+                  </div>
+                </span>
+              </React.Fragment>
+            );
+          })}
       </div>
     </React.Fragment>
   );

@@ -1,0 +1,142 @@
+@import '../../../styles/variables';
+@import '../../../styles/extends';
+
+.kui-theme--light {
+  --color-bg-plot: #{$color-bg-light-4};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
+}
+
+.kui-theme--dark {
+  --color-bg-plot: #{$color-bg-dark-2};
+  --color-button-plot: #{$color-button};
+  --color-button-plot-hovered: #{$color-button-hovered};
+  --color-button-text: #{$color-light};
+}
+
+.pipeline-run-plots-modal {
+  align-content: center;
+  align-items: center;
+  background-color: var(--color-bg-plot);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  left: $global-toolbar-width;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+
+.pipeline-run-plots-modal__top {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  align-items: center;
+  min-width: 100%;
+  padding: 1.5em;
+}
+
+.pipeline-run-plots-modal__header {
+  display: flex;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.pipeline-run-plots-modal__icon {
+  display: inline-block;
+  width: 2.9em;
+  height: 2.8em;
+  margin: 0 10px 0 0;
+  fill: var(--color-text);
+}
+
+.pipeline-run-plots-modal__title {
+  margin-top: 1px;
+  font-size: 1.8em;
+}
+
+.pipeline-run-plots-modal__back {
+  @extend %button;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+}
+
+.pipeline-run-plots-modal__content {
+  align-items: center;
+  display: flex;
+  height: calc(92% - 80px);
+  margin: auto;
+  width: calc(100% - 116px);
+
+  &--oneChart {
+    justify-content: center;
+  }
+
+  &--twoChart {
+    justify-content: space-around;
+  }
+}
+
+.pipeline-run-plots-modal__back-text {
+  font-size: 1.6em;
+}
+
+.pipeline-run-plots-modal__back-icon {
+  width: 1.9em;
+  height: 1.9em;
+  margin: 0 12px 0 0;
+  fill: var(--color-text);
+}
+
+.pipeline-run-plots__wrapper {
+  &--oneChart {
+    height: 100%;
+    max-height: 615px;
+    max-width: 815px;
+  }
+
+  &--twoChart {
+    display: flex;
+    padding: 2%;
+    flex-direction: column;
+  }
+
+  &--threeChart {
+    display: flex;
+    flex-direction: column;
+
+    &:nth-of-type(2),
+    &:nth-of-type(3) {
+      margin-left: 35px;
+    }
+  }
+}
+
+.pipeline-run-plots__image--oneChart {
+  height: 100%;
+  padding-bottom: 10px;
+}
+
+.pipeline-run-plots__image--twoChart {
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.pipeline-run-plots__image--threeChart {
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.pipeline-run-plots-image-text-timestamp {
+  font-size: 1.6em;
+  padding-right: 1.6em;
+}
+
+.pipeline-run-plots-image-text-relative_timestamp {
+  font-size: 1.3em;
+}
