@@ -226,6 +226,42 @@ export const darkPreviewTemplate = {
   },
 };
 
-export const darkModalTemplate = {
+export const darkOneChartTemplate = {
   ...darkTemplate,
+};
+
+export const darkTwoChartTemplate = {
+  ...darkTemplate,
+  height: 520,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 600,
+};
+
+export const darkThreeChartTemplate = {
+  ...darkTemplate,
+  height: 320,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 400,
+};
+
+export const darkExpPreviewTemplate = {
+  ...darkPreviewTemplate,
+  height: 188,
+  margin: {
+    l: 30,
+    r: 10,
+    t: 10,
+    b: 10,
+  },
+  width: 250,
 };
