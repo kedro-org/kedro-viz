@@ -55,6 +55,7 @@ type TrackingDataset {
 
 """Group to show kind of tracking data"""
 enum TrackingDatasetGroup {
+  PLOT
   METRIC
   JSON
 }
