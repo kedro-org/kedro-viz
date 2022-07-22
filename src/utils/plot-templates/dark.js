@@ -232,36 +232,36 @@ export const darkOneChartTemplate = {
 
 export const darkTwoChartTemplate = {
   ...darkTemplate,
-  height: 520,
+  height: null,
   margin: {
     l: 30,
     r: 10,
     t: 10,
     b: 10,
   },
-  width: 600,
+  width: null,
 };
 
 export const darkThreeChartTemplate = {
   ...darkTemplate,
-  height: 320,
+  height: null,
   margin: {
     l: 30,
     r: 10,
     t: 10,
     b: 10,
   },
-  width: 400,
+  width: null,
 };
 
 export const darkExpPreviewTemplate = {
   ...darkPreviewTemplate,
-  height: 188,
+  height: null,
   margin: {
     l: 30,
     r: 10,
     t: 10,
     b: 10,
   },
-  width: 250,
+  width: null,
 };

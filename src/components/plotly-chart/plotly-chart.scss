@@ -3,41 +3,40 @@
 
 .pipeline-plotly-chart {
   display: flex;
-  width: 100%;
-  height: 100%;
 
   .js-plotly-plot {
-    display: flex;
     align-items: center;
+    display: flex;
   }
 }
 
 .pipeline-plotly__oneChart {
-  width: calc(98% - 80px - #{$global-toolbar-width});
   height: calc(92% - 80px);
-  margin: auto;
+  margin: 0 0 24px;
+  width: 100%;
 }
 
 .pipeline-plotly__twoChart {
   display: flex;
-  width: calc(98% - 800px - #{$global-toolbar-width});
-  height: calc(92% - 100px);
-  margin: 5em;
+  height: 100%;
+  margin: 0 0 24px;
+  // max-height: 375px;
+  width: 100%;
 
   .js-plotly-plot {
-    display: flex;
     align-items: center;
+    display: flex;
   }
 }
 
 .pipeline-plotly__threeChart {
   display: flex;
-  width: calc(98% - 940px - #{$global-toolbar-width});
   height: calc(92% - 100px);
   margin-left: 5em;
+  width: calc(98% - 940px - #{$global-toolbar-width});
 
   .js-plotly-plot {
-    display: flex;
     align-items: center;
+    display: flex;
   }
 }

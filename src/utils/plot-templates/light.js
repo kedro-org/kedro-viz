@@ -232,26 +232,26 @@ export const lightOneChartTemplate = {
 
 export const lightTwoChartTemplate = {
   ...lightTemplate,
-  height: 520,
+  height: null,
   margin: {
     l: 30,
     r: 10,
     t: 10,
     b: 10,
   },
-  width: 600,
+  width: null,
 };
 
 export const lightThreeChartTemplate = {
   ...lightTemplate,
-  height: 320,
+  height: null,
   margin: {
     l: 30,
     r: 10,
     t: 10,
     b: 10,
   },
-  width: 400,
+  width: null,
 };
 
 export const lightExpPreviewTemplate = {
