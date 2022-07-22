@@ -56,8 +56,7 @@ class TrackingDatasetGroup(str, Enum):
 TRACKING_DATASET_GROUPS = {
     "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.matplotlib.matplotlib_writer"
-    ".MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,  # pylint: disable=line-too-long
     "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
     "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
@@ -74,6 +73,20 @@ class TrackingDatasetModel:
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.
     runs: Dict[str, Any] = field(init=False, default_factory=dict)
+
+    def is_plot_node(self):
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
+            or self.dataset_type
+            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
+        )
+
+    def is_image_node(self):
+        return (
+            self.dataset_type
+            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
+        )
 
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
@@ -94,11 +107,16 @@ class TrackingDatasetModel:
 
             tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
             tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
-            plotly.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
-            plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type: ignore
-            matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type: ignore
 
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
+
+                if self.is_plot_node():
+                    plotly.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
+                    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type: ignore
+
+                if self.is_image_node():
+                    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type: ignore
+
                 self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()
@@ -109,8 +127,6 @@ class TrackingDatasetModel:
                 run_id,
                 exc,
             )
-            # TODO: ideally this would be None when we load things that aren't just
-            # json.
             self.runs[run_id] = {}
 
         self.dataset._version = None
