@@ -185,49 +185,56 @@ function buildDatasetDataMarkup(
             </span>
           ))}
         {isPlotlyDataset &&
-          runDataWithPin.map((data) => {
+          selectedRunIds.map((value, index) => {
             return (
-              <React.Fragment key={data.runId}>
+              <React.Fragment key={value}>
                 <span
                   className={classnames('details-dataset__value', {
                     'details-dataset__value--single': isSingleRun,
                   })}
-                  key={data.runId}
                 >
-                  <div onClick={onExpandVizClick}>
-                    {data.value && (
-                      <PlotlyChart
-                        data={data.value.data}
-                        layout={data.value.layout}
-                        view="experiment_preview"
-                      />
-                    )}
-                  </div>
+                  {runDataWithPin[index].value ? (
+                    <div onClick={onExpandVizClick}>
+                      {runDataWithPin[index].value && (
+                        <PlotlyChart
+                          data={runDataWithPin[index].value.data}
+                          layout={runDataWithPin[index].value.layout}
+                          view="experiment_preview"
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    fillEmptyPlots()
+                  )}
                 </span>
               </React.Fragment>
             );
           })}
         {isImageDataset &&
-          runDataWithPin.map((data) => {
+          selectedRunIds.map((value, index) => {
             return (
-              <React.Fragment key={data.runId}>
+              <React.Fragment key={value}>
                 <span
                   className={classnames('details-dataset__value', {
                     'details-dataset__value--single': isSingleRun,
                   })}
                 >
-                  <div
-                    className="details-dataset__image-container"
-                    onClick={onExpandVizClick}
-                  >
-                    {data.value && (
-                      <img
-                        alt="Matplotlib rendering"
-                        className="details-dataset__image"
-                        src={`data:image/png;base64,${data.value}`}
-                      />
-                    )}
-                  </div>
+                  {runDataWithPin[index].value ? (
+                    <div
+                      className="details-dataset__image-container"
+                      onClick={onExpandVizClick}
+                    >
+                      {runDataWithPin[index].value && (
+                        <img
+                          alt="Matplotlib rendering"
+                          className="details-dataset__image"
+                          src={`data:image/png;base64,${runDataWithPin[index].value}`}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    fillEmptyPlots()
+                  )}
                 </span>
               </React.Fragment>
             );
@@ -265,6 +272,10 @@ function fillEmptyMetrics(datasetValues, selectedRunIds) {
   });
 
   return metrics;
+}
+
+function fillEmptyPlots() {
+  return <div className="details-dataset__empty-plot">No Plots Available</div>;
 }
 
 export default RunDataset;
