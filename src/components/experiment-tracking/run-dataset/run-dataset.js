@@ -277,7 +277,7 @@ function fillEmptyMetrics(datasetValues, selectedRunIds) {
 }
 
 function fillEmptyPlots() {
-  return <div className="details-dataset__empty-plot">No Plots Available</div>;
+  return <div className="details-dataset__empty-plot">No plot available</div>;
 }
 
 export default RunDataset;
