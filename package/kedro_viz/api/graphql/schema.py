@@ -68,7 +68,7 @@ class RunsQuery:
     def run_tracking_data(
         self,
         run_ids: List[ID],
-        group: TrackingDatasetGroup = None,
+        group: TrackingDatasetGroup,
         show_diff: Optional[bool] = True,
     ) -> List[TrackingDataset]:
         # pylint: disable=line-too-long
@@ -84,7 +84,7 @@ class RunsQuery:
         for dataset in tracking_dataset_models:
             runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
             formatted_tracking_data = format_run_tracking_data(runs, show_diff)
-            if len(formatted_tracking_data) > 0:
+            if formatted_tracking_data:
                 tracking_data = TrackingDataset(
                     dataset_name=dataset.dataset_name,
                     dataset_type=dataset.dataset_type,
