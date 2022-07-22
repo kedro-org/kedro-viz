@@ -232,7 +232,7 @@ export const lightOneChartTemplate = {
 
 export const lightTwoChartTemplate = {
   ...lightTemplate,
-  height: null,
+  height: 375,
   margin: {
     l: 30,
     r: 10,
@@ -244,7 +244,7 @@ export const lightTwoChartTemplate = {
 
 export const lightThreeChartTemplate = {
   ...lightTemplate,
-  height: null,
+  height: 250,
   margin: {
     l: 30,
     r: 10,

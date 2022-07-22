@@ -78,7 +78,12 @@
   fill: #{$color-accent-blue};
 }
 
+.details-dataset__visualization-wrapper {
+  cursor: pointer;
+}
+
 .details-dataset__image-container {
+  cursor: pointer;
   height: 188px;
 }
 
@@ -92,7 +97,7 @@
   background-color: var(--color-bg-1);
   border: 1px solid var(--color-bg-5);
   display: flex;
-  justify-content: center;
   height: 188px;
+  justify-content: center;
   width: 250px;
 }

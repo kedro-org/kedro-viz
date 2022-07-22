@@ -69,8 +69,8 @@
 .pipeline-run-plots-modal__content {
   align-items: center;
   display: flex;
-  height: calc(100% - 66px);
-  margin: auto;
+  height: calc(100% - 66px - 6em);
+  margin: 3em auto 3em;
   width: calc(100% - 116px);
 
   &--oneChart {
@@ -135,10 +135,11 @@
   &--threeChart {
     display: flex;
     flex-direction: column;
+    width: 33.333%;
 
     &:nth-of-type(2),
     &:nth-of-type(3) {
-      margin-left: 35px;
+      margin-left: 25px;
     }
   }
 }

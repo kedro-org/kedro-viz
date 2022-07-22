@@ -232,7 +232,7 @@ export const darkOneChartTemplate = {
 
 export const darkTwoChartTemplate = {
   ...darkTemplate,
-  height: null,
+  height: 375,
   margin: {
     l: 30,
     r: 10,
@@ -244,7 +244,7 @@ export const darkTwoChartTemplate = {
 
 export const darkThreeChartTemplate = {
   ...darkTemplate,
-  height: null,
+  height: 250,
   margin: {
     l: 30,
     r: 10,
