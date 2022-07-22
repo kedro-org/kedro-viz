@@ -16,26 +16,10 @@
   width: 100%;
 }
 
-.pipeline-plotly__twoChart {
-  display: flex;
-  height: 100%;
-  margin: 0 0 24px;
-  width: 100%;
-
-  .js-plotly-plot {
-    align-items: center;
-    display: flex;
-  }
-}
-
+.pipeline-plotly__twoChart,
 .pipeline-plotly__threeChart {
   display: flex;
   height: 100%;
   margin: 0 0 24px;
   width: 100%;
-
-  .js-plotly-plot {
-    align-items: center;
-    display: flex;
-  }
 }

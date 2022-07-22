@@ -55,7 +55,10 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
             return (
               data.value && (
                 <div
-                  className={`pipeline-run-plots__plot-wrapper--${plotView}`}
+                  className={classNames(
+                    'pipeline-run-plots__plot-wrapper',
+                    `pipeline-run-plots__plot-wrapper--${plotView}`
+                  )}
                   key={data.runId}
                 >
                   <PlotlyChart
@@ -628,7 +631,10 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
           runDataWithPlotData.map((data) => {
             return (
               <div
-                className={`pipeline-run-plots__image-wrapper--${plotView}`}
+                className={classNames(
+                  `pipeline-run-plots__image-wrapper`,
+                  `pipeline-run-plots__image-wrapper--${plotView}`
+                )}
                 key={data.runId}
               >
                 <img

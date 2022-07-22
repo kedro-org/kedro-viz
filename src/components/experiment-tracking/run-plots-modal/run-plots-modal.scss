@@ -16,7 +16,6 @@
 }
 
 .pipeline-run-plots-modal {
-  align-content: center;
   align-items: center;
   background-color: var(--color-bg-plot);
   bottom: 0;
@@ -30,10 +29,9 @@
 }
 
 .pipeline-run-plots-modal__top {
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-content: center;
-  align-items: center;
   min-width: 100%;
   padding: 1.5em;
 }
@@ -46,24 +44,24 @@
 
 .pipeline-run-plots-modal__icon {
   display: inline-block;
-  width: 2.9em;
+  fill: var(--color-text);
   height: 2.8em;
   margin: 0 10px 0 0;
-  fill: var(--color-text);
+  width: 2.9em;
 }
 
 .pipeline-run-plots-modal__title {
-  margin-top: 1px;
   font-size: 1.8em;
+  margin-top: 1px;
 }
 
 .pipeline-run-plots-modal__back {
   @extend %button;
 
-  position: relative;
-  display: flex;
   align-items: center;
+  display: flex;
   padding: 6px 12px;
+  position: relative;
 }
 
 .pipeline-run-plots-modal__content {
@@ -87,12 +85,13 @@
 }
 
 .pipeline-run-plots-modal__back-icon {
-  width: 1.9em;
+  fill: var(--color-text);
   height: 1.9em;
   margin: 0 12px 0 0;
-  fill: var(--color-text);
+  width: 1.9em;
 }
 
+// This is the wrapper element for Matplotlib images.
 .pipeline-run-plots__image-wrapper {
   &--oneChart {
     height: 100%;
@@ -102,8 +101,12 @@
 
   &--twoChart {
     display: flex;
-    padding: 2%;
     flex-direction: column;
+    width: 50%;
+
+    &:nth-of-type(2) {
+      margin-left: 58px;
+    }
   }
 
   &--threeChart {
@@ -115,26 +118,39 @@
       margin-left: 35px;
     }
   }
+
+  .pipeline-run-plots__image--oneChart {
+    height: 100%;
+    padding-bottom: 24px;
+  }
+
+  .pipeline-run-plots__image--twoChart,
+  .pipeline-run-plots__image--threeChart {
+    padding-bottom: 24px;
+    width: 100%;
+  }
 }
 
+// This is the wrapper element for Plotly charts.
 .pipeline-run-plots__plot-wrapper {
+  display: flex;
+  flex-direction: column;
+
   &--oneChart {
-    display: flex;
-    flex-direction: column;
     height: 100%;
     justify-content: center;
     width: 100%;
   }
 
   &--twoChart {
-    display: flex;
-    flex-direction: column;
-    width: 48%;
+    width: 50%;
+
+    &:nth-of-type(2) {
+      margin-left: 47px;
+    }
   }
 
   &--threeChart {
-    display: flex;
-    flex-direction: column;
     width: 33.333%;
 
     &:nth-of-type(2),
@@ -142,21 +158,6 @@
       margin-left: 25px;
     }
   }
-}
-
-.pipeline-run-plots__image--oneChart {
-  height: 100%;
-  padding-bottom: 24px;
-}
-
-.pipeline-run-plots__image--twoChart {
-  width: 100%;
-  padding-bottom: 24px;
-}
-
-.pipeline-run-plots__image--threeChart {
-  width: 100%;
-  padding-bottom: 24px;
 }
 
 .pipeline-run-plots-image-text-timestamp {
