@@ -86,3 +86,13 @@
   max-width: 250px;
   width: 100%;
 }
+
+.details-dataset__empty-plot {
+  align-items: center;
+  background-color: var(--color-bg-1);
+  border: 1px solid var(--color-bg-5);
+  display: flex;
+  justify-content: center;
+  height: 188px;
+  width: 250px;
+}
