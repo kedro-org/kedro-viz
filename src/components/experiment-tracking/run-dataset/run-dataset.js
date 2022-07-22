@@ -48,7 +48,6 @@ const RunDataset = ({
   pinnedRun,
   selectedRunIds,
   setRunDatasetToShow,
-  setRunDatasetType,
   setShowRunPlotsModal,
   trackingData,
 }) => {
@@ -95,8 +94,7 @@ const RunDataset = ({
                         enableShowChanges,
                         selectedRunIds,
                         setRunDatasetToShow,
-                        setShowRunPlotsModal,
-                        setRunDatasetType
+                        setShowRunPlotsModal
                       );
                     })}
                 </Accordion>
