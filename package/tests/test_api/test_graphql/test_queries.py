@@ -349,7 +349,7 @@ class TestQueryWithRuns:
             "/graphql",
             json={
                 "query": f"""{{runTrackingData
-                      (runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                      (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
                       {{datasetName, datasetType, data}}}}"""
             },
         )
