@@ -12,7 +12,8 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
     return null;
   }
   const { datasetKey, datasetType, runDataWithPin } = runDatasetToShow;
-  const numDatasets = runDataWithPin.length;
+  const runDataWithPlotData = runDataWithPin.filter(({ value }) => value);
+  const numDatasets = runDataWithPlotData.length;
   const plotView =
     numDatasets === 3
       ? 'threeChart'
@@ -48,7 +49,7 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
         )}
       >
         {isPlotly &&
-          runDataWithPin.map(
+          runDataWithPlotData.map(
             (data) =>
               data.value && (
                 <PlotlyChart
@@ -59,7 +60,7 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
               )
           )}
         {isImage &&
-          runDataWithPin.map((data) => {
+          runDataWithPlotData.map((data) => {
             return (
               <div
                 className={`pipeline-run-plots__wrapper--${plotView}`}

@@ -152,12 +152,12 @@ function buildDatasetDataMarkup(
           >
             Name
           </span>
-          {datasetValues.map((value, index) => (
+          {selectedRunIds.map((value, index) => (
             <span
               className={classnames('details-dataset__value-header', {
                 'details-dataset__value-header--single': isSingleRun,
               })}
-              key={value.runId + index}
+              key={value + index}
             >
               Value
             </span>
