@@ -62,11 +62,14 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
       <div
         className={classNames(
           'pipeline-run-plots-modal__content',
-          `pipeline-run-plots-modal__content--${plotView}`
+          `pipeline-run-plots-modal__content--${plotView}`,
+          {
+            'pipeline-run-plots-modal__content--plotly': isPlotly,
+          }
         )}
       >
         {isPlotly &&
-          runDataWithPlotData.map((data, index) => {
+          runDataWithPlotData.map((data) => {
             return (
               data.value && (
                 <div
@@ -78,7 +81,6 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
                 >
                   <PlotlyChart
                     data={data.value.data}
-                    key={index}
                     layout={data.value.layout}
                     view={plotView}
                   />

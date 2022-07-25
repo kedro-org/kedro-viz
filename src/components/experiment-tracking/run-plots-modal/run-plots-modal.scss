@@ -78,6 +78,11 @@
   &--twoChart {
     justify-content: space-between;
   }
+
+  &--plotly {
+    height: calc(100% - 66px - 6em);
+    margin: 3em auto 3em;
+  }
 }
 
 .pipeline-run-plots-modal__back-text {
