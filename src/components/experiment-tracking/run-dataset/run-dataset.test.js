@@ -6,7 +6,8 @@ import { shallow, mount } from 'enzyme';
 const booleanTrackingData = {
   JSONData: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.hyperparams_linear_regression',
+      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: false }],
       },
@@ -17,7 +18,8 @@ const booleanTrackingData = {
 const objectTrackingData = {
   JSONData: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.hyperparams_linear_regression',
+      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
       },
@@ -28,7 +30,9 @@ const objectTrackingData = {
 const comparisonTrackingData = {
   metrics: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType:
+        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -42,7 +46,9 @@ const comparisonTrackingData = {
 const showDiffTrackingData = {
   metrics: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType:
+        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },

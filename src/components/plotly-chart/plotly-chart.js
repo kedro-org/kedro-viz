@@ -30,7 +30,7 @@ import classNames from 'classnames';
 
 const Plot = createPlotlyComponent(Plotly);
 
-const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
+const PlotlyChart = ({ theme, view = '', data = [], layout = {} }) => {
   const plotConfig = view.includes('preview')
     ? { staticPlot: true }
     : undefined;

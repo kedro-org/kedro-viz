@@ -1,42 +1,31 @@
 import React from 'react';
-import MetadataModal from './run-plots-modal';
-import { toggleNodeClicked, addNodeMetadata } from '../../../actions/nodes';
+import RunPlotsModal from './run-plots-modal';
 import { setup } from '../../../utils/state.mock';
-import { toggleMetadataModal } from '../../../actions';
-import nodePlot from '../../../utils/data/node_plot.mock.json';
 
-const metricsNodeID = '966b9734';
+const runDatasetToShow = {
+  datasetKey: 'matplot_lib_single_plot.png',
+  datasetType:
+    'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+  updatedDatasetValues: [
+    { runId: '2022-07-21T12.54.06.759Z', value: 'iVBORw0KGgoAA' },
+  ],
+};
 
-describe('Plotly Modal', () => {
-  const mount = (props) => {
-    return setup.mount(<MetadataModal />, {
-      beforeLayoutActions: [() => toggleNodeClicked(props.nodeId)],
-      afterLayoutActions: [
-        () => toggleMetadataModal(true),
-        () => addNodeMetadata({ id: metricsNodeID, data: nodePlot }),
-      ],
-    });
+describe('Run Plots Modal', () => {
+  const setShowRunPlotsModal = jest.fn();
+
+  const mount = () => {
+    return setup.mount(
+      <RunPlotsModal
+        runDatasetToShow={runDatasetToShow}
+        setShowRunPlotsModal={setShowRunPlotsModal}
+        visible={true}
+      />
+    );
   };
+
   it('renders without crashing', () => {
-    const wrapper = mount({ nodeId: metricsNodeID });
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(1);
-  });
-
-  it('modal closes when collapse button is clicked', () => {
-    const wrapper = mount({ nodeId: metricsNodeID });
-    wrapper.find('.pipeline-plot-modal__collapse-plot').simulate('click');
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
-  });
-
-  it('modal closes when back button is clicked', () => {
-    const wrapper = mount({ nodeId: metricsNodeID });
-    wrapper.find('.pipeline-plot-modal__back').simulate('click');
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
-  });
-
-  it('shows plot when a plot node is clicked', () => {
-    const wrapper = mount({ nodeId: metricsNodeID });
-    expect(wrapper.find('.pipeline-plot-modal__header').length).toBe(1);
-    expect(wrapper.find('.pipeline-plotly-chart').length).toBe(1);
+    const wrapper = mount();
+    expect(wrapper.find('.pipeline-run-plots-modal').length).toBe(1);
   });
 });
