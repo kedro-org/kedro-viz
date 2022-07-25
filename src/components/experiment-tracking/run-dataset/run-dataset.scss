@@ -21,7 +21,6 @@
   display: flex;
   font-size: 1.4em;
 
-  & span:nth-child(2),
   & span:nth-child(3) {
     margin-right: 130px;
   }
@@ -57,16 +56,13 @@
 
   min-height: 1.8em;
 
-  transform: translateX(0);
-  transition: transform 0.3s ease-out;
-
   width: 375px;
 
   word-break: break-all;
 
   &--comparision-view {
     transform: translateX(-40%);
-    transition: transform 0.3s ease-out;
+    transition: transform 0.2s ease-out;
 
     width: 375px;
   }

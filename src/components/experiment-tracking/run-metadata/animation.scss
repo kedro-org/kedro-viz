@@ -1,0 +1,21 @@
+.details-metadata__run-animation-enter,
+.details-dataset__value-animation-enter {
+  opacity: 0;
+  transform: translateX(20px);
+
+  transition: transform 0.1s ease-out, opacity 0.1s linear;
+}
+
+.details-metadata__run-animation-enter-active,
+.details-dataset__value-animation-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+
+  transition: transform 0.1s ease-out, opacity 0.1s linear;
+}
+
+.details-metadata__run-animation-exit-active,
+.details-dataset__value-animation-exit-active {
+  opacity: 0;
+  transition: opacity 0.1s linear;
+}
