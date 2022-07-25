@@ -22,6 +22,7 @@
   display: flex;
   flex-direction: column;
   left: $global-toolbar-width;
+  overflow-y: scroll;
   position: absolute;
   right: 0;
   top: 0;
@@ -67,8 +68,7 @@
 .pipeline-run-plots-modal__content {
   align-items: center;
   display: flex;
-  height: calc(100% - 66px - 6em);
-  margin: 3em auto 3em;
+  margin: auto;
   width: calc(100% - 116px);
 
   &--oneChart {
@@ -93,10 +93,16 @@
 
 // This is the wrapper element for Matplotlib images.
 .pipeline-run-plots__image-wrapper {
+  margin-bottom: 3em;
+  margin-top: 3em;
+
   &--oneChart {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     max-height: 615px;
     max-width: 815px;
+    width: 100%;
   }
 
   &--twoChart {
@@ -112,6 +118,7 @@
   &--threeChart {
     display: flex;
     flex-direction: column;
+    width: 33.33%;
 
     &:nth-of-type(2),
     &:nth-of-type(3) {
@@ -119,11 +126,7 @@
     }
   }
 
-  .pipeline-run-plots__image--oneChart {
-    height: 100%;
-    padding-bottom: 24px;
-  }
-
+  .pipeline-run-plots__image--oneChart,
   .pipeline-run-plots__image--twoChart,
   .pipeline-run-plots__image--threeChart {
     padding-bottom: 24px;
