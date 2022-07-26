@@ -79,6 +79,12 @@ $baseline-animation-timing: 0.3s;
     opacity $baseline-animation-timing linear;
 }
 
+.details-metadata__run-animation-exit,
+.details-dataset__value-animation-exit {
+  opacity: 1;
+  transition: opacity $baseline-animation-timing linear;
+}
+
 .details-metadata__run-animation-exit-active,
 .details-dataset__value-animation-exit-active {
   opacity: 0;
