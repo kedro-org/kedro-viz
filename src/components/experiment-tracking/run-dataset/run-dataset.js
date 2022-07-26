@@ -113,7 +113,6 @@ function buildDatasetDataMarkup(
         <div className="details-dataset__row">
           <span className="details-dataset__name-header">Name</span>
           {datasetValues.map((value, index) => (
-            // <CSSTransition key={index} timeout={300} classNames="details-dataset__value-animation">
             <span
               className={classnames('details-dataset__value-header', {
                 'details-dataset__value-header--comparision-view':
@@ -123,7 +122,6 @@ function buildDatasetDataMarkup(
             >
               Value
             </span>
-            // </CSSTransition>
           ))}
         </div>
       ) : null}

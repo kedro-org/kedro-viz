@@ -67,29 +67,16 @@ $max-width: 375px;
 }
 
 .details-metadata__run {
-  .details-metadata__table-label {
-    min-width: $max-width;
-  }
-
+  .details-metadata__table-label,
   .details-metadata__table-value {
     min-width: $max-width;
-
-    transform: translateX(0);
-
-    transition: transform 0.3s ease-out;
   }
 }
 
 // a single run when comparison view is on
 .details-metadata__run--baseline-comparision-view {
-  .details-metadata__table-label {
-    width: $max-width;
-  }
-
+  .details-metadata__table-label,
   .details-metadata__table-value {
-    transform: translateX(-40%);
-    transition: transform 0.3s ease-out;
-
     width: $max-width;
   }
 }
@@ -118,36 +105,6 @@ $max-width: 375px;
 
 .details-metadata__title--empty {
   width: 365px;
-
-  opacity: 1;
-  transform: translateX(0);
-
-  transition: transform 0.2s ease-in-out opacity 0.2s ease-in-out;
-}
-
-.details-metadata__title--empty-comparision-mode {
-  opacity: 0;
-  transform: translateX(-40%);
-
-  // as this empty will be moved to the right, the width gets squeezed
-  // remove padding bottom to make it align with the other run
-  padding: 0 0 !important;
-
-  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
-}
-
-.details-metadata__title-baseline {
-  opacity: 0;
-  transform: translateX(0);
-
-  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
-}
-
-.details-metadata__title--baseline-comparision-mode {
-  opacity: 1;
-  transform: translateX(-40%);
-
-  transition: transform 0.3s ease-in-out opacity 0.3s ease-in-out;
 }
 
 // other runs get added to compare with the baseline run

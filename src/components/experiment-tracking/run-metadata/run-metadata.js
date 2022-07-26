@@ -176,13 +176,13 @@ const RunMetadata = ({
             >
               <table className="details-metadata__table">
                 <tbody>
-                  <tr>
+                  <TransitionGroup component="tr">
                     {i === 0 ? (
                       <MetadataTitle
                         className={classnames(
+                          'details-metadata__title',
                           'details-metadata__title--empty',
                           {
-                            'details-metadata__title': !enableComparisonView,
                             'details-metadata__title--empty-comparision-mode':
                               enableComparisonView,
                           }
@@ -210,7 +210,7 @@ const RunMetadata = ({
                       run={run}
                       setPinnedRun={setPinnedRun}
                     />
-                  </tr>
+                  </TransitionGroup>
                   <tr>
                     {i === 0 ? (
                       <td className="details-metadata__table-label">
