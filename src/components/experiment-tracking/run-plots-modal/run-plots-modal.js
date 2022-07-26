@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PlotlyChart from '../../plotly-chart';
-import BackIcon from '../../icons/back';
+import BackWideIcon from '../../icons/back-wide';
 import NodeIcon from '../../icons/node-icon';
 import getShortType from '../../../utils/short-type';
 import { toHumanReadableTime } from '../../../utils/date-utils';
@@ -48,7 +48,7 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
           className="pipeline-run-plots-modal__back"
           onClick={() => setShowRunPlotsModal(false)}
         >
-          <BackIcon className="pipeline-run-plots-modal__back-icon"></BackIcon>
+          <BackWideIcon className="pipeline-run-plots-modal__back-icon"></BackWideIcon>
           <span className="pipeline-run-plots-modal__back-text">Back</span>
         </button>
         <div className="pipeline-run-plots-modal__header">

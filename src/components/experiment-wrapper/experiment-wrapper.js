@@ -7,7 +7,6 @@ import {
   GET_RUN_TRACKING_DATA,
 } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
-import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
@@ -69,13 +68,9 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRunIds(
-          // Runs need to be sorted by time to ensure runIDs get sent to the
-          // graphql endpoint in correct order.
-          sortRunByTime(selectedRunIds.filter((run) => run !== id))
-        );
+        setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
       } else {
-        setSelectedRunIds(sortRunByTime([...selectedRunIds, id]));
+        setSelectedRunIds([...selectedRunIds, id]);
       }
     } else {
       if (selectedRunIds.includes(id)) {
