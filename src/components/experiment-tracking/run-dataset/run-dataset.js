@@ -129,7 +129,7 @@ function buildDatasetDataMarkup(
         <span className={'details-dataset__label'}>{datasetKey}</span>
         {runDataWithPin.map((data, index) => (
           <CSSTransition
-            key={index}
+            key={data.runId}
             timeout={300}
             classNames="details-dataset__value-animation"
           >

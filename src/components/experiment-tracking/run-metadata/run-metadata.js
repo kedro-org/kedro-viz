@@ -155,14 +155,13 @@ const RunMetadata = ({
   };
 
   return (
-    // <div className="details-metadata">
     <TransitionGroup component="div" className="details-metadata">
       {runs.map((run, i) => {
         const humanReadableTime = toHumanReadableTime(run.id);
 
         return (
           <CSSTransition
-            key={i}
+            key={run.id}
             timeout={300}
             classNames="details-metadata__run-animation"
           >
@@ -176,7 +175,7 @@ const RunMetadata = ({
             >
               <table className="details-metadata__table">
                 <tbody>
-                  <TransitionGroup component="tr">
+                  <tr>
                     {i === 0 ? (
                       <MetadataTitle
                         className={classnames(
@@ -210,7 +209,7 @@ const RunMetadata = ({
                       run={run}
                       setPinnedRun={setPinnedRun}
                     />
-                  </TransitionGroup>
+                  </tr>
                   <tr>
                     {i === 0 ? (
                       <td className="details-metadata__table-label">
