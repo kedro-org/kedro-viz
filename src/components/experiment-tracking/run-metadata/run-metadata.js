@@ -69,62 +69,6 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
   );
 };
 
-export const MetadataTitle = ({
-  className,
-  enableShowChanges,
-  isSingleRun,
-  onRunSelection,
-  onTitleOrNoteClick,
-  pinnedRun,
-  run,
-  setPinnedRun,
-}) => {
-  return (
-    <td className={className}>
-      <span
-        className="details-metadata__title-detail"
-        onClick={() => onTitleOrNoteClick(run.id)}
-        title={sanitiseEmptyValue(run.title)}
-      >
-        {sanitiseEmptyValue(run.title)}
-      </span>
-      {isSingleRun ? (
-        <ul className="details-metadata__buttons">
-          <HiddenMenu isBookmarked={run.bookmark} runId={run.id} />
-        </ul>
-      ) : (
-        <ul className="details-metadata__buttons">
-          <IconButton
-            active={run.id === pinnedRun}
-            ariaLive="polite"
-            className={classnames(
-              'pipeline-menu-button--labels',
-              'pipeline-menu-button__pin',
-              {
-                'details-metadata__buttons--selected-pin': run.id === pinnedRun,
-              }
-            )}
-            icon={run.id === pinnedRun ? SelectedPin : UnSelectedPin}
-            labelText={run.id === pinnedRun ? 'Baseline' : 'Make baseline'}
-            labelTextPosition="bottom"
-            onClick={() => setPinnedRun(run.id)}
-            visible={enableShowChanges}
-          />
-          <HiddenMenu isBookmarked={run.bookmark} runId={run.id} />
-          <IconButton
-            ariaLive="polite"
-            className="pipeline-menu-button--labels__close"
-            icon={CloseIcon}
-            labelText="Remove run"
-            labelTextPosition="bottom"
-            onClick={() => onRunSelection(run.id)}
-          />
-        </ul>
-      )}
-    </td>
-  );
-};
-
 const RunMetadata = ({
   enableComparisonView,
   enableShowChanges = false,
@@ -168,19 +112,20 @@ const RunMetadata = ({
                       i === 0 && enableComparisonView,
                   })}
                 >
-                  <MetadataTitle
+                  <td
                     className={classnames(
                       'details-metadata__title',
                       'details-metadata__title-left'
                     )}
-                    enableShowChanges={enableShowChanges}
-                    isSingleRun={isSingleRun}
-                    onRunSelection={onRunSelection}
-                    onTitleOrNoteClick={onTitleOrNoteClick}
-                    pinnedRun={pinnedRun}
-                    run={run}
-                    setPinnedRun={setPinnedRun}
-                  />
+                  >
+                    <span
+                      className="details-metadata__title-detail"
+                      onClick={() => onTitleOrNoteClick(run.id)}
+                      title={sanitiseEmptyValue(run.title)}
+                    >
+                      {sanitiseEmptyValue(run.title)}
+                    </span>
+                  </td>
                   <td className="details-metadata__table-label">Created By</td>
                   <td className="details-metadata__table-label">
                     Creation Date
@@ -207,64 +152,99 @@ const RunMetadata = ({
                   timeout={300}
                   classNames="details-metadata__run-animation"
                 >
-                  <>
-                    <tr
-                      className={classnames('details-metadata__run', {
-                        'details-metadata__run--baseline': i === 0,
-                        'details-metadata__run--baseline-comparision-view':
-                          i === 0 && enableComparisonView,
-                      })}
+                  <tr
+                    className={classnames('details-metadata__run', {
+                      'details-metadata__run--baseline': i === 0,
+                      'details-metadata__run--baseline-comparision-view':
+                        i === 0 && enableComparisonView,
+                    })}
+                  >
+                    <td
+                      className={classnames(
+                        'details-metadata__title',
+                        'details-metadata__title-right'
+                      )}
                     >
-                      <MetadataTitle
-                        className={classnames(
-                          'details-metadata__title',
-                          'details-metadata__title-right'
-                        )}
-                        enableShowChanges={enableShowChanges}
-                        isSingleRun={isSingleRun}
-                        onRunSelection={onRunSelection}
-                        onTitleOrNoteClick={onTitleOrNoteClick}
-                        pinnedRun={pinnedRun}
-                        run={run}
-                        setPinnedRun={setPinnedRun}
-                      />
-                      <td className="details-metadata__table-value">
-                        {sanitiseEmptyValue(run.author)}
-                      </td>
-                      <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
-                        run.id
-                      )})`}</td>
-                      <td className="details-metadata__table-value">
-                        {sanitiseEmptyValue(run.gitSha)}
-                      </td>
-                      <td className="details-metadata__table-value">
-                        {sanitiseEmptyValue(run.gitBranch)}
-                      </td>
-                      <td className="details-metadata__table-value">
-                        {sanitiseEmptyValue(run.runCommand)}
-                      </td>
-                      <td className="details-metadata__table-value">
-                        <p
+                      <span
+                        className="details-metadata__title-detail"
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        title={sanitiseEmptyValue(run.title)}
+                      >
+                        {sanitiseEmptyValue(run.title)}
+                      </span>
+
+                      <ul className="details-metadata__buttons">
+                        <IconButton
+                          active={run.id === pinnedRun}
+                          ariaLive="polite"
                           className={classnames(
-                            'details-metadata__notes',
-                            'details-metadata__table-label'
+                            'pipeline-menu-button--labels',
+                            'pipeline-menu-button__pin',
+                            {
+                              'details-metadata__buttons--selected-pin':
+                                run.id === pinnedRun,
+                            }
                           )}
-                          onClick={() => onTitleOrNoteClick(run.id)}
-                          style={toggleNotes[i] ? { display: 'block' } : null}
+                          icon={
+                            run.id === pinnedRun ? SelectedPin : UnSelectedPin
+                          }
+                          labelText={
+                            run.id === pinnedRun ? 'Baseline' : 'Make baseline'
+                          }
+                          labelTextPosition="bottom"
+                          onClick={() => setPinnedRun(run.id)}
+                          visible={enableShowChanges}
+                        />
+                        <HiddenMenu
+                          isBookmarked={run.bookmark}
+                          runId={run.id}
+                        />
+                        <IconButton
+                          ariaLive="polite"
+                          className="pipeline-menu-button--labels__close"
+                          icon={CloseIcon}
+                          labelText="Remove run"
+                          labelTextPosition="bottom"
+                          onClick={() => onRunSelection(run.id)}
+                        />
+                      </ul>
+                    </td>
+                    <td className="details-metadata__table-value">
+                      {sanitiseEmptyValue(run.author)}
+                    </td>
+                    <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
+                      run.id
+                    )})`}</td>
+                    <td className="details-metadata__table-value">
+                      {sanitiseEmptyValue(run.gitSha)}
+                    </td>
+                    <td className="details-metadata__table-value">
+                      {sanitiseEmptyValue(run.gitBranch)}
+                    </td>
+                    <td className="details-metadata__table-value">
+                      {sanitiseEmptyValue(run.runCommand)}
+                    </td>
+                    <td className="details-metadata__table-value">
+                      <p
+                        className={classnames(
+                          'details-metadata__notes',
+                          'details-metadata__table-label'
+                        )}
+                        onClick={() => onTitleOrNoteClick(run.id)}
+                        style={toggleNotes[i] ? { display: 'block' } : null}
+                      >
+                        {run.notes !== '' ? run.notes : '- Add notes here'}
+                      </p>
+                      {run.notes.length > 100 ? (
+                        <button
+                          className="details-metadata__show-more kedro"
+                          onClick={() => onToggleNoteExpand(i)}
                         >
-                          {run.notes !== '' ? run.notes : '- Add notes here'}
-                        </p>
-                        {run.notes.length > 100 ? (
-                          <button
-                            className="details-metadata__show-more kedro"
-                            onClick={() => onToggleNoteExpand(i)}
-                          >
-                            {toggleNotes[i] ? 'Show less' : 'Show more'}
-                          </button>
-                        ) : null}
-                      </td>
-                    </tr>
-                  </>
+                          {toggleNotes[i] ? 'Show less' : 'Show more'}
+                        </button>
+                      ) : null}
+                    </td>
+                  </tr>
                 </CSSTransition>
               );
             })}
