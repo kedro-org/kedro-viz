@@ -50,13 +50,11 @@ $max-width: 375px;
   flex-shrink: 0;
   margin-right: 13em;
 
-  &:first-of-type {
-    margin-right: 0;
-  }
+  max-width: 375px;
+}
 
-  &:last-of-type {
-    margin-right: 5em;
-  }
+.details-metadata__run--baseline {
+  margin-right: 0;
 }
 
 .details-metadata__run td {
@@ -91,9 +89,17 @@ $max-width: 375px;
   }
 }
 
+.details-metadata__table tbody {
+  display: flex;
+}
+
 .details-metadata__table tr {
-  display: grid;
-  grid-template-columns: $max-width $max-width;
+  display: flex;
+  flex-direction: column;
+}
+
+.details-metadata__run-wrapper {
+  display: flex;
 }
 
 // animation for the title of the baseline when comparison mode is on

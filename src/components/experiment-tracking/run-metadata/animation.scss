@@ -29,21 +29,22 @@ $baseline-animation-timing: 0.3s;
   transition: transform $baseline-animation-timing ease-out;
 }
 
-.details-metadata__title--empty {
+.details-metadata__run--baseline .details-metadata__title-left {
   opacity: 1;
   transform: translateX(0);
 
   transition: opacity 0.1s ease-in-out;
 }
 
-.details-metadata__title--empty-comparision-mode {
+.details-metadata__run--baseline-comparision-view
+  .details-metadata__title-left {
   opacity: 0;
   transform: translateX(-40%);
 
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
 }
 
-.details-metadata__title-baseline {
+.details-metadata__run--baseline .details-metadata__title-right {
   opacity: 0;
   transform: translateX(0);
 
@@ -51,7 +52,8 @@ $baseline-animation-timing: 0.3s;
     opacity $baseline-animation-timing ease-in-out;
 }
 
-.details-metadata__title--baseline-comparision-mode {
+.details-metadata__run--baseline-comparision-view
+  .details-metadata__title-right {
   opacity: 1;
   transform: translateX(-40%);
 

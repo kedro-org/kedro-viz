@@ -155,36 +155,70 @@ const RunMetadata = ({
   };
 
   return (
-    <TransitionGroup component="div" className="details-metadata">
-      {runs.map((run, i) => {
-        const humanReadableTime = toHumanReadableTime(run.id);
+    <div className="details-metadata">
+      <table className="details-metadata__table">
+        <tbody>
+          {runs.map((run, i) => (
+            <>
+              {i === 0 ? (
+                <tr
+                  className={classnames('details-metadata__run', {
+                    'details-metadata__run--baseline': i === 0,
+                    'details-metadata__run--baseline-comparision-view':
+                      i === 0 && enableComparisonView,
+                  })}
+                >
+                  <MetadataTitle
+                    className={classnames(
+                      'details-metadata__title',
+                      'details-metadata__title-left'
+                    )}
+                    enableShowChanges={enableShowChanges}
+                    isSingleRun={isSingleRun}
+                    onRunSelection={onRunSelection}
+                    onTitleOrNoteClick={onTitleOrNoteClick}
+                    pinnedRun={pinnedRun}
+                    run={run}
+                    setPinnedRun={setPinnedRun}
+                  />
+                  <td className="details-metadata__table-label">Created By</td>
+                  <td className="details-metadata__table-label">
+                    Creation Date
+                  </td>
+                  <td className="details-metadata__table-label">Git SHA</td>
+                  <td className="details-metadata__table-label">Git Branch</td>
+                  <td className="details-metadata__table-label">Run Command</td>
+                  <td className="details-metadata__table-label">Notes</td>
+                </tr>
+              ) : null}
+            </>
+          ))}
 
-        return (
-          <CSSTransition
-            key={run.id}
-            timeout={300}
-            classNames="details-metadata__run-animation"
+          <TransitionGroup
+            component="div"
+            className="details-metadata__run-wrapper"
           >
-            <div
-              className={classnames('details-metadata__run', {
-                'details-metadata__run--baseline-comparision-view':
-                  i === 0 && enableComparisonView,
-                'details-metadata__run--other': i > 0,
-              })}
-              key={run.id}
-            >
-              <table className="details-metadata__table">
-                <tbody>
-                  <tr>
-                    {i === 0 ? (
+            {runs.map((run, i) => {
+              const humanReadableTime = toHumanReadableTime(run.id);
+
+              return (
+                <CSSTransition
+                  key={run.id}
+                  timeout={300}
+                  classNames="details-metadata__run-animation"
+                >
+                  <>
+                    <tr
+                      className={classnames('details-metadata__run', {
+                        'details-metadata__run--baseline': i === 0,
+                        'details-metadata__run--baseline-comparision-view':
+                          i === 0 && enableComparisonView,
+                      })}
+                    >
                       <MetadataTitle
                         className={classnames(
                           'details-metadata__title',
-                          'details-metadata__title--empty',
-                          {
-                            'details-metadata__title--empty-comparision-mode':
-                              enableComparisonView,
-                          }
+                          'details-metadata__title-right'
                         )}
                         enableShowChanges={enableShowChanges}
                         isSingleRun={isSingleRun}
@@ -194,102 +228,50 @@ const RunMetadata = ({
                         run={run}
                         setPinnedRun={setPinnedRun}
                       />
-                    ) : null}
-                    <MetadataTitle
-                      className={classnames('details-metadata__title', {
-                        'details-metadata__title-baseline': i === 0,
-                        'details-metadata__title--baseline-comparision-mode':
-                          i === 0 && enableComparisonView,
-                      })}
-                      enableShowChanges={enableShowChanges}
-                      isSingleRun={isSingleRun}
-                      onRunSelection={onRunSelection}
-                      onTitleOrNoteClick={onTitleOrNoteClick}
-                      pinnedRun={pinnedRun}
-                      run={run}
-                      setPinnedRun={setPinnedRun}
-                    />
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">
-                        Created By
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.author)}
                       </td>
-                    ) : null}
-                    <td className="details-metadata__table-value">
-                      {sanitiseEmptyValue(run.author)}
-                    </td>
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">
-                        Creation Date
+                      <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
+                        run.id
+                      )})`}</td>
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.gitSha)}
                       </td>
-                    ) : null}
-                    <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
-                      run.id
-                    )})`}</td>
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">Git SHA</td>
-                    ) : null}
-                    <td className="details-metadata__table-value">
-                      {sanitiseEmptyValue(run.gitSha)}
-                    </td>
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">
-                        Git Branch
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.gitBranch)}
                       </td>
-                    ) : null}
-                    <td className="details-metadata__table-value">
-                      {sanitiseEmptyValue(run.gitBranch)}
-                    </td>
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">
-                        Run Command
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.runCommand)}
                       </td>
-                    ) : null}
-                    <td className="details-metadata__table-value">
-                      {sanitiseEmptyValue(run.runCommand)}
-                    </td>
-                  </tr>
-                  <tr>
-                    {i === 0 ? (
-                      <td className="details-metadata__table-label">Notes</td>
-                    ) : null}
-                    <td className="details-metadata__table-value">
-                      <p
-                        className={classnames(
-                          'details-metadata__notes',
-                          'details-metadata__table-label'
-                        )}
-                        onClick={() => onTitleOrNoteClick(run.id)}
-                        style={toggleNotes[i] ? { display: 'block' } : null}
-                      >
-                        {run.notes !== '' ? run.notes : '- Add notes here'}
-                      </p>
-                      {run.notes.length > 100 ? (
-                        <button
-                          className="details-metadata__show-more kedro"
-                          onClick={() => onToggleNoteExpand(i)}
+                      <td className="details-metadata__table-value">
+                        <p
+                          className={classnames(
+                            'details-metadata__notes',
+                            'details-metadata__table-label'
+                          )}
+                          onClick={() => onTitleOrNoteClick(run.id)}
+                          style={toggleNotes[i] ? { display: 'block' } : null}
                         >
-                          {toggleNotes[i] ? 'Show less' : 'Show more'}
-                        </button>
-                      ) : null}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </CSSTransition>
-        );
-      })}
-    </TransitionGroup>
+                          {run.notes !== '' ? run.notes : '- Add notes here'}
+                        </p>
+                        {run.notes.length > 100 ? (
+                          <button
+                            className="details-metadata__show-more kedro"
+                            onClick={() => onToggleNoteExpand(i)}
+                          >
+                            {toggleNotes[i] ? 'Show less' : 'Show more'}
+                          </button>
+                        ) : null}
+                      </td>
+                    </tr>
+                  </>
+                </CSSTransition>
+              );
+            })}
+          </TransitionGroup>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
