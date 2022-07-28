@@ -389,7 +389,7 @@ export class FlowChart extends Component {
     const transform = viewTransformToFit({
       offset,
       focus,
-      viewWidth: chartWidth + chartSize.metaSidebarWidth,
+      viewWidth: chartWidth,
       viewHeight: chartHeight,
       objectWidth: graphWidth,
       objectHeight: graphHeight,
