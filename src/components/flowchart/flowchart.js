@@ -85,6 +85,9 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.clickedNode !== this.props.clickedNode) {
+      return;
+    }
     this.update(prevProps);
   }
 
@@ -386,7 +389,7 @@ export class FlowChart extends Component {
     const transform = viewTransformToFit({
       offset,
       focus,
-      viewWidth: chartWidth,
+      viewWidth: chartWidth + chartSize.metaSidebarWidth,
       viewHeight: chartHeight,
       objectWidth: graphWidth,
       objectHeight: graphHeight,
@@ -398,13 +401,15 @@ export class FlowChart extends Component {
     // Detect first transform
     const isFirstTransform = isOrigin(getViewTransform(this.view));
 
-    // Apply transform ignoring extents
-    setViewTransformExact(
-      this.view,
-      transform,
-      isFirstTransform ? 0 : this.DURATION,
-      false
-    );
+    if (!this.props.visibleMetaSidebar) {
+      // Apply transform ignoring extents
+      setViewTransformExact(
+        this.view,
+        transform,
+        isFirstTransform ? 0 : this.DURATION,
+        false
+      );
+    }
   }
 
   /**
