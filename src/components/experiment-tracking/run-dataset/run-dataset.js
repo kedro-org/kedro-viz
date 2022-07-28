@@ -203,7 +203,6 @@ function buildDatasetDataMarkup(
                       layout={run.value.layout}
                       view="experiment_preview"
                     />
-                    ~
                   </div>
                 ) : (
                   fillEmptyPlots()
