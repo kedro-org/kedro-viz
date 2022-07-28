@@ -584,55 +584,48 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
-        # Parse plot data
-        if data_node.is_plot_node():
-            from kedro.extras.datasets.plotly.plotly_dataset import (
-                JSONDataSet as PlotlyJSONDataSet,
-            )
-            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
+        latest_version = self.load_latest_version(dataset)
 
-            dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
-            if not dataset.exists():
-                return
-
-            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-            with dataset._fs.open(load_path, **dataset._fs_open_args_load) as fs_file:
-                self.plot = json.load(fs_file)
-
-        if data_node.is_image_node():
-            from kedro.extras.datasets.matplotlib.matplotlib_writer import (
-                MatplotlibWriter,
-            )
-
-            dataset = cast(MatplotlibWriter, dataset)
-            if not dataset.exists():
-                return
-
-            load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-            with open(load_path, "rb") as img_file:
-                base64_bytes = base64.b64encode(img_file.read())
-            self.image = base64_bytes.decode("utf-8")
-
-        if data_node.is_tracking_node():
-            from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
-            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
-
-            if not dataset.exists() or self.filepath is None:
-                return
-
-            dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
-            tracking_data = self.load_latest_tracking_data(dataset)
-            if not tracking_data:
-                return
-            self.tracking_data = tracking_data
-
-            if data_node.is_metric_node():
-                metrics_data = self.load_versioned_tracking_data(self.filepath)
-                if not metrics_data:
-                    return
-                self.plot = self.create_metrics_plot(
-                    pd.DataFrame.from_dict(metrics_data, orient="index")
+        if latest_version:
+            # Parse plot data
+            if data_node.is_plot_node():
+                from kedro.extras.datasets.plotly.plotly_dataset import (
+                    JSONDataSet as PlotlyJSONDataSet,
                 )
+                from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
+
+                dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
+
+                with dataset._fs.open(latest_version, **dataset._fs_open_args_load) as fs_file:
+                        self.plot =  json.load(fs_file)
+
+            if data_node.is_image_node():
+                from kedro.extras.datasets.matplotlib.matplotlib_writer import (
+                    MatplotlibWriter,
+                )
+
+                dataset = cast(MatplotlibWriter, dataset)
+
+                with open(latest_version, "rb") as img_file:
+                    base64_bytes = base64.b64encode(img_file.read())
+                self.image = base64_bytes.decode("utf-8")
+
+            if data_node.is_tracking_node():
+                from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
+                from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+
+                dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
+
+                with dataset._fs.open(latest_version, **dataset._fs_open_args_load) as fs_file:
+                        self.tracking_data =  json.load(fs_file)
+
+                if data_node.is_metric_node():
+                    metrics_data = self.load_versioned_tracking_data(self.filepath)
+                    if not metrics_data:
+                        return
+                    self.plot = self.create_metrics_plot(
+                        pd.DataFrame.from_dict(metrics_data, orient="index")
+                    )
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -640,7 +633,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # TODO: improve this scheme.
     @staticmethod
-    def load_latest_tracking_data(
+    def load_latest_version(
         dataset: Union["JSONDataSet", "MetricsDataSet"],
     ) -> Optional[Dict[str, float]]:
         """Load data for latest versions of the json dataset.
@@ -658,8 +651,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         )
         if not most_recent:
             return None
-        with dataset._fs.open(most_recent, **dataset._fs_open_args_load) as fs_file:
-            return json.load(fs_file)
+        return most_recent
 
     # TODO: improve this scheme.
     @staticmethod
