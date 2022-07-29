@@ -6,9 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.7.2
+
 ## Bug fixes and other changes
 
-- General design-debt fixes. (#930, #955, #956, #959, #960, #970, #977)
+- General design-debt fixes. (#930, #955, #956, #959, #960, #961, #970, #977, #991)
+- Improve grouping of experiment tracking dataset types. (#978)
 
 # Release 4.7.1
 
@@ -57,7 +60,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Change route name from `runsList` to `experiment-tracking`. (#820)
+- Change route name from `runsList` to `experiment tracking`. (#820s. (#978)
 - Update feature flag description to remind the user of the need for page refresh to apply settings. (#823)
 - Fix experiment tracking not showing run details bug on Windows. (#809)
 - Fix rendering of React component instance with custom routes. (#838)
