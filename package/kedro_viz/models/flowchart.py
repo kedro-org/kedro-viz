@@ -695,7 +695,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             A dictionary containing the version and the json data inside each version
         """
         if not filepath:
-            return None
+            return None  # pragma: no cover
 
         version_list = [
             path

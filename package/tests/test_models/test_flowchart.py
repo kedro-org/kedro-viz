@@ -676,13 +676,9 @@ class TestGraphNodeMetadata:
         return source_dir
 
     def test_load_latest_version(self, example_multiple_run_tracking_dataset):
-        assert (
-            isinstance(
-                DataNodeMetadata.load_latest_version(
-                    example_multiple_run_tracking_dataset
-                )
-            )
-            == str
+        assert isinstance(
+            DataNodeMetadata.load_latest_version(example_multiple_run_tracking_dataset),
+            str,
         )
 
     def test_load_latest_version_fail(self, mocker, tracking_data_filepath):
