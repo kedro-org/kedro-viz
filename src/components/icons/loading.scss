@@ -21,6 +21,7 @@ $path2-gap: $section-length;
 
   &--visible {
     opacity: 1;
+    transition-delay: 0.5s;
   }
 
   path {
