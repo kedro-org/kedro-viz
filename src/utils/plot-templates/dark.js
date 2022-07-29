@@ -239,6 +239,7 @@ export const darkTwoChartTemplate = {
     t: 10,
     b: 10,
   },
+  width: null,
 };
 
 export const darkThreeChartTemplate = {
@@ -250,6 +251,7 @@ export const darkThreeChartTemplate = {
     t: 10,
     b: 10,
   },
+  width: null,
 };
 
 export const darkExpPreviewTemplate = {

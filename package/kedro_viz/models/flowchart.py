@@ -18,7 +18,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 from kedro.io import AbstractDataSet
-from kedro.io.core import VERSION_FORMAT, get_filepath_str
+from kedro.io.core import VERSION_FORMAT
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
@@ -26,6 +26,11 @@ from pandas.core.frame import DataFrame
 # only import JSONDataSet and `MetricsDataSet` at top-level for type-checking
 # so it doesn't blow up if user doesn't have the dataset dependencies installed.
 if TYPE_CHECKING:  # pragma: no cover
+    from kedro.extras.datasets.matplotlib.matplotlib_writer import MatplotlibWriter
+    from kedro.extras.datasets.plotly.plotly_dataset import (
+        JSONDataSet as PlotlyJSONDataSet,
+    )
+    from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
     from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
     from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
@@ -584,48 +589,66 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
-        latest_version = self.load_latest_version(dataset)
 
-        if latest_version:
-            # Parse plot data
-            if data_node.is_plot_node():
-                from kedro.extras.datasets.plotly.plotly_dataset import (
-                    JSONDataSet as PlotlyJSONDataSet,
+        # Parse plot data
+        if data_node.is_plot_node():
+            from kedro.extras.datasets.plotly.plotly_dataset import (
+                JSONDataSet as PlotlyJSONDataSet,
+            )
+            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
+
+            dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
+
+            latest_version = self.load_latest_version(dataset)
+
+            if not latest_version:
+                return
+
+            with dataset._fs.open(
+                latest_version, **dataset._fs_open_args_load
+            ) as fs_file:
+                self.plot = json.load(fs_file)
+
+        if data_node.is_image_node():
+            from kedro.extras.datasets.matplotlib.matplotlib_writer import (
+                MatplotlibWriter,
+            )
+
+            dataset = cast(MatplotlibWriter, dataset)
+
+            latest_version = self.load_latest_version(dataset)
+
+            if not latest_version:
+                return
+
+            with open(latest_version, "rb") as img_file:
+                base64_bytes = base64.b64encode(img_file.read())
+            self.image = base64_bytes.decode("utf-8")
+
+        if data_node.is_tracking_node():
+            from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
+            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
+
+            dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
+
+            latest_version = self.load_latest_version(dataset)
+
+            if not latest_version:
+                return
+
+            with dataset._fs.open(
+                latest_version, **dataset._fs_open_args_load
+            ) as fs_file:
+                self.tracking_data = json.load(fs_file)
+
+            if data_node.is_metric_node():
+        
+                metrics_data = self.load_versioned_tracking_data(self.filepath)
+                if not metrics_data:
+                    return
+                self.plot = self.create_metrics_plot(
+                    pd.DataFrame.from_dict(metrics_data, orient="index")
                 )
-                from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
-
-                dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
-
-                with dataset._fs.open(latest_version, **dataset._fs_open_args_load) as fs_file:
-                        self.plot =  json.load(fs_file)
-
-            if data_node.is_image_node():
-                from kedro.extras.datasets.matplotlib.matplotlib_writer import (
-                    MatplotlibWriter,
-                )
-
-                dataset = cast(MatplotlibWriter, dataset)
-
-                with open(latest_version, "rb") as img_file:
-                    base64_bytes = base64.b64encode(img_file.read())
-                self.image = base64_bytes.decode("utf-8")
-
-            if data_node.is_tracking_node():
-                from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
-                from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
-
-                dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
-
-                with dataset._fs.open(latest_version, **dataset._fs_open_args_load) as fs_file:
-                        self.tracking_data =  json.load(fs_file)
-
-                if data_node.is_metric_node():
-                    metrics_data = self.load_versioned_tracking_data(self.filepath)
-                    if not metrics_data:
-                        return
-                    self.plot = self.create_metrics_plot(
-                        pd.DataFrame.from_dict(metrics_data, orient="index")
-                    )
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -634,8 +657,14 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     @staticmethod
     def load_latest_version(
-        dataset: Union["JSONDataSet", "MetricsDataSet"],
-    ) -> Optional[Dict[str, float]]:
+        dataset: Union[
+            "JSONDataSet",
+            "MetricsDataSet",
+            "PlotlyDataSet",
+            "PlotlyJSONDataSet",
+            "MatplotlibWriter",
+        ],
+    ) -> Optional[str]:
         """Load data for latest versions of the json dataset.
         Below operation is also on kedro.io.core -> fetched_latest_load_version()
         However it is a cached function and hence cannot be relied upon
