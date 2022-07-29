@@ -642,7 +642,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 self.tracking_data = json.load(fs_file)
 
             if data_node.is_metric_node():
-        
+
                 metrics_data = self.load_versioned_tracking_data(self.filepath)
                 if not metrics_data:
                     return
@@ -685,7 +685,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     @staticmethod
     def load_versioned_tracking_data(
-        filepath: str, num_versions: int = 10
+        filepath: str = None, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset
         Args:
@@ -694,6 +694,9 @@ class DataNodeMetadata(GraphNodeMetadata):
         Returns:
             A dictionary containing the version and the json data inside each version
         """
+        if not filepath:
+            return None
+
         version_list = [
             path
             for path in sorted(Path(filepath).iterdir(), reverse=True)
