@@ -3,11 +3,7 @@ import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
-import {
-  TransitionGroup,
-  CSSTransition,
-  SwitchTransition,
-} from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import './run-dataset.css';
 import '../run-metadata/animation.css';
@@ -102,12 +98,12 @@ const RunDataset = ({
 function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
-  rowIndex,
-  pinnedRun,
-  enableShowChanges,
   enableComparisonView,
-  selectedRunIds,
-  isSingleRun
+  enableShowChanges,
+  isSingleRun,
+  pinnedRun,
+  rowIndex,
+  selectedRunIds
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
