@@ -71,10 +71,11 @@ const RunDataset = ({
                 return buildDatasetDataMarkup(
                   key,
                   dataset.data[key],
-                  rowIndex,
-                  pinnedRun,
-                  enableShowChanges,
                   enableComparisonView,
+                  enableShowChanges,
+                  isSingleRun,
+                  pinnedRun,
+                  rowIndex,
                   selectedRunIds
                 );
               })}
@@ -90,6 +91,7 @@ const RunDataset = ({
  * @param {string} datasetKey The row label of the data.
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
+ * @param {boolean} isSingleRun Whether or not this is a single run.
  * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
  * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
