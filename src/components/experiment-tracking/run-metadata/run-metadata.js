@@ -106,11 +106,14 @@ const RunMetadata = ({
             <>
               {i === 0 ? (
                 <tr
-                  className={classnames('details-metadata__run', {
-                    'details-metadata__run--baseline': i === 0,
-                    'details-metadata__run--baseline-comparision-view':
-                      i === 0 && enableComparisonView,
-                  })}
+                  className={classnames(
+                    'details-metadata__run',
+                    'details-metadata__run--first',
+                    {
+                      'details-metadata__run--first-comparision-view':
+                        enableComparisonView,
+                    }
+                  )}
                 >
                   <td
                     className={classnames(
@@ -138,11 +141,7 @@ const RunMetadata = ({
               ) : null}
             </>
           ))}
-
-          <TransitionGroup
-            component="div"
-            className="details-metadata__run-wrapper"
-          >
+          <TransitionGroup className="details-metadata__run--wrapper">
             {runs.map((run, i) => {
               const humanReadableTime = toHumanReadableTime(run.id);
 
@@ -150,12 +149,14 @@ const RunMetadata = ({
                 <CSSTransition
                   key={run.id}
                   timeout={300}
-                  classNames="details-metadata__run-animation"
+                  classNames={'details-metadata__run-animation'}
+                  enter={isSingleRun ? false : true}
+                  exit={isSingleRun ? false : true}
                 >
                   <tr
                     className={classnames('details-metadata__run', {
-                      'details-metadata__run--baseline': i === 0,
-                      'details-metadata__run--baseline-comparision-view':
+                      'details-metadata__run--first': i === 0,
+                      'details-metadata__run--first-comparision-view':
                         i === 0 && enableComparisonView,
                     })}
                   >

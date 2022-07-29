@@ -1,64 +1,62 @@
-$baseline-animation-timing: 0.3s;
+$animation-timing: 0.3s;
 
 // aniamtion for baseline when comparison view is on
 .details-metadata__run {
   .details-metadata__table-value {
     transform: translateX(0);
 
-    transition: transform $baseline-animation-timing ease-out;
+    transition: transform $animation-timing ease-out;
   }
 }
 
-.details-metadata__run--baseline-comparision-view {
+.details-metadata__run--first-comparision-view {
   .details-metadata__table-value {
     transform: translateX(-40%);
-    transition: transform $baseline-animation-timing ease-out;
+    transition: transform $animation-timing ease-out;
   }
 }
 
 .details-dataset__value,
 .details-dataset__value-header {
   transform: translateX(0);
-  transition: transform $baseline-animation-timing ease-out;
+  transition: transform $animation-timing ease-out;
 }
 
 .details-dataset__value--comparision-view,
 .details-dataset__value-header--comparision-view {
   transform: translateX(-40%);
 
-  transition: transform $baseline-animation-timing ease-out;
+  transition: transform $animation-timing ease-out;
 }
 
-.details-metadata__run--baseline .details-metadata__title-left {
+.details-metadata__run--first .details-metadata__title-left {
   opacity: 1;
   transform: translateX(0);
 
   transition: opacity 0.1s ease-in-out;
 }
 
-.details-metadata__run--baseline-comparision-view
-  .details-metadata__title-left {
+.details-metadata__run--first-comparision-view .details-metadata__title-left {
   opacity: 0;
   transform: translateX(-40%);
 
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
 }
 
-.details-metadata__run--baseline .details-metadata__title-right {
+.details-metadata__run--first .details-metadata__title-right {
   opacity: 0;
   transform: translateX(0);
 
-  transition: transform $baseline-animation-timing ease-in-out,
-    opacity $baseline-animation-timing ease-in-out;
+  transition: transform $animation-timing ease-in-out,
+    opacity $animation-timing ease-in-out;
 }
 
-.details-metadata__run--baseline-comparision-view
-  .details-metadata__title-right {
+.details-metadata__run--first-comparision-view .details-metadata__title-right {
   opacity: 1;
   transform: translateX(-40%);
 
-  transition: transform $baseline-animation-timing ease-in-out,
-    opacity $baseline-animation-timing ease-in-out;
+  transition: transform $animation-timing ease-in-out,
+    opacity $animation-timing ease-in-out;
 }
 
 // animation for other run when select or deselect
@@ -68,8 +66,8 @@ $baseline-animation-timing: 0.3s;
   opacity: 0;
   transform: translateX(30%);
 
-  transition: transform $baseline-animation-timing ease-out,
-    opacity $baseline-animation-timing linear;
+  transition: transform $animation-timing ease-out,
+    opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-enter-active,
@@ -77,18 +75,18 @@ $baseline-animation-timing: 0.3s;
   opacity: 1;
   transform: translateX(0);
 
-  transition: transform $baseline-animation-timing ease-out,
-    opacity $baseline-animation-timing linear;
+  transition: transform $animation-timing ease-out,
+    opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-exit,
 .details-dataset__value-animation-exit {
   opacity: 1;
-  transition: opacity $baseline-animation-timing linear;
+  transition: opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-exit-active,
 .details-dataset__value-animation-exit-active {
   opacity: 0;
-  transition: opacity $baseline-animation-timing linear;
+  transition: opacity $animation-timing linear;
 }

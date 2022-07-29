@@ -3,7 +3,11 @@ import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import {
+  TransitionGroup,
+  CSSTransition,
+  SwitchTransition,
+} from 'react-transition-group';
 
 import './run-dataset.css';
 import '../run-metadata/animation.css';
@@ -102,7 +106,8 @@ function buildDatasetDataMarkup(
   pinnedRun,
   enableShowChanges,
   enableComparisonView,
-  selectedRunIds
+  selectedRunIds,
+  isSingleRun
 ) {
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
@@ -127,24 +132,28 @@ function buildDatasetDataMarkup(
       ) : null}
       <TransitionGroup component="div" className="details-dataset__row">
         <span className={'details-dataset__label'}>{datasetKey}</span>
-        {runDataWithPin.map((data, index) => (
-          <CSSTransition
-            key={data.runId}
-            timeout={300}
-            classNames="details-dataset__value-animation"
-          >
-            <span
-              className={classnames('details-dataset__value', {
-                'details-dataset__value--comparision-view':
-                  index === 0 && enableComparisonView,
-              })}
-              key={data.runId + index}
+        {runDataWithPin.map((data, index) => {
+          return (
+            <CSSTransition
+              key={data.runId}
+              timeout={300}
+              classNames="details-dataset__value-animation"
+              enter={isSingleRun ? false : true}
+              exit={isSingleRun ? false : true}
             >
-              {sanitizeValue(data.value)}
-              {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
-            </span>
-          </CSSTransition>
-        ))}
+              <span
+                className={classnames('details-dataset__value', {
+                  'details-dataset__value--comparision-view':
+                    index === 0 && enableComparisonView,
+                })}
+                key={data.runId + index}
+              >
+                {sanitizeValue(data.value)}
+                {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
+              </span>
+            </CSSTransition>
+          );
+        })}
       </TransitionGroup>
     </React.Fragment>
   );
