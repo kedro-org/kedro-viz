@@ -1,21 +1,48 @@
 $animation-timing: 0.3s;
 
-// aniamtion for baseline when comparison view is on
-.details-metadata__run {
-  .details-metadata__table-value {
-    transform: translateX(0);
+// aniamtion for the first run when comparison view is on
 
-    transition: transform $animation-timing ease-out;
-  }
-}
-
-.details-metadata__run--first-comparision-view {
+// animation for the first run in `run-metadata.js`when switching the comparison view
+.details-metadata__run--first-run-comparision-view {
   .details-metadata__table-value {
     transform: translateX(-40%);
     transition: transform $animation-timing ease-out;
   }
 }
 
+.details-metadata__run--first-run .details-metadata__title-left {
+  opacity: 1;
+  transform: translateX(0);
+
+  transition: opacity 0.1s ease-in-out;
+}
+
+.details-metadata__run--first-run-comparision-view
+  .details-metadata__title-left {
+  opacity: 0;
+  transform: translateX(-40%);
+
+  transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
+}
+
+.details-metadata__run--first-run .details-metadata__title-right {
+  opacity: 0;
+  transform: translateX(0);
+
+  transition: transform $animation-timing ease-in-out,
+    opacity $animation-timing ease-in-out;
+}
+
+.details-metadata__run--first-run-comparision-view
+  .details-metadata__title-right {
+  opacity: 1;
+  transform: translateX(-40%);
+
+  transition: transform $animation-timing ease-in-out,
+    opacity $animation-timing ease-in-out;
+}
+
+// animation for the first run in`run-dataset.js` when switching the comparison view
 .details-dataset__value,
 .details-dataset__value-header {
   transform: translateX(0);
@@ -27,36 +54,6 @@ $animation-timing: 0.3s;
   transform: translateX(-40%);
 
   transition: transform $animation-timing ease-out;
-}
-
-.details-metadata__run--first .details-metadata__title-left {
-  opacity: 1;
-  transform: translateX(0);
-
-  transition: opacity 0.1s ease-in-out;
-}
-
-.details-metadata__run--first-comparision-view .details-metadata__title-left {
-  opacity: 0;
-  transform: translateX(-40%);
-
-  transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
-}
-
-.details-metadata__run--first .details-metadata__title-right {
-  opacity: 0;
-  transform: translateX(0);
-
-  transition: transform $animation-timing ease-in-out,
-    opacity $animation-timing ease-in-out;
-}
-
-.details-metadata__run--first-comparision-view .details-metadata__title-right {
-  opacity: 1;
-  transform: translateX(-40%);
-
-  transition: transform $animation-timing ease-in-out,
-    opacity $animation-timing ease-in-out;
 }
 
 // animation for other run when select or deselect
