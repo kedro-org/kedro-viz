@@ -124,34 +124,45 @@ function buildDatasetDataMarkup(
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
 
+  console.log(runDataWithPin, 'runDataWithPin');
+
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
-        <div className="details-dataset__row">
+        <TransitionGroup component="div" className="details-dataset__row">
           <span className="details-dataset__name-header">Name</span>
           {datasetValues.map((value, index) => (
-            <span
-              className={classnames('details-dataset__value-header', {
-                'details-dataset__value-header--comparision-view':
-                  index === 0 && enableComparisonView,
-              })}
-              key={value.runId + index}
+            <CSSTransition
+              key={value.runId}
+              timeout={300}
+              classNames="details-dataset__value-animation"
+              enter={isSingleRun ? false : true}
+              exit={isSingleRun ? false : true}
             >
-              Value
-            </span>
+              <span
+                className={classnames('details-dataset__value-header', {
+                  'details-dataset__value-header--comparision-view':
+                    index === 0 && enableComparisonView,
+                })}
+                key={value.runId + index}
+              >
+                Value
+              </span>
+            </CSSTransition>
           ))}
-        </div>
+        </TransitionGroup>
       ) : null}
       <TransitionGroup component="div" className="details-dataset__row">
         <span className={'details-dataset__label'}>{datasetKey}</span>
         {runDataWithPin.map((data, index) => {
+          const isSinglePinnedRun = runDataWithPin.length === 1;
           return (
             <CSSTransition
               key={data.runId}
               timeout={300}
               classNames="details-dataset__value-animation"
-              enter={isSingleRun ? false : true}
-              exit={isSingleRun ? false : true}
+              enter={isSinglePinnedRun ? false : true}
+              exit={isSinglePinnedRun ? false : true}
             >
               <span
                 className={classnames('details-dataset__value', {
