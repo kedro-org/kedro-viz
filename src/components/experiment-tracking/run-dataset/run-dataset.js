@@ -124,8 +124,6 @@ function buildDatasetDataMarkup(
   const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
 
-  console.log(runDataWithPin, 'runDataWithPin');
-
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
