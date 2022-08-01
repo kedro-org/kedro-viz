@@ -108,19 +108,14 @@ const RunMetadata = ({
                 <tr
                   className={classnames(
                     'details-metadata__run',
-                    'details-metadata__run--first-run',
+                    'details-metadata__labels',
                     {
-                      'details-metadata__run--first-run-comparision-view':
+                      'details-metadata__labels-comparision-view':
                         enableComparisonView,
                     }
                   )}
                 >
-                  <td
-                    className={classnames(
-                      'details-metadata__title',
-                      'details-metadata__title-left'
-                    )}
-                  >
+                  <td className="details-metadata__title">
                     <span
                       className="details-metadata__title-detail"
                       onClick={() => onTitleOrNoteClick(run.id)}
@@ -160,12 +155,7 @@ const RunMetadata = ({
                         i === 0 && enableComparisonView,
                     })}
                   >
-                    <td
-                      className={classnames(
-                        'details-metadata__title',
-                        'details-metadata__title-right'
-                      )}
-                    >
+                    <td className="details-metadata__title">
                       <span
                         className="details-metadata__title-detail"
                         onClick={() => onTitleOrNoteClick(run.id)}

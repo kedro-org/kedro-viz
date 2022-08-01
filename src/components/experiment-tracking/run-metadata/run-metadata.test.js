@@ -49,24 +49,34 @@ describe('RunMetadata', () => {
     );
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
-    expect(wrapper.find('.details-metadata__run').length).toBe(3);
+    expect(wrapper.find('.details-metadata__run').length).toBe(4);
   });
 
-  it('renders a single-run view', () => {
+  it('renders a first run for when theres a single run', () => {
     const wrapper = shallow(
       <RunMetadata
+        enableComparisonView={true}
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
         runs={runs.slice(0, 1)}
       />
     );
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
-    expect(wrapper.find('.details-metadata__run--single').length).toBe(1);
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
   });
 
-  it('shows a "-" for empty values ', () => {
-    const wrapper = mount(<RunMetadata isSingleRun={true} runs={emptyRun} />);
-    expect(wrapper.find('.details-metadata__title').text()).toMatch('-');
+  it('shows a "--first-run" for the first run when comparison mode is on', () => {
+    const wrapper = shallow(
+      <RunMetadata
+        enableComparisonView={true}
+        isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
+        runs={runs.slice(0, 1)}
+      />
+    );
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
+    expect(
+      wrapper.find('.details-metadata__run--first-run-comparision-view').length
+    ).toBe(1);
   });
 
   it('handles show more/less button click event', () => {
@@ -100,6 +110,7 @@ describe('RunMetadata', () => {
   it('enables the pin button when show changes is enabled ', () => {
     const wrapper = shallow(
       <RunMetadata
+        enableComparisonView={true}
         enableShowChanges={true}
         isSingleRun={false}
         runs={twoRuns}
