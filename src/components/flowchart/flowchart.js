@@ -394,22 +394,22 @@ export class FlowChart extends Component {
       objectWidth: graphWidth,
       objectHeight: graphHeight,
       minScaleX: 0.2,
-      minScaleFocus: 0.3,
-      focusOffset: 0.8,
+      minScaleFocus: this.props.visibleMetaSidebar
+        ? this.props.chartZoom.scale
+        : 0.3,
+      focusOffset: this.props.visibleMetaSidebar ? 0.01 : 0.8,
     });
 
     // Detect first transform
     const isFirstTransform = isOrigin(getViewTransform(this.view));
 
-    if (!this.props.visibleMetaSidebar) {
-      // Apply transform ignoring extents
-      setViewTransformExact(
-        this.view,
-        transform,
-        isFirstTransform ? 0 : this.DURATION,
-        false
-      );
-    }
+    // Apply transform ignoring extents
+    setViewTransformExact(
+      this.view,
+      transform,
+      isFirstTransform ? 0 : this.DURATION,
+      false
+    );
   }
 
   /**
