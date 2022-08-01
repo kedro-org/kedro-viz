@@ -51,7 +51,11 @@ const RunDataset = ({
   trackingData,
 }) => {
   return (
-    <div className="details-dataset">
+    <div
+      className={classnames('details-dataset', {
+        'details-dataset--comparision-view': enableComparisonView,
+      })}
+    >
       {Object.keys(trackingData).map((group) => {
         return (
           <Accordion

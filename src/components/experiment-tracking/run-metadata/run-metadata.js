@@ -99,7 +99,11 @@ const RunMetadata = ({
   };
 
   return (
-    <div className="details-metadata">
+    <div
+      className={classnames('details-metadata', {
+        'details-metadata--comparision-view': enableComparisonView,
+      })}
+    >
       <table className="details-metadata__table">
         {runs.map((run, i) => (
           <>

@@ -1,9 +1,11 @@
-$animation-timing: 0.3s;
+$animation-timing: 0.2s;
 
 // animation for the first run when switching the comparison view
 .details-dataset__value,
 .details-dataset__value-header,
-.details-metadata__run--first-run {
+.details-metadata__run--first-run,
+.details-dataset,
+.details-metadata {
   transform: translateX(0);
 
   transition: transform $animation-timing ease-out;
@@ -13,6 +15,13 @@ $animation-timing: 0.3s;
 .details-dataset__value-header--comparision-view,
 .details-metadata__run--first-run-comparision-view {
   transform: translateX(-40%);
+
+  transition: transform $animation-timing ease-out;
+}
+
+.details-dataset--comparision-view,
+.details-metadata--comparision-view {
+  transform: translateX(-4em);
 
   transition: transform $animation-timing ease-out;
 }
