@@ -122,6 +122,7 @@ $max-width: 375px;
 }
 
 .details-metadata__table {
+  display: flex;
   border-collapse: collapse;
   max-width: 75em;
   margin-left: -1px; // For exact alignment with content below.
