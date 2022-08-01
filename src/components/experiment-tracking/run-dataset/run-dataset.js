@@ -129,9 +129,9 @@ function buildDatasetDataMarkup(
       {rowIndex === 0 ? (
         <TransitionGroup component="div" className="details-dataset__row">
           <span className="details-dataset__name-header">Name</span>
-          {datasetValues.map((value, index) => (
+          {runDataWithPin.map((data, index) => (
             <CSSTransition
-              key={value.runId}
+              key={data.runId}
               timeout={300}
               classNames="details-dataset__value-animation"
               enter={isSingleRun ? false : true}
@@ -142,7 +142,7 @@ function buildDatasetDataMarkup(
                   'details-dataset__value-header--comparision-view':
                     index === 0 && enableComparisonView,
                 })}
-                key={value.runId + index}
+                key={data.runId + index}
               >
                 Value
               </span>

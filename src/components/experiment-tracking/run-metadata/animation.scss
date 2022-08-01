@@ -5,6 +5,7 @@ $animation-timing: 0.3s;
 .details-dataset__value-header,
 .details-metadata__run--first-run {
   transform: translateX(0);
+
   transition: transform $animation-timing ease-out;
 }
 
