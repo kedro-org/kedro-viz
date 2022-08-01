@@ -7,7 +7,6 @@ import {
   GET_RUN_TRACKING_DATA,
 } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
-import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
