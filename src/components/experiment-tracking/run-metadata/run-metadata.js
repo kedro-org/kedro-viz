@@ -172,38 +172,43 @@ const RunMetadata = ({
                     >
                       {sanitiseEmptyValue(run.title)}
                     </span>
-
                     <ul className="details-metadata__buttons">
-                      <IconButton
-                        active={run.id === pinnedRun}
-                        ariaLive="polite"
-                        className={classnames(
-                          'pipeline-menu-button--labels',
-                          'pipeline-menu-button__pin',
-                          {
-                            'details-metadata__buttons--selected-pin':
-                              run.id === pinnedRun,
-                          }
-                        )}
-                        icon={
-                          run.id === pinnedRun ? SelectedPin : UnSelectedPin
-                        }
-                        labelText={
-                          run.id === pinnedRun ? 'Baseline' : 'Make baseline'
-                        }
-                        labelTextPosition="bottom"
-                        onClick={() => setPinnedRun(run.id)}
-                        visible={enableShowChanges}
-                      />
+                      {!isSingleRun ? (
+                        <>
+                          <IconButton
+                            active={run.id === pinnedRun}
+                            ariaLive="polite"
+                            className={classnames(
+                              'pipeline-menu-button--labels',
+                              'pipeline-menu-button__pin',
+                              {
+                                'details-metadata__buttons--selected-pin':
+                                  run.id === pinnedRun,
+                              }
+                            )}
+                            icon={
+                              run.id === pinnedRun ? SelectedPin : UnSelectedPin
+                            }
+                            labelText={
+                              run.id === pinnedRun
+                                ? 'Baseline'
+                                : 'Make baseline'
+                            }
+                            labelTextPosition="bottom"
+                            onClick={() => setPinnedRun(run.id)}
+                            visible={enableShowChanges}
+                          />
+                          <IconButton
+                            ariaLive="polite"
+                            className="pipeline-menu-button--labels__close"
+                            icon={CloseIcon}
+                            labelText="Remove run"
+                            labelTextPosition="bottom"
+                            onClick={() => onRunSelection(run.id)}
+                          />
+                        </>
+                      ) : null}
                       <HiddenMenu isBookmarked={run.bookmark} runId={run.id} />
-                      <IconButton
-                        ariaLive="polite"
-                        className="pipeline-menu-button--labels__close"
-                        icon={CloseIcon}
-                        labelText="Remove run"
-                        labelTextPosition="bottom"
-                        onClick={() => onRunSelection(run.id)}
-                      />
                     </ul>
                   </td>
                   <td className="details-metadata__table-value">
