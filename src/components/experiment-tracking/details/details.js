@@ -12,6 +12,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
+  loadingTrackingData,
   metadataError,
   onRunSelection,
   pinnedRun,
@@ -88,6 +89,7 @@ const Details = ({
         <RunDataset
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
+          loadingTrackingData={loadingTrackingData}
           pinnedRun={pinnedRun}
           selectedRunIds={selectedRunIds}
           setRunDatasetToShow={setRunDatasetToShow}

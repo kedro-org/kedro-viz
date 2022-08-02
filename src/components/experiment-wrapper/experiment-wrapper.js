@@ -26,6 +26,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
+  const [loadingNewData, setLoadingNewData] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -43,9 +44,13 @@ const ExperimentWrapper = ({ theme }) => {
   const {
     data: { plots = [], metrics = [], JSONData = [] } = [],
     error: trackingDataError,
+    loading: loadingTrackingData,
   } = useApolloQuery(GET_RUN_TRACKING_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
+    onCompleted: () => {
+      setLoadingNewData(false);
+    },
   });
 
   let runTrackingData = {};
@@ -71,12 +76,14 @@ const ExperimentWrapper = ({ theme }) => {
         setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
+        setLoadingNewData(true);
       }
     } else {
       if (selectedRunIds.includes(id)) {
         return;
       } else {
         setSelectedRunIds([id]);
+        setLoadingNewData(true);
       }
     }
   };
@@ -88,6 +95,14 @@ const ExperimentWrapper = ({ theme }) => {
       setSelectedRunIds(selectedRunIds.slice(0, 1));
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (loadingTrackingData === false) {
+        setLoadingNewData(false);
+      }
+    }, 200);
+  }, [loadingTrackingData]);
 
   useEffect(() => {
     if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
@@ -191,6 +206,7 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
+              loadingTrackingData={loadingNewData}
               metadataError={metadataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
