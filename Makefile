@@ -39,9 +39,6 @@ lint-check:
 	flake8 --config=package/.flake8 package
 	mypy --config-file=package/mypy.ini package
 
-install: build
-	cd package && python setup.py install
-
 schema-fix:
 	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema > src/apollo/schema.graphql
 	graphqlviz src/apollo/schema.graphql | dot -Tpng -o .github/img/schema.graphql.png

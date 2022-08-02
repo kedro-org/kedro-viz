@@ -35,7 +35,6 @@ export const GET_RUN_TRACKING_DATA = gql`
     plots: runTrackingData(runIds: $runIds, showDiff: $showDiff, group: PLOT) {
       ...trackingDatasetFields
     }
-
     metrics: runTrackingData(
       runIds: $runIds
       showDiff: $showDiff
