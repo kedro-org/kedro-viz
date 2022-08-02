@@ -44,8 +44,6 @@ if hasattr(tracking, "MetricsDataSet"):
     tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore
 
 
-# TODO: Remove pandas, plotly from reqs
-# TODO: make so this doesn't need to exist
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 

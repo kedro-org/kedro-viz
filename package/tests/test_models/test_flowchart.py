@@ -439,28 +439,25 @@ class TestGraphNodeMetadata:
 
     @patch("builtins.__import__", side_effect=import_mock)
     @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_version")
-    @patch(
-        "builtins.open",
-        new_callable=mock_open,
-        read_data=base64.b64decode(
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        ),
-    )
+    @patch("base64.b64encode")
+    # def test_image_data_node_metadata(self, patched_version, patched_image_load):
+    #
     def test_image_data_node_metadata(
         self, patched_base64, patched_version, patched_import
     ):
         image_dataset_node = MagicMock()
-        base64_encoded_string = (
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        )
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.is_tracking_node.return_value = False
         patched_version.return_value = "mock_version"
+        mock_image_data = (
+            b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            b"AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        )
+        patched_base64.return_value = mock_image_data
+
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
-        assert image_node_metadata.image == base64_encoded_string
+        assert image_node_metadata.image == mock_image_data.decode("utf-8")
 
     @patch("builtins.__import__", side_effect=import_mock)
     def test_image_data_node_dataset_not_exist(self, patched_import):
