@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
@@ -40,11 +38,12 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {boolean} props.isSingleRun Indication to display a single run.
  * @param {string} props.pinnedRun ID of the pinned run.
  * @param {array} props.selectedRunIds Array of strings of runIds.
- * @param {array} props.trackingData The experiment tracking run data.
+ * @param {object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
   enableShowChanges,
   isSingleRun,
+  loadingTrackingData,
   pinnedRun,
   selectedRunIds,
   setRunDatasetToShow,
@@ -94,7 +93,8 @@ const RunDataset = ({
                         enableShowChanges,
                         selectedRunIds,
                         setRunDatasetToShow,
-                        setShowRunPlotsModal
+                        setShowRunPlotsModal,
+                        loadingTrackingData
                       );
                     })}
                 </Accordion>
@@ -116,6 +116,7 @@ const RunDataset = ({
  * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
  * @param {array} selectedRunIds Array of strings of runIds.
+ * @param {boolean} loadingTrackingData Is the tracking-data query loading or not.
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -127,9 +128,14 @@ function buildDatasetDataMarkup(
   enableShowChanges,
   selectedRunIds,
   setRunDatasetToShow,
-  setShowRunPlotsModal
+  setShowRunPlotsModal,
+  loadingTrackingData
 ) {
-  const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
+  const updatedDatasetValues = fillEmptyMetrics(
+    datasetValues,
+    selectedRunIds,
+    loadingTrackingData
+  );
   const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
 
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
@@ -205,7 +211,7 @@ function buildDatasetDataMarkup(
                     />
                   </div>
                 ) : (
-                  fillEmptyPlots()
+                  fillEmptyPlots(loadingTrackingData)
                 )}
               </span>
             );
@@ -231,7 +237,7 @@ function buildDatasetDataMarkup(
                     />
                   </div>
                 ) : (
-                  fillEmptyPlots()
+                  fillEmptyPlots(loadingTrackingData)
                 )}
               </span>
             );
@@ -245,11 +251,12 @@ function buildDatasetDataMarkup(
  * Fill in missing run metrics if they don't match the number of runIds.
  * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
  * @param {array} selectedRunIds Array of strings of runIds.
+ * @param {boolean} loadingTrackingData Is the tracking-data query loading or not.
  * @returns Array of objects, the length of which matches the length
  * of the selectedRunIds.
  */
-function fillEmptyMetrics(datasetValues, selectedRunIds) {
-  if (datasetValues.length === selectedRunIds.length) {
+function fillEmptyMetrics(datasetValues, selectedRunIds, loadingTrackingData) {
+  if (datasetValues.length === selectedRunIds.length || loadingTrackingData) {
     return datasetValues;
   }
 
@@ -271,7 +278,11 @@ function fillEmptyMetrics(datasetValues, selectedRunIds) {
   return metrics;
 }
 
-function fillEmptyPlots() {
+function fillEmptyPlots(loadingTrackingData) {
+  if (loadingTrackingData) {
+    return null;
+  }
+
   return <div className="details-dataset__empty-plot">No plot available</div>;
 }
 
