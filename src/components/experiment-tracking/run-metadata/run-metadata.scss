@@ -10,7 +10,6 @@ $max-width: 375px;
   min-height: 350px;
   min-width: 100%;
   padding: 5em 0 0 9em;
-
   width: max-content;
 }
 
@@ -92,17 +91,20 @@ $max-width: 375px;
   }
 }
 
-.details-metadata__table tbody {
-  display: flex;
-}
-
 .details-metadata__table tr {
   display: flex;
   flex-direction: column;
+  width: $max-width;
 }
 
 .details-metadata__run--wrapper {
   display: flex;
+}
+
+.details-metadata__run--wrapper tr {
+  &:last-of-type {
+    margin-right: 5em;
+  }
 }
 
 // animation for the title of the baseline when comparison mode is on
@@ -124,8 +126,7 @@ $max-width: 375px;
 .details-metadata__table {
   display: flex;
   border-collapse: collapse;
-  max-width: 75em;
-  margin-left: -1px; // For exact alignment with content below.
+  flex-shrink: 0;
   width: 100%;
 }
 
