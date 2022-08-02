@@ -23,7 +23,7 @@ class TrackingDatasetsRepository:
     def get_tracking_datasets_by_group_by_run_ids(
         self, run_ids: List[str], group: TrackingDatasetGroup
     ) -> List[TrackingDatasetModel]:
-        tracking_datasets = self.tracking_datasets_by_group.get(group, [])
+        tracking_datasets = self.tracking_datasets_by_group[group]
 
         for dataset in tracking_datasets:
             for run_id in run_ids:

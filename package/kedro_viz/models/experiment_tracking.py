@@ -5,8 +5,10 @@ import base64
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict
+from typing import Any, Dict
 
+# The kedro datasets imports are safe since ImportErrors are suppressed within kedro.
+from kedro.extras.datasets import json, matplotlib, plotly, tracking
 from kedro.io import AbstractVersionedDataSet, Version
 from kedro.io.core import get_filepath_str
 from sqlalchemy import Column
@@ -14,6 +16,36 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
+# The dataset type is available as an attribute if and only if the import from kedro
+# did not suppress an ImportError. i.e. hasattr(matplotlib, "MatplotlibWriter") is True
+# when matplotlib dependencies are installed.
+# These datasets do not have _load methods defined (tracking and matplotlib) or do not
+# load to json (plotly), hence the need to define _load here.
+if hasattr(matplotlib, "MatplotlibWriter"):
+
+    def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
+        load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+        with dataset._fs.open(load_path, mode="rb") as img_file:
+            base64_bytes = base64.b64encode(img_file.read())
+        return base64_bytes.decode("utf-8")
+
+    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type:ignore
+
+if hasattr(plotly, "JSONDataSet"):
+    plotly.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(plotly, "PlotlyDataSet"):
+    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(tracking, "JSONDataSet"):
+    tracking.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(tracking, "MetricsDataSet"):
+    tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore
+
+
+# TODO: Remove pandas, plotly from reqs
+# TODO: make so this doesn't need to exist
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
@@ -53,10 +85,11 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
+# pylint: disable=line-too-long
 TRACKING_DATASET_GROUPS = {
     "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,  # pylint: disable=line-too-long
+    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
     "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
     "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
@@ -74,20 +107,6 @@ class TrackingDatasetModel:
     # runs is a mapping from run_id to loaded data.
     runs: Dict[str, Any] = field(init=False, default_factory=dict)
 
-    def is_plot_node(self):
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
-            or self.dataset_type
-            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
-        )
-
-    def is_image_node(self):
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
-        )
-
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
 
@@ -99,32 +118,25 @@ class TrackingDatasetModel:
         # Set the load version.
         self.dataset._version = Version(run_id, None)
 
+        if not self.dataset.exists():
+            logger.debug(
+                "'%s' with version '%s' does not exist.", self.dataset_name, run_id
+            )
+            self.runs[run_id] = {}
+            self.dataset._version = None
+            return
+
         try:
-            # tracking datasets do not have load methods defined yet but would be the
-            # same as json loader.
-            # pylint: disable=import-outside-toplevel
-            from kedro.extras.datasets import json, matplotlib, plotly, tracking
-
-            tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
-            tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
-
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
-
-                if self.is_plot_node():
-                    plotly.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
-                    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type: ignore
-
-                if self.is_image_node():
-                    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type: ignore
-
                 self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
-                "'%s' with version '%s' could not be loaded. Full exception: %s",
+                "'%s' with version '%s' could not be loaded. Full exception: %s: %s",
                 self.dataset_name,
                 run_id,
+                type(exc).__name__,
                 exc,
             )
             self.runs[run_id] = {}
@@ -134,16 +146,3 @@ class TrackingDatasetModel:
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
-
-
-# "MatplotlibWriter" is in quotes to avoid importing it.
-# also so it doesn't blow up if user doesn't have the dataset dependencies installed.
-if TYPE_CHECKING:  # pragma: no cover
-    from kedro.extras.datasets.matplotlib.matplotlib_writer import MatplotlibWriter
-
-
-def matplotlib_writer_load(dataset: "MatplotlibWriter") -> str:
-    load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-    with open(load_path, "rb") as img_file:
-        base64_bytes = base64.b64encode(img_file.read())
-    return base64_bytes.decode("utf-8")
