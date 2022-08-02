@@ -604,9 +604,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             if not latest_version:
                 return
 
-            with dataset._fs.open(
-                latest_version, **dataset._fs_open_args_load
-            ) as fs_file:
+            with dataset._fs.open(latest_version) as fs_file:
                 self.plot = json.load(fs_file)
 
         if data_node.is_image_node():
@@ -621,7 +619,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             if not latest_version:
                 return
 
-            with open(latest_version, "rb") as img_file:
+            with dataset._fs.open(latest_version, "rb") as img_file:
                 base64_bytes = base64.b64encode(img_file.read())
             self.image = base64_bytes.decode("utf-8")
 
