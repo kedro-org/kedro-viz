@@ -6,9 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 4.7.2
+
 ## Bug fixes and other changes
 
-- General design-debt fixes. (#930, #955, #956, #959, #960, #970, #977)
+- General design-debt fixes. (#930, #955, #956, #959, #960, #961, #970, #977, #991)
+- Improve grouping of experiment tracking dataset types. (#978)
 
 # Release 4.7.1
 

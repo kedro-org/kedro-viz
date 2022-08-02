@@ -15,7 +15,10 @@ workflows:
           base-revision: main
           config-path: .circleci/continue_config.yml
           # <regex path-to-test> <parameter-to-set> <value-of-pipeline-parameter>
-          mapping: |           
+          mapping: |
             package/.* backend_change true
             .circleci/.* ci_change true
             ^((?!package/).)*$ frontend_change true
+          filters:
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
