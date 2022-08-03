@@ -582,9 +582,9 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         # dataset.release clears the cache before loading to ensure that this issue
         # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
+        dataset.release()
         if not dataset.exists():
             return
-        dataset.release()
 
         if data_node.is_plot_node():
             self.plot = dataset.load()
