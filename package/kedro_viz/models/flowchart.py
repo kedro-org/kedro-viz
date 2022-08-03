@@ -1,10 +1,9 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
-import base64
 import hashlib
 import inspect
-import json
+import json as json_stdlib
 import logging
 import re
 from dataclasses import InitVar, dataclass, field
@@ -12,27 +11,17 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, Dict, List, Optional, Set, Union, cast
 
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
+
 from kedro.io import AbstractDataSet
 from kedro.io.core import VERSION_FORMAT
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
-
-# only import JSONDataSet and `MetricsDataSet` at top-level for type-checking
-# so it doesn't blow up if user doesn't have the dataset dependencies installed.
-if TYPE_CHECKING:  # pragma: no cover
-    from kedro.extras.datasets.matplotlib.matplotlib_writer import MatplotlibWriter
-    from kedro.extras.datasets.plotly.plotly_dataset import (
-        JSONDataSet as PlotlyJSONDataSet,
-    )
-    from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
-    from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
-    from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 
 
 logger = logging.getLogger(__name__)
@@ -590,95 +579,30 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
-        # Parse plot data
+        # Run command is only available if a node is an output, i.e. not a free input
+        if not data_node.is_free_input:
+            self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+        # dataset.release clears the cache before loading to ensure that this issue
+        # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
+        if not dataset.exists():
+            return
+        dataset.release()
+
         if data_node.is_plot_node():
-            from kedro.extras.datasets.plotly.plotly_dataset import (
-                JSONDataSet as PlotlyJSONDataSet,
-            )
-            from kedro.extras.datasets.plotly.plotly_dataset import PlotlyDataSet
-
-            dataset = cast(Union[PlotlyDataSet, PlotlyJSONDataSet], dataset)
-
-            latest_version = self.load_latest_version(dataset)
-
-            if not latest_version:
-                return
-
-            with dataset._fs.open(latest_version) as fs_file:
-                self.plot = json.load(fs_file)
-
-        if data_node.is_image_node():
-            from kedro.extras.datasets.matplotlib.matplotlib_writer import (
-                MatplotlibWriter,
-            )
-
-            dataset = cast(MatplotlibWriter, dataset)
-
-            latest_version = self.load_latest_version(dataset)
-
-            if not latest_version:
-                return
-
-            with dataset._fs.open(latest_version, "rb") as img_file:
-                base64_bytes = base64.b64encode(img_file.read())
-            self.image = base64_bytes.decode("utf-8")
-
-        if data_node.is_tracking_node():
-            from kedro.extras.datasets.tracking.json_dataset import JSONDataSet
-            from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
-
-            dataset = cast(Union[JSONDataSet, MetricsDataSet], dataset)
-
-            latest_version = self.load_latest_version(dataset)
-
-            if not latest_version:
-                return
-
-            with dataset._fs.open(
-                latest_version, **dataset._fs_open_args_load
-            ) as fs_file:
-                self.tracking_data = json.load(fs_file)
+            self.plot = dataset.load()
+        elif data_node.is_image_node():
+            self.image = dataset.load()
+        elif data_node.is_tracking_node():
+            self.tracking_data = dataset.load()
 
             if data_node.is_metric_node():
-
                 metrics_data = self.load_versioned_tracking_data(self.filepath)
                 if not metrics_data:
                     return
                 self.plot = self.create_metrics_plot(
                     pd.DataFrame.from_dict(metrics_data, orient="index")
                 )
-
-        # Run command is only available if a node is an output, i.e. not a free input
-        if not data_node.is_free_input:
-            self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
-
-    # TODO: improve this scheme.
-    @staticmethod
-    def load_latest_version(
-        dataset: Union[
-            "JSONDataSet",
-            "MetricsDataSet",
-            "PlotlyDataSet",
-            "PlotlyJSONDataSet",
-            "MatplotlibWriter",
-        ],
-    ) -> Optional[str]:
-        """Load data for latest versions of the json dataset.
-        Below operation is also on kedro.io.core -> fetched_latest_load_version()
-        However it is a cached function and hence cannot be relied upon
-        Args:
-            dataset: the latest version of the metrics or json dataset
-        Returns:
-            A dictionary containing json data for the latest version
-        """
-        pattern = str(dataset._get_versioned_path("*"))
-        version_paths = sorted(dataset._glob_function(pattern), reverse=True)
-        most_recent = next(
-            (path for path in version_paths if dataset._exists_function(path)), None
-        )
-        if not most_recent:
-            return None
-        return most_recent
 
     # TODO: improve this scheme.
     @staticmethod
@@ -713,7 +637,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             else:
                 path = version / Path(filepath).name
                 with open(path) as fs_file:
-                    versions[run_id] = json.load(fs_file)
+                    versions[run_id] = json_stdlib.load(fs_file)
         return versions
 
     @staticmethod
@@ -728,7 +652,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         melted_sorted_df = pd.melt(
             renamed_df, id_vars="version", var_name="metrics"
         ).sort_values(by="version")
-        return json.loads(
+        return json_stdlib.loads(
             pio.to_json(
                 px.line(
                     melted_sorted_df,

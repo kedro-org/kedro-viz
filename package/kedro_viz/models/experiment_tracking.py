@@ -7,42 +7,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict
 
-# The kedro datasets imports are safe since ImportErrors are suppressed within kedro.
-from kedro.extras.datasets import json, matplotlib, plotly, tracking
 from kedro.io import AbstractVersionedDataSet, Version
-from kedro.io.core import get_filepath_str
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
-
-# The dataset type is available as an attribute if and only if the import from kedro
-# did not suppress an ImportError. i.e. hasattr(matplotlib, "MatplotlibWriter") is True
-# when matplotlib dependencies are installed.
-# These datasets do not have _load methods defined (tracking and matplotlib) or do not
-# load to json (plotly), hence the need to define _load here.
-if hasattr(matplotlib, "MatplotlibWriter"):
-
-    def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
-        load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-        with dataset._fs.open(load_path, mode="rb") as img_file:
-            base64_bytes = base64.b64encode(img_file.read())
-        return base64_bytes.decode("utf-8")
-
-    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type:ignore
-
-if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
-
-if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type:ignore
-
-if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
-
-if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore
-
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
