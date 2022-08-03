@@ -6,6 +6,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Major features and improvements
+
+- Remove support for Kedro v16. (#998)
+
 # Release 4.7.2
 
 ## Bug fixes and other changes

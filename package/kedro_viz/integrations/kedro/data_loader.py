@@ -101,32 +101,25 @@ def load_data(
 
         return context.catalog, context.pipelines, session_store_location
 
-    if KEDRO_VERSION.match("==0.17.0"):
-        from kedro.framework.session import KedroSession
-        from kedro.framework.startup import _get_project_metadata
+    # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
+    from kedro.framework.session import KedroSession
+    from kedro.framework.startup import _get_project_metadata
 
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+    from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
-        metadata = _get_project_metadata(project_path)
-        with KedroSession.create(
-            package_name=metadata.package_name,
-            project_path=project_path,
-            env=env,
-            save_on_close=False,
-            extra_params=extra_params,
-        ) as session:
+    metadata = _get_project_metadata(project_path)
+    with KedroSession.create(
+        package_name=metadata.package_name,
+        project_path=project_path,
+        env=env,
+        save_on_close=False,
+        extra_params=extra_params,
+    ) as session:
 
-            context = session.load_context()
-            session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
+        context = session.load_context()
+        session_store = session._store
+        session_store_location = None
+        if isinstance(session_store, SQLiteStore):
+            session_store_location = session_store.location
 
-        return context.catalog, context.pipelines, session_store_location
-
-    # pre-0.17 load_context version
-    # pylint: disable=no-name-in-module
-    from kedro.framework.context import load_context  # type: ignore
-
-    context = load_context(project_path=project_path, env=env)
-    return context.catalog, context.pipelines, None
+    return context.catalog, context.pipelines, session_store_location
