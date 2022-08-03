@@ -2,20 +2,23 @@
 load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
-# pylint: disable=import-outside-toplevel
-# pylint: disable=protected-access
+# pylint: disable=import-outside-toplevel, protected-access, missing-function-docstring
+
 import base64
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+    json,
+    matplotlib,
+    plotly,
+    tracking,
+)
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
-
-# The kedro datasets imports are safe since ImportErrors are suppressed within kedro.
-from kedro.extras.datasets import json, matplotlib, plotly, tracking
 
 KEDRO_VERSION = VersionInfo.parse(__version__)
 

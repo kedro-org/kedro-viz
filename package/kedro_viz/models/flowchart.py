@@ -16,13 +16,11 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
-
 from kedro.io import AbstractDataSet
 from kedro.io.core import VERSION_FORMAT
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
-
 
 logger = logging.getLogger(__name__)
 
@@ -573,7 +571,6 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
-        # pylint: disable=import-outside-toplevel
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
