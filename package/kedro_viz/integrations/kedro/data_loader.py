@@ -2,7 +2,8 @@
 load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
-# pylint: disable=import-outside-toplevel, protected-access, missing-function-docstring
+# pylint: disable=import-outside-toplevel, protected-access
+# pylint: disable=missing-function-docstring, no-else-return
 
 import base64
 from pathlib import Path
