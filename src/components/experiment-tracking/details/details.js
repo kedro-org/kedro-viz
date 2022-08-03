@@ -4,7 +4,7 @@ import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
 import RunPlotsModal from '../run-plots-modal';
-import RunExportModal from '../run-export-modal.js';
+import RunExportModal from '../run-export-modal';
 import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
 
 import './details.css';
