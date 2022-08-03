@@ -8,15 +8,15 @@ import {
   darkPreviewTemplate,
   darkExpPreviewTemplate,
   darkOneChartTemplate,
-  darkTwoChartTemplate,
-  darkThreeChartTemplate,
+  darkTwoChartsTemplate,
+  darkThreeChartsTemplate,
 } from '../../utils/plot-templates/dark';
 import {
   lightPreviewTemplate,
   lightExpPreviewTemplate,
   lightOneChartTemplate,
-  lightTwoChartTemplate,
-  lightThreeChartTemplate,
+  lightTwoChartsTemplate,
+  lightThreeChartsTemplate,
 } from '../../utils/plot-templates/light';
 import classNames from 'classnames';
 
@@ -59,10 +59,10 @@ const updateLayout = (theme, view, layout) => {
       return deepmerge(layout, darkExpPreviewTemplate);
     } else if (view === 'preview') {
       return deepmerge(layout, darkPreviewTemplate);
-    } else if (view === 'twoChart') {
-      return deepmerge(layout, darkTwoChartTemplate);
-    } else if (view === 'threeChart') {
-      return deepmerge(layout, darkThreeChartTemplate);
+    } else if (view === 'twoCharts') {
+      return deepmerge(layout, darkTwoChartsTemplate);
+    } else if (view === 'threeCharts') {
+      return deepmerge(layout, darkThreeChartsTemplate);
     } else {
       return deepmerge(layout, darkOneChartTemplate);
     }
@@ -71,10 +71,10 @@ const updateLayout = (theme, view, layout) => {
       return deepmerge(layout, lightExpPreviewTemplate);
     } else if (view === 'preview') {
       return deepmerge(layout, lightPreviewTemplate);
-    } else if (view === 'twoChart') {
-      return deepmerge(layout, lightTwoChartTemplate);
-    } else if (view === 'threeChart') {
-      return deepmerge(layout, lightThreeChartTemplate);
+    } else if (view === 'twoCharts') {
+      return deepmerge(layout, lightTwoChartsTemplate);
+    } else if (view === 'threeCharts') {
+      return deepmerge(layout, lightThreeChartsTemplate);
     } else {
       return deepmerge(layout, lightOneChartTemplate);
     }

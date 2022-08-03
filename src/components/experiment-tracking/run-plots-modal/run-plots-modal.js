@@ -15,9 +15,9 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
   const numDatasets = runDataWithPlotData?.length;
   const plotView =
     numDatasets === 3
-      ? 'threeChart'
+      ? 'threeCharts'
       : numDatasets === 2
-      ? 'twoChart'
+      ? 'twoCharts'
       : 'oneChart';
   const isPlotly = getShortType(datasetType) === 'plotly';
   const isImage = getShortType(datasetType) === 'image';

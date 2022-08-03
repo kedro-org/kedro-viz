@@ -230,7 +230,7 @@ export const darkOneChartTemplate = {
   ...darkTemplate,
 };
 
-export const darkTwoChartTemplate = {
+export const darkTwoChartsTemplate = {
   ...darkTemplate,
   height: 375,
   margin: {
@@ -242,7 +242,7 @@ export const darkTwoChartTemplate = {
   width: null,
 };
 
-export const darkThreeChartTemplate = {
+export const darkThreeChartsTemplate = {
   ...darkTemplate,
   height: 250,
   margin: {

@@ -76,7 +76,7 @@
     justify-content: center;
   }
 
-  &--twoChart {
+  &--twoCharts {
     justify-content: space-between;
   }
 
@@ -111,7 +111,7 @@
     width: 100%;
   }
 
-  &--twoChart {
+  &--twoCharts {
     display: flex;
     flex-direction: column;
     width: 50%;
@@ -121,7 +121,7 @@
     }
   }
 
-  &--threeChart {
+  &--threeCharts {
     display: flex;
     flex-direction: column;
     width: 33.33%;
@@ -133,8 +133,8 @@
   }
 
   .pipeline-run-plots__image--oneChart,
-  .pipeline-run-plots__image--twoChart,
-  .pipeline-run-plots__image--threeChart {
+  .pipeline-run-plots__image--twoCharts,
+  .pipeline-run-plots__image--threeCharts {
     padding-bottom: 24px;
     width: 100%;
   }
@@ -151,7 +151,7 @@
     width: 100%;
   }
 
-  &--twoChart {
+  &--twoCharts {
     width: 50%;
 
     &:nth-of-type(2) {
@@ -159,7 +159,7 @@
     }
   }
 
-  &--threeChart {
+  &--threeCharts {
     width: 33.333%;
 
     &:nth-of-type(2),
