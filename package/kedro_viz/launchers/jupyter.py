@@ -139,15 +139,3 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         port
     )
     display(HTML(wrapper))
-
-
-def jupyter_server_proxy():
-    return {
-        "command": ["kedro", "viz", "--port", "{port}"],
-        "timeout": 20,
-        # absolute_url=True was worse
-        "launcher_entry": {
-            "icon_path": "/Users/antony_milne/kedro_stuff/kedro-viz/kedro-icon-color.svg",
-            "title": "Kedro-Viz",
-        },
-    }
