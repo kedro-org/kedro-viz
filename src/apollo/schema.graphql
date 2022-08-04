@@ -51,6 +51,7 @@ type TrackingDataset {
   data: JSON!
   datasetName: String!
   datasetType: String!
+  runIds: [ID!]!
 }
 
 """Group to show kind of tracking data"""
