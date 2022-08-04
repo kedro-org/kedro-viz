@@ -73,4 +73,49 @@ describe('PlotlyChart', () => {
     expect(layout.height).toBe(300);
     expect(layout.paper_bgcolor).toBe('#EEEEEE');
   });
+
+  it('renders with a one-chart template', () => {
+    const props = {
+      data: [],
+      layout: {},
+      theme: 'light',
+      view: 'oneChart',
+    };
+    const wrapper = mount(props);
+    const instance = wrapper.find('PlotlyComponent').instance();
+    const layout = instance.props.layout;
+    expect(layout.height).toBe(null);
+    expect(layout.paper_bgcolor).toBe('#EEEEEE');
+    expect(wrapper.find('.pipeline-plotly__oneChart').length).toBe(1);
+  });
+
+  it('renders with a two-chart template', () => {
+    const props = {
+      data: [],
+      layout: {},
+      theme: 'light',
+      view: 'twoCharts',
+    };
+    const wrapper = mount(props);
+    const instance = wrapper.find('PlotlyComponent').instance();
+    const layout = instance.props.layout;
+    expect(layout.height).toBe(375);
+    expect(layout.paper_bgcolor).toBe('#EEEEEE');
+    expect(wrapper.find('.pipeline-plotly__twoCharts').length).toBe(1);
+  });
+
+  it('renders with a three-chart template', () => {
+    const props = {
+      data: [],
+      layout: {},
+      theme: 'light',
+      view: 'threeCharts',
+    };
+    const wrapper = mount(props);
+    const instance = wrapper.find('PlotlyComponent').instance();
+    const layout = instance.props.layout;
+    expect(layout.height).toBe(250);
+    expect(layout.paper_bgcolor).toBe('#EEEEEE');
+    expect(wrapper.find('.pipeline-plotly__threeCharts').length).toBe(1);
+  });
 });
