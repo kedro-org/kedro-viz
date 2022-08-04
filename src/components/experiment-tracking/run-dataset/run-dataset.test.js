@@ -60,6 +60,62 @@ const showDiffTrackingData = {
   ],
 };
 
+const matplotlibTrackingData = {
+  metrics: [
+    {
+      datasetName: 'matplotlib',
+      datasetType:
+        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      data: {
+        'matplot_lib_single_plot.png': [
+          {
+            runId: 'My Favorite Sprint',
+            value: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          },
+        ],
+      },
+    },
+  ],
+};
+
+const emptyMatplotlibTrackingData = {
+  metrics: [
+    {
+      datasetName: 'matplotlib',
+      datasetType:
+        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      data: {
+        'matplot_lib_single_plot.png': [
+          {
+            runId: 'My Favorite Sprint',
+            value: null,
+          },
+        ],
+      },
+    },
+  ],
+};
+
+const plotlyTrackingData = {
+  metrics: [
+    {
+      datasetName: 'plotly',
+      datasetType: 'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet',
+      data: {
+        plotlyVisualization: [
+          {
+            runId: 'My Favorite Sprint',
+            value: {
+              data: [],
+              layout: {},
+            },
+          },
+        ],
+      },
+    },
+  ],
+};
+
 describe('RunDataset', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -114,7 +170,7 @@ describe('RunDataset', () => {
     expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
   });
 
-  it('for runs with different metrics, it renders a cell with a - value', () => {
+  it('renders a cell with a - value for runs with different metrics', () => {
     const wrapper = mount(
       <RunDataset
         isSingleRun={false}
@@ -124,5 +180,51 @@ describe('RunDataset', () => {
     );
 
     expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
+  });
+
+  it('renders a matplotlib image and container', () => {
+    const wrapper = mount(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        selectedRunIds={['abc']}
+        trackingData={matplotlibTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__image-container').length).toBe(1);
+    expect(wrapper.find('.details-dataset__image').length).toBe(1);
+  });
+
+  it('renders a empty plot placeholder', () => {
+    const wrapper = mount(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        selectedRunIds={['abc']}
+        trackingData={emptyMatplotlibTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__value').length).toBe(1);
+    expect(wrapper.find('.details-dataset__empty-plot').length).toBe(1);
+  });
+
+  it('renders a plotly chart container', () => {
+    const wrapper = shallow(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        selectedRunIds={['abc']}
+        trackingData={plotlyTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__visualization-wrapper').length).toBe(
+      1
+    );
   });
 });
