@@ -8,6 +8,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Allow the visualisation of plots in experiment-tracking metrics. (#984)
 - Remove support for Kedro v16. (#998)
 
 # Release 4.7.2
