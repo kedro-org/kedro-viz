@@ -17,7 +17,7 @@ from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_serve
 
 @click.group(name="Kedro-Viz")
 def commands():
-    pass  # pylint: disable=missing-method-docstring
+    pass  # pylint: disable=missing-function-docstring
 
 
 @commands.command(context_settings=dict(help_option_names=["-h", "--help"]))
