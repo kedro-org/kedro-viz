@@ -10,7 +10,6 @@ from unittest.mock import MagicMock, call, patch
 import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
-from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
 
@@ -140,6 +139,9 @@ class TestGraphNodeCreation:
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
         assert not data_node.is_metric_node()
+        assert not data_node.is_image_node()
+        assert not data_node.is_json_node()
+        assert not data_node.is_tracking_node()
 
     def test_create_transcoded_data_node(self):
         dataset_name = "dataset@pandas2"
@@ -479,6 +481,22 @@ class TestGraphNodeMetadata:
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
+
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
+    def test_tracking_data_node_metadata_versioned_dataset(self, patched_data_loader):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
+        tracking_data_node = MagicMock()
+        tracking_data_node.is_plot_node.return_value = False
+        tracking_data_node.is_image_node.return_value = False
+        tracking_data_node.is_metric_node.return_value = True
+        tracking_data_node.kedro_obj.load.return_value = mock_metrics_data
+        tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
+        assert tracking_data_node_metadata.tracking_data == mock_metrics_data
+        assert hasattr(tracking_data_node_metadata, "plot")
 
     @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
     def test_tracking_data_node_metadata_versioned_dataset_not_exist(
