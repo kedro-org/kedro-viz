@@ -50,6 +50,11 @@ export const trackingData = {
           { runId: 'Slick test this one', value: 1 },
         ],
       },
+      runIds: [
+        'My Favorite Sprint',
+        'Another favorite sprint',
+        'Slick test this one',
+      ],
     },
     {
       datasetName: 'Shopper Spend Raw',
@@ -65,6 +70,11 @@ export const trackingData = {
           { runId: 'Slick test this one', value: 23987 },
         ],
       },
+      runIds: [
+        'My Favorite Sprint',
+        'Another favorite sprint',
+        'Slick test this one',
+      ],
     },
     {
       datasetName: 'Classical Analysis',
@@ -80,6 +90,11 @@ export const trackingData = {
           { runId: 'Slick test this one', value: 456 },
         ],
       },
+      runIds: [
+        'My Favorite Sprint',
+        'Another favorite sprint',
+        'Slick test this one',
+      ],
     },
   ],
 };

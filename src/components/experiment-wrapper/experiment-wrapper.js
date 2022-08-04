@@ -7,7 +7,6 @@ import {
   GET_RUN_TRACKING_DATA,
 } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
-import { sortRunByTime } from '../../utils/date-utils';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
@@ -26,6 +25,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
+  const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -41,7 +41,7 @@ const ExperimentWrapper = ({ theme }) => {
 
   // Fetch all tracking data for selected runs.
   const {
-    data: { metrics = [], JSONData = [] } = [],
+    data: { plots = [], metrics = [], JSONData = [] } = [],
     error: trackingDataError,
   } = useApolloQuery(GET_RUN_TRACKING_DATA, {
     skip: selectedRunIds.length === 0,
@@ -49,6 +49,11 @@ const ExperimentWrapper = ({ theme }) => {
   });
 
   let runTrackingData = {};
+
+  if (plots.length > 0) {
+    runTrackingData['Plots'] = plots;
+  }
+
   if (metrics.length > 0) {
     runTrackingData['Metrics'] = metrics;
   }
@@ -63,13 +68,9 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRunIds(
-          // Runs need to be sorted by time to ensure runIDs get sent to the
-          // graphql endpoint in correct order.
-          sortRunByTime(selectedRunIds.filter((run) => run !== id))
-        );
+        setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
       } else {
-        setSelectedRunIds(sortRunByTime([...selectedRunIds, id]));
+        setSelectedRunIds([...selectedRunIds, id]);
       }
     } else {
       if (selectedRunIds.includes(id)) {
@@ -199,6 +200,8 @@ const ExperimentWrapper = ({ theme }) => {
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
               showRunDetailsModal={showRunDetailsModal}
+              setShowRunPlotsModal={setShowRunPlotsModal}
+              showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
               trackingDataError={trackingDataError}

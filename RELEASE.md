@@ -8,6 +8,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Allow the visualisation of Matplotlib and Plotly plots in experiment tracking. (#984)
 - Remove support for Kedro v16. (#998)
 
 # Release 4.7.2
