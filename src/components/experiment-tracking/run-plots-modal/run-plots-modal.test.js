@@ -10,7 +10,7 @@ function generateTestData(numberOfRuns = 2, dataType = 'plotly') {
       dataType === 'matplotlib'
         ? 'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter'
         : 'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet',
-    updatedDatasetValues: [...Array(numberOfRuns).keys()].map((run) => {
+    datasetValues: [...Array(numberOfRuns).keys()].map((run) => {
       if (dataType === 'matplotlib') {
         return {
           runId: `2022-07-0${run + 1}T12.54.06.759Z`,

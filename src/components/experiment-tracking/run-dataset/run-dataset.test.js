@@ -11,6 +11,7 @@ const booleanTrackingData = {
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: false }],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -23,6 +24,7 @@ const objectTrackingData = {
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -39,6 +41,7 @@ const comparisonTrackingData = {
           { runId: 'My second Favorite Sprint', value: 13 },
         ],
       },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
     },
   ],
 };
@@ -56,6 +59,7 @@ const showDiffTrackingData = {
         ],
         r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
       },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
     },
   ],
 };
@@ -74,6 +78,7 @@ const matplotlibTrackingData = {
           },
         ],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -92,6 +97,7 @@ const emptyMatplotlibTrackingData = {
           },
         ],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -112,6 +118,7 @@ const plotlyTrackingData = {
           },
         ],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -121,7 +128,6 @@ describe('RunDataset', () => {
     const wrapper = shallow(
       <RunDataset
         isSingleRun={runs.length === 1 ? true : false}
-        selectedRunIds={['abc']}
         trackingData={trackingData}
       />
     );
@@ -131,25 +137,13 @@ describe('RunDataset', () => {
   });
 
   it('renders a boolean value as a string', () => {
-    const wrapper = mount(
-      <RunDataset
-        isSingleRun={true}
-        selectedRunIds={['abc']}
-        trackingData={booleanTrackingData}
-      />
-    );
+    const wrapper = mount(<RunDataset trackingData={booleanTrackingData} />);
 
     expect(wrapper.find('.details-dataset__value').text()).toBe('false');
   });
 
   it('renders a boolean value as a string', () => {
-    const wrapper = mount(
-      <RunDataset
-        isSingleRun={true}
-        selectedRunIds={['abc']}
-        trackingData={objectTrackingData}
-      />
-    );
+    const wrapper = mount(<RunDataset trackingData={objectTrackingData} />);
 
     const datasetValue = wrapper.find('.details-dataset__value').text();
 
@@ -162,7 +156,6 @@ describe('RunDataset', () => {
         enableShowChanges={true}
         isSingleRun={false}
         pinnedRun={'My Favorite Sprint'}
-        selectedRunIds={['abc', 'def']}
         trackingData={comparisonTrackingData}
       />
     );
@@ -172,11 +165,7 @@ describe('RunDataset', () => {
 
   it('renders a cell with a - value for runs with different metrics', () => {
     const wrapper = mount(
-      <RunDataset
-        isSingleRun={false}
-        selectedRunIds={['My Favorite Sprint', 'My second Favorite Sprint']}
-        trackingData={showDiffTrackingData}
-      />
+      <RunDataset isSingleRun={false} trackingData={showDiffTrackingData} />
     );
 
     expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
@@ -188,7 +177,6 @@ describe('RunDataset', () => {
         enableShowChanges={true}
         isSingleRun={true}
         pinnedRun={'My Favorite Sprint'}
-        selectedRunIds={['abc']}
         trackingData={matplotlibTrackingData}
       />
     );
@@ -203,7 +191,6 @@ describe('RunDataset', () => {
         enableShowChanges={true}
         isSingleRun={true}
         pinnedRun={'My Favorite Sprint'}
-        selectedRunIds={['abc']}
         trackingData={emptyMatplotlibTrackingData}
       />
     );
@@ -218,7 +205,6 @@ describe('RunDataset', () => {
         enableShowChanges={true}
         isSingleRun={true}
         pinnedRun={'My Favorite Sprint'}
-        selectedRunIds={['abc']}
         trackingData={plotlyTrackingData}
       />
     );

@@ -36,17 +36,13 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * Display the dataset of the experiment tracking run.
  * @param {boolean} props.enableShowChanges Are changes enabled or not.
  * @param {boolean} props.isSingleRun Indication to display a single run.
- * @param {boolean} loadingTrackingData Is the tracking-data query loading or not.
  * @param {string} props.pinnedRun ID of the pinned run.
- * @param {array} props.selectedRunIds Array of strings of runIds.
  * @param {object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
   enableShowChanges,
   isSingleRun,
-  loadingTrackingData,
   pinnedRun,
-  selectedRunIds,
   setRunDatasetToShow,
   setShowRunPlotsModal,
   trackingData,
@@ -68,7 +64,7 @@ const RunDataset = ({
             size="large"
           >
             {trackingData[group].map((dataset) => {
-              const { data, datasetType, datasetName } = dataset;
+              const { data, datasetType, datasetName, runIds } = dataset;
 
               return (
                 <Accordion
@@ -84,18 +80,25 @@ const RunDataset = ({
                       return a.localeCompare(b);
                     })
                     .map((key, rowIndex) => {
+                      const updatedDatasetValues = fillEmptyMetrics(
+                        dataset.data[key],
+                        runIds
+                      );
+                      const runDataWithPin = resolveRunDataWithPin(
+                        updatedDatasetValues,
+                        pinnedRun
+                      );
+
                       return buildDatasetDataMarkup(
                         key,
-                        dataset.data[key],
+                        runDataWithPin,
                         datasetType,
                         rowIndex,
                         isSingleRun,
-                        pinnedRun,
                         enableShowChanges,
-                        selectedRunIds,
+                        runIds,
                         setRunDatasetToShow,
-                        setShowRunPlotsModal,
-                        loadingTrackingData
+                        setShowRunPlotsModal
                       );
                     })}
                 </Accordion>
@@ -114,10 +117,8 @@ const RunDataset = ({
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
- * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {array} selectedRunIds Array of strings of runIds.
- * @param {boolean} loadingTrackingData Is the tracking-data query loading or not.
+ * @param {array} runIds Array of strings of runIds.
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -125,27 +126,18 @@ function buildDatasetDataMarkup(
   datasetType,
   rowIndex,
   isSingleRun,
-  pinnedRun,
   enableShowChanges,
-  selectedRunIds,
+  runIds,
   setRunDatasetToShow,
-  setShowRunPlotsModal,
-  loadingTrackingData
+  setShowRunPlotsModal
 ) {
-  const updatedDatasetValues = fillEmptyMetrics(
-    datasetValues,
-    selectedRunIds,
-    loadingTrackingData
-  );
-  const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
-
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
   const isTrackingDataset = getShortType(datasetType) === 'tracking';
 
   const onExpandVizClick = () => {
     setShowRunPlotsModal(true);
-    setRunDatasetToShow({ datasetKey, datasetType, updatedDatasetValues });
+    setRunDatasetToShow({ datasetKey, datasetType, datasetValues });
   };
 
   return (
@@ -159,7 +151,7 @@ function buildDatasetDataMarkup(
           >
             Name
           </span>
-          {selectedRunIds.map((value, index) => (
+          {runIds.map((value, index) => (
             <span
               className={classnames('details-dataset__value-header', {
                 'details-dataset__value-header--single': isSingleRun,
@@ -180,7 +172,7 @@ function buildDatasetDataMarkup(
           {datasetKey}
         </span>
         {isTrackingDataset &&
-          runDataWithPin.map((data) => (
+          datasetValues.map((data) => (
             <span
               className={classnames('details-dataset__value', {
                 'details-dataset__value--single': isSingleRun,
@@ -192,7 +184,7 @@ function buildDatasetDataMarkup(
             </span>
           ))}
         {isPlotlyDataset &&
-          runDataWithPin.map((run) => {
+          datasetValues.map((run) => {
             return (
               <span
                 className={classnames('details-dataset__value', {
@@ -212,13 +204,13 @@ function buildDatasetDataMarkup(
                     />
                   </div>
                 ) : (
-                  fillEmptyPlots(loadingTrackingData)
+                  fillEmptyPlots()
                 )}
               </span>
             );
           })}
         {isImageDataset &&
-          runDataWithPin.map((run) => {
+          datasetValues.map((run) => {
             return (
               <span
                 className={classnames('details-dataset__value', {
@@ -238,7 +230,7 @@ function buildDatasetDataMarkup(
                     />
                   </div>
                 ) : (
-                  fillEmptyPlots(loadingTrackingData)
+                  fillEmptyPlots()
                 )}
               </span>
             );
@@ -251,19 +243,18 @@ function buildDatasetDataMarkup(
 /**
  * Fill in missing run metrics if they don't match the number of runIds.
  * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
- * @param {array} selectedRunIds Array of strings of runIds.
- * @param {boolean} loadingTrackingData Is the tracking-data query loading or not.
+ * @param {array} runIds Array of strings of runIds.
  * @returns Array of objects, the length of which matches the length
- * of the selectedRunIds.
+ * of the runIds.
  */
-function fillEmptyMetrics(datasetValues, selectedRunIds, loadingTrackingData) {
-  if (datasetValues.length === selectedRunIds.length || loadingTrackingData) {
+function fillEmptyMetrics(datasetValues, runIds) {
+  if (datasetValues.length === runIds.length) {
     return datasetValues;
   }
 
   const metrics = [];
 
-  selectedRunIds.forEach((id) => {
+  runIds.forEach((id) => {
     const foundIdIndex = datasetValues.findIndex((item) => {
       return item.runId === id;
     });
@@ -279,11 +270,7 @@ function fillEmptyMetrics(datasetValues, selectedRunIds, loadingTrackingData) {
   return metrics;
 }
 
-function fillEmptyPlots(loadingTrackingData) {
-  if (loadingTrackingData) {
-    return null;
-  }
-
+function fillEmptyPlots() {
   return <div className="details-dataset__empty-plot">No plot available</div>;
 }
 

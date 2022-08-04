@@ -8,10 +8,8 @@ import classNames from 'classnames';
 import './run-plots-modal.css';
 
 const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
-  const { datasetKey, datasetType, updatedDatasetValues } = runDatasetToShow;
-  const runDataWithPlotData = updatedDatasetValues?.filter(
-    ({ value }) => value
-  );
+  const { datasetKey, datasetType, datasetValues } = runDatasetToShow;
+  const runDataWithPlotData = datasetValues?.filter(({ value }) => value);
   const numDatasets = runDataWithPlotData?.length;
   const plotView =
     numDatasets === 3

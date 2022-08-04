@@ -55,6 +55,7 @@ export const GET_RUN_TRACKING_DATA = gql`
     data
     datasetName
     datasetType
+    runIds
   }
 `;
 

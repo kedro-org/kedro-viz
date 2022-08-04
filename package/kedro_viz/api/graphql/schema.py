@@ -89,6 +89,7 @@ class RunsQuery:
                     dataset_name=dataset.dataset_name,
                     dataset_type=dataset.dataset_type,
                     data=formatted_tracking_data,
+                    run_ids=run_ids,
                 )
                 all_tracking_datasets.append(tracking_data)
 
