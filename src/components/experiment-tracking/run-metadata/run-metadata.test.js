@@ -81,7 +81,7 @@ describe('RunMetadata', () => {
 
   it('handles show more/less button click event', () => {
     const setToggleNotes = jest.fn();
-    const wrapper = mount(
+    const wrapper = shallow(
       <RunMetadata
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
         runs={runs.slice(0, 1)}
