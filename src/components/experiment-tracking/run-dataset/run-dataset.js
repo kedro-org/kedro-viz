@@ -123,7 +123,7 @@ const RunDataset = ({
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
-* @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
  * @param {array} runIds Array of strings of runIds.
  */
 function buildDatasetDataMarkup(
@@ -134,7 +134,6 @@ function buildDatasetDataMarkup(
   isSingleRun,
   enableComparisonView,
   enableShowChanges,
-  runIds,
   setRunDatasetToShow,
   setShowRunPlotsModal
 ) {
@@ -152,7 +151,7 @@ function buildDatasetDataMarkup(
       {rowIndex === 0 ? (
         <TransitionGroup component="div" className="details-dataset__row">
           <span className="details-dataset__name-header">Name</span>
-          {runIds.map((data, index) => (
+          {datasetValues.map((data, index) => (
             <CSSTransition
               key={data.runId}
               timeout={300}
@@ -162,7 +161,8 @@ function buildDatasetDataMarkup(
             >
               <span
                 className={classnames('details-dataset__value-header', {
-                  'details-dataset__value-header--comparision-view':
+                  'details-dataset__value-header--first-run': index === 0,
+                  'details-dataset__value-header---first-run-comparision-view':
                     index === 0 && enableComparisonView,
                 })}
                 key={data.runId + index}
@@ -176,10 +176,6 @@ function buildDatasetDataMarkup(
       <TransitionGroup component="div" className="details-dataset__row">
         <span className={'details-dataset__label'}>{datasetKey}</span>
         {datasetValues.map((run, index) => {
-
-          console.log(run, 'run')
-
-          debugger
           const isSinglePinnedRun = datasetValues.length === 1;
           return (
             <CSSTransition
@@ -191,7 +187,8 @@ function buildDatasetDataMarkup(
             >
               <span
                 className={classnames('details-dataset__value', {
-                  'details-dataset__value--comparision-view':
+                  'details-dataset__value--first-run': index === 0,
+                  'details-dataset__value---first-run-comparision-view':
                     index === 0 && enableComparisonView,
                 })}
                 key={run.runId + index}
@@ -203,7 +200,7 @@ function buildDatasetDataMarkup(
                   </>
                 )}
 
-                {isPlotlyDataset && (run?.value) && (
+                {isPlotlyDataset && run?.value && (
                   <div
                     className="details-dataset__visualization-wrapper"
                     onClick={onExpandVizClick}
@@ -216,7 +213,7 @@ function buildDatasetDataMarkup(
                   </div>
                 )}
 
-                {isImageDataset && (run?.value) && (
+                {isImageDataset && run?.value && (
                   <div
                     className="details-dataset__image-container"
                     onClick={onExpandVizClick}
@@ -229,9 +226,9 @@ function buildDatasetDataMarkup(
                   </div>
                 )}
 
-                {(isPlotlyDataset || isImageDataset) && (!run.value) && (
-                  fillEmptyPlots()
-                )}
+                {(isPlotlyDataset || isImageDataset) &&
+                  !run.value &&
+                  fillEmptyPlots()}
               </span>
             </CSSTransition>
           );

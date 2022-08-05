@@ -61,7 +61,7 @@ $max-width: 375px;
   flex-shrink: 0;
   margin-right: 13em;
 
-  max-width: 375px;
+  max-width: $max-width;
 }
 
 .details-metadata__labels,
@@ -69,6 +69,10 @@ $max-width: 375px;
 .details-metadata__run--first-run,
 .details-metadata__run--first-run-comparision-view {
   margin-right: 0;
+}
+
+.details-metadata__run--wrapper .details-metadata__run {
+  width: 310px;
 }
 
 .details-metadata__run td {
