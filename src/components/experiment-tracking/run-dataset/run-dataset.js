@@ -1,11 +1,12 @@
 import React from 'react';
-import lodash from 'lodash';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
+import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
+import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 import '../run-metadata/animation.css';
 
@@ -39,15 +40,15 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {boolean} props.enableShowChanges Are changes enabled or not.
  * @param {boolean} props.isSingleRun Indication to display a single run.
  * @param {string} props.pinnedRun ID of the pinned run.
- * @param {array} props.selectedRunIds Array of strings of runIds.
- * @param {array} props.trackingData The experiment tracking run data.
+ * @param {object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
   enableComparisonView,
   enableShowChanges,
   isSingleRun,
   pinnedRun,
-  selectedRunIds,
+  setRunDatasetToShow,
+  setShowRunPlotsModal,
   trackingData,
 }) => {
   return (
@@ -61,13 +62,13 @@ const RunDataset = ({
           <Accordion
             className="details-dataset__accordion"
             headingClassName="details-dataset__accordion-header"
-            heading={lodash.startCase(group)}
+            heading={group}
             key={group}
             layout="left"
             size="large"
           >
             {trackingData[group].map((dataset) => {
-              const { data, datasetName } = dataset;
+              const { data, datasetType, datasetName, runIds } = dataset;
 
               return (
                 <Accordion
@@ -83,15 +84,26 @@ const RunDataset = ({
                       return a.localeCompare(b);
                     })
                     .map((key, rowIndex) => {
+                      const updatedDatasetValues = fillEmptyMetrics(
+                        dataset.data[key],
+                        runIds
+                      );
+                      const runDataWithPin = resolveRunDataWithPin(
+                        updatedDatasetValues,
+                        pinnedRun
+                      );
+
                       return buildDatasetDataMarkup(
                         key,
-                        dataset.data[key],
+                        runDataWithPin,
+                        datasetType,
+                        rowIndex,
+                        isSingleRun,
                         enableComparisonView,
                         enableShowChanges,
-                        isSingleRun,
-                        pinnedRun,
-                        rowIndex,
-                        selectedRunIds
+                        runIds,
+                        setRunDatasetToShow,
+                        setShowRunPlotsModal
                       );
                     })}
                 </Accordion>
@@ -110,30 +122,37 @@ const RunDataset = ({
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
- * @param {string} pinnedRun ID of the pinned run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {array} selectedRunIds Array of strings of runIds.
+* @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
+ * @param {array} runIds Array of strings of runIds.
  */
 function buildDatasetDataMarkup(
   datasetKey,
   datasetValues,
+  datasetType,
+  rowIndex,
+  isSingleRun,
   enableComparisonView,
   enableShowChanges,
-  isSingleRun,
-  pinnedRun,
-  rowIndex,
-  selectedRunIds
+  runIds,
+  setRunDatasetToShow,
+  setShowRunPlotsModal
 ) {
-  const updatedDatasetValues = fillEmptyMetrics(datasetValues, selectedRunIds);
-  const runDataWithPin = resolveRunDataWithPin(updatedDatasetValues, pinnedRun);
+  const isPlotlyDataset = getShortType(datasetType) === 'plotly';
+  const isImageDataset = getShortType(datasetType) === 'image';
+  const isTrackingDataset = getShortType(datasetType) === 'tracking';
+
+  const onExpandVizClick = () => {
+    setShowRunPlotsModal(true);
+    setRunDatasetToShow({ datasetKey, datasetType, datasetValues });
+  };
 
   return (
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
         <TransitionGroup component="div" className="details-dataset__row">
           <span className="details-dataset__name-header">Name</span>
-          {runDataWithPin.map((data, index) => (
+          {runIds.map((data, index) => (
             <CSSTransition
               key={data.runId}
               timeout={300}
@@ -156,11 +175,15 @@ function buildDatasetDataMarkup(
       ) : null}
       <TransitionGroup component="div" className="details-dataset__row">
         <span className={'details-dataset__label'}>{datasetKey}</span>
-        {runDataWithPin.map((data, index) => {
-          const isSinglePinnedRun = runDataWithPin.length === 1;
+        {datasetValues.map((run, index) => {
+
+          console.log(run, 'run')
+
+          debugger
+          const isSinglePinnedRun = datasetValues.length === 1;
           return (
             <CSSTransition
-              key={data.runId}
+              key={run.runId}
               timeout={300}
               classNames="details-dataset__value-animation"
               enter={isSinglePinnedRun ? false : true}
@@ -171,10 +194,44 @@ function buildDatasetDataMarkup(
                   'details-dataset__value--comparision-view':
                     index === 0 && enableComparisonView,
                 })}
-                key={data.runId + index}
+                key={run.runId + index}
               >
-                {sanitizeValue(data.value)}
-                {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
+                {isTrackingDataset && (
+                  <>
+                    {sanitizeValue(run?.value)}
+                    {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
+                  </>
+                )}
+
+                {isPlotlyDataset && (run?.value) && (
+                  <div
+                    className="details-dataset__visualization-wrapper"
+                    onClick={onExpandVizClick}
+                  >
+                    <PlotlyChart
+                      data={run.value.data}
+                      layout={run.value.layout}
+                      view="experiment_preview"
+                    />
+                  </div>
+                )}
+
+                {isImageDataset && (run?.value) && (
+                  <div
+                    className="details-dataset__image-container"
+                    onClick={onExpandVizClick}
+                  >
+                    <img
+                      alt="Matplotlib rendering"
+                      className="details-dataset__image"
+                      src={`data:image/png;base64,${run.value}`}
+                    />
+                  </div>
+                )}
+
+                {(isPlotlyDataset || isImageDataset) && (!run.value) && (
+                  fillEmptyPlots()
+                )}
               </span>
             </CSSTransition>
           );
@@ -187,18 +244,18 @@ function buildDatasetDataMarkup(
 /**
  * Fill in missing run metrics if they don't match the number of runIds.
  * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
- * @param {array} selectedRunIds Array of strings of runIds.
+ * @param {array} runIds Array of strings of runIds.
  * @returns Array of objects, the length of which matches the length
- * of the selectedRunIds.
+ * of the runIds.
  */
-function fillEmptyMetrics(datasetValues, selectedRunIds) {
-  if (datasetValues.length === selectedRunIds.length) {
+function fillEmptyMetrics(datasetValues, runIds) {
+  if (datasetValues.length === runIds.length) {
     return datasetValues;
   }
 
   const metrics = [];
 
-  selectedRunIds.forEach((id) => {
+  runIds.forEach((id) => {
     const foundIdIndex = datasetValues.findIndex((item) => {
       return item.runId === id;
     });
@@ -212,6 +269,10 @@ function fillEmptyMetrics(datasetValues, selectedRunIds) {
   });
 
   return metrics;
+}
+
+function fillEmptyPlots() {
+  return <div className="details-dataset__empty-plot">No plot available</div>;
 }
 
 export default RunDataset;

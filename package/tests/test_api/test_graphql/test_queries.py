@@ -75,15 +75,22 @@ class TestQueryWithRuns:
         response = client.post(
             "/graphql",
             json={
-                "query": f"""{{runTrackingData
-                (runIds:["{example_run_id}"])
-                {{datasetName, datasetType, data}}}}"""
+                "query": f"""
+                {{
+                    metrics: runTrackingData(runIds:["{example_run_id}"],group:METRIC)
+                {{datasetName, datasetType, data}}
+                     json: runTrackingData(runIds:["{example_run_id}"],group:JSON)
+                {{datasetName, datasetType, data}}
+                    plots: runTrackingData(runIds:["{example_run_id}"],group:PLOT)
+                {{datasetName, datasetType, data}}
+                }}
+                """
             },
         )
 
         expected_response = {
             "data": {
-                "runTrackingData": [
+                "metrics": [
                     {
                         "datasetName": "metrics",
                         "datasetType": "kedro.extras.datasets.tracking."
@@ -104,6 +111,8 @@ class TestQueryWithRuns:
                             "col6": [{"runId": example_run_id, "value": 6.0}],
                         },
                     },
+                ],
+                "json": [
                     {
                         "datasetName": "json_tracking",
                         "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
@@ -118,9 +127,48 @@ class TestQueryWithRuns:
                             ],
                         },
                     },
-                ]
+                ],
+                "plots": [
+                    {
+                        "datasetName": "plotly_dataset",
+                        "datasetType": "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
+                        "data": {
+                            "plotly.json": [
+                                {
+                                    "runId": "2021-11-03T18.24.24.379Z",
+                                    "value": {
+                                        "data": [
+                                            {
+                                                "x": [
+                                                    "giraffes",
+                                                    "orangutans",
+                                                    "monkeys",
+                                                ],
+                                                "y": [20, 14, 23],
+                                                "type": "bar",
+                                            }
+                                        ]
+                                    },
+                                }
+                            ]
+                        },
+                    },
+                    {
+                        "datasetName": "matplotlib_dataset",
+                        "datasetType": "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter",
+                        "data": {
+                            "matplotlib.png": [
+                                {
+                                    "runId": "2021-11-03T18.24.24.379Z",
+                                    "value": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
+                                }
+                            ]
+                        },
+                    },
+                ],
             }
         }
+
         assert response.json() == expected_response
 
     @pytest.mark.parametrize(
@@ -206,7 +254,7 @@ class TestQueryWithRuns:
             "/graphql",
             json={
                 "query": f"""{{runTrackingData
-                (runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
                 {{datasetName, datasetType, data}}}}"""
             },
         )
@@ -244,17 +292,7 @@ class TestQueryWithRuns:
             ),
             (
                 False,
-                {
-                    "data": {
-                        "runTrackingData": [
-                            {
-                                "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                                "data": {},
-                            }
-                        ]
-                    }
-                },
+                {"data": {"runTrackingData": []}},
             ),
         ],
     )
@@ -275,7 +313,7 @@ class TestQueryWithRuns:
             "/graphql",
             json={
                 "query": f"""{{runTrackingData
-                (runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
                 {{datasetName, datasetType, data}}}}"""
             },
         )
@@ -286,31 +324,11 @@ class TestQueryWithRuns:
         [
             (
                 True,
-                {
-                    "data": {
-                        "runTrackingData": [
-                            {
-                                "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                                "data": {},
-                            }
-                        ]
-                    }
-                },
+                {"data": {"runTrackingData": []}},
             ),
             (
                 False,
-                {
-                    "data": {
-                        "runTrackingData": [
-                            {
-                                "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
-                                "data": {},
-                            }
-                        ]
-                    }
-                },
+                {"data": {"runTrackingData": []}},
             ),
         ],
     )
@@ -331,7 +349,7 @@ class TestQueryWithRuns:
             "/graphql",
             json={
                 "query": f"""{{runTrackingData
-                      (runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                      (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
                       {{datasetName, datasetType, data}}}}"""
             },
         )

@@ -6,10 +6,12 @@ import { shallow, mount } from 'enzyme';
 const booleanTrackingData = {
   JSONData: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.hyperparams_linear_regression',
+      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: false }],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -17,10 +19,12 @@ const booleanTrackingData = {
 const objectTrackingData = {
   JSONData: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.hyperparams_linear_regression',
+      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
       },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -28,13 +32,16 @@ const objectTrackingData = {
 const comparisonTrackingData = {
   metrics: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType:
+        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
           { runId: 'My second Favorite Sprint', value: 13 },
         ],
       },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
     },
   ],
 };
@@ -42,7 +49,9 @@ const comparisonTrackingData = {
 const showDiffTrackingData = {
   metrics: [
     {
-      datasetName: 'Data Analysis',
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType:
+        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -50,6 +59,66 @@ const showDiffTrackingData = {
         ],
         r2Score: [{ runId: 'My second Favorite Sprint', value: 0.2342356 }],
       },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
+    },
+  ],
+};
+
+const matplotlibTrackingData = {
+  metrics: [
+    {
+      datasetName: 'matplotlib',
+      datasetType:
+        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      data: {
+        'matplot_lib_single_plot.png': [
+          {
+            runId: 'My Favorite Sprint',
+            value: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+          },
+        ],
+      },
+      runIds: ['My Favorite Sprint'],
+    },
+  ],
+};
+
+const emptyMatplotlibTrackingData = {
+  metrics: [
+    {
+      datasetName: 'matplotlib',
+      datasetType:
+        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      data: {
+        'matplot_lib_single_plot.png': [
+          {
+            runId: 'My Favorite Sprint',
+            value: null,
+          },
+        ],
+      },
+      runIds: ['My Favorite Sprint'],
+    },
+  ],
+};
+
+const plotlyTrackingData = {
+  metrics: [
+    {
+      datasetName: 'plotly',
+      datasetType: 'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet',
+      data: {
+        plotlyVisualization: [
+          {
+            runId: 'My Favorite Sprint',
+            value: {
+              data: [],
+              layout: {},
+            },
+          },
+        ],
+      },
+      runIds: ['My Favorite Sprint'],
     },
   ],
 };
@@ -59,7 +128,6 @@ describe('RunDataset', () => {
     const wrapper = shallow(
       <RunDataset
         isSingleRun={runs.length === 1 ? true : false}
-        selectedRunIds={['abc']}
         trackingData={trackingData}
       />
     );
@@ -69,25 +137,13 @@ describe('RunDataset', () => {
   });
 
   it('renders a boolean value as a string', () => {
-    const wrapper = mount(
-      <RunDataset
-        isSingleRun={true}
-        selectedRunIds={['abc']}
-        trackingData={booleanTrackingData}
-      />
-    );
+    const wrapper = mount(<RunDataset trackingData={booleanTrackingData} />);
 
     expect(wrapper.find('.details-dataset__value').text()).toBe('false');
   });
 
   it('renders a boolean value as a string', () => {
-    const wrapper = mount(
-      <RunDataset
-        isSingleRun={true}
-        selectedRunIds={['abc']}
-        trackingData={objectTrackingData}
-      />
-    );
+    const wrapper = mount(<RunDataset trackingData={objectTrackingData} />);
 
     const datasetValue = wrapper.find('.details-dataset__value').text();
 
@@ -100,7 +156,6 @@ describe('RunDataset', () => {
         enableShowChanges={true}
         isSingleRun={false}
         pinnedRun={'My Favorite Sprint'}
-        selectedRunIds={['abc', 'def']}
         trackingData={comparisonTrackingData}
       />
     );
@@ -108,17 +163,54 @@ describe('RunDataset', () => {
     expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
   });
 
-  it('for runs with different metrics, it renders a cell with a - value', () => {
+  it('renders a cell with a - value for runs with different metrics', () => {
+    const wrapper = mount(
+      <RunDataset isSingleRun={false} trackingData={showDiffTrackingData} />
+    );
+
+    expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
+  });
+
+  it('renders a matplotlib image and container', () => {
     const wrapper = mount(
       <RunDataset
-        isSingleRun={false}
-        selectedRunIds={['My Favorite Sprint', 'My second Favorite Sprint']}
-        trackingData={showDiffTrackingData}
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={matplotlibTrackingData}
       />
     );
 
-    console.log(wrapper.debug());
+    expect(wrapper.find('.details-dataset__image-container').length).toBe(1);
+    expect(wrapper.find('.details-dataset__image').length).toBe(1);
+  });
 
-    expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
+  it('renders a empty plot placeholder', () => {
+    const wrapper = mount(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={emptyMatplotlibTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__value').length).toBe(1);
+    expect(wrapper.find('.details-dataset__empty-plot').length).toBe(1);
+  });
+
+  it('renders a plotly chart container', () => {
+    const wrapper = shallow(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={plotlyTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__visualization-wrapper').length).toBe(
+      1
+    );
   });
 });
