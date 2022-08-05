@@ -10,15 +10,15 @@ $animation-timing: 0.2s;
   transition: transform $animation-timing ease-out;
 }
 
-.details-dataset__value---first-run-comparision-view,
-.details-dataset__value-header---first-run-comparision-view,
-.details-metadata__run--first-run-comparision-view {
+.details-dataset__value---first-run-comparison-view,
+.details-dataset__value-header---first-run-comparison-view,
+.details-metadata__run--first-run-comparison-view {
   transform: translateX(-40%);
   transition: transform $animation-timing ease-out;
 }
 
-.details-dataset--comparision-view,
-.details-metadata--comparision-view {
+.details-dataset--comparison-view,
+.details-metadata--comparison-view {
   transform: translateX(-4em);
   transition: transform $animation-timing ease-out;
 }
@@ -29,7 +29,7 @@ $animation-timing: 0.2s;
   transition: opacity 0.1s ease-in-out;
 }
 
-.details-metadata__labels-comparision-view .details-metadata__title {
+.details-metadata__labels-comparison-view .details-metadata__title {
   opacity: 0;
   transform: translateX(-40%);
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
@@ -39,7 +39,7 @@ $animation-timing: 0.2s;
   opacity: 0;
 }
 
-.details-metadata__run--first-run-comparision-view .details-metadata__title {
+.details-metadata__run--first-run-comparison-view .details-metadata__title {
   opacity: 1;
   transition: opacity $animation-timing ease-in;
 }

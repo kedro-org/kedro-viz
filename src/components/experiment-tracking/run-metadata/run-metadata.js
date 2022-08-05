@@ -101,12 +101,12 @@ const RunMetadata = ({
   return (
     <div
       className={classnames('details-metadata', {
-        'details-metadata--comparision-view': enableComparisonView,
+        'details-metadata--comparison-view': enableComparisonView,
       })}
     >
       <table className="details-metadata__table">
         {runs.map((run, i) => (
-          <>
+          <React.Fragment key={run.id + i}>
             {i === 0 ? (
               <tbody>
                 <tr
@@ -114,11 +114,10 @@ const RunMetadata = ({
                     'details-metadata__run',
                     'details-metadata__labels',
                     {
-                      'details-metadata__labels-comparision-view':
+                      'details-metadata__labels-comparison-view':
                         enableComparisonView,
                     }
                   )}
-                  key={run.id + i}
                 >
                   <td className="details-metadata__title">
                     <span
@@ -140,7 +139,7 @@ const RunMetadata = ({
                 </tr>
               </tbody>
             ) : null}
-          </>
+          </React.Fragment>
         ))}
         <TransitionGroup
           component={'tbody'}
@@ -160,7 +159,7 @@ const RunMetadata = ({
                 <tr
                   className={classnames('details-metadata__run', {
                     'details-metadata__run--first-run': i === 0,
-                    'details-metadata__run--first-run-comparision-view':
+                    'details-metadata__run--first-run-comparison-view':
                       i === 0 && enableComparisonView,
                   })}
                 >

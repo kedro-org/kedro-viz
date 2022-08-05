@@ -54,7 +54,7 @@ const RunDataset = ({
   return (
     <div
       className={classnames('details-dataset', {
-        'details-dataset--comparision-view': enableComparisonView,
+        'details-dataset--comparison-view': enableComparisonView,
       })}
     >
       {Object.keys(trackingData).map((group) => {
@@ -162,7 +162,7 @@ function buildDatasetDataMarkup(
               <span
                 className={classnames('details-dataset__value-header', {
                   'details-dataset__value-header--first-run': index === 0,
-                  'details-dataset__value-header---first-run-comparision-view':
+                  'details-dataset__value-header---first-run-comparison-view':
                     index === 0 && enableComparisonView,
                 })}
                 key={data.runId + index}
@@ -188,7 +188,7 @@ function buildDatasetDataMarkup(
               <span
                 className={classnames('details-dataset__value', {
                   'details-dataset__value--first-run': index === 0,
-                  'details-dataset__value---first-run-comparision-view':
+                  'details-dataset__value---first-run-comparison-view':
                     index === 0 && enableComparisonView,
                 })}
                 key={run.runId + index}

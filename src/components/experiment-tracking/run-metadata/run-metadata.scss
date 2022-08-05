@@ -67,7 +67,7 @@ $max-width: 375px;
 .details-metadata__labels,
 .details-metadata__labels-comparison-view,
 .details-metadata__run--first-run,
-.details-metadata__run--first-run-comparision-view {
+.details-metadata__run--first-run-comparison-view {
   margin-right: 0;
 }
 
@@ -90,14 +90,14 @@ $max-width: 375px;
 }
 
 // a single run when comparison view is on
-.details-metadata__run--first-run-comparision-view {
+.details-metadata__run--first-run-comparison-view {
   .details-metadata__table-label,
   .details-metadata__table-value {
     width: $max-width;
   }
 }
 
-.details-metadata__run--first-run-comparision-view td {
+.details-metadata__run--first-run-comparison-view td {
   &:first-of-type {
     width: 100%;
   }

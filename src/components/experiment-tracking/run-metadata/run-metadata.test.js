@@ -75,7 +75,7 @@ describe('RunMetadata', () => {
     );
     expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
     expect(
-      wrapper.find('.details-metadata__run--first-run-comparision-view').length
+      wrapper.find('.details-metadata__run--first-run-comparison-view').length
     ).toBe(1);
   });
 
