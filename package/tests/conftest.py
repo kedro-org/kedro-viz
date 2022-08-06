@@ -1,11 +1,13 @@
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict
 from unittest import mock
 
 import pytest
 from fastapi.testclient import TestClient
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
-from kedro.io import DataCatalog, MemoryDataSet
+from kedro.extras.datasets.tracking import MetricsDataSet
+from kedro.io import DataCatalog, MemoryDataSet, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
@@ -137,8 +139,12 @@ def example_api(
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(data_access_manager, example_catalog, example_pipelines, None)
-    mocker.patch("kedro_viz.api.responses.data_access_manager", new=data_access_manager)
-    mocker.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager)
+    mocker.patch(
+        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
+    )
     yield api
 
 
@@ -152,8 +158,12 @@ def example_api_no_default_pipeline(
     del example_pipelines["__default__"]
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(data_access_manager, example_catalog, example_pipelines, None)
-    mocker.patch("kedro_viz.api.responses.data_access_manager", new=data_access_manager)
-    mocker.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager)
+    mocker.patch(
+        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
+    )
     yield api
 
 
@@ -171,9 +181,35 @@ def example_transcoded_api(
         example_transcoded_pipelines,
         None,
     )
-    mocker.patch("kedro_viz.api.responses.data_access_manager", new=data_access_manager)
-    mocker.patch("kedro_viz.api.router.data_access_manager", new=data_access_manager)
+    mocker.patch(
+        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
+    )
     yield api
+
+
+@pytest.fixture
+def example_run_ids():
+    yield ["2021-11-03T18.24.24.379Z", "2021-11-02T18.24.24.379Z"]
+
+
+@pytest.fixture
+def example_multiple_run_tracking_dataset(example_run_ids, tmp_path):
+    new_metrics_dataset = MetricsDataSet(
+        filepath=Path(tmp_path / "test.json").as_posix(),
+        version=Version(None, example_run_ids[1]),
+    )
+    new_metrics_dataset.save({"col1": 1, "col3": 3})
+    new_metrics_dataset = MetricsDataSet(
+        filepath=Path(tmp_path / "test.json").as_posix(),
+        version=Version(None, example_run_ids[0]),
+    )
+    new_data = {"col1": 3, "col2": 3.23}
+    new_metrics_dataset.save(new_data)
+
+    yield new_metrics_dataset
 
 
 @pytest.fixture

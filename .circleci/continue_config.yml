@@ -169,6 +169,9 @@ jobs:
           name: Run security scan
           command: make security-scan
       - run:
+          name: Verify GraphQL schema is up to date
+          command: make schema-check
+      - run:
           name: Run Python formatters and linters
           command: make format-check lint-check
 

@@ -1,3 +1,7 @@
+# pylint:disable=line-too-long
+
+import json
+
 import pytest
 from semver import VersionInfo
 
@@ -71,15 +75,22 @@ class TestQueryWithRuns:
         response = client.post(
             "/graphql",
             json={
-                "query": f"""{{runTrackingData
-                (runIds:["{example_run_id}"])
-                {{datasetName, datasetType, data}}}}"""
+                "query": f"""
+                {{
+                    metrics: runTrackingData(runIds:["{example_run_id}"],group:METRIC)
+                {{datasetName, datasetType, data}}
+                     json: runTrackingData(runIds:["{example_run_id}"],group:JSON)
+                {{datasetName, datasetType, data}}
+                    plots: runTrackingData(runIds:["{example_run_id}"],group:PLOT)
+                {{datasetName, datasetType, data}}
+                }}
+                """
             },
         )
 
         expected_response = {
             "data": {
-                "runTrackingData": [
+                "metrics": [
                     {
                         "datasetName": "metrics",
                         "datasetType": "kedro.extras.datasets.tracking."
@@ -100,6 +111,8 @@ class TestQueryWithRuns:
                             "col6": [{"runId": example_run_id, "value": 6.0}],
                         },
                     },
+                ],
+                "json": [
                     {
                         "datasetName": "json_tracking",
                         "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
@@ -114,16 +127,239 @@ class TestQueryWithRuns:
                             ],
                         },
                     },
-                ]
+                ],
+                "plots": [
+                    {
+                        "datasetName": "plotly_dataset",
+                        "datasetType": "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
+                        "data": {
+                            "plotly.json": [
+                                {
+                                    "runId": "2021-11-03T18.24.24.379Z",
+                                    "value": {
+                                        "data": [
+                                            {
+                                                "x": [
+                                                    "giraffes",
+                                                    "orangutans",
+                                                    "monkeys",
+                                                ],
+                                                "y": [20, 14, 23],
+                                                "type": "bar",
+                                            }
+                                        ]
+                                    },
+                                }
+                            ]
+                        },
+                    },
+                    {
+                        "datasetName": "matplotlib_dataset",
+                        "datasetType": "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter",
+                        "data": {
+                            "matplotlib.png": [
+                                {
+                                    "runId": "2021-11-03T18.24.24.379Z",
+                                    "value": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=",
+                                }
+                            ]
+                        },
+                    },
+                ],
             }
         }
+
+        assert response.json() == expected_response
+
+    @pytest.mark.parametrize(
+        "show_diff,expected_response",
+        [
+            (
+                True,
+                {
+                    "data": {
+                        "runTrackingData": [
+                            {
+                                "datasetName": "new_metrics",
+                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "data": {
+                                    "col1": [
+                                        {
+                                            "runId": "2021-11-03T18.24.24.379Z",
+                                            "value": 3.0,
+                                        },
+                                        {
+                                            "runId": "2021-11-02T18.24.24.379Z",
+                                            "value": 1.0,
+                                        },
+                                    ],
+                                    "col2": [
+                                        {
+                                            "runId": "2021-11-03T18.24.24.379Z",
+                                            "value": 3.23,
+                                        },
+                                    ],
+                                    "col3": [
+                                        {
+                                            "runId": "2021-11-02T18.24.24.379Z",
+                                            "value": 3.0,
+                                        },
+                                    ],
+                                },
+                            }
+                        ]
+                    }
+                },
+            ),
+            (
+                False,
+                {
+                    "data": {
+                        "runTrackingData": [
+                            {
+                                "datasetName": "new_metrics",
+                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "data": {
+                                    "col1": [
+                                        {
+                                            "runId": "2021-11-03T18.24.24.379Z",
+                                            "value": 3.0,
+                                        },
+                                        {
+                                            "runId": "2021-11-02T18.24.24.379Z",
+                                            "value": 1.0,
+                                        },
+                                    ],
+                                },
+                            },
+                        ]
+                    }
+                },
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data(
+        self,
+        example_run_ids,
+        client,
+        example_multiple_run_tracking_catalog,
+        data_access_manager_with_runs,
+        show_diff,
+        expected_response,
+    ):
+
+        data_access_manager_with_runs.add_catalog(example_multiple_run_tracking_catalog)
+
+        response = client.post(
+            "/graphql",
+            json={
+                "query": f"""{{runTrackingData
+                (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                {{datasetName, datasetType, data}}}}"""
+            },
+        )
+        assert response.json() == expected_response
+
+    @pytest.mark.parametrize(
+        "show_diff,expected_response",
+        [
+            (
+                True,
+                {
+                    "data": {
+                        "runTrackingData": [
+                            {
+                                "datasetName": "new_metrics",
+                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "data": {
+                                    "col1": [
+                                        {
+                                            "runId": "2021-11-02T18.24.24.379Z",
+                                            "value": 1.0,
+                                        },
+                                    ],
+                                    "col3": [
+                                        {
+                                            "runId": "2021-11-02T18.24.24.379Z",
+                                            "value": 3.0,
+                                        },
+                                    ],
+                                },
+                            }
+                        ]
+                    }
+                },
+            ),
+            (
+                False,
+                {"data": {"runTrackingData": []}},
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data_at_least_one_empty_run(
+        self,
+        example_run_ids,
+        client,
+        example_multiple_run_tracking_catalog_at_least_one_empty_run,
+        data_access_manager_with_runs,
+        show_diff,
+        expected_response,
+    ):
+        data_access_manager_with_runs.add_catalog(
+            example_multiple_run_tracking_catalog_at_least_one_empty_run
+        )
+
+        response = client.post(
+            "/graphql",
+            json={
+                "query": f"""{{runTrackingData
+                (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                {{datasetName, datasetType, data}}}}"""
+            },
+        )
+        assert response.json() == expected_response
+
+    @pytest.mark.parametrize(
+        "show_diff,expected_response",
+        [
+            (
+                True,
+                {"data": {"runTrackingData": []}},
+            ),
+            (
+                False,
+                {"data": {"runTrackingData": []}},
+            ),
+        ],
+    )
+    def test_graphql_run_tracking_data_all_empty_runs(
+        self,
+        example_run_ids,
+        client,
+        example_multiple_run_tracking_catalog_all_empty_runs,
+        data_access_manager_with_runs,
+        show_diff,
+        expected_response,
+    ):
+        data_access_manager_with_runs.add_catalog(
+            example_multiple_run_tracking_catalog_all_empty_runs
+        )
+
+        response = client.post(
+            "/graphql",
+            json={
+                "query": f"""{{runTrackingData
+                      (group: METRIC runIds:{json.dumps(example_run_ids)}, showDiff: {json.dumps(show_diff)})
+                      {{datasetName, datasetType, data}}}}"""
+            },
+        )
         assert response.json() == expected_response
 
 
 class TestQueryVersion:
     def test_graphql_version_endpoint(self, client, mocker):
         mocker.patch(
-            "kedro_viz.api.graphql.get_latest_version",
+            "kedro_viz.api.graphql.schema.get_latest_version",
             return_value=VersionInfo.parse("1.0.0"),
         )
         response = client.post(

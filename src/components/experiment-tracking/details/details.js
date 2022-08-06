@@ -3,7 +3,8 @@ import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
 import RunDataset from '../run-dataset';
 import RunDetailsModal from '../run-details-modal';
-import RunExportModal from '../run-export-modal.js';
+import RunPlotsModal from '../run-plots-modal';
+import RunExportModal from '../run-export-modal';
 import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
 
 import './details.css';
@@ -19,14 +20,17 @@ const Details = ({
   selectedRunIds,
   setPinnedRun,
   setShowRunDetailsModal,
+  setShowRunExportModal,
+  setShowRunPlotsModal,
   showRunDetailsModal,
+  showRunExportModal,
+  showRunPlotsModal,
   sidebarVisible,
   theme,
   trackingDataError,
-  showRunExportModal,
-  setShowRunExportModal,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
+  const [runDatasetToShow, setRunDatasetToShow] = useState({});
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -59,6 +63,12 @@ const Details = ({
           theme={theme}
           visible={showRunExportModal}
         />
+        <RunPlotsModal
+          runDatasetToShow={runDatasetToShow}
+          setShowRunPlotsModal={setShowRunPlotsModal}
+          theme={theme}
+          visible={showRunPlotsModal}
+        />
       </ButtonTimeoutContextProvider>
       <div
         className={classnames('kedro', 'details-mainframe', {
@@ -79,7 +89,8 @@ const Details = ({
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
-          selectedRunIds={selectedRunIds}
+          setRunDatasetToShow={setRunDatasetToShow}
+          setShowRunPlotsModal={setShowRunPlotsModal}
           trackingData={runTrackingData}
         />
       </div>

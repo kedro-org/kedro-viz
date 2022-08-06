@@ -5,7 +5,7 @@ from typing import Dict, List, Set
 
 from toposort import CircularDependencyError, toposort_flatten
 
-from kedro_viz.models.graph import GraphNode
+from kedro_viz.models.flowchart import GraphNode
 
 logger = logging.getLogger(__name__)
 
