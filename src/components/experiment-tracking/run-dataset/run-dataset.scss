@@ -20,14 +20,6 @@
 .details-dataset__row {
   display: flex;
   font-size: 1.4em;
-
-  & span:nth-child(3) {
-    margin-right: 130px;
-  }
-
-  & span:last-of-type {
-    margin-right: 50px;
-  }
 }
 
 .details-dataset__name-header,
@@ -95,4 +87,16 @@
   height: 188px;
   justify-content: center;
   width: 250px;
+}
+
+.details-dataset__tranistion-group-wrapper {
+  display: flex;
+}
+
+.details-dataset__tranistion-group-wrapper span {
+  margin-right: 10em;
+
+  &:first-of-type {
+    margin-right: 0;
+  }
 }
