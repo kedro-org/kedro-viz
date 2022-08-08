@@ -6,6 +6,8 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 5.0.0
+
 ## Major features and improvements
 
 - Allow the visualisation of Matplotlib and Plotly plots in experiment tracking. (#984)
