@@ -2,6 +2,7 @@
 from a jupyter notebook.
 """
 # pragma: no cover
+import os 
 import logging
 import multiprocessing
 import socket
@@ -19,6 +20,12 @@ _VIZ_PROCESSES: Dict[str, int] = {}
 
 
 logger = logging.getLogger(__name__)
+
+def _get_dbutils() -> Optional[Any]:
+    """Get the instance of 'dbutils' or None if the one could not be found."""
+    dbutils = globals().get("dbutils")
+    if dbutils:
+        return dbutils
 
 
 class WaitForException(Exception):
@@ -130,12 +137,49 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    _wait_for(func=_check_viz_up, port=port)
+    url = make_url(port)
 
-    wrapper = """
-            <html lang="en"><head></head><body style="width:100; height:100;">
-            <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
-            </body></html>""".format(
-        port
-    )
-    display(HTML(wrapper))
+    if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+            try:
+                display_html(f"<a href='{url}'>Launch Kedro-Viz</a>")
+            except EnvironmentError:
+                print("Launch Kedro-Viz:", url)
+    else: 
+        _wait_for(func=_check_viz_up, port=port)
+
+        wrapper = """
+                <html lang="en"><head></head><body style="width:100; height:100;">
+                <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
+                </body></html>""".format(
+            port
+        )
+        display(HTML(wrapper))
+
+def get(dbutils, id):
+    return getattr(
+        dbutils.notebook.entry_point.getDbutils().notebook().getContext(), id
+    )().get()
+
+def make_url(port):
+    dbutils = _get_dbutils()
+    browser_host_name = get(dbutils, "browserHostName")
+    workspace_id = get(dbutils, "workspaceId")
+    cluster_id = get(dbutils, "clusterId")
+
+    return f"https://{browser_host_name}/driver-proxy/o/{workspace_id}/{cluster_id}/{port}/"
+
+
+def display_html(html: str) -> None:
+    """
+    Use databricks displayHTML from an external package
+    Args:
+    - html : html document to display
+    """
+    import inspect
+
+    for frame in inspect.getouterframes(inspect.currentframe()):
+        global_names = set(frame.frame.f_globals)
+        # Use multiple functions to reduce risk of mismatch
+        if all(v in global_names for v in ["displayHTML", "display", "spark"]):
+            return frame.frame.f_globals["displayHTML"](html)
+    raise EnvironmentError("Unable to detect displayHTML function")
