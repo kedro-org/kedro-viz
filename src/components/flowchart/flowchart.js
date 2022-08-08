@@ -85,9 +85,6 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.clickedNode !== this.props.clickedNode) {
-      return;
-    }
     this.update(prevProps);
   }
 
