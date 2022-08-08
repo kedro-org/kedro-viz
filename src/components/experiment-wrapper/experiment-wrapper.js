@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
 import {
@@ -48,19 +48,31 @@ const ExperimentWrapper = ({ theme }) => {
     variables: { runIds: selectedRunIds, showDiff: true },
   });
 
-  let runTrackingData = {};
+  // to comebine metaData and dataSet into master data
+  // to ensure both sets of data get displayed in sync
+  const masterData = useMemo(() => {
+    const data = {
+      MetaData: [],
+      TrackingData: {},
+    };
 
-  if (plots.length > 0) {
-    runTrackingData['Plots'] = plots;
-  }
+    if (runMetadata && runMetadata.length > 0) {
+      data['MetaData'] = runMetadata;
+    }
 
-  if (metrics.length > 0) {
-    runTrackingData['Metrics'] = metrics;
-  }
+    if (plots.length > 0) {
+      data['TrackingData']['Plots'] = plots;
+    }
 
-  if (JSONData.length > 0) {
-    runTrackingData['JSON Data'] = JSONData;
-  }
+    if (metrics.length > 0) {
+      data['TrackingData']['Metrics'] = metrics;
+    }
+
+    if (JSONData.length > 0) {
+      data['TrackingData']['JSON Data'] = JSONData;
+    }
+    return data;
+  }, [runMetadata, plots, metrics, JSONData]);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -194,8 +206,7 @@ const ExperimentWrapper = ({ theme }) => {
               metadataError={metadataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
-              runMetadata={runMetadata}
-              runTrackingData={runTrackingData}
+              masterData={masterData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}

@@ -51,6 +51,10 @@ const RunDataset = ({
   setShowRunPlotsModal,
   trackingData,
 }) => {
+  if (!trackingData) {
+    return null;
+  }
+  console.log(trackingData, 'tracking data');
   return (
     <div
       className={classnames('details-dataset', {
