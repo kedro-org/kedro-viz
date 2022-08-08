@@ -85,7 +85,7 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    // Don't zoom out the metadata or code panels are open or closed
+    // Don't zoom out when the metadata or code panels are open or closed
     if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
       return;
     }
