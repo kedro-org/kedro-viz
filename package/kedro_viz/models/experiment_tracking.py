@@ -46,9 +46,19 @@ class UserRunDetailsModel(Base):
 class TrackingDatasetGroup(str, Enum):
     """Different groups to present together on the frontend."""
 
-    # PLOT = "plot"
+    PLOT = "plot"
     METRIC = "metric"
     JSON = "json"
+
+
+# pylint: disable=line-too-long
+TRACKING_DATASET_GROUPS = {
+    "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+}
 
 
 @dataclass
@@ -74,24 +84,27 @@ class TrackingDatasetModel:
         # Set the load version.
         self.dataset._version = Version(run_id, None)
 
-        try:
-            # tracking datasets do not have load methods defined yet but would be the
-            # same as json loader.
-            # pylint: disable=import-outside-toplevel
-            from kedro.extras.datasets import json, tracking
+        if not self.dataset.exists():
+            logger.debug(
+                "'%s' with version '%s' does not exist.", self.dataset_name, run_id
+            )
+            self.runs[run_id] = {}
+            self.dataset._version = None
+            return
 
-            tracking.JSONDataSet._load = json.JSONDataSet._load  # type: ignore
-            tracking.MetricsDataSet._load = json.JSONDataSet._load  # type: ignore
-            self.runs[run_id] = self.dataset.load()
-        except Exception as exc:  # pylint: disable=broad-except
+        try:
+            if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
+                self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
+            else:
+                self.runs[run_id] = self.dataset.load()
+        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
-                "'%s' with version '%s' could not be loaded. Full exception: %s",
+                "'%s' with version '%s' could not be loaded. Full exception: %s: %s",
                 self.dataset_name,
                 run_id,
+                type(exc).__name__,
                 exc,
             )
-            # TODO: ideally this would be None when we load things that aren't just
-            # json.
             self.runs[run_id] = {}
 
         self.dataset._version = None

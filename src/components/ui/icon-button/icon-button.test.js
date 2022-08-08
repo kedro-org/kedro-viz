@@ -12,7 +12,7 @@ describe('IconButton', () => {
       labelText: 'Toggle theme',
       visible: true,
     });
-    expect(wrapper.find('li').length).toBe(1);
+    expect(wrapper.find('Wrapper').length).toBe(1);
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 

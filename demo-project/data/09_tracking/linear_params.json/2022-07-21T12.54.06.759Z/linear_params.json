@@ -1,0 +1,6 @@
+{
+  "model_type": "LinearRegression",
+  "fit_intercept": true,
+  "copy_X": true,
+  "positive": false
+}

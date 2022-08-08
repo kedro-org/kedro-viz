@@ -2,19 +2,15 @@
 import base64
 import datetime
 import json
-import shutil
-import time
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import MagicMock, call, mock_open, patch
+from unittest.mock import MagicMock, call, patch
 
 import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
-from kedro.extras.datasets.tracking.metrics_dataset import MetricsDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
-from kedro.io.core import Version
 from kedro.pipeline.node import node
 
 from kedro_viz.models.flowchart import (
@@ -29,14 +25,6 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
-
-orig_import = __import__
-
-
-def import_mock(name, *args):
-    if name.startswith("matplotlib"):
-        return MagicMock()
-    return orig_import(name, *args)
 
 
 def identity(x):
@@ -151,6 +139,9 @@ class TestGraphNodeCreation:
         assert data_node.modular_pipelines == expected_modular_pipelines
         assert not data_node.is_plot_node()
         assert not data_node.is_metric_node()
+        assert not data_node.is_image_node()
+        assert not data_node.is_json_node()
+        assert not data_node.is_tracking_node()
 
     def test_create_transcoded_data_node(self):
         dataset_name = "dataset@pandas2"
@@ -385,8 +376,10 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.filepath == "partitioned/"
 
-    @patch("json.load")
-    def test_plotly_data_node_metadata(self, patched_json_load):
+    # TODO: these test should ideally use a "real" catalog entry to create actual rather
+    # than mock DataNode. Or if the loading functionality is tested elsewhere,
+    # perhaps they are not needed at all. At the moment they don't actually test much.
+    def test_plotly_data_node_metadata(self):
         mock_plot_data = {
             "data": [
                 {
@@ -396,11 +389,11 @@ class TestGraphNodeMetadata:
                 }
             ]
         }
-        patched_json_load.return_value = mock_plot_data
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
+        plotly_data_node.kedro_obj.load.return_value = mock_plot_data
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
@@ -413,8 +406,7 @@ class TestGraphNodeMetadata:
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert not hasattr(plotly_node_metadata, "plot")
 
-    @patch("json.load")
-    def test_plotly_json_dataset_node_metadata(self, patched_json_load):
+    def test_plotly_json_dataset_node_metadata(self):
         mock_plot_data = {
             "data": [
                 {
@@ -424,36 +416,29 @@ class TestGraphNodeMetadata:
                 }
             ]
         }
-        patched_json_load.return_value = mock_plot_data
         plotly_json_dataset_node = MagicMock()
         plotly_json_dataset_node.is_plot_node.return_value = True
         plotly_json_dataset_node.is_image_node.return_value = False
         plotly_json_dataset_node.is_tracking_node.return_value = False
+        plotly_json_dataset_node.kedro_obj.load.return_value = mock_plot_data
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
-    @patch("builtins.__import__", side_effect=import_mock)
-    @patch(
-        "builtins.open",
-        new_callable=mock_open,
-        read_data=base64.b64decode(
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        ),
-    )
-    def test_image_data_node_metadata(self, patched_base64, patched_import):
-        image_dataset_node = MagicMock()
-        base64_encoded_string = (
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-            "AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+    # @patch("base64.b64encode")
+    def test_image_data_node_metadata(self):
+        mock_image_data = base64.b64encode(
+            b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
+            b"AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
         )
+        image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
+        image_dataset_node.is_tracking_node.return_value = False
+        image_dataset_node.kedro_obj.load.return_value = mock_image_data
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
-        assert image_node_metadata.image == base64_encoded_string
+        assert image_node_metadata.image == mock_image_data
 
-    @patch("builtins.__import__", side_effect=import_mock)
-    def test_image_data_node_dataset_not_exist(self, patched_import):
+    def test_image_data_node_dataset_not_exist(self):
         image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
@@ -461,70 +446,19 @@ class TestGraphNodeMetadata:
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert not hasattr(image_node_metadata, "image")
 
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.create_metrics_plot")
-    def test_metrics_data_node_metadata(
-        self,
-        patched_metrics_plot,
-        patched_latest_metrics,
-        patched_data_loader,
-    ):
-        mock_metrics_data = {
-            "recommendations": 0.0009277445547700936,
-            "recommended_controls": 0.001159680693462617,
-            "projected_optimization": 0.0013916168321551402,
-        }
-        mock_version_data = {
-            datetime.datetime(2021, 9, 10, 9, 2, 44, 245000): {
-                "recommendations": 0.3866563620506992,
-                "recommended_controls": 0.48332045256337397,
-                "projected_optimization": 0.5799845430760487,
-            },
-            datetime.datetime(2021, 9, 10, 9, 3, 23, 733000): {
-                "recommendations": 0.200383330721228,
-                "recommended_controls": 0.250479163401535,
-                "projected_optimization": 0.30057499608184196,
-            },
-        }
-        mock_plot_data = {
-            "data": [
-                {
-                    "metrics": ["giraffes", "orangutans", "monkeys"],
-                    "value": [20, 14, 23],
-                    "type": "bar",
-                }
-            ]
-        }
-        patched_data_loader.return_value = mock_version_data
-        patched_latest_metrics.return_value = mock_metrics_data
-        patched_metrics_plot.return_value = mock_plot_data
-        metrics_data_node = MagicMock()
-        metrics_data_node.is_plot_node.return_value = False
-        metrics_data_node.is_image_node.return_value = False
-        metrics_data_node.is_tracking_node.return_value = True
-        metrics_data_node.is_metric_node.return_value = True
-        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert metrics_node_metadata.tracking_data == mock_metrics_data
-        assert metrics_node_metadata.plot == mock_plot_data
-
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
-    def test_json_data_node_metadata(
-        self,
-        patched_latest_json,
-    ):
+    def test_json_data_node_metadata(self):
         mock_json_data = {
             "recommendations": "test string",
             "recommended_controls": False,
             "projected_optimization": 0.0013902,
         }
 
-        patched_latest_json.return_value = mock_json_data
         json_data_node = MagicMock()
         json_data_node.is_plot_node.return_value = False
         json_data_node.is_image_node.return_value = False
         json_data_node.is_tracking_node.return_value = True
         json_data_node.is_metric_node.return_value = False
+        json_data_node.kedro_obj.load.return_value = mock_json_data
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
         assert json_node_metadata.tracking_data == mock_json_data
         assert not hasattr(json_node_metadata, "plot")
@@ -539,38 +473,46 @@ class TestGraphNodeMetadata:
         assert not hasattr(metrics_node_metadata, "metrics")
         assert not hasattr(metrics_node_metadata, "plot")
 
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
-    def test_data_node_metadata_latest_tracking_data_not_exist(
-        self,
-        patched_latest_tracking_data,
-    ):
-        patched_latest_tracking_data.return_value = None
+    def test_data_node_metadata_latest_tracking_data_not_exist(self):
+        plotly_data_node = MagicMock()
+        plotly_data_node.is_plot_node.return_value = True
+        plotly_data_node.is_image_node.return_value = False
+        plotly_data_node.is_tracking_node.return_value = False
+        plotly_data_node.kedro_obj.exists.return_value = False
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
+        assert not hasattr(plotly_node_metadata, "plot")
+
+    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
+    def test_tracking_data_node_metadata_versioned_dataset(self, patched_data_loader):
+        mock_metrics_data = {
+            "recommendations": 0.0009277445547700936,
+            "recommended_controls": 0.001159680693462617,
+            "projected_optimization": 0.0013916168321551402,
+        }
         tracking_data_node = MagicMock()
         tracking_data_node.is_plot_node.return_value = False
         tracking_data_node.is_image_node.return_value = False
         tracking_data_node.is_metric_node.return_value = True
+        tracking_data_node.kedro_obj.load.return_value = mock_metrics_data
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
-        assert not hasattr(tracking_data_node_metadata, "metrics")
-        assert not hasattr(tracking_data_node_metadata, "plot")
+        assert tracking_data_node_metadata.tracking_data == mock_metrics_data
+        assert hasattr(tracking_data_node_metadata, "plot")
 
-    @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_latest_tracking_data")
     @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
     def test_tracking_data_node_metadata_versioned_dataset_not_exist(
-        self,
-        patched_data_loader,
-        patched_latest_tracking_data,
+        self, patched_data_loader
     ):
         mock_metrics_data = {
             "recommendations": 0.0009277445547700936,
             "recommended_controls": 0.001159680693462617,
             "projected_optimization": 0.0013916168321551402,
         }
-        patched_latest_tracking_data.return_value = mock_metrics_data
         patched_data_loader.return_value = {}
         tracking_data_node = MagicMock()
         tracking_data_node.is_plot_node.return_value = False
         tracking_data_node.is_image_node.return_value = False
         tracking_data_node.is_metric_node.return_value = True
+        tracking_data_node.kedro_obj.load.return_value = mock_metrics_data
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
         assert tracking_data_node_metadata.tracking_data == mock_metrics_data
         assert not hasattr(tracking_data_node_metadata, "plot")
@@ -658,27 +600,6 @@ class TestGraphNodeMetadata:
             filepath.parent.mkdir(parents=True, exist_ok=True)
             filepath.write_text(json.dumps(json_content[index]))
         return source_dir
-
-    def test_load_latest_tracking_data(self):
-        # Note - filepath is assigned temp.json as temp solution instead of
-        # tracking_data_filepath as it fails on windows build.
-        # This will be cleaned up in the future.
-        filename = "temp.json"
-        dataset = MetricsDataSet(filepath=filename, version=Version(None, None))
-        data = {"col1": 1, "col2": 0.23, "col3": 0.002}
-        dataset.save(data)
-        assert DataNodeMetadata.load_latest_tracking_data(dataset) == data
-        # to avoid datasets being saved concurrently
-        time.sleep(1)
-        new_data = {"col1": 3, "col2": 3.23, "col3": 3.002}
-        dataset.save(new_data)
-        assert DataNodeMetadata.load_latest_tracking_data(dataset) == new_data
-        shutil.rmtree(filename)
-
-    def test_load_latest_tracking_data_fail(self, mocker, tracking_data_filepath):
-        dataset = MetricsDataSet(filepath=f"{tracking_data_filepath}")
-        mocker.patch.object(dataset, "_exists_function", return_value=False)
-        assert DataNodeMetadata.load_latest_tracking_data(dataset) is None
 
     def test_load_metrics_versioned_data(self, tracking_data_filepath):
         mock_tracking_data_json = {

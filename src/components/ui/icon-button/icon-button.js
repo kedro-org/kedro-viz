@@ -14,7 +14,7 @@ const IconButton = ({
   ariaLive,
   children,
   className,
-  container: Container = 'li',
+  container = 'li',
   dataHeapEvent,
   disabled,
   icon,
@@ -32,7 +32,7 @@ const IconButton = ({
     : 'right';
 
   return visible ? (
-    <Container className="pipeline-icon--container">
+    <Wrapper container={container}>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -57,8 +57,18 @@ const IconButton = ({
         )}
       </button>
       {children}
-    </Container>
+    </Wrapper>
   ) : null;
+};
+
+const Wrapper = ({ children, container: Container = 'li' }) => {
+  if (typeof Container === 'symbol') {
+    return <React.Fragment>{children}</React.Fragment>;
+  } else {
+    return (
+      <Container className="pipeline-icon--container">{children}</Container>
+    );
+  }
 };
 
 IconButton.propTypes = {
