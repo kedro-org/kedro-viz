@@ -2,13 +2,22 @@
 load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
-# pylint: disable=import-outside-toplevel
-# pylint: disable=protected-access
+# pylint: disable=import-outside-toplevel, protected-access
+# pylint: disable=missing-function-docstring, no-else-return
+
+import base64
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+    json,
+    matplotlib,
+    plotly,
+    tracking,
+)
 from kedro.io import DataCatalog
+from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
@@ -81,7 +90,7 @@ def load_data(
 
         return catalog, pipelines_dict, session_store_location
 
-    if KEDRO_VERSION.match(">=0.17.1"):
+    elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 
         from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
@@ -101,25 +110,54 @@ def load_data(
 
         return context.catalog, context.pipelines, session_store_location
 
-    # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
-    from kedro.framework.session import KedroSession
-    from kedro.framework.startup import _get_project_metadata
+    else:
+        # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
+        from kedro.framework.session import KedroSession
+        from kedro.framework.startup import _get_project_metadata
 
-    from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
-    metadata = _get_project_metadata(project_path)
-    with KedroSession.create(
-        package_name=metadata.package_name,
-        project_path=project_path,
-        env=env,
-        save_on_close=False,
-        extra_params=extra_params,
-    ) as session:
+        metadata = _get_project_metadata(project_path)
+        with KedroSession.create(
+            package_name=metadata.package_name,
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
+        ) as session:
 
-        context = session.load_context()
-        session_store = session._store
-        session_store_location = None
-        if isinstance(session_store, SQLiteStore):
-            session_store_location = session_store.location
+            context = session.load_context()
+            session_store = session._store
+            session_store_location = None
+            if isinstance(session_store, SQLiteStore):
+                session_store_location = session_store.location
 
-    return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, session_store_location
+
+
+# The dataset type is available as an attribute if and only if the import from kedro
+# did not suppress an ImportError. i.e. hasattr(matplotlib, "MatplotlibWriter") is True
+# when matplotlib dependencies are installed.
+# These datasets do not have _load methods defined (tracking and matplotlib) or do not
+# load to json (plotly), hence the need to define _load here.
+if hasattr(matplotlib, "MatplotlibWriter"):
+
+    def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
+        load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
+        with dataset._fs.open(load_path, mode="rb") as img_file:
+            base64_bytes = base64.b64encode(img_file.read())
+        return base64_bytes.decode("utf-8")
+
+    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type:ignore
+
+if hasattr(plotly, "JSONDataSet"):
+    plotly.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(plotly, "PlotlyDataSet"):
+    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(tracking, "JSONDataSet"):
+    tracking.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+
+if hasattr(tracking, "MetricsDataSet"):
+    tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore

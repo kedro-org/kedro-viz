@@ -3,7 +3,7 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Optional
 
 import strawberry
 from strawberry import ID
@@ -31,6 +31,7 @@ class TrackingDataset:
     data: JSON
     dataset_name: str
     dataset_type: str
+    run_ids: List[ID]
 
 
 TrackingDatasetGroup = strawberry.enum(

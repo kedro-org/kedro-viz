@@ -6,12 +6,19 @@ import { connect } from 'react-redux';
 import './plotly-chart.css';
 import {
   darkPreviewTemplate,
-  darkModalTemplate,
+  darkExpPreviewTemplate,
+  darkOneChartTemplate,
+  darkTwoChartsTemplate,
+  darkThreeChartsTemplate,
 } from '../../utils/plot-templates/dark';
 import {
   lightPreviewTemplate,
-  lightModalTemplate,
+  lightExpPreviewTemplate,
+  lightOneChartTemplate,
+  lightTwoChartsTemplate,
+  lightThreeChartsTemplate,
 } from '../../utils/plot-templates/light';
+import classNames from 'classnames';
 
 /**
  * Display plotly chart
@@ -23,11 +30,18 @@ import {
 
 const Plot = createPlotlyComponent(Plotly);
 
-const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
-  const plotConfig = view === 'preview' ? { staticPlot: true } : undefined;
+const PlotlyChart = ({ theme, view = '', data = [], layout = {} }) => {
+  const plotConfig = view.includes('preview')
+    ? { staticPlot: true }
+    : undefined;
 
   return (
-    <div className="pipeline-plotly-chart">
+    <div
+      className={classNames(
+        'pipeline-plotly-chart',
+        `pipeline-plotly__${view}`
+      )}
+    >
       <Plot
         data={data}
         layout={updateLayout(theme, view, layout)}
@@ -41,16 +55,28 @@ const PlotlyChart = ({ theme, view, data = [], layout = {} }) => {
 
 const updateLayout = (theme, view, layout) => {
   if (theme === 'dark') {
-    if (view === 'modal') {
-      return deepmerge(layout, darkModalTemplate);
-    } else {
+    if (view === 'experiment_preview') {
+      return deepmerge(layout, darkExpPreviewTemplate);
+    } else if (view === 'preview') {
       return deepmerge(layout, darkPreviewTemplate);
+    } else if (view === 'twoCharts') {
+      return deepmerge(layout, darkTwoChartsTemplate);
+    } else if (view === 'threeCharts') {
+      return deepmerge(layout, darkThreeChartsTemplate);
+    } else {
+      return deepmerge(layout, darkOneChartTemplate);
     }
   } else {
-    if (view === 'modal') {
-      return deepmerge(layout, lightModalTemplate);
-    } else {
+    if (view === 'experiment_preview') {
+      return deepmerge(layout, lightExpPreviewTemplate);
+    } else if (view === 'preview') {
       return deepmerge(layout, lightPreviewTemplate);
+    } else if (view === 'twoCharts') {
+      return deepmerge(layout, lightTwoChartsTemplate);
+    } else if (view === 'threeCharts') {
+      return deepmerge(layout, lightThreeChartsTemplate);
+    } else {
+      return deepmerge(layout, lightOneChartTemplate);
     }
   }
 };

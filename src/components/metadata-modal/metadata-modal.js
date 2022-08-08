@@ -74,9 +74,9 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
 };
 
 export const mapStateToProps = (state) => ({
-  visible: state.visible,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
+  visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
