@@ -85,17 +85,6 @@ export class FlowChart extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    // Don't zoom out when the metadata or code panels are open or closed
-    if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
-      return;
-    }
-
-    if (prevProps.visibleCode !== this.props.visibleCode) {
-      if (!this.props.visibleMetaSidebar) {
-        return;
-      }
-    }
-
     this.update(prevProps);
   }
 
@@ -107,6 +96,23 @@ export class FlowChart extends Component {
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
     if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
+      // Don't zoom out when the metadata or code panels are opened or closed
+      if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
+        drawNodes.call(this, changed);
+        drawEdges.call(this, changed);
+
+        return;
+      }
+
+      if (prevProps.visibleCode !== this.props.visibleCode) {
+        if (!this.props.visibleMetaSidebar) {
+          drawNodes.call(this, changed);
+          drawEdges.call(this, changed);
+
+          return;
+        }
+      }
+
       this.updateChartSize();
     }
 
