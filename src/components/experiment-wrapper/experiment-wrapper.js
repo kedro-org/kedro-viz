@@ -48,7 +48,7 @@ const ExperimentWrapper = ({ theme }) => {
     variables: { runIds: selectedRunIds, showDiff: true },
   });
 
-  // to comebine metaData and dataSet into master data
+  // to combine metaData and dataSet into master data
   // to ensure both sets of data get displayed in sync
   const masterData = useMemo(() => {
     const data = {
