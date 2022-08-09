@@ -41,7 +41,7 @@ const Details = ({
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
-  if (dataError) {
+  if (runDataError) {
     return null;
   }
 
