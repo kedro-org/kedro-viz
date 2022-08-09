@@ -134,11 +134,6 @@ $max-width: 375px;
   width: 365px;
 }
 
-// other runs get added to compare with the baseline run
-.details-metadata__run--other {
-  width: $max-width;
-}
-
 .details-metadata__table {
   display: flex;
   border-collapse: collapse;
