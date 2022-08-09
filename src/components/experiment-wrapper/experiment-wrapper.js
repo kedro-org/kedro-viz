@@ -178,7 +178,7 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              dataError={dataError}
+              runDataError={runDataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
               runMetadata={metadata}
