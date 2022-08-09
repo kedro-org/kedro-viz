@@ -96,6 +96,23 @@ export class FlowChart extends Component {
     const changed = (...names) => this.changed(names, prevProps, this.props);
 
     if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
+      // Don't zoom out when the metadata or code panels are opened or closed
+      if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
+        drawNodes.call(this, changed);
+        drawEdges.call(this, changed);
+
+        return;
+      }
+
+      if (prevProps.visibleCode !== this.props.visibleCode) {
+        if (!this.props.visibleMetaSidebar) {
+          drawNodes.call(this, changed);
+          drawEdges.call(this, changed);
+
+          return;
+        }
+      }
+
       this.updateChartSize();
     }
 
@@ -391,8 +408,10 @@ export class FlowChart extends Component {
       objectWidth: graphWidth,
       objectHeight: graphHeight,
       minScaleX: 0.2,
-      minScaleFocus: 0.3,
-      focusOffset: 0.8,
+      minScaleFocus: this.props.visibleMetaSidebar
+        ? this.props.chartZoom.scale
+        : 0.3,
+      focusOffset: this.props.visibleMetaSidebar ? 0.01 : 0.8,
     });
 
     // Detect first transform

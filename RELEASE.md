@@ -6,6 +6,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+## Bug fixes and other changes
+
+- Don't reset the zoom each time a node is selected. (#988)
+
 # Release 5.0.0
 
 ## Major features and improvements
