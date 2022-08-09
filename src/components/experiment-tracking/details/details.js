@@ -12,7 +12,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
-  dataError,
+  runDataError,
   onRunSelection,
   pinnedRun,
   runMetadata,
