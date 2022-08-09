@@ -29,7 +29,7 @@ const ExperimentWrapper = ({ theme }) => {
   // Fetch all data for selected runs.
   const {
     data: { metadata = [], plots = [], metrics = [], JSONData = [] } = [],
-    error: dataError,
+    error: runDataError,
   } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
