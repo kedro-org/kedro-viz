@@ -13,10 +13,10 @@ export const GET_RUNS = gql`
   }
 `;
 
-/** query for details metadata component */
-export const GET_RUN_METADATA = gql`
-  query getRunMetadata($runIds: [ID!]!) {
-    runMetadata(runIds: $runIds) {
+/** query for all run  component */
+export const GET_RUN_DATA = gql`
+  query getRunData($runIds: [ID!]!, $showDiff: Boolean) {
+    metadata: runMetadata(runIds: $runIds) {
       id
       author
       bookmark
@@ -26,12 +26,6 @@ export const GET_RUN_METADATA = gql`
       runCommand
       title
     }
-  }
-`;
-
-/** query for collapsable run details component */
-export const GET_RUN_TRACKING_DATA = gql`
-  query getRunTrackingData($runIds: [ID!]!, $showDiff: Boolean) {
     plots: runTrackingData(runIds: $runIds, showDiff: $showDiff, group: PLOT) {
       ...trackingDatasetFields
     }

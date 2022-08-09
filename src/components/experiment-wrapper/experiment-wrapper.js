@@ -1,11 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import {
-  GET_RUNS,
-  GET_RUN_METADATA,
-  GET_RUN_TRACKING_DATA,
-} from '../../apollo/queries';
+import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
@@ -30,49 +26,28 @@ const ExperimentWrapper = ({ theme }) => {
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
-  // Fetch all metadata for selected runs.
-  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
-    GET_RUN_METADATA,
-    {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds },
-    }
-  );
-
-  // Fetch all tracking data for selected runs.
+  // Fetch all data for selected runs.
   const {
-    data: { plots = [], metrics = [], JSONData = [] } = [],
-    error: trackingDataError,
-  } = useApolloQuery(GET_RUN_TRACKING_DATA, {
+    data: { metadata = [], plots = [], metrics = [], JSONData = [] } = [],
+    error: dataError,
+  } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
   });
 
-  // to combine metaData and dataSet into master data
-  // to ensure both sets of data get displayed in sync
-  const masterData = useMemo(() => {
-    const data = {
-      MetaData: [],
-      TrackingData: {},
-    };
+  let runTrackingData = {};
 
-    if (runMetadata && runMetadata.length > 0) {
-      data['MetaData'] = runMetadata;
-    }
+  if (plots.length > 0) {
+    runTrackingData['Plots'] = plots;
+  }
 
-    if (plots.length > 0) {
-      data['TrackingData']['Plots'] = plots;
-    }
+  if (metrics.length > 0) {
+    runTrackingData['Metrics'] = metrics;
+  }
 
-    if (metrics.length > 0) {
-      data['TrackingData']['Metrics'] = metrics;
-    }
-
-    if (JSONData.length > 0) {
-      data['TrackingData']['JSON Data'] = JSONData;
-    }
-    return data;
-  }, [runMetadata, plots, metrics, JSONData]);
+  if (JSONData.length > 0) {
+    runTrackingData['JSON Data'] = JSONData;
+  }
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {
@@ -203,10 +178,11 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              metadataError={metadataError}
+              dataError={dataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
-              masterData={masterData}
+              runMetadata={metadata}
+              runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
@@ -215,7 +191,6 @@ const ExperimentWrapper = ({ theme }) => {
               showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
-              trackingDataError={trackingDataError}
               showRunExportModal={showRunExportModal}
               setShowRunExportModal={setShowRunExportModal}
             />
