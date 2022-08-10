@@ -1,7 +1,7 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
-$max-width: 375px;
+$max-width: 310px;
 
 .details-metadata {
   display: flex;
@@ -139,6 +139,12 @@ $max-width: 375px;
   border-collapse: collapse;
   flex-shrink: 0;
   width: 100%;
+}
+
+.details-metadata__table tbody {
+  &:first-of-type {
+    width: 375px;
+  }
 }
 
 .details-metadata__title-detail {
