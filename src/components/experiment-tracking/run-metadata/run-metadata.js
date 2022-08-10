@@ -158,6 +158,7 @@ const RunMetadata = ({
               >
                 <tr
                   className={classnames('details-metadata__run', {
+                    'details-metadata__run--first-run': i === 0,
                     'details-metadata__run--first-run-comparison-view':
                       i === 0 && enableComparisonView,
                   })}
