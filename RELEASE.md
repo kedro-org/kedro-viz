@@ -9,6 +9,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Don't reset the zoom each time a node is selected. (#988)
+- Combined the run metadata and run tracking data query into one run data query. (#1006)
 
 # Release 5.0.0
 
