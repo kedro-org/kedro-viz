@@ -28,8 +28,8 @@ const ExperimentWrapper = ({ theme }) => {
 
   // Fetch all data for selected runs.
   const {
-    data: { metadata = [], plots = [], metrics = [], JSONData = [] } = [],
-    error: dataError,
+    data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
+    error: runDataError,
   } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
@@ -178,10 +178,10 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              dataError={dataError}
+              runDataError={runDataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
-              runMetadata={metadata}
+              runMetadata={runMetadata}
               runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}

@@ -12,7 +12,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
-  dataError,
+  runDataError,
   onRunSelection,
   pinnedRun,
   runMetadata,
@@ -41,7 +41,7 @@ const Details = ({
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
-  if (dataError) {
+  if (runDataError) {
     return null;
   }
 
