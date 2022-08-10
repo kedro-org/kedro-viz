@@ -15,7 +15,8 @@ const Details = ({
   dataError,
   onRunSelection,
   pinnedRun,
-  masterData,
+  runMetadata,
+  runTrackingData,
   selectedRunIds,
   setPinnedRun,
   setShowRunDetailsModal,
@@ -29,9 +30,6 @@ const Details = ({
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
-
-  const runMetadata = masterData ? masterData['MetaData'] : [];
-  const runTrackingData = masterData ? masterData['TrackingData'] : {};
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
