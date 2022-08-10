@@ -16,7 +16,7 @@ export const GET_RUNS = gql`
 /** query for runMetadata and runDataset components */
 export const GET_RUN_DATA = gql`
   query getRunData($runIds: [ID!]!, $showDiff: Boolean) {
-    metadata: runMetadata(runIds: $runIds) {
+    runMetadata(runIds: $runIds) {
       id
       author
       bookmark
