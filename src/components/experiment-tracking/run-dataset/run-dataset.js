@@ -169,11 +169,9 @@ function buildDatasetDataMarkup(
               >
                 <span
                   className={classnames('details-dataset__value-header', {
-                    'details-dataset__value-header--first-run': index === 0,
-                    'details-dataset__value-header---first-run-comparison-view':
+                    'details-dataset__value-header--comparison-view':
                       index === 0 && enableComparisonView,
                   })}
-                  key={data.runId + index}
                 >
                   Value
                 </span>
@@ -200,11 +198,9 @@ function buildDatasetDataMarkup(
               >
                 <span
                   className={classnames('details-dataset__value', {
-                    'details-dataset__value--first-run': index === 0,
-                    'details-dataset__value---first-run-comparison-view':
+                    'details-dataset__value--comparison-view':
                       index === 0 && enableComparisonView,
                   })}
-                  key={run.runId + index}
                 >
                   {isTrackingDataset && (
                     <>

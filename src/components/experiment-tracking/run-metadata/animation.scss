@@ -1,24 +1,26 @@
 $animation-timing: 0.5s;
+$first-run-animation-timing: 0.3s;
 
 // animation for the first run when switching the comparison view
-.details-dataset__value--first-run,
-.details-dataset__value-header--first-run,
-.details-metadata__run--first-run {
-  transition: transform $animation-timing ease-out;
+.details-dataset__value,
+.details-dataset__value-header,
+.details-metadata__run {
+  transform: translateX(0%);
+  transition: transform $first-run-animation-timing ease-out;
 }
 
-.details-dataset__value---first-run-comparison-view,
-.details-dataset__value-header---first-run-comparison-view,
+.details-dataset__value-header--comparison-view,
+.details-dataset__value--comparison-view,
 .details-metadata__run--first-run-comparison-view {
   transform: translateX(-60%);
-  transition: transform $animation-timing ease-out;
+  transition: transform $first-run-animation-timing ease-out;
 }
 
 // to transition the whole section to the left
 .details-dataset--comparison-view,
 .details-metadata--comparison-view {
   transform: translateX(-4em);
-  transition: transform $animation-timing ease-out;
+  transition: transform $first-run-animation-timing ease-out;
 }
 
 .details-metadata__labels .details-metadata__title {
