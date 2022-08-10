@@ -62,6 +62,7 @@ describe('RunMetadata', () => {
     );
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
   });
 
   it('shows a "--first-run" for the first run when comparison mode is on', () => {
@@ -72,6 +73,7 @@ describe('RunMetadata', () => {
         runs={runs.slice(0, 1)}
       />
     );
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
     expect(
       wrapper.find('.details-metadata__run--first-run-comparison-view').length
     ).toBe(1);
