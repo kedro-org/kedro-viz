@@ -5,7 +5,7 @@
 
 /** Variables **/
 
-$color-success: #31e27b;
+$color-success: #{$green-300};
 $color-secondary-active: rgba(0, 0, 0, 0.12);
 $timing-primary: 0.2s;
 $secondary-underline-height: 2px;
@@ -13,21 +13,21 @@ $secondary-underline-offset: 8px;
 $secondary-underline-offset-hover: 4px;
 
 .kui-theme--light {
-  --color-button--active: #{rgba($color-dark, 0.85)};
-  --color-button--border: #{$color-dark};
-  --color-button--border--disabled: #{rgba($color-dark, 0.3)};
-  --color-button__text--hover: #{rgba($color-light, 0.85)};
-  --color-button__text: #{rgba($color-dark, 0.85)};
-  --color-button__text--disabled: #{rgba($color-dark, 0.3)};
+  --color-button--active: #{$black-800};
+  --color-button--border: #{$black-900};
+  --color-button--border--disabled: #{$black-600};
+  --color-button__text--hover: #{$white-600};
+  --color-button__text: #{$black-800};
+  --color-button__text--disabled: #{$black-600};
 }
 
 .kui-theme--dark {
-  --color-button--active: #{rgba($color-light, 0.85)};
-  --color-button--border: #{$color-light};
-  --color-button--border--disabled: #{rgba($color-light, 0.3)};
-  --color-button__text--hover: #{rgba($color-dark, 0.85)};
-  --color-button__text: #{rgba($color-light, 0.85)};
-  --color-button__text--disabled: #{rgba($color-light, 0.3)};
+  --color-button--active: #{$white-600};
+  --color-button--border: #{$white-0};
+  --color-button--border--disabled: #{$black-400};
+  --color-button__text--hover: #{$black-800};
+  --color-button__text: #{$white-600};
+  --color-button__text--disabled: #{$black-400};
 }
 
 .button {
@@ -71,7 +71,7 @@ $secondary-underline-offset-hover: 4px;
   }
 
   &:focus {
-    box-shadow: 0 0 0 7px $color-accent-blue;
+    box-shadow: 0 0 0 7px $blue-300;
   }
 
   &:hover:not(:disabled) {
@@ -113,7 +113,7 @@ $secondary-underline-offset-hover: 4px;
   }
 
   &:focus {
-    outline: 4px solid $color-accent-blue;
+    outline: 4px solid $blue-300;
   }
 
   &:hover::after {
@@ -135,7 +135,7 @@ $secondary-underline-offset-hover: 4px;
   animation: scale 0.35s ease;
   background-color: $color-success;
   border: 2px solid $color-success;
-  color: $color-dark;
+  color: $black-900;
   width: 172px; // Match the `Apply and close` width to avoid a layout shift.
 
   &:focus-visible {

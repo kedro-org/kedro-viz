@@ -29,7 +29,7 @@
   border-radius: 50%;
   border: 0px;
   box-sizing: border-box;
-  color: rgb(255, 255, 255);
+  color: $white-0;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -45,12 +45,12 @@
   z-index: 1;
 
   &--active {
-    color: $color-accent-blue;
+    color: $blue-300;
     transform: translateX(14px);
   }
 
   &--active + .switch__track {
-    background-color: $color-accent-blue;
+    background-color: $blue-300;
     opacity: 0.4;
   }
 }
