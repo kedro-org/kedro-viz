@@ -18,11 +18,11 @@ $row-offset-right: 1.6em;
 // Light:
 $row-active-light: darken($color-bg-light-3, 3%);
 $row-selected-light: darken($color-bg-light-3, 8%);
-$filter-indicator-on-light: $color-primary;
-$filter-indicator-off-light: rgba(black, 0.55);
+$filter-indicator-on-light: $blue-300;
+$filter-indicator-off-light: $black-700;
 
 // Dark:
 $row-active-dark: lighten($color-bg-dark-2, 3%);
 $row-selected-dark: lighten($color-bg-dark-2, 8%);
-$filter-indicator-on-dark: $color-primary;
+$filter-indicator-on-dark: $blue-300;
 $filter-indicator-off-dark: rgba(white, 0.45);

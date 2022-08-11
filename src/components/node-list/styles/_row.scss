@@ -19,11 +19,11 @@
   &--overwrite {
     .Mui-selected & {
       .kui-theme--dark & {
-        background-color: #{$color-bg-dark-2};
+        background-color: #{$slate-700};
       }
 
       .kui-theme--light & {
-        background-color: #{$color-bg-light-3};
+        background-color: #{$white-200};
       }
     }
   }
@@ -63,7 +63,7 @@
   fill: var(--color-text);
 
   &.pipeline-row__toggle-icon--focus-checked {
-    fill: $color-primary;
+    fill: $blue-300;
   }
 
   &--disabled > * {
