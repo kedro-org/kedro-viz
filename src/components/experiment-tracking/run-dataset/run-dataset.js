@@ -64,7 +64,10 @@ const RunDataset = ({
       {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
-            className="details-dataset__accordion"
+            className={classnames('details-dataset__accordion-wrapper', {
+              'details-dataset__accordion-wrapper-comparison-view':
+                enableComparisonView,
+            })}
             headingClassName="details-dataset__accordion-header"
             heading={group}
             key={group}

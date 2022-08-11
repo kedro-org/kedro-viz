@@ -17,8 +17,8 @@ $first-run-animation-timing: 0.3s;
 }
 // to transition the metadata and dataset panel to the left
 // when switch to comparison view
-.details-dataset--comparison-view,
-.details-metadata__labels-comparison-view {
+.details-dataset__accordion-wrapper-comparison-view,
+.details-metadata__table-comparison-view {
   transform: translateX(-4em);
   transition: transform $first-run-animation-timing ease-out;
 }

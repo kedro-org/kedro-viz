@@ -104,7 +104,11 @@ const RunMetadata = ({
         'details-metadata--comparison-view': enableComparisonView,
       })}
     >
-      <table className="details-metadata__table">
+      <table
+        className={classnames('details-metadata__table', {
+          'details-metadata__table-comparison-view': enableComparisonView,
+        })}
+      >
         {runs.map((run, i) => (
           <React.Fragment key={run.id + i}>
             {i === 0 ? (
