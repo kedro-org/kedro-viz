@@ -5,7 +5,7 @@
 .kui-theme--light {
   --color-modal-header-text: #{$black-700};
   --color-toggle--on: #{$blue-600};
-  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle-bar--on: #{$ocean-500};
   --color-toggle--off: #{$slate-0};
   --color-toggle-bar--off: #{$slate-700};
   --color-upgrade-reminder-text: #{$blue-300};
@@ -14,7 +14,7 @@
 .kui-theme--dark {
   --color-modal-header-text: #{$black-0};
   --color-toggle--on: #{$blue-300};
-  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
+  --color-toggle-bar--on: #{$ocean-500};
   --color-toggle--off: #{$white-200};
   --color-toggle-bar--off: #{$slate-700};
   --color-upgrade-reminder-text: #{$yellow-300};
