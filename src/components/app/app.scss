@@ -17,7 +17,7 @@
   --color-global-toolbar-background: #{$white-100};
   --color-sidebar-border: rgba(0, 0, 0, 0.05);
   --color-sidebar-shadow: rgba(0, 0, 0, 0.07);
-  --color-run-list-divider: rgba(0, 0, 0, 0.1);
+  --color-run-list-divider: #{$black-800};
   --color-run-list-hover: #{$white-400};
   --color-base-20: rgba(0, 0, 0, 0.2);
   --color-black-10: inherit;
@@ -37,11 +37,11 @@
   --color-sidebar-background: #{$slate-700};
   --color-global-toolbar-background: #{$slate-900};
   --color-sidebar-border: rgba(0, 0, 0, 0.2);
-  --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
-  --color-run-list-divider: rgba(255, 255, 255, 0.1);
+  --color-sidebar-shadow: #{$black-600};
+  --color-run-list-divider: #{$black-700};
   --color-run-list-hover: #{$slate-300};
   --color-base-20: rgba(255, 255, 255, 0.2);
-  --color-black-10: rgba(0, 0, 0, 0.1);
+  --color-black-10: #{$black-800};
 }
 
 .kedro {
