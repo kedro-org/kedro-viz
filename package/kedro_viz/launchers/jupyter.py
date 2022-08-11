@@ -4,12 +4,14 @@ from a jupyter notebook.
 # pragma: no cover
 import logging
 import multiprocessing
+import os
 import socket
-from contextlib import closing
+from contextlib import closing, suppress
 from functools import partial
 from time import sleep, time
 from typing import Any, Callable, Dict
 
+import IPython
 import requests
 from IPython.core.display import HTML, display
 
@@ -28,7 +30,7 @@ class WaitForException(Exception):
 def _wait_for(
     func: Callable,
     expected_result: Any = True,
-    timeout: int = 10,
+    timeout: int = 60,
     print_error: bool = True,
     sleep_for: int = 1,
     **kwargs,
@@ -98,6 +100,30 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
     )
 
 
+def _get_databricks_object(name: str):
+    """Gets object called `name` from the user namespace."""
+    return IPython.get_ipython().user_ns.get(name, None)
+    #
+    # raise EnvironmentError("Unable to find dbutils.")
+
+
+def _make_databricks_url(port: int) -> str:
+    """Finds the URL to the Kedro-Viz instance."""
+    dbutils = _get_databricks_object("dbutils")
+
+    def dbutils_get(attr):
+        return getattr(
+            dbutils.notebook.entry_point.getDbutils().notebook().getContext(), attr
+        )().get()
+
+    browser_host_name = dbutils_get("browserHostName")
+    workspace_id = dbutils_get("workspaceId")
+    cluster_id = dbutils_get("clusterId")
+    path_name = f"/driver-proxy/o/{workspace_id}/{cluster_id}/{port}/"
+
+    return f"https://{browser_host_name}{path_name}"
+
+
 # pylint: disable=unused-argument,missing-type-doc
 def run_viz(port: int = None, line=None, local_ns=None) -> None:
     """
@@ -118,10 +144,15 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
-    if local_ns is not None and "project_path" in local_ns:  # pragma: no cover
-        target = partial(run_server, project_path=local_ns["project_path"])
-    else:
-        target = run_server
+    # use default_project_path?
+
+    from kedro.extras.extensions.ipython import default_project_path
+
+    target = partial(run_server, project_path=default_project_path, host="0.0.0.0")
+    # if local_ns is not None and "project_path" in local_ns:  # pragma: no cover
+    #     target = partial(run_server, project_path=local_ns["project_path"])
+    # else:
+    #     target = run_server
 
     viz_process = multiprocessing.Process(
         target=target, daemon=True, kwargs={"port": port}
@@ -130,12 +161,14 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    _wait_for(func=_check_viz_up, port=port)
+    # _wait_for(func=_check_viz_up, port=port)
 
-    wrapper = """
-            <html lang="en"><head></head><body style="width:100; height:100;">
-            <iframe src="http://127.0.0.1:{}/" height=500 width="100%"></iframe>
-            </body></html>""".format(
-        port
-    )
-    display(HTML(wrapper))
+    if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+        url = _make_databricks_url(port)
+        print(url)
+    else:
+        wrapper = f"""
+                <html lang="en"><head></head><body style="width:100; height:100;">
+                <iframe src="http://127.0.0.1:{port}/" height=500 width="100%"></iframe>
+                </body></html>"""
+        display(HTML(wrapper))
