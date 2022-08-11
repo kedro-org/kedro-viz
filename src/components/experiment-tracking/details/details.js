@@ -12,7 +12,7 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
-  metadataError,
+  runDataError,
   onRunSelection,
   pinnedRun,
   runMetadata,
@@ -27,7 +27,6 @@ const Details = ({
   showRunPlotsModal,
   sidebarVisible,
   theme,
-  trackingDataError,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
@@ -42,7 +41,7 @@ const Details = ({
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
-  if (metadataError || trackingDataError) {
+  if (runDataError) {
     return null;
   }
 
