@@ -162,7 +162,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         url = _make_databricks_url(port)
         displayHTML = _get_databricks_object("displayHTML")
         if displayHTML is not None:
-            displayHTML(f"<a href='{url}'>Open Kedro-Viz</a>")
+            displayHTML(f"<a href='{url}'>Open 2Kedro-Viz</a>")
         else:
             print(f"Kedro-Viz is available at {url}")
     else:
