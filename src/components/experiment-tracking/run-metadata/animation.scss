@@ -11,7 +11,7 @@ $animation-timing: 0.3s;
 .details-dataset__value-header--comparison-view,
 .details-dataset__value--comparison-view,
 .details-metadata__run--first-run-comparison-view {
-  transform: translateX(-30%);
+  transform: translateX(-25%);
   transition: transform $animation-timing ease-out;
 }
 // to transition the metadata and dataset panel to the left
@@ -30,7 +30,7 @@ $animation-timing: 0.3s;
 
 .details-metadata__labels-comparison-view .details-metadata__title {
   opacity: 0;
-  transform: translateX(-30%);
+  transform: translateX(-25%);
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
 }
 

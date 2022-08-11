@@ -105,6 +105,10 @@ $max-width: 310px;
 }
 
 .details-metadata__run--wrapper tr {
+  &:first-of-type {
+    margin-right: 5em;
+  }
+
   &:last-of-type {
     margin-right: 5em;
   }
