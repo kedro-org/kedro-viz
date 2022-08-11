@@ -2,11 +2,11 @@
 @import '../../styles/extends';
 
 .kui-theme--light {
-  --minimap-toolbar-active: #{$color-bg-light-3};
+  --minimap-toolbar-active: #{$white-200};
 }
 
 .kui-theme--dark {
-  --minimap-toolbar-active: #{$color-bg-dark-4};
+  --minimap-toolbar-active: #{$slate-300};
 }
 
 .pipeline-minimap-toolbar {

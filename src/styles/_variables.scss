@@ -16,9 +16,9 @@ $color-accent-blue: #00bcff; //blue-300
 $color-primary: $color-accent-blue; //blue-300
 $color-primary-2: #107da5; //blue-600
 $color-link: rgba($color-primary, 0.85);
-$color-button: #003464;
+$color-button: #003464; //blue-900
 $color-button-hovered: #005d92;
-$color-button-disabled: rgba($color-light, 0.3);
+$color-button-disabled: rgba($color-light, 0.3); //black-400
 
 //-- Theme colours as SCSS variables --//
 
@@ -26,7 +26,7 @@ $color-button-disabled: rgba($color-light, 0.3);
 $color-text-light: rgba(black, 0.85); //black-800
 $color-text-light-2: rgba(black, 0.55); //black-700
 $color-text-light-alt: rgba(white, 0.85); //white-600
-$color-accent-purple: #a000bc;
+$color-accent-purple: #a000bc; //purple-300
 $color-bg-light-1: #ffffff; //white-0
 $color-bg-light-2: #f8f9fa; //white-100
 $color-bg-light-3: #f0f1f3; //white-200
