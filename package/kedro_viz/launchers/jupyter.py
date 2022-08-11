@@ -103,13 +103,14 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
 def _get_databricks_object(name: str):
     """Gets object called `name` from the user namespace."""
     return IPython.get_ipython().user_ns.get(name, None)
-    #
-    # raise EnvironmentError("Unable to find dbutils.")
 
 
 def _make_databricks_url(port: int) -> str:
     """Finds the URL to the Kedro-Viz instance."""
     dbutils = _get_databricks_object("dbutils")
+
+    if dbutils is None:
+        raise EnvironmentError("Unable to find dbutils.")
 
     def dbutils_get(attr):
         return getattr(
@@ -143,16 +144,10 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
-
-    # use default_project_path?
-
     from kedro.extras.extensions.ipython import default_project_path
 
     target = partial(run_server, project_path=default_project_path, host="0.0.0.0")
-    # if local_ns is not None and "project_path" in local_ns:  # pragma: no cover
-    #     target = partial(run_server, project_path=local_ns["project_path"])
-    # else:
-    #     target = run_server
+    # host for db only
 
     viz_process = multiprocessing.Process(
         target=target, daemon=True, kwargs={"port": port}
@@ -165,7 +160,11 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     if "DATABRICKS_RUNTIME_VERSION" in os.environ:
         url = _make_databricks_url(port)
-        print(url)
+        displayHTML = _get_databricks_object("displayHTML")
+        if displayHTML is not None:
+            displayHTML(f"<a href='{url}'>Open Kedro-Viz</a>")
+        else:
+            print(f"Kedro-Viz is available at {url}")
     else:
         wrapper = f"""
                 <html lang="en"><head></head><body style="width:100; height:100;">
