@@ -13,19 +13,6 @@ $max-width: 310px;
   width: max-content;
 }
 
-.details-metadata::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% + 4em);
-  height: 100%;
-
-  background-color: var(--color-bg-1);
-
-  z-index: -1;
-}
-
 .details-metadata__buttons {
   display: flex;
   list-style: none;

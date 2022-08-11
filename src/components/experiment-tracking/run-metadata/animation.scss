@@ -12,13 +12,13 @@ $first-run-animation-timing: 0.3s;
 .details-dataset__value-header--comparison-view,
 .details-dataset__value--comparison-view,
 .details-metadata__run--first-run-comparison-view {
-  transform: translateX(-60%);
+  transform: translateX(-40%);
   transition: transform $first-run-animation-timing ease-out;
 }
-
-// to transition the whole section to the left
+// to transition the metadata and dataset panel to the left
+// when switch to comparison view
 .details-dataset--comparison-view,
-.details-metadata--comparison-view {
+.details-metadata__labels-comparison-view {
   transform: translateX(-4em);
   transition: transform $first-run-animation-timing ease-out;
 }
@@ -31,7 +31,7 @@ $first-run-animation-timing: 0.3s;
 
 .details-metadata__labels-comparison-view .details-metadata__title {
   opacity: 0;
-  transform: translateX(-60%);
+  transform: translateX(-40%);
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
 }
 
@@ -49,7 +49,7 @@ $first-run-animation-timing: 0.3s;
 .details-metadata__run-animation-enter,
 .details-dataset__value-animation-enter {
   opacity: 0;
-  transform: translateX(60%);
+  transform: translateX(40%);
   transition: transform $animation-timing ease-out,
     opacity $animation-timing linear;
 }
