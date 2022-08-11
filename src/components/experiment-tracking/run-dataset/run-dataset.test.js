@@ -129,11 +129,22 @@ describe('RunDataset', () => {
       <RunDataset
         isSingleRun={runs.length === 1 ? true : false}
         trackingData={trackingData}
+        enableComparisonView={false}
       />
     );
 
     expect(wrapper.find('.details-dataset').length).toBe(1);
-    expect(wrapper.find('.details-dataset__accordion').length).toBe(4);
+    expect(wrapper.find('.details-dataset__accordion-wrapper').length).toBe(1);
+  });
+
+  it('contains "comparison-view" classname when the comparison view is enabled', () => {
+    const wrapper = shallow(
+      <RunDataset trackingData={trackingData} enableComparisonView={true} />
+    );
+
+    expect(
+      wrapper.find('.details-dataset__accordion-wrapper-comparison-view').length
+    ).toBe(1);
   });
 
   it('renders a boolean value as a string', () => {

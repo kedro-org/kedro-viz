@@ -2,7 +2,7 @@ import React from 'react';
 import RunMetadata from '.';
 import { runs } from '../../experiment-wrapper/mock-data';
 import Adapter from 'enzyme-adapter-react-16';
-import { configure, mount, shallow } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
@@ -63,6 +63,16 @@ describe('RunMetadata', () => {
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
     expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
+  });
+
+  it('contains "-comparison-view" classname for when the comparison mode is enabled', () => {
+    const wrapper = shallow(
+      <RunMetadata enableComparisonView={true} runs={runs.slice(0, 1)} />
+    );
+
+    expect(
+      wrapper.find('.details-metadata__table-comparison-view').length
+    ).toBe(1);
   });
 
   it('shows a "--first-run" for the first run when comparison mode is on', () => {
