@@ -90,9 +90,9 @@ def run_server(
         if save_file:
             response = get_default_response()
             try:
-                Path(save_file).write_text(response.json(indent=4, sort_keys=True)) 
+                Path(save_file).write_text(response.json(indent=4, sort_keys=True))
             except TypeError:
-            # Keys of incomparable types (e.g. string and int) cannot be sorted.
+                # Keys of incomparable types (e.g. string and int) cannot be sorted.
                 Path(save_file).write_text(response.json(indent=4, sort_keys=False))
         app = apps.create_api_app_from_project(path, autoreload)
     else:
