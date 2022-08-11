@@ -58,7 +58,7 @@ $max-width: 310px;
   margin-right: 0;
 }
 
-.details-metadata__run--wrapper .details-metadata__run {
+.details-metadata__labels {
   width: 310px;
 }
 
@@ -126,12 +126,7 @@ $max-width: 310px;
   border-collapse: collapse;
   flex-shrink: 0;
   width: 100%;
-}
-
-.details-metadata__table tbody {
-  &:first-of-type {
-    width: 375px;
-  }
+  margin-left: -1px; // For exact alignment with content below.
 }
 
 .details-metadata__title-detail {
