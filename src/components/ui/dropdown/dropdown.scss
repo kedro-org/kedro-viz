@@ -109,7 +109,7 @@ $menu-item-padding: 12px;
   z-index: 2; // fix closing transition animation bug
   background: var(--dropdown-options-bg);
   border-top: none;
-  box-shadow: 0 0 2px rgba(black, 0.1);
+  box-shadow: 0 0 2px $black-800;
   position: absolute;
   visibility: hidden;
   width: 100%;

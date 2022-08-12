@@ -71,8 +71,8 @@
 .switch__circle {
   background-color: currentcolor;
   border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 1px -1px,
-    rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  box-shadow: $black-800 0px 2px 1px -1px, $black-800 0px 1px 1px 0px,
+    $black-800 0px 1px 3px 0px;
   height: 12px;
   width: 12px;
 }
