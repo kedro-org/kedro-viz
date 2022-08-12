@@ -71,8 +71,8 @@ def _wait_for(
     )
 
 
-def _check_viz_up(port):  # pragma: no cover
-    url = f"http://{DEFAULT_HOST}:{port}"
+def _check_viz_up(host, port):  # pragma: no cover
+    url = f"http://{host}:{port}"
     try:
         response = requests.get(url)
     except requests.ConnectionError:
@@ -162,7 +162,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    _wait_for(func=_check_viz_up, port=port)
+    _wait_for(func=_check_viz_up, host=host, port=port)
 
     if _is_databricks():
         url = _make_databricks_url(port)
