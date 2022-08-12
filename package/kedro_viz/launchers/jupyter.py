@@ -18,7 +18,7 @@ from IPython.core.display import HTML, display
 from kedro_viz.server import run_server, DEFAULT_PORT, DEFAULT_HOST
 
 _VIZ_PROCESSES: Dict[str, int] = {}
-
+_DATABRICKS_HOST = "0.0.0.0"
 
 logger = logging.getLogger(__name__)
 
@@ -152,8 +152,9 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         default_project_path,
     )  # can this be moved?
 
-    target = partial(run_server, project_path=default_project_path, host="127.0.0.1")
-    # host for db only
+    host = _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST
+
+    target = partial(run_server, project_path=default_project_path, host=host)
 
     viz_process = multiprocessing.Process(
         target=target, daemon=True, kwargs={"port": port}
@@ -174,7 +175,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     else:
         wrapper = f"""
                 <html lang="en"><head></head><body style="width:100; height:100;">
-                <iframe src="http://{DEFAULT_HOST}:{port}/" height=500 width="100%"></iframe>
+                <iframe src="http://{host}:{port}/" height=500 width="100%"></iframe>
                 </body></html>"""
         display(HTML(wrapper))
 
