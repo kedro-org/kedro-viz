@@ -96,7 +96,7 @@ def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:
 
     raise ValueError(
         "Cannot allocate an open TCP port for Kedro-Viz in a range "
-        "from {} to {}".format(start_at, end_at)
+        f"from {start_at} to {end_at}"
     )
 
 
@@ -162,7 +162,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    # _wait_for(func=_check_viz_up, port=port)
+    _wait_for(func=_check_viz_up, port=port)
 
     if _is_databricks():
         url = _make_databricks_url(port)
