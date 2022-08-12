@@ -81,7 +81,7 @@ def _check_viz_up(port):  # pragma: no cover
     return response.status_code == 200
 
 
-def _allocate_port(start_at: int, end_at: int = 65535) -> int:
+def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:
     acceptable_ports = range(start_at, end_at + 1)
 
     viz_ports = _VIZ_PROCESSES.keys() & set(acceptable_ports)
@@ -91,7 +91,7 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
     socket.setdefaulttimeout(2.0)  # seconds
     for port in acceptable_ports:  # iterate through all acceptable ports
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-            if sock.connect_ex((DEFAULT_HOST, port)) != 0:  # port is available
+            if sock.connect_ex((host, port)) != 0:  # port is available
                 return port
 
     raise ValueError(
@@ -144,15 +144,14 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     """
     port = port or DEFAULT_PORT  # Default argument doesn't work in Jupyter line magic.
-    port = _allocate_port(start_at=port)
+    host = _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST
+    port = _allocate_port(host, start_at=port)
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
     from kedro.extras.extensions.ipython import (
         default_project_path,
     )  # can this be moved?
-
-    host = _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST
 
     target = partial(run_server, project_path=default_project_path, host=host)
 
