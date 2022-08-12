@@ -6,18 +6,16 @@ import logging
 import multiprocessing
 import os
 import socket
-from contextlib import closing, suppress
-from functools import partial
+from contextlib import closing
 from time import sleep, time
 from typing import Any, Callable, Dict
 
 import IPython
 import requests
 from IPython.core.display import HTML, display
-from kedro.extras.extensions.ipython import (
-    default_project_path,
-)
-from kedro_viz.server import run_server, DEFAULT_PORT, DEFAULT_HOST
+from kedro.extras.extensions.ipython import default_project_path
+
+from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _DATABRICKS_HOST = "0.0.0.0"
@@ -73,7 +71,7 @@ def _wait_for(
     )
 
 
-def _check_viz_up(host, port):  # pragma: no cover
+def _check_viz_up(host: str, port: int):  # pragma: no cover
     url = f"http://{host}:{port}"
     try:
         response = requests.get(url)
@@ -131,6 +129,15 @@ def _make_databricks_url(port: int) -> str:
     return f"https://{browser_host_name}{path_name}"
 
 
+def _display_databricks_html(port: int):
+    url = _make_databricks_url(port)
+    displayHTML = _get_databricks_object("displayHTML")  # pylint: disable=invalid-name
+    if displayHTML is not None:
+        displayHTML(f"""<a href="{url}">Open Kedro-Viz</a >""")
+    else:
+        print(f"Kedro-Viz is available at {url}")
+
+
 # pylint: disable=unused-argument,missing-type-doc
 def run_viz(port: int = None, line=None, local_ns=None) -> None:
     """
@@ -151,12 +158,11 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
-    # can this be moved?
-
-    target = partial(run_server, project_path=default_project_path, host=host)
 
     viz_process = multiprocessing.Process(
-        target=target, daemon=True, kwargs={"port": port}
+        target=run_server,
+        daemon=True,
+        kwargs={"project_path": default_project_path, "host": host, "port": port},
     )
 
     viz_process.start()
@@ -165,12 +171,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     _wait_for(func=_check_viz_up, host=host, port=port)
 
     if _is_databricks():
-        url = _make_databricks_url(port)
-        displayHTML = _get_databricks_object("displayHTML")
-        if displayHTML is not None:
-            displayHTML(f"""<a href="{url}">Open Kedro-Viz</a >""")
-        else:
-            print(f"Kedro-Viz is available at {url}")
+        _display_databricks_html(port)
     else:
         wrapper = f"""
                 <html lang="en"><head></head><body style="width:100; height:100;">
