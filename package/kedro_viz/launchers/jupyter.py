@@ -15,7 +15,7 @@ import IPython
 import requests
 from IPython.core.display import HTML, display
 
-from kedro_viz.server import run_server
+from kedro_viz.server import run_server, DEFAULT_PORT, DEFAULT_HOST
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -72,7 +72,7 @@ def _wait_for(
 
 
 def _check_viz_up(port):  # pragma: no cover
-    url = "http://127.0.0.1:{}/".format(port)
+    url = f"http://{DEFAULT_HOST}:{port}
     try:
         response = requests.get(url)
     except requests.ConnectionError:
@@ -91,7 +91,7 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
     socket.setdefaulttimeout(2.0)  # seconds
     for port in acceptable_ports:  # iterate through all acceptable ports
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-            if sock.connect_ex(("127.0.0.1", port)) != 0:  # port is available
+            if sock.connect_ex((DEFAULT_HOST, port)) != 0:  # port is available
                 return port
 
     raise ValueError(
@@ -143,7 +143,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    port = port or 4141  # Default argument doesn't work in Jupyter line magic.
+    port = port or DEFAULT_PORT  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
@@ -152,7 +152,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         default_project_path,
     )  # can this be moved?
 
-    target = partial(run_server, project_path=default_project_path, host="0.0.0.0")
+    target = partial(run_server, project_path=default_project_path, host="127.0.0.1")
     # host for db only
 
     viz_process = multiprocessing.Process(
@@ -168,13 +168,13 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         url = _make_databricks_url(port)
         displayHTML = _get_databricks_object("displayHTML")
         if displayHTML is not None:
-            displayHTML(f""""<a href="{url}">Open Kedro-Viz</a>""")
+            displayHTML(f"""<a href="{url}">Open Kedro-Viz</a >""")
         else:
             print(f"Kedro-Viz is available at {url}")
     else:
         wrapper = f"""
                 <html lang="en"><head></head><body style="width:100; height:100;">
-                <iframe src="http://127.0.0.1:{port}/" height=500 width="100%"></iframe>
+                <iframe src="http://{DEFAULT_HOST}:{port}/" height=500 width="100%"></iframe>
                 </body></html>"""
         display(HTML(wrapper))
 
