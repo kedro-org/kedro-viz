@@ -14,7 +14,9 @@ from typing import Any, Callable, Dict
 import IPython
 import requests
 from IPython.core.display import HTML, display
-
+from kedro.extras.extensions.ipython import (
+    default_project_path,
+)
 from kedro_viz.server import run_server, DEFAULT_PORT, DEFAULT_HOST
 
 _VIZ_PROCESSES: Dict[str, int] = {}
@@ -149,9 +151,7 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
-    from kedro.extras.extensions.ipython import (
-        default_project_path,
-    )  # can this be moved?
+    # can this be moved?
 
     target = partial(run_server, project_path=default_project_path, host=host)
 

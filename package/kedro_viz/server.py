@@ -1,7 +1,6 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from time import sleep
 from typing import Any, Dict, Optional
 
 import uvicorn
@@ -77,7 +76,6 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
-    sleep(10)
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store_location = kedro_data_loader.load_data(
