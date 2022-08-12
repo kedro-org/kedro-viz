@@ -100,13 +100,17 @@ def _allocate_port(start_at: int, end_at: int = 65535) -> int:
     )
 
 
+def _is_databricks() -> bool:
+    return "DATABRICKS_RUNTIME_VERSION" in os.environ
+
+
 def _get_databricks_object(name: str):
     """Gets object called `name` from the user namespace."""
     return IPython.get_ipython().user_ns.get(name, None)
 
 
 def _make_databricks_url(port: int) -> str:
-    """Finds the URL to the Kedro-Viz instance."""
+    """Generates the URL to the Kedro-Viz instance."""
     dbutils = _get_databricks_object("dbutils")
 
     if dbutils is None:
@@ -144,7 +148,9 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
-    from kedro.extras.extensions.ipython import default_project_path
+    from kedro.extras.extensions.ipython import (
+        default_project_path,
+    )  # can this be moved?
 
     target = partial(run_server, project_path=default_project_path, host="0.0.0.0")
     # host for db only
@@ -158,11 +164,11 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
 
     # _wait_for(func=_check_viz_up, port=port)
 
-    if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+    if _is_databricks():
         url = _make_databricks_url(port)
         displayHTML = _get_databricks_object("displayHTML")
         if displayHTML is not None:
-            displayHTML(f"<a href='{url}'>Open 2Kedro-Viz</a>")
+            displayHTML(f""""<a href="{url}">Open Kedro-Viz</a>""")
         else:
             print(f"Kedro-Viz is available at {url}")
     else:
@@ -171,3 +177,6 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
                 <iframe src="http://127.0.0.1:{port}/" height=500 width="100%"></iframe>
                 </body></html>"""
         display(HTML(wrapper))
+
+
+# TODO: add arguments
