@@ -3,6 +3,9 @@ import pytest
 from kedro_viz.launchers.jupyter import _VIZ_PROCESSES, WaitForException, run_viz
 from kedro_viz.server import run_server
 
+from kedro.extras.extensions.ipython import default_project_path
+
+
 
 @pytest.fixture
 def patched_check_viz_up(mocker):
@@ -15,7 +18,7 @@ class TestRunVizLineMagic:
         jupyter_display = mocker.patch("kedro_viz.launchers.jupyter.display")
         run_viz()
         process_init.assert_called_once_with(
-            target=run_server, daemon=True, kwargs={"port": 4141}
+            target=run_server, daemon=True, kwargs={"project_path": default_project_path, 'host': '127.0.0.1', "port": 4141}
         )
         jupyter_display.assert_called_once()
         assert set(_VIZ_PROCESSES.keys()) == {4141}
@@ -24,7 +27,7 @@ class TestRunVizLineMagic:
         process_init.reset_mock()
         run_viz()
         process_init.assert_called_once_with(
-            target=run_server, daemon=True, kwargs={"port": 4141}
+            target=run_server, daemon=True, kwargs={"project_path": default_project_path, 'host': '127.0.0.1', "port": 4141}
         )
         assert set(_VIZ_PROCESSES.keys()) == {4141}
 
@@ -40,3 +43,14 @@ class TestRunVizLineMagic:
         )
         with pytest.raises(WaitForException):
             run_viz()
+
+    def test_run_viz_on_databricks(self, mocker):
+        process_init = mocker.patch("multiprocessing.Process")
+        mocker.patch("kedro_viz.launchers.jupyter._is_databricks", return_value = True)
+        databricks_display = mocker.patch("kedro_viz.launchers.jupyter._display_databricks_html")
+        databricks_url = mocker.patch("kedro_viz.launchers.jupyter._make_databricks_url")
+        process_init.reset_mock()
+        run_viz()
+        databricks_display.assert_called_once()
+        databricks_url.assert_called_once()
+
