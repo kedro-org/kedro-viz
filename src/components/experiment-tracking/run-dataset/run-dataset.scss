@@ -38,7 +38,7 @@
 .details-dataset__name-header {
   display: block;
   flex-shrink: 0;
-  width: 310px;
+  width: $run-width-comparison-view;
 }
 
 .details-dataset__value,
@@ -46,7 +46,7 @@
   display: flex;
   flex-shrink: 0;
   min-height: 20px;
-  width: 310px;
+  width: $run-width-comparison-view;
   word-break: break-all;
 }
 

@@ -1,8 +1,6 @@
 @import '../../../styles/variables';
 @import '../../../styles/extends';
 
-$max-width: 310px;
-
 .details-metadata {
   background-color: var(--color-bg-1);
   display: flex;
@@ -49,7 +47,7 @@ $max-width: 310px;
   flex-shrink: 0;
   margin-right: 13em;
 
-  max-width: $max-width;
+  max-width: $run-width-comparison-view;
 }
 
 .details-metadata__labels,
@@ -59,7 +57,7 @@ $max-width: 310px;
 }
 
 .details-metadata__labels {
-  width: 310px;
+  width: $run-width-comparison-view;
 }
 
 .details-metadata__run td {
@@ -72,7 +70,7 @@ $max-width: 310px;
 .details-metadata__run {
   .details-metadata__table-label,
   .details-metadata__table-value {
-    min-width: $max-width;
+    min-width: $run-width-comparison-view;
   }
 }
 
@@ -80,7 +78,7 @@ $max-width: 310px;
 .details-metadata__run--first-run-comparison-view {
   .details-metadata__table-label,
   .details-metadata__table-value {
-    width: $max-width;
+    width: $run-width-comparison-view;
   }
 }
 
@@ -97,7 +95,7 @@ $max-width: 310px;
 .details-metadata__table tr {
   display: flex;
   flex-direction: column;
-  width: $max-width;
+  width: $run-width-comparison-view;
 }
 
 .details-metadata__run--wrapper {
