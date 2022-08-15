@@ -102,21 +102,21 @@
 
 .details-dataset__tranistion-group-wrapper span {
   &:first-of-type {
-    margin-right: 2em;
+    margin-right: 3.5em;
   }
 
   &:nth-of-type(2) {
-    margin-right: 7em;
+    margin-right: 8.5em;
   }
 }
 
 // to ensure the value header is aligned with its value
 .details-dataset__tranistion-group-wrapper .details-dataset__value-header {
   &:nth-of-type(1) {
-    margin-right: 2.2em;
+    margin-right: 3.8em;
   }
 
   &:nth-of-type(2) {
-    margin-right: 7.4em;
+    margin-right: 9.2em;
   }
 }
