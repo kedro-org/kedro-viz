@@ -45,7 +45,7 @@
 // a single run when it's not in comparison mode
 .details-metadata__run {
   flex-shrink: 0;
-  margin-right: 13em;
+  margin-right: 9em;
 
   max-width: $run-width-comparison-view;
 }
@@ -104,7 +104,7 @@
 
 .details-metadata__run--wrapper tr {
   &:first-of-type {
-    margin-right: 5em;
+    margin-right: 1em;
   }
 
   &:last-of-type {
