@@ -38,7 +38,7 @@
 .details-dataset__name-header {
   display: block;
   flex-shrink: 0;
-  width: $run-width-comparison-view;
+  width: $run-width;
 }
 
 .details-dataset__value,
@@ -46,8 +46,17 @@
   display: flex;
   flex-shrink: 0;
   min-height: 20px;
-  width: $run-width-comparison-view;
+  width: $run-width;
   word-break: break-all;
+}
+
+.details-dataset__accordion-wrapper-comparison-view {
+  .details-dataset__label,
+  .details-dataset__name-header,
+  .details-dataset__value,
+  .details-dataset__value-header {
+    width: $run-width-comparison-view;
+  }
 }
 
 .dataset-arrow-icon {

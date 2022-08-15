@@ -47,7 +47,7 @@
   flex-shrink: 0;
   margin-right: 10em;
 
-  max-width: $run-width-comparison-view;
+  max-width: $run-width;
 }
 
 .details-metadata__labels,
@@ -57,6 +57,10 @@
 }
 
 .details-metadata__labels {
+  width: $run-width;
+}
+
+.details-metadata__labels-comparison-view {
   width: $run-width-comparison-view;
 }
 
@@ -65,13 +69,6 @@
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
-}
-
-.details-metadata__run {
-  .details-metadata__table-label,
-  .details-metadata__table-value {
-    min-width: $run-width-comparison-view;
-  }
 }
 
 // a single run when comparison view is on
@@ -93,6 +90,12 @@
 }
 
 .details-metadata__table tr {
+  display: flex;
+  flex-direction: column;
+  width: $run-width;
+}
+
+.details-metadata__table-comparison-view tr {
   display: flex;
   flex-direction: column;
   width: $run-width-comparison-view;
