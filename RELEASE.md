@@ -9,6 +9,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Don't reset the zoom each time a node is selected. (#988)
+- Fix for plots not showing on Metadata panel. (#1014)
 
 # Release 5.0.0
 
