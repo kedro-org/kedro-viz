@@ -79,11 +79,12 @@ const MetaData = ({
     onToggleMetadataModal(true);
   };
 
-  const removeTrailingSlash = (string) => {
-    return string?.replace(/\/$/, '');
+  // Since we style the path right-to-left, remove the initial slash
+  const removeInitialSlash = (string) => {
+    return string?.replace(/^\//g, '');
   };
 
-  const findLastWord = (string) => {
+  const shortenDatasetType = (string) => {
     return string?.split('.').pop();
   };
 
@@ -134,7 +135,7 @@ const MetaData = ({
                     visible={isDataNode}
                     kind="type"
                     title={metadata.datasetType}
-                    value={findLastWord(metadata.datasetType)}
+                    value={shortenDatasetType(metadata.datasetType)}
                   />
                 )}
                 {isTranscoded && (
@@ -156,7 +157,7 @@ const MetaData = ({
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
-                  value={removeTrailingSlash(metadata.filepath)}
+                  value={removeInitialSlash(metadata.filepath)}
                 />
                 {hasTrackingData && (
                   <MetaDataRow
