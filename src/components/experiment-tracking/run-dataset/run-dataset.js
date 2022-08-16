@@ -4,8 +4,11 @@ import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
 import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
+import '../run-metadata/animation.css';
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
   if (data.runId !== pinnedRun && typeof data.value === 'number') {
@@ -40,6 +43,7 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
+  enableComparisonView,
   enableShowChanges,
   isSingleRun,
   pinnedRun,
@@ -47,16 +51,23 @@ const RunDataset = ({
   setShowRunPlotsModal,
   trackingData,
 }) => {
+  if (!trackingData) {
+    return null;
+  }
+
   return (
-    <div
-      className={classnames('details-dataset', {
-        'details-dataset--single': isSingleRun,
-      })}
-    >
+    <div className="details-dataset">
       {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
-            className="details-dataset__accordion"
+            className={classnames(
+              'details-dataset__accordion',
+              'details-dataset__accordion-wrapper',
+              {
+                'details-dataset__accordion-wrapper-comparison-view':
+                  enableComparisonView,
+              }
+            )}
             headingClassName="details-dataset__accordion-header"
             heading={group}
             key={group}
@@ -95,8 +106,8 @@ const RunDataset = ({
                         datasetType,
                         rowIndex,
                         isSingleRun,
+                        enableComparisonView,
                         enableShowChanges,
-                        runIds,
                         setRunDatasetToShow,
                         setShowRunPlotsModal
                       );
@@ -118,7 +129,9 @@ const RunDataset = ({
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {array} runIds Array of strings of runIds.
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
+ * @param {function} setRunDatasetToShow callbak function to show runDataset
+ * @param {function} setShowRunPlotsModal callbak function to show runplot modal
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -126,8 +139,8 @@ function buildDatasetDataMarkup(
   datasetType,
   rowIndex,
   isSingleRun,
+  enableComparisonView,
   enableShowChanges,
-  runIds,
   setRunDatasetToShow,
   setShowRunPlotsModal
 ) {
@@ -144,97 +157,97 @@ function buildDatasetDataMarkup(
     <React.Fragment key={datasetKey + rowIndex}>
       {rowIndex === 0 ? (
         <div className="details-dataset__row">
-          <span
-            className={classnames('details-dataset__name-header', {
-              'details-dataset__value-header--single': isSingleRun,
-            })}
+          <span className="details-dataset__name-header">Name</span>
+          <TransitionGroup
+            component="div"
+            className="details-dataset__tranistion-group-wrapper"
           >
-            Name
-          </span>
-          {runIds.map((value, index) => (
-            <span
-              className={classnames('details-dataset__value-header', {
-                'details-dataset__value-header--single': isSingleRun,
-              })}
-              key={value + index}
-            >
-              Value
-            </span>
-          ))}
+            {datasetValues.map((data, index) => (
+              <CSSTransition
+                key={data.runId}
+                timeout={300}
+                classNames="details-dataset__value-animation"
+                enter={isSingleRun ? false : true}
+                exit={isSingleRun ? false : true}
+              >
+                <span
+                  className={classnames('details-dataset__value-header', {
+                    'details-dataset__value-header--comparison-view':
+                      index === 0 && enableComparisonView,
+                  })}
+                >
+                  Value
+                </span>
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
         </div>
       ) : null}
       <div className="details-dataset__row">
-        <span
-          className={classnames('details-dataset__label', {
-            'details-dataset__label--single': isSingleRun,
-          })}
+        <span className={'details-dataset__label'}>{datasetKey}</span>
+        <TransitionGroup
+          component="div"
+          className="details-dataset__tranistion-group-wrapper"
         >
-          {datasetKey}
-        </span>
-        {isTrackingDataset &&
-          datasetValues.map((data) => (
-            <span
-              className={classnames('details-dataset__value', {
-                'details-dataset__value--single': isSingleRun,
-              })}
-              key={data.runId}
-            >
-              {sanitizeValue(data.value)}
-              {enableShowChanges && <PinArrowIcon icon={data.pinIcon} />}
-            </span>
-          ))}
-        {isPlotlyDataset &&
-          datasetValues.map((run) => {
+          {datasetValues.map((run, index) => {
+            const isSinglePinnedRun = datasetValues.length === 1;
             return (
-              <span
-                className={classnames('details-dataset__value', {
-                  'details-dataset__value--single': isSingleRun,
-                })}
+              <CSSTransition
                 key={run.runId}
+                timeout={300}
+                classNames="details-dataset__value-animation"
+                enter={isSinglePinnedRun ? false : true}
+                exit={isSinglePinnedRun ? false : true}
               >
-                {run.value ? (
-                  <div
-                    className="details-dataset__visualization-wrapper"
-                    onClick={onExpandVizClick}
-                  >
-                    <PlotlyChart
-                      data={run.value.data}
-                      layout={run.value.layout}
-                      view="experiment_preview"
-                    />
-                  </div>
-                ) : (
-                  fillEmptyPlots()
-                )}
-              </span>
+                <span
+                  className={classnames('details-dataset__value', {
+                    'details-dataset__value--comparison-view':
+                      index === 0 && enableComparisonView,
+                  })}
+                >
+                  {isTrackingDataset && (
+                    <>
+                      {sanitizeValue(run?.value)}
+                      {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
+                    </>
+                  )}
+
+                  {isPlotlyDataset &&
+                    (run.value ? (
+                      <div
+                        className="details-dataset__visualization-wrapper"
+                        onClick={onExpandVizClick}
+                      >
+                        <PlotlyChart
+                          data={run.value.data}
+                          layout={run.value.layout}
+                          view="experiment_preview"
+                        />
+                      </div>
+                    ) : (
+                      fillEmptyPlots()
+                    ))}
+
+                  {isImageDataset &&
+                    (run.value ? (
+                      <div
+                        className="details-dataset__image-container"
+                        onClick={onExpandVizClick}
+                      >
+                        <img
+                          alt="Matplotlib rendering"
+                          className="details-dataset__image"
+                          src={`data:image/png;base64,${run.value}`}
+                        />
+                      </div>
+                    ) : (
+                      fillEmptyPlots()
+                    ))}
+                </span>
+              </CSSTransition>
             );
           })}
-        {isImageDataset &&
-          datasetValues.map((run) => {
-            return (
-              <span
-                className={classnames('details-dataset__value', {
-                  'details-dataset__value--single': isSingleRun,
-                })}
-                key={run.runId}
-              >
-                {run.value ? (
-                  <div
-                    className="details-dataset__image-container"
-                    onClick={onExpandVizClick}
-                  >
-                    <img
-                      alt="Matplotlib rendering"
-                      className="details-dataset__image"
-                      src={`data:image/png;base64,${run.value}`}
-                    />
-                  </div>
-                ) : (
-                  fillEmptyPlots()
-                )}
-              </span>
-            );
-          })}
+        </TransitionGroup>
       </div>
     </React.Fragment>
   );
