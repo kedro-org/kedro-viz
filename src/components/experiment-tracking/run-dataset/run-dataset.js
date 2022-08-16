@@ -212,35 +212,37 @@ function buildDatasetDataMarkup(
                     </>
                   )}
 
-                  {isPlotlyDataset && run?.value && (
-                    <div
-                      className="details-dataset__visualization-wrapper"
-                      onClick={onExpandVizClick}
-                    >
-                      <PlotlyChart
-                        data={run.value.data}
-                        layout={run.value.layout}
-                        view="experiment_preview"
-                      />
-                    </div>
-                  )}
+                  {isPlotlyDataset &&
+                    (run.value ? (
+                      <div
+                        className="details-dataset__visualization-wrapper"
+                        onClick={onExpandVizClick}
+                      >
+                        <PlotlyChart
+                          data={run.value.data}
+                          layout={run.value.layout}
+                          view="experiment_preview"
+                        />
+                      </div>
+                    ) : (
+                      fillEmptyPlots()
+                    ))}
 
-                  {isImageDataset && run?.value && (
-                    <div
-                      className="details-dataset__image-container"
-                      onClick={onExpandVizClick}
-                    >
-                      <img
-                        alt="Matplotlib rendering"
-                        className="details-dataset__image"
-                        src={`data:image/png;base64,${run.value}`}
-                      />
-                    </div>
-                  )}
-
-                  {(isPlotlyDataset || isImageDataset) &&
-                    !run.value &&
-                    fillEmptyPlots()}
+                  {isImageDataset &&
+                    (run.value ? (
+                      <div
+                        className="details-dataset__image-container"
+                        onClick={onExpandVizClick}
+                      >
+                        <img
+                          alt="Matplotlib rendering"
+                          className="details-dataset__image"
+                          src={`data:image/png;base64,${run.value}`}
+                        />
+                      </div>
+                    ) : (
+                      fillEmptyPlots()
+                    ))}
                 </span>
               </CSSTransition>
             );
