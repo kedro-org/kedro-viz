@@ -79,6 +79,14 @@ const MetaData = ({
     onToggleMetadataModal(true);
   };
 
+  const removeTrailingSlash = (string) => {
+    return string?.replace(/\/$/, '');
+  };
+
+  const findLastWord = (string) => {
+    return string?.split('.').pop();
+  };
+
   return (
     <>
       <MetaDataCode visible={showCodePanel} value={metadata?.code} />
@@ -125,7 +133,8 @@ const MetaData = ({
                     label="Dataset Type:"
                     visible={isDataNode}
                     kind="type"
-                    value={metadata.datasetType}
+                    title={metadata.datasetType}
+                    value={findLastWord(metadata.datasetType)}
                   />
                 )}
                 {isTranscoded && (
@@ -147,7 +156,7 @@ const MetaData = ({
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
-                  value={metadata.filepath}
+                  value={removeTrailingSlash(metadata.filepath)}
                 />
                 {hasTrackingData && (
                   <MetaDataRow
@@ -185,11 +194,6 @@ const MetaData = ({
                   kind="token"
                   commas={false}
                   value={metadata.tags}
-                />
-                <MetaDataRow
-                  label="Pipeline:"
-                  visible={Boolean(metadata.pipeline)}
-                  value={metadata.pipeline}
                 />
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier command={runCommand} />
