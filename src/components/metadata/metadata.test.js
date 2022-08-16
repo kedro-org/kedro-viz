@@ -305,7 +305,7 @@ describe('MetaData', () => {
       });
       const row = rowByLabel(wrapper, 'File Path:');
       expect(textOf(rowValue(row))).toEqual([
-        '/tmp/project/data/03_primary/model_input_table.csv',
+        'tmp/project/data/03_primary/model_input_table.csv',
       ]);
     });
 
