@@ -7,12 +7,8 @@
   flex-shrink: 0;
   min-height: 350px;
   min-width: 100%;
-  padding: 5em 0 0.8em 5em;
+  padding: 5em 0 0 9em;
   width: max-content;
-
-  &--single {
-    padding: 5em 0 0 9em;
-  }
 }
 
 .details-metadata__buttons {
@@ -46,20 +42,26 @@
   fill: #{$color-accent-blue};
 }
 
+// a single run when it's not in comparison mode
 .details-metadata__run {
   flex-shrink: 0;
-  margin-right: 13em;
+  margin-right: 12em;
 
-  &:last-of-type {
-    margin-right: 5em;
-  }
+  max-width: $run-width;
 }
 
-.details-metadata__table {
-  border-collapse: collapse;
-  max-width: 75em;
-  margin-left: -1px; // For exact alignment with content below.
-  width: 100%;
+.details-metadata__labels,
+.details-metadata__labels-comparison-view,
+.details-metadata__run--first-run-comparison-view {
+  margin-right: 0;
+}
+
+.details-metadata__labels {
+  width: $run-width;
+}
+
+.details-metadata__labels-comparison-view {
+  width: $run-width-comparison-view;
 }
 
 .details-metadata__run td {
@@ -67,32 +69,69 @@
   padding-bottom: 16px;
   vertical-align: top;
   word-wrap: break-word; // For breaking potential long text, such as as git branch, title, etc.
+}
 
-  &:first-of-type {
-    width: 230px;
-  }
-
-  &:last-of-type {
-    width: 310px;
+// a single run when comparison view is on
+.details-metadata__run--first-run-comparison-view {
+  .details-metadata__table-label,
+  .details-metadata__table-value {
+    width: $run-width-comparison-view;
   }
 }
 
-.details-metadata__run--single td {
+.details-metadata__run--first-run-comparison-view td {
   &:first-of-type {
-    min-width: 375px;
-    width: 50%;
+    width: 100%;
   }
 
   &:last-of-type {
-    min-width: 375px;
-    width: 50%;
+    width: 100%;
   }
 }
 
+.details-metadata__table tr {
+  display: flex;
+  flex-direction: column;
+  width: $run-width;
+}
+
+.details-metadata__table-comparison-view tr {
+  display: flex;
+  flex-direction: column;
+  width: $run-width-comparison-view;
+}
+
+.details-metadata__run--wrapper {
+  display: flex;
+}
+
+.details-metadata__run--wrapper tr {
+  &:first-of-type {
+    margin-right: 5em;
+  }
+
+  &:last-of-type {
+    margin-right: 5em;
+  }
+}
+
+// animation for the title of the baseline when comparison mode is on
 .details-metadata__title {
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+.details-metadata__title--empty {
+  width: 365px;
+}
+
+.details-metadata__table {
+  display: flex;
+  border-collapse: collapse;
+  flex-shrink: 0;
+  width: 100%;
+  margin-left: -1px; // For exact alignment with content below.
 }
 
 .details-metadata__title-detail {
