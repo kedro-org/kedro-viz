@@ -15,7 +15,7 @@ $secondary-underline-offset-hover: 4px;
 .kui-theme--light {
   --color-button--active: #{$black-800};
   --color-button--border: #{$black-900};
-  --color-button--border--disabled: #{$black-600};
+  --color-button--border--disabled: #{rgba($color-dark, 0.3)}; // (#000000, 0.3) => $black-600 on Figma - Typography
   --color-button__text--hover: #{$white-600};
   --color-button__text: #{$black-800};
   --color-button__text--disabled: #{$black-600};
@@ -24,7 +24,7 @@ $secondary-underline-offset-hover: 4px;
 .kui-theme--dark {
   --color-button--active: #{$white-600};
   --color-button--border: #{$white-0};
-  --color-button--border--disabled: #{$black-400};
+  --color-button--border--disabled: #{rgba($color-light, 0.3)}; // (#ffffff, 0.3) => $black-400 on Figma - Typography
   --color-button__text--hover: #{$black-800};
   --color-button__text: #{$white-600};
   --color-button__text--disabled: #{$black-400};
