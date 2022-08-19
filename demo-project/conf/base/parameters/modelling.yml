@@ -1,4 +1,6 @@
 split_options:
+  test_inf : .inf
+  test_nan : .nan
   test_size: 0.2
   random_state: 3
   target: 'price'

@@ -2,6 +2,7 @@
 
 # pylint: disable=too-many-instance-attributes
 import logging
+import math
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
@@ -38,6 +39,19 @@ from .repositories import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _make_json_compatible(parameter_value):
+    if isinstance(parameter_value, dict):
+        for key, value in parameter_value.items():
+            try:
+                if math.isinf(value):
+                    parameter_value[key] = "Infinity"
+                if math.isnan(value):
+                    parameter_value[key] = "NaN"
+            except:
+                continue
+    return parameter_value
 
 
 class DataAccessManager:
@@ -273,11 +287,13 @@ class DataAccessManager:
             task_node: The task node to add parameters to.
         """
         if parameters_node.is_all_parameters():
-            task_node.parameters = parameters_node.parameter_value
+            task_node.parameters = _make_json_compatible(
+                parameters_node.parameter_value
+            )
         else:
             task_node.parameters[
                 parameters_node.parameter_name
-            ] = parameters_node.parameter_value
+            ] = _make_json_compatible(parameters_node.parameter_value)
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
