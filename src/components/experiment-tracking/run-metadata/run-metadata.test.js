@@ -2,7 +2,7 @@ import React from 'react';
 import RunMetadata from '.';
 import { runs } from '../../experiment-wrapper/mock-data';
 import Adapter from 'enzyme-adapter-react-16';
-import { configure, mount, shallow } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
@@ -49,29 +49,49 @@ describe('RunMetadata', () => {
     );
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
-    expect(wrapper.find('.details-metadata__run').length).toBe(3);
+    expect(wrapper.find('.details-metadata__run').length).toBe(4);
   });
 
-  it('renders a single-run view', () => {
+  it('renders a first run for when theres a single run', () => {
     const wrapper = shallow(
       <RunMetadata
+        enableComparisonView={true}
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
         runs={runs.slice(0, 1)}
       />
     );
 
     expect(wrapper.find('.details-metadata').length).toBe(1);
-    expect(wrapper.find('.details-metadata__run--single').length).toBe(1);
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
   });
 
-  it('shows a "-" for empty values ', () => {
-    const wrapper = mount(<RunMetadata isSingleRun={true} runs={emptyRun} />);
-    expect(wrapper.find('.details-metadata__title').text()).toMatch('-');
+  it('contains "-comparison-view" classname for when the comparison mode is enabled', () => {
+    const wrapper = shallow(
+      <RunMetadata enableComparisonView={true} runs={runs.slice(0, 1)} />
+    );
+
+    expect(
+      wrapper.find('.details-metadata__table-comparison-view').length
+    ).toBe(1);
+  });
+
+  it('shows a "--first-run" for the first run when comparison mode is on', () => {
+    const wrapper = shallow(
+      <RunMetadata
+        enableComparisonView={true}
+        isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
+        runs={runs.slice(0, 1)}
+      />
+    );
+    expect(wrapper.find('.details-metadata__run--first-run').length).toBe(1);
+    expect(
+      wrapper.find('.details-metadata__run--first-run-comparison-view').length
+    ).toBe(1);
   });
 
   it('handles show more/less button click event', () => {
     const setToggleNotes = jest.fn();
-    const wrapper = mount(
+    const wrapper = shallow(
       <RunMetadata
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
         runs={runs.slice(0, 1)}
@@ -100,6 +120,7 @@ describe('RunMetadata', () => {
   it('enables the pin button when show changes is enabled ', () => {
     const wrapper = shallow(
       <RunMetadata
+        enableComparisonView={true}
         enableShowChanges={true}
         isSingleRun={false}
         runs={twoRuns}
