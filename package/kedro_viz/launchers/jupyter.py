@@ -35,6 +35,7 @@ def _wait_for(
 ) -> None:
     """
     Run specified function until it returns expected result until timeout.
+
     Args:
         func (Callable): Specified function
         expected_result (Any): result that is expected. Defaults to None.
@@ -44,10 +45,13 @@ def _wait_for(
         sleep_for (int): Execute func every specified number of seconds.
             Defaults to 1.
         **kwargs: Arguments to be passed to func
+
     Raises:
          WaitForException: if func doesn't return expected result within the
          specified time
+
     """
+
     end = time() + timeout
 
     while time() <= end:
@@ -100,13 +104,16 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
     the Jupyter notebook environment.
+
     Args:
         port: TCP port that viz will listen to. Defaults to 4141.
         line: line required by line magic interface.
         local_ns: Local namespace with local variables of the scope where the line magic is invoked.
             For more details, please visit:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
+            
     """
+
     port = port or 4141  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
