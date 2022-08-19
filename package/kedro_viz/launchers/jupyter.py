@@ -51,7 +51,6 @@ def _wait_for(
          specified time
 
     """
-
     end = time() + timeout
 
     while time() <= end:
@@ -111,9 +110,8 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
         local_ns: Local namespace with local variables of the scope where the line magic is invoked.
             For more details, please visit:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
-            
-    """
 
+    """
     port = port or 4141  # Default argument doesn't work in Jupyter line magic.
     port = _allocate_port(start_at=port)
 
