@@ -1,7 +1,7 @@
 .kui-theme--light .pipeline-metadata-code__code {
-  @import './node_modules/highlight.js/styles/a11y-light';
+  @import '//node_modules/highlight.js/styles/a11y-light';
 }
 
 .kui-theme--dark .pipeline-metadata-code__code {
-  @import './node_modules/highlight.js/styles/a11y-dark';
+  @import '//node_modules/highlight.js/styles/a11y-dark';
 }
