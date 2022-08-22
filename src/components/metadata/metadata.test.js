@@ -212,14 +212,6 @@ describe('MetaData', () => {
       expect(textOf(rowValue(row))).toEqual(['Split']);
     });
 
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: splitDataTaskNodeId,
-        mockMetadata: nodeTask,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
-    });
     describe('when there is no runCommand returned by the backend', () => {
       it('should show a help message asking user to provide a name property', () => {
         const mockMetadata = { ...nodeTask };
@@ -303,9 +295,7 @@ describe('MetaData', () => {
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Dataset Type:');
-      expect(textOf(rowValue(row))).toEqual([
-        'kedro.extras.datasets.pandas.csv_dataset.CSVDataSet',
-      ]);
+      expect(textOf(rowValue(row))).toEqual(['CSVDataSet']);
     });
 
     it('shows the node filepath', () => {
@@ -315,7 +305,7 @@ describe('MetaData', () => {
       });
       const row = rowByLabel(wrapper, 'File Path:');
       expect(textOf(rowValue(row))).toEqual([
-        '/tmp/project/data/03_primary/model_input_table.csv',
+        'tmp/project/data/03_primary/model_input_table.csv',
       ]);
     });
 
@@ -326,15 +316,6 @@ describe('MetaData', () => {
       });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Features', 'Split']);
-    });
-
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
-        mockMetadata: nodeData,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
     });
 
     describe('when there is a runCommand returned by the backend', () => {
@@ -513,15 +494,6 @@ describe('MetaData', () => {
       });
       const row = rowByLabel(wrapper, 'Tags:');
       expect(textOf(rowValue(row))).toEqual(['Split']);
-    });
-
-    it('shows the node pipeline', () => {
-      const wrapper = mount({
-        nodeId: parametersNodeId,
-        mockMetadata: nodeParameters,
-      });
-      const row = rowByLabel(wrapper, 'Pipeline:');
-      expect(textOf(rowValue(row))).toEqual(['Default']);
     });
   });
 
