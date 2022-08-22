@@ -79,6 +79,15 @@ const MetaData = ({
     onToggleMetadataModal(true);
   };
 
+  // Since we style the path right-to-left, remove the initial slash
+  const removeInitialSlash = (string) => {
+    return string?.replace(/^\//g, '');
+  };
+
+  const shortenDatasetType = (string) => {
+    return string?.split('.').pop();
+  };
+
   return (
     <>
       <MetaDataCode visible={showCodePanel} value={metadata?.code} />
@@ -125,7 +134,8 @@ const MetaData = ({
                     label="Dataset Type:"
                     visible={isDataNode}
                     kind="type"
-                    value={metadata.datasetType}
+                    title={metadata.datasetType}
+                    value={shortenDatasetType(metadata.datasetType)}
                   />
                 )}
                 {isTranscoded && (
@@ -147,7 +157,7 @@ const MetaData = ({
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
-                  value={metadata.filepath}
+                  value={removeInitialSlash(metadata.filepath)}
                 />
                 {hasTrackingData && (
                   <MetaDataRow
@@ -185,11 +195,6 @@ const MetaData = ({
                   kind="token"
                   commas={false}
                   value={metadata.tags}
-                />
-                <MetaDataRow
-                  label="Pipeline:"
-                  visible={Boolean(metadata.pipeline)}
-                  value={metadata.pipeline}
                 />
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier command={runCommand} />

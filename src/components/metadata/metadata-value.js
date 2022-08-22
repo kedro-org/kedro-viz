@@ -6,15 +6,16 @@ import './styles/metadata.css';
  * Shows a metadata value
  */
 const MetaDataValue = ({
-  container: Container = 'span',
   className,
-  value,
-  kind,
+  container: Container = 'span',
   empty,
+  kind,
+  title,
+  value,
 }) => (
   <>
     <Container
-      title={value}
+      title={title}
       className={modifiers('pipeline-metadata__value', { kind }, className)}
     >
       {!value && value !== 0 ? empty : value}

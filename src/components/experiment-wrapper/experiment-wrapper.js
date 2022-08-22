@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import {
-  GET_RUNS,
-  GET_RUN_METADATA,
-  GET_RUN_TRACKING_DATA,
-} from '../../apollo/queries';
+import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
@@ -30,20 +26,11 @@ const ExperimentWrapper = ({ theme }) => {
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
-  // Fetch all metadata for selected runs.
-  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
-    GET_RUN_METADATA,
-    {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds },
-    }
-  );
-
-  // Fetch all tracking data for selected runs.
+  // Fetch all data for selected runs.
   const {
-    data: { plots = [], metrics = [], JSONData = [] } = [],
-    error: trackingDataError,
-  } = useApolloQuery(GET_RUN_TRACKING_DATA, {
+    data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
+    error: runDataError,
+  } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
   });
@@ -191,7 +178,7 @@ const ExperimentWrapper = ({ theme }) => {
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              metadataError={metadataError}
+              runDataError={runDataError}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
               runMetadata={runMetadata}
@@ -204,7 +191,6 @@ const ExperimentWrapper = ({ theme }) => {
               showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
-              trackingDataError={trackingDataError}
               showRunExportModal={showRunExportModal}
               setShowRunExportModal={setShowRunExportModal}
             />
