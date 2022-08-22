@@ -18,10 +18,12 @@ const MetaDataRow = ({
   inline = true,
   commas = true,
   limit = false,
+  title = null,
   children,
 }) => {
   const showList = Array.isArray(value);
   const showObject = typeof value === 'object' && value !== null && !showList;
+
   return (
     visible && (
       <>
@@ -40,10 +42,11 @@ const MetaDataRow = ({
           )}
           {!showList && !showObject && !children && (
             <MetaDataValue
-              value={value}
-              kind={kind}
               empty={empty}
+              kind={kind}
               theme={theme}
+              title={title || value}
+              value={value}
             />
           )}
           {showObject && (
