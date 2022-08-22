@@ -8,5 +8,5 @@ watchgod~=0.8.0
 plotly>=4.0
 pandas>=0.24
 sqlalchemy~=1.2
-strawberry-graphql>=0.93.14, <1.0
+strawberry-graphql>=0.99.0, <1.0
 networkx>=1.0
