@@ -106,17 +106,17 @@ def _is_databricks() -> bool:
 
 def _get_databricks_object(name: str):
     """Gets object called `name` from the user namespace."""
-    return IPython.get_ipython().user_ns.get(name)
+    return IPython.get_ipython().user_ns.get(name) # pragma: no cover
 
 
-def _make_databricks_url(port: int) -> str:
+def _make_databricks_url(port: int) -> str: # pragma: no cover
     """Generates the URL to the Kedro-Viz instance."""
-    dbutils = _get_databricks_object("dbutils")
+    dbutils = _get_databricks_object("dbutils") 
 
-    if dbutils is None:
+    if dbutils is None: 
         raise EnvironmentError("Unable to find dbutils.")
 
-    def dbutils_get(attr):
+    def dbutils_get(attr): 
         return getattr(
             dbutils.notebook.entry_point.getDbutils().notebook().getContext(), attr
         )().get()
@@ -129,7 +129,7 @@ def _make_databricks_url(port: int) -> str:
     return f"https://{browser_host_name}{path_name}"
 
 
-def _display_databricks_html(port: int):
+def _display_databricks_html(port: int): # pragma: no cover
     url = _make_databricks_url(port)
     displayHTML = _get_databricks_object("displayHTML")  # pylint: disable=invalid-name
     if displayHTML is not None:
@@ -178,4 +178,3 @@ def run_viz(port: int = None, line=None, local_ns=None) -> None:
                 <iframe src="http://{host}:{port}/" height=500 width="100%"></iframe>
                 </body></html>"""
         display(HTML(wrapper))
-
