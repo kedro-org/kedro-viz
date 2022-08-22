@@ -106,7 +106,7 @@ class TrackingDatasetModel:
                 exc,
             )
             self.runs[run_id] = {}
-            self.dataset._version = Version(None, None)
+        self.dataset._version = Version(None, None)
 
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
