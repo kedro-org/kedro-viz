@@ -4,9 +4,11 @@ generated using Kedro 0.18.1
 """
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sn
 import PIL
 import plotly.express as px
 from plotly import graph_objects as go
+import random
 
 from .image_utils import DrawTable
 
@@ -56,7 +58,10 @@ def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:
         BaseFigure: Plotly object which is serialised as JSON for rendering
     """
     price_data_df = model_input_data[["price", "engine_type"]]
-
+    print(price_data_df['price'])
+    random_limit = random.randint(0,5)*1000
+    price_data_df['price'] = price_data_df['price'].apply(lambda x: (x + random.randint(0,random_limit)*random.randint(0,1)))
+    print(price_data_df['price'])
     plotly_object = px.histogram(
         data_frame=price_data_df, x="price", log_x=True, color="engine_type"
     )
@@ -89,7 +94,29 @@ def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:
     pil_table = DrawTable(analysis_df)
     return pil_table.image
 
+def create_feature_importance_plot(features: pd.DataFrame):
+    sorted_features = features.sort_values(by='Score', ascending=True)
+    plotly_object = px.bar(sorted_features, 
+                            x="Score", 
+                            y="Features", 
+                            color="Score", 
+                            color_continuous_scale="RdBu")
+    return plotly_object
 
 def create_matplotlib_chart(companies: pd.DataFrame):
-    plt.plot([1, 2, 3], [4, 5, 6])
+    random_actuals = []
+    random_predicted = []
+    for i in range(0,11):
+            actual = random.randint(0,1)
+            predicted = random.randint(0,1)
+            random_actuals.append(actual)
+            random_predicted.append(predicted)
+
+    data = {'y_Actual': random_actuals,
+        'y_Predicted':  random_predicted
+        }
+
+    df = pd.DataFrame(data, columns=['y_Actual','y_Predicted'])
+    confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'], margins = True)
+    sn.heatmap(confusion_matrix, annot=True)
     return plt

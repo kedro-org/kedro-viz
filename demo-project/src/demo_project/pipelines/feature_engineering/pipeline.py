@@ -7,7 +7,7 @@ generated using Kedro 0.18.1
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
-from .nodes import create_derived_features, create_static_features, joiner
+from .nodes import create_derived_features, create_static_features, joiner, create_feature_importance
 
 
 def create_pipeline() -> Pipeline:
@@ -46,8 +46,13 @@ def create_pipeline() -> Pipeline:
                 ],
                 outputs="model_input_table",
             ),
+            node(
+                func=create_feature_importance,
+                inputs="prm_feature_importance",
+                outputs="feature_importance_output",
+            ),
         ],
-        inputs=["prm_shuttle_company_reviews", "prm_spine_table"],
+        inputs=["prm_shuttle_company_reviews", "prm_spine_table","prm_feature_importance"],
         outputs="model_input_table",
         namespace="feature_engineering",
     )

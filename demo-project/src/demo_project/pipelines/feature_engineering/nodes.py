@@ -6,6 +6,7 @@ generated using Kedro 0.18.1
 from functools import reduce
 from typing import Dict, List
 
+import random 
 import numpy
 import pandas as pd
 
@@ -99,3 +100,8 @@ def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:
     # Confirm that the number of rows is unchanged after the operation has completed
     assert spine_df.shape[0] == merged_dfs.shape[0]
     return merged_dfs
+
+def create_feature_importance(data: pd.DataFrame):
+       random_number = random.randint(0,100)/200 + random.randint(0,100)/200
+       data['Score'] = data['Score'].apply(lambda x: (x + random_number) %1)
+       return data 

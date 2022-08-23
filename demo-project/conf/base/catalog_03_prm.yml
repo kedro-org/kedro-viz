@@ -7,3 +7,8 @@ prm_spine_table:
   type: pandas.ParquetDataSet
   filepath: ${base_location}/03_primary/prm_spine_table.pq
   layer: primary
+
+prm_feature_importance:
+  type: pandas.CSVDataSet
+  filepath: ${base_location}/03_primary/feature_importance.csv
+  layer: primary 
