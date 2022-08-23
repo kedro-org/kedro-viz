@@ -125,7 +125,7 @@ To avoid needing to remember the `-s` flag on every commit, you might like to se
 
 ### JavaScript development
 
-_*Note*: We suggest using the [latest release of Node.js v14](https://nodejs.org/download/release/latest-v14.x/) in your development environment._
+_*Note*: We suggest using the [latest release of Node.js v16](https://nodejs.org/download/release/latest-v16.x/) in your development environment._
 
 First clone this repo, then download and install dependencies:
 
