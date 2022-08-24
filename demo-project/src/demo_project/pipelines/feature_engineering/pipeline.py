@@ -48,11 +48,11 @@ def create_pipeline() -> Pipeline:
             ),
             node(
                 func=create_feature_importance,
-                inputs="prm_feature_importance",
+                inputs="prm_spine_table",
                 outputs="feature_importance_output",
             ),
         ],
-        inputs=["prm_shuttle_company_reviews", "prm_spine_table","prm_feature_importance"],
-        outputs="model_input_table",
+        inputs=["prm_shuttle_company_reviews", "prm_spine_table"],
+        outputs=["model_input_table","feature_importance_output"],
         namespace="feature_engineering",
     )
