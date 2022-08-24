@@ -7,4 +7,3 @@ prm_spine_table:
   type: pandas.ParquetDataSet
   filepath: ${base_location}/03_primary/prm_spine_table.pq
   layer: primary
-

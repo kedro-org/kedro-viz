@@ -1,6 +1,6 @@
 image:
   file: .gitpod.Dockerfile
-
+  
 tasks:
   - name: frontend
     init: |
@@ -20,7 +20,7 @@ tasks:
       # force-reinstall kedro to ensure that the latest version from main is installed even when 
       # its version number is the same as that specified in docker_requirements.txt.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
-
+      
     command: | 
       gp sync-await build_complete
       pip install -e package --no-deps
