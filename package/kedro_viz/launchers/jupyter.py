@@ -106,17 +106,17 @@ def _is_databricks() -> bool:
 
 def _get_databricks_object(name: str):
     """Gets object called `name` from the user namespace."""
-    return IPython.get_ipython().user_ns.get(name) # pragma: no cover
+    return IPython.get_ipython().user_ns.get(name)  # pragma: no cover
 
 
-def _make_databricks_url(port: int) -> str: # pragma: no cover
+def _make_databricks_url(port: int) -> str:  # pragma: no cover
     """Generates the URL to the Kedro-Viz instance."""
-    dbutils = _get_databricks_object("dbutils") 
+    dbutils = _get_databricks_object("dbutils")
 
-    if dbutils is None: 
+    if dbutils is None:
         raise EnvironmentError("Unable to find dbutils.")
 
-    def dbutils_get(attr): 
+    def dbutils_get(attr):
         return getattr(
             dbutils.notebook.entry_point.getDbutils().notebook().getContext(), attr
         )().get()
@@ -129,7 +129,7 @@ def _make_databricks_url(port: int) -> str: # pragma: no cover
     return f"https://{browser_host_name}{path_name}"
 
 
-def _display_databricks_html(port: int): # pragma: no cover
+def _display_databricks_html(port: int):  # pragma: no cover
     url = _make_databricks_url(port)
     displayHTML = _get_databricks_object("displayHTML")  # pylint: disable=invalid-name
     if displayHTML is not None:
@@ -139,22 +139,25 @@ def _display_databricks_html(port: int): # pragma: no cover
 
 
 # pylint: disable=unused-argument,missing-type-doc
-def run_viz(port: int = None, line=None, local_ns=None) -> None:
+def run_viz(port: int = None, local_ns=None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
     the Jupyter notebook environment.
 
     Args:
         port: TCP port that viz will listen to. Defaults to 4141.
-        line: line required by line magic interface.
-        local_ns: Local namespace with local variables of the scope where the line magic is invoked.
-            For more details, please visit:
+        local_ns: Local namespace with local variables of the scope where the line magic
+            is invoked. This argument must be in the signature, even though it is not
+            used. This is because the Kedro IPython extension registers line magics with
+            needs_local_scope.
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
     port = port or DEFAULT_PORT  # Default argument doesn't work in Jupyter line magic.
     host = _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST
-    port = _allocate_port(host, start_at=port)
+    port = _allocate_port(
+        host, start_at=int(port)
+    )  # Line magic provides string arguments by default, so we need to convert to int.
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
