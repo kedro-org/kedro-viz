@@ -123,8 +123,7 @@ def create_matplotlib_chart(companies: pd.DataFrame):
         df["y_Actual"],
         df["y_Predicted"],
         rownames=["Actual"],
-        colnames=["Predicted"],
-        margins=True,
+        colnames=["Predicted"]
     )
     sn.heatmap(confusion_matrix, annot=True)
     return plt

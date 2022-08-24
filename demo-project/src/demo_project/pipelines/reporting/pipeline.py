@@ -21,7 +21,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=make_cancel_policy_bar_chart,
                 inputs="prm_shuttle_company_reviews",
-                outputs="rcancellation_policy_breakdown",
+                outputs="cancellation_policy_breakdown",
             ),
             node(
                 func=make_price_histogram,
