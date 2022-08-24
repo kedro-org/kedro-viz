@@ -113,7 +113,7 @@ def create_matplotlib_chart(companies: pd.DataFrame):
     data = {'y_Actual': random_actuals,
         'y_Predicted':  random_predicted
         }
-
+    plt.style.use("dark_background")
     df = pd.DataFrame(data, columns=['y_Actual','y_Predicted'])
     confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'], margins = True)
     sn.heatmap(confusion_matrix, annot=True)
