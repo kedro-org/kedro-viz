@@ -17,5 +17,6 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 # CONF_ROOT = "conf"
 
 from kedro.config import TemplatedConfigLoader
+
 CONFIG_LOADER_CLASS = TemplatedConfigLoader
 CONFIG_LOADER_ARGS = {"globals_pattern": "*globals.yml", "globals_dict": {}}

@@ -10,7 +10,7 @@ from demo_project.pipelines.reporting.nodes import (
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
-    create_feature_importance_plot
+    create_feature_importance_plot,
 )
 
 
@@ -44,7 +44,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="confusion_matrix",
             ),
         ],
-        inputs=["prm_shuttle_company_reviews","feature_importance_output"],
-        namespace = "reporting"
-
+        inputs=["prm_shuttle_company_reviews", "feature_importance_output"],
+        namespace="reporting",
     )
