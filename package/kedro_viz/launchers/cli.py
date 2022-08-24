@@ -16,8 +16,8 @@ from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_serve
 
 
 @click.group(name="Kedro-Viz")
-def commands():
-    """Visualise the pipeline using Kedro viz."""
+def commands():  # pylint: disable=missing-function-docstring
+    pass
 
 
 @commands.command(context_settings=dict(help_option_names=["-h", "--help"]))

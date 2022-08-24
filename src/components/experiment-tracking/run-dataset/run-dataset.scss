@@ -4,11 +4,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: 5em 0 0 5em;
-
-  &--single {
-    padding: 5em 0 0 9em;
-  }
+  padding: 5em 0 0 9em;
 }
 
 .details-dataset__accordion {
@@ -24,15 +20,6 @@
 .details-dataset__row {
   display: flex;
   font-size: 1.4em;
-
-  & span:nth-child(2),
-  & span:nth-child(3) {
-    margin-right: 130px;
-  }
-
-  & span:last-of-type {
-    margin-right: 50px;
-  }
 }
 
 .details-dataset__name-header,
@@ -51,11 +38,7 @@
 .details-dataset__name-header {
   display: block;
   flex-shrink: 0;
-  width: 230px;
-
-  &--single {
-    width: 50%;
-  }
+  width: $run-width;
 }
 
 .details-dataset__value,
@@ -63,11 +46,16 @@
   display: flex;
   flex-shrink: 0;
   min-height: 20px;
-  width: 310px;
+  width: $run-width;
   word-break: break-all;
+}
 
-  &--single {
-    width: 50%;
+.details-dataset__accordion-wrapper-comparison-view {
+  .details-dataset__label,
+  .details-dataset__name-header,
+  .details-dataset__value,
+  .details-dataset__value-header {
+    width: $run-width-comparison-view;
   }
 }
 
@@ -106,4 +94,29 @@
   height: 188px;
   justify-content: center;
   width: 250px;
+}
+
+.details-dataset__tranistion-group-wrapper {
+  display: flex;
+}
+
+.details-dataset__tranistion-group-wrapper span {
+  &:first-of-type {
+    margin-right: 3.5em;
+  }
+
+  &:nth-of-type(2) {
+    margin-right: 8.5em;
+  }
+}
+
+// to ensure the value header is aligned with its value
+.details-dataset__tranistion-group-wrapper .details-dataset__value-header {
+  &:nth-of-type(1) {
+    margin-right: 3.8em;
+  }
+
+  &:nth-of-type(2) {
+    margin-right: 9.2em;
+  }
 }
