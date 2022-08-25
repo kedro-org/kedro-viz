@@ -8,7 +8,7 @@ Please follow the established format:
 
 # Release 5.0.2
 ## Bug fixes and other changes
-- Upgrade to dart-scss, and update the recommended Node version to v16. (#774)
+- Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
 
 # Release 5.0.1
 
