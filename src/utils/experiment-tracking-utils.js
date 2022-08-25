@@ -39,25 +39,46 @@ export const constructExportData = (runMetadata, runTrackingData) => {
       ['Notes', ...notes]
     );
 
-    // create empty line between metadata fields and tracking data fields
+    // Create empty line between metadata fields and tracking data fields.
     csvData.push([]);
 
-    runTrackingData.forEach((trackingDataset) => {
+    runTrackingData['Metrics'].forEach((trackingDataset) => {
       const { datasetName, data } = trackingDataset;
-      const dataKeyNames = Object.keys(data);
+      const dataKeyNames = Object.keys(data).sort((a, b) => {
+        return a.localeCompare(b);
+      });
 
       csvData.push([datasetName]);
 
       dataKeyNames.forEach((key) => {
         let keyData = [key];
 
-        data[key].forEach((datafield) => keyData.push(datafield.value));
+        data[key].forEach((dataField) => keyData.push(dataField.value));
+        csvData.push(keyData);
+      });
+
+      csvData.push([]);
+    });
+
+    runTrackingData['JSON Data'].forEach((trackingDataset) => {
+      const { datasetName, data } = trackingDataset;
+      const dataKeyNames = Object.keys(data).sort((a, b) => {
+        return a.localeCompare(b);
+      });
+
+      csvData.push([datasetName]);
+
+      dataKeyNames.forEach((key) => {
+        let keyData = [key];
+
+        data[key].forEach((dataField) => keyData.push(dataField.value));
         csvData.push(keyData);
       });
 
       csvData.push([]);
     });
   }
+
   return csvData;
 };
 
@@ -68,7 +89,9 @@ export const constructExportData = (runMetadata, runTrackingData) => {
  */
 export const generateCSVFileName = (runMetadata) => {
   let filename = 'rundata';
+
   runMetadata?.forEach((run) => (filename += `-${run.id}`));
   filename += '.csv';
+
   return filename;
 };
