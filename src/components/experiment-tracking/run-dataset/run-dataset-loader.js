@@ -17,9 +17,9 @@ const TitleLoader = ({ y }) => (
 export const DatasetLoader = ({ x, y }) => {
   return (
     <>
-      <rect width="0" height="0" x="350" y={y} />
-      <rect width="50" height="16" x="350" y={y + GAP} />
-      <rect width="180" height="16" x="350" y={y + GAP * 2} />
+      <rect width="0" height="0" x={x} y={y} />
+      <rect width="50" height="16" x={x} y={y + GAP} />
+      <rect width="180" height="16" x={x} y={y + GAP * 2} />
     </>
   );
 };

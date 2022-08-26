@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import ContentLoader from 'react-content-loader';
 import classnames from 'classnames';
 import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
@@ -9,9 +10,44 @@ import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { MetadataLoader } from './run-metadata-loader';
 
 import './run-metadata.css';
 import './animation.css';
+
+const DotsLoader = ({ key, length }) => (
+  <ContentLoader
+    viewBox="0 0 1000 300"
+    width="1000px"
+    height="100%"
+    backgroundColor="#ccd1d6"
+    foregroundColor="#ecebeb"
+    speed={2}
+    key={key}
+  >
+    <rect width="3" height="5" x={100 + length * 10} y="12" />
+    <rect width="3" height="5" x={100 + length * 10 + 5} y="12" />
+    <rect width="3" height="5" x={100 + length * 10 + 10} y="12" />
+    <rect width="3" height="5" x={100 + length * 10 + 15} y="12" />
+  </ContentLoader>
+);
+
+const SquareLoader = ({ length }) => {
+  return (
+    <tbody>
+      <ContentLoader
+        viewBox="0 0 500 300"
+        width="500px"
+        height="100%"
+        backgroundColor="#ccd1d6"
+        foregroundColor="#ecebeb"
+        speed={2}
+      >
+        <MetadataLoader x={50 * length} />
+      </ContentLoader>
+    </tbody>
+  );
+};
 
 // Return a '-' character if the value is empty or null
 const sanitiseEmptyValue = (value) => {
@@ -79,6 +115,7 @@ const RunMetadata = ({
   setPinnedRun,
   setRunMetadataToEdit,
   setShowRunDetailsModal,
+  showLoader,
 }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -250,6 +287,9 @@ const RunMetadata = ({
             );
           })}
         </TransitionGroup>
+        {showLoader && <SquareLoader length={runs.length} />}
+
+        {/* {showLoader && <DotsLoader />} */}
       </table>
     </div>
   );

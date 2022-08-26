@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
+import { RunMetadataLoader } from '../run-metadata/run-metadata-loader';
 import RunDataset from '../run-dataset';
+import { RunDatasetLoader } from '../run-dataset/run-dataset-loader';
 import RunDetailsModal from '../run-details-modal';
 import RunPlotsModal from '../run-plots-modal';
 import RunExportModal from '../run-export-modal';
@@ -26,10 +28,21 @@ const Details = ({
   showRunExportModal,
   showRunPlotsModal,
   sidebarVisible,
+  isRunDataLoading,
+  newRunAdded,
   theme,
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
+  const [showLoader, setShowLoader] = useState(false);
+
+  useEffect(() => {
+    if (isRunDataLoading && newRunAdded) {
+      setShowLoader(true);
+    } else {
+      setShowLoader(false);
+    }
+  }, [isRunDataLoading, newRunAdded]);
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -43,6 +56,19 @@ const Details = ({
 
   if (runDataError) {
     return null;
+  }
+
+  if (isRunDataLoading && !enableComparisonView) {
+    return (
+      <div
+        className={classnames('kedro', 'details-mainframe', {
+          'details-mainframe--sidebar-visible': sidebarVisible,
+        })}
+      >
+        <RunMetadataLoader />;
+        <RunDatasetLoader />
+      </div>
+    );
   }
 
   return (
@@ -84,6 +110,7 @@ const Details = ({
           setPinnedRun={setPinnedRun}
           setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
+          showLoader={showLoader}
         />
         <RunDataset
           enableComparisonView={enableComparisonView}
@@ -92,6 +119,7 @@ const Details = ({
           pinnedRun={pinnedRun}
           setRunDatasetToShow={setRunDatasetToShow}
           setShowRunPlotsModal={setShowRunPlotsModal}
+          showLoader={showLoader}
           trackingData={runTrackingData}
         />
       </div>

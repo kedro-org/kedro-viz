@@ -1,4 +1,5 @@
 import React from 'react';
+import ContentLoader from 'react-content-loader';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
@@ -9,6 +10,22 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 import '../run-metadata/animation.css';
+
+const Loader = ({ x, y, width, height, length }) => {
+  console.log(length, 'length');
+  return (
+    <ContentLoader
+      viewBox="0 0 100 50"
+      width="500px"
+      height="100%"
+      backgroundColor="#ccd1d6"
+      foregroundColor="#ecebeb"
+      speed={2}
+    >
+      <rect width="180" height="16" x={x} y={y + length * 10} />
+    </ContentLoader>
+  );
+};
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
   if (data.runId !== pinnedRun && typeof data.value === 'number') {
@@ -49,6 +66,7 @@ const RunDataset = ({
   pinnedRun,
   setRunDatasetToShow,
   setShowRunPlotsModal,
+  showLoader,
   trackingData,
 }) => {
   if (!trackingData) {
@@ -74,9 +92,8 @@ const RunDataset = ({
             layout="left"
             size="large"
           >
-            {trackingData[group].map((dataset) => {
+            {trackingData[group].map((dataset, index) => {
               const { data, datasetType, datasetName, runIds } = dataset;
-
               return (
                 <Accordion
                   className="details-dataset__accordion"
@@ -101,6 +118,7 @@ const RunDataset = ({
                       );
 
                       return buildDatasetDataMarkup(
+                        index,
                         key,
                         runDataWithPin,
                         datasetType,
@@ -109,7 +127,8 @@ const RunDataset = ({
                         enableComparisonView,
                         enableShowChanges,
                         setRunDatasetToShow,
-                        setShowRunPlotsModal
+                        setShowRunPlotsModal,
+                        showLoader
                       );
                     })}
                 </Accordion>
@@ -134,6 +153,7 @@ const RunDataset = ({
  * @param {function} setShowRunPlotsModal callbak function to show runplot modal
  */
 function buildDatasetDataMarkup(
+  index,
   datasetKey,
   datasetValues,
   datasetType,
@@ -142,7 +162,8 @@ function buildDatasetDataMarkup(
   enableComparisonView,
   enableShowChanges,
   setRunDatasetToShow,
-  setShowRunPlotsModal
+  setShowRunPlotsModal,
+  showLoader
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
@@ -162,25 +183,43 @@ function buildDatasetDataMarkup(
             component="div"
             className="details-dataset__tranistion-group-wrapper"
           >
-            {datasetValues.map((data, index) => (
-              <CSSTransition
-                key={data.runId}
-                timeout={300}
-                classNames="details-dataset__value-animation"
-                enter={isSingleRun ? false : true}
-                exit={isSingleRun ? false : true}
-              >
-                <span
-                  className={classnames('details-dataset__value-header', {
-                    'details-dataset__value-header--comparison-view':
-                      index === 0 && enableComparisonView,
-                  })}
+            {datasetValues.map((data, index) => {
+              return (
+                <CSSTransition
+                  key={data.runId}
+                  timeout={300}
+                  classNames="details-dataset__value-animation"
+                  enter={isSingleRun ? false : true}
+                  exit={isSingleRun ? false : true}
                 >
-                  Value
-                </span>
-              </CSSTransition>
-            ))}
+                  <span
+                    className={classnames('details-dataset__value-header', {
+                      'details-dataset__value-header--comparison-view':
+                        index === 0 && enableComparisonView,
+                    })}
+                  >
+                    Value
+                  </span>
+                </CSSTransition>
+              );
+            })}
           </TransitionGroup>
+          {showLoader && (
+            <Loader
+              width={50}
+              height={16}
+              x={50}
+              y={12}
+              length={datasetValues.length}
+            />
+          )}
+          {/* <Loader
+            width={50}
+            height={16}
+            x={50}
+            y={12}
+            length={datasetValues.length}
+          /> */}
         </div>
       ) : null}
       <div className="details-dataset__row">
@@ -248,6 +287,15 @@ function buildDatasetDataMarkup(
             );
           })}
         </TransitionGroup>
+        {showLoader && (
+          <Loader
+            width={150}
+            height={16}
+            x={50}
+            y={12}
+            length={datasetValues.length}
+          />
+        )}
       </div>
     </React.Fragment>
   );

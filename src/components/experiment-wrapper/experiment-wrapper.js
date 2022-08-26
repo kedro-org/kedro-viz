@@ -22,6 +22,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
+  const [newRunAdded, setNewRunAdded] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -30,6 +31,7 @@ const ExperimentWrapper = ({ theme }) => {
   const {
     data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
     error: runDataError,
+    loading: isRunDataLoading,
   } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
@@ -56,8 +58,10 @@ const ExperimentWrapper = ({ theme }) => {
           return;
         }
         setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
+        setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
+        setNewRunAdded(true);
       }
     } else {
       if (selectedRunIds.includes(id)) {
@@ -193,6 +197,8 @@ const ExperimentWrapper = ({ theme }) => {
               theme={theme}
               showRunExportModal={showRunExportModal}
               setShowRunExportModal={setShowRunExportModal}
+              isRunDataLoading={isRunDataLoading}
+              newRunAdded={newRunAdded}
             />
           ) : null}
         </>

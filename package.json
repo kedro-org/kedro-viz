@@ -70,6 +70,7 @@
     "lodash.noop": "^3.0.1",
     "lodash.sortby": "^4.7.0",
     "plotly.js-dist-min": "^1.58.4",
+    "react-content-loader": "^6.2.0",
     "react-csv": "^2.2.2",
     "react-custom-scrollbars": "^4.2.1",
     "react-json-view": "^1.21.3",
