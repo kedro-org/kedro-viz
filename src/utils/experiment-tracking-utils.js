@@ -21,8 +21,9 @@ export const sanitizeValue = (value) => {
  */
 export const constructExportData = (runMetadata, runTrackingData) => {
   let csvData = [];
+
   if (runMetadata && runTrackingData) {
-    // obtain runMetadata
+    // Obtain runMetadata
     const runTitle = runMetadata?.map((run) => sanitizeValue(run.title));
     const createdBy = runMetadata?.map((run) => sanitizeValue(run.author));
     const gitSha = runMetadata?.map((run) => sanitizeValue(run.gitSha));
@@ -42,41 +43,28 @@ export const constructExportData = (runMetadata, runTrackingData) => {
     // Create empty line between metadata fields and tracking data fields.
     csvData.push([]);
 
-    runTrackingData['Metrics'].forEach((trackingDataset) => {
-      const { datasetName, data } = trackingDataset;
-      const dataKeyNames = Object.keys(data).sort((a, b) => {
-        return a.localeCompare(b);
+    buildCSVRows('Metrics');
+    buildCSVRows('JSON Data');
+
+    function buildCSVRows(section) {
+      runTrackingData[section].forEach((trackingDataset) => {
+        const { datasetName, data } = trackingDataset;
+        const dataKeyNames = Object.keys(data).sort((a, b) => {
+          return a.localeCompare(b);
+        });
+
+        csvData.push([datasetName]);
+
+        dataKeyNames.forEach((key) => {
+          let keyData = [key];
+
+          data[key].forEach((dataField) => keyData.push(dataField.value));
+          csvData.push(keyData);
+        });
+
+        csvData.push([]);
       });
-
-      csvData.push([datasetName]);
-
-      dataKeyNames.forEach((key) => {
-        let keyData = [key];
-
-        data[key].forEach((dataField) => keyData.push(dataField.value));
-        csvData.push(keyData);
-      });
-
-      csvData.push([]);
-    });
-
-    runTrackingData['JSON Data'].forEach((trackingDataset) => {
-      const { datasetName, data } = trackingDataset;
-      const dataKeyNames = Object.keys(data).sort((a, b) => {
-        return a.localeCompare(b);
-      });
-
-      csvData.push([datasetName]);
-
-      dataKeyNames.forEach((key) => {
-        let keyData = [key];
-
-        data[key].forEach((dataField) => keyData.push(dataField.value));
-        csvData.push(keyData);
-      });
-
-      csvData.push([]);
-    });
+    }
   }
 
   return csvData;
