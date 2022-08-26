@@ -21,8 +21,9 @@ export const sanitizeValue = (value) => {
  */
 export const constructExportData = (runMetadata, runTrackingData) => {
   let csvData = [];
+
   if (runMetadata && runTrackingData) {
-    // obtain runMetadata
+    // Obtain runMetadata
     const runTitle = runMetadata?.map((run) => sanitizeValue(run.title));
     const createdBy = runMetadata?.map((run) => sanitizeValue(run.author));
     const gitSha = runMetadata?.map((run) => sanitizeValue(run.gitSha));
@@ -39,25 +40,33 @@ export const constructExportData = (runMetadata, runTrackingData) => {
       ['Notes', ...notes]
     );
 
-    // create empty line between metadata fields and tracking data fields
+    // Create empty line between metadata fields and tracking data fields.
     csvData.push([]);
 
-    runTrackingData.forEach((trackingDataset) => {
-      const { datasetName, data } = trackingDataset;
-      const dataKeyNames = Object.keys(data);
+    buildCSVRows('Metrics');
+    buildCSVRows('JSON Data');
 
-      csvData.push([datasetName]);
+    function buildCSVRows(section) {
+      runTrackingData[section].forEach((trackingDataset) => {
+        const { datasetName, data } = trackingDataset;
+        const dataKeyNames = Object.keys(data).sort((a, b) => {
+          return a.localeCompare(b);
+        });
 
-      dataKeyNames.forEach((key) => {
-        let keyData = [key];
+        csvData.push([datasetName]);
 
-        data[key].forEach((datafield) => keyData.push(datafield.value));
-        csvData.push(keyData);
+        dataKeyNames.forEach((key) => {
+          let keyData = [key];
+
+          data[key].forEach((dataField) => keyData.push(dataField.value));
+          csvData.push(keyData);
+        });
+
+        csvData.push([]);
       });
-
-      csvData.push([]);
-    });
+    }
   }
+
   return csvData;
 };
 
@@ -68,7 +77,9 @@ export const constructExportData = (runMetadata, runTrackingData) => {
  */
 export const generateCSVFileName = (runMetadata) => {
   let filename = 'rundata';
+
   runMetadata?.forEach((run) => (filename += `-${run.id}`));
   filename += '.csv';
+
   return filename;
 };

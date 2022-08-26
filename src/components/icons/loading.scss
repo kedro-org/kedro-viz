@@ -1,8 +1,8 @@
 @import '../../styles/variables';
 
 $polygon-length: 500;
-$section-length: $polygon-length / 8;
-$start-point: $polygon-length / 2;
+$section-length: calc($polygon-length / 8);
+$start-point: calc($polygon-length / 2);
 $spin1-offset-start: $start-point;
 $spin1-offset-end: $start-point -$polygon-length;
 $spin2-offset-start: $start-point -$section-length;
