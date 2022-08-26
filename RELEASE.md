@@ -7,8 +7,11 @@ Please follow the established format:
 -->
 
 # Release 5.0.2
+
 ## Bug fixes and other changes
+
 - Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
+- Fix the export functionality of experiment tracking data. (#1033)
 
 # Release 5.0.1
 
