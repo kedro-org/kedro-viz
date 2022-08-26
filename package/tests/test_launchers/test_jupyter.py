@@ -45,7 +45,9 @@ class TestRunVizLineMagic:
             run_viz(port=999999)
 
     def test_exception_when_viz_cannot_be_launched(self, mocker):
-        mocker.patch("kedro_viz.launchers.jupyter._check_viz_up", return_value=False)
+        mocker.patch(
+            "kedro_viz.launchers.jupyter._check_viz_up", side_effect=Exception("Test")
+        )
         # Reduce the timeout argument from 60 to 1 to make test run faster.
         mocker.patch(
             "kedro_viz.launchers.jupyter._wait_for.__defaults__", (True, 1, True, 1)
