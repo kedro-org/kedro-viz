@@ -13,7 +13,6 @@ from typing import Any, Callable, Dict
 import IPython
 import requests
 from IPython.core.display import HTML, display
-from kedro.extras.extensions.ipython import default_project_path
 
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
@@ -138,8 +137,7 @@ def _display_databricks_html(port: int):  # pragma: no cover
         print(f"Kedro-Viz is available at {url}")
 
 
-# pylint: disable=unused-argument,missing-type-doc
-def run_viz(port: int = None, local_ns=None) -> None:
+def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
     the Jupyter notebook environment.
@@ -162,10 +160,16 @@ def run_viz(port: int = None, local_ns=None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
+    project_path = (
+        local_ns["context"].project_path
+        if local_ns is not None and "context" in local_ns
+        else None
+    )
+
     viz_process = multiprocessing.Process(
         target=run_server,
         daemon=True,
-        kwargs={"project_path": default_project_path, "host": host, "port": port},
+        kwargs={"project_path": project_path, "host": host, "port": port},
     )
 
     viz_process.start()
