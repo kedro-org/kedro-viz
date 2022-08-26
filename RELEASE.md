@@ -8,6 +8,10 @@ Please follow the established format:
 
 # Release 5.0.2
 
+## Major features and improvements
+
+- The `%run_viz` line magic can now be used in Databricks notebooks. (#1012)
+
 ## Bug fixes and other changes
 
 - Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
