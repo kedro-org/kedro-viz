@@ -4,6 +4,10 @@ import ContentLoader from 'react-content-loader';
 import './run-dataset.css';
 
 const GAP = 36;
+const backgroundLightTheme = '#c0c5c9';
+const foregroundLightTheme = '#ecebeb';
+const backgroundDarkTheme = '001521';
+const foregroundDarkTheme = '5e6c74';
 
 const TitleLoader = ({ y }) => (
   <>
@@ -24,14 +28,18 @@ export const DatasetLoader = ({ x, y }) => {
   );
 };
 
-export const RunDatasetLoader = () => (
+export const RunDatasetLoader = ({ theme }) => (
   <div className="details-dataset">
     <ContentLoader
       viewBox="0 0 1000 1000"
       width="1000px"
       height="100%"
-      backgroundColor="#ccd1d6"
-      foregroundColor="#ecebeb"
+      backgroundColor={
+        theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+      }
+      foregroundColor={
+        theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+      }
       speed={2}
     >
       <TitleLoader y={12} />

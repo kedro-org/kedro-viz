@@ -3,6 +3,11 @@ import ContentLoader from 'react-content-loader';
 
 import './run-metadata.css';
 
+const backgroundLightTheme = '#ccd1d6';
+const foregroundLightTheme = '#ecebeb';
+const backgroundDarkTheme = '001521';
+const foregroundDarkTheme = '5e6c74';
+
 const TitleLoader = () => (
   <>
     <rect width="180" height="20" x="0" y="12" />
@@ -25,14 +30,18 @@ export const MetadataLoader = ({ x }) => (
   </>
 );
 
-export const RunMetadataLoader = () => (
+export const RunMetadataLoader = ({ theme }) => (
   <div className="details-metadata">
     <ContentLoader
       viewBox="0 0 1000 300"
       width="1000px"
       height="100%"
-      backgroundColor="#ccd1d6"
-      foregroundColor="#ecebeb"
+      backgroundColor={
+        theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+      }
+      foregroundColor={
+        theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+      }
       speed={2}
     >
       <TitleLoader />

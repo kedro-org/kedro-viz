@@ -65,8 +65,8 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadataLoader />;
-        <RunDatasetLoader />
+        <RunMetadataLoader theme={theme} />;
+        <RunDatasetLoader theme={theme} />;
       </div>
     );
   }
