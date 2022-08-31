@@ -6,9 +6,25 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 5.0.2
+
+## Major features and improvements
+
+- The `%run_viz` line magic can now be used in Databricks notebooks. (#1012)
+
+## Bug fixes and other changes
+
+- Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
+- Fix the export functionality of experiment tracking data. (#1033)
+
+# Release 5.0.1
+
 ## Bug fixes and other changes
 
 - Don't reset the zoom each time a node is selected. (#988)
+- Improve the way runs animate in and out in experiment tracking. (#993)
+- Fix for plots not showing on Metadata panel. (#1014)
+- Enhance the display of information in the Metadata sidebar. (#1015)
 
 # Release 5.0.0
 

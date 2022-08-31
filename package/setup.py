@@ -24,11 +24,6 @@ with open(path.join(here, path.pardir, "package.json")) as data:
 with open("requirements.txt", "r", encoding="utf-8") as f:
     requires = [x.strip() for x in f if x.strip()]
 
-# get test dependencies and installs
-with open("test_requirements.txt", "r", encoding="utf-8") as f:
-    test_requires = [x.strip() for x in f if x.strip() and not x.startswith("-r")]
-
-# Get the long description from the README file
 with open(path.join(here, "../README.md"), encoding="utf-8") as f:
     readme = f.read()
 
@@ -43,7 +38,6 @@ setup(
     url="https://github.com/kedro-org/kedro-viz",
     python_requires=">=3.7, <3.11",
     install_requires=requires,
-    tests_require=test_requires,
     keywords="pipelines, machine learning, data pipelines, data science, data engineering, visualisation",
     author="Kedro",
     packages=find_packages(exclude=["tests*", "features*"]),

@@ -65,7 +65,7 @@ $menu-item-padding: 12px;
   list-style: none;
   outline: 4px solid transparent;
   overflow: hidden;
-  padding: 0 0 0 $sidebar-padding / 1.6; // divide by 1.6em font-size on element
+  padding: 0 0 0 calc($sidebar-padding / 1.6); // divide by 1.6em font-size on element
   position: relative;
   user-select: none;
   width: 100%;
