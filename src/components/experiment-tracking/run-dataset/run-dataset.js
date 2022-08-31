@@ -213,13 +213,6 @@ function buildDatasetDataMarkup(
               length={datasetValues.length}
             />
           )}
-          {/* <Loader
-            width={50}
-            height={16}
-            x={50}
-            y={12}
-            length={datasetValues.length}
-          /> */}
         </div>
       ) : null}
       <div className="details-dataset__row">
