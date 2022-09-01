@@ -15,17 +15,17 @@
   --node-labeltext-fill: #{$black-800};
   --edge-stroke: #{$black-100};
   --edge-arrowhead-fill: #{$slate-0};
-  --layer-fill: #d1d7dd;
+  --layer-fill: #{$grey-200};
   --layer-text: #{$black-900};
-  --node-input-fill: #{rgba(black, 0.4)};
+  --node-input-fill: #{$black-200};
   --parameter-accent: #{$purple-300};
-  --parameter-accent-input: #{rgba($color-accent-purple, 0.6)};
+  --parameter-accent-input: #{$purple-300};
 
   @mixin export {
     --node-fill-default: #{$white-200};
-    --node-stroke-default: #6b6a6b;
-    --edge-stroke: #686768;
-    --edge-arrowhead-fill: #686768;
+    --node-stroke-default: #{$white-900};
+    --edge-stroke: $white-900;
+    --edge-arrowhead-fill: $white-900;
   }
 
   &.pipeline-graph--export {
@@ -48,9 +48,9 @@
   --node-labeltext-fill: #{$white-600};
   --edge-stroke: #{$black-300};
   --edge-arrowhead-fill: #{$white-900};
-  --layer-fill: #072030;
+  --layer-fill: #{$slate-600};
   --layer-text: #{$white-0};
-  --node-input-fill: #{rgba(white, 0.4)};
+  --node-input-fill: #{$grey-800};
   --parameter-accent: #{$yellow-300};
-  --parameter-accent-input: #{rgba($color-accent-yellow, 0.6)};
+  --parameter-accent-input: #{$yellow-900};
 }
