@@ -16,13 +16,13 @@ $row-offset-right: 1.6em;
 //-- Colours --//
 
 // Light:
-$row-active-light: darken($color-bg-light-3, 3%);
-$row-selected-light: darken($color-bg-light-3, 8%);
+$row-active-light: $grey-100;
+$row-selected-light: $white-500;
 $filter-indicator-on-light: $blue-300;
 $filter-indicator-off-light: $black-700;
 
 // Dark:
-$row-active-dark: lighten($color-bg-dark-2, 3%);
-$row-selected-dark: lighten($color-bg-dark-2, 8%);
+$row-active-dark: $ocean-700;
+$row-selected-dark: $ocean-500;
 $filter-indicator-on-dark: $blue-300;
-$filter-indicator-off-dark: rgba(white, 0.45);
+$filter-indicator-off-dark: $grey-600;

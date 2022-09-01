@@ -14,9 +14,9 @@
   --color-nodelist-row-selected: #{$row-selected-light};
   --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
   --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
-  --color-nodelist-highlight: #{darken($color-primary, 10%)};
-  --color-nodelist-split-handle: #555;
-  --color-nodelist-split-handle-border: #{rgba(#555, 0.18)};
+  --color-nodelist-highlight: #{$blue-300};
+  --color-nodelist-split-handle: #{$black-700};
+  --color-nodelist-split-handle-border: #{$grey-100};
   --color-nodelist-filter-panel: #{$white-0};
   --color-nodelist-element-panel: #{$white-200};
 }
@@ -28,7 +28,7 @@
   --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
   --color-nodelist-highlight: #{$blue-300};
   --color-nodelist-split-handle: #{$white-0};
-  --color-nodelist-split-handle-border: #{rgba(#fff, 0.15)};
+  --color-nodelist-split-handle-border: #{$grey-900};
   --color-nodelist-filter-panel: #{$slate-500};
   --color-nodelist-element-panel: #{$slate-700};
 }
