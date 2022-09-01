@@ -2,9 +2,9 @@
 
 .kui-theme--light {
   --color-toggle-on: #{$blue-600};
-  --color-toggle-on-bar: #{rgba($color-primary-2, 0.3)}; //(#107DA5, 0.3) => slate-300//This is what we have on Figma
+  --color-toggle-on-bar: #{$ocean-0};
   --color-toggle-off: #{$slate-0};
-  --color-toggle-off-bar: #{rgba($color-bg-dark-5, 0.3)}; //(#2A3B46, 0.3) => slate-700//This is what we have on Figma
+  --color-toggle-off-bar: #{$grey-400};
 }
 
 .kui-theme--dark {
@@ -73,7 +73,7 @@
 }
 
 [data-whatinput='keyboard'] input:focus + .pipeline-toggle-label:before {
-  box-shadow: 0 0 0 3px yellow;
+  box-shadow: 0 0 0 3px $blue-300;
 }
 
 .pipeline-toggle-label--checked:before {

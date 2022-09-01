@@ -15,7 +15,7 @@ $duration-visibility: 0.4s;
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{rgba($color-bg-dark-1, 0.9)};
+  --color-modal-bg: #{$slate-900};
   --color-modal-content: #{$slate-300};
   --color-modal-title: #{$white-600};
   --color-modal-description: #{$black-0};

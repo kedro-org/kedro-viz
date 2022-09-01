@@ -15,12 +15,12 @@
   --color-bg-alt: #{$color-bg-light-alt};
   --color-sidebar-background: #{$white-200};
   --color-global-toolbar-background: #{$white-100};
-  --color-sidebar-border: rgba(0, 0, 0, 0.05);
-  --color-sidebar-shadow: rgba(0, 0, 0, 0.07);
-  --color-run-list-divider: #{$black-800};
+  --color-sidebar-border: #{$white-800};
+  --color-sidebar-shadow: #{$grey-300};
+  --color-run-list-divider: #{$white-600};
   --color-run-list-hover: #{$white-400};
-  --color-base-20: rgba(0, 0, 0, 0.2);
-  --color-black-10: inherit;
+  --color-base-20: #{$grey-300};
+  --color-black-10: #{$white-200};
 }
 
 .kui-theme--dark {
@@ -36,12 +36,12 @@
   --color-bg-alt: #{$white-0};
   --color-sidebar-background: #{$slate-700};
   --color-global-toolbar-background: #{$slate-900};
-  --color-sidebar-border: rgba(0, 0, 0, 0.2);
-  --color-sidebar-shadow: #{$black-600};
-  --color-run-list-divider: #{$black-700};
+  --color-sidebar-border: #{$grey-300};
+  --color-sidebar-shadow: #{$ocean-900};
+  --color-run-list-divider: #{$slate-0};
   --color-run-list-hover: #{$slate-300};
-  --color-base-20: rgba(255, 255, 255, 0.2);
-  --color-black-10: #{$black-800};
+  --color-base-20: #{$grey-800};
+  --color-black-10: #{$slate-700};
 }
 
 .kedro {
