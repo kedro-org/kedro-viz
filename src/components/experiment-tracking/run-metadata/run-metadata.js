@@ -32,15 +32,24 @@ const DotsLoader = ({ key, length }) => (
   </ContentLoader>
 );
 
-const SquareLoader = ({ length }) => {
+const backgroundLightTheme = '#C4CBD1';
+const foregroundLightTheme = '#D1D1D1';
+const backgroundDarkTheme = '#071D28';
+const foregroundDarkTheme = '#20313A';
+
+const SquareLoader = ({ length, theme }) => {
   return (
     <tbody>
       <ContentLoader
         viewBox="0 0 500 300"
         width="500px"
         height="100%"
-        backgroundColor="#ccd1d6"
-        foregroundColor="#ecebeb"
+        backgroundColor={
+          theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+        }
+        foregroundColor={
+          theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+        }
         speed={2}
       >
         <MetadataLoader x={50 * length} />
@@ -116,6 +125,7 @@ const RunMetadata = ({
   setRunMetadataToEdit,
   setShowRunDetailsModal,
   showLoader,
+  theme,
 }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -287,7 +297,7 @@ const RunMetadata = ({
             );
           })}
         </TransitionGroup>
-        {showLoader && <SquareLoader length={runs.length} />}
+        {showLoader && <SquareLoader length={runs.length} theme={theme} />}
 
         {/* {showLoader && <DotsLoader />} */}
       </table>

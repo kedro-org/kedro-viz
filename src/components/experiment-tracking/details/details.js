@@ -111,6 +111,7 @@ const Details = ({
           setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
           showLoader={showLoader}
+          theme={theme}
         />
         <RunDataset
           enableComparisonView={enableComparisonView}
@@ -121,6 +122,7 @@ const Details = ({
           setShowRunPlotsModal={setShowRunPlotsModal}
           showLoader={showLoader}
           trackingData={runTrackingData}
+          theme={theme}
         />
       </div>
     </>

@@ -11,15 +11,23 @@ import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 import '../run-metadata/animation.css';
 
-const Loader = ({ x, y, width, height, length }) => {
-  console.log(length, 'length');
+const backgroundLightTheme = '#C4CBD1';
+const foregroundLightTheme = '#D1D1D1';
+const backgroundDarkTheme = '#071D28';
+const foregroundDarkTheme = '#20313A';
+
+const Loader = ({ x, y, length, theme }) => {
   return (
     <ContentLoader
       viewBox="0 0 100 50"
       width="500px"
       height="100%"
-      backgroundColor="#ccd1d6"
-      foregroundColor="#ecebeb"
+      backgroundColor={
+        theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+      }
+      foregroundColor={
+        theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+      }
       speed={2}
     >
       <rect width="180" height="16" x={x} y={y + length * 10} />
@@ -68,6 +76,7 @@ const RunDataset = ({
   setShowRunPlotsModal,
   showLoader,
   trackingData,
+  theme,
 }) => {
   if (!trackingData) {
     return null;
@@ -128,7 +137,8 @@ const RunDataset = ({
                         enableShowChanges,
                         setRunDatasetToShow,
                         setShowRunPlotsModal,
-                        showLoader
+                        showLoader,
+                        theme
                       );
                     })}
                 </Accordion>
@@ -163,7 +173,8 @@ function buildDatasetDataMarkup(
   enableShowChanges,
   setRunDatasetToShow,
   setShowRunPlotsModal,
-  showLoader
+  showLoader,
+  theme
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
@@ -206,11 +217,12 @@ function buildDatasetDataMarkup(
           </TransitionGroup>
           {showLoader && (
             <Loader
-              width={50}
               height={16}
+              length={datasetValues.length}
+              theme={theme}
+              width={50}
               x={50}
               y={12}
-              length={datasetValues.length}
             />
           )}
         </div>
@@ -282,11 +294,12 @@ function buildDatasetDataMarkup(
         </TransitionGroup>
         {showLoader && (
           <Loader
-            width={150}
             height={16}
+            length={datasetValues.length}
+            theme={theme}
+            width={150}
             x={50}
             y={12}
-            length={datasetValues.length}
           />
         )}
       </div>

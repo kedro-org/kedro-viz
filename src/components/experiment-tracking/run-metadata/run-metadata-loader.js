@@ -3,10 +3,10 @@ import ContentLoader from 'react-content-loader';
 
 import './run-metadata.css';
 
-const backgroundLightTheme = '#ccd1d6';
-const foregroundLightTheme = '#ecebeb';
-const backgroundDarkTheme = '001521';
-const foregroundDarkTheme = '5e6c74';
+const backgroundLightTheme = '#C4CBD1';
+const foregroundLightTheme = '#D1D1D1';
+const backgroundDarkTheme = '#071D28';
+const foregroundDarkTheme = '#20313A';
 
 const TitleLoader = () => (
   <>
