@@ -34,15 +34,27 @@ const Details = ({
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
+  const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
-    if (isRunDataLoading && newRunAdded) {
-      setShowLoader(true);
-    } else {
-      setShowLoader(false);
-    }
-  }, [isRunDataLoading, newRunAdded]);
+    // delay showing loader for 1s so it has enough time to load the data first
+    const setShowLoaderTimer = setTimeout(() => {
+      if (isRunDataLoading && newRunAdded) {
+        setShowLoader(true);
+      } else {
+        setShowLoader(false);
+      }
+
+      if (isRunDataLoading && !enableComparisonView) {
+        setShowSingleRunLoader(true);
+      } else {
+        setShowSingleRunLoader(false);
+      }
+    }, 100);
+
+    return () => clearTimeout(setShowLoaderTimer);
+  }, [isRunDataLoading, newRunAdded, enableComparisonView]);
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -58,7 +70,7 @@ const Details = ({
     return null;
   }
 
-  if (isRunDataLoading && !enableComparisonView) {
+  if (showSingleRunLoader) {
     return (
       <div
         className={classnames('kedro', 'details-mainframe', {

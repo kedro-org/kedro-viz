@@ -16,7 +16,7 @@ import variables from '../../../styles/_exports.module.scss';
 import './run-metadata.css';
 import './animation.css';
 
-const SquareLoader = ({ length, theme }) => {
+const Loader = ({ length, theme }) => {
   return (
     <tbody>
       <tr>
@@ -284,7 +284,7 @@ const RunMetadata = ({
             );
           })}
         </TransitionGroup>
-        {showLoader && <SquareLoader length={runs.length} theme={theme} />}
+        {showLoader && <Loader length={runs.length} theme={theme} />}
       </table>
     </div>
   );
