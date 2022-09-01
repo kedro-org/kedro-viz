@@ -1,12 +1,8 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
+import variables from '../../../styles/_exports.module.scss';
 
 import './run-metadata.css';
-
-const backgroundLightTheme = '#C4CBD1';
-const foregroundLightTheme = '#D1D1D1';
-const backgroundDarkTheme = '#071D28';
-const foregroundDarkTheme = '#20313A';
 
 const TitleLoader = () => (
   <>
@@ -37,10 +33,14 @@ export const RunMetadataLoader = ({ theme }) => (
       width="1000px"
       height="100%"
       backgroundColor={
-        theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+        theme === 'dark'
+          ? variables.backgroundDarkTheme
+          : variables.backgroundLightTheme
       }
       foregroundColor={
-        theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+        theme === 'dark'
+          ? variables.foregroundDarkTheme
+          : variables.foregroundLightTheme
       }
       speed={2}
     >

@@ -6,15 +6,11 @@ import PinArrowIcon from '../../icons/pin-arrow';
 import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import variables from '../../../styles/_exports.module.scss';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 import '../run-metadata/animation.css';
-
-const backgroundLightTheme = '#C4CBD1';
-const foregroundLightTheme = '#D1D1D1';
-const backgroundDarkTheme = '#071D28';
-const foregroundDarkTheme = '#20313A';
 
 const Loader = ({ x, y, length, theme }) => {
   return (
@@ -23,10 +19,14 @@ const Loader = ({ x, y, length, theme }) => {
       width="500px"
       height="100%"
       backgroundColor={
-        theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+        theme === 'dark'
+          ? variables.backgroundDarkTheme
+          : variables.backgroundLightTheme
       }
       foregroundColor={
-        theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+        theme === 'dark'
+          ? variables.foregroundDarkTheme
+          : variables.foregroundLightTheme
       }
       speed={2}
     >

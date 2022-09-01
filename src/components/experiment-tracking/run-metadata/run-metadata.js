@@ -11,31 +11,10 @@ import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { MetadataLoader } from './run-metadata-loader';
+import variables from '../../../styles/_exports.module.scss';
 
 import './run-metadata.css';
 import './animation.css';
-
-const DotsLoader = ({ key, length }) => (
-  <ContentLoader
-    viewBox="0 0 1000 300"
-    width="1000px"
-    height="100%"
-    backgroundColor="#ccd1d6"
-    foregroundColor="#ecebeb"
-    speed={2}
-    key={key}
-  >
-    <rect width="3" height="5" x={100 + length * 10} y="12" />
-    <rect width="3" height="5" x={100 + length * 10 + 5} y="12" />
-    <rect width="3" height="5" x={100 + length * 10 + 10} y="12" />
-    <rect width="3" height="5" x={100 + length * 10 + 15} y="12" />
-  </ContentLoader>
-);
-
-const backgroundLightTheme = '#C4CBD1';
-const foregroundLightTheme = '#D1D1D1';
-const backgroundDarkTheme = '#071D28';
-const foregroundDarkTheme = '#20313A';
 
 const SquareLoader = ({ length, theme }) => {
   return (
@@ -45,10 +24,14 @@ const SquareLoader = ({ length, theme }) => {
         width="500px"
         height="100%"
         backgroundColor={
-          theme === 'dark' ? backgroundDarkTheme : backgroundLightTheme
+          theme === 'dark'
+            ? variables.backgroundDarkTheme
+            : variables.backgroundLightTheme
         }
         foregroundColor={
-          theme === 'dark' ? foregroundDarkTheme : foregroundLightTheme
+          theme === 'dark'
+            ? variables.foregroundDarkTheme
+            : variables.foregroundLightTheme
         }
         speed={2}
       >
