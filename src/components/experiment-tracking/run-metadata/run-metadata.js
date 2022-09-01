@@ -19,24 +19,28 @@ import './animation.css';
 const SquareLoader = ({ length, theme }) => {
   return (
     <tbody>
-      <ContentLoader
-        viewBox="0 0 500 300"
-        width="500px"
-        height="100%"
-        backgroundColor={
-          theme === 'dark'
-            ? variables.backgroundDarkTheme
-            : variables.backgroundLightTheme
-        }
-        foregroundColor={
-          theme === 'dark'
-            ? variables.foregroundDarkTheme
-            : variables.foregroundLightTheme
-        }
-        speed={2}
-      >
-        <MetadataLoader x={50 * length} />
-      </ContentLoader>
+      <tr>
+        <td>
+          <ContentLoader
+            viewBox="0 0 500 300"
+            width="500px"
+            height="100%"
+            backgroundColor={
+              theme === 'dark'
+                ? variables.backgroundDarkTheme
+                : variables.backgroundLightTheme
+            }
+            foregroundColor={
+              theme === 'dark'
+                ? variables.foregroundDarkTheme
+                : variables.foregroundLightTheme
+            }
+            speed={2}
+          >
+            <MetadataLoader x={50 * length} />
+          </ContentLoader>
+        </td>
+      </tr>
     </tbody>
   );
 };
@@ -281,8 +285,6 @@ const RunMetadata = ({
           })}
         </TransitionGroup>
         {showLoader && <SquareLoader length={runs.length} theme={theme} />}
-
-        {/* {showLoader && <DotsLoader />} */}
       </table>
     </div>
   );
