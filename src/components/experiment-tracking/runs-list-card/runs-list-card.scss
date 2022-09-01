@@ -1,7 +1,7 @@
 @import '../../../styles/variables';
 
 .kui-theme--light {
-  --color-run-list-highlight: #{darken($color-primary, 10%)};
+  --color-run-list-highlight: #{$blue-300};
   --color-run-list-bookmark: #{$black-800};
 }
 
