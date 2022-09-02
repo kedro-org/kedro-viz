@@ -4,25 +4,27 @@ import variables from '../../../styles/_exports.module.scss';
 
 import './run-metadata.css';
 
+const GAP = 46;
+
 const TitleLoader = () => (
   <>
     <rect width="180" height="20" x="0" y="12" />
-    <rect width="88" height="16" x="0" y="58" />
-    <rect width="88" height="16" x="0" y="94" />
-    <rect width="88" height="16" x="0" y="130" />
-    <rect width="88" height="16" x="0" y="166" />
-    <rect width="88" height="16" x="0" y="202" />
+    <rect width="88" height="16" x="0" y={12 + GAP} />
+    <rect width="88" height="16" x="0" y={12 + GAP * 2} />
+    <rect width="88" height="16" x="0" y={12 + GAP * 3} />
+    <rect width="88" height="16" x="0" y={12 + GAP * 4} />
+    <rect width="88" height="16" x="0" y={12 + GAP * 5} />
   </>
 );
 
 export const MetadataLoader = ({ x }) => (
   <>
     <rect width="0" height="0" x={x} y="12" />
-    <rect width="30" height="16" x={x} y="58" />
-    <rect width="180" height="16" x={x} y="94" />
-    <rect width="88" height="16" x={x} y="130" />
-    <rect width="50" height="16" x={x} y="166" />
-    <rect width="100" height="16" x={x} y="202" />
+    <rect width="30" height="16" x={x} y={12 + GAP} />
+    <rect width="180" height="16" x={x} y={12 + GAP * 2} />
+    <rect width="88" height="16" x={x} y={12 + GAP * 3} />
+    <rect width="50" height="16" x={x} y={12 + GAP * 4} />
+    <rect width="100" height="16" x={x} y={12 + GAP * 5} />
   </>
 );
 
@@ -45,7 +47,7 @@ export const RunMetadataLoader = ({ theme }) => (
       speed={2}
     >
       <TitleLoader />
-      <MetadataLoader x={350} />
+      <MetadataLoader x={400} />
     </ContentLoader>
   </div>
 );

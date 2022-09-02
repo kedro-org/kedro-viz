@@ -22,8 +22,8 @@ const Loader = ({ length, theme }) => {
       <tr>
         <td>
           <ContentLoader
-            viewBox="0 0 500 300"
-            width="500px"
+            viewBox="0 0 200 300"
+            width="200px"
             height="100%"
             backgroundColor={
               theme === 'dark'
@@ -37,7 +37,7 @@ const Loader = ({ length, theme }) => {
             }
             speed={2}
           >
-            <MetadataLoader x={50 * length} />
+            <MetadataLoader x={45 * length} />
           </ContentLoader>
         </td>
       </tr>

@@ -44,13 +44,13 @@ export const RunDatasetLoader = ({ theme }) => (
       speed={2}
     >
       <TitleLoader y={12} />
-      <DatasetLoader x={350} y={12} />
+      <DatasetLoader x={400} y={12} />
 
       <TitleLoader y={202} />
-      <DatasetLoader x={350} y={202} />
+      <DatasetLoader x={400} y={202} />
 
       <TitleLoader y={402} />
-      <DatasetLoader x={350} y={402} />
+      <DatasetLoader x={400} y={402} />
     </ContentLoader>
   </div>
 );
