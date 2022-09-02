@@ -8,45 +8,6 @@ in the Style Guide docs under 'Theme Colours'
 $font-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
   Liberation Mono, monospace;
 
-//-- Common Colors --//
-
-$color-dark: black; //black-900
-$color-light: white; //white-0
-$color-accent-blue: #00bcff; //blue-300
-$color-primary: $color-accent-blue; //blue-300
-$color-primary-2: #107da5; //blue-600
-$color-link: rgba($color-primary, 0.85);
-$color-button: #003464; //blue-900
-$color-button-hovered: #005d92;
-$color-button-disabled: rgba($color-light, 0.3); //black-400
-
-//-- Theme colours as SCSS variables --//
-
-// Light:
-$color-text-light: rgba(black, 0.85); //black-800
-$color-text-light-2: rgba(black, 0.55); //black-700
-$color-text-light-alt: rgba(white, 0.85); //white-600
-$color-accent-purple: #a000bc; //purple-300
-$color-bg-light-1: #ffffff; //white-0
-$color-bg-light-2: #f8f9fa; //white-100
-$color-bg-light-3: #f0f1f3; //white-200
-$color-bg-light-4: #e6e8eb; //white-400
-$color-bg-light-5: #dadee2; //white-600
-$color-bg-dev-light-1: #ccd1d6; //white-800
-$color-bg-light-alt: #242525; //vidi kade se koristi, ja nema ovaa boja
-
-// Dark:
-$color-text-dark: rgba(white, 0.85); //white-600
-$color-text-dark-2: rgba(white, 0.55); //black-0
-$color-text-dark-alt: rgba(black, 0.85); //black-800
-$color-accent-yellow: #ffbc00; //yellow-300
-$color-bg-dark-1: #001521; //slate-900
-$color-bg-dark-2: #081c28; //slate-700
-$color-bg-dark-3: #122531; //slate-500
-$color-bg-dark-4: #1d303b; //slate-300
-$color-bg-dark-5: #2a3b46; //slate-0
-$color-bg-dark-alt: white;
-
 //-- Layout --//
 
 $sidebar-padding: 1.8em;
@@ -75,7 +36,7 @@ $run-list-controls-height: 95px;
 $run-width: 375px;
 $run-width-comparison-view: 310px;
 
-// Color cleanup and refactor
+//-- Theme colours as SCSS variables --//
 
 // -- Primary -- //
 $black-0: #989898;
@@ -135,7 +96,6 @@ $ocean-800: #021820;
 $ocean-900: #021218;
 
 // -- Accents -- //
-
 $blue-0: #00e3ff;
 $blue-300: #00bcff;
 $blue-600: #0084b2;
