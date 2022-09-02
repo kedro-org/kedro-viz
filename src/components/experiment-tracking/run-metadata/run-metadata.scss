@@ -39,7 +39,7 @@
 }
 
 .details-metadata__buttons--selected-pin svg {
-  fill: #{$color-accent-blue};
+  fill: $blue-300;
 }
 
 // a single run when it's not in comparison mode
@@ -182,7 +182,7 @@
 }
 
 .hidden-menu {
-  background: #f1f1f1;
+  background: $white-200;
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -199,11 +199,11 @@
 }
 
 .hidden-menu__item {
-  color: rgba(0, 0, 0, 0.85);
+  color: $black-800;
   cursor: pointer;
   padding: 6px 0 6px 20px;
 
   &:hover {
-    background: #fff;
+    background: $white-0;
   }
 }

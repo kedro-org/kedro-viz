@@ -16,7 +16,7 @@ Please follow the established format:
 
 - Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
 - Fix the export functionality of experiment tracking data. (#1033)
-
+- Color cleanup and refactor. (#1007)
 # Release 5.0.1
 
 ## Bug fixes and other changes

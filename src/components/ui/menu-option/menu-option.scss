@@ -6,15 +6,15 @@
 $menu-item-height: 40px;
 
 .kui-theme--light {
-  --menu-option-bg-hover: #{$color-bg-light-5};
-  --menu-option-divider: #{$color-bg-dev-light-1};
-  --menu-option-text-color: #{$color-text-dark-alt};
+  --menu-option-bg-hover: #{$white-600};
+  --menu-option-divider: #{$white-800};
+  --menu-option-text-color: #{$black-800};
 }
 
 .kui-theme--dark {
-  --menu-option-bg-hover: #{$color-bg-dark-3};
-  --menu-option-divider: #21333d;
-  --menu-option-text-color: #{$color-text-light-alt};
+  --menu-option-bg-hover: #{$slate-500};
+  --menu-option-divider: #{$slate-200};
+  --menu-option-text-color: #{$white-600};
 }
 
 .menu-option {

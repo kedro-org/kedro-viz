@@ -36,7 +36,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 4px $color-link inset;
+    box-shadow: 0 0 0 4px $blue-300 inset;
 
     [data-whatintent='mouse'] & {
       box-shadow: none;

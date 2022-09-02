@@ -2,17 +2,17 @@
 @import '../../styles/extends';
 
 .kui-theme--light {
-  --color-bg-plot: #{$color-bg-light-4};
-  --color-button-plot: #{$color-button};
-  --color-button-plot-hovered: #{$color-button-hovered};
-  --color-button-text: #{$color-light};
+  --color-bg-plot: #{$white-400};
+  --color-button-plot: #{$blue-900};
+  --color-button-plot-hovered: #{$blue-600};
+  --color-button-text: #{$white-0};
 }
 
 .kui-theme--dark {
-  --color-bg-plot: #{$color-bg-dark-2};
-  --color-button-plot: #{$color-button};
-  --color-button-plot-hovered: #{$color-button-hovered};
-  --color-button-text: #{$color-light};
+  --color-bg-plot: #{$slate-700};
+  --color-button-plot: #{$blue-900};
+  --color-button-plot-hovered: #{$blue-600};
+  --color-button-text: #{$white-0};
 }
 
 .pipeline-metadata-modal {

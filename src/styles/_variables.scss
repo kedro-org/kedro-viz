@@ -8,45 +8,6 @@ in the Style Guide docs under 'Theme Colours'
 $font-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
   Liberation Mono, monospace;
 
-//-- Common Colors --//
-
-$color-dark: black;
-$color-light: white;
-$color-accent-blue: #00bcff;
-$color-primary: $color-accent-blue;
-$color-primary-2: #107da5;
-$color-link: rgba($color-primary, 0.85);
-$color-button: #003464;
-$color-button-hovered: #005d92;
-$color-button-disabled: rgba($color-light, 0.3);
-
-//-- Theme colours as SCSS variables --//
-
-// Light:
-$color-text-light: rgba(black, 0.85);
-$color-text-light-2: rgba(black, 0.55);
-$color-text-light-alt: rgba(white, 0.85);
-$color-accent-purple: #a000bc;
-$color-bg-light-1: #ffffff;
-$color-bg-light-2: #f8f9fa;
-$color-bg-light-3: #f0f1f3;
-$color-bg-light-4: #e6e8eb;
-$color-bg-light-5: #dadee2;
-$color-bg-dev-light-1: #ccd1d6;
-$color-bg-light-alt: #242525;
-
-// Dark:
-$color-text-dark: rgba(white, 0.85);
-$color-text-dark-2: rgba(white, 0.55);
-$color-text-dark-alt: rgba(black, 0.85);
-$color-accent-yellow: #ffbc00;
-$color-bg-dark-1: #001521;
-$color-bg-dark-2: #081c28;
-$color-bg-dark-3: #122531;
-$color-bg-dark-4: #1d303b;
-$color-bg-dark-5: #2a3b46;
-$color-bg-dark-alt: white;
-
 //-- Layout --//
 
 $sidebar-padding: 1.8em;
@@ -71,5 +32,86 @@ $global-toolbar-width: 80px;
 
 $run-list-controls-height: 95px;
 
+//micro-animation
 $run-width: 375px;
 $run-width-comparison-view: 310px;
+
+//-- Theme colours as SCSS variables --//
+
+// -- Primary -- //
+$black-0: #989898;
+$black-100: #868686;
+$black-200: #747474;
+$black-300: #636363;
+$black-400: #525252;
+$black-500: #424242;
+$black-600: #323232;
+$black-700: #242424;
+$black-800: #151515;
+$black-900: #000000;
+
+$slate-0: #2a3b46;
+$slate-100: #253742;
+$slate-200: #21333e;
+$slate-300: #1c2e3a;
+$slate-400: #172a36;
+$slate-500: #132631;
+$slate-600: #0e222d;
+$slate-700: #091d29;
+$slate-800: #051925;
+$slate-900: #001521;
+
+$white-0: #ffffff;
+$white-100: #f9f9fa;
+$white-200: #f2f3f4;
+$white-300: #ecedef;
+$white-400: #e6e7e9;
+$white-500: #dfe2e4;
+$white-600: #d9dcde;
+$white-700: #d3d6d9;
+$white-800: #ccd0d3;
+$white-900: #c6cace;
+
+// -- Secondary -- //
+$grey-0: #fdfdfd;
+$grey-100: #eaebed;
+$grey-200: #d5d8da;
+$grey-300: #c0c5c9;
+$grey-400: #abb2b7;
+$grey-500: #97a0a6;
+$grey-600: #848e95;
+$grey-700: #717d84;
+$grey-800: #5e6c74;
+$grey-900: #4c5b64;
+
+$ocean-0: #acccda;
+$ocean-100: #97bac9;
+$ocean-200: #82a8b8;
+$ocean-300: #598395;
+$ocean-400: #2f5f73;
+$ocean-500: #063b51;
+$ocean-600: #052f41;
+$ocean-700: #042331;
+$ocean-800: #021820;
+$ocean-900: #021218;
+
+// -- Accents -- //
+$blue-0: #00e3ff;
+$blue-300: #00bcff;
+$blue-600: #0084b2;
+$blue-900: #005c7d;
+
+$green-0: #3bff95;
+$green-300: #31e27b;
+$green-600: #229e56;
+$green-900: #186f3c;
+
+$purple-0: #da11ff;
+$purple-300: #a000bc;
+$purple-600: #700084;
+$purple-900: #4e005c;
+
+$yellow-0: #ffe300;
+$yellow-300: #ffbc00;
+$yellow-600: #b28400;
+$yellow-900: #7d5c00;

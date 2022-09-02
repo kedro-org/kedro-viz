@@ -8,17 +8,17 @@ $size-content-maxwidth: 400px;
 $duration-visibility: 0.4s;
 
 .kui-theme--light {
-  --color-modal-bg: #{rgba($color-dark, 0.55)};
-  --color-modal-content: #{$color-bg-light-2};
-  --color-modal-title: #{rgba($color-dark, 0.85)};
-  --color-modal-description: #{rgba($color-dark, 0.55)};
+  --color-modal-bg: #{$black-700};
+  --color-modal-content: #{$white-100};
+  --color-modal-title: #{$black-800};
+  --color-modal-description: #{$black-700};
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{rgba($color-bg-dark-1, 0.9)};
-  --color-modal-content: #{$color-bg-dark-4};
-  --color-modal-title: #{rgba($color-light, 0.85)};
-  --color-modal-description: #{rgba($color-light, 0.55)};
+  --color-modal-bg: #{$slate-900};
+  --color-modal-content: #{$slate-300};
+  --color-modal-title: #{$white-600};
+  --color-modal-description: #{$black-0};
 }
 
 /** Implementation **/

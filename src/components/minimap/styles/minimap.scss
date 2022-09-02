@@ -26,7 +26,7 @@
 
 .pipeline-minimap__viewport {
   cursor: move;
-  fill: rgba(0, 0, 0, 0); /* Solid for pointer events */
+  fill: transparent; /* Solid for pointer events */
   stroke-width: 1px;
   stroke: var(--minimap-viewport-stroke);
 }
