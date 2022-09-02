@@ -111,7 +111,6 @@ def create_feature_importance(data: pd.DataFrame):
     feature_importance_df = pd.DataFrame(
         {"Features": feature_name, "Score": feature_score}
     )
-    print(feature_importance_df)
     random_number = random.randint(0, 100) / 200 + random.randint(0, 100) / 200
     feature_importance_df["Score"] = feature_importance_df["Score"].apply(
         lambda x: (x + random_number) % 1
