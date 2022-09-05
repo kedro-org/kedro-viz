@@ -11,7 +11,7 @@ import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { MetadataLoader } from './run-metadata-loader';
-import variables from '../../../styles/_exports.module.scss';
+import { experimentTrackingLazyLoadingColours } from '../../../config';
 
 import './run-metadata.css';
 import './animation.css';
@@ -29,13 +29,13 @@ const Loader = ({ length, theme }) => {
             height="100%"
             backgroundColor={
               theme === 'dark'
-                ? variables.backgroundDarkTheme
-                : variables.backgroundLightTheme
+                ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
+                : experimentTrackingLazyLoadingColours.backgroundLightTheme
             }
             foregroundColor={
               theme === 'dark'
-                ? variables.foregroundDarkTheme
-                : variables.foregroundLightTheme
+                ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
+                : experimentTrackingLazyLoadingColours.foregroundLightTheme
             }
             speed={2}
           >

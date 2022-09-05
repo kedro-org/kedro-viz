@@ -1,6 +1,6 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
-import variables from '../../../styles/_exports.module.scss';
+import { experimentTrackingLazyLoadingColours } from '../../../config';
 
 import './run-dataset.css';
 
@@ -33,13 +33,13 @@ export const RunDatasetLoader = ({ theme }) => (
       height="100%"
       backgroundColor={
         theme === 'dark'
-          ? variables.backgroundDarkTheme
-          : variables.backgroundLightTheme
+          ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
+          : experimentTrackingLazyLoadingColours.backgroundLightTheme
       }
       foregroundColor={
         theme === 'dark'
-          ? variables.foregroundDarkTheme
-          : variables.foregroundLightTheme
+          ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
+          : experimentTrackingLazyLoadingColours.foregroundLightTheme
       }
       speed={2}
     >

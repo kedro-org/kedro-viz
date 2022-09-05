@@ -23,6 +23,13 @@ export const codeSidebarWidth = {
   closed: 0,
 };
 
+export const experimentTrackingLazyLoadingColours = {
+  backgroundLightTheme: '#c4cbd1',
+  foregroundLightTheme: '#d1d1d1',
+  backgroundDarkTheme: '#071d28',
+  foregroundDarkTheme: '#20313a',
+};
+
 export const chartMinWidthScale = 0.25;
 
 // Determine the number of nodes and edges in pipeline to trigger size warning
