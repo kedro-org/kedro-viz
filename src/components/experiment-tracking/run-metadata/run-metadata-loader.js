@@ -4,7 +4,7 @@ import { experimentTrackingLazyLoadingColours } from '../../../config';
 
 import './run-metadata.css';
 
-const GAP = 46;
+const GAP = 36;
 
 const TitleLoader = () => (
   <>
@@ -14,6 +14,7 @@ const TitleLoader = () => (
     <rect width="88" height="16" x="0" y={12 + GAP * 3} />
     <rect width="88" height="16" x="0" y={12 + GAP * 4} />
     <rect width="88" height="16" x="0" y={12 + GAP * 5} />
+    <rect width="88" height="16" x="0" y={12 + GAP * 6} />
   </>
 );
 
@@ -25,6 +26,7 @@ export const MetadataLoader = ({ x }) => (
     <rect width="88" height="16" x={x} y={12 + GAP * 3} />
     <rect width="50" height="16" x={x} y={12 + GAP * 4} />
     <rect width="100" height="16" x={x} y={12 + GAP * 5} />
+    <rect width="150" height="16" x={x} y={12 + GAP * 6} />
   </>
 );
 
@@ -47,7 +49,7 @@ export const RunMetadataLoader = ({ theme }) => (
       speed={2}
     >
       <TitleLoader />
-      <MetadataLoader x={400} />
+      <MetadataLoader x={380} />
     </ContentLoader>
   </div>
 );
