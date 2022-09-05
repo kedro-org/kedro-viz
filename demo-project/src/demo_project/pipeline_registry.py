@@ -2,7 +2,6 @@
 from typing import Dict
 
 from kedro.pipeline import Pipeline
-from kedro.pipeline.modular_pipeline import pipeline
 
 from demo_project.pipelines import data_ingestion as di
 from demo_project.pipelines import feature_engineering as fe

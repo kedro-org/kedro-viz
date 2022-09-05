@@ -6,11 +6,11 @@ generated using Kedro 0.18.1
 from kedro.pipeline import Pipeline, node, pipeline
 
 from demo_project.pipelines.reporting.nodes import (
+    create_feature_importance_plot,
     create_matplotlib_chart,
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
-    create_feature_importance_plot,
 )
 
 

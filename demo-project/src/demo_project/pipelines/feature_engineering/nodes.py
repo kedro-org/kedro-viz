@@ -3,10 +3,10 @@ This is a boilerplate pipeline 'feature_engineering'
 generated using Kedro 0.18.1
 """
 
+import random
 from functools import reduce
 from typing import Dict, List
 
-import random
 import numpy
 import pandas as pd
 
@@ -102,17 +102,14 @@ def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:
     return merged_dfs
 
 
-def create_feature_importance(data: pd.DataFrame):
+def create_feature_importance(data: pd.DataFrame) -> pd.DataFrame:
     feature_name = []
     feature_score = []
     for i in range(0, 15):
         feature_name.append("feature_" + str(i))
         feature_score.append(random.randint(0, 999) / 1000)
     feature_importance_df = pd.DataFrame(
-        {"Features": feature_name, "Score": feature_score}
+        {"Feature": feature_name, "Score": feature_score}
     )
-    random_number = random.randint(0, 100) / 200 + random.randint(0, 100) / 200
-    feature_importance_df["Score"] = feature_importance_df["Score"].apply(
-        lambda x: (x + random_number) % 1
-    )
+
     return feature_importance_df

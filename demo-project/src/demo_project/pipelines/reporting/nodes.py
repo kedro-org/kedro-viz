@@ -3,12 +3,12 @@ This is a boilerplate pipeline 'reporting'
 generated using Kedro 0.18.1
 """
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
-import seaborn as sn
 import PIL
 import plotly.express as px
+import seaborn as sn
 from plotly import graph_objects as go
-import random
 
 from .image_utils import DrawTable
 
@@ -58,9 +58,11 @@ def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:
         BaseFigure: Plotly object which is serialised as JSON for rendering
     """
     price_data_df = model_input_data[["price", "engine_type"]]
-    random_limit = random.randint(0, random.randint(5, 9)) * 1000
-    price_data_df["price"] = price_data_df["price"].apply(
-        lambda x: (x + random.randint(0, random_limit) * random.randint(0, 1))
+    p1 = np.random.randint(100, 300) / 1000
+    p2 = np.random.randint(100, 400) / 1000
+    p3 = 1 - (p1 + p2)
+    price_data_df["engine_type"] = np.random.choice(
+        ["Quantum", "Plasma", "Nuclear"], len(price_data_df), p=[p1, p2, p3]
     )
     plotly_object = px.histogram(
         data_frame=price_data_df, x="price", log_x=True, color="engine_type"
@@ -95,35 +97,27 @@ def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:
     return pil_table.image
 
 
-def create_feature_importance_plot(features: pd.DataFrame):
+def create_feature_importance_plot(features: pd.DataFrame) -> go.Figure:
     sorted_features = features.sort_values(by="Score", ascending=True)
     plotly_object = px.bar(
         sorted_features,
         x="Score",
-        y="Features",
+        y="Feature",
         color="Score",
         color_continuous_scale="RdBu",
     )
     return plotly_object
 
 
-def create_matplotlib_chart(companies: pd.DataFrame):
-    random_actuals = []
-    random_predicted = []
-    for i in range(0, 11):
-        actual = random.randint(0, 1)
-        predicted = random.randint(0, 1)
-        random_actuals.append(actual)
-        random_predicted.append(predicted)
+def create_matplotlib_chart(companies: pd.DataFrame) -> plt:
+    random_actuals = np.random.randint(2, size=11)
+    random_predicted = np.random.randint(2, size=11)
 
     data = {"y_Actual": random_actuals, "y_Predicted": random_predicted}
     plt.style.use("dark_background")
     df = pd.DataFrame(data, columns=["y_Actual", "y_Predicted"])
     confusion_matrix = pd.crosstab(
-        df["y_Actual"],
-        df["y_Predicted"],
-        rownames=["Actual"],
-        colnames=["Predicted"]
+        df["y_Actual"], df["y_Predicted"], rownames=["Actual"], colnames=["Predicted"]
     )
     sn.heatmap(confusion_matrix, annot=True)
     return plt

@@ -9,9 +9,9 @@ from kedro.pipeline.modular_pipeline import pipeline
 
 from .nodes import (
     create_derived_features,
+    create_feature_importance,
     create_static_features,
     joiner,
-    create_feature_importance,
 )
 
 
