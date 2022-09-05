@@ -37,7 +37,7 @@ const Loader = ({ length, theme }) => {
             }
             speed={2}
           >
-            <MetadataLoader x={45 * length} />
+            <MetadataLoader x={25 * length * length} />
           </ContentLoader>
         </td>
       </tr>

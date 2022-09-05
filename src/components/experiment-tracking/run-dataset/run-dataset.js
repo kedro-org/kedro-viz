@@ -30,7 +30,7 @@ const Loader = ({ x, y, length, theme }) => {
       }
       speed={2}
     >
-      <rect width="180" height="16" x={x} y={y + length * 2} />
+      <rect width="150" height="16" x={x} y={y + length * 2} />
     </ContentLoader>
   );
 };
@@ -216,7 +216,7 @@ function buildDatasetDataMarkup(
             })}
           </TransitionGroup>
           {showLoader && (
-            <Loader length={datasetValues.length} theme={theme} x={30} y={12} />
+            <Loader length={datasetValues.length} theme={theme} x={20} y={12} />
           )}
         </div>
       ) : null}
@@ -286,7 +286,7 @@ function buildDatasetDataMarkup(
           })}
         </TransitionGroup>
         {showLoader && (
-          <Loader length={datasetValues.length} theme={theme} x={30} y={12} />
+          <Loader length={datasetValues.length} theme={theme} x={20} y={12} />
         )}
       </div>
     </React.Fragment>

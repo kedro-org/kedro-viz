@@ -8,8 +8,8 @@ const GAP = 36;
 
 const TitleLoader = ({ y }) => (
   <>
-    <rect width="10" height="10" x="10" y={y + 3} />
-    <rect width="180" height="20" x="40" y={y} />
+    <rect width="10" height="10" x="0" y={y + 3} />
+    <rect width="180" height="20" x="30" y={y} />
     <rect width="50" height="16" x="0" y={y + GAP} />
     <rect width="100" height="16" x="0" y={y + GAP * 2} />
   </>
