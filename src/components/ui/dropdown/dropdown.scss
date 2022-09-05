@@ -16,17 +16,15 @@ $menu-group-padding: 4px;
 $menu-item-padding: 12px;
 
 .kui-theme--light {
-  --dropdown-shadow: #{rgba($color-dark, 0.03)};
-  --dropdown-label-bg: #{$color-bg-light-1};
-  --dropdown-border: #{rgba($color-dark, 0.12)};
-  --dropdown-options-bg: #{$color-bg-light-3};
+  --dropdown-shadow: #{$white-300};
+  --dropdown-label-bg: #{$white-0};
+  --dropdown-options-bg: #{$white-200};
 }
 
 .kui-theme--dark {
-  --dropdown-shadow: #{rgba($color-dark, 0.1)};
-  --dropdown-label-bg: #{$color-bg-dark-3};
-  --dropdown-border: #{color-dark};
-  --dropdown-options-bg: #{$color-bg-dark-2};
+  --dropdown-shadow: #{$slate-200};
+  --dropdown-label-bg: #{$slate-500};
+  --dropdown-options-bg: #{$slate-700};
 }
 
 .dropdown {
@@ -78,7 +76,7 @@ $menu-item-padding: 12px;
   &:focus {
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 4px $color-primary inset;
+      box-shadow: 0 0 0 4px $blue-300 inset;
 
       [data-whatinput='mouse'] & {
         box-shadow: none;
@@ -109,7 +107,7 @@ $menu-item-padding: 12px;
   z-index: 2; // fix closing transition animation bug
   background: var(--dropdown-options-bg);
   border-top: none;
-  box-shadow: 0 0 2px rgba(black, 0.1);
+  box-shadow: 0 0 2px $black-800;
   position: absolute;
   visibility: hidden;
   width: 100%;

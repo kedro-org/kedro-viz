@@ -68,7 +68,7 @@
   // Handle has keyboard focus, show outline.
   &:focus {
     z-index: 1;
-    outline: 3px solid $color-link;
+    outline: 3px solid $blue-300;
   }
 
   // Handle is hovered, highlight border.
@@ -83,7 +83,7 @@
 
   // Handle is active resizing, highlight border.
   .pipeline-nodelist__split--resizing & {
-    border-top: 1px solid $color-link;
+    border-top: 1px solid $blue-300;
   }
 }
 

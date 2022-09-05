@@ -5,27 +5,27 @@
  */
 
 .kui-theme--light {
-  --node-icon-fill: #{$color-text-light};
-  --node-fill-default: #{$color-bg-light-3};
-  --node-stroke-default: #c6cace;
-  --node-fill-active: #c6e6fb;
-  --node-stroke-active: #b2cada;
-  --node-fill-selected: #aad8ff;
-  --node-stroke-selected: #{$color-primary};
-  --node-labeltext-fill: #{$color-text-light};
-  --edge-stroke: #888;
-  --edge-arrowhead-fill: #{$color-bg-dark-5};
-  --layer-fill: #d1d7dd;
-  --layer-text: black;
-  --node-input-fill: #{rgba(black, 0.4)};
-  --parameter-accent: #{$color-accent-purple};
-  --parameter-accent-input: #{rgba($color-accent-purple, 0.6)};
+  --node-icon-fill: #{$black-800};
+  --node-fill-default: #{$white-200};
+  --node-stroke-default: #{$white-900};
+  --node-fill-active: #{$ocean-0};
+  --node-stroke-active: #{$ocean-100};
+  --node-fill-selected: #{$ocean-0};
+  --node-stroke-selected: #{$blue-300};
+  --node-labeltext-fill: #{$black-800};
+  --edge-stroke: #{$black-100};
+  --edge-arrowhead-fill: #{$slate-0};
+  --layer-fill: #{$grey-200};
+  --layer-text: #{$black-900};
+  --node-input-fill: #{$black-200};
+  --parameter-accent: #{$purple-300};
+  --parameter-accent-input: #{$purple-300};
 
   @mixin export {
-    --node-fill-default: #{$color-bg-light-3};
-    --node-stroke-default: #6b6a6b;
-    --edge-stroke: #686768;
-    --edge-arrowhead-fill: #686768;
+    --node-fill-default: #{$white-200};
+    --node-stroke-default: #{$white-900};
+    --edge-stroke: $white-900;
+    --edge-arrowhead-fill: $white-900;
   }
 
   &.pipeline-graph--export {
@@ -38,19 +38,19 @@
 }
 
 .kui-theme--dark {
-  --node-icon-fill: #{$color-text-dark};
-  --node-fill-default: #{$color-bg-dark-5};
-  --node-stroke-default: #354854;
-  --node-fill-active: #124066;
-  --node-stroke-active: #234f73;
-  --node-fill-selected: #004d8c;
-  --node-stroke-selected: #{$color-primary};
-  --node-labeltext-fill: #{$color-text-dark};
-  --edge-stroke: #666;
-  --edge-arrowhead-fill: #cacaca;
-  --layer-fill: #072030;
-  --layer-text: white;
-  --node-input-fill: #{rgba(white, 0.4)};
-  --parameter-accent: #{$color-accent-yellow};
-  --parameter-accent-input: #{rgba($color-accent-yellow, 0.6)};
+  --node-icon-fill: #{$white-600};
+  --node-fill-default: #{$slate-0};
+  --node-stroke-default: #{$slate-200};
+  --node-fill-active: #{$blue-900};
+  --node-stroke-active: #{$blue-600};
+  --node-fill-selected: #{$blue-900};
+  --node-stroke-selected: #{$blue-300};
+  --node-labeltext-fill: #{$white-600};
+  --edge-stroke: #{$black-300};
+  --edge-arrowhead-fill: #{$white-900};
+  --layer-fill: #{$slate-600};
+  --layer-text: #{$white-0};
+  --node-input-fill: #{$grey-800};
+  --parameter-accent: #{$yellow-300};
+  --parameter-accent-input: #{$yellow-900};
 }

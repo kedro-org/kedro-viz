@@ -1,26 +1,5 @@
 @import '../../../../styles/variables';
 
-%shadow-dark {
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-%shadow-dark--hover {
-  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
-    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.24),
-    0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-%shadow-light--hover {
-  box-shadow: -2px 0 4px 0 rgba(0, 0, 0, 0.08), 2px 0 4px 0 rgba(0, 0, 0, 0.08),
-    0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 2px 0 rgba(0, 0, 0, 0.12);
-}
-
-%shadow-light--active {
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.08);
-}
-
 $default-input-width: 320px;
 $duration-input-transition: 0.3s;
 $height-tiny: 1px;
@@ -40,20 +19,8 @@ $padding-top-bottom: 7px;
   /** padding top can be overriden if label is generated (see below) **/
   padding: $padding-top-bottom $padding-left-right;
 
-  border: $height-tiny solid rgba(0, 0, 0, 0.12);
+  border: $height-tiny solid $slate-0;
   box-sizing: border-box;
-
-  .search-theme--dark & {
-    @extend %shadow-dark;
-
-    &:hover {
-      @extend %shadow-dark--hover;
-    }
-  }
-
-  &:hover:not([disabled]) {
-    @extend %shadow-light--hover;
-  }
 
   &--disabled {
     opacity: 0.5;
@@ -63,8 +30,6 @@ $padding-top-bottom: 7px;
 }
 
 .search-input--focused {
-  @extend %shadow-light--active;
-
   &.search-theme--light {
     outline: 4px solid;
   }
@@ -108,7 +73,7 @@ $padding-top-bottom: 7px;
 }
 
 .search-theme--dark .search-input__field {
-  color: $color-text-dark;
+  color: $white-600;
 }
 
 .search-input__label {
