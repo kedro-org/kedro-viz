@@ -17,6 +17,8 @@ import './run-metadata.css';
 import './animation.css';
 
 const Loader = ({ length, theme }) => {
+  const x = length > 1 ? 75 : 0;
+
   return (
     <tbody>
       <tr>
@@ -37,7 +39,7 @@ const Loader = ({ length, theme }) => {
             }
             speed={2}
           >
-            <MetadataLoader x={25 * length * length} />
+            <MetadataLoader x={x} />
           </ContentLoader>
         </td>
       </tr>

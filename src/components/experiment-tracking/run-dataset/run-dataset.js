@@ -216,7 +216,7 @@ function buildDatasetDataMarkup(
             })}
           </TransitionGroup>
           {showLoader && (
-            <Loader length={datasetValues.length} theme={theme} x={20} y={12} />
+            <Loader length={datasetValues.length} theme={theme} x={0} y={12} />
           )}
         </div>
       ) : null}
@@ -286,7 +286,7 @@ function buildDatasetDataMarkup(
           })}
         </TransitionGroup>
         {showLoader && (
-          <Loader length={datasetValues.length} theme={theme} x={20} y={12} />
+          <Loader length={datasetValues.length} theme={theme} x={0} y={12} />
         )}
       </div>
     </React.Fragment>
