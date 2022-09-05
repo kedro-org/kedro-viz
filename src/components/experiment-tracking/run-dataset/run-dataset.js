@@ -15,8 +15,8 @@ import '../run-metadata/animation.css';
 const Loader = ({ x, y, length, theme }) => {
   return (
     <ContentLoader
-      viewBox="0 0 100 50"
-      width="500px"
+      viewBox="0 10 150 25"
+      width="200px"
       height="100%"
       backgroundColor={
         theme === 'dark'
@@ -30,7 +30,7 @@ const Loader = ({ x, y, length, theme }) => {
       }
       speed={2}
     >
-      <rect width="180" height="16" x={x} y={y + length * 10} />
+      <rect width="180" height="16" x={x} y={y + length * 2} />
     </ContentLoader>
   );
 };
@@ -216,14 +216,7 @@ function buildDatasetDataMarkup(
             })}
           </TransitionGroup>
           {showLoader && (
-            <Loader
-              height={16}
-              length={datasetValues.length}
-              theme={theme}
-              width={50}
-              x={50}
-              y={12}
-            />
+            <Loader length={datasetValues.length} theme={theme} x={30} y={12} />
           )}
         </div>
       ) : null}
@@ -293,14 +286,7 @@ function buildDatasetDataMarkup(
           })}
         </TransitionGroup>
         {showLoader && (
-          <Loader
-            height={16}
-            length={datasetValues.length}
-            theme={theme}
-            width={150}
-            x={50}
-            y={12}
-          />
+          <Loader length={datasetValues.length} theme={theme} x={30} y={12} />
         )}
       </div>
     </React.Fragment>
