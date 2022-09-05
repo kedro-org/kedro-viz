@@ -19,11 +19,7 @@
   }
 }
 
-@include transparentColour(
-  '--layer-bg-transparent',
-  $color-bg-dev-light-1,
-  $color-bg-dark-1
-);
+@include transparentColour('--layer-bg-transparent', $white-800, $slate-900);
 
 .pipeline-flowchart__layer-names {
   position: absolute;

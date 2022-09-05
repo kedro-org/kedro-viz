@@ -42,7 +42,7 @@
   .search-input--focused {
     position: relative;
     z-index: 1;
-    outline-color: $color-primary;
+    outline-color: $blue-300;
   }
 
   .search-input__field::placeholder {
@@ -88,7 +88,7 @@
   }
 
   .search-bar .search-input__line:not([data-value='']):before {
-    background-color: $color-primary;
+    background-color: $blue-300;
     opacity: 1;
   }
 

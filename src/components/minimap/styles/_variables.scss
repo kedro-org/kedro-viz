@@ -5,21 +5,21 @@
  */
 
 .kui-theme--light {
-  --minimap-bg: #a6aeb6;
-  --minimap-shadow: rgba(255, 255, 255, 0.5);
-  --minimap-viewport-stroke: #d3dee3;
-  --minimap-node-fill-default: #{$color-bg-light-3};
-  --minimap-node-fill-active: white;
-  --minimap-node-fill-selected: #81f4ff;
-  --minimap-node-fill-faded: #c3c8ce;
+  --minimap-bg: #{$grey-400};
+  --minimap-shadow: #{$white-400};
+  --minimap-viewport-stroke: #{$white-600};
+  --minimap-node-fill-default: #{$white-200};
+  --minimap-node-fill-active: #{$white-0};
+  --minimap-node-fill-selected: #{$blue-0};
+  --minimap-node-fill-faded: #{$white-900};
 }
 
 .kui-theme--dark {
-  --minimap-bg: #051116;
-  --minimap-shadow: rgba(255, 255, 255, 0.05);
-  --minimap-viewport-stroke: #8e8e90;
-  --minimap-node-fill-default: #{$color-bg-dark-5};
-  --minimap-node-fill-active: #293b46;
-  --minimap-node-fill-selected: #{$color-primary};
-  --minimap-node-fill-faded: #0e1b24;
+  --minimap-bg: #{$slate-800};
+  --minimap-shadow: #{$slate-100};
+  --minimap-viewport-stroke: #{$black-0};
+  --minimap-node-fill-default: #{$slate-0};
+  --minimap-node-fill-active: #{$slate-0};
+  --minimap-node-fill-selected: #{$blue-300};
+  --minimap-node-fill-faded: #{$slate-700};
 }

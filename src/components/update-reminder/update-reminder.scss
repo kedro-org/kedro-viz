@@ -1,19 +1,17 @@
 @import '../../styles/variables';
 
 .kui-theme--light {
-  --color-detail-bg: #{$color-bg-light-4};
-  --color-header-bg: #{$color-accent-yellow};
-  --color-link: #076e9c;
-  --color-subtext: #{$color-text-light-2};
-  --color-text: #{$color-bg-light-2};
+  --color-detail-bg: #{$white-400};
+  --color-header-bg: #{$yellow-300};
+  --color-link: #{$blue-600};
+  --color-subtext: #{$black-700};
 }
 
 .kui-theme--dark {
-  --color-detail-bg: #{$color-bg-dark-4};
-  --color-header-bg: #{$color-accent-yellow};
-  --color-link: #{$color-accent-blue};
-  --color-subtext: #{$color-text-dark-2};
-  --color-text: #{$color-bg-dark-2};
+  --color-detail-bg: #{$slate-300};
+  --color-header-bg: #{$yellow-300};
+  --color-link: #{$blue-300};
+  --color-subtext: #{$black-0};
 }
 
 .update-reminder-unexpanded {
@@ -29,7 +27,7 @@
   z-index: 2;
 
   p {
-    color: $color-bg-dark-2;
+    color: $slate-700;
     text-align: center;
     margin-top: 7.5px;
     font-size: 12px;
@@ -42,14 +40,14 @@
   button {
     background-color: var(--color-header-bg);
     border: none;
-    color: $color-text-light-2;
+    color: $black-700;
     cursor: pointer;
     font-size: 12px;
     font-weight: 600;
     transition: color 0.2s ease;
 
     &:hover {
-      color: $color-text-dark-alt;
+      color: $black-800;
     }
   }
 }
@@ -71,14 +69,14 @@
   }
 
   p {
-    color: $color-bg-dark-2;
+    color: $slate-700;
     font-size: 16px;
     margin-top: 6px;
     padding: 6px 48px;
   }
 
   button {
-    color: $color-bg-dark-2;
+    color: $slate-700;
     border: none;
     background-color: var(--color-header-bg);
     font-size: 16px;
@@ -128,7 +126,7 @@
 
 .close-button {
   svg {
-    fill: $color-text-dark-alt;
+    fill: $black-800;
     height: 24px;
     width: 24px;
   }

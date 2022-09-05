@@ -23,13 +23,13 @@
 // Create transparent versions of theme colours.
 // This is necessary for making gradients to transparent in Safari:
 // https://css-tricks.com/thing-know-gradients-transparent-black/
-@mixin transparentColour($var-name, $color-light, $color-dark) {
+@mixin transparentColour($var-name, $white-0, $black-900) {
   .kui-theme--light {
-    #{$var-name}: #{rgba($color-light, 0)};
+    #{$var-name}: #{rgba($white-0, 0)};
   }
 
   .kui-theme--dark {
-    #{$var-name}: #{rgba($color-dark, 0)};
+    #{$var-name}: #{rgba($black-900, 0)};
   }
 }
 
