@@ -24,8 +24,8 @@ export const codeSidebarWidth = {
 };
 
 export const experimentTrackingLazyLoadingColours = {
-  backgroundLightTheme: '#c4cbd1',
-  foregroundLightTheme: '#d1d1d1',
+  backgroundLightTheme: '#DADADA',
+  foregroundLightTheme: '#EAEAEA',
   backgroundDarkTheme: '#071d28',
   foregroundDarkTheme: '#20313a',
 };
