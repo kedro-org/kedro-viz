@@ -40,7 +40,7 @@ $animation-timing: 0.3s;
 
 .details-metadata__run--first-run-comparison-view .details-metadata__title {
   opacity: 1;
-  transition: opacity $animation-timing ease-in;
+  transition: opacity $animation-timing linear;
 }
 
 // animation for other run when select or deselect
@@ -48,17 +48,13 @@ $animation-timing: 0.3s;
 .details-metadata__run-animation-enter,
 .details-dataset__value-animation-enter {
   opacity: 0;
-  transform: translateX(40%);
-  transition: transform $animation-timing ease-out,
-    opacity $animation-timing linear;
+  transition: opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-enter-active,
 .details-dataset__value-animation-enter-active {
   opacity: 1;
-  transform: translateX(0);
-  transition: transform $animation-timing ease-out,
-    opacity $animation-timing linear;
+  transition: opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-exit,
