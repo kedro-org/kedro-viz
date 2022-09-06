@@ -51,7 +51,6 @@ export const SingleRunDatasetLoader = ({ theme }) => (
           ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
           : experimentTrackingLazyLoadingColours.foregroundLightTheme
       }
-      speed={2}
     >
       <SubCatLoader y={0} />
 
@@ -83,7 +82,6 @@ export const DataSetLoader = ({ x, y, length, theme }) => {
           ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
           : experimentTrackingLazyLoadingColours.foregroundLightTheme
       }
-      speed={2}
     >
       <rect width="150" height="16" x={x} y={y + length * 2} />
     </ContentLoader>

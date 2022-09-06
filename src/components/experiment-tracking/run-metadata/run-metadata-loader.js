@@ -49,7 +49,6 @@ export const SingleRunMetadataLoader = ({ theme }) => (
           ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
           : experimentTrackingLazyLoadingColours.foregroundLightTheme
       }
-      speed={2}
     >
       <TitleLoader />
       <DetailsLoader x={380} />
@@ -78,7 +77,6 @@ export const MetaDataLoader = ({ length, theme }) => {
                 ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
                 : experimentTrackingLazyLoadingColours.foregroundLightTheme
             }
-            speed={2}
           >
             <DetailsLoader x={x} />
           </ContentLoader>
