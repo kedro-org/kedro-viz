@@ -45,16 +45,22 @@ $animation-timing: 0.3s;
 
 // animation for other run when select or deselect
 // needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
+// animation for other run when select or deselect
+// needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
 .details-metadata__run-animation-enter,
 .details-dataset__value-animation-enter {
   opacity: 0;
-  transition: opacity $animation-timing linear;
+  transform: translateX(40%);
+  transition: transform $animation-timing ease-out,
+    opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-enter-active,
 .details-dataset__value-animation-enter-active {
   opacity: 1;
-  transition: opacity $animation-timing linear;
+  transform: translateX(0);
+  transition: transform $animation-timing ease-out,
+    opacity $animation-timing linear;
 }
 
 .details-metadata__run-animation-exit,
