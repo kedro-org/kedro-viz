@@ -69,8 +69,8 @@ export const SingleRunDatasetLoader = ({ theme }) => (
 export const DataSetLoader = ({ x, y, length, theme }) => {
   return (
     <ContentLoader
-      viewBox="0 10 150 25"
-      width="200px"
+      viewBox="0 10 200 30"
+      width="180px"
       height="100%"
       backgroundColor={
         theme === 'dark'

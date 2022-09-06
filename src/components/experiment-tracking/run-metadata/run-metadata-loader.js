@@ -60,7 +60,7 @@ export const MetaDataLoader = ({ length, theme }) => {
   const x = length > 1 ? 75 : 0;
 
   return (
-    <tbody>
+    <tbody className="details-metadata__run-lazy-loader">
       <tr>
         <td>
           <ContentLoader
