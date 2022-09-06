@@ -3,11 +3,10 @@ This is a boilerplate pipeline 'feature_engineering'
 generated using Kedro 0.18.1
 """
 
-import random
 from functools import reduce
 from typing import Dict, List
 
-import numpy
+import numpy as np
 import pandas as pd
 
 
@@ -54,7 +53,7 @@ def _create_metric_column(
     Returns:
         pd.DataFrame: A new feature table
     """
-    column_operation = getattr(numpy, numpy_method)
+    column_operation = getattr(np, numpy_method)
     new_column = column_operation(data[column_a], data[column_b])
     id_columns = _get_id_columns(data=data)
     working_df = data[id_columns]

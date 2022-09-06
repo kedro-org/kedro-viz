@@ -58,11 +58,9 @@ def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:
         BaseFigure: Plotly object which is serialised as JSON for rendering
     """
     price_data_df = model_input_data[["price", "engine_type"]]
-    p1 = np.random.randint(100, 300) / 1000
-    p2 = np.random.randint(100, 400) / 1000
-    p3 = 1 - (p1 + p2)
+    p = np.random.dirichlet([1, 1, 1])
     price_data_df["engine_type"] = np.random.choice(
-        ["Quantum", "Plasma", "Nuclear"], len(price_data_df), p=[p1, p2, p3]
+        ["Quantum", "Plasma", "Nuclear"], len(price_data_df), p=p
     )
     plotly_object = px.histogram(
         data_frame=price_data_df, x="price", log_x=True, color="engine_type"
