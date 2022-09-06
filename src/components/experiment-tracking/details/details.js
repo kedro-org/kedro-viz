@@ -37,13 +37,13 @@ const Details = ({
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
 
-  // delay showing loader for 0.1s so it has enough time to load the data first
+  // delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {
     // for single run
     if (isRunDataLoading && !enableComparisonView) {
       const showSingleRunLoaderTimer = setTimeout(() => {
         setShowSingleRunLoader(true);
-      }, 500);
+      }, 200);
 
       return () => clearTimeout(showSingleRunLoaderTimer);
     } else {
@@ -54,7 +54,7 @@ const Details = ({
     if (isRunDataLoading && newRunAdded) {
       const showRunLoaderTimer = setTimeout(() => {
         setRunLoader(true);
-      }, 500);
+      }, 200);
 
       return () => clearTimeout(showRunLoaderTimer);
     } else {
