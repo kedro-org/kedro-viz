@@ -173,32 +173,32 @@ const ExperimentWrapper = ({ theme }) => {
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
+            setShowRunExportModal={setShowRunExportModal}
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
-            setShowRunExportModal={setShowRunExportModal}
           />
           {selectedRunIds.length > 0 ? (
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              runDataError={runDataError}
+              isRunDataLoading={isRunDataLoading}
+              newRunAdded={newRunAdded}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
+              runDataError={runDataError}
               runMetadata={runMetadata}
               runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
-              showRunDetailsModal={showRunDetailsModal}
+              setShowRunExportModal={setShowRunExportModal}
               setShowRunPlotsModal={setShowRunPlotsModal}
+              showRunDetailsModal={showRunDetailsModal}
+              showRunExportModal={showRunExportModal}
               showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
-              showRunExportModal={showRunExportModal}
-              setShowRunExportModal={setShowRunExportModal}
-              isRunDataLoading={isRunDataLoading}
-              newRunAdded={newRunAdded}
             />
           ) : null}
         </>
