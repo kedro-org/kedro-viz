@@ -1,10 +1,13 @@
 import React from 'react';
 import ContentLoader from 'react-content-loader';
-import { experimentTrackingLazyLoadingColours } from '../../../config';
+import {
+  experimentTrackingLazyLoadingColours,
+  experimentTrackingLazyLoadingGap,
+} from '../../../config';
 
 import './run-metadata.css';
 
-const GAP = 36;
+const GAP = experimentTrackingLazyLoadingGap;
 
 const TitleLoader = () => (
   <>

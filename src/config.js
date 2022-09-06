@@ -30,6 +30,8 @@ export const experimentTrackingLazyLoadingColours = {
   foregroundDarkTheme: '#20313a',
 };
 
+export const experimentTrackingLazyLoadingGap = 36;
+
 export const chartMinWidthScale = 0.25;
 
 // Determine the number of nodes and edges in pipeline to trigger size warning
