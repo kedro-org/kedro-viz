@@ -43,7 +43,7 @@ const Details = ({
     if (isRunDataLoading && !enableComparisonView) {
       const showSingleRunLoaderTimer = setTimeout(() => {
         setShowSingleRunLoader(true);
-      }, 100);
+      }, 500);
 
       return () => clearTimeout(showSingleRunLoaderTimer);
     } else {
@@ -54,7 +54,7 @@ const Details = ({
     if (isRunDataLoading && newRunAdded) {
       const showRunLoaderTimer = setTimeout(() => {
         setRunLoader(true);
-      }, 100);
+      }, 500);
 
       return () => clearTimeout(showRunLoaderTimer);
     } else {
