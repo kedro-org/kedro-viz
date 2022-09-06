@@ -14,7 +14,7 @@ const darkTemplate = {
   },
   autotypenumbers: 'strict',
   coloraxis: {
-    autocolorscale: true,
+    autocolorscale: false,
     colorbar: {
       thickness: 20,
       showticklabels: true,

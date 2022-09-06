@@ -6,7 +6,7 @@ generated using Kedro 0.18.1
 from functools import reduce
 from typing import Dict, List
 
-import numpy
+import numpy as np
 import pandas as pd
 
 
@@ -53,7 +53,7 @@ def _create_metric_column(
     Returns:
         pd.DataFrame: A new feature table
     """
-    column_operation = getattr(numpy, numpy_method)
+    column_operation = getattr(np, numpy_method)
     new_column = column_operation(data[column_a], data[column_b])
     id_columns = _get_id_columns(data=data)
     working_df = data[id_columns]
@@ -99,3 +99,13 @@ def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:
     # Confirm that the number of rows is unchanged after the operation has completed
     assert spine_df.shape[0] == merged_dfs.shape[0]
     return merged_dfs
+
+
+def create_feature_importance(data: pd.DataFrame) -> pd.DataFrame:
+    feature_name = [f"feature_{i}" for i in range(15)]
+    feature_score = np.random.rand(15)
+    feature_importance_df = pd.DataFrame(
+        {"Feature": feature_name, "Score": feature_score}
+    )
+
+    return feature_importance_df
