@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
-import { RunMetadataLoader } from '../run-metadata/run-metadata-loader';
+import { SingleRunMetadataLoader } from '../run-metadata/run-metadata-loader';
 import RunDataset from '../run-dataset';
-import { RunDatasetLoader } from '../run-dataset/run-dataset-loader';
+import { SingleRunDatasetLoader } from '../run-dataset/run-dataset-loader';
 import RunDetailsModal from '../run-details-modal';
 import RunPlotsModal from '../run-plots-modal';
 import RunExportModal from '../run-export-modal';
@@ -77,8 +77,8 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadataLoader theme={theme} />
-        <RunDatasetLoader theme={theme} />
+        <SingleRunMetadataLoader theme={theme} />
+        <SingleRunDatasetLoader theme={theme} />
       </div>
     );
   }

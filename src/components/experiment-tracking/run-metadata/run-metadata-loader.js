@@ -18,7 +18,7 @@ const TitleLoader = () => (
   </>
 );
 
-export const MetadataLoader = ({ x }) => (
+const DetailsLoader = ({ x }) => (
   <>
     <rect width="0" height="0" x={x} y="12" />
     <rect width="30" height="16" x={x} y={12 + GAP} />
@@ -30,7 +30,7 @@ export const MetadataLoader = ({ x }) => (
   </>
 );
 
-export const RunMetadataLoader = ({ theme }) => (
+export const SingleRunMetadataLoader = ({ theme }) => (
   <div className="details-metadata">
     <ContentLoader
       viewBox="0 0 1000 300"
@@ -49,7 +49,38 @@ export const RunMetadataLoader = ({ theme }) => (
       speed={2}
     >
       <TitleLoader />
-      <MetadataLoader x={380} />
+      <DetailsLoader x={380} />
     </ContentLoader>
   </div>
 );
+
+export const MetaDataLoader = ({ length, theme }) => {
+  const x = length > 1 ? 75 : 0;
+
+  return (
+    <tbody>
+      <tr>
+        <td>
+          <ContentLoader
+            viewBox="0 0 200 300"
+            width="200px"
+            height="100%"
+            backgroundColor={
+              theme === 'dark'
+                ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
+                : experimentTrackingLazyLoadingColours.backgroundLightTheme
+            }
+            foregroundColor={
+              theme === 'dark'
+                ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
+                : experimentTrackingLazyLoadingColours.foregroundLightTheme
+            }
+            speed={2}
+          >
+            <DetailsLoader x={x} />
+          </ContentLoader>
+        </td>
+      </tr>
+    </tbody>
+  );
+};

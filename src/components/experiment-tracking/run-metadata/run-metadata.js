@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import ContentLoader from 'react-content-loader';
 import classnames from 'classnames';
 import { useOutsideClick } from '../../../utils/hooks';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
@@ -10,42 +9,10 @@ import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { MetadataLoader } from './run-metadata-loader';
-import { experimentTrackingLazyLoadingColours } from '../../../config';
+import { MetaDataLoader } from './run-metadata-loader';
 
 import './run-metadata.css';
 import './animation.css';
-
-const Loader = ({ length, theme }) => {
-  const x = length > 1 ? 75 : 0;
-
-  return (
-    <tbody>
-      <tr>
-        <td>
-          <ContentLoader
-            viewBox="0 0 200 300"
-            width="200px"
-            height="100%"
-            backgroundColor={
-              theme === 'dark'
-                ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
-                : experimentTrackingLazyLoadingColours.backgroundLightTheme
-            }
-            foregroundColor={
-              theme === 'dark'
-                ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
-                : experimentTrackingLazyLoadingColours.foregroundLightTheme
-            }
-            speed={2}
-          >
-            <MetadataLoader x={x} />
-          </ContentLoader>
-        </td>
-      </tr>
-    </tbody>
-  );
-};
 
 // Return a '-' character if the value is empty or null
 const sanitiseEmptyValue = (value) => {
@@ -286,7 +253,7 @@ const RunMetadata = ({
             );
           })}
         </TransitionGroup>
-        {showLoader && <Loader length={runs.length} theme={theme} />}
+        {showLoader && <MetaDataLoader length={runs.length} theme={theme} />}
       </table>
     </div>
   );

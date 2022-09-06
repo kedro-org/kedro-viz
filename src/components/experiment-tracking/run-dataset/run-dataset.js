@@ -1,39 +1,15 @@
 import React from 'react';
-import ContentLoader from 'react-content-loader';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
 import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { experimentTrackingLazyLoadingColours } from '../../../config';
+import { DataSetLoader } from './run-dataset-loader';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
 import '../run-metadata/animation.css';
-
-const Loader = ({ x, y, length, theme }) => {
-  return (
-    <ContentLoader
-      viewBox="0 10 150 25"
-      width="200px"
-      height="100%"
-      backgroundColor={
-        theme === 'dark'
-          ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
-          : experimentTrackingLazyLoadingColours.backgroundLightTheme
-      }
-      foregroundColor={
-        theme === 'dark'
-          ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
-          : experimentTrackingLazyLoadingColours.foregroundLightTheme
-      }
-      speed={2}
-    >
-      <rect width="150" height="16" x={x} y={y + length * 2} />
-    </ContentLoader>
-  );
-};
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
   if (data.runId !== pinnedRun && typeof data.value === 'number') {
@@ -216,7 +192,12 @@ function buildDatasetDataMarkup(
             })}
           </TransitionGroup>
           {showLoader && (
-            <Loader length={datasetValues.length} theme={theme} x={0} y={12} />
+            <DataSetLoader
+              length={datasetValues.length}
+              theme={theme}
+              x={0}
+              y={12}
+            />
           )}
         </div>
       ) : null}
@@ -286,7 +267,12 @@ function buildDatasetDataMarkup(
           })}
         </TransitionGroup>
         {showLoader && (
-          <Loader length={datasetValues.length} theme={theme} x={0} y={12} />
+          <DataSetLoader
+            length={datasetValues.length}
+            theme={theme}
+            x={0}
+            y={12}
+          />
         )}
       </div>
     </React.Fragment>

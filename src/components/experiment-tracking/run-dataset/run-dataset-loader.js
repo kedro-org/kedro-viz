@@ -6,6 +6,13 @@ import './run-dataset.css';
 
 const GAP = 36;
 
+const SubCatLoader = ({ y }) => (
+  <>
+    <rect width="10" height="10" x="0" y={y + 3} />
+    <rect width="100" height="20" x="30" y={y} />
+  </>
+);
+
 const TitleLoader = ({ y }) => (
   <>
     <rect width="10" height="10" x="0" y={y + 3} />
@@ -15,7 +22,7 @@ const TitleLoader = ({ y }) => (
   </>
 );
 
-export const DatasetLoader = ({ x, y }) => {
+const DetailsLoader = ({ x, y }) => {
   return (
     <>
       <rect width="0" height="0" x={x} y={y} />
@@ -25,10 +32,10 @@ export const DatasetLoader = ({ x, y }) => {
   );
 };
 
-export const RunDatasetLoader = ({ theme }) => (
+export const SingleRunDatasetLoader = ({ theme }) => (
   <div className="details-dataset">
     <ContentLoader
-      viewBox="0 0 1000 1000"
+      viewBox="0 0 1000 625"
       width="1000px"
       height="100%"
       backgroundColor={
@@ -43,14 +50,39 @@ export const RunDatasetLoader = ({ theme }) => (
       }
       speed={2}
     >
-      <TitleLoader y={12} />
-      <DatasetLoader x={400} y={12} />
+      <SubCatLoader y={0} />
 
-      <TitleLoader y={202} />
-      <DatasetLoader x={400} y={202} />
+      <TitleLoader y={35} />
+      <DetailsLoader x={380} y={35} />
 
-      <TitleLoader y={402} />
-      <DatasetLoader x={400} y={402} />
+      <TitleLoader y={160} />
+      <DetailsLoader x={380} y={160} />
+
+      <TitleLoader y={300} />
+      <DetailsLoader x={380} y={300} />
     </ContentLoader>
   </div>
 );
+
+export const DataSetLoader = ({ x, y, length, theme }) => {
+  return (
+    <ContentLoader
+      viewBox="0 10 150 25"
+      width="200px"
+      height="100%"
+      backgroundColor={
+        theme === 'dark'
+          ? experimentTrackingLazyLoadingColours.backgroundDarkTheme
+          : experimentTrackingLazyLoadingColours.backgroundLightTheme
+      }
+      foregroundColor={
+        theme === 'dark'
+          ? experimentTrackingLazyLoadingColours.foregroundDarkTheme
+          : experimentTrackingLazyLoadingColours.foregroundLightTheme
+      }
+      speed={2}
+    >
+      <rect width="150" height="16" x={x} y={y + length * 2} />
+    </ContentLoader>
+  );
+};
