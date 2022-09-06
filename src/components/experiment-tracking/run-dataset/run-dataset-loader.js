@@ -54,14 +54,14 @@ export const SingleRunDatasetLoader = ({ theme }) => (
     >
       <SubCatLoader y={0} />
 
-      <TitleLoader y={35} />
-      <DetailsLoader x={380} y={35} />
+      <TitleLoader y={50} />
+      <DetailsLoader x={380} y={50} />
 
-      <TitleLoader y={160} />
-      <DetailsLoader x={380} y={160} />
+      <TitleLoader y={185} />
+      <DetailsLoader x={380} y={185} />
 
-      <TitleLoader y={300} />
-      <DetailsLoader x={380} y={300} />
+      <TitleLoader y={320} />
+      <DetailsLoader x={380} y={320} />
     </ContentLoader>
   </div>
 );

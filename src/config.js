@@ -30,7 +30,7 @@ export const experimentTrackingLazyLoadingColours = {
   foregroundDarkTheme: '#20313a',
 };
 
-export const experimentTrackingLazyLoadingGap = 36;
+export const experimentTrackingLazyLoadingGap = 38;
 
 export const chartMinWidthScale = 0.25;
 
