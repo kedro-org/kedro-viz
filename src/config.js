@@ -23,11 +23,18 @@ export const codeSidebarWidth = {
   closed: 0,
 };
 
+// these colours variables come from styles/variables';
+const slate600 = '#0e222d';
+const slate200 = '#21333e';
+
+const grey200 = '#d5d8da';
+const grey100 = '#eaebed';
+
 export const experimentTrackingLazyLoadingColours = {
-  backgroundLightTheme: '#DADADA',
-  foregroundLightTheme: '#EAEAEA',
-  backgroundDarkTheme: '#071d28',
-  foregroundDarkTheme: '#20313a',
+  backgroundLightTheme: grey200,
+  foregroundLightTheme: grey100,
+  backgroundDarkTheme: slate600,
+  foregroundDarkTheme: slate200,
 };
 
 export const experimentTrackingLazyLoadingGap = 38;
