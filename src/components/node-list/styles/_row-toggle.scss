@@ -62,7 +62,7 @@
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $color-link inset;
+      box-shadow: 0 0 0 3px $blue-300 inset;
     }
   }
 }
@@ -242,7 +242,7 @@ $filter-icon-opacity-3: 1;
 
   .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unchecked,
   &.pipeline-row__toggle-icon--parent {
-    fill: $color-primary;
-    stroke: $color-primary;
+    fill: $blue-300;
+    stroke: $blue-300;
   }
 }

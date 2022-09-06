@@ -33,7 +33,7 @@ $triangle-size: 10px;
   &::after {
     position: absolute;
     bottom: -$y-offset + 0.5;
-    left: $x-offset / 2;
+    left: calc($x-offset / 2);
     width: 0;
     height: 0;
     border-color: transparent;
@@ -44,7 +44,7 @@ $triangle-size: 10px;
   }
 
   &--right::after {
-    right: $x-offset / 2;
+    right: calc($x-offset / 2);
     left: auto;
   }
 

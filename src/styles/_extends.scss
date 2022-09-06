@@ -3,7 +3,7 @@
 %tooltip {
   color: var(--color-text-alt);
   background: var(--color-bg-alt);
-  box-shadow: 0 1px 3px rgba(black, 0.2);
+  box-shadow: 0 1px 3px $slate-500;
 }
 
 %sidebar {
@@ -26,7 +26,7 @@
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $color-link inset;
+      box-shadow: 0 0 0 3px $blue-300 inset;
     }
   }
 }
@@ -51,7 +51,7 @@
   &:focus-visible {
     outline: none;
     text-decoration: underline;
-    text-decoration-color: $color-accent-blue;
+    text-decoration-color: $blue-300;
   }
 
   &::placeholder {

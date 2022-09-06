@@ -3,45 +3,45 @@
 //-- Theme colours as CSS Custom Properties --//
 
 .kui-theme--light {
-  --color-default-alt: #{$color-dark};
-  --color-text: #{$color-text-light};
-  --color-text-alt: #{$color-text-light-alt};
-  --color-text-faded: rgba(0, 0, 0, 0.55);
-  --color-bg-1: #{$color-bg-dev-light-1};
-  --color-bg-2: #{$color-bg-light-4};
-  --color-bg-3: #{$color-bg-light-3};
-  --color-bg-4: #{$color-bg-light-1};
-  --color-bg-5: #{$color-bg-light-5};
-  --color-bg-alt: #{$color-bg-light-alt};
-  --color-sidebar-background: #{$color-bg-light-3};
-  --color-global-toolbar-background: #{$color-bg-light-2};
-  --color-sidebar-border: rgba(0, 0, 0, 0.05);
-  --color-sidebar-shadow: rgba(0, 0, 0, 0.07);
-  --color-run-list-divider: rgba(0, 0, 0, 0.1);
-  --color-run-list-hover: #{$color-bg-light-4};
-  --color-base-20: rgba(0, 0, 0, 0.2);
-  --color-black-10: inherit;
+  --color-default-alt: #{$black-900};
+  --color-text: #{$black-800};
+  --color-text-alt: #{$white-600};
+  --color-text-faded: #{$black-700};
+  --color-bg-1: #{$white-800};
+  --color-bg-2: #{$white-400};
+  --color-bg-3: #{$white-200};
+  --color-bg-4: #{$white-0};
+  --color-bg-5: #{$white-600};
+  --color-bg-alt: #{$black-700};
+  --color-sidebar-background: #{$white-200};
+  --color-global-toolbar-background: #{$white-100};
+  --color-sidebar-border: #{$white-800};
+  --color-sidebar-shadow: #{$grey-300};
+  --color-run-list-divider: #{$white-600};
+  --color-run-list-hover: #{$white-400};
+  --color-base-20: #{$grey-300};
+  --color-black-10: #{$white-200};
 }
 
 .kui-theme--dark {
-  --color-default-alt: #{$color-light};
-  --color-text: #{$color-text-dark};
-  --color-text-alt: #{$color-text-dark-alt};
-  --color-text-faded: rgba(255, 255, 255, 0.55);
-  --color-bg-1: #{$color-bg-dark-1};
-  --color-bg-2: #{$color-bg-dark-2};
-  --color-bg-3: #{$color-bg-dark-2};
-  --color-bg-4: #{$color-bg-dark-3};
-  --color-bg-5: #{$color-bg-dark-5};
-  --color-bg-alt: #{$color-light};
-  --color-sidebar-background: #{$color-bg-dark-2};
-  --color-global-toolbar-background: #{$color-bg-dark-1};
-  --color-sidebar-border: rgba(0, 0, 0, 0.2);
-  --color-sidebar-shadow: rgba(0, 0, 0, 0.3);
-  --color-run-list-divider: rgba(255, 255, 255, 0.1);
-  --color-run-list-hover: #{$color-bg-dark-4};
-  --color-base-20: rgba(255, 255, 255, 0.2);
-  --color-black-10: rgba(0, 0, 0, 0.1);
+  --color-default-alt: #{$white-0};
+  --color-text: #{$white-600};
+  --color-text-alt: #{$black-800};
+  --color-text-faded: #{$black-0};
+  --color-bg-1: #{$slate-900};
+  --color-bg-2: #{$slate-700};
+  --color-bg-3: #{$slate-700};
+  --color-bg-4: #{$slate-500};
+  --color-bg-5: #{$slate-0};
+  --color-bg-alt: #{$white-0};
+  --color-sidebar-background: #{$slate-700};
+  --color-global-toolbar-background: #{$slate-900};
+  --color-sidebar-border: #{$grey-300};
+  --color-sidebar-shadow: #{$ocean-900};
+  --color-run-list-divider: #{$slate-0};
+  --color-run-list-hover: #{$slate-300};
+  --color-base-20: #{$grey-800};
+  --color-black-10: #{$slate-700};
 }
 
 .kedro {

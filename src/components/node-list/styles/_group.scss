@@ -147,7 +147,7 @@ $placeholder-fade: 120px;
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $color-link inset;
+      box-shadow: 0 0 0 3px $blue-300 inset;
     }
   }
 
@@ -166,7 +166,7 @@ $placeholder-fade: 120px;
   }
 
   &--disabled {
-    color: $color-button-disabled;
+    color: $black-400;
     transform: rotate(90deg);
   }
 }

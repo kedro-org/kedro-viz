@@ -580,6 +580,14 @@ class DataNodeMetadata(GraphNodeMetadata):
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
 
+        # Only check for existence of dataset if we might want to load it.
+        if not (
+            data_node.is_plot_node()
+            or data_node.is_image_node()
+            or data_node.is_tracking_node()
+        ):
+            return
+
         # dataset.release clears the cache before loading to ensure that this issue
         # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
         dataset.release()

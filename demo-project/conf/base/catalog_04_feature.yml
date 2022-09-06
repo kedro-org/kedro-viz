@@ -23,3 +23,12 @@
 #  type: pandas.ParquetDataSet
 #  filepath: ${base_location}/04_feature/feat_scaling_metrics.pq
 #  layer: feature
+
+
+
+feature_engineering.feature_importance_output: 
+  type: pandas.CSVDataSet
+  filepath: ${base_location}/04_feature/feature_importance_output.csv
+  layer: feature 
+
+

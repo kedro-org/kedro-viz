@@ -1,17 +1,17 @@
 @import '../../../styles/variables';
 
 .kui-theme--light {
-  --color-toggle-on: #{$color-primary-2};
-  --color-toggle-on-bar: #{rgba($color-primary-2, 0.3)};
-  --color-toggle-off: #{$color-bg-dark-5};
-  --color-toggle-off-bar: #{rgba($color-bg-dark-5, 0.3)};
+  --color-toggle-on: #{$blue-600};
+  --color-toggle-on-bar: #{$ocean-0};
+  --color-toggle-off: #{$slate-0};
+  --color-toggle-off-bar: #{$grey-400};
 }
 
 .kui-theme--dark {
-  --color-toggle-on: #{$color-primary};
-  --color-toggle-on-bar: #{rgba($color-primary, 0.3)};
-  --color-toggle-off: #{$color-light};
-  --color-toggle-off-bar: #{rgba($color-light, 0.3)};
+  --color-toggle-on: #{$blue-300};
+  --color-toggle-on-bar: #{$ocean-500};
+  --color-toggle-off: #{$white-0};
+  --color-toggle-off-bar: #{$black-400};
 }
 
 .pipeline-toggle {
@@ -73,7 +73,7 @@
 }
 
 [data-whatinput='keyboard'] input:focus + .pipeline-toggle-label:before {
-  box-shadow: 0 0 0 3px yellow;
+  box-shadow: 0 0 0 3px $blue-300;
 }
 
 .pipeline-toggle-label--checked:before {
