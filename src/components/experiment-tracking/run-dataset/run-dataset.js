@@ -77,7 +77,7 @@ const RunDataset = ({
             layout="left"
             size="large"
           >
-            {trackingData[group].map((dataset, index) => {
+            {trackingData[group].map((dataset) => {
               const { data, datasetType, datasetName, runIds } = dataset;
               return (
                 <Accordion
@@ -103,7 +103,6 @@ const RunDataset = ({
                       );
 
                       return buildDatasetDataMarkup(
-                        index,
                         key,
                         runDataWithPin,
                         datasetType,
@@ -139,7 +138,6 @@ const RunDataset = ({
  * @param {function} setShowRunPlotsModal callbak function to show runplot modal
  */
 function buildDatasetDataMarkup(
-  index,
   datasetKey,
   datasetValues,
   datasetType,
@@ -170,26 +168,24 @@ function buildDatasetDataMarkup(
             component="div"
             className="details-dataset__tranistion-group-wrapper"
           >
-            {datasetValues.map((data, index) => {
-              return (
-                <CSSTransition
-                  key={data.runId}
-                  timeout={300}
-                  classNames="details-dataset__value-animation"
-                  enter={isSingleRun ? false : true}
-                  exit={isSingleRun ? false : true}
+            {datasetValues.map((data, index) => (
+              <CSSTransition
+                key={data.runId}
+                timeout={300}
+                classNames="details-dataset__value-animation"
+                enter={isSingleRun ? false : true}
+                exit={isSingleRun ? false : true}
+              >
+                <span
+                  className={classnames('details-dataset__value-header', {
+                    'details-dataset__value-header--comparison-view':
+                      index === 0 && enableComparisonView,
+                  })}
                 >
-                  <span
-                    className={classnames('details-dataset__value-header', {
-                      'details-dataset__value-header--comparison-view':
-                        index === 0 && enableComparisonView,
-                    })}
-                  >
-                    Value
-                  </span>
-                </CSSTransition>
-              );
-            })}
+                  Value
+                </span>
+              </CSSTransition>
+            ))}
           </TransitionGroup>
           {showLoader && (
             <DataSetLoader
