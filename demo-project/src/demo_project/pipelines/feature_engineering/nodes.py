@@ -103,11 +103,8 @@ def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_feature_importance(data: pd.DataFrame) -> pd.DataFrame:
-    feature_name = []
-    feature_score = []
-    for i in range(0, 15):
-        feature_name.append("feature_" + str(i))
-        feature_score.append(random.randint(0, 999) / 1000)
+    feature_name = [f"feature_{i}" for i in range(15)]
+    feature_score = np.random.rand(15)
     feature_importance_df = pd.DataFrame(
         {"Feature": feature_name, "Score": feature_score}
     )
