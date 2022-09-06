@@ -35,15 +35,15 @@ const Details = ({
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+  const [showRunLoader, setRunLoader] = useState(false);
 
   useEffect(() => {
-    // delay showing loader for 1s so it has enough time to load the data first
+    // delay showing loader for 0.1s so it has enough time to load the data first
     const setShowLoaderTimer = setTimeout(() => {
       if (isRunDataLoading && newRunAdded) {
-        setShowLoader(true);
+        setRunLoader(true);
       } else {
-        setShowLoader(false);
+        setRunLoader(false);
       }
 
       if (isRunDataLoading && !enableComparisonView) {
@@ -77,8 +77,8 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadataLoader theme={theme} />;
-        <RunDatasetLoader theme={theme} />;
+        <RunMetadataLoader theme={theme} />
+        <RunDatasetLoader theme={theme} />
       </div>
     );
   }
@@ -122,7 +122,7 @@ const Details = ({
           setPinnedRun={setPinnedRun}
           setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
-          showLoader={showLoader}
+          showLoader={showRunLoader}
           theme={theme}
         />
         <RunDataset
@@ -132,7 +132,7 @@ const Details = ({
           pinnedRun={pinnedRun}
           setRunDatasetToShow={setRunDatasetToShow}
           setShowRunPlotsModal={setShowRunPlotsModal}
-          showLoader={showLoader}
+          showLoader={showRunLoader}
           trackingData={runTrackingData}
           theme={theme}
         />
