@@ -9,6 +9,7 @@ import KebabIcon from '../../icons/kebab';
 import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { MetaDataLoader } from './run-metadata-loader';
 
 import './run-metadata.css';
 import './animation.css';
@@ -79,6 +80,8 @@ const RunMetadata = ({
   setPinnedRun,
   setRunMetadataToEdit,
   setShowRunDetailsModal,
+  showLoader,
+  theme,
 }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -250,6 +253,7 @@ const RunMetadata = ({
             );
           })}
         </TransitionGroup>
+        {showLoader && <MetaDataLoader length={runs.length} theme={theme} />}
       </table>
     </div>
   );

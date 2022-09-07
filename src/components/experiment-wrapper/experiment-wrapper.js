@@ -22,6 +22,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
+  const [newRunAdded, setNewRunAdded] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -30,6 +31,7 @@ const ExperimentWrapper = ({ theme }) => {
   const {
     data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
     error: runDataError,
+    loading: isRunDataLoading,
   } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
@@ -56,8 +58,10 @@ const ExperimentWrapper = ({ theme }) => {
           return;
         }
         setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
+        setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
+        setNewRunAdded(true);
       }
     } else {
       if (selectedRunIds.includes(id)) {
@@ -169,30 +173,32 @@ const ExperimentWrapper = ({ theme }) => {
             selectedRunData={selectedRunData}
             selectedRunIds={selectedRunIds}
             setEnableShowChanges={setEnableShowChanges}
+            setShowRunExportModal={setShowRunExportModal}
             setSidebarVisible={setIsSidebarVisible}
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
-            setShowRunExportModal={setShowRunExportModal}
           />
           {selectedRunIds.length > 0 ? (
             <Details
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              runDataError={runDataError}
+              isRunDataLoading={isRunDataLoading}
+              newRunAdded={newRunAdded}
               onRunSelection={onRunSelection}
               pinnedRun={pinnedRun}
+              runDataError={runDataError}
               runMetadata={runMetadata}
               runTrackingData={runTrackingData}
               selectedRunIds={selectedRunIds}
               setPinnedRun={setPinnedRun}
               setShowRunDetailsModal={setShowRunDetailsModal}
-              showRunDetailsModal={showRunDetailsModal}
+              setShowRunExportModal={setShowRunExportModal}
               setShowRunPlotsModal={setShowRunPlotsModal}
+              showRunDetailsModal={showRunDetailsModal}
+              showRunExportModal={showRunExportModal}
               showRunPlotsModal={showRunPlotsModal}
               sidebarVisible={isSidebarVisible}
               theme={theme}
-              showRunExportModal={showRunExportModal}
-              setShowRunExportModal={setShowRunExportModal}
             />
           ) : null}
         </>
