@@ -1,3 +1,4 @@
+@use '../../../styles/variables' as colors;
 //-- Layout --//
 
 $row-padding-y: 0.6em;
@@ -16,13 +17,13 @@ $row-offset-right: 1.6em;
 //-- Colours --//
 
 // Light:
-$row-active-light: $grey-100;
-$row-selected-light: $white-500;
-$filter-indicator-on-light: $blue-300;
-$filter-indicator-off-light: $black-700;
+$row-active-light: colors.$grey-100;
+$row-selected-light: colors.$white-500;
+$filter-indicator-on-light: colors.$blue-300;
+$filter-indicator-off-light: colors.$black-700;
 
 // Dark:
-$row-active-dark: $ocean-700;
-$row-selected-dark: $ocean-500;
-$filter-indicator-on-dark: $blue-300;
-$filter-indicator-off-dark: $grey-600;
+$row-active-dark: colors.$ocean-700;
+$row-selected-dark: colors.$ocean-500;
+$filter-indicator-on-dark: colors.$blue-300;
+$filter-indicator-off-dark: colors.$grey-600;

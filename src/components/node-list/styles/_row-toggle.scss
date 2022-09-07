@@ -1,7 +1,6 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
-@import './variables';
+@use '../../../styles/mixins' as mixins;
+@use '../../../styles/variables' as colors;
+@use './variables';
 
 //--- Toggle ---//
 
@@ -17,10 +16,10 @@
   }
 }
 
-@include transparentColour(
+@include mixins.transparentColour(
   '--row-selected-transparent',
-  $row-selected-light,
-  $row-selected-dark
+  variables.$row-selected-light,
+  variables.$row-selected-dark
 );
 
 .pipeline-row__toggle:before {
@@ -47,22 +46,22 @@
 }
 
 .pipeline-nodelist__row__checkbox {
-  @include screenReaderOnly;
+  @include mixins.screenReaderOnly;
 }
 
 //--- Toggle icon ---//
 
 .pipeline-row__toggle-icon {
-  width: $toggle-icon-size;
-  height: $toggle-icon-size;
-  padding: $toggle-icon-padding;
+  width: variables.$toggle-icon-size;
+  height: variables.$toggle-icon-size;
+  padding: variables.$toggle-icon-padding;
   border-radius: 50%;
 
   .pipeline-nodelist__row__checkbox:focus + & {
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $blue-300 inset;
+      box-shadow: 0 0 0 3px colors.$blue-300 inset;
     }
   }
 }
@@ -242,7 +241,7 @@ $filter-icon-opacity-3: 1;
 
   .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unchecked,
   &.pipeline-row__toggle-icon--parent {
-    fill: $blue-300;
-    stroke: $blue-300;
+    fill: colors.$blue-300;
+    stroke: colors.$blue-300;
   }
 }

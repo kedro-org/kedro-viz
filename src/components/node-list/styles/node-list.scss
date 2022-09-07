@@ -1,48 +1,47 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
-@import './variables';
-@import './section';
-@import './group';
-@import './row';
-@import './row-label';
-@import './row-toggle';
-@import './panels';
+@use '../../../styles/mixins' as mixins;
+@use '../../../styles/variables' as colors;
+@use './group';
+@use './panels';
+@use './row';
+@use './row-label';
+@use './row-toggle';
+@use './section';
+@use './variables';
 
 .kui-theme--light {
-  --color-nodelist-row-active: #{$row-active-light};
-  --color-nodelist-row-selected: #{$row-selected-light};
-  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-light};
-  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-light};
-  --color-nodelist-highlight: #{$blue-300};
-  --color-nodelist-split-handle: #{$black-700};
-  --color-nodelist-split-handle-border: #{$grey-100};
-  --color-nodelist-filter-panel: #{$white-0};
-  --color-nodelist-element-panel: #{$white-200};
+  --color-nodelist-row-active: #{variables.$row-active-light};
+  --color-nodelist-row-selected: #{variables.$row-selected-light};
+  --color-nodelist-filter-indicator-on: #{variables.$filter-indicator-on-light};
+  --color-nodelist-filter-indicator-off: #{variables.$filter-indicator-off-light};
+  --color-nodelist-highlight: #{colors.$blue-300};
+  --color-nodelist-split-handle: #{colors.$black-700};
+  --color-nodelist-split-handle-border: #{colors.$grey-100};
+  --color-nodelist-filter-panel: #{colors.$white-0};
+  --color-nodelist-element-panel: #{colors.$white-200};
 }
 
 .kui-theme--dark {
-  --color-nodelist-row-active: #{$row-active-dark};
-  --color-nodelist-row-selected: #{$row-selected-dark};
-  --color-nodelist-filter-indicator-on: #{$filter-indicator-on-dark};
-  --color-nodelist-filter-indicator-off: #{$filter-indicator-off-dark};
-  --color-nodelist-highlight: #{$blue-300};
-  --color-nodelist-split-handle: #{$white-0};
-  --color-nodelist-split-handle-border: #{$grey-900};
-  --color-nodelist-filter-panel: #{$slate-500};
-  --color-nodelist-element-panel: #{$slate-700};
+  --color-nodelist-row-active: #{variables.$row-active-dark};
+  --color-nodelist-row-selected: #{variables.$row-selected-dark};
+  --color-nodelist-filter-indicator-on: #{variables.$filter-indicator-on-dark};
+  --color-nodelist-filter-indicator-off: #{variables.$filter-indicator-off-dark};
+  --color-nodelist-highlight: #{colors.$blue-300};
+  --color-nodelist-split-handle: #{colors.$white-0};
+  --color-nodelist-split-handle-border: #{colors.$grey-900};
+  --color-nodelist-filter-panel: #{colors.$slate-500};
+  --color-nodelist-element-panel: #{colors.$slate-700};
 }
 
-@include transparentColour(
+@include mixins.transparentColour(
   '--color-nodelist-bg-transparent',
-  $white-200,
-  $slate-700
+  colors.$white-200,
+  colors.$slate-700
 );
 
-@include transparentColour(
+@include mixins.transparentColour(
   '--color-nodelist-bg-filter-transparent',
-  $white-0,
-  $slate-500
+  colors.$white-0,
+  colors.$slate-500
 );
 
 .pipeline-nodelist {
