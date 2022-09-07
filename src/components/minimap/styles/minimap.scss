@@ -1,5 +1,5 @@
-@import './variables';
-@import './node';
+@use './variables';
+@use './node';
 
 .pipeline-minimap__graph {
   display: block;
