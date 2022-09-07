@@ -1,15 +1,14 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
-@import '../../styles/mixins';
+@use '../../styles/variables' as colors;
+@use '../../styles/mixins' as mixins;
 
 .kui-theme--light {
-  --color-modal-header-text: #{$black-700};
-  --color-upgrade-reminder-text: #{$blue-300};
+  --color-modal-header-text: #{colors.$black-700};
+  --color-upgrade-reminder-text: #{colors.$blue-300};
 }
 
 .kui-theme--dark {
-  --color-modal-header-text: #{$black-0};
-  --color-upgrade-reminder-text: #{$yellow-300};
+  --color-modal-header-text: #{colors.$black-0};
+  --color-upgrade-reminder-text: #{colors.$yellow-300};
 }
 
 .pipeline-settings-modal {
@@ -70,15 +69,15 @@
 }
 
 .pipeline-settings-modal__name {
-  @include flexColumn(3);
+  @include mixins.flexColumn(3);
 }
 
 .pipeline-settings-modal__description {
-  @include flexColumn(6);
+  @include mixins.flexColumn(6);
 }
 
 .pipeline-settings-modal__state {
-  @include flexColumn(3);
+  @include mixins.flexColumn(3);
 }
 
 .pipeline-settings-modal__upgrade-reminder {
