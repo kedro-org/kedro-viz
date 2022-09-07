@@ -1,8 +1,8 @@
-@import '../../../styles/variables';
-@import './variables';
-@import './node';
-@import './edges';
-@import './layers';
+@use '../../../styles/variables' as colors;
+@use './edges';
+@use './layers';
+@use './node';
+@use './variables';
 
 .pipeline-flowchart {
   height: 100%;
@@ -12,7 +12,7 @@
   display: block;
 
   &.pipeline-graph--export.kui-theme--dark {
-    background: $slate-900;
+    background: colors.$slate-900;
   }
 
   @media print {

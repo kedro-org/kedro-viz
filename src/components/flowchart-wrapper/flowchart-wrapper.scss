@@ -1,8 +1,9 @@
-@import '../../styles/variables';
-@import '../../styles/mixins';
+@use '../../styles/variables' as variables;
 
-$sidebar-toolbar-width-closed: $sidebar-width-closed + $global-toolbar-width;
-$sidebar-toolbar-width-open: $sidebar-width-open + $global-toolbar-width;
+$sidebar-toolbar-width-closed: variables.$sidebar-width-closed +
+  variables.$global-toolbar-width;
+$sidebar-toolbar-width-open: variables.$sidebar-width-open +
+  variables.$global-toolbar-width;
 
 .pipeline-wrapper {
   height: 100%;
@@ -21,7 +22,7 @@ $sidebar-toolbar-width-open: $sidebar-width-open + $global-toolbar-width;
   transition: transform 0.4s ease, width ease 0.4s;
   width: calc((100% - #{$sidebar-toolbar-width-closed}));
 
-  @media (min-width: $sidebar-width-breakpoint) {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
     &--sidebar-visible {
       transform: translateX($sidebar-toolbar-width-open);
       width: calc((100% - #{$sidebar-toolbar-width-open}));
