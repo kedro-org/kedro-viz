@@ -1,14 +1,13 @@
-@import '../../../styles/variables';
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import './metadata-code-themes.scss';
+@use '../../../styles/extends';
+@use '../../../styles/variables' as variables;
+@use './metadata-code-themes.scss';
 
 .kui-theme--light {
-  --color-metadata-code-bg: #{$white-0};
+  --color-metadata-code-bg: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --color-metadata-code-bg: #{$slate-700};
+  --color-metadata-code-bg: #{variables.$slate-700};
 }
 
 .pipeline-metadata-code {
@@ -26,7 +25,7 @@
   display: flex;
   flex-direction: column;
   left: 0;
-  padding: 0 $metadata-sidebar-width-open 0 0;
+  padding: 0 variables.$metadata-sidebar-width-open 0 0;
   transform: translateX(100vw);
   transition: transform ease 0.5s 0.1s, left ease 0.5s;
   z-index: 2;
@@ -37,31 +36,32 @@
 
   @mixin breakpoints($sidebar-width) {
     // When screen is the minimum usable width
-    @media (min-width: $metadata-sidebar-code-breakpoint) {
+    @media (min-width: variables.$metadata-sidebar-code-breakpoint) {
       // Anchor code to the left sidebar
       left: $sidebar-width + $margin;
     }
 
     // When screen is wide enough to fit all sidebars
-    $sidebar-total-width: $sidebar-width + $margin + $metadata-sidebar-code-open +
-      $metadata-sidebar-width-open;
+    $sidebar-total-width: $sidebar-width + $margin +
+      variables.$metadata-sidebar-code-open +
+      variables.$metadata-sidebar-width-open;
     @media (min-width: #{$sidebar-total-width}) {
       // Anchor to right sidebar
       left: calc(
-        100% - #{$margin + $metadata-sidebar-code-open +
-          $metadata-sidebar-width-open}
+        100% - #{$margin + variables.$metadata-sidebar-code-open +
+          variables.$metadata-sidebar-width-open}
       );
     }
   }
 
   // When sidebar is open
   &--sidebarVisible {
-    @include breakpoints($sidebar-width-open);
+    @include breakpoints(variables.$sidebar-width-open);
   }
 
   // When sidebar is closed
   &--no-sidebarVisible {
-    @include breakpoints($sidebar-width-closed);
+    @include breakpoints(variables.$sidebar-width-closed);
   }
 
   @media print {
@@ -92,7 +92,7 @@
   }
 
   * {
-    font-family: $font-monospace;
+    font-family: variables.$font-monospace;
   }
 
   .hljs-keyword {

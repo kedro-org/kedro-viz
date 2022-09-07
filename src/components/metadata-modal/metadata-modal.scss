@@ -1,18 +1,18 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
+@use '../../styles/variables' as variables;
+@use '../../styles/extends';
 
 .kui-theme--light {
-  --color-bg-plot: #{$white-400};
-  --color-button-plot: #{$blue-900};
-  --color-button-plot-hovered: #{$blue-600};
-  --color-button-text: #{$white-0};
+  --color-bg-plot: #{variables.$white-400};
+  --color-button-plot: #{variables.$blue-900};
+  --color-button-plot-hovered: #{variables.$blue-600};
+  --color-button-text: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --color-bg-plot: #{$slate-700};
-  --color-button-plot: #{$blue-900};
-  --color-button-plot-hovered: #{$blue-600};
-  --color-button-text: #{$white-0};
+  --color-bg-plot: #{variables.$slate-700};
+  --color-button-plot: #{variables.$blue-900};
+  --color-button-plot-hovered: #{variables.$blue-600};
+  --color-button-text: #{variables.$white-0};
 }
 
 .pipeline-metadata-modal {
@@ -20,7 +20,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  left: $global-toolbar-width;
+  left: variables.$global-toolbar-width;
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -32,7 +32,7 @@
 
   .pipeline-plotly-chart,
   .pipeline-matplotlib-chart {
-    width: calc(98% - 80px - #{$global-toolbar-width});
+    width: calc(98% - 80px - #{variables.$global-toolbar-width});
     height: calc(92% - 80px);
     margin: auto;
   }
@@ -106,7 +106,7 @@
   flex-direction: row;
   align-items: center;
   align-self: flex-end;
-  width: $metadata-sidebar-width-open;
+  width: variables.$metadata-sidebar-width-open;
   background-color: var(--color-button-plot);
 
   &:hover {
@@ -127,7 +127,7 @@
   font-size: 1.6em;
 }
 
-@media (max-width: $metadata-modal-breakpoint) {
+@media (max-width: variables.$metadata-modal-breakpoint) {
   .pipeline-plot-modal__collapse-plot {
     width: auto;
   }
