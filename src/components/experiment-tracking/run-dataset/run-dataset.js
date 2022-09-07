@@ -5,6 +5,7 @@ import PinArrowIcon from '../../icons/pin-arrow';
 import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { DataSetLoader } from './run-dataset-loader';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
@@ -49,7 +50,9 @@ const RunDataset = ({
   pinnedRun,
   setRunDatasetToShow,
   setShowRunPlotsModal,
+  showLoader,
   trackingData,
+  theme,
 }) => {
   if (!trackingData) {
     return null;
@@ -76,7 +79,6 @@ const RunDataset = ({
           >
             {trackingData[group].map((dataset) => {
               const { data, datasetType, datasetName, runIds } = dataset;
-
               return (
                 <Accordion
                   className="details-dataset__accordion"
@@ -109,7 +111,9 @@ const RunDataset = ({
                         enableComparisonView,
                         enableShowChanges,
                         setRunDatasetToShow,
-                        setShowRunPlotsModal
+                        setShowRunPlotsModal,
+                        showLoader,
+                        theme
                       );
                     })}
                 </Accordion>
@@ -142,7 +146,9 @@ function buildDatasetDataMarkup(
   enableComparisonView,
   enableShowChanges,
   setRunDatasetToShow,
-  setShowRunPlotsModal
+  setShowRunPlotsModal,
+  showLoader,
+  theme
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
@@ -181,6 +187,14 @@ function buildDatasetDataMarkup(
               </CSSTransition>
             ))}
           </TransitionGroup>
+          {showLoader && (
+            <DataSetLoader
+              length={datasetValues.length}
+              theme={theme}
+              x={0}
+              y={12}
+            />
+          )}
         </div>
       ) : null}
       <div className="details-dataset__row">
@@ -248,6 +262,14 @@ function buildDatasetDataMarkup(
             );
           })}
         </TransitionGroup>
+        {showLoader && (
+          <DataSetLoader
+            length={datasetValues.length}
+            theme={theme}
+            x={0}
+            y={12}
+          />
+        )}
       </div>
     </React.Fragment>
   );

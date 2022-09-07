@@ -40,9 +40,11 @@ $animation-timing: 0.3s;
 
 .details-metadata__run--first-run-comparison-view .details-metadata__title {
   opacity: 1;
-  transition: opacity $animation-timing ease-in;
+  transition: opacity $animation-timing linear;
 }
 
+// animation for other run when select or deselect
+// needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
 // animation for other run when select or deselect
 // needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
 .details-metadata__run-animation-enter,
