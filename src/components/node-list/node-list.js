@@ -21,12 +21,14 @@ const NodeList = ({
   getGroupState,
   onUpdateSearchValue,
   onGroupToggleChanged,
+  onToggleFocusMode,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
   onItemChange,
   onModularPipelineToggleExpanded,
   focusMode,
+  disabledModularPipeline,
 }) => {
   return (
     <div
@@ -64,7 +66,9 @@ const NodeList = ({
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
                     onNodeToggleExpanded={onModularPipelineToggleExpanded}
+                    onToggleFocusMode={onToggleFocusMode}
                     focusMode={focusMode}
+                    disabledModularPipeline={disabledModularPipeline}
                   />
                 </div>
               </Scrollbars>

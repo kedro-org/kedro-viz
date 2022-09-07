@@ -5,8 +5,8 @@ import { changed, replaceMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
-import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
+import FocusModeIcon from '../icons/focus-mode';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -65,15 +65,9 @@ const NodeListRow = memo(
     icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
-    focusModeIcon = FocusModeIcon,
     rowType,
   }) => {
-    const VisibilityIcon =
-      type === 'modularPipeline'
-        ? focusModeIcon
-        : checked
-        ? visibleIcon
-        : invisibleIcon;
+    const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
     return (
@@ -157,11 +151,7 @@ const NodeListRow = memo(
             <input
               id={id}
               className="pipeline-nodelist__row__checkbox"
-              data-heap-event={
-                kind === 'element'
-                  ? `focusMode.checked.${checked}`
-                  : `visible.${name}.${checked}`
-              }
+              data-heap-event={kind === `visible.${name}.${checked}`}
               type="checkbox"
               checked={checked}
               disabled={disabled}

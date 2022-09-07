@@ -1,8 +1,11 @@
 import React from 'react';
+import classnames from 'classnames';
+
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
 import NodeListRow from './node-list-row';
+import FocusModeIcon from '../icons/focus-mode';
 
 const arrowIconColor = '#8e8e90';
 
