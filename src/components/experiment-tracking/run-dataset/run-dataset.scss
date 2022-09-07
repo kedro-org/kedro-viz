@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 .details-dataset {
   display: flex;
@@ -38,7 +38,7 @@
 .details-dataset__name-header {
   display: block;
   flex-shrink: 0;
-  width: $run-width;
+  width: variables.$run-width;
 }
 
 .details-dataset__value,
@@ -46,7 +46,7 @@
   display: flex;
   flex-shrink: 0;
   min-height: 20px;
-  width: $run-width;
+  width: variables.$run-width;
   word-break: break-all;
 }
 
@@ -55,12 +55,12 @@
   .details-dataset__name-header,
   .details-dataset__value,
   .details-dataset__value-header {
-    width: $run-width-comparison-view;
+    width: variables.$run-width-comparison-view;
   }
 }
 
 .dataset-arrow-icon {
-  fill: $blue-300;
+  fill: variables.$blue-300;
   height: 1.8em;
   margin-left: 1em;
   width: 1.8em;
