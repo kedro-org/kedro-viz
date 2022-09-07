@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import RunMetadata from '../run-metadata';
+import { SingleRunMetadataLoader } from '../run-metadata/run-metadata-loader';
 import RunDataset from '../run-dataset';
+import { SingleRunDatasetLoader } from '../run-dataset/run-dataset-loader';
 import RunDetailsModal from '../run-details-modal';
 import RunPlotsModal from '../run-plots-modal';
 import RunExportModal from '../run-export-modal';
@@ -12,9 +14,11 @@ import './details.css';
 const Details = ({
   enableComparisonView,
   enableShowChanges,
-  runDataError,
+  isRunDataLoading,
+  newRunAdded,
   onRunSelection,
   pinnedRun,
+  runDataError,
   runMetadata,
   runTrackingData,
   selectedRunIds,
@@ -30,6 +34,33 @@ const Details = ({
 }) => {
   const [runMetadataToEdit, setRunMetadataToEdit] = useState(null);
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
+  const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
+  const [showRunLoader, setRunLoader] = useState(false);
+
+  // delay showing loader for 0.2s so it has enough time to load the data first
+  useEffect(() => {
+    // for single run
+    if (isRunDataLoading && !enableComparisonView) {
+      const showSingleRunLoaderTimer = setTimeout(() => {
+        setShowSingleRunLoader(true);
+      }, 200);
+
+      return () => clearTimeout(showSingleRunLoaderTimer);
+    } else {
+      setShowSingleRunLoader(false);
+    }
+
+    // for multiple runs when the comparison mode is active
+    if (isRunDataLoading && newRunAdded) {
+      const showRunLoaderTimer = setTimeout(() => {
+        setRunLoader(true);
+      }, 200);
+
+      return () => clearTimeout(showRunLoaderTimer);
+    } else {
+      setRunLoader(false);
+    }
+  }, [isRunDataLoading, newRunAdded, enableComparisonView]);
 
   useEffect(() => {
     if (runMetadata && !enableComparisonView) {
@@ -43,6 +74,19 @@ const Details = ({
 
   if (runDataError) {
     return null;
+  }
+
+  if (showSingleRunLoader) {
+    return (
+      <div
+        className={classnames('kedro', 'details-mainframe', {
+          'details-mainframe--sidebar-visible': sidebarVisible,
+        })}
+      >
+        <SingleRunMetadataLoader theme={theme} />
+        <SingleRunDatasetLoader theme={theme} />
+      </div>
+    );
   }
 
   return (
@@ -84,6 +128,8 @@ const Details = ({
           setPinnedRun={setPinnedRun}
           setRunMetadataToEdit={setRunMetadataToEdit}
           setShowRunDetailsModal={setShowRunDetailsModal}
+          showLoader={showRunLoader}
+          theme={theme}
         />
         <RunDataset
           enableComparisonView={enableComparisonView}
@@ -92,7 +138,9 @@ const Details = ({
           pinnedRun={pinnedRun}
           setRunDatasetToShow={setRunDatasetToShow}
           setShowRunPlotsModal={setShowRunPlotsModal}
+          showLoader={showRunLoader}
           trackingData={runTrackingData}
+          theme={theme}
         />
       </div>
     </>
