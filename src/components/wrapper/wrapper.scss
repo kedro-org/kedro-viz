@@ -1,5 +1,4 @@
-@import '../../styles/variables';
-@import '../../styles/mixins';
+@use '../../styles/mixins' as mixins;
 
 .kedro-pipeline {
   position: relative;
@@ -16,5 +15,5 @@
 }
 
 .pipeline-title {
-  @include screenReaderOnly;
+  @include mixins.screenReaderOnly;
 }
