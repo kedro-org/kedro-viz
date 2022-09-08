@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 5.0.2
+# Release 5.1.0
 
 ## Major features and improvements
 
@@ -17,6 +17,7 @@ Please follow the established format:
 - Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
 - Fix the export functionality of experiment tracking data. (#1033)
 - Add lazy loading to experiment tracking. (#1041)
+
 # Release 5.0.1
 
 ## Bug fixes and other changes
