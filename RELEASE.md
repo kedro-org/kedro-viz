@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 5.1.1
+
+## Bug fixes and other changes
+
+- Fix the Python packaging build step. (#1053)
+
 # Release 5.1.0
 
 ## Major features and improvements
