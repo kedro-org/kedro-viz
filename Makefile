@@ -1,15 +1,13 @@
 .PHONY: package
 
-clean:
-	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
-
-package: clean
+package:
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
-build: clean
+build: 
+	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 	npm run build
 	cp -R build package/kedro_viz/html
 
