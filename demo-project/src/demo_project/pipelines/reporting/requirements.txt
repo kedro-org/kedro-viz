@@ -1,2 +1,3 @@
 kedro[plotly.PlotlyDataSet, plotly.JSONDataSet, matplotlib.MatplotlibWriter]==0.18.1
 pillow==9.0.1
+seaborn==0.11.2

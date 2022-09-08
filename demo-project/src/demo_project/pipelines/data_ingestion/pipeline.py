@@ -58,7 +58,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=lambda x: x,
                 inputs="prm_spine_table",
                 outputs="prm_spine_table_clone",
-            )
+            ),
         ],
         namespace="ingestion",  # provide inputs
         inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace

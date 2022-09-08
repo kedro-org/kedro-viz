@@ -6,6 +6,7 @@ generated using Kedro 0.18.1
 from kedro.pipeline import Pipeline, node, pipeline
 
 from demo_project.pipelines.reporting.nodes import (
+    create_feature_importance_plot,
     create_matplotlib_chart,
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
@@ -33,11 +34,16 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="cancellation_policy_grid",
             ),
             node(
+                func=create_feature_importance_plot,
+                inputs="feature_importance_output",
+                outputs="feature_importance",
+            ),
+            node(
                 func=create_matplotlib_chart,
                 inputs="prm_shuttle_company_reviews",
-                outputs="matplotlib_image",
+                outputs="confusion_matrix",
             ),
         ],
-        inputs=["prm_shuttle_company_reviews"],
+        inputs=["prm_shuttle_company_reviews", "feature_importance_output"],
         namespace="reporting",
     )

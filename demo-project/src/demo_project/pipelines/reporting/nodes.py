@@ -3,9 +3,11 @@ This is a boilerplate pipeline 'reporting'
 generated using Kedro 0.18.1
 """
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import PIL
 import plotly.express as px
+import seaborn as sn
 from plotly import graph_objects as go
 
 from .image_utils import DrawTable
@@ -56,7 +58,10 @@ def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:
         BaseFigure: Plotly object which is serialised as JSON for rendering
     """
     price_data_df = model_input_data[["price", "engine_type"]]
-
+    p = np.random.dirichlet([1, 1, 1])
+    price_data_df["engine_type"] = np.random.choice(
+        ["Quantum", "Plasma", "Nuclear"], len(price_data_df), p=p
+    )
     plotly_object = px.histogram(
         data_frame=price_data_df, x="price", log_x=True, color="engine_type"
     )
@@ -90,6 +95,27 @@ def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:
     return pil_table.image
 
 
-def create_matplotlib_chart(companies: pd.DataFrame):
-    plt.plot([1, 2, 3], [4, 5, 6])
+def create_feature_importance_plot(features: pd.DataFrame) -> go.Figure:
+    sorted_features = features.sort_values(by="Score", ascending=True)
+    plotly_object = px.bar(
+        sorted_features,
+        x="Score",
+        y="Feature",
+        color="Score",
+        color_continuous_scale="RdBu",
+    )
+    return plotly_object
+
+
+def create_matplotlib_chart(companies: pd.DataFrame) -> plt:
+    random_actuals = np.random.randint(2, size=11)
+    random_predicted = np.random.randint(2, size=11)
+
+    data = {"y_Actual": random_actuals, "y_Predicted": random_predicted}
+    plt.style.use("dark_background")
+    df = pd.DataFrame(data, columns=["y_Actual", "y_Predicted"])
+    confusion_matrix = pd.crosstab(
+        df["y_Actual"], df["y_Predicted"], rownames=["Actual"], colnames=["Predicted"]
+    )
+    sn.heatmap(confusion_matrix, annot=True)
     return plt

@@ -11,7 +11,6 @@ reporting.cancellation_policy_breakdown:
       log_y: true
       labels:
         price: 'fleet_price'
-  versioned: true
 
 reporting.price_histogram:
   type: plotly.JSONDataSet # Constructed via Python API
@@ -19,11 +18,17 @@ reporting.price_histogram:
   layer: reporting
   versioned: true
 
+reporting.feature_importance:
+  type: plotly.JSONDataSet # Constructed via Python API
+  filepath: ${base_location}/08_reporting/feature_importance_plot.json
+  layer: reporting
+  versioned: true
+
 reporting.cancellation_policy_grid:
   type: demo_project.extras.datasets.image_dataset.ImageDataSet
   filepath: ${base_location}/08_reporting/cancellation_policy_grid.png
 
-reporting.matplotlib_image:
+reporting.confusion_matrix:
   type: matplotlib.MatplotlibWriter
-  filepath: ${base_location}/08_reporting/matplot_lib_single_plot.png
+  filepath: ${base_location}/08_reporting/confusion_matrix.png
   versioned: true
