@@ -1,11 +1,11 @@
 .PHONY: package
 
 clean:
-	find . -regex ".*/__pycache__" -exec rm -rf {} +
-	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 
 package: clean
+        find . -regex ".*/__pycache__" -exec rm -rf {} +
+	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
