@@ -85,7 +85,6 @@ const NodeListProvider = ({
   const groups = getGroups({ items });
 
   const onItemClick = (item) => {
-    console.log('ITEM CLICK');
     if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
     } else if (isModularPipelineType(item.type)) {
@@ -99,22 +98,27 @@ const NodeListProvider = ({
     }
   };
 
-  const onItemChange = (item, checked) => {
+  const onItemChange = (item, checked, clickedIconType) => {
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
+
       if (isModularPipelineType(item.type)) {
-        onToggleModularPipelineDisabled([item.id], checked);
-        onToggleModularPipelineActive([item.id], false);
-        // if (focusMode === null) {
-        //   onToggleFocusMode(item);
-        // } else {
-        //   onToggleFocusMode(null);
-        // }
+        if (clickedIconType === 'focus') {
+          if (focusMode === null) {
+            onToggleFocusMode(item);
+          } else {
+            onToggleFocusMode(null);
+          }
+        } else {
+          onToggleModularPipelineDisabled([item.id], checked);
+          onToggleModularPipelineActive([item.id], false);
+        }
       }
     } else {
       if (checked) {
         onToggleNodeActive(null);
       }
+
       onToggleNodesDisabled([item.id], checked);
     }
   };

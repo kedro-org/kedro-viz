@@ -5,8 +5,8 @@ import { changed, replaceMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
-import { getNodeActive } from '../../selectors/nodes';
 import FocusModeIcon from '../icons/focus-mode';
+import { getNodeActive } from '../../selectors/nodes';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -65,11 +65,15 @@ const NodeListRow = memo(
     icon,
     visibleIcon = VisibleIcon,
     invisibleIcon = InvisibleIcon,
+    focusModeIcon = FocusModeIcon,
     rowType,
   }) => {
+    const isModularPipeline = type === 'modularPipeline';
+    const FocusIcon = isModularPipeline ? focusModeIcon : null;
     const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
+
     return (
       <Container
         className={classnames(
@@ -159,6 +163,51 @@ const NodeListRow = memo(
               onChange={onChange}
             />
             <VisibilityIcon
+              aria-label={name}
+              checked={checked}
+              className={classnames(
+                'pipeline-nodelist__row__icon',
+                'pipeline-row__toggle-icon',
+                `pipeline-row__toggle-icon--kind-${kind}`,
+                {
+                  'pipeline-row__toggle-icon--parent': Boolean(children),
+                  'pipeline-row__toggle-icon--child': !children,
+                  'pipeline-row__toggle-icon--checked': checked,
+                  'pipeline-row__toggle-icon--unchecked': !checked,
+                  'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
+                  'pipeline-row__toggle-icon--focus-checked': isModularPipeline
+                    ? false
+                    : focused,
+                }
+              )}
+            />
+          </label>
+        )}
+        {FocusIcon && (
+          <label
+            htmlFor={id + '-focus'}
+            className={classnames(
+              'pipeline-row__toggle',
+              `pipeline-row__toggle--kind-${kind}`,
+              {
+                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--selected': selected,
+              }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              id={id + '-focus'}
+              className="pipeline-nodelist__row__checkbox"
+              data-heap-event={kind === `visible.${name}.${checked}`}
+              type="checkbox"
+              checked={checked}
+              disabled={disabled}
+              name={name}
+              onChange={onChange}
+              data-icon-type="focus"
+            />
+            <FocusIcon
               aria-label={name}
               checked={checked}
               className={classnames(
