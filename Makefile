@@ -1,6 +1,5 @@
 .PHONY: package
 
-
 clean:
 	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 
