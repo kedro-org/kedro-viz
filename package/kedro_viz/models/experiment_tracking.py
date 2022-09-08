@@ -89,7 +89,7 @@ class TrackingDatasetModel:
                 "'%s' with version '%s' does not exist.", self.dataset_name, run_id
             )
             self.runs[run_id] = {}
-            self.dataset._version = None
+            self.dataset._version = Version(None, None)
             return
 
         try:
@@ -106,7 +106,7 @@ class TrackingDatasetModel:
                 exc,
             )
             self.runs[run_id] = {}
-            self.dataset._version = None
+        self.dataset._version = Version(None, None)
 
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:

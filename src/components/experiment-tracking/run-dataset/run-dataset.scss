@@ -9,7 +9,6 @@
 
 .details-dataset__accordion {
   margin-bottom: 36px;
-  max-width: 75em;
   width: 100%;
 }
 
@@ -60,7 +59,7 @@
 }
 
 .dataset-arrow-icon {
-  fill: #{$color-accent-blue};
+  fill: $blue-300;
   height: 1.8em;
   margin-left: 1em;
   width: 1.8em;

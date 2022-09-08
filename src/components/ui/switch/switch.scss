@@ -29,7 +29,7 @@
   border-radius: 50%;
   border: 0px;
   box-sizing: border-box;
-  color: rgb(255, 255, 255);
+  color: $white-0;
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -45,12 +45,12 @@
   z-index: 1;
 
   &--active {
-    color: $color-accent-blue;
+    color: $blue-300;
     transform: translateX(14px);
   }
 
   &--active + .switch__track {
-    background-color: $color-accent-blue;
+    background-color: $blue-300;
     opacity: 0.4;
   }
 }
@@ -71,14 +71,14 @@
 .switch__circle {
   background-color: currentcolor;
   border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 1px -1px,
-    rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px;
+  box-shadow: $black-800 0px 2px 1px -1px, $black-800 0px 1px 1px 0px,
+    $black-800 0px 1px 3px 0px;
   height: 12px;
   width: 12px;
 }
 
 .switch__track {
-  background-color: #526068;
+  background-color: $grey-900;
   border-radius: 7px;
   height: 100%;
   transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
