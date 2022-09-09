@@ -129,7 +129,7 @@ class Mutation:
             updated_run.bookmark,
             updated_run.notes,
         )
-        return UpdateRunDetailsSuccess(updated_run)
+        return UpdateRunDetailsSuccess(run=updated_run)
 
 
 @strawberry.type
