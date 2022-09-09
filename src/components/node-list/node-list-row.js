@@ -199,7 +199,7 @@ const NodeListRow = memo(
             <input
               id={id + '-focus'}
               className="pipeline-nodelist__row__checkbox"
-              data-heap-event={kind === `visible.${name}.${checked}`}
+              data-heap-event={kind === `focusMode.checked.${checked}`}
               type="checkbox"
               checked={checked}
               disabled={disabled}

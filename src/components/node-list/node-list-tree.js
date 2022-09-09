@@ -193,10 +193,7 @@ const TreeListProvider = ({
         data={getModularPipelineRowData({
           ...node,
           focusModeIcon,
-          disabled:
-            focusMode &&
-            !isOnFocusedModePath(focusMode.id, node.id) &&
-            disabledModularPipeline[node.id],
+          disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
           focused: isFocusedModularPipeline,
         })}
         onItemMouseEnter={onItemMouseEnter}

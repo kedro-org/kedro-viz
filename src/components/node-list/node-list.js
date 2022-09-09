@@ -21,7 +21,6 @@ const NodeList = ({
   getGroupState,
   onUpdateSearchValue,
   onGroupToggleChanged,
-  onToggleFocusMode,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -66,7 +65,6 @@ const NodeList = ({
                     onItemMouseLeave={onItemMouseLeave}
                     onItemChange={onItemChange}
                     onNodeToggleExpanded={onModularPipelineToggleExpanded}
-                    onToggleFocusMode={onToggleFocusMode}
                     focusMode={focusMode}
                     disabledModularPipeline={disabledModularPipeline}
                   />
