@@ -1,25 +1,25 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 /**
  * List of colour variables for the different parts of the minimap
  */
 
 .kui-theme--light {
-  --minimap-bg: #{$grey-400};
-  --minimap-shadow: #{$white-400};
-  --minimap-viewport-stroke: #{$white-600};
-  --minimap-node-fill-default: #{$white-200};
-  --minimap-node-fill-active: #{$white-0};
-  --minimap-node-fill-selected: #{$blue-0};
-  --minimap-node-fill-faded: #{$white-900};
+  --minimap-bg: #{colors.$grey-400};
+  --minimap-shadow: #{colors.$white-400};
+  --minimap-viewport-stroke: #{colors.$white-600};
+  --minimap-node-fill-default: #{colors.$white-200};
+  --minimap-node-fill-active: #{colors.$white-0};
+  --minimap-node-fill-selected: #{colors.$blue-0};
+  --minimap-node-fill-faded: #{colors.$white-900};
 }
 
 .kui-theme--dark {
-  --minimap-bg: #{$slate-800};
-  --minimap-shadow: #{$slate-100};
-  --minimap-viewport-stroke: #{$black-0};
-  --minimap-node-fill-default: #{$slate-0};
-  --minimap-node-fill-active: #{$slate-0};
-  --minimap-node-fill-selected: #{$blue-300};
-  --minimap-node-fill-faded: #{$slate-700};
+  --minimap-bg: #{colors.$slate-800};
+  --minimap-shadow: #{colors.$slate-100};
+  --minimap-viewport-stroke: #{colors.$black-0};
+  --minimap-node-fill-default: #{colors.$slate-0};
+  --minimap-node-fill-active: #{colors.$slate-0};
+  --minimap-node-fill-selected: #{colors.$blue-300};
+  --minimap-node-fill-faded: #{colors.$slate-700};
 }

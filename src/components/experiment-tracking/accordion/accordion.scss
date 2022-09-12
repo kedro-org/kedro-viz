@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 $toggle-icon-padding: 0.3em;
 $toggle-height: 2.2em + $toggle-icon-padding * 2;
@@ -54,7 +54,7 @@ $toggle-width: 1.15em;
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $blue-300 inset;
+      box-shadow: 0 0 0 3px colors.$blue-300 inset;
     }
   }
 

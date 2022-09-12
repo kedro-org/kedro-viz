@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 .pipeline-node {
   cursor: pointer;
@@ -20,7 +20,7 @@
     outline: none;
 
     [data-whatinput='keyboard'] & .pipeline-node__bg {
-      stroke: $blue-300;
+      stroke: colors.$blue-300;
       stroke-width: 3.5px;
     }
   }

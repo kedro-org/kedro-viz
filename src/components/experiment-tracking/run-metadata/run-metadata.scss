@@ -1,5 +1,4 @@
-@import '../../../styles/variables';
-@import '../../../styles/extends';
+@use '../../../styles/variables' as variables;
 
 .details-metadata {
   background-color: var(--color-bg-1);
@@ -39,7 +38,7 @@
 }
 
 .details-metadata__buttons--selected-pin svg {
-  fill: $blue-300;
+  fill: variables.$blue-300;
 }
 
 // a single run when it's not in comparison mode
@@ -47,7 +46,7 @@
   flex-shrink: 0;
   margin-right: 12em;
 
-  max-width: $run-width;
+  max-width: variables.$run-width;
 }
 
 .details-metadata__labels,
@@ -57,11 +56,11 @@
 }
 
 .details-metadata__labels {
-  width: $run-width;
+  width: variables.$run-width;
 }
 
 .details-metadata__labels-comparison-view {
-  width: $run-width-comparison-view;
+  width: variables.$run-width-comparison-view;
 }
 
 .details-metadata__run td {
@@ -75,7 +74,7 @@
 .details-metadata__run--first-run-comparison-view {
   .details-metadata__table-label,
   .details-metadata__table-value {
-    width: $run-width-comparison-view;
+    width: variables.$run-width-comparison-view;
   }
 }
 
@@ -92,13 +91,13 @@
 .details-metadata__table tr {
   display: flex;
   flex-direction: column;
-  width: $run-width;
+  width: variables.$run-width;
 }
 
 .details-metadata__table-comparison-view tr {
   display: flex;
   flex-direction: column;
-  width: $run-width-comparison-view;
+  width: variables.$run-width-comparison-view;
 }
 
 .details-metadata__run--wrapper {
@@ -182,7 +181,7 @@
 }
 
 .hidden-menu {
-  background: $white-200;
+  background: variables.$white-200;
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -199,12 +198,12 @@
 }
 
 .hidden-menu__item {
-  color: $black-800;
+  color: variables.$black-800;
   cursor: pointer;
   padding: 6px 0 6px 20px;
 
   &:hover {
-    background: $white-0;
+    background: variables.$white-0;
   }
 }
 

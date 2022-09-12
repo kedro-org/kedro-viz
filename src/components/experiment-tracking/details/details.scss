@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 .details-mainframe {
   background-color: var(--color-sidebar-shadow);
@@ -7,18 +7,26 @@
   flex-direction: column;
   height: 100%;
   justify-content: flex-start;
-  left: #{$global-toolbar-width};
+  left: #{variables.$global-toolbar-width};
   overflow-y: scroll;
   position: absolute;
   top: 0;
-  transform: translateX($sidebar-width-closed);
+  transform: translateX(variables.$sidebar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
-  width: calc((100% - #{$sidebar-width-closed} - #{$global-toolbar-width}));
+  width: calc(
+    (
+      100% - #{variables.$sidebar-width-closed} - #{variables.$global-toolbar-width}
+    )
+  );
 
-  @media (min-width: $sidebar-width-breakpoint) {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
     &--sidebar-visible {
-      width: calc((100% - #{$sidebar-width-open} - #{$global-toolbar-width}));
-      transform: translateX($sidebar-width-open);
+      width: calc(
+        (
+          100% - #{variables.$sidebar-width-open} - #{variables.$global-toolbar-width}
+        )
+      );
+      transform: translateX(variables.$sidebar-width-open);
     }
   }
 }

@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 .container {
   position: relative;
@@ -9,7 +9,7 @@
   display: flex;
   flex-grow: 1;
   align-items: center;
-  font-family: $font-monospace;
+  font-family: variables.$font-monospace;
   font-size: 13px;
 
   &--no-visible {

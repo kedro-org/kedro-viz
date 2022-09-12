@@ -1,5 +1,4 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
+@use '../../styles/extends';
 
 .pipeline-primary-toolbar {
   @extend %listReset;

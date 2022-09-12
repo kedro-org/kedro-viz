@@ -1,7 +1,8 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as variables;
 
 .pipeline-search-list {
-  padding: 2px ($sidebar-padding - 0.4) 0 ($sidebar-padding - 0.4);
+  padding: 2px (variables.$sidebar-padding - 0.4) 0
+    (variables.$sidebar-padding - 0.4);
 
   .search-bar,
   .search-input-wrapper {
@@ -42,7 +43,7 @@
   .search-input--focused {
     position: relative;
     z-index: 1;
-    outline-color: $blue-300;
+    outline-color: variables.$blue-300;
   }
 
   .search-input__field::placeholder {
@@ -88,7 +89,7 @@
   }
 
   .search-bar .search-input__line:not([data-value='']):before {
-    background-color: $blue-300;
+    background-color: variables.$blue-300;
     opacity: 1;
   }
 

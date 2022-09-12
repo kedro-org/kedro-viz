@@ -1,14 +1,13 @@
-@import '../../styles/extends';
-@import '../../styles/variables';
+@use '../../styles/variables' as colors;
 
 .kui-theme--light {
-  --pipeline-list-option-bg-active: #{$white-400};
-  --pipeline-list-option-text-color: #{$black-800};
+  --pipeline-list-option-bg-active: #{colors.$white-400};
+  --pipeline-list-option-text-color: #{colors.$black-800};
 }
 
 .kui-theme--dark {
-  --pipeline-list-option-bg-active: #{$slate-300};
-  --pipeline-list-option-text-color: #{$white-600};
+  --pipeline-list-option-bg-active: #{colors.$slate-300};
+  --pipeline-list-option-text-color: #{colors.$white-600};
 }
 
 .pipeline-list {
@@ -18,7 +17,7 @@
 
     &.pipeline-list__option--active {
       background: var(--pipeline-list-option-bg-active);
-      border-left: 2px solid $blue-300;
+      border-left: 2px solid colors.$blue-300;
       color: var(--pipeline-list-option-text-color);
     }
   }

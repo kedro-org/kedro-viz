@@ -1,7 +1,5 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
-@import './variables';
+@use '../../../styles/variables' as colors;
+@use './variables';
 
 .pipeline-nodelist__elements-panel .MuiTreeItem-label {
   // Handle MuiTreeItem icon offset for correct width
@@ -16,7 +14,7 @@
   // Fixed with required for overflow elipsis
   width: calc(100% - 7em);
   margin-right: auto;
-  padding: $row-padding-y 0 $row-padding-y 0;
+  padding: variables.$row-padding-y 0 variables.$row-padding-y 0;
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -31,12 +29,12 @@
   user-select: none;
 
   &--tree {
-    padding: $row-padding-y 0 $row-padding-y 1em;
+    padding: variables.$row-padding-y 0 variables.$row-padding-y 1em;
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 4px $blue-300 inset;
+    box-shadow: 0 0 0 4px colors.$blue-300 inset;
 
     [data-whatintent='mouse'] & {
       box-shadow: none;
