@@ -106,6 +106,9 @@ const NodeListProvider = ({
         if (clickedIconType === 'focus') {
           if (focusMode === null) {
             onToggleFocusMode(item);
+            if (disabledModularPipeline[item.id]) {
+              onToggleModularPipelineDisabled([item.id], checked);
+            }
           } else {
             onToggleFocusMode(null);
           }
