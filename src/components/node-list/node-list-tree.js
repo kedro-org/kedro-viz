@@ -137,9 +137,12 @@ const TreeListProvider = ({
             isOnFocusedModePath(focusMode.id, modularPipelineID)
           )
           .some(Boolean)) ||
-      node.modularPipelines
-        .map((modularPipelineID) => disabledModularPipeline[modularPipelineID])
-        .some(Boolean);
+      (node.modularPipelines &&
+        node.modularPipelines
+          .map(
+            (modularPipelineID) => disabledModularPipeline[modularPipelineID]
+          )
+          .some(Boolean));
 
     const selected = nodeSelected[node.id];
     return (
