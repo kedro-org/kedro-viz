@@ -15,7 +15,6 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix the Python packaging build step. (#1053)
-- 
 
 # Release 5.1.0
 
