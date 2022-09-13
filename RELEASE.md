@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Allow users to include/exclude modular pipelines on the flowchart. (#1046)
+- Allow users to hide modular pipelines on the flowchart. (#1046)
 
 ## Bug fixes and other changes
 
