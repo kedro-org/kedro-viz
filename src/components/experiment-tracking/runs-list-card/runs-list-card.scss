@@ -1,13 +1,13 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 .kui-theme--light {
-  --color-run-list-highlight: #{$blue-300};
-  --color-run-list-bookmark: #{$black-800};
+  --color-run-list-highlight: #{colors.$blue-300};
+  --color-run-list-bookmark: #{colors.$black-800};
 }
 
 .kui-theme--dark {
-  --color-run-list-highlight: #{$blue-300};
-  --color-run-list-bookmark: #{$white-600};
+  --color-run-list-highlight: #{colors.$blue-300};
+  --color-run-list-bookmark: #{colors.$white-600};
 }
 
 .runs-list-card {
@@ -19,7 +19,7 @@
 
   &--active {
     background: var(--color-run-list-hover);
-    box-shadow: -1px 0px 0px inset $blue-300;
+    box-shadow: -1px 0px 0px inset colors.$blue-300;
   }
 
   &--disabled {
@@ -82,7 +82,7 @@
   }
 
   &--active {
-    fill: $blue-300;
+    fill: colors.$blue-300;
   }
 }
 

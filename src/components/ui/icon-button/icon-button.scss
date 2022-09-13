@@ -1,5 +1,5 @@
-@import '../../../styles/variables';
-@import '../../../styles/extends';
+@use '../../../styles/extends';
+@use '../../../styles/variables' as variables;
 
 $triangle-size: 7px;
 
@@ -14,23 +14,23 @@ $triangle-size: 7px;
   color: inherit;
   cursor: pointer;
   font-size: 1.1em;
-  height: $sidebar-width-closed;
+  height: variables.$sidebar-width-closed;
   padding: 0;
   position: relative;
   text-align: center;
   user-select: none;
   vertical-align: middle;
-  width: $sidebar-width-closed;
+  width: variables.$sidebar-width-closed;
 
   @media (max-height: 550px) {
-    height: $sidebar-width-closed - 14;
+    height: variables.$sidebar-width-closed - 14;
   }
 
   &:focus {
     outline: none;
 
     [data-whatinput='keyboard'] & {
-      outline: 3px solid $blue-300;
+      outline: 3px solid variables.$blue-300;
     }
   }
 
@@ -75,7 +75,7 @@ $triangle-size: 7px;
   // to ensure the tooltip will show on the top of the bookmark dropdown
   z-index: 1;
 
-  @media (max-width: $sidebar-width-breakpoint) {
+  @media (max-width: variables.$sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {
       left: auto;
       margin-left: auto;
@@ -100,7 +100,7 @@ $triangle-size: 7px;
 
     content: '';
 
-    @media (max-width: $sidebar-width-breakpoint) {
+    @media (max-width: variables.$sidebar-width-breakpoint) {
       .pipeline-sidebar--visible & {
         border-color: transparent transparent transparent var(--color-bg-alt);
         border-width: $triangle-size 0 $triangle-size $triangle-size;

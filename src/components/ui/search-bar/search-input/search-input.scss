@@ -1,4 +1,4 @@
-@import '../../../../styles/variables';
+@use '../../../../styles/variables' as colors;
 
 $default-input-width: 320px;
 $duration-input-transition: 0.3s;
@@ -19,7 +19,7 @@ $padding-top-bottom: 7px;
   /** padding top can be overriden if label is generated (see below) **/
   padding: $padding-top-bottom $padding-left-right;
 
-  border: $height-tiny solid $slate-0;
+  border: $height-tiny solid colors.$slate-0;
   box-sizing: border-box;
 
   &--disabled {
@@ -73,7 +73,7 @@ $padding-top-bottom: 7px;
 }
 
 .search-theme--dark .search-input__field {
-  color: $white-600;
+  color: colors.$white-600;
 }
 
 .search-input__label {

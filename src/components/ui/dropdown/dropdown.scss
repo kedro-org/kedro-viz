@@ -1,5 +1,4 @@
-@import '../../../styles/extends';
-@import '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 /** Variables */
 
@@ -16,15 +15,15 @@ $menu-group-padding: 4px;
 $menu-item-padding: 12px;
 
 .kui-theme--light {
-  --dropdown-shadow: #{$white-300};
-  --dropdown-label-bg: #{$white-0};
-  --dropdown-options-bg: #{$white-200};
+  --dropdown-shadow: #{variables.$white-300};
+  --dropdown-label-bg: #{variables.$white-0};
+  --dropdown-options-bg: #{variables.$white-200};
 }
 
 .kui-theme--dark {
-  --dropdown-shadow: #{$slate-200};
-  --dropdown-label-bg: #{$slate-500};
-  --dropdown-options-bg: #{$slate-700};
+  --dropdown-shadow: #{variables.$slate-200};
+  --dropdown-label-bg: #{variables.$slate-500};
+  --dropdown-options-bg: #{variables.$slate-700};
 }
 
 .dropdown {
@@ -63,7 +62,7 @@ $menu-item-padding: 12px;
   list-style: none;
   outline: 4px solid transparent;
   overflow: hidden;
-  padding: 0 0 0 calc($sidebar-padding / 1.6); // divide by 1.6em font-size on element
+  padding: 0 0 0 calc(variables.$sidebar-padding / 1.6); // divide by 1.6em font-size on element
   position: relative;
   user-select: none;
   width: 100%;
@@ -76,7 +75,7 @@ $menu-item-padding: 12px;
   &:focus {
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 4px $blue-300 inset;
+      box-shadow: 0 0 0 4px variables.$blue-300 inset;
 
       [data-whatinput='mouse'] & {
         box-shadow: none;
@@ -107,7 +106,7 @@ $menu-item-padding: 12px;
   z-index: 2; // fix closing transition animation bug
   background: var(--dropdown-options-bg);
   border-top: none;
-  box-shadow: 0 0 2px $black-800;
+  box-shadow: 0 0 2px variables.$black-800;
   position: absolute;
   visibility: hidden;
   width: 100%;

@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 $default-input-width: 320px;
 $size-icon: 24px;
@@ -91,7 +91,7 @@ $size-pos-base: 10px;
   width: 20px;
 
   &:focus {
-    outline-color: $blue-300;
+    outline-color: colors.$blue-300;
   }
 
   .search-bar & {

@@ -1,12 +1,12 @@
-@import '../../../styles/variables';
-@import '../../../styles/extends';
+@use '../../../styles/extends';
+@use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-bg-plot: #{$white-400};
+  --color-bg-plot: #{variables.$white-400};
 }
 
 .kui-theme--dark {
-  --color-bg-plot: #{$slate-700};
+  --color-bg-plot: #{variables.$slate-700};
 }
 
 .pipeline-run-plots-modal {
@@ -15,7 +15,7 @@
   bottom: 0;
   display: flex;
   flex-direction: column;
-  left: $global-toolbar-width;
+  left: variables.$global-toolbar-width;
   overflow-y: scroll;
   position: absolute;
   right: 0;

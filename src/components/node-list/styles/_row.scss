@@ -1,7 +1,5 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
-@import './variables';
+@use '../../../styles/variables' as colors;
+@use './variables';
 
 .pipeline-nodelist__row {
   position: relative;
@@ -19,11 +17,11 @@
   &--overwrite {
     .Mui-selected & {
       .kui-theme--dark & {
-        background-color: #{$slate-700};
+        background-color: #{colors.$slate-700};
       }
 
       .kui-theme--light & {
-        background-color: #{$white-200};
+        background-color: #{colors.$white-200};
       }
     }
   }
@@ -36,7 +34,7 @@
   }
 
   &--kind-filter {
-    padding: 0 $row-offset-right 0 $row-offset-left;
+    padding: 0 variables.$row-offset-right 0 variables.$row-offset-left;
   }
 
   &--active,
@@ -58,12 +56,12 @@
 .pipeline-nodelist__row__icon {
   display: block;
   flex-shrink: 0;
-  width: $row-icon-size;
-  height: $row-icon-size;
+  width: variables.$row-icon-size;
+  height: variables.$row-icon-size;
   fill: var(--color-text);
 
   &.pipeline-row__toggle-icon--focus-checked {
-    fill: $blue-300;
+    fill: colors.$blue-300;
   }
 
   &--disabled > * {
