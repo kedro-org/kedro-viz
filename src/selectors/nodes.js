@@ -13,6 +13,7 @@ import { getNodeRank } from './ranks';
 const getNodeName = (state) => state.node.name;
 const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
+const getModularPipelineDisabled = (state) => state.modularPipeline.disabled;
 const getNodeTags = (state) => state.node.tags;
 export const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getNodeType = (state) => state.node.type;
@@ -121,6 +122,7 @@ export const getNodeData = createSelector(
     getNodeType,
     getNodeDatasetType,
     getNodeDisabled,
+    getModularPipelineDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeTypeDisabled,
@@ -132,6 +134,7 @@ export const getNodeData = createSelector(
     nodeType,
     nodeDatasetType,
     nodeDisabled,
+    modularPipelineDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
     typeDisabled,
@@ -154,6 +157,7 @@ export const getNodeData = createSelector(
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
+        disabledModularPipeline: Boolean(modularPipelineDisabled[id]),
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: nodeDisabledTag[id],
         disabledType: Boolean(typeDisabled[nodeType[id]]),
@@ -172,6 +176,7 @@ export const getNodeDataObject = createSelector(
     getNodeType,
     getNodeDatasetType,
     getNodeDisabled,
+    getModularPipelineDisabled,
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeTypeDisabled,
@@ -183,6 +188,7 @@ export const getNodeDataObject = createSelector(
     nodeType,
     nodeDatasetType,
     nodeDisabled,
+    modularPipelineDisabled,
     nodeDisabledNode,
     nodeDisabledTag,
     typeDisabled,
@@ -196,6 +202,7 @@ export const getNodeDataObject = createSelector(
         icon: getShortType([nodeDatasetType[id]], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
         disabled: nodeDisabled[id],
+        disabledModularPipeline: Boolean(modularPipelineDisabled[id]),
         disabledNode: Boolean(nodeDisabledNode[id]),
         disabledTag: Boolean(nodeDisabledTag[id]),
         disabledType: Boolean(typeDisabled[nodeType[id]]),

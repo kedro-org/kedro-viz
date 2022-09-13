@@ -15,6 +15,19 @@ export function toggleModularPipelineActive(modularPipelineIDs, active) {
   };
 }
 
+export const TOGGLE_MODULAR_PIPELINE_DISABLED =
+  'TOGGLE_MODULAR_PIPELINE_DISABLED';
+
+export function toggleModularPipelineDisabled(modularPipelineIDs, disabled) {
+  return {
+    type: TOGGLE_MODULAR_PIPELINE_DISABLED,
+    modularPipelineIDs: Array.isArray(modularPipelineIDs)
+      ? modularPipelineIDs
+      : [modularPipelineIDs],
+    disabled,
+  };
+}
+
 export const TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED =
   'TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED';
 

@@ -70,21 +70,24 @@ const getModularPipelineRowData = ({
   disabled,
   focused,
   focusModeIcon,
-}) => ({
-  id: id,
-  name: highlightedLabel || data.name,
-  type: 'modularPipeline',
-  icon: 'modularPipeline',
-  focusModeIcon: focusModeIcon,
-  active: false,
-  selected: false,
-  faded: false,
-  visible: true,
-  enabled: true,
-  disabled: disabled,
-  focused: focused,
-  checked: true,
-});
+}) => {
+  const checked = !data.disabledModularPipeline;
+  return {
+    id: id,
+    name: highlightedLabel || data.name,
+    type: 'modularPipeline',
+    icon: 'modularPipeline',
+    focusModeIcon: focusModeIcon,
+    active: false,
+    selected: false,
+    faded: disabled || !checked,
+    visible: !disabled && checked,
+    enabled: true,
+    disabled: disabled,
+    focused: focused,
+    checked,
+  };
+};
 
 /**
  * Return the data of a node to display as a row in the node list
@@ -99,7 +102,7 @@ const getNodeRowData = (node, disabled, selected) => {
     visibleIcon: VisibleIcon,
     invisibleIcon: InvisibleIcon,
     active: node.active,
-    selected: selected,
+    selected,
     faded: disabled || node.disabledNode,
     visible: !disabled && checked,
     checked,
@@ -117,6 +120,7 @@ const TreeListProvider = ({
   onItemClick,
   onNodeToggleExpanded,
   focusMode,
+  disabledModularPipeline,
   expanded,
   onToggleNodeSelected,
 }) => {
@@ -132,7 +136,14 @@ const TreeListProvider = ({
           .map((modularPipelineID) =>
             isOnFocusedModePath(focusMode.id, modularPipelineID)
           )
+          .some(Boolean)) ||
+      (node.modularPipelines &&
+        node.modularPipelines
+          .map(
+            (modularPipelineID) => disabledModularPipeline[modularPipelineID]
+          )
           .some(Boolean));
+
     const selected = nodeSelected[node.id];
     return (
       <NodeListTreeItem

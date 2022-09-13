@@ -2,6 +2,7 @@ import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
   TOGGLE_MODULAR_PIPELINES_EXPANDED,
   TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
+  TOGGLE_MODULAR_PIPELINE_DISABLED,
 } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
@@ -25,6 +26,16 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
           {},
           modularPipelineState.active,
           batchChanges('active')
+        ),
+      });
+    }
+
+    case TOGGLE_MODULAR_PIPELINE_DISABLED: {
+      return updateState({
+        disabled: Object.assign(
+          {},
+          modularPipelineState.disabled,
+          batchChanges('disabled')
         ),
       });
     }

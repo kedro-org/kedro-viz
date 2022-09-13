@@ -68,14 +68,13 @@ const NodeListRow = memo(
     focusModeIcon = FocusModeIcon,
     rowType,
   }) => {
-    const VisibilityIcon =
-      type === 'modularPipeline'
-        ? focusModeIcon
-        : checked
-        ? visibleIcon
-        : invisibleIcon;
+    const isModularPipeline = type === 'modularPipeline';
+    const FocusIcon = isModularPipeline ? focusModeIcon : null;
+    const isChecked = isModularPipeline ? checked || focused : checked;
+    const VisibilityIcon = isChecked ? visibleIcon : invisibleIcon;
     const isButton = onClick && kind !== 'filter';
     const TextButton = isButton ? 'button' : 'div';
+
     return (
       <Container
         className={classnames(
@@ -86,7 +85,7 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--active': active,
             'pipeline-nodelist__row--selected': selected,
             'pipeline-nodelist__row--disabled': disabled,
-            'pipeline-nodelist__row--unchecked': !checked,
+            'pipeline-nodelist__row--unchecked': !isChecked,
             'pipeline-nodelist__row--overwrite': !(active || selected),
           }
         )}
@@ -148,7 +147,9 @@ const NodeListRow = memo(
               'pipeline-row__toggle',
               `pipeline-row__toggle--kind-${kind}`,
               {
-                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--disabled': isModularPipeline
+                  ? focused
+                  : disabled,
                 'pipeline-row__toggle--selected': selected,
               }
             )}
@@ -157,20 +158,16 @@ const NodeListRow = memo(
             <input
               id={id}
               className="pipeline-nodelist__row__checkbox"
-              data-heap-event={
-                kind === 'element'
-                  ? `focusMode.checked.${checked}`
-                  : `visible.${name}.${checked}`
-              }
+              data-heap-event={kind === `visible.${name}.${isChecked}`}
               type="checkbox"
-              checked={checked}
+              checked={isChecked}
               disabled={disabled}
               name={name}
               onChange={onChange}
             />
             <VisibilityIcon
               aria-label={name}
-              checked={checked}
+              checked={isChecked}
               className={classnames(
                 'pipeline-nodelist__row__icon',
                 'pipeline-row__toggle-icon',
@@ -178,8 +175,53 @@ const NodeListRow = memo(
                 {
                   'pipeline-row__toggle-icon--parent': Boolean(children),
                   'pipeline-row__toggle-icon--child': !children,
-                  'pipeline-row__toggle-icon--checked': checked,
-                  'pipeline-row__toggle-icon--unchecked': !checked,
+                  'pipeline-row__toggle-icon--checked': isChecked,
+                  'pipeline-row__toggle-icon--unchecked': !isChecked,
+                  'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
+                  'pipeline-row__toggle-icon--focus-checked': isModularPipeline
+                    ? false
+                    : focused,
+                }
+              )}
+            />
+          </label>
+        )}
+        {FocusIcon && (
+          <label
+            htmlFor={id + '-focus'}
+            className={classnames(
+              'pipeline-row__toggle',
+              `pipeline-row__toggle--kind-${kind}`,
+              {
+                'pipeline-row__toggle--disabled': disabled,
+                'pipeline-row__toggle--selected': selected,
+              }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              id={id + '-focus'}
+              className="pipeline-nodelist__row__checkbox"
+              data-heap-event={kind === `focusMode.checked.${isChecked}`}
+              type="checkbox"
+              checked={isChecked}
+              disabled={disabled}
+              name={name}
+              onChange={onChange}
+              data-icon-type="focus"
+            />
+            <FocusIcon
+              aria-label={name}
+              checked={isChecked}
+              className={classnames(
+                'pipeline-nodelist__row__icon',
+                'pipeline-row__toggle-icon',
+                `pipeline-row__toggle-icon--kind-${kind}`,
+                {
+                  'pipeline-row__toggle-icon--parent': Boolean(children),
+                  'pipeline-row__toggle-icon--child': !children,
+                  'pipeline-row__toggle-icon--checked': isChecked,
+                  'pipeline-row__toggle-icon--unchecked': !isChecked,
                   'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
                   'pipeline-row__toggle-icon--focus-checked': focused,
                 }

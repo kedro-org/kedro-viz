@@ -9,6 +9,7 @@ import { getTagCount } from './tags';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;
+const getDisabledModularPipeline = (state) => state.modularPipeline.disabled;
 const getNodeTags = (state) => state.node.tags;
 const getNodeType = (state) => state.node.type;
 const getTagEnabled = (state) => state.tag.enabled;
@@ -76,6 +77,7 @@ export const getNodeDisabled = createSelector(
     getFocusedModularPipeline,
     getVisibleSidebarNodes,
     getVisibleModularPipelineInputsOutputs,
+    getDisabledModularPipeline,
   ],
   (
     nodeIDs,
@@ -88,9 +90,13 @@ export const getNodeDisabled = createSelector(
     modularPipelinesTree,
     focusedModularPipeline,
     visibleSidebarNodes,
-    visibleModularPipelineInputsOutputs
+    visibleModularPipelineInputsOutputs,
+    disabledModularPipeline
   ) =>
     arrayToObject(nodeIDs, (id) => {
+      let isDisabledViaModularPipeline =
+        disabledModularPipeline[nodeModularPipelines[id]];
+
       const isDisabledViaSidebar =
         !visibleSidebarNodes[id] &&
         !visibleModularPipelineInputsOutputs.has(id);
@@ -115,8 +121,10 @@ export const getNodeDisabled = createSelector(
         nodeDisabledNode[id],
         nodeDisabledTag[id],
         nodeDisabledPipeline[id],
+        disabledModularPipeline[id],
         typeDisabled[nodeType[id]],
         isDisabledViaSidebar,
+        isDisabledViaModularPipeline,
         isDisabledViaFocusedModularPipeline,
       ].some(Boolean);
     })
