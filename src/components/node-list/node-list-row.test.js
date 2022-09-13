@@ -144,6 +144,7 @@ describe('NodeListRow', () => {
           wrapper.find('.pipeline-row__toggle-icon--focus-checked').exists()
         ).toBe(true);
       });
+
       it('hides the visibility toggle when the row is selected for focus mode', () => {
         const { props } = setupProps();
         const wrapper = setup.mount(
@@ -154,6 +155,7 @@ describe('NodeListRow', () => {
           true
         );
       });
+
       it('switches the visibility toggle from hide to show when the row is selected for focus mode', () => {
         const { props } = setupProps();
         const wrapper = setup.mount(

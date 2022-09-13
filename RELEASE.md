@@ -8,9 +8,14 @@ Please follow the established format:
 
 # Release 5.1.1
 
+## Major features and improvements
+
+- Allow users to include/exclude modular pipelines on the flowchart. (#1046)
+
 ## Bug fixes and other changes
 
 - Fix the Python packaging build step. (#1053)
+- 
 
 # Release 5.1.0
 
