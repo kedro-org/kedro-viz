@@ -143,9 +143,10 @@ class TestGraphNodeCreation:
         assert not data_node.is_json_node()
         assert not data_node.is_tracking_node()
 
+
     def test_create_transcoded_data_node(self):
-        dataset_name = "dataset@pandas2"
-        original_name = "dataset"
+        dataset_name = "test.dataset@pandas2"
+        original_name = "test.dataset"
         pretty_name = "Dataset"
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
