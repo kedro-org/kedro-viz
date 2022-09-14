@@ -14,7 +14,7 @@ const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
 const defaultStyle = {
   opacity: 0,
-  transition: `opacity 5s ease-in-out`,
+  transition: `opacity .5s ease-in-out`,
 };
 
 const transitionStyles = {
