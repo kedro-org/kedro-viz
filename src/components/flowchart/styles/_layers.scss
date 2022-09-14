@@ -1,5 +1,5 @@
-@import '../../../styles/variables';
-@import '../../../styles/mixins';
+@use '../../../styles/mixins' as mixins;
+@use '../../../styles/variables' as variables;
 
 .pipeline-layer {
   opacity: 0;
@@ -19,10 +19,10 @@
   }
 }
 
-@include transparentColour(
+@include mixins.transparentColour(
   '--layer-bg-transparent',
-  $color-bg-dev-light-1,
-  $color-bg-dark-1
+  variables.$white-800,
+  variables.$slate-900
 );
 
 .pipeline-flowchart__layer-names {
@@ -48,7 +48,7 @@
   }
 
   &--no-global-toolbar {
-    left: -#{$global-toolbar-width};
+    left: -#{variables.$global-toolbar-width};
   }
 
   @media print {

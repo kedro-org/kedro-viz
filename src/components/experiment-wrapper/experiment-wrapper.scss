@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as variables;
 
 .experiment-wrapper {
   align-items: center;
@@ -6,7 +6,7 @@
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  margin-left: $global-toolbar-width;
+  margin-left: variables.$global-toolbar-width;
 }
 
 .experiment-wrapper__header {

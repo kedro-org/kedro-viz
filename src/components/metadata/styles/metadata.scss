@@ -1,22 +1,22 @@
-@import '../../../styles/variables';
-@import '../../../styles/extends';
+@use '../../../styles/extends';
+@use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-metadata-bg: #{$color-bg-light-3};
-  --color-metadata-kind-token-bg: #{$color-bg-light-4};
-  --color-plot-bg: #{$color-bg-light-4};
-  --color-button-plot: #{$color-button};
-  --color-button-plot-hovered: #{$color-button-hovered};
-  --color-button-text: #{$color-light};
+  --color-metadata-bg: #{variables.$white-200};
+  --color-metadata-kind-token-bg: #{variables.$white-400};
+  --color-plot-bg: #{variables.$white-400};
+  --color-button-plot: #{variables.$blue-900};
+  --color-button-plot-hovered: #{variables.$blue-900};
+  --color-button-text: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --color-metadata-bg: #{$color-bg-dark-3};
-  --color-metadata-kind-token-bg: #{$color-bg-dark-5};
-  --color-plot-bg: #{$color-bg-dark-2};
-  --color-button-plot: #{$color-button};
-  --color-button-plot-hovered: #{$color-button-hovered};
-  --color-button-text: #{$color-light};
+  --color-metadata-bg: #{variables.$slate-500};
+  --color-metadata-kind-token-bg: #{variables.$slate-0};
+  --color-plot-bg: #{variables.$slate-700};
+  --color-button-plot: #{variables.$blue-900};
+  --color-button-plot-hovered: #{variables.$blue-900};
+  --color-button-text: #{variables.$white-0};
 }
 
 .pipeline-metadata {
@@ -29,7 +29,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: $metadata-sidebar-width-open;
+  max-width: variables.$metadata-sidebar-width-open;
   padding: 6px 0 0 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
@@ -149,7 +149,7 @@
     padding: 0.4em 0.8em;
     font-weight: normal;
     font-size: 0.85em;
-    font-family: $font-monospace;
+    font-family: variables.$font-monospace;
   }
 }
 
@@ -266,7 +266,7 @@ $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__object {
   .pretty-json-container {
-    font-family: $font-monospace;
+    font-family: variables.$font-monospace;
     font-size: 0.87em;
   }
 }

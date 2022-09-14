@@ -206,7 +206,7 @@ class GraphNode(abc.ABC):
             dataset_name = _strip_transcoding(full_name)
             return TranscodedDataNode(
                 id=cls._hash(dataset_name),
-                name=_pretty_name(dataset_name),
+                name=_pretty_name(_strip_namespace(dataset_name)),
                 full_name=dataset_name,
                 tags=tags,
                 layer=layer,
@@ -579,6 +579,14 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f'kedro run --to-outputs="{data_node.full_name}"'
+
+        # Only check for existence of dataset if we might want to load it.
+        if not (
+            data_node.is_plot_node()
+            or data_node.is_image_node()
+            or data_node.is_tracking_node()
+        ):
+            return
 
         # dataset.release clears the cache before loading to ensure that this issue
         # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.

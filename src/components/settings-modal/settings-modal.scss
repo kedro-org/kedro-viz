@@ -1,23 +1,14 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
-@import '../../styles/mixins';
+@use '../../styles/variables' as colors;
+@use '../../styles/mixins' as mixins;
 
 .kui-theme--light {
-  --color-modal-header-text: #{rgba($color-dark, 0.55)};
-  --color-toggle--on: #{$color-primary-2};
-  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
-  --color-toggle--off: #{$color-bg-dark-5};
-  --color-toggle-bar--off: #{rgba($color-bg-dark-5, 0.3)};
-  --color-upgrade-reminder-text: #{$color-accent-blue};
+  --color-modal-header-text: #{colors.$black-700};
+  --color-upgrade-reminder-text: #{colors.$blue-300};
 }
 
 .kui-theme--dark {
-  --color-modal-header-text: #{rgba($color-light, 0.55)};
-  --color-toggle--on: #{$color-primary};
-  --color-toggle-bar--on: #{rgba($color-primary, 0.3)};
-  --color-toggle--off: #{$color-bg-light-3};
-  --color-toggle-bar--off: #{$color-bg-dark-2};
-  --color-upgrade-reminder-text: #{$color-accent-yellow};
+  --color-modal-header-text: #{colors.$black-0};
+  --color-upgrade-reminder-text: #{colors.$yellow-300};
 }
 
 .pipeline-settings-modal {
@@ -78,15 +69,15 @@
 }
 
 .pipeline-settings-modal__name {
-  @include flexColumn(3);
+  @include mixins.flexColumn(3);
 }
 
 .pipeline-settings-modal__description {
-  @include flexColumn(6);
+  @include mixins.flexColumn(6);
 }
 
 .pipeline-settings-modal__state {
-  @include flexColumn(3);
+  @include mixins.flexColumn(3);
 }
 
 .pipeline-settings-modal__upgrade-reminder {

@@ -1,7 +1,7 @@
 """Project hooks."""
 import logging
 import time
-from typing import Any, Dict, Iterable, Optional
+from typing import Any
 
 from kedro.framework.hooks import hook_impl
 

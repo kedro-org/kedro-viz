@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as variables;
 
 .pipeline-warning {
   display: flex;
@@ -9,14 +9,14 @@
   position: absolute;
   text-align: center;
   top: 0;
-  transform: translateX($sidebar-width-closed);
+  transform: translateX(variables.$sidebar-width-closed);
   transition: transform 0.4s ease, width ease 0.4s;
-  width: calc((100% - #{$sidebar-width-closed}));
+  width: calc((100% - #{variables.$sidebar-width-closed}));
 
-  @media (min-width: $sidebar-width-breakpoint) {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
     &--sidebar-visible {
-      width: calc((100% - #{$sidebar-width-open}));
-      transform: translateX($sidebar-width-open);
+      width: calc((100% - #{variables.$sidebar-width-open}));
+      transform: translateX(variables.$sidebar-width-open);
     }
   }
 }
@@ -53,7 +53,7 @@
   font-weight: normal;
   margin-bottom: 0.6em;
 
-  @media (min-width: $sidebar-width-breakpoint) {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
     font-size: 3.8em;
   }
 }
@@ -66,7 +66,7 @@
   margin-bottom: 2.4em;
   max-width: 30em;
 
-  @media (min-width: $sidebar-width-breakpoint) {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
     font-size: 1.5em;
   }
 }

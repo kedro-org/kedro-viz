@@ -1,5 +1,4 @@
-image:
-  file: .gitpod.Dockerfile
+image: gitpod/workspace-full:legacy-dazzle-v1
   
 tasks:
   - name: frontend

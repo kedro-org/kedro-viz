@@ -6,6 +6,43 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next release
+
+## Major features and improvements
+
+- Allow users to hide modular pipelines on the flowchart. (#1046)
+
+## Bug fixes and other changes
+
+- Fix pretty naming for transcoded datasets. (#1062)
+
+# Release 5.1.1
+
+## Bug fixes and other changes
+
+- Fix the Python packaging build step. (#1053)
+
+# Release 5.1.0
+
+## Major features and improvements
+
+- The `%run_viz` line magic can now be used in Databricks notebooks. (#1012)
+
+## Bug fixes and other changes
+
+- Upgrade to `dart-scss` and update the recommended Node version to v16. (#1026)
+- Fix the export functionality of experiment tracking data. (#1033)
+- Add lazy loading to experiment tracking. (#1041)
+
+# Release 5.0.1
+
+## Bug fixes and other changes
+
+- Don't reset the zoom each time a node is selected. (#988)
+- Improve the way runs animate in and out in experiment tracking. (#993)
+- Fix for plots not showing on Metadata panel. (#1014)
+- Enhance the display of information in the Metadata sidebar. (#1015)
+
 # Release 5.0.0
 
 ## Major features and improvements

@@ -23,6 +23,22 @@ export const codeSidebarWidth = {
   closed: 0,
 };
 
+// these colours variables come from styles/variables';
+const slate600 = '#0e222d';
+const slate200 = '#21333e';
+
+const grey200 = '#d5d8da';
+const grey100 = '#eaebed';
+
+export const experimentTrackingLazyLoadingColours = {
+  backgroundLightTheme: grey200,
+  foregroundLightTheme: grey100,
+  backgroundDarkTheme: slate600,
+  foregroundDarkTheme: slate200,
+};
+
+export const experimentTrackingLazyLoadingGap = 38;
+
 export const chartMinWidthScale = 0.25;
 
 // Determine the number of nodes and edges in pipeline to trigger size warning

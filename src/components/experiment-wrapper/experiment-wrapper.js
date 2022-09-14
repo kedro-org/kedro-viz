@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
-import {
-  GET_RUNS,
-  GET_RUN_METADATA,
-  GET_RUN_TRACKING_DATA,
-} from '../../apollo/queries';
+import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
 import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
@@ -27,24 +23,17 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
+  const [newRunAdded, setNewRunAdded] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
 
-  // Fetch all metadata for selected runs.
-  const { data: { runMetadata } = [], metadataError } = useApolloQuery(
-    GET_RUN_METADATA,
-    {
-      skip: selectedRunIds.length === 0,
-      variables: { runIds: selectedRunIds },
-    }
-  );
-
-  // Fetch all tracking data for selected runs.
+  // Fetch all data for selected runs.
   const {
-    data: { plots = [], metrics = [], JSONData = [] } = [],
-    error: trackingDataError,
-  } = useApolloQuery(GET_RUN_TRACKING_DATA, {
+    data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
+    error: runDataError,
+    loading: isRunDataLoading,
+  } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
     variables: { runIds: selectedRunIds, showDiff: true },
   });
@@ -70,8 +59,10 @@ const ExperimentWrapper = ({ theme }) => {
           return;
         }
         setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
+        setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
+        setNewRunAdded(true);
       }
     } else {
       if (selectedRunIds.includes(id)) {
@@ -202,10 +193,10 @@ const ExperimentWrapper = ({ theme }) => {
                 selectedRunData={selectedRunData}
                 selectedRunIds={selectedRunIds}
                 setEnableShowChanges={setEnableShowChanges}
+                setShowRunExportModal={setShowRunExportModal}
                 setSidebarVisible={setIsSidebarVisible}
                 showRunDetailsModal={setShowRunDetailsModal}
                 sidebarVisible={isSidebarVisible}
-                setShowRunExportModal={setShowRunExportModal}
               />
               {selectedRunIds.length > 0 ? (
                 <Details
@@ -213,22 +204,23 @@ const ExperimentWrapper = ({ theme }) => {
                   enableShowChanges={
                     enableShowChanges && selectedRunIds.length > 1
                   }
-                  metadataError={metadataError}
+                  isRunDataLoading={isRunDataLoading}
+                  newRunAdded={newRunAdded}
                   onRunSelection={onRunSelection}
                   pinnedRun={pinnedRun}
+                  runDataError={runDataError}
                   runMetadata={runMetadata}
                   runTrackingData={runTrackingData}
                   selectedRunIds={selectedRunIds}
                   setPinnedRun={setPinnedRun}
                   setShowRunDetailsModal={setShowRunDetailsModal}
-                  showRunDetailsModal={showRunDetailsModal}
+                  setShowRunExportModal={setShowRunExportModal}
                   setShowRunPlotsModal={setShowRunPlotsModal}
+                  showRunDetailsModal={showRunDetailsModal}
+                  showRunExportModal={showRunExportModal}
                   showRunPlotsModal={showRunPlotsModal}
                   sidebarVisible={isSidebarVisible}
                   theme={theme}
-                  trackingDataError={trackingDataError}
-                  showRunExportModal={showRunExportModal}
-                  setShowRunExportModal={setShowRunExportModal}
                 />
               ) : null}
             </div>

@@ -89,7 +89,13 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             response = get_default_response()
-            Path(save_file).write_text(response.json(indent=4, sort_keys=True))
+            try:
+                Path(save_file).write_text(response.json(indent=4, sort_keys=True))
+            except TypeError:  # pragma: no cover
+                # Keys of incomparable types (e.g. string and int) cannot be sorted.
+                Path(save_file).write_text(
+                    response.json(indent=4, sort_keys=False)
+                )  # pragma: no cover
         app = apps.create_api_app_from_project(path, autoreload)
     else:
         app = apps.create_api_app_from_file(load_file)

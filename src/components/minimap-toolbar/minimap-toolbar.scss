@@ -1,13 +1,4 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
-
-.kui-theme--light {
-  --minimap-toolbar-active: #{$color-bg-light-3};
-}
-
-.kui-theme--dark {
-  --minimap-toolbar-active: #{$color-bg-dark-4};
-}
+@use '../../styles/extends';
 
 .pipeline-minimap-toolbar {
   @extend %listReset;
