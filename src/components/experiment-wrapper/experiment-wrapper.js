@@ -229,22 +229,32 @@ const ExperimentWrapper = ({ theme }) => {
           </Transition>
         </>
       ) : (
-        <div className="experiment-wrapper">
-          <h2 className="experiment-wrapper__header">
-            You don't have any experiments
-          </h2>
-          <p className="experiment-wrapper__text">
-            Kedro can help you manage your experiments. Learn more how you can
-            enable experiment tracking in your projects from our docs.{' '}
-          </p>
-          <a
-            href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Button>View docs</Button>
-          </a>
-        </div>
+        <Transition in={data?.runsList.length <= 0} timeout={300}>
+          {(state) => (
+            <div
+              className="experiment-wrapper"
+              style={{
+                ...defaultStyle,
+                ...transitionStyles[state],
+              }}
+            >
+              <h2 className="experiment-wrapper__header">
+                You don't have any experiments
+              </h2>
+              <p className="experiment-wrapper__text">
+                Kedro can help you manage your experiments. Learn more how you
+                can enable experiment tracking in your projects from our docs.{' '}
+              </p>
+              <a
+                href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <Button>View docs</Button>
+              </a>
+            </div>
+          )}
+        </Transition>
       )}
     </>
   );
