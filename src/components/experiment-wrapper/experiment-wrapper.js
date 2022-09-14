@@ -12,6 +12,18 @@ import './experiment-wrapper.css';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
+const defaultStyle = {
+  opacity: 0,
+  transition: `opacity 5s ease-in-out`,
+};
+
+const transitionStyles = {
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 },
+};
+
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableComparisonView, setEnableComparisonView] = useState(false);
@@ -151,18 +163,6 @@ const ExperimentWrapper = ({ theme }) => {
     });
   }, [data, subscribeToMore]);
 
-  const defaultStyle = {
-    opacity: 0,
-    transition: `opacity .3s ease-in-out`,
-  };
-
-  const transitionStyles = {
-    entering: { opacity: 1 },
-    entered: { opacity: 1 },
-    exiting: { opacity: 0 },
-    exited: { opacity: 0 },
-  };
-
   if (loading) {
     return (
       <div className="experiment-wrapper">
@@ -174,58 +174,60 @@ const ExperimentWrapper = ({ theme }) => {
   return (
     <>
       {data?.runsList.length > 0 ? (
-        <Transition in={selectedRunIds.length > 0} timeout={300}>
-          {(state) => (
-            <div
-              style={{
-                ...defaultStyle,
-                ...transitionStyles[state],
-              }}
-            >
-              <Sidebar
-                disableRunSelection={disableRunSelection}
-                enableComparisonView={enableComparisonView}
-                enableShowChanges={enableShowChanges}
-                isExperimentView
-                onRunSelection={onRunSelection}
-                onToggleComparisonView={onToggleComparisonView}
-                runsListData={data.runsList}
-                selectedRunData={selectedRunData}
-                selectedRunIds={selectedRunIds}
-                setEnableShowChanges={setEnableShowChanges}
-                setShowRunExportModal={setShowRunExportModal}
-                setSidebarVisible={setIsSidebarVisible}
-                showRunDetailsModal={setShowRunDetailsModal}
-                sidebarVisible={isSidebarVisible}
-              />
-              {selectedRunIds.length > 0 ? (
-                <Details
-                  enableComparisonView={enableComparisonView}
-                  enableShowChanges={
-                    enableShowChanges && selectedRunIds.length > 1
-                  }
-                  isRunDataLoading={isRunDataLoading}
-                  newRunAdded={newRunAdded}
-                  onRunSelection={onRunSelection}
-                  pinnedRun={pinnedRun}
-                  runDataError={runDataError}
-                  runMetadata={runMetadata}
-                  runTrackingData={runTrackingData}
-                  selectedRunIds={selectedRunIds}
-                  setPinnedRun={setPinnedRun}
-                  setShowRunDetailsModal={setShowRunDetailsModal}
-                  setShowRunExportModal={setShowRunExportModal}
-                  setShowRunPlotsModal={setShowRunPlotsModal}
-                  showRunDetailsModal={showRunDetailsModal}
-                  showRunExportModal={showRunExportModal}
-                  showRunPlotsModal={showRunPlotsModal}
-                  sidebarVisible={isSidebarVisible}
-                  theme={theme}
-                />
-              ) : null}
-            </div>
-          )}
-        </Transition>
+        <>
+          <Sidebar
+            disableRunSelection={disableRunSelection}
+            enableComparisonView={enableComparisonView}
+            enableShowChanges={enableShowChanges}
+            isExperimentView
+            onRunSelection={onRunSelection}
+            onToggleComparisonView={onToggleComparisonView}
+            runsListData={data.runsList}
+            selectedRunData={selectedRunData}
+            selectedRunIds={selectedRunIds}
+            setEnableShowChanges={setEnableShowChanges}
+            setShowRunExportModal={setShowRunExportModal}
+            setSidebarVisible={setIsSidebarVisible}
+            showRunDetailsModal={setShowRunDetailsModal}
+            sidebarVisible={isSidebarVisible}
+          />
+          <Transition in={selectedRunIds.length > 0} timeout={300}>
+            {(state) => (
+              <div
+                style={{
+                  ...defaultStyle,
+                  ...transitionStyles[state],
+                }}
+              >
+                {selectedRunIds.length > 0 ? (
+                  <Details
+                    enableComparisonView={enableComparisonView}
+                    enableShowChanges={
+                      enableShowChanges && selectedRunIds.length > 1
+                    }
+                    isRunDataLoading={isRunDataLoading}
+                    newRunAdded={newRunAdded}
+                    onRunSelection={onRunSelection}
+                    pinnedRun={pinnedRun}
+                    runDataError={runDataError}
+                    runMetadata={runMetadata}
+                    runTrackingData={runTrackingData}
+                    selectedRunIds={selectedRunIds}
+                    setPinnedRun={setPinnedRun}
+                    setShowRunDetailsModal={setShowRunDetailsModal}
+                    setShowRunExportModal={setShowRunExportModal}
+                    setShowRunPlotsModal={setShowRunPlotsModal}
+                    showRunDetailsModal={showRunDetailsModal}
+                    showRunExportModal={showRunExportModal}
+                    showRunPlotsModal={showRunPlotsModal}
+                    sidebarVisible={isSidebarVisible}
+                    theme={theme}
+                  />
+                ) : null}
+              </div>
+            )}
+          </Transition>
+        </>
       ) : (
         <div className="experiment-wrapper">
           <h2 className="experiment-wrapper__header">
