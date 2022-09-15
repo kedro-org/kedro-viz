@@ -134,7 +134,7 @@ describe('NodeListRow', () => {
     });
 
     describe('focus mode', () => {
-      it('sets the visibility toggle to the checked mode when the row is selected for focus mode', () => {
+      it('sets the focus toggle to the checked mode when the row is selected for focus mode', () => {
         const { props } = setupProps();
         const wrapper = setup.mount(
           <NodeListRow {...props} focused={true} type="modularPipeline" />
@@ -143,6 +143,30 @@ describe('NodeListRow', () => {
         expect(
           wrapper.find('.pipeline-row__toggle-icon--focus-checked').exists()
         ).toBe(true);
+      });
+
+      it('hides the visibility toggle when the row is selected for focus mode', () => {
+        const { props } = setupProps();
+        const wrapper = setup.mount(
+          <NodeListRow {...props} focused={true} type="modularPipeline" />
+        );
+
+        expect(wrapper.find('.pipeline-row__toggle--disabled').exists()).toBe(
+          true
+        );
+      });
+
+      it('switches the visibility toggle from hide to show when the row is selected for focus mode', () => {
+        const { props } = setupProps();
+        const wrapper = setup.mount(
+          <NodeListRow
+            {...props}
+            focused={true}
+            checked={false}
+            type="modularPipeline"
+          />
+        );
+        expect(wrapper.find('VisibleIcon')).toHaveLength(1);
       });
     });
   });

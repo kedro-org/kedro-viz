@@ -181,16 +181,6 @@ describe('pipeline actions', () => {
         expect(store.getState().loading.pipeline).toBe(true);
       });
 
-      it('should hide the current graph before loading the new pipeline', () => {
-        const store = createStore(reducer, {
-          ...mockState.spaceflights,
-          dataSource: 'json',
-        });
-        expect(store.getState().visible.graph).toBe(true);
-        loadPipelineData(active)(store.dispatch, store.getState);
-        expect(store.getState().visible.graph).toBe(false);
-      });
-
       it('should set loading to false when complete', async () => {
         const store = createStore(reducer, mockState.json);
         await loadPipelineData(active)(store.dispatch, store.getState);

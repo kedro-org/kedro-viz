@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
 import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
@@ -10,6 +11,18 @@ import Sidebar from '../sidebar';
 import './experiment-wrapper.css';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
+
+const defaultStyle = {
+  opacity: 0,
+  transition: `opacity .5s ease-in-out`,
+};
+
+const transitionStyles = {
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 },
+};
 
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
@@ -178,47 +191,70 @@ const ExperimentWrapper = ({ theme }) => {
             showRunDetailsModal={setShowRunDetailsModal}
             sidebarVisible={isSidebarVisible}
           />
-          {selectedRunIds.length > 0 ? (
-            <Details
-              enableComparisonView={enableComparisonView}
-              enableShowChanges={enableShowChanges && selectedRunIds.length > 1}
-              isRunDataLoading={isRunDataLoading}
-              newRunAdded={newRunAdded}
-              onRunSelection={onRunSelection}
-              pinnedRun={pinnedRun}
-              runDataError={runDataError}
-              runMetadata={runMetadata}
-              runTrackingData={runTrackingData}
-              selectedRunIds={selectedRunIds}
-              setPinnedRun={setPinnedRun}
-              setShowRunDetailsModal={setShowRunDetailsModal}
-              setShowRunExportModal={setShowRunExportModal}
-              setShowRunPlotsModal={setShowRunPlotsModal}
-              showRunDetailsModal={showRunDetailsModal}
-              showRunExportModal={showRunExportModal}
-              showRunPlotsModal={showRunPlotsModal}
-              sidebarVisible={isSidebarVisible}
-              theme={theme}
-            />
-          ) : null}
+          <Transition in={selectedRunIds.length > 0} timeout={300}>
+            {(state) => (
+              <div
+                style={{
+                  ...defaultStyle,
+                  ...transitionStyles[state],
+                }}
+              >
+                {selectedRunIds.length > 0 ? (
+                  <Details
+                    enableComparisonView={enableComparisonView}
+                    enableShowChanges={
+                      enableShowChanges && selectedRunIds.length > 1
+                    }
+                    isRunDataLoading={isRunDataLoading}
+                    newRunAdded={newRunAdded}
+                    onRunSelection={onRunSelection}
+                    pinnedRun={pinnedRun}
+                    runDataError={runDataError}
+                    runMetadata={runMetadata}
+                    runTrackingData={runTrackingData}
+                    selectedRunIds={selectedRunIds}
+                    setPinnedRun={setPinnedRun}
+                    setShowRunDetailsModal={setShowRunDetailsModal}
+                    setShowRunExportModal={setShowRunExportModal}
+                    setShowRunPlotsModal={setShowRunPlotsModal}
+                    showRunDetailsModal={showRunDetailsModal}
+                    showRunExportModal={showRunExportModal}
+                    showRunPlotsModal={showRunPlotsModal}
+                    sidebarVisible={isSidebarVisible}
+                    theme={theme}
+                  />
+                ) : null}
+              </div>
+            )}
+          </Transition>
         </>
       ) : (
-        <div className="experiment-wrapper">
-          <h2 className="experiment-wrapper__header">
-            You don't have any experiments
-          </h2>
-          <p className="experiment-wrapper__text">
-            Kedro can help you manage your experiments. Learn more how you can
-            enable experiment tracking in your projects from our docs.{' '}
-          </p>
-          <a
-            href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
-            rel="noreferrer"
-            target="_blank"
-          >
-            <Button>View docs</Button>
-          </a>
-        </div>
+        <Transition in={data?.runsList.length <= 0} timeout={300}>
+          {(state) => (
+            <div
+              className="experiment-wrapper"
+              style={{
+                ...defaultStyle,
+                ...transitionStyles[state],
+              }}
+            >
+              <h2 className="experiment-wrapper__header">
+                You don't have any experiments
+              </h2>
+              <p className="experiment-wrapper__text">
+                Kedro can help you manage your experiments. Learn more how you
+                can enable experiment tracking in your projects from our docs.{' '}
+              </p>
+              <a
+                href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <Button>View docs</Button>
+              </a>
+            </div>
+          )}
+        </Transition>
       )}
     </>
   );
