@@ -37,9 +37,9 @@ const Details = ({
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
 
-  // delay showing loader for 0.2s so it has enough time to load the data first
+  // Delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {
-    // for single run
+    // For single run
     if (isRunDataLoading && !enableComparisonView) {
       const showSingleRunLoaderTimer = setTimeout(() => {
         setShowSingleRunLoader(true);
@@ -50,7 +50,7 @@ const Details = ({
       setShowSingleRunLoader(false);
     }
 
-    // for multiple runs when the comparison mode is active
+    // For multiple runs when the comparison mode is active
     if (isRunDataLoading && newRunAdded) {
       const showRunLoaderTimer = setTimeout(() => {
         setRunLoader(true);
