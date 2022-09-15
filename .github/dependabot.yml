@@ -8,15 +8,11 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/package" # Location of package manifests
     schedule:
-      interval: "weekly"
-updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/demo-project/src" # Location of package manifests
-    schedule:
-      interval: "weekly"
-updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-
+      interval: "daily"
+    target-branch: "dependency-update"
+    ignore:
+      - dependency-name: "types-*"
+    labels:
+      - "python"
+      - "dependencies"
+    open-pull-requests-limit: 50
