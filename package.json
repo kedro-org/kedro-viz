@@ -145,5 +145,8 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "snyk": true
+  "snyk": true,
+  "overrides": {
+    "react-error-overlay": "6.0.9"
+  }
 }
