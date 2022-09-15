@@ -15,6 +15,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix pretty naming for transcoded datasets. (#1062)
+- Keep graph visible when switching pipelines. (#1063)
 
 # Release 5.1.1
 

@@ -1,7 +1,7 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
-import { resetData, toggleGraph } from './index';
+import { resetData } from './index';
 
 /**
  * This file contains actions that update the active pipeline, and if loading data
@@ -69,6 +69,7 @@ export const requiresSecondRequest = (pipeline) => {
   if (!pipeline.ids.length || !pipeline.main) {
     return false;
   }
+
   // There is no active pipeline set
   if (!pipeline.active) {
     return false;
@@ -122,22 +123,25 @@ export function loadInitialPipelineData() {
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
     const { dataSource, pipeline, display, flags } = getState();
+
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
+
     if (dataSource === 'json') {
       dispatch(toggleLoading(true));
-      // Remove the previous graph to show that a new pipeline is being loaded
-      dispatch(toggleGraph(false));
+
       const url = getPipelineUrl({
         main: pipeline.main,
         active: pipelineID,
       });
+
       const expandAllPipelines =
         display.expandAllPipelines || flags.expandAllPipelines;
       const newState = await loadJsonData(url).then((data) =>
         preparePipelineState(data, false, expandAllPipelines)
       );
+
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;
