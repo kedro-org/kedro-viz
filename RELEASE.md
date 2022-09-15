@@ -6,6 +6,18 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next release
+
+## Major features and improvements
+
+- Allow users to hide modular pipelines on the flowchart. (#1046)
+
+## Bug fixes and other changes
+
+- Fix pretty naming for transcoded datasets. (#1062)
+- Keep graph visible when switching pipelines. (#1063)
+- Add a transition to run details in experiment tracking. (#1065)
+
 # Release 5.1.1
 
 ## Bug fixes and other changes

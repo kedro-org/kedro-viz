@@ -15,6 +15,7 @@ export const createInitialPipelineState = () => ({
     visible: {},
     expanded: [],
     active: {},
+    disabled: {},
   },
   node: {
     ids: [],

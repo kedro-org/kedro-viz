@@ -206,7 +206,7 @@ class GraphNode(abc.ABC):
             dataset_name = _strip_transcoding(full_name)
             return TranscodedDataNode(
                 id=cls._hash(dataset_name),
-                name=_pretty_name(dataset_name),
+                name=_pretty_name(_strip_namespace(dataset_name)),
                 full_name=dataset_name,
                 tags=tags,
                 layer=layer,
