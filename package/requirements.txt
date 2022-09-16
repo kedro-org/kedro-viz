@@ -3,7 +3,7 @@ kedro>=0.17.0
 ipython>=7.0.0, <8.0
 fastapi>=0.63.0, <0.67.0
 aiofiles==22.1.0
-uvicorn[standard]~=0.17.0
+uvicorn[standard]~=0.18.3
 watchgod~=0.8.0
 plotly>=4.0
 pandas>=0.24
