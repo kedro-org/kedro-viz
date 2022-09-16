@@ -274,7 +274,14 @@ def get_default_response() -> GraphAPIResponse:
 
 class EnhancedORJSONResponse(ORJSONResponse):
     @staticmethod
-    def write_to_file(content: Any) -> bytes:
+    def encode_to_human_readable(content: Any) -> bytes:
+        """A method to encode the given content to JSON, with the
+        proper formatting to write a human-readable file.
+
+        Returns:
+            A bytes object containing the JSON to write.
+
+        """
         encoded_content = jsonable_encoder(content)
         return orjson.dumps(
             encoded_content,

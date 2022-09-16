@@ -89,7 +89,7 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             default_response = get_default_response()
-            encoded_default_response = EnhancedORJSONResponse.write_to_file(
+            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
                 default_response
             )
             Path(save_file).write_bytes(encoded_default_response)
