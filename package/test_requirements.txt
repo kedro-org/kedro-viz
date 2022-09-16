@@ -1,7 +1,7 @@
 -r requirements.txt
 kedro[pandas.ParquetDataSet]>=0.17.0  
 kedro-telemetry>=0.1.1  # for testing telemetry integration
-bandit~=1.6.2
+bandit~=1.7.4
 behave>=1.2.6, <2.0
 black~=22.8
 flake8~=3.9.2
