@@ -18,6 +18,7 @@ from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
+    ORJSONResponse,
     get_default_response,
 )
 
@@ -27,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.get("/main", response_model=GraphAPIResponse)
+@router.get("/main", response_class=ORJSONResponse)
 async def main():
     return get_default_response()
 

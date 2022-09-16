@@ -1,8 +1,11 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
+import orjson
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
@@ -81,8 +84,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
 
 
 NodeAPIResponse = Union[
-    TaskNodeAPIResponse,
-    DataNodeAPIResponse,
+    TaskNodeAPIResponse, DataNodeAPIResponse,
 ]
 
 
@@ -246,10 +248,8 @@ def get_default_response() -> GraphAPIResponse:
         data_access_manager.get_default_selected_pipeline().id
     )
 
-    modular_pipelines_tree = (
-        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            default_selected_pipeline_id
-        )
+    modular_pipelines_tree = data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+        default_selected_pipeline_id
     )
 
     return GraphAPIResponse(
@@ -267,3 +267,15 @@ def get_default_response() -> GraphAPIResponse:
         modular_pipelines=modular_pipelines_tree,
         selected_pipeline=default_selected_pipeline_id,
     )
+
+
+class ORJSONResponse(ORJSONResponse):
+    @staticmethod
+    def write_to_file(content: Any) -> bytes:
+        encoded_content = jsonable_encoder(content)
+        return orjson.dumps(
+            encoded_content,
+            option=orjson.OPT_INDENT_2
+            | orjson.OPT_NON_STR_KEYS
+            | orjson.OPT_SERIALIZE_NUMPY,
+        )
