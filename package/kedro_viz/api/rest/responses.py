@@ -1,7 +1,7 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 import orjson
 from fastapi.encoders import jsonable_encoder
@@ -84,7 +84,8 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
 
 
 NodeAPIResponse = Union[
-    TaskNodeAPIResponse, DataNodeAPIResponse,
+    TaskNodeAPIResponse,
+    DataNodeAPIResponse,
 ]
 
 
@@ -248,8 +249,10 @@ def get_default_response() -> GraphAPIResponse:
         data_access_manager.get_default_selected_pipeline().id
     )
 
-    modular_pipelines_tree = data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-        default_selected_pipeline_id
+    modular_pipelines_tree = (
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            default_selected_pipeline_id
+        )
     )
 
     return GraphAPIResponse(
@@ -269,7 +272,7 @@ def get_default_response() -> GraphAPIResponse:
     )
 
 
-class ORJSONResponse(ORJSONResponse):
+class EnhancedORJSONResponse(ORJSONResponse):
     @staticmethod
     def write_to_file(content: Any) -> bytes:
         encoded_content = jsonable_encoder(content)

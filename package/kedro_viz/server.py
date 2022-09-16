@@ -9,7 +9,7 @@ from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import get_default_response, ORJSONResponse
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
@@ -89,7 +89,9 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             default_response = get_default_response()
-            encoded_default_response = ORJSONResponse.write_to_file(default_response)
+            encoded_default_response = EnhancedORJSONResponse.write_to_file(
+                default_response
+            )
             Path(save_file).write_bytes(encoded_default_response)
         app = apps.create_api_app_from_project(path, autoreload)
     else:

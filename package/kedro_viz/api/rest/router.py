@@ -16,9 +16,9 @@ from kedro_viz.models.flowchart import (
 
 from .responses import (
     APIErrorMessage,
+    EnhancedORJSONResponse,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
-    ORJSONResponse,
     get_default_response,
 )
 
@@ -28,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.get("/main", response_class=ORJSONResponse)
+@router.get("/main", response_class=EnhancedORJSONResponse)
 async def main():
     return get_default_response()
 
