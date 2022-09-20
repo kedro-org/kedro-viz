@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict
 
 import IPython
 import requests
-from IPython.core.display import HTML, display
+from IPython.display import HTML, display
 
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
