@@ -32,7 +32,7 @@ def db_session_class(store_path):
 class TestSQLiteStore:
     def test_empty(self, store_path):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
-        assert sqlite_store == {}
+        assert not sqlite_store
         assert sqlite_store.location == store_path / "session_store.db"
 
     def test_save_single_run(self, store_path, db_session_class):
