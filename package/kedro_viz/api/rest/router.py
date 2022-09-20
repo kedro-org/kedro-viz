@@ -28,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.get("/main", response_class=EnhancedORJSONResponse)
+@router.get("/main", response_model=GraphAPIResponse)
 async def main():
     return get_default_response()
 
