@@ -16,7 +16,6 @@ from kedro_viz.models.flowchart import (
 
 from .responses import (
     APIErrorMessage,
-    EnhancedORJSONResponse,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
     get_default_response,
