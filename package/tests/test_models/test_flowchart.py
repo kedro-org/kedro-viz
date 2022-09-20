@@ -566,7 +566,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     @pytest.fixture
@@ -589,7 +589,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     @pytest.fixture
@@ -612,7 +612,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     def test_load_metrics_versioned_data(self, tracking_data_filepath):

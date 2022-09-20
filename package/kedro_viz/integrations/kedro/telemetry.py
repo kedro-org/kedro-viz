@@ -22,7 +22,9 @@ def get_heap_app_id(project_path: Path) -> Optional[str]:
     telemetry_file_path = project_path / ".telemetry"
     if not telemetry_file_path.exists():
         return None
-    with open(telemetry_file_path) as telemetry_file:
+    with open(
+        telemetry_file_path, encoding="utf8"
+    ) as telemetry_file:  # pylint: disable: unspecified-encoding
         telemetry = yaml.safe_load(telemetry_file)
         if _is_valid_syntax(telemetry) and telemetry["consent"]:
             return _get_heap_app_id()
