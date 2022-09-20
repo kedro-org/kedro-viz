@@ -1,6 +1,6 @@
 """`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries, mutations
  and subscriptions.."""
-# pylint: disable=no-self-use,missing-function-docstring,missing-class-docstring
+# pylint: disable=missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations
 
