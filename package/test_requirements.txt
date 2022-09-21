@@ -6,7 +6,7 @@ behave>=1.2.6, <2.0
 black~=22.8
 flake8~=5.0.4
 isort~=5.10.1
-matplotlib~=3.3.4
+matplotlib~=3.5
 mypy~=0.971
 psutil==5.9.2  # same as Kedro for now
 pylint~=2.15.3
