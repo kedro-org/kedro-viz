@@ -106,6 +106,6 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads(Path(filepath).read_text())
+        return json.loads(Path(filepath).read_text(encoding="utf8"))
 
     return app

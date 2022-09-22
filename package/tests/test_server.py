@@ -96,7 +96,7 @@ class TestServer:
         )
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)
-        with open(save_file, "r") as f:
+        with open(save_file, "r", encoding="utf8") as f:
             assert json.load(f) == {"content": "test"}
 
     @pytest.mark.parametrize(

@@ -468,11 +468,9 @@ class DataNode(GraphNode):
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
-            or self.dataset_type
-            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
+        return self.dataset_type in (
+            "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
+            "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
@@ -641,7 +639,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 continue
             else:
                 path = version / Path(filepath).name
-                with open(path) as fs_file:
+                with open(path, encoding="utf8") as fs_file:
                     versions[run_id] = json_stdlib.load(fs_file)
         return versions
 
