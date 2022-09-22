@@ -549,11 +549,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
     # the dataset type for this data node, e.g. CSVDataSet
-    type: Optional[str] = field(init=False)
+    type: str = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False)
+    filepath: str = field(init=False)
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
@@ -678,7 +678,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False)
+    filepath: str = field(init=False)
 
     run_command: Optional[str] = field(init=False, default=None)
 
