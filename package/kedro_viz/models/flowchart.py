@@ -380,13 +380,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: str = field(init=False, default=None)
+    code: Optional[str] = field(init=False, default=None)
 
     # path to the file where the node is defined
-    filepath: str = field(init=False, default=None)
+    filepath: Optional[str] = field(init=False, default=None)
 
     # parameters of the node, if available
-    parameters: Dict = field(init=False, default=None)
+    parameters: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
