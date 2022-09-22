@@ -380,16 +380,20 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: str = field(init=False)
+    code: Optional[str] = field(init=False)
 
     # path to the file where the node is defined
-    filepath: str = field(init=False)
+    filepath: Optional[str] = field(init=False)
 
     # parameters of the node, if available
-    parameters: Dict = field(init=False)
+    parameters: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
+
+    inputs: List[str] = field(init=False)
+
+    outputs: List[str] = field(init=False)
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
@@ -556,13 +560,13 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
-    plot: Optional[Dict] = field(init=False)
+    plot: Optional[Dict] = field(init=False, default=None)
 
     # the optional image data if the underlying dataset has a image.
     # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = field(init=False)
+    image: Optional[str] = field(init=False, default=None)
 
-    tracking_data: Optional[Dict] = field(init=False)
+    tracking_data: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
