@@ -380,10 +380,10 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: Optional[str] = field(init=False, default=None)
+    code: Optional[str] = field(init=False)
 
     # path to the file where the node is defined
-    filepath: Optional[str] = field(init=False, default=None)
+    filepath: Optional[str] = field(init=False)
 
     # parameters of the node, if available
     parameters: Optional[Dict] = field(init=False, default=None)
@@ -549,11 +549,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
     # the dataset type for this data node, e.g. CSVDataSet
-    type: Optional[str] = field(init=False, default=None)
+    type: Optional[str] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False, default=None)
+    filepath: Optional[str] = field(init=False)
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
@@ -678,9 +678,9 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False, default=None)
+    filepath: Optional[str] = field(init=False)
 
-    run_command: Optional[str] = field(init=False, default=None)
+    run_command: Optional[str] = field(init=False)
 
     original_type: str = field(init=False)
 
