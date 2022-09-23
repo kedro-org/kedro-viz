@@ -312,12 +312,13 @@ workflows:
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
+              # NOTE - this is left as 3.10 as on Windows we cannot set up a conda environment with 3.10.6
+              python_version: ['3.7', '3.8', '3.9', '3.10'] 
+          # filters:
+          #   branches:
+          #     only:
+          #       - main
+          #       - demo
       - unit_tests:
           matrix:
             parameters:
