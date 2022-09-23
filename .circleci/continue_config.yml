@@ -18,7 +18,7 @@ orbs:
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
-# Python 3.10 is pinned to 3.10.6 to work with current version of mypy
+# Python 3.10 is pinned temporarily to 3.10.6 to work with current version of mypy
 executors:
   docker:
     parameters:
@@ -312,7 +312,8 @@ workflows:
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              #3.10.6 fails with win-build, hence reverting it to 3.10 
+              python_version: ['3.7', '3.8', '3.9', '3.10']
           filters:
             branches:
               only:
