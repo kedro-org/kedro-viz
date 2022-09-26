@@ -380,16 +380,20 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: str = field(init=False)
+    code: Optional[str] = field(init=False)
 
     # path to the file where the node is defined
-    filepath: str = field(init=False)
+    filepath: Optional[str] = field(init=False)
 
     # parameters of the node, if available
-    parameters: Dict = field(init=False)
+    parameters: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
+
+    inputs: List[str] = field(init=False)
+
+    outputs: List[str] = field(init=False)
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
@@ -468,11 +472,9 @@ class DataNode(GraphNode):
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
-            or self.dataset_type
-            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
+        return self.dataset_type in (
+            "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
+            "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
@@ -558,13 +560,13 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
-    plot: Optional[Dict] = field(init=False)
+    plot: Optional[Dict] = field(init=False, default=None)
 
     # the optional image data if the underlying dataset has a image.
     # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = field(init=False)
+    image: Optional[str] = field(init=False, default=None)
 
-    tracking_data: Optional[Dict] = field(init=False)
+    tracking_data: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
@@ -641,7 +643,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 continue
             else:
                 path = version / Path(filepath).name
-                with open(path) as fs_file:
+                with open(path, encoding="utf8") as fs_file:
                     versions[run_id] = json_stdlib.load(fs_file)
         return versions
 
