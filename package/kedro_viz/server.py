@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import uvicorn
+from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
@@ -14,8 +15,6 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
-
-from fastapi.encoders import jsonable_encoder
 
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
