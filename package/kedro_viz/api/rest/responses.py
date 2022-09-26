@@ -1,8 +1,10 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
 # pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
+import orjson
+from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
@@ -267,3 +269,21 @@ def get_default_response() -> GraphAPIResponse:
         modular_pipelines=modular_pipelines_tree,
         selected_pipeline=default_selected_pipeline_id,
     )
+
+
+class EnhancedORJSONResponse(ORJSONResponse):
+    @staticmethod
+    def encode_to_human_readable(content: Any) -> bytes:
+        """A method to encode the given content to JSON, with the
+        proper formatting to write a human-readable file.
+
+        Returns:
+            A bytes object containing the JSON to write.
+
+        """
+        return orjson.dumps(
+            content,
+            option=orjson.OPT_INDENT_2
+            | orjson.OPT_NON_STR_KEYS
+            | orjson.OPT_SERIALIZE_NUMPY,
+        )

@@ -4,12 +4,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import uvicorn
+from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import get_default_response
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
@@ -88,16 +89,12 @@ def run_server(
         )
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
-            response = get_default_response()
-            try:
-                Path(save_file).write_text(
-                    response.json(indent=4, sort_keys=True), encoding="utf8"
-                )
-            except TypeError:  # pragma: no cover
-                # Keys of incomparable types (e.g. string and int) cannot be sorted.
-                Path(save_file).write_text(
-                    response.json(indent=4, sort_keys=False), encoding="utf8"
-                )  # pragma: no cover
+            default_response = get_default_response()
+            jsonable_default_response = jsonable_encoder(default_response)
+            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
+                jsonable_default_response
+            )
+            Path(save_file).write_bytes(encoded_default_response)
         app = apps.create_api_app_from_project(path, autoreload)
     else:
         app = apps.create_api_app_from_file(load_file)

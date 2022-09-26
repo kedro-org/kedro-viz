@@ -10,3 +10,4 @@ pandas>=0.24
 sqlalchemy~=1.4
 strawberry-graphql>=0.99.0, <1.0
 networkx>=1.0
+orjson~=3.8
