@@ -103,9 +103,6 @@ class GraphNode(abc.ABC):
     # the underlying Kedro object for each graph node, if any
     kedro_obj: Optional[Union[KedroNode, AbstractDataSet]] = field(default=None)
 
-    # the tags associated with this node
-    tags: Set[str] = field(default_factory=set)
-
     # the set of registered pipeline IDs this node belongs to
     pipelines: Set[str] = field(default_factory=set)
 
@@ -176,7 +173,6 @@ class GraphNode(abc.ABC):
             id=cls._hash(str(node)),
             name=_pretty_name(node_name),
             full_name=node_name,
-            tags=set(node.tags),
             kedro_obj=node,
         )
 
@@ -185,7 +181,6 @@ class GraphNode(abc.ABC):
         cls,
         full_name: str,
         layer: Optional[str],
-        tags: Set[str],
         dataset: AbstractDataSet,
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
@@ -194,8 +189,6 @@ class GraphNode(abc.ABC):
             full_name: The fullname of the dataset, including namespace, e.g.
                 data_science.master_table.
             layer: The optional layer that the dataset belongs to.
-            tags: The set of tags assigned to assign to the graph representation
-                of this dataset. N.B. currently it's derived from the node's tags.
             dataset: A dataset in a Kedro pipeline.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
@@ -208,7 +201,6 @@ class GraphNode(abc.ABC):
                 id=cls._hash(dataset_name),
                 name=_pretty_name(_strip_namespace(dataset_name)),
                 full_name=dataset_name,
-                tags=tags,
                 layer=layer,
                 is_free_input=is_free_input,
             )
@@ -217,7 +209,6 @@ class GraphNode(abc.ABC):
             id=cls._hash(full_name),
             name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
-            tags=tags,
             layer=layer,
             kedro_obj=dataset,
             is_free_input=is_free_input,
@@ -228,7 +219,6 @@ class GraphNode(abc.ABC):
         cls,
         full_name: str,
         layer: Optional[str],
-        tags: Set[str],
         parameters: AbstractDataSet,
     ) -> "ParametersNode":
         """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
@@ -236,8 +226,6 @@ class GraphNode(abc.ABC):
             full_name: The fullname of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
             layer: The optional layer that the parameters belong to.
-            tags: The set of tags assigned to assign to the graph representation
-                of this dataset. N.B. currently it's derived from the node's tags.
             parameters: A parameters dataset in a Kedro pipeline.
         Returns:
             An instance of ParametersNode.
@@ -246,7 +234,6 @@ class GraphNode(abc.ABC):
             id=cls._hash(full_name),
             name=_pretty_name(_strip_namespace(full_name)),
             full_name=full_name,
-            tags=tags,
             layer=layer,
             kedro_obj=parameters,
         )
@@ -299,6 +286,8 @@ class TaskNode(GraphNode):
     """Represent a graph node of type TASK"""
 
     modular_pipelines: List[str] = field(init=False)
+    # the tags associated with this TaskNode
+    tags: Set[str] = field(default_factory=set)
     parameters: Dict = field(init=False, default_factory=dict)
     type: str = GraphNodeType.TASK.value
 
@@ -307,6 +296,7 @@ class TaskNode(GraphNode):
 
         # the modular pipelines that a task node belongs to are derived from its namespace.
         self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
+        self.tags = set(self.kedro_obj.tags)
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:

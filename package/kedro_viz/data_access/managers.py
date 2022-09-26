@@ -191,7 +191,6 @@ class DataAccessManager:
         graph_node = self.add_dataset(
             registered_pipeline_id, input_dataset, is_free_input=is_free_input
         )
-        graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=graph_node.id, target=task_node.id)
         )
@@ -217,7 +216,6 @@ class DataAccessManager:
             The GraphNode instance representing the node's output that was added to the graph.
         """
         graph_node = self.add_dataset(registered_pipeline_id, output_dataset)
-        graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=task_node.id, target=graph_node.id)
         )
@@ -247,14 +245,12 @@ class DataAccessManager:
             graph_node = GraphNode.create_parameters_node(
                 full_name=dataset_name,
                 layer=layer,
-                tags=set(),
                 parameters=obj,
             )
         else:
             graph_node = GraphNode.create_data_node(
                 full_name=dataset_name,
                 layer=layer,
-                tags=set(),
                 dataset=obj,
                 is_free_input=is_free_input,
             )
