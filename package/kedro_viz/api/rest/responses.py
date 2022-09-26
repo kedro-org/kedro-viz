@@ -21,7 +21,6 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     id: str
     name: str
     full_name: str
-    tags: List[str]
     pipelines: List[str]
     type: str
 
@@ -31,6 +30,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
+    tags: List[str]
 
     class Config:
         schema_extra = {
