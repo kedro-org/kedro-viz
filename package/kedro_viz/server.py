@@ -15,6 +15,8 @@ from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
 
+from fastapi.encoders import jsonable_encoder
+
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
 DEV_PORT = 4142
@@ -89,8 +91,9 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
         if save_file:
             default_response = get_default_response()
+            jsonable_default_response = jsonable_encoder(default_response)
             encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
-                default_response
+                jsonable_default_response
             )
             Path(save_file).write_bytes(encoded_default_response)
         app = apps.create_api_app_from_project(path, autoreload)

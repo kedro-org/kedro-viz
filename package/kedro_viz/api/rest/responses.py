@@ -4,7 +4,6 @@ import abc
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
@@ -282,9 +281,8 @@ class EnhancedORJSONResponse(ORJSONResponse):
             A bytes object containing the JSON to write.
 
         """
-        encoded_content = jsonable_encoder(content)
         return orjson.dumps(
-            encoded_content,
+            content,
             option=orjson.OPT_INDENT_2
             | orjson.OPT_NON_STR_KEYS
             | orjson.OPT_SERIALIZE_NUMPY,
