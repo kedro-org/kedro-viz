@@ -309,13 +309,13 @@ describe('MetaData', () => {
       ]);
     });
 
-    it('shows the node tags', () => {
+    it('shows empty node tags as tags only exist in TaskNode', () => {
       const wrapper = mount({
         nodeId: modelInputDataSetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Features', 'Split']);
+      expect(textOf(rowValue(row))).toEqual([]);
     });
 
     describe('when there is a runCommand returned by the backend', () => {
@@ -487,13 +487,13 @@ describe('MetaData', () => {
       );
     });
 
-    it('shows the node tags', () => {
+    it('shows empty node tags as tags only exist in TaskNode', () => {
       const wrapper = mount({
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
       });
       const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Split']);
+      expect(textOf(rowValue(row))).toEqual([]);
     });
   });
 
