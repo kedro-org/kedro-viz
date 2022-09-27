@@ -44,6 +44,7 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
  * @param {object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
+  activeTab,
   enableComparisonView,
   enableShowChanges,
   isSingleRun,
@@ -59,69 +60,86 @@ const RunDataset = ({
   }
 
   return (
-    <div className="details-dataset">
-      {Object.keys(trackingData).map((group) => {
-        return (
-          <Accordion
-            className={classnames(
-              'details-dataset__accordion',
-              'details-dataset__accordion-wrapper',
-              {
-                'details-dataset__accordion-wrapper-comparison-view':
-                  enableComparisonView,
-              }
-            )}
-            headingClassName="details-dataset__accordion-header"
-            heading={group}
-            key={group}
-            layout="left"
-            size="large"
-          >
-            {trackingData[group].map((dataset) => {
-              const { data, datasetType, datasetName, runIds } = dataset;
-              return (
-                <Accordion
-                  className="details-dataset__accordion"
-                  heading={datasetName}
-                  headingClassName="details-dataset__accordion-header"
-                  key={datasetName}
-                  layout="left"
-                  size="medium"
-                >
-                  {Object.keys(data)
-                    .sort((a, b) => {
-                      return a.localeCompare(b);
-                    })
-                    .map((key, rowIndex) => {
-                      const updatedDatasetValues = fillEmptyMetrics(
-                        dataset.data[key],
-                        runIds
-                      );
-                      const runDataWithPin = resolveRunDataWithPin(
-                        updatedDatasetValues,
-                        pinnedRun
-                      );
-
-                      return buildDatasetDataMarkup(
-                        key,
-                        runDataWithPin,
-                        datasetType,
-                        rowIndex,
-                        isSingleRun,
-                        enableComparisonView,
-                        enableShowChanges,
-                        setRunDatasetToShow,
-                        setShowRunPlotsModal,
-                        showLoader,
-                        theme
-                      );
-                    })}
-                </Accordion>
-              );
-            })}
-          </Accordion>
-        );
+    <div
+      className={classnames('details-dataset', {
+        'details-dataset--not-overview': activeTab !== 'Overview',
       })}
+    >
+      {Object.keys(trackingData)
+        .filter((group) => {
+          if (activeTab === 'Plots' && group === activeTab) {
+            return true;
+          }
+
+          if (activeTab !== 'Plots' && group !== 'Plots') {
+            return true;
+          }
+
+          return false;
+        })
+        .map((group) => {
+          return (
+            <Accordion
+              className={classnames(
+                'details-dataset__accordion',
+                'details-dataset__accordion-wrapper',
+                {
+                  'details-dataset__accordion-wrapper-comparison-view':
+                    enableComparisonView,
+                }
+              )}
+              heading={group}
+              headingClassName="details-dataset__accordion-header"
+              key={group}
+              layout="left"
+              size="large"
+            >
+              {trackingData[group].map((dataset) => {
+                const { data, datasetType, datasetName, runIds } = dataset;
+
+                return (
+                  <Accordion
+                    className="details-dataset__accordion"
+                    heading={datasetName}
+                    headingClassName="details-dataset__accordion-header"
+                    key={datasetName}
+                    layout="left"
+                    size="medium"
+                  >
+                    {Object.keys(data)
+                      .sort((a, b) => {
+                        return a.localeCompare(b);
+                      })
+                      .map((key, rowIndex) => {
+                        const updatedDatasetValues = fillEmptyMetrics(
+                          dataset.data[key],
+                          runIds
+                        );
+                        const runDataWithPin = resolveRunDataWithPin(
+                          updatedDatasetValues,
+                          pinnedRun
+                        );
+
+                        return buildDatasetDataMarkup(
+                          key,
+                          runDataWithPin,
+                          datasetType,
+                          rowIndex,
+                          isSingleRun,
+                          enableComparisonView,
+                          enableShowChanges,
+                          setRunDatasetToShow,
+                          setShowRunPlotsModal,
+                          showLoader,
+                          theme
+                        );
+                      })}
+                  </Accordion>
+                );
+              })}
+            </Accordion>
+          );
+        })}
     </div>
   );
 };

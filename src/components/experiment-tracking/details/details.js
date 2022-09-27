@@ -11,6 +11,8 @@ import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-cont
 
 import './details.css';
 
+const tabs = ['Overview', 'Plots'];
+
 const Details = ({
   enableComparisonView,
   enableShowChanges,
@@ -36,6 +38,7 @@ const Details = ({
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState('Overview');
 
   // Delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {
@@ -118,7 +121,23 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
+        <div className="tabs">
+          {tabs.map((tab) => {
+            return (
+              <div
+                className={classnames('tabs__item', {
+                  'tabs__item--active': activeTab === tab,
+                })}
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </div>
+            );
+          })}
+        </div>
         <RunMetadata
+          activeTab={activeTab}
           enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
@@ -132,10 +151,12 @@ const Details = ({
           theme={theme}
         />
         <RunDataset
+          activeTab={activeTab}
           enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
           pinnedRun={pinnedRun}
+          runMetadata={runMetadata}
           setRunDatasetToShow={setRunDatasetToShow}
           setShowRunPlotsModal={setShowRunPlotsModal}
           showLoader={showRunLoader}
