@@ -60,14 +60,14 @@ const MetaData = ({
   }
 
   // translates the naming for the different types of nodes
-  const translateMetadataType = (metaDataType) => {
-    if (metaDataType === 'task') {
+  const translateMetadataType = (metadataType) => {
+    if (metadataType === 'task') {
       return 'node';
-    } else if (metaDataType === 'data') {
+    } else if (metadataType === 'data') {
       return 'dataset';
     }
 
-    return metaDataType;
+    return metadataType;
   };
 
   const onCloseClick = () => {
@@ -85,7 +85,7 @@ const MetaData = ({
   };
 
   const shortenDatasetType = (string) => {
-    return string?.split('.').pop();
+    return string ? string.split('.').pop() : 'MemoryDataSet';
   };
 
   return (
