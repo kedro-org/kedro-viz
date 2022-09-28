@@ -19,7 +19,7 @@ export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 /**
  * Toggle a selected group of nodes' visibility on/off
  * @param {Array} nodeIDs The nodes' unique identifiers
- * @param {Boolean} isDisabled Whether the node should be visible
+ * @param {boolean} isDisabled Whether the node should be visible
  */
 export function toggleNodesDisabled(nodeIDs, isDisabled) {
   return {
@@ -59,7 +59,7 @@ export const ADD_NODE_METADATA = 'ADD_NODE_METADATA';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading True if pipeline is still loading
+ * @param {Object} data The node's data
  */
 export function addNodeMetadata(data) {
   return {
