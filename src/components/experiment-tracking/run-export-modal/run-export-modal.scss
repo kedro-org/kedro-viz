@@ -13,4 +13,16 @@
 // set fix width for export button for when the text is shorter, eg "Done"
 .pipeline-run-export-modal--experiment-tracking .button__btn--primary {
   width: 160px;
+  margin: 0;
+
+  // to remove focus styling on the button as the style is directly from the CSVLink button
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.run-export-modal-export-button:focus {
+  box-shadow: 0 0 0 7px #00bcff;
+  outline: none;
 }

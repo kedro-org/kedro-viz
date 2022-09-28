@@ -50,6 +50,7 @@ const RunExportModal = ({
           </Button>
           <CSVLink
             asyncOnClick={true}
+            className={'run-export-modal-export-button'}
             data={exportData}
             filename="run-data.csv"
             onClick={updateExportData}
