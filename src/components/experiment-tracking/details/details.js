@@ -11,7 +11,7 @@ import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-cont
 
 import './details.css';
 
-const tabs = ['Overview', 'Plots'];
+const tabLabels = ['Overview', 'Plots'];
 
 const Details = ({
   enableComparisonView,
@@ -38,7 +38,7 @@ const Details = ({
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
-  const [activeTab, setActiveTab] = useState('Overview');
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   // Delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {
@@ -121,8 +121,8 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <div className="tabs">
-          {tabs.map((tab) => {
+        <div className="details__tabs">
+          {tabLabels.map((tab) => {
             return (
               <div
                 className={classnames('tabs__item', {

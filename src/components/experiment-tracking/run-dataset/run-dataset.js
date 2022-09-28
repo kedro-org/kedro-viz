@@ -38,10 +38,14 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
+ * @param {string} props.activeTab The selected tab (Overview || Plots).
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
  * @param {boolean} props.enableShowChanges Are changes enabled or not.
  * @param {boolean} props.isSingleRun Indication to display a single run.
  * @param {string} props.pinnedRun ID of the pinned run.
+ * @param {boolean} props.showLoader Whether to show the loading component.
  * @param {object} props.trackingData The experiment tracking run data.
+ * @param {string} props.theme The currently-selected light or dark theme.
  */
 const RunDataset = ({
   activeTab,
@@ -89,7 +93,13 @@ const RunDataset = ({
                 }
               )}
               heading={group}
-              headingClassName="details-dataset__accordion-header"
+              headingClassName={classnames(
+                'details-dataset__accordion-header',
+                {
+                  'details-dataset__accordion-header--hidden':
+                    group === 'Plots',
+                }
+              )}
               key={group}
               layout="left"
               size="large"
@@ -151,9 +161,9 @@ const RunDataset = ({
  * @param {number} rowIndex The array index of the dataset data.
  * @param {boolean} isSingleRun Whether or not this is a single run.
  * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
- * @param {function} setRunDatasetToShow callbak function to show runDataset
- * @param {function} setShowRunPlotsModal callbak function to show runplot modal
+ * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
+ * @param {function} setRunDatasetToShow Callback function to show runDataset.
+ * @param {function} setShowRunPlotsModal Callback function to show RunPlot modal.
  */
 function buildDatasetDataMarkup(
   datasetKey,

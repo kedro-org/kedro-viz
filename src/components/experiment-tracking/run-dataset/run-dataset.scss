@@ -22,6 +22,10 @@
 
 .details-dataset__accordion-header {
   margin-bottom: 16px;
+
+  &--hidden {
+    display: none;
+  }
 }
 
 .details-dataset__row {
