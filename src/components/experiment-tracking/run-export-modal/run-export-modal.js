@@ -22,7 +22,8 @@ const RunExportModal = ({
 
   const updateExportData = useCallback(() => {
     setExportData(constructExportData(runMetadata, runTrackingData));
-  }, [runMetadata, runTrackingData]);
+    handleClick();
+  }, [runMetadata, runTrackingData, handleClick]);
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
@@ -53,11 +54,7 @@ const RunExportModal = ({
             filename="run-data.csv"
             onClick={updateExportData}
           >
-            <Button
-              mode={isSuccessful ? 'success' : 'primary'}
-              onClick={handleClick}
-              size="small"
-            >
+            <Button mode={isSuccessful ? 'success' : 'primary'} size="small">
               {isSuccessful ? (
                 <>
                   Done <span className="success-check-mark">✅</span>
