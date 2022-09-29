@@ -190,12 +190,14 @@ const MetaData = ({
                   visible={isTaskNode}
                   value={metadata.outputs}
                 />
-                <MetaDataRow
-                  label="Tags:"
-                  kind="token"
-                  commas={false}
-                  value={metadata.tags}
-                />
+                {metadata.type === 'task' && (
+                  <MetaDataRow
+                    label="Tags:"
+                    kind="token"
+                    commas={false}
+                    value={metadata.tags}
+                  />
+                )}
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier command={runCommand} />
                 </MetaDataRow>
