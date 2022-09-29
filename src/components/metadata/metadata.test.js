@@ -309,13 +309,13 @@ describe('MetaData', () => {
       ]);
     });
 
-    it('shows the node tags', () => {
+    it('wont show any tags as they should only appear if the type is nodeTask', () => {
       const wrapper = mount({
         nodeId: modelInputDataSetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Features', 'Split']);
+      expect(row.length).toBe(0);
     });
 
     describe('when there is a runCommand returned by the backend', () => {
@@ -487,13 +487,13 @@ describe('MetaData', () => {
       );
     });
 
-    it('shows the node tags', () => {
+    it('wont show any tags as they should only appear if the type is nodeTask', () => {
       const wrapper = mount({
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
       });
       const row = rowByLabel(wrapper, 'Tags:');
-      expect(textOf(rowValue(row))).toEqual(['Split']);
+      expect(row.length).toBe(0);
     });
   });
 
