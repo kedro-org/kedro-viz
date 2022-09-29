@@ -1,3 +1,5 @@
+@use '../../../styles/variables' as variables;
+
 .pipeline-run-export-modal--experiment-tracking .modal__title {
   text-align: left;
   margin-left: 30px;
@@ -23,7 +25,7 @@
 }
 
 .run-export-modal-export-button:focus {
-  box-shadow: 0 0 0 7px #00bcff;
+  box-shadow: 0 0 0 7px variables.$blue-300;
   outline: none;
 }
 
