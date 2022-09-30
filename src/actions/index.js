@@ -234,3 +234,16 @@ export function toggleFocusMode(modularPipeline) {
     modularPipeline,
   };
 }
+
+export const TOGGLE_HOVERED_FOCUS_MODE = 'TOGGLE_HOVERED_FOCUS_MODE';
+
+/**
+ * Update the value of the of the currently-active hovered node from focus mode
+ * @param {string|null} nodeHovered The node's unique identifier
+ */
+export function toggleHoveredFocusMode(hoveredFocusMode) {
+  return {
+    type: TOGGLE_HOVERED_FOCUS_MODE,
+    hoveredFocusMode,
+  };
+}
