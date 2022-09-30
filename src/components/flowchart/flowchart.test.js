@@ -432,6 +432,7 @@ describe('FlowChart', () => {
       edges: expect.any(Array),
       graphSize: expect.any(Object),
       hoveredParameters: expect.any(Boolean),
+      hoveredFocusMode: expect.any(Boolean),
       layers: expect.any(Array),
       linkedNodes: expect.any(Object),
       nodeActive: expect.any(Object),
