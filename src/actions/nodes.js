@@ -71,7 +71,7 @@ export function addNodeMetadata(data) {
 /**
  * update node metadata on selection, loading new data if it has not been previously called
  * @param {String} nodeID node id of clicked node
- * @return {function} A promise that resolves when the data is loaded
+ * @return {Function} A promise that resolves when the data is loaded
  */
 export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {
