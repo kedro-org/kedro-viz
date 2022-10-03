@@ -501,6 +501,12 @@ class DataNode(GraphNode):
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
+    
+    def is_memory_node(self):
+        return (
+            self.dataset_type
+            =="kedro.io.memory_dataset.MemoryDataSet"
+        )
 
 
 @dataclass
@@ -574,6 +580,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
+        
+        if data_node.is_memory_node():
+            self.filepath=None
+            return
+
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
