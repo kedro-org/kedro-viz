@@ -503,7 +503,6 @@ class DataNode(GraphNode):
         return self.is_json_node() or self.is_metric_node()
 
 
-
 @dataclass
 class TranscodedDataNode(GraphNode):
     """Represent a graph node of type DATA"""
