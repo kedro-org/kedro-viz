@@ -85,7 +85,7 @@ const MetaData = ({
   };
 
   const shortenDatasetType = (string) => {
-    return string ? string.split('.').pop() : 'MemoryDataSet';
+    return string?.split('.').pop();
   };
 
   return (
