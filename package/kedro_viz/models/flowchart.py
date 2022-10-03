@@ -501,12 +501,7 @@ class DataNode(GraphNode):
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
-    
-    def is_memory_node(self):
-        return (
-            self.dataset_type
-            =="kedro.io.memory_dataset.MemoryDataSet"
-        )
+
 
 
 @dataclass
