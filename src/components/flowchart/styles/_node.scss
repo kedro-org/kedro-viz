@@ -45,7 +45,7 @@
   }
 
   .pipeline-node__bg {
-    fill: none;
+    fill: transparent;
     stroke: var(--node-input-fill);
     stroke-dasharray: 3px 3px;
   }
@@ -61,7 +61,7 @@
   }
 
   .pipeline-node__bg {
-    fill: none;
+    fill: transparent;
     stroke: var(--parameter-accent-input);
     stroke-dasharray: 3px 3px;
   }
