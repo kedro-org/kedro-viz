@@ -3,7 +3,7 @@ centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from typing import Dict, Optional
 
-from kedro.io import AbstractDataSet, MemoryDataSet, DataCatalog, DataSetNotFoundError
+from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -57,9 +57,9 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DataSetNotFoundError:  # pragma: no cover
             dataset_obj = None
-        # if dataset has no catalog entry, it is a MemoryDataSet 
+        # if dataset has no catalog entry, it is a MemoryDataSet
         if not dataset_obj:
-                dataset_obj = MemoryDataSet()
+            dataset_obj = MemoryDataSet()
 
         return dataset_obj
 
