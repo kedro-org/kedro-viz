@@ -59,7 +59,7 @@ export const ADD_NODE_METADATA = 'ADD_NODE_METADATA';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading True if pipeline is still loading
+ * @param {Object} data The node's data
  */
 export function addNodeMetadata(data) {
   return {
