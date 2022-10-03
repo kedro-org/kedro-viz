@@ -19,7 +19,7 @@ export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 /**
  * Toggle a selected group of nodes' visibility on/off
  * @param {Array} nodeIDs The nodes' unique identifiers
- * @param {boolean} isDisabled Whether the node should be visible
+ * @param {Boolean} isDisabled Whether the node should be visible
  */
 export function toggleNodesDisabled(nodeIDs, isDisabled) {
   return {
