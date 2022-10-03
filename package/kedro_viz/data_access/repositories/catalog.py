@@ -2,6 +2,7 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from typing import Dict, Optional
+from joblib import Memory
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
 
@@ -55,10 +56,8 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
-        except DataSetNotFoundError:  # pragma: no cover
-            dataset_obj = None
         # if dataset has no catalog entry, it is a MemoryDataSet
-        if not dataset_obj:
+        except DataSetNotFoundError:  # pragma: no cover
             dataset_obj = MemoryDataSet()
 
         return dataset_obj
