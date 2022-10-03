@@ -491,3 +491,16 @@ describe('map dispatch props to async actions', () => {
     });
   });
 });
+
+it('applies faded class to all nodes that are not included in the hovered focus mode icon pipeline', () => {
+  const wrapper = setup.mount(
+    <FlowChart
+      displayGlobalToolbar={true}
+      hoveredFocusMode={true}
+      nodeActive={{
+        [dataScienceNodeId]: true,
+      }}
+    />
+  );
+  expect(wrapper.render().find('.pipeline-node--faded').length).toBe(6);
+});
