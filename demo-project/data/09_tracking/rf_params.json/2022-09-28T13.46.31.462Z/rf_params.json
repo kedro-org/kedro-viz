@@ -1,0 +1,15 @@
+{
+  "model_type": "RandomForestRegressor",
+  "n_estimators": 100,
+  "criterion": "squared_error",
+  "min_samples_split": 2,
+  "min_samples_leaf": 1,
+  "min_weight_fraction_leaf": 0,
+  "max_features": "auto",
+  "min_impurity_decrease": 0,
+  "bootstrap": true,
+  "oob_score": false,
+  "verbose": 0,
+  "warm_start": false,
+  "ccp_alpha": 0
+}
