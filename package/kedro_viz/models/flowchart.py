@@ -580,11 +580,6 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
-        
-        if data_node.is_memory_node():
-            self.filepath=None
-            return
-
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
