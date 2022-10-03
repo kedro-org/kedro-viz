@@ -55,6 +55,18 @@
   }
 }
 
+.pipeline-node-input--active {
+  .pipeline-node__bg {
+    fill: var(--node-input-fill-active);
+  }
+}
+
+.pipeline-node-input--selected {
+  .pipeline-node__icon {
+    fill: var(--node-input-icon-selected);
+  }
+}
+
 .pipeline-node--parameter-input {
   text {
     fill: var(--node-input-fill);
