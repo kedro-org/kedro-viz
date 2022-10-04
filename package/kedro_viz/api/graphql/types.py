@@ -14,24 +14,44 @@ from kedro_viz.models.experiment_tracking import (
 )
 
 
-@strawberry.type(description="Run metadata")
-class Run:
-    author: Optional[str]
+# @strawberry.type(description="Run metadata")
+# class Run:
+#     author: Optional[str]
+#     bookmark: Optional[bool]
+#     git_branch: Optional[str]
+#     git_sha: Optional[str]
+#     id: ID
+#     notes: Optional[str]
+#     run_command: Optional[str]
+#     title: str
+
+@strawberry.type(description="Run List Info")
+class RunList:
     bookmark: Optional[bool]
-    git_branch: Optional[str]
     git_sha: Optional[str]
     id: ID
     notes: Optional[str]
-    run_command: Optional[str]
     title: str
+
+
+@strawberry.type(description="Metadata info for one or more runs")
+class RunsMetadata:
+    author: Optional[List[str]]
+    bookmark: Optional[List[bool]]
+    git_branch: Optional[List[str]]
+    git_sha: Optional[List[str]]
+    id: Optional[List[ID]]
+    notes: Optional[List[str]]
+    run_command: Optional[List[str]]
+    title: Optional[List[str]]
 
 
 @strawberry.type(description="Tracking data for a Run")
 class TrackingDataset:
-    data: JSON
-    dataset_name: str
-    dataset_type: str
     run_ids: List[ID]
+    metrics: Optional[JSON]
+    json: Optional[JSON]
+    plots: Optional[JSON]
 
 
 TrackingDatasetGroup = strawberry.enum(
@@ -48,7 +68,7 @@ class RunInput:
 
 @strawberry.type(description="Response for successful update of run metadata")
 class UpdateRunDetailsSuccess:
-    run: Run
+    run: RunsMetadata
 
 
 @strawberry.type(description="Response for unsuccessful update of run metadata")

@@ -18,9 +18,10 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 
-from .serializers import format_run, format_run_tracking_data, format_runs
+from .serializers import format_run_tracking_data, format_runs, format_run, format_runs_metadata
 from .types import (
-    Run,
+    RunList,
+    RunsMetadata,
     RunInput,
     TrackingDataset,
     TrackingDatasetGroup,
@@ -38,21 +39,18 @@ class RunsQuery:
     @strawberry.field(
         description="Get metadata for specified run_ids from the session store"
     )
-    def run_metadata(self, run_ids: List[ID]) -> List[Run]:
+    def run_metadata(self, run_ids: List[ID]) -> RunsMetadata:
         # TODO: this is hacky and should be improved together with reworking the format
         #  functions.
         # Note we keep the order here the same as the queried run_ids.
-        runs = {
-            run.id: run
-            for run in format_runs(
+        return format_runs_metadata(
                 data_access_manager.runs.get_runs_by_ids(run_ids),
                 data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
             )
-        }
-        return [runs[run_id] for run_id in run_ids if run_id in runs]
+
 
     @strawberry.field(description="Get metadata for all runs from the session store")
-    def runs_list(self) -> List[Run]:
+    def runs_list(self) -> List[RunList]:
         all_runs = data_access_manager.runs.get_all_runs()
         if not all_runs:
             return []
@@ -68,32 +66,28 @@ class RunsQuery:
     def run_tracking_data(
         self,
         run_ids: List[ID],
-        group: TrackingDatasetGroup,
-        show_diff: Optional[bool] = True,
-    ) -> List[TrackingDataset]:
+    ) -> TrackingDataset:
         # pylint: disable=line-too-long
-        tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
-            run_ids, group
+
+        print(run_ids)
+
+        metrics = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids, TrackingDatasetGroup.METRIC)
         )
-        # TODO: this handling of dataset.runs is hacky and should be done by e.g. a
-        #  proper query parameter instead of filtering to right run_ids here.
-        # Note we keep the order here the same as the queried run_ids.
+        json = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids, TrackingDatasetGroup.JSON)
+        )
+        # plot = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+        #     run_ids, TrackingDatasetGroup.PLOT)
+        # )
 
-        all_tracking_datasets = []
+        return TrackingDataset(
+            run_ids = run_ids,
+            metrics = metrics,
+            json = json,
+            plots = [],
 
-        for dataset in tracking_dataset_models:
-            runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
-            formatted_tracking_data = format_run_tracking_data(runs, show_diff)
-            if formatted_tracking_data:
-                tracking_data = TrackingDataset(
-                    dataset_name=dataset.dataset_name,
-                    dataset_type=dataset.dataset_type,
-                    data=formatted_tracking_data,
-                    run_ids=run_ids,
-                )
-                all_tracking_datasets.append(tracking_data)
-
-        return all_tracking_datasets
+        )
 
 
 @strawberry.type
@@ -135,7 +129,7 @@ class Mutation:
 @strawberry.type
 class Subscription:
     @strawberry.subscription(description="Add new runs in real time")  # type: ignore
-    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
+    async def runs_added(self) -> AsyncGenerator[List[RunList], None]:
         """Subscription to new runs in real-time"""
         while True:
             new_runs = data_access_manager.runs.get_new_runs()
