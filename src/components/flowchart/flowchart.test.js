@@ -328,6 +328,44 @@ describe('FlowChart', () => {
     );
   });
 
+  it('applies pipeline-node-input--active class to input/outout nodes when hovering over them under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        displayGlobalToolbar={true}
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: dataScienceNodeId }}
+        inputOutputDataNodes={{
+          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+        }}
+        nodeActive={{
+          '23c94afb': true,
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node-input--active').length).toBe(
+      1
+    );
+  });
+
+  it('applies pipeline-node-input--selected class to input/outout nodes when selecting one of them under focus mode', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        displayGlobalToolbar={true}
+        nodeTypeDisabled={{ parameters: true }}
+        focusMode={{ id: dataScienceNodeId }}
+        inputOutputDataNodes={{
+          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+        }}
+        nodeSelected={{
+          '23c94afb': true,
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node-input--selected').length).toBe(
+      1
+    );
+  });
+
   it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
