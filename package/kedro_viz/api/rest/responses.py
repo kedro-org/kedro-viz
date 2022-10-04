@@ -110,7 +110,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
-    filepath: str
+    filepath: Optional[str]
     type: str
     plot: Optional[Dict]
     image: Optional[str]
