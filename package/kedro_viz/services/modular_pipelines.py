@@ -39,7 +39,7 @@ def expand_tree(
         )
     }
     # sort modular_pipelines_tree.items() so that e.g. sub_pipeline is guaranteed
-    # to be before sub_pipeline.sub_sub_pipeline (order matters)
+    # to be before sub_pipeline.sub_sub_pipeline (see issue #1036 / PR )
     sorted_modular_pipelines_tree = sorted(modular_pipelines_tree.items(), key=lambda x: x[0])
     for modular_pipeline_id, modular_pipeline_node in sorted_modular_pipelines_tree:
         if modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
