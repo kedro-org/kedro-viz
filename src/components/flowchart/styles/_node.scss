@@ -59,6 +59,10 @@
   .pipeline-node__bg {
     fill: var(--node-input-fill-active);
   }
+
+  .pipeline-node__icon {
+    fill: var(--node-input-icon-selected);
+  }
 }
 
 .pipeline-node-input--selected {
