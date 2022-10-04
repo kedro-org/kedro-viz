@@ -212,7 +212,7 @@ export const TOGGLE_PARAMETERS_HOVERED = 'TOGGLE_PARAMETERS_HOVERED';
 
 /**
  * Update the value of the currently-active hovered node
- * @param {string|null} nodeHovered The node's unique identifier
+ * @param {Boolean} hoveredParameters True if parameters heading in the sidebar has been hovered
  */
 export function toggleParametersHovered(hoveredParameters) {
   return {
@@ -239,7 +239,7 @@ export const TOGGLE_HOVERED_FOCUS_MODE = 'TOGGLE_HOVERED_FOCUS_MODE';
 
 /**
  * Update the value of the of the currently-active hovered node from focus mode
- * @param {string|null} nodeHovered The node's unique identifier
+ * @param {Boolean} hoveredFocusMode True if FocudModeIcon in the sidebar has been hovered
  */
 export function toggleHoveredFocusMode(hoveredFocusMode) {
   return {
