@@ -60,13 +60,15 @@
     fill: var(--node-input-fill-active);
   }
 
-  .pipeline-node__icon {
+  .pipeline-node__icon,
+  text {
     fill: var(--node-input-icon-selected);
   }
 }
 
 .pipeline-node-input--selected {
-  .pipeline-node__icon {
+  .pipeline-node__icon,
+  text {
     fill: var(--node-input-icon-selected);
   }
 }
