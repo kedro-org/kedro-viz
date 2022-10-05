@@ -81,11 +81,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
         pipeline(
             pipe=new_train_eval_template(),
             parameters={"dummy_model_options": f"model_options.{model_type}"},
-            inputs={k: k for k in test_train_refs},
-            outputs={  # both of these are tracked as experiments
-                "experiment_params": f"hyperparams_{model_type}",
-                "r2_score": f"r2_score_{model_type}",
-            },
+            inputs={k: k for k in test_train_refs},  
             namespace=model_type,
         )
         for model_type in model_types
