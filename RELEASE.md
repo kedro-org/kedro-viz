@@ -20,6 +20,7 @@ Please follow the established format:
 - Remove Tags field from dataset and parameter nodes when viewed in metadata panel. (#1100)
 - Fix keyboard support for exporting experiment runs. (#1103)
 - Fix `MemoryDataSet` not displaying on metadata panel. (#1113)
+- Enhance display of the flowchart when hovering over the FocusMode icon. (#1107)
 
 # Release 5.1.1
 
