@@ -122,7 +122,7 @@ def format_runs_metadata(
 
 def format_run_tracking_data(
     all_tracking_data: TrackingDatasetModel, run_ids: List[ID]
-) -> Dict:
+) -> List:
     """Convert tracking data in the front-end format.
 
     Args:
@@ -157,4 +157,4 @@ def format_run_tracking_data(
         
         formatted_tracking_dataset[dataset_name].append(formatted_tracking_runs)      
     
-    return formatted_tracking_dataset
+    return [formatted_tracking_dataset]

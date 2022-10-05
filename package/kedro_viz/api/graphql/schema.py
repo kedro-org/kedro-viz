@@ -75,7 +75,7 @@ class RunsQuery:
         json = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids, TrackingDatasetGroup.JSON), run_ids
         )
-        plot = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+        plots = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids, TrackingDatasetGroup.PLOT), run_ids
         )
 
@@ -83,7 +83,7 @@ class RunsQuery:
             run_ids = run_ids,
             metrics = metrics,
             json = json,
-            plots = plot,
+            plots = plots,
 
         )
 
