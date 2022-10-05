@@ -36,14 +36,14 @@ class RunList:
 
 @strawberry.type(description="Metadata info for one or more runs")
 class RunsMetadata:
-    author: Optional[List[str]]
-    bookmark: Optional[List[bool]]
-    git_branch: Optional[List[str]]
-    git_sha: Optional[List[str]]
-    id: Optional[List[ID]]
-    notes: Optional[List[str]]
-    run_command: Optional[List[str]]
-    title: Optional[List[str]]
+    author: List[Optional[str]]
+    bookmark: List[Optional[bool]]
+    git_branch: List[Optional[str]]
+    git_sha: List[Optional[str]]
+    id: List[Optional[ID]]
+    notes: List[Optional[str]]
+    run_command: List[Optional[str]]
+    title: List[Optional[str]]
 
 
 @strawberry.type(description="Tracking data for a Run")
