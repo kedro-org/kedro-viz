@@ -45,7 +45,7 @@ class RunsQuery:
         # Note we keep the order here the same as the queried run_ids.
         return format_runs_metadata(
                 [data_access_manager.runs.get_run_by_id(run_id) for run_id in run_ids],
-                data_access_manager.runs.get_user_run_details(run_ids),
+                data_access_manager.runs.get_user_run_details_by_run_ids(run_ids),
             )
 
 
