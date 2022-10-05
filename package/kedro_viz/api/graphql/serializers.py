@@ -121,25 +121,39 @@ def format_runs_metadata(
 
 
 def format_run_tracking_data(
-    all_tracking_data: TrackingDatasetModel
+    all_tracking_data: TrackingDatasetModel, run_ids: List[ID]
 ) -> Dict:
     """Convert tracking data in the front-end format.
 
     Args:
         tracking_data: JSON blob of tracking data for selected runs
-        show_diff: If false, show runs with only common tracking
-            data; else show all available tracking data
     Returns:
         Dictionary with formatted tracking data for selected runs
     """
 
+    
+
     formatted_tracking_dataset= defaultdict(list)
     for tracking_data in all_tracking_data:
+        tracking_keys = set()
         dataset_name = tracking_data.dataset_name 
+        runs = {run_id: tracking_data.runs[run_id] for run_id in run_ids}
         formatted_tracking_runs= defaultdict(list)
-        for _, run_data in tracking_data.runs.items():
-            for key, value in run_data.items():
-                formatted_tracking_runs[key].append(value)
+        run_index = 0
+        for _, run_data in runs.items():
+                for key, value in run_data.items():
+                    if key in tracking_keys:
+                        formatted_tracking_runs[key].append(value)
+                    else: 
+                        for _ in range(run_index):
+                            formatted_tracking_runs[key].append(None)
+                        formatted_tracking_runs[key].append(value)
+                        tracking_keys.add(key)
+                for key in tracking_keys:
+                    if len(formatted_tracking_runs[key]) < run_index+1:
+                        formatted_tracking_runs[key].append(None)
+                run_index=run_index+1                        
+                    
         
         formatted_tracking_dataset[dataset_name].append(formatted_tracking_runs)      
     

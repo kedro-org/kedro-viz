@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from typing import AsyncGenerator, List, Optional
+from typing import AsyncGenerator, List
 
 import strawberry
 from semver import VersionInfo
@@ -69,23 +69,21 @@ class RunsQuery:
     ) -> TrackingDataset:
         # pylint: disable=line-too-long
 
-        print(run_ids)
-
         metrics = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
-            run_ids, TrackingDatasetGroup.METRIC)
+            run_ids, TrackingDatasetGroup.METRIC), run_ids
         )
         json = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
-            run_ids, TrackingDatasetGroup.JSON)
+            run_ids, TrackingDatasetGroup.JSON), run_ids
         )
-        # plot = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
-        #     run_ids, TrackingDatasetGroup.PLOT)
-        # )
+        plot = format_run_tracking_data(data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids, TrackingDatasetGroup.PLOT), run_ids
+        )
 
         return TrackingDataset(
             run_ids = run_ids,
             metrics = metrics,
             json = json,
-            plots = [],
+            plots = plot,
 
         )
 
