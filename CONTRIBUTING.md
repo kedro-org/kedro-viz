@@ -179,8 +179,7 @@ Before launching a development server with a real Kedro project, you'd need to h
 The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
 
 ```bash
-pip3 install -r package/test_requirements.txt
-pip3 install -r demo-project/src/docker_requirements.txt
+pip3 install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt
 ```
 
 Now build the application with:
