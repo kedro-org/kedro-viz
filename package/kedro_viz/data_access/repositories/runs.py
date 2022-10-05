@@ -59,15 +59,6 @@ class RunsRepository:
         return self._db_session_class().query(RunModel).get(run_id)  # type: ignore
 
     @check_db_session
-    def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
-        return (
-            self._db_session_class()  # type: ignore
-            .query(RunModel)
-            .filter(RunModel.id.in_(run_ids))
-            .all()
-        )
-
-    @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
         return (
             self._db_session_class()  # type: ignore
