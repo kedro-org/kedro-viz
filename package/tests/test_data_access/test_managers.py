@@ -3,7 +3,7 @@ from typing import Dict
 import networkx as nx
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
@@ -209,7 +209,7 @@ class TestAddDataSet:
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
 
-        # dataset should be added as a gragph node
+        # dataset should be added as a graph node
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
         graph_node = nodes_list[0]
@@ -218,6 +218,19 @@ class TestAddDataSet:
         assert graph_node.layer == "raw"
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert not graph_node.modular_pipelines
+
+    def test_add_memory_dataset_when_dataset_not_in_catalog(
+        self, data_access_manager: DataAccessManager
+    ):
+        catalog = DataCatalog()
+        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_dataset("my_pipeline", "memory_dataset")
+        # dataset should be added as a graph node
+        nodes_list = data_access_manager.nodes.as_list()
+        assert len(nodes_list) == 1
+        graph_node = nodes_list[0]
+        assert isinstance(graph_node, DataNode)
+        assert isinstance(graph_node.kedro_obj, MemoryDataSet)
 
     def test_add_dataset_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
