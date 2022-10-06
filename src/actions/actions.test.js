@@ -15,6 +15,7 @@ import {
   UPDATE_CHART_SIZE,
   TOGGLE_CODE,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
+  TOGGLE_HOVERED_FOCUS_MODE,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
@@ -30,6 +31,7 @@ import {
   toggleTheme,
   updateChartSize,
   toggleFocusMode,
+  toggleHoveredFocusMode,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -134,6 +136,15 @@ describe('actions', () => {
       hoveredParameters,
     };
     expect(toggleParametersHovered(hoveredParameters)).toEqual(expectedAction);
+  });
+
+  it('should create an action to toggle whether focud mode icon in the sidebar has been hovered', () => {
+    const hoveredFocusMode = true;
+    const expectedAction = {
+      type: TOGGLE_HOVERED_FOCUS_MODE,
+      hoveredFocusMode,
+    };
+    expect(toggleHoveredFocusMode(hoveredFocusMode)).toEqual(expectedAction);
   });
 
   it('should create an action to toggle whether somes nodes are disabled', () => {

@@ -150,6 +150,10 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
+    if (changed('nodes', 'nodeActive', 'hoveredFocusMode')) {
+      drawNodes.call(this, changed);
+    }
+
     if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       this.resetView();
     } else {
@@ -682,6 +686,7 @@ export const mapStateToProps = (state, ownProps) => ({
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
   hoveredParameters: state.hoveredParameters,
+  hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,

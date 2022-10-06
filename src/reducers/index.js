@@ -17,6 +17,7 @@ import {
   UPDATE_ZOOM,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_PRETTY_NAME,
+  TOGGLE_HOVERED_FOCUS_MODE,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -80,6 +81,11 @@ const combinedReducer = combineReducers({
     false,
     TOGGLE_IGNORE_LARGE_WARNING,
     'ignoreLargeWarning'
+  ),
+  hoveredFocusMode: createReducer(
+    false,
+    TOGGLE_HOVERED_FOCUS_MODE,
+    'hoveredFocusMode'
   ),
 });
 
