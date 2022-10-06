@@ -256,6 +256,14 @@ export const drawNodes = function (changed) {
         (node) => isInputOutputNode(node.id) && node.type === 'parameters'
       )
       .classed(
+        'pipeline-node-input--active',
+        (node) => isInputOutputNode(node.id) && nodeActive[node.id]
+      )
+      .classed(
+        'pipeline-node-input--selected',
+        (node) => isInputOutputNode(node.id) && nodeSelected[node.id]
+      )
+      .classed(
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
       );
