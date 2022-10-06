@@ -17,6 +17,7 @@ import {
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
+  TOGGLE_HOVERED_FOCUS_MODE,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -393,6 +394,17 @@ describe('Reducer', () => {
         loading: true,
       });
       expect(newState.loading.graph).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_HOVERED_FOCUS_MODE', () => {
+    it('should toggle the value of hoveredFocusMode', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_HOVERED_FOCUS_MODE,
+        hoveredFocusMode: true,
+      });
+      expect(mockState.spaceflights.hoveredFocusMode).toBe(false);
+      expect(newState.hoveredFocusMode).toBe(true);
     });
   });
 });

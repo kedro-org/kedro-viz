@@ -70,6 +70,7 @@ export const createInitialPipelineState = () => ({
     enabled: {},
   },
   hoveredParameters: false,
+  hoveredFocusMode: false,
 });
 
 /**
