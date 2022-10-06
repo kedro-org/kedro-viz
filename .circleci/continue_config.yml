@@ -18,7 +18,6 @@ orbs:
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
-# Python 3.10 is pinned temporarily to 3.10.6 to work with current version of mypy
 executors:
   docker:
     parameters:
@@ -308,11 +307,11 @@ workflows:
       - e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6'] 
+              python_version: ['3.7', '3.8', '3.9', '3.10'] 
       - win_e2e_tests:
           matrix:
             parameters:
-              #3.10.6 fails with win-build, hence reverting it to 3.10 
+              #3.10 fails with win-build, hence reverting it to 3.10 
               python_version: ['3.7', '3.8', '3.9', '3.10']
           filters:
             branches:
@@ -322,11 +321,11 @@ workflows:
       - unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
           filters:
             branches:
               only:
@@ -335,7 +334,7 @@ workflows:
       - lint:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
@@ -361,21 +360,21 @@ workflows:
       - e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - lint:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10.6']
+              python_version: ['3.7', '3.8', '3.9', '3.10']
       - javascript_lint_and_tests
