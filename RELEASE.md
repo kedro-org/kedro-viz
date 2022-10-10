@@ -21,6 +21,7 @@ Please follow the established format:
 - Fix keyboard support for exporting experiment runs. (#1103)
 - Fix `MemoryDataSet` not displaying on metadata panel. (#1113)
 - Enhance display of the flowchart when hovering over the FocusMode icon. (#1107)
+- Make dotted datasets clickable and hoverable when in focus mode. (#1114)
 
 # Release 5.1.1
 
