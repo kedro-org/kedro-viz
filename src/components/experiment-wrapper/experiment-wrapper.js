@@ -42,27 +42,16 @@ const ExperimentWrapper = ({ theme }) => {
 
   // Fetch all data for selected runs.
   const {
-    data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
+    data: { runMetadata = {}, runTrackingData = {} } = {},
     error: runDataError,
     loading: isRunDataLoading,
   } = useApolloQuery(GET_RUN_DATA, {
     skip: selectedRunIds.length === 0,
-    variables: { runIds: selectedRunIds, showDiff: true },
+    variables: { runIds: selectedRunIds },
   });
 
-  let runTrackingData = {};
-
-  if (plots.length > 0) {
-    runTrackingData['Plots'] = plots;
-  }
-
-  if (metrics.length > 0) {
-    runTrackingData['Metrics'] = metrics;
-  }
-
-  if (JSONData.length > 0) {
-    runTrackingData['JSON Data'] = JSONData;
-  }
+  console.log('runMetadata: ', runMetadata);
+  console.log('runTrackingData: ', runTrackingData);
 
   const onRunSelection = (id) => {
     if (enableComparisonView) {

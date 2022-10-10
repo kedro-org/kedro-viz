@@ -15,7 +15,7 @@ export const GET_RUNS = gql`
 
 /** query for runMetadata and runDataset components */
 export const GET_RUN_DATA = gql`
-  query getRunData($runIds: [ID!]!, $showDiff: Boolean) {
+  query getRunData($runIds: [ID!]!) {
     runMetadata(runIds: $runIds) {
       id
       author
@@ -26,30 +26,11 @@ export const GET_RUN_DATA = gql`
       runCommand
       title
     }
-    plots: runTrackingData(runIds: $runIds, showDiff: $showDiff, group: PLOT) {
-      ...trackingDatasetFields
+    runTrackingData(runIds: $runIds) {
+      plots
+      metrics
+      json
     }
-    metrics: runTrackingData(
-      runIds: $runIds
-      showDiff: $showDiff
-      group: METRIC
-    ) {
-      ...trackingDatasetFields
-    }
-    JSONData: runTrackingData(
-      runIds: $runIds
-      showDiff: $showDiff
-      group: JSON
-    ) {
-      ...trackingDatasetFields
-    }
-  }
-
-  fragment trackingDatasetFields on TrackingDataset {
-    data
-    datasetName
-    datasetType
-    runIds
   }
 `;
 

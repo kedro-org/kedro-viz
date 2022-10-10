@@ -131,7 +131,7 @@ const Details = ({
           showLoader={showRunLoader}
           theme={theme}
         />
-        <RunDataset
+        {/* <RunDataset
           enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
@@ -141,7 +141,7 @@ const Details = ({
           showLoader={showRunLoader}
           trackingData={runTrackingData}
           theme={theme}
-        />
+        /> */}
       </div>
     </>
   );

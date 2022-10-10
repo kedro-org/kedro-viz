@@ -10,28 +10,16 @@ type Mutation {
 
 type Query {
   """Get metadata for specified run_ids from the session store"""
-  runMetadata(runIds: [ID!]!): [Run!]!
+  runMetadata(runIds: [ID!]!): RunsMetadata!
 
   """Get metadata for all runs from the session store"""
-  runsList: [Run!]!
+  runsList: [RunList!]!
 
   """Get tracking datasets for specified group and run_ids"""
-  runTrackingData(runIds: [ID!]!, group: TrackingDatasetGroup!, showDiff: Boolean = true): [TrackingDataset!]!
+  runTrackingData(runIds: [ID!]!): TrackingDataset!
 
   """Get the installed and latest Kedro-Viz versions"""
   version: Version!
-}
-
-"""Run metadata"""
-type Run {
-  author: String
-  bookmark: Boolean
-  gitBranch: String
-  gitSha: String
-  id: ID!
-  notes: String
-  runCommand: String
-  title: String!
 }
 
 """Input to update run metadata"""
@@ -41,24 +29,38 @@ input RunInput {
   title: String = null
 }
 
+"""Run List Info"""
+type RunList {
+  bookmark: Boolean
+  gitSha: String
+  id: ID!
+  notes: String
+  title: String!
+}
+
+"""Metadata info for one or more runs"""
+type RunsMetadata {
+  author: [String!]
+  bookmark: [Boolean!]
+  gitBranch: [String!]
+  gitSha: [String!]
+  id: [ID!]
+  notes: [String!]
+  runCommand: [String!]
+  title: [String!]
+}
+
 type Subscription {
   """Add new runs in real time"""
-  runsAdded: [Run!]!
+  runsAdded: [RunList!]!
 }
 
 """Tracking data for a Run"""
 type TrackingDataset {
-  data: JSON!
-  datasetName: String!
-  datasetType: String!
   runIds: [ID!]!
-}
-
-"""Group to show kind of tracking data"""
-enum TrackingDatasetGroup {
-  PLOT
-  METRIC
-  JSON
+  metrics: JSON
+  json: JSON
+  plots: JSON
 }
 
 """Response for unsuccessful update of run metadata"""
@@ -72,7 +74,7 @@ union UpdateRunDetailsResponse = UpdateRunDetailsSuccess | UpdateRunDetailsFailu
 
 """Response for successful update of run metadata"""
 type UpdateRunDetailsSuccess {
-  run: Run!
+  run: RunsMetadata!
 }
 
 """Installed and latest Kedro-Viz versions"""
