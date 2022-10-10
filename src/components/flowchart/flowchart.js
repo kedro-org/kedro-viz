@@ -150,7 +150,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (changed('nodes', 'nodeActive', 'hoveredFocusMode')) {
+    if (changed('hoveredFocusMode', 'nodes')) {
       drawNodes.call(this, changed);
     }
 
