@@ -126,35 +126,20 @@ def format_run_tracking_data(
     """Convert tracking data in the front-end format.
 
     Args:
-        tracking_data: JSON blob of tracking data for selected runs
+        all_tracking_data: JSON blob of tracking data for selected runs
+        run_ids: the IDs of the runs to format tracking data for
     Returns:
         Dictionary with formatted tracking data for selected runs
     """
+    formatted_tracking_dataset = defaultdict(list)
 
-    
-
-    formatted_tracking_dataset= defaultdict(list)
     for tracking_data in all_tracking_data:
-        tracking_keys = set()
-        dataset_name = tracking_data.dataset_name 
-        runs = {run_id: tracking_data.runs[run_id] for run_id in run_ids}
-        formatted_tracking_runs= defaultdict(list)
-        run_index = 0
-        for _, run_data in runs.items():
-                for key, value in run_data.items():
-                    if key in tracking_keys:
-                        formatted_tracking_runs[key].append(value)
-                    else: 
-                        for _ in range(run_index):
-                            formatted_tracking_runs[key].append(None)
-                        formatted_tracking_runs[key].append(value)
-                        tracking_keys.add(key)
-                for key in tracking_keys:
-                    if len(formatted_tracking_runs[key]) < run_index+1:
-                        formatted_tracking_runs[key].append(None)
-                run_index=run_index+1                        
-                    
-        
-        formatted_tracking_dataset[dataset_name].append(formatted_tracking_runs)      
-    
+        runs = [tracking_data.runs[run_id] for run_id in run_ids]
+        formatted_tracking_runs = defaultdict(lambda: [None] * len(runs))
+        for run_index, run_data in enumerate(runs):
+            for key in run_data:
+                formatted_tracking_runs[key][run_index] = run_data[key]
+        dataset_name = tracking_data.dataset_name
+        formatted_tracking_dataset[dataset_name].append(formatted_tracking_runs)
+
     return [formatted_tracking_dataset]
