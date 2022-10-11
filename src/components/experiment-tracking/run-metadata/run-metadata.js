@@ -76,7 +76,7 @@ const RunMetadata = ({
   isSingleRun,
   onRunSelection,
   pinnedRun,
-  runs = {},
+  runs = [],
   setPinnedRun,
   setRunMetadataToEdit,
   setShowRunDetailsModal,

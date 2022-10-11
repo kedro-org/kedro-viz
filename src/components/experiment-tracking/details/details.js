@@ -62,13 +62,13 @@ const Details = ({
     }
   }, [isRunDataLoading, newRunAdded, enableComparisonView]);
 
-  useEffect(() => {
-    if (runMetadata && !enableComparisonView) {
-      const metadata = runMetadata.find((run) => run.id === selectedRunIds[0]);
+  // useEffect(() => {
+  //   if (runMetadata && !enableComparisonView) {
+  //     const metadata = runMetadata.find((run) => run.id === selectedRunIds[0]);
 
-      setRunMetadataToEdit(metadata);
-    }
-  }, [enableComparisonView, runMetadata, selectedRunIds]);
+  //     setRunMetadataToEdit(metadata);
+  //   }
+  // }, [enableComparisonView, runMetadata, selectedRunIds]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
@@ -118,7 +118,7 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata
+        {/* <RunMetadata
           enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
@@ -130,8 +130,8 @@ const Details = ({
           setShowRunDetailsModal={setShowRunDetailsModal}
           showLoader={showRunLoader}
           theme={theme}
-        />
-        {/* <RunDataset
+        /> */}
+        <RunDataset
           enableComparisonView={enableComparisonView}
           enableShowChanges={enableShowChanges}
           isSingleRun={isSingleRun}
@@ -141,7 +141,7 @@ const Details = ({
           showLoader={showRunLoader}
           trackingData={runTrackingData}
           theme={theme}
-        /> */}
+        />
       </div>
     </>
   );

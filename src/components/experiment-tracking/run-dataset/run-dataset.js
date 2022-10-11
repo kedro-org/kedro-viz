@@ -54,13 +54,93 @@ const RunDataset = ({
   trackingData,
   theme,
 }) => {
-  if (!trackingData) {
+  if (trackingData && Object.keys(trackingData).length === 0) {
     return null;
   }
 
+  // console.log('trackingData: ', trackingData);
+
   return (
     <div className="details-dataset">
-      {Object.keys(trackingData).map((group) => {
+      {Object.keys(trackingData)
+        .filter((group) => group !== '__typename')
+        .map((group) => {
+          return (
+            <Accordion
+              className={classnames(
+                'details-dataset__accordion',
+                'details-dataset__accordion-wrapper',
+                {
+                  'details-dataset__accordion-wrapper-comparison-view':
+                    enableComparisonView,
+                }
+              )}
+              headingClassName="details-dataset__accordion-header"
+              heading={group}
+              key={group}
+              layout="left"
+              size="large"
+            >
+              {Object.keys(trackingData[group][0]).map((dataset) => {
+                console.log('dataset: ', trackingData[group][0][dataset]);
+
+                return (
+                  <Accordion
+                    className="details-dataset__accordion"
+                    heading={dataset}
+                    headingClassName="details-dataset__accordion-header"
+                    key={dataset}
+                    layout="left"
+                    size="medium"
+                  >
+                    <div className="details-dataset__row">
+                      {/* {group[dataset].map((value) => {
+                      const rowLabel = Object.keys(value)[0];
+                      return (
+                        <span className="details-dataset__label">
+                          {rowLabel}
+                          <TransitionGroup
+                            component="div"
+                            className="details-dataset__tranistion-group-wrapper"
+                          >
+                            {value[rowLabel].map((metricValue, index) => {
+                              const isSinglePinnedRun =
+                                value[rowLabel].length === 1;
+
+                              return (
+                                <CSSTransition
+                                  classNames="details-dataset__value-animation"
+                                  enter={isSinglePinnedRun ? false : true}
+                                  exit={isSinglePinnedRun ? false : true}
+                                  key={index}
+                                  timeout={300}
+                                >
+                                  <span
+                                    className={classnames(
+                                      'details-dataset__value',
+                                      {
+                                        'details-dataset__value--comparison-view':
+                                          index === 0 && enableComparisonView,
+                                      }
+                                    )}
+                                  >
+                                    {metricValue}
+                                  </span>
+                                </CSSTransition>
+                              );
+                            })}
+                          </TransitionGroup>
+                        </span>
+                      );
+                    })} */}
+                    </div>
+                  </Accordion>
+                );
+              })}
+            </Accordion>
+          );
+        })}
+      {/* {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
             className={classnames(
@@ -121,7 +201,7 @@ const RunDataset = ({
             })}
           </Accordion>
         );
-      })}
+      })} */}
     </div>
   );
 };
