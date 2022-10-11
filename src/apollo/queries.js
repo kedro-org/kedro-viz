@@ -27,6 +27,7 @@ export const GET_RUN_DATA = gql`
       title
     }
     runTrackingData(runIds: $runIds) {
+      runIds
       plots
       metrics
       json

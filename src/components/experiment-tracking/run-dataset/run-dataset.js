@@ -58,13 +58,12 @@ const RunDataset = ({
     return null;
   }
 
-  // console.log('trackingData: ', trackingData);
+  const groups = ['metrics', 'json'];
 
   return (
     <div className="details-dataset">
-      {Object.keys(trackingData)
-        .filter((group) => group !== '__typename')
-        .map((group) => {
+      {groups.map((group) => {
+        return trackingData[group].map((datasets) => {
           return (
             <Accordion
               className={classnames(
@@ -77,13 +76,11 @@ const RunDataset = ({
               )}
               headingClassName="details-dataset__accordion-header"
               heading={group}
-              key={group}
+              key={datasets}
               layout="left"
               size="large"
             >
-              {Object.keys(trackingData[group][0]).map((dataset) => {
-                console.log('dataset: ', trackingData[group][0][dataset]);
-
+              {Object.keys(datasets).map((dataset) => {
                 return (
                   <Accordion
                     className="details-dataset__accordion"
@@ -94,52 +91,88 @@ const RunDataset = ({
                     size="medium"
                   >
                     <div className="details-dataset__row">
-                      {/* {group[dataset].map((value) => {
-                      const rowLabel = Object.keys(value)[0];
-                      return (
-                        <span className="details-dataset__label">
-                          {rowLabel}
-                          <TransitionGroup
-                            component="div"
-                            className="details-dataset__tranistion-group-wrapper"
+                      <span className="details-dataset__name-header">Name</span>
+                      <TransitionGroup
+                        className="details-dataset__transition-group-wrapper"
+                        component="div"
+                      >
+                        {trackingData.runIds.map((runId, index) => (
+                          <CSSTransition
+                            key={runId}
+                            timeout={300}
+                            classNames="details-dataset__value-animation"
+                            enter={isSingleRun ? false : true}
+                            exit={isSingleRun ? false : true}
                           >
-                            {value[rowLabel].map((metricValue, index) => {
-                              const isSinglePinnedRun =
-                                value[rowLabel].length === 1;
+                            <span
+                              className={classnames(
+                                'details-dataset__value-header',
+                                {
+                                  'details-dataset__value-header--comparison-view':
+                                    index === 0 && enableComparisonView,
+                                }
+                              )}
+                            >
+                              Value
+                            </span>
+                          </CSSTransition>
+                        ))}
+                      </TransitionGroup>
+                    </div>
+                    <div className="details-dataset__row">
+                      {datasets[dataset].map((value) => {
+                        const rowLabel = Object.keys(value)[0];
 
-                              return (
-                                <CSSTransition
-                                  classNames="details-dataset__value-animation"
-                                  enter={isSinglePinnedRun ? false : true}
-                                  exit={isSinglePinnedRun ? false : true}
-                                  key={index}
-                                  timeout={300}
-                                >
-                                  <span
-                                    className={classnames(
-                                      'details-dataset__value',
-                                      {
-                                        'details-dataset__value--comparison-view':
-                                          index === 0 && enableComparisonView,
-                                      }
-                                    )}
-                                  >
-                                    {metricValue}
-                                  </span>
-                                </CSSTransition>
-                              );
-                            })}
-                          </TransitionGroup>
-                        </span>
-                      );
-                    })} */}
+                        return Object.keys(value).map((metric) => {
+                          return (
+                            <React.Fragment key={rowLabel}>
+                              <span className="details-dataset__label">
+                                {rowLabel}
+                              </span>
+                              <TransitionGroup
+                                component="div"
+                                className="details-dataset__transition-group-wrapper"
+                              >
+                                {value[rowLabel].map((metricValue, index) => {
+                                  const isSinglePinnedRun =
+                                    value[rowLabel].length === 1;
+
+                                  return (
+                                    <CSSTransition
+                                      classNames="details-dataset__value-animation"
+                                      enter={isSinglePinnedRun ? false : true}
+                                      exit={isSinglePinnedRun ? false : true}
+                                      key={trackingData.runIds[index]}
+                                      timeout={300}
+                                    >
+                                      <span
+                                        className={classnames(
+                                          'details-dataset__value',
+                                          {
+                                            'details-dataset__value--comparison-view':
+                                              index === 0 &&
+                                              enableComparisonView,
+                                          }
+                                        )}
+                                      >
+                                        {metricValue}
+                                      </span>
+                                    </CSSTransition>
+                                  );
+                                })}
+                              </TransitionGroup>
+                            </React.Fragment>
+                          );
+                        });
+                      })}
                     </div>
                   </Accordion>
                 );
               })}
             </Accordion>
           );
-        })}
+        });
+      })}
       {/* {Object.keys(trackingData).map((group) => {
         return (
           <Accordion
@@ -246,7 +279,7 @@ function buildDatasetDataMarkup(
           <span className="details-dataset__name-header">Name</span>
           <TransitionGroup
             component="div"
-            className="details-dataset__tranistion-group-wrapper"
+            className="details-dataset__transition-group-wrapper"
           >
             {datasetValues.map((data, index) => (
               <CSSTransition
@@ -281,7 +314,7 @@ function buildDatasetDataMarkup(
         <span className={'details-dataset__label'}>{datasetKey}</span>
         <TransitionGroup
           component="div"
-          className="details-dataset__tranistion-group-wrapper"
+          className="details-dataset__transition-group-wrapper"
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
@@ -353,36 +386,6 @@ function buildDatasetDataMarkup(
       </div>
     </React.Fragment>
   );
-}
-
-/**
- * Fill in missing run metrics if they don't match the number of runIds.
- * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
- * @param {array} runIds Array of strings of runIds.
- * @returns Array of objects, the length of which matches the length
- * of the runIds.
- */
-function fillEmptyMetrics(datasetValues, runIds) {
-  if (datasetValues.length === runIds.length) {
-    return datasetValues;
-  }
-
-  const metrics = [];
-
-  runIds.forEach((id) => {
-    const foundIdIndex = datasetValues.findIndex((item) => {
-      return item.runId === id;
-    });
-
-    // We didn't find a metric with this runId, so add a placeholder.
-    if (foundIdIndex === -1) {
-      metrics.push({ runId: id, value: null });
-    } else {
-      metrics.push(datasetValues[foundIdIndex]);
-    }
-  });
-
-  return metrics;
 }
 
 function fillEmptyPlots() {
