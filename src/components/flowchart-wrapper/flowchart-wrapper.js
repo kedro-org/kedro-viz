@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
+import { getModularPipelinesTree } from '../../selectors/nodes';
+import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
+import { toggleFocusMode } from '../../actions';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
@@ -19,10 +22,18 @@ import './flowchart-wrapper.css';
  */
 export const FlowChartWrapper = ({
   loading,
-  sidebarVisible,
+  modularPipelinesTree,
   onLoadNodeData,
+  onToggleFocusMode,
+  onToggleModularPipelineActive,
+  sidebarVisible,
 }) => {
-  useRedirectLocation(onLoadNodeData);
+  useRedirectLocation(
+    modularPipelinesTree,
+    onLoadNodeData,
+    onToggleFocusMode,
+    onToggleModularPipelineActive
+  );
 
   return (
     <div className="kedro-pipeline">
@@ -47,12 +58,19 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
+  modularPipelinesTree: getModularPipelinesTree(state),
   sidebarVisible: state.visible.sidebar,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
+  onToggleFocusMode: (modularPipeline) => {
+    dispatch(toggleFocusMode(modularPipeline));
+  },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
+  },
+  onToggleModularPipelineActive: (modularPipelineIDs, active) => {
+    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
   },
 });
 
