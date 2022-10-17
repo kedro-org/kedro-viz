@@ -103,10 +103,19 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
 
-        const url = generatePath(routes.flowchart.selectedNode, {
-          id: item.id,
-        });
-        history.push(url);
+        if (item.modularPipelines.length > 0) {
+          const url = generatePath(routes.flowchart.expandedNode, {
+            expandedId: item.modularPipelines[0],
+            id: item.id,
+          });
+
+          history.push(url);
+        } else {
+          const url = generatePath(routes.flowchart.selectedNode, {
+            id: item.id,
+          });
+          history.push(url);
+        }
       }
     }
   };
