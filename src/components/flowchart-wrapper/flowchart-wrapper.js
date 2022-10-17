@@ -5,6 +5,7 @@ import { isLoading } from '../../selectors/loading';
 import { getModularPipelinesTree } from '../../selectors/nodes';
 import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
 import { toggleFocusMode } from '../../actions';
+import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
@@ -26,13 +27,15 @@ export const FlowChartWrapper = ({
   onLoadNodeData,
   onToggleFocusMode,
   onToggleModularPipelineActive,
+  onToggleModularPipelineExpanded,
   sidebarVisible,
 }) => {
   useRedirectLocation(
     modularPipelinesTree,
     onLoadNodeData,
     onToggleFocusMode,
-    onToggleModularPipelineActive
+    onToggleModularPipelineActive,
+    onToggleModularPipelineExpanded
   );
 
   return (
@@ -71,6 +74,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
+  },
+  onToggleModularPipelineExpanded: (expanded) => {
+    dispatch(toggleModularPipelinesExpanded(expanded));
   },
 });
 
