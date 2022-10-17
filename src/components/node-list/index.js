@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory, generatePath } from 'react-router-dom';
+import { routes } from '../../routes.config';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import NodeList from './node-list';
@@ -67,6 +69,8 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+  const history = useHistory();
+
   const items = getFilteredItems({
     nodes,
     tags,
@@ -92,8 +96,17 @@ const NodeListProvider = ({
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
+
+        const url = generatePath(routes.flowchart.main);
+
+        history.push(url);
       } else {
         onToggleNodeSelected(item.id);
+
+        const url = generatePath(routes.flowchart.selectedNode, {
+          nodeId: item.id,
+        });
+        history.push(url);
       }
     }
   };
