@@ -104,7 +104,7 @@ const NodeListProvider = ({
         onToggleNodeSelected(item.id);
 
         const url = generatePath(routes.flowchart.selectedNode, {
-          nodeId: item.id,
+          id: item.id,
         });
         history.push(url);
       }
@@ -119,11 +119,20 @@ const NodeListProvider = ({
         if (clickedIconType === 'focus') {
           if (focusMode === null) {
             onToggleFocusMode(item);
+
+            const url = generatePath(routes.flowchart.focusedNode, {
+              id: item.id,
+            });
+            history.push(url);
+
             if (disabledModularPipeline[item.id]) {
               onToggleModularPipelineDisabled([item.id], checked);
             }
           } else {
             onToggleFocusMode(null);
+
+            const url = generatePath(routes.flowchart.main);
+            history.push(url);
           }
         } else {
           onToggleModularPipelineDisabled([item.id], checked);
