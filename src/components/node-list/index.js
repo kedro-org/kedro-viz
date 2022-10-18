@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, generatePath } from 'react-router-dom';
-import { routes } from '../../routes.config';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import NodeList from './node-list';
@@ -70,9 +68,13 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const history = useHistory();
 
-  const { toFlowchartPage } = useGeneratePathname();
+  const {
+    toFlowchartPage,
+    toSelectedNode,
+    toExpandedModularPipeline,
+    toFocusedModularPipeline,
+  } = useGeneratePathname();
 
   const items = getFilteredItems({
     nodes,
@@ -99,23 +101,14 @@ const NodeListProvider = ({
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
-
         toFlowchartPage();
       } else {
         onToggleNodeSelected(item.id);
 
         if (item.modularPipelines.length > 0) {
-          const url = generatePath(routes.flowchart.expandedNode, {
-            expandedId: item.modularPipelines[0],
-            id: item.id,
-          });
-
-          history.push(url);
+          toExpandedModularPipeline(item);
         } else {
-          const url = generatePath(routes.flowchart.selectedNode, {
-            id: item.id,
-          });
-          history.push(url);
+          toSelectedNode(item);
         }
       }
     }
@@ -129,11 +122,7 @@ const NodeListProvider = ({
         if (clickedIconType === 'focus') {
           if (focusMode === null) {
             onToggleFocusMode(item);
-
-            const url = generatePath(routes.flowchart.focusedNode, {
-              id: item.id,
-            });
-            history.push(url);
+            toFocusedModularPipeline(item);
 
             if (disabledModularPipeline[item.id]) {
               onToggleModularPipelineDisabled([item.id], checked);
