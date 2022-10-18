@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../routes.config';
 
@@ -7,7 +7,8 @@ export const useRedirectLocation = (
   onLoadNodeData,
   onToggleFocusMode,
   onToggleModularPipelineActive,
-  onToggleModularPipelineExpanded
+  onToggleModularPipelineExpanded,
+  reload
 ) => {
   const { pathname, search } = useLocation();
 
@@ -26,7 +27,7 @@ export const useRedirectLocation = (
     path: [routes.flowchart.expandedNode],
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (matchedSelectedNode) {
       const nodeId = search.split(params.selected);
 
@@ -38,7 +39,6 @@ export const useRedirectLocation = (
       const modularPipeline = modularPipelinesTree[modularPipelineId[1]];
 
       onToggleFocusMode(modularPipeline.data);
-
       onToggleModularPipelineActive(modularPipelineId[1], true);
     }
 
@@ -53,15 +53,6 @@ export const useRedirectLocation = (
       onToggleModularPipelineExpanded([expandedId]);
       onLoadNodeData(selectedId[1]);
     }
-  }, [
-    matchedSelectedNode,
-    matchedFocusedNode,
-    matchedExpandedNode,
-    search,
-    onLoadNodeData,
-    modularPipelinesTree,
-    onToggleFocusMode,
-    onToggleModularPipelineActive,
-    onToggleModularPipelineExpanded,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reload]);
 };

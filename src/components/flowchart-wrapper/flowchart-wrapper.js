@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -22,6 +22,7 @@ import './flowchart-wrapper.css';
  * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowChartWrapper = ({
+  reload,
   loading,
   modularPipelinesTree,
   onLoadNodeData,
@@ -35,7 +36,8 @@ export const FlowChartWrapper = ({
     onLoadNodeData,
     onToggleFocusMode,
     onToggleModularPipelineActive,
-    onToggleModularPipelineExpanded
+    onToggleModularPipelineExpanded,
+    reload
   );
 
   return (
