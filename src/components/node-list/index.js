@@ -39,6 +39,7 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.css';
 
 /**
@@ -71,6 +72,8 @@ const NodeListProvider = ({
   const [searchValue, updateSearchValue] = useState('');
   const history = useHistory();
 
+  const { toFlowchartPage } = useGeneratePathname();
+
   const items = getFilteredItems({
     nodes,
     tags,
@@ -97,9 +100,7 @@ const NodeListProvider = ({
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
 
-        const url = generatePath(routes.flowchart.main);
-
-        history.push(url);
+        toFlowchartPage();
       } else {
         onToggleNodeSelected(item.id);
 
@@ -140,8 +141,7 @@ const NodeListProvider = ({
           } else {
             onToggleFocusMode(null);
 
-            const url = generatePath(routes.flowchart.main);
-            history.push(url);
+            toFlowchartPage();
           }
         } else {
           onToggleModularPipelineDisabled([item.id], checked);
