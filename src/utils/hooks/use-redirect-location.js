@@ -45,7 +45,7 @@ export const useRedirectLocation = (
     if (matchedExpandedNode) {
       const expandedId = search.substring(
         search.indexOf(params.expanded) + params.expanded.length,
-        search.lastIndexOf('/')
+        search.lastIndexOf('&')
       );
 
       const selectedId = search.split(params.selected);
