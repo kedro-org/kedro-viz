@@ -24,6 +24,18 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
     'experiment-tracking': '',
   });
 
+  const [reload, setReload] = useState(true);
+
+  useEffect(() => setReload(true), []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar,
@@ -64,7 +76,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             )}
             <Switch>
               <Route exact path={sanitizedPathname}>
-                <FlowChartWrapper />
+                <FlowChartWrapper reload={reload} />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
