@@ -7,7 +7,7 @@ export const useGeneratePathname = () => {
   const history = useHistory();
 
   const localStorage = window.localStorage.getItem(localStorageName);
-  const activePipeline = JSON.parse(localStorage).pipeline.active;
+  const activePipeline = JSON.parse(localStorage)?.pipeline?.active;
 
   const toFlowchartPage = useCallback(() => {
     const url = generatePath(routes.flowchart.main);
