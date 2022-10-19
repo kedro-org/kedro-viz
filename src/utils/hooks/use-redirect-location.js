@@ -2,7 +2,11 @@ import { useMemo } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../routes.config';
 
-export const useRedirectLocation = (
+/**
+ * this is to trigger different actions based on the current pathname in the flowchart
+ * and this hook is only called when the page is reload
+ */
+export const useRedirectLocationInFlowchart = (
   modularPipelinesTree,
   onLoadNodeData,
   onToggleFocusMode,

@@ -15,7 +15,7 @@ import MetadataModal from '../metadata-modal';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import Sidebar from '../sidebar';
-import { useRedirectLocation } from '../../utils/hooks/use-redirect-location';
+import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import './flowchart-wrapper.css';
 
 /**
@@ -33,7 +33,7 @@ export const FlowChartWrapper = ({
   onUpdateActivePipeline,
   sidebarVisible,
 }) => {
-  useRedirectLocation(
+  useRedirectLocationInFlowchart(
     modularPipelinesTree,
     onLoadNodeData,
     onToggleFocusMode,

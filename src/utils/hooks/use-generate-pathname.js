@@ -3,6 +3,11 @@ import { useHistory, generatePath } from 'react-router-dom';
 import { routes } from '../../routes.config';
 import { localStorageName } from '../../config';
 
+/**
+ * to generate different pathnames based on each action
+ * eg: click on a node, or focus on a modular pipeline
+ * or to reset the pathname to the main page
+ */
 export const useGeneratePathname = () => {
   const history = useHistory();
 
