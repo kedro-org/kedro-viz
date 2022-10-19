@@ -129,7 +129,6 @@ const NodeListProvider = ({
             }
           } else {
             onToggleFocusMode(null);
-
             toFlowchartPage();
           }
         } else {

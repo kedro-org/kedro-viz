@@ -5,13 +5,13 @@ export const params = {
   pipeline: 'pipeline_id=',
 };
 
-const pipelineActive = `${params.pipeline}:pipelineId`;
+const activePipeline = `${params.pipeline}:pipelineId`;
 
 export const routes = {
   flowchart: {
     main: '/',
-    focusedNode: `/?${pipelineActive}&${params.focused}:id`,
-    selectedNode: `/?${pipelineActive}&${params.selected}:id`,
-    expandedNode: `/?${pipelineActive}&${params.expanded}:expandedId&${params.selected}:id`,
+    focusedNode: `/?${activePipeline}&${params.focused}:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}:id`,
+    expandedNode: `/?${activePipeline}&${params.expanded}:expandedId&${params.selected}:id`,
   },
 };
