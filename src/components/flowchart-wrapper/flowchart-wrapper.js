@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
 import { getModularPipelinesTree } from '../../selectors/nodes';
-import { toggleModularPipelineActive } from '../../actions/modular-pipelines';
+import {
+  toggleModularPipelineActive,
+  toggleModularPipelinesExpanded,
+} from '../../actions/modular-pipelines';
 import { toggleFocusMode } from '../../actions';
-import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
+import { loadNodeData } from '../../actions/nodes';
+import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
-import { loadNodeData } from '../../actions/nodes';
-import { loadPipelineData } from '../../actions/pipelines';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import './flowchart-wrapper.css';
