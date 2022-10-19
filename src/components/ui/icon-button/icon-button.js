@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.css';
@@ -25,11 +25,28 @@ const IconButton = ({
 }) => {
   const Icon = icon;
 
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
   const labelPosition = labelPositionTypes.includes(
     labelTextPosition.toLowerCase()
   )
     ? labelTextPosition.toLocaleLowerCase()
     : 'right';
+
+  const showTooltip = () => {
+    if (localStorage.getItem('delayShow') === null) {
+      window.localStorage.setItem('delayShow', true);
+      setTimeout(() => {
+        setIsTooltipVisible(true);
+      }, 2000);
+    } else {
+      setIsTooltipVisible(true);
+    }
+  };
+
+  const hideTooltip = () => {
+    setIsTooltipVisible(false);
+  };
 
   return visible ? (
     <Wrapper container={container}>
@@ -43,9 +60,11 @@ const IconButton = ({
         data-heap-event={dataHeapEvent}
         disabled={disabled}
         onClick={onClick}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
       >
         {Icon && <Icon className="pipeline-icon" />}
-        {labelText && (
+        {labelText && isTooltipVisible && (
           <span
             className={classnames(
               'pipeline-toolbar__label',
