@@ -35,6 +35,7 @@ export const PipelineList = ({
         width={null}
         onChanged={(value) => {
           onUpdateActivePipeline(value);
+          // reset the URL to '/' when switching between different view
           toFlowchartPage();
         }}
         defaultText={
