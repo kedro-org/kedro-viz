@@ -8,9 +8,17 @@ export const useRedirectLocation = (
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
+  onUpdateActivePipeline,
   reload
 ) => {
   const { pathname, search } = useLocation();
+
+  const activePipelineId = search.substring(
+    search.indexOf(params.pipeline) + params.pipeline.length,
+    search.indexOf('&')
+  );
+
+  const decodedPipelineId = decodeURI(activePipelineId);
 
   const matchedSelectedNode = matchPath(pathname + search, {
     exact: true,
@@ -29,17 +37,19 @@ export const useRedirectLocation = (
 
   useMemo(() => {
     if (matchedSelectedNode) {
-      const nodeId = search.split(params.selected);
+      const nodeId = search.split(params.selected)[1];
 
-      onLoadNodeData(nodeId[1]);
+      onUpdateActivePipeline(decodedPipelineId);
+      onLoadNodeData(nodeId);
     }
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length !== 0) {
-      const modularPipelineId = search.split(params.focused);
-      const modularPipeline = modularPipelinesTree[modularPipelineId[1]];
+      const modularPipelineId = search.split(params.focused)[1];
+      const modularPipeline = modularPipelinesTree[modularPipelineId];
 
       onToggleFocusMode(modularPipeline.data);
-      onToggleModularPipelineActive(modularPipelineId[1], true);
+      onToggleModularPipelineActive(modularPipelineId, true);
+      onUpdateActivePipeline(decodedPipelineId);
     }
 
     if (matchedExpandedNode) {
@@ -47,11 +57,11 @@ export const useRedirectLocation = (
         search.indexOf(params.expanded) + params.expanded.length,
         search.lastIndexOf('&')
       );
-
-      const selectedId = search.split(params.selected);
+      const selectedId = search.split(params.selected)[1];
 
       onToggleModularPipelineExpanded([expandedId]);
-      onLoadNodeData(selectedId[1]);
+      onLoadNodeData(selectedId);
+      onUpdateActivePipeline(decodedPipelineId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);

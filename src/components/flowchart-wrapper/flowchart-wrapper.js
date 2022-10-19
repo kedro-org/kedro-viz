@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -13,6 +13,7 @@ import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import { loadNodeData } from '../../actions/nodes';
+import { loadPipelineData } from '../../actions/pipelines';
 import Sidebar from '../sidebar';
 import { useRedirectLocation } from '../../utils/hooks/use-redirect-location';
 import './flowchart-wrapper.css';
@@ -29,6 +30,7 @@ export const FlowChartWrapper = ({
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
+  onUpdateActivePipeline,
   sidebarVisible,
 }) => {
   useRedirectLocation(
@@ -37,6 +39,7 @@ export const FlowChartWrapper = ({
     onToggleFocusMode,
     onToggleModularPipelineActive,
     onToggleModularPipelineExpanded,
+    onUpdateActivePipeline,
     reload
   );
 
@@ -79,6 +82,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineExpanded: (expanded) => {
     dispatch(toggleModularPipelinesExpanded(expanded));
+  },
+  onUpdateActivePipeline: (pipelineId) => {
+    dispatch(loadPipelineData(pipelineId));
   },
 });
 

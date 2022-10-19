@@ -2,14 +2,16 @@ export const params = {
   focused: 'focused_id=',
   selected: 'selected_id=',
   expanded: 'expanded_id=',
-  pipeline: 'pipeline_active=',
+  pipeline: 'pipeline_id=',
 };
+
+const pipelineActive = `${params.pipeline}:pipelineId`;
 
 export const routes = {
   flowchart: {
     main: '/',
-    focusedNode: `/?${params.focused}:id`,
-    selectedNode: `/?${params.selected}:id`,
-    expandedNode: `/?${params.expanded}:expandedId&${params.selected}:id`,
+    focusedNode: `/?${pipelineActive}&${params.focused}:id`,
+    selectedNode: `/?${pipelineActive}&${params.selected}:id`,
+    expandedNode: `/?${pipelineActive}&${params.expanded}:expandedId&${params.selected}:id`,
   },
 };

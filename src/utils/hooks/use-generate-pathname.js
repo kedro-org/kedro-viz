@@ -7,7 +7,7 @@ export const useGeneratePathname = () => {
   const history = useHistory();
 
   const localStorage = window.localStorage.getItem(localStorageName);
-  const localStorageData = JSON.parse(localStorage);
+  const activePipeline = JSON.parse(localStorage).pipeline.active;
 
   const toFlowchartPage = useCallback(() => {
     const url = generatePath(routes.flowchart.main);
@@ -17,33 +17,36 @@ export const useGeneratePathname = () => {
   const toSelectedNode = useCallback(
     (item) => {
       const url = generatePath(routes.flowchart.selectedNode, {
+        pipelineId: activePipeline,
         id: item.id,
       });
       history.push(url);
     },
-    [history]
+    [history, activePipeline]
   );
 
   const toExpandedModularPipeline = useCallback(
     (item) => {
       const url = generatePath(routes.flowchart.expandedNode, {
+        pipelineId: activePipeline,
         expandedId: item.modularPipelines[0],
         id: item.id,
       });
 
       history.push(url);
     },
-    [history]
+    [history, activePipeline]
   );
 
   const toFocusedModularPipeline = useCallback(
     (item) => {
       const url = generatePath(routes.flowchart.focusedNode, {
+        pipelineId: activePipeline,
         id: item.id,
       });
       history.push(url);
     },
-    [history]
+    [history, activePipeline]
   );
 
   return {
