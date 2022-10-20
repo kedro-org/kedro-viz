@@ -184,6 +184,12 @@ const NodeListProvider = ({
     }
   };
 
+  const handleToggleModularPipelineExpanded = (expanded) => {
+    onToggleModularPipelineExpanded(expanded);
+    // to reset URL to '/' when expanding modularPipepline as we dont track this action
+    toFlowchartPage();
+  };
+
   const onGroupItemChange = (item, wasChecked) => {
     // Toggle the group
     if (isTagType(item.type)) {
@@ -217,7 +223,7 @@ const NodeListProvider = ({
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
-      onModularPipelineToggleExpanded={onToggleModularPipelineExpanded}
+      onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onToggleFocusMode={onToggleFocusMode}
       onItemClick={onItemClick}
