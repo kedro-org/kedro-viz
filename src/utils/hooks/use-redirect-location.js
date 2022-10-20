@@ -39,12 +39,11 @@ export const useRedirectLocationInFlowchart = (
     if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 
-      const node = nodes?.task.find((node) => node.id === nodeId);
-
-      const hasModularPipeline = node && node.modularPipelines.length > 0;
+      const modularPipeline = nodes[nodeId];
+      const hasModularPipeline = modularPipeline.length > 0;
 
       if (hasModularPipeline) {
-        onToggleModularPipelineExpanded(node.modularPipelines);
+        onToggleModularPipelineExpanded(modularPipeline);
         onUpdateActivePipeline(decodedPipelineId);
         onLoadNodeData(nodeId);
       } else {

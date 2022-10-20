@@ -74,7 +74,7 @@ export const FlowChartWrapper = ({
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
-  nodes: getGroupedNodes(state),
+  nodes: state.node.modularPipelines,
   sidebarVisible: state.visible.sidebar,
 });
 
