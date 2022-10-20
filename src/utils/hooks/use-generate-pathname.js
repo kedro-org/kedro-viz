@@ -30,19 +30,6 @@ export const useGeneratePathname = () => {
     [history, activePipeline]
   );
 
-  const toExpandedModularPipeline = useCallback(
-    (item) => {
-      const url = generatePath(routes.flowchart.expandedNode, {
-        pipelineId: activePipeline,
-        expandedId: item.modularPipelines[0],
-        id: item.id,
-      });
-
-      history.push(url);
-    },
-    [history, activePipeline]
-  );
-
   const toFocusedModularPipeline = useCallback(
     (item) => {
       const url = generatePath(routes.flowchart.focusedNode, {
@@ -57,7 +44,6 @@ export const useGeneratePathname = () => {
   return {
     toFlowchartPage,
     toSelectedNode,
-    toExpandedModularPipeline,
     toFocusedModularPipeline,
   };
 };
