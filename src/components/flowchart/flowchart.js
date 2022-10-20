@@ -446,7 +446,7 @@ export class FlowChart extends Component {
   handleNodeClick = (event, node) => {
     if (node.type === 'modularPipeline') {
       this.props.onClickToExpandModularPipeline(node.id);
-      // to reset URL to '/' when expanding modularPipepline as we dont track this action
+      // To reset URL to '/' when expanding modularPipepline as we dont track this action
       this.props.toFlowchartPage();
     } else {
       this.props.onLoadNodeData(node.id);
@@ -460,7 +460,7 @@ export class FlowChart extends Component {
    */
   handleChartClick = () => {
     this.props.onLoadNodeData(null);
-    // to reset URL to '/' when click outside of a node on flowchart
+    // To reset URL to '/' when click outside of a node on flowchart
     this.props.toFlowchartPage();
   };
 

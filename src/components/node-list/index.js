@@ -186,7 +186,7 @@ const NodeListProvider = ({
 
   const handleToggleModularPipelineExpanded = (expanded) => {
     onToggleModularPipelineExpanded(expanded);
-    // to reset URL to '/' when expanding modularPipepline as we dont track this action
+    // To reset URL to '/' when expanding modularPipepline as we dont track this action
     toFlowchartPage();
   };
 
