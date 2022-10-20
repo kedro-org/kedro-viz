@@ -26,8 +26,10 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
 
   // Reload state is to ensure it will call redirectLocation in FlowcharWrapper
   // only when the page is reloaded
-  const [reload, setReload] = useState(true);
+  const [reload, setReload] = useState(false);
+
   useEffect(() => setReload(true), []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setReload(false);
