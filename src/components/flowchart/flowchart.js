@@ -448,6 +448,7 @@ export class FlowChart extends Component {
       this.props.onClickToExpandModularPipeline(node.id);
     } else {
       this.props.onLoadNodeData(node.id);
+      this.props.toSelectedNode(node);
     }
     event.stopPropagation();
   };
@@ -593,6 +594,8 @@ export class FlowChart extends Component {
       this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
+    console.log(this.props.clickedNode, 'clickedNode');
+    console.log(this.props.nodeSelected, 'node selected');
     return (
       <div
         className="pipeline-flowchart kedro"
