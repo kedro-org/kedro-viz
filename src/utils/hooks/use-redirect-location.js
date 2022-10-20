@@ -8,6 +8,7 @@ import { routes, params } from '../../routes.config';
  */
 export const useRedirectLocationInFlowchart = (
   modularPipelinesTree,
+  nodes,
   onLoadNodeData,
   onToggleFocusMode,
   onToggleModularPipelineActive,
@@ -34,17 +35,22 @@ export const useRedirectLocationInFlowchart = (
     path: [routes.flowchart.focusedNode],
   });
 
-  const matchedExpandedNode = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.expandedNode],
-  });
-
   useMemo(() => {
-    if (matchedSelectedNode) {
+    if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 
-      onUpdateActivePipeline(decodedPipelineId);
-      onLoadNodeData(nodeId);
+      const node = nodes?.task.find((node) => node.id === nodeId);
+
+      const hasModularPipeline = node && node.modularPipelines.length > 0;
+
+      if (hasModularPipeline) {
+        onToggleModularPipelineExpanded(node.modularPipelines);
+        onUpdateActivePipeline(decodedPipelineId);
+        onLoadNodeData(nodeId);
+      } else {
+        onLoadNodeData(nodeId);
+        onUpdateActivePipeline(decodedPipelineId);
+      }
     }
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length !== 0) {
@@ -53,18 +59,6 @@ export const useRedirectLocationInFlowchart = (
 
       onToggleFocusMode(modularPipeline.data);
       onToggleModularPipelineActive(modularPipelineId, true);
-      onUpdateActivePipeline(decodedPipelineId);
-    }
-
-    if (matchedExpandedNode) {
-      const expandedId = search.substring(
-        search.indexOf(params.expanded) + params.expanded.length,
-        search.lastIndexOf('&')
-      );
-      const selectedId = search.split(params.selected)[1];
-
-      onToggleModularPipelineExpanded([expandedId]);
-      onLoadNodeData(selectedId);
       onUpdateActivePipeline(decodedPipelineId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

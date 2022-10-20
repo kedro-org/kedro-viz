@@ -69,12 +69,8 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
-  const {
-    toFlowchartPage,
-    toSelectedNode,
-    toExpandedModularPipeline,
-    toFocusedModularPipeline,
-  } = useGeneratePathname();
+  const { toFlowchartPage, toSelectedNode, toFocusedModularPipeline } =
+    useGeneratePathname();
 
   const items = getFilteredItems({
     nodes,
@@ -104,12 +100,7 @@ const NodeListProvider = ({
         toFlowchartPage();
       } else {
         onToggleNodeSelected(item.id);
-
-        if (item.modularPipelines.length > 0) {
-          toExpandedModularPipeline(item);
-        } else {
-          toSelectedNode(item);
-        }
+        toSelectedNode(item);
       }
     }
   };

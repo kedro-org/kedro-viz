@@ -2,7 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
-import { getModularPipelinesTree } from '../../selectors/nodes';
+import {
+  getModularPipelinesTree,
+  getGroupedNodes,
+} from '../../selectors/nodes';
 import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
@@ -25,18 +28,20 @@ import './flowchart-wrapper.css';
  * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowChartWrapper = ({
-  reload,
   loading,
   modularPipelinesTree,
+  nodes,
   onLoadNodeData,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onUpdateActivePipeline,
+  reload,
   sidebarVisible,
 }) => {
   useRedirectLocationInFlowchart(
     modularPipelinesTree,
+    nodes,
     onLoadNodeData,
     onToggleFocusMode,
     onToggleModularPipelineActive,
@@ -69,6 +74,7 @@ export const FlowChartWrapper = ({
 export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
+  nodes: getGroupedNodes(state),
   sidebarVisible: state.visible.sidebar,
 });
 
