@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../routes.config';
 
@@ -35,7 +35,7 @@ export const useRedirectLocationInFlowchart = (
     path: [routes.flowchart.focusedNode],
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 

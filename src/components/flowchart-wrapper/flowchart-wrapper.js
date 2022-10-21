@@ -2,10 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
-import {
-  getModularPipelinesTree,
-  getGroupedNodes,
-} from '../../selectors/nodes';
+import { getModularPipelinesTree } from '../../selectors/nodes';
 import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
