@@ -52,7 +52,7 @@ export const useRedirectLocationInFlowchart = (
       }
     }
 
-    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length !== 0) {
+    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
       const modularPipelineId = search.split(params.focused)[1];
       const modularPipeline = modularPipelinesTree[modularPipelineId];
 
