@@ -68,7 +68,6 @@ const IconButton = ({
           <span
             className={classnames(
               'pipeline-toolbar__label',
-              className,
               {
                 'pipeline-toolbar__label__visible': isTooltipVisible,
               },
