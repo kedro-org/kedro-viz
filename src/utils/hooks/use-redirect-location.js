@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
-import { routes, params } from '../../routes.config';
+import { routes, params } from '../../config';
 
 /**
  * to trigger different actions based on the current location in the flowchart

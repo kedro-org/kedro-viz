@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useHistory, generatePath } from 'react-router-dom';
-import { routes } from '../../routes.config';
-import { localStorageName } from '../../config';
+import { localStorageName, routes } from '../../config';
 
 /**
  * To generate different pathnames based on each action
