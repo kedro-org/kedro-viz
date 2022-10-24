@@ -270,6 +270,22 @@ describe('FlowChart', () => {
     );
   });
 
+  it('applies bg--highlight class to nodes when highlightDatasets is true', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        displayGlobalToolbar={true}
+        highlightDatasets={true}
+        nodeActive={{
+          [dataScienceNodeId]: true,
+          [dataProcessingNodeId]: true,
+        }}
+      />
+    );
+    expect(wrapper.render().find('.pipeline-node__bg--highlight').length).toBe(
+      7
+    );
+  });
+
   it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
     const wrapper = setup.mount(
       <FlowChart
@@ -469,6 +485,7 @@ describe('FlowChart', () => {
       chartZoom: expect.any(Object),
       edges: expect.any(Array),
       graphSize: expect.any(Object),
+      highlightDatasets: expect.any(Boolean),
       hoveredParameters: expect.any(Boolean),
       hoveredFocusMode: expect.any(Boolean),
       layers: expect.any(Array),

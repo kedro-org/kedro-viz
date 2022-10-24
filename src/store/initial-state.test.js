@@ -80,7 +80,7 @@ describe('prepareNonPipelineState', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: spaceflights })).toMatchObject({
       flags: {
-        sizewarning: expect.any(Boolean),
+        sizeWarning: expect.any(Boolean),
       },
     });
   });

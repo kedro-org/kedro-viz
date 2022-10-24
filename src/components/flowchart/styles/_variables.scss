@@ -20,6 +20,7 @@
   --layer-fill: #{colors.$grey-200};
   --layer-text: #{colors.$black-900};
   --node-input-fill: #{colors.$black-200};
+  --dataset-accent: #{colors.$blue-300};
   --parameter-accent: #{colors.$purple-300};
   --parameter-accent-input: #{colors.$purple-300};
 
@@ -55,6 +56,7 @@
   --layer-fill: #{colors.$slate-600};
   --layer-text: #{colors.$white-0};
   --node-input-fill: #{colors.$grey-800};
+  --dataset-accent: #{colors.$blue-300};
   --parameter-accent: #{colors.$yellow-300};
   --parameter-accent-input: #{colors.$yellow-900};
 }

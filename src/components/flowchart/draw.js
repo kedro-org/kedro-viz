@@ -125,16 +125,17 @@ const updateParameterRect = (nodeRects) =>
 export const drawNodes = function (changed) {
   const {
     clickedNode,
-    linkedNodes,
-    nodeTypeDisabled,
-    nodeActive,
-    nodeSelected,
-    hoveredParameters,
-    nodesWithInputParams,
-    inputOutputDataNodes,
-    nodes,
     focusMode,
+    highlightDatasets,
     hoveredFocusMode,
+    hoveredParameters,
+    inputOutputDataNodes,
+    linkedNodes,
+    nodeActive,
+    nodes,
+    nodeSelected,
+    nodesWithInputParams,
+    nodeTypeDisabled,
   } = this.props;
 
   const isInputOutputNode = (nodeID) =>
@@ -188,7 +189,10 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr(
         'class',
-        (node) => `pipeline-node__bg pipeline-node__bg--${node.type}`
+        (node) =>
+          `pipeline-node__bg pipeline-node__bg--${
+            node.type
+          } pipeline-node__bg--${highlightDatasets ? 'highlight' : 'normal'}`
       );
 
     enterNodes

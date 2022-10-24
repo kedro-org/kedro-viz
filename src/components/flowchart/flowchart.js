@@ -682,6 +682,7 @@ export const mapStateToProps = (state, ownProps) => ({
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
+  highlightDatasets: state.flags.highlightDatasets,
   hoveredParameters: state.hoveredParameters,
   hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),

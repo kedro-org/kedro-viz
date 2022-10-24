@@ -76,7 +76,7 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = (dispatch) => ({
   onDisable: () => {
-    dispatch(changeFlag('sizewarning', false));
+    dispatch(changeFlag('sizeWarning', false));
   },
   onHide: () => {
     dispatch(toggleIgnoreLargeWarning(true));

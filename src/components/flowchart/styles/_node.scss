@@ -16,6 +16,10 @@
     stroke: var(--node-stroke-default);
   }
 
+  .pipeline-node__bg--data.pipeline-node__bg--highlight {
+    stroke: var(--dataset-accent);
+  }
+
   &:focus {
     outline: none;
 

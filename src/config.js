@@ -46,7 +46,7 @@ export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
 export const flags = {
-  sizewarning: {
+  sizeWarning: {
     name: 'Size warning',
     description: 'Show a warning before rendering very large graphs',
     default: true,
@@ -55,6 +55,13 @@ export const flags = {
   expandAllPipelines: {
     name: 'Expand all modular pipelines',
     description: 'Expand all modular pipelines on first load',
+    default: false,
+    icon: '🔛',
+  },
+  highlightDatasets: {
+    name: 'Highlight datasets',
+    description:
+      'Highlight dataset nodes on the Flowchart to for improved legibility',
     default: false,
     icon: '🔛',
   },

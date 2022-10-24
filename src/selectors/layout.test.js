@@ -63,10 +63,10 @@ describe('Selectors', () => {
       expect(getTriggerLargeGraphWarning(state)).toBe(true);
     });
 
-    it('returns false if the sizewarning flag is false', () => {
+    it('returns false if the sizeWarning flag is false', () => {
       const state = reducer(
         prepareState({ data: prepareLargeDataset() }),
-        changeFlag('sizewarning', false)
+        changeFlag('sizeWarning', false)
       );
       expect(getTriggerLargeGraphWarning(state)).toBe(false);
     });

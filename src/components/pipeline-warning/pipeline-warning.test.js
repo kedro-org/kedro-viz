@@ -101,7 +101,7 @@ describe('PipelineWarning', () => {
       mapDispatchToProps(dispatch).onDisable();
       expect(dispatch.mock.calls[0][0]).toEqual({
         type: 'CHANGE_FLAG',
-        name: 'sizewarning',
+        name: 'sizeWarning',
         value: false,
       });
     });

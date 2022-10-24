@@ -102,6 +102,19 @@ export function togglePrettyName(prettyName) {
   };
 }
 
+export const TOGGLE_HIGHLIGHT_DATASETS = 'TOGGLE_HIGHLIGHT_DATASETS';
+
+/**
+ * Toggle whether to highlight datasets on the Flowchart
+ * @param {Boolean} highlightDatasets True if the highlight is to be shown
+ */
+export function toggleHighlighDatasets(highlightDatasets) {
+  return {
+    type: TOGGLE_HIGHLIGHT_DATASETS,
+    highlightDatasets,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

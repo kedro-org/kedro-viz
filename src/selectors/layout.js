@@ -11,7 +11,7 @@ import {
   codeSidebarWidth,
 } from '../config';
 
-const getSizeWarningFlag = (state) => state.flags.sizewarning;
+const getSizeWarningFlag = (state) => state.flags.sizeWarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
 const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
