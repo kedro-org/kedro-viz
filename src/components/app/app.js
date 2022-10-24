@@ -28,6 +28,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    localStorage.removeItem('kedro-viz-tooltip-show');
     if (this.props.data === 'json') {
       this.store.dispatch(loadInitialPipelineData());
     }

@@ -34,8 +34,8 @@ const IconButton = ({
     : 'right';
 
   const showTooltip = () => {
-    if (localStorage.getItem('delayShow') === null) {
-      window.localStorage.setItem('delayShow', true);
+    if (localStorage.getItem('kedro-viz-tooltip-show') === null) {
+      window.localStorage.setItem('kedro-viz-tooltip-show', true);
       setTimeout(() => {
         setIsTooltipVisible(true);
       }, 2000);
