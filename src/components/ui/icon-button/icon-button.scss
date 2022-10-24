@@ -62,7 +62,7 @@ $triangle-size: 7px;
   display: inline-block;
 
   font-size: 1.4em;
-  opacity: 1;
+  opacity: 0;
 
   padding: 0.5em 0.7em;
   pointer-events: none;
@@ -106,6 +106,10 @@ $triangle-size: 7px;
       }
     }
   }
+}
+
+.pipeline-toolbar__label__visible {
+  opacity: 1;
 }
 
 .pipeline-toolbar__label-right {

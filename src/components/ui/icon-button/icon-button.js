@@ -64,10 +64,14 @@ const IconButton = ({
         onMouseLeave={hideTooltip}
       >
         {Icon && <Icon className="pipeline-icon" />}
-        {labelText && isTooltipVisible && (
+        {labelText && (
           <span
             className={classnames(
               'pipeline-toolbar__label',
+              className,
+              {
+                'pipeline-toolbar__label__visible': isTooltipVisible,
+              },
               `pipeline-toolbar__label-${labelPosition}`
             )}
           >
