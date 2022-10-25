@@ -25,6 +25,11 @@ export const useRedirectLocationInFlowchart = (
 
   const decodedPipelineId = decodeURI(activePipelineId);
 
+  const matchedFlowchartMainPage = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.flowchart.main],
+  });
+
   const matchedSelectedNode = matchPath(pathname + search, {
     exact: true,
     path: [routes.flowchart.selectedNode],
@@ -36,12 +41,20 @@ export const useRedirectLocationInFlowchart = (
   });
 
   useEffect(() => {
+    if (matchedFlowchartMainPage) {
+      onLoadNodeData(null);
+      onToggleFocusMode(null);
+    }
+
     if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 
       // Switching the view forces the page to reload again
       // hence this action needs to happen first
       onUpdateActivePipeline(decodedPipelineId);
+
+      // Reset the focus mode to null when when using the navigation buttons
+      onToggleFocusMode(null);
 
       // This timeout is to ensure it has enough time to
       // change to a different modular pipeline view first
@@ -64,6 +77,9 @@ export const useRedirectLocationInFlowchart = (
       // Switching to a different modular pipeline view first
       onUpdateActivePipeline(decodedPipelineId);
 
+      // Reset the node data to null when when using the navigation buttons
+      onLoadNodeData(null);
+
       const modularPipelineId = search.split(params.focused)[1];
       const modularPipeline = modularPipelinesTree[modularPipelineId];
 
@@ -71,5 +87,5 @@ export const useRedirectLocationInFlowchart = (
       onToggleModularPipelineActive(modularPipelineId, true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload]);
+  }, [reload, search]);
 };
