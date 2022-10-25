@@ -144,13 +144,10 @@ export class FlowChart extends Component {
         'hoveredParameters',
         'nodesWithInputParams',
         'focusMode',
-        'inputOutputDataNodes'
+        'inputOutputDataNodes',
+        'hoveredFocusMode'
       )
     ) {
-      drawNodes.call(this, changed);
-    }
-
-    if (changed('nodes', 'nodeActive', 'hoveredFocusMode')) {
       drawNodes.call(this, changed);
     }
 

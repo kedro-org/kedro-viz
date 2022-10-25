@@ -269,7 +269,7 @@ export const drawNodes = function (changed) {
       );
   }
 
-  if (changed('nodes', 'nodeActive', 'hoveredFocusMode')) {
+  if (changed('hoveredFocusMode')) {
     allNodes.classed(
       'pipeline-node--faded',
       (node) => hoveredFocusMode && !nodeActive[node.id]
