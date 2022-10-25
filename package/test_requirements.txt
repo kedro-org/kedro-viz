@@ -12,7 +12,7 @@ psutil==5.9.3  # same as Kedro for now
 pylint~=2.15
 pytest~=7.1
 pytest-asyncio~=0.20
-pytest-mock~=3.9
+pytest-mock~=3.10
 pytest-cov~=4.0
 sqlalchemy-stubs~=0.4
 trufflehog~=2.2
