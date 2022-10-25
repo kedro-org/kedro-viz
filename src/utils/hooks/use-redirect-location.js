@@ -39,26 +39,36 @@ export const useRedirectLocationInFlowchart = (
     if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 
-      const modularPipeline = nodes[nodeId];
-      const hasModularPipeline = modularPipeline.length > 0;
+      // Switching the view forces the page to reload again
+      // hence this action needs to happen first
+      onUpdateActivePipeline(decodedPipelineId);
 
-      if (hasModularPipeline) {
-        onToggleModularPipelineExpanded(modularPipeline);
-        onUpdateActivePipeline(decodedPipelineId);
+      // This timeout is to ensure it has enough time to
+      // change to a different modular pipeline view first
+      const switchingModularPipelineTimeout = setTimeout(() => {
+        // then expanding modular pipeline (if there is one)
+        const modularPipeline = nodes[nodeId];
+        const hasModularPipeline = modularPipeline?.length > 0;
+        if (hasModularPipeline) {
+          onToggleModularPipelineExpanded(modularPipeline);
+        }
+
+        // then upload the node data
         onLoadNodeData(nodeId);
-      } else {
-        onLoadNodeData(nodeId);
-        onUpdateActivePipeline(decodedPipelineId);
-      }
+      }, 400);
+
+      return () => clearTimeout(switchingModularPipelineTimeout);
     }
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+      // Switching to a different modular pipeline view first
+      onUpdateActivePipeline(decodedPipelineId);
+
       const modularPipelineId = search.split(params.focused)[1];
       const modularPipeline = modularPipelinesTree[modularPipelineId];
 
       onToggleFocusMode(modularPipeline.data);
       onToggleModularPipelineActive(modularPipelineId, true);
-      onUpdateActivePipeline(decodedPipelineId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
