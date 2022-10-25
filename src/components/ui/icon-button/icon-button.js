@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.css';
@@ -24,7 +24,7 @@ const IconButton = ({
   visible,
 }) => {
   const Icon = icon;
-
+  let timeout;
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
   const labelPosition = labelPositionTypes.includes(
@@ -33,10 +33,14 @@ const IconButton = ({
     ? labelTextPosition.toLocaleLowerCase()
     : 'right';
 
+  useEffect(() => {
+    window.localStorage.removeItem('kedro-viz-tooltip-show');
+  }, []);
+
   const showTooltip = () => {
     if (localStorage.getItem('kedro-viz-tooltip-show') === null) {
       window.localStorage.setItem('kedro-viz-tooltip-show', true);
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setIsTooltipVisible(true);
       }, 2000);
     } else {
@@ -45,6 +49,7 @@ const IconButton = ({
   };
 
   const hideTooltip = () => {
+    clearTimeout(timeout);
     setIsTooltipVisible(false);
   };
 
