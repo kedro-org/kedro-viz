@@ -36,7 +36,7 @@ export const FlowChartWrapper = ({
   reload,
   sidebarVisible,
 }) => {
-  useRedirectLocationInFlowchart(
+  const { invalidLocation } = useRedirectLocationInFlowchart(
     modularPipelinesTree,
     nodes,
     onLoadNodeData,
@@ -47,25 +47,33 @@ export const FlowChartWrapper = ({
     reload
   );
 
-  return (
-    <div className="kedro-pipeline">
-      <Sidebar />
-      <MetaData />
-      <div className="pipeline-wrapper">
-        <PipelineWarning />
-        <FlowChart />
-        <div
-          className={classnames('pipeline-wrapper__loading', {
-            'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
-          })}
-        >
-          <LoadingIcon visible={loading} />
-        </div>
+  if (invalidLocation) {
+    return (
+      <div className="kedro-pipeline">
+        <h1> "NOT FOUND PAGE goes here" </h1>
       </div>
-      <ExportModal />
-      <MetadataModal />
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="kedro-pipeline">
+        <Sidebar />
+        <MetaData />
+        <div className="pipeline-wrapper">
+          <PipelineWarning />
+          <FlowChart />
+          <div
+            className={classnames('pipeline-wrapper__loading', {
+              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
+            })}
+          >
+            <LoadingIcon visible={loading} />
+          </div>
+        </div>
+        <ExportModal />
+        <MetadataModal />
+      </div>
+    );
+  }
 };
 
 export const mapStateToProps = (state) => ({
