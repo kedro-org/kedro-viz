@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import Button from '../ui/button';
 import './pipeline-warning.css';
 
@@ -18,6 +19,8 @@ export const PipelineWarning = ({
 }) => {
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
+
+  const { toFlowchartPage } = useGeneratePathname();
 
   // Only run this once, when the component mounts.
   useEffect(() => {
@@ -67,9 +70,14 @@ export const PipelineWarning = ({
       )}
       {invalidUrl && componentLoaded && (
         <div
-          className={classnames('kedro', 'pipeline-warning', {
-            'pipeline-warning--sidebar-visible': sidebarVisible,
-          })}
+          className={classnames(
+            'kedro',
+            'pipeline-warning',
+            'pipeline-warning--invalid-url',
+            {
+              'pipeline-warning--sidebar-visible': sidebarVisible,
+            }
+          )}
         >
           <h2 className="pipeline-warning__title">
             Oops, the URL is not correct
@@ -77,6 +85,7 @@ export const PipelineWarning = ({
           <p className="pipeline-warning__subtitle">
             {`It seems like it has "${errorMessage}"`}
           </p>
+          <Button onClick={() => toFlowchartPage()}>Reset view</Button>
         </div>
       )}
     </>
