@@ -18,7 +18,6 @@ import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
-import { useValidateUrl } from '../../utils/hooks/use-validate-url';
 import './flowchart-wrapper.css';
 
 /**
@@ -37,12 +36,7 @@ export const FlowChartWrapper = ({
   reload,
   sidebarVisible,
 }) => {
-  const { errorMessage, invalidUrl } = useValidateUrl(
-    modularPipelinesTree,
-    reload
-  );
-
-  useRedirectLocationInFlowchart(
+  const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
     modularPipelinesTree,
     nodes,
     onLoadNodeData,

@@ -1,6 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../config';
+
+const errorMessages = {
+  node: 'Invalid node ID',
+  modularPipeline: 'Invalid modular pipeline ID',
+  pipeline: 'Invalid pipeline ID',
+};
 
 /**
  * To trigger different actions based on the current location in the Flowchart.
@@ -17,6 +23,10 @@ export const useRedirectLocationInFlowchart = (
   reload
 ) => {
   const { pathname, search } = useLocation();
+
+  const [errorMessage, setErrorMessage] = useState({});
+  const [invalidUrl, setInvalidUrl] = useState(false);
+
   const activePipelineId = search.substring(
     search.indexOf(params.pipeline) + params.pipeline.length,
     search.indexOf('&')
@@ -70,6 +80,9 @@ export const useRedirectLocationInFlowchart = (
 
           // then upload the node data
           onLoadNodeData(nodeId);
+        } else {
+          setErrorMessage(errorMessages.node);
+          setInvalidUrl(true);
         }
       }, 400);
 
@@ -89,8 +102,13 @@ export const useRedirectLocationInFlowchart = (
       if (existedModularPipeline) {
         onToggleFocusMode(existedModularPipeline.data);
         onToggleModularPipelineActive(modularPipelineId, true);
+      } else {
+        setErrorMessage(errorMessages.modularPipeline);
+        setInvalidUrl(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload, search]);
+
+  return { errorMessage, invalidUrl };
 };
