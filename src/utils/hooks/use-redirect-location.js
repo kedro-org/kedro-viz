@@ -40,15 +40,6 @@ export const useRedirectLocationInFlowchart = (
     path: [routes.flowchart.focusedNode],
   });
 
-  // when page is reload
-  // validate the URL first
-  // if the URl is validated
-  // then do the matchPath update
-  // ?pipeline_id=Data%20ingestion&selected_id=9f266f06
-  // useEffect(() => {
-
-  // }, [reload]);
-
   useEffect(() => {
     if (matchedFlowchartMainPage) {
       onLoadNodeData(null);
@@ -58,21 +49,23 @@ export const useRedirectLocationInFlowchart = (
     if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       const nodeId = search.split(params.selected)[1];
 
-      const existedNodeId = Object.keys(nodes).find((node) => node === nodeId);
+      // Switching the view forces the page to reload again
+      // hence this action needs to happen first
+      onUpdateActivePipeline(decodedPipelineId);
 
-      if (existedNodeId) {
-        // Switching the view forces the page to reload again
-        // hence this action needs to happen first
-        onUpdateActivePipeline(decodedPipelineId);
+      // Reset the focus mode to null when when using the navigation buttons
+      onToggleFocusMode(null);
 
-        // Reset the focus mode to null when when using the navigation buttons
-        onToggleFocusMode(null);
+      // This timeout is to ensure it has enough time to
+      // change to a different modular pipeline view first
+      const switchingModularPipelineTimeout = setTimeout(() => {
+        // then expanding modular pipeline (if there is one)
 
-        // This timeout is to ensure it has enough time to
-        // change to a different modular pipeline view first
-        const switchingModularPipelineTimeout = setTimeout(() => {
-          // then expanding modular pipeline (if there is one)
+        const existedNodeId = Object.keys(nodes).find(
+          (node) => node === nodeId
+        );
 
+        if (existedNodeId) {
           const modularPipeline = nodes[nodeId];
           const hasModularPipeline = modularPipeline?.length > 0;
           if (hasModularPipeline) {
@@ -81,12 +74,12 @@ export const useRedirectLocationInFlowchart = (
 
           // then upload the node data
           onLoadNodeData(nodeId);
-        }, 400);
+        } else {
+          setInvalidLocation(true);
+        }
+      }, 400);
 
-        return () => clearTimeout(switchingModularPipelineTimeout);
-      } else {
-        setInvalidLocation(true);
-      }
+      return () => clearTimeout(switchingModularPipelineTimeout);
     }
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
