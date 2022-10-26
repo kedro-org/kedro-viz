@@ -42,13 +42,16 @@ const IconButton = ({
       window.localStorage.setItem('kedro-viz-tooltip-show', true);
       timeout = setTimeout(() => {
         setIsTooltipVisible(true);
-      }, 2000);
+      }, 1000);
     } else {
       setIsTooltipVisible(true);
     }
   };
 
   const hideTooltip = () => {
+    setTimeout(() => {
+      window.localStorage.removeItem('kedro-viz-tooltip-show');
+    }, 5000);
     clearTimeout(timeout);
     setIsTooltipVisible(false);
   };
