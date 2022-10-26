@@ -50,6 +50,9 @@ export const useRedirectLocationInFlowchart = (
   });
 
   useEffect(() => {
+    setErrorMessage({});
+    setInvalidUrl(false);
+
     if (matchedFlowchartMainPage) {
       onLoadNodeData(null);
       onToggleFocusMode(null);
