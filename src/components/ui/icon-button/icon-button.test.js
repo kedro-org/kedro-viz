@@ -1,15 +1,9 @@
 import React from 'react';
 import { mount } from 'enzyme';
-
+import { act } from '@testing-library/react';
 import IconButton from '.';
 import { setup } from '../../../utils/state.mock';
 import MenuIcon from '../../icons/menu';
-import { act } from '@testing-library/react';
-
-// jest.mock('react', () => ({
-//   ...jest.requireActual('react'),
-//   useState: jest.fn(),
-// }));
 
 describe('IconButton', () => {
   it('renders without crashing', () => {
