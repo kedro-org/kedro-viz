@@ -8,6 +8,8 @@ import Button from '../ui/button';
 import './pipeline-warning.css';
 
 export const PipelineWarning = ({
+  errorMessage,
+  invalidUrl,
   nodes,
   onDisable,
   onHide,
@@ -60,6 +62,20 @@ export const PipelineWarning = ({
           <p className="pipeline-warning__subtitle">
             This selection has nothing. Please unselect your filters or modular
             pipeline selection to see pipeline elements.
+          </p>
+        </div>
+      )}
+      {invalidUrl && componentLoaded && (
+        <div
+          className={classnames('kedro', 'pipeline-warning', {
+            'pipeline-warning--sidebar-visible': sidebarVisible,
+          })}
+        >
+          <h2 className="pipeline-warning__title">
+            Oops, the URL is not correct
+          </h2>
+          <p className="pipeline-warning__subtitle">
+            {`It seems like it has "${errorMessage}"`}
           </p>
         </div>
       )}

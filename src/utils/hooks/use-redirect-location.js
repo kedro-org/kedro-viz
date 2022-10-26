@@ -17,7 +17,6 @@ export const useRedirectLocationInFlowchart = (
   reload
 ) => {
   const { pathname, search } = useLocation();
-  const [invalidLocation, setInvalidLocation] = useState(false);
   const activePipelineId = search.substring(
     search.indexOf(params.pipeline) + params.pipeline.length,
     search.indexOf('&')
@@ -60,23 +59,14 @@ export const useRedirectLocationInFlowchart = (
       // change to a different modular pipeline view first
       const switchingModularPipelineTimeout = setTimeout(() => {
         // then expanding modular pipeline (if there is one)
-
-        const existedNodeId = Object.keys(nodes).find(
-          (node) => node === nodeId
-        );
-
-        if (existedNodeId) {
-          const modularPipeline = nodes[nodeId];
-          const hasModularPipeline = modularPipeline?.length > 0;
-          if (hasModularPipeline) {
-            onToggleModularPipelineExpanded(modularPipeline);
-          }
-
-          // then upload the node data
-          onLoadNodeData(nodeId);
-        } else {
-          setInvalidLocation(true);
+        const modularPipeline = nodes[nodeId];
+        const hasModularPipeline = modularPipeline?.length > 0;
+        if (hasModularPipeline) {
+          onToggleModularPipelineExpanded(modularPipeline);
         }
+
+        // then upload the node data
+        onLoadNodeData(nodeId);
       }, 400);
 
       return () => clearTimeout(switchingModularPipelineTimeout);
@@ -95,12 +85,8 @@ export const useRedirectLocationInFlowchart = (
       if (existedModularPipeline) {
         onToggleFocusMode(existedModularPipeline.data);
         onToggleModularPipelineActive(modularPipelineId, true);
-      } else {
-        setInvalidLocation(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload, search]);
-
-  return { invalidLocation };
 };

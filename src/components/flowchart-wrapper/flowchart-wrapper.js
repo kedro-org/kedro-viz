@@ -18,6 +18,7 @@ import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
+import { useValidateUrl } from '../../utils/hooks/use-validate-url';
 import './flowchart-wrapper.css';
 
 /**
@@ -36,7 +37,12 @@ export const FlowChartWrapper = ({
   reload,
   sidebarVisible,
 }) => {
-  const { invalidLocation } = useRedirectLocationInFlowchart(
+  const { errorMessage, invalidUrl } = useValidateUrl(
+    modularPipelinesTree,
+    reload
+  );
+
+  useRedirectLocationInFlowchart(
     modularPipelinesTree,
     nodes,
     onLoadNodeData,
@@ -47,10 +53,12 @@ export const FlowChartWrapper = ({
     reload
   );
 
-  if (invalidLocation) {
+  if (invalidUrl) {
     return (
       <div className="kedro-pipeline">
-        <h1> "NOT FOUND PAGE goes here" </h1>
+        <Sidebar />
+        <MetaData />
+        <PipelineWarning errorMessage={errorMessage} invalidUrl={invalidUrl} />
       </div>
     );
   } else {
