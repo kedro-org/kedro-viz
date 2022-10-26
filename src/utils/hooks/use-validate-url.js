@@ -49,7 +49,9 @@ export const useValidateUrl = (modularPipelinesTree, reload) => {
                 setInvalidUrl(true);
               }
             });
-        } catch (err) {}
+        } catch (err) {
+          console.log(err);
+        }
       };
       fetchNodes();
     }
