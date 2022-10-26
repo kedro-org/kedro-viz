@@ -71,7 +71,6 @@ describe('IconButton', () => {
   it('show tooltip', () => {
     jest.useFakeTimers();
     const setIsTooltipVisible = jest.fn();
-    jest.useFakeTimers();
     const wrapper = mount(
       <IconButton
         labelText="Toggle theme"
