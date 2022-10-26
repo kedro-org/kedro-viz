@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../config';
 
@@ -58,15 +58,19 @@ export const useRedirectLocationInFlowchart = (
       // This timeout is to ensure it has enough time to
       // change to a different modular pipeline view first
       const switchingModularPipelineTimeout = setTimeout(() => {
-        // then expanding modular pipeline (if there is one)
-        const modularPipeline = nodes[nodeId];
-        const hasModularPipeline = modularPipeline?.length > 0;
-        if (hasModularPipeline) {
-          onToggleModularPipelineExpanded(modularPipeline);
-        }
+        const existedNode = Object.keys(nodes).find((node) => node === nodeId);
 
-        // then upload the node data
-        onLoadNodeData(nodeId);
+        if (existedNode) {
+          // then expanding modular pipeline (if there is one)
+          const modularPipeline = nodes[nodeId];
+          const hasModularPipeline = modularPipeline?.length > 0;
+          if (hasModularPipeline) {
+            onToggleModularPipelineExpanded(modularPipeline);
+          }
+
+          // then upload the node data
+          onLoadNodeData(nodeId);
+        }
       }, 400);
 
       return () => clearTimeout(switchingModularPipelineTimeout);
