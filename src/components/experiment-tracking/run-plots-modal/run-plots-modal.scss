@@ -100,9 +100,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    max-height: 615px;
-    max-width: 815px;
-    width: 100%;
+    margin: 0;
+    width: 815px;
   }
 
   &--twoCharts {
