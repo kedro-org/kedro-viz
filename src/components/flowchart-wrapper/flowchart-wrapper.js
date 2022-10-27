@@ -35,6 +35,7 @@ export const FlowChartWrapper = ({
   onUpdateActivePipeline,
   reload,
   sidebarVisible,
+  pipelines,
 }) => {
   const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
     modularPipelinesTree,
@@ -44,6 +45,7 @@ export const FlowChartWrapper = ({
     onToggleModularPipelineActive,
     onToggleModularPipelineExpanded,
     onUpdateActivePipeline,
+    pipelines,
     reload
   );
 
@@ -82,6 +84,7 @@ export const mapStateToProps = (state) => ({
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
+  pipelines: state.pipeline.ids,
   sidebarVisible: state.visible.sidebar,
 });
 
