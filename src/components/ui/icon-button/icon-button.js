@@ -24,7 +24,8 @@ const IconButton = ({
   visible,
 }) => {
   const Icon = icon;
-  let timeout;
+  let inTimeout;
+  let outTimeout;
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
 
   const labelPosition = labelPositionTypes.includes(
@@ -38,9 +39,10 @@ const IconButton = ({
   }, []);
 
   const showTooltip = () => {
+    clearTimeout(outTimeout);
     if (localStorage.getItem('kedro-viz-tooltip-show') === null) {
-      window.localStorage.setItem('kedro-viz-tooltip-show', true);
-      timeout = setTimeout(() => {
+      inTimeout = setTimeout(() => {
+        window.localStorage.setItem('kedro-viz-tooltip-show', true);
         setIsTooltipVisible(true);
       }, 1000);
     } else {
@@ -49,11 +51,11 @@ const IconButton = ({
   };
 
   const hideTooltip = () => {
-    setTimeout(() => {
+    clearTimeout(inTimeout);
+    setIsTooltipVisible(false);
+    outTimeout = setTimeout(() => {
       window.localStorage.removeItem('kedro-viz-tooltip-show');
     }, 5000);
-    clearTimeout(timeout);
-    setIsTooltipVisible(false);
   };
 
   return visible ? (
