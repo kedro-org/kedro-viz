@@ -103,12 +103,12 @@ export const useRedirectLocationInFlowchart = (
 
           const switchingModularPipelineTimeout = setTimeout(() => {
             const modularPipelineId = search.split(params.focused)[1];
-            onToggleModularPipelineActive(modularPipelineId, true);
 
             const foundModularPipeline =
               modularPipelinesTree[modularPipelineId];
 
             if (foundModularPipeline) {
+              onToggleModularPipelineActive(modularPipelineId, true);
               onToggleFocusMode(foundModularPipeline.data);
             } else {
               setErrorMessage(errorMessages.modularPipeline);
