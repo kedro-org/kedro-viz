@@ -15,7 +15,7 @@ parameters:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@x.y
+  node: circleci/node@5.0.3
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
