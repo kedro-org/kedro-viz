@@ -80,7 +80,7 @@ export const PipelineWarning = ({
           )}
         >
           <h2 className="pipeline-warning__title">
-            Oops, the URL is not correct
+            Oops, this URL isn't valid
           </h2>
           <p className="pipeline-warning__subtitle">
             {`It seems like it has "${errorMessage}"`}
