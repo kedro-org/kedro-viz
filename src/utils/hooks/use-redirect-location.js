@@ -77,9 +77,10 @@ export const useRedirectLocationInFlowchart = (
             );
 
             if (existedNode) {
-              // then expanding modular pipeline (if there is one)
+              // Then expand the modular pipeline (if there is one)
               const modularPipeline = nodes[nodeId];
               const hasModularPipeline = modularPipeline?.length > 0;
+              
               if (hasModularPipeline) {
                 onToggleModularPipelineExpanded(modularPipeline);
               }
