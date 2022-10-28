@@ -10,7 +10,7 @@ const errorMessages = {
 
 /**
  * To trigger different actions based on the current location in the Flowchart.
- * This hook is only called when the page is reloaded.
+ * This hook is only called when the page is reloaded or when the URL search changes.
  */
 export const useRedirectLocationInFlowchart = (
   modularPipelinesTree,
