@@ -3,9 +3,9 @@ import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../config';
 
 const errorMessages = {
-  node: 'Invalid node ID',
-  modularPipeline: 'Invalid modular pipeline ID',
-  pipeline: 'Invalid pipeline ID',
+  node: 'The node ID is invalid',
+  modularPipeline: 'The modular pipeline ID is invalid',
+  pipeline: 'The pipeline ID is invalid',
 };
 
 /**
@@ -60,8 +60,8 @@ export const useRedirectLocationInFlowchart = (
     } else {
       // Switching the view forces the page to reload again
       // hence this action needs to happen first
-      const existedPipeline = pipelines.find((id) => id === decodedPipelineId);
-      if (existedPipeline) {
+      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+      if (foundPipeline) {
         onUpdateActivePipeline(decodedPipelineId);
 
         if (matchedSelectedNode && Object.keys(nodes).length > 0) {
@@ -72,15 +72,13 @@ export const useRedirectLocationInFlowchart = (
           // change to a different modular pipeline view first
           const switchingModularPipelineTimeout = setTimeout(() => {
             const nodeId = search.split(params.selected)[1];
-            const existedNode = Object.keys(nodes).find(
+            const foundNode = Object.keys(nodes).find(
               (node) => node === nodeId
             );
-
-            if (existedNode) {
-              // Then expand the modular pipeline (if there is one)
+            if (foundNode) {
               const modularPipeline = nodes[nodeId];
               const hasModularPipeline = modularPipeline?.length > 0;
-              
+
               if (hasModularPipeline) {
                 onToggleModularPipelineExpanded(modularPipeline);
               }
@@ -91,7 +89,7 @@ export const useRedirectLocationInFlowchart = (
               setErrorMessage(errorMessages.node);
               setInvalidUrl(true);
             }
-          }, 400);
+          }, 500);
 
           return () => clearTimeout(switchingModularPipelineTimeout);
         }
@@ -103,17 +101,22 @@ export const useRedirectLocationInFlowchart = (
           // Reset the node data to null when when using the navigation buttons
           onLoadNodeData(null);
 
-          const modularPipelineId = search.split(params.focused)[1];
-          const existedModularPipeline =
-            modularPipelinesTree[modularPipelineId];
-
-          if (existedModularPipeline) {
-            onToggleFocusMode(existedModularPipeline.data);
+          const switchingModularPipelineTimeout = setTimeout(() => {
+            const modularPipelineId = search.split(params.focused)[1];
             onToggleModularPipelineActive(modularPipelineId, true);
-          } else {
-            setErrorMessage(errorMessages.modularPipeline);
-            setInvalidUrl(true);
-          }
+
+            const foundModularPipeline =
+              modularPipelinesTree[modularPipelineId];
+
+            if (foundModularPipeline) {
+              onToggleFocusMode(foundModularPipeline.data);
+            } else {
+              setErrorMessage(errorMessages.modularPipeline);
+              setInvalidUrl(true);
+            }
+          }, 500);
+
+          return () => clearTimeout(switchingModularPipelineTimeout);
         }
       } else {
         setErrorMessage(errorMessages.pipeline);
