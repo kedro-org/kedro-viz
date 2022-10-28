@@ -26,7 +26,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-  // our graphql endpoint, normally here: http://localhost:4141/graphql
+  // Our graphql endpoint, normally here: http://localhost:4141/graphql
   uri: `${sanitizedPathname}graphql`,
   fetch,
 });
