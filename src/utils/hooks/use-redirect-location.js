@@ -3,9 +3,9 @@ import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../config';
 
 const errorMessages = {
-  node: 'The node ID is invalid',
-  modularPipeline: 'The modular pipeline ID is invalid',
-  pipeline: 'The pipeline ID is invalid',
+  node: 'Please check the value of "selected_id" in the URL',
+  modularPipeline: 'Please check the value of "focused_id" in the URL',
+  pipeline: 'Please check the value of "pipeline_id" in the URL',
 };
 
 /**
