@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params } from '../../config';
 
@@ -50,6 +50,20 @@ export const useRedirectLocationInFlowchart = (
     path: [routes.flowchart.focusedNode],
   });
 
+  const updatePipeline = useCallback(
+    (pipelines, decodedPipelineId) => {
+      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+
+      if (foundPipeline) {
+        onUpdateActivePipeline(decodedPipelineId);
+      } else {
+        setErrorMessage(errorMessages.pipeline);
+        setInvalidUrl(true);
+      }
+    },
+    [onUpdateActivePipeline]
+  );
+
   useEffect(() => {
     setErrorMessage({});
     setInvalidUrl(false);
@@ -57,71 +71,61 @@ export const useRedirectLocationInFlowchart = (
     if (matchedFlowchartMainPage) {
       onLoadNodeData(null);
       onToggleFocusMode(null);
-    } else {
+    }
+
+    if (matchedSelectedNode && Object.keys(nodes).length > 0) {
       // Switching the view forces the page to reload again
       // hence this action needs to happen first
-      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
-      if (foundPipeline) {
-        onUpdateActivePipeline(decodedPipelineId);
+      updatePipeline(pipelines, decodedPipelineId);
 
-        if (matchedSelectedNode && Object.keys(nodes).length > 0) {
-          // Reset the focus mode to null when when using the navigation buttons
-          onToggleFocusMode(null);
+      // Reset the focus mode to null when when using the navigation buttons
+      onToggleFocusMode(null);
 
-          // This timeout is to ensure it has enough time to
-          // change to a different modular pipeline view first
-          const switchingModularPipelineTimeout = setTimeout(() => {
-            const nodeId = search.split(params.selected)[1];
-            const foundNode = Object.keys(nodes).find(
-              (node) => node === nodeId
-            );
-            if (foundNode) {
-              const modularPipeline = nodes[nodeId];
-              const hasModularPipeline = modularPipeline?.length > 0;
+      // This timeout is to ensure it has enough time to
+      // change to a different modular pipeline view first
+      const switchingModularPipelineTimeout = setTimeout(() => {
+        const nodeId = search.split(params.selected)[1];
+        const foundNode = Object.keys(nodes).find((node) => node === nodeId);
+        if (foundNode) {
+          const modularPipeline = nodes[nodeId];
+          const hasModularPipeline = modularPipeline?.length > 0;
 
-              if (hasModularPipeline) {
-                onToggleModularPipelineExpanded(modularPipeline);
-              }
+          if (hasModularPipeline) {
+            onToggleModularPipelineExpanded(modularPipeline);
+          }
 
-              // then upload the node data
-              onLoadNodeData(nodeId);
-            } else {
-              setErrorMessage(errorMessages.node);
-              setInvalidUrl(true);
-            }
-          }, 500);
-
-          return () => clearTimeout(switchingModularPipelineTimeout);
+          // then upload the node data
+          onLoadNodeData(nodeId);
+        } else {
+          setErrorMessage(errorMessages.node);
+          setInvalidUrl(true);
         }
+      }, 500);
 
-        if (
-          matchedFocusedNode &&
-          Object.keys(modularPipelinesTree).length > 0
-        ) {
-          // Reset the node data to null when when using the navigation buttons
-          onLoadNodeData(null);
+      return () => clearTimeout(switchingModularPipelineTimeout);
+    }
 
-          const switchingModularPipelineTimeout = setTimeout(() => {
-            const modularPipelineId = search.split(params.focused)[1];
+    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+      updatePipeline(pipelines, decodedPipelineId);
 
-            const foundModularPipeline =
-              modularPipelinesTree[modularPipelineId];
+      // Reset the node data to null when when using the navigation buttons
+      onLoadNodeData(null);
 
-            if (foundModularPipeline) {
-              onToggleModularPipelineActive(modularPipelineId, true);
-              onToggleFocusMode(foundModularPipeline.data);
-            } else {
-              setErrorMessage(errorMessages.modularPipeline);
-              setInvalidUrl(true);
-            }
-          }, 500);
+      const switchingModularPipelineTimeout = setTimeout(() => {
+        const modularPipelineId = search.split(params.focused)[1];
 
-          return () => clearTimeout(switchingModularPipelineTimeout);
+        const foundModularPipeline = modularPipelinesTree[modularPipelineId];
+
+        if (foundModularPipeline) {
+          onToggleModularPipelineActive(modularPipelineId, true);
+          onToggleFocusMode(foundModularPipeline.data);
+        } else {
+          setErrorMessage(errorMessages.modularPipeline);
+          setInvalidUrl(true);
         }
-      } else {
-        setErrorMessage(errorMessages.pipeline);
-        setInvalidUrl(true);
-      }
+      }, 500);
+
+      return () => clearTimeout(switchingModularPipelineTimeout);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
