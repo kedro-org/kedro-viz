@@ -18,6 +18,11 @@ Please follow the established format:
 - Keep graph visible when switching pipelines. (#1063)
 - Add a transition to run details in experiment tracking. (#1065)
 - Remove Tags field from dataset and parameter nodes when viewed in metadata panel. (#1100)
+- Fix keyboard support for exporting experiment runs. (#1103)
+- Fix `MemoryDataSet` not displaying on metadata panel. (#1113)
+- Enhance display of the flowchart when hovering over the FocusMode icon. (#1107)
+- Make dotted datasets clickable and hoverable when in focus mode. (#1114)
+- Fix a bug where tall Matplotlib images weren't displaying correctly. (#1145)
 
 # Release 5.1.1
 

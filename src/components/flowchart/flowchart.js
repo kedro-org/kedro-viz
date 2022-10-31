@@ -144,7 +144,8 @@ export class FlowChart extends Component {
         'hoveredParameters',
         'nodesWithInputParams',
         'focusMode',
-        'inputOutputDataNodes'
+        'inputOutputDataNodes',
+        'hoveredFocusMode'
       )
     ) {
       drawNodes.call(this, changed);
@@ -682,6 +683,7 @@ export const mapStateToProps = (state, ownProps) => ({
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
   hoveredParameters: state.hoveredParameters,
+  hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,

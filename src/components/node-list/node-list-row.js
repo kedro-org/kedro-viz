@@ -7,6 +7,7 @@ import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
+import { toggleHoveredFocusMode } from '../../actions';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -67,6 +68,7 @@ const NodeListRow = memo(
     invisibleIcon = InvisibleIcon,
     focusModeIcon = FocusModeIcon,
     rowType,
+    onToggleHoveredFocusMode,
   }) => {
     const isModularPipeline = type === 'modularPipeline';
     const FocusIcon = isModularPipeline ? focusModeIcon : null;
@@ -198,6 +200,8 @@ const NodeListRow = memo(
               }
             )}
             onClick={(e) => e.stopPropagation()}
+            onMouseEnter={() => onToggleHoveredFocusMode(true)}
+            onMouseLeave={() => onToggleHoveredFocusMode(false)}
           >
             <input
               id={id + '-focus'}
@@ -236,6 +240,12 @@ const NodeListRow = memo(
   shouldMemo
 );
 
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleHoveredFocusMode: (active) => {
+    dispatch(toggleHoveredFocusMode(active));
+  },
+});
+
 export const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   active:
@@ -244,4 +254,4 @@ export const mapStateToProps = (state, ownProps) => ({
       : getNodeActive(state)[ownProps.id] || false,
 });
 
-export default connect(mapStateToProps)(NodeListRow);
+export default connect(mapStateToProps, mapDispatchToProps)(NodeListRow);
