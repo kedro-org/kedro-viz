@@ -82,7 +82,7 @@ export const PipelineWarning = ({
           <h2 className="pipeline-warning__title">
             Oops, this URL isn't valid
           </h2>
-          <p className="pipeline-warning__subtitle">{`${errorMessage}`}</p>
+          <p className="pipeline-warning__subtitle">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
           <Button onClick={() => toFlowchartPage()}>Reset view</Button>
         </div>
       )}
