@@ -111,3 +111,10 @@ class TrackingDatasetModel:
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
+
+
+class MetricPlotType(str, Enum):
+    """The types of metric plot possible on the front end"""
+
+    TIMESERIES = "timeseries"
+    PARALLEL_COORDS = "parallel_coords"
