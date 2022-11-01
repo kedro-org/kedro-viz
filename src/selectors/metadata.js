@@ -58,7 +58,7 @@ export const getClickedNodeMetaData = createSelector(
     nodeTranscodedTypes,
     nodeRunCommand
   ) => {
-    if (!nodeId) {
+    if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
     }
     //rounding of tracking data
