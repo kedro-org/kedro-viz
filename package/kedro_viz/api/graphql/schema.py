@@ -17,13 +17,20 @@ from strawberry.tools import merge_types
 from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
+from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
 
-from .serializers import format_run, format_run_tracking_data, format_runs
+from .serializers import (
+    format_run,
+    format_run_tracking_data,
+    format_run_metric_data,
+    format_runs,
+)
 from .types import (
     Run,
     RunInput,
     TrackingDataset,
     TrackingDatasetGroup,
+    MetricPlotType,
     UpdateRunDetailsFailure,
     UpdateRunDetailsResponse,
     UpdateRunDetailsSuccess,
@@ -84,6 +91,37 @@ class RunsQuery:
         for dataset in tracking_dataset_models:
             runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
             formatted_tracking_data = format_run_tracking_data(runs, show_diff)
+            if formatted_tracking_data:
+                tracking_data = TrackingDataset(
+                    dataset_name=dataset.dataset_name,
+                    dataset_type=dataset.dataset_type,
+                    data=formatted_tracking_data,
+                    run_ids=run_ids,
+                )
+                all_tracking_datasets.append(tracking_data)
+
+        return all_tracking_datasets
+
+    @strawberry.field(
+        description="Get metrics data for a limited number of recent runs"
+    )
+    def run_metrics_data(
+        self, plot_type: MetricPlotType, limit: Optional[int] = 25
+    ) -> List[TrackingDataset]:
+        run_ids = [
+            run.id for run in data_access_manager.runs.get_all_runs(limit_amount=limit)
+        ]
+        group = TrackingDatasetGroup.METRIC
+
+        metric_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids, group
+        )
+
+        all_tracking_datasets = []
+
+        for dataset in metric_dataset_models:
+            runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
+            formatted_tracking_data = format_run_metric_data(runs, plot_type)
             if formatted_tracking_data:
                 tracking_data = TrackingDataset(
                     dataset_name=dataset.dataset_name,
