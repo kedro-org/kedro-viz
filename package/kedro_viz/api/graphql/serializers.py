@@ -5,11 +5,16 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
-from typing import Dict, Iterable, List, Optional, cast
+from enum import Enum
+from typing import Dict, Iterable, List, Optional, Union, cast
 
 from strawberry import ID
 
-from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import (
+    RunModel,
+    UserRunDetailsModel,
+    MetricPlotType,
+)
 
 from .types import Run
 
@@ -128,3 +133,59 @@ def format_run_tracking_data(
                 del formatted_tracking_data[tracking_key]
 
     return formatted_tracking_data
+
+
+def format_run_metric_data(
+    metric_data: Dict[str], plot_type: MetricPlotType
+) -> Dict[str]:
+    """Format metric data to conforms to the schema required by plots on the front
+    end. Parallel Coordinate plots and Timeseries plots are supported.
+
+    Arguments:
+        metric_data: the data to format
+        plot_type: the type of plot to format metric data for
+
+    Returns:
+        a dictionary containing the formatted metric data
+    """
+    if plot_type is MetricPlotType.TIMESERIES:
+        return _format_metric_data_timeseries_plot(metric_data)
+    if plot_type is MetricPlotType.PARALLEL_COORDS:
+        return _format_metric_data_parallel_coords_plot(metric_data)
+
+
+def _format_metric_data_timeseries_plot(
+    metric_data: Dict[str, List]
+) -> Dict[str, List]:
+    result = {
+        "key": list(metric_data.keys()),
+        "value": defaultdict(lambda: [None] * len(metric_data))
+    }
+
+    for i, run_id in enumerate(metric_data):
+        for metric in metric_data[run_id]:
+            result["value"][metric][i] = metric_data[run_id][metric]
+
+    return result
+
+
+def _format_metric_data_parallel_coords_plot(
+    metric_data: Dict[str, List]
+) -> Dict[str, List]:
+    metrics = set()
+    for run_id in metric_data:
+        metrics.update(metric_data[run_id].keys())
+    metrics = list(metrics)
+    metric_indexes = {metric: idx for idx, metric in enumerate(metrics)}
+
+    result = {
+        "key": metrics,
+        "value": defaultdict(lambda: [None] * len(metrics))
+    }
+
+    for run_id in metric_data:
+        for metric in metric_data[run_id]:
+            idx = metric_indexes[metric]
+            result["value"][run_id][idx] = metric_data[run_id][metric]
+
+    return result
