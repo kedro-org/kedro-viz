@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
+import { data } from '../mock-data';
 
+import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
@@ -26,9 +28,11 @@ const MetricsPlots = () => {
         })}
       </div>
       <div style={{ fontSize: 14, marginTop: 30 }}>
-        {activeTab === tabLabels[0]
-          ? 'Time-series chart goes here'
-          : 'Parallel-coordinates chart goes here'}
+        {activeTab === tabLabels[0] ? (
+          'Time-series chart goes here'
+        ) : (
+          <ParallelCoordinates DATA1={data} />
+        )}
       </div>
     </div>
   );

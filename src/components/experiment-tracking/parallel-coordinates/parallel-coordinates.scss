@@ -1,0 +1,68 @@
+.parallelCoordinates {
+  margin: 2em;
+  //   background-color: #000f17;
+  font-family: sans-serif;
+}
+
+g.active path {
+  fill: none;
+  stroke: #132631;
+  stroke-linecap: 'round';
+}
+
+g.selected path {
+  fill: none;
+  /*   stroke:#0084B2; */
+}
+
+text {
+  fill: #97a0a6;
+}
+
+.headers {
+  fill: white;
+  font-size: 12px;
+}
+
+.domain {
+  stroke: #4c5b64;
+}
+
+.tick line {
+  stroke: #4c5b64;
+}
+
+.tick:nth-last-child(1) text {
+  visibility: visible;
+  fill: #dfe2e4;
+}
+
+.tick:nth-child(2) text {
+  visibility: visible;
+  fill: #dfe2e4;
+}
+
+.tick {
+  visibility: hidden;
+}
+
+.marker path {
+  fill: #000f17;
+}
+
+.ticks .text {
+  font-size: 10px;
+  fill: #4c5b64;
+  opacity: 0.4;
+}
+
+.ticks .line {
+  stroke: #4c5b64;
+  stroke-opacity: 0.4;
+}
+
+.marker .text {
+  fill: white;
+  font-size: 10px;
+  font-weight: 600;
+}
