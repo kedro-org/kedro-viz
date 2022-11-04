@@ -1,7 +1,8 @@
 /* eslint-disable id-length */
-import React from 'react';
+import React, { useContext } from 'react';
 import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
+import { HoverStateContext } from '../utils/hover-state-context';
 
 import { LinePath } from './components/line-path.js';
 
@@ -18,11 +19,10 @@ const selectedMarkerRotate = [45, 0, 0];
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
-export const ParallelCoordinates = ({
-  DATA1,
-  selectedRuns,
-  setHoveredItem,
-}) => {
+export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
+  const { handleMouseOut, handleMouseOver, isHovered } =
+    useContext(HoverStateContext);
+
   const selectedMarkerShape = [
     d3.symbolSquare,
     d3.symbolTriangle,
@@ -202,9 +202,11 @@ export const ParallelCoordinates = ({
           {data.map(([k, v], i) => (
             <LinePath
               d={linePath(v, i)}
+              handleMouseOut={handleMouseOut}
+              handleMouseOver={handleMouseOver}
               id={k}
+              isHovered={isHovered === k}
               key={k}
-              setHoveredItem={setHoveredItem}
             />
           ))}
         </g>
@@ -215,8 +217,8 @@ export const ParallelCoordinates = ({
               d={lineSelectedPath(v, i)}
               fill={'none'}
               id={k}
+              isHovered={isHovered === k}
               key={k}
-              setHoveredItem={setHoveredItem}
               stroke={selectedLineColors[i]}
             />
           ))}

@@ -1,12 +1,17 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 
-import { HoverStateContext } from '../../utils/hover-state-context';
-
-export const LinePath = ({ selected, d, id, fill, stroke }) => {
+export const LinePath = ({
+  selected,
+  d,
+  id,
+  fill,
+  stroke,
+  handleMouseOut,
+  handleMouseOver,
+  isHovered,
+}) => {
   const lineRef = useRef();
-
-  const { handleMouseOut, handleMouseOver } = useContext(HoverStateContext);
 
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
@@ -30,8 +35,15 @@ export const LinePath = ({ selected, d, id, fill, stroke }) => {
         handleMouseOut();
         setHighlight(el, false);
       });
+
+      if (isHovered) {
+        setHighlight(el, true);
+      } else {
+        setHighlight(el, false);
+      }
     }
   });
+
   return (
     <path
       className="line-path"
