@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
 import { data } from '../mock-data';
+import { HoverStateContextProvider } from '../utils/hover-state-context';
 
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
-const MetricsPlots = () => {
+const MetricsPlots = ({ selectedRunIds }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   return (
@@ -31,7 +32,9 @@ const MetricsPlots = () => {
         {activeTab === tabLabels[0] ? (
           'Time-series chart goes here'
         ) : (
-          <ParallelCoordinates DATA1={data} />
+          <HoverStateContextProvider>
+            <ParallelCoordinates DATA1={data} selectedRuns={selectedRunIds} />
+          </HoverStateContextProvider>
         )}
       </div>
     </div>
