@@ -30,7 +30,7 @@ const RunsListCard = ({
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(id);
 
-  const { handleMouseOut, handleMouseOver, isHovered } =
+  const { setHoveredElementId, hoveredElementId } =
     useContext(HoverStateContext);
 
   const isMatchSearchValue = (text) =>
@@ -71,11 +71,11 @@ const RunsListCard = ({
       className={classnames('kedro', 'runs-list-card', {
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
-        'runs-list-card--hovered': isHovered === id,
+        'runs-list-card--hovered': hoveredElementId === id,
       })}
       onClick={(e) => onRunsListCardClick(id, e)}
-      onMouseOver={(e) => handleMouseOver(id, e)}
-      onMouseOut={() => handleMouseOut()}
+      onMouseOver={() => setHoveredElementId(id)}
+      onMouseOut={() => setHoveredElementId(null)}
     >
       {enableComparisonView && (
         <CheckIcon

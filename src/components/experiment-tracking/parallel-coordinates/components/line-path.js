@@ -7,8 +7,7 @@ export const LinePath = ({
   id,
   fill,
   stroke,
-  handleMouseOut,
-  handleMouseOver,
+  setHoveredId,
   isHovered,
 }) => {
   const lineRef = useRef();
@@ -27,12 +26,12 @@ export const LinePath = ({
 
     if (!selected) {
       el.on('mouseover', () => {
-        handleMouseOver(id);
+        setHoveredId(id);
         setHighlight(el, true);
       });
 
       el.on('mouseout', () => {
-        handleMouseOut();
+        setHoveredId(null);
         setHighlight(el, false);
       });
 

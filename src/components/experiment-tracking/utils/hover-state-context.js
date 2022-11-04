@@ -8,21 +8,13 @@ export const HoverStateContext = createContext(null);
  * {@returns hasNotInteracted and setHasNotInteracted} these 2 are only used for modal with editable fields
  */
 export const HoverStateContextProvider = ({ children }) => {
-  const [isHovered, setIsHovered] = useState(null);
-
-  const handleMouseOver = (runId) => {
-    setIsHovered(runId);
-  };
-  const handleMouseOut = () => {
-    setIsHovered(null);
-  };
+  const [hoveredElementId, setHoveredElementId] = useState(null);
 
   return (
     <HoverStateContext.Provider
       value={{
-        handleMouseOut,
-        handleMouseOver,
-        isHovered,
+        hoveredElementId,
+        setHoveredElementId,
       }}
     >
       {children}

@@ -20,7 +20,7 @@ const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
 export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
-  const { handleMouseOut, handleMouseOver, isHovered } =
+  const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
   const selectedMarkerShape = [
@@ -199,26 +199,25 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         }}
       >
         <g className="active">
-          {data.map(([k, v], i) => (
+          {data.map(([id, v], i) => (
             <LinePath
               d={linePath(v, i)}
-              handleMouseOut={handleMouseOut}
-              handleMouseOver={handleMouseOver}
-              id={k}
-              isHovered={isHovered === k}
-              key={k}
+              id={id}
+              isHovered={hoveredElementId === id}
+              key={i}
+              setHoveredId={setHoveredElementId}
             />
           ))}
         </g>
         <g className="selected">
-          {selectedData.map(([k, v], i) => (
+          {selectedData.map(([id, v], i) => (
             <LinePath
-              selected
               d={lineSelectedPath(v, i)}
               fill={'none'}
-              id={k}
-              isHovered={isHovered === k}
-              key={k}
+              id={id}
+              isHovered={hoveredElementId === id}
+              key={i}
+              selected
               stroke={selectedLineColors[i]}
             />
           ))}
