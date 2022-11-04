@@ -3,97 +3,97 @@ import React from 'react';
 import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
 
+import { LinePath } from './components/line-path.js';
+
 import './parallel-coordinates.css';
 
-const width = 1500,
-  height = 400,
+const width = 1800,
+  height = 1200,
   padding = 38,
   paddingLr = 50;
 
-export const ParallelCoordinates = ({ DATA1 }) => {
-  const selectedRuns = ['2022-05-11 19:13:24.655232'];
+const buffer = 0.05;
+const selectedMarkerRotate = [45, 0, 0];
 
-  //colors based on design
-  const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
+const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
+const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
+export const ParallelCoordinates = ({
+  DATA1,
+  selectedRuns,
+  setHoveredItem,
+}) => {
   const selectedMarkerShape = [
     d3.symbolSquare,
     d3.symbolTriangle,
     d3.symbolCircle,
   ];
 
-  const selectedMarkerRotate = [45, 0, 0];
-
-  const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
-
   //data manipulation
   const graph = Object.entries(DATA1.metrics);
   const graphKeys = Object.keys(DATA1.metrics);
 
   const data = Object.entries(DATA1.runs);
-
-  // check if selected run is existed
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
 
+  const xScale = d3
+    .scalePoint()
+    .domain(graphKeys)
+    .range([paddingLr, width - paddingLr]);
+
+  // Each vertical scale
+  const yScales = {};
+
+  // for each metric, you draw a y-scale
+  graph.map(([k, v]) => {
+    yScales[k] = d3
+      .scaleLinear()
+      .domain([
+        Math.floor(Math.min(...v) - Math.min(...v) * buffer),
+        Math.ceil(Math.max(...v) + Math.max(...v) * buffer),
+      ])
+      .range([height - padding, padding]);
+  });
+
+  // Each axis generator
+  const yAxis = {};
+
+  Object.entries(yScales).map((x) => {
+    yAxis[x[0]] = d3.axisLeft(x[1]);
+  });
+
+  const lineGenerator = d3.line().defined(function (d) {
+    return d !== null;
+  });
+
+  // Paths for data
+  const linePath = function (d) {
+    let points = d.map((x, i) => {
+      if (x !== null) {
+        return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
+      } else {
+        return null;
+      }
+    });
+    return lineGenerator(points);
+  };
+
+  // Paths for data (selected runs)
+  const lineSelectedPath = function (d) {
+    let points = d.map((x, i) => {
+      if (x !== null) {
+        return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
+      } else {
+        return null;
+      }
+    });
+    return lineGenerator(points);
+  };
+
   const ref = useD3(
     (svg) => {
-      const xScale = d3
-        .scalePoint()
-        .domain(graphKeys)
-        .range([paddingLr, width - paddingLr]);
-
-      // Each vertical scale
-      const yScales = {};
-
-      const buffer = 0.05;
-      // for each metric, you draw a y-scale
-      graph.map(([k, v]) => {
-        yScales[k] = d3
-          .scaleLinear()
-          .domain([
-            Math.floor(Math.min(...v) - Math.min(...v) * buffer),
-            Math.ceil(Math.max(...v) + Math.max(...v) * buffer),
-          ])
-          .range([height - padding, padding]);
-      });
-
-      // Each axis generator
-      const yAxis = {};
-
-      Object.entries(yScales).map((x) => {
-        yAxis[x[0]] = d3.axisLeft(x[1]);
-      });
-
-      const lineGenerator = d3.line().defined(function (d) {
-        return d !== null;
-      });
-
-      // Paths for data
-      const linePath = function (d) {
-        let points = d.map((x, i) => {
-          if (x !== null) {
-            return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
-          } else {
-            return null;
-          }
-        });
-        return lineGenerator(points);
-      };
-
-      // Paths for data (selected runs)
-      const lineSelectedPath = function (d) {
-        let points = d.map((x, i) => {
-          if (x !== null) {
-            return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
-          } else {
-            return null;
-          }
-        });
-        return lineGenerator(points);
-      };
-
       const featureAxisG = svg
         .selectAll('.feature')
         .data(graphKeys)
@@ -112,31 +112,6 @@ export const ParallelCoordinates = ({ DATA1 }) => {
         .attr('text-anchor', 'middle')
         .attr('y', padding / 2)
         .text((d) => d);
-
-      // Vertical axis for the features
-
-      // active data
-      svg
-        .append('g')
-        .attr('class', 'active')
-        .selectAll('path')
-        .data(data)
-        .enter()
-        .append('path')
-        .attr('d', ([k, v]) => linePath(v))
-        .attr('id', ([k, v]) => k);
-
-      svg
-        .append('g')
-        .attr('class', 'selected')
-        .selectAll('path')
-        .data(selectedData)
-        .enter()
-        .append('path')
-        .attr('d', ([k, v], i) => lineSelectedPath(v, i))
-        .attr('id', ([k, v]) => k)
-        .attr('fill', 'none')
-        .attr('stroke', (d, i) => selectedLineColors[i]);
 
       let ticks = svg
         .selectAll('.ticks')
@@ -222,7 +197,31 @@ export const ParallelCoordinates = ({ DATA1 }) => {
           height,
           width,
         }}
-      ></svg>
+      >
+        <g className="active">
+          {data.map(([k, v], i) => (
+            <LinePath
+              d={linePath(v, i)}
+              id={k}
+              key={k}
+              setHoveredItem={setHoveredItem}
+            />
+          ))}
+        </g>
+        <g className="selected">
+          {selectedData.map(([k, v], i) => (
+            <LinePath
+              selected
+              d={lineSelectedPath(v, i)}
+              fill={'none'}
+              id={k}
+              key={k}
+              setHoveredItem={setHoveredItem}
+              stroke={selectedLineColors[i]}
+            />
+          ))}
+        </g>
+      </svg>
     </div>
   );
 };
