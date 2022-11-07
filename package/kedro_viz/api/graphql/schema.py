@@ -21,16 +21,16 @@ from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
 
 from .serializers import (
     format_run,
-    format_run_tracking_data,
     format_run_metric_data,
+    format_run_tracking_data,
     format_runs,
 )
 from .types import (
+    MetricDataset,
     Run,
     RunInput,
     TrackingDataset,
     TrackingDatasetGroup,
-    MetricPlotType,
     UpdateRunDetailsFailure,
     UpdateRunDetailsResponse,
     UpdateRunDetailsSuccess,
@@ -105,9 +105,7 @@ class RunsQuery:
     @strawberry.field(
         description="Get metrics data for a limited number of recent runs"
     )
-    def run_metrics_data(
-        self, plot_type: MetricPlotType, limit: Optional[int] = 25
-    ) -> List[TrackingDataset]:
+    def run_metrics_data(self, limit: Optional[int] = 25) -> MetricDataset:
         run_ids = [
             run.id for run in data_access_manager.runs.get_all_runs(limit_amount=limit)
         ]
@@ -117,21 +115,12 @@ class RunsQuery:
             run_ids, group
         )
 
-        all_tracking_datasets = []
-
+        metric_data = {}
         for dataset in metric_dataset_models:
-            runs = {run_id: dataset.runs[run_id] for run_id in run_ids}
-            formatted_tracking_data = format_run_metric_data(runs, plot_type)
-            if formatted_tracking_data:
-                tracking_data = TrackingDataset(
-                    dataset_name=dataset.dataset_name,
-                    dataset_type=dataset.dataset_type,
-                    data=formatted_tracking_data,
-                    run_ids=run_ids,
-                )
-                all_tracking_datasets.append(tracking_data)
+            metric_data[dataset.dataset_name] = dataset.runs
 
-        return all_tracking_datasets
+        formatted_metric_data = format_run_metric_data(metric_data)
+        return MetricDataset(data=formatted_metric_data)
 
 
 @strawberry.type
