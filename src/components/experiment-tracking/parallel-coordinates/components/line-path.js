@@ -2,13 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 
 export const LinePath = ({
-  selected,
   d,
-  id,
   fill,
-  stroke,
-  setHoveredId,
+  id,
   isHovered,
+  selected,
+  setHoveredId,
+  stroke,
 }) => {
   const lineRef = useRef();
 

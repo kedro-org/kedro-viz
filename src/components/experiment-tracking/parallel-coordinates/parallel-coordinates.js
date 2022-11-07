@@ -8,8 +8,9 @@ import { LinePath } from './components/line-path.js';
 
 import './parallel-coordinates.css';
 
-const width = 1800,
-  height = 1200,
+// TODO: move them to a cofig file or something
+const width = 1500,
+  height = 800,
   padding = 38,
   paddingLr = 50;
 
@@ -29,7 +30,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     d3.symbolCircle,
   ];
 
-  //data manipulation
   const graph = Object.entries(DATA1.metrics);
   const graphKeys = Object.keys(DATA1.metrics);
 
@@ -57,9 +57,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
       .range([height - padding, padding]);
   });
 
-  // Each axis generator
   const yAxis = {};
-
   Object.entries(yScales).map((x) => {
     yAxis[x[0]] = d3.axisLeft(x[1]);
   });
@@ -68,7 +66,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return d !== null;
   });
 
-  // Paths for data
   const linePath = function (d) {
     let points = d.map((x, i) => {
       if (x !== null) {
@@ -80,7 +77,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return lineGenerator(points);
   };
 
-  // Paths for data (selected runs)
   const lineSelectedPath = function (d) {
     let points = d.map((x, i) => {
       if (x !== null) {
@@ -112,79 +108,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         .attr('text-anchor', 'middle')
         .attr('y', padding / 2)
         .text((d) => d);
-
-      let ticks = svg
-        .selectAll('.ticks')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'ticks')
-        .attr('id', ([k, v]) => k);
-
-      // //ticks for the chart
-      ticks.each(function (d) {
-        const [key, values] = d;
-        for (const [index, value] of values.entries()) {
-          if (value !== null) {
-            d3.select(this)
-              .append('text')
-              .attr('class', 'text')
-              .attr('x', xScale(graphKeys[index]))
-              .attr('y', yScales[graphKeys[index]](value))
-              .text(value)
-              .attr('text-anchor', 'end')
-              .attr('transform', 'translate(-10,4)');
-
-            d3.select(this)
-              .append('line')
-              .attr('class', 'line')
-              .attr('x1', xScale(graphKeys[index]))
-              .attr('y1', yScales[graphKeys[index]](value))
-              .attr('x2', xScale(graphKeys[index]) - 4)
-              .attr('y2', yScales[graphKeys[index]](value));
-          }
-        }
-      });
-
-      //markers for selected runs
-      let marker = svg
-        .selectAll('.marker')
-        .data(selectedData)
-        .enter()
-        .append('g')
-        .attr('class', 'marker')
-        .attr('id', ([k, v]) => k);
-
-      marker.each(function (d, i) {
-        const [key, values] = d;
-        for (const [index, value] of values.entries()) {
-          if (value !== null) {
-            d3.select(this)
-              .append('path')
-              .attr('d', d3.symbol().type(selectedMarkerShape[i]).size(25))
-              .attr(
-                'transform',
-                'translate(' +
-                  xScale(graphKeys[index]) +
-                  ',' +
-                  yScales[graphKeys[index]](value) +
-                  ') rotate(' +
-                  selectedMarkerRotate[i] +
-                  ')'
-              )
-              .attr('stroke', selectedMarkerColors[i]);
-
-            d3.select(this)
-              .append('text')
-              .attr('class', 'text')
-              .attr('x', xScale(graphKeys[index]))
-              .attr('y', yScales[graphKeys[index]](value))
-              .text(value)
-              .attr('text-anchor', 'end')
-              .attr('transform', 'translate(-10,4)');
-          }
-        }
-      });
     },
     [data.length]
   );
@@ -198,6 +121,12 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           width,
         }}
       >
+        {/* {graphKeys.map((graph) => (
+          <g className="feature" transform={`translate(${xScale(graph)}, 0)`}>
+            <g>{d3.select(this).call(yAxis[graph])}</g>
+          </g>
+        ))} */}
+
         <g className="active">
           {data.map(([id, v], i) => (
             <LinePath
@@ -209,6 +138,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             />
           ))}
         </g>
+
         <g className="selected">
           {selectedData.map(([id, v], i) => (
             <LinePath
@@ -222,6 +152,63 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             />
           ))}
         </g>
+
+        {data.map(([id, values]) => (
+          <g className="ticks" id={id}>
+            {values.map((value, i) => (
+              <>
+                <text
+                  className="text"
+                  x={xScale(graphKeys[i]) - 5}
+                  y={yScales[graphKeys[i]](value)}
+                  style={{ textAnchor: 'end', transform: 'translate(-10,4)' }}
+                >
+                  {value}
+                </text>
+                <line
+                  className="line"
+                  x1={xScale(graphKeys[i])}
+                  y1={yScales[graphKeys[i]](value)}
+                  x2={xScale(graphKeys[i]) - 4}
+                  y2={yScales[graphKeys[i]](value)}
+                ></line>
+              </>
+            ))}
+          </g>
+        ))}
+
+        {selectedData.map(([id, values], i) => (
+          <g className="marker" id={id}>
+            {values.map((value, index) => {
+              const transformX = xScale(graphKeys[index]);
+              const transformY = yScales[graphKeys[index]](value);
+              const rotate = selectedMarkerRotate[i];
+
+              if (value !== null) {
+                return (
+                  <>
+                    <path
+                      d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
+                      transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
+                      stroke={selectedMarkerColors[i]}
+                    ></path>
+                    <text
+                      className="text"
+                      x={xScale(graphKeys[index]) - 5}
+                      y={yScales[graphKeys[index]](value)}
+                      style={{
+                        textAnchor: 'end',
+                        transform: 'translate(-10,4)',
+                      }}
+                    >
+                      {value}
+                    </text>
+                  </>
+                );
+              }
+            })}
+          </g>
+        ))}
       </svg>
     </div>
   );
