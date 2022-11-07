@@ -181,7 +181,7 @@ export const getFilteredElementTypeItems = createSelector(
  * by enabled status (by tag) and then alphabeticaly (by name)
  * @param {Object} itemA First item to compare
  * @param {Object} itemB Second item to compare
- * @return {number} Comparison result
+ * @return {Number} Comparison result
  */
 const compareEnabledThenAlpha = (itemA, itemB) => {
   const byEnabledTag = Number(itemA.disabledTag) - Number(itemB.disabledTag);
@@ -194,7 +194,7 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
  * by enabled status (by tag) and then alphabeticaly (by name)
  * @param {Object} itemA First item to compare
  * @param {Object} itemB Second item to compare
- * @return {number} Comparison result
+ * @return {Number} Comparison result
  */
 export const getFilteredNodeItems = createSelector(
   [

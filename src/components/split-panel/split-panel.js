@@ -7,7 +7,7 @@ import { useState, useRef } from 'react';
  * @callback splitPanelRender
  * @param {Object} state An object that contains a copy of the current split panel state and props intended for children
  * @param {Boolean} state.isResizing Is `true` when the split is being actively moved, otherwise `false`
- * @param {number} state.split A number [0...1] as the current % split position
+ * @param {Number} state.split A number [0...1] as the current % split position
  * @param {Object} state.props.container The props intended for the panel container element(s)
  * @param {Object} state.props.panelA The props intended for the first panel descendent element(s)
  * @param {Object} state.props.panelB The props intended for the second panel descendent element(s)
@@ -19,10 +19,10 @@ import { useState, useRef } from 'react';
  * Pass any React render function as this component's children and return your elements there.
  * See split-panel.test.js for a reference implementation.
  * @param {splitPanelRender} children Any React render function that returns elements including representing the container, panels, handle
- * @param {?number} [splitDefault=0.65] A number [0...1] as the default % split position
- * @param {?number} [splitMin=0] A number [0...1] as the minimum % split position
- * @param {?number} [splitMax=1] A number [0...1] as the maximum % split position
- * @param {?number} [keyboardStep=0.025] A number [0...1] as the % step to move split when using keyboard
+ * @param {?Number} [splitDefault=0.65] A number [0...1] as the default % split position
+ * @param {?Number} [splitMin=0] A number [0...1] as the minimum % split position
+ * @param {?Number} [splitMax=1] A number [0...1] as the maximum % split position
+ * @param {?Number} [keyboardStep=0.025] A number [0...1] as the % step to move split when using keyboard
  * @param {?String} [orientation='vertical'] Only 'vertical' currently supported
  **/
 export const SplitPanel = ({

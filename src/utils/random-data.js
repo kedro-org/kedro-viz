@@ -46,7 +46,7 @@ class Pipeline {
 
   /**
    * Create the pipelines array
-   * @returns {number} Rank count total
+   * @returns {Number} Rank count total
    */
   generatePipelines() {
     const pipelines = ['Default'];
@@ -77,7 +77,7 @@ class Pipeline {
   /**
    * Get the number of ranks (i.e. horizontal bands)
    * Odd ranks are data, even are task
-   * @returns {number} Rank count total
+   * @returns {Number} Rank count total
    */
   getRankCount() {
     let rankCount = this.utils.randomNumberBetween(
@@ -144,7 +144,7 @@ class Pipeline {
 
   /**
    * Return a random count of nodes for a rank
-   * @returns {number} rank node count
+   * @returns {Number} rank node count
    */
   getRankNodeCount() {
     return Math.min(
@@ -155,7 +155,7 @@ class Pipeline {
 
   /**
    * Determine a node's type based on its rank
-   * @param {number} rank Rank number
+   * @param {Number} rank Rank number
    * @returns {String} Node type (task/data/parameters)
    */
   getType(node) {
@@ -172,8 +172,8 @@ class Pipeline {
 
   /**
    * Create a node datum object.
-   * @param {number} i Node index within its rank
-   * @param {number} initialRank Rank index
+   * @param {Number} i Node index within its rank
+   * @param {Number} initialRank Rank index
    * @returns {Object} Node object
    */
 

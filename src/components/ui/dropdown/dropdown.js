@@ -229,7 +229,7 @@ const Dropdown = (props) => {
   /**
    * When the focused option changes (e.g. via up/down keyboard controls),
    * update the focusedOption index state and select the new one
-   * @param {number} direction - The direction that focus is travelling through the list:
+   * @param {Number} direction - The direction that focus is travelling through the list:
    * negative is up and positive is down.
    */
   const _handleFocusChange = (direction) => {

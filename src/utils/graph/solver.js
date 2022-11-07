@@ -15,7 +15,7 @@ import { Solver, Variable } from 'kiwi.js';
  * Refer to LAYOUT_ENGINE.md for further details.
  * @param {Array} constraints The constraints
  * @param {function} constraint.base.solve A function that solves the constraint in-place
- * @param {number} iterations The number of iterations
+ * @param {Number} iterations The number of iterations
  * @param {?Object} constants The constants used by constraints
  */
 export const solveLoose = (constraints, iterations, constants) => {

@@ -8,27 +8,27 @@ export const HALF_PI = Math.PI * 0.5;
 
 /**
  * Clamps the value between min and max
- * @param {number} value The number to clamp
- * @param {number} min The minimum value
- * @param {number} max The maximum value
- * @returns {number} The value clamped
+ * @param {Number} value The number to clamp
+ * @param {Number} min The minimum value
+ * @param {Number} max The maximum value
+ * @returns {Number} The value clamped
  */
 export const clamp = (value, min, max) =>
   value < min ? min : value > max ? max : value;
 
 /**
  * Rounds the value to the nearest unit value
- * @param {number} value The value to snap
- * @param {number} unit The unit
- * @returns {number} The value snapped
+ * @param {Number} value The value to snap
+ * @param {Number} unit The unit
+ * @returns {Number} The value snapped
  */
 export const snap = (value, unit) => Math.round(value / unit) * unit;
 
 /**
  * Returns the distance between two values
- * @param {number} a The first value
- * @param {number} b The second value
- * @returns {number} The distance
+ * @param {Number} a The first value
+ * @param {Number} b The second value
+ * @returns {Number} The distance
  */
 export const distance1d = (a, b) => Math.abs(a - b);
 
@@ -36,35 +36,35 @@ export const distance1d = (a, b) => Math.abs(a - b);
  * Returns the angle in radians between the points a and b relative to the X-axis about the origin
  * @param {Object} a The first point
  * @param {Object} b The second point
- * @returns {number} The angle
+ * @returns {Number} The angle
  */
 export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
 
 /**
  * Returns the left edge x-position of the node
  * @param {Object} node The node
- * @returns {number} The left edge position
+ * @returns {Number} The left edge position
  */
 export const nodeLeft = (node) => node.x - node.width * 0.5;
 
 /**
  * Returns the right edge x-position of the node
  * @param {Object} node The node
- * @returns {number} The right edge position
+ * @returns {Number} The right edge position
  */
 export const nodeRight = (node) => node.x + node.width * 0.5;
 
 /**
  * Returns the top edge y-position of the node
  * @param {Object} node The node
- * @returns {number} The top edge position
+ * @returns {Number} The top edge position
  */
 export const nodeTop = (node) => node.y - node.height * 0.5;
 
 /**
  * Returns the bottom edge y-position of the node
  * @param {Object} node The node
- * @returns {number} The bottom edge position
+ * @returns {Number} The bottom edge position
  */
 export const nodeBottom = (node) => node.y + node.height * 0.5;
 
@@ -106,10 +106,10 @@ export const groupByRow = (nodes) => {
  * If values are strings then `localeCompare` is used, otherwise values are subtracted
  * Compares the first pair of values and returns the difference if non equal,
  * otherwise ties are broken by comparing the subsequent pairs of values
- * @param {number|String} a Value to compare with `b`
- * @param {number|String} b Value to compare with `a`
- * @param {...number|String} values Any number of further pairs of values to compare as tie-breakers
- * @returns {number} A standard signed comparator result
+ * @param {Number|String} a Value to compare with `b`
+ * @param {Number|String} b Value to compare with `a`
+ * @param {...Number|String} values Any number of further pairs of values to compare as tie-breakers
+ * @returns {Number} A standard signed comparator result
  */
 export const compare = (a, b, ...values) => {
   const delta = typeof a === 'string' ? a.localeCompare(b) : a - b;
@@ -146,12 +146,12 @@ export const offsetEdge = (edge, offset) => {
 
 /**
  * Returns the point on the line segment `ax, ay, bx, by` closest to point `x, y`
- * @param {number} x The test point x
- * @param {number} y The test point y
- * @param {number} ax The start of the line segement x point
- * @param {number} ay The start of the line segement y point
- * @param {number} bx The end of the line segement x point
- * @param {number} by The end of the line segement y point
+ * @param {Number} x The test point x
+ * @param {Number} y The test point y
+ * @param {Number} ax The start of the line segement x point
+ * @param {Number} ay The start of the line segement y point
+ * @param {Number} bx The end of the line segement x point
+ * @param {Number} by The end of the line segement y point
  * @returns {Object} An object with the closest point and both line segment points
  */
 export const nearestOnLine = (x, y, ax, ay, bx, by) => {

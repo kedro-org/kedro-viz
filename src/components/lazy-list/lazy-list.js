@@ -4,9 +4,9 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
  * A component that renders only the children currently visible on screen.
  * Renders all children if not supported by browser or is disabled via the `lazy` prop.
  * @param {function} height A `function(start, end)` returning the pixel height for any given range of items
- * @param {number} total The total count of all items in the list
+ * @param {Number} total The total count of all items in the list
  * @param {function} children A `function(props)` rendering the list and items (see `childProps`)
- * @param {?number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
+ * @param {?Number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
  * @param {?Boolean} [lazy=true] Toggles the lazy functionality
  * @param {?Boolean} [dispose=false] Toggles disposing items when they lose visibility
  * @param {?function} onChange Optional change callback
@@ -167,10 +167,10 @@ const LazyList = ({
 
 /**
  * Returns a range in the form `[start, end]` clamped inside `[min, max]`
- * @param {number} start The start of the range
- * @param {number} end The end of the range
- * @param {number} min The range minimum
- * @param {number} max The range maximum
+ * @param {Number} start The start of the range
+ * @param {Number} end The end of the range
+ * @param {Number} min The range minimum
+ * @param {Number} max The range maximum
  * @returns {Array} The clamped range
  */
 export const range = (start, end, min, max) => [
@@ -204,9 +204,9 @@ export const rangeEqual = (rangeA, rangeB) =>
  * Only considers visibility along the vertical y-axis (i.e. only top, bottom bounds).
  * @param {HTMLElement} element The target element (e.g. list container)
  * @param {?HTMLElement} container The clipping container of the target (e.g. scroll container)
- * @param {number} buffer A number [0...1] as a % of the container to render additionally
- * @param {number} childTotal The total count of all children in the target (e.g. list row count)
- * @param {number} childHeight Height of a single child element (e.g. height of one list row)
+ * @param {Number} buffer A number [0...1] as a % of the container to render additionally
+ * @param {Number} childTotal The total count of all children in the target (e.g. list row count)
+ * @param {Number} childHeight Height of a single child element (e.g. height of one list row)
  * @returns {Array} The calculated range of visible items as `[start, end]`
  */
 const visibleRangeOf = (
@@ -283,7 +283,7 @@ const useRequestFrameOnce = (callback) => {
 /**
  * Generates an array of the form [0, ...n / total]
  * except where total is `0` where it returns `[0]`.
- * @param {number} total The total number of thresholds to create
+ * @param {Number} total The total number of thresholds to create
  * @returns {Array} The threshold array
  */
 export const thresholds = (total) =>

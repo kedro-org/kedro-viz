@@ -41,7 +41,7 @@ export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
 
   /**
    * Listen for keyboard events, and trigger relevant actions
-   * @param {number} keyCode The key event keycode
+   * @param {Number} keyCode The key event keycode
    */
   const handleKeyDown = (event) => {
     const isKeyEscape = event.key === 'Escape' || event.keyCode === 27;

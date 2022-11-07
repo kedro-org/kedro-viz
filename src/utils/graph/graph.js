@@ -129,7 +129,7 @@ const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
  * Comparator function for sorting nodes rank ascending
  * @param {Object} nodeA The first input node
  * @param {Object} nodeB The second input node
- * @returns {number} The signed difference
+ * @returns {Number} The signed difference
  */
 const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
 
@@ -173,7 +173,7 @@ const findNodeBy = (node, successors, order, accept, visited) => {
 /**
  * Finds the region bounding the given nodes
  * @param {Array} nodes The input nodes
- * @param {number} padding Additional padding around the bounds
+ * @param {Number} padding Additional padding around the bounds
  * @returns {Object} The bounds
  */
 const bounds = (nodes, padding) => {

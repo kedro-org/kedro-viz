@@ -16,11 +16,11 @@ import {
  * @param {Array} params.nodes The input nodes
  * @param {Array} params.edges The input edges
  * @param {Object=} params.layers The node layers if specified
- * @param {number} params.spaceX The minimum gap between nodes in X
- * @param {number} params.spaceY The minimum gap between nodes in Y
- * @param {number} params.spreadX Adjusts the gap for each node in X based on the number of connected edges it has
- * @param {number} params.layerSpaceY The additional gap between nodes in Y between layers
- * @param {number} params.iterations The number of solver iterations to perform
+ * @param {Number} params.spaceX The minimum gap between nodes in X
+ * @param {Number} params.spaceY The minimum gap between nodes in Y
+ * @param {Number} params.spreadX Adjusts the gap for each node in X based on the number of connected edges it has
+ * @param {Number} params.layerSpaceY The additional gap between nodes in Y between layers
+ * @param {Number} params.iterations The number of solver iterations to perform
  * @returns {void}
  */
 export const layout = ({
@@ -142,7 +142,7 @@ const createLayerConstraints = (nodes, layers) => {
  * Creates crossing constraints for the given edges.
  * @param {Array} edges The input edges
  * @param {Object} constants The constraint constants
- * @param {number} constants.spaceX The minimum gap between nodes in X
+ * @param {Number} constants.spaceX The minimum gap between nodes in X
  * @returns {Array} The constraints
  */
 const createCrossingConstraints = (edges, constants) => {
@@ -264,9 +264,9 @@ const createSeparationConstraints = (rows, constants) => {
  * Node positions are updated in-place
  * @param {Array} edges The input edges
  * @param {Array} rows The input rows of nodes
- * @param {number} spaceY The spacing between nodes in Y
- * @param {number} [scale=1.25] The amount of expansion to apply relative to row density
- * @param {number} [unit=0.25] The unit size for rounding expansion relative to spaceY
+ * @param {Number} spaceY The spacing between nodes in Y
+ * @param {Number} [scale=1.25] The amount of expansion to apply relative to row density
+ * @param {Number} [unit=0.25] The unit size for rounding expansion relative to spaceY
  */
 const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
   const densities = rowDensity(edges);

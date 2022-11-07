@@ -21,7 +21,7 @@ export const mockAPIFeatureSupport = (data) => {
 
 /**
  * Create a promise that resolves after a timeout
- * @param {number} milliseconds Timeout in milliseconds
+ * @param {Number} milliseconds Timeout in milliseconds
  */
 const timeout = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));

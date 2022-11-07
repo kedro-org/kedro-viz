@@ -130,7 +130,7 @@ const RunDataset = ({
  * Build the necessary markup used to display the run dataset.
  * @param {String} datasetKey The row label of the data.
  * @param {Array} datasetValues A single dataset array from a run.
- * @param {number} rowIndex The array index of the dataset data.
+ * @param {Number} rowIndex The array index of the dataset data.
  * @param {Boolean} isSingleRun Whether or not this is a single run.
  * @param {Boolean} enableShowChanges Are changes enabled or not.
  * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on

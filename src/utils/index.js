@@ -41,7 +41,7 @@ export const getUrl = (type, id) => {
 /**
  * Filter duplicate values from an array
  * @param {any} d Datum
- * @param {number} i Index
+ * @param {Number} i Index
  * @param {Array} arr The array to remove duplicate values from
  */
 export const unique = (d, i, arr) => arr.indexOf(d) === i;
