@@ -5,16 +5,12 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
-from enum import Enum
-from typing import Dict, Iterable, List, Optional, Union, cast
+from itertools import product
+from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
 
-from kedro_viz.models.experiment_tracking import (
-    RunModel,
-    UserRunDetailsModel,
-    MetricPlotType,
-)
+from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 from .types import Run
 
@@ -135,57 +131,49 @@ def format_run_tracking_data(
     return formatted_tracking_data
 
 
-def format_run_metric_data(
-    metric_data: Dict[str], plot_type: MetricPlotType
-) -> Dict[str]:
+def format_run_metric_data(metric_data: Dict) -> Dict:
     """Format metric data to conforms to the schema required by plots on the front
     end. Parallel Coordinate plots and Timeseries plots are supported.
 
     Arguments:
         metric_data: the data to format
-        plot_type: the type of plot to format metric data for
 
     Returns:
         a dictionary containing the formatted metric data
     """
-    if plot_type is MetricPlotType.TIMESERIES:
-        return _format_metric_data_timeseries_plot(metric_data)
-    if plot_type is MetricPlotType.PARALLEL_COORDS:
-        return _format_metric_data_parallel_coords_plot(metric_data)
+    formatted_metric_data = _initialise_metric_data_template(metric_data)
+    _populate_metric_data_template(metric_data, **formatted_metric_data)
+    return formatted_metric_data
 
 
-def _format_metric_data_timeseries_plot(
-    metric_data: Dict[str, List]
-) -> Dict[str, List]:
-    result = {
-        "key": list(metric_data.keys()),
-        "value": defaultdict(lambda: [None] * len(metric_data))
-    }
+def _initialise_metric_data_template(metric_data: Dict) -> Dict:
+    """ """
+    runs, metrics = {}, {}
+    for dataset_name in metric_data:
+        dataset_name_root = dataset_name.rpartition(".")[0]
+        dataset = metric_data[dataset_name]
+        for run_id in dataset:
+            runs[run_id] = []
+            for metric in dataset[run_id]:
+                metrics[dataset_name_root + "." + metric] = []
 
-    for i, run_id in enumerate(metric_data):
-        for metric in metric_data[run_id]:
-            result["value"][metric][i] = metric_data[run_id][metric]
+    for run_id in runs:
+        runs[run_id].extend([None] * len(metrics))
+    for metric in metrics:
+        metrics[metric].extend([None] * len(runs))
 
-    return result
+    return {"metrics": metrics, "runs": runs}
 
 
-def _format_metric_data_parallel_coords_plot(
-    metric_data: Dict[str, List]
-) -> Dict[str, List]:
-    metrics = set()
-    for run_id in metric_data:
-        metrics.update(metric_data[run_id].keys())
-    metrics = list(metrics)
-    metric_indexes = {metric: idx for idx, metric in enumerate(metrics)}
-
-    result = {
-        "key": metrics,
-        "value": defaultdict(lambda: [None] * len(metrics))
-    }
-
-    for run_id in metric_data:
-        for metric in metric_data[run_id]:
-            idx = metric_indexes[metric]
-            result["value"][run_id][idx] = metric_data[run_id][metric]
-
-    return result
+def _populate_metric_data_template(
+    metric_data: Dict, runs: Dict, metrics: Dict
+) -> None:
+    """ """
+    for (run_idx, run_id), (metric_idx, metric) in product(
+        enumerate(runs), enumerate(metrics)
+    ):
+        dataset_name_root, _, metric_name = metric.rpartition(".")
+        for dataset in metric_data:
+            if dataset_name_root == dataset.rpartition(".")[0]:
+                value = metric_data[dataset][run_id].get(metric_name, None)
+                runs[run_id][metric_idx] = metrics[metric][run_idx] = value
