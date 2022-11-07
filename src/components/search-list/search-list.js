@@ -5,7 +5,7 @@ import './search-list.css';
 
 /**
  * Handle Searching of List
- * @param {function} onUpdateSearchValue Event handler
+ * @param {Function} onUpdateSearchValue Event handler
  * @param {String} searchValue Search text
  * @param {String} theme Light/dark theme for SearchBar component
  */

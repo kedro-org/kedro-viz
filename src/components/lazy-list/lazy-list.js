@@ -3,14 +3,14 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 /**
  * A component that renders only the children currently visible on screen.
  * Renders all children if not supported by browser or is disabled via the `lazy` prop.
- * @param {function} height A `function(start, end)` returning the pixel height for any given range of items
+ * @param {Function} height A `function(start, end)` returning the pixel height for any given range of items
  * @param {Number} total The total count of all items in the list
- * @param {function} children A `function(props)` rendering the list and items (see `childProps`)
+ * @param {Function} children A `function(props)` rendering the list and items (see `childProps`)
  * @param {?Number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
  * @param {?Boolean} [lazy=true] Toggles the lazy functionality
  * @param {?Boolean} [dispose=false] Toggles disposing items when they lose visibility
- * @param {?function} onChange Optional change callback
- * @param {?function} container Optional, default scroll container is `element.offsetParent`
+ * @param {?Function} onChange Optional change callback
+ * @param {?Function} container Optional, default scroll container is `element.offsetParent`
  * @return {Object} The rendered children
  **/
 const LazyList = ({
@@ -267,8 +267,8 @@ const visibleRangeOf = (
 
 /**
  * A hook to create a callback that runs once, at the end of the frame
- * @param {function} callback The callback
- * @returns {function} The wrapped callback
+ * @param {Function} callback The callback
+ * @returns {Function} The wrapped callback
  */
 const useRequestFrameOnce = (callback) => {
   const request = useRef();
@@ -295,7 +295,7 @@ export const thresholds = (total) =>
  * A hook that creates and manages an IntersectionObserver for the given element
  * @param {Object} element A React.Ref from the target element
  * @param {Object} options An IntersectionObserver options object
- * @param {function} callback A function to call with IntersectionObserver changes
+ * @param {Function} callback A function to call with IntersectionObserver changes
  */
 const useIntersection = (element, options, callback) => {
   const observer = useRef();

@@ -134,8 +134,8 @@ const RunDataset = ({
  * @param {Boolean} isSingleRun Whether or not this is a single run.
  * @param {Boolean} enableShowChanges Are changes enabled or not.
  * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on
- * @param {function} setRunDatasetToShow callbak function to show runDataset
- * @param {function} setShowRunPlotsModal callbak function to show runplot modal
+ * @param {Function} setRunDatasetToShow callbak function to show runDataset
+ * @param {Function} setShowRunPlotsModal callbak function to show runplot modal
  */
 function buildDatasetDataMarkup(
   datasetKey,

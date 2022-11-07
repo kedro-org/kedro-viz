@@ -14,7 +14,7 @@ import { Solver, Variable } from 'kiwi.js';
  * A solution is approximated iteratively.
  * Refer to LAYOUT_ENGINE.md for further details.
  * @param {Array} constraints The constraints
- * @param {function} constraint.base.solve A function that solves the constraint in-place
+ * @param {Function} constraint.base.solve A function that solves the constraint in-place
  * @param {Number} iterations The number of iterations
  * @param {?Object} constants The constants used by constraints
  */
@@ -33,7 +33,7 @@ export const solveLoose = (constraints, iterations, constants) => {
  * Refer to LAYOUT_ENGINE.md for further details.
  * @param {Array} constraints The constraints
  * @param {String} constraint.base.property The property name on `a` and `b` to constrain
- * @param {function} constraint.base.strict A function returns the constraint in strict form
+ * @param {Function} constraint.base.strict A function returns the constraint in strict form
  * @param {Object} constraint.a The first object to constrain
  * @param {Object} constraint.b The second object to constrain
  * @param {Object} constraint.a.id A unique id for the first object

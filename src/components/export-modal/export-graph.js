@@ -6,7 +6,7 @@ import { globalToolbarWidth } from '../../config';
  * @param {String} format Must be 'svg' or 'png'
  * @param {String} theme light/dark theme
  * @param {Object} graphSize Graph width/height/margin
- * @param {function} mockFn Mock testing function stand-in for svg-crowbar
+ * @param {Function} mockFn Mock testing function stand-in for svg-crowbar
  * @return {Function} onClick handler
  */
 const exportGraph = ({ format, theme, graphSize, mockFn }) => {

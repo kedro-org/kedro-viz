@@ -29,7 +29,7 @@ const timeout = (milliseconds) =>
 /**
  * Mock asynchronously loading/parsing data
  * @param {String} path JSON file location. Defaults to main data url from config.js
- * @return {function} A promise that will return when the file is loaded and parsed
+ * @return {Function} A promise that will return when the file is loaded and parsed
  */
 const loadJsonData = async (path = getUrl('main')) => {
   // Add a short timeout to simulate real world use,

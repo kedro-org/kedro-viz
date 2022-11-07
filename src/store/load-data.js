@@ -7,7 +7,7 @@ import { getUrl } from '../utils';
  * For requests other than `main`, returns the given or default fallback response.
  * @param {String} path JSON file location. Defaults to main data url from config.js
  * @param {Object} fallback The fallback response object on request failure. Default `{}`.
- * @return {function} A promise that will return when the file is loaded and parsed
+ * @return {Function} A promise that will return when the file is loaded and parsed
  */
 const loadJsonData = (path = getUrl('main'), fallback = {}) =>
   json(path).catch(() => {

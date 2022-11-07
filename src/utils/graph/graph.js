@@ -136,9 +136,9 @@ const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
 /**
  * Starting at the given node and expanding successors, returns the first node accepted in order
  * @param {Object} node The starting node
- * @param {function} successors A function returning the next nodes to expand
- * @param {function} order A comparator function used for prioritising successors
- * @param {function} accept A function that returns true if the current node fits the criteria
+ * @param {Function} successors A function returning the next nodes to expand
+ * @param {Function} order A comparator function used for prioritising successors
+ * @param {Function} accept A function that returns true if the current node fits the criteria
  * @param {Object=} visited An object keeping track of nodes already searched
  * @returns {?Object} The first node accepted in order, or undefined if none
  */

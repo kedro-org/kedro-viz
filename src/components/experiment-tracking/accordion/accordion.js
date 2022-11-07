@@ -12,7 +12,7 @@ import './accordion.css';
  * @param {String|null} headingDetail Text to display on the top-level.
  * @param {Boolean} isCollapsed Control to collapse or expand the content.
  * @param {String|null} layout A secondary text string for additional context
- * @param {function} onCallback Fire a function on click from a parent.
+ * @param {Function} onCallback Fire a function on click from a parent.
  * @param {String} size Set the header font size.
  */
 const Accordion = ({
