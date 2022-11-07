@@ -71,7 +71,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         action.expandedIDs.length > modularPipelineState.expanded.length;
       let expandedIDs = action.expandedIDs;
 
-      if (isExpanding) {
+      if (isExpanding && modularPipelineState.ids.length > 0) {
         const expandedModularPipelines = expandedIDs.filter(
           (expandedID) => !modularPipelineState.expanded.includes(expandedID)
         );
