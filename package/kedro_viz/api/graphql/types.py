@@ -11,7 +11,6 @@ from strawberry.scalars import JSON
 
 from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup as TrackingDatasetGroupModel,
-    MetricPlotType as MetricPlotTypeModel,
 )
 
 
@@ -33,6 +32,11 @@ class TrackingDataset:
     dataset_name: str
     dataset_type: str
     run_ids: List[ID]
+
+
+@strawberry.type(description="Metric data")
+class MetricDataset:
+    data: JSON
 
 
 TrackingDatasetGroup = strawberry.enum(
@@ -70,8 +74,3 @@ class Version:
     installed: str
     is_outdated: bool
     latest: str
-
-
-MetricPlotType = strawberry.enum(
-    MetricPlotTypeModel, description="Plot type for metrics data"
-)
