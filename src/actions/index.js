@@ -221,13 +221,6 @@ export function toggleParametersHovered(hoveredParameters) {
   };
 }
 
-export function toggleParametersHovered(hoveredParameters) {
-  return {
-    type: TOGGLE_PARAMETERS_HOVERED,
-    hoveredParameters,
-  };
-}
-
 export const TOGGLE_MODULAR_PIPELINE_FOCUS_MODE =
   'TOGGLE_MODULAR_PIPELINE_FOCUS_MODE';
 
