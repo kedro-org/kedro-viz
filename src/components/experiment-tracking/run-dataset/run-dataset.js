@@ -38,10 +38,10 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
- * @param {boolean} props.enableShowChanges Are changes enabled or not.
- * @param {boolean} props.isSingleRun Indication to display a single run.
- * @param {string} props.pinnedRun ID of the pinned run.
- * @param {object} props.trackingData The experiment tracking run data.
+ * @param {Boolean} props.enableShowChanges Are changes enabled or not.
+ * @param {Boolean} props.isSingleRun Indication to display a single run.
+ * @param {String} props.pinnedRun ID of the pinned run.
+ * @param {Object} props.trackingData The experiment tracking run data.
  */
 const RunDataset = ({
   enableComparisonView,
@@ -128,12 +128,12 @@ const RunDataset = ({
 
 /**
  * Build the necessary markup used to display the run dataset.
- * @param {string} datasetKey The row label of the data.
+ * @param {String} datasetKey The row label of the data.
  * @param {array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
- * @param {boolean} isSingleRun Whether or not this is a single run.
- * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on
+ * @param {Boolean} isSingleRun Whether or not this is a single run.
+ * @param {Boolean} enableShowChanges Are changes enabled or not.
+ * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on
  * @param {function} setRunDatasetToShow callbak function to show runDataset
  * @param {function} setShowRunPlotsModal callbak function to show runplot modal
  */

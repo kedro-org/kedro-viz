@@ -14,7 +14,7 @@ import {
  * Finds positions for the given edges relative to their nodes.
  * Input nodes and edges are updated in-place.
  * Results are stored in the `points` property on edges.
- * @param {object} params The layout parameters
+ * @param {Object} params The layout parameters
  * @param {array} params.nodes The input nodes
  * @param {array} params.edges The input edges
  * @param {number} params.spaceX The minimum gap between a node and passing edges in X

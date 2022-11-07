@@ -6,8 +6,8 @@ import './search-list.css';
 /**
  * Handle Searching of List
  * @param {function} onUpdateSearchValue Event handler
- * @param {string} searchValue Search text
- * @param {string} theme Light/dark theme for SearchBar component
+ * @param {String} searchValue Search text
+ * @param {String} theme Light/dark theme for SearchBar component
  */
 export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
   const container = useRef(null);
@@ -15,7 +15,7 @@ export const SearchList = ({ onUpdateSearchValue, searchValue, theme }) => {
   /**
    * Focus search on CMD+F/CTRL+F, but only if not already focused, so that if
    * you hit the shortcut again you will receive the default browser behaviour
-   * @param {object} event Keydown event
+   * @param {Object} event Keydown event
    */
   const handleWindowKeyDown = (event) => {
     const isKeyF = event.key === 'f' || event.keyCode === 70;

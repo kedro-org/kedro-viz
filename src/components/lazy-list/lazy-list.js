@@ -7,11 +7,11 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
  * @param {number} total The total count of all items in the list
  * @param {function} children A `function(props)` rendering the list and items (see `childProps`)
  * @param {?number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
- * @param {?boolean} [lazy=true] Toggles the lazy functionality
- * @param {?boolean} [dispose=false] Toggles disposing items when they lose visibility
+ * @param {?Boolean} [lazy=true] Toggles the lazy functionality
+ * @param {?Boolean} [dispose=false] Toggles disposing items when they lose visibility
  * @param {?function} onChange Optional change callback
  * @param {?function} container Optional, default scroll container is `element.offsetParent`
- * @return {object} The rendered children
+ * @return {Object} The rendered children
  **/
 const LazyList = ({
   height,
@@ -193,7 +193,7 @@ export const rangeUnion = (rangeA, rangeB) => [
  * Returns true if the ranges have the same `start` and `end` values
  * @param {array} rangeA The first range `[start, end]`
  * @param {array} rangeB The second range `[start, end]`
- * @returns {boolean} True if ranges are equal else false
+ * @returns {Boolean} True if ranges are equal else false
  */
 export const rangeEqual = (rangeA, rangeB) =>
   rangeA[0] === rangeB[0] && rangeA[1] === rangeB[1];
@@ -293,8 +293,8 @@ export const thresholds = (total) =>
 
 /**
  * A hook that creates and manages an IntersectionObserver for the given element
- * @param {object} element A React.Ref from the target element
- * @param {object} options An IntersectionObserver options object
+ * @param {Object} element A React.Ref from the target element
+ * @param {Object} options An IntersectionObserver options object
  * @param {function} callback A function to call with IntersectionObserver changes
  */
 const useIntersection = (element, options, callback) => {

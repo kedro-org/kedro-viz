@@ -158,7 +158,7 @@ const Dropdown = (props) => {
 
   /**
    * Handler for closing a dropdown if a click occurred outside the dropdown.
-   * @param {object} e - event object
+   * @param {Object} e - event object
    */
   const _handleBodyClicked = (e) => {
     if (!dropdownRef.current.contains(e.target) && open) {
@@ -272,7 +272,7 @@ const Dropdown = (props) => {
   /**
    * Retrieve a reference to the dropdown DOM node (from the renderer component),
    * and assign it to a class-wide variable property.
-   * @param {object} el - The ref for the Dropdown container node
+   * @param {Object} el - The ref for the Dropdown container node
    */
   const _handleRef = (el) => {
     dropdownRef.current = el;

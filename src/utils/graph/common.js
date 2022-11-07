@@ -34,36 +34,36 @@ export const distance1d = (a, b) => Math.abs(a - b);
 
 /**
  * Returns the angle in radians between the points a and b relative to the X-axis about the origin
- * @param {object} a The first point
- * @param {object} b The second point
+ * @param {Object} a The first point
+ * @param {Object} b The second point
  * @returns {number} The angle
  */
 export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
 
 /**
  * Returns the left edge x-position of the node
- * @param {object} node The node
+ * @param {Object} node The node
  * @returns {number} The left edge position
  */
 export const nodeLeft = (node) => node.x - node.width * 0.5;
 
 /**
  * Returns the right edge x-position of the node
- * @param {object} node The node
+ * @param {Object} node The node
  * @returns {number} The right edge position
  */
 export const nodeRight = (node) => node.x + node.width * 0.5;
 
 /**
  * Returns the top edge y-position of the node
- * @param {object} node The node
+ * @param {Object} node The node
  * @returns {number} The top edge position
  */
 export const nodeTop = (node) => node.y - node.height * 0.5;
 
 /**
  * Returns the bottom edge y-position of the node
- * @param {object} node The node
+ * @param {Object} node The node
  * @returns {number} The bottom edge position
  */
 export const nodeBottom = (node) => node.y + node.height * 0.5;
@@ -106,9 +106,9 @@ export const groupByRow = (nodes) => {
  * If values are strings then `localeCompare` is used, otherwise values are subtracted
  * Compares the first pair of values and returns the difference if non equal,
  * otherwise ties are broken by comparing the subsequent pairs of values
- * @param {number|string} a Value to compare with `b`
- * @param {number|string} b Value to compare with `a`
- * @param {...number|string} values Any number of further pairs of values to compare as tie-breakers
+ * @param {number|String} a Value to compare with `b`
+ * @param {number|String} b Value to compare with `a`
+ * @param {...number|String} values Any number of further pairs of values to compare as tie-breakers
  * @returns {number} A standard signed comparator result
  */
 export const compare = (a, b, ...values) => {
@@ -118,9 +118,9 @@ export const compare = (a, b, ...values) => {
 
 /**
  * Returns the node with the position translated in-place
- * @param {object} node The node
- * @param {object} offset The translation vector
- * @returns {object} The node
+ * @param {Object} node The node
+ * @param {Object} offset The translation vector
+ * @returns {Object} The node
  */
 export const offsetNode = (node, offset) => {
   node.x = node.x - offset.x;
@@ -132,9 +132,9 @@ export const offsetNode = (node, offset) => {
 
 /**
  * Returns the edge with each point translated in-place
- * @param {object} edge The edge
- * @param {object} offset The translation vector
- * @returns {object} The edge
+ * @param {Object} edge The edge
+ * @param {Object} offset The translation vector
+ * @returns {Object} The edge
  */
 export const offsetEdge = (edge, offset) => {
   edge.points.forEach((point) => {
@@ -152,7 +152,7 @@ export const offsetEdge = (edge, offset) => {
  * @param {number} ay The start of the line segement y point
  * @param {number} bx The end of the line segement x point
  * @param {number} by The end of the line segement y point
- * @returns {object} An object with the closest point and both line segment points
+ * @returns {Object} An object with the closest point and both line segment points
  */
 export const nearestOnLine = (x, y, ax, ay, bx, by) => {
   const dx = bx - ax;

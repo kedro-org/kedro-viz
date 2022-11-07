@@ -3,8 +3,8 @@ import { globalToolbarWidth } from '../../config';
 
 /**
  * Handle onClick for the SVG/PNG download button
- * @param {string} format Must be 'svg' or 'png'
- * @param {string} theme light/dark theme
+ * @param {String} format Must be 'svg' or 'png'
+ * @param {String} theme light/dark theme
  * @param {Object} graphSize Graph width/height/margin
  * @param {function} mockFn Mock testing function stand-in for svg-crowbar
  * @return {Function} onClick handler

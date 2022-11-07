@@ -93,7 +93,7 @@ const randomUtils = () => {
   /**
    * Generate a random latin name
    * @param {number} numWords Number of words in the name
-   * @param {string} join The character(s) used to join each word
+   * @param {String} join The character(s) used to join each word
    */
   const getRandomName = (numWords, join = '_') =>
     getNumberArray(numWords)

@@ -12,10 +12,10 @@ import {
  * Finds positions for the given nodes relative to their edges.
  * Input nodes and edges are updated in-place.
  * Results are stored in the `x, y` properties on nodes.
- * @param {object} params The layout parameters
+ * @param {Object} params The layout parameters
  * @param {array} params.nodes The input nodes
  * @param {array} params.edges The input edges
- * @param {object=} params.layers The node layers if specified
+ * @param {Object=} params.layers The node layers if specified
  * @param {number} params.spaceX The minimum gap between nodes in X
  * @param {number} params.spaceY The minimum gap between nodes in Y
  * @param {number} params.spreadX Adjusts the gap for each node in X based on the number of connected edges it has
@@ -141,7 +141,7 @@ const createLayerConstraints = (nodes, layers) => {
 /**
  * Creates crossing constraints for the given edges.
  * @param {array} edges The input edges
- * @param {object} constants The constraint constants
+ * @param {Object} constants The constraint constants
  * @param {number} constants.spaceX The minimum gap between nodes in X
  * @returns {array} The constraints
  */
@@ -199,7 +199,7 @@ const createCrossingConstraints = (edges, constants) => {
  * - edges connected to single-degree nodes at either end
  * - edges connected to single-degree nodes at both ends
  * @param {array} edges The input edges
- * @returns {object} An object containing the constraints
+ * @returns {Object} An object containing the constraints
  */
 const createParallelConstraints = (edges) =>
   edges.map(({ sourceNode, targetNode }) => ({

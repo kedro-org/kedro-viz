@@ -37,9 +37,9 @@ const defaultOptions = {
  * and `points` properties on edges.
  * @param {array} nodes The input nodes
  * @param {array} edges The input edges
- * @param {object=} layers The node layers if specified
- * @param {object=} options The graph options
- * @returns {object} The generated graph
+ * @param {Object=} layers The node layers if specified
+ * @param {Object=} options The graph options
+ * @returns {Object} The generated graph
  */
 export const graph = (nodes, edges, layers, options = defaultOptions) => {
   addEdgeLinks(nodes, edges);
@@ -120,27 +120,27 @@ const addNearestLayers = (nodes, layers) => {
 
 /**
  * Returns the list of target nodes directly connected to the given node
- * @param {object} node The input node
+ * @param {Object} node The input node
  * @returns {array} The target nodes
  */
 const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
 /**
  * Comparator function for sorting nodes rank ascending
- * @param {object} nodeA The first input node
- * @param {object} nodeB The second input node
+ * @param {Object} nodeA The first input node
+ * @param {Object} nodeB The second input node
  * @returns {number} The signed difference
  */
 const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
 
 /**
  * Starting at the given node and expanding successors, returns the first node accepted in order
- * @param {object} node The starting node
+ * @param {Object} node The starting node
  * @param {function} successors A function returning the next nodes to expand
  * @param {function} order A comparator function used for prioritising successors
  * @param {function} accept A function that returns true if the current node fits the criteria
- * @param {object=} visited An object keeping track of nodes already searched
- * @returns {?object} The first node accepted in order, or undefined if none
+ * @param {Object=} visited An object keeping track of nodes already searched
+ * @returns {?Object} The first node accepted in order, or undefined if none
  */
 const findNodeBy = (node, successors, order, accept, visited) => {
   // If the current node is accepted then return it without further search
@@ -174,7 +174,7 @@ const findNodeBy = (node, successors, order, accept, visited) => {
  * Finds the region bounding the given nodes
  * @param {array} nodes The input nodes
  * @param {number} padding Additional padding around the bounds
- * @returns {object} The bounds
+ * @returns {Object} The bounds
  */
 const bounds = (nodes, padding) => {
   const size = {

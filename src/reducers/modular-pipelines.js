@@ -11,7 +11,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
 
   /**
    * Batch update tags from an array of tag IDs
-   * @param {string} key Tag action value prop
+   * @param {String} key Tag action value prop
    */
   const batchChanges = (key) =>
     action.modularPipelineIDs.reduce((result, modularPipelineID) => {

@@ -23,7 +23,7 @@ const MenuOption = ({
 
   /**
    * Event handler executed when the option is selected
-   * @param  {object} e The event object
+   * @param  {Object} e The event object
    * @return {function}   The event handler
    */
   const _handleClicked = (e) =>
