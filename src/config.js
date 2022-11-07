@@ -4,7 +4,7 @@ export const localStorageName = 'KedroViz';
 
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
-// value here, please also update their corresponding value in src/styles/_variables.scss
+// value here, please also update their corresponding value in src/styles/_variables.scss.
 export const globalToolbarWidth = 80;
 
 export const metaSidebarWidth = {
