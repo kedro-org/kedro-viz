@@ -103,7 +103,7 @@ const randomUtils = () => {
   /**
    * Randomly select a certain number (n) of items from an array (arr).
    * via https://stackoverflow.com/a/19270021/1651713
-   * @param {array} arr List from which to choose
+   * @param {Array} arr List from which to choose
    * @param {number} numItems Number of items to select
    */
   const getRandomSelection = (arr, numItems) => {

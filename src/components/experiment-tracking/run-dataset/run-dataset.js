@@ -129,7 +129,7 @@ const RunDataset = ({
 /**
  * Build the necessary markup used to display the run dataset.
  * @param {String} datasetKey The row label of the data.
- * @param {array} datasetValues A single dataset array from a run.
+ * @param {Array} datasetValues A single dataset array from a run.
  * @param {number} rowIndex The array index of the dataset data.
  * @param {Boolean} isSingleRun Whether or not this is a single run.
  * @param {Boolean} enableShowChanges Are changes enabled or not.
@@ -277,8 +277,8 @@ function buildDatasetDataMarkup(
 
 /**
  * Fill in missing run metrics if they don't match the number of runIds.
- * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
- * @param {array} runIds Array of strings of runIds.
+ * @param {Array} datasetValues Array of objects for a metric, e.g. r2_score.
+ * @param {Array} runIds Array of strings of runIds.
  * @returns Array of objects, the length of which matches the length
  * of the runIds.
  */

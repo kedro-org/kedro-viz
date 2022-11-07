@@ -15,8 +15,8 @@ import {
  * Input nodes and edges are updated in-place.
  * Results are stored in the `points` property on edges.
  * @param {Object} params The layout parameters
- * @param {array} params.nodes The input nodes
- * @param {array} params.edges The input edges
+ * @param {Array} params.nodes The input nodes
+ * @param {Array} params.edges The input edges
  * @param {number} params.spaceX The minimum gap between a node and passing edges in X
  * @param {number} params.spaceY The minimum gap between a node and passing edges in Y
  * @param {number} params.minPassageGap The minimum gap between two nodes in which an edge can pass in X

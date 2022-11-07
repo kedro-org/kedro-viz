@@ -171,7 +171,7 @@ const LazyList = ({
  * @param {number} end The end of the range
  * @param {number} min The range minimum
  * @param {number} max The range maximum
- * @returns {array} The clamped range
+ * @returns {Array} The clamped range
  */
 export const range = (start, end, min, max) => [
   Math.max(Math.min(start, max), min),
@@ -180,9 +180,9 @@ export const range = (start, end, min, max) => [
 
 /**
  * Returns the union of both ranges
- * @param {array} rangeA The first range `[start, end]`
- * @param {array} rangeB The second range `[start, end]`
- * @returns {array} The range union
+ * @param {Array} rangeA The first range `[start, end]`
+ * @param {Array} rangeB The second range `[start, end]`
+ * @returns {Array} The range union
  */
 export const rangeUnion = (rangeA, rangeB) => [
   Math.min(rangeA[0], rangeB[0]),
@@ -191,8 +191,8 @@ export const rangeUnion = (rangeA, rangeB) => [
 
 /**
  * Returns true if the ranges have the same `start` and `end` values
- * @param {array} rangeA The first range `[start, end]`
- * @param {array} rangeB The second range `[start, end]`
+ * @param {Array} rangeA The first range `[start, end]`
+ * @param {Array} rangeB The second range `[start, end]`
  * @returns {Boolean} True if ranges are equal else false
  */
 export const rangeEqual = (rangeA, rangeB) =>
@@ -207,7 +207,7 @@ export const rangeEqual = (rangeA, rangeB) =>
  * @param {number} buffer A number [0...1] as a % of the container to render additionally
  * @param {number} childTotal The total count of all children in the target (e.g. list row count)
  * @param {number} childHeight Height of a single child element (e.g. height of one list row)
- * @returns {array} The calculated range of visible items as `[start, end]`
+ * @returns {Array} The calculated range of visible items as `[start, end]`
  */
 const visibleRangeOf = (
   element,
@@ -284,7 +284,7 @@ const useRequestFrameOnce = (callback) => {
  * Generates an array of the form [0, ...n / total]
  * except where total is `0` where it returns `[0]`.
  * @param {number} total The total number of thresholds to create
- * @returns {array} The threshold array
+ * @returns {Array} The threshold array
  */
 export const thresholds = (total) =>
   total === 0

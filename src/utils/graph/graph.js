@@ -35,8 +35,8 @@ const defaultOptions = {
  * Input nodes and edges are updated in-place.
  * Results are stored as `x, y` properties on nodes
  * and `points` properties on edges.
- * @param {array} nodes The input nodes
- * @param {array} edges The input edges
+ * @param {Array} nodes The input nodes
+ * @param {Array} edges The input edges
  * @param {Object=} layers The node layers if specified
  * @param {Object=} options The graph options
  * @returns {Object} The generated graph
@@ -62,8 +62,8 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
 
 /**
  * Adds lists of source edges and target edges to each node in-place
- * @param {array} nodes The input nodes
- * @param {array} edges The input edges
+ * @param {Array} nodes The input nodes
+ * @param {Array} edges The input edges
  */
 export const addEdgeLinks = (nodes, edges) => {
   const nodeById = {};
@@ -84,8 +84,8 @@ export const addEdgeLinks = (nodes, edges) => {
 
 /**
  * Adds the nearest valid layer to each node whilst maintaining the correct layer order
- * @param {array} nodes The input nodes
- * @param {?array} layers The input layers
+ * @param {Array} nodes The input nodes
+ * @param {?Array} layers The input layers
  */
 const addNearestLayers = (nodes, layers) => {
   if (layers && layers.length > 0) {
@@ -121,7 +121,7 @@ const addNearestLayers = (nodes, layers) => {
 /**
  * Returns the list of target nodes directly connected to the given node
  * @param {Object} node The input node
- * @returns {array} The target nodes
+ * @returns {Array} The target nodes
  */
 const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
@@ -172,7 +172,7 @@ const findNodeBy = (node, successors, order, accept, visited) => {
 
 /**
  * Finds the region bounding the given nodes
- * @param {array} nodes The input nodes
+ * @param {Array} nodes The input nodes
  * @param {number} padding Additional padding around the bounds
  * @returns {Object} The bounds
  */

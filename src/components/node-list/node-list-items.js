@@ -14,7 +14,7 @@ export const isGroupType = (type) => isElementType(type) || isTagType(type);
 /**
  * Get a list of IDs of the visible nodes from all groups
  * @param {Object} nodeGroups Grouped lists of nodes by type
- * @return {array} List of node IDs
+ * @return {Array} List of node IDs
  */
 export const getNodeIDs = (nodeGroups) =>
   Object.values(nodeGroups).flatMap((nodes) => nodes.map((node) => node.id));
@@ -102,7 +102,7 @@ export const getFilteredTags = createSelector(
 /**
  * Return filtered/highlighted tag list items
  * @param {Object} filteredTags List of filtered tags
- * @return {array} Node list items
+ * @return {Array} Node list items
  */
 export const getFilteredTagItems = createSelector(
   [getFilteredTags, (state) => state.tagNodeCounts],
@@ -150,7 +150,7 @@ export const getFilteredElementTypes = createSelector(
 /**
  * Return filtered/highlighted element type items
  * @param {Object} filteredTags List of filtered element types
- * @param {array} nodeTypes List of node types
+ * @param {Array} nodeTypes List of node types
  * @return {Object} Element type items
  */
 export const getFilteredElementTypeItems = createSelector(
@@ -237,7 +237,7 @@ export const getFilteredNodeItems = createSelector(
 /**
  * Returns group items for each sidebar filter group defined in the sidebar config.
  * @param {Object} items List items by group type
- * @return {array} List of groups
+ * @return {Array} List of groups
  */
 export const getGroups = createSelector([(state) => state.items], (items) => {
   const groups = {};
@@ -268,7 +268,7 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
  * @param {Object} filteredNodeItems List of filtered nodes
  * @param {Object} filteredTagItems List of filtered tags
  * @param {Object} getFilteredElementTypeItems List of filtered element type items
- * @return {array} final list of all filtered items from the three filtered item sets
+ * @return {Array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
   [getFilteredNodeItems, getFilteredTagItems, getFilteredElementTypeItems],

@@ -13,8 +13,8 @@ import {
  * Input nodes and edges are updated in-place.
  * Results are stored in the `x, y` properties on nodes.
  * @param {Object} params The layout parameters
- * @param {array} params.nodes The input nodes
- * @param {array} params.edges The input edges
+ * @param {Array} params.nodes The input nodes
+ * @param {Array} params.edges The input edges
  * @param {Object=} params.layers The node layers if specified
  * @param {number} params.spaceX The minimum gap between nodes in X
  * @param {number} params.spaceY The minimum gap between nodes in Y
@@ -79,8 +79,8 @@ export const layout = ({
 
 /**
  * Creates row constraints for the given edges.
- * @param {array} edges The input edges
- * @returns {array} The constraints
+ * @param {Array} edges The input edges
+ * @returns {Array} The constraints
  */
 const createRowConstraints = (edges) =>
   edges.map((edge) => ({
@@ -91,9 +91,9 @@ const createRowConstraints = (edges) =>
 
 /**
  * Creates layer constraints for the given nodes and layers.
- * @param {array} nodes The input nodes
- * @param {array=} layers The input layers if any
- * @returns {array} The constraints
+ * @param {Array} nodes The input nodes
+ * @param {Array=} layers The input layers if any
+ * @returns {Array} The constraints
  */
 const createLayerConstraints = (nodes, layers) => {
   const layerConstraints = [];
@@ -140,10 +140,10 @@ const createLayerConstraints = (nodes, layers) => {
 
 /**
  * Creates crossing constraints for the given edges.
- * @param {array} edges The input edges
+ * @param {Array} edges The input edges
  * @param {Object} constants The constraint constants
  * @param {number} constants.spaceX The minimum gap between nodes in X
- * @returns {array} The constraints
+ * @returns {Array} The constraints
  */
 const createCrossingConstraints = (edges, constants) => {
   const { spaceX } = constants;
@@ -198,7 +198,7 @@ const createCrossingConstraints = (edges, constants) => {
  * Returns object with additional arrays that identify these special cases:
  * - edges connected to single-degree nodes at either end
  * - edges connected to single-degree nodes at both ends
- * @param {array} edges The input edges
+ * @param {Array} edges The input edges
  * @returns {Object} An object containing the constraints
  */
 const createParallelConstraints = (edges) =>
@@ -214,8 +214,8 @@ const createParallelConstraints = (edges) =>
 
 /**
  * Creates horizontal separation constraints for the given rows of nodes.
- * @param {array} rows The rows containing nodes
- * @returns {array} The constraints
+ * @param {Array} rows The rows containing nodes
+ * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, constants) => {
   const { spaceX } = constants;
@@ -262,8 +262,8 @@ const createSeparationConstraints = (rows, constants) => {
 /**
  * Adds additional spacing in Y relative to row density, see function `rowDensity` for definition.
  * Node positions are updated in-place
- * @param {array} edges The input edges
- * @param {array} rows The input rows of nodes
+ * @param {Array} edges The input edges
+ * @param {Array} rows The input rows of nodes
  * @param {number} spaceY The spacing between nodes in Y
  * @param {number} [scale=1.25] The amount of expansion to apply relative to row density
  * @param {number} [unit=0.25] The unit size for rounding expansion relative to spaceY
@@ -294,8 +294,8 @@ const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
  * Rows are determined by each edge's source and target node Y positions.
  * Intermediate row edges are assumed always vertical as a simplification, only the start end rows are measured.
  * Returns a list of values in `(0, 1)` where `0` means all edges on that row are vertical and `1` means all horizontal
- * @param {array} edges The input edges
- * @returns {array} The density of each row
+ * @param {Array} edges The input edges
+ * @returns {Array} The density of each row
  */
 const rowDensity = (edges) => {
   const rows = {};

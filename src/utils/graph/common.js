@@ -72,8 +72,8 @@ export const nodeBottom = (node) => node.y + node.height * 0.5;
  * Finds the rows formed by nodes given the their positions in Y.
  * The result is sorted in X and Y.
  * Adds a `row` property to each node in-place
- * @param {array} nodes The input nodes
- * @returns {array} The sorted rows of nodes
+ * @param {Array} nodes The input nodes
+ * @returns {Array} The sorted rows of nodes
  */
 export const groupByRow = (nodes) => {
   const rows = {};

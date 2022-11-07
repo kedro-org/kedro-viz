@@ -13,7 +13,7 @@ export const Flags = {
 
   /**
    * Returns an array of defined flag names
-   * @returns {array} The defined flag names
+   * @returns {Array} The defined flag names
    */
   names: () => Object.keys(flagsConfig),
 

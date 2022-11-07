@@ -115,7 +115,7 @@ class Pipeline {
 
   /**
    * Generate a random list of tags
-   * @returns {array} Tag name strings
+   * @returns {Array} Tag name strings
    */
   generateTags() {
     const tagCount = this.utils.randomNumber(MAX_TAG_COUNT);
@@ -128,7 +128,7 @@ class Pipeline {
 
   /**
    * Create list of nodes
-   * @returns {array} List of node objects
+   * @returns {Array} List of node objects
    */
   generateNodes() {
     const nodes = [];
@@ -241,7 +241,7 @@ class Pipeline {
 
   /**
    * Create a list of the pipelines that the node will be included in
-   * @returns {array} Node piplines
+   * @returns {Array} Node piplines
    */
   getNodePipelines() {
     return this.pipelines.reduce((pipelines, id, i) => {
@@ -254,7 +254,7 @@ class Pipeline {
 
   /**
    * Select a random number of tags from the list of tags
-   * @returns {array} List of tags
+   * @returns {Array} List of tags
    */
   getRandomTags() {
     return this.utils.getRandomSelection(
@@ -265,7 +265,7 @@ class Pipeline {
 
   /**
    * Gets a map of ranks to lists of nodes at that rank
-   * @returns {array} List of nodes
+   * @returns {Array} List of nodes
    */
   getNodesByRank() {
     const nodesByRank = {};
@@ -280,7 +280,7 @@ class Pipeline {
 
   /**
    * Create list of edges
-   * @returns {array} Edge objects
+   * @returns {Array} Edge objects
    */
   generateEdges() {
     const edges = [];
