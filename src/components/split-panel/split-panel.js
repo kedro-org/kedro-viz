@@ -5,13 +5,13 @@ import { useState, useRef } from 'react';
  * The state and props this function provides are expected to be applied these child elements to enable SplitPanel functionality.
  * See split-panel.test.js for a reference implementation.
  * @callback splitPanelRender
- * @param {object} state An object that contains a copy of the current split panel state and props intended for children
- * @param {boolean} state.isResizing Is `true` when the split is being actively moved, otherwise `false`
- * @param {number} state.split A number [0...1] as the current % split position
- * @param {object} state.props.container The props intended for the panel container element(s)
- * @param {object} state.props.panelA The props intended for the first panel descendent element(s)
- * @param {object} state.props.panelB The props intended for the second panel descendent element(s)
- * @param {object} state.props.handle The props intended for the handle descendent element(s)
+ * @param {Object} state An object that contains a copy of the current split panel state and props intended for children
+ * @param {Boolean} state.isResizing Is `true` when the split is being actively moved, otherwise `false`
+ * @param {Number} state.split A number [0...1] as the current % split position
+ * @param {Object} state.props.container The props intended for the panel container element(s)
+ * @param {Object} state.props.panelA The props intended for the first panel descendent element(s)
+ * @param {Object} state.props.panelB The props intended for the second panel descendent element(s)
+ * @param {Object} state.props.handle The props intended for the handle descendent element(s)
  **/
 
 /**
@@ -19,11 +19,11 @@ import { useState, useRef } from 'react';
  * Pass any React render function as this component's children and return your elements there.
  * See split-panel.test.js for a reference implementation.
  * @param {splitPanelRender} children Any React render function that returns elements including representing the container, panels, handle
- * @param {?number} [splitDefault=0.65] A number [0...1] as the default % split position
- * @param {?number} [splitMin=0] A number [0...1] as the minimum % split position
- * @param {?number} [splitMax=1] A number [0...1] as the maximum % split position
- * @param {?number} [keyboardStep=0.025] A number [0...1] as the % step to move split when using keyboard
- * @param {?string} [orientation='vertical'] Only 'vertical' currently supported
+ * @param {?Number} [splitDefault=0.65] A number [0...1] as the default % split position
+ * @param {?Number} [splitMin=0] A number [0...1] as the minimum % split position
+ * @param {?Number} [splitMax=1] A number [0...1] as the maximum % split position
+ * @param {?Number} [keyboardStep=0.025] A number [0...1] as the % step to move split when using keyboard
+ * @param {?String} [orientation='vertical'] Only 'vertical' currently supported
  **/
 export const SplitPanel = ({
   splitDefault = 0.65,

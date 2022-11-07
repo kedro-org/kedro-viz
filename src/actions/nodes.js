@@ -5,7 +5,7 @@ export const TOGGLE_NODE_CLICKED = 'TOGGLE_NODE_CLICKED';
 
 /**
  * Update the value of the currently-active clicked node
- * @param {string|null} nodeClicked The node's unique identifier
+ * @param {String|null} nodeClicked The node's unique identifier
  */
 export function toggleNodeClicked(nodeClicked) {
   return {
@@ -33,7 +33,7 @@ export const TOGGLE_NODE_HOVERED = 'TOGGLE_NODE_HOVERED';
 
 /**
  * Update the value of the currently-active hovered node
- * @param {string|null} nodeHovered The node's unique identifier
+ * @param {String|null} nodeHovered The node's unique identifier
  */
 export function toggleNodeHovered(nodeHovered) {
   return {
@@ -46,7 +46,7 @@ export const TOGGLE_NODE_DATA_LOADING = 'TOGGLE_NODE_DATA_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading True if pipeline is still loading
+ * @param {Boolean} loading True if pipeline is still loading
  */
 export function toggleNodeDataLoading(loading) {
   return {
@@ -70,8 +70,8 @@ export function addNodeMetadata(data) {
 
 /**
  * update node metadata on selection, loading new data if it has not been previously called
- * @param {string} nodeID node id of clicked node
- * @return {function} A promise that resolves when the data is loaded
+ * @param {String} nodeID node id of clicked node
+ * @return {Function} A promise that resolves when the data is loaded
  */
 export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {

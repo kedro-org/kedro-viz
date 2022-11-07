@@ -2,7 +2,7 @@ import { arrayToObject } from '../utils';
 
 /**
  * Create new default pipeline state instance
- * @return {object} state
+ * @return {Object} state
  */
 export const createInitialPipelineState = () => ({
   pipeline: {
@@ -106,8 +106,8 @@ const createEdgeID = (source, target) => [source, target].join('|');
 
 /**
  * Add a new pipeline
- * @param {string} pipeline.id - Unique ID
- * @param {string} pipeline.name - Pipeline name
+ * @param {String} pipeline.id - Unique ID
+ * @param {String} pipeline.name - Pipeline name
  */
 const addPipeline = (state) => (pipeline) => {
   const { id } = pipeline;
@@ -120,8 +120,8 @@ const addPipeline = (state) => (pipeline) => {
 
 /**
  * Add a new node if it doesn't already exist
- * @param {string} name - Default node name
- * @param {string} type - 'data' or 'task'
+ * @param {String} name - Default node name
+ * @param {String} type - 'data' or 'task'
  * @param {Array} tags - List of associated tags
  */
 const addNode = (state) => (node) => {
