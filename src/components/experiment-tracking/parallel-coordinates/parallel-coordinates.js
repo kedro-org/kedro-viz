@@ -37,6 +37,9 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
+  const unSelectedData = data.filter(
+    ([key, value]) => !selectedRuns.includes(key)
+  );
 
   const xScale = d3
     .scalePoint()
@@ -79,24 +82,22 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
   const ref = useD3(
     (svg) => {
-      const featureAxisG = svg
-        .selectAll('.feature')
-        .data(graphKeys)
-        .enter()
-        .append('g')
-        .attr('class', 'feature')
-        .attr('transform', (d) => 'translate(' + xScale(d) + ',0)');
-
-      featureAxisG.append('g').each(function (d) {
-        d3.select(this).call(yAxis[d]);
-      });
-
-      featureAxisG
-        .append('text')
-        .attr('class', 'headers')
-        .attr('text-anchor', 'middle')
-        .attr('y', padding / 2)
-        .text((d) => d);
+      // const featureAxisG = svg
+      //   .selectAll('.feature')
+      //   .data(graphKeys)
+      //   .enter()
+      //   .append('g')
+      //   .attr('class', 'feature')
+      //   .attr('transform', (d) => 'translate(' + xScale(d) + ',0)');
+      // featureAxisG.append('g').each(function (d) {
+      //   d3.select(this).call(yAxis[d]);
+      // });
+      // featureAxisG
+      //   .append('text')
+      //   .attr('class', 'headers')
+      //   .attr('text-anchor', 'middle')
+      //   .attr('y', padding / 2)
+      //   .text((d) => d);
     },
     [data.length]
   );
@@ -110,6 +111,15 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           width,
         }}
       >
+        {graphKeys.map((key) => (
+          <g className="feature" transform={`translate(${(xScale(key), 0)})`}>
+            <g>{d3.select(this).call(yAxis[key])}</g>
+            <text className="headers" textAnchor="middle" y={padding / 2}>
+              {key}
+            </text>
+          </g>
+        ))}
+
         <g className="active">
           {data.map(([id, value], i) => (
             <LinePath
@@ -135,7 +145,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           ))}
         </g>
 
-        {data.map(([id, values]) => (
+        {unSelectedData.map(([id, values]) => (
           <g className="ticks" id={id}>
             {values.map((value, i) => (
               <>
