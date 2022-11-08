@@ -121,12 +121,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           width,
         }}
       >
-        {/* {graphKeys.map((graph) => (
-          <g className="feature" transform={`translate(${xScale(graph)}, 0)`}>
-            <g>{d3.select(this).call(yAxis[graph])}</g>
-          </g>
-        ))} */}
-
         <g className="active">
           {data.map(([id, v], i) => (
             <LinePath
