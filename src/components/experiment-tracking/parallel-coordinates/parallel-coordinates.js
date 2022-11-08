@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import React, { useContext } from 'react';
 import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
@@ -47,19 +46,19 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const yScales = {};
 
   // for each metric, you draw a y-scale
-  graph.map(([k, v]) => {
-    yScales[k] = d3
+  graph.forEach(([key, value]) => {
+    yScales[key] = d3
       .scaleLinear()
       .domain([
-        Math.floor(Math.min(...v) - Math.min(...v) * buffer),
-        Math.ceil(Math.max(...v) + Math.max(...v) * buffer),
+        Math.floor(Math.min(...value) - Math.min(...value) * buffer),
+        Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
       ])
       .range([height - padding, padding]);
   });
 
   const yAxis = {};
-  Object.entries(yScales).map((x) => {
-    yAxis[x[0]] = d3.axisLeft(x[1]);
+  Object.entries(yScales).forEach(([key, value]) => {
+    yAxis[key] = d3.axisLeft(value);
   });
 
   const lineGenerator = d3.line().defined(function (d) {
@@ -111,9 +110,9 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         }}
       >
         <g className="active">
-          {data.map(([id, v], i) => (
+          {data.map(([id, value], i) => (
             <LinePath
-              d={linePath(v, i)}
+              d={linePath(value, i)}
               id={id}
               isHovered={hoveredElementId === id}
               key={i}
@@ -123,10 +122,9 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         </g>
 
         <g className="selected">
-          {selectedData.map(([id, v], i) => (
+          {selectedData.map(([id, value], i) => (
             <LinePath
-              d={linePath(v, i)}
-              // fill={'none'}
+              d={linePath(value, i)}
               id={id}
               isHovered={hoveredElementId === id}
               key={i}
@@ -162,7 +160,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
         {selectedData.map(([id, values], i) => (
           <g className="marker" id={id}>
-            {values.map((value, index) => {
+            {values.forEach((value, index) => {
               const transformX = xScale(graphKeys[index]);
               const transformY = yScales[graphKeys[index]](value);
               const rotate = selectedMarkerRotate[i];
