@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import classnames from 'classnames';
 import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
@@ -139,10 +140,15 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             {values.map((value, i) => (
               <>
                 <text
-                  className="text"
-                  x={xScale(graphKeys[i]) - 5}
+                  className={classnames('text', {
+                    'text--hovered': hoveredElementId === id,
+                  })}
+                  x={xScale(graphKeys[i]) + padding / 2}
                   y={yScales[graphKeys[i]](value)}
-                  style={{ textAnchor: 'end', transform: 'translate(-10,4)' }}
+                  style={{
+                    textAnchor: 'end',
+                    transform: 'translate(-10,4)',
+                  }}
                 >
                   {value}
                 </text>
@@ -160,33 +166,31 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
         {selectedData.map(([id, values], i) => (
           <g className="marker" id={id}>
-            {values.forEach((value, index) => {
+            {values.map((value, index) => {
               const transformX = xScale(graphKeys[index]);
               const transformY = yScales[graphKeys[index]](value);
               const rotate = selectedMarkerRotate[i];
 
-              if (value !== null) {
-                return (
-                  <>
-                    <path
-                      d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
-                      transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
-                      stroke={selectedMarkerColors[i]}
-                    ></path>
-                    <text
-                      className="text"
-                      x={xScale(graphKeys[index]) - 5}
-                      y={yScales[graphKeys[index]](value)}
-                      style={{
-                        textAnchor: 'end',
-                        transform: 'translate(-10,4)',
-                      }}
-                    >
-                      {value}
-                    </text>
-                  </>
-                );
-              }
+              return (
+                <>
+                  <path
+                    d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
+                    transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
+                    stroke={selectedMarkerColors[i]}
+                  ></path>
+                  <text
+                    className="text"
+                    x={xScale(graphKeys[index]) - 5}
+                    y={yScales[graphKeys[index]](value)}
+                    style={{
+                      textAnchor: 'end',
+                      transform: 'translate(-10,4)',
+                    }}
+                  >
+                    {value}
+                  </text>
+                </>
+              );
             })}
           </g>
         ))}

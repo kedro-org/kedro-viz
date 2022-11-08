@@ -1,22 +1,32 @@
+@use '../../../styles/variables' as colors;
+
+%active {
+  stroke-opacity: 0.4;
+  stroke: #{colors.$grey-900};
+}
+
+%hovered {
+  fill: #{colors.$white-0};
+  opacity: 1;
+}
+
 .parallelCoordinates {
   margin: 2em;
-  //   background-color: #000f17;
   font-family: sans-serif;
 }
 
 g.active path {
   fill: none;
-  stroke: #132631;
+  stroke: #{colors.$slate-500};
   stroke-linecap: 'round';
 }
 
 g.selected path {
   fill: none;
-  /*   stroke:#0084B2; */
 }
 
 text {
-  fill: #97a0a6;
+  fill: #{colors.$grey-500};
 }
 
 .headers {
@@ -25,21 +35,21 @@ text {
 }
 
 .domain {
-  stroke: #4c5b64;
+  stroke: #{colors.$grey-500};
 }
 
 .tick line {
-  stroke: #4c5b64;
+  stroke: #{colors.$grey-500};
 }
 
 .tick:nth-last-child(1) text {
   visibility: visible;
-  fill: #dfe2e4;
+  fill: #{colors.$white-500};
 }
 
 .tick:nth-child(2) text {
   visibility: visible;
-  fill: #dfe2e4;
+  fill: #{colors.$white-500};
 }
 
 .tick {
@@ -47,22 +57,28 @@ text {
 }
 
 .marker path {
-  fill: #000f17;
+  fill: #{colors.$blue-900};
 }
 
 .ticks .text {
+  @extend %active;
+
   font-size: 10px;
-  fill: #4c5b64;
-  opacity: 0.4;
+}
+
+.ticks .text--hovered {
+  @extend %hovered;
+
+  font-size: 12px;
 }
 
 .ticks .line {
-  stroke: #4c5b64;
-  stroke-opacity: 0.4;
+  @extend %active;
 }
 
 .marker .text {
-  fill: white;
-  font-size: 10px;
+  @extend %hovered;
+
+  font-size: 12px;
   font-weight: 600;
 }
