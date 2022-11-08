@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import * as d3 from 'd3';
+import React from 'react';
+import { useD3 } from '../../../../utils/hooks/use-d3';
 
 export const LinePath = ({
   d,
@@ -10,8 +10,6 @@ export const LinePath = ({
   setHoveredId,
   stroke,
 }) => {
-  const lineRef = useRef();
-
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
       el.style('stroke', `white`);
@@ -21,9 +19,7 @@ export const LinePath = ({
     }
   };
 
-  useEffect(() => {
-    let el = d3.select(lineRef.current);
-
+  const ref = useD3((el) => {
     if (!selected) {
       el.on('mouseover', () => {
         setHoveredId(id);
@@ -50,7 +46,7 @@ export const LinePath = ({
       fill={fill}
       id={id}
       key={id}
-      ref={lineRef}
+      ref={ref}
       stroke={stroke}
     ></path>
   );
