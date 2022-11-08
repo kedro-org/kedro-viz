@@ -77,17 +77,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return lineGenerator(points);
   };
 
-  const lineSelectedPath = function (d) {
-    let points = d.map((x, i) => {
-      if (x !== null) {
-        return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
-      } else {
-        return null;
-      }
-    });
-    return lineGenerator(points);
-  };
-
   const ref = useD3(
     (svg) => {
       const featureAxisG = svg
@@ -136,8 +125,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         <g className="selected">
           {selectedData.map(([id, v], i) => (
             <LinePath
-              d={lineSelectedPath(v, i)}
-              fill={'none'}
+              d={linePath(v, i)}
+              // fill={'none'}
               id={id}
               isHovered={hoveredElementId === id}
               key={i}
