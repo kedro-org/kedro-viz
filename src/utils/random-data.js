@@ -46,7 +46,7 @@ class Pipeline {
 
   /**
    * Create the pipelines array
-   * @returns {number} Rank count total
+   * @returns {Number} Rank count total
    */
   generatePipelines() {
     const pipelines = ['Default'];
@@ -77,7 +77,7 @@ class Pipeline {
   /**
    * Get the number of ranks (i.e. horizontal bands)
    * Odd ranks are data, even are task
-   * @returns {number} Rank count total
+   * @returns {Number} Rank count total
    */
   getRankCount() {
     let rankCount = this.utils.randomNumberBetween(
@@ -93,7 +93,7 @@ class Pipeline {
 
   /**
    * Randomly determine the layer for each rank
-   * @returns {object} Layers by rank
+   * @returns {Object} Layers by rank
    */
   getRankLayers() {
     const layerSize = arrayToObject(LAYERS, () => 0);
@@ -115,7 +115,7 @@ class Pipeline {
 
   /**
    * Generate a random list of tags
-   * @returns {array} Tag name strings
+   * @returns {Array} Tag name strings
    */
   generateTags() {
     const tagCount = this.utils.randomNumber(MAX_TAG_COUNT);
@@ -128,7 +128,7 @@ class Pipeline {
 
   /**
    * Create list of nodes
-   * @returns {array} List of node objects
+   * @returns {Array} List of node objects
    */
   generateNodes() {
     const nodes = [];
@@ -144,7 +144,7 @@ class Pipeline {
 
   /**
    * Return a random count of nodes for a rank
-   * @returns {number} rank node count
+   * @returns {Number} rank node count
    */
   getRankNodeCount() {
     return Math.min(
@@ -155,8 +155,8 @@ class Pipeline {
 
   /**
    * Determine a node's type based on its rank
-   * @param {number} rank Rank number
-   * @returns {string} Node type (task/data/parameters)
+   * @param {Number} rank Rank number
+   * @returns {String} Node type (task/data/parameters)
    */
   getType(node) {
     if (node.rank % 2) {
@@ -172,9 +172,9 @@ class Pipeline {
 
   /**
    * Create a node datum object.
-   * @param {number} i Node index within its rank
-   * @param {number} initialRank Rank index
-   * @returns {object} Node object
+   * @param {Number} i Node index within its rank
+   * @param {Number} initialRank Rank index
+   * @returns {Object} Node object
    */
 
   createNode(i, initialRank) {
@@ -197,8 +197,8 @@ class Pipeline {
 
   /**
    * Create a new node name of up to 10 words
-   * @param {string} Node type (task/data/parameters)
-   * @returns {string} Node name
+   * @param {String} Node type (task/data/parameters)
+   * @returns {String} Node name
    */
   getNodeName(type) {
     const name = this.utils.getRandomName(this.utils.randomNumber(10), ' ');
@@ -207,7 +207,7 @@ class Pipeline {
 
   /**
    * Generate node metadata panel info
-   * @param {object} node A single node object
+   * @param {Object} node A single node object
    */
   getNodeMetaData(node) {
     const { getRandomName, randomNumber } = this.utils;
@@ -241,7 +241,7 @@ class Pipeline {
 
   /**
    * Create a list of the pipelines that the node will be included in
-   * @returns {array} Node piplines
+   * @returns {Array} Node piplines
    */
   getNodePipelines() {
     return this.pipelines.reduce((pipelines, id, i) => {
@@ -254,7 +254,7 @@ class Pipeline {
 
   /**
    * Select a random number of tags from the list of tags
-   * @returns {array} List of tags
+   * @returns {Array} List of tags
    */
   getRandomTags() {
     return this.utils.getRandomSelection(
@@ -265,7 +265,7 @@ class Pipeline {
 
   /**
    * Gets a map of ranks to lists of nodes at that rank
-   * @returns {array} List of nodes
+   * @returns {Array} List of nodes
    */
   getNodesByRank() {
     const nodesByRank = {};
@@ -280,7 +280,7 @@ class Pipeline {
 
   /**
    * Create list of edges
-   * @returns {array} Edge objects
+   * @returns {Array} Edge objects
    */
   generateEdges() {
     const edges = [];
@@ -336,7 +336,7 @@ class Pipeline {
 
   /**
    * Select only nodes with at least the minimum required connected nodes
-   * @returns {object} Filtered nodes
+   * @returns {Object} Filtered nodes
    */
   activeNodes() {
     const nodes = {};
@@ -360,7 +360,7 @@ class Pipeline {
 
   /**
    * Select only used tags
-   * @returns {object} Filtered tags
+   * @returns {Object} Filtered tags
    */
   activeTags() {
     return this.nodes
@@ -371,7 +371,7 @@ class Pipeline {
 
   /**
    * Select only used edges
-   * @returns {object} Filtered edges
+   * @returns {Object} Filtered edges
    */
   activeEdges() {
     const visibleNodes = arrayToObject(
@@ -438,7 +438,7 @@ class Pipeline {
 
   /**
    * Gets the complete pipeline data
-   * @returns {object} The pipeline data
+   * @returns {Object} The pipeline data
    */
   all() {
     return {

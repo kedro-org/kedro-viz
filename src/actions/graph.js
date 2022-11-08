@@ -5,7 +5,7 @@ export const TOGGLE_GRAPH_LOADING = 'TOGGLE_GRAPH_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading
+ * @param {Boolean} loading
  */
 export function toggleLoading(loading) {
   return {
@@ -31,7 +31,7 @@ export function updateGraph(graph) {
  * Assign layout engine to use based on the newgraph
  * @param {Object} instance Worker parent instance
  * @param {Object} state A subset of main state
- * @return {function} Promise function
+ * @return {Function} Promise function
  */
 const layout = (instance, state) => instance.graphNew(state);
 
@@ -42,7 +42,7 @@ const layoutWorker = preventWorkerQueues(worker, layout);
  * Async action to calculate graph layout in a web worker
  * whiled displaying a loading spinner
  * @param {Object} graphState A subset of main state
- * @return {function} A promise that resolves when the calculation is done
+ * @return {Function} A promise that resolves when the calculation is done
  */
 export function calculateGraph(graphState) {
   if (!graphState) {

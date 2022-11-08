@@ -7,7 +7,7 @@ import { settings, sidebarWidth } from '../config';
 /**
  * Create new default state instance for properties that aren't overridden
  * when the pipeline is reset with new data via the App component's data prop
- * @return {object} state
+ * @return {Object} state
  */
 export const createInitialState = () => ({
   chartSize: {},
@@ -47,8 +47,8 @@ export const createInitialState = () => ({
 /**
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
- * @param {object} state Initial/extant state
- * @return {object} Combined state from localStorage
+ * @param {Object} state Initial/extant state
+ * @return {Object} Combined state from localStorage
  */
 export const mergeLocalStorage = (state) => {
   const localStorageState = loadState();
@@ -67,8 +67,8 @@ export const mergeLocalStorage = (state) => {
  * because it can be run both on initial state load and again later on.
  * The applyFixes part should only ever be run once, on first load.
  * Exactly when it runs depends on whether the data is loaded asynchronously or not.
- * @param {object} data Data prop passed to App component
- * @param {boolean} applyFixes Whether to override initialState
+ * @param {Object} data Data prop passed to App component
+ * @param {Boolean} applyFixes Whether to override initialState
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
@@ -86,8 +86,8 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
- * @param {object} props Props passed to App component
- * @return {object} Updated initial state
+ * @param {Object} props Props passed to App component
+ * @return {Object} Updated initial state
  */
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
@@ -114,8 +114,8 @@ export const prepareNonPipelineState = (props) => {
  * Configure the redux store's initial state, by merging default values
  * with normalised pipeline data and localStorage.
  * If parameters flag is set to true, then disable parameters on initial load
- * @param {object} props App component props
- * @return {object} Initial state
+ * @param {Object} props App component props
+ * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);

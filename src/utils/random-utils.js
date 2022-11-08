@@ -3,7 +3,7 @@ import seedrandom from 'seedrandom';
 /**
  * Generate a pseudo-random UUID
  * via https://stackoverflow.com/a/1349426/1651713
- * @param {number} length Hash/ID length
+ * @param {Number} length Hash/ID length
  * @return string
  */
 export const generateHash = (length) => {
@@ -48,7 +48,7 @@ export const getSeedFromURL = () => {
 
 /**
  * Get an array of numbers
- * @param {number} length Length of the array
+ * @param {Number} length Length of the array
  */
 export const getNumberArray = (length) => Array.from(Array(length).keys());
 
@@ -67,20 +67,20 @@ const randomUtils = () => {
 
   /**
    * Get a random number between 0 to n-1, inclusive
-   * @param {number} max Max number
+   * @param {Number} max Max number
    */
   const randomIndex = (max) => Math.floor(random() * max);
 
   /**
    * Get a random number between 1 to n, inclusive
-   * @param {number} max Max number
+   * @param {Number} max Max number
    */
   const randomNumber = (max) => Math.ceil(random() * max);
 
   /**
    * Get a random number between min and max, inclusive
-   * @param {number} (min) Min number
-   * @param {number} (max) Max number
+   * @param {Number} (min) Min number
+   * @param {Number} (max) Max number
    */
   const randomNumberBetween = (min, max) => randomNumber(max - min) + min;
 
@@ -92,8 +92,8 @@ const randomUtils = () => {
 
   /**
    * Generate a random latin name
-   * @param {number} numWords Number of words in the name
-   * @param {string} join The character(s) used to join each word
+   * @param {Number} numWords Number of words in the name
+   * @param {String} join The character(s) used to join each word
    */
   const getRandomName = (numWords, join = '_') =>
     getNumberArray(numWords)
@@ -103,8 +103,8 @@ const randomUtils = () => {
   /**
    * Randomly select a certain number (n) of items from an array (arr).
    * via https://stackoverflow.com/a/19270021/1651713
-   * @param {array} arr List from which to choose
-   * @param {number} numItems Number of items to select
+   * @param {Array} arr List from which to choose
+   * @param {Number} numItems Number of items to select
    */
   const getRandomSelection = (arr, numItems) => {
     const result = new Array(numItems);

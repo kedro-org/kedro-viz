@@ -5,6 +5,7 @@ import Dropdown from '../ui/dropdown';
 import MenuOption from '../ui/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './pipeline-list.css';
 
 /**
@@ -20,6 +21,8 @@ export const PipelineList = ({
   prettyName,
   onToggleOpen,
 }) => {
+  const { toFlowchartPage } = useGeneratePathname();
+
   if (!pipeline.ids.length && !asyncDataSource) {
     return null;
   }
@@ -30,7 +33,11 @@ export const PipelineList = ({
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}
-        onChanged={onUpdateActivePipeline}
+        onChanged={(value) => {
+          onUpdateActivePipeline(value);
+          // Reset the URL to '/' when switching between different view
+          toFlowchartPage();
+        }}
         defaultText={
           prettyName
             ? pipeline.name[pipeline.active]
