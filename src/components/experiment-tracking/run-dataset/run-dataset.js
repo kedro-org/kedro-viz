@@ -38,12 +38,17 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
+ * @param {String} props.activeTab The selected tab (Overview || Plots).
+ * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on.
  * @param {Boolean} props.enableShowChanges Are changes enabled or not.
  * @param {Boolean} props.isSingleRun Indication to display a single run.
  * @param {String} props.pinnedRun ID of the pinned run.
+ * @param {Boolean} props.showLoader Whether to show the loading component.
  * @param {Object} props.trackingData The experiment tracking run data.
+ * @param {String} props.theme The currently-selected light or dark theme.
  */
 const RunDataset = ({
+  activeTab,
   enableComparisonView,
   enableShowChanges,
   isSingleRun,
@@ -59,69 +64,92 @@ const RunDataset = ({
   }
 
   return (
-    <div className="details-dataset">
-      {Object.keys(trackingData).map((group) => {
-        return (
-          <Accordion
-            className={classnames(
-              'details-dataset__accordion',
-              'details-dataset__accordion-wrapper',
-              {
-                'details-dataset__accordion-wrapper-comparison-view':
-                  enableComparisonView,
-              }
-            )}
-            headingClassName="details-dataset__accordion-header"
-            heading={group}
-            key={group}
-            layout="left"
-            size="large"
-          >
-            {trackingData[group].map((dataset) => {
-              const { data, datasetType, datasetName, runIds } = dataset;
-              return (
-                <Accordion
-                  className="details-dataset__accordion"
-                  heading={datasetName}
-                  headingClassName="details-dataset__accordion-header"
-                  key={datasetName}
-                  layout="left"
-                  size="medium"
-                >
-                  {Object.keys(data)
-                    .sort((a, b) => {
-                      return a.localeCompare(b);
-                    })
-                    .map((key, rowIndex) => {
-                      const updatedDatasetValues = fillEmptyMetrics(
-                        dataset.data[key],
-                        runIds
-                      );
-                      const runDataWithPin = resolveRunDataWithPin(
-                        updatedDatasetValues,
-                        pinnedRun
-                      );
-
-                      return buildDatasetDataMarkup(
-                        key,
-                        runDataWithPin,
-                        datasetType,
-                        rowIndex,
-                        isSingleRun,
-                        enableComparisonView,
-                        enableShowChanges,
-                        setRunDatasetToShow,
-                        setShowRunPlotsModal,
-                        showLoader,
-                        theme
-                      );
-                    })}
-                </Accordion>
-              );
-            })}
-          </Accordion>
-        );
+    <div
+      className={classnames('details-dataset', {
+        'details-dataset--not-overview': activeTab !== 'Overview',
       })}
+    >
+      {Object.keys(trackingData)
+        .filter((group) => {
+          if (activeTab === 'Plots' && group === activeTab) {
+            return true;
+          }
+
+          if (activeTab !== 'Plots' && group !== 'Plots') {
+            return true;
+          }
+
+          return false;
+        })
+        .map((group) => {
+          return (
+            <Accordion
+              className={classnames(
+                'details-dataset__accordion',
+                'details-dataset__accordion-wrapper',
+                {
+                  'details-dataset__accordion-wrapper-comparison-view':
+                    enableComparisonView,
+                }
+              )}
+              heading={group}
+              headingClassName={classnames(
+                'details-dataset__accordion-header',
+                {
+                  'details-dataset__accordion-header--hidden':
+                    group === 'Plots',
+                }
+              )}
+              key={group}
+              layout="left"
+              size="large"
+            >
+              {trackingData[group].map((dataset) => {
+                const { data, datasetType, datasetName, runIds } = dataset;
+
+                return (
+                  <Accordion
+                    className="details-dataset__accordion"
+                    heading={datasetName}
+                    headingClassName="details-dataset__accordion-header"
+                    key={datasetName}
+                    layout="left"
+                    size="medium"
+                  >
+                    {Object.keys(data)
+                      .sort((a, b) => {
+                        return a.localeCompare(b);
+                      })
+                      .map((key, rowIndex) => {
+                        const updatedDatasetValues = fillEmptyMetrics(
+                          dataset.data[key],
+                          runIds
+                        );
+                        const runDataWithPin = resolveRunDataWithPin(
+                          updatedDatasetValues,
+                          pinnedRun
+                        );
+
+                        return buildDatasetDataMarkup(
+                          key,
+                          runDataWithPin,
+                          datasetType,
+                          rowIndex,
+                          isSingleRun,
+                          enableComparisonView,
+                          enableShowChanges,
+                          setRunDatasetToShow,
+                          setShowRunPlotsModal,
+                          showLoader,
+                          theme
+                        );
+                      })}
+                  </Accordion>
+                );
+              })}
+            </Accordion>
+          );
+        })}
     </div>
   );
 };
@@ -133,9 +161,9 @@ const RunDataset = ({
  * @param {Number} rowIndex The array index of the dataset data.
  * @param {Boolean} isSingleRun Whether or not this is a single run.
  * @param {Boolean} enableShowChanges Are changes enabled or not.
- * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on
- * @param {Function} setRunDatasetToShow callbak function to show runDataset
- * @param {Function} setShowRunPlotsModal callbak function to show runplot modal
+ * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on.
+ * @param {Function} setRunDatasetToShow Callback function to show runDataset.
+ * @param {Function} setShowRunPlotsModal Callback function to show RunPlot modal.
  */
 function buildDatasetDataMarkup(
   datasetKey,

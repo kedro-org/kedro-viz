@@ -407,11 +407,11 @@ class Pipeline {
         node.rank = rank;
         node.type = this.getType(node);
         node.name = this.getNodeName(node.type);
-        node.full_name =  //eslint-disable-line camelcase
-        `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
-          /\s/g,
-          '_'
-        );
+        node.full_name = //eslint-disable-line camelcase
+          `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
+            /\s/g,
+            '_'
+          );
         this.getNodeMetaData(node);
       }
     }
