@@ -29,18 +29,6 @@ text {
   fill: #{colors.$grey-500};
 }
 
-.feature--hovered {
-  .domain {
-    stroke: #{colors.$white-0};
-  }
-
-  .headers {
-    cursor: pointer;
-
-    fill: #{colors.$white-0};
-  }
-}
-
 .headers {
   fill: #{colors.$white-900};
   font-size: 12px;
@@ -66,6 +54,18 @@ text {
 
 .tick {
   visibility: hidden;
+}
+
+.feature--hovered {
+  .domain {
+    stroke: #{colors.$white-0};
+  }
+
+  .headers {
+    cursor: pointer;
+
+    fill: #{colors.$white-0};
+  }
 }
 
 .marker path {

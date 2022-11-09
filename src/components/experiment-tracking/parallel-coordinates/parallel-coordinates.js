@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import classnames from 'classnames';
-import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 
@@ -86,10 +85,9 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     const axisG = d3.selectAll('.feature');
 
     if (axisG) {
-      graphKeys.map((key) => {
-        axisG.append('g').each(function () {
-          d3.select(this).call(yAxis[key]);
-        });
+      axisG.append('g').each(function (each, index) {
+        const key = graphKeys[index];
+        d3.select(this).call(yAxis[key]);
       });
     }
   }, [graphKeys, yAxis]);
@@ -146,7 +144,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           ))}
         </g>
 
-        {unSelectedData.map(([id, values]) => (
+        {graph.map(([id, values]) => (
           <g className="ticks" id={id}>
             {values.map((value, i) => (
               <>
@@ -154,8 +152,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
                   className={classnames('text', {
                     'text--hovered': hoveredElementId === id,
                   })}
-                  x={xScale(graphKeys[i]) + padding / 2}
-                  y={yScales[graphKeys[i]](value)}
+                  x={xScale(id) + padding / 2}
+                  y={yScales[id](value)}
                   style={{
                     textAnchor: 'end',
                     transform: 'translate(-10,4)',
@@ -165,10 +163,10 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
                 </text>
                 <line
                   className="line"
-                  x1={xScale(graphKeys[i])}
-                  y1={yScales[graphKeys[i]](value)}
-                  x2={xScale(graphKeys[i]) - 4}
-                  y2={yScales[graphKeys[i]](value)}
+                  x1={xScale(id)}
+                  y1={yScales[id](value)}
+                  x2={xScale(id) - 4}
+                  y2={yScales[id](value)}
                 ></line>
               </>
             ))}
