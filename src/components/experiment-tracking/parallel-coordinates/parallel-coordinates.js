@@ -38,9 +38,11 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
-  const unSelectedData = data.filter(
-    ([key, value]) => !selectedRuns.includes(key)
-  );
+
+  const selectedValues = [];
+  selectedData.map(([id, values]) => {
+    return values.map((value) => selectedValues.push(value));
+  });
 
   const xScale = d3
     .scalePoint()
@@ -146,30 +148,34 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
         {graph.map(([id, values]) => (
           <g className="ticks" id={id}>
-            {values.map((value, i) => (
-              <>
-                <text
-                  className={classnames('text', {
-                    'text--hovered': hoveredElementId === id,
-                  })}
-                  x={xScale(id) + padding / 2}
-                  y={yScales[id](value)}
-                  style={{
-                    textAnchor: 'end',
-                    transform: 'translate(-10,4)',
-                  }}
-                >
-                  {value}
-                </text>
-                <line
-                  className="line"
-                  x1={xScale(id)}
-                  y1={yScales[id](value)}
-                  x2={xScale(id) - 4}
-                  y2={yScales[id](value)}
-                ></line>
-              </>
-            ))}
+            {values.map((value, index) => {
+              if (!selectedValues.includes(value)) {
+                return (
+                  <>
+                    <text
+                      className={classnames('text', {
+                        'text--hovered': hoveredElementId === id,
+                      })}
+                      x={xScale(id) + padding / 2}
+                      y={yScales[id](value)}
+                      style={{
+                        textAnchor: 'end',
+                        transform: 'translate(-10,4)',
+                      }}
+                    >
+                      {value}
+                    </text>
+                    <line
+                      className="line"
+                      x1={xScale(id)}
+                      y1={yScales[id](value)}
+                      x2={xScale(id) - 4}
+                      y2={yScales[id](value)}
+                    ></line>
+                  </>
+                );
+              }
+            })}
           </g>
         ))}
 
