@@ -16,8 +16,8 @@ export const arrayToObject = (array, callback) => {
 
 /**
  * Determine the endpoint URL for loading different data types
- * @param {string} type Data type
- * @param {string=} id Endpoint identifier e.g. pipeline ID
+ * @param {String} type Data type
+ * @param {String=} id Endpoint identifier e.g. pipeline ID
  */
 export const getUrl = (type, id) => {
   switch (type) {
@@ -41,7 +41,7 @@ export const getUrl = (type, id) => {
 /**
  * Filter duplicate values from an array
  * @param {any} d Datum
- * @param {number} i Index
+ * @param {Number} i Index
  * @param {Array} arr The array to remove duplicate values from
  */
 export const unique = (d, i, arr) => arr.indexOf(d) === i;
@@ -50,9 +50,9 @@ export const unique = (d, i, arr) => arr.indexOf(d) === i;
  * Returns true if any of the given props are different between given objects.
  * Only shallow changes are detected.
  * @param {Array} props The prop names to check
- * @param {object} objectA The first object
- * @param {object} objectB The second object
- * @returns {boolean} True if any prop changed else false
+ * @param {Object} objectA The first object
+ * @param {Object} objectB The second object
+ * @returns {Boolean} True if any prop changed else false
  */
 export const changed = (props, objectA, objectB) => {
   return (
@@ -62,9 +62,9 @@ export const changed = (props, objectA, objectB) => {
 
 /**
  * Replace any parts of a string that match the keys in the toReplace object
- * @param {string} str The string to check
- * @param {object} toReplace The object of strings to replace and their replacements
- * @returns {string} The string with or without replaced values
+ * @param {String} str The string to check
+ * @param {Object} toReplace The object of strings to replace and their replacements
+ * @returns {String} The string with or without replaced values
  */
 export const replaceMatches = (str, toReplace) => {
   if (str?.length > 0) {

@@ -10,7 +10,7 @@ const formatTimestamp = (timestamp) =>
  * Kedro uses this format VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
  * So we need to do some string manipulation to get it to this formatted
  * version: 2021-11-08T18:31:01.171Z
- * @param {string} timestamp The timestamp to be converted
+ * @param {String} timestamp The timestamp to be converted
  * @returns A human-readable from-now date
  */
 export const toHumanReadableTime = (timestamp) => {
@@ -22,7 +22,7 @@ export const toHumanReadableTime = (timestamp) => {
  * Kedro uses this format VERSION_FORMAT = "%Y-%m-%dT%H.%M.%S.%fZ"
  * So we need to do some string manipulation to get it to this formatted
  * version: 2021-11-08T18:31:01.171Z
- * @param {array} runIds The runID which adopts the same format as the timestamp
+ * @param {Array} runIds The runID which adopts the same format as the timestamp
  * @returns a sorted list of runIDs according to ascending time
  */
 export const sortRunByTime = (runIds) => {

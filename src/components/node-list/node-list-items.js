@@ -13,17 +13,17 @@ export const isGroupType = (type) => isElementType(type) || isTagType(type);
 
 /**
  * Get a list of IDs of the visible nodes from all groups
- * @param {object} nodeGroups Grouped lists of nodes by type
- * @return {array} List of node IDs
+ * @param {Object} nodeGroups Grouped lists of nodes by type
+ * @return {Array} List of node IDs
  */
 export const getNodeIDs = (nodeGroups) =>
   Object.values(nodeGroups).flatMap((nodes) => nodes.map((node) => node.id));
 
 /**
  * Add a new highlightedLabel field to each of the node objects
- * @param {object} nodeGroups Grouped lists of nodes by type
- * @param {string} searchValue Search term
- * @return {object} The grouped nodes with highlightedLabel fields added
+ * @param {Object} nodeGroups Grouped lists of nodes by type
+ * @param {String} searchValue Search term
+ * @return {Object} The grouped nodes with highlightedLabel fields added
  */
 export const highlightMatch = (nodeGroups, searchValue) => {
   const highlightedGroups = {};
@@ -40,9 +40,9 @@ export const highlightMatch = (nodeGroups, searchValue) => {
 
 /**
  * Check whether a node matches the search text or true if no search value given
- * @param {object} node
- * @param {string} searchValue
- * @return {boolean} True if node matches or no search value given
+ * @param {Object} node
+ * @param {String} searchValue
+ * @return {Boolean} True if node matches or no search value given
  */
 export const nodeMatchesSearch = (node, searchValue) => {
   if (searchValue) {
@@ -54,9 +54,9 @@ export const nodeMatchesSearch = (node, searchValue) => {
 
 /**
  * Return only the results that match the search text
- * @param {object} nodeGroups Grouped lists of nodes by type
- * @param {string} searchValue Search term
- * @return {object} Grouped nodes
+ * @param {Object} nodeGroups Grouped lists of nodes by type
+ * @param {String} searchValue Search term
+ * @return {Object} Grouped nodes
  */
 export const filterNodeGroups = (nodeGroups, searchValue) => {
   const filteredGroups = {};
@@ -72,9 +72,9 @@ export const filterNodeGroups = (nodeGroups, searchValue) => {
 
 /**
  * Return filtered/highlighted nodes, and filtered node IDs
- * @param {object} nodeGroups Grouped lists of nodes by type
- * @param {string} searchValue Search term
- * @return {object} Grouped nodes, and node IDs
+ * @param {Object} nodeGroups Grouped lists of nodes by type
+ * @param {String} searchValue Search term
+ * @return {Object} Grouped nodes, and node IDs
  */
 export const getFilteredNodes = createSelector(
   [(state) => state.nodes, (state) => state.searchValue],
@@ -89,9 +89,9 @@ export const getFilteredNodes = createSelector(
 
 /**
  * Return filtered/highlighted tags
- * @param {object} tags List of tags
- * @param {string} searchValue Search term
- * @return {object} Grouped tags
+ * @param {Object} tags List of tags
+ * @param {String} searchValue Search term
+ * @return {Object} Grouped tags
  */
 export const getFilteredTags = createSelector(
   [(state) => state.tags, (state) => state.searchValue],
@@ -101,8 +101,8 @@ export const getFilteredTags = createSelector(
 
 /**
  * Return filtered/highlighted tag list items
- * @param {object} filteredTags List of filtered tags
- * @return {array} Node list items
+ * @param {Object} filteredTags List of filtered tags
+ * @return {Array} Node list items
  */
 export const getFilteredTagItems = createSelector(
   [getFilteredTags, (state) => state.tagNodeCounts],
@@ -125,8 +125,8 @@ export const getFilteredTagItems = createSelector(
 
 /**
  * Return filtered/highlighted element types
- * @param {string} searchValue Search term
- * @return {object} Grouped element types
+ * @param {String} searchValue Search term
+ * @return {Object} Grouped element types
  */
 export const getFilteredElementTypes = createSelector(
   [(state) => state.searchValue],
@@ -149,9 +149,9 @@ export const getFilteredElementTypes = createSelector(
 
 /**
  * Return filtered/highlighted element type items
- * @param {object} filteredTags List of filtered element types
- * @param {array} nodeTypes List of node types
- * @return {object} Element type items
+ * @param {Object} filteredTags List of filtered element types
+ * @param {Array} nodeTypes List of node types
+ * @return {Object} Element type items
  */
 export const getFilteredElementTypeItems = createSelector(
   [getFilteredElementTypes, (state) => state.nodeTypes],
@@ -179,9 +179,9 @@ export const getFilteredElementTypeItems = createSelector(
 /**
  * Compares items for sorting in groups first
  * by enabled status (by tag) and then alphabeticaly (by name)
- * @param {object} itemA First item to compare
- * @param {object} itemB Second item to compare
- * @return {number} Comparison result
+ * @param {Object} itemA First item to compare
+ * @param {Object} itemB Second item to compare
+ * @return {Number} Comparison result
  */
 const compareEnabledThenAlpha = (itemA, itemB) => {
   const byEnabledTag = Number(itemA.disabledTag) - Number(itemB.disabledTag);
@@ -192,9 +192,9 @@ const compareEnabledThenAlpha = (itemA, itemB) => {
 /**
  * Compares items for sorting in groups first
  * by enabled status (by tag) and then alphabeticaly (by name)
- * @param {object} itemA First item to compare
- * @param {object} itemB Second item to compare
- * @return {number} Comparison result
+ * @param {Object} itemA First item to compare
+ * @param {Object} itemB Second item to compare
+ * @return {Number} Comparison result
  */
 export const getFilteredNodeItems = createSelector(
   [
@@ -236,8 +236,8 @@ export const getFilteredNodeItems = createSelector(
 
 /**
  * Returns group items for each sidebar filter group defined in the sidebar config.
- * @param {object} items List items by group type
- * @return {array} List of groups
+ * @param {Object} items List items by group type
+ * @return {Array} List of groups
  */
 export const getGroups = createSelector([(state) => state.items], (items) => {
   const groups = {};
@@ -265,10 +265,10 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
 
 /**
  * Returns filtered/highlighted items for nodes & tags
- * @param {object} filteredNodeItems List of filtered nodes
- * @param {object} filteredTagItems List of filtered tags
- * @param {object} getFilteredElementTypeItems List of filtered element type items
- * @return {array} final list of all filtered items from the three filtered item sets
+ * @param {Object} filteredNodeItems List of filtered nodes
+ * @param {Object} filteredTagItems List of filtered tags
+ * @param {Object} getFilteredElementTypeItems List of filtered element type items
+ * @return {Array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
   [getFilteredNodeItems, getFilteredTagItems, getFilteredElementTypeItems],
