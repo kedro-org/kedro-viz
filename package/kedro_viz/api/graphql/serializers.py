@@ -139,7 +139,8 @@ def format_run_metric_data(metric_data: Dict) -> Dict:
         metric_data: the data to format
 
     Returns:
-        a dictionary containing the formatted metric data
+        a dictionary containing metric data in two sub-dictionaries, containing
+        metric data aggregated by run_id and by metric respectively.
     """
     formatted_metric_data = _initialise_metric_data_template(metric_data)
     _populate_metric_data_template(metric_data, **formatted_metric_data)
@@ -147,7 +148,15 @@ def format_run_metric_data(metric_data: Dict) -> Dict:
 
 
 def _initialise_metric_data_template(metric_data: Dict) -> Dict:
-    """ """
+    """Initialise a dictionary to store formatted metric data.
+
+    Arguments:
+        metric_data: the data being formatted
+
+    Returns:
+        A dictionary with two sub-dictionaries containing lists (initialised
+        with `None` values) of the correct length for holding metric data
+    """
     runs, metrics = {}, {}
     for dataset_name in metric_data:
         dataset_name_root = dataset_name.rpartition(".")[0]
@@ -168,7 +177,14 @@ def _initialise_metric_data_template(metric_data: Dict) -> Dict:
 def _populate_metric_data_template(
     metric_data: Dict, runs: Dict, metrics: Dict
 ) -> None:
-    """ """
+    """Populates two dictionaries containing uninitialised lists of
+    the correct length with metric data. Changes made in-place.
+
+    Arguments:
+        metric_data: the data to be being formatted
+        runs: a dictionary to store metric data aggregated by run
+        metrics: a dictionary to store metric data aggregated by metric
+    """
     for (run_idx, run_id), (metric_idx, metric) in product(
         enumerate(runs), enumerate(metrics)
     ):
