@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { useD3 } from '../../../utils/hooks/use-d3';
 import * as d3 from 'd3';
@@ -21,6 +21,8 @@ const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
 export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
+  const [hoveredAxisG, setHoveredAxisG] = useState(null);
+
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
@@ -80,39 +82,45 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return lineGenerator(points);
   };
 
-  const ref = useD3(
-    (svg) => {
-      const axisG = svg
-        .selectAll('.feature')
-        .data(graphKeys)
-        .enter()
-        .append('g')
-        .attr('class', 'feature')
-        .attr('transform', (d) => 'translate(' + xScale(d) + ',0)');
+  useEffect(() => {
+    const axisG = d3.selectAll('.feature');
 
-      axisG.append('g').each(function (d) {
-        d3.select(this).call(yAxis[d]);
+    if (axisG) {
+      graphKeys.map((key) => {
+        axisG.append('g').each(function () {
+          d3.select(this).call(yAxis[key]);
+        });
       });
-
-      axisG
-        .append('text')
-        .attr('class', 'headers')
-        .attr('text-anchor', 'middle')
-        .attr('y', padding / 2)
-        .text((d) => d);
-    },
-    [data.length]
-  );
+    }
+  }, [graphKeys, yAxis]);
 
   return (
     <div className="parallelCoordinates">
       <svg
-        ref={ref}
         style={{
           height,
           width,
         }}
       >
+        {graphKeys.map((key) => (
+          <g
+            className={classnames('feature', {
+              'feature--hovered': hoveredAxisG === key,
+            })}
+            transform={`translate(${xScale(key)}, 0)`}
+            y={padding / 2}
+          >
+            <text
+              className="headers"
+              textAnchor="middle"
+              y={padding / 2}
+              onMouseOver={() => setHoveredAxisG(key)}
+              onMouseOut={() => setHoveredAxisG(null)}
+            >
+              {key}
+            </text>
+          </g>
+        ))}
         <g className="active">
           {data.map(([id, value], i) => (
             <LinePath
