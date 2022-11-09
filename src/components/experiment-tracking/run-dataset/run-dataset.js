@@ -38,14 +38,14 @@ const resolveRunDataWithPin = (runData, pinnedRun) => {
 
 /**
  * Display the dataset of the experiment tracking run.
- * @param {string} props.activeTab The selected tab (Overview || Plots).
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
- * @param {boolean} props.enableShowChanges Are changes enabled or not.
- * @param {boolean} props.isSingleRun Indication to display a single run.
- * @param {string} props.pinnedRun ID of the pinned run.
- * @param {boolean} props.showLoader Whether to show the loading component.
- * @param {object} props.trackingData The experiment tracking run data.
- * @param {string} props.theme The currently-selected light or dark theme.
+ * @param {String} props.activeTab The selected tab (Overview || Plots).
+ * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on.
+ * @param {Boolean} props.enableShowChanges Are changes enabled or not.
+ * @param {Boolean} props.isSingleRun Indication to display a single run.
+ * @param {String} props.pinnedRun ID of the pinned run.
+ * @param {Boolean} props.showLoader Whether to show the loading component.
+ * @param {Object} props.trackingData The experiment tracking run data.
+ * @param {String} props.theme The currently-selected light or dark theme.
  */
 const RunDataset = ({
   activeTab,
@@ -156,14 +156,14 @@ const RunDataset = ({
 
 /**
  * Build the necessary markup used to display the run dataset.
- * @param {string} datasetKey The row label of the data.
- * @param {array} datasetValues A single dataset array from a run.
- * @param {number} rowIndex The array index of the dataset data.
- * @param {boolean} isSingleRun Whether or not this is a single run.
- * @param {boolean} enableShowChanges Are changes enabled or not.
- * @param {boolean} enableComparisonView Whether or not the enableComparisonView is on.
- * @param {function} setRunDatasetToShow Callback function to show runDataset.
- * @param {function} setShowRunPlotsModal Callback function to show RunPlot modal.
+ * @param {String} datasetKey The row label of the data.
+ * @param {Array} datasetValues A single dataset array from a run.
+ * @param {Number} rowIndex The array index of the dataset data.
+ * @param {Boolean} isSingleRun Whether or not this is a single run.
+ * @param {Boolean} enableShowChanges Are changes enabled or not.
+ * @param {Boolean} enableComparisonView Whether or not the enableComparisonView is on.
+ * @param {Function} setRunDatasetToShow Callback function to show runDataset.
+ * @param {Function} setShowRunPlotsModal Callback function to show RunPlot modal.
  */
 function buildDatasetDataMarkup(
   datasetKey,
@@ -305,8 +305,8 @@ function buildDatasetDataMarkup(
 
 /**
  * Fill in missing run metrics if they don't match the number of runIds.
- * @param {array} datasetValues Array of objects for a metric, e.g. r2_score.
- * @param {array} runIds Array of strings of runIds.
+ * @param {Array} datasetValues Array of objects for a metric, e.g. r2_score.
+ * @param {Array} runIds Array of strings of runIds.
  * @returns Array of objects, the length of which matches the length
  * of the runIds.
  */

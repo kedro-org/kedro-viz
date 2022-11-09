@@ -9,7 +9,7 @@ import { saveState, pruneFalseyKeys } from './helpers';
 /**
  * Watch the getGraphInput selector, and dispatch an asynchronous action to
  * update state.graph via a web worker when it changes.
- * @param {object} store Redux store
+ * @param {Object} store Redux store
  */
 export const updateGraphOnChange = (store) => {
   const watchGraph = watch(() => getGraphInput(store.getState()));
@@ -22,7 +22,7 @@ export const updateGraphOnChange = (store) => {
 
 /**
  * Save selected state properties to window.localStorage
- * @param {object} state Redux state snapshot
+ * @param {Object} state Redux state snapshot
  */
 const saveStateToLocalStorage = (state) => {
   // does not save modal state to localStorage
