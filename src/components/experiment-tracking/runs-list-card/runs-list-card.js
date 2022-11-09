@@ -14,7 +14,7 @@ import './runs-list-card.css';
 
 /**
  * Display a card showing run info from an experiment
- * @param {object} data High-level data from the run (id, etc.)
+ * @param {Object} data High-level data from the run (id, etc.)
  */
 const RunsListCard = ({
   data,

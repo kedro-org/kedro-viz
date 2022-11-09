@@ -22,10 +22,10 @@ import classNames from 'classnames';
 
 /**
  * Display plotly chart
- * @param {object} chartSize Chart dimensions in pixels
- * @param {object} targetRect event.target.getBoundingClientRect()
- * @param {boolean} visible Whether to show the tooltip
- * @param {string} text Tooltip display label
+ * @param {Object} chartSize Chart dimensions in pixels
+ * @param {Object} targetRect event.target.getBoundingClientRect()
+ * @param {Boolean} visible Whether to show the tooltip
+ * @param {String} text Tooltip display label
  */
 
 const Plot = createPlotlyComponent(Plotly);
