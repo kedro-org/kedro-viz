@@ -18,6 +18,9 @@ type Query {
   """Get tracking datasets for specified group and run_ids"""
   runTrackingData(runIds: [ID!]!, group: TrackingDatasetGroup!, showDiff: Boolean = true): [TrackingDataset!]!
 
+  """Get metrics data for a limited number of recent runs"""
+  runMetricsData(limit: Int = 25): MetricDataset!
+
   """Get the installed and latest Kedro-Viz versions"""
   version: Version!
 }
