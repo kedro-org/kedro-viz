@@ -8,14 +8,14 @@ const KEYS = {
 
 /**
  * Convenience function for handling keyCodes and creating actions
- * @param  {number} keyCode - A keyboard character
+ * @param  {Number} keyCode - A keyboard character
  * @param  {Object} [keyActions] - An optional object-literal list of key names and actions
- * @return {Function|object} Either a function for a given key char, or nothing
+ * @return {Function|Object} Either a function for a given key char, or nothing
  */
 const handleKeyEvent = (keyCode, keyActions) => {
   /**
    * Execute a callback if a given key name matches the key code received
-   * @param {string}   keyName  - A key name string (e.g. 'left')
+   * @param {String}   keyName  - A key name string (e.g. 'left')
    * @param {Function} callback - A function to execute if the key name matches the key code
    */
   const handleSingleKey = (keyName, callback) => {

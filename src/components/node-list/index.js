@@ -37,6 +37,7 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.css';
 
 /**
@@ -67,6 +68,10 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+
+  const { toFlowchartPage, toSelectedNode, toFocusedModularPipeline } =
+    useGeneratePathname();
+
   const items = getFilteredItems({
     nodes,
     tags,
@@ -92,8 +97,10 @@ const NodeListProvider = ({
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
+        toFlowchartPage();
       } else {
         onToggleNodeSelected(item.id);
+        toSelectedNode(item);
       }
     }
   };
@@ -106,11 +113,14 @@ const NodeListProvider = ({
         if (clickedIconType === 'focus') {
           if (focusMode === null) {
             onToggleFocusMode(item);
+            toFocusedModularPipeline(item);
+
             if (disabledModularPipeline[item.id]) {
               onToggleModularPipelineDisabled([item.id], checked);
             }
           } else {
             onToggleFocusMode(null);
+            toFlowchartPage();
           }
         } else {
           onToggleModularPipelineDisabled([item.id], checked);
@@ -174,6 +184,10 @@ const NodeListProvider = ({
     }
   };
 
+  const handleToggleModularPipelineExpanded = (expanded) => {
+    onToggleModularPipelineExpanded(expanded);
+  };
+
   const onGroupItemChange = (item, wasChecked) => {
     // Toggle the group
     if (isTagType(item.type)) {
@@ -207,7 +221,7 @@ const NodeListProvider = ({
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
-      onModularPipelineToggleExpanded={onToggleModularPipelineExpanded}
+      onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onToggleFocusMode={onToggleFocusMode}
       onItemClick={onItemClick}

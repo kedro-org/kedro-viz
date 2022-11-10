@@ -5,7 +5,7 @@ function tagReducer(tagState = {}, action) {
 
   /**
    * Batch update tags from an array of tag IDs
-   * @param {string} key Tag action value prop
+   * @param {String} key Tag action value prop
    */
   const batchChanges = (key) =>
     action.tagIDs.reduce((result, tagID) => {

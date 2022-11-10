@@ -15,8 +15,8 @@ export const sanitizeValue = (value) => {
 
 /**
  * Takes a set of run metadata and run tracking data to construct the array object for csv export
- * @param {array} runMetadata The set of runMetadata
- * @param {array} runTrackingData The set of runTrackingData
+ * @param {Array} runMetadata The set of runMetadata
+ * @param {Array} runTrackingData The set of runTrackingData
  * @returns An array formatted for CSV export
  */
 export const constructExportData = (runMetadata, runTrackingData) => {
@@ -72,7 +72,7 @@ export const constructExportData = (runMetadata, runTrackingData) => {
 
 /**
  * Take a the runMetadata list to generate a meaningful file name for csv export
- * @param {array} runMetadata The set of runMetadata to be exported
+ * @param {Array} runMetadata The set of runMetadata to be exported
  * @returns A string to be used as the file name
  */
 export const generateCSVFileName = (runMetadata) => {

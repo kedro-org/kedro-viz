@@ -11,9 +11,9 @@ const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 
 /**
  * Create a new transitive edge from the first and last edge in the path
- * @param {string} target Node ID for the new edge
- * @param {string} source Node ID for the new edge
- * @param {object} transitiveEdges Store of existing edges
+ * @param {String} target Node ID for the new edge
+ * @param {String} source Node ID for the new edge
+ * @param {Object} transitiveEdges Store of existing edges
  */
 export const addNewEdge = (source, target, { edgeIDs, sources, targets }) => {
   const id = [source, target].join('|');

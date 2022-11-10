@@ -46,8 +46,8 @@ export const saveState = (state) => {
 
 /**
  * Remove unnecessary keys to prevent them being stored in state forever
- * @param {object} obj An object containing keys and booleans
- * @return {object} A new clone object but with the falsey keys removed
+ * @param {Object} obj An object containing keys and booleans
+ * @return {Object} A new clone object but with the falsey keys removed
  */
 export const pruneFalseyKeys = (obj) => {
   const newObj = {};
