@@ -166,10 +166,10 @@ def _initialise_metric_data_template(metric_data: Dict) -> Dict:
             for metric in dataset[run_id]:
                 metrics[dataset_name_root + "." + metric] = []
 
-    for run_id in runs:
-        runs[run_id].extend([None] * len(metrics))
-    for metric in metrics:
-        metrics[metric].extend([None] * len(runs))
+    for empty_list in runs.values():
+        empty_list.extend([None] * len(metrics))
+    for empty_list in metrics.values():
+        empty_list.extend([None] * len(runs))
 
     return {"metrics": metrics, "runs": runs}
 
