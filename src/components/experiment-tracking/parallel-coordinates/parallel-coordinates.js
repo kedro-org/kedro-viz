@@ -98,8 +98,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     <div className="parallelCoordinates">
       <svg
         style={{
-          height,
-          width,
+          height: '90vh',
+          width: '80vw',
         }}
       >
         {graphKeys.map((key) => (
