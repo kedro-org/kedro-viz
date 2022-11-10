@@ -17,7 +17,6 @@ from strawberry.tools import merge_types
 from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.models.experiment_tracking import TrackingDatasetGroup
 
 from .serializers import (
     format_run,
