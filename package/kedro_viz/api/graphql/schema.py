@@ -111,6 +111,7 @@ class RunsQuery:
         ]
         group = TrackingDatasetGroup.METRIC
 
+        # pylint: disable=line-too-long
         metric_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids, group
         )
