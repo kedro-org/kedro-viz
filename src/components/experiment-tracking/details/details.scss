@@ -30,3 +30,23 @@
     }
   }
 }
+
+.details__tabs {
+  background-color: var(--color-bg-1);
+  display: flex;
+  left: 0;
+  position: sticky;
+}
+
+.tabs__item {
+  background-color: var(--color-run-list-hover);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 15px 0 13px;
+  text-align: center;
+  width: 200px;
+
+  &--active {
+    background-color: var(--color-bg-1);
+  }
+}

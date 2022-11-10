@@ -8,6 +8,11 @@
   min-width: 100%;
   padding: 5em 0 0 9em;
   width: max-content;
+
+  &--not-overview {
+    background-color: var(--color-sidebar-shadow);
+    min-height: auto;
+  }
 }
 
 .details-metadata__buttons {

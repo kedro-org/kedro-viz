@@ -3,15 +3,15 @@ import { useState, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 /**
  * A component that renders only the children currently visible on screen.
  * Renders all children if not supported by browser or is disabled via the `lazy` prop.
- * @param {function} height A `function(start, end)` returning the pixel height for any given range of items
- * @param {number} total The total count of all items in the list
- * @param {function} children A `function(props)` rendering the list and items (see `childProps`)
- * @param {?number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
- * @param {?boolean} [lazy=true] Toggles the lazy functionality
- * @param {?boolean} [dispose=false] Toggles disposing items when they lose visibility
- * @param {?function} onChange Optional change callback
- * @param {?function} container Optional, default scroll container is `element.offsetParent`
- * @return {object} The rendered children
+ * @param {Function} height A `function(start, end)` returning the pixel height for any given range of items
+ * @param {Number} total The total count of all items in the list
+ * @param {Function} children A `function(props)` rendering the list and items (see `childProps`)
+ * @param {?Number} [buffer=0.5] A number [0...1] as a % of the visible region to render additionally
+ * @param {?Boolean} [lazy=true] Toggles the lazy functionality
+ * @param {?Boolean} [dispose=false] Toggles disposing items when they lose visibility
+ * @param {?Function} onChange Optional change callback
+ * @param {?Function} container Optional, default scroll container is `element.offsetParent`
+ * @return {Object} The rendered children
  **/
 const LazyList = ({
   height,
@@ -167,11 +167,11 @@ const LazyList = ({
 
 /**
  * Returns a range in the form `[start, end]` clamped inside `[min, max]`
- * @param {number} start The start of the range
- * @param {number} end The end of the range
- * @param {number} min The range minimum
- * @param {number} max The range maximum
- * @returns {array} The clamped range
+ * @param {Number} start The start of the range
+ * @param {Number} end The end of the range
+ * @param {Number} min The range minimum
+ * @param {Number} max The range maximum
+ * @returns {Array} The clamped range
  */
 export const range = (start, end, min, max) => [
   Math.max(Math.min(start, max), min),
@@ -180,9 +180,9 @@ export const range = (start, end, min, max) => [
 
 /**
  * Returns the union of both ranges
- * @param {array} rangeA The first range `[start, end]`
- * @param {array} rangeB The second range `[start, end]`
- * @returns {array} The range union
+ * @param {Array} rangeA The first range `[start, end]`
+ * @param {Array} rangeB The second range `[start, end]`
+ * @returns {Array} The range union
  */
 export const rangeUnion = (rangeA, rangeB) => [
   Math.min(rangeA[0], rangeB[0]),
@@ -191,9 +191,9 @@ export const rangeUnion = (rangeA, rangeB) => [
 
 /**
  * Returns true if the ranges have the same `start` and `end` values
- * @param {array} rangeA The first range `[start, end]`
- * @param {array} rangeB The second range `[start, end]`
- * @returns {boolean} True if ranges are equal else false
+ * @param {Array} rangeA The first range `[start, end]`
+ * @param {Array} rangeB The second range `[start, end]`
+ * @returns {Boolean} True if ranges are equal else false
  */
 export const rangeEqual = (rangeA, rangeB) =>
   rangeA[0] === rangeB[0] && rangeA[1] === rangeB[1];
@@ -204,10 +204,10 @@ export const rangeEqual = (rangeA, rangeB) =>
  * Only considers visibility along the vertical y-axis (i.e. only top, bottom bounds).
  * @param {HTMLElement} element The target element (e.g. list container)
  * @param {?HTMLElement} container The clipping container of the target (e.g. scroll container)
- * @param {number} buffer A number [0...1] as a % of the container to render additionally
- * @param {number} childTotal The total count of all children in the target (e.g. list row count)
- * @param {number} childHeight Height of a single child element (e.g. height of one list row)
- * @returns {array} The calculated range of visible items as `[start, end]`
+ * @param {Number} buffer A number [0...1] as a % of the container to render additionally
+ * @param {Number} childTotal The total count of all children in the target (e.g. list row count)
+ * @param {Number} childHeight Height of a single child element (e.g. height of one list row)
+ * @returns {Array} The calculated range of visible items as `[start, end]`
  */
 const visibleRangeOf = (
   element,
@@ -267,8 +267,8 @@ const visibleRangeOf = (
 
 /**
  * A hook to create a callback that runs once, at the end of the frame
- * @param {function} callback The callback
- * @returns {function} The wrapped callback
+ * @param {Function} callback The callback
+ * @returns {Function} The wrapped callback
  */
 const useRequestFrameOnce = (callback) => {
   const request = useRef();
@@ -283,8 +283,8 @@ const useRequestFrameOnce = (callback) => {
 /**
  * Generates an array of the form [0, ...n / total]
  * except where total is `0` where it returns `[0]`.
- * @param {number} total The total number of thresholds to create
- * @returns {array} The threshold array
+ * @param {Number} total The total number of thresholds to create
+ * @returns {Array} The threshold array
  */
 export const thresholds = (total) =>
   total === 0
@@ -293,9 +293,9 @@ export const thresholds = (total) =>
 
 /**
  * A hook that creates and manages an IntersectionObserver for the given element
- * @param {object} element A React.Ref from the target element
- * @param {object} options An IntersectionObserver options object
- * @param {function} callback A function to call with IntersectionObserver changes
+ * @param {Object} element A React.Ref from the target element
+ * @param {Object} options An IntersectionObserver options object
+ * @param {Function} callback A function to call with IntersectionObserver changes
  */
 const useIntersection = (element, options, callback) => {
   const observer = useRef();

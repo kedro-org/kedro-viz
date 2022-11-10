@@ -8,7 +8,7 @@ import nodeParameters from '../../utils/data/node_parameters.mock.json';
 /**
  * Mimic old deprecated API formats which didn't include newer fields
  * such as pipelines, layers, tags, etc
- * @param {object} data A dataset file
+ * @param {Object} data A dataset file
  */
 export const mockAPIFeatureSupport = (data) => {
   let dataCopy = Object.assign({}, data);
@@ -21,15 +21,15 @@ export const mockAPIFeatureSupport = (data) => {
 
 /**
  * Create a promise that resolves after a timeout
- * @param {number} milliseconds Timeout in milliseconds
+ * @param {Number} milliseconds Timeout in milliseconds
  */
 const timeout = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 /**
  * Mock asynchronously loading/parsing data
- * @param {string} path JSON file location. Defaults to main data url from config.js
- * @return {function} A promise that will return when the file is loaded and parsed
+ * @param {String} path JSON file location. Defaults to main data url from config.js
+ * @return {Function} A promise that will return when the file is loaded and parsed
  */
 const loadJsonData = async (path = getUrl('main')) => {
   // Add a short timeout to simulate real world use,

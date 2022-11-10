@@ -13,7 +13,7 @@ import './sidebar.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
- * @param {boolean} props.visible Whether the sidebar is open/closed
+ * @param {Boolean} props.visible Whether the sidebar is open/closed
  */
 export const Sidebar = ({
   disableRunSelection,

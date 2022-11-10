@@ -35,11 +35,11 @@ const defaultOptions = {
  * Input nodes and edges are updated in-place.
  * Results are stored as `x, y` properties on nodes
  * and `points` properties on edges.
- * @param {array} nodes The input nodes
- * @param {array} edges The input edges
- * @param {object=} layers The node layers if specified
- * @param {object=} options The graph options
- * @returns {object} The generated graph
+ * @param {Array} nodes The input nodes
+ * @param {Array} edges The input edges
+ * @param {Object=} layers The node layers if specified
+ * @param {Object=} options The graph options
+ * @returns {Object} The generated graph
  */
 export const graph = (nodes, edges, layers, options = defaultOptions) => {
   addEdgeLinks(nodes, edges);
@@ -62,8 +62,8 @@ export const graph = (nodes, edges, layers, options = defaultOptions) => {
 
 /**
  * Adds lists of source edges and target edges to each node in-place
- * @param {array} nodes The input nodes
- * @param {array} edges The input edges
+ * @param {Array} nodes The input nodes
+ * @param {Array} edges The input edges
  */
 export const addEdgeLinks = (nodes, edges) => {
   const nodeById = {};
@@ -84,8 +84,8 @@ export const addEdgeLinks = (nodes, edges) => {
 
 /**
  * Adds the nearest valid layer to each node whilst maintaining the correct layer order
- * @param {array} nodes The input nodes
- * @param {?array} layers The input layers
+ * @param {Array} nodes The input nodes
+ * @param {?Array} layers The input layers
  */
 const addNearestLayers = (nodes, layers) => {
   if (layers && layers.length > 0) {
@@ -120,27 +120,27 @@ const addNearestLayers = (nodes, layers) => {
 
 /**
  * Returns the list of target nodes directly connected to the given node
- * @param {object} node The input node
- * @returns {array} The target nodes
+ * @param {Object} node The input node
+ * @returns {Array} The target nodes
  */
 const targetNodes = (node) => node.targets.map((edge) => edge.targetNode);
 
 /**
  * Comparator function for sorting nodes rank ascending
- * @param {object} nodeA The first input node
- * @param {object} nodeB The second input node
- * @returns {number} The signed difference
+ * @param {Object} nodeA The first input node
+ * @param {Object} nodeB The second input node
+ * @returns {Number} The signed difference
  */
 const orderRankAscending = (nodeA, nodeB) => nodeA.rank - nodeB.rank;
 
 /**
  * Starting at the given node and expanding successors, returns the first node accepted in order
- * @param {object} node The starting node
- * @param {function} successors A function returning the next nodes to expand
- * @param {function} order A comparator function used for prioritising successors
- * @param {function} accept A function that returns true if the current node fits the criteria
- * @param {object=} visited An object keeping track of nodes already searched
- * @returns {?object} The first node accepted in order, or undefined if none
+ * @param {Object} node The starting node
+ * @param {Function} successors A function returning the next nodes to expand
+ * @param {Function} order A comparator function used for prioritising successors
+ * @param {Function} accept A function that returns true if the current node fits the criteria
+ * @param {Object=} visited An object keeping track of nodes already searched
+ * @returns {?Object} The first node accepted in order, or undefined if none
  */
 const findNodeBy = (node, successors, order, accept, visited) => {
   // If the current node is accepted then return it without further search
@@ -172,9 +172,9 @@ const findNodeBy = (node, successors, order, accept, visited) => {
 
 /**
  * Finds the region bounding the given nodes
- * @param {array} nodes The input nodes
- * @param {number} padding Additional padding around the bounds
- * @returns {object} The bounds
+ * @param {Array} nodes The input nodes
+ * @param {Number} padding Additional padding around the bounds
+ * @returns {Object} The bounds
  */
 const bounds = (nodes, padding) => {
   const size = {

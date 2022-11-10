@@ -9,9 +9,9 @@ import './runs-list.css';
 
 /**
  * Return only the runs that match the search text
- * @param {object} runData original set of runs
- * @param {string} searchValue Search term
- * @return {object} Grouped nodes
+ * @param {Object} runData original set of runs
+ * @param {String} searchValue Search term
+ * @return {Object} Grouped nodes
  */
 const getFilteredRunList = (runData, searchValue) => {
   // filter the runs that matches the runId

@@ -67,7 +67,7 @@ export const TOGGLE_GRAPH = 'TOGGLE_GRAPH';
 
 /**
  * Toggle graph visible/hidden
- * @param {boolean} visible Whether graph is shown
+ * @param {Boolean} visible Whether graph is shown
  */
 export function toggleGraph(visible) {
   return {
@@ -106,7 +106,7 @@ export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**
  * Toggle sidebar visible/hidden
- * @param {boolean} visible Whether sidebar nav is shown
+ * @param {Boolean} visible Whether sidebar nav is shown
  */
 export function toggleSidebar(visible) {
   return {
@@ -119,7 +119,7 @@ export const TOGGLE_THEME = 'TOGGLE_THEME';
 
 /**
  * Switch between light/dark theme
- * @param {string} theme Theme name
+ * @param {String} theme Theme name
  */
 export function toggleTheme(theme) {
   return {
@@ -158,7 +158,7 @@ export const TOGGLE_MINIMAP = 'TOGGLE_MINIMAP';
 
 /**
  * Toggle mini map
- * @param {string} visible Visibility status
+ * @param {String} visible Visibility status
  */
 export function toggleMiniMap(visible) {
   return {
@@ -171,8 +171,8 @@ export const CHANGE_FLAG = 'CHANGE_FLAG';
 
 /**
  * Change the given feature flag
- * @param {string} name The flag name
- * @param {value} value The value to set
+ * @param {String} name The flag name
+ * @param {Value} value The value to set
  */
 export function changeFlag(name, value) {
   return {
@@ -186,7 +186,7 @@ export const TOGGLE_IGNORE_LARGE_WARNING = 'TOGGLE_IGNORE_LARGE_WARNING';
 
 /**
  * Resets the ignoreLargeWarning field in the state indicating user preference to enable large graphs to load
- * @param {boolean} ignoreLargeWarning
+ * @param {Boolean} ignoreLargeWarning
  */
 export function toggleIgnoreLargeWarning(ignoreLargeWarning) {
   return {
@@ -199,7 +199,7 @@ export const TOGGLE_CODE = 'TOGGLE_CODE';
 
 /**
  * Toggle code panel
- * @param {string} visible Visibility status
+ * @param {String} visible Visibility status
  */
 export function toggleCode(visible) {
   return {
