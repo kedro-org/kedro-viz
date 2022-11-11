@@ -25,7 +25,7 @@ from .serializers import (
     format_runs,
 )
 from .types import (
-    MetricDataset,
+    MetricPlotDataset,
     Run,
     RunInput,
     TrackingDataset,
@@ -104,7 +104,7 @@ class RunsQuery:
     @strawberry.field(
         description="Get metrics data for a limited number of recent runs"
     )
-    def run_metrics_data(self, limit: Optional[int] = 25) -> MetricDataset:
+    def run_metrics_data(self, limit: Optional[int] = 25) -> MetricPlotDataset:
         run_ids = [
             run.id for run in data_access_manager.runs.get_all_runs(limit_amount=limit)
         ]
@@ -120,7 +120,7 @@ class RunsQuery:
             metric_data[dataset.dataset_name] = dataset.runs
 
         formatted_metric_data = format_run_metric_data(metric_data)
-        return MetricDataset(data=formatted_metric_data)
+        return MetricPlotDataset(data=formatted_metric_data)
 
 
 @strawberry.type

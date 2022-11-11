@@ -35,7 +35,7 @@ class TrackingDataset:
 
 
 @strawberry.type(description="Metric data")
-class MetricDataset:
+class MetricPlotDataset:
     data: JSON
 
 
