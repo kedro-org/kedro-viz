@@ -159,12 +159,12 @@ def _initialise_metric_data_template(metric_data: Dict) -> Dict:
     """
     runs, metrics = {}, {}
     for dataset_name in metric_data:
-        dataset_name_root = dataset_name.rpartition(".")[0]
         dataset = metric_data[dataset_name]
         for run_id in dataset:
             runs[run_id] = []
             for metric in dataset[run_id]:
-                metrics[dataset_name_root + "." + metric] = []
+                metric_name = f"{dataset_name}.{metric}"
+                metrics[metric_name] = []
 
     for empty_list in runs.values():
         empty_list.extend([None] * len(metrics))
@@ -185,11 +185,12 @@ def _populate_metric_data_template(
         runs: a dictionary to store metric data aggregated by run
         metrics: a dictionary to store metric data aggregated by metric
     """
+    print(metric_data)
     for (run_idx, run_id), (metric_idx, metric) in product(
         enumerate(runs), enumerate(metrics)
     ):
         dataset_name_root, _, metric_name = metric.rpartition(".")
-        for dataset in metric_data:
-            if dataset_name_root == dataset.rpartition(".")[0]:
-                value = metric_data[dataset][run_id].get(metric_name, None)
+        for dataset_name in metric_data:
+            if dataset_name_root == dataset_name:
+                value = metric_data[dataset_name][run_id].get(metric_name, None)
                 runs[run_id][metric_idx] = metrics[metric][run_idx] = value
