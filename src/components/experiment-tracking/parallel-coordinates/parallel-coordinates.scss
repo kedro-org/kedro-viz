@@ -84,6 +84,11 @@ text {
   font-size: 12px;
 }
 
+.ticks .line--hovered {
+  stroke: white;
+  stroke-opacity: 1;
+}
+
 .ticks .line {
   @extend %active;
 }

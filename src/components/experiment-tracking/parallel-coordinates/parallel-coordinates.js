@@ -101,7 +101,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
   const yAxis = {};
   Object.entries(yScales).forEach(([key, value]) => {
-    yAxis[key] = d3.axisLeft(value);
+    yAxis[key] = d3.axisLeft(value).tickSizeOuter(0);
   });
 
   const lineGenerator = d3.line().defined(function (d) {
@@ -266,7 +266,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
                   ></path>
                   <text
                     className="text"
-                    x={xScale(graphKeys[index]) - 5}
+                    x={xScale(graphKeys[index]) - 10}
                     y={yScales[graphKeys[index]](value)}
                     style={{
                       textAnchor: 'end',
