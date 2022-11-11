@@ -24,7 +24,7 @@ type Query {
   runTrackingData(runIds: [ID!]!, group: TrackingDatasetGroup!, showDiff: Boolean = true): [TrackingDataset!]!
 
   """Get metrics data for a limited number of recent runs"""
-  runMetricsData(limit: Int = 25): MetricDataset!
+  runMetricsData(limit: Int = 25): MetricPlotDataset!
 
   """Get the installed and latest Kedro-Viz versions"""
   version: Version!
