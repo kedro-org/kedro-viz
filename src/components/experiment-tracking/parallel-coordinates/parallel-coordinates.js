@@ -2,10 +2,33 @@ import React, { useContext, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
+import Tooltip from '../../ui/tooltip';
 
 import { LinePath } from './components/line-path.js';
 
 import './parallel-coordinates.css';
+
+const renderTextForRun = (name, date) => {
+  return (
+    <div className="parallel-coords-tooltip">
+      <h3>Run name:</h3>
+      <p>{name}</p>
+      <h3>Date:</h3>
+      <p>{date}</p>
+    </div>
+  );
+};
+
+const renderTextFoMetric = (name, count) => {
+  return (
+    <div className="parallel-coords-tooltip">
+      <h3>Metric name:</h3>
+      <p>{name}</p>
+      <h3>Count:</h3>
+      <p>{count}</p>
+    </div>
+  );
+};
 
 // TODO: move them to a cofig file or something
 const width = 1500,
@@ -19,9 +42,22 @@ const selectedMarkerRotate = [45, 0, 0];
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
+const mockChartSize = {
+  left: 0,
+  top: 0,
+  right: 100,
+  bottom: 100,
+  width: 120,
+  height: 104,
+};
+
 export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
-
+  const [showTooltip, setShowTooltip] = useState({
+    targetRect: null,
+    text: null,
+    visible: false,
+  });
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
@@ -83,6 +119,40 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return lineGenerator(points);
   };
 
+  const handleMouseOverMetric = (e, key) => {
+    setHoveredAxisG(key);
+
+    const hoveredElement = graph.find(([id, values]) => id === key);
+    setShowTooltip({
+      targetRect: e.currentTarget.getBoundingClientRect(),
+      text: renderTextFoMetric(key, hoveredElement[1].length),
+      visible: true,
+    });
+  };
+
+  const handleMouseOutMetric = () => {
+    setHoveredAxisG(null);
+    setShowTooltip({
+      targetRect: null,
+      text: null,
+      visible: false,
+    });
+  };
+
+  useEffect(() => {
+    if (hoveredElementId) {
+      setShowTooltip({
+        visible: true,
+        text: renderTextForRun(hoveredElementId, hoveredElementId),
+      });
+    } else {
+      setShowTooltip({
+        visible: false,
+        text: null,
+      });
+    }
+  }, [hoveredElementId]);
+
   useEffect(() => {
     const axisG = d3.selectAll('.feature');
 
@@ -114,8 +184,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
               className="headers"
               textAnchor="middle"
               y={padding / 2}
-              onMouseOver={() => setHoveredAxisG(key)}
-              onMouseOut={() => setHoveredAxisG(null)}
+              onMouseOver={(e) => handleMouseOverMetric(e, key)}
+              onMouseOut={handleMouseOutMetric}
             >
               {key}
             </text>
@@ -129,6 +199,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
               isHovered={hoveredElementId === id}
               key={i}
               setHoveredId={setHoveredElementId}
+              setShowTooltip={setShowTooltip}
+              value={value}
             />
           ))}
         </g>
@@ -178,7 +250,6 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             })}
           </g>
         ))}
-
         {selectedData.map(([id, values], i) => (
           <g className="marker" id={id}>
             {values.map((value, index) => {
@@ -210,6 +281,14 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
           </g>
         ))}
       </svg>
+      {showTooltip.visible && (
+        <Tooltip
+          chartSize={mockChartSize}
+          targetRect={showTooltip.targetRect}
+          text={showTooltip.text}
+          visible={showTooltip.visible}
+        />
+      )}
     </div>
   );
 };
