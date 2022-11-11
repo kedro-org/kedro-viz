@@ -157,7 +157,8 @@ def _initialise_metric_data_template(metric_data: Dict) -> Dict:
         A dictionary with two sub-dictionaries containing lists (initialised
         with `None` values) of the correct length for holding metric data
     """
-    runs, metrics = {}, {}
+    runs: Dict = {}
+    metrics: Dict = {}
     for dataset_name in metric_data:
         dataset = metric_data[dataset_name]
         for run_id in dataset:
