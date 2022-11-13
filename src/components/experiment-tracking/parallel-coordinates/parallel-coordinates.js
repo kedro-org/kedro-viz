@@ -221,6 +221,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         {graph.map(([id, values]) => (
           <g className="ticks" id={id}>
             {values.map((value, index) => {
+              // To avoid rendering the tick twice
               if (!selectedValues.includes(value)) {
                 return (
                   <>
@@ -228,7 +229,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
                       className={classnames('text', {
                         'text--hovered': hoveredElementId === id,
                       })}
-                      x={xScale(id) + padding / 2}
+                      x={xScale(id) - 8}
                       y={yScales[id](value)}
                       style={{
                         textAnchor: 'end',

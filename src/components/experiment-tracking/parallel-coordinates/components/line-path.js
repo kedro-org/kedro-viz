@@ -21,15 +21,9 @@ export const LinePath = ({
 
   const ref = useD3((el) => {
     if (!selected) {
-      el.on('mouseover', (e) => {
-        setHoveredId(id);
-        setHighlight(el, true);
-      });
+      el.on('mouseover', (e) => setHoveredId(id));
 
-      el.on('mouseout', () => {
-        setHoveredId(null);
-        setHighlight(el, false);
-      });
+      el.on('mouseout', () => setHoveredId(null));
 
       if (isHovered) {
         setHighlight(el, true);
