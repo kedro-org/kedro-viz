@@ -35,10 +35,12 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const graphKeys = Object.keys(DATA1.metrics);
 
   const data = Object.entries(DATA1.runs);
+  const runKeys = Object.keys(DATA1.runs);
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
 
+  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
   const selectedValues = [];
   selectedData.map(([id, values]) => {
     return values.map((value) => selectedValues.push(value));
@@ -165,7 +167,8 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
                   <>
                     <text
                       className={classnames('text', {
-                        'text--hovered': hoveredElementId === id,
+                        'text--hovered':
+                          hoveredAxisG === id || hoveredElementIndex === index,
                       })}
                       x={xScale(id) - 8}
                       y={yScales[id](value)}
