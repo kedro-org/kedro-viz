@@ -15,7 +15,7 @@ import './global-toolbar.css';
 /**
  * Main controls for filtering the chart data
  * @param {Function} onToggleTheme Handle toggling theme between light/dark
- * @param {string} theme Kedro UI light/dark theme
+ * @param {String} theme Kedro UI light/dark theme
  */
 export const GlobalToolbar = ({
   isOutdated,

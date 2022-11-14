@@ -14,7 +14,7 @@ export const usePrevious = (value) => {
 
 /**
  * Custom hook to detect clicks outside of a specified element.
- * @param {function} callback The function to fire on an outside click.
+ * @param {Function} callback The function to fire on an outside click.
  * @returns A React ref of the element you want to click outside of.
  */
 export const useOutsideClick = (callback) => {

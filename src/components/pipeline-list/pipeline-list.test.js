@@ -5,6 +5,15 @@ import PipelineList, {
 } from './pipeline-list';
 import { mockState, setup } from '../../utils/state.mock';
 
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
+
 describe('PipelineList', () => {
   const pipelineIDs = mockState.spaceflights.pipeline.ids.map((id, i) => [
     id,
@@ -32,11 +41,13 @@ describe('PipelineList', () => {
   });
 
   test.each(pipelineIDs)(
-    'should change the active pipeline to %s on clicking menu option %s',
+    'should change the active pipeline to %s on clicking menu option %s, and the URL should be set to "/" ',
     (id, i) => {
       const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
       wrapper.find('MenuOption').at(i).simulate('click');
+
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
+      expect(mockHistoryPush).toHaveBeenCalledWith('/');
     }
   );
 

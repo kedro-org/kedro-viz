@@ -11,7 +11,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
 
   /**
    * Batch update tags from an array of tag IDs
-   * @param {string} key Tag action value prop
+   * @param {String} key Tag action value prop
    */
   const batchChanges = (key) =>
     action.modularPipelineIDs.reduce((result, modularPipelineID) => {
@@ -71,7 +71,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         action.expandedIDs.length > modularPipelineState.expanded.length;
       let expandedIDs = action.expandedIDs;
 
-      if (isExpanding) {
+      if (isExpanding && modularPipelineState.ids.length > 0) {
         const expandedModularPipelines = expandedIDs.filter(
           (expandedID) => !modularPipelineState.expanded.includes(expandedID)
         );

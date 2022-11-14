@@ -14,18 +14,18 @@ import {
  * Finds positions for the given edges relative to their nodes.
  * Input nodes and edges are updated in-place.
  * Results are stored in the `points` property on edges.
- * @param {object} params The layout parameters
- * @param {array} params.nodes The input nodes
- * @param {array} params.edges The input edges
- * @param {number} params.spaceX The minimum gap between a node and passing edges in X
- * @param {number} params.spaceY The minimum gap between a node and passing edges in Y
- * @param {number} params.minPassageGap The minimum gap between two nodes in which an edge can pass in X
- * @param {number} params.stemUnit The unit length for edge stems at anchors
- * @param {number} params.stemMax The maximum length of edge stems at anchors
- * @param {number} params.stemMinSource The minimum length for edge stems at source anchors
- * @param {number} params.stemMinTarget The minimum length for edge stems at target anchors
- * @param {number} params.stemSpaceSource The ideal spacing between edge stems at source anchors
- * @param {number} params.stemSpaceTarget The ideal spacing between edge stems at target anchors
+ * @param {Object} params The layout parameters
+ * @param {Array} params.nodes The input nodes
+ * @param {Array} params.edges The input edges
+ * @param {Number} params.spaceX The minimum gap between a node and passing edges in X
+ * @param {Number} params.spaceY The minimum gap between a node and passing edges in Y
+ * @param {Number} params.minPassageGap The minimum gap between two nodes in which an edge can pass in X
+ * @param {Number} params.stemUnit The unit length for edge stems at anchors
+ * @param {Number} params.stemMax The maximum length of edge stems at anchors
+ * @param {Number} params.stemMinSource The minimum length for edge stems at source anchors
+ * @param {Number} params.stemMinTarget The minimum length for edge stems at target anchors
+ * @param {Number} params.stemSpaceSource The ideal spacing between edge stems at source anchors
+ * @param {Number} params.stemSpaceTarget The ideal spacing between edge stems at target anchors
  * @returns {void}
  */
 export const routing = ({

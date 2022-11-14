@@ -45,7 +45,7 @@ const SearchInput = ({
 
   /**
    * _handleChanged - updates the state with the value from the input and triggers the passed on change callback.
-   * @param  {object} event
+   * @param  {Object} event
    */
   const _handleChanged = (event) => {
     setValue(event.target.value);
