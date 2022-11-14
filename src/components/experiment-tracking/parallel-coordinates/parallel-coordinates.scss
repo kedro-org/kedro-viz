@@ -1,15 +1,5 @@
 @use '../../../styles/variables' as colors;
 
-%active {
-  stroke-opacity: 0.4;
-  stroke: #{colors.$grey-900};
-}
-
-%hovered {
-  fill: #{colors.$white-0};
-  opacity: 1;
-}
-
 .parallelCoordinates {
   margin: 2em;
   font-family: sans-serif;
@@ -22,7 +12,7 @@ g.active path {
 }
 
 g.highlight path {
-  stroke: white;
+  stroke: #{colors.$white-0};
   fill: none;
 }
 
@@ -30,13 +20,9 @@ g.selected path {
   fill: none;
 }
 
-text {
-  fill: #{colors.$grey-500};
-}
-
 .headers {
-  fill: #{colors.$white-900};
-  font-size: 12px;
+  fill: #{colors.$grey-300};
+  font-size: 14px;
 }
 
 .domain {
@@ -49,16 +35,32 @@ text {
 
 .tick:nth-last-child(1) text {
   visibility: visible;
-  fill: #{colors.$white-500};
+  fill: #{colors.$grey-300};
 }
 
 .tick:nth-child(2) text {
   visibility: visible;
-  fill: #{colors.$white-500};
+  fill: #{colors.$grey-300};
 }
 
+// Hide all the tick values as we don't want to show all of them on the page
 .tick {
   visibility: hidden;
+}
+
+.ticks .text {
+  font-size: 12px;
+  fill: #{colors.$grey-900};
+}
+
+.ticks .line {
+  stroke: #{colors.$grey-900};
+}
+
+.marker .text {
+  fill: #{colors.$white-0};
+
+  font-weight: 600;
 }
 
 .feature--hovered {
@@ -73,38 +75,10 @@ text {
   }
 }
 
-.marker path {
-  fill: #{colors.$blue-900};
-}
-
-.ticks .text {
-  @extend %active;
-
-  font-size: 10px;
-}
-
 .ticks .text--hovered {
-  @extend %hovered;
-
-  font-size: 12px;
+  fill: #{colors.$white-0};
 }
 
 .ticks .line--hovered {
-  stroke: white;
-  stroke-opacity: 1;
-}
-
-.ticks .line {
-  @extend %active;
-}
-
-.marker .text {
-  @extend %hovered;
-
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.parallel-coords-tooltip {
-  font-size: 12px;
+  stroke: #{colors.$white-0};
 }
