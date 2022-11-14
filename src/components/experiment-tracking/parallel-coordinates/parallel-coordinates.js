@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
+import { v4 as uuidv4 } from 'uuid';
 
 import { LinePath } from './components/line-path.js';
 
@@ -185,7 +186,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
               // To avoid rendering the tick twice
               if (!selectedValues.includes(value)) {
                 return (
-                  <>
+                  <React.Fragment key={uuidv4()}>
                     <text
                       className={classnames('text', {
                         'text--hovered':
@@ -212,7 +213,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                       y1={yScales[id](value)}
                       y2={yScales[id](value)}
                     ></line>
-                  </>
+                  </React.Fragment>
                 );
               }
             })}
@@ -227,7 +228,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
               const rotate = selectedMarkerRotate[i];
 
               return (
-                <>
+                <React.Fragment key={uuidv4()}>
                   <path
                     d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
                     key={`marker-path--${index}`}
@@ -246,7 +247,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                   >
                     {value}
                   </text>
-                </>
+                </React.Fragment>
               );
             })}
           </g>

@@ -33,14 +33,11 @@ g.selected path {
   stroke: #{colors.$grey-500};
 }
 
-.tick:nth-last-child(1) text {
-  visibility: visible;
-  fill: #{colors.$grey-300};
-}
-
+.tick:nth-last-child(1) text,
 .tick:nth-child(2) text {
-  visibility: visible;
   fill: #{colors.$grey-300};
+  font-size: 12px;
+  visibility: visible;
 }
 
 // Hide all the tick values as we don't want to show all of them on the page
@@ -59,7 +56,6 @@ g.selected path {
 
 .marker .text {
   fill: #{colors.$white-0};
-
   font-weight: 600;
 }
 
