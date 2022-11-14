@@ -19,7 +19,7 @@ const selectedMarkerRotate = [45, 0, 0];
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
-export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
+export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
 
   const { hoveredElementId, setHoveredElementId } =
@@ -31,11 +31,11 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     d3.symbolCircle,
   ];
 
-  const graph = Object.entries(DATA1.metrics);
-  const graphKeys = Object.keys(DATA1.metrics);
+  const graph = Object.entries(DATA.metrics);
+  const graphKeys = Object.keys(DATA.metrics);
 
-  const data = Object.entries(DATA1.runs);
-  const runKeys = Object.keys(DATA1.runs);
+  const data = Object.entries(DATA.runs);
+  const runKeys = Object.keys(DATA.runs);
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
@@ -44,11 +44,14 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
     return values.map((value) => selectedValues.push(value));
   });
 
-  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
-
+  // To separate data into 2 groups when hovering over a specific run
   const unhoveredData = data.filter(([key, value]) => key !== hoveredElementId);
 
-  const hoveredData = { data: '', index: '' };
+  // Since we need to draw a new line of the top of unhoveredData
+  // we need to know the index of the hovered run
+  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
+
+  const hoveredData = { data: null, index: null };
   if (hoveredElementId) {
     hoveredData.data = data.find(([id, value]) => id === hoveredElementId);
     hoveredData.index = hoveredElementIndex;
@@ -208,6 +211,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             })}
           </g>
         ))}
+
         {selectedData.map(([id, values], i) => (
           <g className="marker" id={id}>
             {values.map((value, index) => {

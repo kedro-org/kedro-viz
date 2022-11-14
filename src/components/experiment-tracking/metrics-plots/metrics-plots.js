@@ -31,7 +31,7 @@ const MetricsPlots = ({ selectedRunIds }) => {
         {activeTab === tabLabels[0] ? (
           'Time-series chart goes here'
         ) : (
-          <ParallelCoordinates DATA1={data} selectedRuns={selectedRunIds} />
+          <ParallelCoordinates DATA={data} selectedRuns={selectedRunIds} />
         )}
       </div>
     </div>
