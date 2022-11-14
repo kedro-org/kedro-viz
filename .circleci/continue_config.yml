@@ -62,7 +62,9 @@ commands:
             Start-Process powershell -verb runAs -Args "-start GeneralProfile"
             nvm install 16.13.2
             nvm use 16.13.2
-            npm install
+      - run:
+          name: Install Node dependencies
+          command: npm install
 
   npm_build:
     steps:
