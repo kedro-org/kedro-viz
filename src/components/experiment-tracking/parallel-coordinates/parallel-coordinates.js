@@ -12,7 +12,7 @@ import './parallel-coordinates.css';
 const width = 1200,
   height = 800,
   padding = 38,
-  paddingLr = 50;
+  paddingLr = 80;
 
 const buffer = 0.05;
 const selectedMarkerRotate = [45, 0, 0];
@@ -65,7 +65,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         Math.floor(Math.min(...value) - Math.min(...value) * buffer),
         Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
       ])
-      .range([height - padding, padding + padding / 3]);
+      .range([height - padding - padding / 2, padding + padding / 3]);
   });
 
   Object.entries(yScales).forEach(([key, value]) => {
