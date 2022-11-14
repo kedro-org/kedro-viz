@@ -1,5 +1,8 @@
 @use '../../../styles/variables' as colors;
 
+$baseColour: #{colors.$grey-900};
+$highlightColour: #{colors.$white-0};
+
 .parallelCoordinates {
   margin: 2em;
   font-family: sans-serif;
@@ -12,7 +15,7 @@ g.active path {
 }
 
 g.highlight path {
-  stroke: #{colors.$white-0};
+  stroke: $highlightColour;
   fill: none;
 }
 
@@ -26,7 +29,7 @@ g.selected path {
 }
 
 .domain {
-  stroke: #{colors.$grey-500};
+  stroke: $baseColour;
 }
 
 .tick line {
@@ -47,34 +50,34 @@ g.selected path {
 
 .ticks .text {
   font-size: 12px;
-  fill: #{colors.$grey-900};
+  fill: $baseColour;
 }
 
 .ticks .line {
-  stroke: #{colors.$grey-900};
+  stroke: $baseColour;
 }
 
 .marker .text {
-  fill: #{colors.$white-0};
+  fill: $highlightColour;
   font-weight: 600;
 }
 
 .feature--hovered {
   .domain {
-    stroke: #{colors.$white-0};
+    stroke: $highlightColour;
   }
 
   .headers {
     cursor: pointer;
 
-    fill: #{colors.$white-0};
+    fill: $highlightColour;
   }
 }
 
 .ticks .text--hovered {
-  fill: #{colors.$white-0};
+  fill: $highlightColour;
 }
 
 .ticks .line--hovered {
-  stroke: #{colors.$white-0};
+  stroke: $highlightColour;
 }
