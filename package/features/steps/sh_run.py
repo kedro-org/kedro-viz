@@ -1,4 +1,3 @@
-# type: ignore
 import shlex
 import subprocess
 from typing import Any, Sequence
@@ -34,7 +33,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
 
     """
     if isinstance(cmd, str) and split:
-        cmd = shlex.split(cmd)
+        cmd = shlex.split(cmd)  # type: ignore
     result = subprocess.run(
         cmd, input="", stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
     )
@@ -42,7 +41,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
     result.stderr = result.stderr.decode("utf-8")
     if print_output:
         print(result.stdout)
-    return result
+    return result  # type: ignore
 
 
 class ChildTerminatingPopen(subprocess.Popen):
