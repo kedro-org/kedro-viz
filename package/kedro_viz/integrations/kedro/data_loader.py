@@ -45,7 +45,9 @@ def _bootstrap(project_path: Path):
 
 
 def load_data(
-    project_path: Path, env: Optional[str] = None, extra_params: Optional[Dict[str, Any]] = None
+    project_path: Path,
+    env: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
     """Load data from a Kedro project.
     Args:

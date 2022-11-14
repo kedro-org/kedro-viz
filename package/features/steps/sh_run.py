@@ -33,7 +33,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
 
     """
     if isinstance(cmd, str) and split:
-        cmd = shlex.split(cmd) # type: ignore
+        cmd = shlex.split(cmd)  # type: ignore
     result = subprocess.run(
         cmd, input="", stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
     )
@@ -41,7 +41,7 @@ def run(cmd: str, split: bool = True, print_output: bool = False, **kwargs: Any)
     result.stderr = result.stderr.decode("utf-8")
     if print_output:
         print(result.stdout)
-    return result # type: ignore
+    return result  # type: ignore
 
 
 class ChildTerminatingPopen(subprocess.Popen):
