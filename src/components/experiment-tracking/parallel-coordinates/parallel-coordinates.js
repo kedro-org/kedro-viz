@@ -8,7 +8,7 @@ import { LinePath } from './components/line-path.js';
 
 import './parallel-coordinates.css';
 
-// TODO: move them to a cofig file or something
+// TODO: move them to a config file or something
 const width = 1200,
   height = 800,
   padding = 38,
@@ -19,6 +19,8 @@ const selectedMarkerRotate = [45, 0, 0];
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
+
+const yAxis = {};
 
 export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
@@ -44,9 +46,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   selectedData.map(([id, values]) => {
     return values.map((value) => selectedValues.push(value));
   });
-
-  // To separate data into 2 groups when hovering over a specific run
-  const unhoveredData = data.filter(([key, value]) => key !== hoveredElementId);
 
   // Since we need to draw a new line of the top of unhoveredData
   // we need to know the index of the hovered run
@@ -77,7 +76,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
       .range([height - padding, padding + padding / 3]);
   });
 
-  const yAxis = {};
   Object.entries(yScales).forEach(([key, value]) => {
     yAxis[key] = d3.axisLeft(value).tickSizeOuter(0);
   });
@@ -114,11 +112,11 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         d3.select(this).call(yAxis[key]);
       });
     }
-  }, [graphKeys, yAxis]);
+  }, [graphKeys]);
 
   return (
-    <div className="parallelCoordinates">
-      <svg width="90%" height="90%" viewBox={`0 0 ${width} ${height}`}>
+    <div className="parallel-coordinates">
+      <svg width="100%" viewBox={`0 0 ${width} ${height}`}>
         {graphKeys.map((key) => (
           <g
             className={classnames('feature', {
@@ -142,7 +140,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         ))}
 
         <g className="active">
-          {unhoveredData.map(([id, value], i) => (
+          {data.map(([id, value], i) => (
             <LinePath
               d={linePath(value, i)}
               id={id}
@@ -153,19 +151,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
             />
           ))}
         </g>
-
-        {hoveredElementId && (
-          <g className="highlight">
-            <LinePath
-              d={linePath(hoveredData.data[1], hoveredData.index)}
-              id={hoveredData.data[0]}
-              isHovered={hoveredElementId === hoveredData.data[0]}
-              key={hoveredData.index}
-              setHoveredId={setHoveredElementId}
-              value={hoveredData.data[1]}
-            />
-          </g>
-        )}
 
         <g className="selected">
           {selectedData.map(([id, value], i) => (
@@ -215,6 +200,8 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                     ></line>
                   </React.Fragment>
                 );
+              } else {
+                return null;
               }
             })}
           </g>
