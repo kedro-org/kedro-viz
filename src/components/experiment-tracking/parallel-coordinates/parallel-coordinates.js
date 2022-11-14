@@ -171,7 +171,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                       })}
                       key={`ticks-text--${id}`}
                       x={xScale(id) - 8}
-                      y={yScales[id](value)}
+                      y={yScales[id](value) + 3}
                       style={{
                         textAnchor: 'end',
                         transform: 'translate(-10,4)',
