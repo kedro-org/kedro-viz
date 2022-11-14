@@ -14,6 +14,7 @@ export const LinePath = ({
     if (highlighted) {
       el.style('stroke', `white`);
       el.style('cursor', 'pointer');
+      el.raise();
     } else {
       el.style('stroke', '#132631');
     }
@@ -21,7 +22,7 @@ export const LinePath = ({
 
   const ref = useD3((el) => {
     if (!selected) {
-      el.on('mouseover', (e) => setHoveredId(id));
+      el.on('mouseover', () => setHoveredId(id));
 
       el.on('mouseout', () => setHoveredId(null));
 

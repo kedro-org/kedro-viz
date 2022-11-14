@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
