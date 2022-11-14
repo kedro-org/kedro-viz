@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/client';
 import { client } from '../../../apollo/config';
 import { shallow } from 'enzyme';
 import { setup } from '../../../utils/state.mock';
+import { HoverStateContext } from '../utils/hover-state-context';
 
 const runDataList = [
   {
@@ -32,6 +33,12 @@ const runDataList = [
   },
 ];
 
+const setHoveredElementId = jest.fn();
+const mockContextValue = {
+  setHoveredElementId,
+  hoveredElementId: [new Date('October 15, 2021 03:29:00').toISOString()],
+};
+
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
@@ -58,7 +65,9 @@ describe('RunsListCard', () => {
 
     const wrapper = setup.mount(
       <ApolloProvider client={client}>
-        <RunsList runData={runDataList} selectedRunIds={['run3']} />
+        <HoverStateContext.Provider value={mockContextValue}>
+          <RunsList runData={runDataList} selectedRunIds={['run3']} />
+        </HoverStateContext.Provider>
       </ApolloProvider>
     );
 
