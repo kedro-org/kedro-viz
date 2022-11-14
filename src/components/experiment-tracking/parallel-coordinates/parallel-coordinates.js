@@ -47,15 +47,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     return values.map((value) => selectedValues.push(value));
   });
 
-  // Since we need to draw a new line of the top of unhoveredData
-  // we need to know the index of the hovered run
   const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
-
-  const hoveredData = { data: null, index: null };
-  if (hoveredElementId) {
-    hoveredData.data = data.find(([id, value]) => id === hoveredElementId);
-    hoveredData.index = hoveredElementIndex;
-  }
 
   const xScale = d3
     .scalePoint()
