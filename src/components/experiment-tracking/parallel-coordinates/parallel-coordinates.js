@@ -8,7 +8,7 @@ import { LinePath } from './components/line-path.js';
 import './parallel-coordinates.css';
 
 // TODO: move them to a cofig file or something
-const width = 1500,
+const width = 1200,
   height = 800,
   padding = 38,
   paddingLr = 50;
@@ -106,12 +106,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
 
   return (
     <div className="parallelCoordinates">
-      <svg
-        style={{
-          height: '90vh',
-          width: '80vw',
-        }}
-      >
+      <svg width="90%" height="90%" viewBox={`0 0 ${width} ${height}`}>
         {graphKeys.map((key) => (
           <g
             className={classnames('feature', {
