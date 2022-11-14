@@ -74,7 +74,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         Math.floor(Math.min(...value) - Math.min(...value) * buffer),
         Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
       ])
-      .range([height - padding, padding]);
+      .range([height - padding, padding + padding / 3]);
   });
 
   const yAxis = {};
