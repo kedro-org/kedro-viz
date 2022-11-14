@@ -604,9 +604,9 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = dataset.load()
 
             if data_node.is_metric_node():
-                if not self.filepath:
-                    return
                 metrics_data = self.load_versioned_tracking_data(self.filepath)
+                if not metrics_data:
+                    return
                 self.plot = self.create_metrics_plot(
                     pd.DataFrame.from_dict(metrics_data, orient="index")
                 )
