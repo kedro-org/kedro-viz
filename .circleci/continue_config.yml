@@ -53,16 +53,16 @@ commands:
   win_install_node_dependencies:
     steps:
       - run: choco install wget -y
-        - run:
+      - run:
           command: wget https://nodejs.org/dist/v16.13.2/node-v16.13.2-x86.msi -P C:\Users\circleci\Downloads\
           shell: cmd.exe
-        - run: MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.13.2-x86.msi /qn
-        - run: 
-            command: |
-                Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-                nvm install 16.13.2
-                nvm use 16.13.2
-  
+      - run: MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.13.2-x86.msi /qn
+      - run:
+          command: |
+            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+            nvm install 16.13.2
+            nvm use 16.13.2
+
   npm_build:
     steps:
       - run:
