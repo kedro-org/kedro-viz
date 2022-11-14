@@ -334,6 +334,7 @@ workflows:
               only:
                 - main
                 - demo
+                - chore/fix-windows-circleci-npm-issue
       - unit_tests:
           matrix:
             parameters:
