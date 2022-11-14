@@ -21,6 +21,11 @@ g.active path {
   stroke-linecap: 'round';
 }
 
+g.highlight path {
+  stroke: white;
+  fill: none;
+}
+
 g.selected path {
   fill: none;
 }

@@ -39,12 +39,20 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
-
-  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
   const selectedValues = [];
   selectedData.map(([id, values]) => {
     return values.map((value) => selectedValues.push(value));
   });
+
+  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
+
+  const unhoveredData = data.filter(([key, value]) => key !== hoveredElementId);
+
+  const hoveredData = { data: '', index: '' };
+  if (hoveredElementId) {
+    hoveredData.data = data.find(([id, value]) => id === hoveredElementId);
+    hoveredData.index = hoveredElementIndex;
+  }
 
   const xScale = d3
     .scalePoint()
@@ -128,7 +136,7 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
         ))}
 
         <g className="active">
-          {data.map(([id, value], i) => (
+          {unhoveredData.map(([id, value], i) => (
             <LinePath
               d={linePath(value, i)}
               id={id}
@@ -139,6 +147,19 @@ export const ParallelCoordinates = ({ DATA1, selectedRuns }) => {
             />
           ))}
         </g>
+
+        {hoveredElementId && (
+          <g className="highlight">
+            <LinePath
+              d={linePath(hoveredData.data[1], hoveredData.index)}
+              id={hoveredData.data[0]}
+              isHovered={hoveredElementId === hoveredData.data[0]}
+              key={hoveredData.index}
+              setHoveredId={setHoveredElementId}
+              value={hoveredData.data[1]}
+            />
+          </g>
+        )}
 
         <g className="selected">
           {selectedData.map(([id, value], i) => (
