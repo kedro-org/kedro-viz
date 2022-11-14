@@ -125,6 +125,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
             })}
             transform={`translate(${xScale(key)}, 0)`}
             y={padding / 2}
+            key={`feature--${key}`}
           >
             <text
               className="headers"
@@ -132,6 +133,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
               y={padding / 2}
               onMouseOver={(e) => handleMouseOverMetric(e, key)}
               onMouseOut={handleMouseOutMetric}
+              key={`feature-text--${key}`}
             >
               {key}
             </text>
@@ -144,7 +146,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
               d={linePath(value, i)}
               id={id}
               isHovered={hoveredElementId === id}
-              key={i}
+              key={id}
               setHoveredId={setHoveredElementId}
               value={value}
             />
@@ -170,7 +172,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
               d={linePath(value, i)}
               id={id}
               isHovered={hoveredElementId === id}
-              key={i}
+              key={id}
               selected
               stroke={selectedLineColors[i]}
             />
@@ -178,7 +180,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         </g>
 
         {graph.map(([id, values]) => (
-          <g className="ticks" id={id}>
+          <g className="ticks" id={id} key={`ticks--${id}`}>
             {values.map((value, index) => {
               // To avoid rendering the tick twice
               if (!selectedValues.includes(value)) {
@@ -189,6 +191,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                         'text--hovered':
                           hoveredAxisG === id || hoveredElementIndex === index,
                       })}
+                      key={`ticks-text--${id}`}
                       x={xScale(id) - 8}
                       y={yScales[id](value)}
                       style={{
@@ -199,10 +202,14 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                       {value}
                     </text>
                     <line
-                      className="line"
+                      className={classnames('line', {
+                        'line--hovered':
+                          hoveredAxisG === id || hoveredElementIndex === index,
+                      })}
+                      key={`ticks-line--${id}`}
                       x1={xScale(id)}
-                      y1={yScales[id](value)}
                       x2={xScale(id) - 4}
+                      y1={yScales[id](value)}
                       y2={yScales[id](value)}
                     ></line>
                   </>
@@ -213,7 +220,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         ))}
 
         {selectedData.map(([id, values], i) => (
-          <g className="marker" id={id}>
+          <g className="marker" id={id} key={`marker--${id}`}>
             {values.map((value, index) => {
               const transformX = xScale(graphKeys[index]);
               const transformY = yScales[graphKeys[index]](value);
@@ -223,11 +230,13 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                 <>
                   <path
                     d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
-                    transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
+                    key={`marker-path--${index}`}
                     stroke={selectedMarkerColors[i]}
-                  ></path>
+                    transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
+                  />
                   <text
                     className="text"
+                    key={`marker-text--${index}`}
                     x={xScale(graphKeys[index]) - 10}
                     y={yScales[graphKeys[index]](value)}
                     style={{
