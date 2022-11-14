@@ -37,7 +37,7 @@ const Tooltip = ({ chartSize, targetRect, visible, text }) => {
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}
     >
-      <div className="pipeline-tooltip__text">{text}</div>
+      <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>
     </div>
   );
 };
