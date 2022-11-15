@@ -43,7 +43,6 @@ export const LinePath = ({
       key={id}
       ref={ref}
       stroke={stroke}
-      strokeWidth="1.5"
     />
   );
 };
