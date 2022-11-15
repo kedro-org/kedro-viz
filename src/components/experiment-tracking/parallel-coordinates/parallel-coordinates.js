@@ -15,6 +15,7 @@ const width = 1200,
   paddingLr = 80;
 
 const buffer = 0.05;
+const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
@@ -60,7 +61,10 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         Math.floor(Math.min(...value) - Math.min(...value) * buffer),
         Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
       ])
-      .range([height - padding - padding / 2, padding + padding / 3]);
+      .range([
+        height - padding - padding * axisGapBuffer,
+        padding + padding / axisGapBuffer,
+      ]);
   });
 
   Object.entries(yScales).forEach(([key, value]) => {
