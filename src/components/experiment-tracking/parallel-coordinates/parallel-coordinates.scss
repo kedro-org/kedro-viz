@@ -1,11 +1,17 @@
 @use '../../../styles/variables' as colors;
 
 $baseColour: #{colors.$grey-900};
-$highlightColour: #{colors.$white-0};
+$lineHighlight: #{colors.$grey-400};
+$textHighlight: #{colors.$white-900};
 
 .parallel-coordinates {
   margin: 0 4em 0 0;
   font-family: sans-serif;
+}
+
+.parallel-coordinates .text {
+  font-size: 12px;
+  font-weight: 400;
 }
 
 g.active path {
@@ -15,7 +21,7 @@ g.active path {
 }
 
 g.highlight path {
-  stroke: $highlightColour;
+  stroke: $lineHighlight;
   fill: none;
 }
 
@@ -24,23 +30,20 @@ g.selected path {
 }
 
 .headers {
-  fill: #{colors.$grey-300};
+  fill: $textHighlight;
   font-size: 14px;
+  font-weight: 400;
 }
 
+// y-Axis
 .domain {
   stroke: $baseColour;
 }
 
-.tick line {
-  stroke: #{colors.$grey-500};
-}
-
 .tick:nth-last-child(1) text,
 .tick:nth-child(2) text {
-  fill: #{colors.$grey-300};
-  font-size: 12px;
   visibility: visible;
+  fill: #{colors.$grey-300};
 }
 
 // Hide all the tick values as we don't want to show all of them on the page
@@ -48,36 +51,39 @@ g.selected path {
   visibility: hidden;
 }
 
+// Custom ticks
 .ticks .text {
-  font-size: 12px;
   fill: $baseColour;
 }
 
-.ticks .line {
+.lines .line {
   stroke: $baseColour;
 }
 
+// Selected runs
 .marker .text {
-  fill: $highlightColour;
+  fill: #{colors.$white-0};
   font-weight: 600;
 }
 
+// Hovered Y-axis
 .feature--hovered {
   .domain {
-    stroke: $highlightColour;
+    stroke: $lineHighlight;
   }
 
   .headers {
     cursor: pointer;
 
-    fill: $highlightColour;
+    fill: #{colors.$white-0};
   }
 }
 
+//  Hovered run
 .ticks .text--hovered {
-  fill: $highlightColour;
+  fill: $textHighlight;
 }
 
-.ticks .line--hovered {
-  stroke: $highlightColour;
+.lines .line--hovered {
+  stroke: $lineHighlight;
 }
