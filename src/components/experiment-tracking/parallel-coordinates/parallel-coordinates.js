@@ -41,10 +41,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
-  const selectedValues = [];
-  selectedData.map(([id, values]) => {
-    return values.map((value) => selectedValues.push(value));
-  });
 
   const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
 
@@ -119,7 +115,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                         hoveredAxisG === id ||
                         (hoveredValues && hoveredValues.includes(value)),
                     })}
-                    key={`ticks-line--${id}`}
+                    key={uuidv4()}
                     x1={xScale(id)}
                     x2={xScale(id) - 4}
                     y1={yScales[id](value)}
@@ -175,32 +171,25 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
           );
 
           return (
-            <g className="ticks" id={id} key={`ticks--${id}`}>
-              {uniqueValues.map((value) => {
-                // Don't render the tick if its from the selected runs
-                if (!selectedValues.includes(value)) {
-                  return (
-                    <text
-                      className={classnames('text', {
-                        'text--hovered':
-                          hoveredAxisG === id ||
-                          (hoveredValues && hoveredValues.includes(value)),
-                      })}
-                      key={`ticks-text--${id}`}
-                      x={xScale(id) - 8}
-                      y={yScales[id](value) + 3}
-                      style={{
-                        textAnchor: 'end',
-                        transform: 'translate(-10,4)',
-                      }}
-                    >
-                      {value}
-                    </text>
-                  );
-                } else {
-                  return null;
-                }
-              })}
+            <g className="ticks" id={id} key={uuidv4()}>
+              {uniqueValues.map((value) => (
+                <text
+                  className={classnames('text', {
+                    'text--hovered':
+                      hoveredAxisG === id ||
+                      (hoveredValues && hoveredValues.includes(value)),
+                  })}
+                  key={uuidv4()}
+                  x={xScale(id) - 8}
+                  y={yScales[id](value) + 3}
+                  style={{
+                    textAnchor: 'end',
+                    transform: 'translate(-10,4)',
+                  }}
+                >
+                  {value}
+                </text>
+              ))}
             </g>
           );
         })}
@@ -236,8 +225,8 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                   <text
                     className="text"
                     key={`marker-text--${index}`}
-                    x={xScale(graphKeys[index]) - 10}
-                    y={yScales[graphKeys[index]](value)}
+                    x={xScale(graphKeys[index]) - 8}
+                    y={yScales[graphKeys[index]](value) + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
