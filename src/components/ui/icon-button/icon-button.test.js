@@ -1,3 +1,6 @@
+import React from 'react';
+import { mount } from 'enzyme';
+import { act } from '@testing-library/react';
 import IconButton from '.';
 import { setup } from '../../../utils/state.mock';
 import MenuIcon from '../../icons/menu';
@@ -57,5 +60,49 @@ describe('IconButton', () => {
     });
 
     expect(wrapper.find('.pipeline-toolbar__label-right').length).toBe(1);
+  });
+
+  it('show tooltip', () => {
+    jest.useFakeTimers();
+    const setIsTooltipVisible = jest.fn();
+    const wrapper = mount(
+      <IconButton
+        labelText="Toggle theme"
+        labelTextPosition="randon position"
+        visible
+      />
+    );
+
+    const onHover = jest.spyOn(React, 'useState');
+    const button = wrapper.find('.pipeline-icon-toolbar__button');
+
+    onHover.mockImplementation((isTooltipVisible) => [
+      isTooltipVisible,
+      setIsTooltipVisible,
+    ]);
+    button.simulate('mouseenter');
+    act(() => jest.runOnlyPendingTimers());
+    wrapper.update();
+    expect(wrapper.find('.pipeline-toolbar__label__visible').length).toBe(1);
+  });
+
+  it('hide tooltip', () => {
+    const setIsTooltipVisible = jest.fn();
+    const wrapper = mount(
+      <IconButton
+        labelText="Toggle theme"
+        labelTextPosition="randon position"
+        visible
+      />
+    );
+    const onHover = jest.spyOn(React, 'useState');
+    const button = wrapper.find('.pipeline-icon-toolbar__button');
+
+    onHover.mockImplementation((isTooltipVisible) => [
+      isTooltipVisible,
+      setIsTooltipVisible,
+    ]);
+    button.simulate('mouseleave');
+    expect(wrapper.find('.pipeline-toolbar__label__visible').length).toBe(0);
   });
 });
