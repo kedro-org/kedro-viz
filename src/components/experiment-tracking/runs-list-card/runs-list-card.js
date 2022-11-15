@@ -75,7 +75,7 @@ const RunsListCard = ({
       })}
       onClick={(e) => onRunsListCardClick(id, e)}
       onMouseOver={() => setHoveredElementId(id)}
-      onMouseOut={() => setHoveredElementId(null)}
+      onMouseLeave={() => setHoveredElementId(null)}
     >
       {enableComparisonView && (
         <CheckIcon
