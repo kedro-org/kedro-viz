@@ -614,7 +614,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     @staticmethod
     def load_versioned_tracking_data(
-        filepath: str = None, num_versions: int = 10
+        filepath: Optional[str] = None, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset
         Args:

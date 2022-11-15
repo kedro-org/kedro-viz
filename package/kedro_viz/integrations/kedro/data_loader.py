@@ -45,7 +45,9 @@ def _bootstrap(project_path: Path):
 
 
 def load_data(
-    project_path: Path, env: str = None, extra_params: Dict[str, Any] = None
+    project_path: Path,
+    env: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
     """Load data from a Kedro project.
     Args:
@@ -71,9 +73,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
@@ -97,9 +99,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
@@ -121,9 +123,9 @@ def load_data(
         with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
