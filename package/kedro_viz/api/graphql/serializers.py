@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from itertools import product
 from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
@@ -128,3 +129,69 @@ def format_run_tracking_data(
                 del formatted_tracking_data[tracking_key]
 
     return formatted_tracking_data
+
+
+def format_run_metric_data(metric_data: Dict) -> Dict:
+    """Format metric data to conforms to the schema required by plots on the front
+    end. Parallel Coordinate plots and Timeseries plots are supported.
+
+    Arguments:
+        metric_data: the data to format
+
+    Returns:
+        a dictionary containing metric data in two sub-dictionaries, containing
+        metric data aggregated by run_id and by metric respectively.
+    """
+    formatted_metric_data = _initialise_metric_data_template(metric_data)
+    _populate_metric_data_template(metric_data, **formatted_metric_data)
+    return formatted_metric_data
+
+
+def _initialise_metric_data_template(metric_data: Dict) -> Dict:
+    """Initialise a dictionary to store formatted metric data.
+
+    Arguments:
+        metric_data: the data being formatted
+
+    Returns:
+        A dictionary with two sub-dictionaries containing lists (initialised
+        with `None` values) of the correct length for holding metric data
+    """
+    runs: Dict = {}
+    metrics: Dict = {}
+    for dataset_name in metric_data:
+        dataset = metric_data[dataset_name]
+        for run_id in dataset:
+            runs[run_id] = []
+            for metric in dataset[run_id]:
+                metric_name = f"{dataset_name}.{metric}"
+                metrics[metric_name] = []
+
+    for empty_list in runs.values():
+        empty_list.extend([None] * len(metrics))
+    for empty_list in metrics.values():
+        empty_list.extend([None] * len(runs))
+
+    return {"metrics": metrics, "runs": runs}
+
+
+def _populate_metric_data_template(
+    metric_data: Dict, runs: Dict, metrics: Dict
+) -> None:
+    """Populates two dictionaries containing uninitialised lists of
+    the correct length with metric data. Changes made in-place.
+
+    Arguments:
+        metric_data: the data to be being formatted
+        runs: a dictionary to store metric data aggregated by run
+        metrics: a dictionary to store metric data aggregated by metric
+    """
+    print(metric_data)
+    for (run_idx, run_id), (metric_idx, metric) in product(
+        enumerate(runs), enumerate(metrics)
+    ):
+        dataset_name_root, _, metric_name = metric.rpartition(".")
+        for dataset_name in metric_data:
+            if dataset_name_root == dataset_name:
+                value = metric_data[dataset_name][run_id].get(metric_name, None)
+                runs[run_id][metric_idx] = metrics[metric][run_idx] = value
