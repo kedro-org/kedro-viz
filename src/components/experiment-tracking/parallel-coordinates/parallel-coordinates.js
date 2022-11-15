@@ -38,7 +38,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const graphKeys = Object.keys(DATA.metrics);
 
   const data = Object.entries(DATA.runs);
-  const runKeys = Object.keys(DATA.runs);
   const selectedData = data.filter(([key, value]) =>
     selectedRuns.includes(key)
   );
@@ -47,7 +46,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     return values.map((value) => selectedValues.push(value));
   });
 
-  const hoveredElementIndex = runKeys.indexOf(hoveredElementId);
+  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
 
   const xScale = d3
     .scalePoint()
@@ -109,47 +108,56 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   return (
     <div className="parallel-coordinates">
       <svg width="100%" viewBox={`0 0 ${width} ${height}`}>
-        {graph.map(([id, values]) => (
-          <g className="ticks" id={id} key={`ticks--${id}`}>
-            {values.map((value, index) => {
-              // To avoid rendering the tick twice
-              if (!selectedValues.includes(value)) {
-                return (
-                  <React.Fragment key={uuidv4()}>
-                    <text
-                      className={classnames('text', {
-                        'text--hovered':
-                          hoveredAxisG === id || hoveredElementIndex === index,
-                      })}
-                      key={`ticks-text--${id}`}
-                      x={xScale(id) - 8}
-                      y={yScales[id](value) + 3}
-                      style={{
-                        textAnchor: 'end',
-                        transform: 'translate(-10,4)',
-                      }}
-                    >
-                      {value}
-                    </text>
-                    <line
-                      className={classnames('line', {
-                        'line--hovered':
-                          hoveredAxisG === id || hoveredElementIndex === index,
-                      })}
-                      key={`ticks-line--${id}`}
-                      x1={xScale(id)}
-                      x2={xScale(id) - 4}
-                      y1={yScales[id](value)}
-                      y2={yScales[id](value)}
-                    ></line>
-                  </React.Fragment>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </g>
-        ))}
+        {graph.map(([id, values]) => {
+          // To avoid rendering the tick more than 1
+          const uniqueValues = values.filter(
+            (value, i, self) => self.indexOf(value) === i
+          );
+
+          return (
+            <g className="ticks" id={id} key={`ticks--${id}`}>
+              {uniqueValues.map((value) => {
+                const active =
+                  hoveredAxisG === id ||
+                  (hoveredValues && hoveredValues.includes(value));
+
+                // Don't render the tick if its from the selected runs
+                if (!selectedValues.includes(value)) {
+                  return (
+                    <React.Fragment key={uuidv4()}>
+                      <text
+                        className={classnames('text', {
+                          'text--hovered': active,
+                        })}
+                        key={`ticks-text--${id}`}
+                        x={xScale(id) - 8}
+                        y={yScales[id](value) + 3}
+                        style={{
+                          textAnchor: 'end',
+                          transform: 'translate(-10,4)',
+                        }}
+                      >
+                        {value}
+                      </text>
+                      <line
+                        className={classnames('line', {
+                          'line--hovered': active,
+                        })}
+                        key={`ticks-line--${id}`}
+                        x1={xScale(id)}
+                        x2={xScale(id) - 4}
+                        y1={yScales[id](value)}
+                        y2={yScales[id](value)}
+                      ></line>
+                    </React.Fragment>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </g>
+          );
+        })}
 
         {graphKeys.map((key) => (
           <g
