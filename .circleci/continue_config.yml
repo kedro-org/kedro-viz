@@ -50,6 +50,19 @@ commands:
           name: Install Node dependencies
           command: npm install
 
+  win_install_nvm:
+    steps:
+      - run: choco install wget -y
+      - run:
+          command: wget https://nodejs.org/dist/v16.13.2/node-v16.13.2-x86.msi -P C:\Users\circleci\Downloads\
+          shell: cmd.exe
+      - run: MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.13.2-x86.msi /qn
+      - run:
+          command: |
+            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
+            nvm install 16.13.2
+            nvm use 16.13.2
+
   npm_build:
     steps:
       - run:
@@ -101,6 +114,7 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
+      - win_install_nvm
       - install_node_dependencies
       - npm_build
 
