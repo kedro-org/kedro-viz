@@ -109,21 +109,27 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     <div className="parallel-coordinates">
       <svg width="100%" viewBox={`0 0 ${width} ${height}`}>
         {graph.map(([id, values]) => (
-          <g className="ticks" id={id} key={`ticks--${id}`}>
-            {values.map((value) => (
-              <line
-                className={classnames('line', {
-                  'line--hovered':
-                    hoveredAxisG === id ||
-                    (hoveredValues && hoveredValues.includes(value)),
-                })}
-                key={`ticks-line--${id}`}
-                x1={xScale(id)}
-                x2={xScale(id) - 4}
-                y1={yScales[id](value)}
-                y2={yScales[id](value)}
-              />
-            ))}
+          <g className="lines" id={id} key={`lines--${id}`}>
+            {values.map((value) => {
+              if (value) {
+                return (
+                  <line
+                    className={classnames('line', {
+                      'line--hovered':
+                        hoveredAxisG === id ||
+                        (hoveredValues && hoveredValues.includes(value)),
+                    })}
+                    key={`ticks-line--${id}`}
+                    x1={xScale(id)}
+                    x2={xScale(id) - 4}
+                    y1={yScales[id](value)}
+                    y2={yScales[id](value)}
+                  />
+                );
+              } else {
+                return null;
+              }
+            })}
           </g>
         ))}
 
