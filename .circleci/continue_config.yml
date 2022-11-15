@@ -50,7 +50,7 @@ commands:
           name: Install Node dependencies
           command: npm install
 
-  win_install_node_dependencies:
+  win_install_nvm:
     steps:
       - run: choco install wget -y
       - run:
@@ -62,9 +62,6 @@ commands:
             Start-Process powershell -verb runAs -Args "-start GeneralProfile"
             nvm install 16.13.2
             nvm use 16.13.2
-      - run:
-          name: Install Node dependencies
-          command: npm install
 
   npm_build:
     steps:
@@ -117,7 +114,8 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - win_install_node_dependencies
+      - win_install_nvm
+      - install_node_dependencies
       - npm_build
 
 jobs:
@@ -337,7 +335,6 @@ workflows:
               only:
                 - main
                 - demo
-                - chore/fix-windows-circleci-npm-issue
       - unit_tests:
           matrix:
             parameters:
