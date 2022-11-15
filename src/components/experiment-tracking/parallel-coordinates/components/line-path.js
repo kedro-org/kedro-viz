@@ -1,6 +1,9 @@
 import React from 'react';
 import { useD3 } from '../../../../utils/hooks/use-d3';
 
+const grey400 = '#ABB2B7';
+const slate300 = '#1C2E3A';
+
 export const LinePath = ({
   d,
   fill,
@@ -12,11 +15,11 @@ export const LinePath = ({
 }) => {
   const setHighlight = (el, highlighted) => {
     if (highlighted) {
-      el.style('stroke', `white`);
+      el.style('stroke', grey400);
       el.style('cursor', 'pointer');
       el.raise();
     } else {
-      el.style('stroke', '#132631');
+      el.style('stroke', slate300);
     }
   };
 
