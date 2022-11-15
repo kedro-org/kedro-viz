@@ -109,6 +109,48 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   return (
     <div className="parallel-coordinates">
       <svg width="100%" viewBox={`0 0 ${width} ${height}`}>
+        {graph.map(([id, values]) => (
+          <g className="ticks" id={id} key={`ticks--${id}`}>
+            {values.map((value, index) => {
+              // To avoid rendering the tick twice
+              if (!selectedValues.includes(value)) {
+                return (
+                  <React.Fragment key={uuidv4()}>
+                    <text
+                      className={classnames('text', {
+                        'text--hovered':
+                          hoveredAxisG === id || hoveredElementIndex === index,
+                      })}
+                      key={`ticks-text--${id}`}
+                      x={xScale(id) - 8}
+                      y={yScales[id](value) + 3}
+                      style={{
+                        textAnchor: 'end',
+                        transform: 'translate(-10,4)',
+                      }}
+                    >
+                      {value}
+                    </text>
+                    <line
+                      className={classnames('line', {
+                        'line--hovered':
+                          hoveredAxisG === id || hoveredElementIndex === index,
+                      })}
+                      key={`ticks-line--${id}`}
+                      x1={xScale(id)}
+                      x2={xScale(id) - 4}
+                      y1={yScales[id](value)}
+                      y2={yScales[id](value)}
+                    ></line>
+                  </React.Fragment>
+                );
+              } else {
+                return null;
+              }
+            })}
+          </g>
+        ))}
+
         {graphKeys.map((key) => (
           <g
             className={classnames('feature', {
@@ -156,48 +198,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
             />
           ))}
         </g>
-
-        {graph.map(([id, values]) => (
-          <g className="ticks" id={id} key={`ticks--${id}`}>
-            {values.map((value, index) => {
-              // To avoid rendering the tick twice
-              if (!selectedValues.includes(value)) {
-                return (
-                  <React.Fragment key={uuidv4()}>
-                    <text
-                      className={classnames('text', {
-                        'text--hovered':
-                          hoveredAxisG === id || hoveredElementIndex === index,
-                      })}
-                      key={`ticks-text--${id}`}
-                      x={xScale(id) - 8}
-                      y={yScales[id](value) + 3}
-                      style={{
-                        textAnchor: 'end',
-                        transform: 'translate(-10,4)',
-                      }}
-                    >
-                      {value}
-                    </text>
-                    <line
-                      className={classnames('line', {
-                        'line--hovered':
-                          hoveredAxisG === id || hoveredElementIndex === index,
-                      })}
-                      key={`ticks-line--${id}`}
-                      x1={xScale(id)}
-                      x2={xScale(id) - 4}
-                      y1={yScales[id](value)}
-                      y2={yScales[id](value)}
-                    ></line>
-                  </React.Fragment>
-                );
-              } else {
-                return null;
-              }
-            })}
-          </g>
-        ))}
 
         {selectedData.map(([id, values], i) => (
           <g className="marker" id={id} key={`marker--${id}`}>
