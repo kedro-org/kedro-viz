@@ -52,16 +52,19 @@ commands:
 
   win_install_nvm:
     steps:
-      - run: choco install wget -y
-      - run:
-          command: wget https://nodejs.org/dist/v16.13.2/node-v16.13.2-x86.msi -P C:\Users\circleci\Downloads\
-          shell: cmd.exe
-      - run: MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.13.2-x86.msi /qn
-      - run:
-          command: |
-            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-            nvm install 16.13.2
-            nvm use 16.13.2
+      - checkout
+      - run: |
+          echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+          echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run: |
+          node -v
+      - run: |
+          nvm install v16.13.2
+          node -v
+          nvm alias default v16.13.2
+          nvm use v16.13.2
+      - run: |
+          node -v
 
   npm_build:
     steps:
@@ -325,6 +328,11 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          filters:
+            branches:
+              only:
+                - main
+                - demo
       - win_e2e_tests:
           matrix:
             parameters:
@@ -335,10 +343,16 @@ workflows:
               only:
                 - main
                 - demo
+                - chore/windows-build-failure-fix
       - unit_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          filters:
+            branches:
+              only:
+                - main
+                - demo
       - win_unit_tests:
           matrix:
             parameters:
@@ -348,10 +362,16 @@ workflows:
               only:
                 - main
                 - demo
+                - chore/windows-build-failure-fix
       - lint:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          filters:
+            branches:
+              only:
+                - main
+                - demo
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
