@@ -53,10 +53,10 @@ commands:
   npm_install_only:
     steps:
       - run:
-        name: Install Node dependencies
-        command: |
-          node -v
-          npm install
+          name: Install Node dependencies
+          command: |
+            node -v
+            npm install
 
   win_install_nvm_node_dependencies:
     steps:
