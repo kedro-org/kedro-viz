@@ -121,7 +121,7 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - win_install_nvm_node_dependencies
+      - install_node_dependencies
       - npm_build
 
 jobs:
