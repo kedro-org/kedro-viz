@@ -72,7 +72,9 @@ commands:
     steps:
       - run:
           name: Build React application
-          command: make build
+          command: |
+            node -v
+            make build
 
   win_setup_python_env:
     # Miniconda3 is pre-installed on the machine:
