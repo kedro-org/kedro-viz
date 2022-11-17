@@ -50,6 +50,14 @@ commands:
           name: Install Node dependencies
           command: npm install
 
+  npm_install_only:
+    steps:
+      - run:
+        name: Install Node dependencies
+        command: |
+          node -v
+          npm install
+
   win_install_nvm_node_dependencies:
     steps:
       - checkout
@@ -121,7 +129,7 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - install_node_dependencies
+      - npm_install_only
       - npm_build
 
 jobs:
