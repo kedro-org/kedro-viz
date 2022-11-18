@@ -15,7 +15,6 @@ parameters:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@5.0.3
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
@@ -44,14 +43,22 @@ commands:
 
   install_node_dependencies:
     steps:
-      - node/install:
-          node-version: '16.13.2'
+      - run: |
+          node -v
+          nvm install v16.13.2
+          nvm use v16.13.2
+          node -v
       - run:
           name: Install Node dependencies
           command: npm install
 
-  npm_install_only:
+  nvm_use_npm_install:
     steps:
+      - run: |
+          nvm install v16.13.2
+          node -v
+          nvm alias default v16.13.2
+          nvm use v16.13.2
       - run:
           name: Install Node dependencies
           command: |
@@ -129,7 +136,7 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - npm_install_only
+      - install_node_dependencies
       - npm_build
 
 jobs:
