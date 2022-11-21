@@ -9,11 +9,8 @@ import { LinePath } from './components/line-path.js';
 import './parallel-coordinates.css';
 
 // TODO: move them to a config file or something
-const width = 1200,
-  height = 800,
-  padding = 38,
-  paddingLr = 80;
-
+const padding = 38;
+const paddingLr = 80;
 const buffer = 0.05;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
@@ -25,6 +22,18 @@ const yAxis = {};
 
 export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
+  const [chartHeight, setChartHeight] = useState(900);
+  const [chartWidth, setChartWidth] = useState(900);
+
+  useEffect(() => {
+    setChartWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+    );
+
+    setChartHeight(
+      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
+    );
+  }, []);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -48,7 +57,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const xScale = d3
     .scalePoint()
     .domain(graphKeys)
-    .range([paddingLr, width - paddingLr]);
+    .range([paddingLr, chartWidth - paddingLr]);
 
   // Each vertical scale
   const yScales = {};
@@ -62,7 +71,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
       ])
       .range([
-        height - padding - padding * axisGapBuffer,
+        chartHeight - padding - padding * axisGapBuffer,
         padding + padding / axisGapBuffer,
       ]);
   });
@@ -107,32 +116,11 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
 
   return (
     <div className="parallel-coordinates">
-      <svg width="100%" viewBox={`0 0 ${width} ${height}`}>
-        {graph.map(([id, values]) => (
-          <g className="lines" id={id} key={`lines--${id}`}>
-            {values.map((value) => {
-              if (value) {
-                return (
-                  <line
-                    className={classnames('line', {
-                      'line--hovered':
-                        hoveredAxisG === id ||
-                        (hoveredValues && hoveredValues.includes(value)),
-                    })}
-                    key={uuidv4()}
-                    x1={xScale(id)}
-                    x2={xScale(id) - 4}
-                    y1={yScales[id](value)}
-                    y2={yScales[id](value)}
-                  />
-                );
-              } else {
-                return null;
-              }
-            })}
-          </g>
-        ))}
-
+      <svg
+        preserveAspectRatio="xMinYMin meet"
+        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+        width="100%"
+      >
         {graphKeys.map((key) => (
           <g
             className={classnames('feature', {
@@ -240,6 +228,31 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
                   </text>
                 </React.Fragment>
               );
+            })}
+          </g>
+        ))}
+
+        {graph.map(([id, values]) => (
+          <g className="lines" id={id} key={`lines--${id}`}>
+            {values.map((value) => {
+              if (value) {
+                return (
+                  <line
+                    className={classnames('line', {
+                      'line--hovered':
+                        hoveredAxisG === id ||
+                        (hoveredValues && hoveredValues.includes(value)),
+                    })}
+                    key={uuidv4()}
+                    x1={xScale(id)}
+                    x2={xScale(id) - 4}
+                    y1={yScales[id](value)}
+                    y2={yScales[id](value)}
+                  />
+                );
+              } else {
+                return null;
+              }
             })}
           </g>
         ))}

@@ -27,7 +27,7 @@ const MetricsPlots = ({ selectedRunIds }) => {
           );
         })}
       </div>
-      <div style={{ fontSize: 14, marginTop: 30 }}>
+      <div className="metrics-plots-wrapper__charts">
         {activeTab === tabLabels[0] ? (
           'Time-series chart goes here'
         ) : (

@@ -1,6 +1,8 @@
 @use '../../../styles/variables' as variables;
 
 .metrics-plots-wrapper {
+  height: 100%;
+  overflow: hidden;
   padding: 5em 0 0 9em;
   width: 100%;
 }
@@ -23,4 +25,11 @@
   &__tab--active {
     border-bottom: 2px solid var(--color-default-alt);
   }
+}
+
+.metrics-plots-wrapper__charts {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  margin-top: 30px;
 }
