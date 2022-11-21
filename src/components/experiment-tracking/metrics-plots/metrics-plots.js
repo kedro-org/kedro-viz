@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
 
+import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
+import { useApolloQuery } from '../../../apollo/utils';
+
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
 const MetricsPlots = () => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
+
+  // Fetch metric plot data for
+  const { data: { runMetricsData = [] } = [] } = useApolloQuery(
+    GET_METRIC_PLOT_DATA,
+    {
+      variables: { limit: 10 },
+    }
+  );
 
   return (
     <div className="metrics-plots-wrapper">
