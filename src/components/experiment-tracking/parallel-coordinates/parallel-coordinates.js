@@ -22,18 +22,9 @@ const yAxis = {};
 
 export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
-  const [chartHeight, setChartHeight] = useState(900);
-  const [chartWidth, setChartWidth] = useState(900);
-
-  useEffect(() => {
-    setChartWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
-    );
-
-    setChartHeight(
-      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
-    );
-  }, []);
+  const [chartHeight, setChartHeight] = useState(null);
+  const [chartWidth, setChartWidth] = useState(null);
+  const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -104,15 +95,32 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   };
 
   useEffect(() => {
+    if (!areDimensionsComputed) {
+      return;
+    }
+
     const axisG = d3.selectAll('.feature');
 
     if (axisG) {
       axisG.append('g').each(function (each, index) {
         const key = graphKeys[index];
+
         d3.select(this).call(yAxis[key]);
       });
     }
-  }, [graphKeys]);
+  }, [areDimensionsComputed, graphKeys]);
+
+  useEffect(() => {
+    setChartWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+    );
+
+    setChartHeight(
+      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
+    );
+
+    setAreDimensionsComputed(true);
+  }, []);
 
   return (
     <div className="parallel-coordinates">
