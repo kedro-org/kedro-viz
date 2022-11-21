@@ -140,9 +140,6 @@
       "eslint src/ --fix"
     ]
   },
-  "jest": {
-    "transformIgnorePatterns": ["/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"]
-  },
   "browserslist": [
     ">0.2%",
     "not dead",
