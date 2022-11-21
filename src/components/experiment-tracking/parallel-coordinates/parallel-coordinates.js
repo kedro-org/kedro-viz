@@ -22,8 +22,8 @@ const yAxis = {};
 
 export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
-  const [chartHeight, setChartHeight] = useState(null);
-  const [chartWidth, setChartWidth] = useState(null);
+  const [chartHeight, setChartHeight] = useState(0);
+  const [chartWidth, setChartWidth] = useState(0);
   const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
 
   const { hoveredElementId, setHoveredElementId } =
