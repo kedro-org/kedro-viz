@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
 import { useApolloQuery } from '../../../apollo/utils';
 
-import { METRIC_LIMIT } from '../../../config';
+import { metricLimit } from '../../../config';
 
 import './metrics-plots.css';
 
@@ -17,7 +17,7 @@ const MetricsPlots = () => {
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
     GET_METRIC_PLOT_DATA,
     {
-      variables: { limit: METRIC_LIMIT },
+      variables: { limit: metricLimit },
     }
   );
 
