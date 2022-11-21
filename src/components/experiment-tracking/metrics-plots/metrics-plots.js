@@ -4,6 +4,8 @@ import classnames from 'classnames';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
 import { useApolloQuery } from '../../../apollo/utils';
 
+import { METRIC_LIMIT } from '../../../config';
+
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
@@ -15,7 +17,7 @@ const MetricsPlots = () => {
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
     GET_METRIC_PLOT_DATA,
     {
-      variables: { limit: 10 },
+      variables: { limit: METRIC_LIMIT },
     }
   );
 
