@@ -119,7 +119,7 @@ class RunsQuery:
         for dataset in metric_dataset_models:
             metric_data[dataset.dataset_name] = dataset.runs
 
-        formatted_metric_data = format_run_metric_data(metric_data)
+        formatted_metric_data = format_run_metric_data(metric_data, run_ids)
         return MetricPlotDataset(data=formatted_metric_data)
 
 

@@ -131,27 +131,29 @@ def format_run_tracking_data(
     return formatted_tracking_data
 
 
-def format_run_metric_data(metric_data: Dict) -> Dict:
+def format_run_metric_data(metric_data: Dict, run_ids: List[ID]) -> Dict:
     """Format metric data to conforms to the schema required by plots on the front
     end. Parallel Coordinate plots and Timeseries plots are supported.
 
     Arguments:
         metric_data: the data to format
+        run_ids: list of specified runs
 
     Returns:
         a dictionary containing metric data in two sub-dictionaries, containing
         metric data aggregated by run_id and by metric respectively.
     """
-    formatted_metric_data = _initialise_metric_data_template(metric_data)
+    formatted_metric_data = _initialise_metric_data_template(metric_data, run_ids)
     _populate_metric_data_template(metric_data, **formatted_metric_data)
     return formatted_metric_data
 
 
-def _initialise_metric_data_template(metric_data: Dict) -> Dict:
+def _initialise_metric_data_template(metric_data: Dict, run_ids: List[ID]) -> Dict:
     """Initialise a dictionary to store formatted metric data.
 
     Arguments:
         metric_data: the data being formatted
+        run_ids: list of specified runs
 
     Returns:
         A dictionary with two sub-dictionaries containing lists (initialised
@@ -161,7 +163,7 @@ def _initialise_metric_data_template(metric_data: Dict) -> Dict:
     metrics: Dict = {}
     for dataset_name in metric_data:
         dataset = metric_data[dataset_name]
-        for run_id in dataset:
+        for run_id in run_ids:
             runs[run_id] = []
             for metric in dataset[run_id]:
                 metric_name = f"{dataset_name}.{metric}"
@@ -186,7 +188,7 @@ def _populate_metric_data_template(
         runs: a dictionary to store metric data aggregated by run
         metrics: a dictionary to store metric data aggregated by metric
     """
-    print(metric_data)
+
     for (run_idx, run_id), (metric_idx, metric) in product(
         enumerate(runs), enumerate(metrics)
     ):

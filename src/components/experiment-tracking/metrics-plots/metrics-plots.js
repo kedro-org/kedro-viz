@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
 
+import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
+import { useApolloQuery } from '../../../apollo/utils';
+
+import { metricLimit } from '../../../config';
+
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
 const MetricsPlots = () => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
+
+  // Fetch metric plot data for
+  const { data: { runMetricsData = [] } = [] } = useApolloQuery(
+    GET_METRIC_PLOT_DATA,
+    {
+      variables: { limit: metricLimit },
+    }
+  );
 
   return (
     <div className="metrics-plots-wrapper">
@@ -30,6 +43,7 @@ const MetricsPlots = () => {
           ? 'Time-series chart goes here'
           : 'Parallel-coordinates chart goes here'}
       </div>
+      <div>{JSON.stringify(runMetricsData, null, 2)}</div>
     </div>
   );
 };
