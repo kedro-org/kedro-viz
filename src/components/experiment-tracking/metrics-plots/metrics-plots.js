@@ -43,6 +43,7 @@ const MetricsPlots = () => {
           ? 'Time-series chart goes here'
           : 'Parallel-coordinates chart goes here'}
       </div>
+      <div>{JSON.stringify(runMetricsData, null, 2)}</div>
     </div>
   );
 };
