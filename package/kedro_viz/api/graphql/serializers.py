@@ -131,12 +131,13 @@ def format_run_tracking_data(
     return formatted_tracking_data
 
 
-def format_run_metric_data(metric_data: Dict, run_ids = List[ID]) -> Dict:
+def format_run_metric_data(metric_data: Dict, run_ids: List[ID]) -> Dict:
     """Format metric data to conforms to the schema required by plots on the front
     end. Parallel Coordinate plots and Timeseries plots are supported.
 
     Arguments:
         metric_data: the data to format
+        run_ids: list of specified runs
 
     Returns:
         a dictionary containing metric data in two sub-dictionaries, containing
@@ -147,11 +148,12 @@ def format_run_metric_data(metric_data: Dict, run_ids = List[ID]) -> Dict:
     return formatted_metric_data
 
 
-def _initialise_metric_data_template(metric_data: Dict, run_ids = List[ID]) -> Dict:
+def _initialise_metric_data_template(metric_data: Dict, run_ids: List[ID]) -> Dict:
     """Initialise a dictionary to store formatted metric data.
 
     Arguments:
         metric_data: the data being formatted
+        run_ids: list of specified runs
 
     Returns:
         A dictionary with two sub-dictionaries containing lists (initialised
