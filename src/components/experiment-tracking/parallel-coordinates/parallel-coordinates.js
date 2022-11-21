@@ -111,9 +111,13 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   }, [areDimensionsComputed, graphKeys]);
 
   useEffect(() => {
-    setChartWidth(900);
+    setChartWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+    );
 
-    setChartHeight(800);
+    setChartHeight(
+      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
+    );
 
     setAreDimensionsComputed(true);
   }, []);
