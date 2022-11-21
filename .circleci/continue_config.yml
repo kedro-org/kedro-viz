@@ -50,24 +50,28 @@ commands:
           name: Install Node dependencies
           command: npm install
 
-  win_install_nvm:
+  nvm_use_npm_install:
     steps:
-      - run: choco install wget -y
       - run:
-          command: wget https://nodejs.org/dist/v16.13.2/node-v16.13.2-x86.msi -P C:\Users\circleci\Downloads\
-          shell: cmd.exe
-      - run: MsiExec.exe /i C:\Users\circleci\Downloads\node-v16.13.2-x86.msi /qn
-      - run:
+          name: Use NVM to run Node v16
           command: |
-            Start-Process powershell -verb runAs -Args "-start GeneralProfile"
-            nvm install 16.13.2
-            nvm use 16.13.2
+            nvm install v16.13.2
+            node -v
+            nvm alias default v16.13.2
+            nvm use v16.13.2
+      - run:
+          name: Install Node dependencies
+          command: |
+            node -v
+            npm install
 
   npm_build:
     steps:
       - run:
           name: Build React application
-          command: make build
+          command: |
+            node -v
+            make build
 
   win_setup_python_env:
     # Miniconda3 is pre-installed on the machine:
@@ -114,8 +118,7 @@ commands:
       - checkout
       - win_setup_python_env:
           python_version: <<parameters.python_version>>
-      - win_install_nvm
-      - install_node_dependencies
+      - nvm_use_npm_install
       - npm_build
 
 jobs:
