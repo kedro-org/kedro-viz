@@ -47,14 +47,14 @@ def populate_data(
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
-    browser: bool = None,
-    load_file: str = None,
-    save_file: str = None,
-    pipeline_name: str = None,
-    env: str = None,
-    project_path: str = None,
+    browser: Optional[bool] = None,
+    load_file: Optional[str] = None,
+    save_file: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    env: Optional[str] = None,
+    project_path: Optional[str] = None,
     autoreload: bool = False,
-    extra_params: Dict[str, Any] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name, too-many-locals
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.

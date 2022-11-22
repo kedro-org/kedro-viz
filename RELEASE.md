@@ -11,6 +11,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Allow users to hide modular pipelines on the flowchart. (#1046)
+- Create URL parameters for each element/section in the flowchart. (#1138)
 
 ## Bug fixes and other changes
 

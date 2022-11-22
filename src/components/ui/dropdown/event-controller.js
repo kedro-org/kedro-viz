@@ -5,7 +5,7 @@
 class EventController {
   /**
    * Manages the attachment of the event listener when body is clicked.
-   * @param {object} eventHandler - event handler which will be added
+   * @param {Object} eventHandler - event handler which will be added
    */
   static addBodyListener(eventHandler) {
     if (typeof window.__bodyEventHandlers === 'undefined') {

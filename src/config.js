@@ -37,6 +37,8 @@ export const experimentTrackingLazyLoadingColours = {
   foregroundDarkTheme: slate200,
 };
 
+export const metricLimit = 10;
+
 export const experimentTrackingLazyLoadingGap = 38;
 
 export const chartMinWidthScale = 0.25;
@@ -88,4 +90,21 @@ export const shortTypeMapping = {
     'image',
   'kedro.extras.datasets.tracking.json_dataset.JSONDataSet': 'tracking',
   'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet': 'tracking',
+};
+
+// URL parameters for each element/section
+export const params = {
+  focused: 'focused_id=',
+  selected: 'selected_id=',
+  pipeline: 'pipeline_id=',
+};
+
+const activePipeline = `${params.pipeline}:pipelineId`;
+
+export const routes = {
+  flowchart: {
+    main: '/',
+    focusedNode: `/?${activePipeline}&${params.focused}:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}:id`,
+  },
 };

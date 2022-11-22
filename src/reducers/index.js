@@ -24,8 +24,8 @@ import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 /**
  * Create a generic reducer
  * @param {*} initialState Default state
- * @param {string} type Action type
- * @param {string} key Action payload key
+ * @param {String} type Action type
+ * @param {String} key Action payload key
  * @return {*} Updated state
  */
 const createReducer =

@@ -39,9 +39,9 @@ export const graph = createMockWorker(graphWorker);
  * Manage the worker, avoiding race conditions by terminating running
  * processes when a new request is made, and reinitialising the instance.
  * Example getJob: (instance, payload) => instance.job(payload)
- * @param {function} worker Init worker and return job functions
- * @param {function} getJob Callback to select correct job function
- * @return {function} Function which returns a promise
+ * @param {Function} worker Init worker and return job functions
+ * @param {Function} getJob Callback to select correct job function
+ * @return {Function} Function which returns a promise
  */
 export function preventWorkerQueues(worker, getJob) {
   let instance = worker();

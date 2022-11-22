@@ -69,7 +69,6 @@ $triangle-size: 7px;
 
   position: absolute;
 
-  transition: opacity ease 0.1s;
   white-space: nowrap;
 
   // to ensure the tooltip will show on the top of the bookmark dropdown
@@ -86,9 +85,7 @@ $triangle-size: 7px;
 
   .pipeline-icon-toolbar__button:hover &,
   [data-whatinput='keyboard'] .pipeline-icon-toolbar__button:focus & {
-    opacity: 1;
     pointer-events: all;
-    transition-delay: 1s;
   }
 
   &::after {
@@ -109,6 +106,10 @@ $triangle-size: 7px;
       }
     }
   }
+}
+
+.pipeline-toolbar__label__visible {
+  opacity: 1;
 }
 
 .pipeline-toolbar__label-right {

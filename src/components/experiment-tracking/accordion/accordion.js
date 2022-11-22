@@ -5,15 +5,15 @@ import './accordion.css';
 
 /**
  * A collapsable container component.
- * @param {object} children React children
- * @param {string|null} className A top-level class name for the component.
- * @param {string} heading Text to display on the top-level.
- * @param {string|null} headingClassName A class name for the accordion header.
- * @param {string|null} headingDetail Text to display on the top-level.
- * @param {boolean} isCollapsed Control to collapse or expand the content.
- * @param {string|null} layout A secondary text string for additional context
- * @param {function} onCallback Fire a function on click from a parent.
- * @param {string} size Set the header font size.
+ * @param {Object} children React children
+ * @param {String|null} className A top-level class name for the component.
+ * @param {String} heading Text to display on the top-level.
+ * @param {String|null} headingClassName A class name for the accordion header.
+ * @param {String|null} headingDetail Text to display on the top-level.
+ * @param {Boolean} isCollapsed Control to collapse or expand the content.
+ * @param {String|null} layout A secondary text string for additional context
+ * @param {Function} onCallback Fire a function on click from a parent.
+ * @param {String} size Set the header font size.
  */
 const Accordion = ({
   children,
