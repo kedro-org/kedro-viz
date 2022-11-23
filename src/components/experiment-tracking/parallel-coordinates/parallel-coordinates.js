@@ -63,7 +63,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   });
 
   Object.entries(yScales).forEach(([key, value]) => {
-    yAxis[key] = d3.axisLeft(value).tickSizeOuter(0);
+    yAxis[key] = d3.axisLeft(value).ticks(0).tickSizeOuter(0);
   });
 
   const lineGenerator = d3.line().defined(function (d) {
@@ -161,10 +161,11 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         </g>
 
         {graph.map(([id, values]) => {
-          // To avoid rendering the tick more than 1
-          const uniqueValues = values.filter(
-            (value, i, self) => self.indexOf(value) === i
-          );
+          // To avoid rendering a tick more than once
+          const uniqueValues = values
+            .filter((value, i, self) => self.indexOf(value) === i)
+            .filter((value) => value !== null)
+            .sort((a, b) => a - b);
 
           return (
             <g className="ticks" id={id} key={uuidv4()}>
@@ -183,7 +184,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                     transform: 'translate(-10,4)',
                   }}
                 >
-                  {value}
+                  {value.toFixed(4)}
                 </text>
               ))}
             </g>
@@ -228,7 +229,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                       transform: 'translate(-10,4)',
                     }}
                   >
-                    {value}
+                    {value.toFixed(4)}
                   </text>
                 </React.Fragment>
               );

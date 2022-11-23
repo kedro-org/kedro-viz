@@ -41,16 +41,11 @@ g.selected path {
   stroke: $baseColour;
 }
 
-.tick:nth-last-child(1) text,
-.tick:nth-child(2) text {
+.ticks > .text:first-of-type,
+.ticks .text:last-of-type {
   visibility: visible;
   fill: #{colors.$grey-300};
   font-size: 12px;
-}
-
-// Hide all the tick values as we don't want to show all of them on the page
-.tick {
-  visibility: hidden;
 }
 
 // Custom ticks
