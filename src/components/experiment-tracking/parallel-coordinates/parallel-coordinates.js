@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
@@ -8,7 +8,7 @@ import { LinePath } from './components/line-path.js';
 
 import './parallel-coordinates.css';
 
-// TODO: move them to a config file or something
+// TODO: move these to a config file?
 const padding = 38;
 const paddingLr = 80;
 const buffer = 0.05;
@@ -36,7 +36,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   ];
 
   const graph = Object.entries(DATA.metrics);
-  const graphKeys = Object.keys(DATA.metrics);
+  const graphKeys = useMemo(() => Object.keys(DATA.metrics), [DATA.metrics]);
 
   const data = Object.entries(DATA.runs);
   const selectedData = data.filter(([key, value]) =>
@@ -53,7 +53,7 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   // Each vertical scale
   const yScales = {};
 
-  // for each metric, you draw a y-scale
+  // For each metric, draw a y-scale
   graph.forEach(([key, value]) => {
     yScales[key] = d3
       .scaleLinear()
@@ -76,13 +76,14 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   });
 
   const linePath = function (d) {
-    let points = d.map((x, i) => {
+    const points = d.map((x, i) => {
       if (x !== null) {
         return [xScale(graphKeys[i]), yScales[graphKeys[i]](x)];
       } else {
         return null;
       }
     });
+
     return lineGenerator(points);
   };
 
