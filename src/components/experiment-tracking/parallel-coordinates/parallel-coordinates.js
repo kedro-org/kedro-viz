@@ -24,7 +24,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
-  const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -95,22 +94,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   };
 
   useEffect(() => {
-    if (!areDimensionsComputed) {
-      return;
-    }
-
-    const axisG = d3.selectAll('.feature');
-
-    if (axisG) {
-      axisG.append('g').each(function (each, index) {
-        const key = graphKeys[index];
-
-        d3.select(this).call(yAxis[key]);
-      });
-    }
-  }, [areDimensionsComputed, graphKeys]);
-
-  useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
     );
@@ -118,8 +101,6 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     setChartHeight(
       document.querySelector('.metrics-plots-wrapper__charts').clientHeight
     );
-
-    setAreDimensionsComputed(true);
   }, []);
 
   return (
@@ -129,27 +110,34 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         width="100%"
       >
-        {graphKeys.map((key) => (
-          <g
-            className={classnames('feature', {
-              'feature--hovered': hoveredAxisG === key,
-            })}
-            transform={`translate(${xScale(key)}, 0)`}
-            y={padding / 2}
-            key={`feature--${key}`}
-          >
-            <text
-              className="headers"
-              textAnchor="middle"
+        {graphKeys.map((key) => {
+          const getYAxis = (ref) => {
+            d3.select(ref).call(yAxis[key]);
+          };
+
+          return (
+            <g
+              ref={getYAxis}
+              className={classnames('feature', {
+                'feature--hovered': hoveredAxisG === key,
+              })}
+              transform={`translate(${xScale(key)}, 0)`}
               y={padding / 2}
-              onMouseOver={(e) => handleMouseOverMetric(e, key)}
-              onMouseOut={handleMouseOutMetric}
-              key={`feature-text--${key}`}
+              key={`feature--${key}`}
             >
-              {key}
-            </text>
-          </g>
-        ))}
+              <text
+                className="headers"
+                textAnchor="middle"
+                y={padding / 2}
+                onMouseOver={(e) => handleMouseOverMetric(e, key)}
+                onMouseOut={handleMouseOutMetric}
+                key={`feature-text--${key}`}
+              >
+                {key}
+              </text>
+            </g>
+          );
+        })}
 
         <g className="active">
           {data.map(([id, value], i) => (
