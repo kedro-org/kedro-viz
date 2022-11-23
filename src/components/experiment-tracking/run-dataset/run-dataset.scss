@@ -1,12 +1,14 @@
 @use '../../../styles/variables' as variables;
 
 .details-dataset {
+  background-color: var(--color-sidebar-shadow);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: 5em 0 0 9em;
 
   &--not-overview {
+    background-color: var(--color-exp-tracking-bg);
     padding: 0.5em 0 0 9em;
   }
 }
