@@ -237,30 +237,35 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           </g>
         ))}
 
-        {graph.map(([id, values]) => (
-          <g className="lines" id={id} key={`lines--${id}`}>
-            {values.map((value) => {
-              if (value) {
-                return (
-                  <line
-                    className={classnames('line', {
-                      'line--hovered':
-                        hoveredAxisG === id ||
-                        (hoveredValues && hoveredValues.includes(value)),
-                    })}
-                    key={uuidv4()}
-                    x1={xScale(id)}
-                    x2={xScale(id) - 4}
-                    y1={yScales[id](value)}
-                    y2={yScales[id](value)}
-                  />
-                );
-              } else {
-                return null;
-              }
-            })}
-          </g>
-        ))}
+        {graph.map(([id, values]) => {
+          const sortedValues = values
+            .filter((value) => value !== null)
+            .sort((a, b) => a - b);
+          return (
+            <g className="lines" id={id} key={`lines--${id}`}>
+              {sortedValues.map((value) => {
+                if (value) {
+                  return (
+                    <line
+                      className={classnames('line', {
+                        'line--hovered':
+                          hoveredAxisG === id ||
+                          (hoveredValues && hoveredValues.includes(value)),
+                      })}
+                      key={uuidv4()}
+                      x1={xScale(id)}
+                      x2={xScale(id) - 4}
+                      y1={yScales[id](value)}
+                      y2={yScales[id](value)}
+                    />
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </g>
+          );
+        })}
       </svg>
     </div>
   );

@@ -41,14 +41,13 @@ g.selected path {
   stroke: $baseColour;
 }
 
+// Custom ticks
 .ticks > .text:first-of-type,
 .ticks .text:last-of-type {
-  visibility: visible;
   fill: #{colors.$grey-300};
   font-size: 12px;
 }
 
-// Custom ticks
 .ticks .text {
   fill: $baseColour;
 }
@@ -83,4 +82,9 @@ g.selected path {
 
 .lines .line--hovered {
   stroke: $lineHighlight;
+}
+
+.line:first-of-type,
+.line:last-of-type {
+  stroke: transparent;
 }
