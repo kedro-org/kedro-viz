@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
-import { data } from '../mock-data';
 
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
@@ -15,7 +14,6 @@ const tabLabels = ['Time-series', 'Parallel coordinates'];
 const MetricsPlots = ({ selectedRunIds }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
-  // Fetch metric plot data for
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
     GET_METRIC_PLOT_DATA,
     {
@@ -44,7 +42,10 @@ const MetricsPlots = ({ selectedRunIds }) => {
         {activeTab === tabLabels[0] ? (
           'Time-series chart goes here'
         ) : (
-          <ParallelCoordinates DATA={data} selectedRuns={selectedRunIds} />
+          <ParallelCoordinates
+            metricsData={runMetricsData?.data}
+            selectedRuns={selectedRunIds}
+          />
         )}
       </div>
       <div>{JSON.stringify(runMetricsData, null, 2)}</div>

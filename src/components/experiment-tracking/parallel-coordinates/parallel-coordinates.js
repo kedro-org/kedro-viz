@@ -11,7 +11,6 @@ import './parallel-coordinates.css';
 // TODO: move these to a config file?
 const padding = 38;
 const paddingLr = 80;
-const buffer = 0.05;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
@@ -19,8 +18,9 @@ const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
 const yAxis = {};
+const yScales = {};
 
-export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
+export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
@@ -35,32 +35,27 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     d3.symbolCircle,
   ];
 
-  const graph = Object.entries(DATA.metrics);
-  const graphKeys = useMemo(() => Object.keys(DATA.metrics), [DATA.metrics]);
-
-  const data = Object.entries(DATA.runs);
-  const selectedData = data.filter(([key, value]) =>
-    selectedRuns.includes(key)
+  const graph = Object.entries(metricsData.metrics);
+  const graphKeys = useMemo(
+    () => Object.keys(metricsData.metrics),
+    [metricsData.metrics]
   );
 
-  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
+  const data = Object.entries(metricsData.runs);
+  const selectedData = data.filter(([key]) => selectedRuns.includes(key));
+
+  const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
   const xScale = d3
     .scalePoint()
     .domain(graphKeys)
     .range([paddingLr, chartWidth - paddingLr]);
 
-  // Each vertical scale
-  const yScales = {};
-
   // For each metric, draw a y-scale
   graph.forEach(([key, value]) => {
     yScales[key] = d3
       .scaleLinear()
-      .domain([
-        Math.floor(Math.min(...value) - Math.min(...value) * buffer),
-        Math.ceil(Math.max(...value) + Math.max(...value) * buffer),
-      ])
+      .domain([d3.min(value), d3.max(value)])
       .range([
         chartHeight - padding - padding * axisGapBuffer,
         padding + padding / axisGapBuffer,
