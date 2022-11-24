@@ -56,10 +56,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     yScales[key] = d3
       .scaleLinear()
       .domain([d3.min(value), d3.max(value)])
-      .range([
-        chartHeight - padding - padding * axisGapBuffer,
-        padding + padding / axisGapBuffer,
-      ]);
+      .range([chartHeight - padding * 2.15, padding + padding / axisGapBuffer]);
   });
 
   Object.entries(yScales).forEach(([key, value]) => {

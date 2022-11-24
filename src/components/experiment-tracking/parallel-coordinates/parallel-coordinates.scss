@@ -1,8 +1,8 @@
 @use '../../../styles/variables' as colors;
 
-$baseColour: #{colors.$grey-900};
-$lineHighlight: #{colors.$grey-400};
-$textHighlight: #{colors.$white-900};
+$baseColor: colors.$grey-900;
+$lineHighlight: colors.$grey-400;
+$textHighlight: colors.$white-0;
 
 .parallel-coordinates {
   flex: 1 1 auto;
@@ -38,22 +38,22 @@ g.selected path {
 
 // y-Axis
 .domain {
-  stroke: $baseColour;
+  stroke: $baseColor;
 }
 
 // Custom ticks
 .ticks > .text:first-of-type,
 .ticks .text:last-of-type {
   fill: #{colors.$grey-300};
-  font-size: 12px;
 }
 
 .ticks .text {
-  fill: $baseColour;
+  fill: $baseColor;
+  font-size: 12px;
 }
 
 .lines .line {
-  stroke: $baseColour;
+  stroke: $baseColor;
 }
 
 // Selected runs
@@ -70,14 +70,13 @@ g.selected path {
 
   .headers {
     cursor: pointer;
-
     fill: #{colors.$white-0};
   }
 }
 
 //  Hovered run
 .ticks .text--hovered {
-  fill: $textHighlight;
+  fill: $textHighlight !important;
 }
 
 .lines .line--hovered {
