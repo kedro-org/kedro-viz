@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 const _dayJs = dayjs.extend(relativeTime);
 
-export const formatTimestamp = (timestamp) =>
+const formatTimestamp = (timestamp) =>
   timestamp.replace('.', ':').replace('.', ':');
 
 /**
