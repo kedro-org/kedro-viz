@@ -1,7 +1,5 @@
 @use '../../../styles/variables' as colors;
 
-$lineHighlight: colors.$grey-400;
-
 .parallel-coordinates {
   flex: 1 1 auto;
   font-family: sans-serif;
@@ -14,6 +12,7 @@ $lineHighlight: colors.$grey-400;
 }
 
 .run-line {
+  cursor: pointer;
   stroke: var(--color-metrics-plot-line);
 
   &--hovered {
@@ -81,7 +80,7 @@ g.selected path {
 // Hovered Y-axis
 .feature--hovered {
   .domain {
-    stroke: $lineHighlight;
+    stroke: colors.$grey-400;
   }
 
   .headers {
@@ -93,10 +92,6 @@ g.selected path {
 // Hovered run
 .tick-values .text--hovered {
   fill: var(--color-metrics-plot-axis-hover) !important;
-}
-
-.lines .line--hovered {
-  stroke: $lineHighlight;
 }
 
 .line:first-of-type,
