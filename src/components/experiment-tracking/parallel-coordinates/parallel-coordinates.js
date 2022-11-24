@@ -4,8 +4,6 @@ import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
 
-import { LinePath } from './components/line-path.js';
-
 import './parallel-coordinates.css';
 
 // TODO: move these to a config file?
@@ -15,7 +13,6 @@ const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
-const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
 const yAxis = {};
 const yScales = {};
@@ -24,7 +21,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
-  const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -88,22 +84,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   useEffect(() => {
-    if (!areDimensionsComputed) {
-      return;
-    }
-
-    const axisG = d3.selectAll('.feature');
-
-    if (axisG) {
-      axisG.append('g').each(function (each, index) {
-        const key = graphKeys[index];
-
-        d3.select(this).call(yAxis[key]);
-      });
-    }
-  }, [areDimensionsComputed, graphKeys]);
-
-  useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
     );
@@ -111,8 +91,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setChartHeight(
       document.querySelector('.metrics-plots-wrapper__charts').clientHeight
     );
-
-    setAreDimensionsComputed(true);
   }, []);
 
   return (
@@ -122,39 +100,53 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         width="100%"
       >
-        {graphKeys.map((key) => (
-          <g
-            className={classnames('feature', {
-              'feature--hovered': hoveredAxisG === key,
-            })}
-            transform={`translate(${xScale(key)}, 0)`}
-            y={padding / 2}
-            key={`feature--${key}`}
-          >
-            <text
-              className="headers"
-              textAnchor="middle"
+        {graphKeys.map((key) => {
+          const getYAxis = (ref) => {
+            d3.select(ref).call(yAxis[key]);
+          };
+
+          return (
+            <g
+              className={classnames('feature', {
+                'feature--hovered': hoveredAxisG === key,
+              })}
+              key={`feature--${key}`}
+              ref={getYAxis}
+              transform={`translate(${xScale(key)}, 0)`}
               y={padding / 2}
-              onMouseOver={(e) => handleMouseOverMetric(e, key)}
-              onMouseOut={handleMouseOutMetric}
-              key={`feature-text--${key}`}
             >
-              {key}
-            </text>
-          </g>
-        ))}
+              <text
+                className="headers"
+                key={`feature-text--${key}`}
+                onMouseOut={handleMouseOutMetric}
+                onMouseOver={(e) => handleMouseOverMetric(e, key)}
+                textAnchor="middle"
+                y={padding / 2}
+              >
+                {key}
+              </text>
+            </g>
+          );
+        })}
 
         <g className="active">
-          {data.map(([id, value], i) => (
-            <LinePath
-              d={linePath(value, i)}
-              id={id}
-              isHovered={hoveredElementId === id}
-              key={id}
-              setHoveredId={setHoveredElementId}
-              value={value}
-            />
-          ))}
+          {data.map(([id, value], i) => {
+            return (
+              <path
+                className={classnames('run-line', {
+                  'run-line--hovered': hoveredElementId === id,
+                })}
+                d={linePath(value, i)}
+                id={id}
+                key={id}
+                onMouseLeave={() => setHoveredElementId(null)}
+                onMouseOver={(e) => {
+                  setHoveredElementId(id);
+                  d3.select(e.target).raise();
+                }}
+              />
+            );
+          })}
         </g>
 
         {graph.map(([id, values]) => {
@@ -165,7 +157,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
             .sort((a, b) => a - b);
 
           return (
-            <g className="ticks" id={id} key={uuidv4()}>
+            <g className="tick-values" id={id} key={uuidv4()}>
               {uniqueValues.map((value) => (
                 <text
                   className={classnames('text', {
@@ -190,13 +182,15 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
         <g className="selected">
           {selectedData.map(([id, value], i) => (
-            <LinePath
+            <path
+              className={classnames({
+                'run-line--selected-first': i === 0,
+                'run-line--selected-second': i === 1,
+                'run-line--selected-third': i === 2,
+              })}
               d={linePath(value, i)}
               id={id}
-              isHovered={hoveredElementId === id}
               key={id}
-              selected
-              stroke={selectedLineColors[i]}
             />
           ))}
         </g>

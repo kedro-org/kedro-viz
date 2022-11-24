@@ -32,7 +32,7 @@
 }
 
 .details__tabs {
-  background-color: var(--color-bg-1);
+  background-color: var(--color-exp-tracking-bg);
   display: flex;
   left: 0;
   position: sticky;
@@ -47,6 +47,6 @@
   width: 200px;
 
   &--active {
-    background-color: var(--color-bg-1);
+    background-color: var(--color-exp-tracking-bg);
   }
 }
