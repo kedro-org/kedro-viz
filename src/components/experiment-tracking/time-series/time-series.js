@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatTimestamp } from '../../../utils/date-utils';
 import * as d3 from 'd3';
 
@@ -12,6 +12,8 @@ const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
 const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
+const selectedMarkerRotate = [45, 0, 0];
+
 const selectedMarkerShape = [
   d3.symbolSquare,
   d3.symbolTriangle,
@@ -21,6 +23,7 @@ const selectedMarkerShape = [
 // const yAxis = {};
 
 export const TimeSeries = ({ DATA, selectedRuns }) => {
+  const [hoveredReference, setHoveredReference] = useState(null);
   const metricKeys = Object.keys(DATA.metrics);
 
   const runData = Object.entries(DATA.runs);
@@ -95,6 +98,17 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
           return d3.line()(points);
         };
 
+        const dottedLinePath = function (data) {
+          let points = data.map(([key, value]) => {
+            if (value !== null) {
+              return [xScale(key), yScales[metricIndex](value[metricIndex])];
+            } else {
+              return null;
+            }
+          });
+          return d3.line()(points);
+        };
+
         return (
           <svg
             preserveAspectRatio="xMinYMin meet"
@@ -112,17 +126,22 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
               />
               <g className="yAxis" ref={getYAxis} />
               <g className="runLine">
-                <path d={linePath(metricValues)} fill="none" stroke="white" />)
+                <path d={linePath(metricValues)} fill="none" stroke="#717D84" />
+                )
               </g>
               <g className="referenceLine">
-                {parsedData.map(([key, _]) => (
+                {parsedData.map(([key, value]) => (
                   <line
                     x1={xScale(key)}
                     y1={0}
                     x2={xScale(key)}
                     y2={height}
-                    stroke="white"
-                  ></line>
+                    stroke="#21333E"
+                    onMouseOver={() => {
+                      setHoveredReference(value);
+                    }}
+                    onMouseLeave={() => setHoveredReference(null)}
+                  />
                 ))}
               </g>
               <g className="selected">
@@ -133,9 +152,50 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                     x2={xScale(key)}
                     y2={height}
                     stroke={selectedLineColors[index]}
-                  ></line>
+                  />
                 ))}
               </g>
+              <g className="marker">
+                {selectedData.map(([key, value], index) => (
+                  <path
+                    d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
+                    transform={`translate(${xScale(key)},${yScales[metricIndex](
+                      value[metricIndex]
+                    )}) 
+                  rotate(${selectedMarkerRotate[index]})`}
+                    stroke={selectedMarkerColors[index]}
+                  />
+                ))}
+              </g>
+
+              <g className="dotted-line">
+                <path
+                  d={dottedLinePath(selectedData)}
+                  fill="none"
+                  stroke="white"
+                  strokeDasharray={4}
+                />
+              </g>
+
+              {hoveredReference && (
+                <g className="hovered-line">
+                  {hoveredReference.map((value, index) => {
+                    if (metricIndex === index) {
+                      return (
+                        <line
+                          x1={0}
+                          y1={yScales[index](value)}
+                          x2={width}
+                          y2={yScales[index](value)}
+                          stroke="#97A0A6"
+                          strokeDasharray={4}
+                        />
+                      );
+                    }
+                  })}
+                  ;
+                </g>
+              )}
             </g>
           </svg>
         );
