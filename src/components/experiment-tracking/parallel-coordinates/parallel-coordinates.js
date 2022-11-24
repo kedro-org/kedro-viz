@@ -22,6 +22,7 @@ const yAxis = {};
 
 export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
+  const [hoveredLine, setHoveredLine] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
 
@@ -93,6 +94,14 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
     setHoveredAxisG(null);
   };
 
+  const handleMouseOverLine = (e, key) => {
+    setHoveredLine(key);
+  };
+
+  const handleMouseOutLine = () => {
+    setHoveredLine(null);
+  };
+
   useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
@@ -141,13 +150,18 @@ export const ParallelCoordinates = ({ DATA, selectedRuns }) => {
 
         <g className="active">
           {data.map(([id, value], i) => (
-            <LinePath
+            <path
               d={linePath(value, i)}
+              className={classnames('run-line', {
+                ' run-line--hovered': hoveredLine === id,
+              })}
               id={id}
-              isHovered={hoveredElementId === id}
               key={id}
-              setHoveredId={setHoveredElementId}
-              value={value}
+              onMouseOver={(e) => handleMouseOverLine(e, id)}
+              onMouseLeave={handleMouseOutLine}
+              stroke={
+                hoveredLine === id || hoveredElementId === id ? 'red' : 'pink'
+              }
             />
           ))}
         </g>
