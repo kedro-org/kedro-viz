@@ -3,6 +3,7 @@
 $baseColour: #{colors.$grey-900};
 $lineHighlight: #{colors.$grey-400};
 $textHighlight: #{colors.$white-900};
+$triangle-size: 10px;
 
 .parallel-coordinates {
   flex: 1 1 auto;
@@ -87,4 +88,66 @@ g.selected path {
 .line:first-of-type,
 .line:last-of-type {
   stroke: transparent;
+}
+
+.parallel-coordinates-wrapper {
+  position: relative;
+}
+
+.tooltip {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  padding: 10px 30px 10px 10px;
+  position: absolute;
+}
+
+.tooltip--show {
+  opacity: 1;
+}
+
+.tooltip-arrow {
+  display: inline-block;
+
+  position: absolute;
+  white-space: nowrap;
+
+  top: 22px;
+  left: 1px;
+
+  margin-top: -1.2em;
+  margin-right: 1.6em;
+
+  width: 0;
+  height: 0;
+
+  &::before {
+    position: absolute;
+
+    width: 0;
+    height: 0;
+
+    content: '';
+
+    top: calc(50% - #{$triangle-size});
+    left: -$triangle-size + 0.5;
+
+    border-top: $triangle-size solid var(--color-bg-alt);
+    border-left: $triangle-size solid transparent;
+  }
+}
+
+.tooltip-label,
+.tooltip-value {
+  font-size: 12px;
+  margin: 0;
+}
+
+.tooltip-label {
+  color: #{colors.$black-500};
+}
+
+.tooltip-value {
+  color: #{colors.$black-900};
 }

@@ -20,11 +20,33 @@ const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 const yAxis = {};
 const yScales = {};
 
+const Tooltip = ({ content, visible, pos }) => {
+  return (
+    <div
+      className={classnames('tooltip', { 'tooltip--show': visible })}
+      style={{ top: pos.top, left: pos.left }}
+    >
+      <span className="tooltip-arrow" />
+      <h3 className="tooltip-label">Metric Name:</h3>
+      <h4 className="tooltip-value">{content.name}</h4>
+
+      <br />
+      <h3 className="tooltip-label">Runs Count:</h3>
+      <h4 className="tooltip-value">{content.runsCount}</h4>
+    </div>
+  );
+};
+
 export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
   const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
+  const [showTooltip, setShowTooltip] = useState({
+    visible: false,
+    pos: { top: null, left: null },
+    content: {},
+  });
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -83,11 +105,28 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   const handleMouseOverMetric = (e, key) => {
+    const runsCount = graph.find((each) => each[0] === key)[1].length;
     setHoveredAxisG(key);
+    setShowTooltip({
+      visible: true,
+      pos: {
+        top: `${e.currentTarget.getBoundingClientRect().y + 20}px`,
+        left: `${e.currentTarget.getBoundingClientRect().x - 365}px`,
+      },
+      content: { name: key, runsCount },
+    });
   };
 
   const handleMouseOutMetric = () => {
     setHoveredAxisG(null);
+    setShowTooltip({
+      visible: false,
+      pos: {
+        top: null,
+        left: null,
+      },
+      content: { name: '', runsCount: 0 },
+    });
   };
 
   useEffect(() => {
@@ -120,6 +159,12 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   return (
     <div className="parallel-coordinates">
+      <Tooltip
+        content={showTooltip.content}
+        visible={showTooltip.visible}
+        pos={showTooltip.pos}
+      />
+
       <svg
         preserveAspectRatio="xMinYMin meet"
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
