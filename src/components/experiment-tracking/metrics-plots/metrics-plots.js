@@ -15,7 +15,6 @@ const tabLabels = ['Time-series', 'Parallel coordinates'];
 const MetricsPlots = ({ selectedRunIds }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
-  // Fetch metric plot data for
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
     GET_METRIC_PLOT_DATA,
     {
@@ -44,7 +43,10 @@ const MetricsPlots = ({ selectedRunIds }) => {
         {activeTab === tabLabels[0] ? (
           <TimeSeries DATA={data} selectedRuns={selectedRunIds} />
         ) : (
-          <ParallelCoordinates DATA={data} selectedRuns={selectedRunIds} />
+          <ParallelCoordinates
+            metricsData={runMetricsData?.data}
+            selectedRuns={selectedRunIds}
+          />
         )}
       </div>
       <div>{JSON.stringify(runMetricsData, null, 2)}</div>
