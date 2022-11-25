@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 // TODO: move them to a config file or something
 
 const margin = { top: 50, right: 0, bottom: 50, left: 50 };
-const width = 760,
+const width = 1100,
   height = 150;
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
