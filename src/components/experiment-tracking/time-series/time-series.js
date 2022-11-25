@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
+import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
+import { HoverStateContext } from '../utils/hover-state-context';
 import * as d3 from 'd3';
+
+import './time-series.css';
 
 // TODO: move them to a config file or something
 
 const margin = { top: 50, right: 0, bottom: 50, left: 50 };
 const width = 760,
   height = 150;
-
-const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
-
-const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 
 const selectedMarkerRotate = [45, 0, 0];
 
@@ -23,28 +23,26 @@ const selectedMarkerShape = [
 // const yAxis = {};
 
 export const TimeSeries = ({ DATA, selectedRuns }) => {
-  const [hoveredReference, setHoveredReference] = useState(null);
+  const { hoveredElementId, setHoveredElementId } =
+    useContext(HoverStateContext);
+
   const metricKeys = Object.keys(DATA.metrics);
-
   const runData = Object.entries(DATA.runs);
-
+  const runKeys = Object.keys(DATA.runs);
   const metricData = Object.entries(DATA.metrics);
 
   const parsedData = runData.map(([key, value]) => [
     new Date(formatTimestamp(key)),
     value,
   ]);
-
   const parsedDates = parsedData.map(([key, _]) => key);
 
   const diffDays = parseInt(
     (d3.max(parsedDates) - d3.min(parsedDates)) / (1000 * 60 * 60 * 24),
     10
   );
-
   const minDate = new Date(d3.min(parsedDates));
   minDate.setDate(minDate.getDate() - diffDays * 0.02);
-
   const maxDate = new Date(d3.max(parsedDates));
   maxDate.setDate(maxDate.getDate() + diffDays * 0.02);
 
@@ -52,12 +50,14 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
     .filter(([key, value]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
+  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
+
   // Each vertical scale
 
   const yScales = {};
 
   metricData.map(
-    ([key, value], i) =>
+    ([_, value], i) =>
       (yScales[i] = d3
         .scaleLinear()
         .domain([
@@ -80,10 +80,7 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
 
         const getYAxis = (ref) => {
           d3.select(ref).call(
-            d3
-              .axisLeft(yScales[metricIndex])
-              .tickValues(metricValues)
-              .tickSizeOuter(0)
+            d3.axisLeft(yScales[metricIndex]).tickSizeOuter(0)
           );
         };
 
@@ -120,50 +117,58 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
               transform={`translate(${margin.left},${margin.top})`}
             >
               <g
-                className="xAxis"
+                className="x-axis"
                 ref={getXAxis}
                 transform={`translate(0,${height})`}
               />
-              <g className="yAxis" ref={getYAxis} />
-              <g className="runLine">
-                <path d={linePath(metricValues)} fill="none" stroke="#717D84" />
-                )
+
+              <g className="y-axis" ref={getYAxis} />
+
+              <g className="run-line">
+                <path d={linePath(metricValues)} />
               </g>
-              <g className="referenceLine">
-                {parsedData.map(([key, value]) => (
+
+              <g className="reference-group">
+                {parsedData.map(([key, value], index) => (
                   <line
+                    className={classnames('reference-line', {
+                      'reference-line--hovered':
+                        hoveredElementId === runKeys[index],
+                    })}
                     x1={xScale(key)}
                     y1={0}
                     x2={xScale(key)}
                     y2={height}
-                    stroke="#21333E"
-                    onMouseOver={() => {
-                      setHoveredReference(value);
+                    onMouseOver={(e) => {
+                      setHoveredElementId(runKeys[index]);
+                      d3.select(e.target).raise();
                     }}
-                    onMouseLeave={() => setHoveredReference(null)}
+                    onMouseLeave={() => setHoveredElementId(null)}
                   />
                 ))}
               </g>
+
               <g className="selected">
                 {selectedData.map(([key, _], index) => (
                   <line
+                    className={`selected-line--${index}`}
                     x1={xScale(key)}
                     y1={0}
                     x2={xScale(key)}
                     y2={height}
-                    stroke={selectedLineColors[index]}
                   />
                 ))}
               </g>
+
               <g className="marker">
                 {selectedData.map(([key, value], index) => (
                   <path
+                    className={`selected-marker--${index}`}
                     d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
                     transform={`translate(${xScale(key)},${yScales[metricIndex](
                       value[metricIndex]
                     )}) 
                   rotate(${selectedMarkerRotate[index]})`}
-                    stroke={selectedMarkerColors[index]}
                   />
                 ))}
               </g>
@@ -177,9 +182,9 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                 />
               </g>
 
-              {hoveredReference && (
+              {hoveredValues && (
                 <g className="hovered-line">
-                  {hoveredReference.map((value, index) => {
+                  {hoveredValues.map((value, index) => {
                     if (metricIndex === index) {
                       return (
                         <line
@@ -191,6 +196,8 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                           strokeDasharray={4}
                         />
                       );
+                    } else {
+                      return null;
                     }
                   })}
                   ;

@@ -10,82 +10,58 @@ $textHighlight: #{colors.$white-900};
   margin: 0 4em 0 0;
 }
 
-.parallel-coordinates .text {
+.time-series .text {
   font-size: 12px;
   font-weight: 400;
 }
 
-g.active path {
+.run-line {
   fill: none;
-  stroke: #{colors.$slate-500};
-  stroke-linecap: 'round';
+  stroke: #717d84;
 }
 
-g.highlight path {
-  stroke: $lineHighlight;
-  fill: none;
+.reference-line {
+  cursor: pointer;
+  stroke: #21333e;
 }
 
-g.selected path {
-  fill: none;
+.reference-line--hovered {
+  stroke: white;
 }
 
-.headers {
-  fill: $textHighlight;
-  font-size: 14px;
-  font-weight: 400;
+.selected-line--0 {
+  stroke: #00bcff;
 }
 
-// y-Axis
-.domain {
-  stroke: $baseColour;
+.selected-line--1 {
+  stroke: #31e27b;
 }
 
-.tick:nth-last-child(1) text,
-.tick:nth-child(2) text {
-  visibility: visible;
-  fill: #{colors.$grey-300};
+.selected-line--2 {
+  stroke: #ffbc00;
+}
+
+.selected-marker--0 {
+  stroke: #00e3ff;
+}
+
+.selected-marker--1 {
+  stroke: #3bff95;
+}
+
+.selected-marker--2 {
+  stroke: #ffe300;
+}
+
+.y-axis .tick {
+  opacity: 0;
   font-size: 12px;
 }
 
-// Hide all the tick values as we don't want to show all of them on the page
-.tick {
-  visibility: hidden;
+.y-axis .tick:nth-last-child(2) {
+  opacity: 1;
 }
 
-// Custom ticks
-.ticks .text {
-  fill: $baseColour;
-}
-
-.lines .line {
-  stroke: $baseColour;
-}
-
-// Selected runs
-.marker .text {
-  fill: #{colors.$white-0};
-  font-weight: 600;
-}
-
-// Hovered Y-axis
-.feature--hovered {
-  .domain {
-    stroke: $lineHighlight;
-  }
-
-  .headers {
-    cursor: pointer;
-
-    fill: #{colors.$white-0};
-  }
-}
-
-//  Hovered run
-.ticks .text--hovered {
-  fill: $textHighlight;
-}
-
-.lines .line--hovered {
-  stroke: $lineHighlight;
+.y-axis .tick:nth-child(3) {
+  opacity: 1;
 }
