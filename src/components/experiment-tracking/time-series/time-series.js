@@ -8,8 +8,8 @@ import './time-series.css';
 
 // TODO: move them to a config file or something
 
-const margin = { top: 50, right: 0, bottom: 50, left: 50 };
-const width = 1100,
+const margin = { top: 50, right: 0, bottom: 50, left: 30 };
+const width = 786,
   height = 150;
 
 const selectedMarkerRotate = [45, 0, 0];
@@ -25,6 +25,10 @@ const selectedMarkerShape = [
 export const TimeSeries = ({ DATA, selectedRuns }) => {
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
+
+  const hoveredElementDate =
+    hoveredElementId && new Date(formatTimestamp(hoveredElementId));
+  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
 
   const metricKeys = Object.keys(DATA.metrics);
   const runData = Object.entries(DATA.runs);
@@ -49,8 +53,6 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
   const selectedData = runData
     .filter(([key, value]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
-
-  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
 
   // Each vertical scale
 
@@ -107,104 +109,157 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
         };
 
         return (
-          <svg
-            preserveAspectRatio="xMinYMin meet"
-            width={width + margin.left + margin.right}
-            height={height + margin.top + margin.bottom}
-          >
-            <g
-              id={metricName}
-              transform={`translate(${margin.left},${margin.top})`}
+          <>
+            <h3 className="metric-name">{metricName}</h3>
+            <svg
+              preserveAspectRatio="xMinYMin meet"
+              width={width + margin.left + margin.right}
+              height={height + margin.top + margin.bottom}
             >
               <g
-                className="x-axis"
-                ref={getXAxis}
-                transform={`translate(0,${height})`}
-              />
-
-              <g className="y-axis" ref={getYAxis} />
-
-              <g className="run-line">
-                <path d={linePath(metricValues)} />
-              </g>
-
-              <g className="reference-group">
-                {parsedData.map(([key, value], index) => (
-                  <line
-                    className={classnames('reference-line', {
-                      'reference-line--hovered':
-                        hoveredElementId === runKeys[index],
-                    })}
-                    x1={xScale(key)}
-                    y1={0}
-                    x2={xScale(key)}
-                    y2={height}
-                    onMouseOver={(e) => {
-                      setHoveredElementId(runKeys[index]);
-                      d3.select(e.target).raise();
-                    }}
-                    onMouseLeave={() => setHoveredElementId(null)}
-                  />
-                ))}
-              </g>
-
-              <g className="selected">
-                {selectedData.map(([key, _], index) => (
-                  <line
-                    className={`selected-line--${index}`}
-                    x1={xScale(key)}
-                    y1={0}
-                    x2={xScale(key)}
-                    y2={height}
-                  />
-                ))}
-              </g>
-
-              <g className="marker">
-                {selectedData.map(([key, value], index) => (
-                  <path
-                    className={`selected-marker--${index}`}
-                    d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
-                    transform={`translate(${xScale(key)},${yScales[metricIndex](
-                      value[metricIndex]
-                    )}) 
-                  rotate(${selectedMarkerRotate[index]})`}
-                  />
-                ))}
-              </g>
-
-              <g className="dotted-line">
-                <path
-                  d={dottedLinePath(selectedData)}
-                  fill="none"
-                  stroke="white"
-                  strokeDasharray={4}
+                id={metricName}
+                transform={`translate(${margin.left},${margin.top})`}
+              >
+                <g
+                  className="x-axis"
+                  ref={getXAxis}
+                  transform={`translate(0,${height})`}
                 />
-              </g>
 
-              {hoveredValues && (
-                <g className="hovered-line">
-                  {hoveredValues.map((value, index) => {
-                    if (metricIndex === index) {
-                      return (
-                        <line
-                          x1={0}
-                          y1={yScales[index](value)}
-                          x2={width}
-                          y2={yScales[index](value)}
-                          stroke="#97A0A6"
-                          strokeDasharray={4}
-                        />
-                      );
-                    } else {
-                      return null;
-                    }
+                <g className="y-axis" ref={getYAxis} />
+
+                <g
+                  className="y-axis-right"
+                  ref={getYAxis}
+                  transform={`translate(${width},0)`}
+                />
+
+                <text
+                  className="axis-label"
+                  y={10 - margin.left}
+                  x={-10 - height / 2}
+                >
+                  value
+                </text>
+
+                <g
+                  className={classnames('run-line', {
+                    'run-line--blend':
+                      hoveredElementId || selectedRuns.length > 1,
                   })}
-                  ;
+                >
+                  <path d={linePath(metricValues)} />
                 </g>
-              )}
-            </g>
-          </svg>
+
+                <g className="reference-group">
+                  {parsedData.map(([key, _], index) => (
+                    <line
+                      className={classnames('reference-line', {
+                        'reference-line--hovered':
+                          hoveredElementId === runKeys[index],
+                      })}
+                      x1={xScale(key)}
+                      y1={0}
+                      x2={xScale(key)}
+                      y2={height}
+                      onMouseOver={(e) => {
+                        setHoveredElementId(runKeys[index]);
+                      }}
+                      onMouseLeave={() => setHoveredElementId(null)}
+                    />
+                  ))}
+                </g>
+
+                {hoveredValues && (
+                  <g>
+                    {hoveredValues.map((value, index) => {
+                      if (metricIndex === index) {
+                        return (
+                          <>
+                            <line
+                              className="hovered-line"
+                              x1={0}
+                              y1={yScales[index](value)}
+                              x2={width}
+                              y2={yScales[index](value)}
+                            />
+                            {/* <line
+                          className="reference-line--hovered"
+                          x1={xScale(hoveredElementDate)}
+                          y1={0}
+                          x2={xScale(hoveredElementDate)}
+                          y2={height}
+                          onMouseOver={(e) => {
+                            setHoveredElementId(runKeys[index]);
+                          }}
+                          onMouseLeave={() => setHoveredElementId(null)}
+                        /> */}
+                            <g className="ticks">
+                              <line
+                                className="tick-line"
+                                x1={xScale(hoveredElementDate)}
+                                y1={yScales[index](value)}
+                                x2={xScale(hoveredElementDate) - 5}
+                                y2={yScales[index](value)}
+                              />
+                              <text
+                                className="tick-text"
+                                x={xScale(hoveredElementDate)}
+                                y={yScales[index](value)}
+                              >
+                                {value}
+                              </text>
+                            </g>
+                          </>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                    ;
+                  </g>
+                )}
+
+                <g className="selected">
+                  {selectedData.map(([key, value], index) => (
+                    <>
+                      <line
+                        className={`selected-line--${index}`}
+                        x1={xScale(key)}
+                        y1={0}
+                        x2={xScale(key)}
+                        y2={height}
+                      />
+                      <text
+                        className="tick-text"
+                        x={xScale(key)}
+                        y={yScales[metricIndex](value[metricIndex])}
+                      >
+                        {value[metricIndex]}
+                      </text>
+                    </>
+                  ))}
+                </g>
+
+                <g className="marker">
+                  {selectedData.map(([key, value], index) => (
+                    <path
+                      className={`selected-marker--${index}`}
+                      d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
+                      transform={`translate(${xScale(key)},${yScales[
+                        metricIndex
+                      ](value[metricIndex])}) 
+                  rotate(${selectedMarkerRotate[index]})`}
+                    />
+                  ))}
+                </g>
+
+                <g className="dotted-line">
+                  <path d={dottedLinePath(selectedData)} />
+                </g>
+              </g>
+            </svg>
+          </>
         );
       })}
     </div>

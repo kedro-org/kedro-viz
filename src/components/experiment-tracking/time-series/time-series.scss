@@ -15,9 +15,26 @@ $textHighlight: #{colors.$white-900};
   font-weight: 400;
 }
 
+.metric_name {
+  font-size: 14px;
+  color: white;
+  line-height: 20px;
+  font-weight: 400px;
+}
+
+.axis-label {
+  fill: #c0c5c9;
+  font-size: 12px;
+  transform: rotate(-90deg);
+}
+
 .run-line {
   fill: none;
   stroke: #717d84;
+}
+
+.run-line--blend {
+  stroke-opacity: 0.4;
 }
 
 .reference-line {
@@ -27,6 +44,10 @@ $textHighlight: #{colors.$white-900};
 
 .reference-line--hovered {
   stroke: white;
+}
+
+.reference-group--blend {
+  stroke-opacity: 0.55;
 }
 
 .selected-line--0 {
@@ -53,7 +74,8 @@ $textHighlight: #{colors.$white-900};
   stroke: #ffe300;
 }
 
-.y-axis .tick {
+.y-axis .tick,
+.y-axis-right .tick {
   opacity: 0;
   font-size: 12px;
 }
@@ -64,4 +86,25 @@ $textHighlight: #{colors.$white-900};
 
 .y-axis .tick:nth-child(3) {
   opacity: 1;
+}
+
+.dotted-line {
+  stroke: white;
+  stroke-dasharray: 4;
+  fill: none;
+}
+
+.hovered-line {
+  stroke: #97a0a6;
+  stroke-dasharray: 4;
+}
+
+.tick-line {
+  stroke: white;
+}
+
+.tick-text {
+  fill: white;
+  text-anchor: end;
+  transform: translate(-10px, -4px);
 }
