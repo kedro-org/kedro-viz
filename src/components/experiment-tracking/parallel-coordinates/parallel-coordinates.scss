@@ -1,9 +1,5 @@
 @use '../../../styles/variables' as colors;
 
-$baseColour: #{colors.$grey-900};
-$lineHighlight: #{colors.$grey-400};
-$textHighlight: #{colors.$white-900};
-
 .parallel-coordinates {
   flex: 1 1 auto;
   font-family: sans-serif;
@@ -15,14 +11,33 @@ $textHighlight: #{colors.$white-900};
   font-weight: 400;
 }
 
+.run-line {
+  cursor: pointer;
+  stroke: var(--color-metrics-plot-line);
+
+  &--hovered {
+    stroke: var(--color-metrics-plot-line-hover);
+  }
+
+  &--selected-first {
+    stroke: colors.$blue-300;
+  }
+
+  &--selected-second {
+    stroke: colors.$green-300;
+  }
+
+  &--selected-third {
+    stroke: colors.$yellow-300;
+  }
+}
+
 g.active path {
   fill: none;
-  stroke: #{colors.$slate-500};
   stroke-linecap: 'round';
 }
 
 g.highlight path {
-  stroke: $lineHighlight;
   fill: none;
 }
 
@@ -31,57 +46,52 @@ g.selected path {
 }
 
 .headers {
-  fill: $textHighlight;
+  fill: var(--color-metrics-plot-text-bold);
   font-size: 14px;
   font-weight: 400;
 }
 
 // y-Axis
 .domain {
-  stroke: $baseColour;
+  stroke: var(--color-metrics-plot-text);
 }
 
-// Custom ticks
-.ticks > .text:first-of-type,
-.ticks .text:last-of-type {
-  fill: #{colors.$grey-300};
+// Start/end tick-values
+.tick-values > .text:first-of-type,
+.tick-values > .text:last-of-type {
+  fill: var(--color-metrics-plot-axis-ends);
+}
+
+.tick-values .text {
+  fill: var(--color-metrics-plot-text);
   font-size: 12px;
 }
 
-.ticks .text {
-  fill: $baseColour;
-}
-
 .lines .line {
-  stroke: $baseColour;
+  stroke: var(--color-metrics-plot-text);
 }
 
 // Selected runs
 .marker .text {
-  fill: #{colors.$white-0};
+  fill: var(--color-metrics-plot-text-bold);
   font-weight: 600;
 }
 
 // Hovered Y-axis
 .feature--hovered {
   .domain {
-    stroke: $lineHighlight;
+    stroke: colors.$grey-400;
   }
 
   .headers {
     cursor: pointer;
-
-    fill: #{colors.$white-0};
+    fill: var(--color-metrics-plot-text-bold);
   }
 }
 
-//  Hovered run
-.ticks .text--hovered {
-  fill: $textHighlight;
-}
-
-.lines .line--hovered {
-  stroke: $lineHighlight;
+// Hovered run
+.tick-values .text--hovered {
+  fill: var(--color-metrics-plot-axis-hover) !important;
 }
 
 .line:first-of-type,

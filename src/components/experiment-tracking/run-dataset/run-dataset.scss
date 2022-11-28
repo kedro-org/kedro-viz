@@ -1,7 +1,7 @@
 @use '../../../styles/variables' as variables;
 
 .details-dataset {
-  background-color: var(--color-sidebar-shadow);
+  background-color: var(--color-exp-tracking-datasets);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
