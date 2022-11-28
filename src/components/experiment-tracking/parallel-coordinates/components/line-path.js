@@ -10,7 +10,8 @@ export const LinePath = ({
   id,
   isHovered,
   selected,
-  setHoveredId,
+  onMouseOver,
+  onMouseOut,
   stroke,
 }) => {
   const setHighlight = (el, highlighted) => {
@@ -25,9 +26,9 @@ export const LinePath = ({
 
   const ref = useD3((el) => {
     if (!selected) {
-      el.on('mouseover', () => setHoveredId(id));
+      el.on('mouseover', (e) => onMouseOver(e, id));
 
-      el.on('mouseout', () => setHoveredId(null));
+      el.on('mouseout', () => onMouseOut());
 
       if (isHovered) {
         setHighlight(el, true);

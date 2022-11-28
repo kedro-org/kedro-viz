@@ -3,6 +3,9 @@ import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
+import { Tooltip } from '../tooltip/tooltip';
+
+import { formatTimestamp } from '../../../utils/date-utils';
 
 import { LinePath } from './components/line-path.js';
 
@@ -20,32 +23,16 @@ const selectedLineColors = ['#00BCFF', '#31E27B', '#FFBC00'];
 const yAxis = {};
 const yScales = {};
 
-const Tooltip = ({ content, visible, pos }) => {
-  return (
-    <div
-      className={classnames('tooltip', { 'tooltip--show': visible })}
-      style={{ top: pos.top, left: pos.left }}
-    >
-      <span className="tooltip-arrow" />
-      <h3 className="tooltip-label">Metric Name:</h3>
-      <h4 className="tooltip-value">{content.name}</h4>
-
-      <br />
-      <h3 className="tooltip-label">Runs Count:</h3>
-      <h4 className="tooltip-value">{content.runsCount}</h4>
-    </div>
-  );
-};
-
 export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
   const [areDimensionsComputed, setAreDimensionsComputed] = useState(false);
   const [showTooltip, setShowTooltip] = useState({
+    content: { label1: '', value1: '', label2: '', value2: '' },
+    direction: 'right',
+    pos: { x: -500, y: -500 },
     visible: false,
-    pos: { top: null, left: null },
-    content: {},
   });
 
   const { hoveredElementId, setHoveredElementId } =
@@ -107,25 +94,83 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const handleMouseOverMetric = (e, key) => {
     const runsCount = graph.find((each) => each[0] === key)[1].length;
     setHoveredAxisG(key);
+
+    const rect = e.target.getBoundingClientRect();
+    const sideBar = 540;
+    const tooltipMaxWidth = 400;
+
+    let x, direction;
+
+    if (window.innerWidth - rect.x > tooltipMaxWidth) {
+      x = e.clientX - sideBar;
+      direction = 'right';
+    } else {
+      x = e.clientX - sideBar - sideBar / 2;
+      direction = 'left';
+    }
+    const y = rect.y - 140;
+
     setShowTooltip({
-      visible: true,
-      pos: {
-        top: `${e.currentTarget.getBoundingClientRect().y + 20}px`,
-        left: `${e.currentTarget.getBoundingClientRect().x - 365}px`,
+      content: {
+        label1: 'Metrics Name',
+        value1: key,
+        label2: 'Runs Count',
+        value2: runsCount,
       },
-      content: { name: key, runsCount },
+      direction,
+      pos: { x, y },
+      visible: true,
     });
   };
 
   const handleMouseOutMetric = () => {
     setHoveredAxisG(null);
     setShowTooltip({
+      pos: { x: -500, y: -500 },
       visible: false,
-      pos: {
-        top: null,
-        left: null,
-      },
-      content: { name: '', runsCount: 0 },
+    });
+  };
+
+  const handleMouseOverLine = (e, key) => {
+    setHoveredElementId(key);
+
+    if (e) {
+      const sideBar = 540;
+      const tooltipMaxWidth = 300;
+
+      let x, direction;
+
+      if (window.innerWidth - e.clientX > tooltipMaxWidth) {
+        x = e.clientX - sideBar - 15;
+        direction = 'right';
+      } else {
+        x = e.clientX - sideBar - sideBar / 2;
+        direction = 'left';
+      }
+      const y = e.clientY - 150;
+
+      const parsedDate = new Date(formatTimestamp(key));
+
+      setShowTooltip({
+        content: {
+          label1: 'Metrics Name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toString(),
+        },
+        direction,
+        pos: { x, y },
+        visible: true,
+      });
+    }
+  };
+
+  const handleMouseOutLine = () => {
+    setHoveredElementId(null);
+
+    setShowTooltip({
+      pos: { x: -500, y: -500 },
+      visible: false,
     });
   };
 
@@ -163,6 +208,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         content={showTooltip.content}
         visible={showTooltip.visible}
         pos={showTooltip.pos}
+        direction={showTooltip.direction}
       />
 
       <svg
@@ -199,7 +245,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               id={id}
               isHovered={hoveredElementId === id}
               key={id}
-              setHoveredId={setHoveredElementId}
+              onMouseOver={handleMouseOverLine}
+              onMouseOut={handleMouseOutLine}
               value={value}
             />
           ))}
