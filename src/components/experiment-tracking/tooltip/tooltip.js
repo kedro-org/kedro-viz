@@ -12,9 +12,9 @@ export const tooltipDefaultProps = {
 
 export const MetricsChartsTooltip = ({
   content = tooltipDefaultProps.content,
-  visible = tooltipDefaultProps.visible,
-  pos = tooltipDefaultProps.pos,
   direction = tooltipDefaultProps.direction,
+  position = tooltipDefaultProps.position,
+  visible = tooltipDefaultProps.visible,
 }) => {
   return (
     <div
