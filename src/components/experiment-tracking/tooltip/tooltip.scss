@@ -17,51 +17,45 @@ $triangle-size: 10px;
 
 .tooltip-arrow {
   display: inline-block;
-
-  position: absolute;
-  white-space: nowrap;
-
-  top: 22px;
+  height: 0;
   left: 1px;
 
-  margin-top: -1.2em;
   margin-right: 1.6em;
+  margin-top: -1.2em;
 
+  position: absolute;
+  top: 22px;
+  white-space: nowrap;
   width: 0;
-  height: 0;
 }
 
 .tooltip-arrow--right {
   &::before {
-    position: absolute;
-
-    width: 0;
-    height: 0;
+    border-left: $triangle-size solid transparent;
+    border-top: $triangle-size solid var(--color-bg-alt);
 
     content: '';
 
-    top: calc(50% - #{$triangle-size});
+    height: 0;
     left: -$triangle-size + 0.5;
-
-    border-top: $triangle-size solid var(--color-bg-alt);
-    border-left: $triangle-size solid transparent;
+    position: absolute;
+    top: calc(50% - #{$triangle-size});
+    width: 0;
   }
 }
 
 .tooltip-arrow--left {
   &::before {
-    position: absolute;
-
-    width: 0;
-    height: 0;
+    border-right: $triangle-size solid transparent;
+    border-top: $triangle-size solid var(--color-bg-alt);
 
     content: '';
 
-    top: calc(50% - #{$triangle-size});
+    height: 0;
+    position: absolute;
     right: -225.5px;
-
-    border-top: $triangle-size solid var(--color-bg-alt);
-    border-right: $triangle-size solid transparent;
+    top: calc(50% - #{$triangle-size});
+    width: 0;
   }
 }
 
@@ -69,11 +63,10 @@ $triangle-size: 10px;
 .tooltip-value {
   font-size: 12px;
   margin: 0;
-
-  width: 180px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 180px;
 }
 
 .tooltip-label {
