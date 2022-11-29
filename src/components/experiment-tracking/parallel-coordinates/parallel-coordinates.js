@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
 import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
-
+import { sidebarWidth } from '../../../config';
 import { formatTimestamp } from '../../../utils/date-utils';
 
 import './parallel-coordinates.css';
@@ -15,8 +15,10 @@ const paddingLr = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
-const sideBarWidth = 540;
 const tooltipMaxWidth = 300;
+const tooltipLeftGap = 90;
+const tooltipRightGap = 60;
+const tooltipTopGap = 150;
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
@@ -87,14 +89,15 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredAxisG(key);
 
     const rect = e.target.getBoundingClientRect();
-    const y = rect.y - 140;
+    const y = rect.y - tooltipTopGap + rect.height / 2;
     let x, direction;
 
     if (window.innerWidth - rect.x > tooltipMaxWidth) {
-      x = e.clientX - sideBarWidth;
+      x = e.clientX - sidebarWidth.open - tooltipRightGap;
       direction = 'right';
     } else {
-      x = e.clientX - sideBarWidth - sideBarWidth / 2;
+      x =
+        e.clientX - sidebarWidth.open - sidebarWidth.open / 2 - tooltipLeftGap;
       direction = 'left';
     }
 
@@ -120,15 +123,19 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredElementId(key);
 
     if (e) {
-      const y = e.clientY - 150;
+      const y = e.clientY - tooltipTopGap;
       const parsedDate = new Date(formatTimestamp(key));
       let x, direction;
 
       if (window.innerWidth - e.clientX > tooltipMaxWidth) {
-        x = e.clientX - sideBarWidth;
+        x = e.clientX - sidebarWidth.open - tooltipRightGap;
         direction = 'right';
       } else {
-        x = e.clientX - sideBarWidth - sideBarWidth / 2;
+        x =
+          e.clientX -
+          sidebarWidth.open -
+          sidebarWidth.open / 2 -
+          tooltipLeftGap;
         direction = 'left';
       }
 
