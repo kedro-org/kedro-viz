@@ -123,6 +123,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredElementId(key);
 
     if (e) {
+      const y = e.clientY - 150;
+      const parsedDate = new Date(formatTimestamp(key));
       let x, direction;
 
       if (window.innerWidth - e.clientX > tooltipMaxWidth) {
@@ -132,9 +134,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         x = e.clientX - sideBarWidth - sideBarWidth / 2;
         direction = 'left';
       }
-      const y = e.clientY - 150;
-
-      const parsedDate = new Date(formatTimestamp(key));
 
       setShowTooltip({
         content: {
