@@ -15,6 +15,10 @@ const paddingLr = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
+const sideBarWidth = 540;
+const tooltipMaxWidth = 300;
+const delayTooltipTiming = 1000;
+
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
 const yAxis = {};
@@ -89,31 +93,37 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredAxisG(key);
 
     const rect = e.target.getBoundingClientRect();
-    const sideBar = 540;
-    const tooltipMaxWidth = 400;
 
     let x, direction;
 
     if (window.innerWidth - rect.x > tooltipMaxWidth) {
-      x = e.clientX - sideBar;
+      x = e.clientX - sideBarWidth;
       direction = 'right';
     } else {
-      x = e.clientX - sideBar - sideBar / 2;
+      x = e.clientX - sideBarWidth - sideBarWidth / 2;
       direction = 'left';
     }
     const y = rect.y - 140;
 
-    setShowTooltip({
-      content: {
-        label1: 'Metrics Name',
-        value1: key,
-        label2: 'Runs Count',
-        value2: runsCount,
-      },
-      direction,
-      pos: { x, y },
-      visible: true,
-    });
+    const timeout = setTimeout(
+      () =>
+        setShowTooltip({
+          content: {
+            label1: 'Metrics Name',
+            value1: key,
+            label2: 'Runs Count',
+            value2: runsCount,
+          },
+          direction,
+          pos: { x, y },
+          visible: true,
+        }),
+      delayTooltipTiming
+    );
+
+    return () => {
+      clearTimeout(timeout);
+    };
   };
 
   const handleMouseOutMetric = () => {
@@ -128,33 +138,38 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredElementId(key);
 
     if (e) {
-      const sideBar = 540;
-      const tooltipMaxWidth = 300;
-
       let x, direction;
 
       if (window.innerWidth - e.clientX > tooltipMaxWidth) {
-        x = e.clientX - sideBar - 15;
+        x = e.clientX - sideBarWidth;
         direction = 'right';
       } else {
-        x = e.clientX - sideBar - sideBar / 2;
+        x = e.clientX - sideBarWidth - sideBarWidth / 2;
         direction = 'left';
       }
       const y = e.clientY - 150;
 
       const parsedDate = new Date(formatTimestamp(key));
 
-      setShowTooltip({
-        content: {
-          label1: 'Metrics Name',
-          value1: key,
-          label2: 'Date',
-          value2: parsedDate.toString(),
-        },
-        direction,
-        pos: { x, y },
-        visible: true,
-      });
+      const hoverLineTimeout = setTimeout(
+        () =>
+          setShowTooltip({
+            content: {
+              label1: 'Metrics Name',
+              value1: key,
+              label2: 'Date',
+              value2: parsedDate.toString(),
+            },
+            direction,
+            pos: { x, y },
+            visible: true,
+          }),
+        delayTooltipTiming
+      );
+
+      return () => {
+        clearTimeout(hoverLineTimeout);
+      };
     }
   };
 
@@ -230,9 +245,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 d={linePath(value, i)}
                 id={id}
                 key={id}
-                onMouseLeave={() => setHoveredElementId(null)}
+                onMouseLeave={handleMouseOutLine}
                 onMouseOver={(e) => {
-                  setHoveredElementId(id);
+                  handleMouseOverLine(e, id);
                   d3.select(e.target).raise();
                 }}
               />
