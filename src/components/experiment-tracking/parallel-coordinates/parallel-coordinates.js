@@ -154,10 +154,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const handleMouseOutLine = () => {
     setHoveredElementId(null);
 
-    setShowTooltip({
-      pos: { x: -500, y: -500 },
-      visible: false,
-    });
+    setShowTooltip(tooltipDefaultProps);
   };
 
   useEffect(() => {
