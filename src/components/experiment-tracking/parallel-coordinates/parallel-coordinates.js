@@ -17,7 +17,6 @@ const selectedMarkerRotate = [45, 0, 0];
 
 const sideBarWidth = 540;
 const tooltipMaxWidth = 300;
-const delayTooltipTiming = 1000;
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
