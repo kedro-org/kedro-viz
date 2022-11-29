@@ -1,5 +1,29 @@
 @use '../../../styles/variables' as colors;
 
+@mixin fade-in($waitTime) {
+  animation: wait #{$waitTime}, fade-in 800ms #{$waitTime};
+}
+
+@keyframes wait {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 $triangle-size: 10px;
 
 .tooltip {
@@ -12,7 +36,7 @@ $triangle-size: 10px;
 }
 
 .tooltip--show {
-  opacity: 1;
+  @include fade-in('700ms');
 }
 
 .tooltip-arrow {

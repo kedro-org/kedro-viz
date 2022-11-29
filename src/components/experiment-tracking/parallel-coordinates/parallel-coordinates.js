@@ -100,25 +100,17 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     }
     const y = rect.y - 140;
 
-    const timeout = setTimeout(
-      () =>
-        setShowTooltip({
-          content: {
-            label1: 'Metrics Name',
-            value1: key,
-            label2: 'Runs Count',
-            value2: runsCount,
-          },
-          direction,
-          pos: { x, y },
-          visible: true,
-        }),
-      delayTooltipTiming
-    );
-
-    return () => {
-      clearTimeout(timeout);
-    };
+    setShowTooltip({
+      content: {
+        label1: 'Metrics Name',
+        value1: key,
+        label2: 'Runs Count',
+        value2: runsCount,
+      },
+      direction,
+      pos: { x, y },
+      visible: true,
+    });
   };
 
   const handleMouseOutMetric = () => {
@@ -146,25 +138,17 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
       const parsedDate = new Date(formatTimestamp(key));
 
-      const hoverLineTimeout = setTimeout(
-        () =>
-          setShowTooltip({
-            content: {
-              label1: 'Metrics Name',
-              value1: key,
-              label2: 'Date',
-              value2: parsedDate.toString(),
-            },
-            direction,
-            pos: { x, y },
-            visible: true,
-          }),
-        delayTooltipTiming
-      );
-
-      return () => {
-        clearTimeout(hoverLineTimeout);
-      };
+      setShowTooltip({
+        content: {
+          label1: 'Metrics Name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toString(),
+        },
+        direction,
+        pos: { x, y },
+        visible: true,
+      });
     }
   };
 
