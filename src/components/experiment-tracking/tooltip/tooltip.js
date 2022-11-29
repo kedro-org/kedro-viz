@@ -6,7 +6,7 @@ import './tooltip.css';
 export const tooltipDefaultProps = {
   content: { label1: '', value1: '', label2: '', value2: '' },
   direction: 'right',
-  pos: { x: -500, y: -500 },
+  position: { x: -500, y: -500 },
   visible: false,
 };
 
@@ -19,7 +19,7 @@ export const MetricsChartsTooltip = ({
   return (
     <div
       className={classnames('tooltip', { 'tooltip--show': visible })}
-      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
     >
       <span
         className={classnames('tooltip-arrow', `tooltip-arrow--${direction}`)}

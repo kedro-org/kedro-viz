@@ -106,17 +106,14 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         value2: runsCount,
       },
       direction,
-      pos: { x, y },
+      position: { x, y },
       visible: true,
     });
   };
 
   const handleMouseOutMetric = () => {
     setHoveredAxisG(null);
-    setShowTooltip({
-      pos: { x: -500, y: -500 },
-      visible: false,
-    });
+    setShowTooltip(tooltipDefaultProps);
   };
 
   const handleMouseOverLine = (e, key) => {
@@ -143,7 +140,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           value2: parsedDate.toString(),
         },
         direction,
-        pos: { x, y },
+        position: { x, y },
         visible: true,
       });
     }
@@ -170,7 +167,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
       <MetricsChartsTooltip
         content={showTooltip.content}
         direction={showTooltip.direction}
-        pos={showTooltip.pos}
+        position={showTooltip.position}
         visible={showTooltip.visible}
       />
 
