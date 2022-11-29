@@ -87,7 +87,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredAxisG(key);
 
     const rect = e.target.getBoundingClientRect();
-
+    const y = rect.y - 140;
     let x, direction;
 
     if (window.innerWidth - rect.x > tooltipMaxWidth) {
@@ -97,7 +97,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
       x = e.clientX - sideBarWidth - sideBarWidth / 2;
       direction = 'left';
     }
-    const y = rect.y - 140;
 
     setShowTooltip({
       content: {
