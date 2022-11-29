@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
-import { Tooltip } from '../tooltip/tooltip';
+import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
 
 import { formatTimestamp } from '../../../utils/date-utils';
 
@@ -28,12 +28,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
-  const [showTooltip, setShowTooltip] = useState({
-    content: { label1: '', value1: '', label2: '', value2: '' },
-    direction: 'right',
-    pos: { x: -500, y: -500 },
-    visible: false,
-  });
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -194,7 +189,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   return (
     <div className="parallel-coordinates">
-      <Tooltip
+      <MetricsChartsTooltip
         content={showTooltip.content}
         visible={showTooltip.visible}
         pos={showTooltip.pos}

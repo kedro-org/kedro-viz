@@ -3,7 +3,19 @@ import classnames from 'classnames';
 
 import './tooltip.css';
 
-export const Tooltip = ({ content, visible, pos, direction }) => {
+export const tooltipDefaultProps = {
+  content: { label1: '', value1: '', label2: '', value2: '' },
+  direction: 'right',
+  pos: { x: -500, y: -500 },
+  visible: false,
+};
+
+export const MetricsChartsTooltip = ({
+  content = tooltipDefaultProps.content,
+  visible = tooltipDefaultProps.visible,
+  pos = tooltipDefaultProps.pos,
+  direction = tooltipDefaultProps.direction,
+}) => {
   return (
     <div
       className={classnames('tooltip', { 'tooltip--show': visible })}
