@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
@@ -26,9 +26,15 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
+  const [hoveredMouseELement, setHoveredMouseELement] = useState(null);
+
   const hoveredElementDate =
-    hoveredElementId && new Date(formatTimestamp(hoveredElementId));
-  const hoveredValues = hoveredElementId && DATA.runs[hoveredElementId];
+    (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
+    (hoveredMouseELement && new Date(formatTimestamp(hoveredMouseELement)));
+
+  const hoveredValues =
+    (hoveredElementId && DATA.runs[hoveredElementId]) ||
+    (hoveredMouseELement && DATA.runs[hoveredMouseELement]);
 
   const metricKeys = Object.keys(DATA.metrics);
   const runData = Object.entries(DATA.runs);
@@ -156,16 +162,16 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                     <line
                       className={classnames('reference-line', {
                         'reference-line--hovered':
-                          hoveredElementId === runKeys[index],
+                          hoveredMouseELement === runKeys[index],
                       })}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
-                      onMouseOver={(e) => {
-                        setHoveredElementId(runKeys[index]);
-                      }}
-                      onMouseLeave={() => setHoveredElementId(null)}
+                      onMouseOver={(e) =>
+                        setHoveredMouseELement(runKeys[index])
+                      }
+                      onMouseLeave={() => setHoveredMouseELement(null)}
                     />
                   ))}
                 </g>
@@ -183,17 +189,17 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                               x2={width}
                               y2={yScales[index](value)}
                             />
-                            {/* <line
-                          className="reference-line--hovered"
-                          x1={xScale(hoveredElementDate)}
-                          y1={0}
-                          x2={xScale(hoveredElementDate)}
-                          y2={height}
-                          onMouseOver={(e) => {
-                            setHoveredElementId(runKeys[index]);
-                          }}
-                          onMouseLeave={() => setHoveredElementId(null)}
-                        /> */}
+                            <line
+                              className="reference-line--hovered"
+                              x1={xScale(hoveredElementDate)}
+                              y1={0}
+                              x2={xScale(hoveredElementDate)}
+                              y2={height}
+                              onMouseOver={(e) => {
+                                setHoveredElementId(runKeys[index]);
+                              }}
+                              onMouseLeave={() => setHoveredElementId(null)}
+                            />
                             <g className="ticks">
                               <line
                                 className="tick-line"
