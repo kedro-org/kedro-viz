@@ -137,7 +137,11 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           label1: 'Metrics Name',
           value1: key,
           label2: 'Date',
-          value2: parsedDate.toString(),
+          value2: parsedDate.toLocaleDateString('default', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
         },
         direction,
         position: { x, y },
@@ -148,7 +152,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   const handleMouseOutLine = () => {
     setHoveredElementId(null);
-
     setShowTooltip(tooltipDefaultProps);
   };
 
