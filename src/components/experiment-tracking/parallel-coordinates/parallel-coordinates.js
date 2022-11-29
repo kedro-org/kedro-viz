@@ -174,9 +174,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     <div className="parallel-coordinates">
       <MetricsChartsTooltip
         content={showTooltip.content}
-        visible={showTooltip.visible}
-        pos={showTooltip.pos}
         direction={showTooltip.direction}
+        pos={showTooltip.pos}
+        visible={showTooltip.visible}
       />
 
       <svg
