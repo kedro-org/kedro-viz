@@ -103,7 +103,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
     setShowTooltip({
       content: {
-        label1: 'Metrics Name',
+        label1: 'Metric name',
         value1: key,
         label2: 'Runs Count',
         value2: runsCount,
