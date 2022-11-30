@@ -141,7 +141,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
       setShowTooltip({
         content: {
-          label1: 'Metrics Name',
+          label1: 'Run name',
           value1: key,
           label2: 'Date',
           value2: parsedDate.toLocaleDateString('default', {
