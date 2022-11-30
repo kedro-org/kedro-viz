@@ -32,7 +32,7 @@
   }
 }
 
-g.active path {
+g.run-lines path {
   fill: none;
   stroke-linecap: 'round';
 }
@@ -41,7 +41,7 @@ g.highlight path {
   fill: none;
 }
 
-g.selected path {
+g.selected-runs path {
   fill: none;
 }
 
@@ -67,12 +67,12 @@ g.selected path {
   font-size: 12px;
 }
 
-.lines .line {
+.tick-lines .line {
   stroke: var(--color-metrics-plot-text);
 }
 
 // Selected runs
-.marker .text {
+.selected-runs .text {
   fill: var(--color-metrics-plot-text-bold);
   font-weight: 600;
 }

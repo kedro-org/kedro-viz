@@ -30,6 +30,8 @@
   --color-metrics-plot-line-hover: #{colors.$black-0};
   --color-metrics-plot-axis-ends: #{colors.$grey-800};
   --color-metrics-plot-axis-hover: #{colors.$grey-800};
+  --color-metrics-plot-tooltip-value: #{colors.$white-0};
+  --color-metrics-plot-tooltip-label: #{colors.$grey-300};
 }
 
 .kui-theme--dark {
@@ -60,6 +62,8 @@
   --color-metrics-plot-line-hover: #{colors.$grey-400};
   --color-metrics-plot-axis-ends: #{colors.$grey-300};
   --color-metrics-plot-axis-hover: #{colors.$white-900};
+  --color-metrics-plot-tooltip-value: #{colors.$black-900};
+  --color-metrics-plot-tooltip-label: #{colors.$black-500};
 }
 
 .kedro {

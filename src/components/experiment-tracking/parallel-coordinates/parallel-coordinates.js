@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
 import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
-
+import { sidebarWidth } from '../../../config';
 import { formatTimestamp } from '../../../utils/date-utils';
 
 import './parallel-coordinates.css';
@@ -15,9 +15,10 @@ const paddingLr = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
-const sideBarWidth = 540;
 const tooltipMaxWidth = 300;
-const delayTooltipTiming = 1000;
+const tooltipLeftGap = 90;
+const tooltipRightGap = 60;
+const tooltipTopGap = 150;
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
@@ -46,7 +47,13 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   );
 
   const data = Object.entries(metricsData.runs);
-  const selectedData = data.filter(([key]) => selectedRuns.includes(key));
+  const selectedData = data
+    .filter(([key]) => selectedRuns.includes(key))
+    .sort((a, b) => {
+      // We need to sort the selected data to match the order of selectedRuns.
+      // If we didn't, the highlighted runs would switch colors unnecessarily.
+      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
+    });
 
   const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
@@ -88,93 +95,77 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     setHoveredAxisG(key);
 
     const rect = e.target.getBoundingClientRect();
-
+    const y = rect.y - tooltipTopGap + rect.height / 2;
     let x, direction;
 
     if (window.innerWidth - rect.x > tooltipMaxWidth) {
-      x = e.clientX - sideBarWidth;
+      x = e.clientX - sidebarWidth.open - tooltipRightGap;
       direction = 'right';
     } else {
-      x = e.clientX - sideBarWidth - sideBarWidth / 2;
+      x =
+        e.clientX - sidebarWidth.open - sidebarWidth.open / 2 - tooltipLeftGap;
       direction = 'left';
     }
-    const y = rect.y - 140;
 
-    const timeout = setTimeout(
-      () =>
-        setShowTooltip({
-          content: {
-            label1: 'Metrics Name',
-            value1: key,
-            label2: 'Runs Count',
-            value2: runsCount,
-          },
-          direction,
-          pos: { x, y },
-          visible: true,
-        }),
-      delayTooltipTiming
-    );
-
-    return () => {
-      clearTimeout(timeout);
-    };
+    setShowTooltip({
+      content: {
+        label1: 'Metric name',
+        value1: key,
+        label2: 'Run count',
+        value2: runsCount,
+      },
+      direction,
+      position: { x, y },
+      visible: true,
+    });
   };
 
   const handleMouseOutMetric = () => {
     setHoveredAxisG(null);
-    setShowTooltip({
-      pos: { x: -500, y: -500 },
-      visible: false,
-    });
+    setShowTooltip(tooltipDefaultProps);
   };
 
   const handleMouseOverLine = (e, key) => {
     setHoveredElementId(key);
 
     if (e) {
+      const y = e.clientY - tooltipTopGap;
+      const parsedDate = new Date(formatTimestamp(key));
       let x, direction;
 
       if (window.innerWidth - e.clientX > tooltipMaxWidth) {
-        x = e.clientX - sideBarWidth;
+        x = e.clientX - sidebarWidth.open - tooltipRightGap;
         direction = 'right';
       } else {
-        x = e.clientX - sideBarWidth - sideBarWidth / 2;
+        x =
+          e.clientX -
+          sidebarWidth.open -
+          sidebarWidth.open / 2 -
+          tooltipLeftGap;
         direction = 'left';
       }
-      const y = e.clientY - 150;
 
-      const parsedDate = new Date(formatTimestamp(key));
-
-      const hoverLineTimeout = setTimeout(
-        () =>
-          setShowTooltip({
-            content: {
-              label1: 'Metrics Name',
-              value1: key,
-              label2: 'Date',
-              value2: parsedDate.toString(),
-            },
-            direction,
-            pos: { x, y },
-            visible: true,
+      setShowTooltip({
+        content: {
+          label1: 'Run name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toLocaleDateString('default', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
           }),
-        delayTooltipTiming
-      );
-
-      return () => {
-        clearTimeout(hoverLineTimeout);
-      };
+        },
+        direction,
+        position: { x, y },
+        visible: true,
+      });
     }
   };
 
   const handleMouseOutLine = () => {
     setHoveredElementId(null);
-
-    setShowTooltip({
-      pos: { x: -500, y: -500 },
-      visible: false,
-    });
+    setShowTooltip(tooltipDefaultProps);
   };
 
   useEffect(() => {
@@ -191,9 +182,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     <div className="parallel-coordinates">
       <MetricsChartsTooltip
         content={showTooltip.content}
-        visible={showTooltip.visible}
-        pos={showTooltip.pos}
         direction={showTooltip.direction}
+        position={showTooltip.position}
+        visible={showTooltip.visible}
       />
 
       <svg
@@ -230,7 +221,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           );
         })}
 
-        <g className="active">
+        <g className="run-lines">
           {data.map(([id, value], i) => {
             return (
               <path
@@ -274,67 +265,20 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                     transform: 'translate(-10,4)',
                   }}
                 >
-                  {value.toFixed(4)}
+                  {value.toFixed(3)}
                 </text>
               ))}
             </g>
           );
         })}
 
-        <g className="selected">
-          {selectedData.map(([id, value], i) => (
-            <path
-              className={classnames({
-                'run-line--selected-first': i === 0,
-                'run-line--selected-second': i === 1,
-                'run-line--selected-third': i === 2,
-              })}
-              d={linePath(value, i)}
-              id={id}
-              key={id}
-            />
-          ))}
-        </g>
-
-        {selectedData.map(([id, values], i) => (
-          <g className="marker" id={id} key={`marker--${id}`}>
-            {values.map((value, index) => {
-              const transformX = xScale(graphKeys[index]);
-              const transformY = yScales[graphKeys[index]](value);
-              const rotate = selectedMarkerRotate[i];
-
-              return (
-                <React.Fragment key={uuidv4()}>
-                  <path
-                    d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
-                    key={`marker-path--${index}`}
-                    stroke={selectedMarkerColors[i]}
-                    transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
-                  />
-                  <text
-                    className="text"
-                    key={`marker-text--${index}`}
-                    x={xScale(graphKeys[index]) - 8}
-                    y={yScales[graphKeys[index]](value) + 3}
-                    style={{
-                      textAnchor: 'end',
-                      transform: 'translate(-10,4)',
-                    }}
-                  >
-                    {value.toFixed(4)}
-                  </text>
-                </React.Fragment>
-              );
-            })}
-          </g>
-        ))}
-
         {graph.map(([id, values]) => {
           const sortedValues = values
             .filter((value) => value !== null)
             .sort((a, b) => a - b);
+
           return (
-            <g className="lines" id={id} key={`lines--${id}`}>
+            <g className="tick-lines" id={id} key={`tick-lines--${id}`}>
               {sortedValues.map((value) => {
                 if (value) {
                   return (
@@ -358,6 +302,52 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
             </g>
           );
         })}
+
+        <g className="selected-runs">
+          {selectedData.map(([id, value], i) => (
+            <path
+              className={classnames({
+                'run-line--selected-first': i === 0,
+                'run-line--selected-second': i === 1,
+                'run-line--selected-third': i === 2,
+              })}
+              d={linePath(value, i)}
+              id={id}
+              key={id}
+            />
+          ))}
+
+          {selectedData.map(([, values], i) =>
+            values.map((value, index) => {
+              const transformX = xScale(graphKeys[index]);
+              const transformY = yScales[graphKeys[index]](value);
+              const rotate = selectedMarkerRotate[i];
+
+              return (
+                <React.Fragment key={uuidv4()}>
+                  <path
+                    d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
+                    key={`marker-path--${index}`}
+                    stroke={selectedMarkerColors[i]}
+                    transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
+                  />
+                  <text
+                    className="text"
+                    key={`marker-text--${index}`}
+                    x={xScale(graphKeys[index]) - 8}
+                    y={yScales[graphKeys[index]](value) + 3}
+                    style={{
+                      textAnchor: 'end',
+                      transform: 'translate(-10,4)',
+                    }}
+                  >
+                    {value.toFixed(3)}
+                  </text>
+                </React.Fragment>
+              );
+            })
+          )}
+        </g>
       </svg>
     </div>
   );
