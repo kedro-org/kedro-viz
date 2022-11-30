@@ -105,7 +105,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
       content: {
         label1: 'Metric name',
         value1: key,
-        label2: 'Runs Count',
+        label2: 'Run count',
         value2: runsCount,
       },
       direction,
