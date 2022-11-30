@@ -1,7 +1,7 @@
 @use '../../../styles/variables' as colors;
 
 @mixin fade-in($waitTime) {
-  animation: wait #{$waitTime}, fade-in 800ms #{$waitTime};
+  animation: wait #{$waitTime}, fade-in 500ms #{$waitTime};
 }
 
 @keyframes wait {
@@ -27,7 +27,7 @@
 $triangle-size: 10px;
 
 .tooltip {
-  background: white;
+  background: var(--color-bg-alt);
   display: flex;
   flex-direction: column;
   opacity: 0;
@@ -96,9 +96,9 @@ $triangle-size: 10px;
 }
 
 .tooltip-label {
-  color: #{colors.$black-500};
+  color: var(--color-metrics-plot-tooltip-label);
 }
 
 .tooltip-value {
-  color: #{colors.$black-900};
+  color: var(--color-metrics-plot-tooltip-value);
 }
