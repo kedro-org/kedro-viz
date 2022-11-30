@@ -3,6 +3,9 @@ import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
+import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import { sidebarWidth } from '../../../config';
+import { formatTimestamp } from '../../../utils/date-utils';
 
 import './parallel-coordinates.css';
 
@@ -11,6 +14,11 @@ const padding = 38;
 const paddingLr = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
+
+const tooltipMaxWidth = 300;
+const tooltipLeftGap = 90;
+const tooltipRightGap = 60;
+const tooltipTopGap = 150;
 
 const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
 
@@ -21,6 +29,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -76,11 +85,81 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   const handleMouseOverMetric = (e, key) => {
+    const runsCount = graph.find((each) => each[0] === key)[1].length;
     setHoveredAxisG(key);
+
+    const rect = e.target.getBoundingClientRect();
+    const y = rect.y - tooltipTopGap + rect.height / 2;
+    let x, direction;
+
+    if (window.innerWidth - rect.x > tooltipMaxWidth) {
+      x = e.clientX - sidebarWidth.open - tooltipRightGap;
+      direction = 'right';
+    } else {
+      x =
+        e.clientX - sidebarWidth.open - sidebarWidth.open / 2 - tooltipLeftGap;
+      direction = 'left';
+    }
+
+    setShowTooltip({
+      content: {
+        label1: 'Metric name',
+        value1: key,
+        label2: 'Run count',
+        value2: runsCount,
+      },
+      direction,
+      position: { x, y },
+      visible: true,
+    });
   };
 
   const handleMouseOutMetric = () => {
     setHoveredAxisG(null);
+    setShowTooltip(tooltipDefaultProps);
+  };
+
+  const handleMouseOverLine = (e, key) => {
+    setHoveredElementId(key);
+
+    if (e) {
+      const y = e.clientY - tooltipTopGap;
+      const parsedDate = new Date(formatTimestamp(key));
+      let x, direction;
+
+      if (window.innerWidth - e.clientX > tooltipMaxWidth) {
+        x = e.clientX - sidebarWidth.open - tooltipRightGap;
+        direction = 'right';
+      } else {
+        x =
+          e.clientX -
+          sidebarWidth.open -
+          sidebarWidth.open / 2 -
+          tooltipLeftGap;
+        direction = 'left';
+      }
+
+      setShowTooltip({
+        content: {
+          label1: 'Run name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toLocaleDateString('default', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+        },
+        direction,
+        position: { x, y },
+        visible: true,
+      });
+    }
+  };
+
+  const handleMouseOutLine = () => {
+    setHoveredElementId(null);
+    setShowTooltip(tooltipDefaultProps);
   };
 
   useEffect(() => {
@@ -95,6 +174,13 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   return (
     <div className="parallel-coordinates">
+      <MetricsChartsTooltip
+        content={showTooltip.content}
+        direction={showTooltip.direction}
+        position={showTooltip.position}
+        visible={showTooltip.visible}
+      />
+
       <svg
         preserveAspectRatio="xMinYMin meet"
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
@@ -139,9 +225,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 d={linePath(value, i)}
                 id={id}
                 key={id}
-                onMouseLeave={() => setHoveredElementId(null)}
+                onMouseLeave={handleMouseOutLine}
                 onMouseOver={(e) => {
-                  setHoveredElementId(id);
+                  handleMouseOverLine(e, id);
                   d3.select(e.target).raise();
                 }}
               />
