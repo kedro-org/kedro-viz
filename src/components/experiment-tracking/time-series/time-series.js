@@ -22,24 +22,24 @@ const selectedMarkerShape = [
 
 // const yAxis = {};
 
-export const TimeSeries = ({ DATA, selectedRuns }) => {
+export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
-  const [hoveredMouseELement, setHoveredMouseELement] = useState(null);
+  const [hoveredMouseELementId, setHoveredMouseELementId] = useState(null);
 
   const hoveredElementDate =
     (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
-    (hoveredMouseELement && new Date(formatTimestamp(hoveredMouseELement)));
+    (hoveredMouseELementId && new Date(formatTimestamp(hoveredMouseELementId)));
 
   const hoveredValues =
-    (hoveredElementId && DATA.runs[hoveredElementId]) ||
-    (hoveredMouseELement && DATA.runs[hoveredMouseELement]);
+    (hoveredElementId && metricsData.runs[hoveredElementId]) ||
+    (hoveredMouseELementId && metricsData.runs[hoveredMouseELementId]);
 
-  const metricKeys = Object.keys(DATA.metrics);
-  const runData = Object.entries(DATA.runs);
-  const runKeys = Object.keys(DATA.runs);
-  const metricData = Object.entries(DATA.metrics);
+  const metricKeys = Object.keys(metricsData.metrics);
+  const runData = Object.entries(metricsData.runs);
+  const runKeys = Object.keys(metricsData.runs);
+  const metricData = Object.entries(metricsData.metrics);
 
   const parsedData = runData.map(([key, value]) => [
     new Date(formatTimestamp(key)),
@@ -80,7 +80,7 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
   return (
     <div className="time-series">
       {metricKeys.map((metricName, metricIndex) => {
-        const metricValues = Object.values(DATA.metrics)[metricIndex];
+        const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
         const getXAxis = (ref) => {
           d3.select(ref).call(d3.axisBottom(xScale).tickSizeOuter(0));
@@ -116,7 +116,7 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
 
         return (
           <>
-            <h3 className="metric-name">{metricName}</h3>
+            <div className="metric-name">{metricName}</div>
             <svg
               preserveAspectRatio="xMinYMin meet"
               width={width + margin.left + margin.right}
@@ -162,16 +162,16 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                     <line
                       className={classnames('reference-line', {
                         'reference-line--hovered':
-                          hoveredMouseELement === runKeys[index],
+                          hoveredMouseELementId === runKeys[index],
                       })}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
                       onMouseOver={(e) =>
-                        setHoveredMouseELement(runKeys[index])
+                        setHoveredMouseELementId(runKeys[index])
                       }
-                      onMouseLeave={() => setHoveredMouseELement(null)}
+                      onMouseLeave={() => setHoveredMouseELementId(null)}
                     />
                   ))}
                 </g>
@@ -198,7 +198,7 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                               onMouseOver={(e) => {
                                 setHoveredElementId(runKeys[index]);
                               }}
-                              onMouseLeave={() => setHoveredElementId(null)}
+                              onMouseOut={() => setHoveredElementId(null)}
                             />
                             <g className="ticks">
                               <line
@@ -213,7 +213,7 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                                 x={xScale(hoveredElementDate)}
                                 y={yScales[index](value)}
                               >
-                                {value}
+                                {value.toFixed(3)}
                               </text>
                             </g>
                           </>
@@ -241,22 +241,17 @@ export const TimeSeries = ({ DATA, selectedRuns }) => {
                         x={xScale(key)}
                         y={yScales[metricIndex](value[metricIndex])}
                       >
-                        {value[metricIndex]}
+                        {value[metricIndex].toFixed(3)}
                       </text>
-                    </>
-                  ))}
-                </g>
-
-                <g className="marker">
-                  {selectedData.map(([key, value], index) => (
-                    <path
-                      className={`selected-marker--${index}`}
-                      d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
-                      transform={`translate(${xScale(key)},${yScales[
-                        metricIndex
-                      ](value[metricIndex])}) 
+                      <path
+                        className={`selected-marker--${index}`}
+                        d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
+                        transform={`translate(${xScale(key)},${yScales[
+                          metricIndex
+                        ](value[metricIndex])}) 
                   rotate(${selectedMarkerRotate[index]})`}
-                    />
+                      />
+                    </>
                   ))}
                 </g>
 

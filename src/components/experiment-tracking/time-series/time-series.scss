@@ -6,20 +6,18 @@ $textHighlight: #{colors.$white-900};
 
 .time-series {
   flex: 1 1 auto;
-  font-family: sans-serif;
+  font-family: 'Titillium Web', sans-serif;
   margin: 0 4em 0 0;
 }
 
 .time-series .text {
   font-size: 12px;
-  font-weight: 400;
 }
 
-.metric_name {
-  font-size: 14px;
+.metric-name {
+  font-size: 1.4em;
   color: white;
   line-height: 20px;
-  font-weight: 400px;
 }
 
 .axis-label {
