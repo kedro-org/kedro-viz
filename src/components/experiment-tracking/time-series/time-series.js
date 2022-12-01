@@ -114,6 +114,23 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
+        const handleZoom = (e) => {
+          // update xAxis
+          let updatedXScale = e.transform.rescaleX(xScale);
+          // getXAxis.call(d3.axisBottom(updatedXScale));
+        };
+
+        const zoom = d3
+          .zoom()
+          .scaleExtent([0.5, 20])
+          .extent([
+            [0, 0],
+            [width, height],
+          ])
+          .on('zoom', handleZoom);
+
+        const zoomRef = (ref) => d3.select(ref).call(zoom);
+
         return (
           <>
             <div className="metric-name">{metricName}</div>
@@ -121,6 +138,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               preserveAspectRatio="xMinYMin meet"
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
+              ref={zoomRef}
             >
               <g
                 id={metricName}
@@ -172,6 +190,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                         setHoveredMouseELementId(runKeys[index])
                       }
                       onMouseLeave={() => setHoveredMouseELementId(null)}
+                      key={key}
                     />
                   ))}
                 </g>
