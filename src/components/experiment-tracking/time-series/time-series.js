@@ -117,7 +117,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         const handleZoom = (e) => {
           // update xAxis
           let updatedXScale = e.transform.rescaleX(xScale);
-          // getXAxis.call(d3.axisBottom(updatedXScale));
+          d3.selectAll('.x-axis').call(d3.axisBottom(updatedXScale));
         };
 
         const zoom = d3
