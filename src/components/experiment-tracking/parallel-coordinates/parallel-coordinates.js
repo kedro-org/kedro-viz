@@ -192,48 +192,48 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         width="100%"
       >
-        {graphKeys.map((key) => {
+        {graphKeys.map((metricName) => {
           const getYAxis = (ref) => {
-            d3.select(ref).call(yAxis[key]);
+            d3.select(ref).call(yAxis[metricName]);
           };
 
           return (
             <g
               className={classnames('feature', {
-                'feature--hovered': hoveredAxisG === key,
+                'feature--hovered': hoveredAxisG === metricName,
               })}
-              key={`feature--${key}`}
+              key={`feature--${metricName}`}
               ref={getYAxis}
-              transform={`translate(${xScale(key)}, 0)`}
+              transform={`translate(${xScale(metricName)}, 0)`}
               y={padding / 2}
             >
               <text
                 className="headers"
-                key={`feature-text--${key}`}
+                key={`feature-text--${metricName}`}
                 onMouseOut={handleMouseOutMetric}
-                onMouseOver={(e) => handleMouseOverMetric(e, key)}
+                onMouseOver={(e) => handleMouseOverMetric(e, metricName)}
                 textAnchor="middle"
                 y={padding / 2}
               >
-                {key}
+                {metricName}
               </text>
             </g>
           );
         })}
 
         <g className="run-lines">
-          {data.map(([id, value], i) => {
+          {data.map(([runId, value], i) => {
             return (
               <path
                 className={classnames('run-line', {
-                  'run-line--hovered': hoveredElementId === id,
+                  'run-line--hovered': hoveredElementId === runId,
                 })}
                 d={linePath(value, i)}
-                id={id}
-                key={id}
+                id={runId}
+                key={runId}
                 onMouseLeave={handleMouseOutLine}
                 onMouseOver={(e) => {
-                  handleMouseOverLine(e, id);
+                  handleMouseOverLine(e, runId);
                   d3.select(e.target).raise();
                 }}
               />
@@ -241,7 +241,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           })}
         </g>
 
-        {graph.map(([id, values]) => {
+        {graph.map(([metricName, values]) => {
           // To avoid rendering a tick more than once
           const uniqueValues = values
             .filter((value, i, self) => self.indexOf(value) === i)
@@ -249,17 +249,17 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
             .sort((a, b) => a - b);
 
           return (
-            <g className="tick-values" id={id} key={uuidv4()}>
+            <g className="tick-values" id={metricName} key={uuidv4()}>
               {uniqueValues.map((value) => (
                 <text
                   className={classnames('text', {
                     'text--hovered':
-                      hoveredAxisG === id ||
+                      hoveredAxisG === metricName ||
                       (hoveredValues && hoveredValues.includes(value)),
                   })}
                   key={uuidv4()}
-                  x={xScale(id) - 8}
-                  y={yScales[id](value) + 3}
+                  x={xScale(metricName) - 8}
+                  y={yScales[metricName](value) + 3}
                   style={{
                     textAnchor: 'end',
                     transform: 'translate(-10,4)',
@@ -272,27 +272,31 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           );
         })}
 
-        {graph.map(([id, values]) => {
+        {graph.map(([metricName, values]) => {
           const sortedValues = values
             .filter((value) => value !== null)
             .sort((a, b) => a - b);
 
           return (
-            <g className="tick-lines" id={id} key={`tick-lines--${id}`}>
+            <g
+              className="tick-lines"
+              id={metricName}
+              key={`tick-lines--${metricName}`}
+            >
               {sortedValues.map((value) => {
                 if (value) {
                   return (
                     <line
                       className={classnames('line', {
                         'line--hovered':
-                          hoveredAxisG === id ||
+                          hoveredAxisG === metricName ||
                           (hoveredValues && hoveredValues.includes(value)),
                       })}
                       key={uuidv4()}
-                      x1={xScale(id)}
-                      x2={xScale(id) - 4}
-                      y1={yScales[id](value)}
-                      y2={yScales[id](value)}
+                      x1={xScale(metricName)}
+                      x2={xScale(metricName) - 4}
+                      y1={yScales[metricName](value)}
+                      y2={yScales[metricName](value)}
                     />
                   );
                 } else {
