@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
-import { sidebarWidth } from '../../../config';
+import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import * as d3 from 'd3';
 
 import './time-series.css';
@@ -22,11 +22,6 @@ const selectedMarkerShape = [
   d3.symbolCircle,
 ];
 
-const tooltipMaxWidth = 300;
-const tooltipLeftGap = 90;
-const tooltipRightGap = 60;
-const tooltipTopGap = 150;
-
 // const yAxis = {};
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
@@ -34,7 +29,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     useContext(HoverStateContext);
 
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
-  const [event, setEvent] = useState(null);
 
   const hoveredElementDate =
     hoveredElementId && new Date(formatTimestamp(hoveredElementId));
@@ -73,23 +67,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     setHoveredElementId(key);
 
     if (e) {
-      const y = e.clientY - tooltipTopGap;
       const parsedDate = new Date(formatTimestamp(key));
-      let x, direction;
-
-      if (window.innerWidth - e.clientX > tooltipMaxWidth) {
-        x = e.clientX - sidebarWidth.open - tooltipRightGap;
-        direction = 'right';
-      } else {
-        x =
-          e.clientX -
-          sidebarWidth.open -
-          sidebarWidth.open / 2 -
-          tooltipLeftGap;
-        direction = 'left';
-      }
-
-      setEvent(e);
+      const { x, y, direction } = getTooltipPosition(e);
 
       setShowTooltip({
         content: {
