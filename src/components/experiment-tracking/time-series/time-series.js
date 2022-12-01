@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
+import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import { sidebarWidth } from '../../../config';
 import * as d3 from 'd3';
 
 import './time-series.css';
@@ -20,21 +22,24 @@ const selectedMarkerShape = [
   d3.symbolCircle,
 ];
 
+const tooltipMaxWidth = 300;
+const tooltipLeftGap = 90;
+const tooltipRightGap = 60;
+const tooltipTopGap = 150;
+
 // const yAxis = {};
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
-  const [hoveredMouseELementId, setHoveredMouseELementId] = useState(null);
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+  const [event, setEvent] = useState(null);
 
   const hoveredElementDate =
-    (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
-    (hoveredMouseELementId && new Date(formatTimestamp(hoveredMouseELementId)));
+    hoveredElementId && new Date(formatTimestamp(hoveredElementId));
 
-  const hoveredValues =
-    (hoveredElementId && metricsData.runs[hoveredElementId]) ||
-    (hoveredMouseELementId && metricsData.runs[hoveredMouseELementId]);
+  const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
   const metricKeys = Object.keys(metricsData.metrics);
   const runData = Object.entries(metricsData.runs);
@@ -64,6 +69,51 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const yScales = {};
 
+  const handleMouseOverLine = (e, key) => {
+    setHoveredElementId(key);
+
+    if (e) {
+      const y = e.clientY - tooltipTopGap;
+      const parsedDate = new Date(formatTimestamp(key));
+      let x, direction;
+
+      if (window.innerWidth - e.clientX > tooltipMaxWidth) {
+        x = e.clientX - sidebarWidth.open - tooltipRightGap;
+        direction = 'right';
+      } else {
+        x =
+          e.clientX -
+          sidebarWidth.open -
+          sidebarWidth.open / 2 -
+          tooltipLeftGap;
+        direction = 'left';
+      }
+
+      setEvent(e);
+
+      setShowTooltip({
+        content: {
+          label1: 'Run name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toLocaleDateString('default', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+        },
+        direction,
+        position: { x, y },
+        visible: true,
+      });
+    }
+  };
+
+  const handleMouseOutLine = () => {
+    setHoveredElementId(null);
+    setShowTooltip(tooltipDefaultProps);
+  };
+
   metricData.map(
     ([_, value], i) =>
       (yScales[i] = d3
@@ -79,6 +129,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   return (
     <div className="time-series">
+      <MetricsChartsTooltip
+        content={showTooltip.content}
+        direction={showTooltip.direction}
+        position={showTooltip.position}
+        visible={showTooltip.visible}
+      />
+
       {metricKeys.map((metricName, metricIndex) => {
         const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
@@ -162,16 +219,17 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                     <line
                       className={classnames('reference-line', {
                         'reference-line--hovered':
-                          hoveredMouseELementId === runKeys[index],
+                          hoveredElementId === runKeys[index],
                       })}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
-                      onMouseOver={(e) =>
-                        setHoveredMouseELementId(runKeys[index])
+                      onMouseOver={
+                        (e) => handleMouseOverLine(e, runKeys[index])
+                        // setHoveredMouseELementId(runKeys[index])
                       }
-                      onMouseLeave={() => setHoveredMouseELementId(null)}
+                      onMouseLeave={handleMouseOutLine}
                     />
                   ))}
                 </g>
@@ -188,17 +246,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                               y1={yScales[index](value)}
                               x2={width}
                               y2={yScales[index](value)}
-                            />
-                            <line
-                              className="reference-line--hovered"
-                              x1={xScale(hoveredElementDate)}
-                              y1={0}
-                              x2={xScale(hoveredElementDate)}
-                              y2={height}
-                              onMouseOver={(e) => {
-                                setHoveredElementId(runKeys[index]);
-                              }}
-                              onMouseOut={() => setHoveredElementId(null)}
                             />
                             <g className="ticks">
                               <line
