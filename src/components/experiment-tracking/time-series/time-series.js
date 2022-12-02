@@ -92,10 +92,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           );
         };
 
-        const linePath = function (data) {
+        const linePath = function (data, scale) {
           let points = data.map((x, i) => {
             if (x !== null) {
-              return [xScale(parsedDates[i]), yScales[metricIndex](x)];
+              return [scale(parsedDates[i]), yScales[metricIndex](x)];
             } else {
               return null;
             }
@@ -118,6 +118,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           // update xAxis
           let updatedXScale = e.transform.rescaleX(xScale);
           d3.selectAll('.x-axis').call(d3.axisBottom(updatedXScale));
+          d3.selectAll('.run-line')
+            .select('path')
+            .attr('d', linePath(metricValues, updatedXScale));
         };
 
         const zoom = d3
@@ -172,7 +175,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       hoveredElementId || selectedRuns.length > 1,
                   })}
                 >
-                  <path d={linePath(metricValues)} />
+                  <path d={linePath(metricValues, xScale)} />
                 </g>
 
                 <g className="reference-group">
