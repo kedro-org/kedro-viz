@@ -26,9 +26,9 @@ const yAxis = {};
 const yScales = {};
 
 export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
-  const [hoveredAxisG, setHoveredAxisG] = useState(null);
   const [chartHeight, setChartHeight] = useState(0);
   const [chartWidth, setChartWidth] = useState(0);
+  const [hoveredMetricLabel, setHoveredMetricLabel] = useState(null);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
   const { hoveredElementId, setHoveredElementId } =
@@ -92,7 +92,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   const handleMouseOverMetric = (e, key) => {
     const runsCount = graph.find((each) => each[0] === key)[1].length;
-    setHoveredAxisG(key);
+    setHoveredMetricLabel(key);
 
     const rect = e.target.getBoundingClientRect();
     const y = rect.y - tooltipTopGap + rect.height / 2;
@@ -121,7 +121,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   const handleMouseOutMetric = () => {
-    setHoveredAxisG(null);
+    setHoveredMetricLabel(null);
     setShowTooltip(tooltipDefaultProps);
   };
 
@@ -199,17 +199,17 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
           return (
             <g
-              className={classnames('feature', {
-                'feature--hovered': hoveredAxisG === metricName,
+              className={classnames('metric-axis', {
+                'metric-axis--hovered': hoveredMetricLabel === metricName,
               })}
-              key={`feature--${metricName}`}
+              key={`metric-axis--${metricName}`}
               ref={getYAxis}
               transform={`translate(${xScale(metricName)}, 0)`}
               y={padding / 2}
             >
               <text
                 className="headers"
-                key={`feature-text--${metricName}`}
+                key={`metric-axis-text--${metricName}`}
                 onMouseOut={handleMouseOutMetric}
                 onMouseOver={(e) => handleMouseOverMetric(e, metricName)}
                 textAnchor="middle"
@@ -250,24 +250,26 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
-              {uniqueValues.map((value) => (
-                <text
-                  className={classnames('text', {
-                    'text--hovered':
-                      hoveredAxisG === metricName ||
-                      (hoveredValues && hoveredValues.includes(value)),
-                  })}
-                  key={uuidv4()}
-                  x={xScale(metricName) - 8}
-                  y={yScales[metricName](value) + 3}
-                  style={{
-                    textAnchor: 'end',
-                    transform: 'translate(-10,4)',
-                  }}
-                >
-                  {value.toFixed(3)}
-                </text>
-              ))}
+              {uniqueValues.map((value) => {
+                return (
+                  <text
+                    className={classnames('text', {
+                      'text--hovered':
+                        hoveredMetricLabel === metricName ||
+                        (hoveredValues && hoveredValues.includes(value)),
+                    })}
+                    key={uuidv4()}
+                    x={xScale(metricName) - 8}
+                    y={yScales[metricName](value) + 3}
+                    style={{
+                      textAnchor: 'end',
+                      transform: 'translate(-10,4)',
+                    }}
+                  >
+                    {value.toFixed(3)}
+                  </text>
+                );
+              })}
             </g>
           );
         })}
@@ -289,7 +291,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                     <line
                       className={classnames('line', {
                         'line--hovered':
-                          hoveredAxisG === metricName ||
+                          hoveredMetricLabel === metricName ||
                           (hoveredValues && hoveredValues.includes(value)),
                       })}
                       key={uuidv4()}
