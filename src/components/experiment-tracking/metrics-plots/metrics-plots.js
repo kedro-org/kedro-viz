@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import classnames from 'classnames';
 import { TimeSeries } from '../time-series/time-series.js';
+// import { data } from '../mock-data';
+
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
 import { useApolloQuery } from '../../../apollo/utils';

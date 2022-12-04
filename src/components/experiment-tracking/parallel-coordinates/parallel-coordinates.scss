@@ -78,7 +78,7 @@ g.selected-runs path {
 }
 
 // Hovered Y-axis
-.feature--hovered {
+.metric-axis--hovered {
   .domain {
     stroke: colors.$grey-400;
   }
