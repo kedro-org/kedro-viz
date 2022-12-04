@@ -138,7 +138,7 @@ const Details = ({
           })}
         </div>
         {activeTab === 'Metrics' ? (
-          <MetricsPlots />
+          <MetricsPlots selectedRunIds={selectedRunIds} />
         ) : (
           <>
             <RunMetadata

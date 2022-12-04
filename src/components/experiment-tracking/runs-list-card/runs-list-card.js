@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useUpdateRunDetails } from '../../../apollo/mutations';
 import classnames from 'classnames';
 import {
@@ -9,6 +9,7 @@ import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import CheckIcon from '../../icons/check';
+import { HoverStateContext } from '../utils/hover-state-context';
 
 import './runs-list-card.css';
 
@@ -28,6 +29,9 @@ const RunsListCard = ({
   const [active, setActive] = useState(false);
   const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(id);
+
+  const { setHoveredElementId, hoveredElementId } =
+    useContext(HoverStateContext);
 
   const isMatchSearchValue = (text) =>
     searchValue ? textMatchesSearch(text, searchValue) : false;
@@ -67,8 +71,11 @@ const RunsListCard = ({
       className={classnames('kedro', 'runs-list-card', {
         'runs-list-card--active': active,
         'runs-list-card--disabled': disableRunSelection && !active,
+        'runs-list-card--hovered': hoveredElementId === id,
       })}
       onClick={(e) => onRunsListCardClick(id, e)}
+      onMouseOver={() => setHoveredElementId(id)}
+      onMouseLeave={() => setHoveredElementId(null)}
     >
       {enableComparisonView && (
         <CheckIcon

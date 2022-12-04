@@ -50,6 +50,7 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
+    "d3": "^7.6.1",
     "d3-fetch": "^2.0.0",
     "d3-interpolate": "^2.0.1",
     "d3-interpolate-path": "^2.2.3",
@@ -137,6 +138,11 @@
     ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint src/ --fix"
+    ]
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
     ]
   },
   "browserslist": [

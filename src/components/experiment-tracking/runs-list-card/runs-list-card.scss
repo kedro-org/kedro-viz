@@ -26,14 +26,15 @@
     opacity: 0.5;
     pointer-events: none;
   }
+}
 
-  &:hover {
-    background: var(--color-run-list-hover);
-    cursor: pointer;
+.runs-list-card--hovered {
+  background: var(--color-run-list-hover);
 
-    .runs-list-card__bookmark--stroke {
-      opacity: 1;
-    }
+  cursor: pointer;
+
+  .runs-list-card__bookmark--stroke {
+    opacity: 1;
   }
 }
 
