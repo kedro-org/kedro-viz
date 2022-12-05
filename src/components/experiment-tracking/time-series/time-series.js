@@ -110,6 +110,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           ]);
         };
 
+        const selectedLine = function (key, scale) {
+          return d3.line()([
+            [scale(key), 0],
+            [scale(key), height],
+          ]);
+        };
         const dottedLinePath = function (data, scale) {
           let points = data.map(([key, value]) => {
             if (value !== null) {
@@ -136,6 +142,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               .selectAll(`path[id="${key}"]`)
               .attr('d', referenceLinePath(key, updatedXScale))
           );
+
+          selectedData.map(([key, value], index) => {
+            d3.selectAll(`selected-line--${index}`).attr(
+              'd',
+              selectedLine(key, updatedXScale)
+            );
+          });
         };
 
         const zoom = d3
@@ -263,12 +276,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g className="selected">
                   {selectedData.map(([key, value], index) => (
                     <>
-                      <line
+                      <path
                         className={`selected-line--${index}`}
-                        x1={xScale(key)}
-                        y1={0}
-                        x2={xScale(key)}
-                        y2={height}
+                        d={selectedLine(key, xScale)}
                       />
                       <text
                         className="tick-text"
