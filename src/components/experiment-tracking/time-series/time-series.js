@@ -17,7 +17,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const margin = { top: 50, right: 0, bottom: 50, left: 30 };
   const height = 150;
-  const dateBuffer = 0.2;
+  const dateBuffer = 0.02;
 
   const selectedMarkerRotate = [45, 0, 0];
   const selectedMarkerShape = [
