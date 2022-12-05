@@ -103,10 +103,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
-        const dottedLinePath = function (data) {
+        const dottedLinePath = function (data, scale) {
           let points = data.map(([key, value]) => {
             if (value !== null) {
-              return [xScale(key), yScales[metricIndex](value[metricIndex])];
+              return [scale(key), yScales[metricIndex](value[metricIndex])];
             } else {
               return null;
             }
@@ -121,6 +121,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           d3.selectAll('.run-line')
             .select('path')
             .attr('d', linePath(metricValues, updatedXScale));
+          d3.selectAll('.dotted-line')
+            .select('path')
+            .attr('d', dottedLinePath(selectedData, updatedXScale));
         };
 
         const zoom = d3
@@ -278,7 +281,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </g>
 
                 <g className="dotted-line">
-                  <path d={dottedLinePath(selectedData)} />
+                  <path d={dottedLinePath(selectedData, xScale)} />
                 </g>
               </g>
             </svg>
