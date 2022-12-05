@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
@@ -8,33 +8,34 @@ import './time-series.css';
 
 // TODO: move them to a config file or something
 
-const margin = { top: 50, right: 0, bottom: 50, left: 30 };
-const width = 786,
-  height = 150;
-
-const selectedMarkerRotate = [45, 0, 0];
-
-const selectedMarkerShape = [
-  d3.symbolSquare,
-  d3.symbolTriangle,
-  d3.symbolCircle,
-];
-
 // const yAxis = {};
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
+  const [width, setWidth] = useState(0);
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
-  const [hoveredMouseELementId, setHoveredMouseELementId] = useState(null);
+  const margin = { top: 50, right: 0, bottom: 50, left: 30 };
+  const height = 150;
+  const dateBuffer = 0.2;
+
+  const selectedMarkerRotate = [45, 0, 0];
+  const selectedMarkerShape = [
+    d3.symbolSquare,
+    d3.symbolTriangle,
+    d3.symbolCircle,
+  ];
+
+  useEffect(() => {
+    setWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
+    );
+  }, []);
 
   const hoveredElementDate =
-    (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
-    (hoveredMouseELementId && new Date(formatTimestamp(hoveredMouseELementId)));
+    hoveredElementId && new Date(formatTimestamp(hoveredElementId));
 
-  const hoveredValues =
-    (hoveredElementId && metricsData.runs[hoveredElementId]) ||
-    (hoveredMouseELementId && metricsData.runs[hoveredMouseELementId]);
+  const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
   const metricKeys = Object.keys(metricsData.metrics);
   const runData = Object.entries(metricsData.runs);
@@ -52,9 +53,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     10
   );
   const minDate = new Date(d3.min(parsedDates));
-  minDate.setDate(minDate.getDate() - diffDays * 0.02);
+  minDate.setDate(minDate.getDate() - diffDays * dateBuffer);
   const maxDate = new Date(d3.max(parsedDates));
-  maxDate.setDate(maxDate.getDate() + diffDays * 0.02);
+  maxDate.setDate(maxDate.getDate() + diffDays * dateBuffer);
 
   const selectedData = runData
     .filter(([key, value]) => selectedRuns.includes(key))
@@ -69,13 +70,17 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
       (yScales[i] = d3
         .scaleLinear()
         .domain([
-          Math.floor(Math.min(...value) - Math.min(...value) * 0.02),
-          Math.ceil(Math.max(...value) + Math.max(...value) * 0.02),
+          Math.floor(Math.min(...value) - Math.min(...value) * dateBuffer),
+          Math.ceil(Math.max(...value) + Math.max(...value) * dateBuffer),
         ])
         .range([height, 0]))
   );
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
+
+  useEffect(() => {
+    d3.selectAll(`line[id="${hoveredElementId}"]`).raise();
+  }, [hoveredElementId]);
 
   return (
     <div className="time-series">
@@ -162,16 +167,15 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                     <line
                       className={classnames('reference-line', {
                         'reference-line--hovered':
-                          hoveredMouseELementId === runKeys[index],
+                          hoveredElementId === runKeys[index],
                       })}
+                      id={runKeys[index]}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
-                      onMouseOver={(e) =>
-                        setHoveredMouseELementId(runKeys[index])
-                      }
-                      onMouseLeave={() => setHoveredMouseELementId(null)}
+                      onMouseOver={(e) => setHoveredElementId(runKeys[index])}
+                      onMouseLeave={() => setHoveredElementId(null)}
                     />
                   ))}
                 </g>
@@ -188,17 +192,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                               y1={yScales[index](value)}
                               x2={width}
                               y2={yScales[index](value)}
-                            />
-                            <line
-                              className="reference-line--hovered"
-                              x1={xScale(hoveredElementDate)}
-                              y1={0}
-                              x2={xScale(hoveredElementDate)}
-                              y2={height}
-                              onMouseOver={(e) => {
-                                setHoveredElementId(runKeys[index]);
-                              }}
-                              onMouseOut={() => setHoveredElementId(null)}
                             />
                             <g className="ticks">
                               <line

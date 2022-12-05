@@ -1,9 +1,5 @@
 @use '../../../styles/variables' as colors;
 
-$baseColour: #{colors.$grey-900};
-$lineHighlight: #{colors.$grey-400};
-$textHighlight: #{colors.$white-900};
-
 .time-series {
   flex: 1 1 auto;
   font-family: 'Titillium Web', sans-serif;
@@ -16,7 +12,7 @@ $textHighlight: #{colors.$white-900};
 
 .metric-name {
   font-size: 1.4em;
-  color: white;
+  color: colors.$white-0;
   line-height: 20px;
 }
 
@@ -28,7 +24,7 @@ $textHighlight: #{colors.$white-900};
 
 .run-line {
   fill: none;
-  stroke: #717d84;
+  stroke: colors.$grey-700;
 }
 
 .run-line--blend {
@@ -37,11 +33,11 @@ $textHighlight: #{colors.$white-900};
 
 .reference-line {
   cursor: pointer;
-  stroke: #21333e;
+  stroke: colors.$slate-200;
 }
 
 .reference-line--hovered {
-  stroke: white;
+  stroke: colors.$white-0;
 }
 
 .reference-group--blend {
@@ -49,27 +45,27 @@ $textHighlight: #{colors.$white-900};
 }
 
 .selected-line--0 {
-  stroke: #00bcff;
+  stroke: colors.$blue-300;
 }
 
 .selected-line--1 {
-  stroke: #31e27b;
+  stroke: colors.$green-300;
 }
 
 .selected-line--2 {
-  stroke: #ffbc00;
+  stroke: colors.$yellow-300;
 }
 
 .selected-marker--0 {
-  stroke: #00e3ff;
+  stroke: colors.$blue-0;
 }
 
 .selected-marker--1 {
-  stroke: #3bff95;
+  stroke: colors.$green-0;
 }
 
 .selected-marker--2 {
-  stroke: #ffe300;
+  stroke: colors.$yellow-0;
 }
 
 .y-axis .tick,
@@ -87,22 +83,22 @@ $textHighlight: #{colors.$white-900};
 }
 
 .dotted-line {
-  stroke: white;
+  stroke: colors.$white-0;
   stroke-dasharray: 4;
   fill: none;
 }
 
 .hovered-line {
-  stroke: #97a0a6;
+  stroke: colors.$grey-700;
   stroke-dasharray: 4;
 }
 
 .tick-line {
-  stroke: white;
+  stroke: colors.$white-0;
 }
 
 .tick-text {
-  fill: white;
+  fill: colors.$white-0;
   text-anchor: end;
   transform: translate(-10px, -4px);
 }
