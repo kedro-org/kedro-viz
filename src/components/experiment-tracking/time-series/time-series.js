@@ -165,16 +165,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </text>
 
                 <g
-                  className={classnames('timeseries-metric-line', {
-                    'timeseries-metric-line--blend':
-                      hoveredElementId || selectedRuns.length > 1,
-                  })}
-                  key={`timeseries-metric-line--${metricName}`}
-                >
-                  <path d={linePath(metricValues)} />
-                </g>
-
-                <g
                   className="timeseries-run-lines"
                   key={`timeseries-run-lines--${metricName}`}
                 >
@@ -277,6 +267,16 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       />
                     </>
                   ))}
+                </g>
+
+                <g
+                  className={classnames('timeseries-metric-line', {
+                    'timeseries-metric-line--blend':
+                      hoveredElementId || selectedRuns.length > 1,
+                  })}
+                  key={`timeseries-metric-line--${metricName}`}
+                >
+                  <path d={linePath(metricValues)} />
                 </g>
 
                 <g
