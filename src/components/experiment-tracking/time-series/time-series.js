@@ -103,6 +103,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
+        const referenceLinePath = function (key, scale) {
+          return d3.line()([
+            [scale(key), 0],
+            [scale(key), height],
+          ]);
+        };
+
         const dottedLinePath = function (data, scale) {
           let points = data.map(([key, value]) => {
             if (value !== null) {
@@ -124,6 +131,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           d3.selectAll('.dotted-line')
             .select('path')
             .attr('d', dottedLinePath(selectedData, updatedXScale));
+          parsedData.map(([key, _], index) =>
+            d3
+              .selectAll(`path[id="${key}"]`)
+              .attr('d', referenceLinePath(key, updatedXScale))
+          );
         };
 
         const zoom = d3
@@ -183,20 +195,17 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
                 <g className="reference-group">
                   {parsedData.map(([key, _], index) => (
-                    <line
+                    <path
                       className={classnames('reference-line', {
                         'reference-line--hovered':
                           hoveredMouseELementId === runKeys[index],
                       })}
-                      x1={xScale(key)}
-                      y1={0}
-                      x2={xScale(key)}
-                      y2={height}
+                      d={referenceLinePath(key, xScale)}
                       onMouseOver={(e) =>
                         setHoveredMouseELementId(runKeys[index])
                       }
                       onMouseLeave={() => setHoveredMouseELementId(null)}
-                      key={key}
+                      id={key}
                     />
                   ))}
                 </g>
