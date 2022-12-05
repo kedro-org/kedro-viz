@@ -10,95 +10,103 @@
   font-size: 12px;
 }
 
-.metric-name {
+.timeseries-metric-name {
   font-size: 1.4em;
-  color: colors.$white-0;
+  color: var(--color-metrics-plot-timeseries-metric-name);
   line-height: 20px;
 }
 
-.axis-label {
-  fill: #c0c5c9;
+.timeseries-axis-label {
+  fill: var(--color-metrics-plot-timeseries-axis-label);
   font-size: 12px;
   transform: rotate(-90deg);
 }
 
-.metric-line {
+.timeseries-metric-line {
   fill: none;
-  stroke: colors.$grey-700;
+  stroke: var(--color-metrics-plot-timeseries-metric-line);
 }
 
-.metric-line--blend {
+.timeseries-metric-line--blend {
   stroke-opacity: 0.4;
 }
 
-.run-line {
+.timeseries-run-line {
   cursor: pointer;
-  stroke: colors.$slate-200;
+  stroke: var(--color-metrics-plot-timeseries-run-line);
 }
 
-.run-line--hovered {
-  stroke: colors.$white-0;
+.timeseries-run-line--hovered {
+  stroke: var(--color-metrics-plot-timeseries-run-line-hovered);
 }
 
-.run-lines--blend {
+.timeseries-run-lines--blend {
   stroke-opacity: 0.55;
 }
 
-.selected-line--0 {
+.timeseries-selected-line--0 {
   stroke: colors.$blue-300;
 }
 
-.selected-line--1 {
+.timeseries-selected-line--1 {
   stroke: colors.$green-300;
 }
 
-.selected-line--2 {
+.timeseries-selected-line--2 {
   stroke: colors.$yellow-300;
 }
 
-.selected-marker--0 {
+.timeseries-selected-marker--0 {
   stroke: colors.$blue-0;
 }
 
-.selected-marker--1 {
+.timeseries-selected-marker--1 {
   stroke: colors.$green-0;
 }
 
-.selected-marker--2 {
+.timeseries-selected-marker--2 {
   stroke: colors.$yellow-0;
 }
 
-.y-axis .tick,
-.y-axis-right .tick {
+.tick text {
+  fill: var(--color-metrics-plot-timeseries-axis-label);
+}
+
+.tick line {
+  stroke: var(--color-metrics-plot-timeseries-axis-label);
+}
+
+.timeseries-metric-axis .tick,
+.timeseries-metric-axis-dual .tick {
   opacity: 0;
   font-size: 12px;
 }
 
-.y-axis .tick:nth-last-child(2) {
+.timeseries-metric-axis .tick:nth-last-child(2) {
   opacity: 1;
 }
 
-.y-axis .tick:nth-child(3) {
+.timeseries-metric-axis .tick:nth-child(3) {
   opacity: 1;
 }
 
-.dotted-line {
-  stroke: colors.$white-0;
+.timeseries-trend-line {
+  stroke: var(--color-metrics-plot-timeseries-dotted-line);
   stroke-dasharray: 4;
   fill: none;
 }
 
-.hovered-line {
-  stroke: colors.$grey-700;
+.timeseries-hovered-line {
+  stroke: var(--color-metrics-plot-timeseries-dotted-line);
   stroke-dasharray: 4;
 }
 
-.tick-line {
-  stroke: colors.$white-0;
+.timeseries-tick-line {
+  stroke: var(--color-metrics-plot-timeseries-hovered-ticks);
 }
 
-.tick-text {
-  fill: colors.$white-0;
+.timeseries-tick-text {
+  fill: var(--color-metrics-plot-timeseries-axis-label);
   text-anchor: end;
   transform: translate(-10px, -4px);
 }
