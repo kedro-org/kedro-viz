@@ -6,18 +6,14 @@ import * as d3 from 'd3';
 
 import './time-series.css';
 
-// TODO: move them to a config file or something
-
-// const yAxis = {};
-
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const [width, setWidth] = useState(0);
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
-  const margin = { top: 50, right: 0, bottom: 50, left: 30 };
+  const margin = { top: 50, right: 0, bottom: 50, left: 40 };
   const height = 150;
-  const dateBuffer = 0.02;
+  const chartBuffer = 0.02;
 
   const selectedMarkerRotate = [45, 0, 0];
   const selectedMarkerShape = [
@@ -26,21 +22,15 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     d3.symbolCircle,
   ];
 
-  useEffect(() => {
-    setWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
-    );
-  }, []);
-
   const hoveredElementDate =
     hoveredElementId && new Date(formatTimestamp(hoveredElementId));
 
   const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
   const metricKeys = Object.keys(metricsData.metrics);
-  const runData = Object.entries(metricsData.runs);
-  const runKeys = Object.keys(metricsData.runs);
   const metricData = Object.entries(metricsData.metrics);
+  const runKeys = Object.keys(metricsData.runs);
+  const runData = Object.entries(metricsData.runs);
 
   const parsedData = runData.map(([key, value]) => [
     new Date(formatTimestamp(key)),
@@ -53,15 +43,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     10
   );
   const minDate = new Date(d3.min(parsedDates));
-  minDate.setDate(minDate.getDate() - diffDays * dateBuffer);
+  minDate.setDate(minDate.getDate() - diffDays * chartBuffer);
   const maxDate = new Date(d3.max(parsedDates));
-  maxDate.setDate(maxDate.getDate() + diffDays * dateBuffer);
+  maxDate.setDate(maxDate.getDate() + diffDays * chartBuffer);
 
   const selectedData = runData
     .filter(([key, value]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
-
-  // Each vertical scale
 
   const yScales = {};
 
@@ -70,8 +58,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
       (yScales[i] = d3
         .scaleLinear()
         .domain([
-          Math.floor(Math.min(...value) - Math.min(...value) * dateBuffer),
-          Math.ceil(Math.max(...value) + Math.max(...value) * dateBuffer),
+          Math.min(...value) - Math.min(...value) * chartBuffer,
+          Math.max(...value) + Math.max(...value) * chartBuffer,
         ])
         .range([height, 0]))
   );
@@ -81,6 +69,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
   useEffect(() => {
     d3.selectAll(`line[id="${hoveredElementId}"]`).raise();
   }, [hoveredElementId]);
+
+  useEffect(() => {
+    setWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
+    );
+  }, []);
 
   return (
     <div className="time-series">
@@ -93,7 +87,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
         const getYAxis = (ref) => {
           d3.select(ref).call(
-            d3.axisLeft(yScales[metricIndex]).tickSizeOuter(0)
+            d3
+              .axisLeft(yScales[metricIndex])
+              .tickSizeOuter(0)
+              .tickFormat((x) => `${x.toFixed(2)}`)
           );
         };
 
@@ -154,22 +151,23 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </text>
 
                 <g
-                  className={classnames('run-line', {
-                    'run-line--blend':
+                  className={classnames('metric-line', {
+                    'metric-line--blend':
                       hoveredElementId || selectedRuns.length > 1,
                   })}
                 >
                   <path d={linePath(metricValues)} />
                 </g>
 
-                <g className="reference-group">
+                <g className="run-lines">
                   {parsedData.map(([key, _], index) => (
                     <line
-                      className={classnames('reference-line', {
-                        'reference-line--hovered':
+                      className={classnames('run-line', {
+                        'run-line--hovered':
                           hoveredElementId === runKeys[index],
                       })}
                       id={runKeys[index]}
+                      key={key}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}

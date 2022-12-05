@@ -22,25 +22,25 @@
   transform: rotate(-90deg);
 }
 
-.run-line {
+.metric-line {
   fill: none;
   stroke: colors.$grey-700;
 }
 
-.run-line--blend {
+.metric-line--blend {
   stroke-opacity: 0.4;
 }
 
-.reference-line {
+.run-line {
   cursor: pointer;
   stroke: colors.$slate-200;
 }
 
-.reference-line--hovered {
+.run-line--hovered {
   stroke: colors.$white-0;
 }
 
-.reference-group--blend {
+.run-lines--blend {
   stroke-opacity: 0.55;
 }
 
