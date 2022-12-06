@@ -10,102 +10,108 @@
   font-size: 12px;
 }
 
-.timeseries-metric-name {
+.time-series__metric-name {
   font-size: 1.4em;
   color: var(--color-metrics-plot-timeseries-metric-name);
   line-height: 20px;
 }
 
-.timeseries-axis-label {
+.time-series__axis-label {
   fill: var(--color-metrics-plot-timeseries-axis-label);
   font-size: 12px;
   transform: rotate(-90deg);
 }
 
-.timeseries-metric-line {
+.time-series__metric-line {
   fill: none;
   stroke: var(--color-metrics-plot-timeseries-metric-line);
+
+  &--blend {
+    stroke-opacity: 0.4;
+  }
 }
 
-.timeseries-metric-line--blend {
-  stroke-opacity: 0.4;
-}
-
-.timeseries-run-line {
+.time-series__run-line {
   cursor: pointer;
   stroke: var(--color-metrics-plot-timeseries-run-line);
+
+  &--hovered {
+    stroke: var(--color-metrics-plot-timeseries-run-line-hovered);
+  }
+
+  &--blend {
+    stroke-opacity: 0.55;
+  }
+
+  &--selected-0 {
+    stroke: colors.$blue-300;
+  }
+
+  &--selected-1 {
+    stroke: colors.$green-300;
+  }
+
+  &--selected-2 {
+    stroke: colors.$yellow-300;
+  }
 }
 
-.timeseries-run-line--hovered {
-  stroke: var(--color-metrics-plot-timeseries-run-line-hovered);
+.time-series__marker {
+  &--selected-0 {
+    stroke: colors.$blue-0;
+  }
+
+  &--selected-1 {
+    stroke: colors.$green-0;
+  }
+
+  &--selected-2 {
+    stroke: colors.$yellow-0;
+  }
 }
 
-.timeseries-run-lines--blend {
-  stroke-opacity: 0.55;
+.time-series {
+  .tick text {
+    fill: var(--color-metrics-plot-timeseries-axis-label);
+  }
+
+  .tick line {
+    stroke: var(--color-metrics-plot-timeseries-axis-label);
+  }
 }
 
-.timeseries-selected-line--0 {
-  stroke: colors.$blue-300;
-}
-
-.timeseries-selected-line--1 {
-  stroke: colors.$green-300;
-}
-
-.timeseries-selected-line--2 {
-  stroke: colors.$yellow-300;
-}
-
-.timeseries-selected-marker--0 {
-  stroke: colors.$blue-0;
-}
-
-.timeseries-selected-marker--1 {
-  stroke: colors.$green-0;
-}
-
-.timeseries-selected-marker--2 {
-  stroke: colors.$yellow-0;
-}
-
-.tick text {
-  fill: var(--color-metrics-plot-timeseries-axis-label);
-}
-
-.tick line {
-  stroke: var(--color-metrics-plot-timeseries-axis-label);
-}
-
-.timeseries-metric-axis .tick,
-.timeseries-metric-axis-dual .tick {
+.time-series__metric-axis .tick,
+.time-series__metric-axis-dual .tick {
   opacity: 0;
   font-size: 12px;
 }
 
-.timeseries-metric-axis .tick:nth-last-child(2) {
-  opacity: 1;
+.time-series__metric-axis {
+  .tick:nth-last-child(2) {
+    opacity: 1;
+  }
+
+  .tick:nth-child(3) {
+    opacity: 1;
+  }
 }
 
-.timeseries-metric-axis .tick:nth-child(3) {
-  opacity: 1;
-}
-
-.timeseries-trend-line {
+.time-series__trend-line {
   stroke: var(--color-metrics-plot-timeseries-dotted-line);
   stroke-dasharray: 4;
   fill: none;
 }
 
-.timeseries-hovered-line {
+.time-series__hovered-line {
   stroke: var(--color-metrics-plot-timeseries-dotted-line);
   stroke-dasharray: 4;
 }
 
-.timeseries-tick-line {
+.time-series__tick-line {
   stroke: var(--color-metrics-plot-timeseries-hovered-ticks);
 }
 
-.timeseries-tick-text {
+.time-series__tick-text {
   fill: var(--color-metrics-plot-timeseries-axis-label);
   text-anchor: end;
   transform: translate(-10px, -4px);
