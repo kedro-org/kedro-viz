@@ -27,6 +27,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     useContext(HoverStateContext);
 
   const [hoveredMouseELementId, setHoveredMouseELementId] = useState(null);
+  const [currentZoomState, setCurrentZoomState] = useState();
 
   const hoveredElementDate =
     (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
@@ -77,6 +78,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
+  if (currentZoomState) {
+    xScale.domain(currentZoomState);
+  }
+
   return (
     <div className="time-series">
       {metricKeys.map((metricName, metricIndex) => {
@@ -92,10 +97,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           );
         };
 
-        const linePath = function (data, scale) {
+        const linePath = function (data) {
           let points = data.map((x, i) => {
             if (x !== null) {
-              return [scale(parsedDates[i]), yScales[metricIndex](x)];
+              return [xScale(parsedDates[i]), yScales[metricIndex](x)];
             } else {
               return null;
             }
@@ -103,52 +108,15 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
-        const referenceLinePath = function (key, scale) {
-          return d3.line()([
-            [scale(key), 0],
-            [scale(key), height],
-          ]);
-        };
-
-        const selectedLine = function (key, scale) {
-          return d3.line()([
-            [scale(key), 0],
-            [scale(key), height],
-          ]);
-        };
-        const dottedLinePath = function (data, scale) {
+        const dottedLinePath = function (data) {
           let points = data.map(([key, value]) => {
             if (value !== null) {
-              return [scale(key), yScales[metricIndex](value[metricIndex])];
+              return [xScale(key), yScales[metricIndex](value[metricIndex])];
             } else {
               return null;
             }
           });
           return d3.line()(points);
-        };
-
-        const handleZoom = (e) => {
-          // update xAxis
-          let updatedXScale = e.transform.rescaleX(xScale);
-          d3.selectAll('.x-axis').call(d3.axisBottom(updatedXScale));
-          d3.selectAll('.run-line')
-            .select('path')
-            .attr('d', linePath(metricValues, updatedXScale));
-          d3.selectAll('.dotted-line')
-            .select('path')
-            .attr('d', dottedLinePath(selectedData, updatedXScale));
-          parsedData.map(([key, _], index) =>
-            d3
-              .selectAll(`path[id="${key}"]`)
-              .attr('d', referenceLinePath(key, updatedXScale))
-          );
-
-          selectedData.map(([key, value], index) => {
-            d3.selectAll(`path[id="${key}"]`).attr(
-              'd',
-              selectedLine(key, updatedXScale)
-            );
-          });
         };
 
         const zoom = d3
@@ -158,7 +126,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             [0, 0],
             [width, height],
           ])
-          .on('zoom', handleZoom);
+          .on('zoom', (e) => {
+            const newXScale = e.transform.rescaleX(xScale);
+            setCurrentZoomState(newXScale.domain());
+          });
 
         const zoomRef = (ref) => d3.select(ref).call(zoom);
 
@@ -203,22 +174,24 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       hoveredElementId || selectedRuns.length > 1,
                   })}
                 >
-                  <path d={linePath(metricValues, xScale)} />
+                  <path d={linePath(metricValues)} />
                 </g>
 
                 <g className="reference-group">
                   {parsedData.map(([key, _], index) => (
-                    <path
+                    <line
                       className={classnames('reference-line', {
                         'reference-line--hovered':
                           hoveredMouseELementId === runKeys[index],
                       })}
-                      d={referenceLinePath(key, xScale)}
+                      x1={xScale(key)}
+                      y1={0}
+                      x2={xScale(key)}
+                      y2={height}
                       onMouseOver={(e) =>
                         setHoveredMouseELementId(runKeys[index])
                       }
                       onMouseLeave={() => setHoveredMouseELementId(null)}
-                      id={key}
                     />
                   ))}
                 </g>
@@ -276,10 +249,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g className="selected">
                   {selectedData.map(([key, value], index) => (
                     <>
-                      <path
+                      <line
                         className={`selected-line--${index}`}
-                        d={selectedLine(key, xScale)}
-                        id={key}
+                        x1={xScale(key)}
+                        y1={0}
+                        x2={xScale(key)}
+                        y2={height}
                       />
                       <text
                         className="tick-text"
@@ -301,7 +276,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </g>
 
                 <g className="dotted-line">
-                  <path d={dottedLinePath(selectedData, xScale)} />
+                  <path d={dottedLinePath(selectedData)} />
                 </g>
               </g>
             </svg>
