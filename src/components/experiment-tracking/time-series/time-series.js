@@ -93,7 +93,14 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
         const getXAxis = (ref) => {
-          d3.select(ref).call(d3.axisBottom(xScale).tickSizeOuter(0));
+          if (rangeSelection) {
+            d3.select(ref)
+              .transition()
+              .duration(1000)
+              .call(d3.axisBottom(xScale).tickSizeOuter(0));
+          } else {
+            d3.select(ref).call(d3.axisBottom(xScale).tickSizeOuter(0));
+          }
         };
 
         const getYAxis = (ref) => {
