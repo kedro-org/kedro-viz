@@ -12,19 +12,19 @@
 
 .time-series__metric-name {
   font-size: 1.4em;
-  color: var(--color-metrics-plot-timeseries-metric-name);
+  color: var(--color-metrics-plot-time-series-metric-name);
   line-height: 20px;
 }
 
 .time-series__axis-label {
-  fill: var(--color-metrics-plot-timeseries-axis-label);
+  fill: var(--color-metrics-plot-time-series-axis-label);
   font-size: 12px;
   transform: rotate(-90deg);
 }
 
 .time-series__metric-line {
   fill: none;
-  stroke: var(--color-metrics-plot-timeseries-metric-line);
+  stroke: var(--color-metrics-plot-time-series-metric-line);
 
   &--blend {
     stroke-opacity: 0.4;
@@ -33,10 +33,10 @@
 
 .time-series__run-line {
   cursor: pointer;
-  stroke: var(--color-metrics-plot-timeseries-run-line);
+  stroke: var(--color-metrics-plot-time-series-run-line);
 
   &--hovered {
-    stroke: var(--color-metrics-plot-timeseries-run-line-hovered);
+    stroke: var(--color-metrics-plot-time-series-run-line-hovered);
   }
 
   &--blend {
@@ -72,18 +72,18 @@
 
 .time-series {
   .tick text {
-    fill: var(--color-metrics-plot-timeseries-axis-label);
+    fill: var(--color-metrics-plot-time-series-axis-label);
+    font-size: 12px;
   }
 
   .tick line {
-    stroke: var(--color-metrics-plot-timeseries-axis-label);
+    stroke: var(--color-metrics-plot-time-series-axis);
   }
 }
 
 .time-series__metric-axis .tick,
 .time-series__metric-axis-dual .tick {
   opacity: 0;
-  font-size: 12px;
 }
 
 .time-series__metric-axis {
@@ -97,22 +97,22 @@
 }
 
 .time-series__trend-line {
-  stroke: var(--color-metrics-plot-timeseries-dotted-line);
+  stroke: var(--color-metrics-plot-time-series-dotted-line);
   stroke-dasharray: 4;
   fill: none;
 }
 
 .time-series__hovered-line {
-  stroke: var(--color-metrics-plot-timeseries-dotted-line);
+  stroke: var(--color-metrics-plot-time-series-dotted-line);
   stroke-dasharray: 4;
 }
 
 .time-series__tick-line {
-  stroke: var(--color-metrics-plot-timeseries-hovered-ticks);
+  stroke: var(--color-metrics-plot-time-series-hovered-ticks);
 }
 
 .time-series__tick-text {
-  fill: var(--color-metrics-plot-timeseries-axis-label);
+  fill: var(--color-metrics-plot-time-series-axis-label);
   text-anchor: end;
   transform: translate(-10px, -4px);
 }
