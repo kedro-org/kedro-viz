@@ -106,3 +106,7 @@ $textHighlight: #{colors.$white-900};
   text-anchor: end;
   transform: translate(-10px, -4px);
 }
+
+.brush .selection {
+  y: -1;
+}
