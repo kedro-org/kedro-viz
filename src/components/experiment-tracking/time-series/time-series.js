@@ -18,8 +18,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const selectedMarkerRotate = [45, 0, 0];
   const selectedMarkerShape = [
     d3.symbolSquare,
-    d3.symbolTriangle,
     d3.symbolCircle,
+    d3.symbolTriangle,
   ];
 
   const hoveredElementDate =
