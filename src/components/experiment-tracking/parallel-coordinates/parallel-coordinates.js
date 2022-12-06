@@ -169,6 +169,10 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   useEffect(() => {
+    d3.select(`.run-line[id="${hoveredElementId}"]`).raise();
+  }, [hoveredElementId]);
+
+  useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
     );
@@ -232,10 +236,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 id={runId}
                 key={runId}
                 onMouseLeave={handleMouseOutLine}
-                onMouseOver={(e) => {
-                  handleMouseOverLine(e, runId);
-                  d3.select(e.target).raise();
-                }}
+                onMouseOver={(e) => handleMouseOverLine(e, runId)}
               />
             );
           })}

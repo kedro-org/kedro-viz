@@ -78,7 +78,7 @@ const RunsListCard = ({
       onMouseLeave={() => setHoveredElementId(null)}
     >
       {enableComparisonView && (
-        <CheckIcon
+        <div
           className={classnames('runs-list-card__checked', {
             'runs-list-card__checked--active': active,
             'runs-list-card__checked--comparing': enableComparisonView,

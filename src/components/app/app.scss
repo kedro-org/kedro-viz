@@ -21,6 +21,8 @@
   --color-run-list-hover: #{colors.$white-300};
   --color-base-20: #{colors.$grey-300};
   --color-black-10: #{colors.$white-200};
+
+  // Experiment tracking colors below
   --color-exp-tracking-bg: #{colors.$white-0};
   --color-exp-tracking-metadata: #{colors.$white-0};
   --color-exp-tracking-datasets: #{colors.$white-100};
@@ -53,6 +55,8 @@
   --color-run-list-hover: #{colors.$slate-300};
   --color-base-20: #{colors.$grey-800};
   --color-black-10: #{colors.$slate-700};
+
+  // Experiment tracking colors below
   --color-exp-tracking-bg: #{colors.$slate-900};
   --color-exp-tracking-metadata: #{colors.$slate-900};
   --color-exp-tracking-datasets: #{colors.$ocean-900};

@@ -74,9 +74,10 @@
 }
 
 .runs-list-card__checked {
-  height: 24px;
-  margin-right: 0.8em;
-  width: 24px;
+  border: 1px solid #{colors.$grey-500};
+  height: 10px;
+  margin: 0.8em 0.8em 0 0;
+  width: 10px;
 
   &--comparing {
     fill: var(--color-base-20);
