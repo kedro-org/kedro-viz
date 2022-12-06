@@ -8,7 +8,6 @@ import {
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
-import CheckIcon from '../../icons/check';
 import { HoverStateContext } from '../utils/hover-state-context';
 
 import './runs-list-card.css';
