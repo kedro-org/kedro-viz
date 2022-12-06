@@ -69,6 +69,10 @@ g.selected-runs path {
 
 .tick-lines .line {
   stroke: var(--color-metrics-plot-text);
+
+  &--hovered {
+    stroke: colors.$grey-400;
+  }
 }
 
 // Selected runs
@@ -81,6 +85,7 @@ g.selected-runs path {
 .metric-axis--hovered {
   .domain {
     stroke: colors.$grey-400;
+    stroke-width: 1px;
   }
 
   .headers {
@@ -96,5 +101,5 @@ g.selected-runs path {
 
 .line:first-of-type,
 .line:last-of-type {
-  stroke: transparent;
+  // stroke: transparent;
 }

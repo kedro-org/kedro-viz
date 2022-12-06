@@ -173,6 +173,12 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   }, [hoveredElementId]);
 
   useEffect(() => {
+    d3.select(`.metric-axis[id="${hoveredMetricLabel}"]`).raise();
+    d3.selectAll(`.selected-runs`).raise();
+    d3.selectAll(`.selected-runs > path`).raise();
+  }, [hoveredMetricLabel]);
+
+  useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
     );
@@ -198,7 +204,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
       >
         {graphKeys.map((metricName) => {
           const getYAxis = (ref) => {
-            d3.select(ref).call(yAxis[metricName]);
+            d3.select(ref).call(yAxis[metricName]).attr('id', metricName);
           };
 
           return (
