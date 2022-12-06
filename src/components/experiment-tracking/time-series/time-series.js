@@ -49,6 +49,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const selectedData = runData
     .filter(([key, value]) => selectedRuns.includes(key))
+    .sort((a, b) => {
+      // We need to sort the selected data to match the order of selectedRuns.
+      // If we didn't, the highlighted runs would switch colors unnecessarily.
+      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
+    })
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
   const yScales = {};
@@ -94,7 +99,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           );
         };
 
-        const linePath = function (data) {
+        const linePath = (data) => {
           let points = data.map((x, i) => {
             if (x !== null) {
               return [xScale(parsedDates[i]), yScales[metricIndex](x)];
@@ -102,10 +107,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               return null;
             }
           });
+
           return d3.line()(points);
         };
 
-        const trendLinePath = function (data) {
+        const trendLinePath = (data) => {
           let points = data.map(([key, value]) => {
             if (value !== null) {
               return [xScale(key), yScales[metricIndex](value[metricIndex])];
@@ -113,6 +119,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               return null;
             }
           });
+
           return d3.line()(points);
         };
 
