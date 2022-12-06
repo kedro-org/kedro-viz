@@ -27,7 +27,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     useContext(HoverStateContext);
 
   const [hoveredMouseELementId, setHoveredMouseELementId] = useState(null);
-  const [currentZoomState, setCurrentZoomState] = useState();
+  // const [currentZoomState, setCurrentZoomState] = useState();
+  const [rangeSelection, setRangeSelection] = useState();
 
   const hoveredElementDate =
     (hoveredElementId && new Date(formatTimestamp(hoveredElementId))) ||
@@ -78,8 +79,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
-  if (currentZoomState) {
-    xScale.domain(currentZoomState);
+  // if (currentZoomState) {
+  //   xScale.domain(currentZoomState);
+  // }
+
+  if (rangeSelection) {
+    xScale.domain(rangeSelection);
   }
 
   return (
@@ -119,19 +124,37 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
-        const zoom = d3
-          .zoom()
-          .scaleExtent([0.5, 20])
+        // const zoom = d3
+        //   .zoom()
+        //   .scaleExtent([0.5, 20])
+        //   .extent([
+        //     [0, 0],
+        //     [width, height],
+        //   ])
+        //   .on('zoom', (e) => {
+        //     const newXScale = e.transform.rescaleX(xScale);
+        //     setCurrentZoomState(newXScale.domain());
+        //   });
+
+        // const zoomRef = (ref) => d3.select(ref).call(zoom);
+
+        const brush = d3
+          .brushX()
           .extent([
             [0, 0],
             [width, height],
           ])
-          .on('zoom', (e) => {
-            const newXScale = e.transform.rescaleX(xScale);
-            setCurrentZoomState(newXScale.domain());
+          .on('end', (e) => {
+            if (e.selection) {
+              const indexSelection = e.selection.map(xScale.invert);
+              setRangeSelection(indexSelection);
+              d3.select('.brush').call(brush.move, null);
+            }
           });
 
-        const zoomRef = (ref) => d3.select(ref).call(zoom);
+        d3.select('.brush').call(brush);
+
+        const resetXScale = () => setRangeSelection();
 
         return (
           <>
@@ -140,12 +163,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               preserveAspectRatio="xMinYMin meet"
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
-              ref={zoomRef}
+              //ref={zoomRef}
             >
               <g
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
               >
+                <g className="brush" onDoubleClick={resetXScale} />
                 <g
                   className="x-axis"
                   ref={getXAxis}
