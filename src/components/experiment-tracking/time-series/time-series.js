@@ -48,7 +48,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
   maxDate.setDate(maxDate.getDate() + diffDays * chartBuffer);
 
   const selectedData = runData
-    .filter(([key, value]) => selectedRuns.includes(key))
+    .filter(([key, _]) => selectedRuns.includes(key))
+    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
+
+  const selectedOrderedData = runData
+    .filter(([key, _]) => selectedRuns.includes(key))
     .sort((a, b) => {
       // We need to sort the selected data to match the order of selectedRuns.
       // If we didn't, the highlighted runs would switch colors unnecessarily.
@@ -219,7 +223,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 )}
 
                 <g className="time-series__selected-group">
-                  {selectedData.map(([key, value], index) => (
+                  {selectedOrderedData.map(([key, value], index) => (
                     <React.Fragment key={key + value}>
                       <line
                         className={`time-series__run-line--selected-${index}`}
