@@ -144,7 +144,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           );
 
           selectedData.map(([key, value], index) => {
-            d3.selectAll(`selected-line--${index}`).attr(
+            d3.selectAll(`path[id="${key}"]`).attr(
               'd',
               selectedLine(key, updatedXScale)
             );
@@ -279,6 +279,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       <path
                         className={`selected-line--${index}`}
                         d={selectedLine(key, xScale)}
+                        id={key}
                       />
                       <text
                         className="tick-text"
