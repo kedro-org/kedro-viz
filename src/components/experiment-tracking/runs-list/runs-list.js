@@ -65,15 +65,16 @@ const RunsList = ({
           headingDetail={bookmarkedRuns.length}
         >
           <div className="runs-list__wrapper">
-            {bookmarkedRuns.map((data, i) => (
+            {bookmarkedRuns.map((data) => (
               <RunsListCard
                 data={data}
                 disableRunSelection={disableRunSelection}
                 enableComparisonView={enableComparisonView}
-                key={i}
+                key={data.id}
                 onRunSelection={onRunSelection}
                 selectedRunIds={selectedRunIds}
                 searchValue={searchValue}
+                selectedIndex={selectedRunIds.indexOf(data.id)}
               />
             ))}
           </div>
@@ -86,15 +87,16 @@ const RunsList = ({
           headingDetail={unbookmarkedRuns.length}
         >
           <div className="runs-list__wrapper">
-            {unbookmarkedRuns.map((data, i) => (
+            {unbookmarkedRuns.map((data) => (
               <RunsListCard
                 data={data}
                 disableRunSelection={disableRunSelection}
                 enableComparisonView={enableComparisonView}
-                key={i}
+                key={data.id}
                 onRunSelection={onRunSelection}
                 selectedRunIds={selectedRunIds}
                 searchValue={searchValue}
+                selectedIndex={selectedRunIds.indexOf(data.id)}
               />
             ))}
           </div>
