@@ -117,57 +117,40 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         };
 
         return (
-          <>
-            <div
-              className="timeseries-metric-name"
-              key={`timeseries-metric-name--${metricName}`}
-            >
-              {metricName}
-            </div>
+          <React.Fragment key={`timeseries-metric-name--${metricName}`}>
+            <div className="timeseries-metric-name">{metricName}</div>
             <svg
               preserveAspectRatio="xMinYMin meet"
-              key={`timeseries--${metricName}`}
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
               <g
                 id={metricName}
-                key={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
               >
                 <g
                   className="timeseries-runs-axis"
-                  key={`timeseries-runs-axis--${metricName}`}
                   ref={getXAxis}
                   transform={`translate(0,${height})`}
                 />
 
-                <g
-                  className="timeseries-metric-axis"
-                  key={`timeseries-metric-axis--${metricName}`}
-                  ref={getYAxis}
-                />
+                <g className="timeseries-metric-axis" ref={getYAxis} />
 
                 <g
                   className="timeseries-metric-axis-dual"
-                  key={`timeseries-metric-axis-dual--${metricName}`}
                   ref={getYAxis}
                   transform={`translate(${width},0)`}
                 />
 
                 <text
                   className="timeseries-axis-label"
-                  key={`timeseries-axis-label--${metricName}`}
                   y={10 - margin.left}
                   x={-10 - height / 2}
                 >
                   value
                 </text>
 
-                <g
-                  className="timeseries-run-lines"
-                  key={`timeseries-run-lines--${metricName}`}
-                >
+                <g className="timeseries-run-lines">
                   {parsedData.map(([key, _], index) => (
                     <line
                       className={classnames('timeseries-run-line', {
@@ -187,29 +170,21 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </g>
 
                 {hoveredValues && (
-                  <g
-                    className="timeseries-hovered-line-group"
-                    key={`timeseries-hovered-line-group--${metricName}`}
-                  >
+                  <g className="timeseries-hovered-line-group">
                     {hoveredValues.map((value, index) => {
                       if (metricIndex === index) {
                         return (
-                          <>
+                          <React.Fragment key={value + index}>
                             <line
                               className="timeseries-hovered-line"
-                              key={`timeseries-hovered-line--${metricName}--${value}`}
                               x1={0}
                               y1={yScales[index](value)}
                               x2={width}
                               y2={yScales[index](value)}
                             />
-                            <g
-                              className="timeseries-ticks"
-                              key={`timeseries-ticks--${metricName}--${value}`}
-                            >
+                            <g className="timeseries-ticks">
                               <line
                                 className="timeseries-tick-line"
-                                key={`timeseries-tick-line--${metricName}--${value}`}
                                 x1={xScale(hoveredElementDate)}
                                 y1={yScales[index](value)}
                                 x2={xScale(hoveredElementDate) - 5}
@@ -217,14 +192,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                               />
                               <text
                                 className="timeseries-tick-text"
-                                key={`timeseries-tick-text--${metricName}--${value}`}
                                 x={xScale(hoveredElementDate)}
                                 y={yScales[index](value)}
                               >
                                 {value.toFixed(3)}
                               </text>
                             </g>
-                          </>
+                          </React.Fragment>
                         );
                       } else {
                         return null;
@@ -234,15 +208,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                   </g>
                 )}
 
-                <g
-                  className="timeseries-selected-group"
-                  key={`timeseries-selected-group--${metricName}}`}
-                >
+                <g className="timeseries-selected-group">
                   {selectedData.map(([key, value], index) => (
-                    <>
+                    <React.Fragment key={key + value}>
                       <line
                         className={`timeseries-selected-line--${index}`}
-                        key={`timeseries-selected-line--${metricName}--${key}`}
                         x1={xScale(key)}
                         y1={0}
                         x2={xScale(key)}
@@ -250,7 +220,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       />
                       <text
                         className="timeseries-tick-text"
-                        key={`timeseries-tick-text--${metricName}--${key}`}
                         x={xScale(key)}
                         y={yScales[metricIndex](value[metricIndex])}
                       >
@@ -258,14 +227,13 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       </text>
                       <path
                         className={`timeseries-selected-marker--${index}`}
-                        key={`timeseries-selected-marker--${metricName}--${key}`}
                         d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
                         transform={`translate(${xScale(key)},${yScales[
                           metricIndex
                         ](value[metricIndex])}) 
                   rotate(${selectedMarkerRotate[index]})`}
                       />
-                    </>
+                    </React.Fragment>
                   ))}
                 </g>
 
@@ -274,23 +242,16 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                     'timeseries-metric-line--blend':
                       hoveredElementId || selectedRuns.length > 1,
                   })}
-                  key={`timeseries-metric-line--${metricName}`}
                 >
                   <path d={linePath(metricValues)} />
                 </g>
 
-                <g
-                  className="timeseries-trend-line"
-                  key={`timeseries-trend-line--${metricName}`}
-                >
-                  <path
-                    key={`timeseries-trend-line-path--${metricName}`}
-                    d={trendLinePath(selectedData)}
-                  />
+                <g className="timeseries-trend-line">
+                  <path d={trendLinePath(selectedData)} />
                 </g>
               </g>
             </svg>
-          </>
+          </React.Fragment>
         );
       })}
     </div>
