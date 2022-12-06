@@ -90,8 +90,7 @@ $triangle-size: 10px;
   font-weight: 400;
   margin: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
   width: 180px;
 }
 

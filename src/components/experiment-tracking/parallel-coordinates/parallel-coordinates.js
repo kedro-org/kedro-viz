@@ -91,9 +91,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   const handleMouseOverMetric = (e, key) => {
-    const runsCount = graph.find((each) => each[0] === key)[1].length;
     setHoveredMetricLabel(key);
 
+    const runsCount = graph.find((each) => each[0] === key)[1].length;
     const rect = e.target.getBoundingClientRect();
     const y = rect.y - tooltipTopGap + rect.height / 2;
     let x, direction;
@@ -225,7 +225,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 textAnchor="middle"
                 y={padding / 2}
               >
-                {metricName}
+                {metricName.length > 10
+                  ? metricName.substring(0, 20)
+                  : metricName}
               </text>
             </g>
           );
