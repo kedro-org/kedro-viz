@@ -20,7 +20,7 @@ const tooltipLeftGap = 90;
 const tooltipRightGap = 60;
 const tooltipTopGap = 150;
 
-const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
+const selectedMarkerColors = ['#00E3FF', '#FFE300', '#3BFF95'];
 
 const yAxis = {};
 const yScales = {};
@@ -36,8 +36,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   const selectedMarkerShape = [
     d3.symbolSquare,
-    d3.symbolTriangle,
     d3.symbolCircle,
+    d3.symbolTriangle,
   ];
 
   const graph = Object.entries(metricsData.metrics);

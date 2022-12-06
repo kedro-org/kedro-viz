@@ -24,11 +24,11 @@
   }
 
   &--selected-second {
-    stroke: colors.$green-300;
+    stroke: colors.$yellow-300;
   }
 
   &--selected-third {
-    stroke: colors.$yellow-300;
+    stroke: colors.$green-300;
   }
 }
 
@@ -97,9 +97,4 @@ g.selected-runs path {
 // Hovered run
 .tick-values .text--hovered {
   fill: var(--color-metrics-plot-axis-hover) !important;
-}
-
-.line:first-of-type,
-.line:last-of-type {
-  // stroke: transparent;
 }

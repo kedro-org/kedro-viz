@@ -1,3 +1,4 @@
+@use '../../../styles/extends';
 @use '../../../styles/variables' as colors;
 
 .kui-theme--light {
@@ -74,10 +75,7 @@
 }
 
 .runs-list-card__checked {
-  border: 1px solid #{colors.$grey-500};
-  height: 10px;
-  margin: 0.8em 0.8em 0 0;
-  width: 10px;
+  @extend %runs-list-card--default;
 
   &--comparing {
     fill: var(--color-base-20);
@@ -88,40 +86,15 @@
   }
 
   &--selected-first {
-    border-color: colors.$blue-300;
-    border-width: 2px;
-    transform: rotate(45deg);
+    @extend %runs-list-card--selected-first;
   }
 
   &--selected-second {
-    background:
-    /* left */ linear-gradient(
-          to bottom left,
-          transparent 49.5%,
-          colors.$green-300 50% calc(50% + 1px),
-          transparent calc(50% + 2px)
-        )
-        right/50% 100%,
-      /* right */
-        linear-gradient(
-          to bottom right,
-          transparent 49.5%,
-          colors.$green-300 50% calc(50% + 1px),
-          transparent calc(50% + 2px)
-        )
-        left/50% 100%,
-      /* bottom*/ linear-gradient(colors.$green-300, colors.$green-300)
-        bottom/calc(100%) 1px;
-    background-repeat: no-repeat;
-    border: none;
-    height: 10px;
-    width: 10px;
+    @extend %runs-list-card--selected-second;
   }
 
   &--selected-third {
-    border-color: colors.$yellow-300;
-    border-width: 2px;
-    border-radius: 50%;
+    @extend %runs-list-card--selected-third;
   }
 }
 

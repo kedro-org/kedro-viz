@@ -164,6 +164,7 @@ const RunMetadata = ({
           component={'tbody'}
         >
           {runs.map((run, i) => {
+            console.log(i);
             const humanReadableTime = toHumanReadableTime(run.id);
 
             return (
@@ -182,6 +183,13 @@ const RunMetadata = ({
                   })}
                 >
                   <td className="details-metadata__title">
+                    <div
+                      className={classnames('details-metadata__indicator', {
+                        'details-metadata__indicator--selected-first': i === 0,
+                        'details-metadata__indicator--selected-second': i === 1,
+                        'details-metadata__indicator--selected-third': i === 2,
+                      })}
+                    ></div>
                     <span
                       className="details-metadata__title-detail"
                       onClick={() => onTitleOrNoteClick(run.id)}
