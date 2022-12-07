@@ -250,7 +250,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           })}
         </g>
 
-        {graph.map(([metricName, values]) => {
+        {graph.map(([metricName, values], metricIndex) => {
           // To avoid rendering a tick more than once
           const uniqueValues = values
             .filter((value, i, self) => self.indexOf(value) === i)
@@ -260,12 +260,19 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
               {uniqueValues.map((value) => {
+                // To ensure the hoveredValues are matched the exact position from metrics
+                const hightlightedValue =
+                  hoveredValues &&
+                  hoveredValues.find(
+                    (value, index) => index === metricIndex && value
+                  );
+
                 return (
                   <text
                     className={classnames('text', {
                       'text--hovered':
                         hoveredMetricLabel === metricName ||
-                        (hoveredValues && hoveredValues.includes(value)),
+                        (hightlightedValue && hightlightedValue === value),
                     })}
                     key={uuidv4()}
                     x={xScale(metricName) - 8}
@@ -283,7 +290,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           );
         })}
 
-        {graph.map(([metricName, values]) => {
+        {graph.map(([metricName, values], metricIndex) => {
           const sortedValues = values
             .filter((value) => value !== null)
             .sort((a, b) => a - b);
@@ -295,13 +302,20 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               key={`tick-lines--${metricName}`}
             >
               {sortedValues.map((value) => {
+                // To ensure the hoveredValues are matched the exact position from metrics
+                const hightlightedValue =
+                  hoveredValues &&
+                  hoveredValues.find(
+                    (value, index) => index === metricIndex && value
+                  );
+
                 if (value) {
                   return (
                     <line
                       className={classnames('line', {
                         'line--hovered':
                           hoveredMetricLabel === metricName ||
-                          (hoveredValues && hoveredValues.includes(value)),
+                          (hightlightedValue && hightlightedValue === value),
                       })}
                       key={uuidv4()}
                       x1={xScale(metricName)}
