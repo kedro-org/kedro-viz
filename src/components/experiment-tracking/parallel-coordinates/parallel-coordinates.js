@@ -231,8 +231,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
               {uniqueValues.map((value) => {
-                // To ensure the hoveredValues are matched the exact position from metrics
-                const hightlightedValue =
+                // To ensure the hoveredValues are highlighted once per axis
+                const highlightedValue =
                   hoveredValues &&
                   hoveredValues.find(
                     (value, index) => index === metricIndex && value
@@ -243,7 +243,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                     className={classnames('text', {
                       'text--hovered':
                         hoveredMetricLabel === metricName ||
-                        (hightlightedValue && hightlightedValue === value),
+                        (highlightedValue && highlightedValue === value),
                     })}
                     key={uuidv4()}
                     x={xScale(metricName) - 8}
@@ -273,8 +273,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               key={`tick-lines--${metricName}`}
             >
               {sortedValues.map((value) => {
-                // To ensure the hoveredValues are matched the exact position from metrics
-                const hightlightedValue =
+                // To ensure the hoveredValues are highlighted once per axis
+                const highlightedValue =
                   hoveredValues &&
                   hoveredValues.find(
                     (value, index) => index === metricIndex && value
@@ -286,7 +286,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                       className={classnames('line', {
                         'line--hovered':
                           hoveredMetricLabel === metricName ||
-                          (hightlightedValue && hightlightedValue === value),
+                          (highlightedValue && highlightedValue === value),
                       })}
                       key={uuidv4()}
                       x1={xScale(metricName)}
