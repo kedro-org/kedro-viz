@@ -5,11 +5,13 @@ import { HoverStateContext } from '../utils/hover-state-context';
 import * as d3 from 'd3';
 
 import './time-series.css';
+import { usePrevious } from '../../../utils/hooks';
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const [width, setWidth] = useState(0);
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
+  const previousselectedRuns = usePrevious(selectedRuns);
   const [rangeSelection, setRangeSelection] = useState();
 
   const margin = { top: 20, right: 0, bottom: 80, left: 40 };
@@ -92,6 +94,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
     );
   }, []);
+
+  if (previousselectedRuns !== selectedRuns) {
+    if (rangeSelection) {
+      setRangeSelection();
+    }
+  }
 
   return (
     <div className="time-series">
