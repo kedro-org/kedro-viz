@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
@@ -8,27 +8,23 @@ import * as d3 from 'd3';
 
 import './time-series.css';
 
-// TODO: move them to a config file or something
-
-const margin = { top: 50, right: 0, bottom: 50, left: 30 };
-const width = 786,
-  height = 150;
-
-const selectedMarkerRotate = [45, 0, 0];
-
-const selectedMarkerShape = [
-  d3.symbolSquare,
-  d3.symbolTriangle,
-  d3.symbolCircle,
-];
-
-// const yAxis = {};
-
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
+  const [width, setWidth] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
-  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+  const margin = { top: 20, right: 0, bottom: 80, left: 40 };
+  const height = 150;
+  const chartBuffer = 0.02;
+
+  const selectedMarkerRotate = [45, 0, 0];
+  const selectedMarkerShape = [
+    d3.symbolSquare,
+    d3.symbolTriangle,
+    d3.symbolCircle,
+  ];
 
   const hoveredElementDate =
     hoveredElementId && new Date(formatTimestamp(hoveredElementId));
@@ -36,9 +32,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const hoveredValues = hoveredElementId && metricsData.runs[hoveredElementId];
 
   const metricKeys = Object.keys(metricsData.metrics);
-  const runData = Object.entries(metricsData.runs);
-  const runKeys = Object.keys(metricsData.runs);
   const metricData = Object.entries(metricsData.metrics);
+  const runKeys = Object.keys(metricsData.runs);
+  const runData = Object.entries(metricsData.runs);
 
   const parsedData = runData.map(([key, value]) => [
     new Date(formatTimestamp(key)),
@@ -51,17 +47,37 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     10
   );
   const minDate = new Date(d3.min(parsedDates));
-  minDate.setDate(minDate.getDate() - diffDays * 0.02);
+  minDate.setDate(minDate.getDate() - diffDays * chartBuffer);
   const maxDate = new Date(d3.max(parsedDates));
-  maxDate.setDate(maxDate.getDate() + diffDays * 0.02);
+  maxDate.setDate(maxDate.getDate() + diffDays * chartBuffer);
 
   const selectedData = runData
-    .filter(([key, value]) => selectedRuns.includes(key))
+    .filter(([key, _]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
-  // Each vertical scale
+  const selectedOrderedData = runData
+    .filter(([key, _]) => selectedRuns.includes(key))
+    .sort((a, b) => {
+      // We need to sort the selected data to match the order of selectedRuns.
+      // If we didn't, the highlighted runs would switch colors unnecessarily.
+      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
+    })
+    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
   const yScales = {};
+
+  metricData.map(
+    ([_, value], i) =>
+      (yScales[i] = d3
+        .scaleLinear()
+        .domain([
+          Math.min(...value) - Math.min(...value) * chartBuffer,
+          Math.max(...value) + Math.max(...value) * chartBuffer,
+        ])
+        .range([height, 0]))
+  );
+
+  const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
   const handleMouseOverLine = (e, key) => {
     setHoveredElementId(key);
@@ -93,18 +109,15 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     setShowTooltip(tooltipDefaultProps);
   };
 
-  metricData.map(
-    ([_, value], i) =>
-      (yScales[i] = d3
-        .scaleLinear()
-        .domain([
-          Math.floor(Math.min(...value) - Math.min(...value) * 0.02),
-          Math.ceil(Math.max(...value) + Math.max(...value) * 0.02),
-        ])
-        .range([height, 0]))
-  );
+  useEffect(() => {
+    d3.selectAll(`line[id="${hoveredElementId}"]`).raise();
+  }, [hoveredElementId]);
 
-  const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
+  useEffect(() => {
+    setWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
+    );
+  }, []);
 
   return (
     <div className="time-series">
@@ -114,7 +127,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         position={showTooltip.position}
         visible={showTooltip.visible}
       />
-
       {metricKeys.map((metricName, metricIndex) => {
         const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
@@ -124,11 +136,14 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
         const getYAxis = (ref) => {
           d3.select(ref).call(
-            d3.axisLeft(yScales[metricIndex]).tickSizeOuter(0)
+            d3
+              .axisLeft(yScales[metricIndex])
+              .tickSizeOuter(0)
+              .tickFormat((x) => `${x.toFixed(2)}`)
           );
         };
 
-        const linePath = function (data) {
+        const linePath = (data) => {
           let points = data.map((x, i) => {
             if (x !== null) {
               return [xScale(parsedDates[i]), yScales[metricIndex](x)];
@@ -136,10 +151,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               return null;
             }
           });
+
           return d3.line()(points);
         };
 
-        const dottedLinePath = function (data) {
+        const trendLinePath = (data) => {
           let points = data.map(([key, value]) => {
             if (value !== null) {
               return [xScale(key), yScales[metricIndex](value[metricIndex])];
@@ -151,10 +167,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         };
 
         return (
-          <>
-            <div className="metric-name">{metricName}</div>
+          <React.Fragment key={metricName + metricIndex}>
+            <div className="time-series__metric-name">{metricName}</div>
             <svg
               preserveAspectRatio="xMinYMin meet"
+              key={`time-series--${metricName}`}
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
@@ -163,50 +180,44 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 transform={`translate(${margin.left},${margin.top})`}
               >
                 <g
-                  className="x-axis"
+                  className="time-series__runs-axis"
                   ref={getXAxis}
                   transform={`translate(0,${height})`}
                 />
 
-                <g className="y-axis" ref={getYAxis} />
+                <g className="time-series__metric-axis" ref={getYAxis} />
 
                 <g
-                  className="y-axis-right"
+                  className="time-series__metric-axis-dual"
                   ref={getYAxis}
                   transform={`translate(${width},0)`}
                 />
 
                 <text
-                  className="axis-label"
+                  className="time-series__axis-label"
                   y={10 - margin.left}
                   x={-10 - height / 2}
                 >
                   value
                 </text>
 
-                <g
-                  className={classnames('run-line', {
-                    'run-line--blend':
-                      hoveredElementId || selectedRuns.length > 1,
-                  })}
-                >
-                  <path d={linePath(metricValues)} />
-                </g>
-
-                <g className="reference-group">
+                <g className="time-series__run-lines">
                   {parsedData.map(([key, _], index) => (
                     <line
-                      className={classnames('reference-line', {
-                        'reference-line--hovered':
+                      className={classnames('time-series__run-line', {
+                        'time-series__run-line--hovered':
                           hoveredElementId === runKeys[index],
+                        'time-series__run-line--blend':
+                          hoveredElementId || selectedRuns.length > 1,
                       })}
+                      id={runKeys[index]}
+                      key={key + index}
                       x1={xScale(key)}
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
-                      onMouseOver={
-                        (e) => handleMouseOverLine(e, runKeys[index])
-                        // setHoveredMouseELementId(runKeys[index])
+                      onMouseOver={(e) =>
+                        handleMouseOverLine(e, runKeys[index])
                       }
                       onMouseLeave={handleMouseOutLine}
                     />
@@ -214,35 +225,35 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 </g>
 
                 {hoveredValues && (
-                  <g>
+                  <g className="time-series__hovered-line-group">
                     {hoveredValues.map((value, index) => {
                       if (metricIndex === index) {
                         return (
-                          <>
+                          <React.Fragment key={value + index}>
                             <line
-                              className="hovered-line"
+                              className="time-series__hovered-line"
                               x1={0}
                               y1={yScales[index](value)}
                               x2={width}
                               y2={yScales[index](value)}
                             />
-                            <g className="ticks">
+                            <g className="time-series__ticks">
                               <line
-                                className="tick-line"
+                                className="time-series__tick-line"
                                 x1={xScale(hoveredElementDate)}
                                 y1={yScales[index](value)}
                                 x2={xScale(hoveredElementDate) - 5}
                                 y2={yScales[index](value)}
                               />
                               <text
-                                className="tick-text"
+                                className="time-series__tick-text"
                                 x={xScale(hoveredElementDate)}
                                 y={yScales[index](value)}
                               >
                                 {value.toFixed(3)}
                               </text>
                             </g>
-                          </>
+                          </React.Fragment>
                         );
                       } else {
                         return null;
@@ -252,41 +263,50 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                   </g>
                 )}
 
-                <g className="selected">
-                  {selectedData.map(([key, value], index) => (
-                    <>
+                <g className="time-series__selected-group">
+                  {selectedOrderedData.map(([key, value], index) => (
+                    <React.Fragment key={key + value}>
                       <line
-                        className={`selected-line--${index}`}
+                        className={`time-series__run-line--selected-${index}`}
                         x1={xScale(key)}
                         y1={0}
                         x2={xScale(key)}
                         y2={height}
                       />
                       <text
-                        className="tick-text"
+                        className="time-series__tick-text"
                         x={xScale(key)}
                         y={yScales[metricIndex](value[metricIndex])}
                       >
                         {value[metricIndex].toFixed(3)}
                       </text>
                       <path
-                        className={`selected-marker--${index}`}
+                        className={`time-series__marker--selected-${index}`}
                         d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
                         transform={`translate(${xScale(key)},${yScales[
                           metricIndex
                         ](value[metricIndex])}) 
                   rotate(${selectedMarkerRotate[index]})`}
                       />
-                    </>
+                    </React.Fragment>
                   ))}
                 </g>
 
-                <g className="dotted-line">
-                  <path d={dottedLinePath(selectedData)} />
+                <g
+                  className={classnames('time-series__metric-line', {
+                    'time-series__metric-line--blend':
+                      hoveredElementId || selectedRuns.length > 1,
+                  })}
+                >
+                  <path d={linePath(metricValues)} />
+                </g>
+
+                <g className="time-series__trend-line">
+                  <path d={trendLinePath(selectedData)} />
                 </g>
               </g>
             </svg>
-          </>
+          </React.Fragment>
         );
       })}
     </div>
