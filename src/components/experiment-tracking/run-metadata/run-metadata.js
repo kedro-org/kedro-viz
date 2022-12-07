@@ -164,7 +164,6 @@ const RunMetadata = ({
           component={'tbody'}
         >
           {runs.map((run, i) => {
-            console.log(i);
             const humanReadableTime = toHumanReadableTime(run.id);
 
             return (

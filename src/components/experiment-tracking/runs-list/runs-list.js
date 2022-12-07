@@ -5,6 +5,8 @@ import SearchList from '../../search-list';
 import Switch from '../../ui/switch';
 import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
+import { metricLimit } from '../../../config';
+
 import './runs-list.css';
 
 /**
@@ -28,6 +30,7 @@ const getFilteredRunList = (runData, searchValue) => {
 const RunsList = ({
   disableRunSelection,
   enableComparisonView,
+  isDisplayingMetrics,
   onRunSelection,
   onToggleComparisonView,
   runData,
@@ -35,7 +38,10 @@ const RunsList = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
-  const filteredRunList = getFilteredRunList(runData, searchValue);
+  const condensedRunsList = isDisplayingMetrics
+    ? runData.slice(0, metricLimit)
+    : runData;
+  const filteredRunList = getFilteredRunList(condensedRunsList, searchValue);
 
   const bookmarkedRuns = filteredRunList.filter((run) => run.bookmark === true);
   const unbookmarkedRuns = filteredRunList.filter(
