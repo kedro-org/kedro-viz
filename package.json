@@ -142,7 +142,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "/node_modules/(?!d3|d3-array|d3-brush|internmap|delaunator|robust-predicates)"
+      "/node_modules/(?!d3|d3-array|d3-brush|d3-selection|d3-zoom|internmap|delaunator|robust-predicates)"
     ]
   },
   "browserslist": [
