@@ -1,9 +1,5 @@
 @use '../../../styles/variables' as colors;
 
-$baseColour: #{colors.$grey-900};
-$lineHighlight: #{colors.$grey-400};
-$textHighlight: #{colors.$white-900};
-
 .time-series {
   flex: 1 1 auto;
   font-family: 'Titillium Web', sans-serif;
@@ -14,99 +10,112 @@ $textHighlight: #{colors.$white-900};
   font-size: 12px;
 }
 
-.metric-name {
+.time-series__metric-name {
   font-size: 1.4em;
-  color: white;
+  color: var(--color-metrics-plot-time-series-metric-name);
   line-height: 20px;
 }
 
-.axis-label {
-  fill: #c0c5c9;
+.time-series__axis-label {
+  fill: var(--color-metrics-plot-time-series-axis-label);
   font-size: 12px;
   transform: rotate(-90deg);
 }
 
-.run-line {
+.time-series__metric-line {
   fill: none;
-  stroke: #717d84;
+  stroke: var(--color-metrics-plot-time-series-metric-line);
+
+  &--blend {
+    stroke-opacity: 0.4;
+  }
 }
 
-.run-line--blend {
-  stroke-opacity: 0.4;
-}
-
-.reference-line {
+.time-series__run-line {
   cursor: pointer;
-  stroke: #21333e;
+  stroke: var(--color-metrics-plot-time-series-run-line);
+
+  &--hovered {
+    stroke: var(--color-metrics-plot-time-series-run-line-hovered);
+  }
+
+  &--blend {
+    stroke-opacity: 0.55;
+  }
+
+  &--selected-0 {
+    stroke: colors.$blue-300;
+  }
+
+  &--selected-1 {
+    stroke: colors.$green-300;
+  }
+
+  &--selected-2 {
+    stroke: colors.$yellow-300;
+  }
 }
 
-.reference-line--hovered {
-  stroke: white;
+.time-series__marker {
+  &--selected-0 {
+    stroke: colors.$blue-0;
+  }
+
+  &--selected-1 {
+    stroke: colors.$green-0;
+  }
+
+  &--selected-2 {
+    stroke: colors.$yellow-0;
+  }
 }
 
-.reference-group--blend {
-  stroke-opacity: 0.55;
+.time-series {
+  .tick text {
+    fill: var(--color-metrics-plot-time-series-axis-label);
+    font-size: 12px;
+  }
+
+  .tick line {
+    stroke: var(--color-metrics-plot-time-series-axis);
+  }
 }
 
-.selected-line--0 {
-  stroke: #00bcff;
-}
-
-.selected-line--1 {
-  stroke: #31e27b;
-}
-
-.selected-line--2 {
-  stroke: #ffbc00;
-}
-
-.selected-marker--0 {
-  stroke: #00e3ff;
-}
-
-.selected-marker--1 {
-  stroke: #3bff95;
-}
-
-.selected-marker--2 {
-  stroke: #ffe300;
-}
-
-.y-axis .tick,
-.y-axis-right .tick {
+.time-series__metric-axis .tick,
+.time-series__metric-axis-dual .tick {
   opacity: 0;
-  font-size: 12px;
 }
 
-.y-axis .tick:nth-last-child(2) {
-  opacity: 1;
+.time-series__metric-axis {
+  .tick:nth-last-child(2) {
+    opacity: 1;
+  }
+
+  .tick:nth-child(3) {
+    opacity: 1;
+  }
 }
 
-.y-axis .tick:nth-child(3) {
-  opacity: 1;
-}
-
-.dotted-line {
-  stroke: white;
+.time-series__trend-line {
+  stroke: var(--color-metrics-plot-time-series-dotted-line);
   stroke-dasharray: 4;
   fill: none;
 }
 
-.hovered-line {
-  stroke: #97a0a6;
+.time-series__hovered-line {
+  stroke: var(--color-metrics-plot-time-series-dotted-line);
   stroke-dasharray: 4;
 }
 
-.tick-line {
-  stroke: white;
+.time-series__tick-line {
+  stroke: var(--color-metrics-plot-time-series-hovered-ticks);
 }
 
-.tick-text {
-  fill: white;
+.time-series__tick-text {
+  fill: var(--color-metrics-plot-time-series-axis-label);
   text-anchor: end;
   transform: translate(-10px, -4px);
 }
 
 .brush .selection {
   y: -1;
-}
