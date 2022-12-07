@@ -2,12 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { HoverStateContext } from '../utils/hover-state-context';
+import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import * as d3 from 'd3';
 
 import './time-series.css';
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const [width, setWidth] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
@@ -75,6 +79,36 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
+  const handleMouseOverLine = (e, key) => {
+    setHoveredElementId(key);
+
+    if (e) {
+      const parsedDate = new Date(formatTimestamp(key));
+      const { x, y, direction } = getTooltipPosition(e);
+
+      setShowTooltip({
+        content: {
+          label1: 'Run name',
+          value1: key,
+          label2: 'Date',
+          value2: parsedDate.toLocaleDateString('default', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+        },
+        direction,
+        position: { x, y },
+        visible: true,
+      });
+    }
+  };
+
+  const handleMouseOutLine = () => {
+    setHoveredElementId(null);
+    setShowTooltip(tooltipDefaultProps);
+  };
+
   useEffect(() => {
     d3.selectAll(`line[id="${hoveredElementId}"]`).raise();
   }, [hoveredElementId]);
@@ -87,6 +121,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   return (
     <div className="time-series">
+      <MetricsChartsTooltip
+        content={showTooltip.content}
+        direction={showTooltip.direction}
+        position={showTooltip.position}
+        visible={showTooltip.visible}
+      />
       {metricKeys.map((metricName, metricIndex) => {
         const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
@@ -123,7 +163,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               return null;
             }
           });
-
           return d3.line()(points);
         };
 
@@ -177,8 +216,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                       y1={0}
                       x2={xScale(key)}
                       y2={height}
-                      onMouseOver={(e) => setHoveredElementId(runKeys[index])}
-                      onMouseLeave={() => setHoveredElementId(null)}
+                      onMouseOver={(e) =>
+                        handleMouseOverLine(e, runKeys[index])
+                      }
+                      onMouseLeave={handleMouseOutLine}
                     />
                   ))}
                 </g>
