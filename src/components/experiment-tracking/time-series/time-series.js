@@ -78,10 +78,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
-  // if (currentZoomState) {
-  //   xScale.domain(currentZoomState);
-  // }
-
   if (rangeSelection) {
     xScale.domain(rangeSelection);
   }
