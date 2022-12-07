@@ -1,8 +1,8 @@
 import { sidebarWidth } from '../../../config';
 
 const tooltipMaxWidth = 300;
-const tooltipLeftGap = 110;
-const tooltipRightGap = 85;
+const tooltipLeftGap = 85;
+const tooltipRightGap = 70;
 const tooltipTopGap = 150;
 
 export const getTooltipPosition = (e) => {
