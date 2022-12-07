@@ -169,7 +169,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             }
           });
 
-        d3.select('.brush').call(brush);
+        d3.selectAll('.brush').call(brush);
 
         const resetXScale = () => setRangeSelection();
 
