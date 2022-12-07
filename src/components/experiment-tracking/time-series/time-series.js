@@ -13,7 +13,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
   const previousselectedRuns = usePrevious(selectedRuns);
   const [width, setWidth] = useState(0);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
-  const [rangeSelection, setRangeSelection] = useState();
+  const [rangeSelection, setRangeSelection] = useState(undefined);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -127,7 +127,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   if (previousselectedRuns !== selectedRuns) {
     if (rangeSelection) {
-      setRangeSelection();
+      setRangeSelection(undefined);
     }
   }
 
@@ -201,7 +201,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
         d3.selectAll('.time-series__brush').call(brush);
 
-        const resetXScale = () => setRangeSelection();
+        const resetXScale = () => setRangeSelection(undefined);
 
         return (
           <React.Fragment key={metricName + metricIndex}>
