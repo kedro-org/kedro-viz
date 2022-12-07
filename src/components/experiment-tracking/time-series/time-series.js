@@ -141,20 +141,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
-        // const zoom = d3
-        //   .zoom()
-        //   .scaleExtent([0.5, 20])
-        //   .extent([
-        //     [0, 0],
-        //     [width, height],
-        //   ])
-        //   .on('zoom', (e) => {
-        //     const newXScale = e.transform.rescaleX(xScale);
-        //     setCurrentZoomState(newXScale.domain());
-        //   });
-
-        // const zoomRef = (ref) => d3.select(ref).call(zoom);
-
         const brush = d3
           .brushX()
           .extent([
@@ -165,11 +151,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             if (e.selection) {
               const indexSelection = e.selection.map(xScale.invert);
               setRangeSelection(indexSelection);
-              d3.select('.brush').call(brush.move, null);
+              d3.selectAll('.brush').call(brush.move, null);
             }
           });
 
-        d3.select('.brush').call(brush);
+        d3.selectAll('.brush').call(brush);
 
         const resetXScale = () => setRangeSelection();
 
@@ -182,6 +168,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
+              <defs>
+                <clipPath id="clip">
+                  <rect x={0} y={0} width={width} height={height} />
+                </clipPath>
+              </defs>
               <g
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
@@ -209,7 +200,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                   value
                 </text>
 
-                <g className="time-series__run-lines">
+                <g className="time-series__run-lines" clipPath="url(#clip)">
                   {parsedData.map(([key, _], index) => (
                     <line
                       className={classnames('time-series__run-line', {
@@ -303,6 +294,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                     'time-series__metric-line--blend':
                       hoveredElementId || selectedRuns.length > 1,
                   })}
+                  clipPath="url(#clip)"
                 >
                   <path d={linePath(metricValues)} />
                 </g>
