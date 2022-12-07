@@ -165,7 +165,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             if (e.selection) {
               const indexSelection = e.selection.map(xScale.invert);
               setRangeSelection(indexSelection);
-              d3.select('.brush').call(brush.move, null);
+              d3.selectAll('.brush').call(brush.move, null);
             }
           });
 
