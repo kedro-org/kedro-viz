@@ -182,6 +182,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
             <g
               className={classnames('metric-axis', {
                 'metric-axis--hovered': hoveredMetricLabel === metricName,
+                'metric-axis--faded':
+                  hoveredMetricLabel && hoveredMetricLabel !== metricName,
               })}
               key={`metric-axis--${metricName}`}
               ref={getYAxis}
@@ -210,6 +212,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               <path
                 className={classnames('run-line', {
                   'run-line--hovered': hoveredElementId === runId,
+                  'run-line--faded':
+                    (hoveredElementId && hoveredElementId !== runId) ||
+                    hoveredMetricLabel,
                 })}
                 d={linePath(value, i)}
                 id={runId}
@@ -244,6 +249,10 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                       'text--hovered':
                         hoveredMetricLabel === metricName ||
                         (hightlightedValue && hightlightedValue === value),
+                      'text--faded':
+                        (hoveredMetricLabel &&
+                          hoveredMetricLabel !== metricName) ||
+                        (hightlightedValue && hightlightedValue !== value),
                     })}
                     key={uuidv4()}
                     x={xScale(metricName) - 8}
@@ -287,6 +296,10 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                         'line--hovered':
                           hoveredMetricLabel === metricName ||
                           (hightlightedValue && hightlightedValue === value),
+                        'line--faded':
+                          (hoveredMetricLabel &&
+                            hoveredMetricLabel !== metricName) ||
+                          (hightlightedValue && hightlightedValue !== value),
                       })}
                       key={uuidv4()}
                       x1={xScale(metricName)}

@@ -98,3 +98,10 @@ g.selected-runs path {
 .tick-values .text--hovered {
   fill: var(--color-metrics-plot-axis-hover) !important;
 }
+
+.metric-axis--faded,
+.run-line--faded,
+.text--faded,
+.line--faded {
+  opacity: 0.55;
+}
