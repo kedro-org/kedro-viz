@@ -155,11 +155,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             if (e.selection) {
               const indexSelection = e.selection.map(xScale.invert);
               setRangeSelection(indexSelection);
-              d3.selectAll('.brush').call(brush.move, null);
+              d3.selectAll('.time-series__brush').call(brush.move, null);
             }
           });
 
-        d3.selectAll('.brush').call(brush);
+        d3.selectAll('.time-series__brush').call(brush);
 
         const resetXScale = () => setRangeSelection();
 
@@ -181,7 +181,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
               >
-                <g className="brush" onDoubleClick={resetXScale} />
+                <g className="time-series__brush" onDoubleClick={resetXScale} />
                 <g
                   className="time-series__runs-axis"
                   ref={getXAxis}

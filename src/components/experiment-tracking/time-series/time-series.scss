@@ -117,6 +117,7 @@
   transform: translate(-10px, -4px);
 }
 
-// .brush .selection {
-//   y: -1;
-// }
+.time-series__brush .selection {
+  fill: colors.$ocean-600;
+  y: -1;
+}
