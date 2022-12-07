@@ -1,22 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
+import { usePrevious } from '../../../utils/hooks';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import * as d3 from 'd3';
 
 import './time-series.css';
-import { usePrevious } from '../../../utils/hooks';
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
+  const previousselectedRuns = usePrevious(selectedRuns);
   const [width, setWidth] = useState(0);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+  const [rangeSelection, setRangeSelection] = useState();
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
-  const previousselectedRuns = usePrevious(selectedRuns);
-  const [rangeSelection, setRangeSelection] = useState();
 
   const margin = { top: 20, right: 0, bottom: 80, left: 40 };
   const height = 150;
