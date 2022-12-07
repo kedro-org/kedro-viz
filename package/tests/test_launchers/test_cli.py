@@ -6,6 +6,7 @@ from watchgod import RegExpWatcher
 
 from kedro_viz import __version__
 from kedro_viz.launchers import cli
+from kedro_viz.server import run_server
 
 
 @pytest.mark.parametrize(
@@ -57,7 +58,7 @@ from kedro_viz.launchers import cli
     ],
 )
 def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
-    run_server = mocker.patch("kedro_viz.launchers.cli.run_server")
+    run_server = mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
@@ -74,7 +75,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
     )
     mock_click_echo = mocker.patch("click.echo")
 
-    mocker.patch("kedro_viz.launchers.cli.run_server")
+    mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
@@ -96,7 +97,7 @@ def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_respo
     )
     mock_click_echo = mocker.patch("click.echo")
 
-    mocker.patch("kedro_viz.launchers.cli.run_server")
+    mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
@@ -109,7 +110,7 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     requests_get.side_effect = requests.exceptions.RequestException("PyPI is down")
     mock_click_echo = mocker.patch("click.echo")
 
-    mocker.patch("kedro_viz.launchers.cli.run_server")
+    mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
@@ -128,7 +129,7 @@ def test_kedro_viz_command_with_autoreload(mocker):
 
     run_process.assert_called_once_with(
         path=mock_project_path,
-        target=cli.run_server,
+        target=run_server,
         kwargs={
             "host": "127.0.0.1",
             "port": 4141,
