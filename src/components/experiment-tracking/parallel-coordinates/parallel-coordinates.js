@@ -31,8 +31,8 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   const selectedMarkerShape = [
     d3.symbolSquare,
-    d3.symbolTriangle,
     d3.symbolCircle,
+    d3.symbolTriangle,
   ];
 
   const graph = Object.entries(metricsData.metrics);
@@ -87,9 +87,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
   const handleMouseOverMetric = (e, key) => {
     const runsCount = graph.find((each) => each[0] === key)[1].length;
-    setHoveredMetricLabel(key);
-
     const { x, y, direction } = getTooltipPosition(e);
+
+    setHoveredMetricLabel(key);
 
     setShowTooltip({
       content: {
@@ -140,6 +140,16 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   };
 
   useEffect(() => {
+    d3.select(`.run-line[id="${hoveredElementId}"]`).raise();
+  }, [hoveredElementId]);
+
+  useEffect(() => {
+    d3.select(`.metric-axis[id="${hoveredMetricLabel}"]`).raise();
+    d3.selectAll(`.selected-runs`).raise();
+    d3.selectAll(`.selected-runs > path`).raise();
+  }, [hoveredMetricLabel]);
+
+  useEffect(() => {
     setChartWidth(
       document.querySelector('.metrics-plots-wrapper__charts').clientWidth
     );
@@ -165,13 +175,15 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
       >
         {graphKeys.map((metricName) => {
           const getYAxis = (ref) => {
-            d3.select(ref).call(yAxis[metricName]);
+            d3.select(ref).call(yAxis[metricName]).attr('id', metricName);
           };
 
           return (
             <g
               className={classnames('metric-axis', {
                 'metric-axis--hovered': hoveredMetricLabel === metricName,
+                'metric-axis--faded':
+                  hoveredMetricLabel && hoveredMetricLabel !== metricName,
               })}
               key={`metric-axis--${metricName}`}
               ref={getYAxis}
@@ -186,7 +198,9 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 textAnchor="middle"
                 y={padding / 2}
               >
-                {metricName}
+                {metricName.length > 10
+                  ? metricName.substring(0, 20)
+                  : metricName}
               </text>
             </g>
           );
@@ -198,21 +212,21 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               <path
                 className={classnames('run-line', {
                   'run-line--hovered': hoveredElementId === runId,
+                  'run-line--faded':
+                    (hoveredElementId && hoveredElementId !== runId) ||
+                    hoveredMetricLabel,
                 })}
                 d={linePath(value, i)}
                 id={runId}
                 key={runId}
                 onMouseLeave={handleMouseOutLine}
-                onMouseOver={(e) => {
-                  handleMouseOverLine(e, runId);
-                  d3.select(e.target).raise();
-                }}
+                onMouseOver={(e) => handleMouseOverLine(e, runId)}
               />
             );
           })}
         </g>
 
-        {graph.map(([metricName, values]) => {
+        {graph.map(([metricName, values], metricIndex) => {
           // To avoid rendering a tick more than once
           const uniqueValues = values
             .filter((value, i, self) => self.indexOf(value) === i)
@@ -222,12 +236,23 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
               {uniqueValues.map((value) => {
+                // To ensure the hoveredValues are highlighted once per axis
+                const highlightedValue =
+                  hoveredValues &&
+                  hoveredValues.find(
+                    (value, index) => index === metricIndex && value
+                  );
+
                 return (
                   <text
                     className={classnames('text', {
                       'text--hovered':
                         hoveredMetricLabel === metricName ||
-                        (hoveredValues && hoveredValues.includes(value)),
+                        (highlightedValue && highlightedValue === value),
+                      'text--faded':
+                        (hoveredMetricLabel &&
+                          hoveredMetricLabel !== metricName) ||
+                        (highlightedValue && highlightedValue !== value),
                     })}
                     key={uuidv4()}
                     x={xScale(metricName) - 8}
@@ -245,7 +270,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
           );
         })}
 
-        {graph.map(([metricName, values]) => {
+        {graph.map(([metricName, values], metricIndex) => {
           const sortedValues = values
             .filter((value) => value !== null)
             .sort((a, b) => a - b);
@@ -257,13 +282,24 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               key={`tick-lines--${metricName}`}
             >
               {sortedValues.map((value) => {
+                // To ensure the hoveredValues are highlighted once per axis
+                const highlightedValue =
+                  hoveredValues &&
+                  hoveredValues.find(
+                    (value, index) => index === metricIndex && value
+                  );
+
                 if (value) {
                   return (
                     <line
                       className={classnames('line', {
                         'line--hovered':
                           hoveredMetricLabel === metricName ||
-                          (hoveredValues && hoveredValues.includes(value)),
+                          (highlightedValue && highlightedValue === value),
+                        'line--faded':
+                          (hoveredMetricLabel &&
+                            hoveredMetricLabel !== metricName) ||
+                          (highlightedValue && highlightedValue !== value),
                       })}
                       key={uuidv4()}
                       x1={xScale(metricName)}

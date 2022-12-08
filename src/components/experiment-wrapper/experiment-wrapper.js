@@ -37,6 +37,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
   const [newRunAdded, setNewRunAdded] = useState(false);
+  const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -181,6 +182,7 @@ const ExperimentWrapper = ({ theme }) => {
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
+              isDisplayingMetrics={isDisplayingMetrics}
               isExperimentView
               onRunSelection={onRunSelection}
               onToggleComparisonView={onToggleComparisonView}
@@ -215,6 +217,7 @@ const ExperimentWrapper = ({ theme }) => {
                       runMetadata={runMetadata}
                       runTrackingData={runTrackingData}
                       selectedRunIds={selectedRunIds}
+                      setIsDisplayingMetrics={setIsDisplayingMetrics}
                       setPinnedRun={setPinnedRun}
                       setShowRunDetailsModal={setShowRunDetailsModal}
                       setShowRunExportModal={setShowRunExportModal}

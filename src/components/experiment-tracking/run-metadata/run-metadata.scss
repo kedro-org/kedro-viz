@@ -1,3 +1,4 @@
+@use '../../../styles/extends';
 @use '../../../styles/variables' as variables;
 
 .details-metadata {
@@ -151,6 +152,27 @@
   &:hover {
     text-decoration: underline;
     text-decoration-color: var(--color-text);
+  }
+}
+
+.details-metadata__indicator {
+  margin-right: 1em;
+
+  &--selected-first {
+    @extend %runs-list-card--selected-first;
+    border-style: solid;
+    flex-shrink: 0;
+  }
+
+  &--selected-second {
+    @extend %runs-list-card--selected-second;
+    border-style: solid;
+    flex-shrink: 0;
+  }
+
+  &--selected-third {
+    @extend %runs-list-card--selected-third;
+    flex-shrink: 0;
   }
 }
 
