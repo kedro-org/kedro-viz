@@ -15,7 +15,7 @@ const paddingLr = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
-const selectedMarkerColors = ['#00E3FF', '#3BFF95', '#FFE300'];
+const selectedMarkerColors = ['#0084B2', '#FFBC00', '#31E27B'];
 
 const yAxis = {};
 const yScales = {};
