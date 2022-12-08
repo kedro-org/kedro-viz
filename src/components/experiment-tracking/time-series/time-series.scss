@@ -48,11 +48,11 @@
   }
 
   &--selected-1 {
-    stroke: colors.$green-300;
+    stroke: colors.$yellow-300;
   }
 
   &--selected-2 {
-    stroke: colors.$yellow-300;
+    stroke: colors.$green-300;
   }
 }
 
@@ -62,11 +62,11 @@
   }
 
   &--selected-1 {
-    stroke: colors.$green-0;
+    stroke: colors.$yellow-0;
   }
 
   &--selected-2 {
-    stroke: colors.$yellow-0;
+    stroke: colors.$green-0;
   }
 }
 
@@ -113,6 +113,7 @@
 
 .time-series__tick-text {
   fill: var(--color-metrics-plot-time-series-axis-label);
+  font-size: 12px;
   text-anchor: end;
   transform: translate(-10px, -4px);
 }

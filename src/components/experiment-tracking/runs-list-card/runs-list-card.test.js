@@ -99,7 +99,7 @@ describe('RunsListCard', () => {
       </HoverStateContext.Provider>
     );
 
-    expect(wrapper.find('.runs-list-card__checked--comparing').length).toBe(2);
+    expect(wrapper.find('.runs-list-card__checked--comparing').length).toBe(1);
   });
 
   it('renders with an inactive bookmark icon', () => {

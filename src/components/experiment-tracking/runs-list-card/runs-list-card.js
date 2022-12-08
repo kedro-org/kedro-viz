@@ -8,7 +8,6 @@ import {
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
-import CheckIcon from '../../icons/check';
 import { HoverStateContext } from '../utils/hover-state-context';
 
 import './runs-list-card.css';
@@ -24,6 +23,7 @@ const RunsListCard = ({
   onRunSelection,
   selectedRunIds = [],
   searchValue,
+  selectedIndex,
 }) => {
   const { id, notes, title = null, bookmark, gitSha } = data;
   const [active, setActive] = useState(false);
@@ -78,10 +78,13 @@ const RunsListCard = ({
       onMouseLeave={() => setHoveredElementId(null)}
     >
       {enableComparisonView && (
-        <CheckIcon
+        <div
           className={classnames('runs-list-card__checked', {
             'runs-list-card__checked--active': active,
             'runs-list-card__checked--comparing': enableComparisonView,
+            'runs-list-card__checked--selected-first': selectedIndex === 0,
+            'runs-list-card__checked--selected-second': selectedIndex === 1,
+            'runs-list-card__checked--selected-third': selectedIndex === 2,
           })}
         />
       )}
