@@ -217,6 +217,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                   <rect x={0} y={0} width={width} height={height} />
                 </clipPath>
               </defs>
+
               <g
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
@@ -242,6 +243,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 >
                   value
                 </text>
+
+                <g className="time-series__brush" onDoubleClick={resetXScale} />
 
                 <g className="time-series__run-lines" clipPath="url(#clip)">
                   {parsedData.map(([key, _], index) => (
@@ -347,8 +350,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g className="time-series__trend-line">
                   <path d={trendLinePath(selectedData)} />
                 </g>
-
-                <g className="time-series__brush" onDoubleClick={resetXScale} />
               </g>
             </svg>
           </React.Fragment>
