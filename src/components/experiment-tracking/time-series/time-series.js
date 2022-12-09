@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
+import { usePrevious } from '../../../utils/hooks';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
@@ -9,8 +10,10 @@ import * as d3 from 'd3';
 import './time-series.css';
 
 export const TimeSeries = ({ metricsData, selectedRuns }) => {
+  const previousselectedRuns = usePrevious(selectedRuns);
   const [width, setWidth] = useState(0);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+  const [rangeSelection, setRangeSelection] = useState(undefined);
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
@@ -79,6 +82,9 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
 
   const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
 
+  if (rangeSelection) {
+    xScale.domain(rangeSelection);
+  }
   const handleMouseOverLine = (e, key) => {
     setHoveredElementId(key);
 
@@ -119,6 +125,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     );
   }, []);
 
+  if (previousselectedRuns !== selectedRuns) {
+    if (rangeSelection) {
+      setRangeSelection(undefined);
+    }
+  }
+
   return (
     <div className="time-series">
       <MetricsChartsTooltip
@@ -131,7 +143,14 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         const metricValues = Object.values(metricsData.metrics)[metricIndex];
 
         const getXAxis = (ref) => {
-          d3.select(ref).call(d3.axisBottom(xScale).tickSizeOuter(0));
+          if (rangeSelection) {
+            d3.select(ref)
+              .transition()
+              .duration(1000)
+              .call(d3.axisBottom(xScale).tickSizeOuter(0));
+          } else {
+            d3.select(ref).call(d3.axisBottom(xScale).tickSizeOuter(0));
+          }
         };
 
         const getYAxis = (ref) => {
@@ -166,6 +185,24 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           return d3.line()(points);
         };
 
+        const brush = d3
+          .brushX()
+          .extent([
+            [0, 0],
+            [width, height],
+          ])
+          .on('end', (e) => {
+            if (e.selection) {
+              const indexSelection = e.selection.map(xScale.invert);
+              setRangeSelection(indexSelection);
+              d3.selectAll('.time-series__brush').call(brush.move, null);
+            }
+          });
+
+        d3.selectAll('.time-series__brush').call(brush);
+
+        const resetXScale = () => setRangeSelection(undefined);
+
         return (
           <React.Fragment key={metricName + metricIndex}>
             <div className="time-series__metric-name">{metricName}</div>
@@ -175,6 +212,11 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
               width={width + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
+              <defs>
+                <clipPath id="clip">
+                  <rect x={0} y={0} width={width} height={height} />
+                </clipPath>
+              </defs>
               <g
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
@@ -201,7 +243,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                   value
                 </text>
 
-                <g className="time-series__run-lines">
+                <g className="time-series__run-lines" clipPath="url(#clip)">
                   {parsedData.map(([key, _], index) => (
                     <line
                       className={classnames('time-series__run-line', {
@@ -297,6 +339,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                     'time-series__metric-line--blend':
                       hoveredElementId || selectedRuns.length > 1,
                   })}
+                  clipPath="url(#clip)"
                 >
                   <path d={linePath(metricValues)} />
                 </g>
@@ -304,6 +347,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g className="time-series__trend-line">
                   <path d={trendLinePath(selectedData)} />
                 </g>
+
+                <g className="time-series__brush" onDoubleClick={resetXScale} />
               </g>
             </svg>
           </React.Fragment>
