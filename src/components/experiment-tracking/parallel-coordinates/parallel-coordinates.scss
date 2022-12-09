@@ -24,11 +24,11 @@
   }
 
   &--selected-second {
-    stroke: colors.$green-300;
+    stroke: colors.$yellow-300;
   }
 
   &--selected-third {
-    stroke: colors.$yellow-300;
+    stroke: colors.$green-300;
   }
 }
 
@@ -69,6 +69,10 @@ g.selected-runs path {
 
 .tick-lines .line {
   stroke: var(--color-metrics-plot-text);
+
+  &--hovered {
+    stroke: colors.$grey-400;
+  }
 }
 
 // Selected runs
@@ -81,6 +85,7 @@ g.selected-runs path {
 .metric-axis--hovered {
   .domain {
     stroke: colors.$grey-400;
+    stroke-width: 1px;
   }
 
   .headers {
@@ -94,7 +99,9 @@ g.selected-runs path {
   fill: var(--color-metrics-plot-axis-hover) !important;
 }
 
-.line:first-of-type,
-.line:last-of-type {
-  stroke: transparent;
+.metric-axis--faded,
+.run-line--faded,
+.text--faded,
+.line--faded {
+  opacity: 0.55;
 }

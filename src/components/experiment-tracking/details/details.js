@@ -25,6 +25,7 @@ const Details = ({
   runMetadata,
   runTrackingData,
   selectedRunIds,
+  setIsDisplayingMetrics,
   setPinnedRun,
   setShowRunDetailsModal,
   setShowRunExportModal,
@@ -73,6 +74,14 @@ const Details = ({
       setRunMetadataToEdit(metadata);
     }
   }, [enableComparisonView, runMetadata, selectedRunIds]);
+
+  useEffect(() => {
+    if (activeTab === 'Metrics') {
+      setIsDisplayingMetrics(true);
+    } else {
+      setIsDisplayingMetrics(false);
+    }
+  }, [activeTab, setIsDisplayingMetrics]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
