@@ -221,7 +221,6 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
               >
-                <g className="time-series__brush" onDoubleClick={resetXScale} />
                 <g
                   className="time-series__runs-axis"
                   ref={getXAxis}
@@ -348,6 +347,8 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g className="time-series__trend-line">
                   <path d={trendLinePath(selectedData)} />
                 </g>
+
+                <g className="time-series__brush" onDoubleClick={resetXScale} />
               </g>
             </svg>
           </React.Fragment>
