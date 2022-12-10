@@ -1,11 +1,89 @@
-describe('Parallel Coordinates renders with D3', () => {
-  it('renders without crashing', () => {});
+import React from 'react';
+import { mount } from 'enzyme';
 
-  it('render the correct number of metric-axis from the data', () => {});
+import { HoverStateContext } from '../utils/hover-state-context';
+import { ParallelCoordinates } from './parallel-coordinates';
+import { data, oneSelectedRun, selectedRuns } from '../mock-data';
 
-  it('run-lines should be limited to less than 10, even if its more than 10 from the data', () => {});
+const mockContextValue = {
+  hoveredElementId: null,
+  setHoveredElementId: jest.fn(),
+};
 
-  it('text from the tick-values should be displayed in ascending order', () => {});
+describe('Parallel Coordinates renders correctly with D3', () => {
+  it('renders without crashing', () => {
+    const svg = mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    )
+      .find('div')
+      .find('svg');
+
+    expect(svg.length).toEqual(1);
+  });
+
+  it('render the correct number of metric-axis from the data', () => {
+    const metricAxises = mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    )
+      .find('div')
+      .find('svg')
+      .find('.metric-axis');
+
+    const graphKeys = Object.keys(data.metrics);
+
+    expect(metricAxises.length).toEqual(graphKeys.length);
+  });
+
+  it('run-lines should be limited to less than 10, even if its more than 10 from the data', () => {
+    const runLine = mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    ).find('.run-line');
+
+    expect(runLine.length).toBeLessThan(10);
+  });
+
+  it('text from the tick-values should be displayed in ascending order', () => {
+    const tickValues = mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    )
+      .find('div')
+      .find('svg')
+      .find('.tick-values');
+
+    const text = tickValues.map((value) => value.text());
+    // Since the text is in the format of ['1.0001.3002.4003.0003.3003.4004.5005.3006.500']
+    // we need to remove the extra '00' in the middle
+    const textValues = text.map((each) => each.split('00'));
+
+    // Then ensure all are number, and the last character 00 should also be removed
+    const formattedTextValues = textValues.map((array) => {
+      array.splice(-1);
+      return array.map((each) => Number(each));
+    });
+
+    const graphData = Object.entries(data.metrics);
+
+    graphData.forEach(([metricName, values], metricIndex) => {
+      const uniqueValues = values
+        .filter((value, i, self) => self.indexOf(value) === i)
+        .filter((value) => value !== null)
+        .sort((a, b) => a - b);
+
+      formattedTextValues.forEach((text, index) => {
+        if (index === metricIndex) {
+          expect(text).toEqual(uniqueValues);
+        }
+      });
+    });
+  });
 
   it('tick-values are only highlighted once per axis', () => {});
 
