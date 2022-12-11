@@ -5,33 +5,37 @@ import { HoverStateContext } from '../utils/hover-state-context';
 import { ParallelCoordinates, getUniqueValues } from './parallel-coordinates';
 import { data, oneSelectedRun, selectedRuns } from '../mock-data';
 
-const mockContextValue = {
+const hoveredRunIndex = 4;
+
+const mockDefaultContextValue = {
   hoveredElementId: null,
   setHoveredElementId: jest.fn(),
 };
 
+const mockHoveredContextValue = {
+  hoveredElementId: Object.keys(data.runs)[hoveredRunIndex],
+  setHoveredElementId: jest.fn(),
+};
+
 describe('Parallel Coordinates renders correctly with D3', () => {
-  it('renders without crashing', () => {
-    const svg = mount(
-      <HoverStateContext.Provider value={mockContextValue}>
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = mount(
+      <HoverStateContext.Provider value={mockDefaultContextValue}>
         <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
       </HoverStateContext.Provider>
-    )
-      .find('div')
-      .find('svg');
+    );
+  });
+
+  it('renders without crashing', () => {
+    const svg = wrapper.find('div').find('svg');
 
     expect(svg.length).toEqual(1);
   });
 
   it('render the correct number of metric-axis from the data', () => {
-    const metricAxises = mount(
-      <HoverStateContext.Provider value={mockContextValue}>
-        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
-      </HoverStateContext.Provider>
-    )
-      .find('div')
-      .find('svg')
-      .find('.metric-axis');
+    const metricAxises = wrapper.find('div').find('svg').find('.metric-axis');
 
     const graphKeys = Object.keys(data.metrics);
 
@@ -39,24 +43,13 @@ describe('Parallel Coordinates renders correctly with D3', () => {
   });
 
   it('run-lines should be limited to less than 10, even if its more than 10 from the data', () => {
-    const runLine = mount(
-      <HoverStateContext.Provider value={mockContextValue}>
-        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
-      </HoverStateContext.Provider>
-    ).find('.run-line');
+    const runLine = wrapper.find('.run-line');
 
     expect(runLine.length).toBeLessThan(10);
   });
 
   it('text from the tick-values should be displayed in ascending order', () => {
-    const tickValues = mount(
-      <HoverStateContext.Provider value={mockContextValue}>
-        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
-      </HoverStateContext.Provider>
-    )
-      .find('div')
-      .find('svg')
-      .find('.tick-values');
+    const tickValues = wrapper.find('div').find('svg').find('.tick-values');
 
     const text = tickValues.map((value) => value.text());
     // Since the text is in the format of ['1.0001.3002.4003.0003.3003.4004.5005.3006.500']
@@ -90,11 +83,46 @@ describe('Parallel Coordinates renders correctly with D3', () => {
 });
 
 describe('Parallel Coordinates" interactions', () => {
-  it('applies "run-line--hovered" to the run line when hovering over', () => {});
+  let wrapper;
 
-  it('applies "run-line--faded" to all the run lines that are not included in the hovered modes', () => {});
+  beforeEach(() => {
+    wrapper = mount(
+      <HoverStateContext.Provider value={mockHoveredContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    );
+  });
 
-  it('applies "text--hovered" to the tick values when hovering over', () => {});
+  it('applies "run-line--hovered" to the run line when hovering over', () => {
+    const runLine = wrapper
+      .find('div')
+      .find('svg')
+      .find('.run-line')
+      .at(hoveredRunIndex);
+
+    expect(runLine.hasClass('run-line--hovered')).toBe(true);
+  });
+
+  it('applies "run-line--faded" to all the run lines that are not included in the hovered modes', () => {
+    const runLines = wrapper.find('div').find('svg').find('.run-line');
+
+    runLines.forEach((run, index) => {
+      expect(run.hasClass('run-line--faded')).toEqual(
+        index !== hoveredRunIndex
+      );
+    });
+  });
+
+  it('applies "text--hovered" to the tick values when hovering over', () => {
+    const textValues = wrapper
+      .find('div')
+      .find('svg')
+      .find('.tick-values')
+      .find('.text')
+      .at(hoveredRunIndex);
+
+    expect(textValues.hasClass('text--hovered')).toBe(true);
+  });
 
   it('applies "text--faded" to all the tick values that are not included in the hovered modes', () => {});
 
