@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import { HoverStateContext } from '../utils/hover-state-context';
-import { ParallelCoordinates } from './parallel-coordinates';
+import { ParallelCoordinates, getUniqueValues } from './parallel-coordinates';
 import { data, oneSelectedRun, selectedRuns } from '../mock-data';
 
 const mockContextValue = {
@@ -72,10 +72,7 @@ describe('Parallel Coordinates renders correctly with D3', () => {
     const graphData = Object.entries(data.metrics);
 
     graphData.forEach(([metricName, values], metricIndex) => {
-      const uniqueValues = values
-        .filter((value, i, self) => self.indexOf(value) === i)
-        .filter((value) => value !== null)
-        .sort((a, b) => a - b);
+      const uniqueValues = getUniqueValues(values);
 
       formattedTextValues.forEach((text, index) => {
         if (index === metricIndex) {

@@ -9,6 +9,13 @@ import { formatTimestamp } from '../../../utils/date-utils';
 
 import './parallel-coordinates.css';
 
+export const getUniqueValues = (values) => {
+  return values
+    .filter((value, i, self) => self.indexOf(value) === i)
+    .filter((value) => value !== null)
+    .sort((a, b) => a - b);
+};
+
 // TODO: move these to a config file?
 const padding = 38;
 const paddingLr = 80;
@@ -150,13 +157,12 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
   }, [hoveredMetricLabel]);
 
   useEffect(() => {
-    setChartWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
-    );
-
-    setChartHeight(
-      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
-    );
+    // setChartWidth(
+    //   document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+    // );
+    // setChartHeight(
+    //   document.querySelector('.metrics-plots-wrapper__charts').clientHeight
+    // );
   }, []);
 
   return (
@@ -228,10 +234,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
         {graph.map(([metricName, values], metricIndex) => {
           // To avoid rendering a tick more than once
-          const uniqueValues = values
-            .filter((value, i, self) => self.indexOf(value) === i)
-            .filter((value) => value !== null)
-            .sort((a, b) => a - b);
+          const uniqueValues = getUniqueValues(values);
 
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
@@ -271,9 +274,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         })}
 
         {graph.map(([metricName, values], metricIndex) => {
-          const sortedValues = values
-            .filter((value) => value !== null)
-            .sort((a, b) => a - b);
+          const sortedValues = getUniqueValues(values);
 
           return (
             <g
