@@ -75,8 +75,6 @@ describe('Parallel Coordinates renders correctly with D3', () => {
       });
     });
   });
-
-  it('tick-values are only highlighted once per axis', () => {});
 });
 
 describe('Parallel Coordinates" interactions', () => {
@@ -101,6 +99,26 @@ describe('Parallel Coordinates" interactions', () => {
     const tooltip = wrapper.find('div').find('.tooltip');
 
     expect(tooltip.hasClass('tooltip--show')).toBe(true);
+  });
+
+  it('tick-values are only highlighted once per axis when hovering over a run line', () => {
+    const highLightedValues = wrapper
+      .find('div')
+      .find('svg')
+      .find('.tick-values')
+      .find('.text--hovered');
+
+    const highlightedText = highLightedValues.map((value) => value.text());
+    const graphData = Object.entries(data.metrics);
+
+    highlightedText.forEach((text, index) => {
+      graphData.forEach(([metricName, values], metricIndex) => {
+        if (index === metricIndex) {
+          // each values from metrics should include a highlightedText
+          expect(values.includes(Number(text))).toBe(true);
+        }
+      });
+    });
   });
 
   it('applies "run-line--hovered" to the run line when hovering over', () => {
