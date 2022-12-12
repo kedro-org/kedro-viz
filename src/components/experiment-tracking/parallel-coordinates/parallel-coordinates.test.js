@@ -126,7 +126,16 @@ describe('Parallel Coordinates" interactions', () => {
 
   it('applies "text--faded" to all the tick values that are not included in the hovered modes', () => {});
 
-  it('applies "line--hovered" to the tick lines when hovering over', () => {});
+  it('applies "line--hovered" to the tick lines when hovering over', () => {
+    const textValues = wrapper
+      .find('div')
+      .find('svg')
+      .find('.tick-lines')
+      .find('.line')
+      .at(hoveredRunIndex);
+
+    expect(textValues.hasClass('line--hovered')).toBe(true);
+  });
 
   it('applies "line--faded" to all the tick lines that are not included in the hovered modes', () => {});
 
@@ -134,7 +143,55 @@ describe('Parallel Coordinates" interactions', () => {
 
   it('applies "metric-axis--faded" to all the metric-axis that are not included in the hovered modes', () => {});
 
-  it('in single run, applies "run-line--selected-first" class to "line" when selecting a new run', () => {});
+  it('in single run, applies "run-line--selected-first" class to "line" when selecting a new run', () => {
+    const runKeys = Object.keys(data.runs);
 
-  it('in comparison mode, applies classnames accordingly to "line"', () => {});
+    const oneSelectedRunWrapper = mount(
+      <HoverStateContext.Provider value={mockHoveredContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
+      </HoverStateContext.Provider>
+    )
+      .find('div')
+      .find('svg')
+      .find('.selected-runs')
+      .find('path')
+      .at(runKeys.indexOf(oneSelectedRun[0]));
+
+    expect(oneSelectedRunWrapper.length).toEqual(1);
+    expect(oneSelectedRunWrapper.hasClass('run-line--selected-first')).toBe(
+      true
+    );
+  });
+
+  it('in comparison mode, applies classnames accordingly to "line"', () => {
+    const runKeys = Object.keys(data.runs);
+
+    const selectedRunsWrapper = mount(
+      <HoverStateContext.Provider value={mockHoveredContextValue}>
+        <ParallelCoordinates metricsData={data} selectedRuns={selectedRuns} />
+      </HoverStateContext.Provider>
+    )
+      .find('div')
+      .find('svg')
+      .find('.selected-runs')
+      .find('path');
+
+    expect(
+      selectedRunsWrapper
+        .at(runKeys.indexOf(selectedRuns[0]))
+        .hasClass('run-line--selected-first')
+    ).toBe(true);
+
+    expect(
+      selectedRunsWrapper
+        .at(runKeys.indexOf(selectedRuns[1]))
+        .hasClass('run-line--selected-second')
+    ).toBe(true);
+
+    expect(
+      selectedRunsWrapper
+        .at(runKeys.indexOf(selectedRuns[2]))
+        .hasClass('run-line--selected-third')
+    ).toBe(true);
+  });
 });
