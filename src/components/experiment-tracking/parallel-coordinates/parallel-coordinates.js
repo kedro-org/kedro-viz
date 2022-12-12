@@ -262,7 +262,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                       transform: 'translate(-10,4)',
                     }}
                   >
-                    {value.toFixed(3)}
+                    {value?.toFixed(3)}
                   </text>
                 );
               })}
@@ -354,7 +354,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                       transform: 'translate(-10,4)',
                     }}
                   >
-                    {value.toFixed(3)}
+                    {value?.toFixed(3)}
                   </text>
                 </React.Fragment>
               );

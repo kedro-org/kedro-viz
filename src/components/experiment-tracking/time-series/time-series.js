@@ -162,6 +162,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           );
         };
 
+        const lineGenerator = d3.line().defined(function (d) {
+          return d !== null;
+        });
+
         const linePath = (data) => {
           let points = data.map((x, i) => {
             if (x !== null) {
@@ -171,7 +175,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             }
           });
 
-          return d3.line()(points);
+          return lineGenerator(points);
         };
 
         const trendLinePath = (data) => {
@@ -295,7 +299,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                                 x={xScale(hoveredElementDate)}
                                 y={yScales[index](value)}
                               >
-                                {value.toFixed(3)}
+                                {value?.toFixed(3)}
                               </text>
                             </g>
                           </React.Fragment>
@@ -323,7 +327,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                         x={xScale(key)}
                         y={yScales[metricIndex](value[metricIndex])}
                       >
-                        {value[metricIndex].toFixed(3)}
+                        {value[metricIndex]?.toFixed(3)}
                       </text>
                       <path
                         className={`time-series__marker--selected-${index}`}
