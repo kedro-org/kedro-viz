@@ -6,6 +6,7 @@ import { ParallelCoordinates, getUniqueValues } from './parallel-coordinates';
 import { data, oneSelectedRun, selectedRuns } from '../mock-data';
 
 const hoveredRunIndex = 4;
+const hoverMetricIndex = 1;
 
 const mockDefaultContextValue = {
   hoveredElementId: null,
@@ -139,9 +140,44 @@ describe('Parallel Coordinates" interactions', () => {
 
   it('applies "line--faded" to all the tick lines that are not included in the hovered modes', () => {});
 
-  it('applies "metric-axis--hovered" to the metric-axis when hovering over', () => {});
+  it('applies "metric-axis--hovered" to the metric-axis when hovering over', () => {
+    wrapper
+      .find('div')
+      .find('svg')
+      .find('.metric-axis')
+      .find('text')
+      .at(hoverMetricIndex)
+      .simulate('mouseover');
 
-  it('applies "metric-axis--faded" to all the metric-axis that are not included in the hovered modes', () => {});
+    const metricAxis = wrapper
+      .find('div')
+      .find('svg')
+      .find('.metric-axis')
+      .at(hoverMetricIndex);
+
+    expect(metricAxis.hasClass('metric-axis--hovered')).toBe(true);
+  });
+
+  it('applies "metric-axis--faded" to all the metric-axis that are not included in the hovered modes', () => {
+    wrapper
+      .find('div')
+      .find('svg')
+      .find('.metric-axis')
+      .find('text')
+      .at(hoverMetricIndex)
+      .simulate('mouseover');
+
+    const otherMetricsAxis = wrapper
+      .find('div')
+      .find('svg')
+      .find('.metric-axis');
+
+    otherMetricsAxis.forEach((metric, index) => {
+      expect(metric.hasClass('metric-axis--faded')).toEqual(
+        index !== hoverMetricIndex
+      );
+    });
+  });
 
   it('in single run, applies "run-line--selected-first" class to "line" when selecting a new run', () => {
     const runKeys = Object.keys(data.runs);
