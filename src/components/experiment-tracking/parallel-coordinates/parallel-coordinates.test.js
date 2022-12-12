@@ -77,10 +77,6 @@ describe('Parallel Coordinates renders correctly with D3', () => {
   });
 
   it('tick-values are only highlighted once per axis', () => {});
-
-  it('shows tooltip when tooltip prop sets as visible', () => {});
-
-  it('hides tooltip when tooltip prop does not set as visible', () => {});
 });
 
 describe('Parallel Coordinates" interactions', () => {
@@ -92,6 +88,19 @@ describe('Parallel Coordinates" interactions', () => {
         <ParallelCoordinates metricsData={data} selectedRuns={oneSelectedRun} />
       </HoverStateContext.Provider>
     );
+  });
+
+  it('shows tooltip when hovering over a run line', () => {
+    wrapper
+      .find('div')
+      .find('svg')
+      .find('.run-line')
+      .at(hoveredRunIndex)
+      .simulate('mouseover');
+
+    const tooltip = wrapper.find('div').find('.tooltip');
+
+    expect(tooltip.hasClass('tooltip--show')).toBe(true);
   });
 
   it('applies "run-line--hovered" to the run line when hovering over', () => {
