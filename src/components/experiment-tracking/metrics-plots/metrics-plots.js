@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { TimeSeries } from '../time-series/time-series.js';
-// import { data } from '../mock-data';
+import { data } from '../mock-data';
 
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
@@ -15,6 +15,8 @@ const tabLabels = ['Time-series', 'Parallel coordinates'];
 
 const MetricsPlots = ({ selectedRunIds }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
+  const [chartHeight, setChartHeight] = useState(0);
+  const [chartWidth, setChartWidth] = useState(0);
 
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
     GET_METRIC_PLOT_DATA,
@@ -22,6 +24,15 @@ const MetricsPlots = ({ selectedRunIds }) => {
       variables: { limit: metricLimit },
     }
   );
+
+  useEffect(() => {
+    setChartWidth(
+      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+    );
+    setChartHeight(
+      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
+    );
+  }, []);
 
   return (
     <div className="metrics-plots-wrapper">
@@ -49,7 +60,9 @@ const MetricsPlots = ({ selectedRunIds }) => {
             />
           ) : (
             <ParallelCoordinates
-              metricsData={runMetricsData?.data}
+              chartHeight={chartHeight}
+              chartWidth={chartWidth}
+              metricsData={data}
               selectedRuns={selectedRunIds}
             />
           )
