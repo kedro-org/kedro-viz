@@ -9,9 +9,8 @@ import * as d3 from 'd3';
 
 import './time-series.css';
 
-export const TimeSeries = ({ metricsData, selectedRuns }) => {
-  const previousselectedRuns = usePrevious(selectedRuns);
-  const [width, setWidth] = useState(0);
+export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
+  const previouslySelectedRuns = usePrevious(selectedRuns);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
   const [rangeSelection, setRangeSelection] = useState(undefined);
 
@@ -80,7 +79,10 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
         .range([height, 0]))
   );
 
-  const xScale = d3.scaleTime().domain([minDate, maxDate]).range([0, width]);
+  const xScale = d3
+    .scaleTime()
+    .domain([minDate, maxDate])
+    .range([0, chartWidth]);
 
   if (rangeSelection) {
     xScale.domain(rangeSelection);
@@ -119,13 +121,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
     d3.selectAll(`line[id="${hoveredElementId}"]`).raise();
   }, [hoveredElementId]);
 
-  useEffect(() => {
-    setWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth - 100
-    );
-  }, []);
-
-  if (previousselectedRuns !== selectedRuns) {
+  if (previouslySelectedRuns !== selectedRuns) {
     if (rangeSelection) {
       setRangeSelection(undefined);
     }
@@ -193,7 +189,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
           .brushX()
           .extent([
             [0, 0],
-            [width, height],
+            [chartWidth, height],
           ])
           .on('end', (e) => {
             if (e.selection) {
@@ -213,12 +209,12 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
             <svg
               preserveAspectRatio="xMinYMin meet"
               key={`time-series--${metricName}`}
-              width={width + margin.left + margin.right}
+              width={chartWidth + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
               <defs>
                 <clipPath id="clip">
-                  <rect x={0} y={0} width={width} height={height} />
+                  <rect x={0} y={0} width={chartWidth} height={height} />
                 </clipPath>
               </defs>
 
@@ -237,7 +233,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                 <g
                   className="time-series__metric-axis-dual"
                   ref={getYAxis}
-                  transform={`translate(${width},0)`}
+                  transform={`translate(${chartWidth},0)`}
                 />
 
                 <text
@@ -283,7 +279,7 @@ export const TimeSeries = ({ metricsData, selectedRuns }) => {
                               className="time-series__hovered-line"
                               x1={0}
                               y1={yScales[index](value)}
-                              x2={width}
+                              x2={chartWidth}
                               y2={yScales[index](value)}
                             />
                             <g className="time-series__ticks">

@@ -20,9 +20,12 @@ const selectedMarkerColors = ['#0084B2', '#FFBC00', '#31E27B'];
 const yAxis = {};
 const yScales = {};
 
-export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
-  const [chartHeight, setChartHeight] = useState(0);
-  const [chartWidth, setChartWidth] = useState(0);
+export const ParallelCoordinates = ({
+  chartHeight,
+  chartWidth,
+  metricsData,
+  selectedRuns,
+}) => {
   const [hoveredMetricLabel, setHoveredMetricLabel] = useState(null);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
@@ -148,16 +151,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     d3.selectAll(`.selected-runs`).raise();
     d3.selectAll(`.selected-runs > path`).raise();
   }, [hoveredMetricLabel]);
-
-  useEffect(() => {
-    setChartWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
-    );
-
-    setChartHeight(
-      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
-    );
-  }, []);
 
   return (
     <div className="parallel-coordinates">
