@@ -240,6 +240,14 @@ export const ParallelCoordinates = ({
                     (value, index) => index === metricIndex && value
                   );
 
+                const xScaleMetricName = isNaN(xScale(metricName))
+                  ? 0
+                  : xScale(metricName);
+
+                const yScaleMetricName = isNaN(yScales[metricName](value))
+                  ? 0
+                  : yScales[metricName](value);
+
                 return (
                   <text
                     className={classnames('text', {
@@ -252,8 +260,8 @@ export const ParallelCoordinates = ({
                         (highlightedValue && highlightedValue !== value),
                     })}
                     key={uuidv4()}
-                    x={xScale(metricName) - 8}
-                    y={yScales[metricName](value) + 3}
+                    x={xScaleMetricName - 8}
+                    y={yScaleMetricName + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
@@ -284,6 +292,14 @@ export const ParallelCoordinates = ({
                     (value, index) => index === metricIndex && value
                   );
 
+                const xScaleMetricName = isNaN(xScale(metricName))
+                  ? 0
+                  : xScale(metricName);
+
+                const yScaleMetricName = isNaN(yScales[metricName](value))
+                  ? 0
+                  : yScales[metricName](value);
+
                 if (value) {
                   return (
                     <line
@@ -297,10 +313,10 @@ export const ParallelCoordinates = ({
                           (highlightedValue && highlightedValue !== value),
                       })}
                       key={uuidv4()}
-                      x1={xScale(metricName)}
-                      x2={xScale(metricName) - 4}
-                      y1={yScales[metricName](value)}
-                      y2={yScales[metricName](value)}
+                      x1={xScaleMetricName}
+                      x2={xScaleMetricName - 4}
+                      y1={yScaleMetricName}
+                      y2={yScaleMetricName}
                     />
                   );
                 } else {
@@ -330,6 +346,13 @@ export const ParallelCoordinates = ({
               const transformX = xScale(graphKeys[index]);
               const transformY = yScales[graphKeys[index]](value);
               const rotate = selectedMarkerRotate[i];
+              const xScaleGraphKey = isNaN(xScale(graphKeys[index]))
+                ? 0
+                : xScale(graphKeys[index]);
+
+              const yScaleGraphKey = isNaN(yScales[graphKeys[index]](value))
+                ? 0
+                : yScales[graphKeys[index]](value);
 
               return (
                 <React.Fragment key={uuidv4()}>
@@ -342,8 +365,8 @@ export const ParallelCoordinates = ({
                   <text
                     className="text"
                     key={`marker-text--${index}`}
-                    x={xScale(graphKeys[index]) - 8}
-                    y={yScales[graphKeys[index]](value) + 3}
+                    x={xScaleGraphKey - 8}
+                    y={yScaleGraphKey + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
