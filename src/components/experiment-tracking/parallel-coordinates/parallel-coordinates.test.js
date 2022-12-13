@@ -4,6 +4,7 @@ import { mount } from 'enzyme';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { ParallelCoordinates, getUniqueValues } from './parallel-coordinates';
 import { data, oneSelectedRun, selectedRuns } from '../mock-data';
+import { metricLimit } from '../../../config';
 
 const hoveredRunIndex = 4;
 const hoverMetricIndex = 1;
@@ -43,10 +44,10 @@ describe('Parallel Coordinates renders correctly with D3', () => {
     expect(metricAxises.length).toEqual(graphKeys.length);
   });
 
-  it('run-lines should be limited to less than 10, even if its more than 10 from the data', () => {
+  it('run-lines should be limited to less than metricLimit, even if its more than 10 from the data', () => {
     const runLine = wrapper.find('.run-line');
 
-    expect(runLine.length).toBeLessThan(10);
+    expect(runLine.length).toBeLessThan(metricLimit);
   });
 
   it('text from the tick-values should be displayed in ascending order', () => {
