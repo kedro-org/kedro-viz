@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { TimeSeries } from '../time-series/time-series.js';
-import { data } from '../mock-data';
+// import { data } from '../mock-data';
 
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
@@ -28,18 +28,22 @@ const MetricsPlots = ({ selectedRunIds }) => {
   );
 
   useEffect(() => {
-    const numberOfMetrics = Object.entries(data?.metrics).length;
+    if (runMetricsData?.data) {
+      const numberOfMetrics = Object.entries(
+        runMetricsData.data.metrics
+      ).length;
 
-    if (numberOfMetrics > 5 && activeTab === tabLabels[1]) {
-      setContainerWidth(numberOfMetrics * 200);
-      setParCoordsWidth(numberOfMetrics * 200);
-    } else {
-      setContainerWidth('auto');
-      setParCoordsWidth(
-        document.querySelector('.metrics-plots-wrapper__charts').clientWidth
-      );
+      if (numberOfMetrics > 5 && activeTab === tabLabels[1]) {
+        setContainerWidth(numberOfMetrics * 200);
+        setParCoordsWidth(numberOfMetrics * 200);
+      } else {
+        setContainerWidth('auto');
+        setParCoordsWidth(
+          document.querySelector('.metrics-plots-wrapper__charts').clientWidth
+        );
+      }
     }
-  }, [activeTab]);
+  }, [activeTab, runMetricsData]);
 
   useEffect(() => {
     setTimeSeriesWidth(
@@ -82,7 +86,7 @@ const MetricsPlots = ({ selectedRunIds }) => {
             <ParallelCoordinates
               chartHeight={chartHeight}
               chartWidth={parCoordsWidth}
-              metricsData={data}
+              metricsData={runMetricsData?.data}
               selectedRuns={selectedRunIds}
             />
           )

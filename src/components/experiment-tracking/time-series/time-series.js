@@ -308,6 +308,16 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                   </g>
                 )}
 
+                <g
+                  className={classnames('time-series__metric-line', {
+                    'time-series__metric-line--blend':
+                      hoveredElementId || selectedRuns.length > 1,
+                  })}
+                  clipPath="url(#clip)"
+                >
+                  <path d={linePath(metricValues)} />
+                </g>
+
                 <g className="time-series__selected-group">
                   {selectedOrderedData.map(([key, value], index) => (
                     <React.Fragment key={key + value}>
@@ -335,16 +345,6 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                       />
                     </React.Fragment>
                   ))}
-                </g>
-
-                <g
-                  className={classnames('time-series__metric-line', {
-                    'time-series__metric-line--blend':
-                      hoveredElementId || selectedRuns.length > 1,
-                  })}
-                  clipPath="url(#clip)"
-                >
-                  <path d={linePath(metricValues)} />
                 </g>
 
                 <g className="time-series__trend-line">
