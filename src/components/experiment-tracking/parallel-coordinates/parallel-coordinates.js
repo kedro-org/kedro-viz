@@ -199,7 +199,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 y={padding / 2}
               >
                 {metricName.length > 10
-                  ? metricName.substring(0, 20)
+                  ? '...' + metricName.slice(-17)
                   : metricName}
               </text>
             </g>
