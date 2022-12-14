@@ -260,8 +260,8 @@ export const ParallelCoordinates = ({
                         (highlightedValue && highlightedValue !== value),
                     })}
                     key={uuidv4()}
-                    x={xScaleMetricName - 8}
-                    y={yScaleMetricName + 3}
+                    x={xScaleTickValue - 8}
+                    y={yScaleTickValue + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
