@@ -89,6 +89,20 @@ describe('TimeSeries', () => {
 
     expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
   });
+
+  it('applies blend class to the correct runLine', () => {
+    const runLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('line')
+      .at(0);
+
+    expect(selectedRuns.length > 1).toBe(true);
+    expect(runLine.hasClass('time-series__run-line--blend')).toBe(true);
+  });
+
   it('show tooltip onHover - runLine', () => {
     wrapper
       .find('.time-series')
