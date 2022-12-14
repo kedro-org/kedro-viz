@@ -5,32 +5,88 @@ import { TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { data } from '../mock-data';
 
-const selectedRuns = ['2022-09-05T12.27.04.496Z'];
+const selectedRuns = [
+  '2022-09-05T12.22.35.825Z',
+  '2022-08-24T21.05.59.296Z',
+  '2022-07-22T13.49.08.764Z',
+];
 
 describe('TimeSeries', () => {
+  const width = jest
+    .spyOn(document, 'querySelector')
+    .mockImplementation(() => 100);
+
+  const metricsKeys = Object.keys(data.metrics);
+
+  const runKeys = Object.keys(data.runs);
+  const runData = Object.entries(data.runs);
+
+  const mockValue = {
+    hoveredElementId: runKeys[0],
+    setHoveredElementId: jest.fn(),
+  };
+
+  const wrapper = mount(
+    <HoverStateContext.Provider value={mockValue}>
+      <TimeSeries metricsData={data} selectedRuns={selectedRuns}></TimeSeries>
+    </HoverStateContext.Provider>
+  );
+
   it('renders without crashing', () => {
-    const mockValue = {
-      hoveredElementId: null,
-      setHoveredElementId: jest.fn(),
-    };
-
-    const width = jest
-      .spyOn(document, 'querySelector')
-      .mockImplementation(() => 100);
-
-    const wrapper = mount(
-      <HoverStateContext.Provider value={mockValue}>
-        <TimeSeries metricsData={data} selectedRuns={selectedRuns}></TimeSeries>
-      </HoverStateContext.Provider>
-    );
-
     expect(wrapper.find('.time-series').length).toBe(1);
   });
-  it('constructs an svg', () => {});
-  it('draw axes', () => {});
-  it('draw metricLine', () => {});
-  it('draw runLines', () => {});
-  it('draw slectedRun with different color and symbol', () => {});
-  it('onHover highlight the line and drawn dotted horizontal line', () => {});
-  it('onHover shows tooltip', () => {});
+  it('constructs an svg for each metric', () => {
+    const svg = wrapper.find('.time-series').find('svg');
+    expect(svg.length).toBe(metricsKeys.length);
+  });
+  it('draw axes', () => {
+    const xAxis = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__runs-axis');
+    expect(xAxis.length).toBe(metricsKeys.length);
+
+    const yAxis = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__metric-axis');
+    expect(yAxis.length).toBe(metricsKeys.length);
+
+    const dualAxis = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__metric-axis-dual');
+    expect(dualAxis.length).toBe(metricsKeys.length);
+  });
+  it('draw metricLine', () => {
+    const metricLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__metric-line');
+    expect(metricLine.length).toBe(metricsKeys.length);
+  });
+  it('draw runLines', () => {
+    const runLines = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('.time-series__run-line');
+    expect(runLines.length).toBe(runData.length * metricsKeys.length);
+  });
+  it('hovered runLine', () => {
+    const runLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('line')
+      .at(0);
+
+    expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
+  });
 });
