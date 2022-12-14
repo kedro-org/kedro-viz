@@ -240,11 +240,11 @@ export const ParallelCoordinates = ({
                     (value, index) => index === metricIndex && value
                   );
 
-                const xScaleMetricName = isNaN(xScale(metricName))
+                const xScaleTickValue = isNaN(xScale(metricName))
                   ? 0
                   : xScale(metricName);
 
-                const yScaleMetricName = isNaN(yScales[metricName](value))
+                const yScaleTickValue = isNaN(yScales[metricName](value))
                   ? 0
                   : yScales[metricName](value);
 
