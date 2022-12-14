@@ -39,7 +39,7 @@ describe('TimeSeries', () => {
     const svg = wrapper.find('.time-series').find('svg');
     expect(svg.length).toBe(metricsKeys.length);
   });
-  it('draw axes', () => {
+  it('draw X, Y and dual axes for each metric chart', () => {
     const xAxis = wrapper
       .find('.time-series')
       .find('svg')
@@ -61,7 +61,7 @@ describe('TimeSeries', () => {
       .find('.time-series__metric-axis-dual');
     expect(dualAxis.length).toBe(metricsKeys.length);
   });
-  it('draw metricLine', () => {
+  it('draw metricLine for each metric', () => {
     const metricLine = wrapper
       .find('.time-series')
       .find('svg')
@@ -69,7 +69,7 @@ describe('TimeSeries', () => {
       .find('.time-series__metric-line');
     expect(metricLine.length).toBe(metricsKeys.length);
   });
-  it('draw runLines', () => {
+  it('draw runLines for each metric', () => {
     const runLines = wrapper
       .find('.time-series')
       .find('svg')
@@ -78,7 +78,7 @@ describe('TimeSeries', () => {
       .find('.time-series__run-line');
     expect(runLines.length).toBe(runData.length * metricsKeys.length);
   });
-  it('hovered runLine', () => {
+  it('applies hovered class to the correct runLine', () => {
     const runLine = wrapper
       .find('.time-series')
       .find('svg')
