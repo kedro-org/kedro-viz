@@ -89,4 +89,18 @@ describe('TimeSeries', () => {
 
     expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
   });
+  it('show tooltip onHover - runLine', () => {
+    wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('line')
+      .at(0)
+      .simulate('mouseover');
+
+    const tooltip = wrapper.find('.time-series').find('.tooltip');
+
+    expect(tooltip.hasClass('tooltip--show')).toBe(true);
+  });
 });
