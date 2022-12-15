@@ -5,23 +5,25 @@ import { TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { data, selectedRuns } from '../mock-data';
 
+const metricsKeys = Object.keys(data.metrics);
+
+const runKeys = Object.keys(data.runs);
+const runData = Object.entries(data.runs);
+
+const hoveredRunIndex = 0;
+
+const mockContextValue = {
+  hoveredElementId: runKeys[0],
+  setHoveredElementId: jest.fn(),
+};
+
 describe('TimeSeries', () => {
   const width = jest
     .spyOn(document, 'querySelector')
     .mockImplementation(() => 100);
 
-  const metricsKeys = Object.keys(data.metrics);
-
-  const runKeys = Object.keys(data.runs);
-  const runData = Object.entries(data.runs);
-
-  const mockValue = {
-    hoveredElementId: runKeys[0],
-    setHoveredElementId: jest.fn(),
-  };
-
   const wrapper = mount(
-    <HoverStateContext.Provider value={mockValue}>
+    <HoverStateContext.Provider value={mockContextValue}>
       <TimeSeries metricsData={data} selectedRuns={selectedRuns}></TimeSeries>
     </HoverStateContext.Provider>
   );
@@ -29,7 +31,7 @@ describe('TimeSeries', () => {
   it('renders without crashing', () => {
     expect(wrapper.find('.time-series').length).toBe(1);
   });
-  it('constructs an svg for each metric', () => {
+  it('constructs an svg for each metric from the data', () => {
     const svg = wrapper.find('.time-series').find('svg');
     expect(svg.length).toBe(metricsKeys.length);
   });
@@ -72,26 +74,26 @@ describe('TimeSeries', () => {
       .find('.time-series__run-line');
     expect(runLines.length).toBe(runData.length * metricsKeys.length);
   });
-  it('applies hovered class to the correct runLine', () => {
+  it('applies "time-series__run-line--hovered" class to the correct runLine on mouseover', () => {
     const runLine = wrapper
       .find('.time-series')
       .find('svg')
       .find('g')
       .find('.time-series__run-lines')
       .find('line')
-      .at(0);
+      .at(hoveredRunIndex);
 
     expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
   });
 
-  it('applies blend class to the correct runLine', () => {
+  it('applies "time-series__run-line--blend" class to the correct runLine on mouseover', () => {
     const runLine = wrapper
       .find('.time-series')
       .find('svg')
       .find('g')
       .find('.time-series__run-lines')
       .find('line')
-      .at(0);
+      .at(hoveredRunIndex);
 
     expect(selectedRuns.length > 1).toBe(true);
     expect(runLine.hasClass('time-series__run-line--blend')).toBe(true);
@@ -104,7 +106,7 @@ describe('TimeSeries', () => {
       .find('g')
       .find('.time-series__run-lines')
       .find('line')
-      .at(0)
+      .at(hoveredRunIndex)
       .simulate('mouseover');
 
     const tooltip = wrapper.find('.time-series').find('.tooltip');
