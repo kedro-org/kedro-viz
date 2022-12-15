@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 
 import { TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
-import { data, selectedRuns } from '../mock-data';
+import { data, selectedRuns, oneSelectedRun } from '../mock-data';
 
 const metricsKeys = Object.keys(data.metrics);
 
@@ -12,15 +12,11 @@ const runData = Object.entries(data.runs);
 
 const hoveredRunIndex = 0;
 
-const mockContextValue = {
-  hoveredElementId: runKeys[0],
-  setHoveredElementId: jest.fn(),
-};
-
-describe('TimeSeries', () => {
-  const width = jest
-    .spyOn(document, 'querySelector')
-    .mockImplementation(() => 100);
+describe('TimeSeries with hoveredElementId value', () => {
+  const mockContextValue = {
+    hoveredElementId: runKeys[0],
+    setHoveredElementId: jest.fn(),
+  };
 
   const wrapper = mount(
     <HoverStateContext.Provider value={mockContextValue}>
@@ -85,6 +81,33 @@ describe('TimeSeries', () => {
 
     expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
   });
+  it('show tooltip onHover - runLine', () => {
+    wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('line')
+      .at(hoveredRunIndex)
+      .simulate('mouseover');
+
+    const tooltip = wrapper.find('.time-series').find('.tooltip');
+
+    expect(tooltip.hasClass('tooltip--show')).toBe(true);
+  });
+});
+
+describe('TimeSeries with "hoveredElementId = null"', () => {
+  const mockContextValue = {
+    hoveredElementId: null,
+    setHoveredElementId: jest.fn(),
+  };
+
+  const wrapper = mount(
+    <HoverStateContext.Provider value={mockContextValue}>
+      <TimeSeries metricsData={data} selectedRuns={selectedRuns}></TimeSeries>
+    </HoverStateContext.Provider>
+  );
 
   it('applies "time-series__run-line--blend" class to the correct runLine on mouseover', () => {
     const runLine = wrapper
@@ -99,18 +122,15 @@ describe('TimeSeries', () => {
     expect(runLine.hasClass('time-series__run-line--blend')).toBe(true);
   });
 
-  it('show tooltip onHover - runLine', () => {
-    wrapper
+  it('applies "time-series__metric-line--blend" class to the correct metricLine on mouseover', () => {
+    const metricLine = wrapper
       .find('.time-series')
       .find('svg')
       .find('g')
-      .find('.time-series__run-lines')
-      .find('line')
-      .at(hoveredRunIndex)
-      .simulate('mouseover');
+      .find('.time-series__metric-line')
+      .at(hoveredRunIndex);
 
-    const tooltip = wrapper.find('.time-series').find('.tooltip');
-
-    expect(tooltip.hasClass('tooltip--show')).toBe(true);
+    expect(selectedRuns.length > 1).toBe(true);
+    expect(metricLine.hasClass('time-series__metric-line--blend')).toBe(true);
   });
 });
