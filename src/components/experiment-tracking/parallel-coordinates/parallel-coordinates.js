@@ -9,6 +9,13 @@ import { formatTimestamp } from '../../../utils/date-utils';
 
 import './parallel-coordinates.css';
 
+export const getUniqueValues = (values) => {
+  return values
+    .filter((value, i, self) => self.indexOf(value) === i)
+    .filter((value) => value !== null)
+    .sort((a, b) => a - b);
+};
+
 // TODO: move these to a config file?
 const padding = 38;
 const paddingLr = 80;
@@ -20,9 +27,12 @@ const selectedMarkerColors = ['#0084B2', '#FFBC00', '#31E27B'];
 const yAxis = {};
 const yScales = {};
 
-export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
-  const [chartHeight, setChartHeight] = useState(0);
-  const [chartWidth, setChartWidth] = useState(0);
+export const ParallelCoordinates = ({
+  chartHeight,
+  chartWidth,
+  metricsData,
+  selectedRuns,
+}) => {
   const [hoveredMetricLabel, setHoveredMetricLabel] = useState(null);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
@@ -149,16 +159,6 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
     d3.selectAll(`.selected-runs > path`).raise();
   }, [hoveredMetricLabel]);
 
-  useEffect(() => {
-    setChartWidth(
-      document.querySelector('.metrics-plots-wrapper__charts').clientWidth
-    );
-
-    setChartHeight(
-      document.querySelector('.metrics-plots-wrapper__charts').clientHeight
-    );
-  }, []);
-
   return (
     <div className="parallel-coordinates">
       <MetricsChartsTooltip
@@ -199,7 +199,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                 y={padding / 2}
               >
                 {metricName.length > 10
-                  ? metricName.substring(0, 20)
+                  ? '...' + metricName.slice(-17)
                   : metricName}
               </text>
             </g>
@@ -228,10 +228,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
 
         {graph.map(([metricName, values], metricIndex) => {
           // To avoid rendering a tick more than once
-          const uniqueValues = values
-            .filter((value, i, self) => self.indexOf(value) === i)
-            .filter((value) => value !== null)
-            .sort((a, b) => a - b);
+          const uniqueValues = getUniqueValues(values);
 
           return (
             <g className="tick-values" id={metricName} key={uuidv4()}>
@@ -242,6 +239,14 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                   hoveredValues.find(
                     (value, index) => index === metricIndex && value
                   );
+
+                const xScaleTickValue = isNaN(xScale(metricName))
+                  ? 0
+                  : xScale(metricName);
+
+                const yScaleTickValue = isNaN(yScales[metricName](value))
+                  ? 0
+                  : yScales[metricName](value);
 
                 return (
                   <text
@@ -255,14 +260,14 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                         (highlightedValue && highlightedValue !== value),
                     })}
                     key={uuidv4()}
-                    x={xScale(metricName) - 8}
-                    y={yScales[metricName](value) + 3}
+                    x={xScaleTickValue - 8}
+                    y={yScaleTickValue + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
                     }}
                   >
-                    {value.toFixed(3)}
+                    {value?.toFixed(3)}
                   </text>
                 );
               })}
@@ -271,9 +276,7 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
         })}
 
         {graph.map(([metricName, values], metricIndex) => {
-          const sortedValues = values
-            .filter((value) => value !== null)
-            .sort((a, b) => a - b);
+          const sortedValues = getUniqueValues(values);
 
           return (
             <g
@@ -289,6 +292,14 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                     (value, index) => index === metricIndex && value
                   );
 
+                const xScaleMetricName = isNaN(xScale(metricName))
+                  ? 0
+                  : xScale(metricName);
+
+                const yScaleMetricName = isNaN(yScales[metricName](value))
+                  ? 0
+                  : yScales[metricName](value);
+
                 if (value) {
                   return (
                     <line
@@ -302,10 +313,10 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                           (highlightedValue && highlightedValue !== value),
                       })}
                       key={uuidv4()}
-                      x1={xScale(metricName)}
-                      x2={xScale(metricName) - 4}
-                      y1={yScales[metricName](value)}
-                      y2={yScales[metricName](value)}
+                      x1={xScaleMetricName}
+                      x2={xScaleMetricName - 4}
+                      y1={yScaleMetricName}
+                      y2={yScaleMetricName}
                     />
                   );
                 } else {
@@ -335,6 +346,13 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
               const transformX = xScale(graphKeys[index]);
               const transformY = yScales[graphKeys[index]](value);
               const rotate = selectedMarkerRotate[i];
+              const xScaleGraphKey = isNaN(xScale(graphKeys[index]))
+                ? 0
+                : xScale(graphKeys[index]);
+
+              const yScaleGraphKey = isNaN(yScales[graphKeys[index]](value))
+                ? 0
+                : yScales[graphKeys[index]](value);
 
               return (
                 <React.Fragment key={uuidv4()}>
@@ -347,14 +365,14 @@ export const ParallelCoordinates = ({ metricsData, selectedRuns }) => {
                   <text
                     className="text"
                     key={`marker-text--${index}`}
-                    x={xScale(graphKeys[index]) - 8}
-                    y={yScales[graphKeys[index]](value) + 3}
+                    x={xScaleGraphKey - 8}
+                    y={yScaleGraphKey + 3}
                     style={{
                       textAnchor: 'end',
                       transform: 'translate(-10,4)',
                     }}
                   >
-                    {value.toFixed(3)}
+                    {value?.toFixed(3)}
                   </text>
                 </React.Fragment>
               );
