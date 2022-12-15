@@ -3,13 +3,7 @@ import { mount } from 'enzyme';
 
 import { TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
-import { data } from '../mock-data';
-
-const selectedRuns = [
-  '2022-09-05T12.22.35.825Z',
-  '2022-08-24T21.05.59.296Z',
-  '2022-07-22T13.49.08.764Z',
-];
+import { data, selectedRuns } from '../mock-data';
 
 describe('TimeSeries', () => {
   const width = jest
