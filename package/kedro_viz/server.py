@@ -11,13 +11,12 @@ from watchgod import run_process
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
+from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
 
-DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 4141
 DEV_PORT = 4142
 
 
