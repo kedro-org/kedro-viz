@@ -28,10 +28,12 @@ describe('TimeSeries', () => {
   it('renders without crashing', () => {
     expect(wrapper.find('.time-series').length).toBe(1);
   });
+
   it('constructs an svg for each metric from the data', () => {
     const svg = wrapper.find('.time-series').find('svg');
     expect(svg.length).toBe(metricsKeys.length);
   });
+
   it('show tooltip onHover - runLine', () => {
     wrapper
       .find('.time-series__run-lines')
@@ -40,7 +42,6 @@ describe('TimeSeries', () => {
       .simulate('mouseover');
 
     const tooltip = wrapper.find('.time-series').find('.tooltip');
-
     expect(tooltip.hasClass('tooltip--show')).toBe(true);
   });
 });
@@ -59,6 +60,7 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
     .find('.time-series')
     .find('svg')
     .find('g');
+
   it('draw X, Y and dual axes for each metric chart', () => {
     const xAxis = wrapper.find('.time-series__runs-axis');
     expect(xAxis.length).toBe(metricsKeys.length);
@@ -69,16 +71,19 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
     const dualAxis = wrapper.find('.time-series__metric-axis-dual');
     expect(dualAxis.length).toBe(metricsKeys.length);
   });
+
   it('draw metricLine for each metric', () => {
     const metricLine = wrapper.find('.time-series__metric-line');
     expect(metricLine.length).toBe(metricsKeys.length);
   });
+
   it('draw runLines for each metric', () => {
     const runLines = wrapper
       .find('.time-series__run-lines')
       .find('.time-series__run-line');
     expect(runLines.length).toBe(runData.length * metricsKeys.length);
   });
+
   it('applies "time-series__run-line--hovered" class to the correct runLine on mouseover', () => {
     const runLine = wrapper
       .find('.time-series__run-lines')
@@ -93,6 +98,7 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       }
     });
   });
+
   it('selected group is returend in the correct order', () => {
     const selectedGroupLine = wrapper
       .find('.time-series__selected-group')
@@ -110,11 +116,10 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       }
     });
   });
+
   it('on double click reset to default zoom scale', () => {
     const setRangeSelection = jest.fn();
-
     const brushContainer = wrapper.find('.time-series__brush').at(0);
-
     const onDbClick = jest.spyOn(React, 'useState');
 
     onDbClick.mockImplementation((rangeSelection) => [
@@ -122,6 +127,7 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       setRangeSelection,
     ]);
     brushContainer.simulate('dblclick');
+
     expect(setRangeSelection).toBeTruthy();
     expect(brushContainer.length).toBe(1);
   });
