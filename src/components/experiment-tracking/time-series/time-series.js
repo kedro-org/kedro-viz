@@ -28,6 +28,8 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
 
+  const defaultChartWidth = isNaN(chartWidth) ? 100 : chartWidth;
+
   const margin = { top: 20, right: 0, bottom: 80, left: 40 };
   const height = 150;
   const chartBuffer = 0.02;
@@ -84,7 +86,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const xScale = d3
     .scaleTime()
     .domain([minDate, maxDate])
-    .range([0, chartWidth]);
+    .range([0, defaultChartWidth]);
 
   if (rangeSelection) {
     xScale.domain(rangeSelection);
@@ -191,7 +193,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
           .brushX()
           .extent([
             [0, 0],
-            [chartWidth, height],
+            [defaultChartWidth, height],
           ])
           .on('end', (e) => {
             if (e.selection) {
@@ -211,12 +213,12 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
             <svg
               preserveAspectRatio="xMinYMin meet"
               key={`time-series--${metricName}`}
-              width={chartWidth + margin.left + margin.right}
+              width={defaultChartWidth + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
               <defs>
                 <clipPath id="clip">
-                  <rect x={0} y={0} width={chartWidth} height={height} />
+                  <rect x={0} y={0} width={defaultChartWidth} height={height} />
                 </clipPath>
               </defs>
 
@@ -235,7 +237,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                 <g
                   className="time-series__metric-axis-dual"
                   ref={getYAxis}
-                  transform={`translate(${chartWidth},0)`}
+                  transform={`translate(${defaultChartWidth},0)`}
                 />
 
                 <text
@@ -281,7 +283,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                               className="time-series__hovered-line"
                               x1={0}
                               y1={yScales[index](value)}
-                              x2={chartWidth}
+                              x2={defaultChartWidth}
                               y2={yScales[index](value)}
                             />
                             <g className="time-series__ticks">
