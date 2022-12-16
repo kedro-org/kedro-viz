@@ -122,6 +122,26 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       }
     });
   });
+  it('on double click reset to default zoom scale', () => {
+    const setRangeSelection = jest.fn();
+
+    const brushContainer = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__brush')
+      .at(0);
+
+    const onDbClick = jest.spyOn(React, 'useState');
+
+    onDbClick.mockImplementation((rangeSelection) => [
+      rangeSelection,
+      setRangeSelection,
+    ]);
+    brushContainer.simulate('dblclick');
+    expect(setRangeSelection).toBeTruthy();
+    expect(brushContainer.length).toBe(1);
+  });
 });
 
 describe('TimeSeries with only one selected run and no hovered run', () => {
