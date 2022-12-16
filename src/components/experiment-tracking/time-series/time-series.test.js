@@ -11,11 +11,11 @@ const metricsKeys = Object.keys(data.metrics);
 const runKeys = Object.keys(data.runs);
 const runData = Object.entries(data.runs);
 
-const hoveredRunIndex = 0;
+const hoveredElement = 0;
 
 describe('TimeSeries with multiple selected runs and hovered run', () => {
   const mockContextValue = {
-    hoveredElementId: runKeys[0],
+    hoveredElementId: runKeys[hoveredElement],
     setHoveredElementId: jest.fn(),
   };
 
@@ -78,10 +78,10 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       .find('g')
       .find('.time-series__run-lines')
       .find('line')
-      .at(hoveredRunIndex);
+      .at(hoveredElement);
 
     runData.forEach((_, index) => {
-      if (hoveredRunIndex === index) {
+      if (hoveredElement === index) {
         expect(
           runLine.at(index).hasClass('time-series__run-line--hovered')
         ).toBe(true);
@@ -95,7 +95,7 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       .find('g')
       .find('.time-series__run-lines')
       .find('line')
-      .at(hoveredRunIndex)
+      .at(hoveredElement)
       .simulate('mouseover');
 
     const tooltip = wrapper.find('.time-series').find('.tooltip');
@@ -162,6 +162,52 @@ describe('TimeSeries with only one selected run and no hovered run', () => {
       expect(
         metricLine.at(index).hasClass('time-series__metric-line--blend')
       ).toBe(false);
+    });
+  });
+});
+
+describe('TimeSeries with only one selected run and hovered run', () => {
+  const mockContextValue = {
+    hoveredElementId: runKeys[hoveredElement],
+    setHoveredElementId: jest.fn(),
+  };
+
+  const wrapper = mount(
+    <HoverStateContext.Provider value={mockContextValue}>
+      <TimeSeries metricsData={data} selectedRuns={oneSelectedRun}></TimeSeries>
+    </HoverStateContext.Provider>
+  );
+
+  it('Class "time-series__run-line--blend" is applied when there is only one selected run and hovered element', () => {
+    const runLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__run-lines')
+      .find('line');
+
+    runData.forEach((_, index) => {
+      if (hoveredElement === index) {
+        expect(runLine.at(index).hasClass('time-series__run-line--blend')).toBe(
+          true
+        );
+      }
+    });
+  });
+
+  it('Class "time-series__metric-line--blend" is applied when there is only one selected run and hovered element', () => {
+    const metricLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__metric-line');
+
+    metricsKeys.forEach((_, index) => {
+      if (hoveredElement === index) {
+        expect(
+          metricLine.at(index).hasClass('time-series__metric-line--blend')
+        ).toBe(true);
+      }
     });
   });
 });
