@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { getSelectedOrderedData, TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { formatTimestamp } from '../../../utils/date-utils';
-import { data, selectedRuns } from '../mock-data';
+import { data, selectedRuns, oneSelectedRun } from '../mock-data';
 
 const metricsKeys = Object.keys(data.metrics);
 
@@ -13,7 +13,7 @@ const runData = Object.entries(data.runs);
 
 const hoveredRunIndex = 0;
 
-describe('TimeSeries with hoveredElementId value', () => {
+describe('TimeSeries with multiple selected runs and hovered run', () => {
   const mockContextValue = {
     hoveredElementId: runKeys[0],
     setHoveredElementId: jest.fn(),
@@ -118,7 +118,7 @@ describe('TimeSeries with hoveredElementId value', () => {
   });
 });
 
-describe('TimeSeries with "hoveredElementId = null"', () => {
+describe('TimeSeries with only one selected run and no hovered run', () => {
   const mockContextValue = {
     hoveredElementId: null,
     setHoveredElementId: jest.fn(),
@@ -126,32 +126,36 @@ describe('TimeSeries with "hoveredElementId = null"', () => {
 
   const wrapper = mount(
     <HoverStateContext.Provider value={mockContextValue}>
-      <TimeSeries metricsData={data} selectedRuns={selectedRuns}></TimeSeries>
+      <TimeSeries metricsData={data} selectedRuns={oneSelectedRun}></TimeSeries>
     </HoverStateContext.Provider>
   );
 
-  it('applies "time-series__run-line--blend" class to the correct runLine on mouseover', () => {
+  it('Class "time-series__run-line--blend" is not applied when there is only one selected run and no hovered element', () => {
     const runLine = wrapper
       .find('.time-series')
       .find('svg')
       .find('g')
       .find('.time-series__run-lines')
-      .find('line')
-      .at(hoveredRunIndex);
+      .find('line');
 
-    expect(selectedRuns.length > 1).toBe(true);
-    expect(runLine.hasClass('time-series__run-line--blend')).toBe(true);
+    runData.forEach((_, index) => {
+      expect(runLine.at(index).hasClass('time-series__run-line--blend')).toBe(
+        false
+      );
+    });
   });
 
-  it('applies "time-series__metric-line--blend" class to the correct metricLine on mouseover', () => {
+  it('Class "time-series__metric-line--blend" is not applied when there is only one selected run and no hovered element', () => {
     const metricLine = wrapper
       .find('.time-series')
       .find('svg')
       .find('g')
-      .find('.time-series__metric-line')
-      .at(hoveredRunIndex);
+      .find('.time-series__metric-line');
 
-    expect(selectedRuns.length > 1).toBe(true);
-    expect(metricLine.hasClass('time-series__metric-line--blend')).toBe(true);
+    metricsKeys.forEach((_, index) => {
+      expect(
+        metricLine.at(index).hasClass('time-series__metric-line--blend')
+      ).toBe(false);
+    });
   });
 });
