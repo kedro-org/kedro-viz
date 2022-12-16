@@ -193,7 +193,7 @@
 $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__value-list--inline {
-  margin: 0 -$list-inline-spacing * 1.5;
+  margin: 0 (-$list-inline-spacing * 1.5);
   padding: 0;
   list-style: none;
 
