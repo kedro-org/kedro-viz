@@ -9,6 +9,17 @@ import * as d3 from 'd3';
 
 import './time-series.css';
 
+export const getSelectedOrderedData = (runData, selectedRuns) => {
+  return runData
+    .filter(([key, _]) => selectedRuns.includes(key))
+    .sort((a, b) => {
+      // We need to sort the selected data to match the order of selectedRuns.
+      // If we didn't, the highlighted runs would switch colors unnecessarily.
+      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
+    })
+    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
+};
+
 export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const previouslySelectedRuns = usePrevious(selectedRuns);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
@@ -16,6 +27,8 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
 
   const { hoveredElementId, setHoveredElementId } =
     useContext(HoverStateContext);
+
+  const defaultChartWidth = isNaN(chartWidth) ? 100 : chartWidth;
 
   const margin = { top: 20, right: 0, bottom: 80, left: 40 };
   const height = 150;
@@ -57,15 +70,6 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
     .filter(([key, _]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
-  const selectedOrderedData = runData
-    .filter(([key, _]) => selectedRuns.includes(key))
-    .sort((a, b) => {
-      // We need to sort the selected data to match the order of selectedRuns.
-      // If we didn't, the highlighted runs would switch colors unnecessarily.
-      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
-    })
-    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
-
   const yScales = {};
 
   metricData.map(
@@ -82,7 +86,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const xScale = d3
     .scaleTime()
     .domain([minDate, maxDate])
-    .range([0, chartWidth]);
+    .range([0, defaultChartWidth]);
 
   if (rangeSelection) {
     xScale.domain(rangeSelection);
@@ -189,7 +193,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
           .brushX()
           .extent([
             [0, 0],
-            [chartWidth, height],
+            [defaultChartWidth, height],
           ])
           .on('end', (e) => {
             if (e.selection) {
@@ -209,12 +213,12 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
             <svg
               preserveAspectRatio="xMinYMin meet"
               key={`time-series--${metricName}`}
-              width={chartWidth + margin.left + margin.right}
+              width={defaultChartWidth + margin.left + margin.right}
               height={height + margin.top + margin.bottom}
             >
               <defs>
                 <clipPath id="clip">
-                  <rect x={0} y={0} width={chartWidth} height={height} />
+                  <rect x={0} y={0} width={defaultChartWidth} height={height} />
                 </clipPath>
               </defs>
 
@@ -233,7 +237,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                 <g
                   className="time-series__metric-axis-dual"
                   ref={getYAxis}
-                  transform={`translate(${chartWidth},0)`}
+                  transform={`translate(${defaultChartWidth},0)`}
                 />
 
                 <text
@@ -279,7 +283,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                               className="time-series__hovered-line"
                               x1={0}
                               y1={yScales[index](value)}
-                              x2={chartWidth}
+                              x2={defaultChartWidth}
                               y2={yScales[index](value)}
                             />
                             <g className="time-series__ticks">
@@ -319,32 +323,34 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                 </g>
 
                 <g className="time-series__selected-group">
-                  {selectedOrderedData.map(([key, value], index) => (
-                    <React.Fragment key={key + value}>
-                      <line
-                        className={`time-series__run-line--selected-${index}`}
-                        x1={xScale(key)}
-                        y1={0}
-                        x2={xScale(key)}
-                        y2={height}
-                      />
-                      <text
-                        className="time-series__tick-text"
-                        x={xScale(key)}
-                        y={yScales[metricIndex](value[metricIndex])}
-                      >
-                        {value[metricIndex]?.toFixed(3)}
-                      </text>
-                      <path
-                        className={`time-series__marker--selected-${index}`}
-                        d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
-                        transform={`translate(${xScale(key)},${yScales[
-                          metricIndex
-                        ](value[metricIndex])}) 
+                  {getSelectedOrderedData(runData, selectedRuns).map(
+                    ([key, value], index) => (
+                      <React.Fragment key={key + value}>
+                        <line
+                          className={`time-series__run-line--selected-${index}`}
+                          x1={xScale(key)}
+                          y1={0}
+                          x2={xScale(key)}
+                          y2={height}
+                        />
+                        <text
+                          className="time-series__tick-text"
+                          x={xScale(key)}
+                          y={yScales[metricIndex](value[metricIndex])}
+                        >
+                          {value[metricIndex]?.toFixed(3)}
+                        </text>
+                        <path
+                          className={`time-series__marker--selected-${index}`}
+                          d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
+                          transform={`translate(${xScale(key)},${yScales[
+                            metricIndex
+                          ](value[metricIndex])}) 
                   rotate(${selectedMarkerRotate[index]})`}
-                      />
-                    </React.Fragment>
-                  ))}
+                        />
+                      </React.Fragment>
+                    )
+                  )}
                 </g>
 
                 <g className="time-series__trend-line">
