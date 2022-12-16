@@ -28,20 +28,17 @@
   --color-exp-tracking-datasets: #{colors.$white-100};
   --color-metrics-plot-text: #{colors.$grey-200};
   --color-metrics-plot-text-bold: #{colors.$black-900};
-  --color-metrics-plot-line: #{colors.$white-200};
-  --color-metrics-plot-line-hover: #{colors.$black-0};
   --color-metrics-plot-axis-ends: #{colors.$grey-800};
-  --color-metrics-plot-axis-hover: #{colors.$grey-800};
+  --color-metrics-plot-parallel-coords-line: #{colors.$white-200};
+  --color-metrics-plot-parallel-coords-line-hover: #{colors.$black-0};
+  --color-metrics-plot-parallel-coords-axis-hover: #{colors.$grey-800};
   --color-metrics-plot-tooltip-value: #{colors.$white-0};
   --color-metrics-plot-tooltip-label: #{colors.$grey-300};
   --color-metrics-plot-time-series-metric-line: #{colors.$grey-200};
   --color-metrics-plot-time-series-axis: #{colors.$grey-300};
   --color-metrics-plot-time-series-run-line: #{colors.$grey-100};
   --color-metrics-plot-time-series-run-line-hovered: #{colors.$black-0};
-  --color-metrics-plot-time-series-axis-label: #{colors.$grey-800};
-  --color-metrics-plot-time-series-metric-name: #{colors.$black-900};
   --color-metrics-plot-time-series-dotted-line: #{colors.$grey-600};
-  --color-metrics-plot-time-series-hovered-ticks: #{colors.$black-0};
 }
 
 .kui-theme--dark {
@@ -70,20 +67,17 @@
   --color-exp-tracking-datasets: #{colors.$ocean-900};
   --color-metrics-plot-text: #{colors.$grey-900};
   --color-metrics-plot-text-bold: #{colors.$white-0};
-  --color-metrics-plot-line: #{colors.$slate-300};
-  --color-metrics-plot-line-hover: #{colors.$grey-400};
   --color-metrics-plot-axis-ends: #{colors.$grey-300};
-  --color-metrics-plot-axis-hover: #{colors.$white-900};
+  --color-metrics-plot-parallel-coords-line: #{colors.$slate-300};
+  --color-metrics-plot-parallel-coords-line-hover: #{colors.$grey-400};
+  --color-metrics-plot-parallel-coords-axis-hover: #{colors.$white-900};
   --color-metrics-plot-tooltip-value: #{colors.$black-900};
   --color-metrics-plot-tooltip-label: #{colors.$black-500};
   --color-metrics-plot-time-series-metric-line: #{colors.$grey-700};
   --color-metrics-plot-time-series-axis: #{colors.$grey-900};
   --color-metrics-plot-time-series-run-line: #{colors.$slate-200};
   --color-metrics-plot-time-series-run-line-hovered: #{colors.$white-0};
-  --color-metrics-plot-time-series-axis-label: #{colors.$grey-300};
-  --color-metrics-plot-time-series-metric-name: #{colors.$white-0};
   --color-metrics-plot-time-series-dotted-line: #{colors.$grey-500};
-  --color-metrics-plot-time-series-hovered-ticks: #{colors.$white-0};
 }
 
 .kedro {

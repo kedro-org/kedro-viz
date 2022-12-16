@@ -13,10 +13,10 @@
 
 .run-line {
   cursor: pointer;
-  stroke: var(--color-metrics-plot-line);
+  stroke: var(--color-metrics-plot-parallel-coords-line);
 
   &--hovered {
-    stroke: var(--color-metrics-plot-line-hover);
+    stroke: var(--color-metrics-plot-parallel-coords-line-hover);
   }
 
   &--selected-first {
@@ -96,7 +96,7 @@ g.selected-runs path {
 
 // Hovered run
 .tick-values .text--hovered {
-  fill: var(--color-metrics-plot-axis-hover) !important;
+  fill: var(--color-metrics-plot-parallel-coords-axis-hover) !important;
 }
 
 .metric-axis--faded,

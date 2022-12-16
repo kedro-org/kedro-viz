@@ -16,12 +16,12 @@
 
 .time-series__metric-name {
   font-size: 1.4em;
-  color: var(--color-metrics-plot-time-series-metric-name);
+  color: var(--color-metrics-plot-text-bold);
   line-height: 20px;
 }
 
 .time-series__axis-label {
-  fill: var(--color-metrics-plot-time-series-axis-label);
+  fill: var(--color-metrics-plot-axis-ends);
   font-size: 12px;
   transform: rotate(-90deg);
 }
@@ -76,7 +76,7 @@
 
 .time-series {
   .tick text {
-    fill: var(--color-metrics-plot-time-series-axis-label);
+    fill: var(--color-metrics-plot-axis-ends);
     font-size: 12px;
   }
 
@@ -112,11 +112,11 @@
 }
 
 .time-series__tick-line {
-  stroke: var(--color-metrics-plot-time-series-hovered-ticks);
+  stroke: var(--color-metrics-plot-time-series-run-line-hovered);
 }
 
 .time-series__tick-text {
-  fill: var(--color-metrics-plot-time-series-axis-label);
+  fill: var(--color-metrics-plot-axis-ends);
   font-size: 12px;
   text-anchor: end;
   transform: translate(-10px, -4px);
