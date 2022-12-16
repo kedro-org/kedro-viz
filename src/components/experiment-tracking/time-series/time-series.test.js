@@ -1,9 +1,10 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { TimeSeries } from './time-series';
+import { getSelectedOrderedData, TimeSeries } from './time-series';
 import { HoverStateContext } from '../utils/hover-state-context';
-import { data, selectedRuns, oneSelectedRun } from '../mock-data';
+import { formatTimestamp } from '../../../utils/date-utils';
+import { data, selectedRuns } from '../mock-data';
 
 const metricsKeys = Object.keys(data.metrics);
 
@@ -94,6 +95,26 @@ describe('TimeSeries with hoveredElementId value', () => {
     const tooltip = wrapper.find('.time-series').find('.tooltip');
 
     expect(tooltip.hasClass('tooltip--show')).toBe(true);
+  });
+  it('selected group is returend in the correct order', () => {
+    const selectedGroupLine = wrapper
+      .find('.time-series')
+      .find('svg')
+      .find('g')
+      .find('.time-series__selected-group')
+      .find('line');
+
+    getSelectedOrderedData(runData, selectedRuns).forEach(([key, _], index) => {
+      const parsedSelectedDate = new Date(formatTimestamp(selectedRuns[index]));
+
+      if (parsedSelectedDate.getTime() === key.getTime()) {
+        expect(
+          selectedGroupLine
+            .at(index)
+            .hasClass(`time-series__run-line--selected-${index}`)
+        ).toBe(true);
+      }
+    });
   });
 });
 

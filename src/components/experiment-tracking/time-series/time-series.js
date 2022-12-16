@@ -9,6 +9,17 @@ import * as d3 from 'd3';
 
 import './time-series.css';
 
+export const getSelectedOrderedData = (runData, selectedRuns) => {
+  return runData
+    .filter(([key, _]) => selectedRuns.includes(key))
+    .sort((a, b) => {
+      // We need to sort the selected data to match the order of selectedRuns.
+      // If we didn't, the highlighted runs would switch colors unnecessarily.
+      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
+    })
+    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
+};
+
 export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const previouslySelectedRuns = usePrevious(selectedRuns);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
@@ -55,15 +66,6 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
 
   const selectedData = runData
     .filter(([key, _]) => selectedRuns.includes(key))
-    .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
-
-  const selectedOrderedData = runData
-    .filter(([key, _]) => selectedRuns.includes(key))
-    .sort((a, b) => {
-      // We need to sort the selected data to match the order of selectedRuns.
-      // If we didn't, the highlighted runs would switch colors unnecessarily.
-      return selectedRuns.indexOf(a[0]) - selectedRuns.indexOf(b[0]);
-    })
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
   const yScales = {};
@@ -319,32 +321,34 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                 </g>
 
                 <g className="time-series__selected-group">
-                  {selectedOrderedData.map(([key, value], index) => (
-                    <React.Fragment key={key + value}>
-                      <line
-                        className={`time-series__run-line--selected-${index}`}
-                        x1={xScale(key)}
-                        y1={0}
-                        x2={xScale(key)}
-                        y2={height}
-                      />
-                      <text
-                        className="time-series__tick-text"
-                        x={xScale(key)}
-                        y={yScales[metricIndex](value[metricIndex])}
-                      >
-                        {value[metricIndex]?.toFixed(3)}
-                      </text>
-                      <path
-                        className={`time-series__marker--selected-${index}`}
-                        d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
-                        transform={`translate(${xScale(key)},${yScales[
-                          metricIndex
-                        ](value[metricIndex])}) 
+                  {getSelectedOrderedData(runData, selectedRuns).map(
+                    ([key, value], index) => (
+                      <React.Fragment key={key + value}>
+                        <line
+                          className={`time-series__run-line--selected-${index}`}
+                          x1={xScale(key)}
+                          y1={0}
+                          x2={xScale(key)}
+                          y2={height}
+                        />
+                        <text
+                          className="time-series__tick-text"
+                          x={xScale(key)}
+                          y={yScales[metricIndex](value[metricIndex])}
+                        >
+                          {value[metricIndex]?.toFixed(3)}
+                        </text>
+                        <path
+                          className={`time-series__marker--selected-${index}`}
+                          d={`${d3.symbol(selectedMarkerShape[index], 20)()}`}
+                          transform={`translate(${xScale(key)},${yScales[
+                            metricIndex
+                          ](value[metricIndex])}) 
                   rotate(${selectedMarkerRotate[index]})`}
-                      />
-                    </React.Fragment>
-                  ))}
+                        />
+                      </React.Fragment>
+                    )
+                  )}
                 </g>
 
                 <g className="time-series__trend-line">
