@@ -80,7 +80,13 @@ describe('TimeSeries with multiple selected runs and hovered run', () => {
       .find('line')
       .at(hoveredRunIndex);
 
-    expect(runLine.hasClass('time-series__run-line--hovered')).toBe(true);
+    runData.forEach((_, index) => {
+      if (hoveredRunIndex === index) {
+        expect(
+          runLine.at(index).hasClass('time-series__run-line--hovered')
+        ).toBe(true);
+      }
+    });
   });
   it('show tooltip onHover - runLine', () => {
     wrapper
