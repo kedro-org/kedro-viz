@@ -222,6 +222,17 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                 </clipPath>
               </defs>
 
+              <defs>
+                <clipPath id="brush_clip">
+                  <rect
+                    x={0}
+                    y={1}
+                    width={defaultChartWidth}
+                    height={height - 2}
+                  />
+                </clipPath>
+              </defs>
+
               <g
                 id={metricName}
                 transform={`translate(${margin.left},${margin.top})`}
@@ -250,7 +261,10 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
 
                 <g className="time-series__brush" onDoubleClick={resetXScale} />
 
-                <g className="time-series__run-lines" clipPath="url(#clip)">
+                <g
+                  className="time-series__run-lines"
+                  clipPath="url(#brush_clip)"
+                >
                   {parsedData.map(([key, _], index) => (
                     <line
                       className={classnames('time-series__run-line', {
@@ -322,7 +336,10 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
                   <path d={linePath(metricValues)} />
                 </g>
 
-                <g className="time-series__selected-group">
+                <g
+                  className="time-series__selected-group"
+                  clipPath="url(#brush_clip)"
+                >
                   {getSelectedOrderedData(runData, selectedRuns).map(
                     ([key, value], index) => (
                       <React.Fragment key={key + value}>
