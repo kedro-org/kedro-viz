@@ -225,10 +225,10 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
               <defs>
                 <clipPath id="brush_clip">
                   <rect
+                    height={height - 1}
+                    width={defaultChartWidth}
                     x={0}
                     y={0.5}
-                    width={defaultChartWidth}
-                    height={height - 1}
                   />
                 </clipPath>
               </defs>
