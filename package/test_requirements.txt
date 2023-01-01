@@ -5,7 +5,7 @@ bandit~=1.7
 behave~=1.2
 black~=22.10
 flake8~=5.0
-isort~=5.10
+isort~=5.11
 matplotlib~=3.5
 mypy~=0.991
 psutil==5.9.4  # same as Kedro for now
