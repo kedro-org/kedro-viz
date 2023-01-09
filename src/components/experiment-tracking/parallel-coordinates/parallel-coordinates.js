@@ -16,9 +16,8 @@ export const getUniqueValues = (values) => {
     .sort((a, b) => a - b);
 };
 
-// TODO: move these to a config file?
-const padding = 38;
-const paddingLr = 80;
+const paddingTopBottom = 38;
+const paddingLeftRight = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
@@ -65,14 +64,17 @@ export const ParallelCoordinates = ({
   const xScale = d3
     .scalePoint()
     .domain(graphKeys)
-    .range([paddingLr, chartWidth - paddingLr]);
+    .range([paddingLeftRight, chartWidth - paddingLeftRight]);
 
   // For each metric, draw a y-scale
   graph.forEach(([key, value]) => {
     yScales[key] = d3
       .scaleLinear()
       .domain([d3.min(value), d3.max(value)])
-      .range([chartHeight - padding * 2.15, padding + padding / axisGapBuffer]);
+      .range([
+        chartHeight - paddingTopBottom * 2.15,
+        paddingTopBottom + paddingTopBottom / axisGapBuffer,
+      ]);
   });
 
   Object.entries(yScales).forEach(([key, value]) => {
@@ -188,7 +190,7 @@ export const ParallelCoordinates = ({
               key={`metric-axis--${metricName}`}
               ref={getYAxis}
               transform={`translate(${xScale(metricName)}, 0)`}
-              y={padding / 2}
+              y={paddingTopBottom / 2}
             >
               <text
                 className="headers"
@@ -196,10 +198,10 @@ export const ParallelCoordinates = ({
                 onMouseOut={handleMouseOutMetric}
                 onMouseOver={(e) => handleMouseOverMetric(e, metricName)}
                 textAnchor="middle"
-                y={padding / 2}
+                y={paddingTopBottom / 2}
               >
-                {metricName.length > 10
-                  ? '...' + metricName.slice(-17)
+                {metricName.length > 20
+                  ? '...' + metricName.slice(-20)
                   : metricName}
               </text>
             </g>

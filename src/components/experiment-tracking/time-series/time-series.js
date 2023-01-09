@@ -20,6 +20,11 @@ export const getSelectedOrderedData = (runData, selectedRuns) => {
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 };
 
+const chartBuffer = 0.02;
+const height = 150;
+const margin = { top: 20, right: 10, bottom: 80, left: 35 };
+const yScales = {};
+
 export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   const previouslySelectedRuns = usePrevious(selectedRuns);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
@@ -29,10 +34,6 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
     useContext(HoverStateContext);
 
   const defaultChartWidth = isNaN(chartWidth) ? 100 : chartWidth;
-
-  const margin = { top: 20, right: 0, bottom: 80, left: 40 };
-  const height = 150;
-  const chartBuffer = 0.02;
 
   const selectedMarkerRotate = [45, 0, 0];
   const selectedMarkerShape = [
@@ -70,8 +71,6 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
     .filter(([key, _]) => selectedRuns.includes(key))
     .map(([key, value], i) => [new Date(formatTimestamp(key)), value]);
 
-  const yScales = {};
-
   metricData.map(
     ([_, value], i) =>
       (yScales[i] = d3
@@ -91,6 +90,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
   if (rangeSelection) {
     xScale.domain(rangeSelection);
   }
+
   const handleMouseOverLine = (e, key) => {
     setHoveredElementId(key);
 
@@ -253,8 +253,8 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
 
                 <text
                   className="time-series__axis-label"
-                  y={10 - margin.left}
                   x={-10 - height / 2}
+                  y={10 - margin.left}
                 >
                   value
                 </text>
