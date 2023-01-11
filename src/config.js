@@ -88,6 +88,11 @@ export const shortTypeMapping = {
     'image',
   'kedro.extras.datasets.tracking.json_dataset.JSONDataSet': 'tracking',
   'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet': 'tracking',
+  'kedro_datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
+  'kedro_datasets.plotly.json_dataset.JSONDataSet': 'plotly',
+  'kedro_datasets.matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
+  'kedro_datasets.tracking.json_dataset.JSONDataSet': 'tracking',
+  'kedro_datasets.tracking.metrics_dataset.MetricsDataSet': 'tracking',
 };
 
 // URL parameters for each element/section

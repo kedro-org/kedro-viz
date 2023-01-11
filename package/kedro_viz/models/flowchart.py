@@ -458,6 +458,12 @@ class DataNode(GraphNode):
             else None
         )
 
+        self.dataset_module, self.dataset_class = (
+            f"{self.kedro_obj.__class__.__module__}", f"{self.kedro_obj.__class__.__qualname__}"
+            if self.kedro_obj
+            else None
+        )
+
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
@@ -472,31 +478,20 @@ class DataNode(GraphNode):
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
-        return self.dataset_type in (
-            "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
-            "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
-        )
+        return "plotly" in self.dataset_module and \
+               self.dataset_class in "PlotlyDataSet, JSONDataSet"
 
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
-        )
+        return self.dataset_class == "MatplotlibWriter"
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
-        )
+        return "tracking" in self.dataset_module and self.dataset_class == "MetricsDataSet"
 
     def is_json_node(self):
         """Check if the current node is a JSONDataSet node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
-        )
+        return "tracking" in self.dataset_module and self.dataset_class == "JSONDataSet"
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""

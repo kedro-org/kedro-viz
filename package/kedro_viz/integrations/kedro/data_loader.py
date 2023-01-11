@@ -10,12 +10,21 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
-from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-    json,
-    matplotlib,
-    plotly,
-    tracking,
-)
+
+try:
+    from kedro_datasets import (
+        json,
+        matplotlib,
+        plotly,
+        tracking,
+    )
+except ImportError:
+    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+        json,
+        matplotlib,
+        plotly,
+        tracking,
+    )
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
