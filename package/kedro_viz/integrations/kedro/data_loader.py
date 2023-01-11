@@ -12,7 +12,7 @@ from typing import Any, Dict, Optional, Tuple
 from kedro import __version__
 
 try:
-    from kedro_datasets import (
+    from kedro_datasets import (  # isort:skip
         json,
         matplotlib,
         plotly,

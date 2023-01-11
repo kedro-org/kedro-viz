@@ -51,7 +51,6 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# pylint: disable=line-too-long
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
@@ -94,7 +93,10 @@ class TrackingDatasetModel:
             return
 
         try:
-            if TRACKING_DATASET_GROUPS[self.dataset_module_class] is TrackingDatasetGroup.PLOT:
+            if (
+                TRACKING_DATASET_GROUPS[self.dataset_module_class]
+                is TrackingDatasetGroup.PLOT
+            ):
                 self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()

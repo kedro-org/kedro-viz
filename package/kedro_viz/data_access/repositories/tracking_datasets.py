@@ -34,7 +34,9 @@ class TrackingDatasetsRepository:
         self, dataset_name: str, dataset: AbstractVersionedDataSet
     ) -> None:
         tracking_dataset = TrackingDatasetModel(dataset_name, dataset)
-        tracking_dataset_group = TRACKING_DATASET_GROUPS[tracking_dataset.dataset_module_class]
+        tracking_dataset_group = TRACKING_DATASET_GROUPS[
+            tracking_dataset.dataset_module_class
+        ]
         self.tracking_datasets_by_group[tracking_dataset_group].append(tracking_dataset)
 
     @staticmethod
