@@ -159,16 +159,16 @@ if hasattr(matplotlib, "MatplotlibWriter"):
             base64_bytes = base64.b64encode(img_file.read())
         return base64_bytes.decode("utf-8")
 
-    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type:ignore
+    matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
 if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+    plotly.JSONDataSet._load = json.JSONDataSet._load
 
 if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type:ignore
+    plotly.PlotlyDataSet._load = json.JSONDataSet._load
 
 if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+    tracking.JSONDataSet._load = json.JSONDataSet._load
 
 if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore
+    tracking.MetricsDataSet._load = json.JSONDataSet._load
