@@ -9,19 +9,15 @@ from kedro_viz.api import apps
 from kedro_viz.models.flowchart import TaskNode
 
 try:
-    from kedro_datasets import (  # isort:skip
-        pandas
-     
-    )
+    from kedro_datasets import pandas  # isort:skip
 except ImportError:
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas
+        pandas,
     )
-
 
 
 def get_dataset_name(dataset):
-    return f'{dataset.__module__}.{dataset.__name__}'
+    return f"{dataset.__module__}.{dataset.__name__}"
 
 
 def _is_dict_list(collection: Any) -> bool:
@@ -279,6 +275,7 @@ def assert_example_data(response_data):
         "selected_pipeline": "__default__",
     }
 
+
 def assert_example_data_from_file(response_data):
     """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
     expected_edges = [
@@ -477,7 +474,6 @@ def assert_example_data_from_file(response_data):
         ],
         "selected_pipeline": "__default__",
     }
-
 
 
 def assert_example_transcoded_data(response_data):

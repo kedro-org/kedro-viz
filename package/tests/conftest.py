@@ -5,6 +5,7 @@ from unittest import mock
 
 import pytest
 from fastapi.testclient import TestClient
+
 try:
     from kedro_datasets import (  # isort:skip
         pandas,
@@ -15,6 +16,7 @@ except ImportError:
         pandas,
         tracking,
     )
+
 from kedro.io import DataCatalog, MemoryDataSet, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -128,7 +130,9 @@ def example_transcoded_pipelines():
 def example_transcoded_catalog():
     yield DataCatalog(
         data_sets={
-            "model_inputs@pandas": pandas.ParquetDataSet(filepath="model_inputs.parquet"),
+            "model_inputs@pandas": pandas.ParquetDataSet(
+                filepath="model_inputs.parquet"
+            ),
             "model_inputs@pandas2": pandas.CSVDataSet(filepath="model_inputs.csv"),
         },
         feed_dict={

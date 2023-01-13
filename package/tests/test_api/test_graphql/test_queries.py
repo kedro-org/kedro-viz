@@ -6,23 +6,19 @@ import pytest
 from semver import VersionInfo
 
 from kedro_viz import __version__
+
 try:
-    from kedro_datasets import (  # isort:skip
-        tracking,
-        plotly,
-        matplotlib
-     
-    )
+    from kedro_datasets import tracking, plotly, matplotlib  # isort:skip
 except ImportError:
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        tracking,
+        matplotlib,
         plotly,
-        matplotlib
+        tracking,
     )
 
 
 def get_dataset_name(dataset):
-    return f'{dataset.__module__}.{dataset.__name__}'
+    return f"{dataset.__module__}.{dataset.__name__}"
 
 
 class TestQueryNoSessionStore:
@@ -196,7 +192,9 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
+                                "datasetType": get_dataset_name(
+                                    tracking.MetricsDataSet
+                                ),
                                 "data": {
                                     "col1": [
                                         {
@@ -233,7 +231,9 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
+                                "datasetType": get_dataset_name(
+                                    tracking.MetricsDataSet
+                                ),
                                 "data": {
                                     "col1": [
                                         {
@@ -285,7 +285,9 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
+                                "datasetType": get_dataset_name(
+                                    tracking.MetricsDataSet
+                                ),
                                 "data": {
                                     "col1": [
                                         {
