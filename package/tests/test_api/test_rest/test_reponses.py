@@ -8,6 +8,21 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.models.flowchart import TaskNode
 
+try:
+    from kedro_datasets import (  # isort:skip
+        pandas
+     
+    )
+except ImportError:
+    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+        pandas
+    )
+
+
+
+def get_dataset_name(dataset):
+    return f'{dataset.__module__}.{dataset.__name__}'
+
 
 def _is_dict_list(collection: Any) -> bool:
     if isinstance(collection, list):
@@ -45,7 +60,6 @@ def assert_nodes_equal(response_nodes, expected_nodes):
         response_node_pipelines = response_node.pop("pipelines")
         expected_node_pipelines = expected_node.pop("pipelines")
         assert sorted(response_node_pipelines) == sorted(expected_node_pipelines)
-
         assert response_node == expected_node
 
 
@@ -394,9 +408,9 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "original_type": get_dataset_name(pandas.CSVDataSet),
             "transcoded_types": [
-                "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+                get_dataset_name(pandas.ParquetDataSet),
             ],
             "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
         }
@@ -424,7 +438,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "type": get_dataset_name(pandas.CSVDataSet),
             "run_command": 'kedro run --to-outputs="model_inputs"',
         }
 
@@ -432,7 +446,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
-            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "type": get_dataset_name(pandas.CSVDataSet),
         }
 
     def test_parameters_node_metadata(self, client):

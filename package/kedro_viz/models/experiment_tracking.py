@@ -66,7 +66,7 @@ class TrackingDatasetModel:
 
     dataset_name: str
     # dataset is the actual dataset instance, whereas dataset_type is a string.
-    # e.g. "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+    # e.g. "kedro_datasets.tracking.metrics_dataset.MetricsDataSet"
     dataset: AbstractVersionedDataSet
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.

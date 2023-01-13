@@ -6,6 +6,23 @@ import pytest
 from semver import VersionInfo
 
 from kedro_viz import __version__
+try:
+    from kedro_datasets import (  # isort:skip
+        tracking,
+        plotly,
+        matplotlib
+     
+    )
+except ImportError:
+    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+        tracking,
+        plotly,
+        matplotlib
+    )
+
+
+def get_dataset_name(dataset):
+    return f'{dataset.__module__}.{dataset.__name__}'
 
 
 class TestQueryNoSessionStore:
@@ -93,8 +110,7 @@ class TestQueryWithRuns:
                 "metrics": [
                     {
                         "datasetName": "metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
+                        "datasetType": get_dataset_name(tracking.MetricsDataSet),
                         "data": {
                             "col1": [{"runId": example_run_id, "value": 1.0}],
                             "col2": [{"runId": example_run_id, "value": 2.0}],
@@ -103,8 +119,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "more_metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
+                        "datasetType": get_dataset_name(tracking.MetricsDataSet),
                         "data": {
                             "col4": [{"runId": example_run_id, "value": 4.0}],
                             "col5": [{"runId": example_run_id, "value": 5.0}],
@@ -115,7 +130,7 @@ class TestQueryWithRuns:
                 "json": [
                     {
                         "datasetName": "json_tracking",
-                        "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
+                        "datasetType": get_dataset_name(tracking.JSONDataSet),
                         "data": {
                             "col2": [{"runId": example_run_id, "value": True}],
                             "col3": [{"runId": example_run_id, "value": 3}],
@@ -131,7 +146,7 @@ class TestQueryWithRuns:
                 "plots": [
                     {
                         "datasetName": "plotly_dataset",
-                        "datasetType": "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
+                        "datasetType": get_dataset_name(plotly.JSONDataSet),
                         "data": {
                             "plotly.json": [
                                 {
@@ -155,7 +170,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "matplotlib_dataset",
-                        "datasetType": "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter",
+                        "datasetType": get_dataset_name(matplotlib.MatplotlibWriter),
                         "data": {
                             "matplotlib.png": [
                                 {
@@ -181,7 +196,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
                                 "data": {
                                     "col1": [
                                         {
@@ -218,7 +233,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
                                 "data": {
                                     "col1": [
                                         {
@@ -270,7 +285,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": get_dataset_name(tracking.MetricsDataSet),
                                 "data": {
                                     "col1": [
                                         {
