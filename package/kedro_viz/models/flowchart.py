@@ -458,9 +458,8 @@ class DataNode(GraphNode):
             else None
         )
 
-        self.dataset_module, self.dataset_class = (
-            f"{self.kedro_obj.__class__.__module__}",
-            f"{self.kedro_obj.__class__.__qualname__}" if self.kedro_obj else None,
+        self.dataset_module_class = (
+            self.get_dataset_module_class(self.kedro_obj) if self.kedro_obj else None
         )
 
         # the modular pipelines that a data node belongs to
@@ -471,30 +470,39 @@ class DataNode(GraphNode):
             self._get_namespace(self.full_name)
         )
 
+    @staticmethod
+    def get_dataset_module_class(kedro_object) -> str:
+        """Get dataset class and the two last parts of the module part."""
+        class_name = f"{kedro_object.__class__.__qualname__}"
+        _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
+            ".", 2
+        )
+        return f"{dataset_type}.{dataset_file}.{class_name}"
+
     # TODO: improve this scheme.
     def is_plot_node(self):
         """Check if the current node is a plot node.
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
-        return (
-            "plotly" in self.dataset_module
-            and self.dataset_class in "PlotlyDataSet, JSONDataSet"
+        return self.dataset_module_class in (
+            "plotly.plotly_dataset.PlotlyDataSet",
+            "plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
-        return self.dataset_class == "MatplotlibWriter"
+        return (
+            self.dataset_module_class == "matplotlib.matplotlib_writer.MatplotlibWriter"
+        )
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return (
-            "tracking" in self.dataset_module and self.dataset_class == "MetricsDataSet"
-        )
+        return self.dataset_module_class == "tracking.metrics_dataset.MetricsDataSet"
 
     def is_json_node(self):
         """Check if the current node is a JSONDataSet node."""
-        return "tracking" in self.dataset_module and self.dataset_class == "JSONDataSet"
+        return self.dataset_module_class == "tracking.json_dataset.JSONDataSet"
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
