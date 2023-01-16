@@ -51,6 +51,11 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
+# The keys will match a dataset type with any prefix, e.g. 
+# plotly.plotly_dataset.PlotlyDataSet would include the following:
+# kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet
+# kedro_datasets.plotly.plotly_dataset.PlotlyDataSet
+# my.custom.path.to.plotly.plotly_dataset.PlotlyDataSet
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
