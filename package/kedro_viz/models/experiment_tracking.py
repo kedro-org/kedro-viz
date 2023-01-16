@@ -79,7 +79,6 @@ class TrackingDatasetModel:
 
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.dataset)
-        self.dataset_module_class = get_dataset_module_class(self.dataset)
 
     def load_tracking_data(self, run_id: str):
         # No need to reload data that has already been loaded.
@@ -99,7 +98,7 @@ class TrackingDatasetModel:
 
         try:
             if (
-                TRACKING_DATASET_GROUPS[self.dataset_module_class]
+                TRACKING_DATASET_GROUPS[self.dataset_type]
                 is TrackingDatasetGroup.PLOT
             ):
                 self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
@@ -118,10 +117,6 @@ class TrackingDatasetModel:
 
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
-    return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
-
-
-def get_dataset_module_class(dataset: AbstractVersionedDataSet) -> str:
     class_name = f"{dataset.__class__.__qualname__}"
     _, dataset_type, dataset_file = f"{dataset.__class__.__module__}".rsplit(".", 2)
     return f"{dataset_type}.{dataset_file}.{class_name}"

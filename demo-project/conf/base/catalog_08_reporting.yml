@@ -25,7 +25,7 @@ reporting.feature_importance:
   versioned: true
 
 reporting.cancellation_policy_grid:
-  type: image_dataset.ImageDataSet
+  type: demo_project.extras.datasets.image_dataset.ImageDataSet
   filepath: ${base_location}/08_reporting/cancellation_policy_grid.png
 
 reporting.confusion_matrix:

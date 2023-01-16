@@ -1,7 +1,6 @@
 import { shortTypeMapping } from '../config';
 
-const getShortType = (name, fallback) => {
-  const longTypeName = name?.split('.').slice(-3).join('.');
+const getShortType = (longTypeName, fallback) => {
   return shortTypeMapping[longTypeName] || fallback;
 };
 
