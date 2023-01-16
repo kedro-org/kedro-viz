@@ -18,9 +18,7 @@ except ImportError:
 
 def _get_dataset_type(dataset):
     class_name = f"{dataset.__name__}"
-    _, dataset_type, dataset_file = f"{dataset.__module__}".rsplit(
-            ".", 2
-        )
+    _, dataset_type, dataset_file = f"{dataset.__module__}".rsplit(".", 2)
     return f"{dataset_type}.{dataset_file}.{class_name}"
 
 

@@ -40,13 +40,14 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
 
+
 def _get_dataset_type(kedro_object) -> str:
-        """Get dataset class and the two last parts of the module part."""
-        class_name = f"{kedro_object.__class__.__qualname__}"
-        _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
-            ".", 2
-        )
-        return f"{dataset_type}.{dataset_file}.{class_name}"
+    """Get dataset class and the two last parts of the module part."""
+    class_name = f"{kedro_object.__class__.__qualname__}"
+    _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
+        ".", 2
+    )
+    return f"{dataset_type}.{dataset_file}.{class_name}"
 
 
 @dataclass
@@ -472,7 +473,6 @@ class DataNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
-    
 
     # TODO: improve this scheme.
     def is_plot_node(self):
