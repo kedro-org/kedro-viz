@@ -51,10 +51,10 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# The keys will match a dataset type with any prefix, e.g. 
+# The keys will match a dataset type with any prefix, e.g.
 # plotly.plotly_dataset.PlotlyDataSet would include the following:
-# kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet
-# kedro_datasets.plotly.plotly_dataset.PlotlyDataSet
+# plotly.plotly_dataset.PlotlyDataSet
+# plotly.plotly_dataset.PlotlyDataSet
 # my.custom.path.to.plotly.plotly_dataset.PlotlyDataSet
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
@@ -71,7 +71,7 @@ class TrackingDatasetModel:
 
     dataset_name: str
     # dataset is the actual dataset instance, whereas dataset_type is a string.
-    # e.g. "kedro_datasets.tracking.metrics_dataset.MetricsDataSet"
+    # e.g. "tracking.metrics_dataset.MetricsDataSet"
     dataset: AbstractVersionedDataSet
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.
@@ -97,10 +97,7 @@ class TrackingDatasetModel:
             return
 
         try:
-            if (
-                TRACKING_DATASET_GROUPS[self.dataset_type]
-                is TrackingDatasetGroup.PLOT
-            ):
+            if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
                 self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
             else:
                 self.runs[run_id] = self.dataset.load()

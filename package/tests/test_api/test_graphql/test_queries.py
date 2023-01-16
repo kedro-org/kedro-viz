@@ -17,8 +17,12 @@ except ImportError:
     )
 
 
-def get_dataset_name(dataset):
-    return f"{dataset.__module__}.{dataset.__name__}"
+def _get_dataset_type(dataset):
+    class_name = f"{dataset.__name__}"
+    _, dataset_type, dataset_file = f"{dataset.__module__}".rsplit(
+            ".", 2
+        )
+    return f"{dataset_type}.{dataset_file}.{class_name}"
 
 
 class TestQueryNoSessionStore:
@@ -106,7 +110,7 @@ class TestQueryWithRuns:
                 "metrics": [
                     {
                         "datasetName": "metrics",
-                        "datasetType": get_dataset_name(tracking.MetricsDataSet),
+                        "datasetType": _get_dataset_type(tracking.MetricsDataSet),
                         "data": {
                             "col1": [{"runId": example_run_id, "value": 1.0}],
                             "col2": [{"runId": example_run_id, "value": 2.0}],
@@ -115,7 +119,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "more_metrics",
-                        "datasetType": get_dataset_name(tracking.MetricsDataSet),
+                        "datasetType": _get_dataset_type(tracking.MetricsDataSet),
                         "data": {
                             "col4": [{"runId": example_run_id, "value": 4.0}],
                             "col5": [{"runId": example_run_id, "value": 5.0}],
@@ -126,7 +130,7 @@ class TestQueryWithRuns:
                 "json": [
                     {
                         "datasetName": "json_tracking",
-                        "datasetType": get_dataset_name(tracking.JSONDataSet),
+                        "datasetType": _get_dataset_type(tracking.JSONDataSet),
                         "data": {
                             "col2": [{"runId": example_run_id, "value": True}],
                             "col3": [{"runId": example_run_id, "value": 3}],
@@ -142,7 +146,7 @@ class TestQueryWithRuns:
                 "plots": [
                     {
                         "datasetName": "plotly_dataset",
-                        "datasetType": get_dataset_name(plotly.JSONDataSet),
+                        "datasetType": _get_dataset_type(plotly.JSONDataSet),
                         "data": {
                             "plotly.json": [
                                 {
@@ -166,7 +170,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "matplotlib_dataset",
-                        "datasetType": get_dataset_name(matplotlib.MatplotlibWriter),
+                        "datasetType": _get_dataset_type(matplotlib.MatplotlibWriter),
                         "data": {
                             "matplotlib.png": [
                                 {
@@ -192,7 +196,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(
+                                "datasetType": _get_dataset_type(
                                     tracking.MetricsDataSet
                                 ),
                                 "data": {
@@ -231,7 +235,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(
+                                "datasetType": _get_dataset_type(
                                     tracking.MetricsDataSet
                                 ),
                                 "data": {
@@ -285,7 +289,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": get_dataset_name(
+                                "datasetType": _get_dataset_type(
                                     tracking.MetricsDataSet
                                 ),
                                 "data": {

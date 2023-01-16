@@ -1,6 +1,6 @@
 {
   "filepath": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
-  "type": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+  "type": "tracking.metrics_dataset.MetricsDataSet",
   "plot": {
     "data": [
       {

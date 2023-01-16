@@ -1,5 +1,5 @@
 {
-  "type": "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
+  "type": "plotly.plotly_dataset.PlotlyDataSet",
   "plot": {
     "data": [
       {

@@ -16,8 +16,12 @@ except ImportError:
     )
 
 
-def get_dataset_name(dataset):
-    return f"{dataset.__module__}.{dataset.__name__}"
+def _get_dataset_type(dataset):
+    class_name = f"{dataset.__name__}"
+    _, dataset_type, dataset_file = f"{dataset.__module__}".rsplit(
+            ".", 2
+        )
+    return f"{dataset_type}.{dataset_file}.{class_name}"
 
 
 def _is_dict_list(collection: Any) -> bool:
@@ -120,7 +124,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": get_dataset_name(pandas.CSVDataSet),
+            "dataset_type": _get_dataset_type(pandas.CSVDataSet),
         },
         {
             "id": "f0ebef01",
@@ -142,7 +146,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": get_dataset_name(pandas.CSVDataSet),
+            "dataset_type": _get_dataset_type(pandas.CSVDataSet),
         },
         {
             "id": "7b140b3f",
@@ -177,7 +181,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -320,7 +324,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "f0ebef01",
@@ -342,7 +346,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -377,7 +381,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -511,7 +515,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "f0ebef01",
@@ -565,7 +569,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
     ]
 
@@ -604,9 +608,9 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": get_dataset_name(pandas.CSVDataSet),
+            "original_type": _get_dataset_type(pandas.CSVDataSet),
             "transcoded_types": [
-                get_dataset_name(pandas.ParquetDataSet),
+                _get_dataset_type(pandas.ParquetDataSet),
             ],
             "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
         }
@@ -634,7 +638,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "type": get_dataset_name(pandas.CSVDataSet),
+            "type": _get_dataset_type(pandas.CSVDataSet),
             "run_command": 'kedro run --to-outputs="model_inputs"',
         }
 
@@ -642,7 +646,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
-            "type": get_dataset_name(pandas.CSVDataSet),
+            "type": _get_dataset_type(pandas.CSVDataSet),
         }
 
     def test_parameters_node_metadata(self, client):
@@ -692,7 +696,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
-                "dataset_type": get_dataset_name(pandas.CSVDataSet),
+                "dataset_type": _get_dataset_type(pandas.CSVDataSet),
             },
             {
                 "id": "7b140b3f",
@@ -727,7 +731,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+                "dataset_type": "io.memory_dataset.MemoryDataSet",
             },
             {
                 "id": "uk",

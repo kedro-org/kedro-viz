@@ -40,6 +40,14 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
 
+def _get_dataset_type(kedro_object) -> str:
+        """Get dataset class and the two last parts of the module part."""
+        class_name = f"{kedro_object.__class__.__qualname__}"
+        _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
+            ".", 2
+        )
+        return f"{dataset_type}.{dataset_file}.{class_name}"
+
 
 @dataclass
 class RegisteredPipeline:
@@ -452,9 +460,9 @@ class DataNode(GraphNode):
     type: str = GraphNodeType.DATA.value
 
     def __post_init__(self):
-     
+
         self.dataset_type = (
-            self.get_dataset_type(self.kedro_obj) if self.kedro_obj else None
+            _get_dataset_type(self.kedro_obj) if self.kedro_obj else None
         )
 
         # the modular pipelines that a data node belongs to
@@ -464,15 +472,7 @@ class DataNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
-
-    @staticmethod
-    def get_dataset_type(kedro_object) -> str:
-        """Get dataset class and the two last parts of the module part."""
-        class_name = f"{kedro_object.__class__.__qualname__}"
-        _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
-            ".", 2
-        )
-        return f"{dataset_type}.{dataset_file}.{class_name}"
+    
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -487,9 +487,7 @@ class DataNode(GraphNode):
 
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
-        return (
-            self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
-        )
+        return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
@@ -692,13 +690,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
-        self.original_type = (
-            f"{original_version.__class__.__module__}."
-            f"{original_version.__class__.__qualname__}"
-        )
+
+        self.original_type = _get_dataset_type(original_version)
         self.transcoded_types = [
-            f"{transcoded_version.__class__.__module__}."
-            f"{transcoded_version.__class__.__qualname__}"
+            _get_dataset_type(transcoded_version)
             for transcoded_version in transcoded_data_node.transcoded_versions
         ]
 
