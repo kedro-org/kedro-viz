@@ -13,6 +13,7 @@ Please follow the established format:
 - Allow users to hide modular pipelines on the flowchart. (#1046)
 - Create URL parameters for each element/section in the flowchart. (#1138)
 - Improve CLI loading time. (#1196)
+- Make Kedro-Viz compatible with kedro-datasets. (#1214)
 
 ## Bug fixes and other changes
 
