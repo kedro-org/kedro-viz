@@ -7,15 +7,6 @@ from semver import VersionInfo
 
 from kedro_viz import __version__
 
-try:
-    from kedro_datasets import tracking, plotly, matplotlib  # isort:skip
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        matplotlib,
-        plotly,
-        tracking,
-    )
-
 
 class TestQueryNoSessionStore:
     def test_graphql_run_list_endpoint(self, client):

@@ -8,13 +8,6 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.models.flowchart import TaskNode
 
-try:
-    from kedro_datasets import pandas  # isort:skip
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas,
-    )
-
 
 def _is_dict_list(collection: Any) -> bool:
     if isinstance(collection, list):
