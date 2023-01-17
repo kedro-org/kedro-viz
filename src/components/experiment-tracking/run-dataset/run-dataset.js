@@ -63,6 +63,8 @@ const RunDataset = ({
     return null;
   }
 
+  // console.log('trackingData: ', trackingData);
+
   return (
     <div
       className={classnames('details-dataset', {
@@ -104,6 +106,41 @@ const RunDataset = ({
               layout="left"
               size="large"
             >
+              {trackingData[group].length === 0 && (
+                <div className="details-dataset__row">
+                  <span
+                    className="details-dataset__name-header"
+                    style={{
+                      visibility: enableComparisonView ? 'hidden' : 'visible',
+                    }}
+                  >
+                    No data to display. Try selecting a different run.
+                  </span>
+                  <TransitionGroup
+                    component="div"
+                    className="details-dataset__tranistion-group-wrapper"
+                  >
+                    <CSSTransition
+                      timeout={300}
+                      classNames="details-dataset__value-animation"
+                      enter={isSingleRun ? false : true}
+                      exit={isSingleRun ? false : true}
+                    >
+                      <span
+                        className={classnames('details-dataset__value-header', {
+                          'details-dataset__value-header--comparison-view':
+                            enableComparisonView,
+                        })}
+                        style={{
+                          display: enableComparisonView ? 'block' : 'none',
+                        }}
+                      >
+                        No data to display. Try selecting a different run.
+                      </span>
+                    </CSSTransition>
+                  </TransitionGroup>
+                </div>
+              )}
               {trackingData[group].map((dataset) => {
                 const { data, datasetType, datasetName, runIds } = dataset;
 

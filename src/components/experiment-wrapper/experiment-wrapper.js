@@ -56,6 +56,8 @@ const ExperimentWrapper = ({ theme }) => {
 
   if (plots.length > 0) {
     runTrackingData['Plots'] = plots;
+  } else {
+    runTrackingData['Plots'] = [];
   }
 
   if (metrics.length > 0) {

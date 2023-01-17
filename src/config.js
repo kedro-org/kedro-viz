@@ -37,7 +37,7 @@ export const experimentTrackingLazyLoadingColours = {
   foregroundDarkTheme: slate200,
 };
 
-export const metricLimit = 25;
+export const metricLimit = 50;
 
 export const experimentTrackingLazyLoadingGap = 38;
 
