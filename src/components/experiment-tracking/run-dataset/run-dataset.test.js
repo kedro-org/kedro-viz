@@ -7,7 +7,7 @@ const booleanTrackingData = {
   JSONData: [
     {
       datasetName: 'train_evaluation.hyperparams_linear_regression',
-      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
+      datasetType: 'tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: false }],
       },
@@ -20,7 +20,7 @@ const objectTrackingData = {
   JSONData: [
     {
       datasetName: 'train_evaluation.hyperparams_linear_regression',
-      datasetType: 'kedro.extras.datasets.tracking.json_dataset.JSONDataSet',
+      datasetType: 'tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
       },
@@ -33,8 +33,7 @@ const comparisonTrackingData = {
   metrics: [
     {
       datasetName: 'train_evaluation.r2_score_linear_regression',
-      datasetType:
-        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
+      datasetType: 'tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -50,8 +49,7 @@ const showDiffTrackingData = {
   metrics: [
     {
       datasetName: 'train_evaluation.r2_score_linear_regression',
-      datasetType:
-        'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet',
+      datasetType: 'tracking.metrics_dataset.MetricsDataSet',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -68,8 +66,7 @@ const matplotlibTrackingData = {
   metrics: [
     {
       datasetName: 'matplotlib',
-      datasetType:
-        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      datasetType: 'matplotlib.matplotlib_writer.MatplotlibWriter',
       data: {
         'matplot_lib_single_plot.png': [
           {
@@ -87,8 +84,7 @@ const emptyMatplotlibTrackingData = {
   metrics: [
     {
       datasetName: 'matplotlib',
-      datasetType:
-        'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter',
+      datasetType: 'matplotlib.matplotlib_writer.MatplotlibWriter',
       data: {
         'matplot_lib_single_plot.png': [
           {
@@ -106,7 +102,7 @@ const plotlyTrackingData = {
   metrics: [
     {
       datasetName: 'plotly',
-      datasetType: 'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet',
+      datasetType: 'plotly.plotly_dataset.PlotlyDataSet',
       data: {
         plotlyVisualization: [
           {

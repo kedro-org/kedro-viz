@@ -358,7 +358,7 @@ describe('MetaData', () => {
         });
         const row = rowByLabel(wrapper, 'Original Type:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro.extras.datasets.spark.spark_dataset.SparkDataSet',
+          'spark.spark_dataset.SparkDataSet',
         ]);
       });
 
@@ -369,7 +369,7 @@ describe('MetaData', () => {
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet',
+          'pandas.parquet_dataset.ParquetDataSet',
         ]);
       });
     });

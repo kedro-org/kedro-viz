@@ -349,10 +349,7 @@ class TestGraphNodeMetadata:
             dataset=dataset,
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
-        assert (
-            data_node_metadata.type
-            == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
-        )
+        assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
 
@@ -372,11 +369,11 @@ class TestGraphNodeMetadata:
         )
         assert (
             transcoded_data_node_metadata.original_type
-            == "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+            == "pandas.parquet_dataset.ParquetDataSet"
         )
 
         assert transcoded_data_node_metadata.transcoded_types == [
-            "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+            "pandas.csv_dataset.CSVDataSet"
         ]
 
     def test_partitioned_data_node_metadata(self):
