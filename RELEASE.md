@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 5.2.0
 
 ## Major features and improvements
 
@@ -14,6 +14,7 @@ Please follow the established format:
 - Create URL parameters for each element/section in the flowchart. (#1138)
 - Improve CLI loading time. (#1196)
 - Make Kedro-Viz compatible with kedro-datasets. (#1214)
+- Add time series and parallel coordinates metrics plots to experiment tracking. (#1102)
 
 ## Bug fixes and other changes
 
