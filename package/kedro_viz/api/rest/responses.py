@@ -121,7 +121,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
         schema_extra = {
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
-                "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "type": "pandas.csv_dataset.CSVDataSet",
                 "run_command": 'kedro run --to-outputs="master_table"',
             }
         }

@@ -41,6 +41,15 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     return str(filepath) if filepath else None
 
 
+def _get_dataset_type(kedro_object) -> str:
+    """Get dataset class and the two last parts of the module part."""
+    class_name = f"{kedro_object.__class__.__qualname__}"
+    _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
+        ".", 2
+    )
+    return f"{dataset_type}.{dataset_file}.{class_name}"
+
+
 @dataclass
 class RegisteredPipeline:
     """Represent a registered pipeline in a Kedro project"""
@@ -452,10 +461,9 @@ class DataNode(GraphNode):
     type: str = GraphNodeType.DATA.value
 
     def __post_init__(self):
+
         self.dataset_type = (
-            f"{self.kedro_obj.__class__.__module__}.{self.kedro_obj.__class__.__qualname__}"
-            if self.kedro_obj
-            else None
+            _get_dataset_type(self.kedro_obj) if self.kedro_obj else None
         )
 
         # the modular pipelines that a data node belongs to
@@ -473,30 +481,21 @@ class DataNode(GraphNode):
         In the future, we might want to make this generic.
         """
         return self.dataset_type in (
-            "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet",
-            "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
+            "plotly.plotly_dataset.PlotlyDataSet",
+            "plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
-        )
+        return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
-        )
+        return self.dataset_type == "tracking.metrics_dataset.MetricsDataSet"
 
     def is_json_node(self):
         """Check if the current node is a JSONDataSet node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
-        )
+        return self.dataset_type == "tracking.json_dataset.JSONDataSet"
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
@@ -691,13 +690,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
-        self.original_type = (
-            f"{original_version.__class__.__module__}."
-            f"{original_version.__class__.__qualname__}"
-        )
+
+        self.original_type = _get_dataset_type(original_version)
         self.transcoded_types = [
-            f"{transcoded_version.__class__.__module__}."
-            f"{transcoded_version.__class__.__qualname__}"
+            _get_dataset_type(transcoded_version)
             for transcoded_version in transcoded_data_node.transcoded_versions
         ]
 

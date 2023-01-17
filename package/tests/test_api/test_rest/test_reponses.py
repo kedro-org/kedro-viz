@@ -45,7 +45,6 @@ def assert_nodes_equal(response_nodes, expected_nodes):
         response_node_pipelines = response_node.pop("pipelines")
         expected_node_pipelines = expected_node.pop("pipelines")
         assert sorted(response_node_pipelines) == sorted(expected_node_pipelines)
-
         assert response_node == expected_node
 
 
@@ -110,7 +109,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "f0ebef01",
@@ -132,7 +131,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -167,7 +166,207 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
+        },
+        {
+            "id": "uk.data_processing",
+            "name": "Data Processing",
+            "full_name": "uk.data_processing",
+            "tags": [],
+            "pipelines": ["__default__"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "uk.data_science",
+            "name": "Data Science",
+            "full_name": "uk.data_science",
+            "tags": [],
+            "pipelines": ["__default__"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "uk",
+            "name": "Uk",
+            "full_name": "uk",
+            "tags": [],
+            "pipelines": ["__default__"],
+            "type": "modularPipeline",
+            "modular_pipelines": None,
+            "layer": None,
+            "dataset_type": None,
+        },
+    ]
+    assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
+
+    # compare modular pipelines
+    expected_modular_pipelines = {
+        "__root__": {
+            "children": [
+                {"id": "0ecea0de", "type": "data"},
+                {"id": "f1f1425b", "type": "parameters"},
+                {"id": "uk", "type": "modularPipeline"},
+            ],
+            "id": "__root__",
+            "inputs": [],
+            "name": "Root",
+            "outputs": [],
+        },
+        "uk": {
+            "children": [
+                {"id": "uk.data_science", "type": "modularPipeline"},
+                {"id": "uk.data_processing", "type": "modularPipeline"},
+            ],
+            "id": "uk",
+            "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
+            "name": "Uk",
+            "outputs": ["d5a8b994"],
+        },
+        "uk.data_processing": {
+            "children": [
+                {"id": "13399a82", "type": "data"},
+                {"id": "f2e4bf0e", "type": "task"},
+            ],
+            "id": "uk.data_processing",
+            "inputs": ["f0ebef01", "13399a82"],
+            "name": "Data Processing",
+            "outputs": ["0ecea0de"],
+        },
+        "uk.data_science": {
+            "children": [
+                {"id": "7b140b3f", "type": "task"},
+                {"id": "d5a8b994", "type": "data"},
+            ],
+            "id": "uk.data_science",
+            "inputs": ["0ecea0de", "f1f1425b"],
+            "name": "Data Science",
+            "outputs": ["d5a8b994"],
+        },
+    }
+    assert_modular_pipelines_tree_equal(
+        response_data.pop("modular_pipelines"), expected_modular_pipelines
+    )
+
+    # compare the rest
+    assert response_data == {
+        "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
+        "layers": ["raw", "model_inputs"],
+        "pipelines": [
+            {"id": "__default__", "name": "Default"},
+            {"id": "data_science", "name": "Data Science"},
+            {"id": "data_processing", "name": "Data Processing"},
+        ],
+        "selected_pipeline": "__default__",
+    }
+
+
+def assert_example_data_from_file(response_data):
+    """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
+    expected_edges = [
+        {"source": "7b140b3f", "target": "d5a8b994"},
+        {"source": "f2e4bf0e", "target": "0ecea0de"},
+        {"source": "13399a82", "target": "f2e4bf0e"},
+        {"source": "f1f1425b", "target": "7b140b3f"},
+        {"source": "0ecea0de", "target": "7b140b3f"},
+        {"source": "f0ebef01", "target": "f2e4bf0e"},
+        {"source": "13399a82", "target": "uk.data_processing"},
+        {"source": "uk.data_processing", "target": "0ecea0de"},
+        {"source": "f0ebef01", "target": "uk.data_processing"},
+        {"source": "f1f1425b", "target": "uk"},
+        {"source": "13399a82", "target": "uk"},
+        {"source": "f1f1425b", "target": "uk.data_science"},
+        {"source": "f0ebef01", "target": "uk"},
+        {"source": "uk.data_science", "target": "d5a8b994"},
+        {"source": "0ecea0de", "target": "uk.data_science"},
+        {"source": "uk", "target": "d5a8b994"},
+    ]
+    assert_dict_list_equal(
+        response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
+    )
+    # compare nodes
+    expected_nodes = [
+        {
+            "id": "f2e4bf0e",
+            "name": "Process Data",
+            "full_name": "process_data",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": ["uk", "uk.data_processing"],
+            "type": "task",
+            "parameters": {"uk.data_processing.train_test_split": 0.1},
+        },
+        {
+            "id": "13399a82",
+            "name": "Raw Data",
+            "full_name": "uk.data_processing.raw_data",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": ["uk", "uk.data_processing"],
+            "type": "data",
+            "layer": "raw",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+        },
+        {
+            "id": "f0ebef01",
+            "name": "Params: Train Test Split",
+            "full_name": "params:uk.data_processing.train_test_split",
+            "tags": ["split"],
+            "pipelines": ["__default__", "data_processing"],
+            "modular_pipelines": ["uk", "uk.data_processing"],
+            "type": "parameters",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "0ecea0de",
+            "name": "Model Inputs",
+            "full_name": "model_inputs",
+            "tags": ["train", "split"],
+            "pipelines": ["__default__", "data_science", "data_processing"],
+            "modular_pipelines": [],
+            "type": "data",
+            "layer": "model_inputs",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+        },
+        {
+            "id": "7b140b3f",
+            "name": "Train Model",
+            "full_name": "train_model",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_science"],
+            "modular_pipelines": ["uk", "uk.data_science"],
+            "type": "task",
+            "parameters": {
+                "train_test_split": 0.1,
+                "num_epochs": 1000,
+            },
+        },
+        {
+            "id": "f1f1425b",
+            "name": "Parameters",
+            "full_name": "parameters",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_science"],
+            "modular_pipelines": [],
+            "type": "parameters",
+            "layer": None,
+            "dataset_type": None,
+        },
+        {
+            "id": "d5a8b994",
+            "name": "Model",
+            "full_name": "uk.data_science.model",
+            "tags": ["train"],
+            "pipelines": ["__default__", "data_science"],
+            "modular_pipelines": ["uk", "uk.data_science"],
+            "type": "data",
+            "layer": None,
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -301,7 +500,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "f0ebef01",
@@ -355,7 +554,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
     ]
 
@@ -394,9 +593,9 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "original_type": "pandas.csv_dataset.CSVDataSet",
             "transcoded_types": [
-                "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+                "pandas.parquet_dataset.ParquetDataSet",
             ],
             "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
         }
@@ -424,7 +623,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "type": "pandas.csv_dataset.CSVDataSet",
             "run_command": 'kedro run --to-outputs="model_inputs"',
         }
 
@@ -432,7 +631,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
-            "type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+            "type": "pandas.csv_dataset.CSVDataSet",
         }
 
     def test_parameters_node_metadata(self, client):
@@ -482,7 +681,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
-                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "dataset_type": "pandas.csv_dataset.CSVDataSet",
             },
             {
                 "id": "7b140b3f",
@@ -517,7 +716,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "kedro.io.memory_dataset.MemoryDataSet",
+                "dataset_type": "io.memory_dataset.MemoryDataSet",
             },
             {
                 "id": "uk",
@@ -606,7 +805,7 @@ class TestAPIAppFromFile:
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/api/main")
-        assert_example_data(response.json())
+        assert_example_data_from_file(response.json())
 
     def test_api_app_from_json_file_index(self):
         filepath = str(Path(__file__).parent.parent / "example_pipelines.json")

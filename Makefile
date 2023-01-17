@@ -6,7 +6,7 @@ package:
 	cd package && python setup.py clean --all
 	cd package && python setup.py sdist bdist_wheel
 
-build: 
+build:
 	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info
 	npm run build
 	cp -R build package/kedro_viz/html
@@ -16,10 +16,10 @@ PROJECT_PATH ?= demo-project
 run:
 	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
-pytest: 
+pytest:
 	cd package && pytest --cov-fail-under=100
 
-e2e-tests: 
+e2e-tests:
 	cd package && behave
 
 lint: format-fix lint-check
@@ -34,7 +34,7 @@ format-check:
 
 lint-check:
 	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
-	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,no-self-use,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
+	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
 	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
 	flake8 --config=package/.flake8 package
 	mypy --config-file=package/mypy.ini package

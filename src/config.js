@@ -82,12 +82,11 @@ export const sidebarElementTypes = {
 };
 
 export const shortTypeMapping = {
-  'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet': 'plotly',
-  'kedro.extras.datasets.plotly.json_dataset.JSONDataSet': 'plotly',
-  'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter':
-    'image',
-  'kedro.extras.datasets.tracking.json_dataset.JSONDataSet': 'tracking',
-  'kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet': 'tracking',
+  'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
+  'plotly.json_dataset.JSONDataSet': 'plotly',
+  'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
+  'tracking.json_dataset.JSONDataSet': 'tracking',
+  'tracking.metrics_dataset.MetricsDataSet': 'tracking',
 };
 
 // URL parameters for each element/section

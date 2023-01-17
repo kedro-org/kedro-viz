@@ -8,8 +8,8 @@ function generateTestData(numberOfRuns = 2, dataType = 'plotly') {
       dataType === 'matplotlib' ? 'matplotlib_plot.png' : 'plotly chart',
     datasetType:
       dataType === 'matplotlib'
-        ? 'kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter'
-        : 'kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet',
+        ? 'matplotlib.matplotlib_writer.MatplotlibWriter'
+        : 'plotly.plotly_dataset.PlotlyDataSet',
     datasetValues: [...Array(numberOfRuns).keys()].map((run) => {
       if (dataType === 'matplotlib') {
         return {
