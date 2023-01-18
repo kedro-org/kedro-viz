@@ -1,10 +1,20 @@
 @use '../../../styles/variables' as variables;
 
 .details-dataset {
+  background-color: var(--color-exp-tracking-datasets);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: 5em 0 0 9em;
+
+  &--not-overview {
+    background-color: var(--color-exp-tracking-bg);
+    padding: 0.5em 0 0 9em;
+  }
+}
+
+.details-metadata__title-detail--plots {
+  padding: 1px 0 1rem;
 }
 
 .details-dataset__accordion {
@@ -14,6 +24,10 @@
 
 .details-dataset__accordion-header {
   margin-bottom: 16px;
+
+  &--hidden {
+    display: none;
+  }
 }
 
 .details-dataset__row {

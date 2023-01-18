@@ -1,7 +1,7 @@
 @use '../../../styles/variables' as variables;
 
 .details-mainframe {
-  background-color: var(--color-sidebar-shadow);
+  background-color: var(--color-exp-tracking-bg);
   bottom: 0;
   display: flex;
   flex-direction: column;
@@ -28,5 +28,25 @@
       );
       transform: translateX(variables.$sidebar-width-open);
     }
+  }
+}
+
+.details__tabs {
+  background-color: var(--color-exp-tracking-bg);
+  display: flex;
+  left: 0;
+  position: sticky;
+}
+
+.tabs__item {
+  background-color: var(--color-run-list-hover);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 15px 0 13px;
+  text-align: center;
+  width: 200px;
+
+  &--active {
+    background-color: var(--color-exp-tracking-bg);
   }
 }

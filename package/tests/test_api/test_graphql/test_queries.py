@@ -169,6 +169,51 @@ class TestQueryWithRuns:
 
         assert response.json() == expected_response
 
+    def test_metrics_data(
+        self,
+        client,
+        example_tracking_catalog,
+        data_access_manager_with_runs,
+    ):
+        data_access_manager_with_runs.add_catalog(example_tracking_catalog)
+
+        response = client.post(
+            "/graphql",
+            json={
+                "query": "query MyQuery {\n  runMetricsData(limit: 3) {\n    data\n  }\n}\n"
+            },
+        )
+
+        expected = {
+            "data": {
+                "runMetricsData": {
+                    "data": {
+                        "metrics": {
+                            "metrics.col1": [1.0, None],
+                            "metrics.col2": [2.0, None],
+                            "metrics.col3": [3.0, None],
+                            "more_metrics.col4": [4.0, None],
+                            "more_metrics.col5": [5.0, None],
+                            "more_metrics.col6": [6.0, None],
+                        },
+                        "runs": {
+                            "2021-11-02T18.24.24.379Z": [
+                                None,
+                                None,
+                                None,
+                                None,
+                                None,
+                                None,
+                            ],
+                            "2021-11-03T18.24.24.379Z": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+                        },
+                    }
+                }
+            }
+        }
+
+        assert response.json() == expected
+
     @pytest.mark.parametrize(
         "show_diff,expected_response",
         [

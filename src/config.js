@@ -37,6 +37,8 @@ export const experimentTrackingLazyLoadingColours = {
   foregroundDarkTheme: slate200,
 };
 
+export const metricLimit = 50;
+
 export const experimentTrackingLazyLoadingGap = 38;
 
 export const chartMinWidthScale = 0.25;

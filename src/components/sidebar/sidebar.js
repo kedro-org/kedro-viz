@@ -21,6 +21,7 @@ export const Sidebar = ({
   displaySidebar,
   enableComparisonView,
   enableShowChanges,
+  isDisplayingMetrics = false,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
@@ -50,6 +51,7 @@ export const Sidebar = ({
             <RunsList
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
+              isDisplayingMetrics={isDisplayingMetrics}
               onRunSelection={onRunSelection}
               onToggleComparisonView={onToggleComparisonView}
               runData={runsListData}

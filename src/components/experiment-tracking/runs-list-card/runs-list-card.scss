@@ -1,3 +1,4 @@
+@use '../../../styles/extends';
 @use '../../../styles/variables' as colors;
 
 .kui-theme--light {
@@ -26,14 +27,15 @@
     opacity: 0.5;
     pointer-events: none;
   }
+}
 
-  &:hover {
-    background: var(--color-run-list-hover);
-    cursor: pointer;
+.runs-list-card--hovered {
+  background: var(--color-run-list-hover);
 
-    .runs-list-card__bookmark--stroke {
-      opacity: 1;
-    }
+  cursor: pointer;
+
+  .runs-list-card__bookmark--stroke {
+    opacity: 1;
   }
 }
 
@@ -73,9 +75,7 @@
 }
 
 .runs-list-card__checked {
-  height: 24px;
-  margin-right: 0.8em;
-  width: 24px;
+  @extend %runs-list-card--default;
 
   &--comparing {
     fill: var(--color-base-20);
@@ -83,6 +83,18 @@
 
   &--active {
     fill: colors.$blue-300;
+  }
+
+  &--selected-first {
+    @extend %runs-list-card--selected-first;
+  }
+
+  &--selected-second {
+    @extend %runs-list-card--selected-second;
+  }
+
+  &--selected-third {
+    @extend %runs-list-card--selected-third;
   }
 }
 
