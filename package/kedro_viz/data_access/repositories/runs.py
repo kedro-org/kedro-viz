@@ -43,13 +43,19 @@ class RunsRepository:
             session.add(run)
 
     @check_db_session
-    def get_all_runs(self) -> Optional[Iterable[RunModel]]:
+    def get_all_runs(
+        self, limit_amount: Optional[int] = None
+    ) -> Optional[Iterable[RunModel]]:
         all_runs = (
             self._db_session_class()  # type: ignore
             .query(RunModel)
             .order_by(RunModel.id.desc())
-            .all()
         )
+
+        if limit_amount:
+            all_runs = all_runs.limit(limit_amount)
+        all_runs = all_runs.all()
+
         if all_runs:
             self.last_run_id = all_runs[0].id
         return all_runs

@@ -10,12 +10,21 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
-from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-    json,
-    matplotlib,
-    plotly,
-    tracking,
-)
+
+try:
+    from kedro_datasets import (  # isort:skip
+        json,
+        matplotlib,
+        plotly,
+        tracking,
+    )
+except ImportError:
+    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
+        json,
+        matplotlib,
+        plotly,
+        tracking,
+    )
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
@@ -45,7 +54,9 @@ def _bootstrap(project_path: Path):
 
 
 def load_data(
-    project_path: Path, env: str = None, extra_params: Dict[str, Any] = None
+    project_path: Path,
+    env: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
     """Load data from a Kedro project.
     Args:
@@ -71,9 +82,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
@@ -97,9 +108,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
@@ -121,9 +132,9 @@ def load_data(
         with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
 
             context = session.load_context()
@@ -148,16 +159,16 @@ if hasattr(matplotlib, "MatplotlibWriter"):
             base64_bytes = base64.b64encode(img_file.read())
         return base64_bytes.decode("utf-8")
 
-    matplotlib.MatplotlibWriter._load = matplotlib_writer_load  # type:ignore
+    matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
 if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+    plotly.JSONDataSet._load = json.JSONDataSet._load
 
 if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load  # type:ignore
+    plotly.PlotlyDataSet._load = json.JSONDataSet._load
 
 if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load  # type:ignore
+    tracking.JSONDataSet._load = json.JSONDataSet._load
 
 if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load  # type:ignore
+    tracking.MetricsDataSet._load = json.JSONDataSet._load

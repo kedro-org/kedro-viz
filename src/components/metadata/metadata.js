@@ -17,6 +17,7 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/metadata.css';
 
 /**
@@ -31,6 +32,7 @@ const MetaData = ({
   onToggleNodeSelected,
   onToggleMetadataModal,
 }) => {
+  const { toFlowchartPage } = useGeneratePathname();
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
@@ -73,6 +75,8 @@ const MetaData = ({
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
+    // and reset the URL to '/'
+    toFlowchartPage();
   };
 
   const onExpandPlotClick = () => {

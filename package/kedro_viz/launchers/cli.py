@@ -11,8 +11,8 @@ from semver import VersionInfo
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
+from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, is_localhost, run_server
 
 
 @click.group(name="Kedro-Viz")
@@ -80,8 +80,11 @@ def commands():  # pylint: disable=missing-function-docstring
     help=PARAMS_ARG_HELP,
     callback=_split_params,
 )
+# pylint: disable=import-outside-toplevel, too-many-locals
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
     """Visualise a Kedro pipeline using Kedro viz."""
+    from kedro_viz.server import is_localhost, run_server
+
     installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
 

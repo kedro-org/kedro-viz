@@ -45,7 +45,7 @@ class TestAddNode:
         assert len(nodes_list) == 1
         assert isinstance(graph_node, TaskNode)
         assert graph_node.belongs_to_pipeline("my_pipeline")
-        assert graph_node.has_metadata
+        assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
         assert data_access_manager.tags.as_list() == [Tag("tag1"), Tag("tag2")]
 

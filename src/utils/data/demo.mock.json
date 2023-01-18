@@ -36,7 +36,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "7a65da0d",
@@ -81,7 +81,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "95cd6bf9",
@@ -120,7 +120,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "845526ea",
@@ -158,7 +158,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "16cae681",
@@ -200,7 +200,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "ddc6c97b",
@@ -240,7 +240,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "3464b488",
@@ -337,7 +337,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "d28f4db6",
@@ -348,7 +348,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "31fb7cc8",
@@ -387,7 +387,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "a771381b",
@@ -398,7 +398,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "dec9c820",
@@ -1199,7 +1199,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "893a3f7f",
@@ -1233,7 +1233,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "b10165f4",
@@ -1267,7 +1267,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "93d3a479",
@@ -1301,7 +1301,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "7be9f72e",
@@ -1335,7 +1335,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "11a72273",
@@ -1369,7 +1369,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "22cfe9cd",
@@ -1390,7 +1390,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "2978a7f5",
@@ -1411,7 +1411,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "72ac6e43",
@@ -1432,7 +1432,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "1d7fffba",
@@ -1453,7 +1453,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "fe81cbe2",
@@ -1493,7 +1493,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "690d415b",
@@ -1522,7 +1522,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "eb1aa767",
@@ -1543,7 +1543,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "4b7d240f",
@@ -1564,7 +1564,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "a8bef9b5",
@@ -1825,7 +1825,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_input",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "2ea5719f",
@@ -1858,7 +1858,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_input",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "602f06fc",
@@ -2183,7 +2183,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "10ce7f66",
@@ -2194,7 +2194,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pandas.json_dataset.JSONDataSet"
+      "dataset_type": "pandas.json_dataset.JSONDataSet"
     },
     {
       "id": "e6c1e1d0",
@@ -2205,7 +2205,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "models",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "68d6f757",
@@ -2400,7 +2400,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "9a97cfe0",
@@ -2411,7 +2411,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "c0020a3e",
@@ -2503,7 +2503,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "9b9921db",
@@ -2514,7 +2514,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "c329efd1",
@@ -2559,7 +2559,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "ae98f5f5",
@@ -2611,7 +2611,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+      "dataset_type": "tracking.metrics_dataset.MetricsDataSet"
     },
     {
       "id": "d1733133",
@@ -2636,7 +2636,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pandas.json_dataset.JSONDataSet"
+      "dataset_type": "pandas.json_dataset.JSONDataSet"
     },
     {
       "id": "b7c5a4e0",
@@ -2647,7 +2647,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "24c3ce33",
@@ -2658,7 +2658,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "7ba4e963",
@@ -2669,7 +2669,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "70c65095",
@@ -2680,7 +2680,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "55758695",
@@ -2701,7 +2701,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "bf435119",
@@ -2742,7 +2742,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
+      "dataset_type": "plotly.plotly_dataset.PlotlyDataSet"
     },
     {
       "id": "0298a817",
@@ -2788,7 +2788,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "f8e6b6f3",
@@ -2809,7 +2809,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "6526dd55",
@@ -2841,7 +2841,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
     },
     {
       "id": "factory.pandas_profiling",

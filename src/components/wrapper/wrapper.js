@@ -24,6 +24,20 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
     'experiment-tracking': '',
   });
 
+  // Reload state is to ensure it will call redirectLocation in FlowchartWrapper
+  // only when the page is reloaded.
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => setReload(true), []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar,
@@ -64,7 +78,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             )}
             <Switch>
               <Route exact path={sanitizedPathname}>
-                <FlowChartWrapper />
+                <FlowChartWrapper reload={reload} />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />

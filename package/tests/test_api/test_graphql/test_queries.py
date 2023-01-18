@@ -93,8 +93,7 @@ class TestQueryWithRuns:
                 "metrics": [
                     {
                         "datasetName": "metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
+                        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
                         "data": {
                             "col1": [{"runId": example_run_id, "value": 1.0}],
                             "col2": [{"runId": example_run_id, "value": 2.0}],
@@ -103,8 +102,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "more_metrics",
-                        "datasetType": "kedro.extras.datasets.tracking."
-                        "metrics_dataset.MetricsDataSet",
+                        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
                         "data": {
                             "col4": [{"runId": example_run_id, "value": 4.0}],
                             "col5": [{"runId": example_run_id, "value": 5.0}],
@@ -115,7 +113,7 @@ class TestQueryWithRuns:
                 "json": [
                     {
                         "datasetName": "json_tracking",
-                        "datasetType": "kedro.extras.datasets.tracking.json_dataset.JSONDataSet",
+                        "datasetType": "tracking.json_dataset.JSONDataSet",
                         "data": {
                             "col2": [{"runId": example_run_id, "value": True}],
                             "col3": [{"runId": example_run_id, "value": 3}],
@@ -131,7 +129,7 @@ class TestQueryWithRuns:
                 "plots": [
                     {
                         "datasetName": "plotly_dataset",
-                        "datasetType": "kedro.extras.datasets.plotly.json_dataset.JSONDataSet",
+                        "datasetType": "plotly.json_dataset.JSONDataSet",
                         "data": {
                             "plotly.json": [
                                 {
@@ -155,7 +153,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "matplotlib_dataset",
-                        "datasetType": "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter",
+                        "datasetType": "matplotlib.matplotlib_writer.MatplotlibWriter",
                         "data": {
                             "matplotlib.png": [
                                 {
@@ -171,6 +169,51 @@ class TestQueryWithRuns:
 
         assert response.json() == expected_response
 
+    def test_metrics_data(
+        self,
+        client,
+        example_tracking_catalog,
+        data_access_manager_with_runs,
+    ):
+        data_access_manager_with_runs.add_catalog(example_tracking_catalog)
+
+        response = client.post(
+            "/graphql",
+            json={
+                "query": "query MyQuery {\n  runMetricsData(limit: 3) {\n    data\n  }\n}\n"
+            },
+        )
+
+        expected = {
+            "data": {
+                "runMetricsData": {
+                    "data": {
+                        "metrics": {
+                            "metrics.col1": [1.0, None],
+                            "metrics.col2": [2.0, None],
+                            "metrics.col3": [3.0, None],
+                            "more_metrics.col4": [4.0, None],
+                            "more_metrics.col5": [5.0, None],
+                            "more_metrics.col6": [6.0, None],
+                        },
+                        "runs": {
+                            "2021-11-02T18.24.24.379Z": [
+                                None,
+                                None,
+                                None,
+                                None,
+                                None,
+                                None,
+                            ],
+                            "2021-11-03T18.24.24.379Z": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+                        },
+                    }
+                }
+            }
+        }
+
+        assert response.json() == expected
+
     @pytest.mark.parametrize(
         "show_diff,expected_response",
         [
@@ -181,7 +224,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
                                 "data": {
                                     "col1": [
                                         {
@@ -218,7 +261,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
                                 "data": {
                                     "col1": [
                                         {
@@ -270,7 +313,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
                                 "data": {
                                     "col1": [
                                         {

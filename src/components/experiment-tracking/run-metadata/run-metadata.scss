@@ -1,13 +1,19 @@
+@use '../../../styles/extends';
 @use '../../../styles/variables' as variables;
 
 .details-metadata {
-  background-color: var(--color-bg-1);
+  background-color: var(--color-exp-tracking-metadata);
   display: flex;
   flex-shrink: 0;
   min-height: 350px;
   min-width: 100%;
   padding: 5em 0 0 9em;
   width: max-content;
+
+  &--not-overview {
+    background-color: var(--color-exp-tracking-bg);
+    min-height: auto;
+  }
 }
 
 .details-metadata__buttons {
@@ -146,6 +152,27 @@
   &:hover {
     text-decoration: underline;
     text-decoration-color: var(--color-text);
+  }
+}
+
+.details-metadata__indicator {
+  margin-right: 1em;
+
+  &--selected-first {
+    @extend %runs-list-card--selected-first;
+    border-style: solid;
+    flex-shrink: 0;
+  }
+
+  &--selected-second {
+    @extend %runs-list-card--selected-second;
+    border-style: solid;
+    flex-shrink: 0;
+  }
+
+  &--selected-third {
+    @extend %runs-list-card--selected-third;
+    flex-shrink: 0;
   }
 }
 

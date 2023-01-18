@@ -448,6 +448,7 @@ export class FlowChart extends Component {
       this.props.onClickToExpandModularPipeline(node.id);
     } else {
       this.props.onLoadNodeData(node.id);
+      this.props.toSelectedNode(node);
     }
     event.stopPropagation();
   };
@@ -457,6 +458,8 @@ export class FlowChart extends Component {
    */
   handleChartClick = () => {
     this.props.onLoadNodeData(null);
+    // To reset URL to '/' when click outside of a node on flowchart
+    this.props.toFlowchartPage();
   };
 
   /**

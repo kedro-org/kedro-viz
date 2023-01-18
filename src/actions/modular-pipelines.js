@@ -2,7 +2,7 @@ export const TOGGLE_MODULAR_PIPELINE_ACTIVE = 'TOGGLE_MODULAR_PIPELINE_ACTIVE';
 
 /**
  * Toggle a modular pipeline item's highlighting on/off (or array of modular pipelines)
- * @param {string|Array} modularPipelineIDs Modular pipeline id(s)
+ * @param {String|Array} modularPipelineIDs Modular pipeline id(s)
  * @param {Boolean} active True if modular pipeline(s) active
  */
 export function toggleModularPipelineActive(modularPipelineIDs, active) {
@@ -33,7 +33,7 @@ export const TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED =
 
 /**
  * Toggle a singular modular pipeline to be expanded.
- * @param {string} modularPipelineID
+ * @param {String} modularPipelineID
  */
 export function toggleSingleModularPipelineExpanded(modularPipelineID) {
   return {

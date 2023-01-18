@@ -53,6 +53,15 @@ export const GET_RUN_DATA = gql`
   }
 `;
 
+/** query for runMetricsData  */
+export const GET_METRIC_PLOT_DATA = gql`
+  query getMetricPlotData($limit: Int) {
+    runMetricsData(limit: $limit) {
+      data
+    }
+  }
+`;
+
 /** query for obtaining installed and latest Kedro-Viz versions */
 export const GET_VERSIONS = gql`
   query getVersion {

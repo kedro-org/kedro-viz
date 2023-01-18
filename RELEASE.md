@@ -6,11 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 5.2.0
 
 ## Major features and improvements
 
 - Allow users to hide modular pipelines on the flowchart. (#1046)
+- Create URL parameters for each element/section in the flowchart. (#1138)
+- Improve CLI loading time. (#1196)
+- Make Kedro-Viz compatible with kedro-datasets. (#1214)
+- Add time series and parallel coordinates metrics plots to experiment tracking. (#1102)
 
 ## Bug fixes and other changes
 
@@ -22,6 +26,7 @@ Please follow the established format:
 - Fix `MemoryDataSet` not displaying on metadata panel. (#1113)
 - Enhance display of the flowchart when hovering over the FocusMode icon. (#1107)
 - Make dotted datasets clickable and hoverable when in focus mode. (#1114)
+- Fix a bug where tall Matplotlib images weren't displaying correctly. (#1145)
 
 # Release 5.1.1
 

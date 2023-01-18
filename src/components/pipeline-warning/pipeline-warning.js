@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 import { changeFlag, toggleIgnoreLargeWarning } from '../../actions';
 import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import Button from '../ui/button';
 import './pipeline-warning.css';
 
 export const PipelineWarning = ({
+  errorMessage,
+  invalidUrl,
   nodes,
   onDisable,
   onHide,
@@ -16,6 +19,8 @@ export const PipelineWarning = ({
 }) => {
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
+
+  const { toFlowchartPage } = useGeneratePathname();
 
   // Only run this once, when the component mounts.
   useEffect(() => {
@@ -61,6 +66,24 @@ export const PipelineWarning = ({
             This selection has nothing. Please unselect your filters or modular
             pipeline selection to see pipeline elements.
           </p>
+        </div>
+      )}
+      {invalidUrl && componentLoaded && (
+        <div
+          className={classnames(
+            'kedro',
+            'pipeline-warning',
+            'pipeline-warning--invalid-url',
+            {
+              'pipeline-warning--sidebar-visible': sidebarVisible,
+            }
+          )}
+        >
+          <h2 className="pipeline-warning__title">
+            Oops, this URL isn't valid
+          </h2>
+          <p className="pipeline-warning__subtitle">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
+          <Button onClick={() => toFlowchartPage()}>Reset view</Button>
         </div>
       )}
     </>

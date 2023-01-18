@@ -158,7 +158,7 @@ const Dropdown = (props) => {
 
   /**
    * Handler for closing a dropdown if a click occurred outside the dropdown.
-   * @param {object} e - event object
+   * @param {Object} e - event object
    */
   const _handleBodyClicked = (e) => {
     if (!dropdownRef.current.contains(e.target) && open) {
@@ -229,7 +229,7 @@ const Dropdown = (props) => {
   /**
    * When the focused option changes (e.g. via up/down keyboard controls),
    * update the focusedOption index state and select the new one
-   * @param {number} direction - The direction that focus is travelling through the list:
+   * @param {Number} direction - The direction that focus is travelling through the list:
    * negative is up and positive is down.
    */
   const _handleFocusChange = (direction) => {
@@ -272,7 +272,7 @@ const Dropdown = (props) => {
   /**
    * Retrieve a reference to the dropdown DOM node (from the renderer component),
    * and assign it to a class-wide variable property.
-   * @param {object} el - The ref for the Dropdown container node
+   * @param {Object} el - The ref for the Dropdown container node
    */
   const _handleRef = (el) => {
     dropdownRef.current = el;

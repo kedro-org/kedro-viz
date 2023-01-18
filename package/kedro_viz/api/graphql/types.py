@@ -34,6 +34,11 @@ class TrackingDataset:
     run_ids: List[ID]
 
 
+@strawberry.type(description="Metric data")
+class MetricPlotDataset:
+    data: JSON
+
+
 TrackingDatasetGroup = strawberry.enum(
     TrackingDatasetGroupModel, description="Group to show kind of tracking data"
 )

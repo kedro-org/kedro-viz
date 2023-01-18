@@ -51,13 +51,17 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# pylint: disable=line-too-long
+# The keys will match a dataset type with any prefix, e.g.
+# plotly.plotly_dataset.PlotlyDataSet would include the following:
+# plotly.plotly_dataset.PlotlyDataSet
+# plotly.plotly_dataset.PlotlyDataSet
+# my.custom.path.to.plotly.plotly_dataset.PlotlyDataSet
 TRACKING_DATASET_GROUPS = {
-    "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
-    "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
-    "kedro.extras.datasets.tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+    "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
 
 
@@ -67,7 +71,7 @@ class TrackingDatasetModel:
 
     dataset_name: str
     # dataset is the actual dataset instance, whereas dataset_type is a string.
-    # e.g. "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+    # e.g. "tracking.metrics_dataset.MetricsDataSet"
     dataset: AbstractVersionedDataSet
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.
@@ -110,4 +114,6 @@ class TrackingDatasetModel:
 
 
 def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
-    return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
+    class_name = f"{dataset.__class__.__qualname__}"
+    _, dataset_type, dataset_file = f"{dataset.__class__.__module__}".rsplit(".", 2)
+    return f"{dataset_type}.{dataset_file}.{class_name}"

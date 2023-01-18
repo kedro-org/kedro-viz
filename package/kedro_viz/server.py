@@ -11,13 +11,12 @@ from watchgod import run_process
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
+from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
 
-DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 4141
 DEV_PORT = 4142
 
 
@@ -47,14 +46,14 @@ def populate_data(
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
-    browser: bool = None,
-    load_file: str = None,
-    save_file: str = None,
-    pipeline_name: str = None,
-    env: str = None,
-    project_path: str = None,
+    browser: Optional[bool] = None,
+    load_file: Optional[str] = None,
+    save_file: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    env: Optional[str] = None,
+    project_path: Optional[str] = None,
     autoreload: bool = False,
-    extra_params: Dict[str, Any] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name, too-many-locals
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.

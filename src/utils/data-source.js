@@ -11,7 +11,7 @@ import selectors from './data/selectors.mock.json';
    - 'spaceflights': Use data from the 'spaceflights' test dataset ( this is the same dataset as used by the Core team for their tests )
    - 'demo': Use data from the 'demo' test dataset
    - 'json': Load data from a local json file (in /public/api/main)
- * @return {string} Data source identifier
+ * @return {String} Data source identifier
  */
 export const getSourceID = () => {
   const urlParams = new URL(document.location.href).searchParams;
@@ -34,8 +34,8 @@ export const getSourceID = () => {
 /**
  * Either load synchronous pipeline data, or else indicate with a string
  * that json data should be loaded asynchronously later on.
- * @param {string} source Data source identifier
- * @return {object|string} Either raw data itself, or 'json'
+ * @param {String} source Data source identifier
+ * @return {Object|String} Either raw data itself, or 'json'
  */
 export const getDataValue = (source) => {
   // Add data source string to data object
@@ -66,7 +66,7 @@ export const getDataValue = (source) => {
 
 /**
  * Determine which data source to use, and return it
- * @return {object|string} Pipeline data, or 'json'
+ * @return {Object|String} Pipeline data, or 'json'
  */
 const getPipelineData = () => getDataValue(getSourceID());
 

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import RunMetadata from '../run-metadata';
-import { SingleRunMetadataLoader } from '../run-metadata/run-metadata-loader';
-import RunDataset from '../run-dataset';
-import { SingleRunDatasetLoader } from '../run-dataset/run-dataset-loader';
-import RunDetailsModal from '../run-details-modal';
-import RunPlotsModal from '../run-plots-modal';
-import RunExportModal from '../run-export-modal';
 import { ButtonTimeoutContextProvider } from '../../../utils/button-timeout-context';
+import { SingleRunDatasetLoader } from '../run-dataset/run-dataset-loader';
+import { SingleRunMetadataLoader } from '../run-metadata/run-metadata-loader';
+import MetricsPlots from '../metrics-plots';
+import RunDataset from '../run-dataset';
+import RunDetailsModal from '../run-details-modal';
+import RunExportModal from '../run-export-modal';
+import RunMetadata from '../run-metadata';
+import RunPlotsModal from '../run-plots-modal';
 
 import './details.css';
+
+const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 const Details = ({
   enableComparisonView,
@@ -22,6 +25,7 @@ const Details = ({
   runMetadata,
   runTrackingData,
   selectedRunIds,
+  setIsDisplayingMetrics,
   setPinnedRun,
   setShowRunDetailsModal,
   setShowRunExportModal,
@@ -36,6 +40,7 @@ const Details = ({
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   // Delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {
@@ -69,6 +74,14 @@ const Details = ({
       setRunMetadataToEdit(metadata);
     }
   }, [enableComparisonView, runMetadata, selectedRunIds]);
+
+  useEffect(() => {
+    if (activeTab === 'Metrics') {
+      setIsDisplayingMetrics(true);
+    } else {
+      setIsDisplayingMetrics(false);
+    }
+  }, [activeTab, setIsDisplayingMetrics]);
 
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
@@ -118,30 +131,54 @@ const Details = ({
           'details-mainframe--sidebar-visible': sidebarVisible,
         })}
       >
-        <RunMetadata
-          enableComparisonView={enableComparisonView}
-          enableShowChanges={enableShowChanges}
-          isSingleRun={isSingleRun}
-          onRunSelection={onRunSelection}
-          pinnedRun={pinnedRun}
-          runs={runMetadata}
-          setPinnedRun={setPinnedRun}
-          setRunMetadataToEdit={setRunMetadataToEdit}
-          setShowRunDetailsModal={setShowRunDetailsModal}
-          showLoader={showRunLoader}
-          theme={theme}
-        />
-        <RunDataset
-          enableComparisonView={enableComparisonView}
-          enableShowChanges={enableShowChanges}
-          isSingleRun={isSingleRun}
-          pinnedRun={pinnedRun}
-          setRunDatasetToShow={setRunDatasetToShow}
-          setShowRunPlotsModal={setShowRunPlotsModal}
-          showLoader={showRunLoader}
-          trackingData={runTrackingData}
-          theme={theme}
-        />
+        <div className="details__tabs">
+          {tabLabels.map((tab) => {
+            return (
+              <div
+                className={classnames('tabs__item', {
+                  'tabs__item--active': activeTab === tab,
+                })}
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </div>
+            );
+          })}
+        </div>
+        {activeTab === 'Metrics' ? (
+          <MetricsPlots selectedRunIds={selectedRunIds} />
+        ) : (
+          <>
+            <RunMetadata
+              activeTab={activeTab}
+              enableComparisonView={enableComparisonView}
+              enableShowChanges={enableShowChanges}
+              isSingleRun={isSingleRun}
+              onRunSelection={onRunSelection}
+              pinnedRun={pinnedRun}
+              runs={runMetadata}
+              setPinnedRun={setPinnedRun}
+              setRunMetadataToEdit={setRunMetadataToEdit}
+              setShowRunDetailsModal={setShowRunDetailsModal}
+              showLoader={showRunLoader}
+              theme={theme}
+            />
+            <RunDataset
+              activeTab={activeTab}
+              enableComparisonView={enableComparisonView}
+              enableShowChanges={enableShowChanges}
+              isSingleRun={isSingleRun}
+              pinnedRun={pinnedRun}
+              runMetadata={runMetadata}
+              setRunDatasetToShow={setRunDatasetToShow}
+              setShowRunPlotsModal={setShowRunPlotsModal}
+              showLoader={showRunLoader}
+              trackingData={runTrackingData}
+              theme={theme}
+            />
+          </>
+        )}
       </div>
     </>
   );
