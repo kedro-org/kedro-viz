@@ -17,6 +17,7 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/metadata.css';
 
 /**
@@ -31,6 +32,7 @@ const MetaData = ({
   onToggleNodeSelected,
   onToggleMetadataModal,
 }) => {
+  const { toFlowchartPage } = useGeneratePathname();
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
@@ -60,19 +62,21 @@ const MetaData = ({
   }
 
   // translates the naming for the different types of nodes
-  const translateMetadataType = (metaDataType) => {
-    if (metaDataType === 'task') {
+  const translateMetadataType = (metadataType) => {
+    if (metadataType === 'task') {
       return 'node';
-    } else if (metaDataType === 'data') {
+    } else if (metadataType === 'data') {
       return 'dataset';
     }
 
-    return metaDataType;
+    return metadataType;
   };
 
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
+    // and reset the URL to '/'
+    toFlowchartPage();
   };
 
   const onExpandPlotClick = () => {
@@ -190,12 +194,14 @@ const MetaData = ({
                   visible={isTaskNode}
                   value={metadata.outputs}
                 />
-                <MetaDataRow
-                  label="Tags:"
-                  kind="token"
-                  commas={false}
-                  value={metadata.tags}
-                />
+                {metadata.type === 'task' && (
+                  <MetaDataRow
+                    label="Tags:"
+                    kind="token"
+                    commas={false}
+                    value={metadata.tags}
+                  />
+                )}
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier command={runCommand} />
                 </MetaDataRow>

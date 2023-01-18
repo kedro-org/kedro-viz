@@ -399,12 +399,26 @@ describe('NodeList', () => {
     const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
 
     it('handles toggle off event', () => {
-      checkbox().simulate('change', { target: { checked: false } });
+      checkbox().simulate('change', {
+        target: {
+          checked: false,
+          dataset: {
+            iconType: 'focus',
+          },
+        },
+      });
       expect(checkbox().props().checked).toBe(false);
     });
 
     it('handles toggle on event', () => {
-      checkbox().simulate('change', { target: { checked: true } });
+      checkbox().simulate('change', {
+        target: {
+          checked: true,
+          dataset: {
+            iconType: 'focus',
+          },
+        },
+      });
       expect(checkbox().props().checked).toBe(true);
     });
   });

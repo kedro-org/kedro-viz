@@ -41,6 +41,15 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     return str(filepath) if filepath else None
 
 
+def _get_dataset_type(kedro_object) -> str:
+    """Get dataset class and the two last parts of the module part."""
+    class_name = f"{kedro_object.__class__.__qualname__}"
+    _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
+        ".", 2
+    )
+    return f"{dataset_type}.{dataset_file}.{class_name}"
+
+
 @dataclass
 class RegisteredPipeline:
     """Represent a registered pipeline in a Kedro project"""
@@ -206,7 +215,7 @@ class GraphNode(abc.ABC):
             dataset_name = _strip_transcoding(full_name)
             return TranscodedDataNode(
                 id=cls._hash(dataset_name),
-                name=_pretty_name(dataset_name),
+                name=_pretty_name(_strip_namespace(dataset_name)),
                 full_name=dataset_name,
                 tags=tags,
                 layer=layer,
@@ -380,16 +389,20 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: str = field(init=False)
+    code: Optional[str] = field(init=False)
 
     # path to the file where the node is defined
-    filepath: str = field(init=False)
+    filepath: Optional[str] = field(init=False)
 
     # parameters of the node, if available
-    parameters: Dict = field(init=False)
+    parameters: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
+
+    inputs: List[str] = field(init=False)
+
+    outputs: List[str] = field(init=False)
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
@@ -448,10 +461,9 @@ class DataNode(GraphNode):
     type: str = GraphNodeType.DATA.value
 
     def __post_init__(self):
+
         self.dataset_type = (
-            f"{self.kedro_obj.__class__.__module__}.{self.kedro_obj.__class__.__qualname__}"
-            if self.kedro_obj
-            else None
+            _get_dataset_type(self.kedro_obj) if self.kedro_obj else None
         )
 
         # the modular pipelines that a data node belongs to
@@ -468,33 +480,22 @@ class DataNode(GraphNode):
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet"
-            or self.dataset_type
-            == "kedro.extras.datasets.plotly.json_dataset.JSONDataSet"
+        return self.dataset_type in (
+            "plotly.plotly_dataset.PlotlyDataSet",
+            "plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.matplotlib.matplotlib_writer.MatplotlibWriter"
-        )
+        return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
-        )
+        return self.dataset_type == "tracking.metrics_dataset.MetricsDataSet"
 
     def is_json_node(self):
         """Check if the current node is a JSONDataSet node."""
-        return (
-            self.dataset_type
-            == "kedro.extras.datasets.tracking.json_dataset.JSONDataSet"
-        )
+        return self.dataset_type == "tracking.json_dataset.JSONDataSet"
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
@@ -558,13 +559,13 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
-    plot: Optional[Dict] = field(init=False)
+    plot: Optional[Dict] = field(init=False, default=None)
 
     # the optional image data if the underlying dataset has a image.
     # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = field(init=False)
+    image: Optional[str] = field(init=False, default=None)
 
-    tracking_data: Optional[Dict] = field(init=False)
+    tracking_data: Optional[Dict] = field(init=False, default=None)
 
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
@@ -612,7 +613,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     @staticmethod
     def load_versioned_tracking_data(
-        filepath: str = None, num_versions: int = 10
+        filepath: Optional[str] = None, num_versions: int = 10
     ) -> Optional[Dict[datetime, Any]]:
         """Load data for multiple versions of the metrics dataset
         Args:
@@ -641,7 +642,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 continue
             else:
                 path = version / Path(filepath).name
-                with open(path) as fs_file:
+                with open(path, encoding="utf8") as fs_file:
                     versions[run_id] = json_stdlib.load(fs_file)
         return versions
 
@@ -689,13 +690,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
-        self.original_type = (
-            f"{original_version.__class__.__module__}."
-            f"{original_version.__class__.__qualname__}"
-        )
+
+        self.original_type = _get_dataset_type(original_version)
         self.transcoded_types = [
-            f"{transcoded_version.__class__.__module__}."
-            f"{transcoded_version.__class__.__qualname__}"
+            _get_dataset_type(transcoded_version)
             for transcoded_version in transcoded_data_node.transcoded_versions
         ]
 

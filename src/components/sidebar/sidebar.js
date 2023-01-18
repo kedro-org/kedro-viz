@@ -13,7 +13,7 @@ import './sidebar.css';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
- * @param {boolean} props.visible Whether the sidebar is open/closed
+ * @param {Boolean} props.visible Whether the sidebar is open/closed
  */
 export const Sidebar = ({
   disableRunSelection,
@@ -21,6 +21,7 @@ export const Sidebar = ({
   displaySidebar,
   enableComparisonView,
   enableShowChanges,
+  isDisplayingMetrics = false,
   isExperimentView = false,
   onRunSelection,
   onToggleComparisonView,
@@ -50,6 +51,7 @@ export const Sidebar = ({
             <RunsList
               disableRunSelection={disableRunSelection}
               enableComparisonView={enableComparisonView}
+              isDisplayingMetrics={isDisplayingMetrics}
               onRunSelection={onRunSelection}
               onToggleComparisonView={onToggleComparisonView}
               runData={runsListData}

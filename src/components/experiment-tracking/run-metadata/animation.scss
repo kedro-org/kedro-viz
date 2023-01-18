@@ -1,6 +1,6 @@
 $animation-timing: 0.3s;
 
-// animation for the first run when switching the comparison view
+// Animation for the first run when switching the comparison view.
 .details-dataset__value,
 .details-dataset__value-header,
 .details-metadata__run {
@@ -14,8 +14,9 @@ $animation-timing: 0.3s;
   transform: translateX(-25%);
   transition: transform $animation-timing ease-out;
 }
-// to transition the metadata and dataset panel to the left
-// when switch to comparison view
+
+// To transition the metadata and dataset panel to the left
+// when switch to comparison view.
 .details-dataset__accordion-wrapper-comparison-view,
 .details-metadata__table-comparison-view {
   transform: translateX(-4em);
@@ -30,6 +31,7 @@ $animation-timing: 0.3s;
 
 .details-metadata__labels-comparison-view .details-metadata__title {
   opacity: 0;
+  pointer-events: none;
   transform: translateX(-25%);
   transition: opacity 0.1s ease-in-out, transform 1s ease-in-out;
 }
@@ -43,10 +45,8 @@ $animation-timing: 0.3s;
   transition: opacity $animation-timing linear;
 }
 
-// animation for other run when select or deselect
-// needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
-// animation for other run when select or deselect
-// needed to use react-cssTransition to animate when the run is not existed in the DOM anymore
+// Animation for other run when selected or deselected.
+// Needed to use react-cssTransition to animate when the run isn't in the DOM anymore.
 .details-metadata__run-animation-enter,
 .details-dataset__value-animation-enter {
   opacity: 0;

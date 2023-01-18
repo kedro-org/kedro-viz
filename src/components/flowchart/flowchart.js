@@ -144,7 +144,8 @@ export class FlowChart extends Component {
         'hoveredParameters',
         'nodesWithInputParams',
         'focusMode',
-        'inputOutputDataNodes'
+        'inputOutputDataNodes',
+        'hoveredFocusMode'
       )
     ) {
       drawNodes.call(this, changed);
@@ -447,6 +448,7 @@ export class FlowChart extends Component {
       this.props.onClickToExpandModularPipeline(node.id);
     } else {
       this.props.onLoadNodeData(node.id);
+      this.props.toSelectedNode(node);
     }
     event.stopPropagation();
   };
@@ -456,6 +458,8 @@ export class FlowChart extends Component {
    */
   handleChartClick = () => {
     this.props.onLoadNodeData(null);
+    // To reset URL to '/' when click outside of a node on flowchart
+    this.props.toFlowchartPage();
   };
 
   /**
@@ -682,6 +686,7 @@ export const mapStateToProps = (state, ownProps) => ({
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
   hoveredParameters: state.hoveredParameters,
+  hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
   nodes: state.graph.nodes || emptyNodes,

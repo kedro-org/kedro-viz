@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
 from kedro_viz import __version__
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router
@@ -27,7 +28,10 @@ def _create_etag() -> str:
 
 def _create_base_api_app() -> FastAPI:
     return FastAPI(
-        title="Kedro-Viz API", description="REST API for Kedro-Viz", version=__version__
+        title="Kedro-Viz API",
+        description="REST API for Kedro-Viz",
+        version=__version__,
+        default_response_class=EnhancedORJSONResponse,
     )
 
 
@@ -106,6 +110,6 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads(Path(filepath).read_text())
+        return json.loads(Path(filepath).read_text(encoding="utf8"))
 
     return app

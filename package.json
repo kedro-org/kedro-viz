@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
@@ -50,6 +50,7 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
+    "d3": "^7.6.1",
     "d3-fetch": "^2.0.0",
     "d3-interpolate": "^2.0.1",
     "d3-interpolate-path": "^2.2.3",
@@ -111,6 +112,7 @@
     "prettier": "^2.3.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
+    "react-error-overlay": "^6.0.9",
     "react-scripts": "^4.0.3",
     "sass": "^1.54.4",
     "snyk": "^1.639.0",
@@ -136,6 +138,11 @@
     ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint src/ --fix"
+    ]
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
     ]
   },
   "browserslist": [

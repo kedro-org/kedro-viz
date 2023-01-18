@@ -30,7 +30,7 @@
       "type": "data",
       "modular_pipelines": ["uk", "uk.data_processing"],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "0ecea0de",
@@ -41,7 +41,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_inputs",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "7b140b3f",
@@ -73,7 +73,7 @@
       "type": "data",
       "modular_pipelines": ["uk", "uk.data_science"],
       "layer": null,
-      "dataset_type": "kedro.io.memory_dataset.MemoryDataSet"
+      "dataset_type": "io.memory_dataset.MemoryDataSet"
     },
     {
       "id": "uk.data_processing",

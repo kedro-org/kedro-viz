@@ -1,11 +1,9 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
-@import './variables';
+@use './variables';
 
 .pipeline-nodelist-section__title {
   display: block;
-  margin: 6px $section-title-padding-x 12px ($section-title-padding-x + 0.085);
+  margin: 6px variables.$section-title-padding-x 12px
+    (variables.$section-title-padding-x + 0.085);
   font-weight: normal;
   font-size: 1.6em;
   opacity: 0.55;

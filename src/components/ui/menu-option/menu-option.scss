@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as variables;
 
 /** Variables */
 
@@ -6,15 +6,15 @@
 $menu-item-height: 40px;
 
 .kui-theme--light {
-  --menu-option-bg-hover: #{$white-600};
-  --menu-option-divider: #{$white-800};
-  --menu-option-text-color: #{$black-800};
+  --menu-option-bg-hover: #{variables.$white-600};
+  --menu-option-divider: #{variables.$white-800};
+  --menu-option-text-color: #{variables.$black-800};
 }
 
 .kui-theme--dark {
-  --menu-option-bg-hover: #{$slate-500};
-  --menu-option-divider: #{$slate-200};
-  --menu-option-text-color: #{$white-600};
+  --menu-option-bg-hover: #{variables.$slate-500};
+  --menu-option-divider: #{variables.$slate-200};
+  --menu-option-text-color: #{variables.$white-600};
 }
 
 .menu-option {
@@ -26,7 +26,8 @@ $menu-item-height: 40px;
   height: $menu-item-height;
   outline: none;
   overflow: hidden;
-  padding: 0 $sidebar-padding 0 calc(#{$sidebar-padding} - 2px);
+  padding: 0 variables.$sidebar-padding 0
+    calc(#{variables.$sidebar-padding} - 2px);
   user-select: none;
   white-space: nowrap;
 

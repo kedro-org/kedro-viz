@@ -1,6 +1,6 @@
 """`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries, mutations
  and subscriptions.."""
-# pylint: disable=no-self-use,missing-function-docstring,missing-class-docstring
+# pylint: disable=missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations
 
@@ -18,8 +18,14 @@ from kedro_viz import __version__
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 
-from .serializers import format_run, format_run_tracking_data, format_runs
+from .serializers import (
+    format_run,
+    format_run_metric_data,
+    format_run_tracking_data,
+    format_runs,
+)
 from .types import (
+    MetricPlotDataset,
     Run,
     RunInput,
     TrackingDataset,
@@ -95,6 +101,27 @@ class RunsQuery:
 
         return all_tracking_datasets
 
+    @strawberry.field(
+        description="Get metrics data for a limited number of recent runs"
+    )
+    def run_metrics_data(self, limit: Optional[int] = 25) -> MetricPlotDataset:
+        run_ids = [
+            run.id for run in data_access_manager.runs.get_all_runs(limit_amount=limit)
+        ]
+        group = TrackingDatasetGroup.METRIC
+
+        # pylint: disable=line-too-long
+        metric_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
+            run_ids, group
+        )
+
+        metric_data = {}
+        for dataset in metric_dataset_models:
+            metric_data[dataset.dataset_name] = dataset.runs
+
+        formatted_metric_data = format_run_metric_data(metric_data, run_ids)
+        return MetricPlotDataset(data=formatted_metric_data)
+
 
 @strawberry.type
 class Mutation:
@@ -129,7 +156,7 @@ class Mutation:
             updated_run.bookmark,
             updated_run.notes,
         )
-        return UpdateRunDetailsSuccess(updated_run)
+        return UpdateRunDetailsSuccess(run=updated_run)
 
 
 @strawberry.type

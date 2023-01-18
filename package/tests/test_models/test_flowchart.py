@@ -143,10 +143,24 @@ class TestGraphNodeCreation:
         assert not data_node.is_json_node()
         assert not data_node.is_tracking_node()
 
-    def test_create_transcoded_data_node(self):
-        dataset_name = "dataset@pandas2"
-        original_name = "dataset"
-        pretty_name = "Dataset"
+    @pytest.mark.parametrize(
+        "dataset_name, original_name, pretty_name",
+        [
+            (
+                "dataset@pandas2",
+                "dataset",
+                "Dataset",
+            ),
+            (
+                "uk.data_science.model_training.dataset@pandas2",
+                "uk.data_science.model_training.dataset",
+                "Dataset",
+            ),
+        ],
+    )
+    def test_create_transcoded_data_node(
+        self, dataset_name, original_name, pretty_name
+    ):
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             full_name=dataset_name,
@@ -335,10 +349,7 @@ class TestGraphNodeMetadata:
             dataset=dataset,
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
-        assert (
-            data_node_metadata.type
-            == "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
-        )
+        assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
 
@@ -358,11 +369,11 @@ class TestGraphNodeMetadata:
         )
         assert (
             transcoded_data_node_metadata.original_type
-            == "kedro.extras.datasets.pandas.parquet_dataset.ParquetDataSet"
+            == "pandas.parquet_dataset.ParquetDataSet"
         )
 
         assert transcoded_data_node_metadata.transcoded_types == [
-            "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+            "pandas.csv_dataset.CSVDataSet"
         ]
 
     def test_partitioned_data_node_metadata(self):
@@ -404,7 +415,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
-        assert not hasattr(plotly_node_metadata, "plot")
+        assert plotly_node_metadata.plot is None
 
     def test_plotly_json_dataset_node_metadata(self):
         mock_plot_data = {
@@ -444,7 +455,7 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.kedro_obj.exists.return_value = False
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
-        assert not hasattr(image_node_metadata, "image")
+        assert image_node_metadata.image is None
 
     def test_json_data_node_metadata(self):
         mock_json_data = {
@@ -461,7 +472,7 @@ class TestGraphNodeMetadata:
         json_data_node.kedro_obj.load.return_value = mock_json_data
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
         assert json_node_metadata.tracking_data == mock_json_data
-        assert not hasattr(json_node_metadata, "plot")
+        assert json_node_metadata.plot is None
 
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
@@ -470,8 +481,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_metric_node.return_value = True
         metrics_data_node.kedro_obj.exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
-        assert not hasattr(metrics_node_metadata, "metrics")
-        assert not hasattr(metrics_node_metadata, "plot")
+        assert metrics_node_metadata.plot is None
 
     def test_data_node_metadata_latest_tracking_data_not_exist(self):
         plotly_data_node = MagicMock()
@@ -480,7 +490,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
-        assert not hasattr(plotly_node_metadata, "plot")
+        assert plotly_node_metadata.plot is None
 
     @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
     def test_tracking_data_node_metadata_versioned_dataset(self, patched_data_loader):
@@ -496,7 +506,7 @@ class TestGraphNodeMetadata:
         tracking_data_node.kedro_obj.load.return_value = mock_metrics_data
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
         assert tracking_data_node_metadata.tracking_data == mock_metrics_data
-        assert hasattr(tracking_data_node_metadata, "plot")
+        assert tracking_data_node_metadata.plot is not None
 
     @patch("kedro_viz.models.flowchart.DataNodeMetadata.load_versioned_tracking_data")
     def test_tracking_data_node_metadata_versioned_dataset_not_exist(
@@ -515,7 +525,7 @@ class TestGraphNodeMetadata:
         tracking_data_node.kedro_obj.load.return_value = mock_metrics_data
         tracking_data_node_metadata = DataNodeMetadata(data_node=tracking_data_node)
         assert tracking_data_node_metadata.tracking_data == mock_metrics_data
-        assert not hasattr(tracking_data_node_metadata, "plot")
+        assert tracking_data_node_metadata.plot is None
 
     def test_data_node_metadata_create_metrics_plot(self):
         test_versioned_data = {
@@ -552,7 +562,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     @pytest.fixture
@@ -575,7 +585,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     @pytest.fixture
@@ -598,7 +608,7 @@ class TestGraphNodeMetadata:
         for index, directory in enumerate(dir_name):
             filepath = Path(source_dir / directory / filename)
             filepath.parent.mkdir(parents=True, exist_ok=True)
-            filepath.write_text(json.dumps(json_content[index]))
+            filepath.write_text(json.dumps(json_content[index]), encoding="utf8")
         return source_dir
 
     def test_load_metrics_versioned_data(self, tracking_data_filepath):

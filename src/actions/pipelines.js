@@ -1,7 +1,7 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
 import { preparePipelineState } from '../store/initial-state';
-import { resetData, toggleGraph } from './index';
+import { resetData } from './index';
 
 /**
  * This file contains actions that update the active pipeline, and if loading data
@@ -24,7 +24,7 @@ export const UPDATE_ACTIVE_PIPELINE = 'UPDATE_ACTIVE_PIPELINE';
 
 /**
  * Update the actively-selected pipeline
- * @param {string} pipeline Pipeline ID
+ * @param {String} pipeline Pipeline ID
  */
 export function updateActivePipeline(pipeline) {
   return {
@@ -37,7 +37,7 @@ export const TOGGLE_PIPELINE_LOADING = 'TOGGLE_PIPELINE_LOADING';
 
 /**
  * Toggle whether to display the loading spinner
- * @param {boolean} loading True if pipeline is still loading
+ * @param {Boolean} loading True if pipeline is still loading
  */
 export function toggleLoading(loading) {
   return {
@@ -48,7 +48,7 @@ export function toggleLoading(loading) {
 
 /**
  * Determine where to load data from
- * @param {object} pipeline Pipeline state
+ * @param {Object} pipeline Pipeline state
  */
 export const getPipelineUrl = (pipeline) => {
   if (pipeline.active === pipeline.main) {
@@ -61,14 +61,15 @@ export const getPipelineUrl = (pipeline) => {
  * Check whether another async data pipeline request is needed on first page-load.
  * A second request is typically only required when an active pipeline is set in
  * localStorage, and it's not the 'main' pipeline endpoint.
- * @param {object} pipeline Pipeline state
- * @return {boolean} True if another request is needed
+ * @param {Object} pipeline Pipeline state
+ * @return {Boolean} True if another request is needed
  */
 export const requiresSecondRequest = (pipeline) => {
   // Pipelines are not present in the data
   if (!pipeline.ids.length || !pipeline.main) {
     return false;
   }
+
   // There is no active pipeline set
   if (!pipeline.active) {
     return false;
@@ -80,7 +81,7 @@ export const requiresSecondRequest = (pipeline) => {
 
 /**
  * Load pipeline data on initial page-load
- * @return {function} A promise that resolves when the data is loaded
+ * @return {Function} A promise that resolves when the data is loaded
  */
 export function loadInitialPipelineData() {
   return async function (dispatch, getState) {
@@ -116,28 +117,31 @@ export function loadInitialPipelineData() {
 
 /**
  * Change pipeline on selection, loading new data if necessary
- * @param {string} pipelineID Unique ID for new pipeline
- * @return {function} A promise that resolves when the data is loaded
+ * @param {String} pipelineID Unique ID for new pipeline
+ * @return {Function} A promise that resolves when the data is loaded
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
     const { dataSource, pipeline, display, flags } = getState();
+
     if (pipelineID && pipelineID === pipeline.active) {
       return;
     }
+
     if (dataSource === 'json') {
       dispatch(toggleLoading(true));
-      // Remove the previous graph to show that a new pipeline is being loaded
-      dispatch(toggleGraph(false));
+
       const url = getPipelineUrl({
         main: pipeline.main,
         active: pipelineID,
       });
+
       const expandAllPipelines =
         display.expandAllPipelines || flags.expandAllPipelines;
       const newState = await loadJsonData(url).then((data) =>
         preparePipelineState(data, false, expandAllPipelines)
       );
+
       // Set active pipeline here rather than dispatching two separate actions,
       // to improve performance by only requiring one state recalculation
       newState.pipeline.active = pipelineID;

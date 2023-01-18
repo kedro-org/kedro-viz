@@ -1,7 +1,6 @@
 /** Imports **/
 
-@import '../../../styles/variables';
-@import '../../../styles/mixins';
+@use '../../../styles/variables' as colors;
 
 /** Variables **/
 $timing-primary: 0.2s;
@@ -10,19 +9,19 @@ $secondary-underline-offset: 8px;
 $secondary-underline-offset-hover: 4px;
 
 .kui-theme--light {
-  --color-button--border: #{$black-900};
-  --color-button--border--disabled: #{$grey-400};
-  --color-button__text--hover: #{$white-600};
-  --color-button__text: #{$black-800};
-  --color-secondary-active: #{$white-100};
+  --color-button--border: #{colors.$black-900};
+  --color-button--border--disabled: #{colors.$grey-400};
+  --color-button__text--hover: #{colors.$white-600};
+  --color-button__text: #{colors.$black-800};
+  --color-secondary-active: #{colors.$white-100};
 }
 
 .kui-theme--dark {
-  --color-button--border: #{$white-0};
-  --color-button--border--disabled: #{$grey-900};
-  --color-button__text--hover: #{$black-800};
-  --color-button__text: #{$white-600};
-  --color-secondary-active: #{$slate-0};
+  --color-button--border: #{colors.$white-0};
+  --color-button--border--disabled: #{colors.$grey-900};
+  --color-button__text--hover: #{colors.$black-800};
+  --color-button__text: #{colors.$white-600};
+  --color-secondary-active: #{colors.$slate-0};
 }
 
 .button {
@@ -66,7 +65,7 @@ $secondary-underline-offset-hover: 4px;
   }
 
   &:focus {
-    box-shadow: 0 0 0 7px $blue-300;
+    box-shadow: 0 0 0 7px colors.$blue-300;
   }
 
   &:hover:not(:disabled) {
@@ -108,7 +107,7 @@ $secondary-underline-offset-hover: 4px;
   }
 
   &:focus {
-    outline: 4px solid $blue-300;
+    outline: 4px solid colors.$blue-300;
   }
 
   &:hover::after {
@@ -128,9 +127,9 @@ $secondary-underline-offset-hover: 4px;
 
 .button__btn--success {
   animation: scale 0.35s ease;
-  background-color: $green-300;
-  border: 2px solid $green-300;
-  color: $black-900;
+  background-color: colors.$green-300;
+  border: 2px solid colors.$green-300;
+  color: colors.$black-900;
   width: 172px; // Match the `Apply and close` width to avoid a layout shift.
 
   &:focus-visible {

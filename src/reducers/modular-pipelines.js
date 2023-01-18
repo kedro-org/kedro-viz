@@ -2,6 +2,7 @@ import {
   TOGGLE_MODULAR_PIPELINE_ACTIVE,
   TOGGLE_MODULAR_PIPELINES_EXPANDED,
   TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
+  TOGGLE_MODULAR_PIPELINE_DISABLED,
 } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
@@ -10,7 +11,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
 
   /**
    * Batch update tags from an array of tag IDs
-   * @param {string} key Tag action value prop
+   * @param {String} key Tag action value prop
    */
   const batchChanges = (key) =>
     action.modularPipelineIDs.reduce((result, modularPipelineID) => {
@@ -25,6 +26,16 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
           {},
           modularPipelineState.active,
           batchChanges('active')
+        ),
+      });
+    }
+
+    case TOGGLE_MODULAR_PIPELINE_DISABLED: {
+      return updateState({
+        disabled: Object.assign(
+          {},
+          modularPipelineState.disabled,
+          batchChanges('disabled')
         ),
       });
     }
@@ -60,7 +71,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         action.expandedIDs.length > modularPipelineState.expanded.length;
       let expandedIDs = action.expandedIDs;
 
-      if (isExpanding) {
+      if (isExpanding && modularPipelineState.ids.length > 0) {
         const expandedModularPipelines = expandedIDs.filter(
           (expandedID) => !modularPipelineState.expanded.includes(expandedID)
         );

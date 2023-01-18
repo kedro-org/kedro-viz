@@ -17,14 +17,15 @@ import {
   UPDATE_ZOOM,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_PRETTY_NAME,
+  TOGGLE_HOVERED_FOCUS_MODE,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
  * Create a generic reducer
  * @param {*} initialState Default state
- * @param {string} type Action type
- * @param {string} key Action payload key
+ * @param {String} type Action type
+ * @param {String} key Action payload key
  * @return {*} Updated state
  */
 const createReducer =
@@ -80,6 +81,11 @@ const combinedReducer = combineReducers({
     false,
     TOGGLE_IGNORE_LARGE_WARNING,
     'ignoreLargeWarning'
+  ),
+  hoveredFocusMode: createReducer(
+    false,
+    TOGGLE_HOVERED_FOCUS_MODE,
+    'hoveredFocusMode'
   ),
 });
 

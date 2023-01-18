@@ -2,7 +2,7 @@
   "serviceName": "kedro-viz-live-demo",
   "containers": {
     "kedro-viz-live-demo": {
-      "image": "public.ecr.aws/g0x0s3o2/kedro-viz-live-demo:5.1.1",
+      "image": "public.ecr.aws/g0x0s3o2/kedro-viz-live-demo:5.2.0",
       "ports": {
         "4141": "HTTP"
       }

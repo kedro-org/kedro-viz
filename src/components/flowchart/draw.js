@@ -134,6 +134,7 @@ export const drawNodes = function (changed) {
     inputOutputDataNodes,
     nodes,
     focusMode,
+    hoveredFocusMode,
   } = this.props;
 
   const isInputOutputNode = (nodeID) =>
@@ -255,9 +256,24 @@ export const drawNodes = function (changed) {
         (node) => isInputOutputNode(node.id) && node.type === 'parameters'
       )
       .classed(
+        'pipeline-node-input--active',
+        (node) => isInputOutputNode(node.id) && nodeActive[node.id]
+      )
+      .classed(
+        'pipeline-node-input--selected',
+        (node) => isInputOutputNode(node.id) && nodeSelected[node.id]
+      )
+      .classed(
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
       );
+  }
+
+  if (changed('hoveredFocusMode')) {
+    allNodes.classed(
+      'pipeline-node--faded',
+      (node) => hoveredFocusMode && !nodeActive[node.id]
+    );
   }
 
   if (changed('nodes')) {

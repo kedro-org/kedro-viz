@@ -1,5 +1,5 @@
-@import '../../styles/variables';
-@import '../../styles/extends';
+@use '../../styles/variables' as variables;
+@use '../../styles/extends';
 
 .pipeline-sidebar {
   @extend %sidebar;
@@ -7,7 +7,7 @@
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   bottom: -1px;
-  left: $global-toolbar-width;
+  left: variables.$global-toolbar-width;
 
   &--no-global-toolbar {
     left: 0;
@@ -17,16 +17,17 @@
   z-index: 1;
   display: flex;
   width: 100%;
-  transform: translateX(calc(-100% + #{$sidebar-width-closed}));
+  transform: translateX(calc(-100% + #{variables.$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
-  @media (min-width: $metadata-sidebar-code-breakpoint) {
+  @media (min-width: variables.$metadata-sidebar-code-breakpoint) {
     z-index: 3;
   }
 
-  @media (min-width: $sidebar-width-breakpoint) {
-    $sidebar-ui-width: $sidebar-width-open - $sidebar-width-closed;
-    width: $sidebar-width-open;
+  @media (min-width: variables.$sidebar-width-breakpoint) {
+    $sidebar-ui-width: variables.$sidebar-width-open -
+      variables.$sidebar-width-closed;
+    width: variables.$sidebar-width-open;
     transform: translateX(-$sidebar-ui-width);
   }
 
@@ -71,7 +72,7 @@
   flex-direction: column;
   height: 100%;
   position: relative;
-  width: $sidebar-width-closed;
+  width: variables.$sidebar-width-closed;
   z-index: 2;
 }
 

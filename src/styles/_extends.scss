@@ -1,9 +1,9 @@
-@import './variables';
+@use './variables' as variables;
 
 %tooltip {
   color: var(--color-text-alt);
   background: var(--color-bg-alt);
-  box-shadow: 0 1px 3px $slate-500;
+  box-shadow: 0 1px 3px variables.$slate-500;
 }
 
 %sidebar {
@@ -26,7 +26,7 @@
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px $blue-300 inset;
+      box-shadow: 0 0 0 3px variables.$blue-300 inset;
     }
   }
 }
@@ -51,7 +51,7 @@
   &:focus-visible {
     outline: none;
     text-decoration: underline;
-    text-decoration-color: $blue-300;
+    text-decoration-color: variables.$blue-300;
   }
 
   &::placeholder {
@@ -67,4 +67,52 @@
 %input--small {
   font-size: 14px;
   font-weight: normal;
+}
+
+%runs-list-card--default {
+  border: 1px solid variables.$grey-500;
+  height: 10px;
+  margin: 0.8em 0.8em 0 0;
+  width: 10px;
+}
+
+%runs-list-card--selected-first {
+  border-color: variables.$blue-300;
+  border-width: 2px;
+  height: 10px;
+  transform: rotate(45deg);
+  width: 10px;
+}
+
+%runs-list-card--selected-second {
+  border-color: variables.$yellow-300;
+  border-width: 2px;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+}
+
+%runs-list-card--selected-third {
+  background:
+    /* left */ linear-gradient(
+        to bottom left,
+        transparent 49.5%,
+        variables.$green-300 50% calc(50% + 1px),
+        transparent calc(50% + 2px)
+      )
+      right/50% 100%,
+    /* right */
+      linear-gradient(
+        to bottom right,
+        transparent 49.5%,
+        variables.$green-300 50% calc(50% + 1px),
+        transparent calc(50% + 2px)
+      )
+      left/50% 100%,
+    /* bottom*/ linear-gradient(variables.$green-300, variables.$green-300)
+      bottom/calc(100%) 1px;
+  background-repeat: no-repeat;
+  border: none;
+  height: 10px;
+  width: 10px;
 }

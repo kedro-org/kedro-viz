@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 /** Variables **/
 
@@ -8,17 +8,17 @@ $size-content-maxwidth: 400px;
 $duration-visibility: 0.4s;
 
 .kui-theme--light {
-  --color-modal-bg: #{$black-700};
-  --color-modal-content: #{$white-100};
-  --color-modal-title: #{$black-800};
-  --color-modal-description: #{$black-700};
+  --color-modal-bg: #{colors.$black-700};
+  --color-modal-content: #{colors.$white-100};
+  --color-modal-title: #{colors.$black-800};
+  --color-modal-description: #{colors.$black-700};
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{$slate-900};
-  --color-modal-content: #{$slate-300};
-  --color-modal-title: #{$white-600};
-  --color-modal-description: #{$black-0};
+  --color-modal-bg: #{colors.$slate-900};
+  --color-modal-content: #{colors.$slate-300};
+  --color-modal-title: #{colors.$white-600};
+  --color-modal-description: #{colors.$black-0};
 }
 
 /** Implementation **/

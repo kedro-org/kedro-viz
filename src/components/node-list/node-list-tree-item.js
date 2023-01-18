@@ -43,7 +43,9 @@ const NodeListTreeItem = ({
         onClick={() => onItemClick(data)}
         onMouseEnter={() => onItemMouseEnter(data)}
         onMouseLeave={() => onItemMouseLeave(data)}
-        onChange={(e) => onItemChange(data, !e.target.checked)}
+        onChange={(e) =>
+          onItemChange(data, !e.target.checked, e.target.dataset.iconType)
+        }
         rowType="tree"
         focused={data.focused}
       />

@@ -19,7 +19,7 @@
       "type": "data",
       "modular_pipelines": ["data_processing"],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.excel_dataset.ExcelDataSet"
+      "dataset_type": "pandas.excel_dataset.ExcelDataSet"
     },
     {
       "id": "e5a9ec27",
@@ -30,7 +30,7 @@
       "type": "data",
       "modular_pipelines": ["data_processing"],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "c09084f2",
@@ -51,7 +51,7 @@
       "type": "data",
       "modular_pipelines": ["data_processing"],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "daf35ba0",
@@ -62,7 +62,7 @@
       "type": "data",
       "modular_pipelines": ["data_processing"],
       "layer": "intermediate",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "47b81aa6",
@@ -83,7 +83,7 @@
       "type": "data",
       "modular_pipelines": ["data_processing"],
       "layer": "raw",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "23c94afb",
@@ -94,7 +94,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataSet"
     },
     {
       "id": "65d0d789",
@@ -193,7 +193,7 @@
       "type": "data",
       "modular_pipelines": ["data_science"],
       "layer": "models",
-      "dataset_type": "kedro.extras.datasets.pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
     },
     {
       "id": "f5e8d7df",
@@ -214,7 +214,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "kedro.extras.datasets.tracking.metrics_dataset.MetricsDataSet"
+      "dataset_type": "tracking.metrics_dataset.MetricsDataSet"
     },
     {
       "id": "data_processing",

@@ -1,6 +1,4 @@
-@import '../../../styles/extends';
-@import '../../../styles/mixins';
-@import '../../../styles/variables';
+@use '../../../styles/variables' as colors;
 
 .pipeline-nodelist__filter-panel {
   z-index: 1;
@@ -68,7 +66,7 @@
   // Handle has keyboard focus, show outline.
   &:focus {
     z-index: 1;
-    outline: 3px solid $blue-300;
+    outline: 3px solid colors.$blue-300;
   }
 
   // Handle is hovered, highlight border.
@@ -83,7 +81,7 @@
 
   // Handle is active resizing, highlight border.
   .pipeline-nodelist__split--resizing & {
-    border-top: 1px solid $blue-300;
+    border-top: 1px solid colors.$blue-300;
   }
 }
 

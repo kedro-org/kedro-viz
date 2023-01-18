@@ -32,10 +32,10 @@ export const getVisibleEdgesByNode = createSelector(
 
 /**
  * Finds all visible successor nodeIDs for the given nodeID
- * @param {string} nodeID the starting nodeID
+ * @param {String} nodeID the starting nodeID
  * @param {Object} edgesByNode an object mapping nodeIDs to successor nodeIDs
- * @param {object} visited an object for storing all visited node ids
- * @returns {object} the supplied `visited` object
+ * @param {Object} visited an object for storing all visited node ids
+ * @returns {Object} the supplied `visited` object
  */
 const findLinkedNodes = (nodeID, edgesByNode, visited) => {
   if (!visited[nodeID]) {
@@ -54,7 +54,7 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
 /**
  * Gets all visible ancestors and descendents for the given nodeID
  * @param {Object} visibleEdgeMaps
- * @param {string} nodeID
+ * @param {String} nodeID
  */
 export const getLinkedNodes = createSelector(
   [getVisibleEdgesByNode, getClickedNode],

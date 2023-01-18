@@ -71,6 +71,7 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
 };
 
 const RunMetadata = ({
+  activeTab,
   enableComparisonView,
   enableShowChanges = false,
   isSingleRun,
@@ -102,7 +103,11 @@ const RunMetadata = ({
   };
 
   return (
-    <div className="details-metadata">
+    <div
+      className={classnames('details-metadata', {
+        'details-metadata--not-overview': activeTab !== 'Overview',
+      })}
+    >
       <table
         className={classnames('details-metadata__table', {
           'details-metadata__table-comparison-view': enableComparisonView,
@@ -131,33 +136,43 @@ const RunMetadata = ({
                       {sanitiseEmptyValue(run.title)}
                     </span>
                   </td>
-                  <td className="details-metadata__table-label">Created By</td>
-                  <td className="details-metadata__table-label">
-                    Creation Date
-                  </td>
-                  <td className="details-metadata__table-label">Git SHA</td>
-                  <td className="details-metadata__table-label">Git Branch</td>
-                  <td className="details-metadata__table-label">Run Command</td>
-                  <td className="details-metadata__table-label">Notes</td>
+                  {activeTab !== 'Plots' ? (
+                    <>
+                      <td className="details-metadata__table-label">
+                        Created By
+                      </td>
+                      <td className="details-metadata__table-label">
+                        Creation Date
+                      </td>
+                      <td className="details-metadata__table-label">Git SHA</td>
+                      <td className="details-metadata__table-label">
+                        Git Branch
+                      </td>
+                      <td className="details-metadata__table-label">
+                        Run Command
+                      </td>
+                      <td className="details-metadata__table-label">Notes</td>
+                    </>
+                  ) : null}
                 </tr>
               </tbody>
             ) : null}
           </React.Fragment>
         ))}
         <TransitionGroup
-          component={'tbody'}
           className="details-metadata__run--wrapper"
+          component={'tbody'}
         >
           {runs.map((run, i) => {
             const humanReadableTime = toHumanReadableTime(run.id);
 
             return (
               <CSSTransition
-                key={run.id}
-                timeout={300}
                 classNames={'details-metadata__run-animation'}
                 enter={isSingleRun ? false : true}
                 exit={isSingleRun ? false : true}
+                key={run.id}
+                timeout={300}
               >
                 <tr
                   className={classnames('details-metadata__run', {
@@ -167,6 +182,13 @@ const RunMetadata = ({
                   })}
                 >
                   <td className="details-metadata__title">
+                    <div
+                      className={classnames('details-metadata__indicator', {
+                        'details-metadata__indicator--selected-first': i === 0,
+                        'details-metadata__indicator--selected-second': i === 1,
+                        'details-metadata__indicator--selected-third': i === 2,
+                      })}
+                    ></div>
                     <span
                       className="details-metadata__title-detail"
                       onClick={() => onTitleOrNoteClick(run.id)}
@@ -213,41 +235,45 @@ const RunMetadata = ({
                       <HiddenMenu isBookmarked={run.bookmark} runId={run.id} />
                     </ul>
                   </td>
-                  <td className="details-metadata__table-value">
-                    {sanitiseEmptyValue(run.author)}
-                  </td>
-                  <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
-                    run.id
-                  )})`}</td>
-                  <td className="details-metadata__table-value">
-                    {sanitiseEmptyValue(run.gitSha)}
-                  </td>
-                  <td className="details-metadata__table-value">
-                    {sanitiseEmptyValue(run.gitBranch)}
-                  </td>
-                  <td className="details-metadata__table-value">
-                    {sanitiseEmptyValue(run.runCommand)}
-                  </td>
-                  <td className="details-metadata__table-value">
-                    <p
-                      className={classnames(
-                        'details-metadata__notes',
-                        'details-metadata__table-label'
-                      )}
-                      onClick={() => onTitleOrNoteClick(run.id)}
-                      style={toggleNotes[i] ? { display: 'block' } : null}
-                    >
-                      {run.notes !== '' ? run.notes : '- Add notes here'}
-                    </p>
-                    {run.notes.length > 100 ? (
-                      <button
-                        className="details-metadata__show-more kedro"
-                        onClick={() => onToggleNoteExpand(i)}
-                      >
-                        {toggleNotes[i] ? 'Show less' : 'Show more'}
-                      </button>
-                    ) : null}
-                  </td>
+                  {activeTab !== 'Plots' ? (
+                    <>
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.author)}
+                      </td>
+                      <td className="details-metadata__table-value">{`${humanReadableTime} (${sanitiseEmptyValue(
+                        run.id
+                      )})`}</td>
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.gitSha)}
+                      </td>
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.gitBranch)}
+                      </td>
+                      <td className="details-metadata__table-value">
+                        {sanitiseEmptyValue(run.runCommand)}
+                      </td>
+                      <td className="details-metadata__table-value">
+                        <p
+                          className={classnames(
+                            'details-metadata__notes',
+                            'details-metadata__table-label'
+                          )}
+                          onClick={() => onTitleOrNoteClick(run.id)}
+                          style={toggleNotes[i] ? { display: 'block' } : null}
+                        >
+                          {run.notes !== '' ? run.notes : '- Add notes here'}
+                        </p>
+                        {run.notes.length > 100 ? (
+                          <button
+                            className="details-metadata__show-more kedro"
+                            onClick={() => onToggleNoteExpand(i)}
+                          >
+                            {toggleNotes[i] ? 'Show less' : 'Show more'}
+                          </button>
+                        ) : null}
+                      </td>
+                    </>
+                  ) : null}
                 </tr>
               </CSSTransition>
             );
