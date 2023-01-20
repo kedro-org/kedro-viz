@@ -8,22 +8,23 @@ export const localStorageName = 'KedroViz';
 export const globalToolbarWidth = 80;
 
 export const metaSidebarWidth = {
-  open: 400,
   closed: 0,
+  open: 400,
 };
 
 export const sidebarWidth = {
-  open: 400 + globalToolbarWidth,
-  closed: 56 + globalToolbarWidth,
   breakpoint: 700,
+  closed: 56 + globalToolbarWidth,
+  open: 400 + globalToolbarWidth,
+  pipelineUI: 344,
 };
 
 export const codeSidebarWidth = {
-  open: 480,
   closed: 0,
+  open: 480,
 };
 
-// these colours variables come from styles/variables';
+// These colours variables come from styles/variables;
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
 

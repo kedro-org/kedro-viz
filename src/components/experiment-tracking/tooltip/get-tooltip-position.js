@@ -5,7 +5,8 @@ const tooltipLeftGap = 85;
 const tooltipRightGap = 70;
 const tooltipTopGap = 150;
 
-export const getTooltipPosition = (e) => {
+export const getTooltipPosition = (e, sidebarVisible) => {
+  const xCoordsAdjustment = sidebarVisible ? 0 : sidebarWidth.pipelineUI;
   const y = e.clientY - tooltipTopGap;
   let x, direction;
 
@@ -16,6 +17,8 @@ export const getTooltipPosition = (e) => {
     x = e.clientX - sidebarWidth.open - sidebarWidth.open / 2 - tooltipLeftGap;
     direction = 'left';
   }
+
+  x = x + xCoordsAdjustment;
 
   return { x, y, direction };
 };
