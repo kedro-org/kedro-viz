@@ -12,7 +12,7 @@ import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
-const MetricsPlots = ({ selectedRunIds }) => {
+const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
   const [chartHeight, setChartHeight] = useState(0);
   const [parCoordsWidth, setParCoordsWidth] = useState(0);
@@ -78,6 +78,7 @@ const MetricsPlots = ({ selectedRunIds }) => {
               chartWidth={timeSeriesWidth - 100}
               metricsData={runMetricsData?.data}
               selectedRuns={selectedRunIds}
+              sidebarVisible={sidebarVisible}
             />
           ) : (
             <ParallelCoordinates
@@ -85,6 +86,7 @@ const MetricsPlots = ({ selectedRunIds }) => {
               chartWidth={parCoordsWidth}
               metricsData={runMetricsData?.data}
               selectedRuns={selectedRunIds}
+              sidebarVisible={sidebarVisible}
             />
           )
         ) : null}

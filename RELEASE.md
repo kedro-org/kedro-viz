@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next release
+
+## Bug fixes and other changes
+
+- Visual fixes for metrics plots in experiment tracking. (#1229)
+
 # Release 5.2.0
 
 ## Major features and improvements
