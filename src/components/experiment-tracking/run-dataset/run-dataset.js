@@ -53,6 +53,7 @@ const RunDataset = ({
   enableShowChanges,
   isSingleRun,
   pinnedRun,
+  selectedRunIds,
   setRunDatasetToShow,
   setShowRunPlotsModal,
   showLoader,
@@ -62,8 +63,6 @@ const RunDataset = ({
   if (!trackingData) {
     return null;
   }
-
-  // console.log('trackingData: ', trackingData);
 
   return (
     <div
@@ -118,26 +117,34 @@ const RunDataset = ({
                   </span>
                   <TransitionGroup
                     component="div"
-                    className="details-dataset__tranistion-group-wrapper"
+                    className="details-dataset__transition-group-wrapper"
                   >
-                    <CSSTransition
-                      timeout={300}
-                      classNames="details-dataset__value-animation"
-                      enter={isSingleRun ? false : true}
-                      exit={isSingleRun ? false : true}
-                    >
-                      <span
-                        className={classnames('details-dataset__value-header', {
-                          'details-dataset__value-header--comparison-view':
-                            enableComparisonView,
-                        })}
-                        style={{
-                          display: enableComparisonView ? 'block' : 'none',
-                        }}
-                      >
-                        No data to display. Try selecting a different run.
-                      </span>
-                    </CSSTransition>
+                    {selectedRunIds.map((id, index) => {
+                      return (
+                        <CSSTransition
+                          classNames="details-dataset__value-animation"
+                          enter={isSingleRun ? false : true}
+                          exit={isSingleRun ? false : true}
+                          key={id}
+                          timeout={300}
+                        >
+                          <span
+                            className={classnames(
+                              'details-dataset__value-header',
+                              {
+                                'details-dataset__value-header--comparison-view':
+                                  enableComparisonView && index === 0,
+                              }
+                            )}
+                            style={{
+                              display: enableComparisonView ? 'flex' : 'none',
+                            }}
+                          >
+                            No data to display. Try selecting a different run.
+                          </span>
+                        </CSSTransition>
+                      );
+                    })}
                   </TransitionGroup>
                 </div>
               )}
@@ -231,7 +238,7 @@ function buildDatasetDataMarkup(
           <span className="details-dataset__name-header">Name</span>
           <TransitionGroup
             component="div"
-            className="details-dataset__tranistion-group-wrapper"
+            className="details-dataset__transition-group-wrapper"
           >
             {datasetValues.map((data, index) => (
               <CSSTransition
@@ -266,10 +273,11 @@ function buildDatasetDataMarkup(
         <span className={'details-dataset__label'}>{datasetKey}</span>
         <TransitionGroup
           component="div"
-          className="details-dataset__tranistion-group-wrapper"
+          className="details-dataset__transition-group-wrapper"
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
+
             return (
               <CSSTransition
                 key={run.runId}

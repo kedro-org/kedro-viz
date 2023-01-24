@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import './icon-button.css';
-import { useOutsideClick } from '../../../utils/hooks';
 
 const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
 
@@ -34,31 +33,17 @@ const IconButton = ({
     ? labelTextPosition.toLocaleLowerCase()
     : 'right';
 
-  const clearLocalStorage = () => {
-    window.localStorage.removeItem('kedro-viz-tooltip-show');
-  };
-
-  useEffect(() => {
-    clearLocalStorage();
-  }, []);
-
   const showTooltip = () => {
-    if (localStorage.getItem('kedro-viz-tooltip-show') === null) {
-      inTimeout = setTimeout(() => {
-        window.localStorage.setItem('kedro-viz-tooltip-show', true);
-        setIsTooltipVisible(true);
-      }, 1000);
-    } else {
+    inTimeout = setTimeout(() => {
+      window.localStorage.setItem('kedro-viz-tooltip-show', true);
       setIsTooltipVisible(true);
-    }
+    }, 333);
   };
 
   const hideTooltip = () => {
     clearTimeout(inTimeout);
     setIsTooltipVisible(false);
   };
-
-  const iconBtnRef = useOutsideClick(clearLocalStorage);
 
   return visible ? (
     <Wrapper container={container}>
@@ -74,7 +59,6 @@ const IconButton = ({
         onClick={onClick}
         onMouseEnter={showTooltip}
         onMouseLeave={hideTooltip}
-        ref={iconBtnRef}
       >
         {Icon && <Icon className="pipeline-icon" />}
         {labelText && (

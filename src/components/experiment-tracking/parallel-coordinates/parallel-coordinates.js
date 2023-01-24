@@ -31,6 +31,7 @@ export const ParallelCoordinates = ({
   chartWidth,
   metricsData,
   selectedRuns,
+  sidebarVisible,
 }) => {
   const [hoveredMetricLabel, setHoveredMetricLabel] = useState(null);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
@@ -99,7 +100,7 @@ export const ParallelCoordinates = ({
 
   const handleMouseOverMetric = (e, key) => {
     const runsCount = graph.find((each) => each[0] === key)[1].length;
-    const { x, y, direction } = getTooltipPosition(e);
+    const { x, y, direction } = getTooltipPosition(e, sidebarVisible);
 
     setHoveredMetricLabel(key);
 
@@ -126,7 +127,7 @@ export const ParallelCoordinates = ({
 
     if (e) {
       const parsedDate = new Date(formatTimestamp(key));
-      const { x, y, direction } = getTooltipPosition(e);
+      const { x, y, direction } = getTooltipPosition(e, sidebarVisible);
 
       setShowTooltip({
         content: {

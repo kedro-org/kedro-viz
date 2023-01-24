@@ -1,26 +1,26 @@
-*                                       @richardwestenra
+*                                       @tynandebold
 
-src/                                    @richardwestenra
-public/                                 @richardwestenra
-tools/                                  @limdauto
-package/                                @limdauto
+src/                                    @tynandebold
+public/                                 @tynandebold
+tools/                                  @rashidakanchwala
+package/                                @rashidakanchwala
 
-Makefile                                @richardwestenra
-.circleci/                              @richardwestenra
+Makefile                                @tynandebold
+.circleci/                              @tynandebold
 
-*.js                                    @richardwestenra
-*.json                                  @richardwestenra
-*.scss                                  @richardwestenra
-*.py                                    @limdauto
-*.md                                    @richardwestenra @yetudada
+*.js                                    @tynandebold
+*.json                                  @tynandebold
+*.scss                                  @tynandebold
+*.py                                    @rashidakanchwala
+*.md                                    @tynandebold @yetudada
 
-.babelrc                                @richardwestenra
-.eslintrc.json                          @richardwestenra
-.prettierrc                             @richardwestenra
-.gitignore                              @richardwestenra
-CODEOWNERS                              @richardwestenra @yetudada
-CONTRIBUTING.md                         @richardwestenra @yetudada
-README.md                               @richardwestenra @yetudada
-RELEASE.md                              @richardwestenra @yetudada
-legal_header.txt                        @richardwestenra @yetudada
-LICENSE.md                              @richardwestenra @yetudada
+.babelrc                                @tynandebold
+.eslintrc.json                          @tynandebold
+.prettierrc                             @tynandebold
+.gitignore                              @tynandebold
+CODEOWNERS                              @tynandebold @yetudada
+CONTRIBUTING.md                         @tynandebold @yetudada
+README.md                               @tynandebold @yetudada
+RELEASE.md                              @tynandebold @yetudada
+legal_header.txt                        @tynandebold @yetudada
+LICENSE.md                              @tynandebold @yetudada
