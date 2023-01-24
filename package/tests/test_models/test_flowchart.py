@@ -11,7 +11,6 @@ import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
-from kedro.io.core import DataSetError
 from kedro.pipeline.node import node
 
 from kedro_viz.models.flowchart import (
