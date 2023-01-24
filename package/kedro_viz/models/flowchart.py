@@ -17,7 +17,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 from kedro.io import AbstractDataSet
-from kedro.io.core import DataSetError, VERSION_FORMAT
+from kedro.io.core import VERSION_FORMAT, DataSetError
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
