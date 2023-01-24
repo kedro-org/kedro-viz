@@ -6,10 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 5.2.1
+# Next release
 
 ## Bug fixes and other changes
-- Fix bug causing user to be unable to start Kedro-Viz if undefined parameters are used.
+
+- Visual fixes for metrics plots in experiment tracking. (#1229)
+- Fix bug causing user to be unable to start Kedro-Viz if undefined parameters are used. (#1231)
 
 # Release 5.2.0
 
