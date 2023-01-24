@@ -17,6 +17,8 @@ def get_dataset_type(dataset: AbstractDataSet) -> str:
     Returns:
         The abbreviated type of the dataset as a string.
     """
+    if not dataset:
+        return None
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"

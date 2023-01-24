@@ -455,7 +455,7 @@ class DataNode(GraphNode):
 
     def __post_init__(self):
 
-        self.dataset_type = get_dataset_type(self.kedro_obj) if self.kedro_obj else None
+        self.dataset_type = get_dataset_type(self.kedro_obj)
 
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
