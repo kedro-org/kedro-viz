@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
+from kedro.io.core import DataSetError
 from kedro.pipeline.node import node
 
 from kedro_viz.models.flowchart import (
@@ -223,6 +224,20 @@ class TestGraphNodeCreation:
             full_name="non_existing", layer=None, tags={}, parameters=None
         )
         assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.parameter_value is None
+        patched_warning.assert_has_calls(
+            [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
+        )
+
+    @patch("logging.Logger.warning")
+    def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):
+        parameters_dataset = MemoryDataSet()
+        parameters_node = GraphNode.create_parameters_node(
+            full_name="non_existing",
+            layer=None,
+            tags={},
+            parameters=parameters_dataset,
+        )
         assert parameters_node.parameter_value is None
         patched_warning.assert_has_calls(
             [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
