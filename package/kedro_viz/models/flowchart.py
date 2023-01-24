@@ -755,7 +755,6 @@ class ParametersNode(GraphNode):
             return None
 
 
-
 @dataclass
 class ParametersNodeMetadata:
     """Represent the metadata of a ParametersNode"""
