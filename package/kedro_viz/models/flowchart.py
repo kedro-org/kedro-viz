@@ -748,7 +748,7 @@ class ParametersNode(GraphNode):
         self.kedro_obj: AbstractDataSet
         try:
             return self.kedro_obj.load()
-        except DataSetError:
+        except (AttributeError, DataSetError):
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
