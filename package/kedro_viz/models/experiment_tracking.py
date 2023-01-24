@@ -12,6 +12,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
+from .utils import get_dataset_type
+
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
@@ -111,9 +113,3 @@ class TrackingDatasetModel:
             )
             self.runs[run_id] = {}
         self.dataset._version = Version(None, None)
-
-
-def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
-    class_name = f"{dataset.__class__.__qualname__}"
-    _, dataset_type, dataset_file = f"{dataset.__class__.__module__}".rsplit(".", 2)
-    return f"{dataset_type}.{dataset_file}.{class_name}"
