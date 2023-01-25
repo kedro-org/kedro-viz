@@ -53,7 +53,7 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# Map dataset types to their group
+# Map dataset types (as produced by get_dataset_type) to their group
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
