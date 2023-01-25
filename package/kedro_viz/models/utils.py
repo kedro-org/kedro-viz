@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_dataset_type(dataset: AbstractDataSet) -> str:
-    """Get the type of a dataset as a string-- the abbreviated name of the module to
+    """Get the type of a dataset as a string: the abbreviated name of the module to
     which ``dataset`` belongs, joined with the name of its class.
     ::
 
