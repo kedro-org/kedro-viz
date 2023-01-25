@@ -1,10 +1,5 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-
-import logging
-
 from kedro.io import AbstractDataSet
-
-logger = logging.getLogger(__name__)
 
 
 def get_dataset_type(dataset: AbstractDataSet) -> str:
