@@ -1,17 +1,17 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import './styles/metadata.css';
+import './json-object.css';
 import ReactJson from 'react-json-view';
 import {
   darkjsonViewerTheme,
   lightjsonViewerTheme,
-} from './metadata-parameters-theme';
+} from '../metadata/metadata-parameters-theme';
 
 /**
  * Shows a metadata object
  */
-const MetaDataObject = ({ className, value, kind, theme, empty }) => (
-  <div className={modifiers('pipeline-metadata__object', { kind }, className)}>
+const JSONObject = ({ className, value, kind, theme, empty }) => (
+  <div className={modifiers('pipeline-json__object', { kind }, className)}>
     {Object.keys(value).length === 0 ? (
       empty
     ) : (
@@ -29,4 +29,4 @@ const MetaDataObject = ({ className, value, kind, theme, empty }) => (
   </div>
 );
 
-export default MetaDataObject;
+export default JSONObject;

@@ -1,6 +1,10 @@
 {
   "model_type": "LinearRegression",
   "fit_intercept": true,
-  "copy_X": true,
+  "normalize": false,
+  "copy_X":{"precision":0.9023,
+            "recall":0.97154,
+            "f1_score":0.984534,
+            "support":0.2323},
   "positive": false
 }

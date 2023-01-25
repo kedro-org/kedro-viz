@@ -6,6 +6,7 @@ import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DataSetLoader } from './run-dataset-loader';
+import JSONObject from '../../json-object';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
@@ -277,6 +278,7 @@ function buildDatasetDataMarkup(
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
+            const isJSONObject = typeof run?.value === 'object';
 
             return (
               <CSSTransition
@@ -292,11 +294,14 @@ function buildDatasetDataMarkup(
                       index === 0 && enableComparisonView,
                   })}
                 >
-                  {isTrackingDataset && (
+                  {isTrackingDataset && !isJSONObject && (
                     <>
                       {sanitizeValue(run?.value)}
                       {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
                     </>
+                  )}
+                  {isTrackingDataset && isJSONObject && (
+                    <JSONObject value={run?.value} theme={theme} empty="-" />
                   )}
 
                   {isPlotlyDataset &&

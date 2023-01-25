@@ -113,7 +113,7 @@
   display: flex;
 }
 
-.details-dataset__transition-group-wrapper span {
+.details-dataset__transition-group-wrapper .details-dataset__value {
   &:first-of-type {
     margin-right: 3.5em;
   }

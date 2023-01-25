@@ -1,6 +1,6 @@
 import React from 'react';
 import MetaDataList from './metadata-list';
-import MetaDataObject from './metadata-object';
+import JSONObject from '../json-object';
 import MetaDataValue from './metadata-value';
 import './styles/metadata.css';
 
@@ -50,12 +50,7 @@ const MetaDataRow = ({
             />
           )}
           {showObject && (
-            <MetaDataObject
-              value={value}
-              kind={kind}
-              theme={theme}
-              empty={empty}
-            />
+            <JSONObject value={value} kind={kind} theme={theme} empty={empty} />
           )}
           {children}
         </dd>
