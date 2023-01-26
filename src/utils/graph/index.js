@@ -10,9 +10,12 @@ export const graphNew = ({ nodes, edges, layers }) => {
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
     node.icon = node.icon || 'node';
+    const fullName =
+      (node && node.fullName && node.fullName.length) ||
+      (node && node.full_name && node.full_name.length);
 
     const padding = { x: 20, y: 10 };
-    const textWidth = (node?.fullName?.length || node?.full_name?.length) * 7;
+    const textWidth = fullName * 7;
     const textGap = 6;
     const innerWidth = node.iconSize + textWidth + textGap;
 
