@@ -7,7 +7,23 @@ import { graph } from './graph';
  * which don't affect layout.
  */
 export const graphNew = ({ nodes, edges, layers }) => {
+  for (const node of nodes) {
+    node.iconSize = node.iconSize || 24;
+    node.icon = node.icon || 'node';
+
+    const padding = { x: 20, y: 10 };
+    const textWidth = (node?.fullName.length || node?.full_name.length) * 7;
+    const textGap = 6;
+    const innerWidth = node.iconSize + textWidth + textGap;
+
+    node.width = node.width || innerWidth + padding.x * 2;
+    node.height = node.height || node.iconSize + padding.y * 2;
+    node.textOffset = node.textOffset || (innerWidth - textWidth) / 2;
+    node.iconOffset = node.iconOffset || -innerWidth / 2;
+  }
+
   const result = graph(nodes, edges, layers);
+
   return {
     ...result,
     size: { ...result.size, marginx: 100, marginy: 100 },
