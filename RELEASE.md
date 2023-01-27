@@ -6,6 +6,16 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next release
+
+# Release 5.2.1
+
+## Bug fixes and other changes
+
+- Visual fixes for metrics plots in experiment tracking. (#1229)
+- Fix bug that prevented Kedro-Viz from loading when a project contained undefined parameters. (#1231)
+- Modify the implementation of `get_dataset_type` in the `models` package to improve safety. (#1232)
+
 # Release 5.2.0
 
 ## Major features and improvements

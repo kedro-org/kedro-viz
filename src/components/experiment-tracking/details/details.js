@@ -147,7 +147,10 @@ const Details = ({
           })}
         </div>
         {activeTab === 'Metrics' ? (
-          <MetricsPlots selectedRunIds={selectedRunIds} />
+          <MetricsPlots
+            selectedRunIds={selectedRunIds}
+            sidebarVisible={sidebarVisible}
+          />
         ) : (
           <>
             <RunMetadata
@@ -171,6 +174,7 @@ const Details = ({
               isSingleRun={isSingleRun}
               pinnedRun={pinnedRun}
               runMetadata={runMetadata}
+              selectedRunIds={selectedRunIds}
               setRunDatasetToShow={setRunDatasetToShow}
               setShowRunPlotsModal={setShowRunPlotsModal}
               showLoader={showRunLoader}

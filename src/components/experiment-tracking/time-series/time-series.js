@@ -25,7 +25,12 @@ const height = 150;
 const margin = { top: 20, right: 10, bottom: 80, left: 35 };
 const yScales = {};
 
-export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
+export const TimeSeries = ({
+  chartWidth,
+  metricsData,
+  selectedRuns,
+  sidebarVisible,
+}) => {
   const previouslySelectedRuns = usePrevious(selectedRuns);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
   const [rangeSelection, setRangeSelection] = useState(undefined);
@@ -96,7 +101,7 @@ export const TimeSeries = ({ chartWidth, metricsData, selectedRuns }) => {
 
     if (e) {
       const parsedDate = new Date(formatTimestamp(key));
-      const { x, y, direction } = getTooltipPosition(e);
+      const { x, y, direction } = getTooltipPosition(e, sidebarVisible);
 
       setShowTooltip({
         content: {

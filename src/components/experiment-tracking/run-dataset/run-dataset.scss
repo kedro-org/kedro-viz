@@ -109,11 +109,11 @@
   width: 250px;
 }
 
-.details-dataset__tranistion-group-wrapper {
+.details-dataset__transition-group-wrapper {
   display: flex;
 }
 
-.details-dataset__tranistion-group-wrapper span {
+.details-dataset__transition-group-wrapper span {
   &:first-of-type {
     margin-right: 3.5em;
   }
@@ -124,7 +124,7 @@
 }
 
 // to ensure the value header is aligned with its value
-.details-dataset__tranistion-group-wrapper .details-dataset__value-header {
+.details-dataset__transition-group-wrapper .details-dataset__value-header {
   &:nth-of-type(1) {
     margin-right: 3.8em;
   }
