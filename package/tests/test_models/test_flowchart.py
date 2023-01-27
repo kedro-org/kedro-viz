@@ -219,6 +219,7 @@ class TestGraphNodeCreation:
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node(self, patched_warning):
+        """Test the case where ``parameters`` is equal to None"""
         parameters_node = GraphNode.create_parameters_node(
             full_name="non_existing", layer=None, tags={}, parameters=None
         )
@@ -230,6 +231,7 @@ class TestGraphNodeCreation:
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):
+        """Test the case where ``parameters`` is equal to a MemoryDataSet with no data"""
         parameters_dataset = MemoryDataSet()
         parameters_node = GraphNode.create_parameters_node(
             full_name="non_existing",
