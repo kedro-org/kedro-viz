@@ -749,6 +749,9 @@ class ParametersNode(GraphNode):
         try:
             return self.kedro_obj.load()
         except (AttributeError, DataSetError):
+            # This except clause triggers if the user passes a parameter that is not
+            # defined in the catalog (DataSetError) it also catches any case where
+            # the kedro_obj is None (AttributeError)
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
