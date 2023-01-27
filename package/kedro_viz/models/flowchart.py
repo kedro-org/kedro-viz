@@ -22,6 +22,8 @@ from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
 
+from .utils import get_dataset_type
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,15 +41,6 @@ def _strip_namespace(name: str) -> str:
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
-
-
-def _get_dataset_type(kedro_object) -> str:
-    """Get dataset class and the two last parts of the module part."""
-    class_name = f"{kedro_object.__class__.__qualname__}"
-    _, dataset_type, dataset_file = f"{kedro_object.__class__.__module__}".rsplit(
-        ".", 2
-    )
-    return f"{dataset_type}.{dataset_file}.{class_name}"
 
 
 @dataclass
@@ -462,9 +455,7 @@ class DataNode(GraphNode):
 
     def __post_init__(self):
 
-        self.dataset_type = (
-            _get_dataset_type(self.kedro_obj) if self.kedro_obj else None
-        )
+        self.dataset_type = get_dataset_type(self.kedro_obj)
 
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
@@ -691,9 +682,9 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
 
-        self.original_type = _get_dataset_type(original_version)
+        self.original_type = get_dataset_type(original_version)
         self.transcoded_types = [
-            _get_dataset_type(transcoded_version)
+            get_dataset_type(transcoded_version)
             for transcoded_version in transcoded_data_node.transcoded_versions
         ]
 

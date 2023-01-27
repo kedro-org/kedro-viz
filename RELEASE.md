@@ -12,6 +12,7 @@ Please follow the established format:
 
 - Visual fixes for metrics plots in experiment tracking. (#1229)
 - Fix bug that prevented Kedro-Viz from loading when a project contained undefined parameters. (#1231)
+- Modify the implementation of `get_dataset_type` in the `models` package to improve safety. (#1232)
 
 # Release 5.2.0
 
