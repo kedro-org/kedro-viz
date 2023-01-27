@@ -8,6 +8,8 @@ Please follow the established format:
 
 # Next release
 
+# Release 5.2.1
+
 ## Bug fixes and other changes
 
 - Visual fixes for metrics plots in experiment tracking. (#1229)
