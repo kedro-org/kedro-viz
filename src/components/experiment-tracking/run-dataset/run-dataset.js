@@ -225,7 +225,9 @@ function buildDatasetDataMarkup(
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
-  const isTrackingDataset = getShortType(datasetType) === 'tracking';
+  const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
+  const isMetricsTrackingDataset = getShortType(datasetType) === 'metricsTracking';
+  const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset
 
   const onExpandVizClick = () => {
     setShowRunPlotsModal(true);
@@ -278,7 +280,7 @@ function buildDatasetDataMarkup(
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
-            const isJSONObject = typeof run?.value === 'object';
+            const isJSONObject = run.value && typeof run.value === 'object';
 
             return (
               <CSSTransition
@@ -296,12 +298,12 @@ function buildDatasetDataMarkup(
                 >
                   {isTrackingDataset && !isJSONObject && (
                     <>
-                      {sanitizeValue(run?.value)}
+                      {sanitizeValue(run.value)}
                       {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
                     </>
                   )}
-                  {isTrackingDataset && isJSONObject && (
-                    <JSONObject value={run?.value} theme={theme} empty="-" />
+                  {isJSONTrackingDataset && isJSONObject && (
+                    <JSONObject value={run.value} theme={theme} empty="-" kind="text"/>
                   )}
 
                   {isPlotlyDataset &&

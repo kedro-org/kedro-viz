@@ -45,6 +45,36 @@ const comparisonTrackingData = {
   ],
 };
 
+const jsonTrackingData = {
+  json: [
+    {
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType: 'tracking.json_dataset.JSONDataSet',
+      data: {
+        classWeight: [
+          { runId: 'My Favorite Sprint', value: 
+            {'precision': 1,
+              'accuracy': {
+                'a1':1,
+                'a2':2
+              }
+            } 
+          },
+          { runId: 'My second Favorite Sprint', value: 
+          {'precision': 4.5,
+          'accuracy': {
+            'a1':3.1,
+            'a2':2.5
+          }
+        } 
+      }, 
+        ],
+      },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
+    },
+  ],
+};
+
 const showDiffTrackingData = {
   metrics: [
     {
@@ -172,7 +202,9 @@ describe('RunDataset', () => {
 
   it('renders a cell with a - value for runs with different metrics', () => {
     const wrapper = mount(
-      <RunDataset isSingleRun={false} trackingData={showDiffTrackingData} />
+      <RunDataset 
+      isSingleRun={false} 
+      trackingData={showDiffTrackingData} />
     );
 
     expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
@@ -217,6 +249,23 @@ describe('RunDataset', () => {
     );
 
     expect(wrapper.find('.details-dataset__visualization-wrapper').length).toBe(
+      1
+    );
+  });
+
+  it('renders a react-json-view component when the run value is a nested json', () => {
+    const wrapper = shallow(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={jsonTrackingData}
+      />
+    );
+
+    console.log(wrapper.debug())
+
+    expect(wrapper.find('.pipeline-json__object').length).toBe(
       1
     );
   });
