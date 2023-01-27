@@ -11,7 +11,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Visual fixes for metrics plots in experiment tracking. (#1229)
-- Fix bug causing user to be unable to start Kedro-Viz if undefined parameters are used. (#1231)
+- Fix bug that prevented Kedro-Viz from loading when a project contained undefined parameters. (#1231)
 
 # Release 5.2.0
 
