@@ -1,6 +1,7 @@
 import React from 'react';
 import RunDataset from '.';
 import { runs, trackingData } from '../../experiment-wrapper/mock-data';
+import JSONObject from '../../json-object';
 import { shallow, mount } from 'enzyme';
 
 const booleanTrackingData = {
@@ -52,22 +53,26 @@ const jsonTrackingData = {
       datasetType: 'tracking.json_dataset.JSONDataSet',
       data: {
         classWeight: [
-          { runId: 'My Favorite Sprint', value: 
-            {'precision': 1,
-              'accuracy': {
-                'a1':1,
-                'a2':2
-              }
-            } 
+          {
+            runId: 'My Favorite Sprint',
+            value: {
+              precision: 1,
+              accuracy: {
+                acc1: 1,
+                acc2: 2,
+              },
+            },
           },
-          { runId: 'My second Favorite Sprint', value: 
-          {'precision': 4.5,
-          'accuracy': {
-            'a1':3.1,
-            'a2':2.5
-          }
-        } 
-      }, 
+          {
+            runId: 'My second Favorite Sprint',
+            value: {
+              precision: 4.5,
+              accuracy: {
+                acc1: 3.1,
+                acc2: 2.5,
+              },
+            },
+          },
         ],
       },
       runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
@@ -202,9 +207,7 @@ describe('RunDataset', () => {
 
   it('renders a cell with a - value for runs with different metrics', () => {
     const wrapper = mount(
-      <RunDataset 
-      isSingleRun={false} 
-      trackingData={showDiffTrackingData} />
+      <RunDataset isSingleRun={false} trackingData={showDiffTrackingData} />
     );
 
     expect(wrapper.find('.details-dataset__value').at(2).text()).toBe('-');
@@ -263,10 +266,6 @@ describe('RunDataset', () => {
       />
     );
 
-    console.log(wrapper.debug())
-
-    expect(wrapper.find('.pipeline-json__object').length).toBe(
-      1
-    );
+    expect(wrapper.containsMatchingElement(<JSONObject />)).toEqual(true);
   });
 });
