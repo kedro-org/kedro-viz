@@ -17,7 +17,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 from kedro.io import AbstractDataSet
-from kedro.io.core import VERSION_FORMAT
+from kedro.io.core import VERSION_FORMAT, DataSetError
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pandas.core.frame import DataFrame
@@ -746,12 +746,16 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         self.kedro_obj: AbstractDataSet
-        if self.kedro_obj is None:
+        try:
+            return self.kedro_obj.load()
+        except (AttributeError, DataSetError):
+            # This except clause triggers if the user passes a parameter that is not
+            # defined in the catalog (DataSetError) it also catches any case where
+            # the kedro_obj is None (AttributeError) -- GH#1231
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
             return None
-        return self.kedro_obj.load()
 
 
 @dataclass
