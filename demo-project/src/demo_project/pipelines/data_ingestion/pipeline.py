@@ -31,7 +31,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=apply_types_to_shuttles,
                 inputs="shuttles",
-                outputs="int_typed_shuttles",
+                outputs="int_typed_shuttles@pandas1",
             ),
             node(
                 func=apply_types_to_reviews,
@@ -47,7 +47,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=combine_shuttle_level_information,
                 inputs={
-                    "shuttles": "int_typed_shuttles",
+                    "shuttles": "int_typed_shuttles@pandas2",
                     "reviews": "int_typed_reviews",
                     "companies": "prm_agg_companies",
                 },
