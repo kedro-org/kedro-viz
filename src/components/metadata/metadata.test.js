@@ -236,7 +236,7 @@ describe('MetaData', () => {
 
         const row = rowByLabel(wrapper, 'Run Command:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro run --to-nodes="split_data_node"',
+          'kedro run --to-nodes=split_data_node',
         ]);
       });
 
@@ -255,7 +255,7 @@ describe('MetaData', () => {
         copyButton.simulate('click');
 
         expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-          'kedro run --to-nodes="split_data_node"'
+          'kedro run --to-nodes=split_data_node'
         );
       });
     });
@@ -327,7 +327,7 @@ describe('MetaData', () => {
 
         const row = rowByLabel(wrapper, 'Run Command:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro run --to-outputs="model_input_table"',
+          'kedro run --to-outputs=model_input_table',
         ]);
       });
 
@@ -346,7 +346,7 @@ describe('MetaData', () => {
         copyButton.simulate('click');
 
         expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-          'kedro run --to-outputs="model_input_table"'
+          'kedro run --to-outputs=model_input_table'
         );
       });
     });

@@ -426,7 +426,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if kedro_node._name is not None:
-            self.run_command = f'kedro run --to-nodes={task_node.namespace}.{kedro_node._name}'
+            self.run_command = (
+                f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
+            )
 
 
 # pylint: disable=too-many-instance-attributes
@@ -569,7 +571,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
-            self.run_command = f'kedro run --to-outputs={data_node.full_name}'
+            self.run_command = f"kedro run --to-outputs={data_node.full_name}"
 
         # Only check for existence of dataset if we might want to load it.
         if not (
@@ -692,7 +694,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (
-                f'kedro run --to-outputs={transcoded_data_node.original_name}'
+                f"kedro run --to-outputs={transcoded_data_node.original_name}"
             )
 
 
