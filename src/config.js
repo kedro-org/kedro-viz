@@ -88,8 +88,8 @@ export const shortTypeMapping = {
   'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
   'plotly.json_dataset.JSONDataSet': 'plotly',
   'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
-  'tracking.json_dataset.JSONDataSet': 'tracking',
-  'tracking.metrics_dataset.MetricsDataSet': 'tracking',
+  'tracking.json_dataset.JSONDataSet': 'JSONTracking',
+  'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
 // URL parameters for each element/section

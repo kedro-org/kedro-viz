@@ -1,0 +1,11 @@
+@use '../../styles/variables' as variables;
+
+.pipeline-json__object {
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
+  
+  .pretty-json-container {
+    font-family: variables.$font-monospace;
+    font-size: 0.87em;
+  }
+}
