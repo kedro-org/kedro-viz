@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from kedro.io import AbstractVersionedDataSet, Version
 from sqlalchemy import Column
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
