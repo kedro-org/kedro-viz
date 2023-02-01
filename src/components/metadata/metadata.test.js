@@ -45,7 +45,7 @@ describe('MetaData', () => {
   const title = (wrapper) => wrapper.find('.pipeline-metadata__title');
   const rowIcon = (row) => row.find('svg.pipeline-metadata__icon');
   const rowValue = (row) => row.find('.pipeline-metadata__value');
-  const rowObject = (row) => row.find('.pipeline-metadata__object');
+  const rowObject = (row) => row.find('.pipeline-json__object');
   const rowByLabel = (wrapper, label) =>
     // Using attribute since traversal by sibling not supported
     wrapper.find(`.pipeline-metadata__row[data-label="${label}"]`);
