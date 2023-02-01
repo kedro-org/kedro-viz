@@ -423,11 +423,10 @@ class TaskNodeMetadata(GraphNodeMetadata):
         self.outputs = [
             _pretty_name(_strip_namespace(name)) for name in kedro_node.outputs
         ]
-
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if kedro_node._name is not None:
-            self.run_command = f'kedro run --to-nodes={kedro_node.full_name}'
+            self.run_command = f'kedro run --to-nodes={task_node.namespace}.{kedro_node._name}'
 
 
 # pylint: disable=too-many-instance-attributes
