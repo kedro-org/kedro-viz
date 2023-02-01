@@ -86,7 +86,6 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
-
             context = session.load_context()
             session_store = session._store
             session_store_location = None
@@ -112,7 +111,6 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
-
             context = session.load_context()
             session_store = session._store
             session_store_location = None
@@ -136,7 +134,6 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
-
             context = session.load_context()
             session_store = session._store
             session_store_location = None

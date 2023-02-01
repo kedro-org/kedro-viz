@@ -116,7 +116,6 @@ class DataAccessManager:
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
-
                 # Add the input as an input to the task_node
                 # Mark it as a transcoded dataset unless it's a free input
                 # because free inputs to the pipeline can't be transcoded.

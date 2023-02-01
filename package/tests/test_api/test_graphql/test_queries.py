@@ -290,7 +290,6 @@ class TestQueryWithRuns:
         show_diff,
         expected_response,
     ):
-
         data_access_manager_with_runs.add_catalog(example_multiple_run_tracking_catalog)
 
         response = client.post(
