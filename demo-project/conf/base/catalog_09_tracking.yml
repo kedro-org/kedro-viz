@@ -1,9 +1,9 @@
-train_evaluation.linear_regression:
+train_evaluation.linear_regression.r2_score:
   type: tracking.MetricsDataSet
   filepath: ${base_location}/09_tracking/linear_score.json
   versioned: True
 
-train_evaluation.random_forest:
+train_evaluation.random_forest.r2_score:
   type: tracking.MetricsDataSet
   filepath: ${base_location}/09_tracking/rf_score.json
   versioned: True

@@ -193,18 +193,13 @@
 $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__value-list--inline {
-  margin: 0 (-$list-inline-spacing * 1.5);
   padding: 0;
+  line-height: 1.5em;
   list-style: none;
-
-  li {
-    display: inline;
-    margin: $list-inline-spacing $list-inline-spacing * 1.5;
-  }
 }
 
 .pipeline-metadata__value-list--commas li:not(:last-child):after {
-  content: ', ';
+  content: ' , ';
 }
 
 .pipeline-metadata__plot {
