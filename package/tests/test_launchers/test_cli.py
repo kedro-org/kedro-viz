@@ -14,17 +14,17 @@ from kedro_viz.server import run_server
     [
         (
             ["viz"],
-            dict(
-                host="127.0.0.1",
-                port=4141,
-                browser=True,
-                load_file=None,
-                save_file=None,
-                pipeline_name=None,
-                env=None,
-                autoreload=False,
-                extra_params={},
-            ),
+            {
+                "host": "127.0.0.1",
+                "port": 4141,
+                "browser": True,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "extra_params": {},
+            },
         ),
         (
             [
@@ -43,17 +43,17 @@ from kedro_viz.server import run_server
                 "--params",
                 "extra_param:param",
             ],
-            dict(
-                host="8.8.8.8",
-                port=4142,
-                browser=False,
-                load_file=None,
-                save_file="save.json",
-                pipeline_name="data_science",
-                env="local",
-                autoreload=False,
-                extra_params={"extra_param": "param"},
-            ),
+            {
+                "host": "8.8.8.8",
+                "port": 4142,
+                "browser": False,
+                "load_file": None,
+                "save_file": "save.json",
+                "pipeline_name": "data_science",
+                "env": "local",
+                "autoreload": False,
+                "extra_params": {"extra_param": "param"},
+            },
         ),
     ],
 )
