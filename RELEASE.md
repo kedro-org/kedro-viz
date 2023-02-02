@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Enable the display of json objects with react-json-viewer in the Experiment Tracking Overview Section. (#1236)
+- Enable the display of json objects with `react-json-viewer` in experiment tracking. (#1236)
 
 ## Bug fixes and other changes
 
