@@ -51,7 +51,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=combine_shuttle_level_information,
                 inputs={
                     "shuttles": "int_typed_shuttles@pandas2",
-                    "shuttles2": "int_typed_shuttles@pandas3",
                     "reviews": "int_typed_reviews",
                     "companies": "prm_agg_companies",
                 },
