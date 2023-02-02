@@ -31,7 +31,13 @@ const MetaDataList = ({
         })}
       >
         {showValues.map((item, index) => (
-          <li key={index}>{property ? item[property] : item}</li>
+          <li key={index}>
+            <MetaDataValue
+              value={property ? item[property] : item}
+              kind={kind}
+              empty={empty}
+            />
+          </li>
         ))}
       </ul>
       {remainder > 0 ? (

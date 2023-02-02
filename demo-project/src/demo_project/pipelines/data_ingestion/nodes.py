@@ -96,7 +96,7 @@ def aggregate_company_data(typed_companies: pd.DataFrame) -> pd.DataFrame:
 
 
 def combine_shuttle_level_information(
-    shuttles: pd.DataFrame, companies: pd.DataFrame, reviews: pd.DataFrame
+    shuttles: pd.DataFrame, shuttles2:pd.DataFrame, companies: pd.DataFrame, reviews: pd.DataFrame
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Combines all data to create a domain level primary table.
 

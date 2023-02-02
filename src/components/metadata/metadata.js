@@ -147,13 +147,11 @@ const MetaData = ({
                     <MetaDataRow
                       label="Original Type:"
                       visible={isDataNode}
-                      kind="type"
                       value={metadata.originalType}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
                       visible={isDataNode}
-                      kind="type"
                       value={metadata.transcodedTypes}
                     />
                   </>
@@ -203,7 +201,10 @@ const MetaData = ({
                   />
                 )}
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
-                  <CommandCopier command={runCommand} />
+                  <CommandCopier
+                    command={runCommand}
+                    isCommand={metadata?.runCommand}
+                  />
                 </MetaDataRow>
               </dl>
               {hasPlot && (

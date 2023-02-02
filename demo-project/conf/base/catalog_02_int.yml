@@ -13,6 +13,12 @@ ingestion.int_typed_shuttles@pandas2:
   filepath: ${base_location}/02_intermediate/typed_shuttles.pq
   layer: intermediate
 
+
+ingestion.int_typed_shuttles@pandas3:
+  type: pandas.ParquetDataSet
+  filepath: ${base_location}/02_intermediate/typed_shuttles.pq
+  layer: intermediate
+
 ingestion.int_typed_reviews:
   type: pandas.ParquetDataSet
   filepath: ${base_location}/02_intermediate/typed_reviews.pq
