@@ -6,5 +6,5 @@
     "recommended_controls": 0.2701227292578884,
     "projected_optimization": 0.32414727510946606
   },
-  "run_command": "kedro run --to-outputs=\"test_json\""
+  "run_command": "kedro run --to-outputs=test_json"
 }

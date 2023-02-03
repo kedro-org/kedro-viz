@@ -5,7 +5,7 @@ import IconButton from '../../ui/icon-button';
 import CopyIcon from '../../icons/copy';
 import './command-copier.css';
 
-const CommandCopier = ({ command }) => {
+const CommandCopier = ({ command, isCommand }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const onCopyClick = () => {
@@ -23,7 +23,7 @@ const CommandCopier = ({ command }) => {
         })}
         value={command}
       />
-      {window.navigator.clipboard && command && (
+      {window.navigator.clipboard && isCommand && (
         <>
           <span
             className={modifiers('copy-message', {
