@@ -63,8 +63,8 @@ describe('node-list-selectors', () => {
     ]);
 
     it('returns expected number of element types', () => {
-      expect(filteredElementTypes.length).not.toBe(elementTypes.length);
-      expect(filteredElementTypes).toHaveLength(1);
+      expect(filteredElementTypes.length).toBe(elementTypes.length);
+      expect(filteredElementTypes).toHaveLength(3);
     });
 
     it('returns element types of the correct format', () => {
