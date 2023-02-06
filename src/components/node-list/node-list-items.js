@@ -31,7 +31,10 @@ export const highlightMatch = (nodeGroups, searchValue) => {
   for (const type of Object.keys(nodeGroups)) {
     highlightedGroups[type] = nodeGroups[type].map((node) => ({
       ...node,
-      highlightedLabel: getHighlightedText(node.name, searchValue),
+      highlightedLabel: getHighlightedText(
+        node.name || node.fullName,
+        searchValue
+      ),
     }));
   }
 
@@ -46,7 +49,10 @@ export const highlightMatch = (nodeGroups, searchValue) => {
  */
 export const nodeMatchesSearch = (node, searchValue) => {
   if (searchValue) {
-    return new RegExp(escapeRegExp(searchValue), 'gi').test(node.name);
+    return (
+      new RegExp(escapeRegExp(searchValue), 'gi').test(node.name) ||
+      new RegExp(escapeRegExp(searchValue), 'gi').test(node.fullName)
+    );
   }
 
   return true;
