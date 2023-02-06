@@ -8,6 +8,14 @@ Please follow the established format:
 
 # Next release
 
+## Major features and improvements
+
+- Enable the display of json objects with `react-json-viewer` in experiment tracking. (#1236)
+
+## Bug fixes and other changes
+
+- Fix run command for task nodes on metadata panel. (#1245)
+
 # Release 5.2.1
 
 ## Bug fixes and other changes

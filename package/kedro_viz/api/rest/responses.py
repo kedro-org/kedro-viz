@@ -104,7 +104,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "parameters": {"test_size": 0.2},
                 "inputs": ["params:input1", "input2"],
                 "outputs": ["output1"],
-                "run_command": 'kedro run --to-nodes="split_data"',
+                "run_command": "kedro run --to-nodes=split_data",
             }
         }
 
@@ -122,7 +122,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "pandas.csv_dataset.CSVDataSet",
-                "run_command": 'kedro run --to-outputs="master_table"',
+                "run_command": "kedro run --to-outputs=master_table",
             }
         }
 
