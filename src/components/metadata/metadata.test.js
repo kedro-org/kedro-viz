@@ -78,7 +78,7 @@ describe('MetaData', () => {
       expect(parametersRow().find('.pipeline-metadata__value').length).toBe(20);
     });
 
-    it('when pretty name is turned off the metadata title displays the full node name', () => {
+    it('when pretty name is turned off the metadata title displays the full node name and the row below shows the pretty name', () => {
       const props = {
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
@@ -96,9 +96,12 @@ describe('MetaData', () => {
         ],
       });
       expect(textOf(title(wrapper))).toEqual(['parameters']);
+
+      const row = rowByLabel(wrapper, 'Pretty node name:');
+      expect(textOf(rowValue(row))).toEqual(['Parameters']);
     });
 
-    it('when pretty name is turned on the metadata title display the formatted name', () => {
+    it('when pretty name is turned on the metadata title displays the formatted name and the row below shows the original name', () => {
       const props = {
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
@@ -116,6 +119,9 @@ describe('MetaData', () => {
         ],
       });
       expect(textOf(title(wrapper))).toEqual(['Parameters']);
+
+      const row = rowByLabel(wrapper, 'Original node name:');
+      expect(textOf(rowValue(row))).toEqual(['parameters']);
     });
   });
 
