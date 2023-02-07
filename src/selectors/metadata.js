@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getNodeLabel } from './nodes';
+import { getNodeLabel, getNodeFullName, getNodeName } from './nodes';
 const getClickedNode = (state) => state.node.clicked;
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -21,6 +21,8 @@ export const getClickedNodeMetaData = createSelector(
   [
     getClickedNode,
     getNodeLabel,
+    getNodeFullName,
+    getNodeName,
     (state) => state.node.type,
     (state) => state.node.tags,
     (state) => state.tag.name,
@@ -41,6 +43,8 @@ export const getClickedNodeMetaData = createSelector(
   (
     nodeId,
     nodeLabel,
+    nodeFullName,
+    nodePrettyName,
     nodeType,
     nodeTags,
     tagNames,
@@ -72,6 +76,8 @@ export const getClickedNodeMetaData = createSelector(
     const metadata = {
       id: nodeId,
       name: nodeLabel[nodeId],
+      fullName: nodeFullName[nodeId],
+      prettyName: nodePrettyName[nodeId],
       type: nodeType[nodeId],
       tags: [...nodeTags[nodeId]]
         .map((tagId) => tagNames[tagId])
