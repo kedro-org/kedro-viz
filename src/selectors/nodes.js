@@ -10,8 +10,8 @@ import {
 import getShortType from '../utils/short-type';
 import { getNodeRank } from './ranks';
 
-const getNodeName = (state) => state.node.name;
-const getNodeFullName = (state) => state.node.fullName;
+export const getNodeName = (state) => state.node.name;
+export const getNodeFullName = (state) => state.node.fullName;
 const getNodeDisabledNode = (state) => state.node.disabled;
 const getModularPipelineDisabled = (state) => state.modularPipeline.disabled;
 const getNodeTags = (state) => state.node.tags;
