@@ -13,6 +13,7 @@ const errorMessages = {
  * This hook is only called when the page is reloaded or when the URL search changes.
  */
 export const useRedirectLocationInFlowchart = (
+  flags,
   modularPipelinesTree,
   nodes,
   onLoadNodeData,
@@ -90,7 +91,9 @@ export const useRedirectLocationInFlowchart = (
           const modularPipeline = nodes[nodeId];
           const hasModularPipeline = modularPipeline?.length > 0;
 
-          if (hasModularPipeline) {
+          // For when the user toggles Expand all modular pipelines button
+          // then we don't need to call this action
+          if (!flags.expandAllPipelines && hasModularPipeline) {
             onToggleModularPipelineExpanded(modularPipeline);
           }
 
