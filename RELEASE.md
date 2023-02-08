@@ -16,6 +16,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix run command for task nodes on metadata panel. (#1245)
+- Fix URL query params with expand all modular pipelines toggle. (#1256)
 
 # Release 5.2.1
 
