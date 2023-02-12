@@ -219,10 +219,26 @@ class TestGraphNodeCreation:
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node(self, patched_warning):
+        """Test the case where ``parameters`` is equal to None"""
         parameters_node = GraphNode.create_parameters_node(
             full_name="non_existing", layer=None, tags={}, parameters=None
         )
         assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.parameter_value is None
+        patched_warning.assert_has_calls(
+            [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
+        )
+
+    @patch("logging.Logger.warning")
+    def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):
+        """Test the case where ``parameters`` is equal to a MemoryDataSet with no data"""
+        parameters_dataset = MemoryDataSet()
+        parameters_node = GraphNode.create_parameters_node(
+            full_name="non_existing",
+            layer=None,
+            tags={},
+            parameters=parameters_dataset,
+        )
         assert parameters_node.parameter_value is None
         patched_warning.assert_has_calls(
             [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
@@ -285,7 +301,10 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert task_node_metadata.parameters == {}
-        assert task_node_metadata.run_command == 'kedro run --to-nodes="identity_node"'
+        assert (
+            task_node_metadata.run_command
+            == "kedro run --to-nodes=namespace.identity_node"
+        )
 
     def test_task_node_metadata_no_run_command(self):
         kedro_node = node(
@@ -351,7 +370,7 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
-        assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
+        assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")

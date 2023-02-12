@@ -5,7 +5,8 @@ isort~=5.0
 jupyter~=1.0
 jupyter_client>=5.1, <7.0
 jupyterlab~=3.0
-kedro[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==0.18.1
+kedro==0.18.4
+kedro-datasets[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet, plotly.PlotlyDataSet]==1.0.1
 nbstripout~=0.4
 pytest-cov~=2.5
 pytest-mock>=1.7.1, <2.0

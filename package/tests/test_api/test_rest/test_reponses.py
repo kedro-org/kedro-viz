@@ -597,7 +597,7 @@ class TestTranscodedDataset:
             "transcoded_types": [
                 "pandas.parquet_dataset.ParquetDataSet",
             ],
-            "run_command": 'kedro run --to-outputs="model_inputs@pandas2"',
+            "run_command": "kedro run --to-outputs=model_inputs@pandas2",
         }
 
 
@@ -616,7 +616,10 @@ class TestNodeMetadataEndpoint:
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
         assert metadata["inputs"] == ["Raw Data", "Params: Train Test Split"]
         assert metadata["outputs"] == ["Model Inputs"]
-        assert metadata["run_command"] == 'kedro run --to-nodes="process_data"'
+        assert (
+            metadata["run_command"]
+            == "kedro run --to-nodes=uk.data_processing.process_data"
+        )
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_data_node_metadata(self, client):
@@ -624,7 +627,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "model_inputs.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
-            "run_command": 'kedro run --to-outputs="model_inputs"',
+            "run_command": "kedro run --to-outputs=model_inputs",
         }
 
     def test_data_node_metadata_for_free_input(self, client):

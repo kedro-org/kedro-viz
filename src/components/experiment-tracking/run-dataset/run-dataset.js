@@ -6,6 +6,7 @@ import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DataSetLoader } from './run-dataset-loader';
+import JSONObject from '../../json-object';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
@@ -53,6 +54,7 @@ const RunDataset = ({
   enableShowChanges,
   isSingleRun,
   pinnedRun,
+  selectedRunIds,
   setRunDatasetToShow,
   setShowRunPlotsModal,
   showLoader,
@@ -62,8 +64,6 @@ const RunDataset = ({
   if (!trackingData) {
     return null;
   }
-
-  // console.log('trackingData: ', trackingData);
 
   return (
     <div
@@ -118,26 +118,34 @@ const RunDataset = ({
                   </span>
                   <TransitionGroup
                     component="div"
-                    className="details-dataset__tranistion-group-wrapper"
+                    className="details-dataset__transition-group-wrapper"
                   >
-                    <CSSTransition
-                      timeout={300}
-                      classNames="details-dataset__value-animation"
-                      enter={isSingleRun ? false : true}
-                      exit={isSingleRun ? false : true}
-                    >
-                      <span
-                        className={classnames('details-dataset__value-header', {
-                          'details-dataset__value-header--comparison-view':
-                            enableComparisonView,
-                        })}
-                        style={{
-                          display: enableComparisonView ? 'block' : 'none',
-                        }}
-                      >
-                        No data to display. Try selecting a different run.
-                      </span>
-                    </CSSTransition>
+                    {selectedRunIds.map((id, index) => {
+                      return (
+                        <CSSTransition
+                          classNames="details-dataset__value-animation"
+                          enter={isSingleRun ? false : true}
+                          exit={isSingleRun ? false : true}
+                          key={id}
+                          timeout={300}
+                        >
+                          <span
+                            className={classnames(
+                              'details-dataset__value-header',
+                              {
+                                'details-dataset__value-header--comparison-view':
+                                  enableComparisonView && index === 0,
+                              }
+                            )}
+                            style={{
+                              display: enableComparisonView ? 'flex' : 'none',
+                            }}
+                          >
+                            No data to display. Try selecting a different run.
+                          </span>
+                        </CSSTransition>
+                      );
+                    })}
                   </TransitionGroup>
                 </div>
               )}
@@ -217,7 +225,9 @@ function buildDatasetDataMarkup(
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
-  const isTrackingDataset = getShortType(datasetType) === 'tracking';
+  const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
+  const isMetricsTrackingDataset = getShortType(datasetType) === 'metricsTracking';
+  const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset
 
   const onExpandVizClick = () => {
     setShowRunPlotsModal(true);
@@ -231,7 +241,7 @@ function buildDatasetDataMarkup(
           <span className="details-dataset__name-header">Name</span>
           <TransitionGroup
             component="div"
-            className="details-dataset__tranistion-group-wrapper"
+            className="details-dataset__transition-group-wrapper"
           >
             {datasetValues.map((data, index) => (
               <CSSTransition
@@ -266,10 +276,12 @@ function buildDatasetDataMarkup(
         <span className={'details-dataset__label'}>{datasetKey}</span>
         <TransitionGroup
           component="div"
-          className="details-dataset__tranistion-group-wrapper"
+          className="details-dataset__transition-group-wrapper"
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
+            const isJSONObject = run.value && typeof run.value === 'object';
+
             return (
               <CSSTransition
                 key={run.runId}
@@ -284,11 +296,14 @@ function buildDatasetDataMarkup(
                       index === 0 && enableComparisonView,
                   })}
                 >
-                  {isTrackingDataset && (
+                  {isTrackingDataset && !isJSONObject && (
                     <>
-                      {sanitizeValue(run?.value)}
+                      {sanitizeValue(run.value)}
                       {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
                     </>
+                  )}
+                  {isJSONTrackingDataset && isJSONObject && (
+                    <JSONObject value={run.value} theme={theme} empty="-" kind="text"/>
                   )}
 
                   {isPlotlyDataset &&

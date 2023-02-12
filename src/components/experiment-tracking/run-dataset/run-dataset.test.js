@@ -1,6 +1,7 @@
 import React from 'react';
 import RunDataset from '.';
 import { runs, trackingData } from '../../experiment-wrapper/mock-data';
+import JSONObject from '../../json-object';
 import { shallow, mount } from 'enzyme';
 
 const booleanTrackingData = {
@@ -38,6 +39,40 @@ const comparisonTrackingData = {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
           { runId: 'My second Favorite Sprint', value: 13 },
+        ],
+      },
+      runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
+    },
+  ],
+};
+
+const jsonTrackingData = {
+  json: [
+    {
+      datasetName: 'train_evaluation.r2_score_linear_regression',
+      datasetType: 'tracking.json_dataset.JSONDataSet',
+      data: {
+        classWeight: [
+          {
+            runId: 'My Favorite Sprint',
+            value: {
+              precision: 1,
+              accuracy: {
+                acc1: 1,
+                acc2: 2,
+              },
+            },
+          },
+          {
+            runId: 'My second Favorite Sprint',
+            value: {
+              precision: 4.5,
+              accuracy: {
+                acc1: 3.1,
+                acc2: 2.5,
+              },
+            },
+          },
         ],
       },
       runIds: ['My Favorite Sprint', 'My second Favorite Sprint'],
@@ -219,5 +254,18 @@ describe('RunDataset', () => {
     expect(wrapper.find('.details-dataset__visualization-wrapper').length).toBe(
       1
     );
+  });
+
+  it('renders a react-json-view component when the run value is a nested json', () => {
+    const wrapper = shallow(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={true}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={jsonTrackingData}
+      />
+    );
+
+    expect(wrapper.containsMatchingElement(<JSONObject />)).toEqual(true);
   });
 });

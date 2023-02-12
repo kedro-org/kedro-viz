@@ -13,6 +13,7 @@ const errorMessages = {
  * This hook is only called when the page is reloaded or when the URL search changes.
  */
 export const useRedirectLocationInFlowchart = (
+  flags,
   modularPipelinesTree,
   nodes,
   onLoadNodeData,
@@ -27,6 +28,7 @@ export const useRedirectLocationInFlowchart = (
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
+  const [pageReloaded, setPageReloaded] = useState(false);
 
   const activePipelineId = search.substring(
     search.indexOf(params.pipeline) + params.pipeline.length,
@@ -65,32 +67,47 @@ export const useRedirectLocationInFlowchart = (
   );
 
   useEffect(() => {
-    setErrorMessage({});
-    setInvalidUrl(false);
-
-    if (matchedFlowchartMainPage) {
-      onLoadNodeData(null);
-      onToggleFocusMode(null);
+    if (reload) {
+      setPageReloaded(true);
     }
 
-    if (matchedSelectedNode && Object.keys(nodes).length > 0) {
-      // Switching the view forces the page to reload again
-      // hence this action needs to happen first
-      updatePipeline(pipelines, decodedPipelineId);
+    // This timeout is to ensure it has enough time to
+    // load the data after the page is reloaded
+    // or change to a different modular pipeline view first
+    const setPageReloadedTimeOut = setTimeout(() => {
+      pageReloaded && setPageReloaded(false);
+    }, 500);
 
-      // Reset the focus mode to null when when using the navigation buttons
-      onToggleFocusMode(null);
+    return () => clearTimeout(setPageReloadedTimeOut);
+  }, [pageReloaded, reload]);
 
-      // This timeout is to ensure it has enough time to
-      // change to a different modular pipeline view first
-      const switchingModularPipelineTimeout = setTimeout(() => {
+  useEffect(() => {
+    if (pageReloaded) {
+      setErrorMessage({});
+      setInvalidUrl(false);
+
+      if (matchedFlowchartMainPage) {
+        onLoadNodeData(null);
+        onToggleFocusMode(null);
+      }
+
+      if (matchedSelectedNode && Object.keys(nodes).length > 0) {
+        // Switching the view forces the page to reload again
+        // hence this action needs to happen first
+        updatePipeline(pipelines, decodedPipelineId);
+
+        // Reset the focus mode to null when when using the navigation buttons
+        onToggleFocusMode(null);
+
         const nodeId = search.split(params.selected)[1];
         const foundNode = Object.keys(nodes).find((node) => node === nodeId);
         if (foundNode) {
           const modularPipeline = nodes[nodeId];
           const hasModularPipeline = modularPipeline?.length > 0;
 
-          if (hasModularPipeline) {
+          // For when the user toggles Expand all modular pipelines button
+          // then we don't need to call this action
+          if (!flags.expandAllPipelines && hasModularPipeline) {
             onToggleModularPipelineExpanded(modularPipeline);
           }
 
@@ -100,18 +117,14 @@ export const useRedirectLocationInFlowchart = (
           setErrorMessage(errorMessages.node);
           setInvalidUrl(true);
         }
-      }, 500);
+      }
 
-      return () => clearTimeout(switchingModularPipelineTimeout);
-    }
+      if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+        updatePipeline(pipelines, decodedPipelineId);
 
-    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
-      updatePipeline(pipelines, decodedPipelineId);
+        // Reset the node data to null when when using the navigation buttons
+        onLoadNodeData(null);
 
-      // Reset the node data to null when when using the navigation buttons
-      onLoadNodeData(null);
-
-      const switchingModularPipelineTimeout = setTimeout(() => {
         const modularPipelineId = search.split(params.focused)[1];
 
         const foundModularPipeline = modularPipelinesTree[modularPipelineId];
@@ -123,9 +136,7 @@ export const useRedirectLocationInFlowchart = (
           setErrorMessage(errorMessages.modularPipeline);
           setInvalidUrl(true);
         }
-      }, 500);
-
-      return () => clearTimeout(switchingModularPipelineTimeout);
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

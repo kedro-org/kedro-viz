@@ -12,6 +12,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
+from .utils import get_dataset_type
+
 logger = logging.getLogger(__name__)
 Base = declarative_base()
 
@@ -51,11 +53,7 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# The keys will match a dataset type with any prefix, e.g.
-# plotly.plotly_dataset.PlotlyDataSet would include the following:
-# plotly.plotly_dataset.PlotlyDataSet
-# plotly.plotly_dataset.PlotlyDataSet
-# my.custom.path.to.plotly.plotly_dataset.PlotlyDataSet
+# Map dataset types (as produced by get_dataset_type) to their group
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
     "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
@@ -111,9 +109,3 @@ class TrackingDatasetModel:
             )
             self.runs[run_id] = {}
         self.dataset._version = Version(None, None)
-
-
-def get_dataset_type(dataset: AbstractVersionedDataSet) -> str:
-    class_name = f"{dataset.__class__.__qualname__}"
-    _, dataset_type, dataset_file = f"{dataset.__class__.__module__}".rsplit(".", 2)
-    return f"{dataset_type}.{dataset_file}.{class_name}"

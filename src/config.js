@@ -8,22 +8,23 @@ export const localStorageName = 'KedroViz';
 export const globalToolbarWidth = 80;
 
 export const metaSidebarWidth = {
-  open: 400,
   closed: 0,
+  open: 400,
 };
 
 export const sidebarWidth = {
-  open: 400 + globalToolbarWidth,
-  closed: 56 + globalToolbarWidth,
   breakpoint: 700,
+  closed: 56 + globalToolbarWidth,
+  open: 400 + globalToolbarWidth,
+  pipelineUI: 344,
 };
 
 export const codeSidebarWidth = {
-  open: 480,
   closed: 0,
+  open: 480,
 };
 
-// these colours variables come from styles/variables';
+// These colours variables come from styles/variables;
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
 
@@ -94,8 +95,8 @@ export const shortTypeMapping = {
   'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
   'plotly.json_dataset.JSONDataSet': 'plotly',
   'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
-  'tracking.json_dataset.JSONDataSet': 'tracking',
-  'tracking.metrics_dataset.MetricsDataSet': 'tracking',
+  'tracking.json_dataset.JSONDataSet': 'JSONTracking',
+  'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
 // URL parameters for each element/section

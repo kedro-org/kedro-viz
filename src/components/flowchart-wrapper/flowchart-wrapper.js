@@ -25,6 +25,7 @@ import './flowchart-wrapper.css';
  * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowChartWrapper = ({
+  flags,
   loading,
   modularPipelinesTree,
   nodes,
@@ -33,11 +34,12 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onUpdateActivePipeline,
+  pipelines,
   reload,
   sidebarVisible,
-  pipelines,
 }) => {
   const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
+    flags,
     modularPipelinesTree,
     nodes,
     onLoadNodeData,
@@ -81,6 +83,7 @@ export const FlowChartWrapper = ({
 };
 
 export const mapStateToProps = (state) => ({
+  flags: state.flags,
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
