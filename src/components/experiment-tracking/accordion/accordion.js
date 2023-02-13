@@ -82,7 +82,7 @@ const Accordion = ({
         >
           {heading}
           {headingDetail && (
-            <span className="accordion__title__detail">{'headingDetail'}</span>
+            <span className="accordion__title__detail">{headingDetail}</span>
           )}
         </div>
         {layout === 'right' && (
