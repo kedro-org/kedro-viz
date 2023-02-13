@@ -2,7 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
-import { getModularPipelinesTree } from '../../selectors/nodes';
+import {
+  getModularPipelinesTree,
+  getNodeFullName,
+} from '../../selectors/nodes';
 import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
@@ -26,6 +29,7 @@ import './flowchart-wrapper.css';
  */
 export const FlowChartWrapper = ({
   flags,
+  fullNames,
   loading,
   modularPipelinesTree,
   nodes,
@@ -40,6 +44,7 @@ export const FlowChartWrapper = ({
 }) => {
   const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
     flags,
+    fullNames,
     modularPipelinesTree,
     nodes,
     onLoadNodeData,
@@ -84,6 +89,7 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
+  fullNames: getNodeFullName(state),
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,

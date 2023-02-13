@@ -96,6 +96,7 @@ export const shortTypeMapping = {
 export const params = {
   focused: 'focused_id=',
   selected: 'selected_id=',
+  selectedName: 'selected_name=',
   pipeline: 'pipeline_id=',
 };
 
@@ -106,5 +107,6 @@ export const routes = {
     main: '/',
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
   },
 };
