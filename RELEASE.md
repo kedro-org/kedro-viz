@@ -17,6 +17,7 @@ Please follow the established format:
 
 - Fix run command for task nodes on metadata panel. (#1245)
 - Fix URL query params with expand all modular pipelines toggle. (#1256)
+- Display delta value for metrics when comparing runs in experiment tracking. (#1257)
 
 # Release 5.2.1
 
