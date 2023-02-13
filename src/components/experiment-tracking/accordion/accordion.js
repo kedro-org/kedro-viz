@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { generatePath } from 'react-router-dom';
 import classnames from 'classnames';
+import { routes } from '../../../config';
 
 import './accordion.css';
 
@@ -65,10 +67,22 @@ const Accordion = ({
             'accordion__title--medium': size === 'medium',
             'accordion__title--large': size === 'large',
           })}
+          onClick={() => {
+            // maybe we should get an extra flag to show if this is a sub-heading?
+            // rather just relying on the size
+            if (size === 'medium') {
+              const url = generatePath(routes.flowchart.selectedName, {
+                pipelineId: '__default__',
+                fullName: heading,
+              });
+
+              window.open(url, '_blank');
+            }
+          }}
         >
           {heading}
           {headingDetail && (
-            <span className="accordion__title__detail">{headingDetail}</span>
+            <span className="accordion__title__detail">{'headingDetail'}</span>
           )}
         </div>
         {layout === 'right' && (
