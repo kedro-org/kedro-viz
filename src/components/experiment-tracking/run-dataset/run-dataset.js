@@ -30,8 +30,9 @@ const determinePinDelta = (data, pinValue, pinnedRun) => {
     typeof data.value === 'number' &&
     data.value !== pinValue
   ) {
-    const delta = Math.round(((data.value - pinValue) / pinValue) * 100);
-    return delta + '%';
+    const delta = data.value - pinValue;
+    const deltaPercentage = Math.round((delta / pinValue) * 100);
+    return delta.toFixed(1) + ' (' + deltaPercentage + '%)';
   }
   return null;
 };
