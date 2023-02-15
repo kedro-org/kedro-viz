@@ -216,7 +216,7 @@ describe('RunDataset', () => {
     );
 
     expect(wrapper.find('.details-dataset__deltaValue').at(1).text()).toBe(
-      '1 (8%)'
+      '1.0 (8%)'
     );
   });
 
