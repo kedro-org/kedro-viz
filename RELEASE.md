@@ -11,10 +11,12 @@ Please follow the established format:
 ## Major features and improvements
 
 - Enable the display of json objects with `react-json-viewer` in experiment tracking. (#1236)
+- Always show pretty and original node names in the metadata panel. (#1254)
 
 ## Bug fixes and other changes
 
 - Fix run command for task nodes on metadata panel. (#1245)
+- Fix URL query params with expand all modular pipelines toggle. (#1256)
 
 # Release 5.2.1
 
@@ -71,8 +73,8 @@ Please follow the established format:
 
 - Don't reset the zoom each time a node is selected. (#988)
 - Improve the way runs animate in and out in experiment tracking. (#993)
-- Fix for plots not showing on Metadata panel. (#1014)
-- Enhance the display of information in the Metadata sidebar. (#1015)
+- Fix for plots not showing on metadata panel. (#1014)
+- Enhance the display of information in the metadata panel. (#1015)
 
 # Release 5.0.0
 
@@ -124,7 +126,7 @@ Please follow the established format:
 
 - Fix lambda and partial Python functions not rendering correctly on flowchart. (#851)
 - Add tooltip label text to page-navigation links. (#846)
-- Change `Type` naming on Metadata Side Panel. (#852)
+- Change `Type` naming on metadata Side Panel. (#852)
 - Improve Heap event tracking. (#556)
 
 # Release 4.5.0
