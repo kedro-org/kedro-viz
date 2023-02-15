@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from kedro.io import AbstractVersionedDataSet, Version
 from sqlalchemy import Column
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
-class RunModel(Base):
+class RunModel(Base):  # type: ignore
     """Data model to represent run data from a Kedro Session."""
 
     __tablename__ = "runs"
@@ -30,7 +30,7 @@ class RunModel(Base):
         orm_mode = True
 
 
-class UserRunDetailsModel(Base):
+class UserRunDetailsModel(Base):  # type: ignore
     """Data model to represent run details as defined by users through Kedro Viz."""
 
     __tablename__ = "user_run_details"
