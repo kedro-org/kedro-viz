@@ -1,8 +1,0 @@
-{
-  "name": "@quantumblack/kedro-viz-layout",
-  "main": "index.js",
-  "version": "0.1.0",
-  "dependencies": {
-    "kiwi.js": "^1.1.3"
-  }
-}
