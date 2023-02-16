@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 5.3.0
 
 ## Major features and improvements
 
