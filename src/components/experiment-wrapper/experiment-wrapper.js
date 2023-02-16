@@ -42,7 +42,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
-  const { toSelectedRuns } = useGeneratePathnameForExperimentTracking();
+  const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -82,13 +82,13 @@ const ExperimentWrapper = ({ theme }) => {
         const selected = selectedRunIds.filter((run) => run !== id);
 
         setSelectedRunIds(selected);
-        toSelectedRuns(selected, activeTab, enableComparisonView);
+        toSelectedRunsPath(selected, activeTab, enableComparisonView);
 
         setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
         setNewRunAdded(true);
-        toSelectedRuns(
+        toSelectedRunsPath(
           [...selectedRunIds, id],
           activeTab,
           enableComparisonView
@@ -99,7 +99,7 @@ const ExperimentWrapper = ({ theme }) => {
         return;
       } else {
         setSelectedRunIds([id]);
-        toSelectedRuns([id], activeTab, enableComparisonView);
+        toSelectedRunsPath([id], activeTab, enableComparisonView);
       }
     }
   };
@@ -108,7 +108,7 @@ const ExperimentWrapper = ({ theme }) => {
     setEnableComparisonView(!enableComparisonView);
 
     if (selectedRunIds.length === 1) {
-      toSelectedRuns(
+      toSelectedRunsPath(
         selectedRunIds.slice(0, 1),
         activeTab,
         !enableComparisonView
@@ -117,7 +117,7 @@ const ExperimentWrapper = ({ theme }) => {
 
     if (enableComparisonView && selectedRunIds.length > 1) {
       setSelectedRunIds(selectedRunIds.slice(0, 1));
-      toSelectedRuns(
+      toSelectedRunsPath(
         selectedRunIds.slice(0, 1),
         activeTab,
         !enableComparisonView
@@ -127,7 +127,7 @@ const ExperimentWrapper = ({ theme }) => {
 
   const onTabChangeHandler = (tab) => {
     setActiveTab(tab);
-    toSelectedRuns(selectedRunIds, tab, enableComparisonView);
+    toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
   useEffect(() => {
@@ -149,12 +149,28 @@ const ExperimentWrapper = ({ theme }) => {
       });
 
       if (bookmarkedRuns.length > 0) {
-        setSelectedRunIds(bookmarkedRuns.map((run) => run.id).slice(0, 1));
+        const defaultRunFromBookmarked = bookmarkedRuns
+          .map((run) => run.id)
+          .slice(0, 1);
+        setSelectedRunIds(defaultRunFromBookmarked);
+        toSelectedRunsPath(
+          defaultRunFromBookmarked,
+          activeTab,
+          enableComparisonView
+        );
       } else {
-        setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
+        const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
+        setSelectedRunIds(defaultRun);
+        toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
       }
     }
-  }, [data, selectedRunIds]);
+  }, [
+    data,
+    selectedRunIds,
+    activeTab,
+    enableComparisonView,
+    toSelectedRunsPath,
+  ]);
 
   useEffect(() => {
     /**

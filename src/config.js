@@ -113,7 +113,6 @@ export const routes = {
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
   },
   experimentTracking: {
-    main: '/experiment-tracking',
     selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
 };
