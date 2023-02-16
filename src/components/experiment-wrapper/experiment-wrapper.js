@@ -8,6 +8,7 @@ import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
+import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
 import { tabLabels } from '../../config';
 
 import './experiment-wrapper.css';
@@ -40,6 +41,8 @@ const ExperimentWrapper = ({ theme }) => {
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
+
+  const { toSelectedRuns } = useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -76,17 +79,27 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
+        const selected = selectedRunIds.filter((run) => run !== id);
+
+        setSelectedRunIds(selected);
+        toSelectedRuns(selected, activeTab, enableComparisonView);
+
         setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
         setNewRunAdded(true);
+        toSelectedRuns(
+          [...selectedRunIds, id],
+          activeTab,
+          enableComparisonView
+        );
       }
     } else {
       if (selectedRunIds.includes(id)) {
         return;
       } else {
         setSelectedRunIds([id]);
+        toSelectedRuns([id], activeTab, enableComparisonView);
       }
     }
   };
@@ -94,13 +107,27 @@ const ExperimentWrapper = ({ theme }) => {
   const onToggleComparisonView = () => {
     setEnableComparisonView(!enableComparisonView);
 
+    if (selectedRunIds.length === 1) {
+      toSelectedRuns(
+        selectedRunIds.slice(0, 1),
+        activeTab,
+        !enableComparisonView
+      );
+    }
+
     if (enableComparisonView && selectedRunIds.length > 1) {
       setSelectedRunIds(selectedRunIds.slice(0, 1));
+      toSelectedRuns(
+        selectedRunIds.slice(0, 1),
+        activeTab,
+        !enableComparisonView
+      );
     }
   };
 
   const onTabChangeHandler = (tab) => {
     setActiveTab(tab);
+    toSelectedRuns(selectedRunIds, tab, enableComparisonView);
   };
 
   useEffect(() => {

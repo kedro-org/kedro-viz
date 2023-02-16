@@ -52,3 +52,24 @@ export const useGeneratePathname = () => {
     toFocusedModularPipeline,
   };
 };
+
+export const useGeneratePathnameForExperimentTracking = () => {
+  const history = useHistory();
+
+  const toSelectedRuns = useCallback(
+    (ids, view, isComparison) => {
+      const url = generatePath(routes.experimentTracking.selectedRuns, {
+        ids: ids.length === 1 ? ids[0] : ids.toString(),
+        view,
+        isComparison,
+      });
+
+      history.push(url);
+    },
+    [history]
+  );
+
+  return {
+    toSelectedRuns,
+  };
+};
