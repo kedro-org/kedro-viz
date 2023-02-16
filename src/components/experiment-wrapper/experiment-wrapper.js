@@ -8,6 +8,7 @@ import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
+import { tabLabels } from '../../config';
 
 import './experiment-wrapper.css';
 
@@ -38,6 +39,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -95,6 +97,10 @@ const ExperimentWrapper = ({ theme }) => {
     if (enableComparisonView && selectedRunIds.length > 1) {
       setSelectedRunIds(selectedRunIds.slice(0, 1));
     }
+  };
+
+  const onTabChangeHandler = (tab) => {
+    setActiveTab(tab);
   };
 
   useEffect(() => {
@@ -207,6 +213,7 @@ const ExperimentWrapper = ({ theme }) => {
                 >
                   {selectedRunIds.length > 0 ? (
                     <Details
+                      activeTab={activeTab}
                       enableComparisonView={enableComparisonView}
                       enableShowChanges={
                         enableShowChanges && selectedRunIds.length > 1
@@ -219,6 +226,7 @@ const ExperimentWrapper = ({ theme }) => {
                       runMetadata={runMetadata}
                       runTrackingData={runTrackingData}
                       selectedRunIds={selectedRunIds}
+                      setActiveTab={onTabChangeHandler}
                       setIsDisplayingMetrics={setIsDisplayingMetrics}
                       setPinnedRun={setPinnedRun}
                       setShowRunDetailsModal={setShowRunDetailsModal}

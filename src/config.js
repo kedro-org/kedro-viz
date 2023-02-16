@@ -92,6 +92,8 @@ export const shortTypeMapping = {
   'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
+export const tabLabels = ['Overview', 'Metrics', 'Plots'];
+
 // URL parameters for each element/section
 export const params = {
   focused: 'focused_id=',
