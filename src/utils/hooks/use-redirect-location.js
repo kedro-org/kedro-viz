@@ -6,7 +6,7 @@ const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
   pipeline: 'Please check the value of "pipeline_id" in the URL',
-  run: 'Place holder for run errors',
+  run: 'Please check the value of "run_ids" in the URL',
 };
 
 /**
@@ -146,7 +146,7 @@ export const useRedirectLocationInFlowchart = (
   return { errorMessage, invalidUrl };
 };
 
-export const useRedirectLocationInExperimentTracking = (reload) => {
+export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
@@ -155,9 +155,6 @@ export const useRedirectLocationInExperimentTracking = (reload) => {
 
   const { pathname, search } = useLocation();
 
-  // check pathName when reloaded the page first
-  // update state => send to the wrapper to load
-  // still return setState so it can handle different onChanged in wrapper
   const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
     exact: true,
     path: [routes.experimentTracking.main],
@@ -169,6 +166,10 @@ export const useRedirectLocationInExperimentTracking = (reload) => {
   });
 
   useEffect(() => {
+    // 1.match route
+    // 2. check if ids existed
+    // 3. check if the view is valid
+    // 4. check if comparison mode is valid
     if (matchedSelectedRuns) {
       const runIds = search
         .substring(
@@ -201,7 +202,6 @@ export const useRedirectLocationInExperimentTracking = (reload) => {
     }
 
     if (matchedExperimentTrackingMainPage) {
-      debugger;
       setErrorMessage({});
       setInvalidUrl(false);
     }

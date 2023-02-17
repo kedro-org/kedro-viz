@@ -40,6 +40,11 @@ const ExperimentWrapper = ({ theme, reload }) => {
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
   const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
+
+  // Fetch all runs.
+  const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+  const allRunIds = data?.runsList.map((run) => run.id);
+
   const {
     activeTab,
     enableComparisonView,
@@ -49,10 +54,7 @@ const ExperimentWrapper = ({ theme, reload }) => {
     setActiveTab,
     setEnableComparisonView,
     setSelectedRunIds,
-  } = useRedirectLocationInExperimentTracking(reload);
-
-  // Fetch all runs.
-  const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+  } = useRedirectLocationInExperimentTracking(reload, allRunIds);
 
   // Fetch all data for selected runs.
   const {
