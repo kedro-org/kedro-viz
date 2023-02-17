@@ -38,23 +38,7 @@ async def main():
     response_model_exclude_none=True,
 )
 async def get_single_node_metadata(node_id: str):
-    node = data_access_manager.nodes.get_node_by_id(node_id)
-    if not node:
-        return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
-
-    if not node.has_metadata():
-        return JSONResponse(content={})
-
-    if isinstance(node, TaskNode):
-        return TaskNodeMetadata(node)
-
-    if isinstance(node, DataNode):
-        return DataNodeMetadata(node)
-
-    if isinstance(node, TranscodedDataNode):
-        return TranscodedDataNodeMetadata(node)
-
-    return ParametersNodeMetadata(node)
+    return get_node_response(node_id)
 
 
 @router.get(

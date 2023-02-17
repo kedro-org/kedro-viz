@@ -4,10 +4,20 @@ import abc
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-from fastapi.responses import ORJSONResponse
+from fastapi.responses import ORJSONResponse, JSONResponse
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
+
+from kedro_viz.models.flowchart import (
+    DataNode,
+    DataNodeMetadata,
+    ParametersNodeMetadata,
+    TaskNode,
+    TaskNodeMetadata,
+    TranscodedDataNode,
+    TranscodedDataNodeMetadata,
+)
 
 
 class APIErrorMessage(BaseModel):
@@ -241,6 +251,24 @@ class GraphAPIResponse(BaseAPIResponse):
     modular_pipelines: ModularPipelinesTreeAPIResponse
     selected_pipeline: str
 
+class EnhancedORJSONResponse(ORJSONResponse):
+    @staticmethod
+    def encode_to_human_readable(content: Any) -> bytes:
+        """A method to encode the given content to JSON, with the
+        proper formatting to write a human-readable file.
+
+        Returns:
+            A bytes object containing the JSON to write.
+
+        """
+        return orjson.dumps(
+            content,
+            option=orjson.OPT_INDENT_2
+            | orjson.OPT_NON_STR_KEYS
+            | orjson.OPT_SERIALIZE_NUMPY,
+        )
+
+
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
@@ -270,20 +298,24 @@ def get_default_response() -> GraphAPIResponse:
         selected_pipeline=default_selected_pipeline_id,
     )
 
+def get_node_response(node_id: str):
+        
+    node = data_access_manager.nodes.get_node_by_id(node_id)
+    if not node:
+        return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
-class EnhancedORJSONResponse(ORJSONResponse):
-    @staticmethod
-    def encode_to_human_readable(content: Any) -> bytes:
-        """A method to encode the given content to JSON, with the
-        proper formatting to write a human-readable file.
+    if not node.has_metadata():
+        return JSONResponse(content={})
 
-        Returns:
-            A bytes object containing the JSON to write.
+    if isinstance(node, TaskNode):
+        return TaskNodeMetadata(node)
 
-        """
-        return orjson.dumps(
-            content,
-            option=orjson.OPT_INDENT_2
-            | orjson.OPT_NON_STR_KEYS
-            | orjson.OPT_SERIALIZE_NUMPY,
-        )
+    if isinstance(node, DataNode):
+        return DataNodeMetadata(node)
+
+    if isinstance(node, TranscodedDataNode):
+        return TranscodedDataNodeMetadata(node)
+
+    return ParametersNodeMetadata(node)
+
+
