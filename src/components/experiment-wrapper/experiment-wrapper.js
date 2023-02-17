@@ -9,7 +9,7 @@ import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
 import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
-import { tabLabels } from '../../config';
+import { useRedirectLocationInExperimentTracking } from '../../utils/hooks/use-redirect-location';
 
 import './experiment-wrapper.css';
 
@@ -27,22 +27,29 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const ExperimentWrapper = ({ theme }) => {
+const ExperimentWrapper = ({ theme, reload }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
-  const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [pinnedRun, setPinnedRun] = useState();
-  const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
-  const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
+  const {
+    activeTab,
+    enableComparisonView,
+    errorMessage,
+    invalidUrl,
+    selectedRunIds,
+    setActiveTab,
+    setEnableComparisonView,
+    setSelectedRunIds,
+  } = useRedirectLocationInExperimentTracking(reload);
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -139,7 +146,11 @@ const ExperimentWrapper = ({ theme }) => {
   }, [selectedRunIds]);
 
   useEffect(() => {
-    if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
+    if (
+      !invalidUrl &&
+      data?.runsList.length > 0 &&
+      selectedRunIds.length === 0
+    ) {
       /**
        * If we return runs and don't yet have a selected run, set the first one
        * as the default, with precedence given to runs that are bookmarked.
@@ -165,10 +176,12 @@ const ExperimentWrapper = ({ theme }) => {
       }
     }
   }, [
-    data,
-    selectedRunIds,
     activeTab,
+    data,
     enableComparisonView,
+    invalidUrl,
+    selectedRunIds,
+    setSelectedRunIds,
     toSelectedRunsPath,
   ]);
 
@@ -224,99 +237,111 @@ const ExperimentWrapper = ({ theme }) => {
     );
   }
 
-  return (
-    <>
-      <HoverStateContextProvider>
-        {data?.runsList.length > 0 ? (
-          <>
-            <Sidebar
-              disableRunSelection={disableRunSelection}
-              enableComparisonView={enableComparisonView}
-              enableShowChanges={enableShowChanges}
-              isDisplayingMetrics={isDisplayingMetrics}
-              isExperimentView
-              onRunSelection={onRunSelection}
-              onToggleComparisonView={onToggleComparisonView}
-              runsListData={data.runsList}
-              selectedRunData={selectedRunData}
-              selectedRunIds={selectedRunIds}
-              setEnableShowChanges={setEnableShowChanges}
-              setShowRunExportModal={setShowRunExportModal}
-              setSidebarVisible={setIsSidebarVisible}
-              showRunDetailsModal={setShowRunDetailsModal}
-              sidebarVisible={isSidebarVisible}
-            />
-            <Transition in={selectedRunIds.length > 0} timeout={300}>
+  if (invalidUrl) {
+    return (
+      <div className="experiment-wrapper">
+        <h2 className="experiment-warning__title">
+          Oops, this URL isn't valid
+        </h2>
+        <p className="experiment-warning__subtitle">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
+      </div>
+    );
+  } else {
+    return (
+      <>
+        <HoverStateContextProvider>
+          {data?.runsList.length > 0 ? (
+            <>
+              <Sidebar
+                disableRunSelection={disableRunSelection}
+                enableComparisonView={enableComparisonView}
+                enableShowChanges={enableShowChanges}
+                isDisplayingMetrics={isDisplayingMetrics}
+                isExperimentView
+                onRunSelection={onRunSelection}
+                onToggleComparisonView={onToggleComparisonView}
+                runsListData={data.runsList}
+                selectedRunData={selectedRunData}
+                selectedRunIds={selectedRunIds}
+                setEnableShowChanges={setEnableShowChanges}
+                setShowRunExportModal={setShowRunExportModal}
+                setSidebarVisible={setIsSidebarVisible}
+                showRunDetailsModal={setShowRunDetailsModal}
+                sidebarVisible={isSidebarVisible}
+              />
+              <Transition in={selectedRunIds.length > 0} timeout={300}>
+                {(state) => (
+                  <div
+                    style={{
+                      ...defaultStyle,
+                      ...transitionStyles[state],
+                    }}
+                  >
+                    {selectedRunIds.length > 0 ? (
+                      <Details
+                        activeTab={activeTab}
+                        enableComparisonView={enableComparisonView}
+                        enableShowChanges={
+                          enableShowChanges && selectedRunIds.length > 1
+                        }
+                        isRunDataLoading={isRunDataLoading}
+                        newRunAdded={newRunAdded}
+                        onRunSelection={onRunSelection}
+                        pinnedRun={pinnedRun}
+                        runDataError={runDataError}
+                        runMetadata={runMetadata}
+                        runTrackingData={runTrackingData}
+                        selectedRunIds={selectedRunIds}
+                        setActiveTab={onTabChangeHandler}
+                        setIsDisplayingMetrics={setIsDisplayingMetrics}
+                        setPinnedRun={setPinnedRun}
+                        setShowRunDetailsModal={setShowRunDetailsModal}
+                        setShowRunExportModal={setShowRunExportModal}
+                        setShowRunPlotsModal={setShowRunPlotsModal}
+                        showRunDetailsModal={showRunDetailsModal}
+                        showRunExportModal={showRunExportModal}
+                        showRunPlotsModal={showRunPlotsModal}
+                        sidebarVisible={isSidebarVisible}
+                        theme={theme}
+                      />
+                    ) : null}
+                  </div>
+                )}
+              </Transition>
+            </>
+          ) : (
+            <Transition in={data?.runsList.length <= 0} timeout={300}>
               {(state) => (
                 <div
+                  className="experiment-wrapper"
                   style={{
                     ...defaultStyle,
                     ...transitionStyles[state],
                   }}
                 >
-                  {selectedRunIds.length > 0 ? (
-                    <Details
-                      activeTab={activeTab}
-                      enableComparisonView={enableComparisonView}
-                      enableShowChanges={
-                        enableShowChanges && selectedRunIds.length > 1
-                      }
-                      isRunDataLoading={isRunDataLoading}
-                      newRunAdded={newRunAdded}
-                      onRunSelection={onRunSelection}
-                      pinnedRun={pinnedRun}
-                      runDataError={runDataError}
-                      runMetadata={runMetadata}
-                      runTrackingData={runTrackingData}
-                      selectedRunIds={selectedRunIds}
-                      setActiveTab={onTabChangeHandler}
-                      setIsDisplayingMetrics={setIsDisplayingMetrics}
-                      setPinnedRun={setPinnedRun}
-                      setShowRunDetailsModal={setShowRunDetailsModal}
-                      setShowRunExportModal={setShowRunExportModal}
-                      setShowRunPlotsModal={setShowRunPlotsModal}
-                      showRunDetailsModal={showRunDetailsModal}
-                      showRunExportModal={showRunExportModal}
-                      showRunPlotsModal={showRunPlotsModal}
-                      sidebarVisible={isSidebarVisible}
-                      theme={theme}
-                    />
-                  ) : null}
+                  <h2 className="experiment-wrapper__header">
+                    You don't have any experiments
+                  </h2>
+                  <p className="experiment-wrapper__text">
+                    Kedro can help you manage your experiments. Learn more how
+                    you can enable experiment tracking in your projects from our
+                    docs.{' '}
+                  </p>
+                  <a
+                    href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <Button>View docs</Button>
+                  </a>
                 </div>
               )}
             </Transition>
-          </>
-        ) : (
-          <Transition in={data?.runsList.length <= 0} timeout={300}>
-            {(state) => (
-              <div
-                className="experiment-wrapper"
-                style={{
-                  ...defaultStyle,
-                  ...transitionStyles[state],
-                }}
-              >
-                <h2 className="experiment-wrapper__header">
-                  You don't have any experiments
-                </h2>
-                <p className="experiment-wrapper__text">
-                  Kedro can help you manage your experiments. Learn more how you
-                  can enable experiment tracking in your projects from our docs.{' '}
-                </p>
-                <a
-                  href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <Button>View docs</Button>
-                </a>
-              </div>
-            )}
-          </Transition>
-        )}
-      </HoverStateContextProvider>
-    </>
-  );
+          )}
+        </HoverStateContextProvider>
+      </>
+    );
+  }
 };
 
 export const mapStateToProps = (state) => ({

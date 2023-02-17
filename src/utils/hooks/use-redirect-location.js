@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
-import { routes, params } from '../../config';
+import { routes, params, tabLabels } from '../../config';
 
 const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
   pipeline: 'Please check the value of "pipeline_id" in the URL',
+  run: 'Place holder for run errors',
 };
 
 /**
@@ -143,4 +144,79 @@ export const useRedirectLocationInFlowchart = (
   }, [reload, search]);
 
   return { errorMessage, invalidUrl };
+};
+
+export const useRedirectLocationInExperimentTracking = (reload) => {
+  const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [selectedRunIds, setSelectedRunIds] = useState([]);
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
+  const [errorMessage, setErrorMessage] = useState({});
+  const [invalidUrl, setInvalidUrl] = useState(false);
+
+  const { pathname, search } = useLocation();
+
+  // check pathName when reloaded the page first
+  // update state => send to the wrapper to load
+  // still return setState so it can handle different onChanged in wrapper
+  const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.main],
+  });
+
+  const matchedSelectedRuns = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.selectedRuns],
+  });
+
+  useEffect(() => {
+    if (matchedSelectedRuns) {
+      const runIds = search
+        .substring(
+          search.indexOf(params.run),
+          search.indexOf(`&${params.view}`)
+        )
+        .split(params.run)[1];
+
+      const runIdsArray = runIds.split(',');
+
+      const view = search
+        .substring(
+          search.indexOf(params.view),
+          search.indexOf(`&${params.comparisonMode}`)
+        )
+        .split(params.view)[1];
+
+      // if there is more than 1 runId, the comparison mode should always be true
+      const isComparison =
+        runIdsArray.length > 1
+          ? 'true'
+          : search.split(params.comparisonMode)[1];
+
+      setSelectedRunIds(runIdsArray);
+      setEnableComparisonView(isComparison === 'true');
+      setActiveTab(view);
+    } else {
+      setErrorMessage(errorMessages.run);
+      setInvalidUrl(true);
+    }
+
+    if (matchedExperimentTrackingMainPage) {
+      debugger;
+      setErrorMessage({});
+      setInvalidUrl(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reload, search]);
+
+  return {
+    activeTab,
+    enableComparisonView,
+    errorMessage,
+    invalidUrl,
+    selectedRunIds,
+    setActiveTab,
+    setEnableComparisonView,
+    setSelectedRunIds,
+  };
 };

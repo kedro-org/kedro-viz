@@ -61,7 +61,10 @@ const RunsList = ({
           <span className="compare-switch-wrapper__text">
             Compare runs (max. 3)
           </span>
-          <Switch onChange={onToggleComparisonView} />
+          <Switch
+            defaultChecked={enableComparisonView}
+            onChange={onToggleComparisonView}
+          />
         </div>
       </div>
       {bookmarkedRuns.length > 0 ? (
