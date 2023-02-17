@@ -3,6 +3,10 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+import zipfile
+import io
+import json
+
 import uvicorn
 from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
@@ -10,7 +14,7 @@ from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response, get_node_metadata_response, get_selected_pipeline_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
@@ -81,22 +85,45 @@ def run_server(
         catalog, pipelines, session_store_location = kedro_data_loader.load_data(
             path, env, extra_params
         )
+
         pipelines = (
             pipelines
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
+
         if save_file:
-            default_response = get_default_response()
-            jsonable_default_response = jsonable_encoder(default_response)
-            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
-                jsonable_default_response
+
+            default_pipeline_response = get_default_response()
+            jsonable_default_pipeline_response = jsonable_encoder(
+                default_pipeline_response)
+            encoded_default_pipeline_response = EnhancedORJSONResponse.encode_to_human_readable(
+                jsonable_default_pipeline_response
             )
-            Path(save_file).write_bytes(encoded_default_response)
+
+            encoded_node_response = {}
+
+            for node in data_access_manager.nodes.get_node_ids():
+                node_response = get_node_metadata_response(node)
+                jsonable_node_response = jsonable_encoder(node_response)
+                encoded_node_response[node] = EnhancedORJSONResponse.encode_to_human_readable(
+                    jsonable_node_response
+                )
+
+            zip_buffer = io.BytesIO()
+
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                zip_file.writestr('main', encoded_default_pipeline_response)
+                for node in encoded_node_response:
+                    zip_file.writestr(f'nodes/{node}', encoded_node_response[node])
+
+            with open(f'/{project_path}/{save_file}.zip', 'wb') as zip_file:
+                zip_file.write(zip_buffer.getvalue())
+
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(load_file)
+        app = apps.create_api_app_from_file(f'{project_path}/{load_file}')
 
     if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")

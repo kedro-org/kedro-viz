@@ -19,6 +19,8 @@ from .responses import (
     GraphAPIResponse,
     NodeMetadataAPIResponse,
     get_default_response,
+    get_node_metadata_response,
+    get_selected_pipeline_response
 )
 
 router = APIRouter(
@@ -38,23 +40,7 @@ async def main():
     response_model_exclude_none=True,
 )
 async def get_single_node_metadata(node_id: str):
-    node = data_access_manager.nodes.get_node_by_id(node_id)
-    if not node:
-        return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
-
-    if not node.has_metadata():
-        return JSONResponse(content={})
-
-    if isinstance(node, TaskNode):
-        return TaskNodeMetadata(node)
-
-    if isinstance(node, DataNode):
-        return DataNodeMetadata(node)
-
-    if isinstance(node, TranscodedDataNode):
-        return TranscodedDataNodeMetadata(node)
-
-    return ParametersNodeMetadata(node)
+    return get_node_metadata_response(node_id)
 
 
 @router.get(
@@ -62,29 +48,4 @@ async def get_single_node_metadata(node_id: str):
     response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(registered_pipeline_id: str):
-    if not data_access_manager.registered_pipelines.has_pipeline(
-        registered_pipeline_id
-    ):
-        return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
-
-    modular_pipelines_tree = (
-        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            registered_pipeline_id
-        )
-    )
-
-    return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        pipelines=data_access_manager.registered_pipelines.as_list(),
-        selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines_tree,
-    )
+    return get_selected_pipeline_response(registered_pipeline_id)

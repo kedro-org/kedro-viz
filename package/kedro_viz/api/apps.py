@@ -5,6 +5,8 @@ import json
 import time
 from pathlib import Path
 
+import zipfile
+
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
@@ -110,6 +112,21 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads(Path(filepath).read_text(encoding="utf8"))
+        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
+            main = zip_file.read('main')
+        return json.loads(main)
+
+    @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
+    async def get_node_metadata(node_id):
+        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
+            node_metdata = zip_file.read(f'nodes/{node_id}')
+        return json.loads(node_metdata)
+    
+    @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
+    async def get_registered_pipeline(pipeline_id):
+        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
+            pipeline = zip_file.read(f'pipelines/{pipeline_id}')
+        return json.loads(pipeline)
 
     return app
+
