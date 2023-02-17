@@ -4,11 +4,10 @@ import abc
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-from fastapi.responses import ORJSONResponse, JSONResponse
+from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
-
 from kedro_viz.models.flowchart import (
     DataNode,
     DataNodeMetadata,
@@ -251,6 +250,7 @@ class GraphAPIResponse(BaseAPIResponse):
     modular_pipelines: ModularPipelinesTreeAPIResponse
     selected_pipeline: str
 
+
 class EnhancedORJSONResponse(ORJSONResponse):
     @staticmethod
     def encode_to_human_readable(content: Any) -> bytes:
@@ -267,7 +267,6 @@ class EnhancedORJSONResponse(ORJSONResponse):
             | orjson.OPT_NON_STR_KEYS
             | orjson.OPT_SERIALIZE_NUMPY,
         )
-
 
 
 def get_default_response() -> GraphAPIResponse:
@@ -298,8 +297,8 @@ def get_default_response() -> GraphAPIResponse:
         selected_pipeline=default_selected_pipeline_id,
     )
 
+
 def get_node_metadata_response(node_id: str):
-        
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
@@ -346,5 +345,3 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
         selected_pipeline=registered_pipeline_id,
         modular_pipelines=modular_pipelines_tree,
     )
-
-

@@ -1,11 +1,10 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
-import webbrowser
-from pathlib import Path
-from typing import Any, Dict, Optional
-
-import zipfile
 import io
 import json
+import webbrowser
+import zipfile
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 import uvicorn
 from fastapi.encoders import jsonable_encoder
@@ -14,7 +13,12 @@ from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response, get_node_metadata_response, get_selected_pipeline_response
+from kedro_viz.api.rest.responses import (
+    EnhancedORJSONResponse,
+    get_default_response,
+    get_node_metadata_response,
+    get_selected_pipeline_response,
+)
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
@@ -95,12 +99,14 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
 
         if save_file:
-
             default_pipeline_response = get_default_response()
             jsonable_default_pipeline_response = jsonable_encoder(
-                default_pipeline_response)
-            encoded_default_pipeline_response = EnhancedORJSONResponse.encode_to_human_readable(
-                jsonable_default_pipeline_response
+                default_pipeline_response
+            )
+            encoded_default_pipeline_response = (
+                EnhancedORJSONResponse.encode_to_human_readable(
+                    jsonable_default_pipeline_response
+                )
             )
 
             encoded_node_response = {}
@@ -108,23 +114,40 @@ def run_server(
             for node in data_access_manager.nodes.get_node_ids():
                 node_response = get_node_metadata_response(node)
                 jsonable_node_response = jsonable_encoder(node_response)
-                encoded_node_response[node] = EnhancedORJSONResponse.encode_to_human_readable(
+                encoded_node_response[
+                    node
+                ] = EnhancedORJSONResponse.encode_to_human_readable(
                     jsonable_node_response
+                )
+
+            encoded_pipeline_response = {}
+
+            for pipeline in data_access_manager.registered_pipelines.get_pipeline_ids():
+                pipeline_response = get_selected_pipeline_response(pipeline)
+                jsonable_pipeline_response = jsonable_encoder(pipeline_response)
+                encoded_pipeline_response[
+                    pipeline
+                ] = EnhancedORJSONResponse.encode_to_human_readable(
+                    jsonable_pipeline_response
                 )
 
             zip_buffer = io.BytesIO()
 
-            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-                zip_file.writestr('main', encoded_default_pipeline_response)
+            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                zip_file.writestr("main", encoded_default_pipeline_response)
                 for node in encoded_node_response:
-                    zip_file.writestr(f'nodes/{node}', encoded_node_response[node])
+                    zip_file.writestr(f"nodes/{node}", encoded_node_response[node])
+                for pipeline in encoded_pipeline_response:
+                    zip_file.writestr(
+                        f"pipelines/{pipeline}", encoded_pipeline_response[pipeline]
+                    )
 
-            with open(f'/{path}/{save_file}.zip', 'wb') as zip_file:
+            with open(f"/{path}/{save_file}.zip", "wb") as zip_file:
                 zip_file.write(zip_buffer.getvalue())
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(f'{path}/{load_file}')
+        app = apps.create_api_app_from_file(f"{path}/{load_file}")
 
     if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")

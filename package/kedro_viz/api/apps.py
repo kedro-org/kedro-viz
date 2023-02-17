@@ -3,9 +3,8 @@ This data could either come from a real Kedro project or a file.
 """
 import json
 import time
-from pathlib import Path
-
 import zipfile
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
@@ -112,21 +111,20 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
-            main = zip_file.read('main')
+        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
+            main = zip_file.read("main")
         return json.loads(main)
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
-            node_metdata = zip_file.read(f'nodes/{node_id}')
+        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
+            node_metdata = zip_file.read(f"nodes/{node_id}")
         return json.loads(node_metdata)
-    
+
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        with zipfile.ZipFile(f'{filepath}.zip', 'r') as zip_file:
-            pipeline = zip_file.read(f'pipelines/{pipeline_id}')
+        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
+            pipeline = zip_file.read(f"pipelines/{pipeline_id}")
         return json.loads(pipeline)
 
     return app
-

@@ -20,7 +20,7 @@ from .responses import (
     NodeMetadataAPIResponse,
     get_default_response,
     get_node_metadata_response,
-    get_selected_pipeline_response
+    get_selected_pipeline_response,
 )
 
 router = APIRouter(

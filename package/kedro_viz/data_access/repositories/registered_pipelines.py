@@ -20,7 +20,7 @@ class RegisteredPipelinesRepository:
 
     def get_pipeline_by_id(self, pipeline_id: str) -> Optional[RegisteredPipeline]:
         return self.pipelines_dict.get(pipeline_id)
-    
+
     def get_pipeline_ids(self) -> List[str]:
         return self.pipelines_dict.keys()
 
