@@ -80,8 +80,9 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
+    path = Path(project_path) if project_path else Path.cwd()
+
     if load_file is None:
-        path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store_location = kedro_data_loader.load_data(
             path, env, extra_params
         )
@@ -118,12 +119,12 @@ def run_server(
                 for node in encoded_node_response:
                     zip_file.writestr(f'nodes/{node}', encoded_node_response[node])
 
-            with open(f'/{project_path}/{save_file}.zip', 'wb') as zip_file:
+            with open(f'/{path}/{save_file}.zip', 'wb') as zip_file:
                 zip_file.write(zip_buffer.getvalue())
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(f'{project_path}/{load_file}')
+        app = apps.create_api_app_from_file(f'{path}/{load_file}')
 
     if browser and is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")
