@@ -1,6 +1,5 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import io
-import json
 import webbrowser
 import zipfile
 from pathlib import Path
@@ -99,14 +98,10 @@ def run_server(
         populate_data(data_access_manager, catalog, pipelines, session_store_location)
 
         if save_file:
-            default_pipeline_response = get_default_response()
-            jsonable_default_pipeline_response = jsonable_encoder(
-                default_pipeline_response
-            )
-            encoded_default_pipeline_response = (
-                EnhancedORJSONResponse.encode_to_human_readable(
-                    jsonable_default_pipeline_response
-                )
+            default_response = get_default_response()
+            jsonable_default_response = jsonable_encoder(default_response)
+            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
+                jsonable_default_response
             )
 
             encoded_node_response = {}
@@ -134,13 +129,11 @@ def run_server(
             zip_buffer = io.BytesIO()
 
             with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-                zip_file.writestr("main", encoded_default_pipeline_response)
-                for node in encoded_node_response:
-                    zip_file.writestr(f"nodes/{node}", encoded_node_response[node])
-                for pipeline in encoded_pipeline_response:
-                    zip_file.writestr(
-                        f"pipelines/{pipeline}", encoded_pipeline_response[pipeline]
-                    )
+                zip_file.writestr("main", encoded_default_response)
+                for node_id, node_metadata in encoded_node_response.items():
+                    zip_file.writestr(f"nodes/{node_id}", node_metadata)
+                for pipeline_id, pipeline_data in encoded_pipeline_response.items():
+                    zip_file.writestr(f"pipelines/{pipeline_id}", pipeline_data)
 
             with open(f"/{path}/{save_file}.zip", "wb") as zip_file:
                 zip_file.write(zip_buffer.getvalue())

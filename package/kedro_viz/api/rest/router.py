@@ -1,18 +1,6 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-
-from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.flowchart import (
-    DataNode,
-    DataNodeMetadata,
-    ParametersNodeMetadata,
-    TaskNode,
-    TaskNodeMetadata,
-    TranscodedDataNode,
-    TranscodedDataNodeMetadata,
-)
 
 from .responses import (
     APIErrorMessage,

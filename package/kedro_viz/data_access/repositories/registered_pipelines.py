@@ -22,7 +22,7 @@ class RegisteredPipelinesRepository:
         return self.pipelines_dict.get(pipeline_id)
 
     def get_pipeline_ids(self) -> List[str]:
-        return self.pipelines_dict.keys()
+        return list(self.pipelines_dict.keys())
 
     def has_pipeline(self, pipeline_id: str) -> bool:
         return pipeline_id in self.pipelines_dict

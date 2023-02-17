@@ -299,6 +299,7 @@ def get_default_response() -> GraphAPIResponse:
 
 
 def get_node_metadata_response(node_id: str):
+    """API response for `/api/nodes/node_id`."""
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
@@ -319,6 +320,7 @@ def get_node_metadata_response(node_id: str):
 
 
 def get_selected_pipeline_response(registered_pipeline_id: str):
+    """API response for `/api/pipeline/pipeline_id`."""
     if not data_access_manager.registered_pipelines.has_pipeline(
         registered_pipeline_id
     ):
