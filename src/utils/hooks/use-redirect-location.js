@@ -6,7 +6,10 @@ const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
   pipeline: 'Please check the value of "pipeline_id" in the URL',
-  run: 'Please check the value of "run_ids" in the URL',
+  experimentTracking:
+    'Please check the value of "run_ids" or "view" in the URL',
+  runIds:
+    'Please check the value of "run_ids" in the URL. At least one of the ID doesn"t seem to exist',
 };
 
 /**
@@ -166,10 +169,6 @@ export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
   });
 
   useEffect(() => {
-    // 1.match route
-    // 2. check if ids existed
-    // 3. check if the view is valid
-    // 4. check if comparison mode is valid
     if (matchedSelectedRuns) {
       const runIds = search
         .substring(
@@ -179,25 +178,32 @@ export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
         .split(params.run)[1];
 
       const runIdsArray = runIds.split(',');
+      const existedIds = runIdsArray.find((id) => allRunIds?.includes(id));
 
-      const view = search
-        .substring(
-          search.indexOf(params.view),
-          search.indexOf(`&${params.comparisonMode}`)
-        )
-        .split(params.view)[1];
+      // Extra check if the ids from URL are existed
+      if (existedIds) {
+        const view = search
+          .substring(
+            search.indexOf(params.view),
+            search.indexOf(`&${params.comparisonMode}`)
+          )
+          .split(params.view)[1];
 
-      // if there is more than 1 runId, the comparison mode should always be true
-      const isComparison =
-        runIdsArray.length > 1
-          ? 'true'
-          : search.split(params.comparisonMode)[1];
+        // if there is more than 1 runId, the comparison mode should always be true
+        const isComparison =
+          runIdsArray.length > 1
+            ? 'true'
+            : search.split(params.comparisonMode)[1];
 
-      setSelectedRunIds(runIdsArray);
-      setEnableComparisonView(isComparison === 'true');
-      setActiveTab(view);
+        setSelectedRunIds(runIdsArray);
+        setEnableComparisonView(isComparison === 'true');
+        setActiveTab(view);
+      } else {
+        setErrorMessage(errorMessages.runIds);
+        setInvalidUrl(true);
+      }
     } else {
-      setErrorMessage(errorMessages.run);
+      setErrorMessage(errorMessages.experimentTracking);
       setInvalidUrl(true);
     }
 
