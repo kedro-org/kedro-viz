@@ -89,8 +89,12 @@ const MetaData = ({
     return string?.replace(/^\//g, '');
   };
 
-  const shortenDatasetType = (string) => {
-    return string?.split('.').pop();
+  const shortenDatasetType = (value) => {
+    const isList = Array.isArray(value);
+
+    return isList
+      ? value.map((val) => val.split('.').pop())
+      : value?.split('.').pop();
   };
 
   return (
@@ -159,12 +163,12 @@ const MetaData = ({
                     <MetaDataRow
                       label="Original Type:"
                       visible={isDataNode}
-                      value={metadata.originalType}
+                      value={shortenDatasetType(metadata.originalType)}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
                       visible={isDataNode}
-                      value={metadata.transcodedTypes}
+                      value={shortenDatasetType(metadata.transcodedTypes)}
                     />
                   </>
                 )}
