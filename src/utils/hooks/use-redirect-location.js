@@ -170,31 +170,23 @@ export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
 
   useEffect(() => {
     if (matchedSelectedRuns) {
-      const runIds = search
-        .substring(
-          search.indexOf(params.run),
-          search.indexOf(`&${params.view}`)
-        )
-        .split(params.run)[1];
+      const { params: searchParams } = matchedSelectedRuns;
 
-      const runIdsArray = runIds.split(',');
+      const runIdsArray = searchParams.ids.split(',');
       const existedIds = runIdsArray.find((id) => allRunIds?.includes(id));
+
+      // If the view from URL is not matched the tabLabels
+      // then set the default value to be the first one from tabLabels
+      const view = tabLabels.includes(searchParams.view)
+        ? searchParams.view
+        : tabLabels[0];
+
+      // If there is more than 1 runId, the comparison mode should always be true
+      const isComparison =
+        runIdsArray.length > 1 ? 'true' : searchParams.isComparison;
 
       // Extra check if the ids from URL are existed
       if (existedIds) {
-        const view = search
-          .substring(
-            search.indexOf(params.view),
-            search.indexOf(`&${params.comparisonMode}`)
-          )
-          .split(params.view)[1];
-
-        // if there is more than 1 runId, the comparison mode should always be true
-        const isComparison =
-          runIdsArray.length > 1
-            ? 'true'
-            : search.split(params.comparisonMode)[1];
-
         setSelectedRunIds(runIdsArray);
         setEnableComparisonView(isComparison === 'true');
         setActiveTab(view);
