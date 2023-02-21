@@ -55,7 +55,7 @@ const ExperimentWrapper = ({ theme, reload }) => {
     setActiveTab,
     setEnableComparisonView,
     setSelectedRunIds,
-  } = useRedirectLocationInExperimentTracking(reload, allRunIds);
+  } = useRedirectLocationInExperimentTracking(allRunIds, loading, reload);
 
   // Fetch all data for selected runs.
   const {

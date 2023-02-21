@@ -149,7 +149,11 @@ export const useRedirectLocationInFlowchart = (
   return { errorMessage, invalidUrl };
 };
 
-export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
+export const useRedirectLocationInExperimentTracking = (
+  allRunIds,
+  loading,
+  reload
+) => {
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
@@ -169,30 +173,33 @@ export const useRedirectLocationInExperimentTracking = (reload, allRunIds) => {
   });
 
   useEffect(() => {
-    if (matchedSelectedRuns) {
+    setErrorMessage({});
+    setInvalidUrl(false);
+
+    if (matchedSelectedRuns && !loading) {
       const { params: searchParams } = matchedSelectedRuns;
 
       const runIdsArray = searchParams.ids.split(',');
-      const existedIds = runIdsArray.find((id) => allRunIds?.includes(id));
-
-      // If the view from URL is not matched the tabLabels
-      // then set the default value to be the first one from tabLabels
-      const view = tabLabels.includes(searchParams.view)
-        ? searchParams.view
-        : tabLabels[0];
-
-      // If there is more than 1 runId, the comparison mode should always be true
-      const isComparison =
-        runIdsArray.length > 1 ? 'true' : searchParams.isComparison;
+      const notFoundIds = runIdsArray.find((id) => !allRunIds?.includes(id));
 
       // Extra check if the ids from URL are existed
-      if (existedIds) {
+      if (notFoundIds) {
+        setErrorMessage(errorMessages.runIds);
+        setInvalidUrl(true);
+      } else {
+        // If the view from URL is not matched the tabLabels
+        // then set the default value to be the first one from tabLabels
+        const view = tabLabels.includes(searchParams.view)
+          ? searchParams.view
+          : tabLabels[0];
+
+        // If there is more than 1 runId, the comparison mode should always be true
+        const isComparison =
+          runIdsArray.length > 1 ? 'true' : searchParams.isComparison;
+
         setSelectedRunIds(runIdsArray);
         setEnableComparisonView(isComparison === 'true');
         setActiveTab(view);
-      } else {
-        setErrorMessage(errorMessages.runIds);
-        setInvalidUrl(true);
       }
     } else {
       setErrorMessage(errorMessages.experimentTracking);
