@@ -39,7 +39,8 @@ const ExperimentWrapper = ({ theme, reload }) => {
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
-  const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
+  const { toExperimentTrackingPath, toSelectedRunsPath } =
+    useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -241,11 +242,12 @@ const ExperimentWrapper = ({ theme, reload }) => {
 
   if (invalidUrl) {
     return (
-      <div className="experiment-wrapper">
-        <h2 className="experiment-warning__title">
+      <div className="experiment-wrapper__error">
+        <h2 className="experiment-wrapper__header">
           Oops, this URL isn't valid
         </h2>
-        <p className="experiment-warning__subtitle">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
+        <p className="experiment-wrapper__text">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
+        <Button onClick={() => toExperimentTrackingPath()}>Reset view</Button>
       </div>
     );
   } else {

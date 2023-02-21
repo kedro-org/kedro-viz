@@ -56,6 +56,12 @@ export const useGeneratePathname = () => {
 export const useGeneratePathnameForExperimentTracking = () => {
   const history = useHistory();
 
+  const toExperimentTrackingPath = useCallback(() => {
+    const url = generatePath(routes.experimentTracking.main);
+
+    history.push(url);
+  }, [history]);
+
   const toSelectedRunsPath = useCallback(
     (ids, view, isComparison) => {
       const url = generatePath(routes.experimentTracking.selectedRuns, {
@@ -70,6 +76,7 @@ export const useGeneratePathnameForExperimentTracking = () => {
   );
 
   return {
+    toExperimentTrackingPath,
     toSelectedRunsPath,
   };
 };
