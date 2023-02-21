@@ -27,16 +27,19 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=apply_types_to_companies,
                 inputs="companies",
                 outputs="int_typed_companies",
+                name='apply_types_to_companies'
             ),
             node(
                 func=apply_types_to_shuttles,
                 inputs="shuttles",
-                outputs="int_typed_shuttles",
+                outputs="int_typed_shuttles@pandas1",
+                name='apply_types_to_shuttles'
             ),
             node(
                 func=apply_types_to_reviews,
                 inputs=["reviews", "params:typing.reviews.columns_as_floats"],
                 outputs="int_typed_reviews",
+                name='apply_types_to_reviews'
             ),
             node(
                 func=aggregate_company_data,
@@ -47,7 +50,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=combine_shuttle_level_information,
                 inputs={
-                    "shuttles": "int_typed_shuttles",
+                    "shuttles": "int_typed_shuttles@pandas2",
                     "reviews": "int_typed_reviews",
                     "companies": "prm_agg_companies",
                 },

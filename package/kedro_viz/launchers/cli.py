@@ -20,7 +20,7 @@ def commands():  # pylint: disable=missing-function-docstring
     pass
 
 
-@commands.command(context_settings=dict(help_option_names=["-h", "--help"]))
+@commands.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--host",
     default=DEFAULT_HOST,
@@ -127,7 +127,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
                 target=run_server,
                 kwargs=run_server_kwargs,
                 watcher_cls=RegExpWatcher,
-                watcher_kwargs=dict(re_files=r"^.*(\.yml|\.yaml|\.py|\.json)$"),
+                watcher_kwargs={"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
             )
 
         else:

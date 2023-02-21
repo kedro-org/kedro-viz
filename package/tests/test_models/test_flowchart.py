@@ -301,7 +301,10 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert task_node_metadata.parameters == {}
-        assert task_node_metadata.run_command == 'kedro run --to-nodes="identity_node"'
+        assert (
+            task_node_metadata.run_command
+            == "kedro run --to-nodes=namespace.identity_node"
+        )
 
     def test_task_node_metadata_no_run_command(self):
         kedro_node = node(
@@ -367,7 +370,7 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
-        assert data_node_metadata.run_command == 'kedro run --to-outputs="dataset"'
+        assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")

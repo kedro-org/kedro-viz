@@ -6,6 +6,7 @@ import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DataSetLoader } from './run-dataset-loader';
+import JSONObject from '../../json-object';
 
 import getShortType from '../../../utils/short-type';
 import './run-dataset.css';
@@ -23,12 +24,28 @@ const determinePinIcon = (data, pinValue, pinnedRun) => {
   return null;
 };
 
+const determinePinDelta = (data, pinValue, pinnedRun) => {
+  if (
+    data.runId !== pinnedRun &&
+    typeof data.value === 'number' &&
+    data.value !== pinValue
+  ) {
+    const delta = data.value - pinValue;
+    const deltaPercentage = Math.round((delta / Math.abs(pinValue)) * 100);
+
+    return delta.toFixed(1) + ' (' + deltaPercentage + '%)';
+  }
+
+  return null;
+};
+
 const resolveRunDataWithPin = (runData, pinnedRun) => {
   const pinValue = runData.filter((data) => data.runId === pinnedRun)[0]?.value;
 
   if (typeof pinValue === 'number') {
     return runData.map((data) => ({
       pinIcon: determinePinIcon(data, pinValue, pinnedRun),
+      pinDelta: determinePinDelta(data, pinValue, pinnedRun),
       ...data,
     }));
   }
@@ -224,7 +241,10 @@ function buildDatasetDataMarkup(
 ) {
   const isPlotlyDataset = getShortType(datasetType) === 'plotly';
   const isImageDataset = getShortType(datasetType) === 'image';
-  const isTrackingDataset = getShortType(datasetType) === 'tracking';
+  const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
+  const isMetricsTrackingDataset =
+    getShortType(datasetType) === 'metricsTracking';
+  const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset;
 
   const onExpandVizClick = () => {
     setShowRunPlotsModal(true);
@@ -277,6 +297,7 @@ function buildDatasetDataMarkup(
         >
           {datasetValues.map((run, index) => {
             const isSinglePinnedRun = datasetValues.length === 1;
+            const isJSONObject = run.value && typeof run.value === 'object';
 
             return (
               <CSSTransition
@@ -292,11 +313,24 @@ function buildDatasetDataMarkup(
                       index === 0 && enableComparisonView,
                   })}
                 >
-                  {isTrackingDataset && (
+                  {isTrackingDataset && !isJSONObject && (
                     <>
-                      {sanitizeValue(run?.value)}
+                      {sanitizeValue(run.value)}
                       {enableShowChanges && <PinArrowIcon icon={run.pinIcon} />}
+                      {enableShowChanges && (
+                        <span className="details-dataset__deltaValue">
+                          {run.pinDelta}
+                        </span>
+                      )}
                     </>
+                  )}
+                  {isJSONTrackingDataset && isJSONObject && (
+                    <JSONObject
+                      value={run.value}
+                      theme={theme}
+                      empty="-"
+                      kind="text"
+                    />
                   )}
 
                   {isPlotlyDataset &&
