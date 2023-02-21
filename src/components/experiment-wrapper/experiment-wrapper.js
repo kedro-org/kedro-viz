@@ -89,10 +89,10 @@ const ExperimentWrapper = ({ theme, reload }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        const selected = selectedRunIds.filter((run) => run !== id);
+        const selectedIds = selectedRunIds.filter((run) => run !== id);
 
-        setSelectedRunIds(selected);
-        toSelectedRunsPath(selected, activeTab, enableComparisonView);
+        setSelectedRunIds(selectedIds);
+        toSelectedRunsPath(selectedIds, activeTab, enableComparisonView);
 
         setNewRunAdded(false);
       } else {

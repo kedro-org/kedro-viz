@@ -182,7 +182,7 @@ export const useRedirectLocationInExperimentTracking = (
       const runIdsArray = searchParams.ids.split(',');
       const notFoundIds = runIdsArray.find((id) => !allRunIds?.includes(id));
 
-      // Extra check if the ids from URL are existed
+      // Extra check if the ids from URL are not existed
       if (notFoundIds) {
         setErrorMessage(errorMessages.runIds);
         setInvalidUrl(true);
