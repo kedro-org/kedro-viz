@@ -76,9 +76,9 @@
 
 .dataset-arrow-icon {
   fill: variables.$blue-300;
-  height: 1.8em;
+  height: 1.7em;
   margin-left: 1em;
-  width: 1.8em;
+  width: 1.7em;
 }
 
 .details-dataset__visualization-wrapper,
@@ -134,4 +134,9 @@
   &:nth-of-type(2) {
     margin-right: 9.2em;
   }
+}
+
+.details-dataset__deltaValue {
+  color: variables.$blue-300;
+  margin-left: 0.5em;
 }
