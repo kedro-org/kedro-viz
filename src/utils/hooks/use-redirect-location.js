@@ -6,10 +6,8 @@ const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
   pipeline: 'Please check the value of "pipeline_id" in the URL',
-  experimentTracking:
-    'Please check the value of "run_ids" or "view" in the URL',
-  runIds:
-    'Please check the value of "run_ids" in the URL. At least one of the ID doesn"t seem to exist',
+  experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
+  runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
 
 /**

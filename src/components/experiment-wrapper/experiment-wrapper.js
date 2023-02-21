@@ -246,7 +246,7 @@ const ExperimentWrapper = ({ theme, reload }) => {
         <h2 className="experiment-wrapper__header">
           Oops, this URL isn't valid
         </h2>
-        <p className="experiment-wrapper__text">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
+        <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
         <Button onClick={() => toExperimentTrackingPath()}>Reset view</Button>
       </div>
     );
