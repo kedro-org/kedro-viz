@@ -114,6 +114,7 @@ export const routes = {
   },
   experimentTracking: {
     main: '/experiment-tracking',
+    selectedView: `/experiment-tracking?${params.view}:view`,
     selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
 };

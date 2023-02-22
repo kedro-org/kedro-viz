@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params, tabLabels } from '../../config';
+import { useGeneratePathnameForExperimentTracking } from './use-generate-pathname';
 
 const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
@@ -147,11 +148,7 @@ export const useRedirectLocationInFlowchart = (
   return { errorMessage, invalidUrl };
 };
 
-export const useRedirectLocationInExperimentTracking = (
-  allRunIds,
-  loading,
-  reload
-) => {
+export const useRedirectLocationInExperimentTracking = (data, reload) => {
   const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
@@ -159,10 +156,16 @@ export const useRedirectLocationInExperimentTracking = (
   const [invalidUrl, setInvalidUrl] = useState(false);
 
   const { pathname, search } = useLocation();
+  const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
 
   const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
     exact: true,
     path: [routes.experimentTracking.main],
+  });
+
+  const matchedSelectedView = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.selectedView],
   });
 
   const matchedSelectedRuns = matchPath(pathname + search, {
@@ -171,13 +174,52 @@ export const useRedirectLocationInExperimentTracking = (
   });
 
   useEffect(() => {
-    setErrorMessage({});
-    setInvalidUrl(false);
+    if (
+      !matchedExperimentTrackingMainPage &&
+      !matchedSelectedRuns &&
+      !matchedSelectedView
+    ) {
+      setErrorMessage(errorMessages.experimentTracking);
+      setInvalidUrl(true);
+    }
 
-    if (matchedSelectedRuns && !loading) {
+    if (matchedExperimentTrackingMainPage) {
+      if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
+        setErrorMessage({});
+        setInvalidUrl(false);
+
+        /**
+         * If we return runs and don't yet have a selected run, set the first one
+         * as the default, with precedence given to runs that are bookmarked.
+         */
+        const bookmarkedRuns = data.runsList.filter((run) => {
+          return run.bookmark === true;
+        });
+
+        if (bookmarkedRuns.length > 0) {
+          const defaultRunFromBookmarked = bookmarkedRuns
+            .map((run) => run.id)
+            .slice(0, 1);
+          setSelectedRunIds(defaultRunFromBookmarked);
+          toSelectedRunsPath(
+            defaultRunFromBookmarked,
+            activeTab,
+            enableComparisonView
+          );
+        } else {
+          const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
+          setSelectedRunIds(defaultRun);
+          toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
+        }
+      }
+    }
+
+    if (matchedSelectedRuns && data) {
       const { params: searchParams } = matchedSelectedRuns;
 
       const runIdsArray = searchParams.ids.split(',');
+
+      const allRunIds = data?.runsList.map((run) => run.id);
       const notFoundIds = runIdsArray.find((id) => !allRunIds?.includes(id));
 
       // Extra check if the ids from URL are not existed
@@ -199,18 +241,17 @@ export const useRedirectLocationInExperimentTracking = (
         setEnableComparisonView(isComparison === 'true');
         setActiveTab(view);
       }
-    } else {
-      setErrorMessage(errorMessages.experimentTracking);
-      setInvalidUrl(true);
     }
 
-    if (matchedExperimentTrackingMainPage) {
-      setErrorMessage({});
-      setInvalidUrl(false);
+    if (matchedSelectedView && data) {
+      const { params } = matchedSelectedView;
+      const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
+      setSelectedRunIds(latestRun);
+      toSelectedRunsPath(latestRun, params.view, enableComparisonView);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload, search]);
+  }, [reload, search, matchedExperimentTrackingMainPage]);
 
   return {
     activeTab,

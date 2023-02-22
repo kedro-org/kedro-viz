@@ -44,7 +44,6 @@ const ExperimentWrapper = ({ theme, reload }) => {
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
-  const allRunIds = data?.runsList.map((run) => run.id);
 
   const {
     activeTab,
@@ -55,7 +54,7 @@ const ExperimentWrapper = ({ theme, reload }) => {
     setActiveTab,
     setEnableComparisonView,
     setSelectedRunIds,
-  } = useRedirectLocationInExperimentTracking(allRunIds, loading, reload);
+  } = useRedirectLocationInExperimentTracking(data, reload);
 
   // Fetch all data for selected runs.
   const {
@@ -147,46 +146,6 @@ const ExperimentWrapper = ({ theme, reload }) => {
       setDisableRunSelection(false);
     }
   }, [selectedRunIds]);
-
-  useEffect(() => {
-    if (
-      !invalidUrl &&
-      data?.runsList.length > 0 &&
-      selectedRunIds.length === 0
-    ) {
-      /**
-       * If we return runs and don't yet have a selected run, set the first one
-       * as the default, with precedence given to runs that are bookmarked.
-       */
-      const bookmarkedRuns = data.runsList.filter((run) => {
-        return run.bookmark === true;
-      });
-
-      if (bookmarkedRuns.length > 0) {
-        const defaultRunFromBookmarked = bookmarkedRuns
-          .map((run) => run.id)
-          .slice(0, 1);
-        setSelectedRunIds(defaultRunFromBookmarked);
-        toSelectedRunsPath(
-          defaultRunFromBookmarked,
-          activeTab,
-          enableComparisonView
-        );
-      } else {
-        const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
-        setSelectedRunIds(defaultRun);
-        toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
-      }
-    }
-  }, [
-    activeTab,
-    data,
-    enableComparisonView,
-    invalidUrl,
-    selectedRunIds,
-    setSelectedRunIds,
-    toSelectedRunsPath,
-  ]);
 
   useEffect(() => {
     /**
