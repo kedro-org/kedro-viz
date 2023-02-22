@@ -172,9 +172,7 @@ const setupTest = ({
 
   // Gets the React instance for a React node
   const getInstance = (node) => {
-    const key = Object.keys(node).find((key) =>
-      key.startsWith('__reactInternalInstance')
-    );
+    const key = Object.keys(node).find((key) => key.startsWith('__reactFiber'));
     return node[key];
   };
 

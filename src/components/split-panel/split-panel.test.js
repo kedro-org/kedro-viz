@@ -29,7 +29,7 @@ describe('SplitPanel', () => {
     // Gets the React instance className for a React node
     const getInstanceClassName = (node) => {
       const key = Object.keys(node).find((key) =>
-        key.startsWith('__reactInternalInstance')
+        key.startsWith('__reactFiber')
       );
       return node[key].memoizedProps.className;
     };
