@@ -243,6 +243,10 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       }
     }
 
+    /**
+     * This is for when there's only view= is defined in the URL, without any run_ids
+     * it should re-direct to the latest run
+     */
     if (matchedSelectedView && data) {
       const { params } = matchedSelectedView;
       const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
