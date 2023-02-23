@@ -3,6 +3,14 @@ import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params, tabLabels } from '../../config';
 import { useGeneratePathnameForExperimentTracking } from './use-generate-pathname';
 
+const getDefaultTabLabel = (searchParams) => {
+  // If the view from URL is not matched the tabLabels
+  // then set the default value to be the first one from tabLabels
+  return tabLabels.includes(searchParams.view)
+    ? searchParams.view
+    : tabLabels[0];
+};
+
 const errorMessages = {
   node: 'Please check the value of "selected_id" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
@@ -227,11 +235,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
         setErrorMessage(errorMessages.runIds);
         setInvalidUrl(true);
       } else {
-        // If the view from URL is not matched the tabLabels
-        // then set the default value to be the first one from tabLabels
-        const view = tabLabels.includes(searchParams.view)
-          ? searchParams.view
-          : tabLabels[0];
+        const view = getDefaultTabLabel(searchParams);
 
         // If there is more than 1 runId, the comparison mode should always be true
         const isComparison =
@@ -249,9 +253,12 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
      */
     if (matchedSelectedView && data) {
       const { params } = matchedSelectedView;
+
       const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
       setSelectedRunIds(latestRun);
-      toSelectedRunsPath(latestRun, params.view, enableComparisonView);
+
+      const view = getDefaultTabLabel(params);
+      toSelectedRunsPath(latestRun, view, enableComparisonView);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
