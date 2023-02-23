@@ -192,7 +192,6 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       setInvalidUrl(true);
     }
 
-    debugger;
     if (matchedExperimentTrackingMainPage) {
       if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
         setErrorMessage({});
