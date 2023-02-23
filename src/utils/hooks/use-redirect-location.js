@@ -255,7 +255,13 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload, search, matchedExperimentTrackingMainPage, matchedSelectedView]);
+  }, [
+    matchedExperimentTrackingMainPage,
+    matchedSelectedRuns,
+    matchedSelectedView,
+    reload,
+    search,
+  ]);
 
   return {
     activeTab,
