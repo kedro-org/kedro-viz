@@ -181,7 +181,6 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
     path: [routes.experimentTracking.selectedRuns],
   });
 
-  console.log(reload);
   useEffect(() => {
     if (
       !matchedExperimentTrackingMainPage &&
@@ -192,7 +191,6 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       setInvalidUrl(true);
     }
 
-    debugger;
     if (matchedExperimentTrackingMainPage) {
       if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
         setErrorMessage({});
