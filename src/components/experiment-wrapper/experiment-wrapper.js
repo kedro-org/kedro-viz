@@ -27,7 +27,7 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const ExperimentWrapper = ({ theme, reload }) => {
+const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -38,6 +38,18 @@ const ExperimentWrapper = ({ theme, reload }) => {
   const [showRunPlotsModal, setShowRunPlotsModal] = useState(false);
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
+
+  // Reload state is to ensure it will call useRedirectLocationInExperimentTracking
+  // only when the component is re-rendered or reloaded.
+  const [reload, setReload] = useState(false);
+  useEffect(() => setReload(true), []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const { toExperimentTrackingPath, toSelectedRunsPath } =
     useGeneratePathnameForExperimentTracking();

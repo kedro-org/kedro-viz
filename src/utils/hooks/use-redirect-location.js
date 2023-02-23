@@ -181,6 +181,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
     path: [routes.experimentTracking.selectedRuns],
   });
 
+  console.log(reload);
   useEffect(() => {
     if (
       !matchedExperimentTrackingMainPage &&
@@ -191,6 +192,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       setInvalidUrl(true);
     }
 
+    debugger;
     if (matchedExperimentTrackingMainPage) {
       if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
         setErrorMessage({});
@@ -262,13 +264,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    matchedExperimentTrackingMainPage,
-    matchedSelectedRuns,
-    matchedSelectedView,
-    reload,
-    search,
-  ]);
+  }, [reload, search, pathname]);
 
   return {
     activeTab,
