@@ -6,18 +6,18 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 5.3.0
 
 ## Major features and improvements
 
 - Enable the display of json objects with `react-json-viewer` in experiment tracking. (#1236)
 - Always show pretty and original node names in the metadata panel. (#1254)
+- Display delta value for metrics when comparing runs in experiment tracking. (#1257)
 
 ## Bug fixes and other changes
 
 - Fix run command for task nodes on metadata panel. (#1245)
 - Fix URL query params with expand all modular pipelines toggle. (#1256)
-- Display delta value for metrics when comparing runs in experiment tracking. (#1257)
 
 # Release 5.2.1
 
