@@ -6,7 +6,7 @@ import { useGeneratePathnameForExperimentTracking } from './use-generate-pathnam
 /**
  * If the view from URL is not matched the tabLabels then set the default
  * value to be the first one from tabLabels
- * @param {object} searchParams 
+ * @param {object} searchParams
  * @returns string
  */
 const getDefaultTabLabel = (searchParams) => {
@@ -212,7 +212,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
           const defaultRunFromBookmarked = bookmarkedRuns
             .map((run) => run.id)
             .slice(0, 1);
-            
+
           setSelectedRunIds(defaultRunFromBookmarked);
           toSelectedRunsPath(
             defaultRunFromBookmarked,
@@ -221,7 +221,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
           );
         } else {
           const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
-          
+
           setSelectedRunIds(defaultRun);
           toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
         }
@@ -241,7 +241,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       } else {
         const view = getDefaultTabLabel(searchParams);
         const isComparison =
-          runIdsArray.length > 1 ? true : Boolean(searchParams.isComparison);
+          runIdsArray.length > 1 ? true : searchParams.isComparison === 'true';
 
         setSelectedRunIds(runIdsArray);
         setEnableComparisonView(isComparison);
@@ -257,7 +257,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       const { params } = matchedSelectedView;
       const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
       const view = getDefaultTabLabel(params);
-      
+
       setSelectedRunIds(latestRun);
       toSelectedRunsPath(latestRun, view, enableComparisonView);
     }

@@ -42,9 +42,9 @@ const ExperimentWrapper = ({ theme }) => {
   // Reload state is to ensure it will call useRedirectLocationInExperimentTracking
   // only when the component is re-rendered or reloaded.
   const [reload, setReload] = useState(false);
-  
+
   useEffect(() => setReload(true), []);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setReload(false);
@@ -69,6 +69,8 @@ const ExperimentWrapper = ({ theme }) => {
     setEnableComparisonView,
     setSelectedRunIds,
   } = useRedirectLocationInExperimentTracking(data, reload);
+
+  console.log(enableComparisonView, 'enableComparisonView');
 
   // Fetch all data for selected runs.
   const {
