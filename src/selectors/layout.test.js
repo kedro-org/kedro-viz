@@ -9,7 +9,7 @@ import { changeFlag, toggleIgnoreLargeWarning } from '../actions';
 import { updateGraph } from '../actions/graph';
 import { toggleTypeDisabled } from '../actions/node-type';
 import reducer from '../reducers';
-import { graphNew } from '@quantumblack/kedro-viz-layout';
+import { graphNew } from '../utils/graph';
 import { sidebarWidth, largeGraphThreshold } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
 import { getVisibleNodeIDs } from './disabled';
