@@ -70,8 +70,6 @@ const ExperimentWrapper = ({ theme }) => {
     setSelectedRunIds,
   } = useRedirectLocationInExperimentTracking(data, reload);
 
-  console.log(enableComparisonView, 'enableComparisonView');
-
   // Fetch all data for selected runs.
   const {
     data: { runMetadata = [], plots = [], metrics = [], JSONData = [] } = [],
