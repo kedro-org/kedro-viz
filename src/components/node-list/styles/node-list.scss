@@ -84,6 +84,16 @@
 .MuiTreeItem-label {
   .kui-theme--dark &,
   .kui-theme--light & {
-    padding-left: 0;
+    padding-left: 0 !important;
+  }
+}
+
+.pipeline-treeItem__root--overwrite {
+  .Mui-selected {
+    background-color: transparent !important;
+  }
+
+  .MuiTreeItem-content {
+    padding: 0;
   }
 }
