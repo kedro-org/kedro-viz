@@ -3,9 +3,13 @@ import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params, tabLabels } from '../../config';
 import { useGeneratePathnameForExperimentTracking } from './use-generate-pathname';
 
+/**
+ * If the view from URL is not matched the tabLabels then set the default
+ * value to be the first one from tabLabels
+ * @param {object} searchParams 
+ * @returns string
+ */
 const getDefaultTabLabel = (searchParams) => {
-  // If the view from URL is not matched the tabLabels
-  // then set the default value to be the first one from tabLabels
   return tabLabels.includes(searchParams.view)
     ? searchParams.view
     : tabLabels[0];
