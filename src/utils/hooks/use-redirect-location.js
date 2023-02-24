@@ -212,6 +212,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
           const defaultRunFromBookmarked = bookmarkedRuns
             .map((run) => run.id)
             .slice(0, 1);
+            
           setSelectedRunIds(defaultRunFromBookmarked);
           toSelectedRunsPath(
             defaultRunFromBookmarked,
