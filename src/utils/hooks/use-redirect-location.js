@@ -221,6 +221,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
           );
         } else {
           const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
+          
           setSelectedRunIds(defaultRun);
           toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
         }
