@@ -244,7 +244,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
           runIdsArray.length > 1 ? true : Boolean(searchParams.isComparison);
 
         setSelectedRunIds(runIdsArray);
-        setEnableComparisonView(isComparison === 'true');
+        setEnableComparisonView(isComparison);
         setActiveTab(view);
       }
     }
