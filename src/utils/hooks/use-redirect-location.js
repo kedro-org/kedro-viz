@@ -240,10 +240,8 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
         setInvalidUrl(true);
       } else {
         const view = getDefaultTabLabel(searchParams);
-
-        // If there is more than 1 runId, the comparison mode should always be true
         const isComparison =
-          runIdsArray.length > 1 ? 'true' : searchParams.isComparison;
+          runIdsArray.length > 1 ? true : Boolean(searchParams.isComparison);
 
         setSelectedRunIds(runIdsArray);
         setEnableComparisonView(isComparison === 'true');
