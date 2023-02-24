@@ -363,9 +363,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual([
-          'spark.spark_dataset.SparkDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['SparkDataSet']);
       });
 
       it('shows the node transcoded type', () => {
@@ -374,9 +372,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual([
-          'pandas.parquet_dataset.ParquetDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['ParquetDataSet']);
       });
     });
     describe('Metrics dataset nodes', () => {
