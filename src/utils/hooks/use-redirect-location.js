@@ -255,11 +255,10 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
      */
     if (matchedSelectedView && data) {
       const { params } = matchedSelectedView;
-
       const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
-      setSelectedRunIds(latestRun);
-
       const view = getDefaultTabLabel(params);
+      
+      setSelectedRunIds(latestRun);
       toSelectedRunsPath(latestRun, view, enableComparisonView);
     }
 
