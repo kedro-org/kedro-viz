@@ -10,7 +10,7 @@ export const tooltipDefaultProps = {
   visible: false,
 };
 
-export const MetricsChartsTooltip = ({
+export const ExperimentTrackingTooltip = ({
   content = tooltipDefaultProps.content,
   direction = tooltipDefaultProps.direction,
   position = tooltipDefaultProps.position,
@@ -28,8 +28,10 @@ export const MetricsChartsTooltip = ({
       <h4 className="tooltip-value">{content?.value1}</h4>
 
       <br />
-      <h3 className="tooltip-label">{`${content?.label2}:`}</h3>
-      <h4 className="tooltip-value">{content?.value2}</h4>
+      {content?.label2 && (
+        <h3 className="tooltip-label">{`${content?.label2}:`}</h3>
+      )}
+      {content?.value2 && <h4 className="tooltip-value">{content?.value2}</h4>}
     </div>
   );
 };

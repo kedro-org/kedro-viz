@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { generatePath } from 'react-router-dom';
 import classnames from 'classnames';
 import { routes } from '../../../config';
+import {
+  ExperimentTrackingTooltip,
+  tooltipDefaultProps,
+} from '../tooltip/tooltip';
 
 import './accordion.css';
 
@@ -29,6 +33,7 @@ const Accordion = ({
   size = 'small',
 }) => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
+  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
   useEffect(() => {
     setCollapsed(isCollapsed);
@@ -39,6 +44,27 @@ const Accordion = ({
     onCallback && onCallback();
   };
 
+  const onMouseOverTitleMedium = (e) => {
+    if (e) {
+      e.persist();
+      const elementWidth = e.currentTarget?.clientWidth + 30;
+
+      const tooltipTimeout = setTimeout(() => {
+        setShowTooltip({
+          content: {
+            label1: 'Link out destination:',
+            value1: 'Show me where this dataset is located  in the flowchart',
+          },
+          direction: 'right-middle',
+          position: { x: elementWidth + 10, y: -20 },
+          visible: true,
+        });
+      }, 300);
+
+      return () => clearTimeout(tooltipTimeout);
+    }
+  };
+
   return (
     <div
       className={classnames('accordion', {
@@ -46,6 +72,12 @@ const Accordion = ({
         [`${className}`]: className,
       })}
     >
+      <ExperimentTrackingTooltip
+        content={showTooltip.content}
+        direction={showTooltip.direction}
+        position={showTooltip.position}
+        visible={showTooltip.visible}
+      />
       <div
         className={classnames('accordion__heading', {
           [`${headingClassName}`]: headingClassName,
@@ -79,6 +111,8 @@ const Accordion = ({
               window.open(url, '_blank');
             }
           }}
+          onMouseOver={onMouseOverTitleMedium}
+          onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
         >
           {heading}
           {headingDetail && (
