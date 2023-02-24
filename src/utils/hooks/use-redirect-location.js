@@ -229,9 +229,7 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
 
     if (matchedSelectedRuns && data) {
       const { params: searchParams } = matchedSelectedRuns;
-
       const runIdsArray = searchParams.ids.split(',');
-
       const allRunIds = data?.runsList.map((run) => run.id);
       const notFoundIds = runIdsArray.find((id) => !allRunIds?.includes(id));
 
