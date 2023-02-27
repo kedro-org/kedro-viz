@@ -1,13 +1,10 @@
 # pylint: disable=too-many-public-methods
 import base64
-import datetime
-import json
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
-import pandas as pd
 import pytest
 from kedro.extras.datasets.pandas import CSVDataSet, ParquetDataSet
 from kedro.io import MemoryDataSet, PartitionedDataSet
