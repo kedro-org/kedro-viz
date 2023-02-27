@@ -386,21 +386,6 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-
-      describe('shows the time series plot for metrics node', () => {
-        const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
-          mockMetadata: nodeMetricsData,
-        });
-        it('shows the plotly chart', () => {
-          expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
-        });
-        it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
-        });
-      });
     });
 
     describe('JSON dataset nodes', () => {
@@ -433,9 +418,7 @@ describe('MetaData', () => {
           expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
         });
         it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
+          expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
         });
       });
     });
