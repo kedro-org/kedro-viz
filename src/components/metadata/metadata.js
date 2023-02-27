@@ -24,13 +24,14 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({
-  visible = true,
+  isPrettyNameOn,
   metadata,
-  theme,
-  visibleCode,
   onToggleCode,
-  onToggleNodeSelected,
   onToggleMetadataModal,
+  onToggleNodeSelected,
+  theme,
+  visible = true,
+  visibleCode,
 }) => {
   const { toFlowchartPage } = useGeneratePathname();
   // Hide code panel when selected metadata changes
@@ -88,8 +89,12 @@ const MetaData = ({
     return string?.replace(/^\//g, '');
   };
 
-  const shortenDatasetType = (string) => {
-    return string?.split('.').pop();
+  const shortenDatasetType = (value) => {
+    const isList = Array.isArray(value);
+
+    return isList
+      ? value.map((val) => val.split('.').pop())
+      : value?.split('.').pop();
   };
 
   return (
@@ -129,6 +134,17 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
+                {isPrettyNameOn ? (
+                  <MetaDataRow
+                    label="Original node name:"
+                    value={metadata.fullName}
+                  />
+                ) : (
+                  <MetaDataRow
+                    label="Pretty node name:"
+                    value={metadata.prettyName}
+                  />
+                )}
                 <MetaDataRow
                   label="Type:"
                   value={translateMetadataType(metadata.type)}
@@ -147,14 +163,12 @@ const MetaData = ({
                     <MetaDataRow
                       label="Original Type:"
                       visible={isDataNode}
-                      kind="type"
-                      value={metadata.originalType}
+                      value={shortenDatasetType(metadata.originalType)}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
                       visible={isDataNode}
-                      kind="type"
-                      value={metadata.transcodedTypes}
+                      value={shortenDatasetType(metadata.transcodedTypes)}
                     />
                   </>
                 )}
@@ -203,7 +217,10 @@ const MetaData = ({
                   />
                 )}
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
-                  <CommandCopier command={runCommand} />
+                  <CommandCopier
+                    command={runCommand}
+                    isCommand={metadata?.runCommand}
+                  />
                 </MetaDataRow>
               </dl>
               {hasPlot && (
@@ -261,9 +278,10 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
-  visible: getVisibleMetaSidebar(state),
+  isPrettyNameOn: state.prettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
+  visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
   ...ownProps,
 });

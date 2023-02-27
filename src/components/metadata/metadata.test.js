@@ -78,7 +78,7 @@ describe('MetaData', () => {
       expect(parametersRow().find('.pipeline-metadata__value').length).toBe(20);
     });
 
-    it('when pretty name is turned off the metadata title displays the full node name', () => {
+    it('when pretty name is turned off the metadata title displays the full node name and the row below shows the pretty name', () => {
       const props = {
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
@@ -96,9 +96,12 @@ describe('MetaData', () => {
         ],
       });
       expect(textOf(title(wrapper))).toEqual(['parameters']);
+
+      const row = rowByLabel(wrapper, 'Pretty node name:');
+      expect(textOf(rowValue(row))).toEqual(['Parameters']);
     });
 
-    it('when pretty name is turned on the metadata title display the formatted name', () => {
+    it('when pretty name is turned on the metadata title displays the formatted name and the row below shows the original name', () => {
       const props = {
         nodeId: parametersNodeId,
         mockMetadata: nodeParameters,
@@ -116,6 +119,9 @@ describe('MetaData', () => {
         ],
       });
       expect(textOf(title(wrapper))).toEqual(['Parameters']);
+
+      const row = rowByLabel(wrapper, 'Original node name:');
+      expect(textOf(rowValue(row))).toEqual(['parameters']);
     });
   });
 
@@ -236,7 +242,7 @@ describe('MetaData', () => {
 
         const row = rowByLabel(wrapper, 'Run Command:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro run --to-nodes="split_data_node"',
+          'kedro run --to-nodes=split_data_node',
         ]);
       });
 
@@ -255,7 +261,7 @@ describe('MetaData', () => {
         copyButton.simulate('click');
 
         expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-          'kedro run --to-nodes="split_data_node"'
+          'kedro run --to-nodes=split_data_node'
         );
       });
     });
@@ -327,7 +333,7 @@ describe('MetaData', () => {
 
         const row = rowByLabel(wrapper, 'Run Command:');
         expect(textOf(rowValue(row))).toEqual([
-          'kedro run --to-outputs="model_input_table"',
+          'kedro run --to-outputs=model_input_table',
         ]);
       });
 
@@ -346,7 +352,7 @@ describe('MetaData', () => {
         copyButton.simulate('click');
 
         expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith(
-          'kedro run --to-outputs="model_input_table"'
+          'kedro run --to-outputs=model_input_table'
         );
       });
     });
@@ -357,9 +363,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual([
-          'spark.spark_dataset.SparkDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['SparkDataSet']);
       });
 
       it('shows the node transcoded type', () => {
@@ -368,9 +372,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual([
-          'pandas.parquet_dataset.ParquetDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['ParquetDataSet']);
       });
     });
     describe('Metrics dataset nodes', () => {

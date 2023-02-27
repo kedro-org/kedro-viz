@@ -205,6 +205,21 @@ describe('RunDataset', () => {
     expect(wrapper.find('.dataset-arrow-icon').length).toBe(1);
   });
 
+  it('renders the comparison delta value when showChanges is on', () => {
+    const wrapper = mount(
+      <RunDataset
+        enableShowChanges={true}
+        isSingleRun={false}
+        pinnedRun={'My Favorite Sprint'}
+        trackingData={comparisonTrackingData}
+      />
+    );
+
+    expect(wrapper.find('.details-dataset__deltaValue').at(1).text()).toBe(
+      '1.0 (8%)'
+    );
+  });
+
   it('renders a cell with a - value for runs with different metrics', () => {
     const wrapper = mount(
       <RunDataset isSingleRun={false} trackingData={showDiffTrackingData} />

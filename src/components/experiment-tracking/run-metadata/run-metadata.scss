@@ -8,7 +8,6 @@
   min-height: 350px;
   min-width: 100%;
   padding: 5em 0 0 9em;
-  width: max-content;
 
   &--not-overview {
     background-color: var(--color-exp-tracking-bg);
@@ -116,7 +115,7 @@
   }
 
   &:last-of-type {
-    margin-right: 5em;
+    margin-right: 0;
   }
 }
 
