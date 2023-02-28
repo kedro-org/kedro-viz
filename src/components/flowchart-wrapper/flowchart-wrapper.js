@@ -77,7 +77,6 @@ export const FlowChartWrapper = ({
 
   const onGoBackToExperimentTrackingHandler = () => {
     const url = goBackToExperimentTracking.fromURL;
-
     history.push(url);
 
     const storage = {
@@ -107,7 +106,12 @@ export const FlowChartWrapper = ({
           <PipelineWarning />
           <FlowChart />
           {goBackToExperimentTracking.showGoBackBtn && (
-            <div className="pipeline-wrapper--go-back-btn">
+            <div
+              className={classnames('pipeline-wrapper__go-back-btn', {
+                'pipeline-wrapper__go-back-btn--sidebar-visible':
+                  sidebarVisible,
+              })}
+            >
               <Button onClick={onGoBackToExperimentTrackingHandler}>
                 Go back
               </Button>
