@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -21,6 +22,8 @@ import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
+import Button from '../ui/button';
+
 import './flowchart-wrapper.css';
 
 /**
@@ -39,22 +42,53 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineExpanded,
   onUpdateActivePipeline,
   pipelines,
-  reload,
   sidebarVisible,
 }) => {
-  const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
-    flags,
-    fullNames,
-    modularPipelinesTree,
-    nodes,
-    onLoadNodeData,
-    onToggleFocusMode,
-    onToggleModularPipelineActive,
-    onToggleModularPipelineExpanded,
-    onUpdateActivePipeline,
-    pipelines,
-    reload
-  );
+  const history = useHistory();
+
+  // Reload state is to ensure it will call redirectLocation
+  // only when the page is reloaded.
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => setReload(true), []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const { errorMessage, invalidUrl, goBackToExperimentTracking } =
+    useRedirectLocationInFlowchart(
+      flags,
+      fullNames,
+      modularPipelinesTree,
+      nodes,
+      onLoadNodeData,
+      onToggleFocusMode,
+      onToggleModularPipelineActive,
+      onToggleModularPipelineExpanded,
+      onUpdateActivePipeline,
+      pipelines,
+      reload
+    );
+
+  const onGoBackToExperimentTrackingHandler = () => {
+    const url = goBackToExperimentTracking.fromURL;
+
+    history.push(url);
+
+    const storage = {
+      fromURL: null,
+      showGoBackBtn: false,
+    };
+    window.localStorage.setItem(
+      'kedro-viz-link-to-flowchart',
+      JSON.stringify(storage)
+    );
+  };
 
   if (invalidUrl) {
     return (
@@ -72,6 +106,14 @@ export const FlowChartWrapper = ({
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
+          {goBackToExperimentTracking.showGoBackBtn && (
+            <div className="pipeline-wrapper--go-back-btn">
+              <Button onClick={onGoBackToExperimentTrackingHandler}>
+                Go back
+              </Button>
+            </div>
+          )}
+
           <div
             className={classnames('pipeline-wrapper__loading', {
               'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
