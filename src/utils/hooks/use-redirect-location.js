@@ -50,6 +50,8 @@ export const useRedirectLocationInFlowchart = (
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [pageReloaded, setPageReloaded] = useState(false);
+  const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
+    useState(false);
 
   const activePipelineId = search.substring(
     search.indexOf(params.pipeline) + params.pipeline.length,
@@ -145,6 +147,12 @@ export const useRedirectLocationInFlowchart = (
       }
 
       if (matchedSelectedNodeName) {
+        const storage = window.localStorage.getItem(
+          'kedro-viz-link-to-flowchart'
+        );
+
+        setGoBackToExperimentTracking(JSON.parse(storage));
+
         const nodeName = search.split(params.selectedName)[1];
         const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
         const foundNodeId = getKeyByValue(fullNames, decodedNodeName);
@@ -186,7 +194,7 @@ export const useRedirectLocationInFlowchart = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload, search]);
 
-  return { errorMessage, invalidUrl };
+  return { errorMessage, invalidUrl, goBackToExperimentTracking };
 };
 
 export const useRedirectLocationInExperimentTracking = (data, reload) => {

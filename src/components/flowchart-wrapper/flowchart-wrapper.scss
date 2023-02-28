@@ -7,6 +7,7 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
 
 .pipeline-wrapper {
   height: 100%;
+  position: relative;
 }
 
 .pipeline-wrapper__loading {
@@ -27,5 +28,19 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
       transform: translateX($sidebar-toolbar-width-open);
       width: calc((100% - #{$sidebar-toolbar-width-open}));
     }
+  }
+}
+
+.pipeline-wrapper--go-back-btn {
+  position: absolute;
+  top: 90%;
+  right: 40%;
+
+  .button button {
+    background-color: variables.$yellow-300;
+    // border-radius: 40%;
+    width: 200px;
+    border: none;
+    color: black;
   }
 }
