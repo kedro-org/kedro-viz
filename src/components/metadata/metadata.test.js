@@ -386,6 +386,13 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
+      it('shows the experiment link', () => {
+        const wrapper = mount({
+          nodeId: modelInputDataSetNodeId,
+          mockMetadata: nodeMetricsData,
+        });
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
+      });
     });
 
     describe('JSON dataset nodes', () => {
@@ -399,12 +406,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-      it('does not show the plotly chart', () => {
+      it('does not show the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeJSONData,
         });
-        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(0);
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(0);
       });
     });
 
