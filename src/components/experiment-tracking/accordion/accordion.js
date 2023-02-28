@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { generatePath } from 'react-router-dom';
+import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import classnames from 'classnames';
 import { routes } from '../../../config';
 import {
@@ -35,6 +35,9 @@ const Accordion = ({
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
 
+  const history = useHistory();
+  const { pathname, search } = useLocation();
+
   useEffect(() => {
     setCollapsed(isCollapsed);
   }, [isCollapsed]);
@@ -63,6 +66,24 @@ const Accordion = ({
 
       return () => clearTimeout(tooltipTimeout);
     }
+  };
+
+  const onLinkToFlowChart = () => {
+    const url = generatePath(routes.flowchart.selectedName, {
+      pipelineId: '__default__',
+      fullName: heading,
+    });
+
+    history.push(url);
+
+    const storage = {
+      fromURL: pathname + search,
+      showGoBackBtn: true,
+    };
+    window.localStorage.setItem(
+      'kedro-viz-link-to-flowchart',
+      JSON.stringify(storage)
+    );
   };
 
   return (
@@ -103,12 +124,7 @@ const Accordion = ({
             // maybe we should get an extra flag to show if this is a sub-heading?
             // rather just relying on the size
             if (size === 'medium') {
-              const url = generatePath(routes.flowchart.selectedName, {
-                pipelineId: '__default__',
-                fullName: heading,
-              });
-
-              window.open(url, '_blank');
+              onLinkToFlowChart();
             }
           }}
           onMouseOver={onMouseOverTitleMedium}
