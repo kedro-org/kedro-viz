@@ -38,7 +38,8 @@ const MetaData = ({
   visibleCode,
 }) => {
   const { toFlowchartPage } = useGeneratePathname();
-  const { toMetricsViewPath } = useGeneratePathnameForExperimentTracking();
+  const { toExperimentTrackingPath, toMetricsViewPath } =
+    useGeneratePathnameForExperimentTracking();
 
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
@@ -276,10 +277,14 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {isMetricsTrackingDataset && (
+              {hasTrackingData && (
                 <button
                   className="pipeline-metadata__link"
-                  onClick={toMetricsViewPath}
+                  onClick={
+                    isMetricsTrackingDataset
+                      ? toMetricsViewPath
+                      : toExperimentTrackingPath
+                  }
                 >
                   <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                   <span className="pipeline-metadata__link-text">

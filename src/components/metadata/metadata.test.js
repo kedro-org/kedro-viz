@@ -406,12 +406,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-      it('does not show the experiment link', () => {
+      it('shows the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeJSONData,
         });
-        expect(wrapper.find('.pipeline-metadata__link').length).toBe(0);
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
