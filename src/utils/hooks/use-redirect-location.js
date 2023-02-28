@@ -137,62 +137,70 @@ export const useRedirectLocationInFlowchart = (
   }, [pageReloaded, reload]);
 
   useEffect(() => {
-    if (pageReloaded) {
+    if (
+      pageReloaded &&
+      (!matchedFlowchartMainPage ||
+        !matchedSelectedNodeId ||
+        !matchedFocusedNode)
+    ) {
       setErrorMessage({});
       setInvalidUrl(false);
+    }
 
-      if (matchedFlowchartMainPage) {
-        onLoadNodeData(null);
-        onToggleFocusMode(null);
+    if (matchedFlowchartMainPage) {
+      onLoadNodeData(null);
+      onToggleFocusMode(null);
+
+      setErrorMessage({});
+      setInvalidUrl(false);
+    }
+
+    if (matchedSelectedNodeName) {
+      const storage = window.localStorage.getItem(
+        'kedro-viz-link-to-flowchart'
+      );
+
+      setGoBackToExperimentTracking(JSON.parse(storage));
+
+      const nodeName = search.split(params.selectedName)[1];
+      const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
+      const foundNodeId = getKeyByValue(fullNames, decodedNodeName);
+
+      if (foundNodeId) {
+        redirectToSelectedNode(foundNodeId);
+      } else {
+        setErrorMessage(errorMessages.nodeName);
+        setInvalidUrl(true);
       }
+    }
 
-      if (matchedSelectedNodeName) {
-        const storage = window.localStorage.getItem(
-          'kedro-viz-link-to-flowchart'
-        );
+    if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
+      const nodeId = search.split(params.selected)[1];
 
-        setGoBackToExperimentTracking(JSON.parse(storage));
+      redirectToSelectedNode(nodeId);
+    }
 
-        const nodeName = search.split(params.selectedName)[1];
-        const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
-        const foundNodeId = getKeyByValue(fullNames, decodedNodeName);
+    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+      updatePipeline(pipelines, decodedPipelineId);
 
-        if (foundNodeId) {
-          redirectToSelectedNode(foundNodeId);
-        } else {
-          setErrorMessage(errorMessages.nodeName);
-          setInvalidUrl(true);
-        }
-      }
+      // Reset the node data to null when when using the navigation buttons
+      onLoadNodeData(null);
 
-      if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
-        const nodeId = search.split(params.selected)[1];
+      const modularPipelineId = search.split(params.focused)[1];
 
-        redirectToSelectedNode(nodeId);
-      }
+      const foundModularPipeline = modularPipelinesTree[modularPipelineId];
 
-      if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
-        updatePipeline(pipelines, decodedPipelineId);
-
-        // Reset the node data to null when when using the navigation buttons
-        onLoadNodeData(null);
-
-        const modularPipelineId = search.split(params.focused)[1];
-
-        const foundModularPipeline = modularPipelinesTree[modularPipelineId];
-
-        if (foundModularPipeline) {
-          onToggleModularPipelineActive(modularPipelineId, true);
-          onToggleFocusMode(foundModularPipeline.data);
-        } else {
-          setErrorMessage(errorMessages.modularPipeline);
-          setInvalidUrl(true);
-        }
+      if (foundModularPipeline) {
+        onToggleModularPipelineActive(modularPipelineId, true);
+        onToggleFocusMode(foundModularPipeline.data);
+      } else {
+        setErrorMessage(errorMessages.modularPipeline);
+        setInvalidUrl(true);
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload, search]);
+  }, [reload, search, pathname]);
 
   return { errorMessage, invalidUrl, goBackToExperimentTracking };
 };
