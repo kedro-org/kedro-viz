@@ -50,6 +50,7 @@ const Accordion = ({
   const onMouseOverTitleMedium = (e) => {
     if (e) {
       e.persist();
+
       const elementWidth = e.currentTarget?.clientWidth + 30;
 
       const tooltipTimeout = setTimeout(() => {
@@ -80,6 +81,7 @@ const Accordion = ({
       fromURL: pathname + search,
       showGoBackBtn: true,
     };
+
     window.localStorage.setItem(
       'kedro-viz-link-to-flowchart',
       JSON.stringify(storage)
@@ -121,14 +123,20 @@ const Accordion = ({
             'accordion__title--large': size === 'large',
           })}
           onClick={() => {
-            // maybe we should get an extra flag to show if this is a sub-heading?
-            // rather just relying on the size
             if (size === 'medium') {
               onLinkToFlowChart();
             }
           }}
-          onMouseOver={onMouseOverTitleMedium}
-          onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
+          onMouseOver={(e) => {
+            if (size === 'medium') {
+              onMouseOverTitleMedium(e);
+            }
+          }}
+          onMouseLeave={() => {
+            if (size === 'medium') {
+              setShowTooltip(tooltipDefaultProps);
+            }
+          }}
         >
           {heading}
           {headingDetail && (
