@@ -55,6 +55,7 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
+  const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -275,7 +276,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasTrackingData && (
+              {isMetricsTrackingDataset && (
                 <button
                   className="pipeline-metadata__link"
                   onClick={toMetricsViewPath}
