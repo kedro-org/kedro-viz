@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Generator
 
 from kedro.framework.session.store import BaseSessionStore
+from omegaconf import OmegaConf
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -52,6 +53,11 @@ class SQLiteStore(BaseSessionStore):
                     value["branch"] = branch.name
                 except ImportError as exc:  # pragma: no cover
                     logger.warning("%s:%s", exc.__class__.__name__, exc.msg)
+
+            if key == "cli":
+                # to convert the nested DictConfig to dict we will need to first convert the whole dict to DictConfig
+                dictconfig_value = OmegaConf.create(value)
+                value = OmegaConf.to_container(dictconfig_value, resolve=True)
 
             if _is_json_serializable(value):
                 session_dict[key] = value
