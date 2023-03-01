@@ -36,6 +36,14 @@ def format_run(
     notes = (
         user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
+
+    #fix for 0.18.5 users who get a string version of cli
+    run_command = {}
+    if isinstance(run_blob.get("cli"), str):
+        run_command = eval(run_blob.get("cli")).get("command_path")
+    else:
+        run_command=run_blob.get("cli", {}).get("command_path")
+
     run = Run(
         author=run_blob.get("username"),
         bookmark=bookmark,
@@ -43,7 +51,7 @@ def format_run(
         git_sha=git_data.get("commit_sha") if git_data else None,
         id=ID(run_id),
         notes=notes,
-        run_command=run_blob.get("cli", {}).get("command_path"),
+        run_command=run_command,
         title=title,
     )
     return run
