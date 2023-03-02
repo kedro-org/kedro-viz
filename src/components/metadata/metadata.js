@@ -17,7 +17,11 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
-import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import {
+  useGeneratePathname,
+  useGeneratePathnameForExperimentTracking,
+} from '../../utils/hooks/use-generate-pathname';
+
 import './styles/metadata.css';
 
 /**
@@ -34,6 +38,9 @@ const MetaData = ({
   visibleCode,
 }) => {
   const { toFlowchartPage } = useGeneratePathname();
+  const { toExperimentTrackingPath, toMetricsViewPath } =
+    useGeneratePathnameForExperimentTracking();
+
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
@@ -49,6 +56,7 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
+  const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -236,11 +244,11 @@ const MetaData = ({
                     />
                   </div>
                   <button
-                    className="pipeline-metadata__expand-plot"
+                    className="pipeline-metadata__link"
                     onClick={onExpandPlotClick}
                   >
-                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__expand-plot-text">
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
                       Expand Plotly Visualization
                     </span>
                   </button>
@@ -259,15 +267,30 @@ const MetaData = ({
                     />
                   </div>
                   <button
-                    className="pipeline-metadata__expand-plot"
+                    className="pipeline-metadata__link"
                     onClick={onExpandPlotClick}
                   >
-                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__expand-plot-text">
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
                       Expand Matplotlib Image
                     </span>
                   </button>
                 </>
+              )}
+              {hasTrackingData && (
+                <button
+                  className="pipeline-metadata__link"
+                  onClick={
+                    isMetricsTrackingDataset
+                      ? toMetricsViewPath
+                      : toExperimentTrackingPath
+                  }
+                >
+                  <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                  <span className="pipeline-metadata__link-text">
+                    Open in Experiment Tracking
+                  </span>
+                </button>
               )}
             </div>
           </>

@@ -62,6 +62,13 @@ export const useGeneratePathnameForExperimentTracking = () => {
     history.push(url);
   }, [history]);
 
+  const toMetricsViewPath = useCallback(() => {
+    const url = generatePath(routes.experimentTracking.selectedView, {
+      view: 'Metrics',
+    });
+    history.push(url);
+  }, [history]);
+
   const toSelectedRunsPath = useCallback(
     (ids, view, isComparison) => {
       const url = generatePath(routes.experimentTracking.selectedRuns, {
@@ -77,6 +84,7 @@ export const useGeneratePathnameForExperimentTracking = () => {
 
   return {
     toExperimentTrackingPath,
+    toMetricsViewPath,
     toSelectedRunsPath,
   };
 };

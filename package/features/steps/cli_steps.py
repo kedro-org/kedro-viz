@@ -76,7 +76,8 @@ def create_project_with_starter(context, starter):
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
     """Run ``pip install -r src/requirements.txt``."""
-    cmd = [context.pip, "install", "-r", str(context.requirements_path)]
+    requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+    cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
