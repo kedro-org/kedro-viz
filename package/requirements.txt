@@ -5,7 +5,9 @@ fastapi>=0.73.0, <0.90.0
 aiofiles==22.1.0
 uvicorn[standard]~=0.20.0
 watchgod~=0.8.2
-sqlalchemy~=1.4
+plotly>=4.0
+pandas>=0.24
+sqlalchemy~=2.0
 strawberry-graphql>=0.99.0, <1.0
 networkx>=1.0
 orjson~=3.8
