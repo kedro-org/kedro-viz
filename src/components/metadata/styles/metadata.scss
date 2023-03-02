@@ -237,7 +237,7 @@ $list-inline-spacing: 0.2em;
   overflow-y: auto;
 }
 
-.pipeline-metadata__expand-plot {
+.pipeline-metadata__link {
   @extend %button;
 
   display: flex;
@@ -251,14 +251,14 @@ $list-inline-spacing: 0.2em;
   }
 }
 
-.pipeline-metadata__expand-plot-icon {
+.pipeline-metadata__link-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 6px 0 36px;
   fill: var(--color-button-text);
 }
 
-.pipeline-metadata__expand-plot-text {
+.pipeline-metadata__link-text {
   margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
