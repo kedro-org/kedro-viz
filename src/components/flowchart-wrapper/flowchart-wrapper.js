@@ -50,7 +50,16 @@ export const FlowChartWrapper = ({
   // only when the page is reloaded.
   const [reload, setReload] = useState(false);
 
-  useEffect(() => setReload(true), []);
+  const [counter, setCounter] = React.useState(5);
+  const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
+    useState(false);
+
+  useEffect(() => {
+    setReload(true);
+
+    const storage = window.localStorage.getItem('kedro-viz-link-to-flowchart');
+    setGoBackToExperimentTracking(JSON.parse(storage));
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -60,25 +69,27 @@ export const FlowChartWrapper = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const { errorMessage, invalidUrl, goBackToExperimentTracking } =
-    useRedirectLocationInFlowchart(
-      flags,
-      fullNames,
-      modularPipelinesTree,
-      nodes,
-      onLoadNodeData,
-      onToggleFocusMode,
-      onToggleModularPipelineActive,
-      onToggleModularPipelineExpanded,
-      onUpdateActivePipeline,
-      pipelines,
-      reload
-    );
+  const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
+    flags,
+    fullNames,
+    modularPipelinesTree,
+    nodes,
+    onLoadNodeData,
+    onToggleFocusMode,
+    onToggleModularPipelineActive,
+    onToggleModularPipelineExpanded,
+    onUpdateActivePipeline,
+    pipelines,
+    reload
+  );
 
-  const onGoBackToExperimentTrackingHandler = () => {
-    const url = goBackToExperimentTracking.fromURL;
-    history.push(url);
+  useEffect(() => {
+    const timer =
+      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    return () => clearInterval(timer);
+  }, [counter]);
 
+  const resetLinkingToFlowchartLocalStorage = () => {
     const storage = {
       fromURL: null,
       showGoBackBtn: false,
@@ -87,6 +98,22 @@ export const FlowChartWrapper = ({
       'kedro-viz-link-to-flowchart',
       JSON.stringify(storage)
     );
+
+    setGoBackToExperimentTracking(storage);
+  };
+
+  useEffect(() => {
+    if (counter === 0) {
+      // debugger;
+      resetLinkingToFlowchartLocalStorage();
+    }
+  }, [counter]);
+
+  const onGoBackToExperimentTrackingHandler = () => {
+    const url = goBackToExperimentTracking.fromURL;
+    history.push(url);
+
+    resetLinkingToFlowchartLocalStorage();
   };
 
   if (invalidUrl) {
@@ -105,19 +132,20 @@ export const FlowChartWrapper = ({
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
-          {goBackToExperimentTracking.showGoBackBtn && (
-            <div
-              className={classnames('pipeline-wrapper__go-back-btn', {
-                'pipeline-wrapper__go-back-btn--sidebar-visible':
-                  sidebarVisible,
-              })}
-            >
-              <Button onClick={onGoBackToExperimentTrackingHandler}>
-                Go back
-              </Button>
-            </div>
-          )}
-
+          <div
+            className={classnames('pipeline-wrapper__go-back-btn', {
+              'pipeline-wrapper__go-back-btn--show':
+                goBackToExperimentTracking.showGoBackBtn,
+              'pipeline-wrapper__go-back-btn--sidebar-visible': sidebarVisible,
+            })}
+          >
+            <Button onClick={onGoBackToExperimentTrackingHandler}>
+              <span className="pipeline-wrapper__go-back-btn-timer">
+                {counter}
+              </span>
+              Return to Experiment Tracking
+            </Button>
+          </div>
           <div
             className={classnames('pipeline-wrapper__loading', {
               'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
