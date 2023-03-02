@@ -50,7 +50,7 @@ export const FlowChartWrapper = ({
   // only when the page is reloaded.
   const [reload, setReload] = useState(false);
 
-  const [counter, setCounter] = React.useState(5);
+  const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
 
@@ -104,7 +104,6 @@ export const FlowChartWrapper = ({
 
   useEffect(() => {
     if (counter === 0) {
-      // debugger;
       resetLinkingToFlowchartLocalStorage();
     }
   }, [counter]);
