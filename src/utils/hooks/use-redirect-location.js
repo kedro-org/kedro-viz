@@ -259,7 +259,8 @@ export const useRedirectLocationInExperimentTracking = (data, reload) => {
       const view = getDefaultTabLabel(params);
 
       setSelectedRunIds(latestRun);
-      toSelectedRunsPath(latestRun, view, enableComparisonView);
+      setEnableComparisonView(false);
+      setActiveTab(view);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
