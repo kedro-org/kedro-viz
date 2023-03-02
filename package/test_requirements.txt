@@ -10,7 +10,7 @@ isort~=5.11
 matplotlib~=3.5
 mypy~=0.991
 psutil==5.9.4  # same as Kedro for now
-pylint~=2.15
+pylint~=2.16
 pytest~=7.2
 pytest-asyncio~=0.20
 pytest-mock~=3.10
