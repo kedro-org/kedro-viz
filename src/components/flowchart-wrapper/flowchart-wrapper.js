@@ -23,6 +23,7 @@ import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import Button from '../ui/button';
+import CircleProgressBar from '../ui/cicrle-progress-bar';
 
 import './flowchart-wrapper.css';
 
@@ -135,13 +136,16 @@ export const FlowChartWrapper = ({
             className={classnames('pipeline-wrapper__go-back-btn', {
               'pipeline-wrapper__go-back-btn--show':
                 goBackToExperimentTracking.showGoBackBtn,
-              'pipeline-wrapper__go-back-btn--sidebar-visible': sidebarVisible,
+              // 'pipeline-wrapper__go-back-btn--show-sidebar-not-visible':
+              //   !sidebarVisible,
+              // 'pipeline-wrapper__go-back-btn--show-sidebar-visible':
+              //   sidebarVisible,
             })}
           >
             <Button onClick={onGoBackToExperimentTrackingHandler}>
-              <span className="pipeline-wrapper__go-back-btn-timer">
-                {counter}
-              </span>
+              {/* <span className="pipeline-wrapper__go-back-btn-timer"> */}
+              <CircleProgressBar>{counter}</CircleProgressBar>
+              {/* </span> */}
               Return to Experiment Tracking
             </Button>
           </div>

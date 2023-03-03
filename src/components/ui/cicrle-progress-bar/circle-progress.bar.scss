@@ -1,0 +1,133 @@
+.circle-wrap {
+  width: 30px;
+  height: 30px;
+  background: #fefcff;
+  border-radius: 50%;
+  border: 1px solid #cdcbd0;
+}
+
+.circle-wrap .circle .mask,
+.circle-wrap .circle .fill {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  border-radius: 50%;
+}
+
+// /* 3rd progress bar */
+.mask .fill {
+  clip: rect(0, 30px, 30px, 15px);
+  //   clip: rect(0, 30px, 30px, 0px);
+  background-color: green;
+}
+
+.circle-wrap .circle .mask {
+  clip: rect(0px, 15px, 30px, 0px);
+}
+
+.circle-wrap .inside-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: pink;
+  line-height: 120px;
+  text-align: center;
+  margin-top: 2px;
+  margin-left: 2px;
+  color: #1e51dc;
+  position: absolute;
+  z-index: 100;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+// /* color animation */
+
+.mask .full,
+.circle .fill {
+  animation: fill ease-in-out 4s;
+  transform: rotate(360deg);
+}
+
+@keyframes fill {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+// svg
+
+// .progress-ring__circle {
+//   //   stroke-dasharray: 5 5;
+//   transition: stroke-dashoffset 0.35s;
+//   transform: rotate(180deg);
+//   transform-origin: 50% 50%;
+// }
+
+/* Sets the containers height and width */
+.base-timer {
+  position: relative;
+  height: 30px;
+  width: 30px;
+}
+
+/* Removes SVG styling that would hide the time label */
+.base-timer__circle {
+  fill: none;
+  stroke: none;
+}
+
+/* The SVG path that displays the timer's progress */
+.base-timer__path-elapsed {
+  stroke-width: 2px;
+  stroke: grey;
+}
+
+.base-timer__label {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.base-timer__path-remaining {
+  /* Just as thick as the original ring */
+  stroke-width: 7px;
+
+  /* Rounds the line endings to create a seamless circle */
+  stroke-linecap: round;
+
+  /* Makes sure the animation starts at the top of the circle */
+  transform: rotate(90deg);
+  transform-origin: center;
+
+  /* One second aligns with the speed of the countdown timer */
+  transition: 1s linear all;
+
+  stroke: red;
+}
+
+.base-timer__svg {
+  /* Flips the svg and makes the animation to move left-to-right */
+  transform: scaleX(-1);
+}
+
+.base-timer__path-remaining.green {
+  color: rgb(65, 184, 131);
+}
+
+.base-timer__path-remaining.orange {
+  color: orange;
+}
+
+.base-timer__path-remaining.red {
+  color: red;
+}
