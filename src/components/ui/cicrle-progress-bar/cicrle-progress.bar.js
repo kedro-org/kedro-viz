@@ -1,12 +1,11 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import './circle-progress.bar.css';
 
 const FULL_DASH_ARRAY = 283;
+const TIME_LIMIT = 60;
 
 const CircleProgressBar = ({ children: counter }) => {
-  const TIME_LIMIT = 60;
-
   const calculateTimeFraction = useCallback(() => {
     return counter / TIME_LIMIT;
   }, [counter]);
