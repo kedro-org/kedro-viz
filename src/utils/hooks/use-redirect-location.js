@@ -105,9 +105,10 @@ export const useRedirectLocationInFlowchart = (
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
 
-      // For when the user toggles Expand all modular pipelines button
-      // then we don't need to call this action
-      if (!flags.expandAllPipelines && hasModularPipeline) {
+      // We only want to call this function specifically when the page is reloaded
+      // to ensure the modular pipeline list is expanded
+      // but we don't want this action to happen on any other on click, go back etc
+      if (pageReloaded && hasModularPipeline) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
 
