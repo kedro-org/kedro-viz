@@ -6,6 +6,16 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 5.X
+
+## Major features and improvements
+
+- Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
+
+## Bug fixes and other changes
+
+- Remove pandas and plotly dependecies from Kedro-viz. (#1268)
+
 # Release 5.3.0
 
 ## Major features and improvements
