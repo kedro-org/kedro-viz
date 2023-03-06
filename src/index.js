@@ -1,7 +1,5 @@
-import { createRoot } from 'react-dom/client';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import KedroViz from './components/container';
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-
-root.render(<KedroViz />);
+ReactDOM.render(<KedroViz />, document.getElementById('root'));
