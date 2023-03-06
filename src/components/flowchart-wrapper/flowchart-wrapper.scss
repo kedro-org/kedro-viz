@@ -57,6 +57,8 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
 
 .pipeline-wrapper__go-back-btn--show {
   opacity: 1;
+  transform: translate(0, -140%);
+  transition: transform 0.6s ease, opacity 0.4s ease-in-out;
 
   .button button {
     background-color: variables.$yellow-300;
