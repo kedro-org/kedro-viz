@@ -7,7 +7,6 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
 
 .pipeline-wrapper {
   height: 100%;
-  position: relative;
 }
 
 .pipeline-wrapper__loading {
@@ -32,19 +31,10 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
 }
 
 .pipeline-wrapper__go-back-btn {
-  position: absolute;
-  top: 90%;
-  right: 40%;
+  display: flex;
+  justify-content: center;
   opacity: 0;
-
-  transform: translateX(-$sidebar-toolbar-width-closed);
-  transition: transform 0.4s ease, width ease 0.4s;
-
-  @media (min-width: variables.$sidebar-width-breakpoint) {
-    &--sidebar-visible {
-      transform: translateX(0);
-    }
-  }
+  position: relative;
 
   .button button {
     background-color: variables.$yellow-300;
@@ -61,25 +51,21 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
   transition: transform 0.6s ease, opacity 0.4s ease-in-out;
 
   .button button {
+    align-items: center;
     background-color: variables.$yellow-300;
     border-radius: 40px;
     border: none;
     color: black;
+    column-gap: 10px;
+    display: flex;
+    justify-content: center;
+    padding: 8px 8px 8px 0;
     width: 280px;
   }
 }
 
-.pipeline-wrapper__go-back-btn-timer {
-  align-items: center;
-  background: white;
-  border-radius: 50%;
-  color: black;
-  display: flex;
-  height: 30px;
-  justify-content: center;
-  position: absolute;
-  right: -10px;
-  top: -10px;
-  width: 30px;
-  z-index: 1;
+.pipeline-wrapper__go-back-btn--show-sidebar-not-visible {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
+    transform: translate(-50px, -140%);
+  }
 }

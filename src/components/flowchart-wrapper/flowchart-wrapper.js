@@ -136,16 +136,12 @@ export const FlowChartWrapper = ({
             className={classnames('pipeline-wrapper__go-back-btn', {
               'pipeline-wrapper__go-back-btn--show':
                 goBackToExperimentTracking.showGoBackBtn,
-              // 'pipeline-wrapper__go-back-btn--show-sidebar-not-visible':
-              //   !sidebarVisible,
-              // 'pipeline-wrapper__go-back-btn--show-sidebar-visible':
-              //   sidebarVisible,
+              'pipeline-wrapper__go-back-btn--show-sidebar-not-visible':
+                !sidebarVisible,
             })}
           >
             <Button onClick={onGoBackToExperimentTrackingHandler}>
-              {/* <span className="pipeline-wrapper__go-back-btn-timer"> */}
               <CircleProgressBar>{counter}</CircleProgressBar>
-              {/* </span> */}
               Return to Experiment Tracking
             </Button>
           </div>
