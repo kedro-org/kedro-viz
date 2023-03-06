@@ -3,6 +3,7 @@ which stores sessions data in the SQLite database"""
 
 import json
 import logging
+import s3fs
 from pathlib import Path
 from typing import Any, Generator
 
@@ -39,6 +40,11 @@ class SQLiteStore(BaseSessionStore):
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
         return Path(self._path) / "session_store.db"
+    
+    @property
+    def s3_location(self) -> Path:
+        """Returns location of the sqlite_store database"""
+        return self._s3_path
 
     def to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
@@ -67,3 +73,9 @@ class SQLiteStore(BaseSessionStore):
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
         database.add(session_store_data)
         database.commit()
+        if(self._s3_path):
+            s3 = s3fs.S3FileSystem()
+            with open(self.location,'rb') as file:
+                 with s3.open(f'{self._s3_path}/example2.db', 'wb') as s3f:
+                         s3f.write(file.read())
+

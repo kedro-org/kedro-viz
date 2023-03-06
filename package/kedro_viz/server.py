@@ -3,6 +3,9 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+import os
+
+import s3fs
 import uvicorn
 from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
@@ -30,10 +33,12 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     session_store_location: Optional[Path],
+    session_store_s3_location: str
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
+
     if session_store_location:
         database_engine, session_class = create_db_engine(session_store_location)
         Base.metadata.create_all(bind=database_engine)
@@ -41,6 +46,25 @@ def populate_data(
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
+
+    
+
+    if session_store_s3_location:
+        s3 = s3fs.S3FileSystem()
+        for file in s3.ls(session_store_s3_location):
+            if not file.endswith('/'):
+                file_name = os.path.basename(file)
+                db_location = f'{os.path.dirname(session_store_location)}/{file_name}'
+                with s3.open(file, 'rb') as file:
+                    db_bytes = file.read()
+                with open(db_location, 'wb') as f:
+                        f.write(db_bytes)
+                database_engine, session_class = create_db_engine(db_location)
+                Base.metadata.create_all(bind=database_engine)
+                data_access_manager.set_db_session(session_class)
+
+
+            
 
 
 def run_server(
@@ -78,7 +102,7 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store_location = kedro_data_loader.load_data(
+        catalog, pipelines, session_store_location,session_store_s3_location = kedro_data_loader.load_data(
             path, env, extra_params
         )
         pipelines = (
@@ -86,7 +110,7 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store_location)
+        populate_data(data_access_manager, catalog, pipelines, session_store_location, session_store_s3_location)
         if save_file:
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)

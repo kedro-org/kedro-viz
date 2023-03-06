@@ -89,8 +89,10 @@ def load_data(
             context = session.load_context()
             session_store = session._store
             session_store_location = None
+            session_store_s3_location = None
             if isinstance(session_store, SQLiteStore):
                 session_store_location = session_store.location
+                session_store_s3_location = session_store.s3_location
             catalog = context.catalog
 
             # Pipelines is a lazy dict-like object, so we force it to populate here
@@ -98,7 +100,7 @@ def load_data(
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
 
-        return catalog, pipelines_dict, session_store_location
+        return catalog, pipelines_dict, session_store_location, session_store_s3_location
 
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
