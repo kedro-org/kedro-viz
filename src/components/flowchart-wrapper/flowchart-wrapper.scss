@@ -64,14 +64,14 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
   }
 }
 
-.pipeline-wrapper__go-back-btn--show-sidebar-not-visible {
+.pipeline-wrapper__go-back-btn--show-sidebar-visible {
   @media (min-width: variables.$sidebar-width-breakpoint) {
-    transform: translate(-50px, -140%);
+    transform: translate(50px, -140%);
   }
 }
 
-.pipeline-wrapper__go-back-btn--show-metadata-not-visible {
+.pipeline-wrapper__go-back-btn--show-metadata-visible {
   @media (min-width: variables.$sidebar-width-breakpoint) {
-    transform: translate(50px, -140%);
+    transform: translate(-50px, -140%);
   }
 }
