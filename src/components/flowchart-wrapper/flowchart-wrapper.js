@@ -7,6 +7,7 @@ import {
   getModularPipelinesTree,
   getNodeFullName,
 } from '../../selectors/nodes';
+import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
@@ -44,6 +45,7 @@ export const FlowChartWrapper = ({
   onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
+  metadataVisible,
 }) => {
   const history = useHistory();
 
@@ -138,6 +140,8 @@ export const FlowChartWrapper = ({
                 goBackToExperimentTracking?.showGoBackBtn,
               'pipeline-wrapper__go-back-btn--show-sidebar-not-visible':
                 !sidebarVisible,
+              'pipeline-wrapper__go-back-btn--show-metadata-not-visible':
+                !metadataVisible,
             })}
           >
             <Button onClick={onGoBackToExperimentTrackingHandler}>
@@ -168,6 +172,7 @@ export const mapStateToProps = (state) => ({
   nodes: state.node.modularPipelines,
   pipelines: state.pipeline.ids,
   sidebarVisible: state.visible.sidebar,
+  metadataVisible: getVisibleMetaSidebar(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

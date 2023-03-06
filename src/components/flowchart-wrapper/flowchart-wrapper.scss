@@ -69,3 +69,9 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
     transform: translate(-50px, -140%);
   }
 }
+
+.pipeline-wrapper__go-back-btn--show-metadata-not-visible {
+  @media (min-width: variables.$sidebar-width-breakpoint) {
+    transform: translate(50px, -140%);
+  }
+}
