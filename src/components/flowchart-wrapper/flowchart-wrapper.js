@@ -135,7 +135,7 @@ export const FlowChartWrapper = ({
           <div
             className={classnames('pipeline-wrapper__go-back-btn', {
               'pipeline-wrapper__go-back-btn--show':
-                goBackToExperimentTracking.showGoBackBtn,
+                goBackToExperimentTracking?.showGoBackBtn,
               'pipeline-wrapper__go-back-btn--show-sidebar-not-visible':
                 !sidebarVisible,
             })}
