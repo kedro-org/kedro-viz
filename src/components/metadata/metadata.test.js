@@ -363,9 +363,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual([
-          'spark.spark_dataset.SparkDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['SparkDataSet']);
       });
 
       it('shows the node transcoded type', () => {
@@ -374,9 +372,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual([
-          'pandas.parquet_dataset.ParquetDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['ParquetDataSet']);
       });
     });
     describe('Metrics dataset nodes', () => {
@@ -390,20 +386,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-
-      describe('shows the time series plot for metrics node', () => {
+      it('shows the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeMetricsData,
         });
-        it('shows the plotly chart', () => {
-          expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
-        });
-        it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
-        });
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
@@ -418,12 +406,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-      it('does not show the plotly chart', () => {
+      it('shows the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeJSONData,
         });
-        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(0);
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
@@ -437,9 +425,7 @@ describe('MetaData', () => {
           expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
         });
         it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
+          expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
         });
       });
     });

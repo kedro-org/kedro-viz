@@ -8,6 +8,8 @@ import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
+import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
+import { useRedirectLocationInExperimentTracking } from '../../utils/hooks/use-redirect-location';
 
 import './experiment-wrapper.css';
 
@@ -27,11 +29,9 @@ const transitionStyles = {
 
 const ExperimentWrapper = ({ theme }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
-  const [enableComparisonView, setEnableComparisonView] = useState(false);
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [pinnedRun, setPinnedRun] = useState();
-  const [selectedRunIds, setSelectedRunIds] = useState([]);
   const [selectedRunData, setSelectedRunData] = useState(null);
   const [showRunDetailsModal, setShowRunDetailsModal] = useState(false);
   const [showRunExportModal, setShowRunExportModal] = useState(false);
@@ -39,8 +39,36 @@ const ExperimentWrapper = ({ theme }) => {
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
+  // Reload state is to ensure it will call useRedirectLocationInExperimentTracking
+  // only when the component is re-rendered or reloaded.
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => setReload(true), []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const { toExperimentTrackingPath, toSelectedRunsPath } =
+    useGeneratePathnameForExperimentTracking();
+
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+
+  const {
+    activeTab,
+    enableComparisonView,
+    errorMessage,
+    invalidUrl,
+    selectedRunIds,
+    setActiveTab,
+    setEnableComparisonView,
+    setSelectedRunIds,
+  } = useRedirectLocationInExperimentTracking(data, reload);
 
   // Fetch all data for selected runs.
   const {
@@ -74,17 +102,27 @@ const ExperimentWrapper = ({ theme }) => {
         if (selectedRunIds.length === 1) {
           return;
         }
-        setSelectedRunIds(selectedRunIds.filter((run) => run !== id));
+        const selectedIds = selectedRunIds.filter((run) => run !== id);
+
+        setSelectedRunIds(selectedIds);
+        toSelectedRunsPath(selectedIds, activeTab, enableComparisonView);
+
         setNewRunAdded(false);
       } else {
         setSelectedRunIds([...selectedRunIds, id]);
         setNewRunAdded(true);
+        toSelectedRunsPath(
+          [...selectedRunIds, id],
+          activeTab,
+          enableComparisonView
+        );
       }
     } else {
       if (selectedRunIds.includes(id)) {
         return;
       } else {
         setSelectedRunIds([id]);
+        toSelectedRunsPath([id], activeTab, enableComparisonView);
       }
     }
   };
@@ -92,9 +130,27 @@ const ExperimentWrapper = ({ theme }) => {
   const onToggleComparisonView = () => {
     setEnableComparisonView(!enableComparisonView);
 
+    if (selectedRunIds.length === 1) {
+      toSelectedRunsPath(
+        selectedRunIds.slice(0, 1),
+        activeTab,
+        !enableComparisonView
+      );
+    }
+
     if (enableComparisonView && selectedRunIds.length > 1) {
       setSelectedRunIds(selectedRunIds.slice(0, 1));
+      toSelectedRunsPath(
+        selectedRunIds.slice(0, 1),
+        activeTab,
+        !enableComparisonView
+      );
     }
+  };
+
+  const onTabChangeHandler = (tab) => {
+    setActiveTab(tab);
+    toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
   useEffect(() => {
@@ -104,24 +160,6 @@ const ExperimentWrapper = ({ theme }) => {
       setDisableRunSelection(false);
     }
   }, [selectedRunIds]);
-
-  useEffect(() => {
-    if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
-      /**
-       * If we return runs and don't yet have a selected run, set the first one
-       * as the default, with precedence given to runs that are bookmarked.
-       */
-      const bookmarkedRuns = data.runsList.filter((run) => {
-        return run.bookmark === true;
-      });
-
-      if (bookmarkedRuns.length > 0) {
-        setSelectedRunIds(bookmarkedRuns.map((run) => run.id).slice(0, 1));
-      } else {
-        setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
-      }
-    }
-  }, [data, selectedRunIds]);
 
   useEffect(() => {
     /**
@@ -175,97 +213,112 @@ const ExperimentWrapper = ({ theme }) => {
     );
   }
 
-  return (
-    <>
-      <HoverStateContextProvider>
-        {data?.runsList.length > 0 ? (
-          <>
-            <Sidebar
-              disableRunSelection={disableRunSelection}
-              enableComparisonView={enableComparisonView}
-              enableShowChanges={enableShowChanges}
-              isDisplayingMetrics={isDisplayingMetrics}
-              isExperimentView
-              onRunSelection={onRunSelection}
-              onToggleComparisonView={onToggleComparisonView}
-              runsListData={data.runsList}
-              selectedRunData={selectedRunData}
-              selectedRunIds={selectedRunIds}
-              setEnableShowChanges={setEnableShowChanges}
-              setShowRunExportModal={setShowRunExportModal}
-              setSidebarVisible={setIsSidebarVisible}
-              showRunDetailsModal={setShowRunDetailsModal}
-              sidebarVisible={isSidebarVisible}
-            />
-            <Transition in={selectedRunIds.length > 0} timeout={300}>
+  if (invalidUrl) {
+    return (
+      <div className="experiment-wrapper__error">
+        <h2 className="experiment-wrapper__header">
+          Oops, this URL isn't valid
+        </h2>
+        <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
+        <Button onClick={() => toExperimentTrackingPath()}>Reset view</Button>
+      </div>
+    );
+  } else {
+    return (
+      <>
+        <HoverStateContextProvider>
+          {data?.runsList.length > 0 ? (
+            <>
+              <Sidebar
+                disableRunSelection={disableRunSelection}
+                enableComparisonView={enableComparisonView}
+                enableShowChanges={enableShowChanges}
+                isDisplayingMetrics={isDisplayingMetrics}
+                isExperimentView
+                onRunSelection={onRunSelection}
+                onToggleComparisonView={onToggleComparisonView}
+                runsListData={data.runsList}
+                selectedRunData={selectedRunData}
+                selectedRunIds={selectedRunIds}
+                setEnableShowChanges={setEnableShowChanges}
+                setShowRunExportModal={setShowRunExportModal}
+                setSidebarVisible={setIsSidebarVisible}
+                showRunDetailsModal={setShowRunDetailsModal}
+                sidebarVisible={isSidebarVisible}
+              />
+              <Transition in={selectedRunIds.length > 0} timeout={300}>
+                {(state) => (
+                  <div
+                    style={{
+                      ...defaultStyle,
+                      ...transitionStyles[state],
+                    }}
+                  >
+                    {selectedRunIds.length > 0 ? (
+                      <Details
+                        activeTab={activeTab}
+                        enableComparisonView={enableComparisonView}
+                        enableShowChanges={
+                          enableShowChanges && selectedRunIds.length > 1
+                        }
+                        isRunDataLoading={isRunDataLoading}
+                        newRunAdded={newRunAdded}
+                        onRunSelection={onRunSelection}
+                        pinnedRun={pinnedRun}
+                        runDataError={runDataError}
+                        runMetadata={runMetadata}
+                        runTrackingData={runTrackingData}
+                        selectedRunIds={selectedRunIds}
+                        setActiveTab={onTabChangeHandler}
+                        setIsDisplayingMetrics={setIsDisplayingMetrics}
+                        setPinnedRun={setPinnedRun}
+                        setShowRunDetailsModal={setShowRunDetailsModal}
+                        setShowRunExportModal={setShowRunExportModal}
+                        setShowRunPlotsModal={setShowRunPlotsModal}
+                        showRunDetailsModal={showRunDetailsModal}
+                        showRunExportModal={showRunExportModal}
+                        showRunPlotsModal={showRunPlotsModal}
+                        sidebarVisible={isSidebarVisible}
+                        theme={theme}
+                      />
+                    ) : null}
+                  </div>
+                )}
+              </Transition>
+            </>
+          ) : (
+            <Transition in={data?.runsList.length <= 0} timeout={300}>
               {(state) => (
                 <div
+                  className="experiment-wrapper"
                   style={{
                     ...defaultStyle,
                     ...transitionStyles[state],
                   }}
                 >
-                  {selectedRunIds.length > 0 ? (
-                    <Details
-                      enableComparisonView={enableComparisonView}
-                      enableShowChanges={
-                        enableShowChanges && selectedRunIds.length > 1
-                      }
-                      isRunDataLoading={isRunDataLoading}
-                      newRunAdded={newRunAdded}
-                      onRunSelection={onRunSelection}
-                      pinnedRun={pinnedRun}
-                      runDataError={runDataError}
-                      runMetadata={runMetadata}
-                      runTrackingData={runTrackingData}
-                      selectedRunIds={selectedRunIds}
-                      setIsDisplayingMetrics={setIsDisplayingMetrics}
-                      setPinnedRun={setPinnedRun}
-                      setShowRunDetailsModal={setShowRunDetailsModal}
-                      setShowRunExportModal={setShowRunExportModal}
-                      setShowRunPlotsModal={setShowRunPlotsModal}
-                      showRunDetailsModal={showRunDetailsModal}
-                      showRunExportModal={showRunExportModal}
-                      showRunPlotsModal={showRunPlotsModal}
-                      sidebarVisible={isSidebarVisible}
-                      theme={theme}
-                    />
-                  ) : null}
+                  <h2 className="experiment-wrapper__header">
+                    You don't have any experiments
+                  </h2>
+                  <p className="experiment-wrapper__text">
+                    Kedro can help you manage your experiments. Learn more how
+                    you can enable experiment tracking in your projects from our
+                    docs.{' '}
+                  </p>
+                  <a
+                    href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <Button>View docs</Button>
+                  </a>
                 </div>
               )}
             </Transition>
-          </>
-        ) : (
-          <Transition in={data?.runsList.length <= 0} timeout={300}>
-            {(state) => (
-              <div
-                className="experiment-wrapper"
-                style={{
-                  ...defaultStyle,
-                  ...transitionStyles[state],
-                }}
-              >
-                <h2 className="experiment-wrapper__header">
-                  You don't have any experiments
-                </h2>
-                <p className="experiment-wrapper__text">
-                  Kedro can help you manage your experiments. Learn more how you
-                  can enable experiment tracking in your projects from our docs.{' '}
-                </p>
-                <a
-                  href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <Button>View docs</Button>
-                </a>
-              </div>
-            )}
-          </Transition>
-        )}
-      </HoverStateContextProvider>
-    </>
-  );
+          )}
+        </HoverStateContextProvider>
+      </>
+    );
+  }
 };
 
 export const mapStateToProps = (state) => ({

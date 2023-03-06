@@ -92,11 +92,16 @@ export const shortTypeMapping = {
   'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
+export const tabLabels = ['Overview', 'Metrics', 'Plots'];
+
 // URL parameters for each element/section
 export const params = {
   focused: 'focused_id=',
   selected: 'selected_id=',
   pipeline: 'pipeline_id=',
+  run: 'run_ids=',
+  view: 'view=',
+  comparisonMode: 'comparison=',
 };
 
 const activePipeline = `${params.pipeline}:pipelineId`;
@@ -106,5 +111,10 @@ export const routes = {
     main: '/',
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
+  },
+  experimentTracking: {
+    main: '/experiment-tracking',
+    selectedView: `/experiment-tracking?${params.view}:view`,
+    selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
 };
