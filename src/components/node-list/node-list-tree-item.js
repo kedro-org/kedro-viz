@@ -1,7 +1,7 @@
 import React from 'react';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import TreeItem from '@material-ui/lab/TreeItem';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import TreeItem from '@mui/lab/TreeItem';
 import NodeListRow from './node-list-row';
 
 const arrowIconColor = '#8e8e90';
@@ -15,6 +15,7 @@ const NodeListTreeItem = ({
   children,
 }) => (
   <TreeItem
+    className="pipeline-treeItem__root--overwrite"
     key={data.id}
     nodeId={data.id}
     // this setup is to allow flexibility for adjusting the setting for individual arrow icons
