@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, useLocation } from 'react-router-dom';
 import classnames from 'classnames';
 import { routes } from '../../../config';
 import {
@@ -34,8 +34,8 @@ const Accordion = ({
 }) => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
+  const [flowchartUrl, setFlowchartUrl] = useState(null);
 
-  const history = useHistory();
   const { pathname, search } = useLocation();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const Accordion = ({
     onCallback && onCallback();
   };
 
-  const onMouseOverTitleMedium = (e) => {
+  const onMouseOverDataSet = (e) => {
     if (e) {
       e.persist();
 
@@ -75,7 +75,7 @@ const Accordion = ({
       fullName: heading,
     });
 
-    history.push(url);
+    setFlowchartUrl(url);
 
     const storage = {
       fromURL: pathname + search,
@@ -117,32 +117,34 @@ const Accordion = ({
             })}
           />
         )}
-        <div
-          className={classnames('accordion__title', {
-            'accordion__title--medium': size === 'medium',
-            'accordion__title--large': size === 'large',
-          })}
-          onClick={() => {
-            if (size === 'medium') {
-              onLinkToFlowChart();
-            }
-          }}
-          onMouseOver={(e) => {
-            if (size === 'medium') {
-              onMouseOverTitleMedium(e);
-            }
-          }}
-          onMouseLeave={() => {
-            if (size === 'medium') {
-              setShowTooltip(tooltipDefaultProps);
-            }
-          }}
-        >
-          {heading}
-          {headingDetail && (
-            <span className="accordion__title__detail">{headingDetail}</span>
-          )}
-        </div>
+        {size === 'medium' ? (
+          <a
+            className={classnames(
+              'accordion__title',
+              'accordion__title--medium'
+            )}
+            href={flowchartUrl}
+            onClick={onLinkToFlowChart}
+            onMouseOver={onMouseOverDataSet}
+            onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
+          >
+            {heading}
+            {headingDetail && (
+              <span className="accordion__title__detail">{headingDetail}</span>
+            )}
+          </a>
+        ) : (
+          <div
+            className={classnames('accordion__title', {
+              'accordion__title--large': size === 'large',
+            })}
+          >
+            {heading}
+            {headingDetail && (
+              <span className="accordion__title__detail">{headingDetail}</span>
+            )}
+          </div>
+        )}
         {layout === 'right' && (
           <button
             aria-label={`${
