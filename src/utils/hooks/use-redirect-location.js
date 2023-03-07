@@ -34,7 +34,7 @@ const getKeyByValue = (object, value) => {
  */
 export const useRedirectLocationInFlowchart = (
   flags,
-  fullNames,
+  fullNodeNames,
   modularPipelinesTree,
   nodes,
   onLoadNodeData,
@@ -152,7 +152,7 @@ export const useRedirectLocationInFlowchart = (
     if (matchedSelectedNodeName) {
       const nodeName = search.split(params.selectedName)[1];
       const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
-      const foundNodeId = getKeyByValue(fullNames, decodedNodeName);
+      const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
 
       if (foundNodeId) {
         redirectToSelectedNode(foundNodeId);

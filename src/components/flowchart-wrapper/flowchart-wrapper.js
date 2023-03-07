@@ -34,7 +34,7 @@ import './flowchart-wrapper.css';
  */
 export const FlowChartWrapper = ({
   flags,
-  fullNames,
+  fullNodeNames,
   loading,
   modularPipelinesTree,
   nodes,
@@ -74,7 +74,7 @@ export const FlowChartWrapper = ({
 
   const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
     flags,
-    fullNames,
+    fullNodeNames,
     modularPipelinesTree,
     nodes,
     onLoadNodeData,
@@ -165,7 +165,7 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
-  fullNames: getNodeFullName(state),
+  fullNodeNames: getNodeFullName(state),
   loading: isLoading(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
