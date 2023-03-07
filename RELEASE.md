@@ -6,15 +6,16 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 5.X
+# Release 6.x.x
 
 ## Major features and improvements
 
 - Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
+- Bump minimum version of React from 16.8.6 to 17.0.2. (#1282)
 
 ## Bug fixes and other changes
 
-- Remove pandas and plotly dependecies from Kedro-viz. (#1268)
+- Remove pandas and plotly dependencies from Kedro-viz. (#1268)
 
 # Release 5.3.0
 
