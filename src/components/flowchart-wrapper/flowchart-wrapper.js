@@ -86,12 +86,6 @@ export const FlowChartWrapper = ({
     reload
   );
 
-  useEffect(() => {
-    const timer =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
-    return () => clearInterval(timer);
-  }, [counter]);
-
   const resetLinkingToFlowchartLocalStorage = () => {
     const storage = {
       fromURL: null,
@@ -106,9 +100,14 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
+    const timer =
+      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+
     if (counter === 0) {
       resetLinkingToFlowchartLocalStorage();
     }
+
+    return () => clearInterval(timer);
   }, [counter]);
 
   const onGoBackToExperimentTrackingHandler = () => {
