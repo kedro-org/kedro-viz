@@ -24,7 +24,7 @@ import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import Button from '../ui/button';
-import CircleProgressBar from '../ui/cicrle-progress-bar';
+import CircleProgressBar from '../ui/circle-progress-bar';
 
 import './flowchart-wrapper.css';
 
