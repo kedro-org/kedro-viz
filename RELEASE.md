@@ -11,7 +11,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
-- Link plot/json dataset names from the Experiment Tracking to the flowchart. (#1165)
+- Link plot and JSON dataset names from experiment tracking to the flowchart. (#1165)
 
 ## Bug fixes and other changes
 
