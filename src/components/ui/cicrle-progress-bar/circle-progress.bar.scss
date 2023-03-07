@@ -1,7 +1,7 @@
 /* Sets the containers height and width */
 .base-timer {
-  position: relative;
   height: 30px;
+  position: relative;
   width: 30px;
 }
 
@@ -18,19 +18,20 @@
 }
 
 .base-timer__label {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  top: 0;
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   font-size: 12px;
+  height: 30px;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 30px;
 }
 
 .base-timer__path-remaining {
   /* Just as thick as the original ring */
   stroke-width: 7px;
+  stroke: white;
 
   /* Rounds the line endings to create a seamless circle */
   stroke-linecap: round;
@@ -41,8 +42,6 @@
 
   /* One second aligns with the speed of the countdown timer */
   transition: 1s linear all;
-
-  stroke: white;
 }
 
 .base-timer__svg {
