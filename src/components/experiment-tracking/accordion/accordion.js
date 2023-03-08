@@ -6,6 +6,8 @@ import {
   ExperimentTrackingTooltip,
   tooltipDefaultProps,
 } from '../tooltip/tooltip';
+import { saveLocalStorage } from '../../../store/helpers';
+import { localStorageForLinkingFlowchart } from '../../../config';
 
 import './accordion.css';
 
@@ -35,7 +37,6 @@ const Accordion = ({
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
   const [flowchartUrl, setFlowchartUrl] = useState(null);
-
   const { pathname, search } = useLocation();
 
   useEffect(() => {
@@ -77,15 +78,10 @@ const Accordion = ({
 
     setFlowchartUrl(url);
 
-    const storage = {
+    saveLocalStorage(localStorageForLinkingFlowchart, {
       fromURL: pathname + search,
       showGoBackBtn: true,
-    };
-
-    window.localStorage.setItem(
-      'kedro-viz-link-to-flowchart',
-      JSON.stringify(storage)
-    );
+    });
   };
 
   return (

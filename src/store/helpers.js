@@ -58,3 +58,47 @@ export const pruneFalseyKeys = (obj) => {
   }
   return newObj;
 };
+
+/**
+ * Retrieve state data from localStorage
+ * @param {string} itemKey storage name
+ * @return {Object} State
+ */
+export const loadLocalStorage = (itemKey) => {
+  if (noWindow) {
+    return {};
+  }
+  try {
+    const serializedState = window.localStorage.getItem(itemKey);
+    if (serializedState === null) {
+      return {};
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    console.error(err);
+    return {};
+  }
+};
+
+/**
+ * Save updated state to localStorage
+ * @param {string} itemKey storage name
+ * @param {Object} state New state object
+ */
+export const saveLocalStorage = (itemKey, state) => {
+  if (noWindow) {
+    return;
+  }
+  try {
+    const newState = Object.assign(loadState(), state);
+    // Remove deprecated key from localStorage to suppress error.
+    // This can be removed in future versions of KedroViz:
+    if (newState.hasOwnProperty('nodeTypeDisabled')) {
+      delete newState.nodeTypeDisabled;
+    }
+    const serializedState = JSON.stringify(newState);
+    window.localStorage.setItem(itemKey, serializedState);
+  } catch (err) {
+    console.error(err);
+  }
+};

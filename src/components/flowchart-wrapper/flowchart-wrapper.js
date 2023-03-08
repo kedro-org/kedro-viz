@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -25,8 +25,15 @@ import Sidebar from '../sidebar';
 import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
+import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
+import { localStorageForLinkingFlowchart } from '../../config';
 
 import './flowchart-wrapper.css';
+
+const linkToFlowchartInitialVal = {
+  fromURL: null,
+  showGoBackBtn: false,
+};
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -60,8 +67,8 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     setReload(true);
 
-    const storage = window.localStorage.getItem('kedro-viz-link-to-flowchart');
-    setGoBackToExperimentTracking(JSON.parse(storage));
+    const linkToFlowchart = loadLocalStorage(localStorageForLinkingFlowchart);
+    setGoBackToExperimentTracking(linkToFlowchart);
   }, []);
 
   useEffect(() => {
@@ -86,18 +93,14 @@ export const FlowChartWrapper = ({
     reload
   );
 
-  const resetLinkingToFlowchartLocalStorage = () => {
-    const storage = {
-      fromURL: null,
-      showGoBackBtn: false,
-    };
-    window.localStorage.setItem(
-      'kedro-viz-link-to-flowchart',
-      JSON.stringify(storage)
+  const resetLinkingToFlowchartLocalStorage = useCallback(() => {
+    saveLocalStorage(
+      localStorageForLinkingFlowchart,
+      linkToFlowchartInitialVal
     );
 
-    setGoBackToExperimentTracking(storage);
-  };
+    setGoBackToExperimentTracking(linkToFlowchartInitialVal);
+  }, []);
 
   useEffect(() => {
     const timer =
@@ -108,7 +111,7 @@ export const FlowChartWrapper = ({
     }
 
     return () => clearInterval(timer);
-  }, [counter]);
+  }, [counter, resetLinkingToFlowchartLocalStorage]);
 
   const onGoBackToExperimentTrackingHandler = () => {
     const url = goBackToExperimentTracking.fromURL;

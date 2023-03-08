@@ -1,6 +1,7 @@
 export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
+export const localStorageForLinkingFlowchart = 'KedroViz-link-to-flowchart';
 
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
