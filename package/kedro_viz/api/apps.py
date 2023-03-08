@@ -4,6 +4,7 @@ This data could either come from a real Kedro project or a file.
 import json
 import time
 from pathlib import Path
+import shutil
 
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
@@ -94,6 +95,12 @@ def create_api_app_from_project(
             return Response(status_code=304)
 
         return Response()
+    
+    @app.on_event("shutdown")
+    def shutdown_event():
+        dir_path = Path("data/temp_db")
+        if dir_path.is_dir():
+            shutil.rmtree(dir_path)
 
     return app
 

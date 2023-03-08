@@ -3,9 +3,6 @@ import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import os
-
-import s3fs
 import uvicorn
 from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
@@ -16,7 +13,7 @@ from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.database import create_db_engine
+from kedro_viz.database import create_db_engine, create_merged_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
 
@@ -39,29 +36,20 @@ def populate_data(
     if creatinge an api app from project.
     """
 
-    if session_store_location:
+    if session_store_location and not session_store_s3_location:
         database_engine, session_class = create_db_engine(session_store_location)
         Base.metadata.create_all(bind=database_engine)
-        data_access_manager.set_db_session(session_class)
-
-    data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)
-
-    
+        data_access_manager.set_db_session(session_class)  
 
     if session_store_s3_location:
-        s3 = s3fs.S3FileSystem()
-        for file in s3.ls(session_store_s3_location):
-            if not file.endswith('/'):
-                file_name = os.path.basename(file)
-                db_location = f'{os.path.dirname(session_store_location)}/{file_name}'
-                with s3.open(file, 'rb') as file:
-                    db_bytes = file.read()
-                with open(db_location, 'wb') as f:
-                        f.write(db_bytes)
-                database_engine, session_class = create_db_engine(db_location)
-                Base.metadata.create_all(bind=database_engine)
-                data_access_manager.set_db_session(session_class)
+        db_location = Path("data/temp_db")
+        db_location.mkdir(parents=True,exist_ok=True)
+        database_engine, session_class = create_merged_db_engine(db_location, session_store_s3_location)
+        Base.metadata.create_all(bind=database_engine)
+        data_access_manager.set_db_session(session_class)  
+        
+    data_access_manager.add_catalog(catalog)
+    data_access_manager.add_pipelines(pipelines)             
 
 
             
