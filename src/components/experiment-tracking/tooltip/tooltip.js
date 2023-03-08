@@ -28,10 +28,8 @@ export const ExperimentTrackingTooltip = ({
       <h4 className="tooltip-value">{content?.value1}</h4>
 
       <br />
-      {content?.label2 && (
-        <h3 className="tooltip-label">{`${content?.label2}:`}</h3>
-      )}
-      {content?.value2 && <h4 className="tooltip-value">{content?.value2}</h4>}
+      <h3 className="tooltip-label">{`${content?.label2}:`}</h3>
+      <h4 className="tooltip-value">{content?.value2}</h4>
     </div>
   );
 };

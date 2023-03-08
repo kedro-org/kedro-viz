@@ -15,7 +15,9 @@ import './accordion.css';
  * @param {String|null} headingClassName A class name for the accordion header.
  * @param {String|null} headingDetail Text to display on the top-level.
  * @param {Boolean} isCollapsed Control to collapse or expand the content.
+ * @param {Boolean} isHyperlink Whether the button has an anchor link to a different page or not
  * @param {String|null} layout A secondary text string for additional context
+ * @param {String|null} linkTitle A tag defines the title of the element
  * @param {Function} onCallback Fire a function on click from a parent.
  * @param {String} size Set the header font size.
  */
@@ -26,10 +28,14 @@ const Accordion = ({
   headingClassName = null,
   headingDetail = null,
   isCollapsed = false,
+  isHyperlink = false,
   layout = 'right',
+  linkTitle = null,
   onCallback,
   size = 'small',
 }) => {
+  console.log(isHyperlink, 'isHyperlink');
+  console.log(linkTitle, 'linkTitle');
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [flowchartUrl, setFlowchartUrl] = useState(null);
   const { pathname, search } = useLocation();
@@ -80,7 +86,7 @@ const Accordion = ({
             })}
           />
         )}
-        {size === 'medium' ? (
+        {isHyperlink ? (
           <a
             className={classnames(
               'accordion__title',
@@ -88,9 +94,7 @@ const Accordion = ({
             )}
             href={flowchartUrl}
             onClick={onLinkToFlowChart}
-            title={'Show me where this dataset is located  in the flowchart'}
-            // onMouseOver={onMouseOverDataSet}
-            // onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
+            title={linkTitle}
           >
             {heading}
             {headingDetail && (
@@ -100,6 +104,7 @@ const Accordion = ({
         ) : (
           <div
             className={classnames('accordion__title', {
+              'accordion__title--medium': size === 'medium',
               'accordion__title--large': size === 'large',
             })}
           >

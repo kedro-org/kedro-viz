@@ -38,7 +38,6 @@ $triangle-size: 10px;
 .tooltip--show {
   @include fade-in('700ms');
   animation-fill-mode: forwards;
-  z-index: 1;
 }
 
 .tooltip-arrow {
