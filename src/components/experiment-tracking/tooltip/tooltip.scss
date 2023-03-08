@@ -70,22 +70,6 @@ $triangle-size: 10px;
   }
 }
 
-.tooltip-arrow--right-middle {
-  &::before {
-    border-top: 5px solid transparent;
-    border-right: $triangle-size solid var(--color-bg-alt);
-    border-bottom: 5px solid transparent;
-
-    content: '';
-
-    height: 0;
-    left: -$triangle-size + 0.5;
-    position: absolute;
-    top: calc(50% + #{$triangle-size} * 2);
-    width: 0;
-  }
-}
-
 .tooltip-arrow--left {
   &::before {
     border-right: $triangle-size solid transparent;

@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { generatePath, useLocation } from 'react-router-dom';
 import classnames from 'classnames';
 import { routes } from '../../../config';
-import {
-  ExperimentTrackingTooltip,
-  tooltipDefaultProps,
-} from '../tooltip/tooltip';
 import { saveLocalStorage } from '../../../store/helpers';
 import { localStorageForLinkingFlowchart } from '../../../config';
 
@@ -35,7 +31,6 @@ const Accordion = ({
   size = 'small',
 }) => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
-  const [showTooltip, setShowTooltip] = useState(tooltipDefaultProps);
   const [flowchartUrl, setFlowchartUrl] = useState(null);
   const { pathname, search } = useLocation();
 
@@ -46,28 +41,6 @@ const Accordion = ({
   const onClick = () => {
     setCollapsed(!collapsed);
     onCallback && onCallback();
-  };
-
-  const onMouseOverDataSet = (e) => {
-    if (e) {
-      e.persist();
-
-      const elementWidth = e.currentTarget?.clientWidth + 30;
-
-      const tooltipTimeout = setTimeout(() => {
-        setShowTooltip({
-          content: {
-            label1: 'Link out destination:',
-            value1: 'Show me where this dataset is located  in the flowchart',
-          },
-          direction: 'right-middle',
-          position: { x: elementWidth + 10, y: -20 },
-          visible: true,
-        });
-      }, 300);
-
-      return () => clearTimeout(tooltipTimeout);
-    }
   };
 
   const onLinkToFlowChart = () => {
@@ -91,12 +64,6 @@ const Accordion = ({
         [`${className}`]: className,
       })}
     >
-      <ExperimentTrackingTooltip
-        content={showTooltip.content}
-        direction={showTooltip.direction}
-        position={showTooltip.position}
-        visible={showTooltip.visible}
-      />
       <div
         className={classnames('accordion__heading', {
           [`${headingClassName}`]: headingClassName,
@@ -121,8 +88,9 @@ const Accordion = ({
             )}
             href={flowchartUrl}
             onClick={onLinkToFlowChart}
-            onMouseOver={onMouseOverDataSet}
-            onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
+            title={'Show me where this dataset is located  in the flowchart'}
+            // onMouseOver={onMouseOverDataSet}
+            // onMouseLeave={() => setShowTooltip(tooltipDefaultProps)}
           >
             {heading}
             {headingDetail && (
