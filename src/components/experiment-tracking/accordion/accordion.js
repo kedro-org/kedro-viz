@@ -34,8 +34,6 @@ const Accordion = ({
   onCallback,
   size = 'small',
 }) => {
-  console.log(isHyperlink, 'isHyperlink');
-  console.log(linkTitle, 'linkTitle');
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [flowchartUrl, setFlowchartUrl] = useState(null);
   const { pathname, search } = useLocation();
