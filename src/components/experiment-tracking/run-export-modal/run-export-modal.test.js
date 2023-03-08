@@ -1,6 +1,6 @@
 import React from 'react';
 import RunExportModal from './index';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { configure, mount } from 'enzyme';
 import { render, screen } from '@testing-library/react';
 import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';

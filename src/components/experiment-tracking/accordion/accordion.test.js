@@ -1,6 +1,6 @@
 import React from 'react';
 import Accordion from '.';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
