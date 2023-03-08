@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { loadState, saveState } from '../../store/helpers';
+import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import NodeListGroup from './node-list-group';
+import { localStorageName } from '../../config';
 
-const storedState = loadState();
+const storedState = loadLocalStorage(localStorageName);
 
 const NodeListGroups = ({
   groups,
@@ -24,7 +25,7 @@ const NodeListGroups = ({
     };
 
     setCollapsed(groupsCollapsed);
-    saveState({ groupsCollapsed });
+    saveLocalStorage(localStorageName, { groupsCollapsed });
   };
 
   return (
