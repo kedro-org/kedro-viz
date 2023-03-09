@@ -30,6 +30,11 @@ $toggle-width: 1.15em;
     &:hover {
       font-weight: 700;
     }
+
+    &:visited {
+      color: var(--color-default-alt);
+      text-decoration: none;
+    }
   }
 
   &--large {
