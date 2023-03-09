@@ -115,6 +115,7 @@ export const FlowChartWrapper = ({
 
   const onGoBackToExperimentTrackingHandler = () => {
     const url = goBackToExperimentTracking.fromURL;
+    
     history.push(url);
 
     resetLinkingToFlowchartLocalStorage();
