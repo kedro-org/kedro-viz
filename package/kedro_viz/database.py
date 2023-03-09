@@ -25,8 +25,6 @@ def create_merged_db_engine(merged_store_location: Path, s3_store_location: str)
     engine = create_engine(f"sqlite:///{merged_store_location}/merged_session_store.db",connect_args={"check_same_thread": False})
     metadata = MetaData()
 
-
-
     for database in databases:
         with s3.open(database, 'rb') as file:
             db_bytes = file.read()
@@ -48,6 +46,7 @@ def create_merged_db_engine(merged_store_location: Path, s3_store_location: str)
             db_loc = f'{merged_store_location}/{database_name}'
             db_engine  = create_engine(f"sqlite:///{db_loc}")
             with db_engine.connect() as database_conn:
+                db_metadata.reflect(bind=db_engine)
                 for table_name, table_obj in db_metadata.tables.items():
                     data = database_conn.execute(table_obj.select()).fetchall()
 
