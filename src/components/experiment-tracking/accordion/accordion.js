@@ -84,34 +84,28 @@ const Accordion = ({
             })}
           />
         )}
-        {isHyperlink ? (
-          <a
-            className={classnames(
-              'accordion__title',
-              'accordion__title--medium'
-            )}
-            href={flowchartUrl}
-            onClick={onLinkToFlowChart}
-            title={linkTitle}
-          >
-            {heading}
-            {headingDetail && (
-              <span className="accordion__title__detail">{headingDetail}</span>
-            )}
-          </a>
-        ) : (
-          <div
-            className={classnames('accordion__title', {
-              'accordion__title--medium': size === 'medium',
-              'accordion__title--large': size === 'large',
-            })}
-          >
-            {heading}
-            {headingDetail && (
-              <span className="accordion__title__detail">{headingDetail}</span>
-            )}
-          </div>
-        )}
+        <div
+          className={classnames('accordion__title', {
+            'accordion__title--medium': size === 'medium',
+            'accordion__title--large': size === 'large',
+          })}
+        >
+          {isHyperlink ? (
+            <a
+              className="accordion__title--hyperlink"
+              href={flowchartUrl}
+              onClick={onLinkToFlowChart}
+              title={linkTitle}
+            >
+              {heading}
+            </a>
+          ) : (
+            heading
+          )}
+          {headingDetail && (
+            <span className="accordion__title__detail">{headingDetail}</span>
+          )}
+        </div>
         {layout === 'right' && (
           <button
             aria-label={`${
