@@ -42,19 +42,21 @@ const Accordion = ({
     setCollapsed(isCollapsed);
   }, [isCollapsed]);
 
-  const onClick = () => {
-    setCollapsed(!collapsed);
-    onCallback && onCallback();
-  };
-
-  const onLinkToFlowChart = () => {
+  useEffect(() => {
     const url = generatePath(routes.flowchart.selectedName, {
       pipelineId: '__default__',
       fullName: heading,
     });
 
     setFlowchartUrl(url);
+  }, [heading]);
 
+  const onClick = () => {
+    setCollapsed(!collapsed);
+    onCallback && onCallback();
+  };
+
+  const onLinkToFlowChart = () => {
     saveLocalStorage(localStorageFlowchartLink, {
       fromURL: pathname + search,
       showGoBackBtn: true,
