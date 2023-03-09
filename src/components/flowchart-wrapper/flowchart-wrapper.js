@@ -26,7 +26,7 @@ import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-l
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageForLinkingFlowchart } from '../../config';
+import { localStorageFlowchartLink } from '../../config';
 
 import './flowchart-wrapper.css';
 
@@ -67,7 +67,7 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     setReload(true);
 
-    const linkToFlowchart = loadLocalStorage(localStorageForLinkingFlowchart);
+    const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
   }, []);
 
@@ -94,10 +94,7 @@ export const FlowChartWrapper = ({
   );
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
-    saveLocalStorage(
-      localStorageForLinkingFlowchart,
-      linkToFlowchartInitialVal
-    );
+    saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
 
     setGoBackToExperimentTracking(linkToFlowchartInitialVal);
   }, []);
@@ -115,7 +112,7 @@ export const FlowChartWrapper = ({
 
   const onGoBackToExperimentTrackingHandler = () => {
     const url = goBackToExperimentTracking.fromURL;
-    
+
     history.push(url);
 
     resetLinkingToFlowchartLocalStorage();

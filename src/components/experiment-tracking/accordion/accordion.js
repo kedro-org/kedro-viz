@@ -3,7 +3,7 @@ import { generatePath, useLocation } from 'react-router-dom';
 import classnames from 'classnames';
 import { routes } from '../../../config';
 import { saveLocalStorage } from '../../../store/helpers';
-import { localStorageForLinkingFlowchart } from '../../../config';
+import { localStorageFlowchartLink } from '../../../config';
 
 import './accordion.css';
 
@@ -55,7 +55,7 @@ const Accordion = ({
 
     setFlowchartUrl(url);
 
-    saveLocalStorage(localStorageForLinkingFlowchart, {
+    saveLocalStorage(localStorageFlowchartLink, {
       fromURL: pathname + search,
       showGoBackBtn: true,
     });
