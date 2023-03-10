@@ -43,12 +43,14 @@ const Accordion = ({
   }, [isCollapsed]);
 
   useEffect(() => {
-    const url = generatePath(routes.flowchart.selectedName, {
-      pipelineId: '__default__',
-      fullName: heading,
-    });
+    if (heading.length > 0) {
+      const url = generatePath(routes.flowchart.selectedName, {
+        pipelineId: '__default__',
+        fullName: heading,
+      });
 
-    setFlowchartUrl(url);
+      setFlowchartUrl(url);
+    }
   }, [heading]);
 
   const onClick = () => {
