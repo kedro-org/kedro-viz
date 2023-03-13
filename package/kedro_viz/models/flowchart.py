@@ -555,12 +555,17 @@ class DataNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
+    preview: Optional[Dict] = field(init=False, default=None)
+
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataSet, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
+
+        if (self.type == "pandas.csv_dataset.CSVDataSet"):
+            self.preview = dataset._preview(10)
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:

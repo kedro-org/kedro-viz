@@ -116,6 +116,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     image: Optional[str]
     tracking_data: Optional[Dict]
     run_command: Optional[str]
+    preview: Optional[Dict]
 
     class Config:
         schema_extra = {
