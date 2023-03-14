@@ -1,8 +1,10 @@
 """Database management layer based on SQLAlchemy"""
 import os
-import s3fs
+import fsspec
 from pathlib import Path
 from typing import Tuple
+
+from kedro.io.core import  get_protocol_and_path
 
 from sqlalchemy import create_engine, MetaData, Table, select, insert
 from sqlalchemy.engine.base import Engine
@@ -20,13 +22,14 @@ def create_db_engine(
 
 
 def create_merged_db_engine(merged_store_location: Path, s3_store_location: str) ->  Tuple[Engine, sessionmaker]:
-    s3 = s3fs.S3FileSystem()
-    databases = s3.glob(f"{s3_store_location}/*.db")
+    protocol, _ = get_protocol_and_path(s3_store_location)
+    fs = fsspec.filesystem(protocol)
+    databases = fs.glob(f"{s3_store_location}/*.db")
     engine = create_engine(f"sqlite:///{merged_store_location}/merged_session_store.db",connect_args={"check_same_thread": False})
     metadata = MetaData()
 
     for database in databases:
-        with s3.open(database, 'rb') as file:
+        with fs.open(database, 'rb') as file:
             db_bytes = file.read()
         database_name = os.path.basename(database)
         db_loc = f'{merged_store_location}/{database_name}'

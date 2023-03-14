@@ -3,11 +3,13 @@ which stores sessions data in the SQLite database"""
 
 import json
 import logging
-import s3fs
+import fsspec
 from pathlib import Path
 from typing import Any, Generator
 
 from kedro.framework.session.store import BaseSessionStore
+from kedro.io.core import  get_protocol_and_path
+
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -74,8 +76,9 @@ class SQLiteStore(BaseSessionStore):
         database.add(session_store_data)
         database.commit()
         if(self._s3_path):
-            s3 = s3fs.S3FileSystem()
+            protocol, _ = get_protocol_and_path(self._s3_path)
+            fs = fsspec.filesystem(protocol)
             with open(self.location,'rb') as file:
-                 with s3.open(f'{self._s3_path}/example2.db', 'wb') as s3f:
+                 with fs.open(f'{self._s3_path}/example1.db', 'wb') as s3f:
                          s3f.write(file.read())
 
