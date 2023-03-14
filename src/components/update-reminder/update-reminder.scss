@@ -1,17 +1,22 @@
 @use '../../styles/variables' as colors;
 
+$panel-width: 484px;
+$padding-left: 48px;
+
 .kui-theme--light {
   --color-detail-bg: #{colors.$white-400};
-  --color-header-bg: #{colors.$yellow-300};
+  --color-header-bg: #{colors.$yellow-0};
   --color-link: #{colors.$blue-600};
-  --color-subtext: #{colors.$black-700};
+  --color-subtext: #{colors.$black-400};
+  --color-content-bg: #{colors.$white-300};
 }
 
 .kui-theme--dark {
   --color-detail-bg: #{colors.$slate-300};
-  --color-header-bg: #{colors.$yellow-300};
+  --color-header-bg: #{colors.$yellow-0};
   --color-link: #{colors.$blue-300};
-  --color-subtext: #{colors.$black-0};
+  --color-subtext: #{colors.$black-400};
+  --color-content-bg: #{colors.$slate-600};
 }
 
 .update-reminder-unexpanded {
@@ -19,11 +24,12 @@
   display: flex;
   font-size: 12px;
   height: 32px;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 0 50px 0 24px;
   position: absolute;
   right: 0px;
   top: 0px;
-  width: 296px;
+  width: $panel-width;
   z-index: 2;
 
   p {
@@ -43,8 +49,13 @@
     color: colors.$black-700;
     cursor: pointer;
     font-size: 12px;
-    font-weight: 600;
+    padding: 0;
     transition: color 0.2s ease;
+
+    &:first-of-type {
+      font-weight: 600;
+      margin-right: 24px;
+    }
 
     &:hover {
       color: colors.$black-800;
@@ -56,12 +67,12 @@
   background-color: var(--color-header-bg);
   display: flex;
   font-size: 12px;
-  height: 48px;
-  justify-content: space-between;
+  height: 36px;
+  justify-content: flex-end;
   position: absolute;
   right: 0px;
   top: 0px;
-  width: 484px;
+  width: $panel-width;
   z-index: 2;
 
   .close-button-container {
@@ -72,7 +83,7 @@
     color: colors.$slate-700;
     font-size: 16px;
     margin-top: 6px;
-    padding: 6px 48px;
+    padding: 6px $padding-left;
   }
 
   button {
@@ -86,17 +97,23 @@
 }
 
 .update-reminder-expanded-detail {
-  background-color: var(--color-detail-bg);
+  background-color: var(--color-header-bg);
+  padding-bottom: 52px;
   position: absolute;
   right: 0px;
-  top: 48px;
-  width: 484px;
+  top: 36px;
+  width: $panel-width;
   z-index: 2;
+
+  h3 {
+    font-size: 20px;
+    margin-top: 0;
+    padding-left: $padding-left;
+  }
 
   p {
     font-size: 14px;
-    padding-left: 48px;
-    padding-top: 30px;
+    padding-left: $padding-left;
     width: 430px;
 
     a {
@@ -108,7 +125,6 @@
     color: var(--color-subtext);
     font-size: 13px;
     margin-bottom: 0;
-    padding-bottom: 5px;
     padding-top: 20px;
 
     &--small {
@@ -119,7 +135,7 @@
 
   .command-copier {
     font-size: 14px;
-    padding-left: 48px;
+    padding-left: $padding-left;
     width: 400px;
   }
 }
@@ -129,5 +145,48 @@
     fill: colors.$black-800;
     height: 24px;
     width: 24px;
+  }
+}
+
+.update-reminder-content {
+  background-color: var(--color-content-bg);
+  height: calc(100vh - 279px);
+  overflow-y: scroll;
+  padding: 0 56px 0 $padding-left;
+  position: absolute;
+  right: 0;
+  top: 279px;
+  width: $panel-width;
+  z-index: 2;
+}
+
+.update-reminder-version-tag {
+  color: colors.$black-900;
+  cursor: pointer;
+  font-size: 12px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+
+  &--outdated {
+    padding: 4px 8px;
+
+    &:hover {
+      background-color: colors.$yellow-0;
+
+      > span {
+        background-color: colors.$yellow-600;
+      }
+    }
+
+    > span {
+      background-color: colors.$yellow-0;
+      border-radius: 50%;
+      display: inline-block;
+      height: 8px;
+      margin-right: 8px;
+      width: 8px;
+    }
   }
 }
