@@ -56,6 +56,10 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
+  const hasPreviewData = Boolean(metadata?.preview);
+  const previewDataHeaders = hasPreviewData && Object.keys(metadata?.preview);
+  const previewDataLength =
+    hasPreviewData && Object.keys(metadata.preview[previewDataHeaders[0]]);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -291,6 +295,22 @@ const MetaData = ({
                     Open in Experiment Tracking
                   </span>
                 </button>
+              )}
+              {hasPreviewData && (
+                <table>
+                  <tr>
+                    {previewDataHeaders.map((header) => (
+                      <th>{header}</th>
+                    ))}
+                  </tr>
+                  {previewDataLength.map((index) => (
+                    <tr>
+                      {previewDataHeaders.map((header) => {
+                        return <td>{metadata.preview[header][index]}</td>;
+                      })}
+                    </tr>
+                  ))}
+                </table>
               )}
             </div>
           </>
