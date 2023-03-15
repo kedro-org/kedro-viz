@@ -114,6 +114,11 @@
   }
 }
 
+.pipeline-plot-modal__preview {
+  max-width: calc(100vw - #{variables.$global-toolbar-width});
+  overflow-y: auto;
+}
+
 .pipeline-plot-modal__collapse-plot-icon {
   width: 1.9em;
   height: 1.9em;

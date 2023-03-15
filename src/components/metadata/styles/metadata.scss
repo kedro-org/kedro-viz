@@ -276,8 +276,8 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview {
   background-color: #{variables.$slate-800};
   height: 300px;
-  margin-bottom: 12px;
   overflow: hidden;
+  position: relative;
 }
 
 .pipeline-metadata__preview-shadow-box-right {
@@ -289,8 +289,8 @@ $list-inline-spacing: 0.2em;
   border: none;
   content: ' ';
   height: 100%;
-  right: 0;
   position: absolute;
+  right: 0;
   top: 0;
   width: 50px;
 }
@@ -306,6 +306,6 @@ $list-inline-spacing: 0.2em;
   width: 100%;
   left: 0%;
   position: absolute;
-  bottom: 50px;
+  bottom: 0;
   height: 40px;
 }

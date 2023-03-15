@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
+import PreviewTable from '../preview-table';
 import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
@@ -12,8 +13,9 @@ import './metadata-modal.css';
 const MetadataModal = ({ metadata, onToggle, visible }) => {
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
+  const hasPreview = Boolean(metadata?.preview);
 
-  if (!visible.metadataModal || (!hasPlot && !hasImage)) {
+  if (!visible.metadataModal || (!hasPlot && !hasImage && !hasPreview)) {
     return null;
   }
 
@@ -56,19 +58,26 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
           </div>
         </div>
       )}
-      <div className="pipeline-plot-modal__bottom">
-        <button
-          className="pipeline-plot-modal__collapse-plot"
-          onClick={onCollapsePlotClick}
-        >
-          <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
-          <span className="pipeline-plot-modal__collapse-plot-text">
-            {hasPlot
-              ? 'Collapse Plotly Visualization'
-              : 'Collapse Matplotlib Image'}
-          </span>
-        </button>
-      </div>
+      {hasPreview && (
+        <div className="pipeline-plot-modal__preview">
+          <PreviewTable data={metadata.preview} />
+        </div>
+      )}
+      {!hasPreview && (
+        <div className="pipeline-plot-modal__bottom">
+          <button
+            className="pipeline-plot-modal__collapse-plot"
+            onClick={onCollapsePlotClick}
+          >
+            <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
+            <span className="pipeline-plot-modal__collapse-plot-text">
+              {hasPlot
+                ? 'Collapse Plotly Visualization'
+                : 'Collapse Matplotlib Image'}
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
