@@ -295,9 +295,12 @@ const MetaData = ({
                 </button>
               )}
               {hasPreviewData && (
-                <div className="pipeline-metadata__preview">
-                  <PreviewTable data={metadata.preview} />
-                  <div className="pipeline-metadata__preview-shadow-box" />
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <PreviewTable data={metadata.preview} />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
                   <button
                     className="pipeline-metadata__link"
                     onClick={onExpandPlotClick}
@@ -307,7 +310,7 @@ const MetaData = ({
                       Expand Preview Table
                     </span>
                   </button>
-                </div>
+                </>
               )}
             </div>
           </>
