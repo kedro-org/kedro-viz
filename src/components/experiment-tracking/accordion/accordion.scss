@@ -38,6 +38,8 @@ $toggle-width: 1.15em;
 }
 
 .accordion__title--hyperlink {
+  color: var(--color-default-alt);
+
   &:visited {
     color: var(--color-default-alt);
     text-decoration: none;
