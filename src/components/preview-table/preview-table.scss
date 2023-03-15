@@ -1,23 +1,23 @@
-table {
+.preview-table {
   margin: 30px 32px;
 }
 
-th {
+.preview-table__header {
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
   padding-bottom: 12px;
 }
 
-td {
+.preview-table__data {
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
   padding-bottom: 8px;
 }
 
-th,
-td {
+.preview-table__header,
+.preview-table__data {
   text-align: left;
   padding-right: 32px;
 }

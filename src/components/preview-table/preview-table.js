@@ -7,17 +7,23 @@ const PreviewTable = ({ data }) => {
   const nCols = Object.keys(data[headers[0]]);
 
   return (
-    <table>
+    <table className="preview-table">
       <tbody>
-        <tr>
+        <tr className="preview-table__row">
           {headers.map((header) => (
-            <th key={header}>{header}</th>
+            <th className="preview-table__header" key={header}>
+              {header}
+            </th>
           ))}
         </tr>
         {nCols.map((index) => (
           <tr key={index}>
             {headers.map((header, i) => {
-              return <td key={i}>{data[header][index]}</td>;
+              return (
+                <td className="preview-table__data" key={i}>
+                  {data[header][index]}
+                </td>
+              );
             })}
           </tr>
         ))}
