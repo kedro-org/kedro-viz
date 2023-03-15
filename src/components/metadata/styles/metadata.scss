@@ -3,6 +3,7 @@
 
 .kui-theme--light {
   --color-metadata-bg: #{variables.$white-200};
+  --color-metadata-preview-bg: #{variables.$grey-200};
   --color-metadata-kind-token-bg: #{variables.$white-400};
   --color-plot-bg: #{variables.$white-400};
   --color-button-plot: #{variables.$blue-900};
@@ -12,6 +13,7 @@
 
 .kui-theme--dark {
   --color-metadata-bg: #{variables.$slate-500};
+  --color-metadata-preview-bg: #{variables.$slate-800};
   --color-metadata-kind-token-bg: #{variables.$slate-0};
   --color-plot-bg: #{variables.$slate-700};
   --color-button-plot: #{variables.$blue-900};
@@ -274,7 +276,7 @@ $list-inline-spacing: 0.2em;
 }
 
 .pipeline-metadata__preview {
-  background-color: #{variables.$slate-800};
+  background: var(--color-metadata-preview-bg);
   height: 300px;
   overflow: hidden;
   position: relative;
@@ -284,7 +286,7 @@ $list-inline-spacing: 0.2em;
   background-image: linear-gradient(
     to right,
     rgba(0, 0, 0, 0),
-    #{variables.$slate-800}
+    var(--color-metadata-preview-bg)
   );
   border: none;
   content: ' ';
@@ -299,7 +301,7 @@ $list-inline-spacing: 0.2em;
   background-image: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0),
-    #{variables.$slate-800}
+    var(--color-metadata-preview-bg)
   );
   border: none;
   content: ' ';
