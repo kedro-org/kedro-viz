@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
+import PreviewTable from '../../components/preview-table';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -57,9 +58,6 @@ const MetaData = ({
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasPreviewData = Boolean(metadata?.preview);
-  const previewDataHeaders = hasPreviewData && Object.keys(metadata?.preview);
-  const previewDataLength =
-    hasPreviewData && Object.keys(metadata.preview[previewDataHeaders[0]]);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -297,20 +295,19 @@ const MetaData = ({
                 </button>
               )}
               {hasPreviewData && (
-                <table>
-                  <tr>
-                    {previewDataHeaders.map((header) => (
-                      <th>{header}</th>
-                    ))}
-                  </tr>
-                  {previewDataLength.map((index) => (
-                    <tr>
-                      {previewDataHeaders.map((header) => {
-                        return <td>{metadata.preview[header][index]}</td>;
-                      })}
-                    </tr>
-                  ))}
-                </table>
+                <div className="pipeline-metadata__preview">
+                  <PreviewTable data={metadata.preview} />
+                  <div className="pipeline-metadata__preview-shadow-box" />
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandPlotClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand Preview Table
+                    </span>
+                  </button>
+                </div>
               )}
             </div>
           </>
