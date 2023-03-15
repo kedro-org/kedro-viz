@@ -4,7 +4,8 @@ import watch from 'redux-watch';
 import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
-import { saveState, pruneFalseyKeys } from './helpers';
+import { saveLocalStorage, pruneFalseyKeys } from './helpers';
+import { localStorageName } from '../config';
 
 /**
  * Watch the getGraphInput selector, and dispatch an asynchronous action to
@@ -33,7 +34,7 @@ const saveStateToLocalStorage = (state) => {
     modularPipelineFocusMode,
     ...otherVisibleProps
   } = state.visible;
-  saveState({
+  saveLocalStorage(localStorageName, {
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
     },

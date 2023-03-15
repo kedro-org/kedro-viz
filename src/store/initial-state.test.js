@@ -4,7 +4,8 @@ import getInitialState, {
   preparePipelineState,
   prepareNonPipelineState,
 } from './initial-state';
-import { saveState } from './helpers';
+import { saveLocalStorage } from './helpers';
+import { localStorageName } from '../config';
 import spaceflights from '../utils/data/spaceflights.mock.json';
 
 describe('createInitialState', () => {
@@ -20,7 +21,7 @@ describe('mergeLocalStorage', () => {
       theme: 'light',
       tag: { enabled: 'medium' },
     };
-    saveState(localStorageValues);
+    saveLocalStorage(localStorageName, localStorageValues);
     expect(
       mergeLocalStorage({
         textLabels: true,
@@ -40,7 +41,7 @@ describe('mergeLocalStorage', () => {
   });
 
   it('deep-merges nested objects', () => {
-    saveState({ foo: { bar: 1, baz: 2 } });
+    saveLocalStorage(localStorageName, { foo: { bar: 1, baz: 2 } });
     expect(
       mergeLocalStorage({ quz: 'quux', foo: { bar: 30, foo: 'foo' } })
     ).toMatchObject({ quz: 'quux', foo: { bar: 1, baz: 2, foo: 'foo' } });
@@ -54,13 +55,13 @@ describe('preparePipelineState', () => {
   };
 
   it('applies localStorage values on top of normalised pipeline data', () => {
-    saveState(localStorageState);
+    saveLocalStorage(localStorageName, localStorageState);
     expect(preparePipelineState(spaceflights)).toMatchObject(localStorageState);
     window.localStorage.clear();
   });
 
   it('if applyFixes is true and stored active pipeline from localStorage is not one of the pipelines in the current list, uses default pipeline value instead', () => {
-    saveState(localStorageState);
+    saveLocalStorage(localStorageName, localStorageState);
     const { active } = preparePipelineState(spaceflights, true).pipeline;
     expect(active).toBe(spaceflights.selected_pipeline);
     window.localStorage.clear();
@@ -70,7 +71,7 @@ describe('preparePipelineState', () => {
 describe('prepareNonPipelineState', () => {
   it('applies localStorage values on top of initial state', () => {
     const localStorageState = { theme: 'foo' };
-    saveState(localStorageState);
+    saveLocalStorage(localStorageName, localStorageState);
     const state = prepareNonPipelineState({});
     expect(state.theme).toEqual(localStorageState.theme);
     window.localStorage.clear();
@@ -143,13 +144,13 @@ describe('getInitialState', () => {
       textLabels: false,
       theme: 'light',
     };
-    saveState(storeValues);
+    saveLocalStorage(localStorageName, storeValues);
     expect(getInitialState(props)).toMatchObject(storeValues);
     window.localStorage.clear();
   });
 
   it('uses prop values instead of localstorage if provided', () => {
-    saveState({ theme: 'light' });
+    saveLocalStorage(localStorageName, { theme: 'light' });
     expect(getInitialState({ ...props, theme: 'dark' })).toMatchObject({
       theme: 'dark',
     });

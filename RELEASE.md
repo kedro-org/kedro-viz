@@ -11,6 +11,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
+- Link plot and JSON dataset names from experiment tracking to the flowchart. (#1165)
 - Bump minimum version of React from 16.8.6 to 17.0.2. (#1282)
 
 ## Bug fixes and other changes

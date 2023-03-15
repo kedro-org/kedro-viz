@@ -154,6 +154,13 @@ const plotlyTrackingData = {
   ],
 };
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: 'localhost:3000/',
+  }),
+}));
+
 describe('RunDataset', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(
