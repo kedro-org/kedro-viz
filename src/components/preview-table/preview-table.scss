@@ -1,23 +1,56 @@
+@use '../../styles/variables' as variables;
+
 .preview-table {
   margin: 30px 32px;
 }
 
 .preview-table__header {
-  font-weight: 600;
   font-size: 12px;
+  font-weight: 600;
   line-height: 16px;
   padding-bottom: 12px;
 }
 
 .preview-table__data {
-  font-weight: 400;
   font-size: 12px;
+  font-weight: 400;
   line-height: 16px;
   padding-bottom: 8px;
 }
 
+.preview-table__small {
+  .preview-table__header,
+  .preview-table__data {
+    text-align: left;
+    padding-right: 32px;
+  }
+}
+
+.preview-table__large {
+  .preview-table__header,
+  .preview-table__data {
+    text-align: left;
+    padding-right: 62px;
+  }
+}
+
+.preview-table__row:hover {
+  background-color: #{variables.$slate-400};
+}
+
 .preview-table__header,
 .preview-table__data {
-  text-align: left;
-  padding-right: 32px;
+  position: relative;
+  outline: 0;
+}
+
+.preview-table__header:hover::after {
+  content: '';
+  position: absolute;
+  background-color: #{variables.$slate-400};
+  left: 0;
+  top: -5000px;
+  height: 10000px;
+  width: 85%;
+  z-index: -1;
 }

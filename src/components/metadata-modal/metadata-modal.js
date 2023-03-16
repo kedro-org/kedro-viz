@@ -60,7 +60,7 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
       )}
       {hasPreview && (
         <div className="pipeline-plot-modal__preview">
-          <PreviewTable data={metadata.preview} />
+          <PreviewTable data={metadata.preview} size="large" />
         </div>
       )}
       {!hasPreview && (
