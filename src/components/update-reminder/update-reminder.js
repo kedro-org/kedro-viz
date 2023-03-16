@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { updateContent } from './update-reminder-content';
 
@@ -14,6 +14,17 @@ const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
   const { latest, installed } = versions;
 
   const command = 'pip install -U kedro-viz';
+
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 27) {
+      setExpand(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
 
   if (expand) {
     return (

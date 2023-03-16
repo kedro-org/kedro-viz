@@ -3,18 +3,38 @@ import UpdateReminder from './update-reminder';
 import { mount } from 'enzyme';
 
 describe('Update Reminder', () => {
-  const versions = { latest: '4.3.1', installed: '4.2.0', isOutDated: true };
+  const versionOutOfDate = {
+    latest: '4.3.1',
+    installed: '4.2.0',
+    isOutdated: true,
+  };
+  const versionsUpToDate = {
+    latest: '4.3.1',
+    installed: '4.3.1',
+    isOutdated: false,
+  };
 
   const setDismiss = jest.fn();
 
   it('renders without crashing', () => {
-    const wrapper = mount(<UpdateReminder versions={versions} />);
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionOutOfDate.isOutdated}
+        versions={versionOutOfDate}
+      />
+    );
     expect(wrapper.find('.update-reminder-unexpanded').length).toBe(1);
   });
 
   it('popup expands when it is clicked', () => {
     const wrapper = mount(
-      <UpdateReminder versions={versions} setDismiss={setDismiss} />
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionOutOfDate.isOutdated}
+        setDismiss={setDismiss}
+        versions={versionOutOfDate}
+      />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
 
@@ -24,10 +44,91 @@ describe('Update Reminder', () => {
 
   it('dismisses when the dismiss button is clicked', () => {
     const wrapper = mount(
-      <UpdateReminder versions={versions} setDismiss={setDismiss} />
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionOutOfDate.isOutdated}
+        setDismiss={setDismiss}
+        versions={versionOutOfDate}
+      />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
     container.find('.buttons-container').find('button').at(1).simulate('click');
     expect(wrapper.find('.update-reminder-expanded-header').length).toBe(0);
+  });
+
+  it('shows the correct version tag when outdated', () => {
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={true}
+        isOutdated={versionOutOfDate.isOutdated}
+        versions={versionOutOfDate}
+      />
+    );
+    expect(wrapper.find('.update-reminder-version-tag--outdated').length).toBe(
+      1
+    );
+  });
+
+  it('shows the correct version tag when up to date', () => {
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={true}
+        isOutdated={versionsUpToDate.isOutdated}
+        versions={versionsUpToDate}
+      />
+    );
+    expect(
+      wrapper.find('.update-reminder-version-tag--up-to-date').length
+    ).toBe(1);
+  });
+
+  it('shows feature release information', () => {
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionOutOfDate.isOutdated}
+        setDismiss={setDismiss}
+        versions={versionOutOfDate}
+      />
+    );
+    const container = wrapper.find('.update-reminder-unexpanded');
+    container.find('.buttons-container').find('button').at(0).simulate('click');
+    expect(wrapper.find('.update-reminder-content').length).toBe(1);
+    expect(wrapper.find('.update-reminder-content--feature').length).toBe(2);
+  });
+
+  it('shows new version information', () => {
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionOutOfDate.isOutdated}
+        setDismiss={setDismiss}
+        versions={versionOutOfDate}
+      />
+    );
+    const container = wrapper.find('.update-reminder-unexpanded');
+    container.find('.buttons-container').find('button').at(0).simulate('click');
+    expect(wrapper.find('.update-reminder-expanded-detail > h3').text()).toBe(
+      'Kedro-Viz 4.3.1 is here!'
+    );
+  });
+
+  it('shows the user is up to date', () => {
+    const wrapper = mount(
+      <UpdateReminder
+        dismissed={false}
+        isOutdated={versionsUpToDate.isOutdated}
+        setDismiss={setDismiss}
+        versions={versionsUpToDate}
+      />
+    );
+    const container = wrapper.find('.update-reminder-version-tag--up-to-date');
+    container.simulate('click');
+    expect(
+      wrapper.find('.update-reminder-expanded-detail--up-to-date > h3').text()
+    ).toBe("You're up to date");
+    expect(
+      wrapper.find('.update-reminder-expanded-detail--up-to-date > p').text()
+    ).toBe('Kedro-Viz 4.3.1');
   });
 });
