@@ -36,6 +36,7 @@
 
 .preview-table__row:hover {
   background-color: #{variables.$slate-400};
+  cursor: pointer;
 }
 
 .preview-table__header,
@@ -44,13 +45,17 @@
   outline: 0;
 }
 
+.preview-table__header:hover {
+  cursor: pointer;
+}
+
 .preview-table__header:hover::after {
-  content: '';
-  position: absolute;
   background-color: #{variables.$slate-400};
-  left: 0;
-  top: -5000px;
+  content: '';
   height: 10000px;
+  left: 0;
+  position: absolute;
+  top: -5000px;
   width: 85%;
   z-index: -1;
 }
