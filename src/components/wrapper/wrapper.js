@@ -69,7 +69,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
-            {versionData && isOutdated && (
+            {versionData && (
               <UpdateReminder
                 dismissed={dismissed}
                 isOutdated={isOutdated}

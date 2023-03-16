@@ -1,22 +1,49 @@
 @use '../../styles/variables' as colors;
 
 $panel-width: 484px;
-$padding-left: 48px;
+$spacing-left: 48px;
+
+%h3 {
+  font-size: 20px;
+  margin-top: 0;
+  padding-left: $spacing-left;
+}
+
+%paragraph {
+  font-size: 14px;
+  line-height: 20px;
+  padding-left: $spacing-left;
+  width: 430px;
+
+  a {
+    color: colors.$blue-900;
+  }
+}
 
 .kui-theme--light {
   --color-detail-bg: #{colors.$white-400};
   --color-header-bg: #{colors.$yellow-0};
+  --color-header-bg--up-to-date: #{colors.$white-0};
   --color-link: #{colors.$blue-600};
   --color-subtext: #{colors.$black-400};
   --color-content-bg: #{colors.$white-300};
+  --color-version-tag: #{colors.$black-900};
+  --color-version-tag--hover-outdated: #{colors.$black-900};
+  --color-version-tag--hover-up-to-date-bg: #{colors.$black-300};
+  --color-version-tag--hover-up-to-date: #{colors.$white-0};
 }
 
 .kui-theme--dark {
   --color-detail-bg: #{colors.$slate-300};
   --color-header-bg: #{colors.$yellow-0};
+  --color-header-bg--up-to-date: #{colors.$white-0};
   --color-link: #{colors.$blue-300};
   --color-subtext: #{colors.$black-400};
   --color-content-bg: #{colors.$slate-600};
+  --color-version-tag: #{colors.$white-500};
+  --color-version-tag--hover-outdated: #{colors.$black-900};
+  --color-version-tag--hover-up-to-date-bg: #{colors.$black-400};
+  --color-version-tag--hover-up-to-date: #{colors.$white-500};
 }
 
 .update-reminder-unexpanded {
@@ -75,49 +102,38 @@ $padding-left: 48px;
   width: $panel-width;
   z-index: 2;
 
+  &--up-to-date {
+    background-color: var(--color-header-bg--up-to-date);
+  }
+
   .close-button-container {
     margin-right: 20px;
-  }
-
-  p {
-    color: colors.$slate-700;
-    font-size: 16px;
-    margin-top: 6px;
-    padding: 6px $padding-left;
-  }
-
-  button {
-    color: colors.$slate-700;
-    border: none;
-    background-color: var(--color-header-bg);
-    font-size: 16px;
-    padding: 0 0 5px 24px;
-    cursor: pointer;
   }
 }
 
 .update-reminder-expanded-detail {
   background-color: var(--color-header-bg);
-  padding-bottom: 52px;
+  color: colors.$black-900;
+  padding-bottom: 40px;
   position: absolute;
   right: 0px;
   top: 36px;
   width: $panel-width;
   z-index: 2;
 
+  &--up-to-date {
+    background-color: var(--color-header-bg--up-to-date);
+  }
+
   h3 {
-    font-size: 20px;
-    margin-top: 0;
-    padding-left: $padding-left;
+    @extend %h3;
   }
 
   p {
-    font-size: 14px;
-    padding-left: $padding-left;
-    width: 430px;
+    @extend %paragraph;
 
-    a {
-      color: var(--color-link);
+    &:last-of-type {
+      margin-bottom: 0;
     }
   }
 
@@ -135,8 +151,12 @@ $padding-left: 48px;
 
   .command-copier {
     font-size: 14px;
-    padding-left: $padding-left;
+    padding-left: $spacing-left;
     width: 400px;
+  }
+
+  .pipeline-icon {
+    fill: colors.$black-900;
   }
 }
 
@@ -150,30 +170,68 @@ $padding-left: 48px;
 
 .update-reminder-content {
   background-color: var(--color-content-bg);
-  height: calc(100vh - 279px);
+  height: calc(100vh - 270px);
   overflow-y: scroll;
-  padding: 0 56px 0 $padding-left;
+  padding-right: 56px;
+  padding-top: 40px;
   position: absolute;
   right: 0;
-  top: 279px;
+  top: 270px;
   width: $panel-width;
   z-index: 2;
+
+  &--up-to-date {
+    height: calc(100vh - 144px);
+    top: 144px;
+  }
+
+  &--feature {
+    margin-bottom: 68px;
+  }
+
+  h3 {
+    @extend %h3;
+
+    margin-bottom: 12px;
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    margin: 40px 0 20px;
+    padding-left: $spacing-left;
+  }
+
+  img {
+    max-width: 380px;
+    margin-left: $spacing-left;
+  }
+
+  p {
+    @extend %paragraph;
+  }
+
+  .button {
+    margin-top: 12px;
+    padding-left: $spacing-left;
+  }
 }
 
 .update-reminder-version-tag {
-  color: colors.$black-900;
+  color: var(--color-version-tag);
   cursor: pointer;
   font-size: 12px;
+  padding: 4px 8px;
   position: absolute;
   top: 0;
   right: 0;
   z-index: 5;
 
   &--outdated {
-    padding: 4px 8px;
-
     &:hover {
       background-color: colors.$yellow-0;
+      color: var(--color-version-tag--hover-outdated);
 
       > span {
         background-color: colors.$yellow-600;
@@ -187,6 +245,13 @@ $padding-left: 48px;
       height: 8px;
       margin-right: 8px;
       width: 8px;
+    }
+  }
+
+  &--up-to-date {
+    &:hover {
+      background-color: var(--color-version-tag--hover-up-to-date-bg);
+      color: var(--color-version-tag--hover-up-to-date);
     }
   }
 }
