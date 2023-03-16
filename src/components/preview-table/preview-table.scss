@@ -29,8 +29,8 @@
 .preview-table__large {
   .preview-table__header,
   .preview-table__data {
+    padding: 12px 42px 12px 22px;
     text-align: left;
-    padding-right: 62px;
   }
 }
 
@@ -52,10 +52,10 @@
 .preview-table__header:hover::after {
   background-color: #{variables.$slate-400};
   content: '';
-  height: 10000px;
+  height: 100vh;
   left: 0;
   position: absolute;
-  top: -5000px;
-  width: 85%;
+  top: -12px;
+  width: 95%;
   z-index: -1;
 }
