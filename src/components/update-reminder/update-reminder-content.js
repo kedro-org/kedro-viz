@@ -1,5 +1,4 @@
 export const updateContent = {
-  headline: "What's new",
   date: '23rd Feb. 2023',
   features: [
     {

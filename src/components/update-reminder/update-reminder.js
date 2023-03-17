@@ -82,7 +82,7 @@ const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
             'update-reminder-content--up-to-date': !isOutdated,
           })}
         >
-          <h3>{updateContent.headline}</h3>
+          <h3>{isOutdated ? "What's new" : 'Release highlights'}</h3>
           <p>{updateContent.date}</p>
           {updateContent.features.map((feature) => {
             return (
