@@ -20,6 +20,9 @@ from .utils import get_dataset_type
 
 logger = logging.getLogger(__name__)
 
+PREVIEW_DATASETS = ["pandas.csv_dataset.CSVDataSet",
+                    "pandas.parquet_dataset.ParquetDataSet", "pandas.excel_dataset.ExcelDataSet"]
+
 
 def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ").replace(":", ": ")
@@ -564,8 +567,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
-        if (self.type == "pandas.csv_dataset.CSVDataSet" or self.type == "pandas.parquet_dataset.ParquetDataSet" or self.type == "pandas.excel_dataset.ExcelDataSet"):
-            self.preview = dataset._preview(10)
+        if self.type in PREVIEW_DATASETS:
+            self.preview = dataset._preview(40)
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
