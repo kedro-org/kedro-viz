@@ -31,9 +31,6 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
   });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
-  // Reload state is to ensure it will call redirectLocation in FlowchartWrapper
-  // only when the page is reloaded.
-  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     if (versionData) {
@@ -41,16 +38,6 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       setLatestVersion(versionData.version.latest);
     }
   }, [versionData]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    setReload(true);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div
