@@ -5,7 +5,7 @@ import './preview-table.css';
 
 const PreviewTable = ({ data, size = 'small' }) => {
   const headers = Object.keys(data);
-  const nCols = Object.keys(data[headers[0]]);
+  const nRows = Object.keys(data[headers[0]]);
 
   return (
     <table
@@ -23,7 +23,7 @@ const PreviewTable = ({ data, size = 'small' }) => {
             </th>
           ))}
         </tr>
-        {nCols.map((index) => (
+        {nRows.map((index) => (
           <tr className="preview-table__row" key={index}>
             {headers.map((header, i) => {
               return (
