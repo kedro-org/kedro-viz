@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { updateContent } from './update-reminder-content';
+import { getVisibleMetaSidebar } from '../../selectors/metadata';
 
 import Button from '../ui/button';
 import CommandCopier from '../ui/command-copier/command-copier';
@@ -9,7 +11,8 @@ import CloseIcon from '../icons/close';
 
 import './update-reminder.css';
 
-const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
+const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
+  const [dismissed, setDismissed] = useState(false);
   const [expand, setExpand] = useState(false);
   const { latest, installed } = versions;
 
@@ -23,8 +26,15 @@ const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
+
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, []);
+
+  useEffect(() => {
+    if (visibleMetaSidebar) {
+      setExpand(false);
+    }
+  }, [visibleMetaSidebar]);
 
   if (expand) {
     return (
@@ -136,7 +146,7 @@ const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
           <button className="kedro" onClick={() => setExpand(true)}>
             Expand
           </button>
-          <button className="kedro" onClick={() => setDismiss(true)}>
+          <button className="kedro" onClick={() => setDismissed(true)}>
             Dismiss
           </button>
         </div>
@@ -145,4 +155,8 @@ const UpdateReminder = ({ dismissed, isOutdated, setDismiss, versions }) => {
   }
 };
 
-export default UpdateReminder;
+const mapStateToProps = (state) => ({
+  visibleMetaSidebar: getVisibleMetaSidebar(state),
+});
+
+export default connect(mapStateToProps)(UpdateReminder);

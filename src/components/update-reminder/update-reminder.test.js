@@ -1,6 +1,6 @@
 import React from 'react';
 import UpdateReminder from './update-reminder';
-import { mount } from 'enzyme';
+import { setup } from '../../utils/state.mock';
 
 describe('Update Reminder', () => {
   const versionOutOfDate = {
@@ -14,12 +14,9 @@ describe('Update Reminder', () => {
     isOutdated: false,
   };
 
-  const setDismiss = jest.fn();
-
   it('renders without crashing', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionOutOfDate.isOutdated}
         versions={versionOutOfDate}
       />
@@ -28,11 +25,9 @@ describe('Update Reminder', () => {
   });
 
   it('popup expands when it is clicked', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionOutOfDate.isOutdated}
-        setDismiss={setDismiss}
         versions={versionOutOfDate}
       />
     );
@@ -43,11 +38,9 @@ describe('Update Reminder', () => {
   });
 
   it('dismisses when the dismiss button is clicked', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionOutOfDate.isOutdated}
-        setDismiss={setDismiss}
         versions={versionOutOfDate}
       />
     );
@@ -57,22 +50,21 @@ describe('Update Reminder', () => {
   });
 
   it('shows the correct version tag when outdated', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={true}
         isOutdated={versionOutOfDate.isOutdated}
         versions={versionOutOfDate}
       />
     );
+    wrapper.find('.buttons-container').find('button').at(1).simulate('click');
     expect(wrapper.find('.update-reminder-version-tag--outdated').length).toBe(
       1
     );
   });
 
   it('shows the correct version tag when up to date', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={true}
         isOutdated={versionsUpToDate.isOutdated}
         versions={versionsUpToDate}
       />
@@ -83,11 +75,9 @@ describe('Update Reminder', () => {
   });
 
   it('shows feature release information', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionOutOfDate.isOutdated}
-        setDismiss={setDismiss}
         versions={versionOutOfDate}
       />
     );
@@ -100,11 +90,9 @@ describe('Update Reminder', () => {
   });
 
   it('shows new version information', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionOutOfDate.isOutdated}
-        setDismiss={setDismiss}
         versions={versionOutOfDate}
       />
     );
@@ -116,11 +104,9 @@ describe('Update Reminder', () => {
   });
 
   it('shows the user is up to date', () => {
-    const wrapper = mount(
+    const wrapper = setup.mount(
       <UpdateReminder
-        dismissed={false}
         isOutdated={versionsUpToDate.isOutdated}
-        setDismiss={setDismiss}
         versions={versionsUpToDate}
       />
     );

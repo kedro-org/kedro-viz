@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import classnames from 'classnames';
 import { replaceMatches } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
-import classnames from 'classnames';
+
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -24,27 +25,15 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
     'experiment-tracking': '',
   });
 
-  // Reload state is to ensure it will call redirectLocation in FlowchartWrapper
-  // only when the page is reloaded.
-  const [reload, setReload] = useState(false);
-
-  useEffect(() => setReload(true), []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar,
   });
-  const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  // Reload state is to ensure it will call redirectLocation in FlowchartWrapper
+  // only when the page is reloaded.
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     if (versionData) {
@@ -52,6 +41,16 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       setLatestVersion(versionData.version.latest);
     }
   }, [versionData]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+
+    setReload(true);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div
@@ -71,9 +70,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             />
             {versionData && (
               <UpdateReminder
-                dismissed={dismissed}
                 isOutdated={isOutdated}
-                setDismiss={setDismissed}
                 versions={versionData.version}
               />
             )}
