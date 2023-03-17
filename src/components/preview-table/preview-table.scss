@@ -1,4 +1,13 @@
 @use '../../styles/variables' as variables;
+@use '../../styles/extends';
+
+.kui-theme--light {
+  --color-highlight: #{variables.$grey-200};
+}
+
+.kui-theme--dark {
+  --color-highlight: #{variables.$slate-400};
+}
 
 .preview-table {
   margin: 30px 32px;
@@ -35,7 +44,7 @@
 }
 
 .preview-table__row:hover {
-  background-color: #{variables.$slate-400};
+  background: var(--color-highlight);
   cursor: pointer;
 }
 
@@ -50,7 +59,7 @@
 }
 
 .preview-table__header:hover::after {
-  background-color: #{variables.$slate-400};
+  background: var(--color-highlight);
   content: '';
   height: 100vh;
   left: 0;
