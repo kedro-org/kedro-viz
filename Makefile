@@ -15,7 +15,7 @@ build:
 PROJECT_PATH ?= demo-project
 
 run:
-	PYTHONPATH=$(shell pwd)/package python3 package/kedro_viz/server.py $(PROJECT_PATH)
+	PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
 pytest:
 	cd package && pytest --cov-fail-under=100

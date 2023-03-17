@@ -7,7 +7,8 @@ import spaceflights from '../../utils/data/spaceflights.mock.json';
 import demo from '../../utils/data/demo.mock.json';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
-import { saveState } from '../../store/helpers';
+import { saveLocalStorage } from '../../store/helpers';
+import { localStorageName } from '../../config';
 import { prepareNonPipelineState } from '../../store/initial-state';
 import reducer from '../../reducers/index';
 import { TOGGLE_GRAPH_LOADING } from '../../actions/graph';
@@ -60,7 +61,7 @@ describe('App', () => {
 
     test('but does not override localStorage values', () => {
       const localState = { node: { disabled: { foo: true } } };
-      saveState(localState);
+      saveLocalStorage(localStorageName, localState);
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: spaceflights });
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
