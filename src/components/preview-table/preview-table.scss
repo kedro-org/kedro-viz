@@ -28,6 +28,8 @@
 }
 
 .preview-table__small {
+  margin: 30px 32px;
+
   .preview-table__header,
   .preview-table__data {
     text-align: left;
@@ -36,6 +38,8 @@
 }
 
 .preview-table__large {
+  margin: 30px 30px 30px 0px;
+
   .preview-table__header,
   .preview-table__data {
     padding: 12px 42px 12px 22px;
