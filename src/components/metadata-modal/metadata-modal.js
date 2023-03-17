@@ -39,6 +39,11 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
           <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
           <span className="pipeline-plot-modal__title">{metadata.name}</span>
         </div>
+        {hasPreview && (
+          <div className="pipeline-plot-modal__preview-text">
+            Previewing 40 first rows only
+          </div>
+        )}
       </div>
       {hasPlot && (
         <PlotlyChart
