@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import { updateContent } from './update-reminder-expanded-content';
+import { updateContent } from './update-reminder-content';
 
 import Button from '../ui/button';
 import CommandCopier from '../ui/command-copier/command-copier';
