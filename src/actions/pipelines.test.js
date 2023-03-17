@@ -1,7 +1,8 @@
 import { createStore } from 'redux';
 import reducer from '../reducers';
 import { mockState } from '../utils/state.mock';
-import { saveState } from '../store/helpers';
+import { saveLocalStorage } from '../store/helpers';
+import { localStorageName } from '../config';
 import {
   updateActivePipeline,
   UPDATE_ACTIVE_PIPELINE,
@@ -109,7 +110,9 @@ describe('pipeline actions', () => {
       });
 
       it("should reset the active pipeline if its ID isn't included in the list of pipeline IDs", async () => {
-        saveState({ pipeline: { active: 'unknown-id' } });
+        saveLocalStorage(localStorageName, {
+          pipeline: { active: 'unknown-id' },
+        });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         const state = store.getState();
@@ -120,7 +123,7 @@ describe('pipeline actions', () => {
       it('should request data from a different dataset if the active pipeline is set', async () => {
         const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
-        saveState({ pipeline: { active } });
+        saveLocalStorage(localStorageName, { pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().pipeline.active).toBe(active);
@@ -139,7 +142,7 @@ describe('pipeline actions', () => {
         window.deletePipelines = true; // pass option to load-data mock
         const { pipeline } = mockState.spaceflights;
         const active = pipeline.ids.find((id) => id !== pipeline.main);
-        saveState({ pipeline: { active } });
+        saveLocalStorage(localStorageName, { pipeline: { active } });
         const store = createStore(reducer, mockState.json);
         await loadInitialPipelineData()(store.dispatch, store.getState);
         expect(store.getState().node).toEqual(mockState.spaceflights.node);

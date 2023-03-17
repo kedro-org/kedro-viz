@@ -39,6 +39,13 @@ const mockContextValue = {
   hoveredElementId: [new Date('October 15, 2021 03:29:00').toISOString()],
 };
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: 'localhost:3000/',
+  }),
+}));
+
 describe('RunsListCard', () => {
   it('renders without crashing', () => {
     const wrapper = shallow(

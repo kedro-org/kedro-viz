@@ -1,6 +1,7 @@
 export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
+export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
@@ -98,6 +99,7 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 export const params = {
   focused: 'focused_id=',
   selected: 'selected_id=',
+  selectedName: 'selected_name=',
   pipeline: 'pipeline_id=',
   run: 'run_ids=',
   view: 'view=',
@@ -111,6 +113,7 @@ export const routes = {
     main: '/',
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
   },
   experimentTracking: {
     main: '/experiment-tracking',

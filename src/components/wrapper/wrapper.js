@@ -76,7 +76,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             )}
             <Switch>
               <Route exact path={sanitizedPathname}>
-                <FlowChartWrapper reload={reload} />
+                <FlowChartWrapper />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
