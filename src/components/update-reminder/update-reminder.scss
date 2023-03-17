@@ -23,7 +23,8 @@ $spacing-left: 48px;
 .kui-theme--light {
   --color-detail-bg: #{colors.$white-400};
   --color-header-bg: #{colors.$yellow-0};
-  --color-header-bg--up-to-date: #{colors.$white-0};
+  --color-header-bg--up-to-date: #{colors.$grey-800};
+  --color-header-text--up-to-date: #{colors.$white-0};
   --color-link: #{colors.$blue-600};
   --color-subtext: #{colors.$black-400};
   --color-content-bg: #{colors.$white-300};
@@ -37,6 +38,7 @@ $spacing-left: 48px;
   --color-detail-bg: #{colors.$slate-300};
   --color-header-bg: #{colors.$yellow-0};
   --color-header-bg--up-to-date: #{colors.$white-0};
+  --color-header-text--up-to-date: #{colors.$black-900};
   --color-link: #{colors.$blue-300};
   --color-subtext: #{colors.$black-400};
   --color-content-bg: #{colors.$slate-600};
@@ -102,12 +104,26 @@ $spacing-left: 48px;
   width: $panel-width;
   z-index: 2;
 
-  &--up-to-date {
-    background-color: var(--color-header-bg--up-to-date);
-  }
-
   .close-button-container {
     margin-right: 20px;
+  }
+
+  .close-button {
+    svg {
+      fill: colors.$black-800;
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  &--up-to-date {
+    background-color: var(--color-header-bg--up-to-date);
+
+    .close-button {
+      svg {
+        fill: var(--color-header-text--up-to-date);
+      }
+    }
   }
 }
 
@@ -123,6 +139,7 @@ $spacing-left: 48px;
 
   &--up-to-date {
     background-color: var(--color-header-bg--up-to-date);
+    color: var(--color-header-text--up-to-date);
   }
 
   h3 {
@@ -157,14 +174,6 @@ $spacing-left: 48px;
 
   .pipeline-icon {
     fill: colors.$black-900;
-  }
-}
-
-.close-button {
-  svg {
-    fill: colors.$black-800;
-    height: 24px;
-    width: 24px;
   }
 }
 
