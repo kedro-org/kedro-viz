@@ -564,7 +564,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
-        if (self.type == "pandas.csv_dataset.CSVDataSet"):
+        if (self.type == "pandas.csv_dataset.CSVDataSet" or self.type == "pandas.parquet_dataset.ParquetDataSet" or self.type == "pandas.excel_dataset.ExcelDataSet"):
             self.preview = dataset._preview(10)
 
         # Run command is only available if a node is an output, i.e. not a free input
