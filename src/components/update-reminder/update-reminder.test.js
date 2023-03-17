@@ -93,8 +93,10 @@ describe('Update Reminder', () => {
     );
     const container = wrapper.find('.update-reminder-unexpanded');
     container.find('.buttons-container').find('button').at(0).simulate('click');
-    expect(wrapper.find('.update-reminder-content').length).toBe(1);
-    expect(wrapper.find('.update-reminder-content--feature').length).toBe(2);
+    expect(wrapper.find('.update-reminder-expanded-content').length).toBe(1);
+    expect(
+      wrapper.find('.update-reminder-expanded-content--feature').length
+    ).toBe(2);
   });
 
   it('shows new version information', () => {
