@@ -33,6 +33,7 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
   useEffect(() => {
     if (visibleMetaSidebar) {
       setExpand(false);
+      setDismissed(true);
     }
   }, [visibleMetaSidebar]);
 
