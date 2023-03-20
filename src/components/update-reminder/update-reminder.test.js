@@ -1,6 +1,9 @@
 import React from 'react';
 import UpdateReminder from './update-reminder';
 import { setup } from '../../utils/state.mock';
+import { updateContent } from './update-reminder-content';
+
+const numberNewFeatures = updateContent.features.length;
 
 describe('Update Reminder', () => {
   const versionOutOfDate = {
@@ -86,7 +89,7 @@ describe('Update Reminder', () => {
     expect(wrapper.find('.update-reminder-expanded-content').length).toBe(1);
     expect(
       wrapper.find('.update-reminder-expanded-content--feature').length
-    ).toBe(2);
+    ).toBe(numberNewFeatures);
   });
 
   it('shows new version information', () => {
