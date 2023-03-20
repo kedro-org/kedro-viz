@@ -297,7 +297,11 @@ const MetaData = ({
               {hasPreviewData && (
                 <>
                   <div className="pipeline-metadata__preview">
-                    <PreviewTable data={metadata.preview} size="small" />
+                    <PreviewTable
+                      data={metadata.preview}
+                      size="small"
+                      onClick={onExpandPlotClick}
+                    />
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
