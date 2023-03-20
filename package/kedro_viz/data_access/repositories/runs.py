@@ -26,20 +26,25 @@ def check_db_session(method: Callable) -> Callable:
 
 
 class RunsRepository:
-    _db_session_class: Optional[sessionmaker]
+    _db_read_session_class: Optional[sessionmaker]
+    _db_write_session_class: Optional[sessionmaker]
     last_run_id: Optional[str]
 
     def __init__(self, db_session_class: Optional[sessionmaker] = None):
         self._db_session_class = db_session_class
         self.last_run_id = None
 
-    def set_db_session(self, db_session_class: sessionmaker):
+    def set_db_read_session(self, db_session_class: sessionmaker):
         """Sqlite db connection session"""
-        self._db_session_class = db_session_class
+        self._db_read_session_class = db_session_class
+
+    def set_db_write_session(self, db_session_class: sessionmaker):
+        """Sqlite db connection session"""
+        self._db_write_session_class = db_session_class
 
     @check_db_session
     def add_run(self, run: RunModel):
-        with self._db_session_class.begin() as session:  # type: ignore
+        with self._db_write_session_class.begin() as session:  # type: ignore
             session.add(run)
 
     @check_db_session
@@ -47,7 +52,7 @@ class RunsRepository:
         self, limit_amount: Optional[int] = None
     ) -> Optional[Iterable[RunModel]]:
         all_runs = (
-            self._db_session_class()  # type: ignore
+            self._db_read_session_class()  # type: ignore
             .query(RunModel)
             .order_by(RunModel.id.desc())
         )
@@ -62,12 +67,12 @@ class RunsRepository:
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        return self._db_session_class().query(RunModel).get(run_id)  # type: ignore
+        return self._db_read_session_class().query(RunModel).get(run_id)  # type: ignore
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
         return (
-            self._db_session_class()  # type: ignore
+            self._db_read_session_class()  # type: ignore
             .query(RunModel)
             .filter(RunModel.id.in_(run_ids))
             .all()
@@ -76,7 +81,7 @@ class RunsRepository:
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
         return (
-            self._db_session_class()  # type: ignore
+            self._db_read_session_class()  # type: ignore
             .query(UserRunDetailsModel)
             .filter(UserRunDetailsModel.run_id == run_id)
             .first()
@@ -84,7 +89,7 @@ class RunsRepository:
 
     @check_db_session
     def get_new_runs(self) -> Optional[Iterable[RunModel]]:
-        query = self._db_session_class().query(RunModel)  # type: ignore
+        query = self._db_read_session_class().query(RunModel)  # type: ignore
 
         if self.last_run_id:
             query = query.filter(RunModel.id > self.last_run_id)
@@ -97,7 +102,7 @@ class RunsRepository:
     ) -> Optional[Dict[str, UserRunDetailsModel]]:
         return {
             user_run_details.run_id: user_run_details
-            for user_run_details in self._db_session_class()  # type: ignore
+            for user_run_details in self._db_read_session_class()  # type: ignore
             .query(UserRunDetailsModel)
             .filter(UserRunDetailsModel.run_id.in_(run_ids))
             .all()
@@ -107,7 +112,7 @@ class RunsRepository:
     def create_or_update_user_run_details(
         self, run_id: str, title: str, bookmark: bool, notes: str
     ) -> Optional[UserRunDetailsModel]:
-        with self._db_session_class.begin() as session:  # type: ignore
+        with self._db_write_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
                 .filter(UserRunDetailsModel.run_id == run_id)

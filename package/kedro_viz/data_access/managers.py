@@ -63,9 +63,13 @@ class DataAccessManager:
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
 
-    def set_db_session(self, db_session_class: sessionmaker):
+    def set_db_read_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
+        self.runs.set_db_read_session(db_session_class)
+
+    def set_db_write_session(self, db_session_class: sessionmaker):
+        """Set db session on repositories that need it."""
+        self.runs.set_db_write_session(db_session_class)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to
