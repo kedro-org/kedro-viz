@@ -567,9 +567,9 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
-        # If the kedro-datasets is on the latest and does have the _preview
-        if (hasattr(dataset, '_preview')):
-            if self.type in PREVIEW_DATASETS:
+        if self.type in PREVIEW_DATASETS:
+            # If the kedro-datasets is on the latest and does have the _preview
+            if (hasattr(dataset, '_preview')):
                 self.preview = dataset._preview(40)
 
         # Run command is only available if a node is an output, i.e. not a free input
