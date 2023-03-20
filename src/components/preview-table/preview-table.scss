@@ -43,28 +43,31 @@
   }
 }
 
-.preview-table__row:hover {
-  background: var(--color-highlight);
+.preview-table__row:hover,
+.preview-table__header:hover {
   cursor: pointer;
+}
+
+// Only need to highlight row when the table is in full view
+.preview-table__large {
+  .preview-table__row:hover {
+    background: var(--color-highlight);
+  }
+
+  .preview-table__header:hover::after {
+    background: var(--color-highlight);
+    content: '';
+    height: 100vh;
+    left: 0;
+    position: absolute;
+    top: -12px;
+    width: 95%;
+    z-index: -1;
+  }
 }
 
 .preview-table__header,
 .preview-table__data {
   position: relative;
   outline: 0;
-}
-
-.preview-table__header:hover {
-  cursor: pointer;
-}
-
-.preview-table__header:hover::after {
-  background: var(--color-highlight);
-  content: '';
-  height: 100vh;
-  left: 0;
-  position: absolute;
-  top: -12px;
-  width: 95%;
-  z-index: -1;
 }
