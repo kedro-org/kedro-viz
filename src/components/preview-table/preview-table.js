@@ -4,8 +4,8 @@ import className from 'classnames';
 import './preview-table.css';
 
 const PreviewTable = ({ data, size = 'small', onClick }) => {
-  const headers = Object.keys(data);
-  const nRows = Object.keys(data[headers[0]]);
+  const tableHeaders = Object.keys(data);
+  const tableRowsIndexes = Object.keys(data[tableHeaders[0]]);
 
   return (
     <table
@@ -17,7 +17,7 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
     >
       <tbody>
         <tr className="preview-table__row-header">
-          {headers.map((header) => (
+          {tableHeaders.map((header) => (
             <th
               className="preview-table__header"
               key={header}
@@ -27,9 +27,9 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
             </th>
           ))}
         </tr>
-        {nRows.map((index) => (
+        {tableRowsIndexes.map((index) => (
           <tr className="preview-table__row" key={index}>
-            {headers.map((header, i) => {
+            {tableHeaders.map((header, i) => {
               return (
                 <td className="preview-table__data" key={i} onClick={onClick}>
                   {data[header][index]}
