@@ -1,6 +1,7 @@
 """Database management layer based on SQLAlchemy"""
 import os
 import fsspec
+import json
 from pathlib import Path
 from typing import Tuple
 
@@ -24,14 +25,18 @@ def create_db_engine(
 def create_merged_db_engine(merged_store_location: Path, s3_store_location: str) ->  Tuple[Engine, sessionmaker]:
     protocol, _ = get_protocol_and_path(s3_store_location)
     fs = fsspec.filesystem(protocol)
-    databases = fs.glob(f"{s3_store_location}/*.db")
+    databases = sorted(fs.glob(f"{s3_store_location}/*.db"), key=lambda path: fs.info(path)['LastModified'], reverse=True)
     engine = create_engine(f"sqlite:///{merged_store_location}/merged_session_store.db",connect_args={"check_same_thread": False})
     metadata = MetaData()
 
+    database_metadata = {}
     for database in databases:
+        database_name = os.path.basename(database)
+        database_timestamp = fs.info(database)['LastModified']
+        database_metadata[database_name]= str(database_timestamp)
+
         with fs.open(database, 'rb') as file:
             db_bytes = file.read()
-        database_name = os.path.basename(database)
         db_loc = f'{merged_store_location}/{database_name}'
         with open(db_loc, 'wb') as temp_db:
                 temp_db.write(db_bytes)
@@ -52,14 +57,15 @@ def create_merged_db_engine(merged_store_location: Path, s3_store_location: str)
                 db_metadata.reflect(bind=db_engine)
                 for table_name, table_obj in db_metadata.tables.items():
                     data = database_conn.execute(table_obj.select()).fetchall()
-
                     for row in data:
                         try:
                             new_table = metadata.tables[table_name]
                             target_conn.execute(new_table.insert().values(row))
                         except Exception as e:
-                            print(f"Failed to insert {row}: {e}")
-    
+                            pass
+
+    with open('.db_info.json','w') as file:
+        json.dump({'databases':database_metadata}, file)
 
     session_class = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return engine, session_class

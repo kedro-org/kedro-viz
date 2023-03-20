@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Generator
 
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io.core import  get_protocol_and_path
+from kedro.io.core import get_protocol_and_path
 
 from sqlalchemy.orm import sessionmaker
 
@@ -42,7 +42,7 @@ class SQLiteStore(BaseSessionStore):
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
         return Path(self._path) / "session_store.db"
-    
+
     @property
     def s3_location(self) -> Path:
         """Returns location of the sqlite_store database"""
@@ -78,7 +78,6 @@ class SQLiteStore(BaseSessionStore):
         if(self._s3_path):
             protocol, _ = get_protocol_and_path(self._s3_path)
             fs = fsspec.filesystem(protocol)
-            with open(self.location,'rb') as file:
-                 with fs.open(f'{self._s3_path}/example1.db', 'wb') as s3f:
-                         s3f.write(file.read())
-
+            with open(self.location, 'rb') as file:
+                with fs.open(f'{self._s3_path}/ivan.db', 'wb') as s3f:
+                    s3f.write(file.read())

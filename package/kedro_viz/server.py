@@ -29,24 +29,27 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store_location: Optional[Path],
-    session_store_s3_location: str
+    local_session_store_location: Optional[Path],
+    cloud_session_store_location: str
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
 
-    if session_store_location and not session_store_s3_location:
-        database_engine, session_class = create_db_engine(session_store_location)
-        Base.metadata.create_all(bind=database_engine)
-        data_access_manager.set_db_session(session_class)  
+    local_database_engine, local_session_class = create_db_engine(local_session_store_location)
+    Base.metadata.create_all(bind=local_database_engine)
 
-    if session_store_s3_location:
+    if local_session_store_location and not cloud_session_store_location:
+        data_access_manager.set_db_read_session(local_session_class)  
+        data_access_manager.set_db_write_session(local_session_class)  
+
+    if cloud_session_store_location:
         db_location = Path("data/temp_db")
         db_location.mkdir(parents=True,exist_ok=True)
-        database_engine, session_class = create_merged_db_engine(db_location, session_store_s3_location)
-        Base.metadata.create_all(bind=database_engine)
-        data_access_manager.set_db_session(session_class)  
+        cloud_database_engine, cloud_session_class = create_merged_db_engine(db_location, cloud_session_store_location)
+        Base.metadata.create_all(bind=cloud_database_engine)
+        data_access_manager.set_db_read_session(cloud_session_class)  
+        data_access_manager.set_db_write_session(local_session_class,local_session_store_location,cloud_session_store_location)  
         
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)             

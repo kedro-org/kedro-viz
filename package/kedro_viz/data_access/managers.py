@@ -3,7 +3,8 @@
 # pylint: disable=too-many-instance-attributes
 import logging
 from collections import defaultdict
-from typing import Dict, List, Set, Union
+from pathlib import Path
+from typing import Dict, List, Set, Union, Optional
 
 import networkx as nx
 from kedro.io import DataCatalog
@@ -67,9 +68,14 @@ class DataAccessManager:
         """Set db session on repositories that need it."""
         self.runs.set_db_read_session(db_session_class)
 
-    def set_db_write_session(self, db_session_class: sessionmaker):
+    def set_db_write_session(self, 
+                             db_session_class: sessionmaker, 
+                             local_session_store_location: Optional[str] = None, 
+                             cloud_session_store_location: Optional[Path] = None):
         """Set db session on repositories that need it."""
         self.runs.set_db_write_session(db_session_class)
+        self.runs.set_local_session_store_location(local_session_store_location)
+        self.runs.set_cloud_session_store_location(cloud_session_store_location)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to
