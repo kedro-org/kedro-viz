@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import classnames from 'classnames';
 import { replaceMatches } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
-import classnames from 'classnames';
+
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -28,7 +29,6 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
     client,
     skip: !displayGlobalToolbar,
   });
-  const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
 
@@ -55,10 +55,9 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
-            {versionData && isOutdated && !dismissed && (
+            {versionData && (
               <UpdateReminder
-                dismissed={dismissed}
-                setDismiss={setDismissed}
+                isOutdated={isOutdated}
                 versions={versionData.version}
               />
             )}
