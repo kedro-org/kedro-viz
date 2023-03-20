@@ -41,7 +41,7 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
         </div>
         {hasPreview && (
           <div className="pipeline-plot-modal__preview-text">
-            Previewing 40 first rows only
+            Previewing first 40 rows only
           </div>
         )}
       </div>
