@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 PREVIEW_DATASETS = [
     "pandas.csv_dataset.CSVDataSet",
-    "pandas.parquet_dataset.ParquetDataSet",
     "pandas.excel_dataset.ExcelDataSet",
 ]
 
