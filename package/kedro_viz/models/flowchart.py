@@ -20,8 +20,11 @@ from .utils import get_dataset_type
 
 logger = logging.getLogger(__name__)
 
-PREVIEW_DATASETS = ["pandas.csv_dataset.CSVDataSet",
-                    "pandas.parquet_dataset.ParquetDataSet", "pandas.excel_dataset.ExcelDataSet"]
+PREVIEW_DATASETS = [
+    "pandas.csv_dataset.CSVDataSet",
+    "pandas.parquet_dataset.ParquetDataSet",
+    "pandas.excel_dataset.ExcelDataSet",
+]
 
 
 def _pretty_name(name: str) -> str:
@@ -569,7 +572,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         if self.type in PREVIEW_DATASETS:
             # If the kedro-datasets is on the latest and does have the _preview
-            if (hasattr(dataset, '_preview')):
+            if hasattr(dataset, "_preview"):
                 self.preview = dataset._preview(40)
 
         # Run command is only available if a node is an output, i.e. not a free input
