@@ -369,6 +369,27 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
+    def test_data_node_metadata_preview(self):
+        mockPreviewData = {
+            "id": {0: "id1", 1: "id2", 2: "id3"},
+            "companyRating": {0: "100%", 1: "67%", 2: "67%"},
+            "companyLocation": {0: "London", 1: "Paris", 2: "New York"},
+        }
+
+        dataset = CSVDataSet(filepath="/tmp/dataset.csv")
+        data_node = GraphNode.create_data_node(
+            full_name="dataset",
+            layer="raw",
+            tags=set(),
+            dataset=dataset,
+        )
+
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
+        data_node_metadata.preview = mockPreviewData
+
+        if data_node_metadata.type == "pandas.csv_dataset.CSVDataSet":
+            assert data_node_metadata.preview == mockPreviewData
+
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         transcoded_data_node = GraphNode.create_data_node(
