@@ -371,12 +371,12 @@ class TestGraphNodeMetadata:
 
     def test_preview_data_node_metadata(self):
         mock_preview_data = {
-            'columns': ['id', 'company_rating', 'company_location'],
-            'index': [0, 1, 2],
-            'data': [
-                    [1, '90%', 'London'],
-                    [2, '80%', 'Paris'],
-                    [3, '40%', 'Milan'],
+            "columns": ["id", "company_rating", "company_location"],
+            "index": [0, 1, 2],
+            "data": [
+                [1, "90%", "London"],
+                [2, "80%", "Paris"],
+                [3, "40%", "Milan"],
             ],
         }
 
