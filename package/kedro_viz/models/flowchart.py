@@ -20,11 +20,6 @@ from .utils import get_dataset_type
 
 logger = logging.getLogger(__name__)
 
-PREVIEW_DATASETS = [
-    "pandas.csv_dataset.CSVDataSet",
-    "pandas.excel_dataset.ExcelDataSet",
-]
-
 
 def _pretty_name(name: str) -> str:
     name = name.replace("-", " ").replace("_", " ").replace(":", ": ")
@@ -491,6 +486,10 @@ class DataNode(GraphNode):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
+    def is_preview_node(self):
+        """Checks if the current node has a preview"""
+        return hasattr(self.kedro_obj, "_preview")
+
 
 @dataclass
 class TranscodedDataNode(GraphNode):
@@ -569,11 +568,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
-        if self.type in PREVIEW_DATASETS:
-            # If the kedro-datasets is on the latest and does have the _preview
-            if hasattr(dataset, "_preview"):
-                self.preview = dataset._preview(40)
-
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f"kedro run --to-outputs={data_node.full_name}"
@@ -583,6 +577,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             data_node.is_plot_node()
             or data_node.is_image_node()
             or data_node.is_tracking_node()
+            or data_node.is_preview_node()
         ):
             return
 
@@ -598,6 +593,16 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.image = dataset.load()
         elif data_node.is_tracking_node():
             self.tracking_data = dataset.load()
+        elif data_node.is_preview_node():
+            try:
+                self.preview = dataset._preview()
+            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+                logger.warning(
+                    "'%s' could not be previewed. Full exception: %s: %s",
+                    data_node.full_name,
+                    type(exc).__name__,
+                    exc,
+                )
 
 
 @dataclass
