@@ -14,7 +14,7 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
     >
       <tbody>
         <tr className="preview-table__row-header">
-          {data.columns.map((column) => (
+          {data.columns?.map((column) => (
             <th
               className="preview-table__header"
               key={column}
@@ -24,7 +24,7 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
             </th>
           ))}
         </tr>
-        {data.data.map((row, index) => (
+        {data.data?.map((row, index) => (
           <tr className="preview-table__row" key={index}>
             {row.map((content, i) => (
               <td className="preview-table__data" key={i} onClick={onClick}>
