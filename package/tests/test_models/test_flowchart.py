@@ -369,26 +369,37 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
-    def test_data_node_metadata_preview(self):
-        mockPreviewData = {
-            "id": {0: "id1", 1: "id2", 2: "id3"},
-            "companyRating": {0: "100%", 1: "67%", 2: "67%"},
-            "companyLocation": {0: "London", 1: "Paris", 2: "New York"},
+    def test_preview_data_node_metadata(self):
+        mock_preview_data = {
+            'columns': ['id', 'company_rating', 'company_location'],
+            'index': [0, 1, 2],
+            'data': [
+                    [1, '90%', 'London'],
+                    [2, '80%', 'Paris'],
+                    [3, '40%', 'Milan'],
+            ],
         }
 
-        dataset = CSVDataSet(filepath="/tmp/dataset.csv")
-        data_node = GraphNode.create_data_node(
-            full_name="dataset",
-            layer="raw",
-            tags=set(),
-            dataset=dataset,
-        )
+        preview_data_node = MagicMock()
 
-        data_node_metadata = DataNodeMetadata(data_node=data_node)
-        data_node_metadata.preview = mockPreviewData
+        preview_data_node.is_plot_node.return_value = False
+        preview_data_node.is_image_node.return_value = False
+        preview_data_node.is_tracking_node.return_value = False
+        preview_data_node.is_preview_node.return_value = True
+        preview_data_node.kedro_obj._preview.return_value = mock_preview_data
+        preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
+        assert preview_node_metadata.preview == mock_preview_data
 
-        if data_node_metadata.type == "pandas.csv_dataset.CSVDataSet":
-            assert data_node_metadata.preview == mockPreviewData
+    def test_preview_data_node_dataset_not_exist(self):
+        preview_data_node = MagicMock()
+
+        preview_data_node.is_plot_node.return_value = False
+        preview_data_node.is_image_node.return_value = False
+        preview_data_node.is_tracking_node.return_value = False
+        preview_data_node.is_preview_node.return_value = True
+        preview_data_node.kedro_obj._preview.return_value = False
+        preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
+        assert preview_node_metadata.plot is None
 
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")
@@ -441,6 +452,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_plot_node.return_value = True
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
+        plotly_data_node.is_preview_node.return_value = False
         plotly_data_node.kedro_obj.load.return_value = mock_plot_data
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
@@ -451,6 +463,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
+        plotly_data_node.is_preview_node.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot is None
 
@@ -468,6 +481,7 @@ class TestGraphNodeMetadata:
         plotly_json_dataset_node.is_plot_node.return_value = True
         plotly_json_dataset_node.is_image_node.return_value = False
         plotly_json_dataset_node.is_tracking_node.return_value = False
+        plotly_json_dataset_node.is_preview_node.return_value = False
         plotly_json_dataset_node.kedro_obj.load.return_value = mock_plot_data
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
         assert plotly_node_metadata.plot == mock_plot_data
@@ -482,6 +496,7 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.is_tracking_node.return_value = False
+        image_dataset_node.is_preview_node.return_value = False
         image_dataset_node.kedro_obj.load.return_value = mock_image_data
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image == mock_image_data
@@ -491,6 +506,7 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_image_node.return_value = True
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.kedro_obj.exists.return_value = False
+        image_dataset_node.is_preview_node.return_value = False
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image is None
 
@@ -506,6 +522,7 @@ class TestGraphNodeMetadata:
         json_data_node.is_image_node.return_value = False
         json_data_node.is_tracking_node.return_value = True
         json_data_node.is_metric_node.return_value = False
+        json_data_node.is_preview_node.return_value = False
         json_data_node.kedro_obj.load.return_value = mock_json_data
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
         assert json_node_metadata.tracking_data == mock_json_data
@@ -516,6 +533,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_plot_node.return_value = False
         metrics_data_node.is_image_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
+        metrics_data_node.is_preview_node.return_value = False
         metrics_data_node.kedro_obj.exists.return_value = False
         metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert metrics_node_metadata.plot is None
@@ -525,6 +543,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_plot_node.return_value = True
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
+        plotly_data_node.kedro_obj.exists.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot is None
