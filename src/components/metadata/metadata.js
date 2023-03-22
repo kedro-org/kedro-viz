@@ -90,7 +90,7 @@ const MetaData = ({
     toFlowchartPage();
   };
 
-  const onExpandPlotClick = () => {
+  const onExpandMetaDataClick = () => {
     onToggleMetadataModal(true);
   };
 
@@ -237,7 +237,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
                       data={metadata.plot.data}
@@ -247,7 +247,7 @@ const MetaData = ({
                   </div>
                   <button
                     className="pipeline-metadata__link"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
@@ -260,7 +260,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <img
                       alt="Matplotlib rendering"
@@ -270,7 +270,7 @@ const MetaData = ({
                   </div>
                   <button
                     className="pipeline-metadata__link"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
@@ -300,14 +300,14 @@ const MetaData = ({
                     <PreviewTable
                       data={metadata.preview}
                       size="small"
-                      onClick={onExpandPlotClick}
+                      onClick={onExpandMetaDataClick}
                     />
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
                   <button
                     className="pipeline-metadata__link"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
