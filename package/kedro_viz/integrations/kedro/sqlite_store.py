@@ -2,14 +2,17 @@
 which stores sessions data in the SQLite database"""
 
 import json
+import os 
+import io
 import logging
 import fsspec
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, Generator, Dict, BinaryIO
 
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
 
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -75,9 +78,65 @@ class SQLiteStore(BaseSessionStore):
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
         database.add(session_store_data)
         database.commit()
-        if(self._s3_path):
-            protocol, _ = get_protocol_and_path(self._s3_path)
-            fs = fsspec.filesystem(protocol)
-            with open(self.location, 'rb') as file:
-                with fs.open(f'{self._s3_path}/ivan.db', 'wb') as s3f:
-                    s3f.write(file.read())
+
+    def upload(self):
+        """Upload the session store db to s3"""
+        protocol, _ = get_protocol_and_path(self._s3_path)
+        fs = fsspec.filesystem(protocol)
+        with open(self.location, 'rb') as file:
+            with fs.open(f'{self._s3_path}/ivan.db', 'wb') as s3f:
+                s3f.write(file.read())
+    
+    def download(self) -> Dict[str, BinaryIO]:
+        """Download all the dbs from an s3 locations"""
+        protocol, _ = get_protocol_and_path(self._path)
+        tmp_dir = Path(f'{self._path.parent}/tmp_dbs/')
+        tmp_dir.mkdir(parents=True,exist_ok=True)
+        fs = fsspec.filesystem(protocol)
+        databases = fs.glob(f"{self._s3_path}/*.db")
+        downloaded_dbs = {}
+        for database in databases:
+            with fs.open(database, 'rb') as file:
+                db_buffer = io.BytesIO(file.read())
+                downloaded_dbs[database] = db_buffer
+
+    
+    def merge(self, downloaded_dbs: Dict[str,BinaryIO]): 
+        "Merge all dbs to the local session_store.db"
+        engine, session_class = create_db_engine(self.location)
+        Base.metadata.create_all(bind=engine)
+        database = next(get_db(session_class))
+
+        for database_name, db_buffer in downloaded_dbs.items():
+            temp_engine = create_engine('sqlite:///:memory:')
+            with temp_engine.connect() as database_conn:
+                db_metadata = MetaData()
+                db_metadata.reflect(bind=temp_engine)
+                for table_name, table_obj in db_metadata.tables.items():
+                    if table_name == 'runs':
+                        data = database_conn.execute(table_obj.select()).fetchall()
+                        for row in data:
+                            try: 
+                                database.add(RunModel(**row.__dict__))
+                            except Exception as e:
+                                  pass 
+
+    def sync(self):
+        self.upload()
+        downloaded_dbs = self.download()
+        self.merge(downloaded_dbs)      
+
+
+
+
+
+
+
+            
+            
+
+
+   
+
+    
+
