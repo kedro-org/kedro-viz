@@ -2,10 +2,12 @@
 @use '../../styles/extends';
 
 .kui-theme--light {
+  --color-bg: #{variables.$white-400};
   --color-highlight: #{variables.$white-200};
 }
 
 .kui-theme--dark {
+  --color-bg: #{variables.$slate-700};
   --color-highlight: #{variables.$slate-400};
 }
 
@@ -50,19 +52,17 @@
 
 // Only need to highlight row when the table is in full view
 .preview-table__large {
-  .preview-table__row:hover {
-    background: var(--color-highlight);
+  .preview-table__row-header {
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
-  .preview-table__header:hover::after {
+  .preview-table__row:hover,
+  .preview-table__header:hover,
+  .preview-table__data-hovered {
     background: var(--color-highlight);
-    content: '';
-    height: 100vh;
-    left: 0;
-    position: absolute;
-    top: -12px;
-    width: 95%;
-    z-index: -1;
   }
 }
 

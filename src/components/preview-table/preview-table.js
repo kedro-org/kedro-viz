@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import className from 'classnames';
 
 import './preview-table.css';
 
 const PreviewTable = ({ data, size = 'small', onClick }) => {
+  const [hoveredHeaderIndex, setHoveredHeaderIndex] = useState(null);
+
   return (
     <table
       className={className('preview-table', {
@@ -14,11 +16,13 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
     >
       <tbody>
         <tr className="preview-table__row-header">
-          {data.columns?.map((column) => (
+          {data.columns?.map((column, index) => (
             <th
               className="preview-table__header"
               key={column}
               onClick={onClick}
+              onMouseOut={() => setHoveredHeaderIndex(null)}
+              onMouseOver={() => setHoveredHeaderIndex(index)}
             >
               {column}
             </th>
@@ -27,7 +31,13 @@ const PreviewTable = ({ data, size = 'small', onClick }) => {
         {data.data?.map((row, index) => (
           <tr className="preview-table__row" key={index}>
             {row.map((content, i) => (
-              <td className="preview-table__data" key={i} onClick={onClick}>
+              <td
+                className={className('preview-table__data', {
+                  'preview-table__data-hovered': i === hoveredHeaderIndex,
+                })}
+                key={i}
+                onClick={onClick}
+              >
                 {content}
               </td>
             ))}
