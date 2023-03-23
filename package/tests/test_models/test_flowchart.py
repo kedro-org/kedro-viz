@@ -390,7 +390,7 @@ class TestGraphNodeMetadata:
         preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
         assert preview_node_metadata.preview == mock_preview_data
 
-    def test_preview_data_node_dataset_not_exist(self):
+    def test_preview_data_node_metadata_not_exist(self):
         preview_data_node = MagicMock()
 
         preview_data_node.is_plot_node.return_value = False
