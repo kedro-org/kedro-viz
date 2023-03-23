@@ -29,6 +29,7 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({
+  flags,
   isPrettyNameOn,
   metadata,
   onToggleCode,
@@ -57,7 +58,7 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
-  const hasPreviewData = Boolean(metadata?.preview);
+  const hasPreviewData = Boolean(metadata?.preview) && flags.previewDataSet;
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -325,6 +326,7 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
+  flags: state.flags,
   isPrettyNameOn: state.prettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
