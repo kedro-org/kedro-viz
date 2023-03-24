@@ -1,13 +1,8 @@
 """Database management layer based on SQLAlchemy"""
-import os
-import fsspec
-import json
 from pathlib import Path
 from typing import Tuple
 
-from kedro.io.core import  get_protocol_and_path
-
-from sqlalchemy import create_engine, MetaData, Table, select, insert
+from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import sessionmaker
 
