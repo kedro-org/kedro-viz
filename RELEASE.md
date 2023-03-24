@@ -6,11 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 6.x.x
+# Release 6.0.0
 
 ## Major features and improvements
 
-- Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
+- Remove metrics plots from metadata panel and add link to the plots on experiment tracking. (#1268)
 - Link plot and JSON dataset names from experiment tracking to the flowchart. (#1165)
 - Bump minimum version of React from 16.8.6 to 17.0.2. (#1282)
 - Show preview of data in metadata panel. (#1288)
