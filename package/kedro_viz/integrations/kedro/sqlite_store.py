@@ -2,7 +2,8 @@
 which stores sessions data in the SQLite database"""
 
 import json
-import os 
+import getpass
+import uuid
 import io
 import logging
 import fsspec
@@ -29,6 +30,19 @@ def get_db(session_class: sessionmaker) -> Generator:
     finally:
         database.close()
 
+def _get_dbname():
+        try:
+            return getpass.getuser()
+        
+        except Exception as exc:  # pylint: disable=broad-except
+            unique_id = uuid.uuid4()
+            logger.warning(
+                """Something went wrong with getting the username. Generated unique id %s for 
+                 for user's database name  Exception: %s""",
+                unique_id,exc,
+            )
+            return unique_id
+
 
 def _is_json_serializable(obj: Any):
     try:
@@ -44,12 +58,12 @@ class SQLiteStore(BaseSessionStore):
     @property
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
-        return Path(self._path) / "session_store.db"
+        return Path(self._local_path) / "session_store.db"
 
     @property
-    def s3_location(self) -> Path:
+    def remote_location(self) -> Path:
         """Returns location of the sqlite_store database"""
-        return self._s3_path
+        return self._remote_path
 
     def to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
@@ -82,9 +96,10 @@ class SQLiteStore(BaseSessionStore):
     def upload(self):
         """Upload the session store db to s3"""
         protocol, _ = get_protocol_and_path(self._s3_path)
+        db_name = _get_dbname()
         fs = fsspec.filesystem(protocol)
         with open(self.location, 'rb') as file:
-            with fs.open(f'{self._s3_path}/ivan.db', 'wb') as s3f:
+            with fs.open(f'{self._s3_path}/{db_name}.db', 'wb') as s3f:
                 s3f.write(file.read())
     
     def download(self) -> Dict[str, BinaryIO]:
@@ -107,9 +122,11 @@ class SQLiteStore(BaseSessionStore):
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
 
-        for database_name, db_buffer in downloaded_dbs.items():
-            temp_engine = create_engine('sqlite:///:memory:')
+        for _, db_buffer in downloaded_dbs.items():
+            temp_engine = create_engine('sqlite:///:memory:', echo=True)
             with temp_engine.connect() as database_conn:
+                db_buffer.seek(0)
+                database_conn.execute(db_buffer.read())
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
                 for table_name, table_obj in db_metadata.tables.items():

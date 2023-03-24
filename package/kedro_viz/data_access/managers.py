@@ -3,8 +3,7 @@
 # pylint: disable=too-many-instance-attributes
 import logging
 from collections import defaultdict
-from pathlib import Path
-from typing import Dict, List, Set, Union, Optional
+from typing import Dict, List, Set, Union
 
 import networkx as nx
 from kedro.io import DataCatalog
@@ -64,23 +63,13 @@ class DataAccessManager:
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
 
-    def set_db_read_session(self, db_session_class: sessionmaker):
+    def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
-        self.runs.set_db_read_session(db_session_class)
-
-    def set_db_write_session(self, 
-                             db_session_class: sessionmaker, 
-                             local_session_store_location: Optional[str] = None, 
-                             cloud_session_store_location: Optional[Path] = None):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_write_session(db_session_class)
-        self.runs.set_local_session_store_location(local_session_store_location)
-        self.runs.set_cloud_session_store_location(cloud_session_store_location)
+        self.runs.set_db_session(db_session_class)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to
         TrackingDatasetRepository.
-
         Args:
             catalog: The DataCatalog instance to add.
         """
@@ -93,7 +82,6 @@ class DataAccessManager:
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
         into the relevant repositories.
-
         Args:
             pipelines: All registered pipelines in a Kedro project.
         """
@@ -105,10 +93,8 @@ class DataAccessManager:
         """Iterate through all the nodes and datasets in a "registered" pipeline
         and add them to relevant repositories. Take care of extracting other relevant information
         such as modular pipelines, layers, etc. and add them to relevant repositories.
-
         The purpose of this method is to construct a set of repositories of Viz-specific
         domain models from raw Kedro objects before feeding them to the API serialisation layer.
-
         Args:
             registered_pipeline_id: The ID of the registered pipeline to add to the graph.
             pipeline: The Kedro pipeline instance to convert to graph models
@@ -166,7 +152,6 @@ class DataAccessManager:
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
         for a given registered pipeline ID.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to which the node belongs.
             node: The Kedro node to add as TaskNode.
@@ -187,7 +172,6 @@ class DataAccessManager:
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
-
         Args:
             registered_pipeline_id: The pipeline ID to which the node's input belongs.
             input_dataset: The input dataset of the TaskNode.
@@ -217,7 +201,6 @@ class DataAccessManager:
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's output as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
-
         Args:
             registered_pipeline_id: The pipeline ID to which the node's output belongs.
             output_dataset: The output dataset of the TaskNode.
@@ -241,7 +224,6 @@ class DataAccessManager:
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro dataset as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to which the dataset belongs.
             dataset_name: The name of the dataset.
@@ -276,7 +258,6 @@ class DataAccessManager:
         parameters_node: ParametersNode, task_node: TaskNode
     ):
         """Add parameters to a task node in order to show which task node has parameters.
-
         Args:
             parameters_node: The parameters to add.
             task_node: The task node to add parameters to.
@@ -292,7 +273,6 @@ class DataAccessManager:
         """Return the default selected pipeline ID to display on first page load.
         If the DEFAULT_REGISTERED_PIPELINE_ID is present in user's project,
         use that. Otherwise, return the first one in the list of registered pipelines.
-
         Returns:
             The default selected RegisteredPipeline instance.
         """
@@ -307,7 +287,6 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphNode]:
         """Return all nodes for a given registered pipeline.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to get nodes for.
         Returns:
@@ -322,7 +301,6 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphEdge]:
         """Return all edges for a given registered pipeline.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
         Returns:
@@ -334,7 +312,6 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, Set]:
         """Return all node dependencies for a given registered pipeline.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
         Returns:
@@ -347,7 +324,6 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[str]:
         """Return layers in a topologically sorted order for a registered pipeline.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to get sorted layers for.
         Returns:
@@ -368,7 +344,6 @@ class DataAccessManager:
         as well as modular pipeline edges to the list of edges in the registered pipeline.
         N.B. The method is named `create_` to also imply that it has side effect on
         other repositories in the data access manager.
-
         Args:
             registered_pipeline_id: The registered pipeline ID to get modular pipelines for.
         Returns:

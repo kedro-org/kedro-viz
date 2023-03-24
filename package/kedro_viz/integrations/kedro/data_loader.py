@@ -88,11 +88,6 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            session_store_s3_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
-                session_store_s3_location = session_store.s3_location
             catalog = context.catalog
 
             # Pipelines is a lazy dict-like object, so we force it to populate here
@@ -100,7 +95,7 @@ def load_data(
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
 
-        return catalog, pipelines_dict, session_store_location, session_store_s3_location
+        return catalog, pipelines_dict, session_store
 
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
@@ -115,11 +110,8 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
 
-        return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, session_store
 
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
@@ -138,11 +130,8 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
-
-        return context.catalog, context.pipelines, session_store_location
+        
+        return context.catalog, context.pipelines, session_store
 
 
 # The dataset type is available as an attribute if and only if the import from kedro

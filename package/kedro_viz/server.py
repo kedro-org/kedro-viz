@@ -16,6 +16,7 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine, create_merged_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
+from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
 
 DEV_PORT = 4142
 
@@ -29,30 +30,21 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    local_session_store_location: Optional[Path],
-    cloud_session_store_location: str
+    session_store: SQLiteStore
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
     """
 
-    local_database_engine, local_session_class = create_db_engine(local_session_store_location)
-    Base.metadata.create_all(bind=local_database_engine)
+    if session_store.location:
+        if session_store.remote_location:
+            session_store.sync()
+        database_engine, session_class = create_db_engine(session_store.location)
+        Base.metadata.create_all(bind=database_engine)
+        data_access_manager.set_db_session(session_class)
 
-    if local_session_store_location and not cloud_session_store_location:
-        data_access_manager.set_db_read_session(local_session_class)  
-        data_access_manager.set_db_write_session(local_session_class)  
-
-    if cloud_session_store_location:
-        db_location = Path("data/temp_db")
-        db_location.mkdir(parents=True,exist_ok=True)
-        cloud_database_engine, cloud_session_class = create_merged_db_engine(db_location, cloud_session_store_location)
-        Base.metadata.create_all(bind=cloud_database_engine)
-        data_access_manager.set_db_read_session(cloud_session_class)  
-        data_access_manager.set_db_write_session(local_session_class,local_session_store_location,cloud_session_store_location)  
-        
     data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)             
+    data_access_manager.add_pipelines(pipelines)            
 
 
             
@@ -93,7 +85,7 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store_location,session_store_s3_location = kedro_data_loader.load_data(
+        catalog, pipelines, session_store= kedro_data_loader.load_data(
             path, env, extra_params
         )
         pipelines = (
@@ -101,7 +93,7 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store_location, session_store_s3_location)
+        populate_data(data_access_manager, catalog, pipelines, session_store)
         if save_file:
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)
