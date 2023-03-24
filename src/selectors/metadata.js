@@ -39,6 +39,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.originalType,
     (state) => state.node.transcodedTypes,
     (state) => state.node.runCommand,
+    (state) => state.node.preview,
   ],
   (
     nodeId,
@@ -60,7 +61,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeDatasetTypes,
     nodeOriginalTypes,
     nodeTranscodedTypes,
-    nodeRunCommand
+    nodeRunCommand,
+    preview
   ) => {
     if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
@@ -95,6 +97,7 @@ export const getClickedNodeMetaData = createSelector(
       transcodedTypes: nodeTranscodedTypes[nodeId],
       inputs: nodeInputs[nodeId],
       outputs: nodeOutputs[nodeId],
+      preview: preview && preview[nodeId],
     };
 
     return metadata;

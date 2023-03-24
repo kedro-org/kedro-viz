@@ -486,6 +486,10 @@ class DataNode(GraphNode):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
+    def is_preview_node(self):
+        """Checks if the current node has a preview"""
+        return hasattr(self.kedro_obj, "_preview")
+
 
 @dataclass
 class TranscodedDataNode(GraphNode):
@@ -555,6 +559,8 @@ class DataNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
+    preview: Optional[Dict] = field(init=False, default=None)
+
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
@@ -571,6 +577,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             data_node.is_plot_node()
             or data_node.is_image_node()
             or data_node.is_tracking_node()
+            or data_node.is_preview_node()
         ):
             return
 
@@ -586,6 +593,16 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.image = dataset.load()
         elif data_node.is_tracking_node():
             self.tracking_data = dataset.load()
+        elif data_node.is_preview_node():
+            try:
+                self.preview = dataset._preview()  # type: ignore
+            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+                logger.warning(
+                    "'%s' could not be previewed. Full exception: %s: %s",
+                    data_node.full_name,
+                    type(exc).__name__,
+                    exc,
+                )
 
 
 @dataclass

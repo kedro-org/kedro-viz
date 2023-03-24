@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
+import PreviewTable from '../../components/preview-table';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -28,6 +29,7 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({
+  flags,
   isPrettyNameOn,
   metadata,
   onToggleCode,
@@ -56,6 +58,7 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
+  const hasPreviewData = Boolean(metadata?.preview) && flags.previewDataSet;
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -88,7 +91,7 @@ const MetaData = ({
     toFlowchartPage();
   };
 
-  const onExpandPlotClick = () => {
+  const onExpandMetaDataClick = () => {
     onToggleMetadataModal(true);
   };
 
@@ -235,7 +238,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
                       data={metadata.plot.data}
@@ -245,7 +248,7 @@ const MetaData = ({
                   </div>
                   <button
                     className="pipeline-metadata__link"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
@@ -258,7 +261,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <img
                       alt="Matplotlib rendering"
@@ -268,7 +271,7 @@ const MetaData = ({
                   </div>
                   <button
                     className="pipeline-metadata__link"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
@@ -292,6 +295,28 @@ const MetaData = ({
                   </span>
                 </button>
               )}
+              {hasPreviewData && (
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <PreviewTable
+                      data={metadata.preview}
+                      size="small"
+                      onClick={onExpandMetaDataClick}
+                    />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand Preview Table
+                    </span>
+                  </button>
+                </>
+              )}
             </div>
           </>
         )}
@@ -301,6 +326,7 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
+  flags: state.flags,
   isPrettyNameOn: state.prettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,

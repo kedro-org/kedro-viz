@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
+import PreviewTable from '../preview-table';
 import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
@@ -12,8 +13,9 @@ import './metadata-modal.css';
 const MetadataModal = ({ metadata, onToggle, visible }) => {
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
+  const hasPreview = Boolean(metadata?.preview);
 
-  if (!visible.metadataModal || (!hasPlot && !hasImage)) {
+  if (!visible.metadataModal || (!hasPlot && !hasImage && !hasPreview)) {
     return null;
   }
 
@@ -25,18 +27,28 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
 
   return (
     <div className="pipeline-metadata-modal">
-      <div className="pipeline-plot-modal__top">
+      <div className="pipeline-metadata-modal__top">
         <button
-          className="pipeline-plot-modal__back"
+          className="pipeline-metadata-modal__back"
           onClick={onCollapsePlotClick}
         >
-          <BackIcon className="pipeline-plot-modal__back-icon"></BackIcon>
-          <span className="pipeline-plot-modal__back-text">Back</span>
+          <BackIcon className="pipeline-metadata-modal__back-icon"></BackIcon>
+          <span className="pipeline-metadata-modal__back-text">Back</span>
         </button>
-        <div className="pipeline-plot-modal__header">
-          <NodeIcon className="pipeline-plot-modal__icon" icon={nodeTypeIcon} />
-          <span className="pipeline-plot-modal__title">{metadata.name}</span>
+        <div className="pipeline-metadata-modal__header">
+          <NodeIcon
+            className="pipeline-metadata-modal__icon"
+            icon={nodeTypeIcon}
+          />
+          <span className="pipeline-metadata-modal__title">
+            {metadata.name}
+          </span>
         </div>
+        {hasPreview && (
+          <div className="pipeline-metadata-modal__preview-text">
+            Previewing first 40 rows only
+          </div>
+        )}
       </div>
       {hasPlot && (
         <PlotlyChart
@@ -56,19 +68,26 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
           </div>
         </div>
       )}
-      <div className="pipeline-plot-modal__bottom">
-        <button
-          className="pipeline-plot-modal__collapse-plot"
-          onClick={onCollapsePlotClick}
-        >
-          <CollapseIcon className="pipeline-plot-modal__collapse-plot-icon"></CollapseIcon>
-          <span className="pipeline-plot-modal__collapse-plot-text">
-            {hasPlot
-              ? 'Collapse Plotly Visualization'
-              : 'Collapse Matplotlib Image'}
-          </span>
-        </button>
-      </div>
+      {hasPreview && (
+        <div className="pipeline-metadata-modal__preview">
+          <PreviewTable data={metadata.preview} size="large" />
+        </div>
+      )}
+      {!hasPreview && (
+        <div className="pipeline-metadata-modal__bottom">
+          <button
+            className="pipeline-metadata-modal__collapse-plot"
+            onClick={onCollapsePlotClick}
+          >
+            <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
+            <span className="pipeline-metadata-modal__collapse-plot-text">
+              {hasPlot
+                ? 'Collapse Plotly Visualization'
+                : 'Collapse Matplotlib Image'}
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

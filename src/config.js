@@ -62,6 +62,12 @@ export const flags = {
     default: false,
     icon: '🔛',
   },
+  previewDataSet: {
+    name: 'Preview datasets',
+    description: 'Enable dataset previews in the metadata panel',
+    default: true,
+    icon: '🗂',
+  },
 };
 
 export const settings = {

@@ -3,6 +3,7 @@
 
 .kui-theme--light {
   --color-metadata-bg: #{variables.$white-200};
+  --color-metadata-preview-bg: #{variables.$grey-200};
   --color-metadata-kind-token-bg: #{variables.$white-400};
   --color-plot-bg: #{variables.$white-400};
   --color-button-plot: #{variables.$blue-900};
@@ -12,6 +13,7 @@
 
 .kui-theme--dark {
   --color-metadata-bg: #{variables.$slate-500};
+  --color-metadata-preview-bg: #{variables.$slate-800};
   --color-metadata-kind-token-bg: #{variables.$slate-0};
   --color-plot-bg: #{variables.$slate-700};
   --color-button-plot: #{variables.$blue-900};
@@ -240,11 +242,13 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__link {
   @extend %button;
 
+  align-items: center;
+  background-color: var(--color-button-plot);
   display: flex;
   flex-direction: row;
-  align-items: center;
+  justify-content: center;
   padding: 0;
-  background-color: var(--color-button-plot);
+  z-index: 1;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);
@@ -269,4 +273,41 @@ $list-inline-spacing: 0.2em;
     font-family: variables.$font-monospace;
     font-size: 0.87em;
   }
+}
+
+.pipeline-metadata__preview {
+  background: var(--color-metadata-preview-bg);
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pipeline-metadata__preview-shadow-box-right {
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    var(--color-metadata-preview-bg)
+  );
+  border: none;
+  content: ' ';
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50px;
+}
+
+.pipeline-metadata__preview-shadow-box-bottom {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0),
+    var(--color-metadata-preview-bg)
+  );
+  border: none;
+  content: ' ';
+  width: 100%;
+  left: 0%;
+  position: absolute;
+  bottom: 0;
+  height: 40px;
 }
