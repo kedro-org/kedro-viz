@@ -94,7 +94,7 @@ def create_api_app_from_project(
             return Response(status_code=304)
 
         return Response()
-    
+
     return app
 
 

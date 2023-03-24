@@ -266,7 +266,7 @@ class DataAccessManager:
         parameters_node: ParametersNode, task_node: TaskNode
     ):
         """Add parameters to a task node in order to show which task node has parameters.
-        
+
         Args:
             parameters_node: The parameters to add.
             task_node: The task node to add parameters to.
@@ -282,8 +282,8 @@ class DataAccessManager:
         """Return the default selected pipeline ID to display on first page load.
         If the DEFAULT_REGISTERED_PIPELINE_ID is present in user's project,
         use that. Otherwise, return the first one in the list of registered pipelines.
-       
-       Returns:
+
+        Returns:
             The default selected RegisteredPipeline instance.
         """
         default_pipeline = RegisteredPipeline(id=DEFAULT_REGISTERED_PIPELINE_ID)
@@ -297,7 +297,7 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphNode]:
         """Return all nodes for a given registered pipeline.
-        
+
         Args:
             registered_pipeline_id: The registered pipeline ID to get nodes for.
         Returns:
@@ -312,7 +312,7 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[GraphEdge]:
         """Return all edges for a given registered pipeline.
-        
+
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
         Returns:
@@ -324,7 +324,7 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, Set]:
         """Return all node dependencies for a given registered pipeline.
-        
+
         Args:
             registered_pipeline_id: The registered pipeline ID to get edges for.
         Returns:
@@ -337,7 +337,7 @@ class DataAccessManager:
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> List[str]:
         """Return layers in a topologically sorted order for a registered pipeline.
-        
+
         Args:
             registered_pipeline_id: The registered pipeline ID to get sorted layers for.
         Returns:
@@ -358,7 +358,7 @@ class DataAccessManager:
         as well as modular pipeline edges to the list of edges in the registered pipeline.
         N.B. The method is named `create_` to also imply that it has side effect on
         other repositories in the data access manager.
-        
+
         Args:
             registered_pipeline_id: The registered pipeline ID to get modular pipelines for.
         Returns:
