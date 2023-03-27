@@ -1,10 +1,10 @@
 export const updateContent = {
-  date: '24 March 2023',
+  date: '27 March 2023',
   features: [
     {
       title: 'New Update Panel',
       image: '',
-      copy: "This new and improved update panel will provide more context into what's new in each Kedro-Viz release.",
+      copy: "This new and improved update panel provides more context into what's new in each Kedro-Viz release.",
       buttonLink: '',
       buttonText: '',
     },
