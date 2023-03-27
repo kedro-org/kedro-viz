@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
-import { loadState, saveState } from './helpers';
+import { loadLocalStorage, saveLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { settings, sidebarWidth } from '../config';
+import { settings, sidebarWidth, localStorageName } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -51,7 +51,7 @@ export const createInitialState = () => ({
  * @return {Object} Combined state from localStorage
  */
 export const mergeLocalStorage = (state) => {
-  const localStorageState = loadState();
+  const localStorageState = loadLocalStorage(localStorageName);
   Object.keys(localStorageState).forEach((key) => {
     if (!state[key]) {
       delete localStorageState[key];
@@ -119,7 +119,7 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  saveState({
+  saveLocalStorage(localStorageName, {
     nodeType: {
       // Default to disabled parameters and other types enabled
       disabled: { parameters: true, task: false, data: false },

@@ -3,7 +3,10 @@ import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
-import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import {
+  ExperimentTrackingTooltip,
+  tooltipDefaultProps,
+} from '../tooltip/tooltip';
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import { formatTimestamp } from '../../../utils/date-utils';
 
@@ -164,7 +167,7 @@ export const ParallelCoordinates = ({
 
   return (
     <div className="parallel-coordinates">
-      <MetricsChartsTooltip
+      <ExperimentTrackingTooltip
         content={showTooltip.content}
         direction={showTooltip.direction}
         position={showTooltip.position}

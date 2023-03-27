@@ -1,6 +1,7 @@
 export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
+export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
@@ -61,6 +62,12 @@ export const flags = {
     default: false,
     icon: '🔛',
   },
+  previewDataSet: {
+    name: 'Preview datasets',
+    description: 'Enable dataset previews in the metadata panel',
+    default: true,
+    icon: '🗂',
+  },
 };
 
 export const settings = {
@@ -92,11 +99,17 @@ export const shortTypeMapping = {
   'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
+export const tabLabels = ['Overview', 'Metrics', 'Plots'];
+
 // URL parameters for each element/section
 export const params = {
   focused: 'focused_id=',
   selected: 'selected_id=',
+  selectedName: 'selected_name=',
   pipeline: 'pipeline_id=',
+  run: 'run_ids=',
+  view: 'view=',
+  comparisonMode: 'comparison=',
 };
 
 const activePipeline = `${params.pipeline}:pipelineId`;
@@ -106,5 +119,11 @@ export const routes = {
     main: '/',
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
+  },
+  experimentTracking: {
+    main: '/experiment-tracking',
+    selectedView: `/experiment-tracking?${params.view}:view`,
+    selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
 };

@@ -10,6 +10,10 @@
   }
 }
 
+.pipeline-nodelist-section > ul.MuiTreeView-root {
+  padding: 0 0 0 20px;
+}
+
 .pipeline-nodelist__elements-panel {
   .pipeline-nodelist-section:last-child {
     padding-bottom: 28px;

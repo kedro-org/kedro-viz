@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
+import PreviewTable from '../../components/preview-table';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -17,13 +18,18 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
-import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
+import {
+  useGeneratePathname,
+  useGeneratePathnameForExperimentTracking,
+} from '../../utils/hooks/use-generate-pathname';
+
 import './styles/metadata.css';
 
 /**
  * Shows node meta data
  */
 const MetaData = ({
+  flags,
   isPrettyNameOn,
   metadata,
   onToggleCode,
@@ -34,6 +40,9 @@ const MetaData = ({
   visibleCode,
 }) => {
   const { toFlowchartPage } = useGeneratePathname();
+  const { toExperimentTrackingPath, toMetricsViewPath } =
+    useGeneratePathnameForExperimentTracking();
+
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
   // Hide plot modal when selected metadata changes
@@ -49,6 +58,8 @@ const MetaData = ({
   const hasPlot = Boolean(metadata?.plot);
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
+  const hasPreviewData = Boolean(metadata?.preview) && flags.previewDataSet;
+  const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -80,7 +91,7 @@ const MetaData = ({
     toFlowchartPage();
   };
 
-  const onExpandPlotClick = () => {
+  const onExpandMetaDataClick = () => {
     onToggleMetadataModal(true);
   };
 
@@ -89,8 +100,12 @@ const MetaData = ({
     return string?.replace(/^\//g, '');
   };
 
-  const shortenDatasetType = (string) => {
-    return string?.split('.').pop();
+  const shortenDatasetType = (value) => {
+    const isList = Array.isArray(value);
+
+    return isList
+      ? value.map((val) => val.split('.').pop())
+      : value?.split('.').pop();
   };
 
   return (
@@ -159,12 +174,12 @@ const MetaData = ({
                     <MetaDataRow
                       label="Original Type:"
                       visible={isDataNode}
-                      value={metadata.originalType}
+                      value={shortenDatasetType(metadata.originalType)}
                     />
                     <MetaDataRow
                       label="Transcoded Types:"
                       visible={isDataNode}
-                      value={metadata.transcodedTypes}
+                      value={shortenDatasetType(metadata.transcodedTypes)}
                     />
                   </>
                 )}
@@ -223,7 +238,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
                       data={metadata.plot.data}
@@ -232,11 +247,11 @@ const MetaData = ({
                     />
                   </div>
                   <button
-                    className="pipeline-metadata__expand-plot"
-                    onClick={onExpandPlotClick}
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
                   >
-                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__expand-plot-text">
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
                       Expand Plotly Visualization
                     </span>
                   </button>
@@ -246,7 +261,7 @@ const MetaData = ({
                 <>
                   <div
                     className="pipeline-metadata__plot"
-                    onClick={onExpandPlotClick}
+                    onClick={onExpandMetaDataClick}
                   >
                     <img
                       alt="Matplotlib rendering"
@@ -255,12 +270,49 @@ const MetaData = ({
                     />
                   </div>
                   <button
-                    className="pipeline-metadata__expand-plot"
-                    onClick={onExpandPlotClick}
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
                   >
-                    <ExpandIcon className="pipeline-metadata__expand-plot-icon"></ExpandIcon>
-                    <span className="pipeline-metadata__expand-plot-text">
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
                       Expand Matplotlib Image
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasTrackingData && (
+                <button
+                  className="pipeline-metadata__link"
+                  onClick={
+                    isMetricsTrackingDataset
+                      ? toMetricsViewPath
+                      : toExperimentTrackingPath
+                  }
+                >
+                  <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                  <span className="pipeline-metadata__link-text">
+                    Open in Experiment Tracking
+                  </span>
+                </button>
+              )}
+              {hasPreviewData && (
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <PreviewTable
+                      data={metadata.preview}
+                      size="small"
+                      onClick={onExpandMetaDataClick}
+                    />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand Preview Table
                     </span>
                   </button>
                 </>
@@ -274,6 +326,7 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
+  flags: state.flags,
   isPrettyNameOn: state.prettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,

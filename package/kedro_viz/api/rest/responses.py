@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
-# pylint: disable=missing-class-docstring,too-few-public-methods
+# pylint: disable=missing-class-docstring,too-few-public-methods,invalid-name
 import abc
 from typing import Any, Dict, List, Optional, Union
 
@@ -116,6 +116,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     image: Optional[str]
     tracking_data: Optional[Dict]
     run_command: Optional[str]
+    preview: Optional[Dict]
 
     class Config:
         schema_extra = {

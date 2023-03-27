@@ -3,24 +3,18 @@
 import abc
 import hashlib
 import inspect
-import json as json_stdlib
 import logging
 import re
 from dataclasses import InitVar, dataclass, field
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
-import pandas as pd
-import plotly.express as px
-import plotly.io as pio
 from kedro.io import AbstractDataSet
-from kedro.io.core import VERSION_FORMAT, DataSetError
+from kedro.io.core import DataSetError
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-from pandas.core.frame import DataFrame
 
 from .utils import get_dataset_type
 
@@ -492,6 +486,10 @@ class DataNode(GraphNode):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
+    def is_preview_node(self):
+        """Checks if the current node has a preview"""
+        return hasattr(self.kedro_obj, "_preview")
+
 
 @dataclass
 class TranscodedDataNode(GraphNode):
@@ -561,6 +559,8 @@ class DataNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this data node
     run_command: Optional[str] = field(init=False, default=None)
 
+    preview: Optional[Dict] = field(init=False, default=None)
+
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
@@ -577,6 +577,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             data_node.is_plot_node()
             or data_node.is_image_node()
             or data_node.is_tracking_node()
+            or data_node.is_preview_node()
         ):
             return
 
@@ -592,74 +593,16 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.image = dataset.load()
         elif data_node.is_tracking_node():
             self.tracking_data = dataset.load()
-
-            if data_node.is_metric_node():
-                metrics_data = self.load_versioned_tracking_data(self.filepath)
-                if not metrics_data:
-                    return
-                self.plot = self.create_metrics_plot(
-                    pd.DataFrame.from_dict(metrics_data, orient="index")
-                )
-
-    # TODO: improve this scheme.
-    @staticmethod
-    def load_versioned_tracking_data(
-        filepath: Optional[str] = None, num_versions: int = 10
-    ) -> Optional[Dict[datetime, Any]]:
-        """Load data for multiple versions of the metrics dataset
-        Args:
-            filepath: the path whether the dataset is located.
-            num_versions: the maximum number of past versions we want to load.
-        Returns:
-            A dictionary containing the version and the json data inside each version
-        """
-        if not filepath:
-            return None  # pragma: no cover
-
-        version_list = [
-            path
-            for path in sorted(Path(filepath).iterdir(), reverse=True)
-            if path.is_dir()
-        ]
-        versions = {}
-        for version in version_list[:num_versions]:
+        elif data_node.is_preview_node():
             try:
-                run_id = datetime.strptime(version.name, VERSION_FORMAT)
-            except ValueError:
+                self.preview = dataset._preview()  # type: ignore
+            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
-                    """Expected run_id (timestamp) of format YYYY-MM-DDTHH:MM:SS.ffffff.
-                    Skip when loading tracking data."""
+                    "'%s' could not be previewed. Full exception: %s: %s",
+                    data_node.full_name,
+                    type(exc).__name__,
+                    exc,
                 )
-                continue
-            else:
-                path = version / Path(filepath).name
-                with open(path, encoding="utf8") as fs_file:
-                    versions[run_id] = json_stdlib.load(fs_file)
-        return versions
-
-    @staticmethod
-    def create_metrics_plot(data_frame: DataFrame) -> Dict[str, Any]:
-        """
-        Args:
-            data_frame: dataframe with the metrics data from all versions
-        Returns:
-            a plotly line chart object with metrics data
-        """
-        renamed_df = data_frame.reset_index().rename(columns={"index": "version"})
-        melted_sorted_df = pd.melt(
-            renamed_df, id_vars="version", var_name="metrics"
-        ).sort_values(by="version")
-        return json_stdlib.loads(
-            pio.to_json(
-                px.line(
-                    melted_sorted_df,
-                    x="version",
-                    y="value",
-                    color="metrics",
-                    title="Metrics trend",
-                )
-            )
-        )
 
 
 @dataclass

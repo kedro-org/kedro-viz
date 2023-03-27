@@ -9,12 +9,12 @@ import RunDetailsModal from '../run-details-modal';
 import RunExportModal from '../run-export-modal';
 import RunMetadata from '../run-metadata';
 import RunPlotsModal from '../run-plots-modal';
+import { tabLabels } from '../../../config';
 
 import './details.css';
 
-const tabLabels = ['Overview', 'Metrics', 'Plots'];
-
 const Details = ({
+  activeTab,
   enableComparisonView,
   enableShowChanges,
   isRunDataLoading,
@@ -25,6 +25,7 @@ const Details = ({
   runMetadata,
   runTrackingData,
   selectedRunIds,
+  setActiveTab,
   setIsDisplayingMetrics,
   setPinnedRun,
   setShowRunDetailsModal,
@@ -40,7 +41,6 @@ const Details = ({
   const [runDatasetToShow, setRunDatasetToShow] = useState({});
   const [showSingleRunLoader, setShowSingleRunLoader] = useState(false);
   const [showRunLoader, setRunLoader] = useState(false);
-  const [activeTab, setActiveTab] = useState(tabLabels[0]);
 
   // Delay showing loader for 0.2s so it has enough time to load the data first
   useEffect(() => {

@@ -21,11 +21,28 @@ $toggle-width: 1.15em;
   font-weight: 600;
 
   &--medium {
+    cursor: pointer;
     font-size: 1.3em;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+
+    &:hover {
+      font-weight: 700;
+    }
   }
 
   &--large {
     font-size: 1.6em;
+  }
+}
+
+.accordion__title--hyperlink {
+  color: var(--color-default-alt);
+
+  &:visited {
+    color: var(--color-default-alt);
+    text-decoration: none;
   }
 }
 
