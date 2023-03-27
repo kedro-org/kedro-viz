@@ -112,8 +112,6 @@ class SQLiteStore(BaseSessionStore):
     def download(self) -> List[str]:
         """Download all the dbs from an s3 locations"""
         protocol, _ = get_protocol_and_path(self._remote_path)
-        tmp_dir = Path(f'{self.location.parent}/tmp_dbs/')
-        tmp_dir.mkdir(parents=True,exist_ok=True)
         fs = fsspec.filesystem(protocol)
         databases = fs.glob(f"{self._remote_path}/*.db")
         databases_location = []
@@ -156,9 +154,9 @@ class SQLiteStore(BaseSessionStore):
                 
 
     def sync(self):
-        self.upload()
         downloaded_dbs = self.download()
-        self.merge(downloaded_dbs)      
+        self.merge(downloaded_dbs)    
+        self.upload()  
 
 
 
