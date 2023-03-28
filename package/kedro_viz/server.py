@@ -44,11 +44,8 @@ def populate_data(
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)            
-
-
-            
-
+    data_access_manager.add_pipelines(pipelines)     
+    data_access_manager.add_session_store(session_store)       
 
 def run_server(
     host: str = DEFAULT_HOST,

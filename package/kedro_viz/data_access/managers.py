@@ -26,6 +26,8 @@ from kedro_viz.models.flowchart import (
 )
 from kedro_viz.services import layers_services, modular_pipelines_services
 
+from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
+
 from .repositories import (
     CatalogRepository,
     GraphEdgesRepository,
@@ -66,6 +68,10 @@ class DataAccessManager:
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
         self.runs.set_db_session(db_session_class)
+
+    def add_session_store(self, session_store: SQLiteStore):
+        """Set db session on repositories that need it."""
+        self.runs.add_session_store(session_store)
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to

@@ -17,15 +17,10 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiment_tracking import Base, RunModel
+from kedro_viz.models.experiment_tracking import Base, RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
 
-def cast_to_run_model(row):
-    new_run = RunModel()
-    for key in row._fields:
-        setattr(new_run, key, row.column_n)
-    return new_run
 
 def get_db(session_class: sessionmaker) -> Generator:
     """Makes connection to the database"""
@@ -37,7 +32,7 @@ def get_db(session_class: sessionmaker) -> Generator:
 
 def _get_dbname():
         try:
-            return getpass.getuser()
+            return f'{getpass.getuser()}.db'
         
         except Exception as exc:  # pylint: disable=broad-except
             unique_id = uuid.uuid4()
@@ -46,7 +41,7 @@ def _get_dbname():
                  for user's database name  Exception: %s""",
                 unique_id,exc,
             )
-            return unique_id
+            return f'{unique_id}.db'
 
 
 def _is_json_serializable(obj: Any):
@@ -95,10 +90,16 @@ class SQLiteStore(BaseSessionStore):
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
-        database.add(session_store_data)
-        database.commit()
+        try:
+            database.add(session_store_data)
+            database.commit()
+        except Exception as e:
+            pass
+        finally:
+            database.close()
+
         if self.remote_location:
-            self.upload()
+            self.sync()
 
     def upload(self):
         """Upload the session store db to s3"""
@@ -106,7 +107,7 @@ class SQLiteStore(BaseSessionStore):
         db_name = _get_dbname()
         fs = fsspec.filesystem(protocol)
         with open(self.location, 'rb') as file:
-            with fs.open(f'{self._remote_path}/{db_name}.db', 'wb') as s3f:
+            with fs.open(f'{self._remote_path}/{db_name}', 'wb') as s3f:
                 s3f.write(file.read())
     
     def download(self) -> List[str]:
@@ -133,7 +134,11 @@ class SQLiteStore(BaseSessionStore):
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
 
+        temp_engine = None
         for db_loc in databases_location:
+
+            if temp_engine: 
+                temp_engine.dispose()
             temp_engine = create_engine(f'sqlite:///{db_loc}')
             with temp_engine.connect() as database_conn:
                 db_metadata = MetaData()
@@ -142,16 +147,32 @@ class SQLiteStore(BaseSessionStore):
                     if table_name == 'runs':
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
-                            try: 
-                                row_dict = row._asdict()
-                                session_store_data = RunModel(id=row_dict['id'], blob=row_dict['blob'])
+                            row_dict = row._asdict()
+                            session_store_data = RunModel(**row_dict)
+                            try:
                                 database.add(session_store_data)
                                 database.commit()
                             except Exception as e:
-                                  pass
+                                database.rollback()
+                                pass
+                            finally: 
+                                database.close()
+                    if table_name == 'user_run_details' and _get_dbname() in db_loc:
+                        data = database_conn.execute(table_obj.select()).fetchall()
+                        print(data)
+                        for row in data:
+                            row_dict = row._asdict()
+                            user_details_data = UserRunDetailsModel(**row_dict)
+                            try:
+                                database.add(user_details_data)
+                                database.commit()
+                            except Exception as e:
+                                database.rollback()
+                                print(e)
+                            finally: 
+                                database.close()
             temp_engine.dispose()
             os.remove(db_loc)
-                
 
     def sync(self):
         downloaded_dbs = self.download()
