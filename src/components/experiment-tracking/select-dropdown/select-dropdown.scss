@@ -1,0 +1,32 @@
+@use '../../../styles/variables' as variables;
+
+.kui-theme--light {
+  -select-dropdown-bg-hover: #{variables.$white-600};
+  -select-dropdown-text-color: #{variables.$black-800};
+}
+
+.kui-theme--dark {
+  -select-dropdown-bg-hover: #{variables.$slate-500};
+  -select-dropdown-text-color: #{variables.$white-600};
+}
+
+.select-dropdown__checkbox {
+  display: flex;
+  justify-content: space-around;
+
+  .menu-option {
+    max-width: 80%;
+  }
+
+  .menu-option__content {
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.select-dropdown__checkbox:hover {
+  background: variables.$slate-500;
+}
