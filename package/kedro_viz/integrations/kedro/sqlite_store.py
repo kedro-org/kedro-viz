@@ -1,20 +1,19 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
 
-import json
 import getpass
-import uuid
-import os
+import json
 import logging
-import fsspec
-import time 
+import os
+import time
+import uuid
 from pathlib import Path
 from typing import Any, Generator, List
 
+import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-
-from sqlalchemy import create_engine, MetaData, event
+from sqlalchemy import MetaData, create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -31,18 +30,20 @@ def get_db(session_class: sessionmaker) -> Generator:
     finally:
         database.close()
 
+
 def _get_dbname():
-        try:
-            return f'{getpass.getuser()}.db'
-        
-        except Exception as exc:  # pylint: disable=broad-except
-            unique_id = uuid.uuid4()
-            logger.warning(
-                """Something went wrong with getting the username. Generated unique id %s for 
+    try:
+        return f"{getpass.getuser()}.db"
+
+    except Exception as exc:  # pylint: disable=broad-except
+        unique_id = uuid.uuid4()
+        logger.warning(
+            """Something went wrong with getting the username. Generated unique id %s for 
                  for user's database name  Exception: %s""",
-                unique_id,exc,
-            )
-            return f'{unique_id}.db'
+            unique_id,
+            exc,
+        )
+        return f"{unique_id}.db"
 
 
 def _is_json_serializable(obj: Any):
@@ -51,6 +52,7 @@ def _is_json_serializable(obj: Any):
         return True
     except (TypeError, OverflowError):
         return False
+
 
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
@@ -83,7 +85,7 @@ class SQLiteStore(BaseSessionStore):
             else:
                 session_dict[key] = str(value)
         return json.dumps(session_dict)
-    
+
     def on_commit_sync(self, _):
         self.sync()
 
@@ -92,7 +94,7 @@ class SQLiteStore(BaseSessionStore):
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
-        event.listen(database, 'after_commit', self.on_commit_sync)
+        event.listen(database, "after_commit", self.on_commit_sync)
 
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
         try:
@@ -108,10 +110,10 @@ class SQLiteStore(BaseSessionStore):
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
         fs = fsspec.filesystem(protocol)
-        with open(self.location, 'rb') as file:
-            with fs.open(f'{self._remote_path}/{db_name}', 'wb') as s3f:
+        with open(self.location, "rb") as file:
+            with fs.open(f"{self._remote_path}/{db_name}", "wb") as s3f:
                 s3f.write(file.read())
-    
+
     def download(self) -> List[str]:
         """Download all the dbs from an s3 locations"""
         protocol, _ = get_protocol_and_path(self._remote_path)
@@ -120,14 +122,15 @@ class SQLiteStore(BaseSessionStore):
         databases_location = []
         for database in databases:
             database_name = os.path.basename(database)
-            with fs.open(database, 'rb') as file:
+            with fs.open(database, "rb") as file:
                 db_data = file.read()
-            db_loc = f'{self._path}/{database_name}'
-            with open(db_loc,'wb') as temp_db:
+            db_loc = f"{self._path}/{database_name}"
+            with open(db_loc, "wb") as temp_db:
                 temp_db.write(db_data)
             databases_location.append(db_loc)
         return databases_location
-    def merge(self, databases_location: List[str]): 
+
+    def merge(self, databases_location: List[str]):
         "Merge all dbs to the local session_store.db"
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
@@ -135,15 +138,14 @@ class SQLiteStore(BaseSessionStore):
 
         temp_engine = None
         for db_loc in databases_location:
-
-            if temp_engine: 
+            if temp_engine:
                 temp_engine.dispose()
-            temp_engine = create_engine(f'sqlite:///{db_loc}')
+            temp_engine = create_engine(f"sqlite:///{db_loc}")
             with temp_engine.connect() as database_conn:
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
                 for table_name, table_obj in db_metadata.tables.items():
-                    if table_name == 'runs':
+                    if table_name == "runs":
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
                             row_dict = row._asdict()
@@ -154,9 +156,9 @@ class SQLiteStore(BaseSessionStore):
                             except Exception as e:
                                 database.rollback()
                                 pass
-                            finally: 
+                            finally:
                                 database.close()
-                    if table_name == 'user_run_details' and _get_dbname() in db_loc:
+                    if table_name == "user_run_details" and _get_dbname() in db_loc:
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
                             row_dict = row._asdict()
@@ -166,7 +168,7 @@ class SQLiteStore(BaseSessionStore):
                                 database.commit()
                             except Exception as e:
                                 database.rollback()
-                            finally: 
+                            finally:
                                 database.close()
             temp_engine.dispose()
             os.remove(db_loc)
@@ -174,20 +176,5 @@ class SQLiteStore(BaseSessionStore):
     def sync(self):
         if self.remote_location:
             downloaded_dbs = self.download()
-            self.merge(downloaded_dbs)   
-            self.upload() 
-
-
-
-
-
-
-
-            
-            
-
-
-   
-
-    
-
+            self.merge(downloaded_dbs)
+            self.upload()

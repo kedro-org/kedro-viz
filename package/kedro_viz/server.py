@@ -7,6 +7,7 @@ import uvicorn
 from fastapi.encoders import jsonable_encoder
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
+from sqlalchemy import event
 from watchgod import run_process
 
 from kedro_viz.api import apps
@@ -15,10 +16,8 @@ from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.models.experiment_tracking import Base
 from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
-
-from sqlalchemy import event
+from kedro_viz.models.experiment_tracking import Base
 
 DEV_PORT = 4142
 
@@ -32,7 +31,7 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store: SQLiteStore
+    session_store: SQLiteStore,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creatinge an api app from project.
@@ -42,11 +41,12 @@ def populate_data(
         session_store.sync()
         database_engine, session_class = create_db_engine(session_store.location)
         Base.metadata.create_all(bind=database_engine)
-        event.listen(session_class, 'after_commit', session_store.on_commit_sync)
+        event.listen(session_class, "after_commit", session_store.on_commit_sync)
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)         
+    data_access_manager.add_pipelines(pipelines)
+
 
 def run_server(
     host: str = DEFAULT_HOST,
@@ -83,7 +83,7 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store= kedro_data_loader.load_data(
+        catalog, pipelines, session_store = kedro_data_loader.load_data(
             path, env, extra_params
         )
         pipelines = (

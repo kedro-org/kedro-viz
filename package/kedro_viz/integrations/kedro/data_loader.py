@@ -130,7 +130,7 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-        
+
         return context.catalog, context.pipelines, session_store
 
 

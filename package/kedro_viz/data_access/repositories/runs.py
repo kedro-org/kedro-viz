@@ -106,7 +106,7 @@ class RunsRepository:
     @check_db_session
     def create_or_update_user_run_details(
         self, run_id: str, title: str, bookmark: bool, notes: str
-    ) -> Optional[UserRunDetailsModel]:       
+    ) -> Optional[UserRunDetailsModel]:
         with self._db_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
@@ -121,9 +121,9 @@ class RunsRepository:
                     session.add(user_run_details)
                 except Exception as e:
                     session.rollback()
-                finally: 
+                finally:
                     session.close()
-            
+
             else:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark
