@@ -18,6 +18,8 @@ from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.models.experiment_tracking import Base
 from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
 
+from sqlalchemy import event
+
 DEV_PORT = 4142
 
 
@@ -37,15 +39,14 @@ def populate_data(
     """
 
     if session_store.location:
-        if session_store.remote_location:
-            session_store.sync()
+        session_store.sync()
         database_engine, session_class = create_db_engine(session_store.location)
         Base.metadata.create_all(bind=database_engine)
+        event.listen(session_class, 'after_commit', session_store.on_commit_sync)
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)     
-    data_access_manager.add_session_store(session_store)       
+    data_access_manager.add_pipelines(pipelines)         
 
 def run_server(
     host: str = DEFAULT_HOST,

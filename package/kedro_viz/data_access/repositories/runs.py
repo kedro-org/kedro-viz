@@ -9,8 +9,6 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
-from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
-
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +27,6 @@ def check_db_session(method: Callable) -> Callable:
 
 class RunsRepository:
     _db_session_class: Optional[sessionmaker]
-    _session_store: SQLiteStore
     last_run_id: Optional[str]
 
     def __init__(self, db_session_class: Optional[sessionmaker] = None):
@@ -39,9 +36,6 @@ class RunsRepository:
     def set_db_session(self, db_session_class: sessionmaker):
         """Sqlite db connection session"""
         self._db_session_class = db_session_class
-
-    def add_session_store(self, session_store: SQLiteStore):
-        self._session_store = session_store
 
     @check_db_session
     def add_run(self, run: RunModel):
@@ -112,7 +106,7 @@ class RunsRepository:
     @check_db_session
     def create_or_update_user_run_details(
         self, run_id: str, title: str, bookmark: bool, notes: str
-    ) -> Optional[UserRunDetailsModel]:
+    ) -> Optional[UserRunDetailsModel]:       
         with self._db_session_class.begin() as session:  # type: ignore
             user_run_details = (
                 session.query(UserRunDetailsModel)
@@ -125,10 +119,8 @@ class RunsRepository:
                 )
                 try:
                     session.add(user_run_details)
-                    session.commit()
                 except Exception as e:
                     session.rollback()
-                    pass
                 finally: 
                     session.close()
             
@@ -136,8 +128,5 @@ class RunsRepository:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark
                 user_run_details.notes = notes
-             
-        if self._session_store.remote_location:
-            self._session_store.upload()
 
         return user_run_details

@@ -7,13 +7,14 @@ import uuid
 import os
 import logging
 import fsspec
+import time 
 from pathlib import Path
 from typing import Any, Generator, List
 
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
 
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, event
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -51,7 +52,6 @@ def _is_json_serializable(obj: Any):
     except (TypeError, OverflowError):
         return False
 
-
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
@@ -83,12 +83,17 @@ class SQLiteStore(BaseSessionStore):
             else:
                 session_dict[key] = str(value)
         return json.dumps(session_dict)
+    
+    def on_commit_sync(self, _):
+        self.sync()
 
     def save(self):
         """Save the session store info on db ."""
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
+        event.listen(database, 'after_commit', self.on_commit_sync)
+
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
         try:
             database.add(session_store_data)
@@ -97,9 +102,6 @@ class SQLiteStore(BaseSessionStore):
             pass
         finally:
             database.close()
-
-        if self.remote_location:
-            self.sync()
 
     def upload(self):
         """Upload the session store db to s3"""
@@ -125,9 +127,6 @@ class SQLiteStore(BaseSessionStore):
                 temp_db.write(db_data)
             databases_location.append(db_loc)
         return databases_location
-
-
-    
     def merge(self, databases_location: List[str]): 
         "Merge all dbs to the local session_store.db"
         engine, session_class = create_db_engine(self.location)
@@ -159,7 +158,6 @@ class SQLiteStore(BaseSessionStore):
                                 database.close()
                     if table_name == 'user_run_details' and _get_dbname() in db_loc:
                         data = database_conn.execute(table_obj.select()).fetchall()
-                        print(data)
                         for row in data:
                             row_dict = row._asdict()
                             user_details_data = UserRunDetailsModel(**row_dict)
@@ -168,16 +166,16 @@ class SQLiteStore(BaseSessionStore):
                                 database.commit()
                             except Exception as e:
                                 database.rollback()
-                                print(e)
                             finally: 
                                 database.close()
             temp_engine.dispose()
             os.remove(db_loc)
 
     def sync(self):
-        downloaded_dbs = self.download()
-        self.merge(downloaded_dbs)    
-        self.upload()  
+        if self.remote_location:
+            downloaded_dbs = self.download()
+            self.merge(downloaded_dbs)   
+            self.upload() 
 
 
 
