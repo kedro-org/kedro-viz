@@ -74,6 +74,49 @@ def example_db_session_with_runs(example_db_session, example_run_ids):
 
 
 @pytest.fixture
+def example_db_session_with_params(example_db_session, example_run_ids):
+    with example_db_session.begin() as session:
+        for run_id in example_run_ids:
+            session_data = {
+                "package_name": "testsql",
+                "project_path": "/Users/Projects/testsql",
+                "session_id": run_id,
+                "cli": {
+                    "args": [],
+                    "params": {
+                        "from_inputs": [],
+                        "to_outputs": [],
+                        "from_nodes": [],
+                        "to_nodes": [],
+                        "node_names": (),
+                        "runner": None,
+                        "parallel": False,
+                        "is_async": False,
+                        "env": None,
+                        "tag": (),
+                        "load_version": {},
+                        "pipeline": None,
+                        "config": None,
+                        "params": {
+                            "key1": {
+                                "nested_key1": "value1"
+                            },
+                            "key2": "value2"
+
+                        },
+                    },
+                    "command_name": "run",
+                    "command_path": "kedro run",
+                },
+            }
+            run = RunModel(id=run_id, blob=json.dumps(session_data))
+            user_run_details = UserRunDetailsModel(run_id=run.id, bookmark=True)
+            session.add(run)
+            session.add(user_run_details)
+    yield example_db_session
+
+
+@pytest.fixture
 def data_access_manager_with_no_run(data_access_manager, example_db_session, mocker):
     data_access_manager.set_db_session(example_db_session)
     mocker.patch(
@@ -87,6 +130,17 @@ def data_access_manager_with_runs(
     data_access_manager, example_db_session_with_runs, mocker
 ):
     data_access_manager.set_db_session(example_db_session_with_runs)
+    mocker.patch(
+        "kedro_viz.api.graphql.schema.data_access_manager", data_access_manager
+    )
+    yield data_access_manager
+
+
+@pytest.fixture
+def data_access_manager_with_params(
+    data_access_manager, example_db_session_with_params, mocker
+):
+    data_access_manager.set_db_session(example_db_session_with_params)
     mocker.patch(
         "kedro_viz.api.graphql.schema.data_access_manager", data_access_manager
     )

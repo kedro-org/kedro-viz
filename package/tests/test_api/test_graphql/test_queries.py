@@ -35,6 +35,22 @@ class TestQueryNoRun:
         assert response.json() == {"data": {"runMetadata": []}}
 
 
+@pytest.mark.usefixtures("data_access_manager_with_params")
+class TestQueryRunWithParams:
+    def test_run_list_query_with_params(self, client, example_run_ids):
+        response = client.post("/graphql", json={"query": "{runsList {id runCommand}}"})
+        assert response.json() == {
+            "data": {
+                "runsList": [
+                    {
+                        "id": run_id,
+                        "runCommand": "kedro run --params=key1.nested_key1:value1,key2:value2"}
+                    for run_id in example_run_ids
+                ]
+            }
+        }
+
+
 @pytest.mark.usefixtures("data_access_manager_with_runs")
 class TestQueryWithRuns:
     def test_run_list_query(

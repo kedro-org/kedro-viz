@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from collections.abc import MutableMapping
 from itertools import product
 from typing import Dict, Iterable, List, Optional, cast
 
@@ -13,6 +14,30 @@ from strawberry import ID
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 from .types import Run
+
+
+def flatten_dict(dict_to_flatten: MutableMapping, parent_key="", sep=".") -> Dict:
+    """Flattens a nested dictionary into a single level dictionary."""
+    items: List = []
+    for key, value in dict_to_flatten.items():
+        new_key = parent_key + sep + key if parent_key else key
+        if isinstance(value, MutableMapping):
+            items.extend(flatten_dict(value, new_key, sep=sep).items())
+        else:
+            items.append((new_key, value))
+    return dict(items)
+
+
+def cli_format_run_params(params: Dict[str, str]) -> str:
+    """Convert a nested dictionary of parameters into the required CLI argument format
+
+    Args:
+        params: Nested params dict
+    Returns:
+        String in format "key1.nestedkey1:value1,key2:value2"
+    """
+    params = flatten_dict(params, sep=".")
+    return ",".join([f"{k}:{v}" for k, v in params.items()])
 
 
 def format_run(
@@ -36,6 +61,14 @@ def format_run(
     notes = (
         user_run_details.notes if user_run_details and user_run_details.notes else ""
     )
+    command_path = run_blob.get("cli", {}).get("command_path")
+    params = run_blob.get("cli", {}).get("params", {}).get("params", {})
+    run_command = (
+        command_path + f" --params={cli_format_run_params(params)}"
+        if params
+        else command_path
+    )
+
     run = Run(
         author=run_blob.get("username"),
         bookmark=bookmark,
@@ -43,7 +76,7 @@ def format_run(
         git_sha=git_data.get("commit_sha") if git_data else None,
         id=ID(run_id),
         notes=notes,
-        run_command=run_blob.get("cli", {}).get("command_path"),
+        run_command=run_command,
         title=title,
     )
     return run
