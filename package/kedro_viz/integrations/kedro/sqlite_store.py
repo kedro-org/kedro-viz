@@ -5,7 +5,6 @@ import getpass
 import json
 import logging
 import os
-import time
 import uuid
 from pathlib import Path
 from typing import Any, Generator, List
@@ -52,6 +51,30 @@ def _is_json_serializable(obj: Any):
         return True
     except (TypeError, OverflowError):
         return False
+    
+def _add_to_local_storage(database_name, database_timestamp):
+    try:
+        with open('db.info','r') as file:
+            db_info = json.load(file)
+    except Exception:
+        db_info = {}
+    db_info[database_name] = str(database_timestamp)
+    with open('db.info','w') as file:
+        json.dump(db_info, file)
+    
+def _is_db_updated(database_name, database_timestamp):
+    try: 
+        with open('db.info','r') as file:
+            db_info = json.load(file)
+    except Exception:
+        return True 
+    if database_name not in db_info:
+        return True 
+    local_timestamp = db_info[database_name]
+    if str(database_timestamp) > local_timestamp:
+        return True
+    return False
+
 
 
 class SQLiteStore(BaseSessionStore):
@@ -122,12 +145,16 @@ class SQLiteStore(BaseSessionStore):
         databases_location = []
         for database in databases:
             database_name = os.path.basename(database)
-            with fs.open(database, "rb") as file:
-                db_data = file.read()
-            db_loc = f"{self._path}/{database_name}"
-            with open(db_loc, "wb") as temp_db:
-                temp_db.write(db_data)
-            databases_location.append(db_loc)
+            database_timestamp = fs.info(database)['LastModified']
+            isUpdated = _is_db_updated(database_name,database_timestamp)
+            if isUpdated:
+                with fs.open(database, "rb") as file:
+                    db_data = file.read()
+                db_loc = f"{self._path}/{database_name}"
+                with open(db_loc, "wb") as temp_db:
+                    temp_db.write(db_data)
+                databases_location.append(db_loc)
+                _add_to_local_storage(database_name,database_timestamp)
         return databases_location
 
     def merge(self, databases_location: List[str]):
