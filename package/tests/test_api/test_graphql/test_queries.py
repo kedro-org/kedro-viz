@@ -44,7 +44,8 @@ class TestQueryRunWithParams:
                 "runsList": [
                     {
                         "id": run_id,
-                        "runCommand": "kedro run --params=key1.nested_key1:value1,key2:value2"}
+                        "runCommand": "kedro run --params=key1.nested_key1:value1,key2:value2",
+                    }
                     for run_id in example_run_ids
                 ]
             }

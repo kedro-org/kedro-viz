@@ -97,13 +97,7 @@ def example_db_session_with_params(example_db_session, example_run_ids):
                         "load_version": {},
                         "pipeline": None,
                         "config": None,
-                        "params": {
-                            "key1": {
-                                "nested_key1": "value1"
-                            },
-                            "key2": "value2"
-
-                        },
+                        "params": {"key1": {"nested_key1": "value1"}, "key2": "value2"},
                     },
                     "command_name": "run",
                     "command_path": "kedro run",
