@@ -18,6 +18,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Remove pandas and plotly dependencies from Kedro-viz. (#1268)
+- Add run CLI parameters to Run Command in Kedro-viz. (#1303)
 
 # Release 5.3.0
 
