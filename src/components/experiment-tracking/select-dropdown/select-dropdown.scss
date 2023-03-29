@@ -10,23 +10,75 @@
   -select-dropdown-text-color: #{variables.$white-600};
 }
 
+.select-dropdown {
+  // apply scroll
+  section {
+    height: 379px;
+    overflow: hidden;
+  }
+
+  // overide the fix height and width option from the Dropdown component
+  .dropdown__options {
+    width: 284px;
+    right: 0;
+    max-height: 379px;
+  }
+}
+
+.select-dropdown__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 17px 0 24px 23px;
+}
+
 .select-dropdown__checkbox {
   display: flex;
   justify-content: space-around;
+  // display: block;
+  position: relative;
+  cursor: pointer;
+  margin: 0 33px 12px 18px;
 
-  .menu-option {
+  .select-dropdown__checkbox-text {
+    font-size: 14px;
+    line-height: 20px;
     max-width: 80%;
-  }
-
-  .menu-option__content {
-    span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
 .select-dropdown__checkbox:hover {
   background: variables.$slate-500;
 }
+
+.select-dropdown__apply-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.select-dropdown__apply-btn {
+  width: 77px;
+  height: 28px;
+  margin: 32px 21px 18px auto;
+  border-color: variables.$slate-500;
+}
+
+// // /* Hide the browser's default checkbox */
+// .select-dropdown__checkbox input {
+//   position: absolute;
+//   opacity: 0;
+//   cursor: pointer;
+//   height: 0;
+//   width: 0;
+// }
+
+// /* On mouse-over, add a grey background color */
+// .select-dropdown__checkbox:hover input ~ .checkmark {
+//   background-color: #ccc;
+// }
+
+// .select-dropdown__checkbox input:checked ~ .checkmark {
+//   background-color: black;
+// }

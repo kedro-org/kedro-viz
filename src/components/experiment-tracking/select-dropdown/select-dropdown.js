@@ -1,42 +1,35 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 import Dropdown from '../../ui/dropdown';
-import MenuOption from '../../ui/menu-option';
 
 import './select-dropdown.css';
 
 const CheckboxOption = ({ text, selectedValues, onChange }) => {
   return (
     <label className="select-dropdown__checkbox">
-      <MenuOption
-        primaryText={text}
-        value={text}
-        id={text}
-        onSelected={() => onChange(text)}
-      />
+      <span className="select-dropdown__checkbox-text">{text}</span>
       <input
         type="checkbox"
         id={text}
         checked={selectedValues && selectedValues.includes(text)}
-        // onClick={() => onChange(text)}
+        onChange={() => onChange(text)}
       />
     </label>
   );
 };
 
 const SelectDropdown = ({
-  onToggleOpen,
-  defaultText,
   dropdownValues,
   onChange,
+  selectedDropdownValues,
 }) => {
-  const [selected, setSelected] = useState(dropdownValues);
+  const [selected, setSelected] = useState(selectedDropdownValues);
 
   useEffect(() => {
-    if (dropdownValues) {
-      setSelected(dropdownValues);
+    if (selectedDropdownValues) {
+      setSelected(selectedDropdownValues);
     }
-  }, [dropdownValues]);
+  }, [selectedDropdownValues]);
 
   const onSelectedHandler = useCallback(
     (value) => {
@@ -51,23 +44,37 @@ const SelectDropdown = ({
   );
 
   return (
-    <Dropdown
-      onOpened={() => onToggleOpen(true)}
-      onClosed={() => onToggleOpen(false)}
-      onChanged={() => {}}
-      defaultText={defaultText}
-    >
-      {dropdownValues &&
-        dropdownValues.map((text) => (
-          <CheckboxOption
-            key={text}
-            text={text}
-            selectedValues={selected}
-            onChange={onSelectedHandler}
-          />
-        ))}
-      <button onClick={() => onChange(selected)}>Save</button>
-    </Dropdown>
+    <div className="select-dropdown">
+      <Dropdown
+        onChanged={() => {}}
+        // reset the valur if click close without Apply
+        onClosed={() => setSelected(selectedDropdownValues)}
+        defaultText={`Metrics ${selected ? selected.length : 0}/${
+          dropdownValues ? dropdownValues.length : 0
+        }`}
+      >
+        <div className="select-dropdown__title">Metrics</div>
+        {dropdownValues &&
+          dropdownValues.map((text) => (
+            <CheckboxOption
+              key={text}
+              text={text}
+              selectedValues={selected}
+              onChange={onSelectedHandler}
+            />
+          ))}
+        <div className="select-dropdown__apply-btn-wrapper">
+          <button
+            className="select-dropdown__apply-btn"
+            onClick={() => {
+              onChange(selected);
+            }}
+          >
+            Apply
+          </button>
+        </div>
+      </Dropdown>
+    </div>
   );
 };
 
