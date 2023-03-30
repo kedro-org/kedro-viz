@@ -13,6 +13,40 @@ import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
+// shoudl rename to be more generic
+function removeElementFromMetrics(originalObj, array) {
+  let res = { ...originalObj };
+  // eslint-disable-next-line array-callback-return
+  array.map((each) => {
+    const { [each]: unused, ...rest } = res;
+
+    return (res = { ...rest });
+  });
+
+  return res;
+}
+
+// shoudl rename to be more generic
+const removeElementsFromRuns = (obj, array) => {
+  let res = {};
+  for (const [key, value] of Object.entries(obj)) {
+    let newVal = [...value];
+
+    // eslint-disable-next-line array-callback-return
+    // array.map((each, index) => {
+    //   newVal.splice(array[index], 1);
+    // });
+
+    newVal = newVal.filter(function (value, index) {
+      return array.indexOf(index) === -1;
+    });
+
+    res[key] = newVal;
+  }
+
+  return res;
+};
+
 const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
   const [chartHeight, setChartHeight] = useState(0);
@@ -30,6 +64,15 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
       variables: { limit: metricLimit },
     }
   );
+
+  const metrics =
+    runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
+
+  const originalMetricsData =
+    runMetricsData?.data && runMetricsData?.data.metrics;
+
+  const originalRunsData = runMetricsData?.data && runMetricsData?.data.runs;
+
   const numberOfMetrics = runMetricsData?.data
     ? Object.keys(runMetricsData?.data.metrics).length
     : 0;
@@ -46,6 +89,36 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
   // manipulate the runMetricsData here
   const onSelectedDropdownChanged = (selectedValues) => {
     setSelectedDropdownValues(selectedValues);
+    const missing = {};
+
+    // eslint-disable-next-line array-callback-return
+    metrics.map((metric, index) => {
+      if (selectedValues.indexOf(metric) === -1) {
+        missing[metric] = index;
+      }
+      return missing;
+    });
+
+    // here can be we decide to remove or add metrics?
+    const updatedMetrics = removeElementFromMetrics(
+      originalMetricsData,
+      Object.keys(missing)
+    );
+
+    // here can be we decide to remove or add runs?
+    const updatedRuns = removeElementsFromRuns(
+      originalRunsData,
+      Object.values(missing)
+    );
+
+    const updatedRunData = {
+      ...runData,
+      metrics: updatedMetrics,
+      runs: updatedRuns,
+    };
+
+    debugger;
+    setRunData(updatedRunData);
   };
 
   useEffect(() => {
@@ -90,9 +163,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
           })}
         </div>
         <SelectDropdown
-          dropdownValues={
-            runMetricsData?.data && Object.keys(runMetricsData?.data.metrics)
-          }
+          dropdownValues={metrics}
           selectedDropdownValues={selectedDropdownValues}
           onChange={onSelectedDropdownChanged}
         />
