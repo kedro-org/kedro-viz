@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.0.1
+
+## Bug fixes and other changes
+
+- Fix SQLalchemy dependency conflict with Kedro. (#1300)
+
 # Release 6.0.0
 
 ## Major features and improvements
