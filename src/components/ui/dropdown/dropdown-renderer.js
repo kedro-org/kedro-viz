@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import handleKeyEvent from '../../../utils/key-events';
 import uniqueId from 'lodash/uniqueId';
 import DropdownArrow from '../../icons/dropdown-arrow';
+import Button from '../button';
 
 /**
  * Renderer for the Dropdown component
@@ -14,11 +15,15 @@ const DropdownRenderer = ({
   disabled,
   focusedOption,
   handleRef,
+  haveSelectedValues,
+  onApplyAndClose,
+  onCancel,
   onLabelClicked,
   onOptionSelected,
   onSelectChanged,
   open,
   selectedOption,
+  showCancelApplyBtns,
   title,
   width,
 }) => {
@@ -99,6 +104,8 @@ const DropdownRenderer = ({
       case 'span':
         // Heading
         return child;
+      case 'div':
+        return child;
       default:
         // Menu Option
         return _extendMenuOption(child, `menu-option-${i}`, optionIndex);
@@ -132,7 +139,25 @@ const DropdownRenderer = ({
           <DropdownArrow />
         </span>
       </button>
-      <div className="dropdown__options">{optionsNode}</div>
+      <div className="dropdown__options">
+        {optionsNode}
+
+        {showCancelApplyBtns && (
+          <div className="select-dropdown__btn-wrapper">
+            <Button mode="secondary" onClick={onCancel} size="small">
+              Cancel
+            </Button>
+            <Button
+              disabled={!haveSelectedValues}
+              onClick={onApplyAndClose}
+              mode={'primary'}
+              size="small"
+            >
+              Apply and Close
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

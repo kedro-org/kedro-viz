@@ -24,6 +24,7 @@ const SelectDropdown = ({
   selectedDropdownValues,
 }) => {
   const [selected, setSelected] = useState(selectedDropdownValues);
+  const [haveSelectedValues, setHaveSelectedValues] = useState(false);
 
   useEffect(() => {
     if (selectedDropdownValues) {
@@ -33,6 +34,8 @@ const SelectDropdown = ({
 
   const onSelectedHandler = useCallback(
     (value) => {
+      setHaveSelectedValues(true);
+
       if (selected.includes(value)) {
         const selectedIds = selected.filter((each) => each !== value);
         setSelected(selectedIds);
@@ -46,9 +49,20 @@ const SelectDropdown = ({
   return (
     <div className="select-dropdown">
       <Dropdown
-        onChanged={() => {}}
-        // reset the valur if click close without Apply
-        onClosed={() => setSelected(selectedDropdownValues)}
+        onClosed={() => {
+          setSelected(selectedDropdownValues);
+          setHaveSelectedValues(false);
+        }}
+        showCancelApplyBtns
+        onApplyAndClose={() => {
+          onChange(selected);
+          setHaveSelectedValues(false);
+        }}
+        onCancel={() => {
+          setSelected(selectedDropdownValues);
+          setHaveSelectedValues(false);
+        }}
+        haveSelectedValues={haveSelectedValues}
         defaultText={`Metrics ${selected ? selected.length : 0}/${
           dropdownValues ? dropdownValues.length : 0
         }`}
@@ -63,16 +77,6 @@ const SelectDropdown = ({
               onChange={onSelectedHandler}
             />
           ))}
-        <div className="select-dropdown__apply-btn-wrapper">
-          <button
-            className="select-dropdown__apply-btn"
-            onClick={() => {
-              onChange(selected);
-            }}
-          >
-            Apply
-          </button>
-        </div>
       </Dropdown>
     </div>
   );

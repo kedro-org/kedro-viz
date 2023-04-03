@@ -13,11 +13,24 @@ const Dropdown = (props) => {
     children,
     defaultText,
     disabled,
+    haveSelectedValues,
+    onApplyAndClose,
+    onCancel,
     onChanged,
     onClosed,
     onOpened,
+    showCancelApplyBtns,
     width,
   } = props;
+
+  // onCancel={() => {
+  //       setOpen(false);
+  //       onCancel();
+  //     }}
+  //     onApplyAndClose={() => {
+  //       setOpen(false);
+  //       onApplyAndClose();
+  //     }}
 
   /**
    * Format the selected option props for adding to state
@@ -292,13 +305,23 @@ const Dropdown = (props) => {
     <DropdownRenderer
       defaultText={defaultText}
       disabled={disabled}
+      focusedOption={focusedOption}
       handleRef={_handleRef}
+      haveSelectedValues={haveSelectedValues}
+      onApplyAndClose={() => {
+        setOpen(false);
+        onApplyAndClose();
+      }}
+      onCancel={() => {
+        setOpen(false);
+        onCancel();
+      }}
       onLabelClicked={_handleLabelClicked}
       onOptionSelected={_handleOptionSelected}
       onSelectChanged={_handleFocusChange}
       open={open}
-      focusedOption={focusedOption}
       selectedOption={selectedOption}
+      showCancelApplyBtns={showCancelApplyBtns}
       width={width}
     >
       {children}

@@ -132,3 +132,9 @@ $menu-item-padding: 12px;
     padding: 0;
   }
 }
+
+.select-dropdown__btn-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 32px 0;
+}
