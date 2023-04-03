@@ -17,6 +17,10 @@ from kedro_viz.models.flowchart import (
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
+    GraphEdgeAPIResponse,
+    ModularPipelinesTreeAPIResponse,
+    NamedEntityAPIResponse,
+    NodeAPIResponse,
     NodeMetadataAPIResponse,
     get_default_response,
 )
@@ -74,17 +78,28 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        tags=data_access_manager.tags.as_list(),
+        nodes=[
+            NodeAPIResponse.from_orm(node)
+            for node in data_access_manager.get_nodes_for_registered_pipeline(
+                registered_pipeline_id
+            )
+        ],
+        edges=[
+            GraphEdgeAPIResponse.from_orm(edge)
+            for edge in data_access_manager.get_edges_for_registered_pipeline(
+                registered_pipeline_id
+            )
+        ],
+        tags=[
+            NamedEntityAPIResponse.from_orm(tag)
+            for tag in data_access_manager.tags.as_list()
+        ],
         layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
             registered_pipeline_id
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=ModularPipelinesTreeAPIResponse.from_orm(
+            modular_pipelines_tree
+        ),
     )

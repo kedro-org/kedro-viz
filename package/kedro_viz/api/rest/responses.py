@@ -8,6 +8,7 @@ from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.flowchart import DataNode, TaskNode
 
 
 class APIErrorMessage(BaseModel):
@@ -82,10 +83,17 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
         }
 
 
-NodeAPIResponse = Union[
-    TaskNodeAPIResponse,
-    DataNodeAPIResponse,
-]
+class NodeAPIResponse(BaseAPIResponse):
+    @classmethod
+    def from_orm(cls, node):
+        if isinstance(
+            node, TaskNode
+        ):  # Assuming TaskNode is the ORM class for TaskNodeAPIResponse
+            return TaskNodeAPIResponse.from_orm(node)
+        if isinstance(
+            node, DataNode
+        ):  # Assuming DataNode is the ORM class for DataNodeAPIResponse
+            return DataNodeAPIResponse.from_orm(node)
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
@@ -230,7 +238,15 @@ class ModularPipelinesTreeNodeAPIResponse(BaseAPIResponse):
 #        },
 #    }
 # }
-ModularPipelinesTreeAPIResponse = Dict[str, ModularPipelinesTreeNodeAPIResponse]
+
+
+class ModularPipelinesTreeAPIResponse(BaseAPIResponse):
+    @classmethod
+    def from_orm(cls, tree):
+        return {
+            key: ModularPipelinesTreeNodeAPIResponse.from_orm(value)
+            for key, value in tree.items()
+        }
 
 
 class GraphAPIResponse(BaseAPIResponse):
@@ -256,18 +272,29 @@ def get_default_response() -> GraphAPIResponse:
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
-            default_selected_pipeline_id
-        ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
-            default_selected_pipeline_id
-        ),
-        tags=data_access_manager.tags.as_list(),
+        nodes=[
+            NodeAPIResponse.from_orm(node)
+            for node in data_access_manager.get_nodes_for_registered_pipeline(
+                default_selected_pipeline_id
+            )
+        ],
+        edges=[
+            GraphEdgeAPIResponse.from_orm(edge)
+            for edge in data_access_manager.get_edges_for_registered_pipeline(
+                default_selected_pipeline_id
+            )
+        ],
+        tags=[
+            NamedEntityAPIResponse.from_orm(tag)
+            for tag in data_access_manager.tags.as_list()
+        ],
         layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
             default_selected_pipeline_id
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=ModularPipelinesTreeAPIResponse.from_orm(
+            modular_pipelines_tree
+        ),
         selected_pipeline=default_selected_pipeline_id,
     )
 
