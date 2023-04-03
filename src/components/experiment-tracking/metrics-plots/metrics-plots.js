@@ -6,45 +6,41 @@ import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinate
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
 import { useApolloQuery } from '../../../apollo/utils';
 import SelectDropdown from '../select-dropdown';
-
-import { metricLimit } from '../../../config';
+import { saveLocalStorage, loadLocalStorage } from '../../../store/helpers';
+import { metricLimit, localStorageMetricsSelect } from '../../../config';
+import {
+  removeChildFromObject,
+  removeElementsFromObjectValues,
+} from '../../../utils/sorting-data';
 
 import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
-// shoudl rename to be more generic
-function removeElementFromMetrics(originalObj, array) {
-  let res = { ...originalObj };
-  // eslint-disable-next-line array-callback-return
-  array.map((each) => {
-    const { [each]: unused, ...rest } = res;
+const getData = (runMetricsData, runData, selectedMetrics) => {
+  const metrics =
+    runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
+  const originalMetricsData =
+    runMetricsData?.data && runMetricsData?.data.metrics;
+  const originalRunsData = runMetricsData?.data && runMetricsData?.data.runs;
 
-    return (res = { ...rest });
+  const missing = {};
+
+  metrics.map((metric, index) => {
+    if (selectedMetrics.indexOf(metric) === -1) {
+      missing[metric] = index;
+    }
+    return missing;
   });
 
-  return res;
-}
+  const updatedMetrics = removeChildFromObject(originalMetricsData, missing);
+  const updatedRuns = removeElementsFromObjectValues(originalRunsData, missing);
 
-// shoudl rename to be more generic
-const removeElementsFromRuns = (obj, array) => {
-  let res = {};
-  for (const [key, value] of Object.entries(obj)) {
-    let newVal = [...value];
-
-    // eslint-disable-next-line array-callback-return
-    // array.map((each, index) => {
-    //   newVal.splice(array[index], 1);
-    // });
-
-    newVal = newVal.filter(function (value, index) {
-      return array.indexOf(index) === -1;
-    });
-
-    res[key] = newVal;
-  }
-
-  return res;
+  return {
+    ...runData,
+    metrics: updatedMetrics,
+    runs: updatedRuns,
+  };
 };
 
 const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
@@ -67,57 +63,36 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
 
   const metrics =
     runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
-
-  const originalMetricsData =
-    runMetricsData?.data && runMetricsData?.data.metrics;
-
-  const originalRunsData = runMetricsData?.data && runMetricsData?.data.runs;
-
-  const numberOfMetrics = runMetricsData?.data
-    ? Object.keys(runMetricsData?.data.metrics).length
-    : 0;
+  const numberOfMetrics = metrics ? metrics.length : 0;
 
   // set data to component state so we can hide/show without changing data from BE
   // for SelectDropdown component
+  // it gets the value stored in localStorage
   useEffect(() => {
     if (runMetricsData?.data) {
-      setRunData(runMetricsData?.data);
-      setSelectedDropdownValues(Object.keys(runMetricsData.data.metrics));
+      const selectMetricsValues = loadLocalStorage(localStorageMetricsSelect);
+
+      setSelectedDropdownValues(selectMetricsValues[0]);
+
+      const updatedRunData = getData(
+        runMetricsData,
+        runData,
+        selectMetricsValues[0]
+      );
+
+      setRunData(updatedRunData);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runMetricsData, numberOfMetrics]);
 
   // manipulate the runMetricsData here
   const onSelectedDropdownChanged = (selectedValues) => {
+    // Aside from setting the selected values to the state
+    // we also want to store this localStorage
     setSelectedDropdownValues(selectedValues);
-    const missing = {};
+    saveLocalStorage(localStorageMetricsSelect, [selectedValues]);
+    const updatedRunData = getData(runMetricsData, runData, selectedValues);
 
-    // eslint-disable-next-line array-callback-return
-    metrics.map((metric, index) => {
-      if (selectedValues.indexOf(metric) === -1) {
-        missing[metric] = index;
-      }
-      return missing;
-    });
-
-    // here can be we decide to remove or add metrics?
-    const updatedMetrics = removeElementFromMetrics(
-      originalMetricsData,
-      Object.keys(missing)
-    );
-
-    // here can be we decide to remove or add runs?
-    const updatedRuns = removeElementsFromRuns(
-      originalRunsData,
-      Object.values(missing)
-    );
-
-    const updatedRunData = {
-      ...runData,
-      metrics: updatedMetrics,
-      runs: updatedRuns,
-    };
-
-    debugger;
     setRunData(updatedRunData);
   };
 
