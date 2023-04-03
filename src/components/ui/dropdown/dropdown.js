@@ -23,15 +23,6 @@ const Dropdown = (props) => {
     width,
   } = props;
 
-  // onCancel={() => {
-  //       setOpen(false);
-  //       onCancel();
-  //     }}
-  //     onApplyAndClose={() => {
-  //       setOpen(false);
-  //       onApplyAndClose();
-  //     }}
-
   /**
    * Format the selected option props for adding to state
    * @param {Object} props - Component props
@@ -333,6 +324,7 @@ Dropdown.defaultProps = {
   children: null,
   defaultText: 'Please select...',
   disabled: false,
+  haveSelectedValues: false,
   onChanged: null,
   onClosed: null,
   onOpened: null,
@@ -352,6 +344,18 @@ Dropdown.propTypes = {
    * Whether to disable the dropdown
    */
   disabled: PropTypes.bool,
+  /**
+   * Whether user has selected any value from the dropdown
+   */
+  haveSelectedValues: PropTypes.bool,
+  /**
+   * Callback function to be excecuted when a Apply and Close button is clicked
+   */
+  onApplyAndClose: PropTypes.func,
+  /**
+   * Callback function to be excecuted when a Cancel button is clicked
+   */
+  onCancel: PropTypes.func,
   /**
    * Callback function to be executed when a menu item is clicked, other than the one currently selected.
    */

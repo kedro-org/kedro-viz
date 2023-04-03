@@ -168,6 +168,7 @@ DropdownRenderer.defaultProps = {
   disabled: false,
   focusedOption: null,
   handleRef: null,
+  haveSelectedValues: false,
   onLabelClicked: null,
   onOptionSelected: null,
   onSelectChanged: null,
@@ -198,6 +199,18 @@ DropdownRenderer.propTypes = {
    * Retrieve a reference to the dropdown DOM node
    */
   handleRef: PropTypes.func,
+  /**
+   * Whether user has selected any value from the dropdown
+   */
+  haveSelectedValues: PropTypes.bool,
+  /**
+   * Callback function to be excecuted when a Apply and Close button is clicked
+   */
+  onApplyAndClose: PropTypes.func,
+  /**
+   * Callback function to be excecuted when a Cancel button is clicked
+   */
+  onCancel: PropTypes.func,
   /**
    * Callback to be executed when the main label is clicked
    */
