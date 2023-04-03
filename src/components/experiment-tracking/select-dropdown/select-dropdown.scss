@@ -32,12 +32,12 @@
 }
 
 .select-dropdown__checkbox {
+  align-items: center;
+  cursor: pointer;
   display: flex;
   justify-content: space-around;
-  // display: block;
-  position: relative;
-  cursor: pointer;
   margin: 0 33px 12px 18px;
+  position: relative;
 
   .select-dropdown__checkbox-text {
     font-size: 14px;
@@ -53,20 +53,16 @@
   background: variables.$slate-500;
 }
 
-// // /* Hide the browser's default checkbox */
-// .select-dropdown__checkbox input {
-//   position: absolute;
-//   opacity: 0;
-//   cursor: pointer;
-//   height: 0;
-//   width: 0;
-// }
+input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid #737373;
+  cursor: pointer;
+  height: 6px;
+  width: 6px;
+}
 
-// /* On mouse-over, add a grey background color */
-// .select-dropdown__checkbox:hover input ~ .checkmark {
-//   background-color: #ccc;
-// }
-
-// .select-dropdown__checkbox input:checked ~ .checkmark {
-//   background-color: black;
-// }
+input[type='checkbox']:checked {
+  background: variables.$blue-300;
+  border-color: variables.$blue-300;
+}
