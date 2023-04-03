@@ -7,7 +7,9 @@ import './select-dropdown.css';
 const CheckboxOption = ({ text, selectedValues, onChange }) => {
   return (
     <label className="select-dropdown__checkbox">
-      <span className="select-dropdown__checkbox-text">{text}</span>
+      <span className="select-dropdown__checkbox-text" title={text}>
+        {text}
+      </span>
       <input
         type="checkbox"
         id={text}

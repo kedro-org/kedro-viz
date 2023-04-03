@@ -35,9 +35,10 @@
   align-items: center;
   cursor: pointer;
   display: flex;
-  justify-content: space-around;
-  margin: 0 33px 12px 18px;
+  justify-content: space-between;
+  padding: 0 24px;
   position: relative;
+  height: 32px;
 
   .select-dropdown__checkbox-text {
     font-size: 14px;
