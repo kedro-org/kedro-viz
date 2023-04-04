@@ -24,17 +24,23 @@ const getData = (runMetricsData, runData, selectedMetrics) => {
     runMetricsData?.data && runMetricsData?.data.metrics;
   const originalRunsData = runMetricsData?.data && runMetricsData?.data.runs;
 
-  const missing = {};
+  const toBeRemovedVals = {};
 
   metrics.map((metric, index) => {
     if (selectedMetrics.indexOf(metric) === -1) {
-      missing[metric] = index;
+      toBeRemovedVals[metric] = index;
     }
-    return missing;
+    return toBeRemovedVals;
   });
 
-  const updatedMetrics = removeChildFromObject(originalMetricsData, missing);
-  const updatedRuns = removeElementsFromObjectValues(originalRunsData, missing);
+  const updatedMetrics = removeChildFromObject(
+    originalMetricsData,
+    Object.keys(toBeRemovedVals)
+  );
+  const updatedRuns = removeElementsFromObjectValues(
+    originalRunsData,
+    Object.values(toBeRemovedVals)
+  );
 
   return {
     ...runData,
