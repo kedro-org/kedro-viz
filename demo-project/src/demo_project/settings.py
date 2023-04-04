@@ -9,7 +9,7 @@ from pathlib import Path
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
 SESSION_STORE_CLASS = SQLiteStore
-SESSION_STORE_ARGS = {"local_path": str(Path(__file__).parents[2] / "data"),
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data"),
                       "remote_path": "s3://114954825321-kedro-viz/Master/kedro-project/session_store" }
 
 # Define custom context class. Defaults to `KedroContext`

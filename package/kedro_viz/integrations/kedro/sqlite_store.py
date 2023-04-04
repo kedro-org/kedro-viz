@@ -51,36 +51,14 @@ def _is_json_serializable(obj: Any):
         return True
     except (TypeError, OverflowError):
         return False
-
-
-def _add_to_local_storage(database_name, database_timestamp):
-    try:
-        with open("db.info", "r") as file:
-            db_info = json.load(file)
-    except Exception:
-        db_info = {}
-    db_info[database_name] = str(database_timestamp)
-    with open("db.info", "w") as file:
-        json.dump(db_info, file)
-
-
-def _is_db_updated(database_name, database_timestamp):
-    try:
-        with open("db.info", "r") as file:
-            db_info = json.load(file)
-    except Exception:
-        return True
-    if database_name not in db_info:
-        return True
-    local_timestamp = db_info[database_name]
-    if str(database_timestamp) > local_timestamp:
-        return True
-    return False
-
-
+    
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
-
+    
+    def __init__(self, *args, remote_path: str = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._remote_path = remote_path
+        
     @property
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
@@ -110,24 +88,16 @@ class SQLiteStore(BaseSessionStore):
                 session_dict[key] = str(value)
         return json.dumps(session_dict)
 
-    def on_commit_sync(self, _):
-        self.sync()
-
     def save(self):
         """Save the session store info on db ."""
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
-        event.listen(database, "after_commit", self.on_commit_sync)
 
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
-        try:
-            database.add(session_store_data)
-            database.commit()
-        except Exception as e:
-            pass
-        finally:
-            database.close()
+        database.add(session_store_data)
+        database.commit()
+        self.sync()
 
     def upload(self):
         """Upload the session store db to s3"""
@@ -146,16 +116,12 @@ class SQLiteStore(BaseSessionStore):
         databases_location = []
         for database in databases:
             database_name = os.path.basename(database)
-            database_timestamp = fs.info(database)["LastModified"]
-            isUpdated = _is_db_updated(database_name, database_timestamp)
-            if isUpdated:
-                with fs.open(database, "rb") as file:
-                    db_data = file.read()
-                db_loc = f"{self._path}/{database_name}"
-                with open(db_loc, "wb") as temp_db:
-                    temp_db.write(db_data)
-                databases_location.append(db_loc)
-                _add_to_local_storage(database_name, database_timestamp)
+            with fs.open(database, "rb") as file:
+                db_data = file.read()
+            db_loc = f"{self._path}/{database_name}"
+            with open(db_loc, "wb") as temp_db:
+                temp_db.write(db_data)
+            databases_location.append(db_loc)
         return databases_location
 
     def merge(self, databases_location: List[str]):
@@ -178,26 +144,9 @@ class SQLiteStore(BaseSessionStore):
                         for row in data:
                             row_dict = row._asdict()
                             session_store_data = RunModel(**row_dict)
-                            try:
-                                database.add(session_store_data)
-                                database.commit()
-                            except Exception as e:
-                                database.rollback()
-                                pass
-                            finally:
-                                database.close()
-                    if table_name == "user_run_details" and _get_dbname() in db_loc:
-                        data = database_conn.execute(table_obj.select()).fetchall()
-                        for row in data:
-                            row_dict = row._asdict()
-                            user_details_data = UserRunDetailsModel(**row_dict)
-                            try:
-                                database.add(user_details_data)
-                                database.commit()
-                            except Exception as e:
-                                database.rollback()
-                            finally:
-                                database.close()
+                            database.add(session_store_data)
+                            database.commit()
+                    
             temp_engine.dispose()
             os.remove(db_loc)
 

@@ -41,7 +41,6 @@ def populate_data(
         session_store.sync()
         database_engine, session_class = create_db_engine(session_store.location)
         Base.metadata.create_all(bind=database_engine)
-        event.listen(session_class, "after_commit", session_store.on_commit_sync)
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
