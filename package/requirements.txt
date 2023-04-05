@@ -1,13 +1,13 @@
 semver~=2.13 # Needs to be at least 2.10.0 to get VersionInfo.match
 kedro>=0.17.0
 ipython>=7.0.0, <9.0
-fastapi>=0.73.0, <0.90.0
+fastapi>=0.73.0, <0.96.0
 aiofiles==22.1.0
-uvicorn[standard]~=0.20.0
+uvicorn[standard]~=0.21.1
 watchgod~=0.8.2
 plotly>=4.0
 pandas>=0.24
-sqlalchemy~=2.0
+sqlalchemy>=1.4, <3
 strawberry-graphql>=0.99.0, <1.0
 networkx>=1.0
 orjson~=3.8
