@@ -17,33 +17,33 @@ import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
-const getData = (runMetricsData, runData, selectedMetrics) => {
-  const metrics =
+const getData = (runMetricsData, localRunMetricsData, selectedMetrics) => {
+  const metricsKeys =
     runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
   const originalMetricsData =
     runMetricsData?.data && runMetricsData?.data.metrics;
   const originalRunsData = runMetricsData?.data && runMetricsData?.data.runs;
 
-  const toBeRemovedVals = {};
+  const toBeRemoved = {};
 
-  metrics.map((metric, index) => {
+  metricsKeys.map((metric, index) => {
     if (selectedMetrics.indexOf(metric) === -1) {
-      toBeRemovedVals[metric] = index;
+      toBeRemoved[metric] = index;
     }
-    return toBeRemovedVals;
+    return toBeRemoved;
   });
 
   const updatedMetrics = removeChildFromObject(
     originalMetricsData,
-    Object.keys(toBeRemovedVals)
+    Object.keys(toBeRemoved)
   );
   const updatedRuns = removeElementsFromObjectValues(
     originalRunsData,
-    Object.values(toBeRemovedVals)
+    Object.values(toBeRemoved)
   );
 
   return {
-    ...runData,
+    ...localRunMetricsData,
     metrics: updatedMetrics,
     runs: updatedRuns,
   };
@@ -55,9 +55,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
   const [parCoordsWidth, setParCoordsWidth] = useState(0);
   const [timeSeriesWidth, setTimeSeriesWidth] = useState(0);
   const [containerWidth, setContainerWidth] = useState('auto');
-
-  // states for SelectDropdown component
-  const [runData, setRunData] = useState({});
+  const [localRunMetricsData, setLocalRunMetricsData] = useState({});
   const [selectedDropdownValues, setSelectedDropdownValues] = useState(0);
 
   const { data: { runMetricsData = [] } = [] } = useApolloQuery(
@@ -71,35 +69,31 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
     runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
   const numberOfMetrics = metrics ? metrics.length : 0;
 
-  // set data to component state so we can hide/show without changing data from BE
-  // for SelectDropdown component
-  // it gets the value stored in localStorage
+  // We want to check the localStorage everytime the component re-loads
+  // so that we can update the localRunMetricsData with the selected values stored in the storage
   useEffect(() => {
     if (runMetricsData?.data) {
       const selectMetricsValues = loadLocalStorage(localStorageMetricsSelect);
-
       setSelectedDropdownValues(selectMetricsValues[0]);
 
       const updatedRunData = getData(
         runMetricsData,
-        runData,
+        localRunMetricsData,
         selectMetricsValues[0]
       );
-
-      setRunData(updatedRunData);
+      setLocalRunMetricsData(updatedRunData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runMetricsData, numberOfMetrics]);
+  }, [runMetricsData]);
 
-  // manipulate the runMetricsData here
   const onSelectedDropdownChanged = (selectedValues) => {
-    // Aside from setting the selected values to the state
-    // we also want to store this localStorage
-    setSelectedDropdownValues(selectedValues);
+    const updatedRunData = getData(
+      runMetricsData,
+      localRunMetricsData,
+      selectedValues
+    );
+    setLocalRunMetricsData(updatedRunData);
     saveLocalStorage(localStorageMetricsSelect, [selectedValues]);
-    const updatedRunData = getData(runMetricsData, runData, selectedValues);
-
-    setRunData(updatedRunData);
   };
 
   useEffect(() => {
@@ -154,11 +148,11 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         className="metrics-plots-wrapper__charts"
         style={{ width: containerWidth }}
       >
-        {Object.keys(runData).length > 0 ? (
+        {Object.keys(localRunMetricsData).length > 0 ? (
           activeTab === tabLabels[0] ? (
             <TimeSeries
               chartWidth={timeSeriesWidth - 100}
-              metricsData={runData}
+              metricsData={localRunMetricsData}
               selectedRuns={selectedRunIds}
               sidebarVisible={sidebarVisible}
             />
@@ -166,7 +160,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
             <ParallelCoordinates
               chartHeight={chartHeight}
               chartWidth={parCoordsWidth}
-              metricsData={runData}
+              metricsData={localRunMetricsData}
               selectedRuns={selectedRunIds}
               sidebarVisible={sidebarVisible}
             />
