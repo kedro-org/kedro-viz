@@ -117,13 +117,7 @@ class RunsRepository:
                 user_run_details = UserRunDetailsModel(
                     run_id=run_id, title=title, bookmark=bookmark, notes=notes
                 )
-                try:
-                    session.add(user_run_details)
-                except Exception as e:
-                    session.rollback()
-                finally:
-                    session.close()
-
+                session.add(user_run_details)
             else:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark

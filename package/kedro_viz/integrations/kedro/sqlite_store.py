@@ -144,8 +144,11 @@ class SQLiteStore(BaseSessionStore):
                         for row in data:
                             row_dict = row._asdict()
                             session_store_data = RunModel(**row_dict)
-                            database.add(session_store_data)
-                            database.commit()
+                            try: 
+                                database.add(session_store_data)
+                                database.commit()
+                            except Exception:
+                                database.rollback()
                     
             temp_engine.dispose()
             os.remove(db_loc)
