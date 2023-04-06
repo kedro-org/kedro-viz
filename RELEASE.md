@@ -11,6 +11,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix SQLalchemy dependency conflict with Kedro. (#1300)
+- Select metrics for visualisation in experiment tracking. (#1313)
 
 # Release 6.0.0
 
