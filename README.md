@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-✨ <em> Data Science Pipelines. Beautifully Designed</em> ✨
+✨ <em> Data Science Pipelies. Beautifully Designed</em> ✨
 <br />
 Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.org/</a>
 </p>
