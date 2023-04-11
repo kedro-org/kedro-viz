@@ -1,4 +1,4 @@
-# Kedro-Viz
+# Kedro-Vi
 
 <br />
 <p align="center">
