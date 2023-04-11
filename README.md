@@ -3,7 +3,7 @@
 <br />
 <p align="center">
 
-![Kedro-Viz Pipeline Visualisation](./.github/img/banner.png)
+![Kedro-Viz Pipeline Visulisation](./.github/img/banner.png)
 
 </p>
 
