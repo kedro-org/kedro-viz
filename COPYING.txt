@@ -4,7 +4,7 @@
 Kiwi is licensed under the terms of the Modified BSD License (also known as
 New or Revised BSD), as follows:
 
-Copyright (c) 2013, Nucleic Development Team
+Copyright (c) 2013, Nuleic Development Team
 
 All rights reserved.
 
