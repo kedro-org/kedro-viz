@@ -1,4 +1,4 @@
-image: gitpod/workspace-full:legacy-dazzle-v1
+image: gitpod/workspace-full
   
 tasks:
   - name: frontend
