@@ -1,4 +1,4 @@
-image: gitpod/workspace-full:legacy-dazzle-v1
+image: gitpod/workspace-full:2023-01-16-03-31-28
   
 tasks:
   - name: frontend
@@ -10,21 +10,23 @@ tasks:
     command: |
       gp sync-done build_complete
       DANGEROUSLY_DISABLE_HOST_CHECK=true npm run start
+
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
+      pip install "pip==23.0.1" --user
       pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user
       # force-reinstall kedro to ensure that the latest version from main is installed even when 
       # its version number is the same as that specified in docker_requirements.txt.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
-      
     command: | 
       gp sync-await build_complete
       pip install -e package --no-deps
       gp sync-done kedro_installed
       make run
+      
   - name: demo-project
     command: |
       cd demo-project
@@ -32,7 +34,8 @@ tasks:
       kedro info
 
 ports:
-  - port: 4141
+  - name: Kedro-Viz for demo-project
+    port: 4141
     onOpen: open-browser
     visibility: public
   - port: 4142
@@ -47,7 +50,7 @@ github:
     # enable for the master/default branch (defaults to true)
     master: true
     # enable for all branches in this repo (defaults to false)
-    branches: true
+    branches: false
     # enable for pull requests coming from this repo (defaults to true)
     pullRequests: true
     # enable for pull requests coming from forks (defaults to false)
