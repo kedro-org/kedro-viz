@@ -11,6 +11,8 @@ from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 from sqlalchemy.orm import sessionmaker
 
+from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
+
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -62,6 +64,15 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
+        self.session_store = None
+
+    def set_session_store(self, session_store: SQLiteStore):
+        self.session_store = session_store
+
+    def refresh(self):
+        print("Check for refresh")
+        if self.session_store and self.session_store.remote_location:
+            self.session_store.sync()
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""

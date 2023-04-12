@@ -42,6 +42,7 @@ def populate_data(
         database_engine, session_class = create_db_engine(session_store.location)
         Base.metadata.create_all(bind=database_engine)
         data_access_manager.set_db_session(session_class)
+        data_access_manager.set_session_store(session_store)
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)

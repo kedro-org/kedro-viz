@@ -154,6 +154,7 @@ class SQLiteStore(BaseSessionStore):
             os.remove(db_loc)
 
     def sync(self):
+        print("Every 3 seconds")
         if self.remote_location:
             downloaded_dbs = self.download()
             self.merge(downloaded_dbs)

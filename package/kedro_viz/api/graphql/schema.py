@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from typing import AsyncGenerator, List, Optional
+from typing import AsyncGenerator, List, Optional, Union
 
 import strawberry
 from semver import VersionInfo
@@ -165,6 +165,7 @@ class Subscription:
     async def runs_added(self) -> AsyncGenerator[List[Run], None]:
         """Subscription to new runs in real-time"""
         while True:
+            data_access_manager.refresh()
             new_runs = data_access_manager.runs.get_new_runs()
             if new_runs:
                 data_access_manager.runs.last_run_id = new_runs[0].id
@@ -177,6 +178,7 @@ class Subscription:
                     for run in new_runs
                 ]
             await asyncio.sleep(3)  # pragma: no cover
+
 
 
 @strawberry.type
