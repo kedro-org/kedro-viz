@@ -31,18 +31,11 @@ def get_db(session_class: sessionmaker) -> Generator:
 
 
 def _get_dbname():
-    try:
-        return f"{getpass.getuser()}.db"
-
-    except Exception as exc:  # pylint: disable=broad-except
-        unique_id = uuid.uuid4()
-        logger.warning(
-            """Something went wrong with getting the username. Generated unique id %s for 
-                 for user's database name  Exception: %s""",
-            unique_id,
-            exc,
-        )
-        return f"{unique_id}.db"
+    username = os.environ.get('KEDRO_SQLITE_STORE_USERNAME')
+    if username is not None:
+        return f"{username}.db"
+    else:
+        return f"{getpass.getuser()}.db"    
 
 
 def _is_json_serializable(obj: Any):
@@ -69,7 +62,7 @@ class SQLiteStore(BaseSessionStore):
         """Returns location of the sqlite_store database"""
         return self._remote_path
 
-    def to_json(self) -> str:
+    def _to_json(self) -> str:
         """Returns session_store information in json format after converting PosixPath to string"""
         session_dict = {}
         for key, value in self.data.items():
@@ -94,12 +87,12 @@ class SQLiteStore(BaseSessionStore):
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
 
-        session_store_data = RunModel(id=self._session_id, blob=self.to_json())
+        session_store_data = RunModel(id=self._session_id, blob=self._to_json())
         database.add(session_store_data)
         database.commit()
         self.sync()
 
-    def upload(self):
+    def _upload(self):
         """Upload the session store db to s3"""
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
@@ -108,7 +101,7 @@ class SQLiteStore(BaseSessionStore):
             with fs.open(f"{self._remote_path}/{db_name}", "wb") as s3f:
                 s3f.write(file.read())
 
-    def download(self) -> List[str]:
+    def _download(self) -> List[str]:
         """Download all the dbs from an s3 locations"""
         protocol, _ = get_protocol_and_path(self._remote_path)
         fs = fsspec.filesystem(protocol)
@@ -124,7 +117,7 @@ class SQLiteStore(BaseSessionStore):
             databases_location.append(db_loc)
         return databases_location
 
-    def merge(self, databases_location: List[str]):
+    def _merge(self, databases_location: List[str]):
         "Merge all dbs to the local session_store.db"
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
@@ -155,6 +148,7 @@ class SQLiteStore(BaseSessionStore):
 
     def sync(self):
         if self.remote_location:
-            downloaded_dbs = self.download()
-            self.merge(downloaded_dbs)
-            self.upload()
+            downloaded_dbs = self._download()
+            self._merge(downloaded_dbs)
+            self._upload()
+

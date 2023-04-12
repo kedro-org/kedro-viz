@@ -67,7 +67,7 @@ class TestSQLiteStore:
         }
         mocker.patch("git.Repo.active_branch").name = "test_branch"
 
-        assert sqlite_store.to_json() == json.dumps(
+        assert sqlite_store._to_json() == json.dumps(
             {
                 "project_path": str(store_path),
                 "git": {"commit_sha": "123456", "branch": "test_branch"},
