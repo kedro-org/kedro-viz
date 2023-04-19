@@ -1,4 +1,5 @@
 """Database management layer based on SQLAlchemy"""
+
 from pathlib import Path
 from typing import Tuple
 

@@ -16,7 +16,7 @@ from sqlalchemy import MetaData, create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiment_tracking import Base, RunModel, UserRunDetailsModel
+from kedro_viz.models.experiment_tracking import Base, RunModel
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,7 @@ class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
     
     def __init__(self, *args, remote_path: str = None, **kwargs):
+        """Sets remote_path for Collaborative Experiment Tracking"""
         super().__init__(*args, **kwargs)
         self._remote_path = remote_path
         
@@ -102,7 +103,7 @@ class SQLiteStore(BaseSessionStore):
                 s3f.write(file.read())
 
     def _download(self) -> List[str]:
-        """Download all the dbs from an s3 locations"""
+        """Download all the dbs from an s3 bucket"""
         protocol, _ = get_protocol_and_path(self._remote_path)
         fs = fsspec.filesystem(protocol)
         databases = fs.glob(f"{self._remote_path}/*.db")

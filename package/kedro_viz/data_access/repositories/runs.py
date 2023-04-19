@@ -122,5 +122,4 @@ class RunsRepository:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark
                 user_run_details.notes = notes
-
         return user_run_details
