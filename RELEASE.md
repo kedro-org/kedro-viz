@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next release
+
+## Bug fixes and other changes
+
+- Bug fix for where some elements on the flowchart weren't clickable. (#1322)
+
 # Release 6.0.1
 
 ## Bug fixes and other changes
