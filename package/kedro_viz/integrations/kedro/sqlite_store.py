@@ -7,7 +7,7 @@ import logging
 import os
 import uuid
 from pathlib import Path
-from typing import Any, Generator, List
+from typing import Any, Generator, List, Optional
 
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
@@ -60,8 +60,8 @@ class SQLiteStore(BaseSessionStore):
         return Path(self._path) / "session_store.db"
 
     @property
-    def remote_location(self) -> Path:
-        """Returns location of the sqlite_store database"""
+    def remote_location(self) -> Optional[Path]:
+        """Returns the remote location of the sqlite_store database on the cloud"""
         return self._remote_path
 
     def _to_json(self) -> str:
@@ -84,7 +84,7 @@ class SQLiteStore(BaseSessionStore):
         return json.dumps(session_dict)
 
     def save(self):
-        """Save the session store info on db ."""
+        """Save the session store info on db and uploads it to the cloud if a remote cloud path is provided ."""
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
