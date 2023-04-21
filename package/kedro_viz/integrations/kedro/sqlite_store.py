@@ -95,7 +95,7 @@ class SQLiteStore(BaseSessionStore):
         self.sync()
 
     def _upload(self):
-        """Uploads the session store database file to the specified remote path on a cloud storage service."""
+        """Uploads the session store database file to the specified remote path on the cloud storage."""
         # Connect to the remote file system
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
@@ -106,7 +106,7 @@ class SQLiteStore(BaseSessionStore):
                 s3f.write(file.read())
 
     def _download(self) -> List[str]:
-        """Downloads all the session store database files from the specified remote path on a cloud storage service
+        """Downloads all the session store database files from the specified remote path on the cloud storage
         to your local project.
         Note: All the database files are deleted after they are merged to the main session_store.db.
 
@@ -137,10 +137,10 @@ class SQLiteStore(BaseSessionStore):
         """Merges all the session store databases stored at the specified locations into the user's local session_store.db
 
         Notes:
-        - This method uses multiple SQLAlchemy engines to connect user's session_store.db and also to connect to all the downloaded db files.
+        - This method uses multiple SQLAlchemy engines to connect to the user's session_store.db and to all the other downloaded dbs.
         - It is assumed that all the databases share the same schema.
         - In the version 1.0 - we only merge the runs table which contains all the experiments.
-        - The downloaded database files are deleted after the runs are merged with the user's local session_store.db
+        - The downloaded database files are deleted after it's runs are merged with the user's local session_store.db
 
         Args:
             database_location:  A list of local filepath in string format for all the databases
@@ -181,7 +181,7 @@ class SQLiteStore(BaseSessionStore):
 
     def sync(self):
         """
-        Synchronizes the user's local session_store.db with remote databases stored on a cloud storage service.
+        Synchronizes the user's local session_store.db with remote session_store.db stored on a cloud storage service.
 
         Notes:
         - First, all the database files at the remote location are downloaded to the local project.
