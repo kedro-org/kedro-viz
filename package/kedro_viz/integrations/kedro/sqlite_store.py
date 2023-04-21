@@ -31,11 +31,11 @@ def get_db(session_class: sessionmaker) -> Generator:
 
 
 def _get_dbname():
-    username = os.environ.get('KEDRO_SQLITE_STORE_USERNAME')
+    username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME")
     if username is not None:
         return f"{username}.db"
     else:
-        return f"{getpass.getuser()}.db"    
+        return f"{getpass.getuser()}.db"
 
 
 def _is_json_serializable(obj: Any):
@@ -44,15 +44,16 @@ def _is_json_serializable(obj: Any):
         return True
     except (TypeError, OverflowError):
         return False
-    
+
+
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
-    
+
     def __init__(self, *args, remote_path: str = None, **kwargs):
         """Sets remote_path for Collaborative Experiment Tracking"""
         super().__init__(*args, **kwargs)
         self._remote_path = remote_path
-        
+
     @property
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
@@ -94,62 +95,101 @@ class SQLiteStore(BaseSessionStore):
         self.sync()
 
     def _upload(self):
-        """Upload the session store db to s3"""
+        """Uploads the session store database file to the specified remote path on a cloud storage service."""
+        # Connect to the remote file system
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
         fs = fsspec.filesystem(protocol)
+        # Open the local database file and upload it to the remote path
         with open(self.location, "rb") as file:
             with fs.open(f"{self._remote_path}/{db_name}", "wb") as s3f:
                 s3f.write(file.read())
 
     def _download(self) -> List[str]:
-        """Download all the dbs from an s3 bucket"""
+        """Downloads all the session store database files from the specified remote path on a cloud storage service
+        to your local project.
+        Note: All the database files are deleted after they are merged to the main session_store.db.
+
+        Returns:
+        A list of local filepath in string format for all the databases
+
+        """
+
+        # Connect to the remote file system
         protocol, _ = get_protocol_and_path(self._remote_path)
         fs = fsspec.filesystem(protocol)
+        # Find all the databases at the remote path
         databases = fs.glob(f"{self._remote_path}/*.db")
         databases_location = []
+        # Download each database to a local filepath
         for database in databases:
-            database_name = os.path.basename(database)
+            database_name = Path(database).name
             with fs.open(database, "rb") as file:
                 db_data = file.read()
-            db_loc = f"{self._path}/{database_name}"
-            with open(db_loc, "wb") as temp_db:
-                temp_db.write(db_data)
+                db_loc = f"{self._path}/{database_name}"
+                with open(db_loc, "wb") as temp_db:
+                    temp_db.write(db_data)
             databases_location.append(db_loc)
+        # Return the list of local filepaths
         return databases_location
 
     def _merge(self, databases_location: List[str]):
-        "Merge all dbs to the local session_store.db"
+        """Merges all the session store databases stored at the specified locations into the user's local session_store.db
+
+        Notes:
+        - This method uses multiple SQLAlchemy engines to connect user's session_store.db and also to connect to all the downloaded db files.
+        - It is assumed that all the databases share the same schema.
+        - In the version 1.0 - we only merge the runs table which contains all the experiments.
+        - The downloaded database files are deleted after the runs are merged with the user's local session_store.db
+
+        Args:
+            database_location:  A list of local filepath in string format for all the databases
+
+        """
+
+        # Connect to the user's local session_store.db
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
 
         temp_engine = None
+        # Iterate through each downloaded database
         for db_loc in databases_location:
             if temp_engine:
                 temp_engine.dispose()
+            # Open a connection to the downloaded database
             temp_engine = create_engine(f"sqlite:///{db_loc}")
             with temp_engine.connect() as database_conn:
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
+                # Merge data from the 'runs' table
                 for table_name, table_obj in db_metadata.tables.items():
                     if table_name == "runs":
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
                             row_dict = row._asdict()
                             session_store_data = RunModel(**row_dict)
-                            try: 
+                            try:
                                 database.add(session_store_data)
                                 database.commit()
-                            except Exception:
+                            except Exception as e:
                                 database.rollback()
-                    
+                                logging.exception(f"Failed to add runs to the {database}: {e}")
+            # Close the connection to the downloaded database and delete it
             temp_engine.dispose()
             os.remove(db_loc)
 
     def sync(self):
+        """
+        Synchronizes the user's local session_store.db with remote databases stored on a cloud storage service.
+
+        Notes:
+        - First, all the database files at the remote location are downloaded to the local project.
+        - Next, the downloaded databases are merged into the user's local session_store.db.
+        - Finally, the user's local session_store.db is uploaded to the remote location to ensure that it has the most up-to-date runs.
+        """
+
         if self.remote_location:
             downloaded_dbs = self._download()
             self._merge(downloaded_dbs)
             self._upload()
-
