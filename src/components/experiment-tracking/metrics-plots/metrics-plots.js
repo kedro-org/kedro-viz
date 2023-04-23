@@ -17,7 +17,11 @@ import './metrics-plots.css';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 
-const getData = (runMetricsData, localRunMetricsData, selectedMetrics) => {
+const getSelectedDataFromDropdown = (
+  runMetricsData,
+  localRunMetricsData,
+  selectedMetrics
+) => {
   const metricsKeys =
     runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
   const originalMetricsData =
@@ -76,7 +80,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
       const selectMetricsValues = loadLocalStorage(localStorageMetricsSelect);
       setSelectedDropdownValues(selectMetricsValues[0]);
 
-      const updatedRunData = getData(
+      const updatedRunData = getSelectedDataFromDropdown(
         runMetricsData,
         localRunMetricsData,
         selectMetricsValues[0]
@@ -87,7 +91,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
   }, [runMetricsData]);
 
   const onSelectedDropdownChanged = (selectedValues) => {
-    const updatedRunData = getData(
+    const updatedRunData = getSelectedDataFromDropdown(
       runMetricsData,
       localRunMetricsData,
       selectedValues
