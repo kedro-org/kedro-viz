@@ -1,7 +1,7 @@
 import {
   removeChildFromObject,
   removeElementsFromObjectValues,
-} from './sorting-data';
+} from './object-utils';
 import { data } from '../components/experiment-tracking/mock-data';
 
 const mockToBeRemovedValues = {

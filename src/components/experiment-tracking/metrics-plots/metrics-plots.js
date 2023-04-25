@@ -11,7 +11,7 @@ import { metricLimit, localStorageMetricsSelect } from '../../../config';
 import {
   removeChildFromObject,
   removeElementsFromObjectValues,
-} from '../../../utils/sorting-data';
+} from '../../../utils/object-utils';
 
 import './metrics-plots.css';
 
