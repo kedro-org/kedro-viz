@@ -89,7 +89,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         );
         setLocalRunMetricsData(updatedRunData);
       }
-      // If value is not existed in the localStorage yet
+      // If value doesn't exist in localStorage yet
       // then we need to create it first
       else {
         const metricsKeys = Object.keys(runMetricsData.data.metrics);
