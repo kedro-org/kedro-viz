@@ -39,8 +39,7 @@ const SelectDropdown = ({
       setHaveSelectedValues(true);
 
       if (selected.includes(value)) {
-        const selectedIds = selected.filter((each) => each !== value);
-        setSelected(selectedIds);
+        setSelected(selected.filter((each) => each !== value));
       } else {
         setSelected([...selected, value]);
       }
