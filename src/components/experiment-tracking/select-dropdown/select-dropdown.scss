@@ -1,13 +1,11 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  -select-dropdown-bg-hover: #{variables.$white-600};
-  -select-dropdown-text-color: #{variables.$black-800};
+  --select-dropdown-bg-hover: #{variables.$white-600};
 }
 
 .kui-theme--dark {
-  -select-dropdown-bg-hover: #{variables.$slate-500};
-  -select-dropdown-text-color: #{variables.$white-600};
+  --select-dropdown-bg-hover: #{variables.$slate-500};
 }
 
 .select-dropdown {
@@ -52,7 +50,7 @@
 }
 
 .select-dropdown__checkbox:hover {
-  background: variables.$slate-500;
+  background: var(--select-dropdown-bg-hover);
 }
 
 input[type='checkbox'] {
