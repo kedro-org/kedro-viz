@@ -164,6 +164,11 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         className="metrics-plots-wrapper__charts"
         style={{ width: containerWidth }}
       >
+        {selectedDropdownValues.length === 0 && (
+          <span className="metrics-plots-wrapper__charts-empty">
+            No data to display. Select a metric to view a visualisation.
+          </span>
+        )}
         {Object.keys(localRunMetricsData).length > 0 ? (
           activeTab === tabLabels[0] ? (
             <TimeSeries
