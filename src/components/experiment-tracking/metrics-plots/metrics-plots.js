@@ -77,7 +77,8 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
     if (runMetricsData?.data) {
       const selectMetricsValues = loadLocalStorage(localStorageMetricsSelect);
       // We want to check the localStorage everytime the component re-loads
-      // so that we can update the localRunMetricsData with the selected values stored in the storage if existed
+      // if value stored in localStorage
+      // we can update the localRunMetricsData with the selected values from localStorage
       if (Object.keys(selectMetricsValues).length > 0) {
         setSelectedDropdownValues(selectMetricsValues[0]);
 
@@ -88,7 +89,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         );
         setLocalRunMetricsData(updatedRunData);
       }
-      // If values is not stored in the localStorage yet
+      // If value is not existed in the localStorage yet
       // then we need to create it first
       else {
         const metricsKeys = Object.keys(runMetricsData.data.metrics);
