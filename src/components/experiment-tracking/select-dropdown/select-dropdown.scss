@@ -2,10 +2,12 @@
 
 .kui-theme--light {
   --select-dropdown-bg-hover: #{variables.$white-600};
+  --select-dropdown-bg: #{variables.$white-100};
 }
 
 .kui-theme--dark {
   --select-dropdown-bg-hover: #{variables.$slate-500};
+  --select-dropdown-bg: #{variables.$slate-500};
 }
 
 .select-dropdown {
@@ -13,6 +15,10 @@
   section {
     height: 379px;
     overflow: hidden;
+  }
+
+  .dropdown__label {
+    background: var(--select-dropdown-bg);
   }
 
   // overide the fix height and width option from the Dropdown component
