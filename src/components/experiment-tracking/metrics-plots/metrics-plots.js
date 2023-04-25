@@ -155,8 +155,8 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         </div>
         <SelectDropdown
           dropdownValues={metrics}
-          selectedDropdownValues={selectedDropdownValues}
           onChange={onSelectedDropdownChanged}
+          selectedDropdownValues={selectedDropdownValues}
         />
       </div>
 

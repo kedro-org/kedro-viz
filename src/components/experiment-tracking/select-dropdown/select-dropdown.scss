@@ -23,9 +23,9 @@
 
   // overide the fix height and width option from the Dropdown component
   .dropdown__options {
-    width: 284px;
-    right: 0;
     max-height: 379px;
+    right: 0;
+    width: 284px;
   }
 }
 
@@ -40,10 +40,10 @@
   align-items: center;
   cursor: pointer;
   display: flex;
+  height: 32px;
   justify-content: space-between;
   padding: 0 24px;
   position: relative;
-  height: 32px;
 
   .select-dropdown__checkbox-text {
     font-size: 14px;

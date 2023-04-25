@@ -11,10 +11,10 @@ const CheckboxOption = ({ text, selectedValues, onChange }) => {
         {text}
       </span>
       <input
-        type="checkbox"
-        id={text}
         checked={selectedValues && selectedValues.includes(text)}
+        id={text}
         onChange={() => onChange(text)}
+        type="checkbox"
       />
     </label>
   );
@@ -70,12 +70,12 @@ const SelectDropdown = ({
       >
         <div className="select-dropdown__title">Metrics</div>
         {dropdownValues &&
-          dropdownValues.map((text) => (
+          dropdownValues.map((text, i) => (
             <CheckboxOption
-              key={text}
-              text={text}
-              selectedValues={selected}
+              key={text + i}
               onChange={onSelectedHandler}
+              selectedValues={selected}
+              text={text}
             />
           ))}
       </Dropdown>
