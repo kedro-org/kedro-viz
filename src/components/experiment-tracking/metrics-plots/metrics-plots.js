@@ -98,6 +98,7 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
     );
     setLocalRunMetricsData(updatedRunData);
     saveLocalStorage(localStorageMetricsSelect, [selectedValues]);
+    setSelectedDropdownValues(selectedValues);
   };
 
   useEffect(() => {
