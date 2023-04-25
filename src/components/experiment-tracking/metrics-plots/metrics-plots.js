@@ -73,19 +73,29 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
     runMetricsData?.data && Object.keys(runMetricsData?.data.metrics);
   const numberOfMetrics = metrics ? metrics.length : 0;
 
-  // We want to check the localStorage everytime the component re-loads
-  // so that we can update the localRunMetricsData with the selected values stored in the storage
   useEffect(() => {
     if (runMetricsData?.data) {
       const selectMetricsValues = loadLocalStorage(localStorageMetricsSelect);
-      setSelectedDropdownValues(selectMetricsValues[0]);
+      // We want to check the localStorage everytime the component re-loads
+      // so that we can update the localRunMetricsData with the selected values stored in the storage if existed
+      if (Object.keys(selectMetricsValues).length > 0) {
+        setSelectedDropdownValues(selectMetricsValues[0]);
 
-      const updatedRunData = getSelectedDataFromDropdown(
-        runMetricsData,
-        localRunMetricsData,
-        selectMetricsValues[0]
-      );
-      setLocalRunMetricsData(updatedRunData);
+        const updatedRunData = getSelectedDataFromDropdown(
+          runMetricsData,
+          localRunMetricsData,
+          selectMetricsValues[0]
+        );
+        setLocalRunMetricsData(updatedRunData);
+      }
+      // If values is not stored in the localStorage yet
+      // then we need to create it first
+      else {
+        const metricsKeys = Object.keys(runMetricsData.data.metrics);
+
+        setSelectedDropdownValues(metricsKeys);
+        setLocalRunMetricsData(runMetricsData.data);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runMetricsData]);
