@@ -1,0 +1,24 @@
+.experiment-warning__wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 70%;
+  justify-content: center;
+  width: 85%;
+  font-size: 16px;
+}
+
+.experiment-warning__title {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 28px;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.experiment-warning__subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0;
+}
