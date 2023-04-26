@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import handleKeyEvent from '../../../utils/key-events';
 import uniqueId from 'lodash/uniqueId';
 import DropdownArrow from '../../icons/dropdown-arrow';
+import Button from '../button';
 
 /**
  * Renderer for the Dropdown component
@@ -14,11 +15,15 @@ const DropdownRenderer = ({
   disabled,
   focusedOption,
   handleRef,
+  haveSelectedValues,
+  onApplyAndClose,
+  onCancel,
   onLabelClicked,
   onOptionSelected,
   onSelectChanged,
   open,
   selectedOption,
+  showCancelApplyBtns,
   title,
   width,
 }) => {
@@ -99,6 +104,8 @@ const DropdownRenderer = ({
       case 'span':
         // Heading
         return child;
+      case 'div':
+        return child;
       default:
         // Menu Option
         return _extendMenuOption(child, `menu-option-${i}`, optionIndex);
@@ -132,7 +139,25 @@ const DropdownRenderer = ({
           <DropdownArrow />
         </span>
       </button>
-      <div className="dropdown__options">{optionsNode}</div>
+      <div className="dropdown__options">
+        {optionsNode}
+
+        {showCancelApplyBtns && (
+          <div className="select-dropdown__btn-wrapper">
+            <Button mode="secondary" onClick={onCancel} size="small">
+              Cancel
+            </Button>
+            <Button
+              disabled={!haveSelectedValues}
+              onClick={onApplyAndClose}
+              mode={'primary'}
+              size="small"
+            >
+              Apply and Close
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -143,6 +168,7 @@ DropdownRenderer.defaultProps = {
   disabled: false,
   focusedOption: null,
   handleRef: null,
+  haveSelectedValues: false,
   onLabelClicked: null,
   onOptionSelected: null,
   onSelectChanged: null,
@@ -173,6 +199,18 @@ DropdownRenderer.propTypes = {
    * Retrieve a reference to the dropdown DOM node
    */
   handleRef: PropTypes.func,
+  /**
+   * Whether user has selected any value from the dropdown
+   */
+  haveSelectedValues: PropTypes.bool,
+  /**
+   * Callback function to be excecuted when a Apply and Close button is clicked
+   */
+  onApplyAndClose: PropTypes.func,
+  /**
+   * Callback function to be excecuted when a Cancel button is clicked
+   */
+  onCancel: PropTypes.func,
   /**
    * Callback to be executed when the main label is clicked
    */

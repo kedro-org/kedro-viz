@@ -132,3 +132,13 @@ $menu-item-padding: 12px;
     padding: 0;
   }
 }
+
+.select-dropdown__btn-wrapper {
+  background-color: var(--dropdown-options-bg);
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 32px 0;
+  position: sticky;
+  z-index: 1;
+}
