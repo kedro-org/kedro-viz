@@ -13,7 +13,7 @@
 .select-dropdown {
   // apply scroll
   section {
-    height: 379px;
+    height: 479px;
     overflow: hidden;
   }
 
@@ -23,7 +23,7 @@
 
   // overide the fix height and width option from the Dropdown component
   .dropdown__options {
-    max-height: 379px;
+    max-height: 479px;
     right: 0;
     width: 284px;
   }
