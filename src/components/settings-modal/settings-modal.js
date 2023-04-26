@@ -151,6 +151,7 @@ const SettingsModal = ({
                 showSettingsModal(false);
                 setHasNotInteracted(true);
                 setToggleFlags(flags);
+                setIsPrettyNameOn(prettyName);
               }}
               size="small"
             >
