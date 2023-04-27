@@ -23,6 +23,7 @@
 
   // overide the fix height and width option from the Dropdown component
   .dropdown__options {
+    box-shadow: none;
     max-height: 479px;
     right: 0;
     width: 284px;
