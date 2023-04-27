@@ -12,6 +12,7 @@ Please follow the established format:
 
 - Fix SQLAlchemy QueuePool Overflow Error. (#1301)
 - Bug fix for where some elements on the flowchart weren't clickable. (#1322)
+- Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
 - Fixed link to Kedro experiment tracking docs. (#1325)
 
 # Release 6.0.1

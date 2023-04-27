@@ -75,12 +75,14 @@ const SettingsModal = ({
   const resetStateCloseModal = () => {
     showSettingsModal(false);
     setHasNotInteracted(true);
+    setToggleFlags(flags);
+    setIsPrettyNameOn(prettyName);
   };
 
   return (
     <div className="pipeline-settings-modal">
       <Modal
-        closeModal={() => resetStateCloseModal()}
+        closeModal={resetStateCloseModal}
         title="Settings"
         visible={visible.settingsModal}
       >
@@ -147,11 +149,7 @@ const SettingsModal = ({
           <div className="run-details-modal-button-wrapper">
             <Button
               mode="secondary"
-              onClick={() => {
-                showSettingsModal(false);
-                setHasNotInteracted(true);
-                setToggleFlags(flags);
-              }}
+              onClick={resetStateCloseModal}
               size="small"
             >
               Cancel

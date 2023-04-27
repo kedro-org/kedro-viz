@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { TimeSeries } from '../time-series/time-series.js';
 
 import { ParallelCoordinates } from '../parallel-coordinates/parallel-coordinates.js';
+import ExperimentWarning from '../../experiment-warning';
 import { GET_METRIC_PLOT_DATA } from '../../../apollo/queries';
 import { useApolloQuery } from '../../../apollo/utils';
 import SelectDropdown from '../select-dropdown';
@@ -165,9 +166,10 @@ const MetricsPlots = ({ selectedRunIds, sidebarVisible }) => {
         style={{ width: containerWidth }}
       >
         {selectedDropdownValues.length === 0 && (
-          <span className="metrics-plots-wrapper__charts-empty">
-            No data to display. Select a metric to view a visualisation.
-          </span>
+          <ExperimentWarning
+            title={'No data to display'}
+            subTitle={'Select a metric to view a visualisation.'}
+          />
         )}
         {Object.keys(localRunMetricsData).length > 0 ? (
           activeTab === tabLabels[0] ? (
