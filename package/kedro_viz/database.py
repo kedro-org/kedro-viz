@@ -14,5 +14,5 @@ def create_db_engine(
     """SQLAlchemy connection to a SQLite DB"""
     database_url = f"sqlite:///{session_store_location}"
     engine = create_engine(database_url, connect_args={"check_same_thread": False})
-    session_class = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    session_class = sessionmaker(bind=engine)
     return engine, session_class

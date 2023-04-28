@@ -6,6 +6,6 @@ from .schema import schema
 
 router = APIRouter()
 
-graphql_app = GraphQL(schema)
+graphql_app: GraphQL = GraphQL(schema)
 router.add_route("/graphql", graphql_app)
 router.add_websocket_route("/graphql", graphql_app)

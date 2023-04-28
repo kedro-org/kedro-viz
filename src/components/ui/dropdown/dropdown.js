@@ -13,9 +13,13 @@ const Dropdown = (props) => {
     children,
     defaultText,
     disabled,
+    haveSelectedValues,
+    onApplyAndClose,
+    onCancel,
     onChanged,
     onClosed,
     onOpened,
+    showCancelApplyBtns,
     width,
   } = props;
 
@@ -292,13 +296,23 @@ const Dropdown = (props) => {
     <DropdownRenderer
       defaultText={defaultText}
       disabled={disabled}
+      focusedOption={focusedOption}
       handleRef={_handleRef}
+      haveSelectedValues={haveSelectedValues}
+      onApplyAndClose={() => {
+        setOpen(false);
+        onApplyAndClose();
+      }}
+      onCancel={() => {
+        setOpen(false);
+        onCancel();
+      }}
       onLabelClicked={_handleLabelClicked}
       onOptionSelected={_handleOptionSelected}
       onSelectChanged={_handleFocusChange}
       open={open}
-      focusedOption={focusedOption}
       selectedOption={selectedOption}
+      showCancelApplyBtns={showCancelApplyBtns}
       width={width}
     >
       {children}
@@ -310,6 +324,7 @@ Dropdown.defaultProps = {
   children: null,
   defaultText: 'Please select...',
   disabled: false,
+  haveSelectedValues: false,
   onChanged: null,
   onClosed: null,
   onOpened: null,
@@ -329,6 +344,18 @@ Dropdown.propTypes = {
    * Whether to disable the dropdown
    */
   disabled: PropTypes.bool,
+  /**
+   * Whether user has selected any value from the dropdown
+   */
+  haveSelectedValues: PropTypes.bool,
+  /**
+   * Callback function to be excecuted when a Apply and Close button is clicked
+   */
+  onApplyAndClose: PropTypes.func,
+  /**
+   * Callback function to be excecuted when a Cancel button is clicked
+   */
+  onCancel: PropTypes.func,
   /**
    * Callback function to be executed when a menu item is clicked, other than the one currently selected.
    */

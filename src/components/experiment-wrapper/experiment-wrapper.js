@@ -305,7 +305,7 @@ const ExperimentWrapper = ({ theme }) => {
                     docs.{' '}
                   </p>
                   <a
-                    href="https://kedro.readthedocs.io/en/stable/logging/experiment_tracking.html"
+                    href="https://docs.kedro.org/en/stable/visualisation/experiment_tracking.html"
                     rel="noreferrer"
                     target="_blank"
                   >
