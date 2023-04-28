@@ -6,21 +6,24 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 6.1.0
+
+## Major features and improvements
+
+- Allow showing and hiding of metrics visualisations in experiment tracking. (#1313)
 
 ## Bug fixes and other changes
 
 - Fix SQLAlchemy QueuePool Overflow Error. (#1301)
 - Bug fix for where some elements on the flowchart weren't clickable. (#1322)
-- Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
 - Fixed link to Kedro experiment tracking docs. (#1325)
+- Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
 
 # Release 6.0.1
 
 ## Bug fixes and other changes
 
 - Fix SQLalchemy dependency conflict with Kedro. (#1300)
-- Allow showing and hiding of metrics visualisations in experiment tracking. (#1313)
 
 # Release 6.0.0
 
