@@ -97,11 +97,11 @@ class SQLiteStore(BaseSessionStore):
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
         try:
-            # Fsspec will read credentials stored as env variables 
+            # Fsspec will read credentials stored as env variables
             fs = fsspec.filesystem(protocol)
             # Upload the local file to the remote path
-            fs.put(f"{self.location}",f"{self._remote_path}/{db_name}")
-        except (ConnectionError, TimeoutError) as e:
+            fs.put(f"{self.location}", f"{self._remote_path}/{db_name}")
+        except Exception as e:
             logging.exception(f"Error uploading file to S3: {e}")
 
     def _download(self) -> List[str]:
@@ -113,19 +113,22 @@ class SQLiteStore(BaseSessionStore):
         A list of local filepath in string format for all the databases
 
         """
-
+        databases_location = []
         # Connect to the remote file system
         protocol, _ = get_protocol_and_path(self._remote_path)
-        fs = fsspec.filesystem(protocol)
-        # Find all the databases at the remote path
-        databases = fs.glob(f"{self._remote_path}/*.db")
-        databases_location = []
-        # Download each database to a local filepath
-        for database in databases:
-            database_name = Path(database).name
-            db_loc = Path(self._path) / database_name
-            fs.get(f"{database}",f"{db_loc}")
-            databases_location.append(db_loc)
+        try:
+            fs = fsspec.filesystem(protocol)
+            # Find all the databases at the remote path
+            databases = fs.glob(f"{self._remote_path}/*.db")
+
+            # Download each database to a local filepath
+            for database in databases:
+                database_name = Path(database).name
+                db_loc = Path(self._path) / database_name
+                fs.get(f"{database}", f"{db_loc}")
+                databases_location.append(db_loc)
+        except Exception as e:
+            logging.exception(f"Error downloading file from S3: {e}")
         # Return the list of local filepaths
         return databases_location
 
@@ -166,13 +169,13 @@ class SQLiteStore(BaseSessionStore):
                         for row in data:
                             all_runs_data.append((row._asdict()))
                 for run in all_runs_data:
-                        try:
-                            session_store_data = RunModel(**run)
-                            database.add(session_store_data)
-                            database.commit()
-                        except Exception as e:
-                            database.rollback()
-                            logging.exception(f"Failed to add runs: {e}")
+                    try:
+                        session_store_data = RunModel(**run)
+                        database.add(session_store_data)
+                        database.commit()
+                    except Exception as e:
+                        database.rollback()
+                        logging.exception(f"Failed to add runs: {e}")
             # Close the connection to the downloaded database and delete it
             temp_engine.dispose()
             os.remove(db_loc)
