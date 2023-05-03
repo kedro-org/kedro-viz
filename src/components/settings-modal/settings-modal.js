@@ -32,6 +32,7 @@ const SettingsModal = ({
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
   const [isPrettyNameOn, setIsPrettyNameOn] = useState(prettyName);
+  const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -43,6 +44,13 @@ const SettingsModal = ({
 
       // Delay the reset so the user can't see the button text change.
       resetTimeout = setTimeout(() => {
+        const updatedFlags = Object.entries(toggleFlags);
+        updatedFlags.map((each) => {
+          const [name, value] = each;
+
+          return onToggleFlag(name, value);
+        });
+
         onTogglePrettyName(isPrettyNameOn);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
@@ -58,19 +66,23 @@ const SettingsModal = ({
   }, [
     hasClickedApplyAndClose,
     isPrettyNameOn,
+    onToggleFlag,
     onTogglePrettyName,
     showSettingsModal,
+    toggleFlags,
   ]);
 
   const resetStateCloseModal = () => {
     showSettingsModal(false);
     setHasNotInteracted(true);
+    setToggleFlags(flags);
+    setIsPrettyNameOn(prettyName);
   };
 
   return (
     <div className="pipeline-settings-modal">
       <Modal
-        closeModal={() => resetStateCloseModal()}
+        closeModal={resetStateCloseModal}
         title="Settings"
         visible={visible.settingsModal}
       >
@@ -104,10 +116,14 @@ const SettingsModal = ({
                 key={value}
                 name={name}
                 onToggleChange={(event) => {
-                  onToggleFlag(value, event.target.checked);
+                  setToggleFlags({
+                    ...toggleFlags,
+                    [value]: event.target.checked,
+                  });
+
                   setHasNotInteracted(false);
                 }}
-                toggleValue={flags[value]}
+                toggleValue={toggleFlags[value]}
               />
             ))}
             {isOutdated ? (
@@ -133,10 +149,7 @@ const SettingsModal = ({
           <div className="run-details-modal-button-wrapper">
             <Button
               mode="secondary"
-              onClick={() => {
-                showSettingsModal(false);
-                setHasNotInteracted(true);
-              }}
+              onClick={resetStateCloseModal}
               size="small"
             >
               Cancel

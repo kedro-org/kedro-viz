@@ -6,12 +6,33 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 6.x.x
+# Release 6.1.0
 
 ## Major features and improvements
 
-- Remove metrics plots from metadata panel and add link to the plots on Experiment tracking. (#1268)
+- Allow showing and hiding of metrics visualisations in experiment tracking. (#1313)
+
+## Bug fixes and other changes
+
+- Fix SQLAlchemy QueuePool Overflow Error. (#1301)
+- Bug fix for where some elements on the flowchart weren't clickable. (#1322)
+- Fixed link to Kedro experiment tracking docs. (#1325)
+- Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
+
+# Release 6.0.1
+
+## Bug fixes and other changes
+
+- Fix SQLalchemy dependency conflict with Kedro. (#1300)
+
+# Release 6.0.0
+
+## Major features and improvements
+
+- Link plot and JSON dataset names from experiment tracking to the flowchart. (#1165)
+- Remove metrics plots from metadata panel and add link to the plots on experiment tracking. (#1268)
 - Bump minimum version of React from 16.8.6 to 17.0.2. (#1282)
+- Show preview of data in metadata panel. (#1288)
 
 ## Bug fixes and other changes
 

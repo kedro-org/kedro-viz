@@ -26,8 +26,8 @@
   flex-direction: column;
   align-content: center;
   align-items: center;
-  width: 100%; /* Full width (cover the whole page) */
   height: 100%; /* Full height (cover the whole page) */
+  /* We don't need full width as sometime the preview table can take up more than a width of the page */
   background-color: var(--color-bg-plot);
 
   .pipeline-plotly-chart,
@@ -38,7 +38,7 @@
   }
 }
 
-.pipeline-plot-modal__top {
+.pipeline-metadata-modal__top {
   display: flex;
   flex-direction: row;
   align-content: center;
@@ -47,13 +47,13 @@
   padding: 1.5em;
 }
 
-.pipeline-plot-modal__header {
+.pipeline-metadata-modal__header {
   display: flex;
   margin: 0 auto;
   padding: 0 32px;
 }
 
-.pipeline-plot-modal__icon {
+.pipeline-metadata-modal__icon {
   display: inline-block;
   width: 2.9em;
   height: 2.8em;
@@ -61,12 +61,12 @@
   fill: var(--color-text);
 }
 
-.pipeline-plot-modal__title {
+.pipeline-metadata-modal__title {
   margin-top: 1px;
   font-size: 1.8em;
 }
 
-.pipeline-plot-modal__back {
+.pipeline-metadata-modal__back {
   @extend %button;
 
   position: relative;
@@ -76,18 +76,23 @@
   padding: 6px 12px;
 }
 
-.pipeline-plot-modal__back-text {
+.pipeline-metadata-modal__back-text {
   font-size: 1.6em;
 }
 
-.pipeline-plot-modal__back-icon {
+.pipeline-metadata-modal__back-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 12px 0 0;
   fill: var(--color-text);
 }
 
-.pipeline-plot-modal__bottom {
+.pipeline-metadata-modal__preview-text {
+  font-size: 14px;
+  margin-right: 80px;
+}
+
+.pipeline-metadata-modal__bottom {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -99,7 +104,7 @@
   min-width: 100%;
 }
 
-.pipeline-plot-modal__collapse-plot {
+.pipeline-metadata-modal__collapse-plot {
   @extend %button;
 
   display: flex;
@@ -114,29 +119,36 @@
   }
 }
 
-.pipeline-plot-modal__collapse-plot-icon {
+.pipeline-metadata-modal__preview {
+  max-width: calc(100vw - #{variables.$global-toolbar-width});
+  overflow-y: auto;
+  padding: 0 1.5em;
+  margin: 1.5em 0;
+}
+
+.pipeline-metadata-modal__collapse-plot-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 6px -0.1em 36px;
   fill: var(--color-button-text);
 }
 
-.pipeline-plot-modal__collapse-plot-text {
+.pipeline-metadata-modal__collapse-plot-text {
   margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
 }
 
 @media (max-width: variables.$metadata-modal-breakpoint) {
-  .pipeline-plot-modal__collapse-plot {
+  .pipeline-metadata-modal__collapse-plot {
     width: auto;
   }
 
-  .pipeline-plot-modal__collapse-plot-text {
+  .pipeline-metadata-modal__collapse-plot-text {
     display: none;
   }
 
-  .pipeline-plot-modal__collapse-plot-icon {
+  .pipeline-metadata-modal__collapse-plot-icon {
     margin: 10px;
   }
 }

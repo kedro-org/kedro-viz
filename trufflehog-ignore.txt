@@ -6,3 +6,4 @@ RELEASE.md
 README.md
 LAYOUT_ENGINE.md
 src/utils/random-utils.js
+src/components/update-reminder/update-reminder-content.js

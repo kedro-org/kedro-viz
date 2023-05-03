@@ -8,6 +8,21 @@
   width: 100%;
 }
 
+.metrics-plots-wrapper__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.metrics-plots-wrapper__header {
+  .dropdown {
+    margin-right: 30px;
+  }
+}
+
+.metrics-plots-wrapper__charts-empty {
+  font-size: 13px;
+}
+
 .chart-types-wrapper {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;

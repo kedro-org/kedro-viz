@@ -173,8 +173,10 @@ const RunDataset = ({
                     className="details-dataset__accordion"
                     heading={datasetName}
                     headingClassName="details-dataset__accordion-header"
+                    isHyperlink
                     key={datasetName}
                     layout="left"
+                    linkTitle="Show me where this dataset is located in the flowchart"
                     size="medium"
                   >
                     {Object.keys(data)

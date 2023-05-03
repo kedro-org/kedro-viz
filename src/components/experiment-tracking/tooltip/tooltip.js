@@ -10,7 +10,7 @@ export const tooltipDefaultProps = {
   visible: false,
 };
 
-export const MetricsChartsTooltip = ({
+export const ExperimentTrackingTooltip = ({
   content = tooltipDefaultProps.content,
   direction = tooltipDefaultProps.direction,
   position = tooltipDefaultProps.position,
