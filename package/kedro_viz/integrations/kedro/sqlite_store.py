@@ -31,11 +31,7 @@ def get_db(session_class: sessionmaker) -> Generator:
 
 
 def _get_dbname():
-    username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME")
-    if username is not None:
-        return f"{username}.db"
-    else:
-        return f"{getpass.getuser()}.db"
+    return os.environ.get("KEDRO_SQLITE_STORE_USERNAME", getpass.getuser()) + ".db"
 
 
 def _is_json_serializable(obj: Any):
@@ -92,18 +88,21 @@ class SQLiteStore(BaseSessionStore):
         session_store_data = RunModel(id=self._session_id, blob=self._to_json())
         database.add(session_store_data)
         database.commit()
-        self.sync()
+        if self._remote_path:
+            self._upload()
 
     def _upload(self):
         """Uploads the session store database file to the specified remote path on the cloud storage."""
         # Connect to the remote file system
         protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
-        fs = fsspec.filesystem(protocol)
-        # Open the local database file and upload it to the remote path
-        with open(self.location, "rb") as file:
-            with fs.open(f"{self._remote_path}/{db_name}", "wb") as s3f:
-                s3f.write(file.read())
+        try:
+            # Fsspec will read credentials stored as env variables 
+            fs = fsspec.filesystem(protocol)
+            # Upload the local file to the remote path
+            fs.put(f"{self.location}",f"{self._remote_path}/{db_name}")
+        except (ConnectionError, TimeoutError) as e:
+            logging.exception(f"Error uploading file to S3: {e}")
 
     def _download(self) -> List[str]:
         """Downloads all the session store database files from the specified remote path on the cloud storage
@@ -124,11 +123,8 @@ class SQLiteStore(BaseSessionStore):
         # Download each database to a local filepath
         for database in databases:
             database_name = Path(database).name
-            with fs.open(database, "rb") as file:
-                db_data = file.read()
-                db_loc = f"{self._path}/{database_name}"
-                with open(db_loc, "wb") as temp_db:
-                    temp_db.write(db_data)
+            db_loc = Path(self._path) / database_name
+            fs.get(f"{database}",f"{db_loc}")
             databases_location.append(db_loc)
         # Return the list of local filepaths
         return databases_location
@@ -163,18 +159,20 @@ class SQLiteStore(BaseSessionStore):
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
                 # Merge data from the 'runs' table
+                all_runs_data = []
                 for table_name, table_obj in db_metadata.tables.items():
                     if table_name == "runs":
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
-                            row_dict = row._asdict()
-                            session_store_data = RunModel(**row_dict)
-                            try:
-                                database.add(session_store_data)
-                                database.commit()
-                            except Exception as e:
-                                database.rollback()
-                                logging.exception(f"Failed to add runs to the {database}: {e}")
+                            all_runs_data.append((row._asdict()))
+                for run in all_runs_data:
+                        try:
+                            session_store_data = RunModel(**run)
+                            database.add(session_store_data)
+                            database.commit()
+                        except Exception as e:
+                            database.rollback()
+                            logging.exception(f"Failed to add runs: {e}")
             # Close the connection to the downloaded database and delete it
             temp_engine.dispose()
             os.remove(db_loc)

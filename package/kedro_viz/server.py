@@ -16,7 +16,7 @@ from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import create_db_engine
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.integrations.kedro import sqlite_store as SQLiteStore
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.experiment_tracking import Base
 
 DEV_PORT = 4142
@@ -37,7 +37,7 @@ def populate_data(
     if creatinge an api app from project.
     """
 
-    if session_store.location:
+    if isinstance(session_store, SQLiteStore):
         session_store.sync()
         database_engine, session_class = create_db_engine(session_store.location)
         Base.metadata.create_all(bind=database_engine)
