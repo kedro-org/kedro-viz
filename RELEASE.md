@@ -19,6 +19,11 @@ Please follow the established format:
 - Fixed link to Kedro experiment tracking docs. (#1325)
 - Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
 
+## Community contributions
+Many thanks to the following Kedroids for contributing PRs to this release:
+
+* [MattRossetti](https://github.com/MattRossetti)
+
 # Release 6.0.1
 
 ## Bug fixes and other changes
