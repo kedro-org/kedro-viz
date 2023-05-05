@@ -31,7 +31,8 @@ def get_db(session_class: sessionmaker) -> Generator:
 
 
 def _get_dbname():
-    return os.environ.get("KEDRO_SQLITE_STORE_USERNAME", getpass.getuser()) + ".db"
+    username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME") or getpass.getuser()
+    return username + ".db"
 
 
 def _is_json_serializable(obj: Any):
@@ -119,6 +120,7 @@ class SQLiteStore(BaseSessionStore):
         try:
             fs = fsspec.filesystem(protocol)
             # Find all the databases at the remote path
+
             databases = fs.glob(f"{self._remote_path}/*.db")
 
             # Download each database to a local filepath
