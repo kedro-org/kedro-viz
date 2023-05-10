@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.session.store import BaseSessionStore
 
 try:
     from kedro_datasets import (  # isort:skip
@@ -57,7 +58,7 @@ def load_data(
     project_path: Path,
     env: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
@@ -69,8 +70,7 @@ def load_data(
             configuration.
     Returns:
         A tuple containing the data catalog and the pipeline dictionary
-        and the session store location path (this can be NONE if session_store
-        is turned off or for Kedro 16 hence Optional)
+        and the session store.
     """
     _bootstrap(project_path)
 
