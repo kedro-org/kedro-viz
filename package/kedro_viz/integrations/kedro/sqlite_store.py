@@ -101,25 +101,22 @@ class SQLiteStore(BaseSessionStore):
         db_name = _get_dbname()
         try:
             # TODO: check auto_mkdir
-            # TODO: check slash on remote_location
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
             logging.exception(exc)
 
-    def _download(self) -> List[str]:
+    def _download(self):
         """Downloads all the session store database files from the specified remote path on the cloud storage
         to your local project.
         Note: All the database files are deleted after they are merged to the main session_store.db.
         """
         try:
-            # Find all the databases at the remote path
             self._remote_fs.get(f"{self.remote_location}/*.db", Path(self.location).parent)
-        # TODO: think about str self.location
         # TODO: no return now
         except Exception as exc:
             logging.exception(exc)
 
-    def _merge(self, databases_location: List[str]):
+    def _merge(self):
         """Merges all the session store databases stored at the specified locations into the user's local session_store.db
 
         Notes:
@@ -140,6 +137,8 @@ class SQLiteStore(BaseSessionStore):
 
         temp_engine = None
         # Iterate through each downloaded database
+        databases_location = set(Path(self.location).parent.glob("*.db")) - {Path(self.location)}
+
         for db_loc in databases_location:
             if temp_engine:
                 temp_engine.dispose()
@@ -178,12 +177,13 @@ class SQLiteStore(BaseSessionStore):
         """
 
         if self.remote_location:
-            downloaded_dbs = self._download()
-            self._merge(downloaded_dbs)
+            self._download()
+            self._merge()
             self._upload()
 
 # TODO: refactor if remote_location, error catching into decorator?
-# Don't want broken sync to stop kedro-viz.
+# Don't want broken sync in populate_data to stop kedro-viz.
+# What happens if you delete session store file?
 
 # Notes:
 # --autoreload should work still, so long as change local file
