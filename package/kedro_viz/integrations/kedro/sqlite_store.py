@@ -56,9 +56,9 @@ class SQLiteStore(BaseSessionStore):
             self._remote_fs = fsspec.filesystem(protocol)
 
     @property
-    def location(self) -> Path:
+    def location(self) -> str:
         """Returns location of the sqlite_store database"""
-        return Path(self._path) / "session_store.db"
+        return str(Path(self._path) / "session_store.db")
 
     @property
     def remote_location(self) -> Optional[str]:
@@ -100,37 +100,24 @@ class SQLiteStore(BaseSessionStore):
         """Uploads the session store database file to the specified remote path on the cloud storage."""
         db_name = _get_dbname()
         try:
-            # Fsspec will read credentials stored as env variables
-            # Upload the local file to the remote path
-            self._remote_fs.put(f"{self.location}", f"{self.remote_location}/{db_name}")
-        except Exception as e:
-            logging.exception(f"Error uploading file to S3: {e}")
+            # TODO: check auto_mkdir
+            # TODO: check slash on remote_location
+            self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
+        except Exception as exc:
+            logging.exception(exc)
 
     def _download(self) -> List[str]:
         """Downloads all the session store database files from the specified remote path on the cloud storage
         to your local project.
         Note: All the database files are deleted after they are merged to the main session_store.db.
-
-        Returns:
-        A list of local filepath in string format for all the databases
-
         """
-        databases_location = []
-
         try:
             # Find all the databases at the remote path
-            databases = self._remote_fs.glob(f"{self.remote_location}/*.db")
-
-            # Download each database to a local filepath
-            for database in databases:
-                database_name = Path(database).name
-                db_loc = Path(self._path) / database_name
-                self._remote_fs.get(f"{database}", f"{db_loc}")
-                databases_location.append(db_loc)
-        except Exception as e:
-            logging.exception(f"Error downloading file from S3: {e}")
-        # Return the list of local filepaths
-        return databases_location
+            self._remote_fs.get(f"{self.remote_location}/*.db", Path(self.location).parent)
+        # TODO: think about str self.location
+        # TODO: no return now
+        except Exception as exc:
+            logging.exception(exc)
 
     def _merge(self, databases_location: List[str]):
         """Merges all the session store databases stored at the specified locations into the user's local session_store.db
@@ -173,9 +160,9 @@ class SQLiteStore(BaseSessionStore):
                         session_store_data = RunModel(**run)
                         database.add(session_store_data)
                         database.commit()
-                    except Exception as e:
+                    except Exception as exc:
                         database.rollback()
-                        logging.exception(f"Failed to add runs: {e}")
+                        logging.exception(f"Failed to add runs: {exc}")
             # Close the connection to the downloaded database and delete it
             temp_engine.dispose()
             os.remove(db_loc)
