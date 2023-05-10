@@ -51,13 +51,17 @@ class SQLiteStore(BaseSessionStore):
         super().__init__(*args, **kwargs)
         self._remote_path = remote_path
 
+        if self.remote_location:
+            protocol, _ = get_protocol_and_path(self.remote_location)
+            self._remote_fs = fsspec.filesystem(protocol)
+
     @property
     def location(self) -> Path:
         """Returns location of the sqlite_store database"""
         return Path(self._path) / "session_store.db"
 
     @property
-    def remote_location(self) -> Optional[Path]:
+    def remote_location(self) -> Optional[str]:
         """Returns the remote location of the sqlite_store database on the cloud"""
         return self._remote_path
 
@@ -89,19 +93,16 @@ class SQLiteStore(BaseSessionStore):
         session_store_data = RunModel(id=self._session_id, blob=self._to_json())
         database.add(session_store_data)
         database.commit()
-        if self._remote_path:
+        if self.remote_location:
             self._upload()
 
     def _upload(self):
         """Uploads the session store database file to the specified remote path on the cloud storage."""
-        # Connect to the remote file system
-        protocol, _ = get_protocol_and_path(self._remote_path)
         db_name = _get_dbname()
         try:
             # Fsspec will read credentials stored as env variables
-            fs = fsspec.filesystem(protocol)
             # Upload the local file to the remote path
-            fs.put(f"{self.location}", f"{self._remote_path}/{db_name}")
+            self._remote_fs.put(f"{self.location}", f"{self.remote_location}/{db_name}")
         except Exception as e:
             logging.exception(f"Error uploading file to S3: {e}")
 
@@ -115,19 +116,16 @@ class SQLiteStore(BaseSessionStore):
 
         """
         databases_location = []
-        # Connect to the remote file system
-        protocol, _ = get_protocol_and_path(self._remote_path)
-        try:
-            fs = fsspec.filesystem(protocol)
-            # Find all the databases at the remote path
 
-            databases = fs.glob(f"{self._remote_path}/*.db")
+        try:
+            # Find all the databases at the remote path
+            databases = self._remote_fs.glob(f"{self.remote_location}/*.db")
 
             # Download each database to a local filepath
             for database in databases:
                 database_name = Path(database).name
                 db_loc = Path(self._path) / database_name
-                fs.get(f"{database}", f"{db_loc}")
+                self._remote_fs.get(f"{database}", f"{db_loc}")
                 databases_location.append(db_loc)
         except Exception as e:
             logging.exception(f"Error downloading file from S3: {e}")
@@ -196,3 +194,9 @@ class SQLiteStore(BaseSessionStore):
             downloaded_dbs = self._download()
             self._merge(downloaded_dbs)
             self._upload()
+
+# TODO: refactor if remote_location, error catching into decorator?
+# Don't want broken sync to stop kedro-viz.
+
+# Notes:
+# --autoreload should work still, so long as change local file
