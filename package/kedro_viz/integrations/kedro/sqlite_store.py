@@ -137,9 +137,14 @@ class SQLiteStore(BaseSessionStore):
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
 
+        all_runs_data = []
+        existing_run_ids = [id[0] for id in database.query(RunModel.id).all()]
+
         temp_engine = None
         # Iterate through each downloaded database
-        databases_location = set(Path(self.location).parent.glob("*.db")) - {Path(self.location)}
+        databases_location = set(Path(self.location).parent.glob("*.db")) - {
+            Path(self.location)
+        }
 
         for db_loc in databases_location:
             if temp_engine:
@@ -150,23 +155,17 @@ class SQLiteStore(BaseSessionStore):
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
                 # Merge data from the 'runs' table
-                all_runs_data = []
                 for table_name, table_obj in db_metadata.tables.items():
                     if table_name == "runs":
                         data = database_conn.execute(table_obj.select()).fetchall()
                         for row in data:
-                            all_runs_data.append((row._asdict()))
-                for run in all_runs_data:
-                    try:
-                        session_store_data = RunModel(**run)
-                        database.add(session_store_data)
-                        database.commit()
-                    except Exception as exc:
-                        database.rollback()
-                        logging.exception(f"Failed to add runs: {exc}")
-            # Close the connection to the downloaded database and delete it
+                            if row.id not in existing_run_ids:
+                                existing_run_ids.append(row.id)
+                                all_runs_data.append((row._asdict()))
             temp_engine.dispose()
-            #os.remove(db_loc)
+
+        database.bulk_insert_mappings(RunModel, all_runs_data)
+        database.commit()
 
     def sync(self):
         """
@@ -182,6 +181,7 @@ class SQLiteStore(BaseSessionStore):
             self._download()
             self._merge()
             self._upload()
+
 
 # TODO:
 # Don't want broken sync in populate_data to stop kedro-viz.
