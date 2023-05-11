@@ -162,7 +162,7 @@ kedro viz --save-file=filename.json
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
-_For more examples on how to visualise with kedro-viz, please refer to the [Documentation](https://docs.kedro.org/en/stable/visualisation/)_
+**_For more examples on how to visualise with kedro-viz, please refer to the [Documentation](https://docs.kedro.org/en/stable/visualisation/)_**
 
 ## Feature Flags
 
