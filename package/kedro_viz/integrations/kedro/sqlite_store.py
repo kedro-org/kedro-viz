@@ -100,10 +100,9 @@ class SQLiteStore(BaseSessionStore):
         """Uploads the session store database file to the specified remote path on the cloud storage."""
         db_name = _get_dbname()
         try:
-            # TODO: check auto_mkdir
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
-            logging.exception(exc)
+            logger.exception(exc)
 
     def _download(self):
         """Downloads all the session store database files from the specified remote path on the cloud storage
@@ -111,10 +110,14 @@ class SQLiteStore(BaseSessionStore):
         Note: All the database files are deleted after they are merged to the main session_store.db.
         """
         try:
-            self._remote_fs.get(f"{self.remote_location}/*.db", Path(self.location).parent)
-        # TODO: no return now
+            # In theory we should be able to do this as a single operation:
+            # self._remote_fs.get(f"{self.remote_location}/*.db", str(Path(self.location).parent))
+            # but this does not seem to work correctly - maybe a bug in fsspec. So instead
+            # we do it in two steps.
+            remote_dbs = self._remote_fs.glob(f"{self.remote_location}/*.db")
+            self._remote_fs.get(remote_dbs, str(Path(self.location).parent))
         except Exception as exc:
-            logging.exception(exc)
+            logger.exception(exc)
 
     def _merge(self):
         """Merges all the session store databases stored at the specified locations into the user's local session_store.db
@@ -129,7 +132,6 @@ class SQLiteStore(BaseSessionStore):
             database_location:  A list of local filepath in string format for all the databases
 
         """
-
         # Connect to the user's local session_store.db
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
@@ -164,7 +166,7 @@ class SQLiteStore(BaseSessionStore):
                         logging.exception(f"Failed to add runs: {exc}")
             # Close the connection to the downloaded database and delete it
             temp_engine.dispose()
-            os.remove(db_loc)
+            #os.remove(db_loc)
 
     def sync(self):
         """
@@ -181,9 +183,11 @@ class SQLiteStore(BaseSessionStore):
             self._merge()
             self._upload()
 
-# TODO: refactor if remote_location, error catching into decorator?
+# TODO:
 # Don't want broken sync in populate_data to stop kedro-viz.
 # What happens if you delete session store file?
+# Does it work without SQLiteStore still?
+# And with SQLIteStore but without remote path?
 
 # Notes:
 # --autoreload should work still, so long as change local file
