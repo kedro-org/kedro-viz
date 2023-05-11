@@ -5,7 +5,6 @@ from typing import Any, Dict, Optional
 
 import uvicorn
 from fastapi.encoders import jsonable_encoder
-
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
