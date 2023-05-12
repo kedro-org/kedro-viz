@@ -2,6 +2,7 @@
 This data could either come from a real Kedro project or a file.
 """
 import json
+import secure
 import time
 from pathlib import Path
 
@@ -19,6 +20,8 @@ from .graphql.router import router as graphql_router
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
+
+secure_headers = secure.Secure()
 
 
 def _create_etag() -> str:
@@ -55,6 +58,12 @@ def create_api_app_from_project(
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
     app_etag = _create_etag()
+
+    @app.middleware("http")
+    async def set_secure_headers(request, call_next):
+        response = await call_next(request)
+        secure_headers.framework.fastapi(response)
+        return response
 
     @app.get("/")
     @app.get("/experiment-tracking")
