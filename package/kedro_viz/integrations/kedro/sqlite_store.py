@@ -156,15 +156,11 @@ class SQLiteStore(BaseSessionStore):
                 db_metadata.reflect(bind=temp_engine)
 
                 Session = sessionmaker(bind=database_conn)
-                session = Session()
-
-                # Merge data from the 'runs' table
-                for table_name, table_obj in db_metadata.tables.items():
-                    if table_name == "runs":
-                        data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
-                        for row in data:
-                            existing_run_ids.append(row.id)
-                            all_runs_data.append(row.__dict__)
+                session = Session()                
+                data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
+                for row in data:
+                    existing_run_ids.append(row.id)
+                    all_runs_data.append(row.__dict__)
 
             temp_engine.dispose()
 
