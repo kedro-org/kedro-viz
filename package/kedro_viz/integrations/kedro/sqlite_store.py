@@ -12,7 +12,7 @@ from typing import Any, Generator, List, Optional
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-from sqlalchemy import MetaData, create_engine, event
+from sqlalchemy import MetaData, create_engine, insert, select
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -138,7 +138,7 @@ class SQLiteStore(BaseSessionStore):
         database = next(get_db(session_class))
 
         all_runs_data = []
-        existing_run_ids = [id[0] for id in database.query(RunModel.id).all()]
+        existing_run_ids = database.execute(select(RunModel.id)).scalars().all()
 
         temp_engine = None
         # Iterate through each downloaded database
@@ -157,15 +157,18 @@ class SQLiteStore(BaseSessionStore):
                 # Merge data from the 'runs' table
                 for table_name, table_obj in db_metadata.tables.items():
                     if table_name == "runs":
-                        data = database_conn.execute(table_obj.select()).fetchall()
+                        query = select(table_obj).where(
+                            ~table_obj.c.id.in_(existing_run_ids)
+                        )
+                        data = database_conn.execute(query).fetchall()
                         for row in data:
-                            if row.id not in existing_run_ids:
-                                existing_run_ids.append(row.id)
-                                all_runs_data.append((row._asdict()))
+                            existing_run_ids.append(row.id)
+                            all_runs_data.append(row._asdict())
             temp_engine.dispose()
 
-        database.bulk_insert_mappings(RunModel, all_runs_data)
-        database.commit()
+        if all_runs_data:
+            database.execute(insert(RunModel), all_runs_data)
+            database.commit()
 
     def sync(self):
         """
