@@ -12,7 +12,7 @@ from typing import Any, Generator, List, Optional
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-from sqlalchemy import MetaData, create_engine, insert, select
+from sqlalchemy import MetaData, create_engine, select, insert
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -154,20 +154,22 @@ class SQLiteStore(BaseSessionStore):
             with temp_engine.connect() as database_conn:
                 db_metadata = MetaData()
                 db_metadata.reflect(bind=temp_engine)
+
+                Session = sessionmaker(bind=database_conn)
+                session = Session()
+
                 # Merge data from the 'runs' table
                 for table_name, table_obj in db_metadata.tables.items():
                     if table_name == "runs":
-                        query = select(table_obj).where(
-                            ~table_obj.c.id.in_(existing_run_ids)
-                        )
-                        data = database_conn.execute(query).fetchall()
+                        data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
                         for row in data:
                             existing_run_ids.append(row.id)
-                            all_runs_data.append(row._asdict())
+                            all_runs_data.append(row.__dict__)
+
             temp_engine.dispose()
 
         if all_runs_data:
-            database.execute(insert(RunModel), all_runs_data)
+            database.execute(insert(RunModel),all_runs_data)
             database.commit()
 
     def sync(self):
