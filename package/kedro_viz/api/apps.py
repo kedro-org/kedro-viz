@@ -2,10 +2,10 @@
 This data could either come from a real Kedro project or a file.
 """
 import json
-import secure
 import time
 from pathlib import Path
 
+import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
