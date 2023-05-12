@@ -21,6 +21,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4355948.svg)](https://doi.org/10.5281/zenodo.4355948)
+[![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ## Introduction
@@ -162,14 +163,16 @@ kedro viz --save-file=filename.json
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
+**_Our documentation contains [additional examples on how to visualise with kedro-viz](https://docs.kedro.org/en/stable/visualisation/)_**
+
 ## Feature Flags
 
 Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
 
-| Flag        | Description                                                                             |
-| ----------- | --------------------------------------------------------------------------------------- |
-| sizewarning | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
-| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`) |
+| Flag               | Description                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
+| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
