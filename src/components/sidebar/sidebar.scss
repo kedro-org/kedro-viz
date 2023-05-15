@@ -61,6 +61,7 @@
   }
 
   &--experiment-tracking {
+    border-right: 1px solid #{variables.$white-300};
     overflow-y: scroll;
   }
 }
