@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-metadata-bg: #{variables.$white-200};
+  --color-metadata-bg: #{variables.$grey-100};
   --color-metadata-preview-bg: #{variables.$grey-200};
   --color-metadata-kind-token-bg: #{variables.$white-400};
   --color-plot-bg: #{variables.$white-400};
@@ -35,6 +35,7 @@
   padding: 6px 0 0 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
+  border-left: 1px solid #{variables.$white-500};
   transform: translateX(100%);
   transition: transform ease 0.4s;
 

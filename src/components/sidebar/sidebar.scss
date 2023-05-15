@@ -45,15 +45,16 @@
 }
 
 .pipeline-ui {
-  position: relative;
-  z-index: 2;
+  background: var(--color-bg-list);
+  border-right: 1px solid #{variables.$white-300};
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  background: var(--color-bg-3);
-  visibility: hidden;
+  position: relative;
   transition: visibility 0.3s;
+  visibility: hidden;
+  z-index: 2;
 
   .pipeline-sidebar--visible & {
     visibility: visible;
@@ -61,7 +62,6 @@
   }
 
   &--experiment-tracking {
-    border-right: 1px solid #{variables.$white-300};
     overflow-y: scroll;
   }
 }
