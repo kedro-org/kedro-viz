@@ -31,7 +31,7 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store: Optional[BaseSessionStore],
+    session_store: BaseSessionStore,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.

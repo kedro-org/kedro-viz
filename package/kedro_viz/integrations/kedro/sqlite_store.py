@@ -110,8 +110,7 @@ class SQLiteStore(BaseSessionStore):
     def _download(self):
         """Downloads all the session store database files
         from the specified remote path on the cloud storage
-        to your local project.Note: All the database files are deleted
-        after they are merged to the main session_store.db.
+        to your local project.
         """
         try:
             # In theory we should be able to do this as a single operation:
@@ -133,13 +132,6 @@ class SQLiteStore(BaseSessionStore):
         - It is assumed that all the databases share the same schema.
         - In the version 1.0 - we only merge the runs table which
         contains all the experiments.
-        - The downloaded database files are deleted after it's runs are merged
-        with the user's local session_store.db
-
-        Args:
-            database_location:  A list of local filepath in string
-            format for all the databases
-
         """
         # Connect to the user's local session_store.db
         engine, session_class = create_db_engine(self.location)
@@ -180,14 +172,6 @@ class SQLiteStore(BaseSessionStore):
         """
         Synchronizes the user's local session_store.db with
         remote session_store.db stored on a cloud storage service.
-
-        Notes:
-        - First, all the database files at the remote
-        location are downloaded to the local project.
-        - Next, the downloaded databases are merged
-        into the user's local session_store.db.
-        - Finally, the user's local session_store.db is uploaded
-        to the remote location to ensure that it has the most up-to-date runs.
         """
 
         if self.remote_location:
