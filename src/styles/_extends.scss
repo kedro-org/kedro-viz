@@ -9,7 +9,7 @@
 %sidebar {
   background: var(--color-sidebar-background);
   border-bottom: 1px solid var(--color-sidebar-border);
-  border-right: 1px solid #{variables.$white-300};
+  border-right: 1px solid var(--color-border-line);
 }
 
 %button {

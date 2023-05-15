@@ -46,7 +46,7 @@
 
 .pipeline-ui {
   background: var(--color-bg-list);
-  border-right: 1px solid #{variables.$white-300};
+  border-right: 1px solid var(--color-border-line);
   display: flex;
   flex-direction: column;
   flex-grow: 1;

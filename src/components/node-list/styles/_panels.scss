@@ -3,7 +3,7 @@
 .pipeline-nodelist__filter-panel {
   z-index: 1;
   background: var(--color-nodelist-filter-panel);
-  border-top: 1px solid #{colors.$white-500};
+  border-top: 1px solid var(--color-border-line);
 
   .pipeline-nodelist-section:last-child {
     padding-bottom: 28px;
