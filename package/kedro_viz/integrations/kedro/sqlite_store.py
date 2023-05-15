@@ -147,22 +147,23 @@ class SQLiteStore(BaseSessionStore):
         }
 
         for db_loc in databases_location:
-            if temp_engine:
-                temp_engine.dispose()
+            try:
             # Open a connection to the downloaded database
-            temp_engine = create_engine(f"sqlite:///{db_loc}")
-            with temp_engine.connect() as database_conn:
-                db_metadata = MetaData()
-                db_metadata.reflect(bind=temp_engine)
+                temp_engine = create_engine(f"sqlite:///{db_loc}")
+                with temp_engine.connect() as database_conn:
+                    db_metadata = MetaData()
+                    db_metadata.reflect(bind=temp_engine)
 
-                Session = sessionmaker(bind=database_conn)
-                session = Session()                
-                data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
-                for row in data:
-                    existing_run_ids.append(row.id)
-                    all_runs_data.append(row.__dict__)
-
-            temp_engine.dispose()
+                    Session = sessionmaker(bind=database_conn)
+                    session = Session()                
+                    data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
+                    for row in data:
+                        existing_run_ids.append(row.id)
+                        all_runs_data.append(row.__dict__)
+            except Exception as exc:
+                logger.exception(exc) 
+            finally:
+                temp_engine.dispose()
 
         if all_runs_data:
             database.execute(insert(RunModel),all_runs_data)
