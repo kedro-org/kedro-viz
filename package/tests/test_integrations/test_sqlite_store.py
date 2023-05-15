@@ -5,7 +5,6 @@ from pathlib import Path
 from unittest import mock
 
 import boto3
-import fsspec
 import pytest
 from moto import mock_s3
 from sqlalchemy import create_engine
@@ -184,7 +183,7 @@ class TestSQLiteStore:
     def test_empty(self, store_path):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
         assert not sqlite_store
-        assert sqlite_store.location == store_path / "session_store.db"
+        assert sqlite_store.location == str(Path(store_path) / "session_store.db")
 
     def test_save_single_run(self, store_path, db_session_class):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
@@ -245,53 +244,51 @@ class TestSQLiteStore:
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            sqlite_store._upload()
-            mock_fs.return_value.put.assert_called_once()
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._upload()
+        sqlite_store._remote_fs.put.assert_called_once()
 
     def test_upload_to_s3_fail(self, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            with mock.patch.object(logging, "exception") as mock_log:
-                mock_fs.return_value.put.side_effect = ConnectionError(
-                    "Connection error"
-                )
-                sqlite_store._upload()
-                mock_log.assert_called_once_with(
-                    "Error uploading file to S3: Connection error"
-                )
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.put.side_effect = ConnectionError(
+                "Connection error"
+        )
+        with mock.patch.object(logging.Logger, "exception") as mock_log:
+            sqlite_store._upload()
+            mock_log.assert_called_once()
 
     def test_download_from_s3_success(self, store_path, remote_path, mocked_db_in_s3):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            mock_fs.return_value.glob.return_value = mocked_db_in_s3
-            downloaded_dbs = sqlite_store._download()
-            # Assert that the number of databases downloaded is 3
-            assert len(downloaded_dbs) == 3
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
+        sqlite_store._download()
+        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
+        Path(sqlite_store.location)}
+        # Assert that the number of databases downloaded is 3
+        assert len(downloaded_dbs) == 3
 
-            # Assert that the paths contain db1.db, db2.db, and db3.db
-            assert any("db1.db" in str(db_loc) for db_loc in downloaded_dbs)
-            assert any("db2.db" in str(db_loc) for db_loc in downloaded_dbs)
-            assert any("db3.db" in str(db_loc) for db_loc in downloaded_dbs)
+        # Assert that the paths contain db1.db, db2.db, and db3.db
+        assert any("db1.db" in str(db_loc) for db_loc in downloaded_dbs)
+        assert any("db2.db" in str(db_loc) for db_loc in downloaded_dbs)
+        assert any("db3.db" in str(db_loc) for db_loc in downloaded_dbs)
 
     def test_download_from_s3_failure(self, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            mock_fs.return_value.glob.side_effect = ConnectionError("Connection error")
-            # Replace the logging.exception() method with a mock object
-            with mock.patch.object(logging, "exception") as mock_log:
-                downloaded_dbs = sqlite_store._download()
-                # Assert that the number of databases downloaded is 0
-                assert len(downloaded_dbs) == 0
-                mock_log.assert_called_once_with(
-                    "Error downloading file from S3: Connection error"
-                )
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.side_effect = ConnectionError("Connection error")
+        with mock.patch.object(logging.Logger, "exception") as mock_log:
+            sqlite_store._download()
+            downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) 
+            # Assert that the number of databases downloaded is 0
+            assert len(downloaded_dbs) == 0
+            mock_log.assert_called_once()
 
     def test_merge_databases(
         self, store_path, remote_path, mocked_db_in_s3, db_session_class
@@ -299,13 +296,15 @@ class TestSQLiteStore:
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            mock_fs.return_value.glob.return_value = mocked_db_in_s3
-            downloaded_dbs = sqlite_store._download()
-            sqlite_store._merge(downloaded_dbs)
-            db = next(get_db(db_session_class))
-            assert len(downloaded_dbs) == 3
-            assert db.query(RunModel).count() == 3
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
+        sqlite_store._download()
+        sqlite_store._merge()
+        db = next(get_db(db_session_class))
+        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
+        Path(sqlite_store.location)}
+        assert len(downloaded_dbs) == 3
+        assert db.query(RunModel).count() == 3
 
     def test_merge_databases_with_repeated_runs(
         self, store_path, remote_path, mocked_db_in_s3_repeated_runs, db_session_class
@@ -313,47 +312,46 @@ class TestSQLiteStore:
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            with mock.patch.object(logging, "exception") as mock_log:
-                downloaded_dbs = sqlite_store._download()
-                mock_fs.return_value.glob.return_value = mocked_db_in_s3_repeated_runs
-                downloaded_dbs = sqlite_store._download()
-                sqlite_store._merge(downloaded_dbs)
-                db = next(get_db(db_session_class))
-                assert len(downloaded_dbs) == 4
-                assert db.query(RunModel).count() == 3
-                mock_log.assert_called_once()
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3_repeated_runs
+        sqlite_store._download()
+        sqlite_store._merge()
+        db = next(get_db(db_session_class))
+        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
+        Path(sqlite_store.location)}
+        assert len(downloaded_dbs) == 4
+        assert db.query(RunModel).count() == 3
 
     def test_sync(self, store_path, remote_path, mocked_db_in_s3):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            mock_fs.return_value.glob.return_value = mocked_db_in_s3
-            with mock.patch.object(
-                sqlite_store, "_download"
-            ) as mock_download, mock.patch.object(
-                sqlite_store, "_merge"
-            ) as mock_merge, mock.patch.object(
-                sqlite_store, "_upload"
-            ) as mock_upload:
-                sqlite_store.sync()
-                mock_download.assert_called_once()
-                mock_merge.assert_called_once()
-                mock_upload.assert_called_once()
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
+        with mock.patch.object(
+            sqlite_store, "_download"
+        ) as mock_download, mock.patch.object(
+            sqlite_store, "_merge"
+        ) as mock_merge, mock.patch.object(
+            sqlite_store, "_upload"
+        ) as mock_upload:
+            sqlite_store.sync()
+            mock_download.assert_called_once()
+            mock_merge.assert_called_once()
+            mock_upload.assert_called_once()
 
     def test_sync_without_remote_path(self, store_path, mocked_db_in_s3):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
-        with mock.patch.object(fsspec, "filesystem") as mock_fs:
-            mock_fs.return_value.glob.return_value = mocked_db_in_s3
-            with mock.patch.object(
-                sqlite_store, "_download"
-            ) as mock_download, mock.patch.object(
-                sqlite_store, "_merge"
-            ) as mock_merge, mock.patch.object(
-                sqlite_store, "_upload"
-            ) as mock_upload:
-                sqlite_store.sync()
-                assert not mock_download.called
-                assert not mock_merge.called
-                assert not mock_upload.called
+        sqlite_store._remote_fs = mock.MagicMock()
+        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
+        with mock.patch.object(
+            sqlite_store, "_download"
+        ) as mock_download, mock.patch.object(
+            sqlite_store, "_merge"
+        ) as mock_merge, mock.patch.object(
+            sqlite_store, "_upload"
+        ) as mock_upload:
+            sqlite_store.sync()
+            assert not mock_download.called
+            assert not mock_merge.called
+            assert not mock_upload.called

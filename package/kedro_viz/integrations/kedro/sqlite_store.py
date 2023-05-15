@@ -12,7 +12,7 @@ from typing import Any, Generator, List, Optional
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-from sqlalchemy import MetaData, create_engine, select, insert
+from sqlalchemy import MetaData, create_engine, insert, select
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -140,7 +140,6 @@ class SQLiteStore(BaseSessionStore):
         all_runs_data = []
         existing_run_ids = database.execute(select(RunModel.id)).scalars().all()
 
-        temp_engine = None
         # Iterate through each downloaded database
         databases_location = set(Path(self.location).parent.glob("*.db")) - {
             Path(self.location)
@@ -148,22 +147,26 @@ class SQLiteStore(BaseSessionStore):
 
         for db_loc in databases_location:
             try:
-            # Open a connection to the downloaded database
+                # Open a connection to the downloaded database and get all runs
                 temp_engine = create_engine(f"sqlite:///{db_loc}")
                 with temp_engine.connect() as database_conn:
                     Session = sessionmaker(bind=database_conn)
-                    session = Session()                
-                    data = session.query(RunModel).filter(RunModel.id.not_in(existing_run_ids)).all()
+                    session = Session()
+                    data = (
+                        session.query(RunModel)
+                        .filter(RunModel.id.not_in(existing_run_ids))
+                        .all()
+                    )
                     for row in data:
                         existing_run_ids.append(row.id)
                         all_runs_data.append(row.__dict__)
             except Exception as exc:
-                logger.exception(exc) 
+                logger.exception(exc)
             finally:
                 temp_engine.dispose()
 
         if all_runs_data:
-            database.execute(insert(RunModel),all_runs_data)
+            database.execute(insert(RunModel), all_runs_data)
             database.commit()
 
     def sync(self):
