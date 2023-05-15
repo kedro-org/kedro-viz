@@ -30,20 +30,18 @@ def _create_etag() -> str:
 
 
 def _create_base_api_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(
+        title="Kedro-Viz API",
+        description="REST API for Kedro-Viz",
+        version=__version__,
+        default_response_class=EnhancedORJSONResponse,
+    )
 
     @app.middleware("http")
     async def set_secure_headers(request, call_next):
         response = await call_next(request)
         secure_headers.framework.fastapi(response)
         return response
-
-    FastAPI(
-        title="Kedro-Viz API",
-        description="REST API for Kedro-Viz",
-        version=__version__,
-        default_response_class=EnhancedORJSONResponse,
-    )
 
     return app
 
