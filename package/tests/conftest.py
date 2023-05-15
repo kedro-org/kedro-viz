@@ -23,7 +23,7 @@ from kedro.pipeline.modular_pipeline import pipeline
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
 
 BUCKET_NAME = "test-bucket"

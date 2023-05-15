@@ -1,18 +1,19 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
 
+# pylint: disable=broad-exception-caught
+
 import getpass
 import json
 import logging
 import os
-import uuid
 from pathlib import Path
-from typing import Any, Generator, List, Optional
+from typing import Any, Generator, Optional
 
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-from sqlalchemy import MetaData, create_engine, insert, select
+from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
@@ -46,7 +47,7 @@ def _is_json_serializable(obj: Any):
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
-    def __init__(self, *args, remote_path: str = None, **kwargs):
+    def __init__(self, *args, remote_path: Optional[str] = None, **kwargs):
         """Sets remote_path for Collaborative Experiment Tracking"""
         super().__init__(*args, **kwargs)
         self._remote_path = remote_path
@@ -85,7 +86,8 @@ class SQLiteStore(BaseSessionStore):
         return json.dumps(session_dict)
 
     def save(self):
-        """Save the session store info on db and uploads it to the cloud if a remote cloud path is provided ."""
+        """Save the session store info on db and uploads it
+        to the cloud if a remote cloud path is provided ."""
         engine, session_class = create_db_engine(self.location)
         Base.metadata.create_all(bind=engine)
         database = next(get_db(session_class))
@@ -97,7 +99,8 @@ class SQLiteStore(BaseSessionStore):
             self._upload()
 
     def _upload(self):
-        """Uploads the session store database file to the specified remote path on the cloud storage."""
+        """Uploads the session store database file to the specified
+        remote path on the cloud storage."""
         db_name = _get_dbname()
         try:
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
@@ -105,9 +108,10 @@ class SQLiteStore(BaseSessionStore):
             logger.exception(exc)
 
     def _download(self):
-        """Downloads all the session store database files from the specified remote path on the cloud storage
-        to your local project.
-        Note: All the database files are deleted after they are merged to the main session_store.db.
+        """Downloads all the session store database files
+        from the specified remote path on the cloud storage
+        to your local project.Note: All the database files are deleted
+        after they are merged to the main session_store.db.
         """
         try:
             # In theory we should be able to do this as a single operation:
@@ -120,16 +124,21 @@ class SQLiteStore(BaseSessionStore):
             logger.exception(exc)
 
     def _merge(self):
-        """Merges all the session store databases stored at the specified locations into the user's local session_store.db
+        """Merges all the session store databases stored at the
+        specified locations into the user's local session_store.db
 
         Notes:
-        - This method uses multiple SQLAlchemy engines to connect to the user's session_store.db and to all the other downloaded dbs.
+        - This method uses multiple SQLAlchemy engines to connect to the
+        user's session_store.db and to all the other downloaded dbs.
         - It is assumed that all the databases share the same schema.
-        - In the version 1.0 - we only merge the runs table which contains all the experiments.
-        - The downloaded database files are deleted after it's runs are merged with the user's local session_store.db
+        - In the version 1.0 - we only merge the runs table which
+        contains all the experiments.
+        - The downloaded database files are deleted after it's runs are merged
+        with the user's local session_store.db
 
         Args:
-            database_location:  A list of local filepath in string format for all the databases
+            database_location:  A list of local filepath in string
+            format for all the databases
 
         """
         # Connect to the user's local session_store.db
@@ -150,8 +159,8 @@ class SQLiteStore(BaseSessionStore):
                 # Open a connection to the downloaded database and get all runs
                 temp_engine = create_engine(f"sqlite:///{db_loc}")
                 with temp_engine.connect() as database_conn:
-                    Session = sessionmaker(bind=database_conn)
-                    session = Session()
+                    session_class = sessionmaker(bind=database_conn)
+                    session = session_class()
                     data = (
                         session.query(RunModel)
                         .filter(RunModel.id.not_in(existing_run_ids))
@@ -160,8 +169,6 @@ class SQLiteStore(BaseSessionStore):
                     for row in data:
                         existing_run_ids.append(row.id)
                         all_runs_data.append(row.__dict__)
-            except Exception as exc:
-                logger.exception(exc)
             finally:
                 temp_engine.dispose()
 
@@ -171,12 +178,16 @@ class SQLiteStore(BaseSessionStore):
 
     def sync(self):
         """
-        Synchronizes the user's local session_store.db with remote session_store.db stored on a cloud storage service.
+        Synchronizes the user's local session_store.db with
+        remote session_store.db stored on a cloud storage service.
 
         Notes:
-        - First, all the database files at the remote location are downloaded to the local project.
-        - Next, the downloaded databases are merged into the user's local session_store.db.
-        - Finally, the user's local session_store.db is uploaded to the remote location to ensure that it has the most up-to-date runs.
+        - First, all the database files at the remote
+        location are downloaded to the local project.
+        - Next, the downloaded databases are merged
+        into the user's local session_store.db.
+        - Finally, the user's local session_store.db is uploaded
+        to the remote location to ensure that it has the most up-to-date runs.
         """
 
         if self.remote_location:

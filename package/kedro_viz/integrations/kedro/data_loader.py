@@ -78,8 +78,6 @@ def load_data(
         from kedro.framework.project import pipelines
         from kedro.framework.session import KedroSession
 
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore
@@ -100,8 +98,6 @@ def load_data(
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore
@@ -117,8 +113,6 @@ def load_data(
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
         from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
-
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         metadata = _get_project_metadata(project_path)
         with KedroSession.create(

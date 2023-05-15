@@ -8,7 +8,6 @@ from fastapi.encoders import jsonable_encoder
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-from sqlalchemy import event
 from watchgod import run_process
 
 from kedro_viz.api import apps
@@ -32,7 +31,7 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store: BaseSessionStore,
+    session_store: Optional[BaseSessionStore],
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.

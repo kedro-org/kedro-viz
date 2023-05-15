@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Dict, cast
 from unittest import mock
 
 import boto3
@@ -29,7 +30,7 @@ def db_session_class(store_path):
     return Session
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def aws_credentials():
     """Mocked AWS credentials for moto"""
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
@@ -37,7 +38,7 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def mocked_s3_bucket(aws_credentials):
     """S3 Mock Client"""
     with mock_s3():
@@ -172,7 +173,10 @@ def test_get_dbname_with_env_var(mock_getuser):
     assert dbname == "env_user_name.db"
 
 
-@mock.patch("os.environ", {**os.environ, "KEDRO_SQLITE_STORE_USERNAME": None})
+@mock.patch(
+    "os.environ",
+    cast(Dict[str, str], {**os.environ, "KEDRO_SQLITE_STORE_USERNAME": None}),
+)
 @mock.patch("getpass.getuser", return_value="computer_user_name")
 def test_get_dbname_without_env_var(mock_getuser):
     dbname = _get_dbname()
@@ -253,9 +257,7 @@ class TestSQLiteStore:
             store_path, next(session_id()), remote_path=remote_path
         )
         sqlite_store._remote_fs = mock.MagicMock()
-        sqlite_store._remote_fs.put.side_effect = ConnectionError(
-                "Connection error"
-        )
+        sqlite_store._remote_fs.put.side_effect = ConnectionError("Connection error")
         with mock.patch.object(logging.Logger, "exception") as mock_log:
             sqlite_store._upload()
             mock_log.assert_called_once()
@@ -268,7 +270,8 @@ class TestSQLiteStore:
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
         sqlite_store._download()
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-        Path(sqlite_store.location)}
+            Path(sqlite_store.location)
+        }
         # Assert that the number of databases downloaded is 3
         assert len(downloaded_dbs) == 3
 
@@ -285,7 +288,7 @@ class TestSQLiteStore:
         sqlite_store._remote_fs.glob.side_effect = ConnectionError("Connection error")
         with mock.patch.object(logging.Logger, "exception") as mock_log:
             sqlite_store._download()
-            downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) 
+            downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db"))
             # Assert that the number of databases downloaded is 0
             assert len(downloaded_dbs) == 0
             mock_log.assert_called_once()
@@ -302,7 +305,8 @@ class TestSQLiteStore:
         sqlite_store._merge()
         db = next(get_db(db_session_class))
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-        Path(sqlite_store.location)}
+            Path(sqlite_store.location)
+        }
         assert len(downloaded_dbs) == 3
         assert db.query(RunModel).count() == 3
 
@@ -318,7 +322,8 @@ class TestSQLiteStore:
         sqlite_store._merge()
         db = next(get_db(db_session_class))
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-        Path(sqlite_store.location)}
+            Path(sqlite_store.location)
+        }
         assert len(downloaded_dbs) == 4
         assert db.query(RunModel).count() == 3
 

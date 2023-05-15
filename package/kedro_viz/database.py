@@ -1,6 +1,4 @@
 """Database management layer based on SQLAlchemy"""
-
-from pathlib import Path
 from typing import Tuple
 
 from sqlalchemy import create_engine
