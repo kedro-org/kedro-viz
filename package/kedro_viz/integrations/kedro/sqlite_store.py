@@ -1,27 +1,18 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+# pylint: disable=no-member
 
 import json
 import logging
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 from kedro.framework.session.store import BaseSessionStore
-from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiment_tracking import Base, RunModel
+from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
-
-
-def get_db(session_class: sessionmaker) -> Generator:
-    """Makes connection to the database"""
-    try:
-        database = session_class()
-        yield database
-    finally:
-        database.close()
 
 
 def _is_json_serializable(obj: Any):
@@ -34,6 +25,11 @@ def _is_json_serializable(obj: Any):
 
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        session_class = create_db_engine(self.location)
+        self._db_session = session_class
 
     @property
     def location(self) -> Path:
@@ -61,9 +57,7 @@ class SQLiteStore(BaseSessionStore):
 
     def save(self):
         """Save the session store info on db ."""
-        engine, session_class = create_db_engine(self.location)
-        Base.metadata.create_all(bind=engine)
-        database = next(get_db(session_class))
+
         session_store_data = RunModel(id=self._session_id, blob=self.to_json())
-        database.add(session_store_data)
-        database.commit()
+        with self._db_session.begin() as session:
+            session.add(session_store_data)
