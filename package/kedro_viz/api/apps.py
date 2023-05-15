@@ -30,12 +30,22 @@ def _create_etag() -> str:
 
 
 def _create_base_api_app() -> FastAPI:
-    return FastAPI(
+    app = FastAPI()
+
+    @app.middleware("http")
+    async def set_secure_headers(request, call_next):
+        response = await call_next(request)
+        secure_headers.framework.fastapi(response)
+        return response
+
+    FastAPI(
         title="Kedro-Viz API",
         description="REST API for Kedro-Viz",
         version=__version__,
         default_response_class=EnhancedORJSONResponse,
     )
+
+    return app
 
 
 def create_api_app_from_project(
@@ -58,12 +68,6 @@ def create_api_app_from_project(
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
     app_etag = _create_etag()
-
-    @app.middleware("http")
-    async def set_secure_headers(request, call_next):
-        response = await call_next(request)
-        secure_headers.framework.fastapi(response)
-        return response
 
     @app.get("/")
     @app.get("/experiment-tracking")
