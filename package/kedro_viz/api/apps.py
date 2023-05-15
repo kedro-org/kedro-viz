@@ -5,6 +5,7 @@ import json
 import time
 from pathlib import Path
 
+import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
@@ -20,6 +21,8 @@ from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
+secure_headers = secure.Secure()
+
 
 def _create_etag() -> str:
     """Generate the current timestamp to use as etag."""
@@ -27,12 +30,22 @@ def _create_etag() -> str:
 
 
 def _create_base_api_app() -> FastAPI:
-    return FastAPI(
+    app = FastAPI()
+
+    @app.middleware("http")
+    async def set_secure_headers(request, call_next):
+        response = await call_next(request)
+        secure_headers.framework.fastapi(response)
+        return response
+
+    FastAPI(
         title="Kedro-Viz API",
         description="REST API for Kedro-Viz",
         version=__version__,
         default_response_class=EnhancedORJSONResponse,
     )
+
+    return app
 
 
 def create_api_app_from_project(
