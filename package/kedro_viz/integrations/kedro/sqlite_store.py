@@ -13,21 +13,20 @@ from typing import Any, Optional
 
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
+
 from kedro.io.core import get_protocol_and_path
 from sqlalchemy import create_engine, insert, select
-from sqlalchemy.orm import sessionmaker
-
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
 
 
+
 def _get_dbname():
     username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME") or getpass.getuser()
     return username + ".db"
-
-
+  
 def _is_json_serializable(obj: Any):
     try:
         json.dumps(obj)
@@ -39,6 +38,7 @@ def _is_json_serializable(obj: Any):
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
+
     def __init__(self, *args, remote_path: Optional[str] = None, **kwargs):
         """Initializes the SQLiteStore object."""
         super().__init__(*args, **kwargs)
@@ -48,7 +48,6 @@ class SQLiteStore(BaseSessionStore):
         if self.remote_location:
             protocol, _ = get_protocol_and_path(self.remote_location)
             self._remote_fs = fsspec.filesystem(protocol)
-
     @property
     def location(self) -> str:
         """Returns location of the sqlite_store database"""
@@ -79,6 +78,7 @@ class SQLiteStore(BaseSessionStore):
         return json.dumps(session_dict)
 
     def save(self):
+
         """Save the session store info on db and uploads it
         to the cloud if a remote cloud path is provided ."""
         with self._db_session_class.begin() as session:

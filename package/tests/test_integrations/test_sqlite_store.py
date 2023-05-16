@@ -11,6 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, _get_dbname
+
 from kedro_viz.models.experiment_tracking import Base, RunModel
 
 BUCKET_NAME = "test-bucket"
@@ -211,6 +212,7 @@ class TestSQLiteStore:
         sqlite_store2.save()
         with sqlite_store2._db_session_class() as db_session:
             assert db_session.query(RunModel).count() == 2
+
 
     def test_save_run_with_remote_path(self, mocker, store_path, remote_path):
         mocker.patch("fsspec.filesystem")

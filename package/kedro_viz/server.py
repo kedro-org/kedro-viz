@@ -18,6 +18,7 @@ from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
+
 DEV_PORT = 4142
 
 
