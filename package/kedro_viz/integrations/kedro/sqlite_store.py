@@ -28,8 +28,7 @@ class SQLiteStore(BaseSessionStore):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        session_class = create_db_engine(self.location)
-        self._db_session = session_class
+        self._db_session = create_db_engine(self.location)
 
     @property
     def location(self) -> Path:
