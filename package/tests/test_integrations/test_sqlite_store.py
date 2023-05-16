@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, get_db
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.experiment_tracking import Base, RunModel
 
 
@@ -39,25 +39,25 @@ class TestSQLiteStore:
         sqlite_store = SQLiteStore(store_path, next(session_id()))
         sqlite_store.data = {"project_path": store_path, "project_name": "test"}
         sqlite_store.save()
-        db = next(get_db(db_session_class))
-        loaded_runs = db.query(RunModel).all()
-        assert len(loaded_runs) == 1
-        assert json.loads(loaded_runs[0].blob) == {
-            "project_path": str(store_path),
-            "project_name": "test",
-        }
+        with sqlite_store._db_session_class() as session:
+            loaded_runs = session.query(RunModel).all()
+            assert len(loaded_runs) == 1
+            assert json.loads(loaded_runs[0].blob) == {
+                "project_path": str(store_path),
+                "project_name": "test",
+            }
 
     def test_save_multiple_runs(self, store_path, db_session_class):
         session = session_id()
         sqlite_store = SQLiteStore(store_path, next(session))
         sqlite_store.save()
-        db = next(get_db(db_session_class))
-        assert db.query(RunModel).count() == 1
-        # save another session
+        with sqlite_store._db_session_class() as db_session:
+            assert db_session.query(RunModel).count() == 1
+            # save another session
         sqlite_store2 = SQLiteStore(store_path, next(session))
         sqlite_store2.save()
-        db = next(get_db(db_session_class))
-        assert db.query(RunModel).count() == 2
+        with sqlite_store2._db_session_class() as db_session:
+            assert db_session.query(RunModel).count() == 2
 
     def test_update_git_branch(self, store_path, mocker):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
