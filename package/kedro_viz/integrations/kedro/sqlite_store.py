@@ -1,5 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+# pylint: disable=no-member
 
 # pylint: disable=broad-exception-caught
 
@@ -8,7 +9,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any, Optional
 
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
@@ -16,19 +17,10 @@ from kedro.io.core import get_protocol_and_path
 from sqlalchemy import create_engine, insert, select
 from sqlalchemy.orm import sessionmaker
 
-from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiment_tracking import Base, RunModel
+from kedro_viz.database import make_db_session_factory
+from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
-
-
-def get_db(session_class: sessionmaker) -> Generator:
-    """Makes connection to the database"""
-    try:
-        database = session_class()
-        yield database
-    finally:
-        database.close()
 
 
 def _get_dbname():
@@ -48,8 +40,9 @@ class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
     def __init__(self, *args, remote_path: Optional[str] = None, **kwargs):
-        """Sets remote_path for Collaborative Experiment Tracking"""
+        """Initializes the SQLiteStore object."""
         super().__init__(*args, **kwargs)
+        self._db_session_class = make_db_session_factory(self.location)
         self._remote_path = remote_path
 
         if self.remote_location:
@@ -88,13 +81,8 @@ class SQLiteStore(BaseSessionStore):
     def save(self):
         """Save the session store info on db and uploads it
         to the cloud if a remote cloud path is provided ."""
-        engine, session_class = create_db_engine(self.location)
-        Base.metadata.create_all(bind=engine)
-        database = next(get_db(session_class))
-
-        session_store_data = RunModel(id=self._session_id, blob=self._to_json())
-        database.add(session_store_data)
-        database.commit()
+        with self._db_session_class.begin() as session:
+            session.add(RunModel(id=self._session_id, blob=self._to_json()))
         if self.remote_location:
             self._upload()
 
@@ -133,19 +121,16 @@ class SQLiteStore(BaseSessionStore):
         - In the version 1.0 - we only merge the runs table which
         contains all the experiments.
         """
-        # Connect to the user's local session_store.db
-        engine, session_class = create_db_engine(self.location)
-        Base.metadata.create_all(bind=engine)
-        database = next(get_db(session_class))
 
         all_runs_data = []
-        existing_run_ids = database.execute(select(RunModel.id)).scalars().all()
+        with self._db_session_class() as session:
+            existing_run_ids = session.execute(select(RunModel.id)).scalars().all()
 
-        # Iterate through each downloaded database
         databases_location = set(Path(self.location).parent.glob("*.db")) - {
             Path(self.location)
         }
 
+        # Iterate through each downloaded database
         for db_loc in databases_location:
             try:
                 # Open a connection to the downloaded database and get all runs
@@ -164,9 +149,10 @@ class SQLiteStore(BaseSessionStore):
             finally:
                 temp_engine.dispose()
 
+        # Adds all the run_data from downloaded dbs to the local session store
         if all_runs_data:
-            database.execute(insert(RunModel), all_runs_data)
-            database.commit()
+            with self._db_session_class.begin() as session:
+                session.execute(insert(RunModel), all_runs_data)
 
     def sync(self):
         """
