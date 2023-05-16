@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.1.1
+
+## Bug fixes and other changes
+
+- Update API response headers for added application security. (#1355)
+
 # Release 6.1.0
 
 ## Major features and improvements
@@ -20,9 +26,10 @@ Please follow the established format:
 - Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
 
 ## Community contributions
+
 Many thanks to the following Kedroids for contributing PRs to this release:
 
-* [MattRossetti](https://github.com/MattRossetti)
+- [MattRossetti](https://github.com/MattRossetti)
 
 # Release 6.0.1
 
