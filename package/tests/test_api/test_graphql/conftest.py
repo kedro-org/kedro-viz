@@ -17,7 +17,7 @@ except ImportError:
 from kedro.io import DataCatalog, Version
 
 from kedro_viz.api.graphql.types import Run
-from kedro_viz.database import create_db_engine
+from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 
@@ -29,7 +29,7 @@ def example_run_ids():
 @pytest.fixture
 def example_db_session(tmp_path):
     session_store_location = Path(tmp_path / "session_store.db")
-    session_class = create_db_engine(session_store_location)
+    session_class = make_db_session_factory(session_store_location)
     yield session_class
 
 

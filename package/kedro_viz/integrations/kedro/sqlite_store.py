@@ -9,7 +9,7 @@ from typing import Any
 
 from kedro.framework.session.store import BaseSessionStore
 
-from kedro_viz.database import create_db_engine
+from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
@@ -28,8 +28,7 @@ class SQLiteStore(BaseSessionStore):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        session_class = create_db_engine(self.location)
-        self._db_session = session_class
+        self._db_session_class = make_db_session_factory(self.location)
 
     @property
     def location(self) -> Path:
@@ -58,6 +57,5 @@ class SQLiteStore(BaseSessionStore):
     def save(self):
         """Save the session store info on db ."""
 
-        session_store_data = RunModel(id=self._session_id, blob=self.to_json())
-        with self._db_session.begin() as session:
-            session.add(session_store_data)
+        with self._db_session_class.begin() as session:
+            session.add(RunModel(id=self._session_id, blob=self.to_json()))
