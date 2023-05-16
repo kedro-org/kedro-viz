@@ -13,9 +13,8 @@ from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.database import create_db_engine
+from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.models.experiment_tracking import Base
 
 DEV_PORT = 4142
 
@@ -35,8 +34,7 @@ def populate_data(
     if creatinge an api app from project.
     """
     if session_store_location:
-        database_engine, session_class = create_db_engine(session_store_location)
-        Base.metadata.create_all(bind=database_engine)
+        session_class = make_db_session_factory(session_store_location)
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
