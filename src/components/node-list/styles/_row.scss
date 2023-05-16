@@ -17,7 +17,7 @@
   &--overwrite {
     .Mui-selected & {
       .kui-theme--dark & {
-        background-color: #{colors.$slate-700};
+        background-color: #{colors.$slate-200};
       }
 
       .kui-theme--light & {

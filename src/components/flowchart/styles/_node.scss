@@ -31,6 +31,11 @@
     fill: var(--node-fill-active);
     stroke: var(--node-stroke-active);
   }
+
+  text,
+  .pipeline-node__icon {
+    fill: #{colors.$white-600};
+  }
 }
 
 .pipeline-node--parameters {
