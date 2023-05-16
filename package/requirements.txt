@@ -8,7 +8,6 @@ uvicorn[standard]~=0.22.0
 watchgod~=0.8.2
 plotly>=4.0
 pandas>=0.24
-s3fs>=2021.4, <2024.1 
 sqlalchemy>=1.4, <3
 strawberry-graphql>=0.99.0, <1.0
 networkx>=1.0

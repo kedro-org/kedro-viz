@@ -3,7 +3,7 @@ import logging
 import os
 from pathlib import Path
 from typing import Dict, cast
-from unittest import mock
+from unittest.mock import patch
 
 import boto3
 import pytest
@@ -166,18 +166,18 @@ def session_id():
         i += 1
 
 
-@mock.patch.dict(os.environ, {"KEDRO_SQLITE_STORE_USERNAME": "env_user_name"})
-@mock.patch("getpass.getuser", return_value="computer_user_name")
+@patch.dict(os.environ, {"KEDRO_SQLITE_STORE_USERNAME": "env_user_name"})
+@patch("getpass.getuser", return_value="computer_user_name")
 def test_get_dbname_with_env_var(mock_getuser):
     dbname = _get_dbname()
     assert dbname == "env_user_name.db"
 
 
-@mock.patch(
+@patch(
     "os.environ",
     cast(Dict[str, str], {**os.environ, "KEDRO_SQLITE_STORE_USERNAME": None}),
 )
-@mock.patch("getpass.getuser", return_value="computer_user_name")
+@patch("getpass.getuser", return_value="computer_user_name")
 def test_get_dbname_without_env_var(mock_getuser):
     dbname = _get_dbname()
     assert dbname == "computer_user_name.db"
@@ -213,19 +213,20 @@ class TestSQLiteStore:
         db = next(get_db(db_session_class))
         assert db.query(RunModel).count() == 2
 
-    def test_save_run_with_remote_path(self, store_path, remote_path):
+    @patch("fsspec.filesystem")
+    def test_save_run_with_remote_path(self, mock_fs, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
         sqlite_store.data = {"project_path": store_path, "project_name": "test"}
-        with mock.patch.object(sqlite_store, "_upload") as mock_upload:
+        with patch.object(sqlite_store, "_upload") as mock_upload:
             sqlite_store.save()
             mock_upload.assert_called_once()
 
     def test_save_run_without_remote_path(self, store_path):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
         sqlite_store.data = {"project_path": store_path, "project_name": "test"}
-        with mock.patch.object(sqlite_store, "_upload") as mock_upload:
+        with patch.object(sqlite_store, "_upload") as mock_upload:
             sqlite_store.save()
             assert not mock_upload.called
 
@@ -244,29 +245,31 @@ class TestSQLiteStore:
             }
         )
 
-    def test_upload_to_s3_success(self, store_path, remote_path):
+    @patch("fsspec.filesystem")
+    def test_upload_to_s3_success(self, mock_fs, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._upload()
         sqlite_store._remote_fs.put.assert_called_once()
 
-    def test_upload_to_s3_fail(self, store_path, remote_path):
+    @patch("fsspec.filesystem")
+    def test_upload_to_s3_fail(self, mock_fs, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.put.side_effect = ConnectionError("Connection error")
-        with mock.patch.object(logging.Logger, "exception") as mock_log:
+        with patch.object(logging.Logger, "exception") as mock_log:
             sqlite_store._upload()
             mock_log.assert_called_once()
 
-    def test_download_from_s3_success(self, store_path, remote_path, mocked_db_in_s3):
+    @patch("fsspec.filesystem")
+    def test_download_from_s3_success(
+        self, mock_fs, store_path, remote_path, mocked_db_in_s3
+    ):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
         sqlite_store._download()
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
@@ -280,26 +283,26 @@ class TestSQLiteStore:
         assert any("db2.db" in str(db_loc) for db_loc in downloaded_dbs)
         assert any("db3.db" in str(db_loc) for db_loc in downloaded_dbs)
 
-    def test_download_from_s3_failure(self, store_path, remote_path):
+    @patch("fsspec.filesystem")
+    def test_download_from_s3_failure(self, mock_fs, store_path, remote_path):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.glob.side_effect = ConnectionError("Connection error")
-        with mock.patch.object(logging.Logger, "exception") as mock_log:
+        with patch.object(logging.Logger, "exception") as mock_log:
             sqlite_store._download()
             downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db"))
             # Assert that the number of databases downloaded is 0
             assert len(downloaded_dbs) == 0
             mock_log.assert_called_once()
 
+    @patch("fsspec.filesystem")
     def test_merge_databases(
-        self, store_path, remote_path, mocked_db_in_s3, db_session_class
+        self, mock_fs, store_path, remote_path, mocked_db_in_s3, db_session_class
     ):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
         sqlite_store._download()
         sqlite_store._merge()
@@ -310,13 +313,18 @@ class TestSQLiteStore:
         assert len(downloaded_dbs) == 3
         assert db.query(RunModel).count() == 3
 
+    @patch("fsspec.filesystem")
     def test_merge_databases_with_repeated_runs(
-        self, store_path, remote_path, mocked_db_in_s3_repeated_runs, db_session_class
+        self,
+        mock_fs,
+        store_path,
+        remote_path,
+        mocked_db_in_s3_repeated_runs,
+        db_session_class,
     ):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3_repeated_runs
         sqlite_store._download()
         sqlite_store._merge()
@@ -327,35 +335,26 @@ class TestSQLiteStore:
         assert len(downloaded_dbs) == 4
         assert db.query(RunModel).count() == 3
 
-    def test_sync(self, store_path, remote_path, mocked_db_in_s3):
+    @patch("fsspec.filesystem")
+    def test_sync(self, mock_fs, store_path, remote_path, mocked_db_in_s3):
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        sqlite_store._remote_fs = mock.MagicMock()
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
-        with mock.patch.object(
-            sqlite_store, "_download"
-        ) as mock_download, mock.patch.object(
+        with patch.object(sqlite_store, "_download") as mock_download, patch.object(
             sqlite_store, "_merge"
-        ) as mock_merge, mock.patch.object(
-            sqlite_store, "_upload"
-        ) as mock_upload:
+        ) as mock_merge, patch.object(sqlite_store, "_upload") as mock_upload:
             sqlite_store.sync()
             mock_download.assert_called_once()
             mock_merge.assert_called_once()
             mock_upload.assert_called_once()
 
-    def test_sync_without_remote_path(self, store_path, mocked_db_in_s3):
+    @patch("fsspec.filesystem")
+    def test_sync_without_remote_path(self, mock_fs, store_path):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
-        sqlite_store._remote_fs = mock.MagicMock()
-        sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
-        with mock.patch.object(
-            sqlite_store, "_download"
-        ) as mock_download, mock.patch.object(
+        with patch.object(sqlite_store, "_download") as mock_download, patch.object(
             sqlite_store, "_merge"
-        ) as mock_merge, mock.patch.object(
-            sqlite_store, "_upload"
-        ) as mock_upload:
+        ) as mock_merge, patch.object(sqlite_store, "_upload") as mock_upload:
             sqlite_store.sync()
             assert not mock_download.called
             assert not mock_merge.called
