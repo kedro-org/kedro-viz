@@ -15,7 +15,7 @@ import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
 from sqlalchemy import create_engine, insert, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel
@@ -90,6 +90,7 @@ class SQLiteStore(BaseSessionStore):
         """Uploads the session store database file to the specified
         remote path on the cloud storage."""
         db_name = _get_dbname()
+        logger.debug(f"Uploading local session store to remote with name {db_name}...")
         try:
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
@@ -106,6 +107,7 @@ class SQLiteStore(BaseSessionStore):
             # but this does not seem to work correctly - maybe a bug in fsspec. So instead
             # we do it in two steps.
             remote_dbs = self._remote_fs.glob(f"{self.remote_location}/*.db")
+            logger.debug(f"Downloading {len(remote_dbs)} remote session stores to local...")
             self._remote_fs.get(remote_dbs, str(Path(self.location).parent))
         except Exception as exc:
             logger.exception(exc)
@@ -122,37 +124,38 @@ class SQLiteStore(BaseSessionStore):
         contains all the experiments.
         """
 
-        all_runs_data = []
+        all_new_runs = []
+
         with self._db_session_class() as session:
             existing_run_ids = session.execute(select(RunModel.id)).scalars().all()
 
-        databases_location = set(Path(self.location).parent.glob("*.db")) - {
+        # Look at all databases in the local session store directory
+        # that aren't the actual session_store.db itself.
+        downloaded_db_locations = set(Path(self.location).parent.glob("*.db")) - {
             Path(self.location)
         }
 
-        # Iterate through each downloaded database
-        for db_loc in databases_location:
-            try:
-                # Open a connection to the downloaded database and get all runs
-                temp_engine = create_engine(f"sqlite:///{db_loc}")
-                with temp_engine.connect() as database_conn:
-                    session_class = sessionmaker(bind=database_conn)
-                    session = session_class()
-                    data = (
-                        session.query(RunModel)
-                        .filter(RunModel.id.not_in(existing_run_ids))
-                        .all()
-                    )
-                    for row in data:
-                        existing_run_ids.append(row.id)
-                        all_runs_data.append(row.__dict__)
-            finally:
-                temp_engine.dispose()
+        logger.debug(f"Checking {len(downloaded_db_locations)} downloaded session stores for new runs...")
+        for downloaded_db_location in downloaded_db_locations:
+            engine = create_engine(f"sqlite:///{downloaded_db_location}")
+            with Session(engine) as session:
+                new_runs = (
+                    session.query(RunModel)
+                    .filter(RunModel.id.not_in(existing_run_ids))
+                    .all()
+                )
 
-        # Adds all the run_data from downloaded dbs to the local session store
-        if all_runs_data:
+                existing_run_ids.extend([run.id for run in new_runs])
+                all_new_runs.extend(new_runs)
+                logger.debug(f"Found {len(new_runs)} new runs in downloaded session store"
+                             f" {downloaded_db_location.name}")
+
+        if all_new_runs:
+            logger.debug(f"Adding {len(all_new_runs)} new runs to session store...")
             with self._db_session_class.begin() as session:
-                session.execute(insert(RunModel), all_runs_data)
+                for run in all_new_runs:
+                    session.merge(run)
+
 
     def sync(self):
         """
@@ -162,15 +165,9 @@ class SQLiteStore(BaseSessionStore):
 
         if self.remote_location:
             self._download()
-            self._merge()
+            # We don't want a failed merge to stop the whole kedro-viz process.
+            try:
+                self._merge()
+            except Exception as exc:
+                logger.exception(exc)
             self._upload()
-
-
-# TODO:
-# Don't want broken sync in populate_data to stop kedro-viz.
-# What happens if you delete session store file?
-# Does it work without SQLiteStore still?
-# And with SQLIteStore but without remote path?
-
-# Notes:
-# --autoreload should work still, so long as change local file
