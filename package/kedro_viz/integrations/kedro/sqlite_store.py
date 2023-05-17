@@ -1,8 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
-# pylint: disable=no-member
-
-# pylint: disable=broad-exception-caught
+# pylint: disable=no-member,logging-fstring-interpolation, broad-exception-caught
 
 import getpass
 import json
@@ -14,8 +12,8 @@ from typing import Any, Optional
 import fsspec
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
-from sqlalchemy import create_engine, insert, select
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel
@@ -105,10 +103,14 @@ class SQLiteStore(BaseSessionStore):
             # In theory we should be able to do this as a single operation:
             # self._remote_fs.get(f"{self.remote_location}/*.db", str(Path(self.location).parent))
             # but this does not seem to work correctly - maybe a bug in fsspec. So instead
-            # we do it in two steps.
+            # we do it in two steps. Also need to add os.sep so it works with older s3fs version.
+            # This is a known bug in s3fs
             remote_dbs = self._remote_fs.glob(f"{self.remote_location}/*.db")
-            logger.debug(f"Downloading {len(remote_dbs)} remote session stores to local...")
-            self._remote_fs.get(remote_dbs, str(Path(self.location).parent))
+            logger.debug(
+                f"Downloading {len(remote_dbs)} remote session stores to local..."
+            )
+            for remote_db in remote_dbs:
+                self._remote_fs.get(remote_db, str(Path(self.location).parent) + os.sep)
         except Exception as exc:
             logger.exception(exc)
 
@@ -135,7 +137,9 @@ class SQLiteStore(BaseSessionStore):
             Path(self.location)
         }
 
-        logger.debug(f"Checking {len(downloaded_db_locations)} downloaded session stores for new runs...")
+        logger.debug(
+            f"Checking {len(downloaded_db_locations)} downloaded session stores for new runs..."
+        )
         for downloaded_db_location in downloaded_db_locations:
             engine = create_engine(f"sqlite:///{downloaded_db_location}")
             with Session(engine) as session:
@@ -147,15 +151,16 @@ class SQLiteStore(BaseSessionStore):
 
                 existing_run_ids.extend([run.id for run in new_runs])
                 all_new_runs.extend(new_runs)
-                logger.debug(f"Found {len(new_runs)} new runs in downloaded session store"
-                             f" {downloaded_db_location.name}")
+                logger.debug(
+                    f"Found {len(new_runs)} new runs in downloaded session store"
+                    f" {downloaded_db_location.name}"
+                )
 
         if all_new_runs:
             logger.debug(f"Adding {len(all_new_runs)} new runs to session store...")
             with self._db_session_class.begin() as session:
                 for run in all_new_runs:
                     session.merge(run)
-
 
     def sync(self):
         """

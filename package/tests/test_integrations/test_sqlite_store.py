@@ -363,3 +363,20 @@ class TestSQLiteStore:
         assert not mock_download.called
         assert not mock_merge.called
         assert not mock_upload.called
+
+    def test_sync_with_merge_error(self, mocker, store_path, remote_path):
+        mocker.patch("fsspec.filesystem")
+        sqlite_store = SQLiteStore(
+            store_path, next(session_id()), remote_path=remote_path
+        )
+        mock_log = mocker.patch.object(logging.Logger, "exception")
+        mock_download = mocker.patch.object(sqlite_store, "_download")
+        mock_merge = mocker.patch.object(
+            sqlite_store, "_merge", side_effect=Exception("Merge failed")
+        )
+        mock_upload = mocker.patch.object(sqlite_store, "_upload")
+        sqlite_store.sync()
+        mock_download.assert_called_once()
+        mock_merge.assert_called_once()
+        mock_upload.assert_called_once()
+        mock_log.assert_called_once()
