@@ -159,12 +159,14 @@ class Mutation:
         return UpdateRunDetailsSuccess(run=updated_run)
 
 
+
 @strawberry.type
 class Subscription:
     @strawberry.subscription(description="Add new runs in real time")  # type: ignore
     async def runs_added(self) -> AsyncGenerator[List[Run], None]:
         """Subscription to new runs in real-time"""
         while True:
+            data_access_manager.refresh_session_store()
             new_runs = data_access_manager.runs.get_new_runs()
             if new_runs:
                 data_access_manager.runs.last_run_id = new_runs[0].id

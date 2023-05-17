@@ -35,12 +35,7 @@ def populate_data(
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
-
-    if isinstance(session_store, SQLiteStore):
-        session_store.sync()
-        session_class = make_db_session_factory(session_store.location)
-        data_access_manager.set_db_session(session_class)
-
+    data_access_manager.set_session_store(session_store)
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
 

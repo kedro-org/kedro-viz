@@ -62,10 +62,18 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
+        self.session_store = None
 
-    def set_db_session(self, db_session_class: sessionmaker):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
+    def set_session_store(self, session_store: BaseSessionStore):
+        self.session_store = session_store
+        # isinstance here still not nice. Probably leave this and read vs. sync difficulty unresolved for first PR
+        # and come back to it?
+        if isinstance(session_store, SQLiteStore):
+            self.runs.set_db_session(session_store)
+
+    def refresh_session_store(self):
+        # Need to use _sync currently.
+        self.session_store.read()
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to

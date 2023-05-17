@@ -157,7 +157,7 @@ class SQLiteStore(BaseSessionStore):
                     session.merge(run)
 
 
-    def sync(self):
+    def _sync(self):
         """
         Synchronizes the user's local session_store.db with
         remote session_store.db stored on a cloud storage service.
@@ -171,3 +171,8 @@ class SQLiteStore(BaseSessionStore):
             except Exception as exc:
                 logger.exception(exc)
             self._upload()
+
+    # Problem: read expected to return dict and is used in BaseSessionStore.__init__
+    def read(self):
+        self._sync()
+        # return

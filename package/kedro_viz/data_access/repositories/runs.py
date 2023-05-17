@@ -7,6 +7,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 
 from sqlalchemy.orm import sessionmaker
 
+from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 logger = logging.getLogger(__name__)
@@ -33,9 +34,9 @@ class RunsRepository:
         self._db_session_class = db_session_class
         self.last_run_id = None
 
-    def set_db_session(self, db_session_class: sessionmaker):
+    def set_db_session(self, session_store):
         """Sqlite db connection session"""
-        self._db_session_class = db_session_class
+        self._db_session_class = make_db_session_factory(session_store.location)
 
     @check_db_session
     def add_run(self, run: RunModel):
@@ -78,6 +79,9 @@ class RunsRepository:
 
     @check_db_session
     def get_new_runs(self) -> Optional[Iterable[RunModel]]:
+        # Need to think about what happens here in case that you're loading old runs.
+        # Probably best to just store all loaded run_ids rather than last_run_id.
+        # So new runs are those that haven't been seen before rather than new ones.
         with self._db_session_class() as session:  # type: ignore
             query = session.query(RunModel)
 

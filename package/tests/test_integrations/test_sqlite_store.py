@@ -348,7 +348,7 @@ class TestSQLiteStore:
         mock_download = mocker.patch.object(sqlite_store, "_download")
         mock_merge = mocker.patch.object(sqlite_store, "_merge")
         mock_upload = mocker.patch.object(sqlite_store, "_upload")
-        sqlite_store.sync()
+        sqlite_store._sync()
         mock_download.assert_called_once()
         mock_merge.assert_called_once()
         mock_upload.assert_called_once()
@@ -359,7 +359,7 @@ class TestSQLiteStore:
         mock_download = mocker.patch.object(sqlite_store, "_download")
         mock_merge = mocker.patch.object(sqlite_store, "_merge")
         mock_upload = mocker.patch.object(sqlite_store, "_upload")
-        sqlite_store.sync()
+        sqlite_store._sync()
         assert not mock_download.called
         assert not mock_merge.called
         assert not mock_upload.called
