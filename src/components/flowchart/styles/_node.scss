@@ -110,6 +110,11 @@
     fill: var(--node-fill-selected);
     stroke: var(--node-stroke-selected);
   }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: #{colors.$white-600};
+  }
 }
 
 .pipeline-node--collapsed-hint {
