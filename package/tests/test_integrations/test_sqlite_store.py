@@ -253,10 +253,7 @@ class TestSQLiteStore:
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
             Path(sqlite_store.location)
         }
-        assert downloaded_dbs == {
-            Path(tmp_path / "db1.db"),
-            Path(tmp_path / "db2.db")
-        }
+        assert downloaded_dbs == {Path(tmp_path / "db1.db"), Path(tmp_path / "db2.db")}
 
     def test_download_from_s3_failure(self, mocker, store_path, remote_path):
         mocker.patch("fsspec.filesystem")

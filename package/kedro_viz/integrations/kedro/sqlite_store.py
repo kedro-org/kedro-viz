@@ -88,7 +88,10 @@ class SQLiteStore(BaseSessionStore):
         """Uploads the session store database file to the specified
         remote path on the cloud storage."""
         db_name = _get_dbname()
-        logger.debug(f"Uploading local session store to remote with name {db_name} to {self.remote_location}...")
+        logger.debug(
+            f"""Uploading local session store to remote with name
+              {db_name} to {self.remote_location}..."""
+        )
         try:
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
