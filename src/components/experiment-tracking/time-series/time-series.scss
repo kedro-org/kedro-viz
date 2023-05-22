@@ -48,7 +48,7 @@
   }
 
   &--selected-0 {
-    stroke: colors.$blue-300;
+    stroke: colors.$purple-300;
   }
 
   &--selected-1 {
@@ -62,17 +62,17 @@
 
 .time-series__marker {
   &--selected-0 {
-    fill: colors.$blue-0;
-    stroke: colors.$blue-0;
+    fill: transparent;
+    stroke: colors.$purple-300;
   }
 
   &--selected-1 {
-    fill: colors.$yellow-0;
+    fill: transparent;
     stroke: colors.$yellow-0;
   }
 
   &--selected-2 {
-    fill: colors.$green-0;
+    fill: transparent;
     stroke: colors.$green-0;
   }
 }
