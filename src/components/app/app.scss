@@ -16,6 +16,7 @@
   --color-bg-list: #{colors.$white-100};
   --color-sidebar-background: #{colors.$white-200};
   --color-global-toolbar-background: #{colors.$white-100};
+  --color-global-toolbar-active-btn: #{colors.$grey-0};
   --color-pipeline-toolbar-background: #{colors.$grey-0};
   --color-sidebar-border: #{colors.$white-800};
   --color-sidebar-shadow: #{colors.$grey-300};
@@ -58,6 +59,7 @@
   --color-bg-list: #{colors.$slate-600};
   --color-sidebar-background: #{colors.$slate-400};
   --color-global-toolbar-background: #{colors.$slate-900};
+  --color-global-toolbar-active-btn: #{colors.$slate-400};
   --color-pipeline-toolbar-background: #{colors.$slate-700};
   --color-sidebar-border: #{colors.$grey-300};
   --color-sidebar-shadow: #{colors.$ocean-900};

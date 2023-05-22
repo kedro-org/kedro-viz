@@ -62,14 +62,17 @@
 
 .time-series__marker {
   &--selected-0 {
+    fill: colors.$blue-0;
     stroke: colors.$blue-0;
   }
 
   &--selected-1 {
+    fill: colors.$yellow-0;
     stroke: colors.$yellow-0;
   }
 
   &--selected-2 {
+    fill: colors.$green-0;
     stroke: colors.$green-0;
   }
 }
