@@ -88,11 +88,11 @@ class SQLiteStore(BaseSessionStore):
         """Uploads the session store database file to the specified
         remote path on the cloud storage."""
         db_name = _get_dbname()
-        logger.debug(f"Uploading local session store to remote with name {db_name}...")
+        logger.debug(f"Uploading local session store to remote with name {db_name} to {self.remote_location}...")
         try:
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
-            logger.exception(exc)
+            logger.exception(f"Upload failed: {exc}")
 
     def _download(self):
         """Downloads all the session store database files
@@ -112,7 +112,7 @@ class SQLiteStore(BaseSessionStore):
             for remote_db in remote_dbs:
                 self._remote_fs.get(remote_db, str(Path(self.location).parent) + os.sep)
         except Exception as exc:
-            logger.exception(exc)
+            logger.exception(f"Download failed: {exc}")
 
     def _merge(self):
         """Merges all the session store databases stored at the
@@ -122,7 +122,7 @@ class SQLiteStore(BaseSessionStore):
         - This method uses multiple SQLAlchemy engines to connect to the
         user's session_store.db and to all the other downloaded dbs.
         - It is assumed that all the databases share the same schema.
-        - In the version 1.0 - we only merge the runs table which
+        - In the Kedro-viz version 6.2.0 - we only merge the runs table which
         contains all the experiments.
         """
 
@@ -174,5 +174,5 @@ class SQLiteStore(BaseSessionStore):
             try:
                 self._merge()
             except Exception as exc:
-                logger.exception(exc)
+                logger.exception(f"Merge failed on sync: {exc}")
             self._upload()

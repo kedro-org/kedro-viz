@@ -78,26 +78,13 @@ def mock_db2(tmp_path):
 
 
 @pytest.fixture
-def mock_db3(tmp_path):
+def mock_db3_with_db2_data(tmp_path):
     database_loc = str(tmp_path / "db3.db")
     engine = create_engine(f"sqlite:///{database_loc}")
     session_class = sessionmaker(bind=engine)
     Base.metadata.create_all(bind=engine)
     session = session_class()
-    session.add(RunModel(id="3", blob="blob3"))
-    session.commit()
-    session.close()
-    yield Path(database_loc)
-
-
-@pytest.fixture
-def mock_db4(tmp_path):
-    database_loc = str(tmp_path / "db4.db")
-    engine = create_engine(f"sqlite:///{database_loc}")
-    session_class = sessionmaker(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    session = session_class()
-    session.add(RunModel(id="3", blob="blob3"))
+    session.add(RunModel(id="2", blob="blob2"))
     session.commit()
     session.close()
     yield Path(database_loc)
@@ -111,11 +98,10 @@ def get_files_in_bucket(bucket_name):
 
 
 @pytest.fixture
-def mocked_db_in_s3(mocked_s3_bucket, mock_db1, mock_db2, mock_db3):
+def mocked_db_in_s3(mocked_s3_bucket, mock_db1, mock_db2):
     # define the name of the S3 bucket and the database file names
     db1_filename = "db1.db"
     db2_filename = "db2.db"
-    db3_filename = "db3.db"
 
     # upload each mock database file to the mocked S3 bucket
     mocked_s3_bucket.put_object(
@@ -123,9 +109,6 @@ def mocked_db_in_s3(mocked_s3_bucket, mock_db1, mock_db2, mock_db3):
     )
     mocked_s3_bucket.put_object(
         Bucket=BUCKET_NAME, Key=db2_filename, Body=mock_db2.read_bytes()
-    )
-    mocked_s3_bucket.put_object(
-        Bucket=BUCKET_NAME, Key=db3_filename, Body=mock_db3.read_bytes()
     )
 
     return get_files_in_bucket(BUCKET_NAME)
@@ -133,13 +116,12 @@ def mocked_db_in_s3(mocked_s3_bucket, mock_db1, mock_db2, mock_db3):
 
 @pytest.fixture
 def mocked_db_in_s3_repeated_runs(
-    mocked_s3_bucket, mock_db1, mock_db2, mock_db3, mock_db4
+    mocked_s3_bucket, mock_db1, mock_db2, mock_db3_with_db2_data
 ):
     # define the name of the S3 bucket and the database file names
     db1_filename = "db1.db"
     db2_filename = "db2.db"
     db3_filename = "db3.db"
-    db4_filename = "db4.db"
 
     # upload each mock database file to the mocked S3 bucket
     mocked_s3_bucket.put_object(
@@ -149,10 +131,7 @@ def mocked_db_in_s3_repeated_runs(
         Bucket=BUCKET_NAME, Key=db2_filename, Body=mock_db2.read_bytes()
     )
     mocked_s3_bucket.put_object(
-        Bucket=BUCKET_NAME, Key=db3_filename, Body=mock_db3.read_bytes()
-    )
-    mocked_s3_bucket.put_object(
-        Bucket=BUCKET_NAME, Key=db4_filename, Body=mock_db4.read_bytes()
+        Bucket=BUCKET_NAME, Key=db3_filename, Body=mock_db3_with_db2_data.read_bytes()
     )
 
     return get_files_in_bucket(BUCKET_NAME)
@@ -260,7 +239,7 @@ class TestSQLiteStore:
         sqlite_store._remote_fs.put.side_effect = ConnectionError("Connection error")
         mock_log = mocker.patch.object(logging.Logger, "exception")
         sqlite_store._upload()
-        mock_log.assert_called_once()
+        mock_log.assert_called_once_with("Upload failed: Connection error")
 
     def test_download_from_s3_success(
         self, mocker, store_path, remote_path, mocked_db_in_s3, tmp_path
@@ -276,8 +255,7 @@ class TestSQLiteStore:
         }
         assert downloaded_dbs == {
             Path(tmp_path / "db1.db"),
-            Path(tmp_path / "db2.db"),
-            Path(tmp_path / "db3.db"),
+            Path(tmp_path / "db2.db")
         }
 
     def test_download_from_s3_failure(self, mocker, store_path, remote_path):
@@ -293,7 +271,7 @@ class TestSQLiteStore:
         }
         # Assert that the number of databases downloaded is 0
         assert len(downloaded_dbs) == 0
-        mock_log.assert_called_once()
+        mock_log.assert_called_once_with("Download failed: Connection error")
 
     def test_merge_databases(
         self,
@@ -310,12 +288,8 @@ class TestSQLiteStore:
         sqlite_store._download()
         sqlite_store._merge()
         db_session = sqlite_store._db_session_class
-        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-            Path(sqlite_store.location)
-        }
-        assert len(downloaded_dbs) == 3
         with db_session() as session:
-            assert session.query(RunModel).count() == 3
+            assert session.query(RunModel).count() == 2
 
     def test_merge_databases_with_repeated_runs(
         self,
@@ -335,9 +309,9 @@ class TestSQLiteStore:
         downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
             Path(sqlite_store.location)
         }
-        assert len(downloaded_dbs) == 4
+        assert len(downloaded_dbs) == 3
         with db_session() as session:
-            assert session.query(RunModel).count() == 3
+            assert session.query(RunModel).count() == 2
 
     def test_sync(self, mocker, store_path, remote_path, mocked_db_in_s3):
         mocker.patch("fsspec.filesystem")
@@ -379,4 +353,4 @@ class TestSQLiteStore:
         mock_download.assert_called_once()
         mock_merge.assert_called_once()
         mock_upload.assert_called_once()
-        mock_log.assert_called_once()
+        mock_log.assert_called_once_with("Merge failed on sync: Merge failed")
