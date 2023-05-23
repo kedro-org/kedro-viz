@@ -1,15 +1,6 @@
 @use '../../styles/variables' as variables;
 
-.kui-theme--light {
-  --pipeline-json-object-bg: #{variables.$grey-300};
-}
-
-.kui-theme--dark {
-  --pipeline-json-object-bg: transparent;
-}
-
 .pipeline-json__object {
-  background-color: var(--pipeline-json-object-bg);
   margin-bottom: 1.2em;
   // negative margin to override the margin applied from the parent "pipeline-metadata__row"
   margin-right: -35px;
