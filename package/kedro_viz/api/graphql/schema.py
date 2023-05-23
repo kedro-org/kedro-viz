@@ -10,8 +10,10 @@ import logging
 from typing import AsyncGenerator, List, Optional
 
 import strawberry
+from graphql.validation import NoSchemaIntrospectionCustomRule
 from semver import VersionInfo
 from strawberry import ID
+from strawberry.extensions import AddValidationRules
 from strawberry.tools import merge_types
 
 from kedro_viz import __version__
@@ -196,4 +198,7 @@ schema = strawberry.Schema(
     query=(merge_types("Query", (RunsQuery, VersionQuery))),
     mutation=Mutation,
     subscription=Subscription,
+    extensions=[
+        AddValidationRules([NoSchemaIntrospectionCustomRule]),
+    ],
 )
