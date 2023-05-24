@@ -1,7 +1,6 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, cast
 
 import boto3
 import pytest

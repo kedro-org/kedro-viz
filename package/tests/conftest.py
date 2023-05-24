@@ -24,6 +24,7 @@ from kedro.pipeline.modular_pipeline import pipeline
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
 
 
@@ -35,6 +36,11 @@ def data_access_manager():
 @pytest.fixture
 def session_store():
     yield BaseSessionStore("dummy_path", "dummy_session_id")
+
+
+@pytest.fixture
+def sqlite_session_store(tmp_path):
+    yield SQLiteStore(tmp_path, "dummy_session_id")
 
 
 @pytest.fixture
