@@ -1,6 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
-# pylint: disable=no-member,logging-fstring-interpolation, broad-exception-caught
+# pylint: disable=no-member, broad-exception-caught
 
 import getpass
 import json
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 def _get_dbname():
     username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME") or getpass.getuser()
-    return username + ".db"
+    return f"{username}.db"
 
 
 def _is_json_serializable(obj: Any):
@@ -89,13 +89,15 @@ class SQLiteStore(BaseSessionStore):
         remote path on the cloud storage."""
         db_name = _get_dbname()
         logger.debug(
-            f"""Uploading local session store to remote with name
-              {db_name} to {self.remote_location}..."""
+            """Uploading local session store to %s with name
+              %s...""",
+            self.remote_location,
+            db_name,
         )
         try:
             self._remote_fs.put(self.location, f"{self.remote_location}/{db_name}")
         except Exception as exc:
-            logger.exception(f"Upload failed: {exc}")
+            logger.exception("Upload failed: %s ", exc)
 
     def _download(self):
         """Downloads all the session store database files
@@ -107,15 +109,15 @@ class SQLiteStore(BaseSessionStore):
             # self._remote_fs.get(f"{self.remote_location}/*.db", str(Path(self.location).parent))
             # but this does not seem to work correctly - maybe a bug in fsspec. So instead
             # we do it in two steps. Also need to add os.sep so it works with older s3fs version.
-            # This is a known bug in s3fs
+            # This is a known bug in s3fs - https://github.com/fsspec/s3fs/issues/717
             remote_dbs = self._remote_fs.glob(f"{self.remote_location}/*.db")
             logger.debug(
-                f"Downloading {len(remote_dbs)} remote session stores to local..."
+                "Downloading %s remote session stores to local...", len(remote_dbs)
             )
             for remote_db in remote_dbs:
                 self._remote_fs.get(remote_db, str(Path(self.location).parent) + os.sep)
         except Exception as exc:
-            logger.exception(f"Download failed: {exc}")
+            logger.exception("Download failed: %s ", exc)
 
     def _merge(self):
         """Merges all the session store databases stored at the
@@ -141,7 +143,8 @@ class SQLiteStore(BaseSessionStore):
         }
 
         logger.debug(
-            f"Checking {len(downloaded_db_locations)} downloaded session stores for new runs..."
+            "Checking %s downloaded session stores for new runs...",
+            len(downloaded_db_locations),
         )
         for downloaded_db_location in downloaded_db_locations:
             engine = create_engine(f"sqlite:///{downloaded_db_location}")
@@ -155,12 +158,13 @@ class SQLiteStore(BaseSessionStore):
                 existing_run_ids.extend([run.id for run in new_runs])
                 all_new_runs.extend(new_runs)
                 logger.debug(
-                    f"Found {len(new_runs)} new runs in downloaded session store"
-                    f" {downloaded_db_location.name}"
+                    "Found %s new runs in downloaded session store %s",
+                    len(new_runs),
+                    downloaded_db_location.name,
                 )
 
         if all_new_runs:
-            logger.debug(f"Adding {len(all_new_runs)} new runs to session store...")
+            logger.debug("Adding %s new runs to session store...", len(all_new_runs))
             with self._db_session_class.begin() as session:
                 for run in all_new_runs:
                     session.merge(run)
@@ -177,5 +181,5 @@ class SQLiteStore(BaseSessionStore):
             try:
                 self._merge()
             except Exception as exc:
-                logger.exception(f"Merge failed on sync: {exc}")
+                logger.exception("Merge failed on sync: %s", exc)
             self._upload()

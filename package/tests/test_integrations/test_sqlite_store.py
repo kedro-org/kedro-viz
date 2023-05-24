@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from pathlib import Path
 from typing import Dict, cast
@@ -7,9 +6,10 @@ from typing import Dict, cast
 import boto3
 import pytest
 from moto import mock_s3
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
+from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore, _get_dbname
 from kedro_viz.models.experiment_tracking import Base, RunModel
 
@@ -54,39 +54,24 @@ def remote_path():
 @pytest.fixture
 def mock_db1(tmp_path):
     database_loc = str(tmp_path / "db1.db")
-    engine = create_engine(f"sqlite:///{database_loc}")
-    session_class = sessionmaker(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    session = session_class()
-    session.add(RunModel(id="1", blob="blob1"))
-    session.commit()
-    session.close()
+    with make_db_session_factory(database_loc).begin() as session:
+        session.add(RunModel(id="1", blob="blob1"))
     yield Path(database_loc)
 
 
 @pytest.fixture
 def mock_db2(tmp_path):
     database_loc = str(tmp_path / "db2.db")
-    engine = create_engine(f"sqlite:///{database_loc}")
-    session_class = sessionmaker(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    session = session_class()
-    session.add(RunModel(id="2", blob="blob2"))
-    session.commit()
-    session.close()
+    with make_db_session_factory(database_loc).begin() as session:
+        session.add(RunModel(id="2", blob="blob2"))
     yield Path(database_loc)
 
 
 @pytest.fixture
 def mock_db3_with_db2_data(tmp_path):
     database_loc = str(tmp_path / "db3.db")
-    engine = create_engine(f"sqlite:///{database_loc}")
-    session_class = sessionmaker(bind=engine)
-    Base.metadata.create_all(bind=engine)
-    session = session_class()
-    session.add(RunModel(id="2", blob="blob2"))
-    session.commit()
-    session.close()
+    with make_db_session_factory(database_loc).begin() as session:
+        session.add(RunModel(id="2", blob="blob2"))
     yield Path(database_loc)
 
 
@@ -179,7 +164,7 @@ class TestSQLiteStore:
                 "project_name": "test",
             }
 
-    def test_save_multiple_runs(self, store_path, db_session_class):
+    def test_save_multiple_runs(self, store_path):
         session = session_id()
         sqlite_store = SQLiteStore(store_path, next(session))
         sqlite_store.save()
@@ -206,7 +191,7 @@ class TestSQLiteStore:
         sqlite_store.data = {"project_path": store_path, "project_name": "test"}
         mock_upload = mocker.patch.object(sqlite_store, "_upload")
         sqlite_store.save()
-        assert not mock_upload.called
+        mock_upload.assert_not_called()
 
     def test_update_git_branch(self, store_path, mocker):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
@@ -231,15 +216,14 @@ class TestSQLiteStore:
         sqlite_store._upload()
         sqlite_store._remote_fs.put.assert_called_once()
 
-    def test_upload_to_s3_fail(self, mocker, store_path, remote_path):
+    def test_upload_to_s3_fail(self, mocker, store_path, remote_path, caplog):
         mocker.patch("fsspec.filesystem")
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
         sqlite_store._remote_fs.put.side_effect = ConnectionError("Connection error")
-        mock_log = mocker.patch.object(logging.Logger, "exception")
         sqlite_store._upload()
-        mock_log.assert_called_once_with("Upload failed: Connection error")
+        assert "Upload failed: Connection error" in caplog.text
 
     def test_download_from_s3_success(
         self, mocker, store_path, remote_path, mocked_db_in_s3, tmp_path
@@ -250,25 +234,25 @@ class TestSQLiteStore:
         )
         sqlite_store._remote_fs.glob.return_value = mocked_db_in_s3
         sqlite_store._download()
-        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-            Path(sqlite_store.location)
-        }
-        assert downloaded_dbs == {Path(tmp_path / "db1.db"), Path(tmp_path / "db2.db")}
 
-    def test_download_from_s3_failure(self, mocker, store_path, remote_path):
+        assert set(file.name for file in Path(store_path).glob("*.db")) == {
+            "db1.db",
+            "db2.db",
+            "session_store.db",
+        }
+
+    def test_download_from_s3_failure(self, mocker, store_path, remote_path, caplog):
         mocker.patch("fsspec.filesystem")
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
         sqlite_store._remote_fs.glob.side_effect = ConnectionError("Connection error")
-        mock_log = mocker.patch.object(logging.Logger, "exception")
         sqlite_store._download()
-        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-            Path(sqlite_store.location)
+        # assert that downloaded dbs are not downloaded
+        assert set(file.name for file in Path(store_path).glob("*.db")) == {
+            "session_store.db"
         }
-        # Assert that the number of databases downloaded is 0
-        assert len(downloaded_dbs) == 0
-        mock_log.assert_called_once_with("Download failed: Connection error")
+        assert "Download failed: Connection error" in caplog.text
 
     def test_merge_databases(
         self,
@@ -286,7 +270,7 @@ class TestSQLiteStore:
         sqlite_store._merge()
         db_session = sqlite_store._db_session_class
         with db_session() as session:
-            assert session.query(RunModel).count() == 2
+            assert session.execute(select(RunModel.id)).scalars().all() == ["1", "2"]
 
     def test_merge_databases_with_repeated_runs(
         self,
@@ -303,12 +287,8 @@ class TestSQLiteStore:
         sqlite_store._download()
         sqlite_store._merge()
         db_session = sqlite_store._db_session_class
-        downloaded_dbs = set(Path(sqlite_store.location).parent.glob("*.db")) - {
-            Path(sqlite_store.location)
-        }
-        assert len(downloaded_dbs) == 3
         with db_session() as session:
-            assert session.query(RunModel).count() == 2
+            assert session.execute(select(RunModel.id)).scalars().all() == ["1", "2"]
 
     def test_sync(self, mocker, store_path, remote_path, mocked_db_in_s3):
         mocker.patch("fsspec.filesystem")
@@ -331,16 +311,15 @@ class TestSQLiteStore:
         mock_merge = mocker.patch.object(sqlite_store, "_merge")
         mock_upload = mocker.patch.object(sqlite_store, "_upload")
         sqlite_store.sync()
-        assert not mock_download.called
-        assert not mock_merge.called
-        assert not mock_upload.called
+        mock_download.assert_not_called()
+        mock_merge.assert_not_called()
+        mock_upload.assert_not_called()
 
-    def test_sync_with_merge_error(self, mocker, store_path, remote_path):
+    def test_sync_with_merge_error(self, mocker, store_path, remote_path, caplog):
         mocker.patch("fsspec.filesystem")
         sqlite_store = SQLiteStore(
             store_path, next(session_id()), remote_path=remote_path
         )
-        mock_log = mocker.patch.object(logging.Logger, "exception")
         mock_download = mocker.patch.object(sqlite_store, "_download")
         mock_merge = mocker.patch.object(
             sqlite_store, "_merge", side_effect=Exception("Merge failed")
@@ -350,4 +329,4 @@ class TestSQLiteStore:
         mock_download.assert_called_once()
         mock_merge.assert_called_once()
         mock_upload.assert_called_once()
-        mock_log.assert_called_once_with("Merge failed on sync: Merge failed")
+        assert "Merge failed on sync: Merge failed" in caplog.text

@@ -17,16 +17,14 @@ except ImportError:
         tracking,
     )
 
+from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog, MemoryDataSet, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
-
-BUCKET_NAME = "test-bucket"
 
 
 @pytest.fixture
@@ -35,17 +33,8 @@ def data_access_manager():
 
 
 @pytest.fixture
-def session_store_mock(tmp_path):
-    # Create a MagicMock object for SQLiteStore
-    session_store_mock = mock.MagicMock(spec=SQLiteStore)
-
-    # Create a PropertyMock object for the location attribute
-    location_mock = mock.PropertyMock(return_value=Path(tmp_path / "session_store.db"))
-    type(session_store_mock).location = location_mock
-
-    session_store_mock.sync = mock.MagicMock()
-
-    yield session_store_mock
+def session_store():
+    yield BaseSessionStore("dummy_path", "dummy_session_id")
 
 
 @pytest.fixture
@@ -164,12 +153,12 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store_mock: SQLiteStore,
+    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_catalog, example_pipelines, session_store_mock
+        data_access_manager, example_catalog, example_pipelines, session_store
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
@@ -185,13 +174,13 @@ def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store_mock: SQLiteStore,
+    session_store: BaseSessionStore,
     mocker,
 ):
     del example_pipelines["__default__"]
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_catalog, example_pipelines, session_store_mock
+        data_access_manager, example_catalog, example_pipelines, session_store
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
@@ -207,7 +196,7 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
-    session_store_mock: SQLiteStore,
+    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -215,7 +204,7 @@ def example_transcoded_api(
         data_access_manager,
         example_transcoded_catalog,
         example_transcoded_pipelines,
-        session_store_mock,
+        session_store,
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager

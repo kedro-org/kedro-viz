@@ -32,13 +32,13 @@ def patched_create_api_app_from_file(mocker):
 
 
 @pytest.fixture(autouse=True)
-def patched_load_data(mocker, example_catalog, example_pipelines, session_store_mock):
+def patched_load_data(mocker, example_catalog, example_pipelines, session_store):
     yield mocker.patch(
         "kedro_viz.server.kedro_data_loader.load_data",
         return_value=(
             example_catalog,
             example_pipelines,
-            session_store_mock,
+            session_store,
         ),
     )
 
