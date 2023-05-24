@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_dbname():
-    username = os.environ.get("KEDRO_SQLITE_STORE_USERNAME") or getpass.getuser()
-    return f"{username}.db"
+    return os.getenv("KEDRO_SQLITE_STORE_USERNAME", getpass.getuser()) + ".db"
 
 
 def _is_json_serializable(obj: Any):

@@ -130,17 +130,16 @@ def session_id():
 
 
 def test_get_dbname_with_env_var(mocker):
-    mocker.patch.dict(os.environ, {"KEDRO_SQLITE_STORE_USERNAME": "env_user_name"})
+    mocker.patch.dict(
+        os.environ, {"KEDRO_SQLITE_STORE_USERNAME": "env_user_name"}, clear=True
+    )
     mocker.patch("getpass.getuser", return_value="computer_user_name")
     dbname = _get_dbname()
     assert dbname == "env_user_name.db"
 
 
 def test_get_dbname_without_env_var(mocker):
-    mocker.patch(
-        "os.environ",
-        cast(Dict[str, str], {**os.environ, "KEDRO_SQLITE_STORE_USERNAME": None}),
-    )
+    mocker.patch.dict("os.environ", clear=True)
     mocker.patch("getpass.getuser", return_value="computer_user_name")
     dbname = _get_dbname()
     assert dbname == "computer_user_name.db"
