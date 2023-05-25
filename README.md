@@ -65,7 +65,7 @@ There are two ways you can use Kedro-Viz:
 
 #### Compatibility with Kedro
 
-Ensure that your Kedro-Viz version is compatible with your Kedro version by referencing the following table:
+Ensure your Kedro-Viz and Kedro versions are compatible by referencing the following table:
 
 | Kedro-Viz version | Kedro version     |
 | ----------------- | ----------------- |
