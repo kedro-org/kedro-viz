@@ -63,6 +63,16 @@ There are two ways you can use Kedro-Viz:
 
 ## Usage
 
+#### Compatibility with Kedro
+
+Ensure that your Kedro-Viz version is compatible with your Kedro version by referencing the following table:
+
+| Kedro-Viz version | Kedro version     |
+| ----------------- | ----------------- |
+| >=4.7             | >=0.17.5          |
+| >=3.8.0, <4.7     | >=0.16.6, <0.17.5 |
+| <3.8.0            | <0.16.6           |
+
 ### CLI Usage
 
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
