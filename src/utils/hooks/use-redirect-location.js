@@ -150,6 +150,8 @@ export const useRedirectLocationInFlowchart = (
     }
 
     if (matchedSelectedNodeName) {
+      updatePipeline(pipelines, decodedPipelineId);
+
       const nodeName = search.split(params.selectedName)[1];
       const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
       const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
