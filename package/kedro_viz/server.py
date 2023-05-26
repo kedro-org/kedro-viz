@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 
 import uvicorn
 from fastapi.encoders import jsonable_encoder
+from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
@@ -15,6 +16,7 @@ from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
 DEV_PORT = 4142
 
@@ -28,13 +30,15 @@ def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
-    session_store_location: Optional[Path],
+    session_store: BaseSessionStore,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
-    if creatinge an api app from project.
+    if creating an api app from project.
     """
-    if session_store_location:
-        session_class = make_db_session_factory(session_store_location)
+
+    if isinstance(session_store, SQLiteStore):
+        session_store.sync()
+        session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
@@ -76,7 +80,7 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store_location = kedro_data_loader.load_data(
+        catalog, pipelines, session_store = kedro_data_loader.load_data(
             path, env, extra_params
         )
         pipelines = (
@@ -84,7 +88,7 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store_location)
+        populate_data(data_access_manager, catalog, pipelines, session_store)
         if save_file:
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)
