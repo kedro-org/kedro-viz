@@ -32,6 +32,20 @@
   }
 }
 
+.marker-path {
+  &--selected-0 {
+    stroke: colors.$purple-300;
+  }
+
+  &--selected-1 {
+    stroke: colors.$yellow-300;
+  }
+
+  &--selected-2 {
+    stroke: colors.$green-300;
+  }
+}
+
 g.run-lines path {
   fill: none;
   stroke-linecap: 'round';
