@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.session.store import BaseSessionStore
 
 try:
     from kedro_datasets import (  # isort:skip
@@ -57,7 +58,7 @@ def load_data(
     project_path: Path,
     env: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Optional[Path]]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
@@ -69,8 +70,7 @@ def load_data(
             configuration.
     Returns:
         A tuple containing the data catalog and the pipeline dictionary
-        and the session store location path (this can be NONE if session_store
-        is turned off or for Kedro 16 hence Optional)
+        and the session store.
     """
     _bootstrap(project_path)
 
@@ -78,8 +78,6 @@ def load_data(
         from kedro.framework.project import pipelines
         from kedro.framework.session import KedroSession
 
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore
@@ -88,9 +86,6 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
             catalog = context.catalog
 
             # Pipelines is a lazy dict-like object, so we force it to populate here
@@ -98,12 +93,10 @@ def load_data(
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
 
-        return catalog, pipelines_dict, session_store_location
+        return catalog, pipelines_dict, session_store
 
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
-
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         with KedroSession.create(
             project_path=project_path,
@@ -113,18 +106,13 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
 
-        return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, session_store
 
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
         from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
-
-        from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
         metadata = _get_project_metadata(project_path)
         with KedroSession.create(
@@ -136,11 +124,8 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            session_store_location = None
-            if isinstance(session_store, SQLiteStore):
-                session_store_location = session_store.location
 
-        return context.catalog, context.pipelines, session_store_location
+        return context.catalog, context.pipelines, session_store
 
 
 # The dataset type is available as an attribute if and only if the import from kedro

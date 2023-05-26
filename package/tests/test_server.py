@@ -31,21 +31,28 @@ def patched_create_api_app_from_file(mocker):
     yield mocker.patch("kedro_viz.api.apps.create_api_app_from_file")
 
 
-@pytest.fixture
-def example_session_store_location(tmp_path):
-    yield tmp_path / "session_store.db"
-
-
 @pytest.fixture(autouse=True)
-def patched_load_data(
-    mocker, example_catalog, example_pipelines, example_session_store_location
+def patched_load_data(mocker, example_catalog, example_pipelines, session_store):
+    yield mocker.patch(
+        "kedro_viz.server.kedro_data_loader.load_data",
+        return_value=(
+            example_catalog,
+            example_pipelines,
+            session_store,
+        ),
+    )
+
+
+@pytest.fixture
+def patched_load_data_with_sqlite_session_store(
+    mocker, example_catalog, example_pipelines, sqlite_session_store
 ):
     yield mocker.patch(
         "kedro_viz.server.kedro_data_loader.load_data",
         return_value=(
             example_catalog,
             example_pipelines,
-            example_session_store_location,
+            sqlite_session_store,
         ),
     )
 
@@ -65,6 +72,30 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
+        patched_data_access_manager.set_db_session.assert_not_called()
+
+        # correct api app is created
+        patched_create_api_app_from_project.assert_called_once()
+
+        # an uvicorn server is launched
+        patched_uvicorn_run.assert_called_once()
+
+    def test_run_server_from_project_with_sqlite_store(
+        self,
+        patched_create_api_app_from_project,
+        patched_data_access_manager,
+        patched_uvicorn_run,
+        patched_load_data_with_sqlite_session_store,
+        example_catalog,
+        example_pipelines,
+    ):
+        run_server()
+        # assert that when running server, data are added correctly to the data access manager
+        patched_data_access_manager.add_catalog.assert_called_once_with(example_catalog)
+        patched_data_access_manager.add_pipelines.assert_called_once_with(
+            example_pipelines
+        )
+        patched_data_access_manager.set_db_session.assert_called_once()
 
         # correct api app is created
         patched_create_api_app_from_project.assert_called_once()

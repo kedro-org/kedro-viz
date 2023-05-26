@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.2.0
+
+## Major features and improvements
+
+- Enable collaborative experiment tracking on Kedro-viz. (#1286)
+
 # Release 6.1.1
 
 ## Bug fixes and other changes

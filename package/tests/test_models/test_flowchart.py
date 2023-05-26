@@ -1,4 +1,3 @@
-# pylint: disable=too-many-public-methods
 import base64
 from functools import partial
 from pathlib import Path
