@@ -17,3 +17,20 @@ class TestDataCatalogRepository:
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("cars") == "raw"
         assert repo.get_layer_for_dataset("cars@pandas") == "raw"
+
+    def test_get_layer_mapping_from_metadata(self):
+        repo = CatalogRepository()
+        catalog_config = {
+            "cars": {
+                "type": "pandas.CSVDataSet",
+                "filepath": "cars.csv",
+                "metadata": {
+                    "kedro-viz": {
+                        "layer": "raw",
+                    },
+                },
+            },
+        }
+        catalog = DataCatalog.from_config(catalog_config)
+        repo.set_catalog(catalog)
+        assert repo.get_layer_for_dataset("cars") == "raw"

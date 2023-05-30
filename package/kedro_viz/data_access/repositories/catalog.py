@@ -1,6 +1,7 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
+from collections import defaultdict
 from typing import Dict, Optional
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
@@ -20,6 +21,46 @@ class CatalogRepository:
     def set_catalog(self, value: DataCatalog):
         self._catalog = value
 
+    def get_layers(self) -> Optional[Dict]:
+        """
+        This method retrieves the layers from the catalog. For kedro-datasets versions before 1.3.0,
+        the 'layers' attribute is defined directly in the catalog.
+
+        From kedro-datasets 1.3.0 onwards, the 'layers' attribute is defined inside the 'metadata'
+        under 'kedro-viz' plugin.
+
+        Catalog before kedro-datasets 1.3.0:
+            type: pandas.CSVDataSet
+            filepath: /filepath/to/dataset
+            layers: raw
+
+        Catalog from kedro-datasets 1.3.0 onwards:
+            type: pandas.CSVDataSet
+            filepath: /filepath/to/dataset
+            metadata:
+                kedro-viz:
+                    layers: raw
+
+        Currently, Kedro up to 18.x and kedro-viz up to 6.x support both formats.
+        However, support for the old format will be discontinued from Kedro 19.x and kedro-viz
+        7.x onwards.
+        It's recommended to follow the newest format for defining layers in the catalog.
+        """
+        if self._catalog.layers:
+            return self._catalog.layers
+
+        layers: dict[str, set[str]] = defaultdict(set)
+
+        for dataset_name in self._catalog._data_sets:
+            dataset = self._catalog._get_dataset(dataset_name)
+
+            if hasattr(dataset, "metadata"):
+                metadata = dataset.metadata or {}
+                dataset_layer = metadata.get("kedro-viz", {}).get("layer")
+                if dataset_layer:
+                    layers[dataset_layer].add(dataset_name)
+        return layers or None
+
     @staticmethod
     def strip_encoding(dataset_name: str) -> str:
         return dataset_name.split("@")[0]
@@ -27,17 +68,20 @@ class CatalogRepository:
     @property
     def layers_mapping(self):
         """Return layer mapping: dataset_full_name -> layer it belongs to in the catalog"""
+
         if self._layers_mapping is not None:
             return self._layers_mapping
 
-        if self._catalog.layers is None:
+        layers = self.get_layers()
+
+        if layers is None:
             self._layers_mapping = {
                 self.strip_encoding(dataset_name): None
                 for dataset_name in self._catalog._data_sets
             }
         else:
             self._layers_mapping = {}
-            for layer, dataset_names in self._catalog.layers.items():
+            for layer, dataset_names in layers.items():
                 self._layers_mapping.update(
                     {
                         self.strip_encoding(dataset_name): layer
