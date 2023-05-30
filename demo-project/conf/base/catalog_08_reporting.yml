@@ -1,9 +1,9 @@
 reporting.cancellation_policy_breakdown:
   type: plotly.PlotlyDataSet # Constructed via plotly_args below
   filepath: ${base_location}/08_reporting/cancellation_breakdown.json
-  # metadata:
-  #   kedro-viz:
-  #     layer: reporting
+  metadata:
+    kedro-viz:
+      layer: reporting
   plotly_args:
     type: bar
     fig:
@@ -17,9 +17,9 @@ reporting.cancellation_policy_breakdown:
 reporting.price_histogram:
   type: plotly.JSONDataSet # Constructed via Python API
   filepath: ${base_location}/08_reporting/price_histogram.json
-  # metadata:
-  #   kedro-viz:
-  #     layer: reporting
+  metadata:
+    kedro-viz:
+      layer: reporting
   versioned: true
 
 reporting.feature_importance:
