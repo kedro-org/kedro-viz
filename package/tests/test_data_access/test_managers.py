@@ -2,7 +2,14 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
+
+try:
+    from kedro_datasets.pandas import CSVDataSet  # isort:skip
+except ImportError:
+    from kedro.extras.datasets.pandas import (
+        CSVDataSet,
+    )  # Safe since ImportErrors are suppressed within kedro.
+
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline

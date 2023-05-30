@@ -2,7 +2,7 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import defaultdict
-from typing import Dict, Optional
+from typing import Dict, Optional, Set
 
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
 
@@ -49,7 +49,7 @@ class CatalogRepository:
         if self._catalog.layers:
             return self._catalog.layers
 
-        layers: dict[str, set[str]] = defaultdict(set)
+        layers: Dict[str, Set[str]] = defaultdict(Set)
 
         for dataset_name in self._catalog._data_sets:
             dataset = self._catalog._get_dataset(dataset_name)

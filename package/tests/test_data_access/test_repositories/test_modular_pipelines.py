@@ -1,5 +1,12 @@
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
+
+try:
+    from kedro_datasets.pandas import CSVDataSet  # isort:skip
+except ImportError:
+    from kedro.extras.datasets.pandas import (
+        CSVDataSet,
+    )  # Safe since ImportErrors are suppressed within kedro.
+
 from kedro.pipeline import node
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
