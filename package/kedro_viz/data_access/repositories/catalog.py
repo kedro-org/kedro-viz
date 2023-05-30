@@ -21,7 +21,7 @@ class CatalogRepository:
     def set_catalog(self, value: DataCatalog):
         self._catalog = value
 
-    def get_layers(self) -> Optional[Dict]:
+    def get_layers(self) -> Optional[Dict[str, Set[str]]]:
         """
         This method retrieves the layers from the catalog. For kedro-datasets versions before 1.3.0,
         the 'layers' attribute is defined directly in the catalog.
@@ -49,7 +49,7 @@ class CatalogRepository:
         if self._catalog.layers:
             return self._catalog.layers
 
-        layers: Dict[str, Set[str]] = defaultdict(Set)
+        layers: Dict[str, Set[str]] = defaultdict(set)
 
         for dataset_name in self._catalog._data_sets:
             dataset = self._catalog._get_dataset(dataset_name)

@@ -5,17 +5,9 @@ from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-
-try:
-    from kedro_datasets.pandas import CSVDataSet, ParquetDataSet  # isort:skip
-except ImportError:
-    from kedro.extras.datasets.pandas import (
-        CSVDataSet,
-        ParquetDataSet,
-    )  # Safe since ImportErrors are suppressed within kedro.
-
 from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
+from kedro_datasets.pandas import CSVDataSet, ParquetDataSet
 
 from kedro_viz.models.flowchart import (
     DataNode,
