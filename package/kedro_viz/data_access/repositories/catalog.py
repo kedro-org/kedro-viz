@@ -53,12 +53,10 @@ class CatalogRepository:
 
         for dataset_name in self._catalog._data_sets:
             dataset = self._catalog._get_dataset(dataset_name)
-
-            if hasattr(dataset, "metadata"):
-                metadata = dataset.metadata or {}
-                dataset_layer = metadata.get("kedro-viz", {}).get("layer")
-                if dataset_layer:
-                    layers[dataset_layer].add(dataset_name)
+            metadata = getattr(dataset, "metadata", {}) or {}
+            dataset_layer = metadata.get("kedro-viz", {}).get("layer")
+            if dataset_layer:
+                layers[dataset_layer].add(dataset_name)
         return layers or None
 
     @staticmethod
