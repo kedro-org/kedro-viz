@@ -29,6 +29,9 @@
 feature_importance_output: 
   type: pandas.CSVDataSet
   filepath: ${base_location}/04_feature/feature_importance_output.csv
-  layer: feature 
+  metadata:
+    kedro-viz:
+      layer: feature 
+      preview: 2
 
 

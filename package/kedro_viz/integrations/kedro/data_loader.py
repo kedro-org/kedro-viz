@@ -80,9 +80,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store
@@ -100,9 +100,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store
@@ -118,9 +118,9 @@ def load_data(
         with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store

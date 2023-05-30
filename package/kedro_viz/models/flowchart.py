@@ -488,7 +488,12 @@ class DataNode(GraphNode):
 
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        return hasattr(self.kedro_obj, "_preview")
+        metadata = getattr(self.kedro_obj, "metadata", {}) or {}
+        return bool(metadata.get("kedro-viz", {}).get("preview"))
+
+    def get_preview_nrows(self):
+        """Gets the number of rows for the preview dataset"""
+        return int(self.kedro_obj.metadata.get("kedro-viz", {}).get("preview", 0))
 
 
 @dataclass
@@ -595,7 +600,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = dataset.load()
         elif data_node.is_preview_node():
             try:
-                self.preview = dataset._preview()  # type: ignore
+                self.preview = dataset._preview(data_node.get_preview_nrows())
             except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",
