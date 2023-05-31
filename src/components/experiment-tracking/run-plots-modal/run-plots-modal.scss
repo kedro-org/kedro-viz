@@ -2,11 +2,11 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-bg-plot: #{variables.$white-400};
+  --color-bg-plot: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --color-bg-plot: #{variables.$slate-700};
+  --color-bg-plot: #{variables.$slate-600};
 }
 
 .pipeline-run-plots-modal {

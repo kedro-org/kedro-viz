@@ -9,7 +9,7 @@
 %sidebar {
   background: var(--color-sidebar-background);
   border-bottom: 1px solid var(--color-sidebar-border);
-  box-shadow: 0 1px 3px var(--color-sidebar-shadow);
+  border-right: 1px solid var(--color-border-line);
 }
 
 %button {
@@ -77,7 +77,7 @@
 }
 
 %runs-list-card--selected-first {
-  border-color: variables.$blue-300;
+  border-color: variables.$purple-300;
   border-width: 2px;
   height: 10px;
   transform: rotate(45deg);

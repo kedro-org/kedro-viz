@@ -16,7 +16,7 @@
   --color-nodelist-highlight: #{colors.$blue-300};
   --color-nodelist-split-handle: #{colors.$black-700};
   --color-nodelist-split-handle-border: #{colors.$grey-100};
-  --color-nodelist-filter-panel: #{colors.$white-0};
+  --color-nodelist-filter-panel: #{colors.$white-200};
   --color-nodelist-element-panel: #{colors.$white-200};
 }
 
@@ -28,7 +28,7 @@
   --color-nodelist-highlight: #{colors.$blue-300};
   --color-nodelist-split-handle: #{colors.$white-0};
   --color-nodelist-split-handle-border: #{colors.$grey-900};
-  --color-nodelist-filter-panel: #{colors.$slate-500};
+  --color-nodelist-filter-panel: #{colors.$slate-300};
   --color-nodelist-element-panel: #{colors.$slate-700};
 }
 
@@ -95,5 +95,9 @@
 
   .MuiTreeItem-content {
     padding: 0;
+
+    &:hover {
+      background-color: var(--color-nodelist-row-active);
+    }
   }
 }

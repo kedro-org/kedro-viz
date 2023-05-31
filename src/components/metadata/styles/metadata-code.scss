@@ -3,11 +3,11 @@
 @use './metadata-code-themes.scss';
 
 .kui-theme--light {
-  --color-metadata-code-bg: #{variables.$white-0};
+  --color-metadata-code-bg: #{variables.$grey-100};
 }
 
 .kui-theme--dark {
-  --color-metadata-code-bg: #{variables.$slate-700};
+  --color-metadata-code-bg: #{variables.$slate-500};
 }
 
 .pipeline-metadata-code {
