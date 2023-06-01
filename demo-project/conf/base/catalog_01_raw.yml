@@ -1,9 +1,7 @@
 companies:
   type: pandas.CSVDataSet
   filepath: ${base_location}/01_raw/companies.csv
-  metadata:
-    kedro-viz:
-      layer: raw
+  layer: raw
 
 reviews:
   type: pandas.CSVDataSet
@@ -20,19 +18,3 @@ shuttles:
       layer: raw
 
 
-
-
-# companies:
-#   type: pandas.CSVDataSet
-#   filepath: ${base_location}/01_raw/companies.csv
-#   layer: raw
-
-# reviews:
-#   type: pandas.CSVDataSet
-#   filepath: ${base_location}/01_raw/reviews.csv
-#   layer: raw
-
-# shuttles:
-#   type: pandas.ExcelDataSet
-#   filepath: ${base_location}/01_raw/shuttles.xlsx
-#   layer: raw

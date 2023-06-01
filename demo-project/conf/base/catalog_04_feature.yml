@@ -13,20 +13,6 @@
 
 {% endfor %}
 
-
-
-# {% set namespace = 'feature_engineering' %}
-# {% set metric_types = ['weighting', 'scaling'] %}
-# {% for metric_type in metric_types %}
-# {{ namespace }}.feat_{{ metric_type }}_metrics:
-#   type: pandas.ParquetDataSet
-#   filepath: ${base_location}/04_feature/feat_{{ metric_type }}_metrics.pq
-#   layer: feature
-
-# {% endfor %}
-
-
-
 # This will render to generate the records below...
 #
 # feature_engineering.feat_weighting_metrics:
@@ -38,12 +24,6 @@
 #  type: pandas.ParquetDataSet
 #  filepath: ${base_location}/04_feature/feat_scaling_metrics.pq
 #  layer: feature
-
-
-# feature_importance_output: 
-#   type: pandas.CSVDataSet
-#   filepath: ${base_location}/04_feature/feature_importance_output.csv
-#   layer: feature 
 
 
 feature_importance_output: 
