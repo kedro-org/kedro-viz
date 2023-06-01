@@ -486,14 +486,18 @@ class DataNode(GraphNode):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
+    def get_viz_metadata(self):
+        """Gets the kedro-viz metadata config specified in the catalog"""
+        metadata = getattr(self.kedro_obj, "metadata", {}) or {}
+        return metadata.get("kedro-viz", {})
+
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        metadata = getattr(self.kedro_obj, "metadata", {}) or {}
-        return bool(metadata.get("kedro-viz", {}).get("preview"))
+        return bool(self.get_viz_metadata().get("preview_args"))
 
     def get_preview_nrows(self):
         """Gets the number of rows for the preview dataset"""
-        return int(self.kedro_obj.metadata.get("kedro-viz", {}).get("preview", 0))
+        return self.get_viz_metadata().get("preview_args", {})
 
 
 @dataclass
@@ -600,7 +604,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = dataset.load()
         elif data_node.is_preview_node():
             try:
-                self.preview = dataset._preview(data_node.get_preview_nrows())
+                self.preview = dataset._preview(**data_node.get_preview_nrows())
             except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",

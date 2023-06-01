@@ -4,7 +4,8 @@ companies:
   metadata:
     kedro-viz:
       layer: raw
-      preview: 5
+      preview_args: 
+        nrows: 5
 
 reviews:
   type: pandas.CSVDataSet
@@ -12,7 +13,8 @@ reviews:
   metadata:
     kedro-viz:
       layer: raw
-      preview: 10
+      preview_args: 
+        nrows: 10
 
 shuttles:
   type: pandas.ExcelDataSet
@@ -20,22 +22,9 @@ shuttles:
   metadata:
     kedro-viz:
       layer: raw
-      preview: 15 
+      preview_args:
+        nrows: 15 
 
 
 
 
-# companies:
-#   type: pandas.CSVDataSet
-#   filepath: ${base_location}/01_raw/companies.csv
-#   layer: raw
-
-# reviews:
-#   type: pandas.CSVDataSet
-#   filepath: ${base_location}/01_raw/reviews.csv
-#   layer: raw
-
-# shuttles:
-#   type: pandas.ExcelDataSet
-#   filepath: ${base_location}/01_raw/shuttles.xlsx
-#   layer: raw
