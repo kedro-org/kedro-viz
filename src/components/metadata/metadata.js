@@ -145,6 +145,7 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
+                {/* Why is the metadata displayed opposite to the prettyName ? */}
                 {isPrettyNameOn ? (
                   <MetaDataRow
                     label="Original node name:"
@@ -209,6 +210,7 @@ const MetaData = ({
                   value={metadata.parameters}
                   limit={10}
                 />
+                {/* TODO a pretty check for changing inputs and outputs based on pretty filter */}
                 <MetaDataRow
                   label="Inputs:"
                   visible={isTaskNode}
