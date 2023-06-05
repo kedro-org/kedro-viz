@@ -34,11 +34,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  background: linear-gradient(
-    to right,
-    var(--color-bg-1),
-    var(--layer-bg-transparent)
-  );
   opacity: 0;
   transition: opacity ease 0.7s;
   pointer-events: none;

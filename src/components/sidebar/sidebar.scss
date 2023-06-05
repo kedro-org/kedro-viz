@@ -45,15 +45,16 @@
 }
 
 .pipeline-ui {
-  position: relative;
-  z-index: 2;
+  background: var(--color-bg-list);
+  border-right: 1px solid var(--color-border-line);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  background: var(--color-bg-3);
-  visibility: hidden;
+  position: relative;
   transition: visibility 0.3s;
+  visibility: hidden;
+  z-index: 2;
 
   .pipeline-sidebar--visible & {
     visibility: visible;
@@ -67,7 +68,7 @@
 
 .pipeline-toolbar {
   align-items: center;
-  background: var(--color-bg-2);
+  background: var(--color-pipeline-toolbar-background);
   display: flex;
   flex-direction: column;
   height: 100%;

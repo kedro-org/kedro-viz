@@ -17,11 +17,11 @@
   &--overwrite {
     .Mui-selected & {
       .kui-theme--dark & {
-        background-color: #{colors.$slate-700};
+        background-color: #{colors.$slate-200};
       }
 
       .kui-theme--light & {
-        background-color: #{colors.$white-200};
+        background-color: #{colors.$white-0};
       }
     }
   }

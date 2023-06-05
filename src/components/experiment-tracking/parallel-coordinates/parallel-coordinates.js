@@ -24,8 +24,6 @@ const paddingLeftRight = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
 
-const selectedMarkerColors = ['#0084B2', '#FFBC00', '#31E27B'];
-
 const yAxis = {};
 const yScales = {};
 
@@ -363,9 +361,9 @@ export const ParallelCoordinates = ({
               return (
                 <React.Fragment key={uuidv4()}>
                   <path
+                    className={`marker-path--selected-${i}`}
                     d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
                     key={`marker-path--${index}`}
-                    stroke={selectedMarkerColors[i]}
                     transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
                   />
                   <text

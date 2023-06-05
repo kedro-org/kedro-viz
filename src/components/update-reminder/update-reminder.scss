@@ -23,8 +23,8 @@ $spacing-left: 48px;
 .kui-theme--light {
   --color-detail-bg: #{colors.$white-400};
   --color-header-bg: #{colors.$yellow-0};
-  --color-header-bg--up-to-date: #{colors.$grey-800};
-  --color-header-text--up-to-date: #{colors.$white-0};
+  --color-header-bg--up-to-date: #{colors.$grey-400};
+  --color-header-text--up-to-date: #{colors.$black-900};
   --color-link: #{colors.$blue-600};
   --color-subtext: #{colors.$black-400};
   --color-content-bg: #{colors.$white-300};
@@ -41,7 +41,7 @@ $spacing-left: 48px;
   --color-header-text--up-to-date: #{colors.$black-900};
   --color-link: #{colors.$blue-300};
   --color-subtext: #{colors.$black-400};
-  --color-content-bg: #{colors.$slate-600};
+  --color-content-bg: #{colors.$slate-300};
   --color-version-tag: #{colors.$white-500};
   --color-version-tag--hover-outdated: #{colors.$black-900};
   --color-version-tag--hover-up-to-date-bg: #{colors.$black-400};
@@ -179,6 +179,7 @@ $spacing-left: 48px;
 
 .update-reminder-expanded-content {
   background-color: var(--color-content-bg);
+  border-left: 1px solid var(--color-border-line);
   height: calc(100vh - 270px);
   overflow-y: scroll;
   padding-right: 56px;

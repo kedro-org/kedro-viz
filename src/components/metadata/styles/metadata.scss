@@ -2,9 +2,9 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-metadata-bg: #{variables.$white-200};
+  --color-metadata-bg: #{variables.$grey-100};
   --color-metadata-preview-bg: #{variables.$grey-200};
-  --color-metadata-kind-token-bg: #{variables.$white-400};
+  --color-metadata-kind-token-bg: #{variables.$grey-300};
   --color-plot-bg: #{variables.$white-400};
   --color-button-plot: #{variables.$blue-900};
   --color-button-plot-hovered: #{variables.$blue-900};
@@ -12,9 +12,9 @@
 }
 
 .kui-theme--dark {
-  --color-metadata-bg: #{variables.$slate-500};
+  --color-metadata-bg: #{variables.$slate-300};
   --color-metadata-preview-bg: #{variables.$slate-800};
-  --color-metadata-kind-token-bg: #{variables.$slate-0};
+  --color-metadata-kind-token-bg: #{variables.$black-600};
   --color-plot-bg: #{variables.$slate-700};
   --color-button-plot: #{variables.$blue-900};
   --color-button-plot-hovered: #{variables.$blue-900};
@@ -35,6 +35,7 @@
   padding: 6px 0 0 0;
   overflow-y: auto;
   background: var(--color-metadata-bg);
+  border-left: 1px solid var(--color-border-line);
   transform: translateX(100%);
   transition: transform ease 0.4s;
 

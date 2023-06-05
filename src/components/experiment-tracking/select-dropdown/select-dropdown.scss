@@ -2,12 +2,12 @@
 
 .kui-theme--light {
   --select-dropdown-bg-hover: #{variables.$white-600};
-  --select-dropdown-bg: #{variables.$white-100};
+  --select-dropdown-bg: #{variables.$grey-100};
 }
 
 .kui-theme--dark {
   --select-dropdown-bg-hover: #{variables.$slate-500};
-  --select-dropdown-bg: #{variables.$slate-500};
+  --select-dropdown-bg: #{variables.$slate-700};
 }
 
 .select-dropdown {
