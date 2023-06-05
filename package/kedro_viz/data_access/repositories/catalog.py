@@ -52,33 +52,34 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
-        # TODO - remove the old method of mapping layers when we upgrade to viz 7.x
         # Maps layers according to the old format
-        if self._catalog.layers is None:
-            self._layers_mapping = {
-                self.strip_encoding(dataset_name): None
-                for dataset_name in self._catalog._data_sets
-            }
-        else:
-            for layer, dataset_names in self._catalog.layers.items():
-                self._layers_mapping.update(
-                    {
-                        self.strip_encoding(dataset_name): layer
-                        for dataset_name in dataset_names
-                    }
-                )
+        if KEDRO_VERSION.match("<=0.19.0"):
+            if self._catalog.layers is None:
+                self._layers_mapping = {
+                    self.strip_encoding(dataset_name): None
+                    for dataset_name in self._catalog._data_sets
+                }
+            else:
+                for layer, dataset_names in self._catalog.layers.items():
+                    self._layers_mapping.update(
+                        {
+                            self.strip_encoding(dataset_name): layer
+                            for dataset_name in dataset_names
+                        }
+                    )
 
         # Maps layers according to the new format
         for dataset_name in self._catalog._data_sets:
             dataset = self._catalog._get_dataset(dataset_name)
-            metadata = getattr(dataset, "metadata", {})
+            metadata = getattr(dataset, "metadata", None)
             if not metadata:
                 continue
-            dataset_layer = metadata.get("kedro-viz", {}).get("layer")
-            if dataset_layer:
-                self._layers_mapping.update(
-                    {self.strip_encoding(dataset_name): dataset_layer}
-                )
+            try:
+                dataset_layer = dataset.metadata["kedro-viz"]["layer"]
+            except (AttributeError, KeyError):  # pragma: no cover
+                pass
+            else:
+                self._layers_mapping[self.strip_encoding(dataset_name)] = dataset_layer
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
