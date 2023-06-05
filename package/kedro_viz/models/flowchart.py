@@ -488,16 +488,26 @@ class DataNode(GraphNode):
 
     def get_viz_metadata(self):
         """Gets the kedro-viz metadata config specified in the catalog"""
-        metadata = getattr(self.kedro_obj, "metadata", {}) or {}
-        return metadata.get("kedro-viz", {})
+        metadata = getattr(self.kedro_obj, "metadata", None)
+        if not metadata:
+            return None
+        try:
+            viz_metadata = metadata["kedro-viz"]
+        except (AttributeError, KeyError):
+            return None
+        return viz_metadata
 
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        return bool(self.get_viz_metadata().get("preview_args"))
+        try:
+            is_preview = bool(self.get_viz_metadata()["preview_args"])
+        except (AttributeError, KeyError):
+            return False
+        return is_preview
 
     def get_preview_nrows(self):
         """Gets the number of rows for the preview dataset"""
-        return self.get_viz_metadata().get("preview_args", {})
+        return self.get_viz_metadata()["preview_args"]
 
 
 @dataclass

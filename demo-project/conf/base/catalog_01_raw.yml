@@ -4,8 +4,7 @@ companies:
   metadata:
     kedro-viz:
       layer: raw
-      preview_args: 
-        nrows: 5
+      preview_args:
 
 reviews:
   type: pandas.CSVDataSet
