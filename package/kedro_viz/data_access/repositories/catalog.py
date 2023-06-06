@@ -1,13 +1,16 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
-from typing import Dict, Optional
 import logging
+from typing import Dict, Optional
+
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
 
 from kedro_viz.constants import KEDRO_VERSION
 
 logger = logging.getLogger(__name__)
+
+
 class CatalogRepository:
     _catalog: DataCatalog
 
@@ -42,9 +45,9 @@ class CatalogRepository:
                 kedro-viz:
                     layers: raw
 
-        Currently, Kedro up to 18.x supports both formats. However, 
+        Currently, Kedro up to 18.x supports both formats. However,
         support for the old format will be discontinued from Kedro 19.x.
-        Kedro-viz will continue to support both formats. 
+        Kedro-viz will continue to support both formats.
         It's recommended to follow the newest format for defining layers in the catalog.
         """
         if self._layers_mapping is not None:
@@ -77,8 +80,10 @@ class CatalogRepository:
             try:
                 dataset_layer = dataset.metadata["kedro-viz"]["layer"]
             except (AttributeError, KeyError):  # pragma: no cover
-                logger.debug("No layer info provided under metadata "
-                            "in the catalog for `%s`", dataset_name)
+                logger.debug(
+                    "No layer info provided under metadata in the catalog for %s",
+                    dataset_name,
+                )
             else:
                 self._layers_mapping[self.strip_encoding(dataset_name)] = dataset_layer
         return self._layers_mapping
