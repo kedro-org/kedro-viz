@@ -5,6 +5,7 @@ companies:
     kedro-viz:
       layer: raw
       preview_args:
+        nrows: 5
 
 reviews:
   type: pandas.CSVDataSet

@@ -464,8 +464,9 @@ class DataNode(GraphNode):
         if metadata:
             try:
                 self.viz_metadata = metadata["kedro-viz"]
-            except (AttributeError, KeyError):
-                pass
+            except (AttributeError, KeyError) as e:
+                logger.debug("Kedro-viz metadata not found for %s", self.full_name)
+
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -502,7 +503,7 @@ class DataNode(GraphNode):
             return False
         return is_preview
 
-    def get_preview_nrows(self):
+    def get_preview_args(self):
         """Gets the number of rows for the preview dataset"""
         return self.viz_metadata["preview_args"]
 
@@ -611,7 +612,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = dataset.load()
         elif data_node.is_preview_node():
             try:
-                self.preview = dataset._preview(**data_node.get_preview_nrows())
+                self.preview = dataset._preview(**data_node.get_preview_args())
             except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",
