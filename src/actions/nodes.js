@@ -80,7 +80,7 @@ export function loadNodeData(nodeID) {
 
     if (dataSource === 'json' && nodeID && !node.fetched[nodeID]) {
       dispatch(toggleNodeDataLoading(true));
-      const url = getUrl('nodes', nodeID) + `?isPrettyName=${prettyName}`;
+      const url = getUrl('nodes', nodeID).concat(`?isPrettyName=${prettyName}`);
       const nodeData = await loadJsonData(url);
       dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
       dispatch(toggleNodeDataLoading(false));
