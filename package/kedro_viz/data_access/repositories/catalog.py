@@ -2,12 +2,12 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from typing import Dict, Optional
-
+import logging
 from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
 
 from kedro_viz.constants import KEDRO_VERSION
 
-
+logger = logging.getLogger(__name__)
 class CatalogRepository:
     _catalog: DataCatalog
 
@@ -77,7 +77,8 @@ class CatalogRepository:
             try:
                 dataset_layer = dataset.metadata["kedro-viz"]["layer"]
             except (AttributeError, KeyError):  # pragma: no cover
-                pass
+                logger.debug("No layer info provided under metadata "
+                            "in the catalog for `%s`", dataset_name)
             else:
                 self._layers_mapping[self.strip_encoding(dataset_name)] = dataset_layer
         return self._layers_mapping
