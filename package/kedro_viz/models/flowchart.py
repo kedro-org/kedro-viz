@@ -393,7 +393,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
-    isPrettyName: InitVar[bool] = False
+    isPrettyName: InitVar[bool] = True
 
     def __post_init__(self, task_node: TaskNode, isPrettyName: bool):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
