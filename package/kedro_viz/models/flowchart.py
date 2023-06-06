@@ -442,7 +442,7 @@ class DataNode(GraphNode):
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
 
-    viz_metadata: Optional[Dict] = field(init=False, default=None)
+    viz_metadata: Optional[Dict] = field(init=False)
 
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
