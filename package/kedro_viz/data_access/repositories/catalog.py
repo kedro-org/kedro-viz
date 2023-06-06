@@ -43,8 +43,7 @@ class CatalogRepository:
                     layers: raw
 
         Currently, Kedro up to 18.x and kedro-viz up to 6.x support both formats =.
-        However, support for the old format will be discontinued from Kedro 19.x and kedro-viz
-        7.x onwards.
+        However, support for the old format will be discontinued from Kedro 19.x.
         It's recommended to follow the newest format for defining layers in the catalog.
         """
         if self._layers_mapping is not None:
