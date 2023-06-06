@@ -442,6 +442,8 @@ class DataNode(GraphNode):
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
 
+    viz_metadata: Optional[Dict] = field(init=False, default=None)
+
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
 
@@ -458,6 +460,12 @@ class DataNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
+        metadata = getattr(self.kedro_obj, "metadata", None)
+        if metadata:
+            try:
+                self.viz_metadata = metadata["kedro-viz"]
+            except (AttributeError, KeyError):
+                pass
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -486,28 +494,17 @@ class DataNode(GraphNode):
         """Checks if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
-    def get_viz_metadata(self):
-        """Gets the kedro-viz metadata config specified in the catalog"""
-        metadata = getattr(self.kedro_obj, "metadata", None)
-        if not metadata:
-            return None
-        try:
-            viz_metadata = metadata["kedro-viz"]
-        except (AttributeError, KeyError):
-            return None
-        return viz_metadata
-
     def is_preview_node(self):
         """Checks if the current node has a preview"""
         try:
-            is_preview = bool(self.get_viz_metadata()["preview_args"])
+            is_preview = bool(self.viz_metadata["preview_args"])
         except (AttributeError, KeyError):
             return False
         return is_preview
 
     def get_preview_nrows(self):
         """Gets the number of rows for the preview dataset"""
-        return self.get_viz_metadata()["preview_args"]
+        return self.viz_metadata["preview_args"]
 
 
 @dataclass
