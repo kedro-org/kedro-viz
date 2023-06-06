@@ -370,7 +370,7 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
     def test_get_preview_nrows(self):
-        metadata = {"kedro-viz": {"preview": 3}}
+        metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
         dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
             full_name="dataset",
@@ -378,7 +378,7 @@ class TestGraphNodeMetadata:
             layer=None,
             dataset=dataset,
         )
-        assert data_node.get_preview_nrows() == 3
+        assert data_node.get_preview_args() == 3
 
     def test_preview_data_node_metadata(self):
         mock_preview_data = {

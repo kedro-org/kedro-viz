@@ -464,9 +464,8 @@ class DataNode(GraphNode):
         if metadata:
             try:
                 self.viz_metadata = metadata["kedro-viz"]
-            except (AttributeError, KeyError) as e:
+            except (AttributeError, KeyError):
                 logger.debug("Kedro-viz metadata not found for %s", self.full_name)
-
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -504,7 +503,7 @@ class DataNode(GraphNode):
         return is_preview
 
     def get_preview_args(self):
-        """Gets the number of rows for the preview dataset"""
+        """Gets the preview arguments for a dataset"""
         return self.viz_metadata["preview_args"]
 
 
