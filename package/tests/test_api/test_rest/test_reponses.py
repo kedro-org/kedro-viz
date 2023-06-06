@@ -607,7 +607,7 @@ class TestNodeMetadataEndpoint:
         assert response.status_code == 404
 
     def test_task_node_metadata_with_pretty_name(self, client):
-        response = client.get("/api/nodes/f2e4bf0e?isPrettyName=true")
+        response = client.get("/api/nodes/f2e4bf0e?is_pretty=true")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()
@@ -623,7 +623,7 @@ class TestNodeMetadataEndpoint:
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 
     def test_task_node_metadata_without_pretty_name(self, client):
-        response = client.get("/api/nodes/f2e4bf0e?isPrettyName=false")
+        response = client.get("/api/nodes/f2e4bf0e?is_pretty=false")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()

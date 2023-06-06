@@ -393,9 +393,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
-    isPrettyName: InitVar[bool] = True
+    is_pretty: InitVar[bool] = True
 
-    def __post_init__(self, task_node: TaskNode, isPrettyName: bool):
+    def __post_init__(self, task_node: TaskNode, is_pretty: bool):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
         # this is required to handle partial, curry functions
         if inspect.isfunction(kedro_node.func):
@@ -414,13 +414,13 @@ class TaskNodeMetadata(GraphNodeMetadata):
         self.parameters = task_node.parameters
         self.inputs = [
             _pretty_name(_strip_namespace(name))
-            if isPrettyName
+            if is_pretty
             else _strip_namespace(name)
             for name in kedro_node.inputs
         ]
         self.outputs = [
             _pretty_name(_strip_namespace(name))
-            if isPrettyName
+            if is_pretty
             else _strip_namespace(name)
             for name in kedro_node.outputs
         ]
