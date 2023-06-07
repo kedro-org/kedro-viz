@@ -56,7 +56,7 @@ class CatalogRepository:
         self._layers_mapping = {}
 
         # Maps layers according to the old format
-        if KEDRO_VERSION.match("<=0.19.0"):
+        if KEDRO_VERSION.match("<0.19.0"):
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     self.strip_encoding(dataset_name): None
