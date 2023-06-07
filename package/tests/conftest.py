@@ -5,22 +5,11 @@ from unittest import mock
 
 import pytest
 from fastapi.testclient import TestClient
-
-try:
-    from kedro_datasets import (  # isort:skip
-        pandas,
-        tracking,
-    )
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas,
-        tracking,
-    )
-
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog, MemoryDataSet, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
+from kedro_datasets import pandas, tracking
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
