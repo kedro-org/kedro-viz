@@ -2,10 +2,10 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
+from kedro_datasets.pandas import CSVDataSet
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
