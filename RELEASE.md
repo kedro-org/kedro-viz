@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Show unpretty input/output names in node details. (#1381)
+- Show original node input and output names in metadata panel. (#1381)
 
 # Release 6.2.1
 
