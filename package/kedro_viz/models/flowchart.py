@@ -464,7 +464,7 @@ class DataNode(GraphNode):
         if metadata:
             try:
                 self.viz_metadata = metadata["kedro-viz"]
-            except (AttributeError, KeyError):
+            except (AttributeError, KeyError):  # pragma: no cover
                 logger.debug("Kedro-viz metadata not found for %s", self.full_name)
 
     # TODO: improve this scheme.
