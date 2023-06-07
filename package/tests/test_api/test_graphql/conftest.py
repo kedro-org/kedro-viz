@@ -3,18 +3,8 @@ import json
 from pathlib import Path
 
 import pytest
-
-try:
-    from kedro_datasets import pandas, tracking, matplotlib, plotly  # isort:skip
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas,
-        tracking,
-        matplotlib,
-        plotly,
-    )
-
 from kedro.io import DataCatalog, Version
+from kedro_datasets import matplotlib, pandas, plotly, tracking
 
 from kedro_viz.api.graphql.types import Run
 from kedro_viz.database import make_db_session_factory

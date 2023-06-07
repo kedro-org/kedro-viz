@@ -2,7 +2,7 @@
 
 .time-series {
   flex: 1 1 auto;
-  font-family: 'Titillium Web', sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0 4em 0 0;
 
   > svg:last-of-type {
@@ -48,7 +48,7 @@
   }
 
   &--selected-0 {
-    stroke: colors.$blue-300;
+    stroke: colors.$purple-300;
   }
 
   &--selected-1 {
@@ -62,14 +62,17 @@
 
 .time-series__marker {
   &--selected-0 {
-    stroke: colors.$blue-0;
+    fill: transparent;
+    stroke: colors.$purple-300;
   }
 
   &--selected-1 {
+    fill: transparent;
     stroke: colors.$yellow-0;
   }
 
   &--selected-2 {
+    fill: transparent;
     stroke: colors.$green-0;
   }
 }

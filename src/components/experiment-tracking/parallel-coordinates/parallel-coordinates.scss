@@ -20,7 +20,7 @@
   }
 
   &--selected-first {
-    stroke: colors.$blue-300;
+    stroke: colors.$purple-300;
   }
 
   &--selected-second {
@@ -28,6 +28,20 @@
   }
 
   &--selected-third {
+    stroke: colors.$green-300;
+  }
+}
+
+.marker-path {
+  &--selected-0 {
+    stroke: colors.$purple-300;
+  }
+
+  &--selected-1 {
+    stroke: colors.$yellow-300;
+  }
+
+  &--selected-2 {
     stroke: colors.$green-300;
   }
 }

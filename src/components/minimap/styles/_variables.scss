@@ -5,10 +5,10 @@
  */
 
 .kui-theme--light {
-  --minimap-bg: #{colors.$grey-400};
+  --minimap-bg: #{colors.$white-200};
   --minimap-shadow: #{colors.$white-400};
   --minimap-viewport-stroke: #{colors.$white-600};
-  --minimap-node-fill-default: #{colors.$white-200};
+  --minimap-node-fill-default: #{colors.$grey-200};
   --minimap-node-fill-active: #{colors.$white-0};
   --minimap-node-fill-selected: #{colors.$blue-0};
   --minimap-node-fill-faded: #{colors.$white-900};
