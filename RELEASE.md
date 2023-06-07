@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.2.1
+
+## Major features and improvements
+
+- Add support for new kedro-viz layer configuration in kedro-datasets. (#1373)
+
 # Release 6.2.0
 
 ## Major features and improvements
