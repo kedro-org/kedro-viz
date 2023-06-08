@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 6.2.2
+
+## Major features and improvements
+
+- Show original node input and output names in metadata panel. (#1381)
 
 # Release 6.2.1
 
