@@ -25,7 +25,7 @@
   @extend %sidebar;
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
-  right: 0;
+  right: -1px;
   bottom: -1px;
   z-index: 2;
   display: flex;
@@ -34,6 +34,7 @@
   max-width: variables.$metadata-sidebar-width-open;
   padding: 6px 0 0 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--color-metadata-bg);
   border-left: 1px solid var(--color-border-line);
   transform: translateX(100%);
