@@ -15,7 +15,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add support for new kedro-viz layer configuration in kedro-datasets. (#1373)
+- Add support for new kedro-viz layer configuration in kedro-datasets version 1.3.0 or more. 
+- Add support for new kedro-viz preview_args configuration in kedro-datasets version 1.3.0 or more. 
 
 # Release 6.2.0
 
