@@ -128,3 +128,12 @@ export const routes = {
     selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
 };
+
+export const errorMessages = {
+  node: 'Please check the value of "selected_id" in the URL',
+  nodeName: 'Please check the value of "selected_name" in the URL',
+  modularPipeline: 'Please check the value of "focused_id" in the URL',
+  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
+  runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
+};
