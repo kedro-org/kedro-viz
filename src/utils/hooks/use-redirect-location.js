@@ -41,8 +41,6 @@ export const useRedirectLocationInFlowchart = (
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
-  onUpdateActivePipeline,
-  pipelines,
   reload
 ) => {
   const { pathname, search } = useLocation();

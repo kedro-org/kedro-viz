@@ -85,6 +85,9 @@ export const FlowChartWrapper = ({
 
   useEffect(() => {
     setReload(true);
+
+    // QUICK FIX: updatePipeline needs to happen here first before the redirectLocation hook happens
+    // so just all the relevant data is fully loaded first then passing it to the hook.
     updatePipeline(pipelines, decodedPipelineId);
 
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
@@ -108,8 +111,6 @@ export const FlowChartWrapper = ({
     onToggleFocusMode,
     onToggleModularPipelineActive,
     onToggleModularPipelineExpanded,
-    onUpdateActivePipeline,
-    pipelines,
     reload
   );
 
