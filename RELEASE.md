@@ -11,6 +11,10 @@ Please follow the established format:
 
 - Show original node input and output names in metadata panel. (#1381)
 
+## Bug fixes and other changes
+
+- Fix broken URL link between Experiment Tracking and Flowchart when the pipeline is not the default one. (#1388)
+
 # Release 6.2.1
 
 ## Major features and improvements
