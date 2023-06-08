@@ -7,10 +7,11 @@
 {{ namespace }}.feat_{{ metric_type }}_metrics:
   type: pandas.ParquetDataSet
   filepath: ${base_location}/04_feature/feat_{{ metric_type }}_metrics.pq
-  layer: feature
+  metadata:
+    kedro-viz:
+      layer: feature
 
 {% endfor %}
-
 
 # This will render to generate the records below...
 #
@@ -25,10 +26,11 @@
 #  layer: feature
 
 
-
 feature_importance_output: 
   type: pandas.CSVDataSet
   filepath: ${base_location}/04_feature/feature_importance_output.csv
-  layer: feature 
+  metadata:
+    kedro-viz:
+      layer: feature 
 
 

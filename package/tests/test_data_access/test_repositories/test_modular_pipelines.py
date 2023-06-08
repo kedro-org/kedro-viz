@@ -1,6 +1,6 @@
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.pipeline import node
+from kedro_datasets.pandas import CSVDataSet
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
