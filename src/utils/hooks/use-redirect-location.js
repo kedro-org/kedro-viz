@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import { routes, params, tabLabels } from '../../config';
 import { useGeneratePathnameForExperimentTracking } from './use-generate-pathname';
@@ -51,13 +51,6 @@ export const useRedirectLocationInFlowchart = (
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [pageReloaded, setPageReloaded] = useState(false);
 
-  const activePipelineId = search.substring(
-    search.indexOf(params.pipeline) + params.pipeline.length,
-    search.indexOf('&')
-  );
-
-  const decodedPipelineId = decodeURI(activePipelineId);
-
   const matchedFlowchartMainPage = matchPath(pathname + search, {
     exact: true,
     path: [routes.flowchart.main],
@@ -78,25 +71,7 @@ export const useRedirectLocationInFlowchart = (
     path: [routes.flowchart.focusedNode],
   });
 
-  const updatePipeline = useCallback(
-    (pipelines, decodedPipelineId) => {
-      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
-
-      if (foundPipeline) {
-        onUpdateActivePipeline(decodedPipelineId);
-      } else {
-        setErrorMessage(errorMessages.pipeline);
-        setInvalidUrl(true);
-      }
-    },
-    [onUpdateActivePipeline]
-  );
-
   const redirectToSelectedNode = (nodeId) => {
-    // Switching the view forces the page to reload again
-    // hence this action needs to happen first
-    updatePipeline(pipelines, decodedPipelineId);
-
     // Reset the focus mode to null when when using the navigation buttons
     onToggleFocusMode(null);
 
@@ -127,7 +102,6 @@ export const useRedirectLocationInFlowchart = (
 
     // This timeout is to ensure it has enough time to
     // load the data after the page is reloaded
-    // or change to a different modular pipeline view first
     const setPageReloadedTimeOut = setTimeout(() => {
       pageReloaded && setPageReloaded(false);
     }, 500);
@@ -150,8 +124,6 @@ export const useRedirectLocationInFlowchart = (
     }
 
     if (matchedSelectedNodeName) {
-      updatePipeline(pipelines, decodedPipelineId);
-
       const nodeName = search.split(params.selectedName)[1];
       const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
       const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
@@ -171,8 +143,6 @@ export const useRedirectLocationInFlowchart = (
     }
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
-      updatePipeline(pipelines, decodedPipelineId);
-
       // Reset the node data to null when when using the navigation buttons
       onLoadNodeData(null);
 

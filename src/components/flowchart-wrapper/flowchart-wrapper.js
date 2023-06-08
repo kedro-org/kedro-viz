@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -26,7 +26,7 @@ import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-l
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageFlowchartLink } from '../../config';
+import { localStorageFlowchartLink, params } from '../../config';
 
 import './flowchart-wrapper.css';
 
@@ -55,6 +55,25 @@ export const FlowChartWrapper = ({
   metadataVisible,
 }) => {
   const history = useHistory();
+  const { search } = useLocation();
+
+  const activePipelineId = search.substring(
+    search.indexOf(params.pipeline) + params.pipeline.length,
+    search.indexOf('&')
+  );
+
+  const decodedPipelineId = decodeURI(activePipelineId);
+
+  const updatePipeline = useCallback(
+    (pipelines, decodedPipelineId) => {
+      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+
+      if (foundPipeline) {
+        onUpdateActivePipeline(decodedPipelineId);
+      }
+    },
+    [onUpdateActivePipeline]
+  );
 
   // Reload state is to ensure it will call redirectLocation
   // only when the page is reloaded.
@@ -66,10 +85,11 @@ export const FlowChartWrapper = ({
 
   useEffect(() => {
     setReload(true);
+    updatePipeline(pipelines, decodedPipelineId);
 
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
-  }, []);
+  }, [pipelines, decodedPipelineId, updatePipeline]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
