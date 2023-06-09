@@ -11,8 +11,8 @@ Please follow the established format:
 ## Major features and improvements
 
 - Update UI with new Kedro rebrand look and feel. (#1359)
-- Add support for new layer configuration in kedro-datasets version >1.3.0. (#1373)
-- Add support for new `preview_args` configuration in kedro-datasets version >1.3.0. (#1374)
+- Add support for new layer configuration in kedro-datasets version >=1.3.0. (#1373)
+- Add support for new `preview_args` configuration in kedro-datasets version >=1.3.0. (#1374)
 
 ## Bug fixes and other changes
 
