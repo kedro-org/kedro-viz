@@ -69,7 +69,6 @@ export const FlowChartWrapper = ({
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
-  const [pageReloaded, setPageReloaded] = useState(false);
   const [reload, setReload] = useState(false);
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
@@ -125,7 +124,7 @@ export const FlowChartWrapper = ({
       // We only want to call this function specifically when the page is reloaded
       // to ensure the modular pipeline list is expanded
       // but we don't want this action to happen on any other on click, go back etc
-      if (pageReloaded && hasModularPipeline) {
+      if (!reload && hasModularPipeline) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
 
@@ -139,13 +138,10 @@ export const FlowChartWrapper = ({
 
   useEffect(() => {
     setReload(true);
-    // updatePipeline needs to happen here first before the redirectLocation hook happens
-    // so just all the relevant data is fully loaded first then passing it to the hook.
-    updatePipeline(pipelines, decodedPipelineId);
 
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
-  }, [pipelines, decodedPipelineId, updatePipeline]);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -155,21 +151,11 @@ export const FlowChartWrapper = ({
   }, []);
 
   useEffect(() => {
-    if (reload) {
-      setPageReloaded(true);
-    }
+    // updatePipeline needs to happen here first before the redirectLocation hook happens
+    // so just all the relevant data is fully loaded first then passing it to the hook.
+    updatePipeline(pipelines, decodedPipelineId);
 
-    // This timeout is to ensure it has enough time to
-    // load the data after the page is reloaded
-    const setPageReloadedTimeOut = setTimeout(() => {
-      pageReloaded && setPageReloaded(false);
-    }, 500);
-
-    return () => clearTimeout(setPageReloadedTimeOut);
-  }, [pageReloaded, reload]);
-
-  useEffect(() => {
-    if (pageReloaded) {
+    if (!reload) {
       setErrorMessage({});
       setInvalidUrl(false);
     }
@@ -182,7 +168,7 @@ export const FlowChartWrapper = ({
       setInvalidUrl(false);
     }
 
-    if (matchedSelectedNodeName) {
+    if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
       const nodeName = search.split(params.selectedName)[1];
       const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
       const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
