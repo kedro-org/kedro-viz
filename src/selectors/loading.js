@@ -20,8 +20,8 @@ export const isLoading = createSelector(
  * Determine whether the graph data is current loading
  */
 export const isGraphLoading = createSelector(
-  [getGraphLoading],
-  (graphLoading) => {
-    return graphLoading;
+  [getGraphLoading, getPipelineLoading],
+  (graphLoading, getPipelineLoading) => {
+    return graphLoading || getPipelineLoading;
   }
 );
