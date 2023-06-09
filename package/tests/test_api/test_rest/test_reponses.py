@@ -606,8 +606,8 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/foo")
         assert response.status_code == 404
 
-    def test_task_node_metadata(self, client):
-        response = client.get("/api/nodes/f2e4bf0e")
+    def test_task_node_metadata_with_pretty_name(self, client):
+        response = client.get("/api/nodes/f2e4bf0e?is_pretty=true")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()
@@ -616,6 +616,22 @@ class TestNodeMetadataEndpoint:
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
         assert metadata["inputs"] == ["Raw Data", "Params: Train Test Split"]
         assert metadata["outputs"] == ["Model Inputs"]
+        assert (
+            metadata["run_command"]
+            == "kedro run --to-nodes=uk.data_processing.process_data"
+        )
+        assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
+
+    def test_task_node_metadata_without_pretty_name(self, client):
+        response = client.get("/api/nodes/f2e4bf0e?is_pretty=false")
+        metadata = response.json()
+        assert (
+            metadata["code"].lstrip()
+            == "def process_data(raw_data, train_test_split):\n        ...\n"
+        )
+        assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
+        assert metadata["inputs"] == ["raw_data", "params:train_test_split"]
+        assert metadata["outputs"] == ["model_inputs"]
         assert (
             metadata["run_command"]
             == "kedro run --to-nodes=uk.data_processing.process_data"

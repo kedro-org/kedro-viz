@@ -16,14 +16,14 @@ $menu-item-padding: 12px;
 
 .kui-theme--light {
   --dropdown-shadow: #{variables.$white-300};
-  --dropdown-label-bg: #{variables.$white-0};
-  --dropdown-options-bg: #{variables.$white-200};
+  --dropdown-label-bg: #{variables.$white-200};
+  --dropdown-options-bg: #{variables.$grey-100};
 }
 
 .kui-theme--dark {
   --dropdown-shadow: #{variables.$slate-200};
   --dropdown-label-bg: #{variables.$slate-500};
-  --dropdown-options-bg: #{variables.$slate-700};
+  --dropdown-options-bg: #{variables.$slate-600};
 }
 
 .dropdown {

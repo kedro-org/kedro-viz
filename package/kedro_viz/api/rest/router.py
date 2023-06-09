@@ -37,7 +37,7 @@ async def main():
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-async def get_single_node_metadata(node_id: str):
+async def get_single_node_metadata(node_id: str, is_pretty: bool = True):
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
         return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
@@ -46,7 +46,7 @@ async def get_single_node_metadata(node_id: str):
         return JSONResponse(content={})
 
     if isinstance(node, TaskNode):
-        return TaskNodeMetadata(node)
+        return TaskNodeMetadata(node, is_pretty)
 
     if isinstance(node, DataNode):
         return DataNodeMetadata(node)

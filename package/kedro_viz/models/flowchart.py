@@ -393,8 +393,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
+    is_pretty: InitVar[bool] = True
 
-    def __post_init__(self, task_node: TaskNode):
+    def __post_init__(self, task_node: TaskNode, is_pretty: bool):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
         # this is required to handle partial, curry functions
         if inspect.isfunction(kedro_node.func):
@@ -412,10 +413,16 @@ class TaskNodeMetadata(GraphNodeMetadata):
             self.filepath = str(filepath)
         self.parameters = task_node.parameters
         self.inputs = [
-            _pretty_name(_strip_namespace(name)) for name in kedro_node.inputs
+            _pretty_name(_strip_namespace(name))
+            if is_pretty
+            else _strip_namespace(name)
+            for name in kedro_node.inputs
         ]
         self.outputs = [
-            _pretty_name(_strip_namespace(name)) for name in kedro_node.outputs
+            _pretty_name(_strip_namespace(name))
+            if is_pretty
+            else _strip_namespace(name)
+            for name in kedro_node.outputs
         ]
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
@@ -442,6 +449,8 @@ class DataNode(GraphNode):
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
 
+    viz_metadata: Optional[Dict] = field(init=False)
+
     # command to run the pipeline to this node
     run_command: Optional[str] = field(init=False, default=None)
 
@@ -458,6 +467,12 @@ class DataNode(GraphNode):
         self.modular_pipelines = self._expand_namespaces(
             self._get_namespace(self.full_name)
         )
+        metadata = getattr(self.kedro_obj, "metadata", None)
+        if metadata:
+            try:
+                self.viz_metadata = metadata["kedro-viz"]
+            except (AttributeError, KeyError):  # pragma: no cover
+                logger.debug("Kedro-viz metadata not found for %s", self.full_name)
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -488,7 +503,15 @@ class DataNode(GraphNode):
 
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        return hasattr(self.kedro_obj, "_preview")
+        try:
+            is_preview = bool(self.viz_metadata["preview_args"])
+        except (AttributeError, KeyError):
+            return False
+        return is_preview
+
+    def get_preview_args(self):
+        """Gets the preview arguments for a dataset"""
+        return self.viz_metadata["preview_args"]
 
 
 @dataclass
@@ -595,7 +618,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             self.tracking_data = dataset.load()
         elif data_node.is_preview_node():
             try:
-                self.preview = dataset._preview()  # type: ignore
+                self.preview = dataset._preview(**data_node.get_preview_args())  # type: ignore
             except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",

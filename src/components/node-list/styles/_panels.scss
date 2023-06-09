@@ -3,6 +3,7 @@
 .pipeline-nodelist__filter-panel {
   z-index: 1;
   background: var(--color-nodelist-filter-panel);
+  border-top: 1px solid var(--color-border-line);
 
   .pipeline-nodelist-section:last-child {
     padding-bottom: 28px;
@@ -93,18 +94,13 @@
   flex-grow: 1;
 
   &:after {
-    position: absolute;
-    top: 0;
-    right: -1px;
-    left: -1px;
-    height: 22px;
-    background: linear-gradient(
-      0deg,
-      var(--color-nodelist-bg-transparent) 0%,
-      var(--color-bg-3) 100%
-    );
     content: '';
+    height: 22px;
+    left: -1px;
     pointer-events: none;
+    position: absolute;
+    right: -1px;
+    top: 0;
   }
 
   .pipeline-nodelist__filter-panel &:after {
