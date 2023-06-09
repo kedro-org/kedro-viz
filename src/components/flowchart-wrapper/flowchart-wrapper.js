@@ -70,6 +70,7 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [pageReloaded, setPageReloaded] = useState(false);
+  const [reload, setReload] = useState(false);
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
@@ -124,7 +125,7 @@ export const FlowChartWrapper = ({
       // We only want to call this function specifically when the page is reloaded
       // to ensure the modular pipeline list is expanded
       // but we don't want this action to happen on any other on click, go back etc
-      if (hasModularPipeline) {
+      if (pageReloaded && hasModularPipeline) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
 
@@ -137,6 +138,7 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
+    setReload(true);
     // updatePipeline needs to happen here first before the redirectLocation hook happens
     // so just all the relevant data is fully loaded first then passing it to the hook.
     updatePipeline(pipelines, decodedPipelineId);
@@ -146,16 +148,25 @@ export const FlowChartWrapper = ({
   }, [pipelines, decodedPipelineId, updatePipeline]);
 
   useEffect(() => {
-    setPageReloaded(true);
+    const timer = setTimeout(() => {
+      setReload(false);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (reload) {
+      setPageReloaded(true);
+    }
 
     // This timeout is to ensure it has enough time to
     // load the data after the page is reloaded
     const setPageReloadedTimeOut = setTimeout(() => {
       pageReloaded && setPageReloaded(false);
-    }, 200);
+    }, 500);
 
     return () => clearTimeout(setPageReloadedTimeOut);
-  }, [pageReloaded]);
+  }, [pageReloaded, reload]);
 
   useEffect(() => {
     if (pageReloaded) {
@@ -192,7 +203,7 @@ export const FlowChartWrapper = ({
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
       // Reset the node data to null when when using the navigation buttons
-      // onLoadNodeData(null);
+      onLoadNodeData(null);
 
       const modularPipelineId = search.split(params.focused)[1];
       const foundModularPipeline = modularPipelinesTree[modularPipelineId];
@@ -207,7 +218,7 @@ export const FlowChartWrapper = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageReloaded, search, pathname]);
+  }, [reload, search, pathname]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
