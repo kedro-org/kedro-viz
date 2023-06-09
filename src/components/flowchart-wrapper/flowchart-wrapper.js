@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory, useLocation, matchPath } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -29,9 +29,9 @@ import {
   localStorageFlowchartLink,
   localStorageName,
   params,
-  routes,
   errorMessages,
 } from '../../config';
+import { findMatchedPath } from '../../utils/match-path';
 
 import './flowchart-wrapper.css';
 
@@ -42,6 +42,14 @@ const linkToFlowchartInitialVal = {
 
 const getKeyByValue = (object, value) => {
   return Object.keys(object).find((key) => object[key] === value);
+};
+
+const getDecodedPipelineId = (search) => {
+  const activePipelineId = search.substring(
+    search.indexOf(params.pipeline) + params.pipeline.length,
+    search.indexOf('&')
+  );
+  return decodeURI(activePipelineId);
 };
 
 /**
@@ -64,7 +72,6 @@ export const FlowChartWrapper = ({
   metadataVisible,
 }) => {
   const history = useHistory();
-
   const { pathname, search } = useLocation();
 
   const [errorMessage, setErrorMessage] = useState({});
@@ -75,32 +82,14 @@ export const FlowChartWrapper = ({
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
 
-  // find match path
-  const matchedFlowchartMainPage = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.main],
-  });
+  const {
+    matchedFlowchartMainPage,
+    matchedSelectedNodeId,
+    matchedSelectedNodeName,
+    matchedFocusedNode,
+  } = findMatchedPath(pathname, search);
 
-  const matchedSelectedNodeId = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.selectedNode],
-  });
-
-  const matchedSelectedNodeName = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.selectedName],
-  });
-
-  const matchedFocusedNode = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.focusedNode],
-  });
-
-  const activePipelineId = search.substring(
-    search.indexOf(params.pipeline) + params.pipeline.length,
-    search.indexOf('&')
-  );
-  const decodedPipelineId = decodeURI(activePipelineId);
+  const decodedPipelineId = getDecodedPipelineId(search);
 
   /**
    * To switch to different pipeline first depending on what is defined in the URL
