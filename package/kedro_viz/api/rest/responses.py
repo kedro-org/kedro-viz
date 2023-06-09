@@ -21,7 +21,6 @@ class BaseAPIResponse(BaseModel, abc.ABC):
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
     id: str
-    name: str
     full_name: str
     tags: List[str]
     pipelines: List[str]
@@ -38,7 +37,6 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
         schema_extra = {
             "example": {
                 "id": "6ab908b8",
-                "name": "split_data_node",
                 "full_name": "split_data_node",
                 "tags": [],
                 "pipelines": ["__default__", "ds"],
@@ -70,7 +68,6 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
         schema_extra = {
             "example": {
                 "id": "d7b83b05",
-                "name": "Master Table",
                 "full_name": "master_table",
                 "tags": [],
                 "pipelines": ["__default__", "dp", "ds"],
@@ -192,7 +189,7 @@ class ModularPipelinesTreeNodeAPIResponse(BaseAPIResponse):
     """Model a node in the tree representation of modular pipelines in the API response."""
 
     id: str
-    name: str
+    full_name: str
     inputs: List[str]
     outputs: List[str]
     children: List[ModularPipelineChildAPIResponse]
@@ -230,7 +227,8 @@ class ModularPipelinesTreeNodeAPIResponse(BaseAPIResponse):
 #        },
 #    }
 # }
-ModularPipelinesTreeAPIResponse = Dict[str, ModularPipelinesTreeNodeAPIResponse]
+ModularPipelinesTreeAPIResponse = Dict[str,
+                                       ModularPipelinesTreeNodeAPIResponse]
 
 
 class GraphAPIResponse(BaseAPIResponse):

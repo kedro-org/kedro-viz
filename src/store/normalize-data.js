@@ -1,4 +1,4 @@
-import { arrayToObject } from '../utils';
+import { arrayToObject, prettifyName, stripNamespace } from '../utils';
 
 /**
  * Create new default pipeline state instance
@@ -115,7 +115,7 @@ const addPipeline = (state) => (pipeline) => {
     return;
   }
   state.pipeline.ids.push(id);
-  state.pipeline.name[id] = pipeline.name;
+  state.pipeline.name[id] = prettifyName(pipeline.name || '');
 };
 
 /**
@@ -130,8 +130,8 @@ const addNode = (state) => (node) => {
     return;
   }
   state.node.ids.push(id);
-  state.node.name[id] = node.name;
-  state.node.fullName[id] = node.full_name || node.name;
+  state.node.name[id] = prettifyName(stripNamespace(node.full_name || ''));
+  state.node.fullName[id] = node.full_name;
   state.node.type[id] = node.type;
   state.node.layer[id] = node.layer;
   state.node.pipelines[id] = node.pipelines
