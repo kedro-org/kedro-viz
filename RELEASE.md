@@ -10,9 +10,12 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add support for new kedro-viz layer configuration in kedro-datasets. (#1373)
-- Show original node input and output names in metadata panel. (#1381)
-- Fix bug where git causing kedro-viz panic. (#1380)
+- Add support for new kedro-viz layer configuration in kedro-datasets version 1.3.0 or more.
+- Add support for new kedro-viz preview_args configuration in kedro-datasets version 1.3.0 or more.
+
+## Bug fixes and other changes
+
+- Fix bug where git caused a Kedro-Viz panic. (#1380)
 
 # Release 6.2.0
 
