@@ -16,6 +16,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Fix bug where git caused a Kedro-Viz panic. (#1380)
 - Show original node input and output names in metadata panel. (#1381)
 
 # Release 6.2.0
