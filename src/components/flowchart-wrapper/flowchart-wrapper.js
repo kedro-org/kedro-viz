@@ -22,12 +22,12 @@ import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
-// import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import {
   localStorageFlowchartLink,
+  localStorageName,
   params,
   routes,
   errorMessages,
@@ -70,7 +70,6 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [reload, setReload] = useState(false);
-  const [nodeNames, setNodeNames] = useState();
 
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
@@ -139,7 +138,7 @@ export const FlowChartWrapper = ({
       // updatePipeline needs to happen here first
       // so just all the relevant data is fully loaded first then passing it to the hook.
       updatePipeline(pipelines, decodedPipelineId),
-    [decodedPipelineId, pipelines]
+    [decodedPipelineId, pipelines, updatePipeline]
   );
 
   useEffect(() => {
@@ -171,6 +170,14 @@ export const FlowChartWrapper = ({
     }
 
     if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
+      const localStorage = loadLocalStorage(localStorageName);
+
+      // if the pipeline in local storage is not the same as in the URL
+      // ensure the page is reloaded so that the fullNodeNames is updated
+      if (localStorage.pipeline.active !== decodedPipelineId) {
+        history.go(0);
+      }
+
       const nodeName = search.split(params.selectedName)[1];
       const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
       const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
