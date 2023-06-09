@@ -25,12 +25,7 @@ import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import {
-  localStorageFlowchartLink,
-  localStorageName,
-  params,
-  errorMessages,
-} from '../../config';
+import { localStorageFlowchartLink, params, errorMessages } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 
 import './flowchart-wrapper.css';
@@ -90,17 +85,6 @@ export const FlowChartWrapper = ({
 
   const decodedPipelineId = getDecodedPipelineId(search);
 
-  /**
-   * To switch to different pipeline first depending on what is defined in the URL
-   */
-  useEffect(() => {
-    const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
-
-    if (foundPipeline) {
-      onUpdateActivePipeline(decodedPipelineId);
-    }
-  }, [onUpdateActivePipeline, decodedPipelineId, pipelines]);
-
   const redirectToSelectedNode = (nodeId) => {
     // Reset the focus mode to null when when using the navigation buttons
     onToggleFocusMode(null);
@@ -121,6 +105,18 @@ export const FlowChartWrapper = ({
     }
   };
 
+  /**
+   * When the component first loads
+   * switch to different pipeline first depending on what is defined in the URL
+   */
+  useEffect(() => {
+    const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+
+    if (foundPipeline) {
+      onUpdateActivePipeline(decodedPipelineId);
+    }
+  }, [onUpdateActivePipeline, decodedPipelineId, pipelines]);
+
   useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
@@ -140,14 +136,6 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
-        // const localStorage = loadLocalStorage(localStorageName);
-
-        // if the pipeline in local storage is not the same as in the URL
-        // ensure the page is reloaded so that the fullNodeNames is updated
-        // if (localStorage.pipeline.active !== decodedPipelineId) {
-        //   history.go(0);
-        // }
-
         const nodeName = search.split(params.selectedName)[1];
         const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
         const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
