@@ -102,16 +102,16 @@ export const FlowChartWrapper = ({
   );
   const decodedPipelineId = decodeURI(activePipelineId);
 
-  const updatePipeline = useCallback(
-    (pipelines, decodedPipelineId) => {
-      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+  /**
+   * To switch to different pipeline first depending on what is defined in the URL
+   */
+  useEffect(() => {
+    const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
 
-      if (foundPipeline) {
-        onUpdateActivePipeline(decodedPipelineId);
-      }
-    },
-    [onUpdateActivePipeline]
-  );
+    if (foundPipeline) {
+      onUpdateActivePipeline(decodedPipelineId);
+    }
+  }, [onUpdateActivePipeline, decodedPipelineId, pipelines]);
 
   const redirectToSelectedNode = (nodeId) => {
     // Reset the focus mode to null when when using the navigation buttons
@@ -133,14 +133,6 @@ export const FlowChartWrapper = ({
     }
   };
 
-  useEffect(
-    () =>
-      // updatePipeline needs to happen here first
-      // so just all the relevant data is fully loaded first then passing it to the hook.
-      updatePipeline(pipelines, decodedPipelineId),
-    [decodedPipelineId, pipelines, updatePipeline]
-  );
-
   useEffect(() => {
     setReload(true);
 
@@ -155,6 +147,9 @@ export const FlowChartWrapper = ({
     return () => clearTimeout(timer);
   }, []);
 
+  /**
+   * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
+   */
   useEffect(() => {
     if (!reload) {
       setErrorMessage({});
