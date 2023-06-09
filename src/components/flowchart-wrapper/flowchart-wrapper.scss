@@ -36,6 +36,7 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
   opacity: 0;
   pointer-events: none;
   position: relative;
+  z-index: 3;
 
   .button button {
     background-color: variables.$yellow-300;
