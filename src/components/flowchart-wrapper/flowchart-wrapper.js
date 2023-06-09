@@ -54,7 +54,7 @@ export const FlowChartWrapper = ({
   loading,
   modularPipelinesTree,
   nodes,
-  onLoadNodeData,
+  onToggleNodeSelected,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
@@ -70,6 +70,8 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [reload, setReload] = useState(false);
+  const [nodeNames, setNodeNames] = useState();
+
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
@@ -121,20 +123,24 @@ export const FlowChartWrapper = ({
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
 
-      // We only want to call this function specifically when the page is reloaded
-      // to ensure the modular pipeline list is expanded
-      // but we don't want this action to happen on any other on click, go back etc
-      if (!reload && hasModularPipeline) {
+      if (hasModularPipeline) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
 
-      // then upload the node data
-      onLoadNodeData(nodeId);
+      onToggleNodeSelected(nodeId);
     } else {
       setErrorMessage(errorMessages.node);
       setInvalidUrl(true);
     }
   };
+
+  useEffect(
+    () =>
+      // updatePipeline needs to happen here first
+      // so just all the relevant data is fully loaded first then passing it to the hook.
+      updatePipeline(pipelines, decodedPipelineId),
+    [decodedPipelineId, pipelines]
+  );
 
   useEffect(() => {
     setReload(true);
@@ -151,17 +157,13 @@ export const FlowChartWrapper = ({
   }, []);
 
   useEffect(() => {
-    // updatePipeline needs to happen here first before the redirectLocation hook happens
-    // so just all the relevant data is fully loaded first then passing it to the hook.
-    updatePipeline(pipelines, decodedPipelineId);
-
     if (!reload) {
       setErrorMessage({});
       setInvalidUrl(false);
     }
 
     if (matchedFlowchartMainPage) {
-      onLoadNodeData(null);
+      onToggleNodeSelected(null);
       onToggleFocusMode(null);
 
       setErrorMessage({});
@@ -189,7 +191,7 @@ export const FlowChartWrapper = ({
 
     if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
       // Reset the node data to null when when using the navigation buttons
-      onLoadNodeData(null);
+      onToggleNodeSelected(null);
 
       const modularPipelineId = search.split(params.focused)[1];
       const foundModularPipeline = modularPipelinesTree[modularPipelineId];
@@ -292,8 +294,8 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
-  onLoadNodeData: (nodeClicked) => {
-    dispatch(loadNodeData(nodeClicked));
+  onToggleNodeSelected: (nodeID) => {
+    dispatch(loadNodeData(nodeID));
   },
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
