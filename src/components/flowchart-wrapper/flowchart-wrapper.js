@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { isLoading } from '../../selectors/loading';
+import { isGraphLoading, isLoading } from '../../selectors/loading';
 import {
   getModularPipelinesTree,
   getNodeFullName,
@@ -57,26 +57,25 @@ const getDecodedPipelineId = (search) => {
  * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowChartWrapper = ({
-  flags,
   fullNodeNames,
+  graphLoading,
   loading,
+  metadataVisible,
   modularPipelinesTree,
   nodes,
-  onToggleNodeSelected,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
+  onToggleNodeSelected,
   onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
-  metadataVisible,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
-  const [reload, setReload] = useState(false);
 
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
@@ -123,81 +122,68 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
-    setReload(true);
-
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-    return () => clearTimeout(timer);
   }, []);
 
   /**
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    if (!reload) {
-      setErrorMessage({});
-      setInvalidUrl(false);
-    }
+    if (graphLoading) {
+      if (matchedFlowchartMainPage) {
+        onToggleNodeSelected(null);
+        onToggleFocusMode(null);
 
-    if (matchedFlowchartMainPage) {
-      onToggleNodeSelected(null);
-      onToggleFocusMode(null);
-
-      setErrorMessage({});
-      setInvalidUrl(false);
-    }
-
-    if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
-      const localStorage = loadLocalStorage(localStorageName);
-
-      // if the pipeline in local storage is not the same as in the URL
-      // ensure the page is reloaded so that the fullNodeNames is updated
-      if (localStorage.pipeline.active !== decodedPipelineId) {
-        history.go(0);
+        setErrorMessage({});
+        setInvalidUrl(false);
       }
 
-      const nodeName = search.split(params.selectedName)[1];
-      const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
-      const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
+      if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
+        // const localStorage = loadLocalStorage(localStorageName);
 
-      if (foundNodeId) {
-        redirectToSelectedNode(foundNodeId);
-      } else {
-        setErrorMessage(errorMessages.nodeName);
-        setInvalidUrl(true);
+        // if the pipeline in local storage is not the same as in the URL
+        // ensure the page is reloaded so that the fullNodeNames is updated
+        // if (localStorage.pipeline.active !== decodedPipelineId) {
+        //   history.go(0);
+        // }
+
+        const nodeName = search.split(params.selectedName)[1];
+        const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
+        const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
+
+        if (foundNodeId) {
+          redirectToSelectedNode(foundNodeId);
+        } else {
+          setErrorMessage(errorMessages.nodeName);
+          setInvalidUrl(true);
+        }
+      }
+
+      if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
+        const nodeId = search.split(params.selected)[1];
+
+        redirectToSelectedNode(nodeId);
+      }
+
+      if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+        // Reset the node data to null when when using the navigation buttons
+        onToggleNodeSelected(null);
+
+        const modularPipelineId = search.split(params.focused)[1];
+        const foundModularPipeline = modularPipelinesTree[modularPipelineId];
+
+        if (foundModularPipeline) {
+          onToggleModularPipelineActive(modularPipelineId, true);
+          onToggleFocusMode(foundModularPipeline.data);
+        } else {
+          setErrorMessage(errorMessages.modularPipeline);
+          setInvalidUrl(true);
+        }
       }
     }
-
-    if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
-      const nodeId = search.split(params.selected)[1];
-
-      redirectToSelectedNode(nodeId);
-    }
-
-    if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
-      // Reset the node data to null when when using the navigation buttons
-      onToggleNodeSelected(null);
-
-      const modularPipelineId = search.split(params.focused)[1];
-      const foundModularPipeline = modularPipelinesTree[modularPipelineId];
-
-      if (foundModularPipeline) {
-        onToggleModularPipelineActive(modularPipelineId, true);
-        onToggleFocusMode(foundModularPipeline.data);
-      } else {
-        setErrorMessage(errorMessages.modularPipeline);
-        setInvalidUrl(true);
-      }
-    }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reload, search, pathname]);
+  }, [graphLoading, search, pathname]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
@@ -271,14 +257,14 @@ export const FlowChartWrapper = ({
 };
 
 export const mapStateToProps = (state) => ({
-  flags: state.flags,
   fullNodeNames: getNodeFullName(state),
+  graphLoading: isGraphLoading(state),
   loading: isLoading(state),
+  metadataVisible: getVisibleMetaSidebar(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
   pipelines: state.pipeline.ids,
   sidebarVisible: state.visible.sidebar,
-  metadataVisible: getVisibleMetaSidebar(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
