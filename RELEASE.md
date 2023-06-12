@@ -5,21 +5,25 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 6.2.2
 
-## Major features and improvements
-
-- Show original node input and output names in metadata panel. (#1381)
+# Release 6.3.1
 
 ## Bug fixes and other changes
 
 - Fix broken URL link between experiment tracking and flowchart when the pipeline is not the default one. (#1388)
 
-# Release 6.2.1
+# Release 6.3.0
 
 ## Major features and improvements
 
-- Add support for new kedro-viz layer configuration in kedro-datasets. (#1373)
+- Update UI with new Kedro rebrand look and feel. (#1359)
+- Add support for new layer configuration in kedro-datasets version >=1.3.0. (#1373)
+- Add support for new `preview_args` configuration in kedro-datasets version >=1.3.0. (#1374)
+
+## Bug fixes and other changes
+
+- Fix bug where git caused a Kedro-Viz panic. (#1380)
+- Show original node input and output names in metadata panel. (#1381)
 
 # Release 6.2.0
 
