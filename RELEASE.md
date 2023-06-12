@@ -13,7 +13,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix broken URL link between Experiment Tracking and Flowchart when the pipeline is not the default one. (#1388)
+- Fix broken URL link between experiment tracking and flowchart when the pipeline is not the default one. (#1388)
 
 # Release 6.2.1
 
