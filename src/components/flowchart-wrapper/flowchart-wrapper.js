@@ -72,6 +72,8 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
 
+  const [reload, setReload] = useState(true);
+
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
@@ -110,12 +112,15 @@ export const FlowChartWrapper = ({
    * switch to different pipeline first depending on what is defined in the URL
    */
   useEffect(() => {
-    const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+    if (graphLoading) {
+      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
 
-    if (foundPipeline) {
-      onUpdateActivePipeline(decodedPipelineId);
+      if (foundPipeline) {
+        onUpdateActivePipeline(decodedPipelineId);
+      }
     }
-  }, [onUpdateActivePipeline, decodedPipelineId, pipelines]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphLoading]);
 
   useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
@@ -126,7 +131,9 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    if (graphLoading) {
+    if (graphLoading && reload) {
+      setReload(false);
+
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
