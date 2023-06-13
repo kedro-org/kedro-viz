@@ -23,3 +23,16 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+const apiBaseUrl = Cypress.env('apiBaseUrl')
+
+Cypress.Commands.add('main', () => {
+    cy.request({
+        method: 'GET',
+        url: `${apiBaseUrl}/main`
+    }).then ((response) => {
+            expect(response).property('status').to.equal(200)
+            expect(response.body).property('pipelines').to.not.be.oneOf([null, ""])
+            window.localStorage.setItem('KedroViz', JSON.stringify(response.body))
+    })
+})

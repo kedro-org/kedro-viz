@@ -1,11 +1,8 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  retries: {
-    runMode: 2,
-  },
   env: {
-    apiUrl: "http://localhost:4142",
+    apiBaseUrl: "http://localhost:4142/api",
     coverage: false,
     codeCoverage: {
       url: "http://localhost:3001/__coverage__",
@@ -14,8 +11,12 @@ module.exports = defineConfig({
   },
   e2e: {
     baseUrl: "http://localhost:4141",
-    specPattern: "cypress/integration/**/*.spec.{js,jsx,ts,tsx}",
+    specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
     supportFile: "cypress/support/index.js"
   },
-  video: false
+  retries: {
+    runMode: 2,
+  },
+  viewportWidth: 1280,
+  viewportHeight: 720,
 });
