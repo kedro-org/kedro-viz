@@ -1,3 +1,4 @@
+# pylint: disable=too-many-public-methods
 import base64
 from functools import partial
 from pathlib import Path
@@ -367,6 +368,29 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
+
+    def test_preview_args_not_exist(self):
+        metadata = {"kedro-viz": {"something": 3}}
+        dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
+        data_node = GraphNode.create_data_node(
+            full_name="dataset",
+            tags=set(),
+            layer=None,
+            dataset=dataset,
+        )
+        assert not data_node.is_preview_node()
+
+    def test_get_preview_args(self):
+        metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
+        dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
+        data_node = GraphNode.create_data_node(
+            full_name="dataset",
+            tags=set(),
+            layer=None,
+            dataset=dataset,
+        )
+        assert data_node.is_preview_node()
+        assert data_node.get_preview_args() == {"nrows": 3}
 
     def test_preview_data_node_metadata(self):
         mock_preview_data = {
