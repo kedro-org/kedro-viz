@@ -7,6 +7,9 @@
     "id-length": ["error", { "min": 3, "exceptions": ["_","a","b","d","e","i","j","k","x","y","id","el","pi","PI","up"] }],
     "no-var": ["error"],
     "lines-between-class-members": ["error", "always"]
+  },
+  "globals": {
+    "cy": true
   }
 }
 

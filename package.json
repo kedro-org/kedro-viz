@@ -38,6 +38,8 @@
     "test:coverage": "npm test -- --coverage --watchAll=false",
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
+    "cypress:open": "cypress open",
+    "cypress": "cypress run",
     "eject": "react-scripts eject",
     "snyk-protect": "snyk protect",
     "snyk-test": "snyk test -prune-repeated-subdependencies"
@@ -107,6 +109,7 @@
     "@testing-library/user-event": "^12.8.3",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "canvas": "^2.7.0",
+    "cypress": "^12.14.0",
     "enzyme": "^3.11.0",
     "graphqlviz": "^4.0.1",
     "husky": "^4.3.8",
