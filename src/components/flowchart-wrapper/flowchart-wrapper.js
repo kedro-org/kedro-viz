@@ -74,8 +74,6 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
 
-  const [reload, setReload] = useState(true);
-
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
@@ -116,15 +114,13 @@ export const FlowChartWrapper = ({
    * switch to different pipeline first depending on what is defined in the URL
    */
   useEffect(() => {
-    if (graphLoading) {
-      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+    const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
 
-      if (foundPipeline) {
-        onUpdateActivePipeline(decodedPipelineId);
-      }
+    if (foundPipeline) {
+      onUpdateActivePipeline(decodedPipelineId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphLoading]);
+  }, []);
 
   useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
@@ -136,13 +132,7 @@ export const FlowChartWrapper = ({
    */
   useEffect(() => {
     console.log(Object.keys(graph).length);
-    //rashida change
     if (graphState.current === null && Object.keys(graph).length > 0) {
-      prevSearch.current = search;
-    //huong code
-    if (graphLoading && reload) {
-      setReload(false);
-
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -188,6 +178,7 @@ export const FlowChartWrapper = ({
           setInvalidUrl(true);
         }
       }
+      prevSearch.current = search;
     }
     if (Object.keys(graph).length === 0) {
       graphState.current = null;
