@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { isLoading } from '../../selectors/loading';
+import { isLoading, isGraphLoading } from '../../selectors/loading';
 import {
   getModularPipelinesTree,
   getNodeFullName,
@@ -62,23 +62,19 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
-  onUpdateActivePipeline,
-  pipelines,
   sidebarVisible,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
-  const prevSearch = useRef('');
-  const graphState = useRef(null);
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
 
-  const [reload, setReload] = useState(true);
-
   const [counter, setCounter] = React.useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
+
+  const graphState = useRef(null);
 
   const {
     matchedFlowchartMainPage,
@@ -87,44 +83,22 @@ export const FlowChartWrapper = ({
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
 
-  const decodedPipelineId = getDecodedPipelineId(search);
-
   const redirectToSelectedNode = (nodeId) => {
     // Reset the focus mode to null when when using the navigation buttons
-    onToggleFocusMode(null);
-
-    console.log('DO I GO HERE');
 
     const foundNode = Object.keys(nodes).find((node) => node === nodeId);
     if (foundNode) {
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
-
       if (hasModularPipeline) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
-
       onToggleNodeSelected(nodeId);
     } else {
       setErrorMessage(errorMessages.node);
       setInvalidUrl(true);
     }
   };
-
-  /**
-   * When the component first loads
-   * switch to different pipeline first depending on what is defined in the URL
-   */
-  useEffect(() => {
-    if (graphLoading) {
-      const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
-
-      if (foundPipeline) {
-        onUpdateActivePipeline(decodedPipelineId);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphLoading]);
 
   useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
@@ -135,14 +109,7 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    console.log(Object.keys(graph).length);
-    //rashida change
     if (graphState.current === null && Object.keys(graph).length > 0) {
-      prevSearch.current = search;
-    //huong code
-    if (graphLoading && reload) {
-      setReload(false);
-
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -163,9 +130,6 @@ export const FlowChartWrapper = ({
           setInvalidUrl(true);
         }
       }
-
-      console.log(matchedSelectedNodeId);
-      console.log(nodes);
 
       if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
         const nodeId = search.split(params.selected)[1];
@@ -194,8 +158,9 @@ export const FlowChartWrapper = ({
     } else {
       graphState.current = graph;
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graph, search, pathname]);
+  }, [search, pathname, graph]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);

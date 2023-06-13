@@ -74,7 +74,11 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
-    if (!state.pipeline.ids.includes(state.pipeline.active)) {
+    const params = new URLSearchParams(window.location.search);
+    const pipelineFromURL = params.get('pipeline_id');
+    if (pipelineFromURL) {
+      state.pipeline.active = pipelineFromURL;
+    } else if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
   }
