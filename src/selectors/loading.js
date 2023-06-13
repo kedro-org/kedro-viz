@@ -21,7 +21,7 @@ export const isLoading = createSelector(
  */
 export const isGraphLoading = createSelector(
   [getGraphLoading, getPipelineLoading],
-  (graphLoading, getPipelineLoading) => {
-    return graphLoading || getPipelineLoading;
+  (graphLoading) => {
+    return graphLoading;
   }
 );

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { isGraphLoading, isLoading } from '../../selectors/loading';
+import { isLoading } from '../../selectors/loading';
 import {
   getModularPipelinesTree,
   getNodeFullName,
@@ -53,7 +53,7 @@ const getDecodedPipelineId = (search) => {
  */
 export const FlowChartWrapper = ({
   fullNodeNames,
-  graphLoading,
+  graph,
   loading,
   metadataVisible,
   modularPipelinesTree,
@@ -68,6 +68,8 @@ export const FlowChartWrapper = ({
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
+  const prevSearch = useRef('');
+  const graphState = useRef(null);
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
@@ -88,6 +90,8 @@ export const FlowChartWrapper = ({
   const redirectToSelectedNode = (nodeId) => {
     // Reset the focus mode to null when when using the navigation buttons
     onToggleFocusMode(null);
+
+    console.log('DO I GO HERE');
 
     const foundNode = Object.keys(nodes).find((node) => node === nodeId);
     if (foundNode) {
@@ -126,7 +130,11 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    if (graphLoading) {
+    console.log(Object.keys(graph).length);
+
+    if (graphState.current === null && Object.keys(graph).length > 0) {
+      prevSearch.current = search;
+
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -147,6 +155,9 @@ export const FlowChartWrapper = ({
           setInvalidUrl(true);
         }
       }
+
+      console.log(matchedSelectedNodeId);
+      console.log(nodes);
 
       if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
         const nodeId = search.split(params.selected)[1];
@@ -170,8 +181,13 @@ export const FlowChartWrapper = ({
         }
       }
     }
+    if (Object.keys(graph).length === 0) {
+      graphState.current = null;
+    } else {
+      graphState.current = graph;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphLoading, search, pathname]);
+  }, [graph, search, pathname]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
@@ -246,7 +262,7 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   fullNodeNames: getNodeFullName(state),
-  graphLoading: isGraphLoading(state),
+  graph: state.graph,
   loading: isLoading(state),
   metadataVisible: getVisibleMetaSidebar(state),
   modularPipelinesTree: getModularPipelinesTree(state),
