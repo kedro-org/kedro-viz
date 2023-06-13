@@ -25,7 +25,12 @@ import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageFlowchartLink, params, errorMessages } from '../../config';
+import {
+  localStorageFlowchartLink,
+  localStorageName,
+  params,
+  errorMessages,
+} from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 
 import './flowchart-wrapper.css';
@@ -86,12 +91,11 @@ export const FlowChartWrapper = ({
   } = findMatchedPath(pathname, search);
 
   const decodedPipelineId = getDecodedPipelineId(search);
+  const { pipeline: storagePipeline } = loadLocalStorage(localStorageName);
 
   const redirectToSelectedNode = (nodeId) => {
     // Reset the focus mode to null when when using the navigation buttons
     onToggleFocusMode(null);
-
-    console.log('DO I GO HERE');
 
     const foundNode = Object.keys(nodes).find((node) => node === nodeId);
     if (foundNode) {
@@ -119,8 +123,7 @@ export const FlowChartWrapper = ({
     if (foundPipeline) {
       onUpdateActivePipeline(decodedPipelineId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onUpdateActivePipeline, decodedPipelineId, pipelines]);
 
   useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
@@ -131,7 +134,7 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    console.log(Object.keys(graph).length);
+    // graphState is null means the page is empty when it first loads
     if (graphState.current === null && Object.keys(graph).length > 0) {
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
@@ -141,7 +144,11 @@ export const FlowChartWrapper = ({
         setInvalidUrl(false);
       }
 
-      if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
+      if (matchedSelectedNodeName) {
+        if (storagePipeline.active !== decodedPipelineId) {
+          return history.go(0);
+        }
+
         const nodeName = search.split(params.selectedName)[1];
         const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
         const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
@@ -154,16 +161,13 @@ export const FlowChartWrapper = ({
         }
       }
 
-      console.log(matchedSelectedNodeId);
-      console.log(nodes);
-
-      if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
+      if (matchedSelectedNodeId) {
         const nodeId = search.split(params.selected)[1];
 
         redirectToSelectedNode(nodeId);
       }
 
-      if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+      if (matchedFocusedNode) {
         // Reset the node data to null when when using the navigation buttons
         onToggleNodeSelected(null);
 
