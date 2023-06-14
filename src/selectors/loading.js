@@ -15,13 +15,3 @@ export const isLoading = createSelector(
     return graphLoading || pipelineLoading || nodeLoading;
   }
 );
-
-/**
- * Determine whether the graph data is current loading
- */
-export const isGraphLoading = createSelector(
-  [getGraphLoading],
-  (graphLoading) => {
-    return graphLoading;
-  }
-);
