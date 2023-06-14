@@ -130,7 +130,7 @@ def check_kedroviz_up(context):
         assert context.result.poll() is None
         assert (
             "X_test"
-            == sorted(data_json["nodes"], key=lambda i: i["full_name"])[0]["full_name"]
+            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
         context.result.terminate()
