@@ -39,17 +39,6 @@ const getKeyByValue = (object, value) => {
   return Object.keys(object).find((key) => object[key] === value);
 };
 
-const getDecodedPipelineId = (search) => {
-  const pipelineId = search.includes('&')
-    ? search.substring(
-        search.indexOf(params.pipeline) + params.pipeline.length,
-        search.indexOf('&')
-      )
-    : search.split(params.pipeline)[1];
-
-  return decodeURI(pipelineId);
-};
-
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
  * the rendering of the flowchart, as well as the display of all related modals.
@@ -70,6 +59,7 @@ export const FlowChartWrapper = ({
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(window.location.search);
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
@@ -119,9 +109,9 @@ export const FlowChartWrapper = ({
    * or when user navigating through the back and forward button
    */
   useEffect(() => {
-    const isGraphEmpty = Object.keys(graph).length > 0;
+    const isGraphEmpty = Object.keys(graph).length === 0;
 
-    if ((graphState.current === null || usedNavigationBtn) && isGraphEmpty) {
+    if ((graphState.current === null || usedNavigationBtn) && !isGraphEmpty) {
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -131,9 +121,8 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedNodeName) {
-        const nodeName = search.split(params.selectedName)[1];
-        const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
-        const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
+        const nodeName = searchParams.get(params.selectedName);
+        const foundNodeId = getKeyByValue(fullNodeNames, nodeName);
 
         if (foundNodeId) {
           redirectToSelectedNode(foundNodeId);
@@ -144,7 +133,7 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedNodeId) {
-        const nodeId = search.split(params.selected)[1];
+        const nodeId = searchParams.get(params.selected);
         const foundNode = Object.keys(nodes).find((node) => node === nodeId);
 
         if (foundNode) {
@@ -156,8 +145,8 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedPipeline) {
-        const decodedPipelineId = getDecodedPipelineId(search);
-        const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+        const pipelineId = searchParams.get(params.pipeline);
+        const foundPipeline = pipelines.find((id) => id === pipelineId);
 
         if (!foundPipeline) {
           setErrorMessage(errorMessages.pipeline);
@@ -166,7 +155,7 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedFocusedNode) {
-        const modularPipelineId = search.split(params.focused)[1];
+        const modularPipelineId = searchParams.get(params.focused);
         const foundModularPipeline = modularPipelinesTree[modularPipelineId];
 
         if (foundModularPipeline) {

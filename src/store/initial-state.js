@@ -74,7 +74,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
     const search = new URLSearchParams(window.location.search);
-    const pipelineFromURL = search.get(params.pipeline.slice(0, -1));
+    const pipelineFromURL = search.get(params.pipeline);
 
     // Use main pipeline if pipeline from URL isn't recognised
     if (!state.pipeline.ids.includes(pipelineFromURL)) {

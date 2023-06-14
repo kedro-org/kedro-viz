@@ -98,23 +98,23 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id=',
-  selected: 'selected_id=',
-  selectedName: 'selected_name=',
-  pipeline: 'pipeline_id=',
-  run: 'run_ids=',
-  view: 'view=',
-  comparisonMode: 'comparison=',
+  focused: 'focused_id',
+  selected: 'selected_id',
+  selectedName: 'selected_name',
+  pipeline: 'pipeline_id',
+  run: 'run_ids',
+  view: 'view',
+  comparisonMode: 'comparison',
 };
 
-const activePipeline = `${params.pipeline}:pipelineId`;
+const activePipeline = `${params.pipeline}=:pipelineId`;
 
 export const routes = {
   flowchart: {
     main: '/?pipeline_id=__default__',
-    focusedNode: `/?${activePipeline}&${params.focused}:id`,
-    selectedNode: `/?${activePipeline}&${params.selected}:id`,
-    selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
+    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
     selectedPipeline: `/?${activePipeline}`,
   },
   experimentTracking: {
