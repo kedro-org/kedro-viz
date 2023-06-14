@@ -115,6 +115,7 @@ export const routes = {
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
     selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
+    selectedPipeline: `/?${activePipeline}`,
   },
   experimentTracking: {
     main: '/experiment-tracking',

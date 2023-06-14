@@ -20,6 +20,16 @@ export const useGeneratePathname = () => {
     history.push(url);
   }, [history]);
 
+  const toSelectedPipeline = useCallback(() => {
+    const activePipeline = getCurrentActivePipeline();
+
+    const url = generatePath(routes.flowchart.selectedPipeline, {
+      pipelineId: activePipeline,
+    });
+
+    history.push(url);
+  }, [history]);
+
   const toSelectedNode = useCallback(
     (item) => {
       const activePipeline = getCurrentActivePipeline();
@@ -47,6 +57,7 @@ export const useGeneratePathname = () => {
   );
 
   return {
+    toSelectedPipeline,
     toFlowchartPage,
     toSelectedNode,
     toFocusedModularPipeline,
