@@ -154,14 +154,12 @@ export const FlowChartWrapper = ({
           setInvalidUrl(true);
         }
       }
-    }
-    if (Object.keys(graph).length === 0) {
-      graphState.current = null;
-    } else {
-      graphState.current = graph;
-    }
 
-    setUsedNavigationBtn(false);
+      // Once all the matchPath check is finished
+      // ensure the local states are updated to reflect the change
+      graphState.current = graph;
+      setUsedNavigationBtn(false);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, usedNavigationBtn]);
