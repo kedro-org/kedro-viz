@@ -28,7 +28,7 @@ describe('lib-test', () => {
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
-      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID]?.full_name || ""
     );
     expect(modularPipelineNames).toContain(firstNodeName);
   };
