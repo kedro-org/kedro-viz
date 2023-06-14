@@ -114,15 +114,14 @@ export const FlowChartWrapper = ({
 
   /**
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
+   * We only need to call these matchPath actions either when:
+   * graphState.current is null means the page first loads
+   * or when user navigating through the back and forward button
    */
   useEffect(() => {
-    // We only need to call these matchPath actions either when:
-    // graphState.current is null means the page first loads
-    // or when user navigating through the back and forward button
-    if (
-      (graphState.current === null || usedNavigationBtn) &&
-      Object.keys(graph).length > 0
-    ) {
+    const isGraphEmpty = Object.keys(graph).length > 0;
+
+    if ((graphState.current === null || usedNavigationBtn) && isGraphEmpty) {
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -180,7 +179,7 @@ export const FlowChartWrapper = ({
       }
 
       // Once all the matchPath check is finished
-      // ensure the local states are updated to reflect the change
+      // ensure the local states are reset
       graphState.current = graph;
       setUsedNavigationBtn(false);
     }
