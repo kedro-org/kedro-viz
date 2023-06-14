@@ -73,10 +73,16 @@ export const searchTree = (
     }
   }
 
-  if (foundChildren.length > 0 || searchString(treeNode.name, searchValue)) {
+  if (
+    foundChildren.length > 0 ||
+    searchString(treeNode?.full_name || '', searchValue)
+  ) {
     result[currentNodeID] = {
       ...treeNode,
-      highlightedLabel: getHighlightedText(treeNode.name, searchValue),
+      highlightedLabel: getHighlightedText(
+        treeNode?.full_name || '',
+        searchValue
+      ),
       children: foundChildren,
     };
     return true;
