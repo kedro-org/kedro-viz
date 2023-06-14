@@ -125,8 +125,7 @@ export const routes = {
 };
 
 export const errorMessages = {
-  node: 'Please check the value of "selected_id" in the URL',
-  nodeName: 'Please check the value of "selected_name" in the URL',
+  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
   modularPipeline: 'Please check the value of "focused_id" in the URL',
   pipeline: 'Please check the value of "pipeline_id" in the URL',
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,

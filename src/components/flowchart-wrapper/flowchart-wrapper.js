@@ -79,14 +79,50 @@ export const FlowChartWrapper = ({
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
 
-  const redirectToSelectedNode = (nodeId) => {
-    const modularPipeline = nodes[nodeId];
-    const hasModularPipeline = modularPipeline?.length > 0;
+  const redirectToSelectedNode = () => {
+    const node =
+      searchParams.get(params.selected) ||
+      searchParams.get(params.selectedName);
 
-    if (hasModularPipeline) {
-      onToggleModularPipelineExpanded(modularPipeline);
+    const nodeId =
+      getKeyByValue(fullNodeNames, node) ||
+      Object.keys(nodes).find((nodeId) => nodeId === node);
+
+    if (nodeId) {
+      const modularPipeline = nodes[nodeId];
+      const hasModularPipeline = modularPipeline?.length > 0;
+
+      if (hasModularPipeline) {
+        onToggleModularPipelineExpanded(modularPipeline);
+      }
+      onToggleNodeSelected(nodeId);
+    } else {
+      setErrorMessage(errorMessages.node);
+      setInvalidUrl(true);
     }
-    onToggleNodeSelected(nodeId);
+  };
+
+  const redirectToSelectedPipeline = () => {
+    const pipelineId = searchParams.get(params.pipeline);
+    const foundPipeline = pipelines.find((id) => id === pipelineId);
+
+    if (!foundPipeline) {
+      setErrorMessage(errorMessages.pipeline);
+      setInvalidUrl(true);
+    }
+  };
+
+  const redirectToFocusedNode = () => {
+    const focusedId = searchParams.get(params.focused);
+    const foundModularPipeline = modularPipelinesTree[focusedId];
+
+    if (foundModularPipeline) {
+      onToggleModularPipelineActive(focusedId, true);
+      onToggleFocusMode(foundModularPipeline.data);
+    } else {
+      setErrorMessage(errorMessages.modularPipeline);
+      setInvalidUrl(true);
+    }
   };
 
   useEffect(() => {
@@ -120,51 +156,16 @@ export const FlowChartWrapper = ({
         setInvalidUrl(false);
       }
 
-      if (matchedSelectedNodeName) {
-        const nodeName = searchParams.get(params.selectedName);
-        const foundNodeId = getKeyByValue(fullNodeNames, nodeName);
-
-        if (foundNodeId) {
-          redirectToSelectedNode(foundNodeId);
-        } else {
-          setErrorMessage(errorMessages.nodeName);
-          setInvalidUrl(true);
-        }
-      }
-
-      if (matchedSelectedNodeId) {
-        const nodeId = searchParams.get(params.selected);
-        const foundNode = Object.keys(nodes).find((node) => node === nodeId);
-
-        if (foundNode) {
-          redirectToSelectedNode(nodeId);
-        } else {
-          setErrorMessage(errorMessages.node);
-          setInvalidUrl(true);
-        }
+      if (matchedSelectedNodeName || matchedSelectedNodeId) {
+        redirectToSelectedNode();
       }
 
       if (matchedSelectedPipeline) {
-        const pipelineId = searchParams.get(params.pipeline);
-        const foundPipeline = pipelines.find((id) => id === pipelineId);
-
-        if (!foundPipeline) {
-          setErrorMessage(errorMessages.pipeline);
-          setInvalidUrl(true);
-        }
+        redirectToSelectedPipeline();
       }
 
       if (matchedFocusedNode) {
-        const modularPipelineId = searchParams.get(params.focused);
-        const foundModularPipeline = modularPipelinesTree[modularPipelineId];
-
-        if (foundModularPipeline) {
-          onToggleModularPipelineActive(modularPipelineId, true);
-          onToggleFocusMode(foundModularPipeline.data);
-        } else {
-          setErrorMessage(errorMessages.modularPipeline);
-          setInvalidUrl(true);
-        }
+        redirectToFocusedNode();
       }
 
       // Once all the matchPath check is finished
