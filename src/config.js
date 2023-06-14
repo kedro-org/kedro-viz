@@ -111,7 +111,7 @@ const activePipeline = `${params.pipeline}:pipelineId`;
 
 export const routes = {
   flowchart: {
-    main: '/',
+    main: '/?pipeline_id=__default__',
     focusedNode: `/?${activePipeline}&${params.focused}:id`,
     selectedNode: `/?${activePipeline}&${params.selected}:id`,
     selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,

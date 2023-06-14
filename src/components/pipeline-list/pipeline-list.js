@@ -35,6 +35,7 @@ export const PipelineList = ({
         width={null}
         onChanged={(value) => {
           onUpdateActivePipeline(value);
+          // Reset the URL to the current active pipeline when switching between different view
           toSelectedPipeline();
         }}
         defaultText={

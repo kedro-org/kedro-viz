@@ -39,6 +39,17 @@ const getKeyByValue = (object, value) => {
   return Object.keys(object).find((key) => object[key] === value);
 };
 
+const getDecodedPipelineId = (search) => {
+  const pipelineId = search.includes('&')
+    ? search.substring(
+        search.indexOf(params.pipeline) + params.pipeline.length,
+        search.indexOf('&')
+      )
+    : search.split(params.pipeline)[1];
+
+  return decodeURI(pipelineId);
+};
+
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
  * the rendering of the flowchart, as well as the display of all related modals.
@@ -54,6 +65,7 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
+  pipelines,
   sidebarVisible,
 }) => {
   const history = useHistory();
@@ -71,24 +83,20 @@ export const FlowChartWrapper = ({
 
   const {
     matchedFlowchartMainPage,
+    matchedSelectedPipeline,
     matchedSelectedNodeId,
     matchedSelectedNodeName,
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
 
   const redirectToSelectedNode = (nodeId) => {
-    const foundNode = Object.keys(nodes).find((node) => node === nodeId);
-    if (foundNode) {
-      const modularPipeline = nodes[nodeId];
-      const hasModularPipeline = modularPipeline?.length > 0;
-      if (hasModularPipeline) {
-        onToggleModularPipelineExpanded(modularPipeline);
-      }
-      onToggleNodeSelected(nodeId);
-    } else {
-      setErrorMessage(errorMessages.node);
-      setInvalidUrl(true);
+    const modularPipeline = nodes[nodeId];
+    const hasModularPipeline = modularPipeline?.length > 0;
+
+    if (hasModularPipeline) {
+      onToggleModularPipelineExpanded(modularPipeline);
     }
+    onToggleNodeSelected(nodeId);
   };
 
   useEffect(() => {
@@ -138,8 +146,24 @@ export const FlowChartWrapper = ({
 
       if (matchedSelectedNodeId) {
         const nodeId = search.split(params.selected)[1];
+        const foundNode = Object.keys(nodes).find((node) => node === nodeId);
 
-        redirectToSelectedNode(nodeId);
+        if (foundNode) {
+          redirectToSelectedNode(nodeId);
+        } else {
+          setErrorMessage(errorMessages.node);
+          setInvalidUrl(true);
+        }
+      }
+
+      if (matchedSelectedPipeline) {
+        const decodedPipelineId = getDecodedPipelineId(search);
+        const foundPipeline = pipelines.find((id) => id === decodedPipelineId);
+
+        if (!foundPipeline) {
+          setErrorMessage(errorMessages.pipeline);
+          setInvalidUrl(true);
+        }
       }
 
       if (matchedFocusedNode) {

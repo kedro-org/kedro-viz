@@ -8,6 +8,11 @@ export const findMatchedPath = (pathname, search) => {
     path: [routes.flowchart.main],
   });
 
+  const matchedSelectedPipeline = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.flowchart.selectedPipeline],
+  });
+
   const matchedSelectedNodeId = matchPath(pathname + search, {
     exact: true,
     path: [routes.flowchart.selectedNode],
@@ -25,6 +30,7 @@ export const findMatchedPath = (pathname, search) => {
 
   return {
     matchedFlowchartMainPage,
+    matchedSelectedPipeline,
     matchedSelectedNodeId,
     matchedSelectedNodeName,
     matchedFocusedNode,
