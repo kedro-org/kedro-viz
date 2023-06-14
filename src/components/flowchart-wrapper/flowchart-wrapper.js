@@ -61,7 +61,7 @@ export const FlowChartWrapper = ({
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
-  const [backBtn, setBackBtn] = useState(false);
+  const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
   const [counter, setCounter] = useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
@@ -94,10 +94,10 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
-    window.addEventListener('popstate', () => setBackBtn(true));
+    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
 
     return () => {
-      window.removeEventListener('popstate', () => setBackBtn(false));
+      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
     };
   }, []);
 
@@ -111,12 +111,9 @@ export const FlowChartWrapper = ({
    */
   useEffect(() => {
     if (
-      (graphState.current === null || backBtn) &&
+      (graphState.current === null || usedNavigationBtn) &&
       Object.keys(graph).length > 0
     ) {
-      setBackBtn(false);
-
-
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -166,8 +163,10 @@ export const FlowChartWrapper = ({
       graphState.current = graph;
     }
 
+    setUsedNavigationBtn(false);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graph, backBtn]);
+  }, [graph, usedNavigationBtn]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
