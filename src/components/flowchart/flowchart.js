@@ -458,8 +458,8 @@ export class FlowChart extends Component {
    */
   handleChartClick = () => {
     this.props.onLoadNodeData(null);
-    // To reset URL to '/' when click outside of a node on flowchart
-    this.props.toFlowchartPage();
+    // To reset URL to current active pipeline when click outside of a node on flowchart
+    this.props.toSelectedPipeline();
   };
 
   /**
