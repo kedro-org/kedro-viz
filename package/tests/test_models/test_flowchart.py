@@ -84,7 +84,6 @@ class TestGraphNodeCreation:
         assert isinstance(task_node, TaskNode)
         assert task_node.kedro_obj is kedro_node
         assert task_node.id == GraphNode._hash(str(kedro_node))
-        assert task_node.name == "Identity Node"
         assert task_node.full_name == "identity_node"
         assert task_node.tags == {"tag"}
         assert task_node.pipelines == set()
@@ -101,12 +100,11 @@ class TestGraphNodeCreation:
         assert task_node.full_name == "identity"
 
     @pytest.mark.parametrize(
-        "dataset_name,pretty_name,expected_modular_pipelines",
+        "dataset_name,expected_modular_pipelines",
         [
-            ("dataset", "Dataset", []),
+            ("dataset", []),
             (
                 "uk.data_science.model_training.dataset",
-                "Dataset",
                 [
                     "uk",
                     "uk.data_science",
@@ -116,7 +114,7 @@ class TestGraphNodeCreation:
         ],
     )
     def test_create_data_node(
-        self, dataset_name, pretty_name, expected_modular_pipelines
+        self, dataset_name, expected_modular_pipelines
     ):
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
@@ -128,7 +126,6 @@ class TestGraphNodeCreation:
         assert isinstance(data_node, DataNode)
         assert data_node.kedro_obj is kedro_dataset
         assert data_node.id == GraphNode._hash(dataset_name)
-        assert data_node.name == pretty_name
         assert data_node.layer == "raw"
         assert data_node.tags == set()
         assert data_node.pipelines == set()
@@ -140,22 +137,20 @@ class TestGraphNodeCreation:
         assert not data_node.is_tracking_node()
 
     @pytest.mark.parametrize(
-        "dataset_name, original_name, pretty_name",
+        "dataset_name, original_name",
         [
             (
                 "dataset@pandas2",
-                "dataset",
-                "Dataset",
+                "dataset"
             ),
             (
                 "uk.data_science.model_training.dataset@pandas2",
                 "uk.data_science.model_training.dataset",
-                "Dataset",
             ),
         ],
     )
     def test_create_transcoded_data_node(
-        self, dataset_name, original_name, pretty_name
+        self, dataset_name, original_name
     ):
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
@@ -166,7 +161,6 @@ class TestGraphNodeCreation:
         )
         assert isinstance(data_node, TranscodedDataNode)
         assert data_node.id == GraphNode._hash(original_name)
-        assert data_node.name == pretty_name
         assert data_node.layer == "raw"
         assert data_node.tags == set()
         assert data_node.pipelines == set()
@@ -242,13 +236,13 @@ class TestGraphNodeCreation:
 
 
 class TestGraphNodePipelines:
-    def test_registered_pipeline_pretty_name(self):
+    def test_registered_pipeline_name(self):
         pipeline = RegisteredPipeline("__default__")
-        assert pipeline.name == "Default"
+        assert pipeline.name == "__default__"
 
-    def test_modular_pipeline_pretty_name(self):
+    def test_modular_pipeline_name(self):
         pipeline = GraphNode.create_modular_pipeline_node("data_engineering")
-        assert pipeline.name == "Data Engineering"
+        assert pipeline.full_name == "data_engineering"
 
     def test_add_node_to_pipeline(self):
         default_pipeline = RegisteredPipeline("__default__")
@@ -347,13 +341,12 @@ class TestGraphNodeMetadata:
         )
         task_node = GraphNode.create_task_node(kedro_node)
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
-        assert task_node.name == "<partial>"
         assert task_node.full_name == "<partial>"
         assert not hasattr(task_node_metadata, "code")
         assert not hasattr(task_node_metadata, "filepath")
         assert task_node_metadata.parameters == {}
-        assert task_node_metadata.inputs == ["X"]
-        assert task_node_metadata.outputs == ["Y"]
+        assert task_node_metadata.inputs == ["x"]
+        assert task_node_metadata.outputs == ["y"]
 
     def test_data_node_metadata(self):
         dataset = CSVDataSet(filepath="/tmp/dataset.csv")

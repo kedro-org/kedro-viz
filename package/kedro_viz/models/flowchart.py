@@ -244,7 +244,7 @@ class GraphNode(abc.ABC):
         Example:
             >>> node = GraphNode.create_modular_pipeline_node("pipeline.data_science")
             >>> assert node.id == "pipeline.data_science"
-            >>> assert node.name == "Data Science"
+            >>> assert node.full_name == "pipeline.data_science"
             >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
         return ModularPipelineNode(

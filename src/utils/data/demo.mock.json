@@ -2,7 +2,6 @@
   "nodes": [
     {
       "id": "2596e632",
-      "name": "Data Profiling Pandas",
       "full_name": "data_profiling_pandas",
       "tags": ["data-engineering", "eda"],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -18,7 +17,6 @@
     },
     {
       "id": "0e9ed868",
-      "name": "Params: Factory",
       "full_name": "params:pandas_profiling.factory",
       "tags": ["data-engineering", "eda"],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -29,7 +27,6 @@
     },
     {
       "id": "73930ef2",
-      "name": "Factory Historic",
       "full_name": "factory_historic",
       "tags": ["pre-processing", "data-science", "eda", "data-engineering"],
       "pipelines": ["split", "pandas_profiling", "__default__"],
@@ -40,7 +37,6 @@
     },
     {
       "id": "7a65da0d",
-      "name": "Data Profiling Pandas",
       "full_name": "data_profiling_pandas",
       "tags": ["data-engineering", "eda"],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -56,7 +52,6 @@
     },
     {
       "id": "b5b5b6b2",
-      "name": "Params: In Out",
       "full_name": "params:pandas_profiling.in_out",
       "tags": ["data-engineering", "eda"],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -67,7 +62,6 @@
     },
     {
       "id": "3f69a9b8",
-      "name": "In Out Historic",
       "full_name": "in_out_historic",
       "tags": [
         "pre-processing",
@@ -85,7 +79,6 @@
     },
     {
       "id": "95cd6bf9",
-      "name": "Correlation Plot",
       "full_name": "correlation_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -102,7 +95,6 @@
     },
     {
       "id": "7f91c2cc",
-      "name": "Params: Correlation Plot",
       "full_name": "params:eda.in_out.correlation_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -113,7 +105,6 @@
     },
     {
       "id": "6d337a84",
-      "name": "Correlation Plot",
       "full_name": "correlation_plot",
       "tags": ["visualisation", "notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -124,7 +115,6 @@
     },
     {
       "id": "845526ea",
-      "name": "Density Plot",
       "full_name": "density_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -140,7 +130,6 @@
     },
     {
       "id": "3d29088c",
-      "name": "Params: Density Plot",
       "full_name": "params:eda.in_out.density_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -151,7 +140,6 @@
     },
     {
       "id": "05877538",
-      "name": "Density Plot",
       "full_name": "density_plot",
       "tags": ["visualisation", "notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -162,7 +150,6 @@
     },
     {
       "id": "16cae681",
-      "name": "Box Plot",
       "full_name": "box_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -182,7 +169,6 @@
     },
     {
       "id": "3526f0b5",
-      "name": "Params: Box Plot",
       "full_name": "params:eda.in_out.box_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -193,7 +179,6 @@
     },
     {
       "id": "54e2783c",
-      "name": "Box Plot",
       "full_name": "box_plot",
       "tags": ["visualisation", "notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -204,7 +189,6 @@
     },
     {
       "id": "ddc6c97b",
-      "name": "Scatter Plot",
       "full_name": "scatter_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -222,7 +206,6 @@
     },
     {
       "id": "bf1ae95c",
-      "name": "Params: Scatter Plot",
       "full_name": "params:eda.in_out.scatter_plot",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -233,7 +216,6 @@
     },
     {
       "id": "ee95fd1e",
-      "name": "Scatter Plot",
       "full_name": "scatter_plot",
       "tags": ["visualisation", "notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -244,7 +226,6 @@
     },
     {
       "id": "3464b488",
-      "name": "Eda.generate Pdf",
       "full_name": "eda.generate_pdf",
       "tags": ["reporting"],
       "pipelines": ["__default__", "eda"],
@@ -263,7 +244,6 @@
     },
     {
       "id": "47800056",
-      "name": "Params: Pdf",
       "full_name": "params:eda.pdf",
       "tags": ["reporting"],
       "pipelines": ["__default__", "eda"],
@@ -274,7 +254,6 @@
     },
     {
       "id": "a624849b",
-      "name": "Eda.generate Notebook",
       "full_name": "eda.generate_notebook",
       "tags": ["notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -291,7 +270,6 @@
     },
     {
       "id": "98b533a3",
-      "name": "Params: Notebook",
       "full_name": "params:eda.notebook",
       "tags": ["notebooks", "reporting"],
       "pipelines": ["__default__", "eda"],
@@ -302,7 +280,6 @@
     },
     {
       "id": "ff79c0d9",
-      "name": "Split Data",
       "full_name": "split_data",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["split", "__default__"],
@@ -319,7 +296,6 @@
     },
     {
       "id": "ca959a2d",
-      "name": "Params: Factory",
       "full_name": "params:split.factory",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["split", "__default__"],
@@ -330,7 +306,6 @@
     },
     {
       "id": "12ee06f3",
-      "name": "Factory Test",
       "full_name": "factory_test",
       "tags": ["pre-processing", "data-eng", "data-science"],
       "pipelines": ["clean", "split", "__default__"],
@@ -341,7 +316,6 @@
     },
     {
       "id": "d28f4db6",
-      "name": "Factory Train",
       "full_name": "factory_train",
       "tags": ["pre-processing", "data-eng", "data-science"],
       "pipelines": ["clean", "split", "__default__"],
@@ -352,7 +326,6 @@
     },
     {
       "id": "31fb7cc8",
-      "name": "Split Data",
       "full_name": "split_data",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["split", "__default__"],
@@ -369,7 +342,6 @@
     },
     {
       "id": "778c88c9",
-      "name": "Params: In Out",
       "full_name": "params:split.in_out",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["split", "__default__"],
@@ -380,7 +352,6 @@
     },
     {
       "id": "62e203cf",
-      "name": "In Out Test",
       "full_name": "in_out_test",
       "tags": ["pre-processing", "data-eng", "data-science"],
       "pipelines": ["clean", "split", "__default__"],
@@ -391,7 +362,6 @@
     },
     {
       "id": "a771381b",
-      "name": "In Out Train",
       "full_name": "in_out_train",
       "tags": ["pre-processing", "data-eng", "data-science"],
       "pipelines": ["clean", "split", "__default__"],
@@ -402,7 +372,6 @@
     },
     {
       "id": "dec9c820",
-      "name": "Remove Null Columns",
       "full_name": "remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -412,7 +381,6 @@
     },
     {
       "id": "b83dff93",
-      "name": "Remove Null Columns",
       "full_name": "in_out_test.clean.remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -423,7 +391,6 @@
     },
     {
       "id": "ec0ad2a0",
-      "name": "Remove Null Columns",
       "full_name": "remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -433,7 +400,6 @@
     },
     {
       "id": "861c59bf",
-      "name": "Remove Null Columns",
       "full_name": "factory_train.clean.remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -444,7 +410,6 @@
     },
     {
       "id": "700b6aec",
-      "name": "Remove Null Columns",
       "full_name": "remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -454,7 +419,6 @@
     },
     {
       "id": "7a162ddc",
-      "name": "Remove Null Columns",
       "full_name": "in_out_train.clean.remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -465,7 +429,6 @@
     },
     {
       "id": "f44bd53f",
-      "name": "Remove Null Columns",
       "full_name": "remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -475,7 +438,6 @@
     },
     {
       "id": "a99c5c0f",
-      "name": "Remove Null Columns",
       "full_name": "factory_test.clean.remove_null_columns",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -486,7 +448,6 @@
     },
     {
       "id": "516628d2",
-      "name": "Unify Timestamp Col Name",
       "full_name": "unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -509,7 +470,6 @@
     },
     {
       "id": "456488de",
-      "name": "Params: Factory",
       "full_name": "params:clean.factory",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -520,7 +480,6 @@
     },
     {
       "id": "d9a62050",
-      "name": "Unify Timestamp Col Name",
       "full_name": "factory_test.clean.unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -531,7 +490,6 @@
     },
     {
       "id": "a57429e5",
-      "name": "Unify Timestamp Col Name",
       "full_name": "unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -554,7 +512,6 @@
     },
     {
       "id": "1f876261",
-      "name": "Params: In Out",
       "full_name": "params:clean.in_out",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -565,7 +522,6 @@
     },
     {
       "id": "210adac8",
-      "name": "Unify Timestamp Col Name",
       "full_name": "in_out_train.clean.unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -576,7 +532,6 @@
     },
     {
       "id": "c8f70ca9",
-      "name": "Unify Timestamp Col Name",
       "full_name": "unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -599,7 +554,6 @@
     },
     {
       "id": "073606b6",
-      "name": "Unify Timestamp Col Name",
       "full_name": "factory_train.clean.unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -610,7 +564,6 @@
     },
     {
       "id": "b99ee270",
-      "name": "Unify Timestamp Col Name",
       "full_name": "unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -633,7 +586,6 @@
     },
     {
       "id": "3f156da8",
-      "name": "Unify Timestamp Col Name",
       "full_name": "in_out_test.clean.unify_timestamp_col_name",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -644,7 +596,6 @@
     },
     {
       "id": "7397d2dc",
-      "name": "Set Timezones",
       "full_name": "set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -667,7 +618,6 @@
     },
     {
       "id": "3a8062a5",
-      "name": "Set Timezones",
       "full_name": "factory_train.clean.set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -678,7 +628,6 @@
     },
     {
       "id": "988261ac",
-      "name": "Set Timezones",
       "full_name": "set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -701,7 +650,6 @@
     },
     {
       "id": "c81ae4f9",
-      "name": "Set Timezones",
       "full_name": "in_out_train.clean.set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -712,7 +660,6 @@
     },
     {
       "id": "666587bd",
-      "name": "Set Timezones",
       "full_name": "set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -735,7 +682,6 @@
     },
     {
       "id": "bf34f92f",
-      "name": "Set Timezones",
       "full_name": "in_out_test.clean.set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -746,7 +692,6 @@
     },
     {
       "id": "fa4ebf1b",
-      "name": "Set Timezones",
       "full_name": "set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -769,7 +714,6 @@
     },
     {
       "id": "514660c5",
-      "name": "Set Timezones",
       "full_name": "factory_test.clean.set_timezones",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -780,7 +724,6 @@
     },
     {
       "id": "502829ed",
-      "name": "Round Timestamps",
       "full_name": "round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -803,7 +746,6 @@
     },
     {
       "id": "d02bfec9",
-      "name": "Round Timestamps",
       "full_name": "factory_train.clean.round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -814,7 +756,6 @@
     },
     {
       "id": "87d52565",
-      "name": "Round Timestamps",
       "full_name": "round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -837,7 +778,6 @@
     },
     {
       "id": "4d95b087",
-      "name": "Round Timestamps",
       "full_name": "in_out_test.clean.round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -848,7 +788,6 @@
     },
     {
       "id": "44bc2d21",
-      "name": "Round Timestamps",
       "full_name": "round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -871,7 +810,6 @@
     },
     {
       "id": "f8d4e465",
-      "name": "Round Timestamps",
       "full_name": "in_out_train.clean.round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -882,7 +820,6 @@
     },
     {
       "id": "24710762",
-      "name": "Round Timestamps",
       "full_name": "round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -905,7 +842,6 @@
     },
     {
       "id": "ef57a1fc",
-      "name": "Round Timestamps",
       "full_name": "factory_test.clean.round_timestamps",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -916,7 +852,6 @@
     },
     {
       "id": "9c13d89f",
-      "name": "Drop Duplicates",
       "full_name": "drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -939,7 +874,6 @@
     },
     {
       "id": "0a1be393",
-      "name": "Drop Duplicates",
       "full_name": "in_out_train.clean.drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -950,7 +884,6 @@
     },
     {
       "id": "f7082f22",
-      "name": "Drop Duplicates",
       "full_name": "drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -973,7 +906,6 @@
     },
     {
       "id": "dec14f64",
-      "name": "Drop Duplicates",
       "full_name": "factory_train.clean.drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -984,7 +916,6 @@
     },
     {
       "id": "ce9f17e7",
-      "name": "Drop Duplicates",
       "full_name": "drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1007,7 +938,6 @@
     },
     {
       "id": "4bd93139",
-      "name": "Drop Duplicates",
       "full_name": "in_out_test.clean.drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1018,7 +948,6 @@
     },
     {
       "id": "88c843ae",
-      "name": "Drop Duplicates",
       "full_name": "drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1041,7 +970,6 @@
     },
     {
       "id": "ee508f00",
-      "name": "Drop Duplicates",
       "full_name": "factory_test.clean.drop_duplicates",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1052,7 +980,6 @@
     },
     {
       "id": "b4716bd3",
-      "name": "Enforce Schema",
       "full_name": "enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1062,7 +989,6 @@
     },
     {
       "id": "53578014",
-      "name": "Expert Input",
       "full_name": "expert_input",
       "tags": [
         "imputation",
@@ -1095,7 +1021,6 @@
     },
     {
       "id": "c3f72bfd",
-      "name": "Enforce Schema",
       "full_name": "in_out_test.clean.enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1106,7 +1031,6 @@
     },
     {
       "id": "e3fadeda",
-      "name": "Enforce Schema",
       "full_name": "enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1116,7 +1040,6 @@
     },
     {
       "id": "a229cbdc",
-      "name": "Enforce Schema",
       "full_name": "factory_test.clean.enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1127,7 +1050,6 @@
     },
     {
       "id": "8835772a",
-      "name": "Enforce Schema",
       "full_name": "enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1137,7 +1059,6 @@
     },
     {
       "id": "61ffca7f",
-      "name": "Enforce Schema",
       "full_name": "factory_train.clean.enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1148,7 +1069,6 @@
     },
     {
       "id": "277dc1ee",
-      "name": "Enforce Schema",
       "full_name": "enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1158,7 +1078,6 @@
     },
     {
       "id": "2996dd8e",
-      "name": "Enforce Schema",
       "full_name": "in_out_train.clean.enforce_schema",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1169,7 +1088,6 @@
     },
     {
       "id": "7d7e1704",
-      "name": "Remove Outlier",
       "full_name": "remove_outlier",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1192,7 +1110,6 @@
     },
     {
       "id": "cf7dcb8f",
-      "name": "Factory Test Clean",
       "full_name": "factory_test_clean",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["clean", "impute_transform", "__default__"],
@@ -1203,7 +1120,6 @@
     },
     {
       "id": "893a3f7f",
-      "name": "Remove Outlier",
       "full_name": "remove_outlier",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1226,7 +1142,6 @@
     },
     {
       "id": "d2fb21a0",
-      "name": "In Out Train Clean",
       "full_name": "in_out_train_clean",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["clean", "impute_fit", "impute_transform", "__default__"],
@@ -1237,7 +1152,6 @@
     },
     {
       "id": "b10165f4",
-      "name": "Remove Outlier",
       "full_name": "remove_outlier",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1260,7 +1174,6 @@
     },
     {
       "id": "6d5873ac",
-      "name": "Factory Train Clean",
       "full_name": "factory_train_clean",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["clean", "impute_fit", "impute_transform", "__default__"],
@@ -1271,7 +1184,6 @@
     },
     {
       "id": "93d3a479",
-      "name": "Remove Outlier",
       "full_name": "remove_outlier",
       "tags": ["data-eng"],
       "pipelines": ["clean", "__default__"],
@@ -1294,7 +1206,6 @@
     },
     {
       "id": "63186f26",
-      "name": "In Out Test Clean",
       "full_name": "in_out_test_clean",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["clean", "impute_transform", "__default__"],
@@ -1305,7 +1216,6 @@
     },
     {
       "id": "7be9f72e",
-      "name": "Fit Numeric Imputer",
       "full_name": "fit_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "__default__"],
@@ -1317,7 +1227,6 @@
     },
     {
       "id": "f38b4714",
-      "name": "Params: Factory",
       "full_name": "params:impute.factory",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "__default__"],
@@ -1328,7 +1237,6 @@
     },
     {
       "id": "1161a87b",
-      "name": "Factory Imputer",
       "full_name": "factory_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "impute_transform", "__default__"],
@@ -1339,7 +1247,6 @@
     },
     {
       "id": "11a72273",
-      "name": "Fit Numeric Imputer",
       "full_name": "fit_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "__default__"],
@@ -1351,7 +1258,6 @@
     },
     {
       "id": "5d57686d",
-      "name": "Params: In Out",
       "full_name": "params:impute.in_out",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "__default__"],
@@ -1362,7 +1268,6 @@
     },
     {
       "id": "5540a3fb",
-      "name": "In Out Imputer",
       "full_name": "in_out_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_fit", "impute_transform", "__default__"],
@@ -1373,7 +1278,6 @@
     },
     {
       "id": "22cfe9cd",
-      "name": "Transform Numeric Imputer",
       "full_name": "transform_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "__default__"],
@@ -1383,7 +1287,6 @@
     },
     {
       "id": "7178598e",
-      "name": "In Out Test Imputed",
       "full_name": "in_out_test_imputed",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "create_features", "__default__"],
@@ -1394,7 +1297,6 @@
     },
     {
       "id": "2978a7f5",
-      "name": "Transform Numeric Imputer",
       "full_name": "transform_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "__default__"],
@@ -1404,7 +1306,6 @@
     },
     {
       "id": "eefd807e",
-      "name": "Factory Test Imputed",
       "full_name": "factory_test_imputed",
       "tags": ["recommendations", "imputation", "data-eng"],
       "pipelines": ["on_off_logic", "impute_transform", "__default__"],
@@ -1415,7 +1316,6 @@
     },
     {
       "id": "72ac6e43",
-      "name": "Transform Numeric Imputer",
       "full_name": "transform_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "__default__"],
@@ -1425,7 +1325,6 @@
     },
     {
       "id": "d7ff3fc5",
-      "name": "Factory Train Imputed",
       "full_name": "factory_train_imputed",
       "tags": ["recommendations", "imputation", "data-eng"],
       "pipelines": ["on_off_logic", "impute_transform", "__default__"],
@@ -1436,7 +1335,6 @@
     },
     {
       "id": "1d7fffba",
-      "name": "Transform Numeric Imputer",
       "full_name": "transform_numeric_imputer",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "__default__"],
@@ -1446,7 +1344,6 @@
     },
     {
       "id": "f4cccc1a",
-      "name": "In Out Train Imputed",
       "full_name": "in_out_train_imputed",
       "tags": ["imputation", "data-eng"],
       "pipelines": ["impute_transform", "create_features", "__default__"],
@@ -1457,7 +1354,6 @@
     },
     {
       "id": "fe81cbe2",
-      "name": "Generate On Off Factory B",
       "full_name": "generate_on_off_factory_b",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1475,7 +1371,6 @@
     },
     {
       "id": "0613286f",
-      "name": "Params: Tags",
       "full_name": "params:on_off_logic.factory.tags",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1486,7 +1381,6 @@
     },
     {
       "id": "593a4f96",
-      "name": "Factory Test With Derived On Off Tags",
       "full_name": "factory_test_with_derived_on_off_tags",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1497,7 +1391,6 @@
     },
     {
       "id": "690d415b",
-      "name": "Generate On Off Factory B",
       "full_name": "generate_on_off_factory_b",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1515,7 +1408,6 @@
     },
     {
       "id": "42d73649",
-      "name": "Factory Train With Derived On Off Tags",
       "full_name": "factory_train_with_derived_on_off_tags",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1526,7 +1418,6 @@
     },
     {
       "id": "eb1aa767",
-      "name": "Set Off Equipment To Zero",
       "full_name": "set_off_equipment_to_zero",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1536,7 +1427,6 @@
     },
     {
       "id": "2d3c0374",
-      "name": "Factory Test With Off Equipment To Zero",
       "full_name": "factory_test_with_off_equipment_to_zero",
       "tags": ["recommendations", "data-eng"],
       "pipelines": ["on_off_logic", "__default__", "create_features"],
@@ -1547,7 +1437,6 @@
     },
     {
       "id": "4b7d240f",
-      "name": "Set Off Equipment To Zero",
       "full_name": "set_off_equipment_to_zero",
       "tags": ["recommendations"],
       "pipelines": ["on_off_logic", "__default__"],
@@ -1557,7 +1446,6 @@
     },
     {
       "id": "6ffb551a",
-      "name": "Factory Train With Off Equipment To Zero",
       "full_name": "factory_train_with_off_equipment_to_zero",
       "tags": ["recommendations", "data-eng"],
       "pipelines": ["on_off_logic", "__default__", "create_features"],
@@ -1568,7 +1456,6 @@
     },
     {
       "id": "a8bef9b5",
-      "name": "Create Time Grid",
       "full_name": "create_time_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1588,7 +1475,6 @@
     },
     {
       "id": "6ac1368f",
-      "name": "Params: Create Features",
       "full_name": "params:create_features",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1599,7 +1485,6 @@
     },
     {
       "id": "0c78911d",
-      "name": "Time Grid",
       "full_name": "test.create_features.time_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1610,7 +1495,6 @@
     },
     {
       "id": "ed0ecc71",
-      "name": "Create Time Grid",
       "full_name": "create_time_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1630,7 +1514,6 @@
     },
     {
       "id": "e87168af",
-      "name": "Time Grid",
       "full_name": "train.create_features.time_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1641,7 +1524,6 @@
     },
     {
       "id": "906b727f",
-      "name": "Create Features Factory Train With Off Equipment To Zero",
       "full_name": "create_features_factory_train_with_off_equipment_to_zero",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1661,7 +1543,6 @@
     },
     {
       "id": "614a4cd8",
-      "name": "Static Features",
       "full_name": "train.create_features.factory_train_with_off_equipment_to_zero.static_features",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1676,7 +1557,6 @@
     },
     {
       "id": "74555d8b",
-      "name": "Create Features In Out Train Imputed",
       "full_name": "create_features_in_out_train_imputed",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1696,7 +1576,6 @@
     },
     {
       "id": "85d157bf",
-      "name": "Static Features",
       "full_name": "train.create_features.in_out_train_imputed.static_features",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1711,7 +1590,6 @@
     },
     {
       "id": "aebdea6c",
-      "name": "Create Features In Out Test Imputed",
       "full_name": "create_features_in_out_test_imputed",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1731,7 +1609,6 @@
     },
     {
       "id": "a12a727e",
-      "name": "Static Features",
       "full_name": "test.create_features.in_out_test_imputed.static_features",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1746,7 +1623,6 @@
     },
     {
       "id": "7d43885c",
-      "name": "Create Features Factory Test With Off Equipment To Zero",
       "full_name": "create_features_factory_test_with_off_equipment_to_zero",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1766,7 +1642,6 @@
     },
     {
       "id": "31cb9133",
-      "name": "Static Features",
       "full_name": "test.create_features.factory_test_with_off_equipment_to_zero.static_features",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1781,7 +1656,6 @@
     },
     {
       "id": "35336154",
-      "name": "Merge To Grid",
       "full_name": "merge_to_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1791,7 +1665,6 @@
     },
     {
       "id": "ae9b6150",
-      "name": "Test Static Features No Run Id",
       "full_name": "test_static_features_no_run_id",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1802,7 +1675,6 @@
     },
     {
       "id": "dd5a69ac",
-      "name": "Merge To Grid",
       "full_name": "merge_to_grid",
       "tags": ["data-eng"],
       "pipelines": ["__default__", "create_features"],
@@ -1812,7 +1684,6 @@
     },
     {
       "id": "a4d73089",
-      "name": "Train Static Features",
       "full_name": "train_static_features",
       "tags": [
         "pre-processing",
@@ -1829,7 +1700,6 @@
     },
     {
       "id": "2ea5719f",
-      "name": "Generate Run Id",
       "full_name": "generate_run_id",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -1839,7 +1709,6 @@
     },
     {
       "id": "94dd8ecd",
-      "name": "Test Static Features",
       "full_name": "test_static_features",
       "tags": [
         "reporting",
@@ -1862,7 +1731,6 @@
     },
     {
       "id": "602f06fc",
-      "name": "Split Data",
       "full_name": "split_data",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["__default__", "train_model"],
@@ -1879,7 +1747,6 @@
     },
     {
       "id": "048b398b",
-      "name": "Params: Split",
       "full_name": "params:train_model.split",
       "tags": ["data-science", "pre-processing"],
       "pipelines": ["__default__", "train_model"],
@@ -1890,7 +1757,6 @@
     },
     {
       "id": "721854e3",
-      "name": "Test Set",
       "full_name": "train.train_model.test_set",
       "tags": ["pre-processing", "predictions", "data-science"],
       "pipelines": ["__default__", "train_model"],
@@ -1901,7 +1767,6 @@
     },
     {
       "id": "2e97b838",
-      "name": "Train Set",
       "full_name": "train.train_model.train_set",
       "tags": ["pre-processing", "predictions", "data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1912,7 +1777,6 @@
     },
     {
       "id": "0bc424f4",
-      "name": "Load Regressor",
       "full_name": "load_regressor",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1948,7 +1812,6 @@
     },
     {
       "id": "86b7300b",
-      "name": "Params: Features",
       "full_name": "params:train_model.features",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1959,7 +1822,6 @@
     },
     {
       "id": "843b0b03",
-      "name": "Params: Feature Selection",
       "full_name": "params:train_model.feature_selection",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1970,7 +1832,6 @@
     },
     {
       "id": "b633dd0b",
-      "name": "Params: Regressor",
       "full_name": "params:train_model.regressor",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1981,7 +1842,6 @@
     },
     {
       "id": "4faa7a1e",
-      "name": "Regressor",
       "full_name": "train.train_model.regressor",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -1992,7 +1852,6 @@
     },
     {
       "id": "d89b2a45",
-      "name": "Add Transformers",
       "full_name": "add_transformers",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2073,7 +1932,6 @@
     },
     {
       "id": "f8948258",
-      "name": "Params: Train Model",
       "full_name": "params:train_model",
       "tags": ["predictions", "data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2084,7 +1942,6 @@
     },
     {
       "id": "fe300198",
-      "name": "Regressor Pipeline",
       "full_name": "train.train_model.regressor_pipeline",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2095,7 +1952,6 @@
     },
     {
       "id": "e9c51d85",
-      "name": "Train Model",
       "full_name": "train_model",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2176,7 +2032,6 @@
     },
     {
       "id": "dc0abb8b",
-      "name": "Train Trainset Cv Results",
       "full_name": "train_trainset_cv_results",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2187,7 +2042,6 @@
     },
     {
       "id": "10ce7f66",
-      "name": "Train Trainset Feature Importance",
       "full_name": "train_trainset_feature_importance",
       "tags": ["data-science", "training", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2198,7 +2052,6 @@
     },
     {
       "id": "e6c1e1d0",
-      "name": "Train Trainset Model",
       "full_name": "train_trainset_model",
       "tags": ["predictions", "data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2209,7 +2062,6 @@
     },
     {
       "id": "68d6f757",
-      "name": "Retrain Model",
       "full_name": "retrain_model",
       "tags": ["data-science", "training"],
       "pipelines": ["__default__", "train_model"],
@@ -2290,7 +2142,6 @@
     },
     {
       "id": "f23452a4",
-      "name": "Train Model",
       "full_name": "train_model",
       "tags": [
         "visualisation",
@@ -2312,7 +2163,6 @@
     },
     {
       "id": "089a8e9a",
-      "name": "Create Train Predictions",
       "full_name": "create_train_predictions",
       "tags": ["data-science", "predictions"],
       "pipelines": ["__default__", "train_model"],
@@ -2393,7 +2243,6 @@
     },
     {
       "id": "c9058d39",
-      "name": "Train Trainset Metrics",
       "full_name": "train_trainset_metrics",
       "tags": ["predictions", "data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2404,7 +2253,6 @@
     },
     {
       "id": "9a97cfe0",
-      "name": "Train Trainset Predictions",
       "full_name": "train_trainset_predictions",
       "tags": ["predictions", "data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2415,7 +2263,6 @@
     },
     {
       "id": "c0020a3e",
-      "name": "Create Test Predictions",
       "full_name": "create_test_predictions",
       "tags": ["data-science", "predictions"],
       "pipelines": ["__default__", "train_model"],
@@ -2496,7 +2343,6 @@
     },
     {
       "id": "320ef4e8",
-      "name": "Train Testset Metrics",
       "full_name": "train_testset_metrics",
       "tags": ["data-science", "predictions"],
       "pipelines": ["__default__", "train_model"],
@@ -2507,7 +2353,6 @@
     },
     {
       "id": "9b9921db",
-      "name": "Train Testset Predictions",
       "full_name": "train_testset_predictions",
       "tags": ["predictions", "data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2518,7 +2363,6 @@
     },
     {
       "id": "c329efd1",
-      "name": "Generate Performance Report",
       "full_name": "generate_performance_report",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2541,7 +2385,6 @@
     },
     {
       "id": "b46c6fb9",
-      "name": "Params: Report",
       "full_name": "params:train_model.report",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2552,7 +2395,6 @@
     },
     {
       "id": "b7bde39a",
-      "name": "Train Report Figures",
       "full_name": "train_report_figures",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "train_model"],
@@ -2563,7 +2405,6 @@
     },
     {
       "id": "ae98f5f5",
-      "name": "Bulk Optimize",
       "full_name": "bulk_optimize",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["recommend", "__default__"],
@@ -2593,7 +2434,6 @@
     },
     {
       "id": "ce869767",
-      "name": "Params: Recommend",
       "full_name": "params:recommend",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["recommend", "__default__"],
@@ -2604,7 +2444,6 @@
     },
     {
       "id": "d407a8cf",
-      "name": "Test Metrics",
       "full_name": "test_metrics",
       "tags": ["visualisation", "reporting"],
       "pipelines": ["recommend", "__default__"],
@@ -2615,7 +2454,6 @@
     },
     {
       "id": "d1733133",
-      "name": "Create Bulk Result Tables",
       "full_name": "create_bulk_result_tables",
       "tags": ["data-science", "optimisation"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2625,7 +2463,6 @@
     },
     {
       "id": "e4821861",
-      "name": "Test Recommendations",
       "full_name": "test_recommendations",
       "tags": ["data-science", "optimisation", "sensitivity"],
       "pipelines": [
@@ -2640,7 +2477,6 @@
     },
     {
       "id": "b7c5a4e0",
-      "name": "Test Bulk Constraints",
       "full_name": "test_bulk_constraints",
       "tags": ["data-science", "optimisation", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2651,7 +2487,6 @@
     },
     {
       "id": "24c3ce33",
-      "name": "Test Bulk Ctrl",
       "full_name": "test_bulk_ctrl",
       "tags": ["data-science", "optimisation", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2662,7 +2497,6 @@
     },
     {
       "id": "7ba4e963",
-      "name": "Test Bulk Output",
       "full_name": "test_bulk_output",
       "tags": ["data-science", "optimisation", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2673,7 +2507,6 @@
     },
     {
       "id": "70c65095",
-      "name": "Test Bulk State",
       "full_name": "test_bulk_state",
       "tags": ["data-science", "optimisation", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2684,7 +2517,6 @@
     },
     {
       "id": "55758695",
-      "name": "Create Bulk Report",
       "full_name": "create_bulk_report",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2694,7 +2526,6 @@
     },
     {
       "id": "d3f3241a",
-      "name": "Test Bulk Report",
       "full_name": "test_bulk_report",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2705,7 +2536,6 @@
     },
     {
       "id": "bf435119",
-      "name": "Uplift Report Results",
       "full_name": "uplift_report_results",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2724,7 +2554,6 @@
     },
     {
       "id": "c58671fa",
-      "name": "Params: Pdf",
       "full_name": "params:uplift.pdf",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2735,7 +2564,6 @@
     },
     {
       "id": "19040e7c",
-      "name": "Uplift Report Figures",
       "full_name": "uplift_report_figures",
       "tags": ["data-science", "reporting"],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -2746,7 +2574,6 @@
     },
     {
       "id": "0298a817",
-      "name": "Generate Sensitivity Data",
       "full_name": "generate_sensitivity_data",
       "tags": ["data-science", "sensitivity"],
       "pipelines": ["recommend_sensitivity", "__default__"],
@@ -2770,7 +2597,6 @@
     },
     {
       "id": "6fd8074d",
-      "name": "Params: Recommend Sensitivity",
       "full_name": "params:recommend_sensitivity",
       "tags": ["data-science", "sensitivity"],
       "pipelines": ["recommend_sensitivity", "__default__"],
@@ -2781,7 +2607,6 @@
     },
     {
       "id": "9eb96a09",
-      "name": "Test Sensitivity Plot Df",
       "full_name": "test_sensitivity_plot_df",
       "tags": ["data-science", "sensitivity"],
       "pipelines": ["recommend_sensitivity", "__default__"],
@@ -2792,7 +2617,6 @@
     },
     {
       "id": "f8e6b6f3",
-      "name": "Apply Types",
       "full_name": "Apply Types",
       "tags": ["transcoding"],
       "pipelines": ["transcoding_demo", "__default__"],
@@ -2802,7 +2626,6 @@
     },
     {
       "id": "3db9b130",
-      "name": "In Out Recent",
       "full_name": "in_out_recent",
       "tags": ["transcoding"],
       "pipelines": ["transcoding_demo", "__default__"],
@@ -2813,7 +2636,6 @@
     },
     {
       "id": "6526dd55",
-      "name": "In Out Recent Clean",
       "full_name": "in_out_recent_clean",
       "tags": ["transcoding"],
       "pipelines": ["transcoding_demo", "__default__"],
@@ -2824,7 +2646,6 @@
     },
     {
       "id": "d6744468",
-      "name": "Filter Rows",
       "full_name": "Filter Rows",
       "tags": ["transcoding"],
       "pipelines": ["transcoding_demo", "__default__"],
@@ -2834,7 +2655,6 @@
     },
     {
       "id": "71a945b5",
-      "name": "In Out Recent Filtered",
       "full_name": "in_out_recent_filtered",
       "tags": ["transcoding"],
       "pipelines": ["transcoding_demo", "__default__"],
@@ -2845,7 +2665,6 @@
     },
     {
       "id": "factory.pandas_profiling",
-      "name": "Pandas Profiling",
       "full_name": "factory.pandas_profiling",
       "tags": [],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -2856,7 +2675,6 @@
     },
     {
       "id": "factory",
-      "name": "Factory",
       "full_name": "factory",
       "tags": [],
       "pipelines": ["__default__", "impute_fit", "split", "pandas_profiling"],
@@ -2867,7 +2685,6 @@
     },
     {
       "id": "in_out.pandas_profiling",
-      "name": "Pandas Profiling",
       "full_name": "in_out.pandas_profiling",
       "tags": [],
       "pipelines": ["pandas_profiling", "__default__"],
@@ -2878,7 +2695,6 @@
     },
     {
       "id": "in_out",
-      "name": "In Out",
       "full_name": "in_out",
       "tags": [],
       "pipelines": ["__default__", "impute_fit", "split", "pandas_profiling"],
@@ -2889,7 +2705,6 @@
     },
     {
       "id": "factory.split",
-      "name": "Split",
       "full_name": "factory.split",
       "tags": [],
       "pipelines": ["split", "__default__"],
@@ -2900,7 +2715,6 @@
     },
     {
       "id": "in_out.split",
-      "name": "Split",
       "full_name": "in_out.split",
       "tags": [],
       "pipelines": ["split", "__default__"],
@@ -2911,7 +2725,6 @@
     },
     {
       "id": "in_out_test.clean",
-      "name": "Clean",
       "full_name": "in_out_test.clean",
       "tags": [],
       "pipelines": ["clean", "__default__"],
@@ -2922,7 +2735,6 @@
     },
     {
       "id": "in_out_test",
-      "name": "In Out Test",
       "full_name": "in_out_test",
       "tags": [],
       "pipelines": ["clean", "impute_transform", "__default__"],
@@ -2933,7 +2745,6 @@
     },
     {
       "id": "factory_train.clean",
-      "name": "Clean",
       "full_name": "factory_train.clean",
       "tags": [],
       "pipelines": ["clean", "__default__"],
@@ -2944,7 +2755,6 @@
     },
     {
       "id": "factory_train",
-      "name": "Factory Train",
       "full_name": "factory_train",
       "tags": [],
       "pipelines": ["clean", "__default__", "on_off_logic", "impute_transform"],
@@ -2955,7 +2765,6 @@
     },
     {
       "id": "in_out_train.clean",
-      "name": "Clean",
       "full_name": "in_out_train.clean",
       "tags": [],
       "pipelines": ["clean", "__default__"],
@@ -2966,7 +2775,6 @@
     },
     {
       "id": "in_out_train",
-      "name": "In Out Train",
       "full_name": "in_out_train",
       "tags": [],
       "pipelines": ["clean", "impute_transform", "__default__"],
@@ -2977,7 +2785,6 @@
     },
     {
       "id": "factory_test.clean",
-      "name": "Clean",
       "full_name": "factory_test.clean",
       "tags": [],
       "pipelines": ["clean", "__default__"],
@@ -2988,7 +2795,6 @@
     },
     {
       "id": "factory_test",
-      "name": "Factory Test",
       "full_name": "factory_test",
       "tags": [],
       "pipelines": ["clean", "__default__", "on_off_logic", "impute_transform"],
@@ -2999,7 +2805,6 @@
     },
     {
       "id": "factory.impute",
-      "name": "Impute",
       "full_name": "factory.impute",
       "tags": [],
       "pipelines": ["impute_fit", "__default__"],
@@ -3010,7 +2815,6 @@
     },
     {
       "id": "in_out.impute",
-      "name": "Impute",
       "full_name": "in_out.impute",
       "tags": [],
       "pipelines": ["impute_fit", "__default__"],
@@ -3021,7 +2825,6 @@
     },
     {
       "id": "in_out_test.impute",
-      "name": "Impute",
       "full_name": "in_out_test.impute",
       "tags": [],
       "pipelines": ["impute_transform", "__default__"],
@@ -3032,7 +2835,6 @@
     },
     {
       "id": "factory_test.impute",
-      "name": "Impute",
       "full_name": "factory_test.impute",
       "tags": [],
       "pipelines": ["impute_transform", "__default__"],
@@ -3043,7 +2845,6 @@
     },
     {
       "id": "factory_train.impute",
-      "name": "Impute",
       "full_name": "factory_train.impute",
       "tags": [],
       "pipelines": ["impute_transform", "__default__"],
@@ -3054,7 +2855,6 @@
     },
     {
       "id": "in_out_train.impute",
-      "name": "Impute",
       "full_name": "in_out_train.impute",
       "tags": [],
       "pipelines": ["impute_transform", "__default__"],
@@ -3065,7 +2865,6 @@
     },
     {
       "id": "factory_test.on_off_logic",
-      "name": "On Off Logic",
       "full_name": "factory_test.on_off_logic",
       "tags": [],
       "pipelines": ["on_off_logic", "__default__"],
@@ -3076,7 +2875,6 @@
     },
     {
       "id": "factory_train.on_off_logic",
-      "name": "On Off Logic",
       "full_name": "factory_train.on_off_logic",
       "tags": [],
       "pipelines": ["on_off_logic", "__default__"],
@@ -3087,7 +2885,6 @@
     },
     {
       "id": "test.create_features",
-      "name": "Create Features",
       "full_name": "test.create_features",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3098,7 +2895,6 @@
     },
     {
       "id": "test",
-      "name": "Test",
       "full_name": "test",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3109,7 +2905,6 @@
     },
     {
       "id": "train.create_features",
-      "name": "Create Features",
       "full_name": "train.create_features",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3120,7 +2915,6 @@
     },
     {
       "id": "train",
-      "name": "Train",
       "full_name": "train",
       "tags": [],
       "pipelines": ["__default__", "create_features", "train_model"],
@@ -3131,7 +2925,6 @@
     },
     {
       "id": "train.create_features.factory_train_with_off_equipment_to_zero",
-      "name": "Factory Train With Off Equipment To Zero",
       "full_name": "train.create_features.factory_train_with_off_equipment_to_zero",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3142,7 +2935,6 @@
     },
     {
       "id": "train.create_features.in_out_train_imputed",
-      "name": "In Out Train Imputed",
       "full_name": "train.create_features.in_out_train_imputed",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3153,7 +2945,6 @@
     },
     {
       "id": "test.create_features.in_out_test_imputed",
-      "name": "In Out Test Imputed",
       "full_name": "test.create_features.in_out_test_imputed",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3164,7 +2955,6 @@
     },
     {
       "id": "test.create_features.factory_test_with_off_equipment_to_zero",
-      "name": "Factory Test With Off Equipment To Zero",
       "full_name": "test.create_features.factory_test_with_off_equipment_to_zero",
       "tags": [],
       "pipelines": ["__default__", "create_features"],
@@ -3175,7 +2965,6 @@
     },
     {
       "id": "train.train_model",
-      "name": "Train Model",
       "full_name": "train.train_model",
       "tags": [],
       "pipelines": ["__default__", "train_model"],
@@ -3186,7 +2975,6 @@
     },
     {
       "id": "recommend",
-      "name": "Recommend",
       "full_name": "recommend",
       "tags": [],
       "pipelines": ["recommend", "__default__"],
@@ -3197,7 +2985,6 @@
     },
     {
       "id": "uplift",
-      "name": "Uplift",
       "full_name": "uplift",
       "tags": [],
       "pipelines": ["__default__", "recommend_uplift_report"],
@@ -3208,7 +2995,6 @@
     },
     {
       "id": "sensitivity",
-      "name": "Sensitivity",
       "full_name": "sensitivity",
       "tags": [],
       "pipelines": ["recommend_sensitivity", "__default__"],
@@ -3699,7 +3485,7 @@
   "modular_pipelines": {
     "__root__": {
       "id": "__root__",
-      "name": "Root",
+      "full_name": "__root__",
       "inputs": [],
       "outputs": [],
       "children": [
@@ -3793,14 +3579,14 @@
     },
     "factory.pandas_profiling": {
       "id": "factory.pandas_profiling",
-      "name": "Pandas Profiling",
+      "full_name": "factory.pandas_profiling",
       "inputs": ["73930ef2", "0e9ed868"],
       "outputs": [],
       "children": [{ "id": "2596e632", "type": "task" }]
     },
     "factory": {
       "id": "factory",
-      "name": "Factory",
+      "full_name": "factory",
       "inputs": [
         "ca959a2d",
         "6d5873ac",
@@ -3818,14 +3604,14 @@
     },
     "in_out.pandas_profiling": {
       "id": "in_out.pandas_profiling",
-      "name": "Pandas Profiling",
+      "full_name": "in_out.pandas_profiling",
       "inputs": ["3f69a9b8", "b5b5b6b2"],
       "outputs": [],
       "children": [{ "id": "7a65da0d", "type": "task" }]
     },
     "in_out": {
       "id": "in_out",
-      "name": "In Out",
+      "full_name": "in_out",
       "inputs": [
         "b5b5b6b2",
         "d2fb21a0",
@@ -3843,21 +3629,21 @@
     },
     "factory.split": {
       "id": "factory.split",
-      "name": "Split",
+      "full_name": "factory.split",
       "inputs": ["ca959a2d", "73930ef2"],
       "outputs": ["d28f4db6", "12ee06f3"],
       "children": [{ "id": "ff79c0d9", "type": "task" }]
     },
     "in_out.split": {
       "id": "in_out.split",
-      "name": "Split",
+      "full_name": "in_out.split",
       "inputs": ["3f69a9b8", "778c88c9"],
       "outputs": ["a771381b", "62e203cf"],
       "children": [{ "id": "31fb7cc8", "type": "task" }]
     },
     "in_out_test.clean": {
       "id": "in_out_test.clean",
-      "name": "Clean",
+      "full_name": "in_out_test.clean",
       "inputs": ["62e203cf", "53578014", "1f876261"],
       "outputs": ["63186f26"],
       "children": [
@@ -3878,7 +3664,7 @@
     },
     "in_out_test": {
       "id": "in_out_test",
-      "name": "In Out Test",
+      "full_name": "in_out_test",
       "inputs": ["6d5873ac", "62e203cf", "5540a3fb", "53578014", "1f876261"],
       "outputs": ["7178598e"],
       "children": [
@@ -3888,7 +3674,7 @@
     },
     "factory_train.clean": {
       "id": "factory_train.clean",
-      "name": "Clean",
+      "full_name": "factory_train.clean",
       "inputs": ["456488de", "d28f4db6", "53578014"],
       "outputs": ["6d5873ac"],
       "children": [
@@ -3909,7 +3695,7 @@
     },
     "factory_train": {
       "id": "factory_train",
-      "name": "Factory Train",
+      "full_name": "factory_train",
       "inputs": ["d28f4db6", "1161a87b", "456488de", "0613286f", "53578014"],
       "outputs": ["6ffb551a"],
       "children": [
@@ -3920,7 +3706,7 @@
     },
     "in_out_train.clean": {
       "id": "in_out_train.clean",
-      "name": "Clean",
+      "full_name": "in_out_train.clean",
       "inputs": ["a771381b", "53578014", "1f876261"],
       "outputs": ["d2fb21a0"],
       "children": [
@@ -3941,7 +3727,7 @@
     },
     "in_out_train": {
       "id": "in_out_train",
-      "name": "In Out Train",
+      "full_name": "in_out_train",
       "inputs": ["6d5873ac", "5540a3fb", "53578014", "a771381b", "1f876261"],
       "outputs": ["f4cccc1a"],
       "children": [
@@ -3951,7 +3737,7 @@
     },
     "factory_test.clean": {
       "id": "factory_test.clean",
-      "name": "Clean",
+      "full_name": "factory_test.clean",
       "inputs": ["456488de", "53578014", "12ee06f3"],
       "outputs": ["cf7dcb8f"],
       "children": [
@@ -3972,7 +3758,7 @@
     },
     "factory_test": {
       "id": "factory_test",
-      "name": "Factory Test",
+      "full_name": "factory_test",
       "inputs": [
         "6d5873ac",
         "1161a87b",
@@ -3990,49 +3776,49 @@
     },
     "factory.impute": {
       "id": "factory.impute",
-      "name": "Impute",
+      "full_name": "factory.impute",
       "inputs": ["6d5873ac", "53578014", "f38b4714"],
       "outputs": ["1161a87b"],
       "children": [{ "id": "7be9f72e", "type": "task" }]
     },
     "in_out.impute": {
       "id": "in_out.impute",
-      "name": "Impute",
+      "full_name": "in_out.impute",
       "inputs": ["d2fb21a0", "53578014", "5d57686d"],
       "outputs": ["5540a3fb"],
       "children": [{ "id": "11a72273", "type": "task" }]
     },
     "in_out_test.impute": {
       "id": "in_out_test.impute",
-      "name": "Impute",
+      "full_name": "in_out_test.impute",
       "inputs": ["6d5873ac", "5540a3fb", "53578014", "63186f26"],
       "outputs": ["7178598e"],
       "children": [{ "id": "22cfe9cd", "type": "task" }]
     },
     "factory_test.impute": {
       "id": "factory_test.impute",
-      "name": "Impute",
+      "full_name": "factory_test.impute",
       "inputs": ["6d5873ac", "1161a87b", "cf7dcb8f", "53578014"],
       "outputs": ["eefd807e"],
       "children": [{ "id": "2978a7f5", "type": "task" }]
     },
     "factory_train.impute": {
       "id": "factory_train.impute",
-      "name": "Impute",
+      "full_name": "factory_train.impute",
       "inputs": ["6d5873ac", "1161a87b", "53578014"],
       "outputs": ["d7ff3fc5"],
       "children": [{ "id": "72ac6e43", "type": "task" }]
     },
     "in_out_train.impute": {
       "id": "in_out_train.impute",
-      "name": "Impute",
+      "full_name": "in_out_train.impute",
       "inputs": ["d2fb21a0", "6d5873ac", "5540a3fb", "53578014"],
       "outputs": ["f4cccc1a"],
       "children": [{ "id": "1d7fffba", "type": "task" }]
     },
     "factory_test.on_off_logic": {
       "id": "factory_test.on_off_logic",
-      "name": "On Off Logic",
+      "full_name": "factory_test.on_off_logic",
       "inputs": ["eefd807e", "0613286f", "53578014"],
       "outputs": ["2d3c0374"],
       "children": [
@@ -4042,7 +3828,7 @@
     },
     "factory_train.on_off_logic": {
       "id": "factory_train.on_off_logic",
-      "name": "On Off Logic",
+      "full_name": "factory_train.on_off_logic",
       "inputs": ["0613286f", "53578014", "d7ff3fc5"],
       "outputs": ["6ffb551a"],
       "children": [
@@ -4052,7 +3838,7 @@
     },
     "test.create_features": {
       "id": "test.create_features",
-      "name": "Create Features",
+      "full_name": "test.create_features",
       "inputs": ["7178598e", "6ac1368f", "53578014", "2d3c0374"],
       "outputs": ["94dd8ecd"],
       "children": [
@@ -4074,14 +3860,14 @@
     },
     "test": {
       "id": "test",
-      "name": "Test",
+      "full_name": "test",
       "inputs": ["7178598e", "6ac1368f", "53578014", "2d3c0374"],
       "outputs": ["94dd8ecd"],
       "children": [{ "id": "test.create_features", "type": "modularPipeline" }]
     },
     "train.create_features": {
       "id": "train.create_features",
-      "name": "Create Features",
+      "full_name": "train.create_features",
       "inputs": ["f4cccc1a", "6ac1368f", "53578014", "6ffb551a"],
       "outputs": ["a4d73089"],
       "children": [
@@ -4102,7 +3888,7 @@
     },
     "train": {
       "id": "train",
-      "name": "Train",
+      "full_name": "train",
       "inputs": [
         "6ac1368f",
         "86b7300b",
@@ -4123,35 +3909,35 @@
     },
     "train.create_features.factory_train_with_off_equipment_to_zero": {
       "id": "train.create_features.factory_train_with_off_equipment_to_zero",
-      "name": "Factory Train With Off Equipment To Zero",
+      "full_name": "train.create_features.factory_train_with_off_equipment_to_zero",
       "inputs": [],
       "outputs": [],
       "children": [{ "id": "614a4cd8", "type": "data" }]
     },
     "train.create_features.in_out_train_imputed": {
       "id": "train.create_features.in_out_train_imputed",
-      "name": "In Out Train Imputed",
+      "full_name": "train.create_features.in_out_train_imputed",
       "inputs": [],
       "outputs": [],
       "children": [{ "id": "85d157bf", "type": "data" }]
     },
     "test.create_features.in_out_test_imputed": {
       "id": "test.create_features.in_out_test_imputed",
-      "name": "In Out Test Imputed",
+      "full_name": "test.create_features.in_out_test_imputed",
       "inputs": [],
       "outputs": [],
       "children": [{ "id": "a12a727e", "type": "data" }]
     },
     "test.create_features.factory_test_with_off_equipment_to_zero": {
       "id": "test.create_features.factory_test_with_off_equipment_to_zero",
-      "name": "Factory Test With Off Equipment To Zero",
+      "full_name": "test.create_features.factory_test_with_off_equipment_to_zero",
       "inputs": [],
       "outputs": [],
       "children": [{ "id": "31cb9133", "type": "data" }]
     },
     "train.train_model": {
       "id": "train.train_model",
-      "name": "Train Model",
+      "full_name": "train.train_model",
       "inputs": [
         "86b7300b",
         "b633dd0b",
@@ -4180,14 +3966,14 @@
     },
     "recommend": {
       "id": "recommend",
-      "name": "Recommend",
+      "full_name": "recommend",
       "inputs": ["94dd8ecd", "ce869767", "f23452a4", "53578014"],
       "outputs": ["d407a8cf"],
       "children": [{ "id": "ae98f5f5", "type": "task" }]
     },
     "uplift": {
       "id": "uplift",
-      "name": "Uplift",
+      "full_name": "uplift",
       "inputs": ["c58671fa", "94dd8ecd", "53578014", "e4821861"],
       "outputs": ["19040e7c"],
       "children": [
@@ -4198,7 +3984,7 @@
     },
     "sensitivity": {
       "id": "sensitivity",
-      "name": "Sensitivity",
+      "full_name": "sensitivity",
       "inputs": ["f23452a4", "6fd8074d", "94dd8ecd", "53578014", "e4821861"],
       "outputs": ["9eb96a09"],
       "children": [{ "id": "0298a817", "type": "task" }]

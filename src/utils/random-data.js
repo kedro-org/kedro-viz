@@ -181,7 +181,6 @@ class Pipeline {
     const layer = this.rankLayers[initialRank];
     const node = {
       id: `${layer}_${initialRank}_${i}`,
-      name: null,
       full_name: null, //eslint-disable-line camelcase
       type: null,
       rank: initialRank,
@@ -406,12 +405,10 @@ class Pipeline {
         const node = this.nodes.find((node) => node.id === id);
         node.rank = rank;
         node.type = this.getType(node);
-        node.name = this.getNodeName(node.type);
         node.full_name = //eslint-disable-line camelcase
-          `${node.layer}_${node.type}_${node.rank}_${node.name}`.replace(
-            /\s/g,
-            '_'
-          );
+          `${node.layer}_${node.type}_${node.rank}_${this.getNodeName(
+            node.type
+          )}`.replace(/\s/g, '_');
         this.getNodeMetaData(node);
       }
     }
