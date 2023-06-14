@@ -77,8 +77,6 @@ export const FlowChartWrapper = ({
   } = findMatchedPath(pathname, search);
 
   const redirectToSelectedNode = (nodeId) => {
-    // Reset the focus mode to null when when using the navigation buttons
-
     const foundNode = Object.keys(nodes).find((node) => node === nodeId);
     if (foundNode) {
       const modularPipeline = nodes[nodeId];
@@ -110,6 +108,9 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
+    // We only need to call these matchPath actions either when:
+    // graphState.current is null means the page first loads
+    // or when user navigating through the back and forward button
     if (
       (graphState.current === null || usedNavigationBtn) &&
       Object.keys(graph).length > 0
@@ -142,9 +143,6 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedFocusedNode) {
-        // Reset the node data to null when when using the navigation buttons
-        onToggleNodeSelected(null);
-
         const modularPipelineId = search.split(params.focused)[1];
         const foundModularPipeline = modularPipelinesTree[modularPipelineId];
 
