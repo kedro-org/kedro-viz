@@ -39,14 +39,6 @@ const getKeyByValue = (object, value) => {
   return Object.keys(object).find((key) => object[key] === value);
 };
 
-const getDecodedPipelineId = (search) => {
-  const activePipelineId = search.substring(
-    search.indexOf(params.pipeline) + params.pipeline.length,
-    search.indexOf('&')
-  );
-  return decodeURI(activePipelineId);
-};
-
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
  * the rendering of the flowchart, as well as the display of all related modals.
@@ -69,8 +61,9 @@ export const FlowChartWrapper = ({
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
+  const [backBtn, setBackBtn] = useState(false);
 
-  const [counter, setCounter] = React.useState(60);
+  const [counter, setCounter] = useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
 
@@ -101,6 +94,14 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
+    window.addEventListener('popstate', () => setBackBtn(true));
+
+    return () => {
+      window.removeEventListener('popstate', () => setBackBtn(false));
+    };
+  }, []);
+
+  useEffect(() => {
     const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
     setGoBackToExperimentTracking(linkToFlowchart);
   }, []);
@@ -109,7 +110,13 @@ export const FlowChartWrapper = ({
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    */
   useEffect(() => {
-    if (graphState.current === null && Object.keys(graph).length > 0) {
+    if (
+      (graphState.current === null || backBtn) &&
+      Object.keys(graph).length > 0
+    ) {
+      setBackBtn(false);
+
+
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
@@ -118,7 +125,7 @@ export const FlowChartWrapper = ({
         setInvalidUrl(false);
       }
 
-      if (matchedSelectedNodeName && Object.keys(fullNodeNames).length > 0) {
+      if (matchedSelectedNodeName) {
         const nodeName = search.split(params.selectedName)[1];
         const decodedNodeName = decodeURI(nodeName).replace(/['"]+/g, '');
         const foundNodeId = getKeyByValue(fullNodeNames, decodedNodeName);
@@ -131,13 +138,13 @@ export const FlowChartWrapper = ({
         }
       }
 
-      if (matchedSelectedNodeId && Object.keys(nodes).length > 0) {
+      if (matchedSelectedNodeId) {
         const nodeId = search.split(params.selected)[1];
 
         redirectToSelectedNode(nodeId);
       }
 
-      if (matchedFocusedNode && Object.keys(modularPipelinesTree).length > 0) {
+      if (matchedFocusedNode) {
         // Reset the node data to null when when using the navigation buttons
         onToggleNodeSelected(null);
 
@@ -160,7 +167,7 @@ export const FlowChartWrapper = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, pathname, graph]);
+  }, [graph, backBtn]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
