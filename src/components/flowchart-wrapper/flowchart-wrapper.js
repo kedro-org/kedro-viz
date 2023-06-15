@@ -59,7 +59,7 @@ export const FlowChartWrapper = ({
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = new URLSearchParams(search);
 
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
@@ -79,6 +79,11 @@ export const FlowChartWrapper = ({
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
 
+  const resetErrorMessage = () => {
+    setErrorMessage({});
+    setInvalidUrl(false);
+  };
+
   const redirectToSelectedNode = () => {
     const node =
       searchParams.get(params.selected) ||
@@ -96,6 +101,7 @@ export const FlowChartWrapper = ({
         onToggleModularPipelineExpanded(modularPipeline);
       }
       onToggleNodeSelected(nodeId);
+      resetErrorMessage();
     } else {
       setErrorMessage(errorMessages.node);
       setInvalidUrl(true);
@@ -119,6 +125,7 @@ export const FlowChartWrapper = ({
     if (foundModularPipeline) {
       onToggleModularPipelineActive(focusedId, true);
       onToggleFocusMode(foundModularPipeline.data);
+      resetErrorMessage();
     } else {
       setErrorMessage(errorMessages.modularPipeline);
       setInvalidUrl(true);
@@ -147,13 +154,15 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     const isGraphEmpty = Object.keys(graph).length === 0;
 
-    if ((graphState.current === null || usedNavigationBtn) && !isGraphEmpty) {
+    if (
+      (graphState.current === null || usedNavigationBtn || invalidUrl) &&
+      !isGraphEmpty
+    ) {
       if (matchedFlowchartMainPage) {
         onToggleNodeSelected(null);
         onToggleFocusMode(null);
 
-        setErrorMessage({});
-        setInvalidUrl(false);
+        resetErrorMessage();
       }
 
       if (matchedSelectedNodeName || matchedSelectedNodeId) {
@@ -175,7 +184,7 @@ export const FlowChartWrapper = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graph, usedNavigationBtn]);
+  }, [graph, usedNavigationBtn, invalidUrl]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
