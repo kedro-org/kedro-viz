@@ -29,7 +29,7 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({
-  isPrettyNameOn,
+  isPrettyName,
   metadata,
   onToggleCode,
   onToggleMetadataModal,
@@ -144,7 +144,7 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                {isPrettyNameOn ? (
+                {isPrettyName ? (
                   <MetaDataRow
                     label="Original node name:"
                     value={metadata.fullName}
@@ -325,7 +325,7 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
-  isPrettyNameOn: state.prettyName,
+  isPrettyName: state.isPrettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),

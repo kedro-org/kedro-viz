@@ -95,7 +95,7 @@ export const stripNamespace = (str) => {
  */
 export const prettifyName = (str) => {
   str = str.replace(/-/g, ' ').replace(/_/g, ' ').replace(/:/g, ': ').trim();
-  return str.replace(/\b\w/g, (match) => match.toUpperCase());
+  return str.replace(/(^|\s)\S/g, (match) => match.toUpperCase());
 };
 
 /**

@@ -42,7 +42,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.transcodedTypes,
     (state) => state.node.runCommand,
     (state) => state.node.preview,
-    (state) => state.prettyName,
+    (state) => state.isPrettyName,
   ],
   (
     nodeId,

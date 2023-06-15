@@ -66,7 +66,7 @@ export const flags = {
 };
 
 export const settings = {
-  prettyName: {
+  isPrettyName: {
     name: 'Pretty name',
     description: 'Display a formatted name for the kedro nodes',
     default: true,

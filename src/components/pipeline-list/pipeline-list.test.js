@@ -80,7 +80,7 @@ describe('PipelineList', () => {
         name: expect.any(Object),
         ids: expect.any(Array),
       },
-      prettyName: expect.any(Boolean),
+      isPrettyName: expect.any(Boolean),
     });
   });
 
