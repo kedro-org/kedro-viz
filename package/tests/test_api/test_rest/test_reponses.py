@@ -587,7 +587,10 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
-        assert metadata["inputs"] == ["uk.data_processing.raw_data", "params:uk.data_processing.train_test_split"]
+        assert metadata["inputs"] == [
+            "uk.data_processing.raw_data",
+            "params:uk.data_processing.train_test_split",
+        ]
         assert metadata["outputs"] == ["model_inputs"]
         assert (
             metadata["run_command"]

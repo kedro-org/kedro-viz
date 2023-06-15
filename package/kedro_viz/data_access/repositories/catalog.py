@@ -29,7 +29,7 @@ class CatalogRepository:
 
     @property
     def layers_mapping(self):
-        """Return layer mapping: dataset_full_name -> layer it belongs to in the catalog
+        """Return layer mapping: dataset_name -> layer it belongs to in the catalog
         From kedro-datasets 1.3.0 onwards, the 'layers' attribute is defined inside the 'metadata'
         under 'kedro-viz' plugin.
 
