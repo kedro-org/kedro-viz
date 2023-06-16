@@ -90,7 +90,7 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-            pip install git+https://github.com/kedro-org/kedro@main
+            pip install kedro
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
