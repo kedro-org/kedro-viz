@@ -94,8 +94,12 @@ export const stripNamespace = (str) => {
  * @returns {String} The string with or without replaced values
  */
 export const prettifyName = (str) => {
-  str = str.replace(/-/g, ' ').replace(/_/g, ' ').replace(/:/g, ': ').trim();
-  return str.replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+  const replacedString = str
+    .replace(/-/g, ' ')
+    .replace(/_/g, ' ')
+    .replace(/:/g, ': ')
+    .trim();
+  return replacedString.replace(/(^|\s)\S/g, (match) => match.toUpperCase());
 };
 
 /**
@@ -107,6 +111,7 @@ export const prettifyModularPipelineNames = (modularPipelines) => {
   for (const key in modularPipelines) {
     if (modularPipelines.hasOwnProperty(key)) {
       const modularPipeline = modularPipelines[key];
+
       if (modularPipeline.hasOwnProperty('name')) {
         modularPipelines[key] = {
           ...modularPipeline,
