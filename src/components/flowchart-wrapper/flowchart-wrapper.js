@@ -179,7 +179,7 @@ export const FlowChartWrapper = ({
         redirectToFocusedNode();
       }
 
-      // Once all the matchPath check is finished
+      // Once all the matchPath checks are finished
       // ensure the local states are reset
       graphRef.current = graph;
       setUsedNavigationBtn(false);
