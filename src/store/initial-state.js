@@ -76,11 +76,16 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     const search = new URLSearchParams(window.location.search);
     const pipelineFromURL = search.get(params.pipeline);
 
-    // Use main pipeline if pipeline from URL isn't recognised
-    if (!state.pipeline.ids.includes(pipelineFromURL)) {
+    // Use main pipeline if active pipeline from localStorage isn't recognised
+    if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     } else if (pipelineFromURL) {
-      state.pipeline.active = pipelineFromURL;
+      // Use main pipeline if pipeline from URL isn't recognised
+      if (!state.pipeline.ids.includes(pipelineFromURL)) {
+        state.pipeline.active = state.pipeline.main;
+      } else {
+        state.pipeline.active = pipelineFromURL;
+      }
     }
   }
 
