@@ -141,8 +141,7 @@ export const FlowChartWrapper = ({
   }, []);
 
   useEffect(() => {
-    const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
-    setGoBackToExperimentTracking(linkToFlowchart);
+    setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));
   }, []);
 
   /**
