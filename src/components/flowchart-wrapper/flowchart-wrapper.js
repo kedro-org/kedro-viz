@@ -84,6 +84,15 @@ export const FlowChartWrapper = ({
     setIsInvalidUrl(false);
   };
 
+  const checkIfPipelineExisted = () => {
+    const pipelineId = searchParams.get(params.pipeline);
+    const foundPipeline = pipelines.find((id) => id === pipelineId);
+
+    if (!foundPipeline) {
+      setErrorMessage(errorMessages.pipeline);
+      setIsInvalidUrl(true);
+    }
+  };
   const redirectToSelectedNode = () => {
     const node =
       searchParams.get(params.selected) ||
@@ -109,16 +118,8 @@ export const FlowChartWrapper = ({
       setErrorMessage(errorMessages.node);
       setIsInvalidUrl(true);
     }
-  };
 
-  const checkIfPipelineExisted = () => {
-    const pipelineId = searchParams.get(params.pipeline);
-    const foundPipeline = pipelines.find((id) => id === pipelineId);
-
-    if (!foundPipeline) {
-      setErrorMessage(errorMessages.pipeline);
-      setIsInvalidUrl(true);
-    }
+    checkIfPipelineExisted();
   };
 
   const redirectToFocusedNode = () => {
@@ -136,6 +137,8 @@ export const FlowChartWrapper = ({
       setErrorMessage(errorMessages.modularPipeline);
       setIsInvalidUrl(true);
     }
+
+    checkIfPipelineExisted();
   };
 
   useEffect(() => {
