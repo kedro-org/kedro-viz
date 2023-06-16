@@ -11,8 +11,8 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
-from kedro.io import AbstractDataSet
-from kedro.io.core import DataSetError
+from kedro.io import AbstractDataset
+from kedro.io.core import DatasetError
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
@@ -97,7 +97,7 @@ class GraphNode(abc.ABC):
     type: str
 
     # the underlying Kedro object for each graph node, if any
-    kedro_obj: Optional[Union[KedroNode, AbstractDataSet]] = field(default=None)
+    kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = field(default=None)
 
     # the tags associated with this node
     tags: Set[str] = field(default_factory=set)
@@ -182,10 +182,10 @@ class GraphNode(abc.ABC):
         full_name: str,
         layer: Optional[str],
         tags: Set[str],
-        dataset: AbstractDataSet,
+        dataset: AbstractDataset,
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
-        """Create a graph node of type DATA for a given Kedro DataSet instance.
+        """Create a graph node of type DATA for a given Kedro Dataset instance.
         Args:
             full_name: The fullname of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -225,7 +225,7 @@ class GraphNode(abc.ABC):
         full_name: str,
         layer: Optional[str],
         tags: Set[str],
-        parameters: AbstractDataSet,
+        parameters: AbstractDataset,
     ) -> "ParametersNode":
         """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
         Args:
@@ -481,8 +481,8 @@ class DataNode(GraphNode):
         In the future, we might want to make this generic.
         """
         return self.dataset_type in (
-            "plotly.plotly_dataset.PlotlyDataSet",
-            "plotly.json_dataset.JSONDataSet",
+            "plotly.plotly_dataset.PlotlyDataset",
+            "plotly.json_dataset.JSONDataset",
         )
 
     def is_image_node(self):
@@ -491,11 +491,11 @@ class DataNode(GraphNode):
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return self.dataset_type == "tracking.metrics_dataset.MetricsDataSet"
+        return self.dataset_type == "tracking.metrics_dataset.MetricsDataset"
 
     def is_json_node(self):
-        """Check if the current node is a JSONDataSet node."""
-        return self.dataset_type == "tracking.json_dataset.JSONDataSet"
+        """Check if the current node is a JSONDataset node."""
+        return self.dataset_type == "tracking.json_dataset.JSONDataset"
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
@@ -524,14 +524,14 @@ class TranscodedDataNode(GraphNode):
     # the layer that this data node belongs to
     layer: Optional[str] = field(default=None)
 
-    # the original Kedro's AbstractDataSet for this transcoded data node
-    original_version: AbstractDataSet = field(init=False)
+    # the original Kedro's AbstractDataset for this transcoded data node
+    original_version: AbstractDataset = field(init=False)
 
     # keep track of the original name for the generated run command
     original_name: str = field(init=False)
 
     # the transcoded versions of this transcoded data nodes
-    transcoded_versions: Set[AbstractDataSet] = field(init=False, default_factory=set)
+    transcoded_versions: Set[AbstractDataset] = field(init=False, default_factory=set)
 
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
@@ -559,7 +559,7 @@ class TranscodedDataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
-    # the dataset type for this data node, e.g. CSVDataSet
+    # the dataset type for this data node, e.g. CSVDataset
     type: Optional[str] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
@@ -570,7 +570,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     data_node: InitVar[DataNode]
 
     # the optional plot data if the underlying dataset has a plot.
-    # currently only applicable for PlotlyDataSet
+    # currently only applicable for PlotlyDataset
     plot: Optional[Dict] = field(init=False, default=None)
 
     # the optional image data if the underlying dataset has a image.
@@ -587,7 +587,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
-        dataset = cast(AbstractDataSet, data_node.kedro_obj)
+        dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
@@ -702,12 +702,12 @@ class ParametersNode(GraphNode):
     @property
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
-        self.kedro_obj: AbstractDataSet
+        self.kedro_obj: AbstractDataset
         try:
             return self.kedro_obj.load()
-        except (AttributeError, DataSetError):
+        except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
-            # defined in the catalog (DataSetError) it also catches any case where
+            # defined in the catalog (DatasetError) it also catches any case where
             # the kedro_obj is None (AttributeError) -- GH#1231
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name

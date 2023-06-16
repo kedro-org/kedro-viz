@@ -1,6 +1,6 @@
 {
   "filepath": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
-  "type": "tracking.json_dataset.JSONDataSet",
+  "type": "tracking.json_dataset.JSONDataset",
   "tracking_data": {
     "recommendations": "dummy_recommendation",
     "recommended_controls": 0.2701227292578884,

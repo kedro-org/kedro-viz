@@ -93,7 +93,7 @@ class TestQueryWithRuns:
                 "metrics": [
                     {
                         "datasetName": "metrics",
-                        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+                        "datasetType": "tracking.metrics_dataset.MetricsDataset",
                         "data": {
                             "col1": [{"runId": example_run_id, "value": 1.0}],
                             "col2": [{"runId": example_run_id, "value": 2.0}],
@@ -102,7 +102,7 @@ class TestQueryWithRuns:
                     },
                     {
                         "datasetName": "more_metrics",
-                        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+                        "datasetType": "tracking.metrics_dataset.MetricsDataset",
                         "data": {
                             "col4": [{"runId": example_run_id, "value": 4.0}],
                             "col5": [{"runId": example_run_id, "value": 5.0}],
@@ -113,7 +113,7 @@ class TestQueryWithRuns:
                 "json": [
                     {
                         "datasetName": "json_tracking",
-                        "datasetType": "tracking.json_dataset.JSONDataSet",
+                        "datasetType": "tracking.json_dataset.JSONDataset",
                         "data": {
                             "col2": [{"runId": example_run_id, "value": True}],
                             "col3": [{"runId": example_run_id, "value": 3}],
@@ -129,7 +129,7 @@ class TestQueryWithRuns:
                 "plots": [
                     {
                         "datasetName": "plotly_dataset",
-                        "datasetType": "plotly.json_dataset.JSONDataSet",
+                        "datasetType": "plotly.json_dataset.JSONDataset",
                         "data": {
                             "plotly.json": [
                                 {
@@ -224,7 +224,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataset",
                                 "data": {
                                     "col1": [
                                         {
@@ -261,7 +261,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataset",
                                 "data": {
                                     "col1": [
                                         {
@@ -312,7 +312,7 @@ class TestQueryWithRuns:
                         "runTrackingData": [
                             {
                                 "datasetName": "new_metrics",
-                                "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+                                "datasetType": "tracking.metrics_dataset.MetricsDataset",
                                 "data": {
                                     "col1": [
                                         {

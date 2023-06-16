@@ -143,14 +143,14 @@ if hasattr(matplotlib, "MatplotlibWriter"):
 
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
-if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load
+if hasattr(plotly, "JSONDataset"):
+    plotly.JSONDataset._load = json.JSONDataset._load
 
-if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load
+if hasattr(plotly, "PlotlyDataset"):
+    plotly.PlotlyDataset._load = json.JSONDataset._load
 
-if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load
+if hasattr(tracking, "JSONDataset"):
+    tracking.JSONDataset._load = json.JSONDataset._load
 
-if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load
+if hasattr(tracking, "MetricsDataset"):
+    tracking.MetricsDataset._load = json.JSONDataset._load

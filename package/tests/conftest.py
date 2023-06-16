@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io import DataCatalog, MemoryDataSet, Version
+from kedro.io import DataCatalog, MemoryDataset, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
@@ -77,9 +77,9 @@ def example_pipelines():
 def example_catalog():
     yield DataCatalog(
         data_sets={
-            "uk.data_processing.raw_data": pandas.CSVDataSet(filepath="raw_data.csv"),
-            "model_inputs": pandas.CSVDataSet(filepath="model_inputs.csv"),
-            "uk.data_science.model": MemoryDataSet(),
+            "uk.data_processing.raw_data": pandas.CSVDataset(filepath="raw_data.csv"),
+            "model_inputs": pandas.CSVDataset(filepath="model_inputs.csv"),
+            "uk.data_science.model": MemoryDataset(),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
@@ -131,10 +131,10 @@ def example_transcoded_pipelines():
 def example_transcoded_catalog():
     yield DataCatalog(
         data_sets={
-            "model_inputs@pandas": pandas.ParquetDataSet(
+            "model_inputs@pandas": pandas.ParquetDataset(
                 filepath="model_inputs.parquet"
             ),
-            "model_inputs@pandas2": pandas.CSVDataSet(filepath="model_inputs.csv"),
+            "model_inputs@pandas2": pandas.CSVDataset(filepath="model_inputs.csv"),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
@@ -217,12 +217,12 @@ def example_run_ids():
 
 @pytest.fixture
 def example_multiple_run_tracking_dataset(example_run_ids, tmp_path):
-    new_metrics_dataset = tracking.MetricsDataSet(
+    new_metrics_dataset = tracking.MetricsDataset(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[1]),
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
-    new_metrics_dataset = tracking.MetricsDataSet(
+    new_metrics_dataset = tracking.MetricsDataset(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[0]),
     )

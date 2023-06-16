@@ -13,7 +13,7 @@ import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json'
 import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
 import nodeJSONData from '../../utils/data/node_json_data.mock.json';
 
-const modelInputDataSetNodeId = '23c94afb';
+const modelInputDatasetNodeId = '23c94afb';
 const splitDataTaskNodeId = '65d0d789';
 const parametersNodeId = 'f1f1425b';
 const dataScienceNodeId = 'data_science';
@@ -270,7 +270,7 @@ describe('MetaData', () => {
   describe('Dataset nodes', () => {
     it('shows the node type as an icon', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       expect(rowIcon(wrapper).hasClass('pipeline-node-icon--icon-data')).toBe(
@@ -280,7 +280,7 @@ describe('MetaData', () => {
 
     it('shows the node name as the title', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       expect(textOf(title(wrapper))).toEqual(['Model Input Table']);
@@ -288,7 +288,7 @@ describe('MetaData', () => {
 
     it('shows the node type as text', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Type:');
@@ -297,16 +297,16 @@ describe('MetaData', () => {
 
     it('shows the node dataset type', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Dataset Type:');
-      expect(textOf(rowValue(row))).toEqual(['CSVDataSet']);
+      expect(textOf(rowValue(row))).toEqual(['CSVDataset']);
     });
 
     it('shows the node filepath', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'File Path:');
@@ -317,7 +317,7 @@ describe('MetaData', () => {
 
     it('wont show any tags as they should only appear if the type is nodeTask', () => {
       const wrapper = mount({
-        nodeId: modelInputDataSetNodeId,
+        nodeId: modelInputDatasetNodeId,
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Tags:');
@@ -327,7 +327,7 @@ describe('MetaData', () => {
     describe('when there is a runCommand returned by the backend', () => {
       it('shows the node run command', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeData,
         });
 
@@ -343,7 +343,7 @@ describe('MetaData', () => {
         };
 
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeData,
         });
 
@@ -359,26 +359,26 @@ describe('MetaData', () => {
     describe('Transcoded dataset nodes', () => {
       it('shows the node original type', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual(['SparkDataSet']);
+        expect(textOf(rowValue(row))).toEqual(['SparkDataset']);
       });
 
       it('shows the node transcoded type', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual(['ParquetDataSet']);
+        expect(textOf(rowValue(row))).toEqual(['ParquetDataset']);
       });
     });
     describe('Metrics dataset nodes', () => {
       it('shows the node metrics', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeMetricsData,
         });
         const row = rowByLabel(wrapper, 'Tracking data from last run:');
@@ -388,7 +388,7 @@ describe('MetaData', () => {
       });
       it('shows the experiment link', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeMetricsData,
         });
         expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
@@ -398,7 +398,7 @@ describe('MetaData', () => {
     describe('JSON dataset nodes', () => {
       it('shows the json data', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeJSONData,
         });
         const row = rowByLabel(wrapper, 'Tracking data from last run:');
@@ -408,7 +408,7 @@ describe('MetaData', () => {
       });
       it('shows the experiment link', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodeJSONData,
         });
         expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
@@ -418,7 +418,7 @@ describe('MetaData', () => {
     describe('Plot nodes', () => {
       describe('shows the plot info', () => {
         const wrapper = mount({
-          nodeId: modelInputDataSetNodeId,
+          nodeId: modelInputDatasetNodeId,
           mockMetadata: nodePlot,
         });
         it('shows the plotly chart', () => {

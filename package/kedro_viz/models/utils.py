@@ -1,23 +1,23 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-from kedro.io import AbstractDataSet
+from kedro.io import AbstractDataset
 
 
-def get_dataset_type(dataset: AbstractDataSet) -> str:
+def get_dataset_type(dataset: AbstractDataset) -> str:
     """Get the type of a dataset as a string: the abbreviated name of the module to
     which ``dataset`` belongs, joined with the name of its class.
     ::
 
-        >>> get_dataset_type(kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataSet())
-        plotly.plotly_dataset.PlotlyDataSet
+        >>> get_dataset_type(kedro.extras.datasets.plotly.plotly_dataset.PlotlyDataset())
+        plotly.plotly_dataset.PlotlyDataset
 
-        >>> get_dataset_type(kedro_datasets.plotly.plotly_dataset.PlotlyDataSet())
-        plotly.plotly_dataset.PlotlyDataSet
+        >>> get_dataset_type(kedro_datasets.plotly.plotly_dataset.PlotlyDataset())
+        plotly.plotly_dataset.PlotlyDataset
 
-        >>> get_dataset_type(my.custom.path.to.plotly.plotly_dataset.PlotlyDataSet())
-        plotly.plotly_dataset.PlotlyDataSet
+        >>> get_dataset_type(my.custom.path.to.plotly.plotly_dataset.PlotlyDataset())
+        plotly.plotly_dataset.PlotlyDataset
 
-        >>> get_dataset_type(package.PlotlyDataSet())
-        package.PlotlyDataSet
+        >>> get_dataset_type(package.PlotlyDataset())
+        package.PlotlyDataset
 
     Args:
         dataset: The dataset object to get the type of

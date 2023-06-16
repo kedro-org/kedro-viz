@@ -4,7 +4,7 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import Dict, Optional
 
-from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
+from kedro.io import AbstractDataset, DataCatalog, DatasetNotFoundError, MemoryDataset
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -34,12 +34,12 @@ class CatalogRepository:
         under 'kedro-viz' plugin.
 
         Catalog before kedro-datasets 1.3.0:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             layers: raw
 
         Catalog from kedro-datasets 1.3.0 onwards:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             metadata:
                 kedro-viz:
@@ -88,8 +88,8 @@ class CatalogRepository:
                 self._layers_mapping[self.strip_encoding(dataset_name)] = dataset_layer
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
-        dataset_obj: Optional[AbstractDataSet]
+    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataset]:
+        dataset_obj: Optional[AbstractDataset]
         try:
             # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
             # fuzzy-matching process.
@@ -97,15 +97,15 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
-        except DataSetNotFoundError:
-            dataset_obj = MemoryDataSet()
+        except DatasetNotFoundError:
+            dataset_obj = MemoryDataset()
 
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(self.strip_encoding(dataset_name))
 
-    def as_dict(self) -> Dict[str, Optional[AbstractDataSet]]:
+    def as_dict(self) -> Dict[str, Optional[AbstractDataset]]:
         return {
             dataset_name: self.get_dataset(dataset_name)
             for dataset_name in self._catalog.list()
