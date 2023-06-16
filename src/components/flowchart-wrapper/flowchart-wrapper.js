@@ -146,12 +146,12 @@ export const FlowChartWrapper = ({
   }, []);
 
   /**
-   * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
-   * We only need to call these matchPath actions either when:
-   * graphRef.current is null means the page first loads
-   * or when user navigating through the back and forward button
-   * or when the invalidUrl is true, that means the user enters some thing wrong in the URL
-   * and we should allow them to reset it by clicking on a different node on the list
+   * To handle redirecting to a different location via the URL (e.g. selectedNode,
+   * focusNode, etc.) we only need to call the matchPath actions when:
+   * 1. graphRef.current is null, meaning the page has just loaded
+   * 2. or when the user navigates using the back and forward buttons
+   * 3. or when invalidUrl is true, meaning the user entered something wrong in
+   * the URL and we should allow them to reset by clicking on a different node.
    */
   useEffect(() => {
     const isGraphEmpty = Object.keys(graph).length === 0;
