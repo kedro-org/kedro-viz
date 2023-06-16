@@ -24,15 +24,37 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-const apiBaseUrl = Cypress.env('apiBaseUrl')
+const apiBaseUrl = Cypress.env('apiBaseUrl');
 
+// Add any reusable custom commands here
 Cypress.Commands.add('main', () => {
-    cy.request({
-        method: 'GET',
-        url: `${apiBaseUrl}/main`
-    }).then ((response) => {
-            expect(response).property('status').to.equal(200)
-            expect(response.body).property('pipelines').to.not.be.oneOf([null, ""])
-            window.localStorage.setItem('KedroViz', JSON.stringify(response.body))
-    })
-})
+  cy.request({
+    method: 'GET',
+    url: `${apiBaseUrl}/main`,
+  }).then((response) => {
+    expect(response).property('status').to.equal(200);
+    expect(response.body).property('pipelines').to.not.be.oneOf([null, '']);
+    window.localStorage.setItem('KedroViz', JSON.stringify(response.body));
+  });
+});
+
+// Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
+Cypress.SelectorPlayground.defaults({
+  onElement: ($el) => {
+    const customId = $el.attr('data-cy');
+
+    if (customId) {
+      return `[data-cy=${customId}]`;
+    }
+  },
+});
+
+// Custom hover command
+Cypress.Commands.add('hover', selector => {
+    cy.get(selector).trigger('mouseover')
+});
+
+// Custom unhover command
+Cypress.Commands.add('unhover', selector => {
+    cy.get(selector).trigger('mouseout')
+});

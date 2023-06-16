@@ -148,6 +148,7 @@ const SettingsModal = ({
           </div>
           <div className="run-details-modal-button-wrapper">
             <Button
+              dataCy={'Cancel Button in Settings Modal'}
               mode="secondary"
               onClick={resetStateCloseModal}
               size="small"

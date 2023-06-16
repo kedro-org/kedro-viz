@@ -12,7 +12,9 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: "http://localhost:4141",
     specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
-    supportFile: "cypress/support/index.js"
+    supportFile: "cypress/support/index.js",
+    experimentalStudio: true,
+    watchForFileChanges:true
   },
   retries: {
     runMode: 2,
