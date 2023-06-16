@@ -62,7 +62,7 @@ export const FlowChartWrapper = ({
   const searchParams = new URLSearchParams(search);
 
   const [errorMessage, setErrorMessage] = useState({});
-  const [invalidUrl, setInvalidUrl] = useState(false);
+  const [isInvalidUrl, setIsInvalidUrl] = useState(false);
   const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
   const [counter, setCounter] = useState(60);
@@ -81,7 +81,7 @@ export const FlowChartWrapper = ({
 
   const resetErrorMessage = () => {
     setErrorMessage({});
-    setInvalidUrl(false);
+    setIsInvalidUrl(false);
   };
 
   const redirectToSelectedNode = () => {
@@ -101,10 +101,13 @@ export const FlowChartWrapper = ({
         onToggleModularPipelineExpanded(modularPipeline);
       }
       onToggleNodeSelected(nodeId);
-      resetErrorMessage();
+
+      if (isInvalidUrl) {
+        resetErrorMessage();
+      }
     } else {
       setErrorMessage(errorMessages.node);
-      setInvalidUrl(true);
+      setIsInvalidUrl(true);
     }
   };
 
@@ -114,7 +117,7 @@ export const FlowChartWrapper = ({
 
     if (!foundPipeline) {
       setErrorMessage(errorMessages.pipeline);
-      setInvalidUrl(true);
+      setIsInvalidUrl(true);
     }
   };
 
@@ -125,10 +128,13 @@ export const FlowChartWrapper = ({
     if (foundModularPipeline) {
       onToggleModularPipelineActive(focusedId, true);
       onToggleFocusMode(foundModularPipeline.data);
-      resetErrorMessage();
+
+      if (isInvalidUrl) {
+        resetErrorMessage();
+      }
     } else {
       setErrorMessage(errorMessages.modularPipeline);
-      setInvalidUrl(true);
+      setIsInvalidUrl(true);
     }
   };
 
@@ -156,7 +162,7 @@ export const FlowChartWrapper = ({
     const isGraphEmpty = Object.keys(graph).length === 0;
 
     if (
-      (graphRef.current === null || usedNavigationBtn || invalidUrl) &&
+      (graphRef.current === null || usedNavigationBtn || isInvalidUrl) &&
       !isGraphEmpty
     ) {
       if (matchedFlowchartMainPage) {
@@ -185,7 +191,7 @@ export const FlowChartWrapper = ({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graph, usedNavigationBtn, invalidUrl]);
+  }, [graph, usedNavigationBtn, isInvalidUrl]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
@@ -212,12 +218,15 @@ export const FlowChartWrapper = ({
     resetLinkingToFlowchartLocalStorage();
   };
 
-  if (invalidUrl) {
+  if (isInvalidUrl) {
     return (
       <div className="kedro-pipeline">
         <Sidebar />
         <MetaData />
-        <PipelineWarning errorMessage={errorMessage} invalidUrl={invalidUrl} />
+        <PipelineWarning
+          errorMessage={errorMessage}
+          invalidUrl={isInvalidUrl}
+        />
       </div>
     );
   } else {
