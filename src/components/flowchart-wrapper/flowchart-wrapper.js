@@ -69,7 +69,7 @@ export const FlowChartWrapper = ({
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
 
-  const graphState = useRef(null);
+  const graphRef = useRef(null);
 
   const {
     matchedFlowchartMainPage,
@@ -148,14 +148,16 @@ export const FlowChartWrapper = ({
   /**
    * To handle redirecting to different location via URL, eg: selectedNode, focusNode, etc
    * We only need to call these matchPath actions either when:
-   * graphState.current is null means the page first loads
+   * graphRef.current is null means the page first loads
    * or when user navigating through the back and forward button
+   * or when the invalidUrl is true, that means the user enters some thing wrong in the URL
+   * and we should allow them to reset it by clicking on a different node on the list
    */
   useEffect(() => {
     const isGraphEmpty = Object.keys(graph).length === 0;
 
     if (
-      (graphState.current === null || usedNavigationBtn || invalidUrl) &&
+      (graphRef.current === null || usedNavigationBtn || invalidUrl) &&
       !isGraphEmpty
     ) {
       if (matchedFlowchartMainPage) {
@@ -179,7 +181,7 @@ export const FlowChartWrapper = ({
 
       // Once all the matchPath check is finished
       // ensure the local states are reset
-      graphState.current = graph;
+      graphRef.current = graph;
       setUsedNavigationBtn(false);
     }
 
