@@ -2,7 +2,6 @@ import { matchPath } from 'react-router-dom';
 import { routes } from '../config';
 
 export const findMatchedPath = (pathname, search) => {
-  // find match path
   const matchedFlowchartMainPage = matchPath(pathname + search, {
     exact: true,
     path: [routes.flowchart.main],

@@ -111,7 +111,7 @@ export const FlowChartWrapper = ({
     }
   };
 
-  const redirectToSelectedPipeline = () => {
+  const checkIfPipelineExisted = () => {
     const pipelineId = searchParams.get(params.pipeline);
     const foundPipeline = pipelines.find((id) => id === pipelineId);
 
@@ -172,12 +172,16 @@ export const FlowChartWrapper = ({
         resetErrorMessage();
       }
 
-      if (matchedSelectedNodeName || matchedSelectedNodeId) {
-        redirectToSelectedNode();
+      if (matchedSelectedPipeline) {
+        // Redirecting to a different pipeline is handled at `preparePipelineState`
+        // to ensure the data is ready before being passed to here
+        // If pipeline from URL isn't recognised then use main pipeline
+        // and display Not Found Pipeline error
+        checkIfPipelineExisted();
       }
 
-      if (matchedSelectedPipeline) {
-        redirectToSelectedPipeline();
+      if (matchedSelectedNodeName || matchedSelectedNodeId) {
+        redirectToSelectedNode();
       }
 
       if (matchedFocusedNode) {
