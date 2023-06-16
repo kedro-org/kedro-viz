@@ -107,7 +107,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 - Add a transition to run details in experiment tracking. (#1065)
 - Remove Tags field from dataset and parameter nodes when viewed in metadata panel. (#1100)
 - Fix keyboard support for exporting experiment runs. (#1103)
-- Fix `MemoryDataset` not displaying on metadata panel. (#1113)
+- Fix `MemoryDataSet` not displaying on metadata panel. (#1113)
 - Enhance display of the flowchart when hovering over the FocusMode icon. (#1107)
 - Make dotted datasets clickable and hoverable when in focus mode. (#1114)
 - Fix a bug where tall Matplotlib images weren't displaying correctly. (#1145)
@@ -248,7 +248,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 
 - Bug fix to display the original function names when pretty name is turned off. (#686)
 - Fix the order of the runs list in experiment tracking. (#691)
-- Bug fix for Plotly JSONDataset icon. (#684)
+- Bug fix for Plotly JSONDataSet icon. (#684)
 - Bug fix for when some flowchart nodes were being cut off by the sidebar. (#701)
 - Bug fix empty metadata panel when clicking on modular pipeline nodes during search. (#704)
 - Bug fix for datasets when params is used as a prefix. (#707)
@@ -265,7 +265,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 ## Bug fixes and other changes
 
 - Bug fix for Plotly modal when escape button is pressed. (#654)
-- Display Plotly JSONDataset plot in metadata side-panel. (#660)
+- Display Plotly JSONDataSet plot in metadata side-panel. (#660)
 - Refactor Primary Toolbar setup. (#664)
 - Upgrade @apollo/client from 3.4.16 to 3.5.3. (#661, #668)
 
@@ -303,7 +303,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 
 ## Bug fixes and other changes
 
-- Display JSON tracking (`tracking.JSONDataset`) on the metadata panel. (#608)
+- Display JSON tracking (`tracking.JSONDataSet`) on the metadata panel. (#608)
 - Fix layers visualisation for transcoded datasets. (#614, #615)
 
 # Release 4.0.0
@@ -385,7 +385,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 ## Bug fixes and other changes
 
 - Remove build/api after running build. (#515)
-- Fix path parsing for PartitionedDataset (#516)
+- Fix path parsing for PartitionedDataSet (#516)
 - Fix dev server port (#517)
 
 # Release 3.13.1
@@ -423,7 +423,7 @@ Many thanks to the following Kedroids for contributing PRs to this release:
 - Complete backend rewrite to be more modular and maintainable using FastAPI. (#432)
 - Add layout engine documentation. (#436)
 - Add split panel components and implement into the sidebar. (#448)
-- Visualise Plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataset` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
+- Visualise Plotly charts if user defines them with `kedro.extra.datasets.plotly.PlotlyDataSet` in their Kedro project _(Note: This feature is only available in `kedro>=0.17.4`)._ (#455)
 
 ## Bug fixes and other changes
 

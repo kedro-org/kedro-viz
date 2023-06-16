@@ -2,10 +2,10 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog, MemoryDataset
+from kedro.io import DataCatalog, MemoryDataSet
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
-from kedro_datasets.pandas import CSVDataset
+from kedro_datasets.pandas import CSVDataSet
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
@@ -25,7 +25,7 @@ def identity(x):
 
 class TestAddCatalog:
     def test_add_catalog(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataset(filepath="dataset.csv")
+        dataset = CSVDataSet(filepath="dataset.csv")
         catalog = DataCatalog(data_sets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
@@ -66,7 +66,7 @@ class TestAddNode:
         ]
 
     def test_add_node_input(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataset(filepath="dataset.csv")
+        dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "x"
         registered_pipeline_id = "my_pipeline"
 
@@ -160,7 +160,7 @@ class TestAddNode:
         assert "uk.data_science.train_test_split" not in modular_pipelines_tree
 
     def test_add_node_output(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataset(filepath="dataset.csv")
+        dataset = CSVDataSet(filepath="dataset.csv")
         registered_pipeline_id = "my_pipeline"
         dataset_name = "x"
 
@@ -198,9 +198,9 @@ class TestAddNode:
         }
 
 
-class TestAddDataset:
+class TestAddDataSet:
     def test_add_dataset(self, data_access_manager: DataAccessManager):
-        dataset = CSVDataset(filepath="dataset.csv")
+        dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "x"
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
@@ -230,12 +230,12 @@ class TestAddDataset:
         assert len(nodes_list) == 1
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
-        assert isinstance(graph_node.kedro_obj, MemoryDataset)
+        assert isinstance(graph_node.kedro_obj, MemoryDataSet)
 
     def test_add_dataset_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
     ):
-        dataset = CSVDataset(filepath="dataset.csv")
+        dataset = CSVDataSet(filepath="dataset.csv")
         dataset_name = "uk.data_science.x"
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},

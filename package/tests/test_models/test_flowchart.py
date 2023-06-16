@@ -6,9 +6,9 @@ from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from kedro.io import MemoryDataset, PartitionedDataset
+from kedro.io import MemoryDataSet, PartitionedDataSet
 from kedro.pipeline.node import node
-from kedro_datasets.pandas import CSVDataset, ParquetDataset
+from kedro_datasets.pandas import CSVDataSet, ParquetDataSet
 
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -119,7 +119,7 @@ class TestGraphNodeCreation:
     def test_create_data_node(
         self, dataset_name, pretty_name, expected_modular_pipelines
     ):
-        kedro_dataset = CSVDataset(filepath="foo.csv")
+        kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             full_name=dataset_name,
             layer="raw",
@@ -158,7 +158,7 @@ class TestGraphNodeCreation:
     def test_create_transcoded_data_node(
         self, dataset_name, original_name, pretty_name
     ):
-        kedro_dataset = CSVDataset(filepath="foo.csv")
+        kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             full_name=dataset_name,
             layer="raw",
@@ -173,7 +173,7 @@ class TestGraphNodeCreation:
         assert data_node.pipelines == set()
 
     def test_create_parameters_all_parameters(self):
-        parameters_dataset = MemoryDataset(
+        parameters_dataset = MemoryDataSet(
             data={"test_split_ratio": 0.3, "num_epochs": 1000}
         )
         parameters_node = GraphNode.create_parameters_node(
@@ -203,7 +203,7 @@ class TestGraphNodeCreation:
     def test_create_parameters_node_single_parameter(
         self, dataset_name, expected_modular_pipelines
     ):
-        parameters_dataset = MemoryDataset(data=0.3)
+        parameters_dataset = MemoryDataSet(data=0.3)
         parameters_node = GraphNode.create_parameters_node(
             full_name=dataset_name, layer=None, tags={}, parameters=parameters_dataset
         )
@@ -228,8 +228,8 @@ class TestGraphNodeCreation:
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):
-        """Test the case where ``parameters`` is equal to a MemoryDataset with no data"""
-        parameters_dataset = MemoryDataset()
+        """Test the case where ``parameters`` is equal to a MemoryDataSet with no data"""
+        parameters_dataset = MemoryDataSet()
         parameters_node = GraphNode.create_parameters_node(
             full_name="non_existing",
             layer=None,
@@ -254,7 +254,7 @@ class TestGraphNodePipelines:
     def test_add_node_to_pipeline(self):
         default_pipeline = RegisteredPipeline("__default__")
         another_pipeline = RegisteredPipeline("testing")
-        kedro_dataset = CSVDataset(filepath="foo.csv")
+        kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             full_name="dataset@transcoded",
             layer="raw",
@@ -269,7 +269,7 @@ class TestGraphNodePipelines:
 
 class TestGraphNodeMetadata:
     @pytest.mark.parametrize(
-        "dataset,has_metadata", [(MemoryDataset(data=1), True), (None, False)]
+        "dataset,has_metadata", [(MemoryDataSet(data=1), True), (None, False)]
     )
     def test_node_has_metadata(self, dataset, has_metadata):
         data_node = GraphNode.create_data_node(
@@ -357,7 +357,7 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.outputs == ["Y"]
 
     def test_data_node_metadata(self):
-        dataset = CSVDataset(filepath="/tmp/dataset.csv")
+        dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         data_node = GraphNode.create_data_node(
             full_name="dataset",
             layer="raw",
@@ -365,13 +365,13 @@ class TestGraphNodeMetadata:
             dataset=dataset,
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
-        assert data_node_metadata.type == "pandas.csv_dataset.CSVDataset"
+        assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
 
     def test_preview_args_not_exist(self):
         metadata = {"kedro-viz": {"something": 3}}
-        dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+        dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
             full_name="dataset",
             tags=set(),
@@ -382,7 +382,7 @@ class TestGraphNodeMetadata:
 
     def test_get_preview_args(self):
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
-        dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+        dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
             full_name="dataset",
             tags=set(),
@@ -425,7 +425,7 @@ class TestGraphNodeMetadata:
         assert preview_node_metadata.plot is None
 
     def test_transcoded_data_node_metadata(self):
-        dataset = CSVDataset(filepath="/tmp/dataset.csv")
+        dataset = CSVDataSet(filepath="/tmp/dataset.csv")
         transcoded_data_node = GraphNode.create_data_node(
             full_name="dataset@pandas2",
             layer="raw",
@@ -433,22 +433,22 @@ class TestGraphNodeMetadata:
             dataset=dataset,
         )
         transcoded_data_node.original_name = "dataset"
-        transcoded_data_node.original_version = ParquetDataset(filepath="foo.parquet")
-        transcoded_data_node.transcoded_versions = [CSVDataset(filepath="foo.csv")]
+        transcoded_data_node.original_version = ParquetDataSet(filepath="foo.parquet")
+        transcoded_data_node.transcoded_versions = [CSVDataSet(filepath="foo.csv")]
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
             transcoded_data_node=transcoded_data_node
         )
         assert (
             transcoded_data_node_metadata.original_type
-            == "pandas.parquet_dataset.ParquetDataset"
+            == "pandas.parquet_dataset.ParquetDataSet"
         )
 
         assert transcoded_data_node_metadata.transcoded_types == [
-            "pandas.csv_dataset.CSVDataset"
+            "pandas.csv_dataset.CSVDataSet"
         ]
 
     def test_partitioned_data_node_metadata(self):
-        dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataset")
+        dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
         data_node = GraphNode.create_data_node(
             full_name="dataset",
             layer="raw",
@@ -573,7 +573,7 @@ class TestGraphNodeMetadata:
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
-        parameters_dataset = MemoryDataset(data=parameters)
+        parameters_dataset = MemoryDataSet(data=parameters)
         parameters_node = GraphNode.create_parameters_node(
             full_name="parameters", layer=None, tags={}, parameters=parameters_dataset
         )
@@ -581,7 +581,7 @@ class TestGraphNodeMetadata:
         assert parameters_node_metadata.parameters == parameters
 
     def test_parameters_metadata_single_parameter(self):
-        parameters_dataset = MemoryDataset(data=0.3)
+        parameters_dataset = MemoryDataSet(data=0.3)
         parameters_node = GraphNode.create_parameters_node(
             full_name="params:test_split_ratio",
             layer=None,

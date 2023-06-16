@@ -8,7 +8,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "cars@pandas": {
-                "type": "pandas.CSVDataset",
+                "type": "pandas.CSVDataSet",
                 "filepath": "cars.csv",
                 "layer": "raw",
             },
@@ -22,7 +22,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "cars": {
-                "type": "pandas.CSVDataset",
+                "type": "pandas.CSVDataSet",
                 "filepath": "cars.csv",
                 "metadata": {
                     "kedro-viz": {
@@ -40,7 +40,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "car_1": {
-                "type": "pandas.CSVDataset",
+                "type": "pandas.CSVDataSet",
                 "filepath": "cars.csv",
                 "metadata": {
                     "kedro-viz": {
@@ -49,7 +49,7 @@ class TestDataCatalogRepository:
                 },
             },
             "car_2": {
-                "type": "pandas.CSVDataset",
+                "type": "pandas.CSVDataSet",
                 "filepath": "cars.csv",
                 "layer": "raw",
             },

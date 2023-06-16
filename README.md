@@ -146,7 +146,7 @@ Once the above set-up is complete, tracking datasets can be used to track releva
 
 ```yaml
 train_evaluation.r2_score_linear_regression:
-  type: tracking.MetricsDataset
+  type: tracking.MetricsDataSet
   filepath: ${base_location}/09_tracking/linear_score.json
   versioned: true
 ```

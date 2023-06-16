@@ -88,30 +88,30 @@ def save_version(example_run_ids):
 @pytest.fixture
 def example_tracking_catalog(example_run_ids, tmp_path):
     example_run_id = example_run_ids[0]
-    metrics_dataset = tracking.MetricsDataset(
+    metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_id),
     )
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
 
-    csv_dataset = pandas.CSVDataset(
+    csv_dataset = pandas.CSVDataSet(
         Path(tmp_path / "metrics.csv").as_posix(),
         version=Version(None, example_run_id),
     )
 
-    more_metrics = tracking.MetricsDataset(
+    more_metrics = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "metrics.json").as_posix(),
         version=Version(None, example_run_id),
     )
     more_metrics.save({"col4": 4, "col5": 5, "col6": 6})
 
-    json_dataset = tracking.JSONDataset(
+    json_dataset = tracking.JSONDataSet(
         filepath=Path(tmp_path / "tracking.json").as_posix(),
         version=Version(None, example_run_id),
     )
     json_dataset.save({"col7": "column_seven", "col2": True, "col3": 3})
 
-    plotly_dataset = plotly.JSONDataset(
+    plotly_dataset = plotly.JSONDataSet(
         filepath=Path(tmp_path / "plotly.json").as_posix(),
         version=Version(None, example_run_id),
     )
@@ -168,12 +168,12 @@ def example_tracking_catalog(example_run_ids, tmp_path):
 
 @pytest.fixture
 def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[1]),
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[0]),
     )
@@ -192,12 +192,12 @@ def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
 def example_multiple_run_tracking_catalog_at_least_one_empty_run(
     example_run_ids, tmp_path
 ):
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[1]),
     )
     new_metrics_dataset.save({"col1": 1, "col3": 3})
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[0]),
     )
@@ -212,11 +212,11 @@ def example_multiple_run_tracking_catalog_at_least_one_empty_run(
 
 @pytest.fixture
 def example_multiple_run_tracking_catalog_all_empty_runs(example_run_ids, tmp_path):
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[1]),
     )
-    new_metrics_dataset = tracking.MetricsDataset(
+    new_metrics_dataset = tracking.MetricsDataSet(
         filepath=Path(tmp_path / "test.json").as_posix(),
         version=Version(None, example_run_ids[0]),
     )

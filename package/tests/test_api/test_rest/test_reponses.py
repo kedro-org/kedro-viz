@@ -109,7 +109,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "pandas.csv_dataset.CSVDataset",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "f0ebef01",
@@ -131,7 +131,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "pandas.csv_dataset.CSVDataset",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -166,7 +166,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataset",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -309,7 +309,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "pandas.csv_dataset.CSVDataset",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "f0ebef01",
@@ -331,7 +331,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "pandas.csv_dataset.CSVDataset",
+            "dataset_type": "pandas.csv_dataset.CSVDataSet",
         },
         {
             "id": "7b140b3f",
@@ -366,7 +366,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataset",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "uk.data_processing",
@@ -500,7 +500,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataset",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
         {
             "id": "f0ebef01",
@@ -554,7 +554,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataset",
+            "dataset_type": "io.memory_dataset.MemoryDataSet",
         },
     ]
 
@@ -593,9 +593,9 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "pandas.csv_dataset.CSVDataset",
+            "original_type": "pandas.csv_dataset.CSVDataSet",
             "transcoded_types": [
-                "pandas.parquet_dataset.ParquetDataset",
+                "pandas.parquet_dataset.ParquetDataSet",
             ],
             "run_command": "kedro run --to-outputs=model_inputs@pandas2",
         }
@@ -642,7 +642,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "type": "pandas.csv_dataset.CSVDataset",
+            "type": "pandas.csv_dataset.CSVDataSet",
             "run_command": "kedro run --to-outputs=model_inputs",
         }
 
@@ -650,7 +650,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
-            "type": "pandas.csv_dataset.CSVDataset",
+            "type": "pandas.csv_dataset.CSVDataSet",
         }
 
     def test_parameters_node_metadata(self, client):
@@ -700,7 +700,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
-                "dataset_type": "pandas.csv_dataset.CSVDataset",
+                "dataset_type": "pandas.csv_dataset.CSVDataSet",
             },
             {
                 "id": "7b140b3f",
@@ -735,7 +735,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "io.memory_dataset.MemoryDataset",
+                "dataset_type": "io.memory_dataset.MemoryDataSet",
             },
             {
                 "id": "uk",

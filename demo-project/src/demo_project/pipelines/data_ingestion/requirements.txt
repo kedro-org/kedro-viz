@@ -1,2 +1,2 @@
 kedro==0.18.4
-kedro-datasets[pandas.CSVDataset,pandas.ExcelDataset, pandas.ParquetDataset]==1.0.1
+kedro-datasets[pandas.CSVDataSet,pandas.ExcelDataSet, pandas.ParquetDataSet]==1.0.1
