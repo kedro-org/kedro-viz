@@ -1,4 +1,4 @@
-// Discovering Cypress
+// All E2E Tests Related to Discovering Cypress goes here.
 
 // Visiting url/website
 describe('visit kedro-viz', () => {

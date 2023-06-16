@@ -11,7 +11,7 @@ module.exports = defineConfig({
   },
   e2e: {
     baseUrl: "http://localhost:4141",
-    specPattern: "cypress/tests/**/*.cy.{js,jsx,ts,tsx}",
+    specPattern: "cypress/tests/**/discovery.cy.{js,jsx,ts,tsx}", // [TODO] Need to modify this to include all the test files once finalized
     supportFile: "cypress/support/index.js",
     experimentalStudio: true,
     watchForFileChanges:true
