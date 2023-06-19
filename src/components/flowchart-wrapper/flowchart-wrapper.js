@@ -27,16 +27,13 @@ import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import { localStorageFlowchartLink, params, errorMessages } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
+import { getKeyByValue } from '../../utils/get-key-by-value';
 
 import './flowchart-wrapper.css';
 
 const linkToFlowchartInitialVal = {
   fromURL: null,
   showGoBackBtn: false,
-};
-
-const getKeyByValue = (object, value) => {
-  return Object.keys(object).find((key) => object[key] === value);
 };
 
 /**
@@ -98,10 +95,12 @@ export const FlowChartWrapper = ({
       searchParams.get(params.selected) ||
       searchParams.get(params.selectedName);
 
+    debugger;
     const nodeId =
       getKeyByValue(fullNodeNames, node) ||
       Object.keys(nodes).find((nodeId) => nodeId === node);
 
+    console.log(nodeId);
     if (nodeId) {
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
