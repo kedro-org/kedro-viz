@@ -95,12 +95,10 @@ export const FlowChartWrapper = ({
       searchParams.get(params.selected) ||
       searchParams.get(params.selectedName);
 
-    debugger;
     const nodeId =
       getKeyByValue(fullNodeNames, node) ||
       Object.keys(nodes).find((nodeId) => nodeId === node);
 
-    console.log(nodeId);
     if (nodeId) {
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
