@@ -44,7 +44,7 @@ class TestDataCatalogRepository:
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
         with pytest.raises(ValueError, match=r"Transcoded datasets should have the same layer. Mismatch found for"):
-           repo.get_layer_for_dataset("cars@pandas1")
+           repo.get_layer_for_dataset("car@pandas1")
 
     def test_get_layer_mapping_from_metadata(self):
         repo = CatalogRepository()
