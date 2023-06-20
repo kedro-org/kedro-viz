@@ -68,6 +68,9 @@ class SQLiteStore(BaseSessionStore):
                     value["branch"] = branch.name
                 except ImportError as exc:  # pragma: no cover
                     logger.warning("%s:%s", exc.__class__.__name__, exc.msg)
+                except Exception as exc:  # pragma: no cover
+                    logger.warning("Something went wrong when fetching git metadata.")
+                    logger.warning(exc)
 
             if _is_json_serializable(value):
                 session_dict[key] = value
