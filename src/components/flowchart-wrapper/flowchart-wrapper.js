@@ -81,7 +81,7 @@ export const FlowChartWrapper = ({
     setIsInvalidUrl(false);
   };
 
-  const checkIfPipelineExisted = () => {
+  const checkIfPipelineExists = () => {
     const pipelineId = searchParams.get(params.pipeline);
     const foundPipeline = pipelines.find((id) => id === pipelineId);
 
@@ -116,7 +116,7 @@ export const FlowChartWrapper = ({
       setIsInvalidUrl(true);
     }
 
-    checkIfPipelineExisted();
+    checkIfPipelineExists();
   };
 
   const redirectToFocusedNode = () => {
@@ -135,7 +135,7 @@ export const FlowChartWrapper = ({
       setIsInvalidUrl(true);
     }
 
-    checkIfPipelineExisted();
+    checkIfPipelineExists();
   };
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export const FlowChartWrapper = ({
         // to ensure the data is ready before being passed to here
         // If pipeline from URL isn't recognised then use main pipeline
         // and display Not Found Pipeline error
-        checkIfPipelineExisted();
+        checkIfPipelineExists();
       }
 
       if (matchedSelectedNodeName || matchedSelectedNodeId) {
