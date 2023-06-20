@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.3.1
+
+## Bug fixes and other changes
+
+- Fix broken URL link between experiment tracking and flowchart when the pipeline is not the default one. (#1388)
+
 # Release 6.3.0
 
 ## Major features and improvements
