@@ -500,7 +500,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "f0ebef01",
@@ -554,7 +554,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
     ]
 
