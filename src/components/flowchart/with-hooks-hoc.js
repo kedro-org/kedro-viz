@@ -3,12 +3,12 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 
 export const withHooksHOC = (Component) => {
   return (props) => {
-    const { toFlowchartPage, toSelectedNode, toFocusedModularPipeline } =
+    const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
       useGeneratePathname();
 
     return (
       <Component
-        toFlowchartPage={toFlowchartPage}
+        toSelectedPipeline={toSelectedPipeline}
         toSelectedNode={toSelectedNode}
         toFocusedModularPipeline={toFocusedModularPipeline}
         {...props}
