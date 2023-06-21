@@ -21,7 +21,7 @@ export const PipelineList = ({
   prettyName,
   onToggleOpen,
 }) => {
-  const { toFlowchartPage } = useGeneratePathname();
+  const { toSelectedPipeline } = useGeneratePathname();
 
   if (!pipeline.ids.length && !asyncDataSource) {
     return null;
@@ -35,8 +35,8 @@ export const PipelineList = ({
         width={null}
         onChanged={(value) => {
           onUpdateActivePipeline(value);
-          // Reset the URL to '/' when switching between different view
-          toFlowchartPage();
+          // Reset the URL to the current active pipeline when switching between different view
+          toSelectedPipeline();
         }}
         defaultText={
           prettyName

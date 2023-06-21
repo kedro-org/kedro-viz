@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage, saveLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { settings, sidebarWidth, localStorageName } from '../config';
+import { settings, sidebarWidth, localStorageName, params } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -73,9 +73,19 @@ export const mergeLocalStorage = (state) => {
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   if (applyFixes) {
+    const search = new URLSearchParams(window.location.search);
+    const pipelineFromURL = search.get(params.pipeline);
+
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
+    } else if (pipelineFromURL) {
+      // Use main pipeline if pipeline from URL isn't recognised
+      if (!state.pipeline.ids.includes(pipelineFromURL)) {
+        state.pipeline.active = state.pipeline.main;
+      } else {
+        state.pipeline.active = pipelineFromURL;
+      }
     }
   }
 
