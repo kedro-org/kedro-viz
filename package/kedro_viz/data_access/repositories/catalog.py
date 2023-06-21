@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
-# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
+# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access, catching-non-exception
 import logging
 from typing import Dict, Optional
 
@@ -34,12 +34,12 @@ class CatalogRepository:
         under 'kedro-viz' plugin.
 
         Catalog before kedro-datasets 1.3.0:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             layers: raw
 
         Catalog from kedro-datasets 1.3.0 onwards:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             metadata:
                 kedro-viz:
