@@ -69,7 +69,7 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
-  const { toFlowchartPage, toSelectedNode, toFocusedModularPipeline } =
+  const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
     useGeneratePathname();
 
   const items = getFilteredItems({
@@ -97,7 +97,7 @@ const NodeListProvider = ({
     } else {
       if (item.faded || item.selected) {
         onToggleNodeSelected(null);
-        toFlowchartPage();
+        toSelectedPipeline();
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
@@ -120,7 +120,7 @@ const NodeListProvider = ({
             }
           } else {
             onToggleFocusMode(null);
-            toFlowchartPage();
+            toSelectedPipeline();
           }
         } else {
           onToggleModularPipelineDisabled([item.id], checked);
