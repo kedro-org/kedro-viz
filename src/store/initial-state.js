@@ -14,7 +14,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
-  prettyName: settings.prettyName.default,
+  isPrettyName: settings.isPrettyName.default,
   ignoreLargeWarning: false,
   loading: {
     graph: false,

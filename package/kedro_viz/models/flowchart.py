@@ -4,7 +4,6 @@ import abc
 import hashlib
 import inspect
 import logging
-import re
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -21,17 +20,6 @@ from .utils import get_dataset_type
 logger = logging.getLogger(__name__)
 
 
-def _pretty_name(name: str) -> str:
-    name = name.replace("-", " ").replace("_", " ").replace(":", ": ")
-    parts = [n.capitalize() for n in name.split()]
-    return " ".join(parts)
-
-
-def _strip_namespace(name: str) -> str:
-    pattern = re.compile(r"[A-Za-z0-9-_]+\.")
-    return re.sub(pattern, "", name)
-
-
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
@@ -45,7 +33,7 @@ class RegisteredPipeline:
     name: str = field(init=False)
 
     def __post_init__(self):
-        self.name = _pretty_name(self.id)
+        self.name = self.id
 
 
 class GraphNodeType(str, Enum):
@@ -87,11 +75,8 @@ class GraphNode(abc.ABC):
     # obtained by hashing the node's string representation
     id: str
 
-    # the pretty name of a node
-    name: str
-
     # the full name of this node obtained from the underlying Kedro object
-    full_name: str
+    name: str
 
     # the type of the graph node
     type: str
@@ -119,20 +104,20 @@ class GraphNode(abc.ABC):
         return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
     @staticmethod
-    def _get_namespace(dataset_full_name: str) -> Optional[str]:
-        """Extract the namespace from the full dataset/parameter name.
+    def _get_namespace(dataset_name: str) -> Optional[str]:
+        """Extract the namespace from the dataset/parameter name.
         Args:
-            dataset_full_name: The full name of the dataset.
+            dataset_name: The name of the dataset.
         Returns:
             The namespace of this dataset, if available.
         Example:
             >>> GraphNode._get_namespace("pipeline.dataset")
             'pipeline'
         """
-        if "." not in dataset_full_name:
+        if "." not in dataset_name:
             return None
 
-        return dataset_full_name.rsplit(".", 1)[0]
+        return dataset_name.rsplit(".", 1)[0]
 
     @staticmethod
     def _expand_namespaces(namespace: Optional[str]) -> List[str]:
@@ -170,8 +155,7 @@ class GraphNode(abc.ABC):
         node_name = node._name or node._func_name
         return TaskNode(
             id=cls._hash(str(node)),
-            name=_pretty_name(node_name),
-            full_name=node_name,
+            name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
         )
@@ -179,7 +163,7 @@ class GraphNode(abc.ABC):
     @classmethod
     def create_data_node(
         cls,
-        full_name: str,
+        dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataSet,
@@ -187,7 +171,7 @@ class GraphNode(abc.ABC):
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type DATA for a given Kedro DataSet instance.
         Args:
-            full_name: The fullname of the dataset, including namespace, e.g.
+            dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
             layer: The optional layer that the dataset belongs to.
             tags: The set of tags assigned to assign to the graph representation
@@ -197,22 +181,20 @@ class GraphNode(abc.ABC):
         Returns:
             An instance of DataNode.
         """
-        is_transcoded_dataset = TRANSCODING_SEPARATOR in full_name
+        is_transcoded_dataset = TRANSCODING_SEPARATOR in dataset_name
         if is_transcoded_dataset:
-            dataset_name = _strip_transcoding(full_name)
+            name = _strip_transcoding(dataset_name)
             return TranscodedDataNode(
-                id=cls._hash(dataset_name),
-                name=_pretty_name(_strip_namespace(dataset_name)),
-                full_name=dataset_name,
+                id=cls._hash(name),
+                name=name,
                 tags=tags,
                 layer=layer,
                 is_free_input=is_free_input,
             )
 
         return DataNode(
-            id=cls._hash(full_name),
-            name=_pretty_name(_strip_namespace(full_name)),
-            full_name=full_name,
+            id=cls._hash(dataset_name),
+            name=dataset_name,
             tags=tags,
             layer=layer,
             kedro_obj=dataset,
@@ -222,14 +204,14 @@ class GraphNode(abc.ABC):
     @classmethod
     def create_parameters_node(
         cls,
-        full_name: str,
+        dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
         parameters: AbstractDataSet,
     ) -> "ParametersNode":
         """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
         Args:
-            full_name: The fullname of the dataset, including namespace, e.g.
+            dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
             layer: The optional layer that the parameters belong to.
             tags: The set of tags assigned to assign to the graph representation
@@ -239,9 +221,8 @@ class GraphNode(abc.ABC):
             An instance of ParametersNode.
         """
         return ParametersNode(
-            id=cls._hash(full_name),
-            name=_pretty_name(_strip_namespace(full_name)),
-            full_name=full_name,
+            id=cls._hash(dataset_name),
+            name=dataset_name,
             tags=tags,
             layer=layer,
             kedro_obj=parameters,
@@ -260,14 +241,10 @@ class GraphNode(abc.ABC):
         Example:
             >>> node = GraphNode.create_modular_pipeline_node("pipeline.data_science")
             >>> assert node.id == "pipeline.data_science"
-            >>> assert node.name == "Data Science"
+            >>> assert node.name == "pipeline.data_science"
             >>> assert node.type == GraphNodeType.MODULAR_PIPELINE
         """
-        return ModularPipelineNode(
-            id=modular_pipeline_id,
-            name=_pretty_name(_strip_namespace(modular_pipeline_id)),
-            full_name=modular_pipeline_id,
-        )
+        return ModularPipelineNode(id=modular_pipeline_id, name=modular_pipeline_id)
 
     def add_pipeline(self, pipeline_id: str):
         """Add a pipeline_id to the list of pipelines that this node belongs to."""
@@ -393,9 +370,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
     # the task node to which this metadata belongs
     task_node: InitVar[TaskNode]
-    is_pretty: InitVar[bool] = True
 
-    def __post_init__(self, task_node: TaskNode, is_pretty: bool):
+    def __post_init__(self, task_node: TaskNode):
         kedro_node = cast(KedroNode, task_node.kedro_obj)
         # this is required to handle partial, curry functions
         if inspect.isfunction(kedro_node.func):
@@ -412,18 +388,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 filepath = code_full_path
             self.filepath = str(filepath)
         self.parameters = task_node.parameters
-        self.inputs = [
-            _pretty_name(_strip_namespace(name))
-            if is_pretty
-            else _strip_namespace(name)
-            for name in kedro_node.inputs
-        ]
-        self.outputs = [
-            _pretty_name(_strip_namespace(name))
-            if is_pretty
-            else _strip_namespace(name)
-            for name in kedro_node.outputs
-        ]
+        self.inputs = kedro_node.inputs
+        self.outputs = kedro_node.outputs
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if kedro_node._name is not None:
@@ -463,16 +429,14 @@ class DataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
-        self.namespace = self._get_namespace(self.full_name)
-        self.modular_pipelines = self._expand_namespaces(
-            self._get_namespace(self.full_name)
-        )
+        self.namespace = self._get_namespace(self.name)
+        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
         metadata = getattr(self.kedro_obj, "metadata", None)
         if metadata:
             try:
                 self.viz_metadata = metadata["kedro-viz"]
             except (AttributeError, KeyError):  # pragma: no cover
-                logger.debug("Kedro-viz metadata not found for %s", self.full_name)
+                logger.debug("Kedro-viz metadata not found for %s", self.name)
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -549,10 +513,8 @@ class TranscodedDataNode(GraphNode):
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
-        self.namespace = self._get_namespace(self.full_name)
-        self.modular_pipelines = self._expand_namespaces(
-            self._get_namespace(self.full_name)
-        )
+        self.namespace = self._get_namespace(self.name)
+        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
 
 
 @dataclass
@@ -593,7 +555,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
-            self.run_command = f"kedro run --to-outputs={data_node.full_name}"
+            self.run_command = f"kedro run --to-outputs={data_node.name}"
 
         # Only check for existence of dataset if we might want to load it.
         if not (
@@ -622,7 +584,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",
-                    data_node.full_name,
+                    data_node.name,
                     type(exc).__name__,
                     exc,
                 )
@@ -688,7 +650,7 @@ class ParametersNode(GraphNode):
 
     def is_all_parameters(self) -> bool:
         """Check whether the graph node represent all parameters in the pipeline"""
-        return self.full_name == "parameters"
+        return self.name == "parameters"
 
     def is_single_parameter(self) -> bool:
         """Check whether the graph node represent a single parameter in the pipeline"""
@@ -697,7 +659,7 @@ class ParametersNode(GraphNode):
     @property
     def parameter_name(self) -> str:
         """Get a normalised parameter name without the "params:" prefix"""
-        return self.full_name.replace("params:", "")
+        return self.name.replace("params:", "")
 
     @property
     def parameter_value(self) -> Any:
