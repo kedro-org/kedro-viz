@@ -10,7 +10,7 @@ import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
 import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
-import { tabLabels, errorMessages } from '../../config';
+import { tabLabels, errorMessages, params } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 
 import './experiment-wrapper.css';
@@ -22,9 +22,7 @@ import './experiment-wrapper.css';
  * @returns string
  */
 const getDefaultTabLabel = (searchParams) => {
-  return tabLabels.includes(searchParams.view)
-    ? searchParams.view
-    : tabLabels[0];
+  return tabLabels.includes(searchParams) ? searchParams : tabLabels[0];
 };
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
@@ -60,6 +58,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [invalidUrl, setInvalidUrl] = useState(false);
 
   const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
 
   const {
     matchedExperimentTrackingMainPage,
@@ -158,12 +157,12 @@ const ExperimentWrapper = ({ theme }) => {
 
   useEffect(() => {
     if (data) {
+      /**
+       * If we return runs and don't yet have a selected run, set the first one
+       * as the default, with precedence given to runs that are bookmarked.
+       */
       if (matchedExperimentTrackingMainPage) {
         if (selectedRunIds.length === 0) {
-          /**
-           * If we return runs and don't yet have a selected run, set the first one
-           * as the default, with precedence given to runs that are bookmarked.
-           */
           const bookmarkedRuns = data.runsList.filter(
             (run) => run.bookmark === true
           );
@@ -189,22 +188,21 @@ const ExperimentWrapper = ({ theme }) => {
       }
 
       if (matchedSelectedRuns) {
-        const { params: searchParams } = matchedSelectedRuns;
-        const runIdsArray = searchParams.ids.split(',');
+        const runIds = searchParams.get(params.run).split(',');
         const allRunIds = data?.runsList.map((run) => run.id);
-        const notFoundIds = runIdsArray.find((id) => !allRunIds?.includes(id));
+        const notFoundIds = runIds.find((id) => !allRunIds?.includes(id));
 
         if (notFoundIds) {
           setErrorMessage(errorMessages.runIds);
           setInvalidUrl(true);
         } else {
-          const view = getDefaultTabLabel(searchParams);
+          const view = getDefaultTabLabel(searchParams.get(params.view));
           const isComparison =
-            runIdsArray.length > 1
+            runIds.length > 1
               ? true
-              : searchParams.isComparison === 'true';
+              : searchParams.get(params.comparisonMode) === 'true';
 
-          setSelectedRunIds(runIdsArray);
+          setSelectedRunIds(runIds);
           setEnableComparisonView(isComparison);
           setActiveTab(view);
         }
@@ -215,9 +213,8 @@ const ExperimentWrapper = ({ theme }) => {
        * it should re-direct to the latest run
        */
       if (matchedSelectedView) {
-        const { params } = matchedSelectedView;
         const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
-        const view = getDefaultTabLabel(params);
+        const view = getDefaultTabLabel(searchParams.get(params.view));
 
         setSelectedRunIds(latestRun);
         setEnableComparisonView(false);
