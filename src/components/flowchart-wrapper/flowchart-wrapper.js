@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -22,11 +22,12 @@ import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
-import { useRedirectLocationInFlowchart } from '../../utils/hooks/use-redirect-location';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageFlowchartLink } from '../../config';
+import { localStorageFlowchartLink, params, errorMessages } from '../../config';
+import { findMatchedPath } from '../../utils/match-path';
+import { getKeyByValue } from '../../utils/get-key-by-value';
 
 import './flowchart-wrapper.css';
 
@@ -40,58 +41,161 @@ const linkToFlowchartInitialVal = {
  * the rendering of the flowchart, as well as the display of all related modals.
  */
 export const FlowChartWrapper = ({
-  flags,
   fullNodeNames,
+  graph,
   loading,
+  metadataVisible,
   modularPipelinesTree,
   nodes,
-  onLoadNodeData,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
-  onUpdateActivePipeline,
+  onToggleNodeSelected,
   pipelines,
   sidebarVisible,
-  metadataVisible,
 }) => {
   const history = useHistory();
+  const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
 
-  // Reload state is to ensure it will call redirectLocation
-  // only when the page is reloaded.
-  const [reload, setReload] = useState(false);
+  const [errorMessage, setErrorMessage] = useState({});
+  const [isInvalidUrl, setIsInvalidUrl] = useState(false);
+  const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
-  const [counter, setCounter] = React.useState(60);
+  const [counter, setCounter] = useState(60);
   const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
     useState(false);
 
-  useEffect(() => {
-    setReload(true);
+  const graphRef = useRef(null);
 
-    const linkToFlowchart = loadLocalStorage(localStorageFlowchartLink);
-    setGoBackToExperimentTracking(linkToFlowchart);
+  const {
+    matchedFlowchartMainPage,
+    matchedSelectedPipeline,
+    matchedSelectedNodeId,
+    matchedSelectedNodeName,
+    matchedFocusedNode,
+  } = findMatchedPath(pathname, search);
+
+  const resetErrorMessage = () => {
+    setErrorMessage({});
+    setIsInvalidUrl(false);
+  };
+
+  const checkIfPipelineExists = () => {
+    const pipelineId = searchParams.get(params.pipeline);
+    const foundPipeline = pipelines.find((id) => id === pipelineId);
+
+    if (!foundPipeline) {
+      setErrorMessage(errorMessages.pipeline);
+      setIsInvalidUrl(true);
+    }
+  };
+  const redirectToSelectedNode = () => {
+    const node =
+      searchParams.get(params.selected) ||
+      searchParams.get(params.selectedName);
+
+    const nodeId =
+      getKeyByValue(fullNodeNames, node) ||
+      Object.keys(nodes).find((nodeId) => nodeId === node);
+
+    if (nodeId) {
+      const modularPipeline = nodes[nodeId];
+      const hasModularPipeline = modularPipeline?.length > 0;
+
+      if (hasModularPipeline) {
+        onToggleModularPipelineExpanded(modularPipeline);
+      }
+      onToggleNodeSelected(nodeId);
+
+      if (isInvalidUrl) {
+        resetErrorMessage();
+      }
+    } else {
+      setErrorMessage(errorMessages.node);
+      setIsInvalidUrl(true);
+    }
+
+    checkIfPipelineExists();
+  };
+
+  const redirectToFocusedNode = () => {
+    const focusedId = searchParams.get(params.focused);
+    const foundModularPipeline = modularPipelinesTree[focusedId];
+
+    if (foundModularPipeline) {
+      onToggleModularPipelineActive(focusedId, true);
+      onToggleFocusMode(foundModularPipeline.data);
+
+      if (isInvalidUrl) {
+        resetErrorMessage();
+      }
+    } else {
+      setErrorMessage(errorMessages.modularPipeline);
+      setIsInvalidUrl(true);
+    }
+
+    checkIfPipelineExists();
+  };
+
+  useEffect(() => {
+    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+
+    return () => {
+      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+    };
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    return () => clearTimeout(timer);
+    setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));
   }, []);
 
-  const { errorMessage, invalidUrl } = useRedirectLocationInFlowchart(
-    flags,
-    fullNodeNames,
-    modularPipelinesTree,
-    nodes,
-    onLoadNodeData,
-    onToggleFocusMode,
-    onToggleModularPipelineActive,
-    onToggleModularPipelineExpanded,
-    onUpdateActivePipeline,
-    pipelines,
-    reload
-  );
+  /**
+   * To handle redirecting to a different location via the URL (e.g. selectedNode,
+   * focusNode, etc.) we only need to call the matchPath actions when:
+   * 1. graphRef.current is null, meaning the page has just loaded
+   * 2. or when the user navigates using the back and forward buttons
+   * 3. or when invalidUrl is true, meaning the user entered something wrong in
+   * the URL and we should allow them to reset by clicking on a different node.
+   */
+  useEffect(() => {
+    const isGraphEmpty = Object.keys(graph).length === 0;
+
+    if (
+      (graphRef.current === null || usedNavigationBtn || isInvalidUrl) &&
+      !isGraphEmpty
+    ) {
+      if (matchedFlowchartMainPage) {
+        onToggleNodeSelected(null);
+        onToggleFocusMode(null);
+
+        resetErrorMessage();
+      }
+
+      if (matchedSelectedPipeline) {
+        // Redirecting to a different pipeline is handled at `preparePipelineState`
+        // to ensure the data is ready before being passed to here
+        // If pipeline from URL isn't recognised then use main pipeline
+        // and display Not Found Pipeline error
+        checkIfPipelineExists();
+      }
+
+      if (matchedSelectedNodeName || matchedSelectedNodeId) {
+        redirectToSelectedNode();
+      }
+
+      if (matchedFocusedNode) {
+        redirectToFocusedNode();
+      }
+
+      // Once all the matchPath checks are finished
+      // ensure the local states are reset
+      graphRef.current = graph;
+      setUsedNavigationBtn(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graph, usedNavigationBtn, isInvalidUrl]);
 
   const resetLinkingToFlowchartLocalStorage = useCallback(() => {
     saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
@@ -118,12 +222,15 @@ export const FlowChartWrapper = ({
     resetLinkingToFlowchartLocalStorage();
   };
 
-  if (invalidUrl) {
+  if (isInvalidUrl) {
     return (
       <div className="kedro-pipeline">
         <Sidebar />
         <MetaData />
-        <PipelineWarning errorMessage={errorMessage} invalidUrl={invalidUrl} />
+        <PipelineWarning
+          errorMessage={errorMessage}
+          invalidUrl={isInvalidUrl}
+        />
       </div>
     );
   } else {
@@ -165,22 +272,22 @@ export const FlowChartWrapper = ({
 };
 
 export const mapStateToProps = (state) => ({
-  flags: state.flags,
   fullNodeNames: getNodeFullName(state),
+  graph: state.graph,
   loading: isLoading(state),
+  metadataVisible: getVisibleMetaSidebar(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
   pipelines: state.pipeline.ids,
   sidebarVisible: state.visible.sidebar,
-  metadataVisible: getVisibleMetaSidebar(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
-  onLoadNodeData: (nodeClicked) => {
-    dispatch(loadNodeData(nodeClicked));
+  onToggleNodeSelected: (nodeID) => {
+    dispatch(loadNodeData(nodeID));
   },
   onToggleModularPipelineActive: (modularPipelineIDs, active) => {
     dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
