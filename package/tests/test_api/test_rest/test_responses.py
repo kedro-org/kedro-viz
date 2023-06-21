@@ -166,7 +166,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "uk.data_processing",
@@ -366,7 +366,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "uk.data_processing",
@@ -500,7 +500,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "f0ebef01",
@@ -554,7 +554,7 @@ def assert_example_transcoded_data(response_data):
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
     ]
 
@@ -735,7 +735,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "io.memory_dataset.MemoryDataSet",
+                "dataset_type": "io.memory_dataset.MemoryDataset",
             },
             {
                 "id": "uk",
