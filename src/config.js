@@ -98,27 +98,36 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id=',
-  selected: 'selected_id=',
-  selectedName: 'selected_name=',
-  pipeline: 'pipeline_id=',
-  run: 'run_ids=',
-  view: 'view=',
-  comparisonMode: 'comparison=',
+  focused: 'focused_id',
+  selected: 'selected_id',
+  selectedName: 'selected_name',
+  pipeline: 'pipeline_id',
+  run: 'run_ids',
+  view: 'view',
+  comparisonMode: 'comparison',
 };
 
-const activePipeline = `${params.pipeline}:pipelineId`;
+const activePipeline = `${params.pipeline}=:pipelineId`;
 
 export const routes = {
   flowchart: {
     main: '/',
-    focusedNode: `/?${activePipeline}&${params.focused}:id`,
-    selectedNode: `/?${activePipeline}&${params.selected}:id`,
-    selectedName: `/?${activePipeline}&${params.selectedName}:fullName`,
+    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `/?${activePipeline}`,
   },
   experimentTracking: {
     main: '/experiment-tracking',
     selectedView: `/experiment-tracking?${params.view}:view`,
     selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
   },
+};
+
+export const errorMessages = {
+  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
+  modularPipeline: 'Please check the value of "focused_id" in the URL',
+  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
+  runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
