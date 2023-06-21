@@ -34,7 +34,7 @@ commands:
       - run:
           name: Install Python dependencies
           command: |
-            pip install kedro
+            pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
@@ -50,7 +50,6 @@ commands:
           name: Install Node dependencies
           command: npm install
 
-  nvm_use_npm_install:
     steps:
       - run:
           name: Use NVM to run Node v16
@@ -90,7 +89,7 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-            pip install kedro
+            pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
