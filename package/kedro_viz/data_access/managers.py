@@ -244,14 +244,14 @@ class DataAccessManager:
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
-                full_name=dataset_name,
+                dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 parameters=obj,
             )
         else:
             graph_node = GraphNode.create_data_node(
-                full_name=dataset_name,
+                dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 dataset=obj,

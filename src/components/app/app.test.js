@@ -12,6 +12,7 @@ import { localStorageName } from '../../config';
 import { prepareNonPipelineState } from '../../store/initial-state';
 import reducer from '../../reducers/index';
 import { TOGGLE_GRAPH_LOADING } from '../../actions/graph';
+import { prettifyName } from '../../utils/index';
 
 describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();
@@ -102,14 +103,18 @@ describe('App', () => {
     );
     const { container, rerender } = render(<App data={spaceflights} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
-    const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
+    const menuOption = within(pipelineDropdown).getByText(
+      prettifyName(activePipeline.name)
+    );
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
       '.dropdown__label > span:first-child'
     );
 
     expect(pipelineDropdownLabel.innerHTML).toBe('Default');
     fireEvent.click(menuOption);
-    expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
+    expect(pipelineDropdownLabel.innerHTML).toBe(
+      prettifyName(activePipeline.name)
+    );
     rerender(<App data={demo} />);
     // the default dropdown placeholder is 'Please select...' which is not returned right after a rerender
     expect(pipelineDropdownLabel.innerHTML).toBe('Please select...');

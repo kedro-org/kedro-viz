@@ -53,7 +53,7 @@ const saveStateToLocalStorage = (state) => {
     textLabels: state.textLabels,
     visible: otherVisibleProps,
     theme: state.theme,
-    prettyName: state.prettyName,
+    isPrettyName: state.isPrettyName,
     flags: state.flags,
   });
 };

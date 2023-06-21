@@ -10,8 +10,7 @@ def test_expand_tree_no_nested_key():
     tree = {modular_pipeline_id: modular_pipeline_node}
     expanded_tree = modular_pipelines_services.expand_tree(tree)
     assert sorted(expanded_tree.keys()) == [ROOT_MODULAR_PIPELINE_ID, "data_science"]
-    assert expanded_tree[modular_pipeline_id].name == "Data Science"
-    assert expanded_tree[modular_pipeline_id].full_name == "data_science"
+    assert expanded_tree[modular_pipeline_id].name == "data_science"
 
 
 def test_expanded_tree_with_nested_key():

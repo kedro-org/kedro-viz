@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect';
 import { getNodeLabel, getNodeFullName, getNodeName } from './nodes';
+import { prettifyName, stripNamespace } from '../utils';
+
 const getClickedNode = (state) => state.node.clicked;
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
@@ -40,6 +42,7 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.transcodedTypes,
     (state) => state.node.runCommand,
     (state) => state.node.preview,
+    (state) => state.isPrettyName,
   ],
   (
     nodeId,
@@ -62,7 +65,8 @@ export const getClickedNodeMetaData = createSelector(
     nodeOriginalTypes,
     nodeTranscodedTypes,
     nodeRunCommand,
-    preview
+    preview,
+    isPrettyName
   ) => {
     if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
@@ -95,8 +99,20 @@ export const getClickedNodeMetaData = createSelector(
       datasetType: nodeDatasetTypes[nodeId],
       originalType: nodeOriginalTypes[nodeId],
       transcodedTypes: nodeTranscodedTypes[nodeId],
-      inputs: nodeInputs[nodeId],
-      outputs: nodeOutputs[nodeId],
+      inputs: isPrettyName
+        ? nodeInputs[nodeId] &&
+          nodeInputs[nodeId].map((nodeInput) =>
+            prettifyName(stripNamespace(nodeInput))
+          )
+        : nodeInputs[nodeId] &&
+          nodeInputs[nodeId].map((nodeInput) => stripNamespace(nodeInput)),
+      outputs: isPrettyName
+        ? nodeOutputs[nodeId] &&
+          nodeOutputs[nodeId].map((nodeOutput) =>
+            prettifyName(stripNamespace(nodeOutput))
+          )
+        : nodeOutputs[nodeId] &&
+          nodeOutputs[nodeId].map((nodeOutput) => stripNamespace(nodeOutput)),
       preview: preview && preview[nodeId],
     };
 
