@@ -2,7 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   env: {
-    apiBaseUrl: "http://localhost:4142/api",
+    apiBaseUrl: "http://localhost:4142",
     coverage: false,
     codeCoverage: {
       url: "http://localhost:3001/__coverage__",

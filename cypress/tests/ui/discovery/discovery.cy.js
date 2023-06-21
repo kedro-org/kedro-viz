@@ -10,7 +10,7 @@ describe('visit kedro-viz', () => {
 // Testing commands
 describe('testing main command', () => {
   it('checks the response of main api and stores in local storage', () => {
-     cy.main()
+     cy.main() // This test requires backend server to be running
   })
 })
 

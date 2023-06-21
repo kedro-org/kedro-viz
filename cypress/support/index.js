@@ -21,5 +21,12 @@ import './commands'
 
 // Command to perform before each test case run
 beforeEach(() => {
+    cy.intercept('/api/main', { fixture: 'rest/main' }).as('main')
+
+    // Intercept all Graphql operations in beforeEach or respective tests
+    // cy.interceptGql("getVersion")
+    // cy.interceptGql("getRunsList")
+
     cy.visit('/')
+    cy.wait(['@main'])
 })

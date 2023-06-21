@@ -1,0 +1,10 @@
+{
+    "data": {
+        "version": {
+            "installed": "6.3.0",
+            "isOutdated": false,
+            "latest": "6.3.0",
+            "__typename": "Version"
+        }
+    }
+}

@@ -23,19 +23,28 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+// Add any reusable custom commands here
 
 const apiBaseUrl = Cypress.env('apiBaseUrl');
 
-// Add any reusable custom commands here
+// Network requests
 Cypress.Commands.add('main', () => {
   cy.request({
     method: 'GET',
-    url: `${apiBaseUrl}/main`,
+    url: `${apiBaseUrl}/api/main`,
   }).then((response) => {
     expect(response).property('status').to.equal(200);
     expect(response.body).property('pipelines').to.not.be.oneOf([null, '']);
     window.localStorage.setItem('KedroViz', JSON.stringify(response.body));
+    // cy.writeFile('cypress/fixtures/main.json', response.body) // you can generate a fixture with an initial request
   });
+});
+
+// Intercepting Network requests using fixtures
+Cypress.Commands.add('interceptGql', (operationName) => {
+  cy.intercept({ method: 'POST', url: `/graphql` }, (req) => {
+    req.reply({ fixture: `/graphql/${operationName})}.json` });
+  }).as(operationName);
 });
 
 // Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
@@ -50,11 +59,11 @@ Cypress.SelectorPlayground.defaults({
 });
 
 // Custom hover command
-Cypress.Commands.add('hover', selector => {
-    cy.get(selector).trigger('mouseover')
+Cypress.Commands.add('hover', (selector) => {
+  cy.get(selector).trigger('mouseover');
 });
 
 // Custom unhover command
-Cypress.Commands.add('unhover', selector => {
-    cy.get(selector).trigger('mouseout')
+Cypress.Commands.add('unhover', (selector) => {
+  cy.get(selector).trigger('mouseout');
 });

@@ -74,7 +74,7 @@ else
   echo
   echo "Starting Kedro-Viz frontend..."
   echo
-  npm start &
+  BROWSER=none npm start &
   process_group=$(ps -o pgid $$ | tail -n 1)
   process_ids+=($!)
 fi
