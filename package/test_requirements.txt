@@ -1,5 +1,6 @@
 -r requirements.txt
-kedro >=0.17.0  
+
+kedro >=0.17.0
 kedro-datasets[pandas.ParquetDataSet, pandas.CSVDataSet, pandas.ExcelDataSet, plotly.JSONDataSet]~=1.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.7
@@ -19,6 +20,7 @@ pytest-asyncio~=0.21
 pytest-mock~=3.10
 pytest-cov~=4.0
 sqlalchemy-stubs~=0.4
+strawberry-graphql<0.184.1  # https://github.com/strawberry-graphql/strawberry/pull/2569
 trufflehog~=2.2
 
 # mypy
