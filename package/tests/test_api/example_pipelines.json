@@ -73,7 +73,7 @@
       "type": "data",
       "modular_pipelines": ["uk", "uk.data_science"],
       "layer": null,
-      "dataset_type": "io.memory_dataset.MemoryDataSet"
+      "dataset_type": "io.memory_dataset.MemoryDataset"
     },
     {
       "id": "uk.data_processing",
