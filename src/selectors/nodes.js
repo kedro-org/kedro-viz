@@ -20,7 +20,7 @@ const getNodeType = (state) => state.node.type;
 const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
-const getPrettyName = (state) => state.prettyName;
+const getIsPrettyName = (state) => state.isPrettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
@@ -108,8 +108,9 @@ export const getNodeSelected = createSelector(
  * Returns node label based on if pretty name is turned on/off
  */
 export const getNodeLabel = createSelector(
-  [getPrettyName, getNodeName, getNodeFullName],
-  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
+  [getIsPrettyName, getNodeName, getNodeFullName],
+  (isPrettyName, nodeName, nodeFullName) =>
+    isPrettyName ? nodeName : nodeFullName
 );
 
 /**
