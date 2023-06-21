@@ -20,7 +20,7 @@ pytest-asyncio~=0.21
 pytest-mock~=3.10
 pytest-cov~=4.0
 sqlalchemy-stubs~=0.4
-strawberry-graphql[cli]<=0.185  # Pinning as recent versions don't work with mypy < 1.0 
+strawberry-graphql[cli]<0.185  # Pinning as recent versions don't work with mypy < 1.0 
 trufflehog~=2.2
 
 # mypy
