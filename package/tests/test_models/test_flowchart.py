@@ -6,7 +6,7 @@ from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from kedro.io import MemoryDataSet, PartitionedDataSet
+from kedro.io import MemoryDataset, PartitionedDataSet
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataSet, ParquetDataSet
 
@@ -173,7 +173,7 @@ class TestGraphNodeCreation:
         assert data_node.pipelines == set()
 
     def test_create_parameters_all_parameters(self):
-        parameters_dataset = MemoryDataSet(
+        parameters_dataset = MemoryDataset(
             data={"test_split_ratio": 0.3, "num_epochs": 1000}
         )
         parameters_node = GraphNode.create_parameters_node(
@@ -203,7 +203,7 @@ class TestGraphNodeCreation:
     def test_create_parameters_node_single_parameter(
         self, dataset_name, expected_modular_pipelines
     ):
-        parameters_dataset = MemoryDataSet(data=0.3)
+        parameters_dataset = MemoryDataset(data=0.3)
         parameters_node = GraphNode.create_parameters_node(
             full_name=dataset_name, layer=None, tags={}, parameters=parameters_dataset
         )
@@ -228,8 +228,8 @@ class TestGraphNodeCreation:
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):
-        """Test the case where ``parameters`` is equal to a MemoryDataSet with no data"""
-        parameters_dataset = MemoryDataSet()
+        """Test the case where ``parameters`` is equal to a MemoryDataset with no data"""
+        parameters_dataset = MemoryDataset()
         parameters_node = GraphNode.create_parameters_node(
             full_name="non_existing",
             layer=None,
@@ -269,7 +269,7 @@ class TestGraphNodePipelines:
 
 class TestGraphNodeMetadata:
     @pytest.mark.parametrize(
-        "dataset,has_metadata", [(MemoryDataSet(data=1), True), (None, False)]
+        "dataset,has_metadata", [(MemoryDataset(data=1), True), (None, False)]
     )
     def test_node_has_metadata(self, dataset, has_metadata):
         data_node = GraphNode.create_data_node(
@@ -573,7 +573,7 @@ class TestGraphNodeMetadata:
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}
-        parameters_dataset = MemoryDataSet(data=parameters)
+        parameters_dataset = MemoryDataset(data=parameters)
         parameters_node = GraphNode.create_parameters_node(
             full_name="parameters", layer=None, tags={}, parameters=parameters_dataset
         )
@@ -581,7 +581,7 @@ class TestGraphNodeMetadata:
         assert parameters_node_metadata.parameters == parameters
 
     def test_parameters_metadata_single_parameter(self):
-        parameters_dataset = MemoryDataSet(data=0.3)
+        parameters_dataset = MemoryDataset(data=0.3)
         parameters_node = GraphNode.create_parameters_node(
             full_name="params:test_split_ratio",
             layer=None,
