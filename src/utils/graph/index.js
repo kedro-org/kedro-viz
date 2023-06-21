@@ -12,7 +12,7 @@ export const graphNew = ({ nodes, edges, layers }) => {
     node.icon = node.icon || 'node';
     const fullName =
       (node && node.fullName && node.fullName.length) ||
-      (node && node.full_name && node.full_name.length);
+      (node && node.name && node.name.length);
 
     const padding = { x: 20, y: 10 };
     const textWidth = fullName * 7;

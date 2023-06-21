@@ -13,7 +13,7 @@ import {
   TOGGLE_CODE,
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
-  TOGGLE_PRETTY_NAME,
+  TOGGLE_IS_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -116,14 +116,14 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_PRETTY_NAME', () => {
-    it('should toggle the value of prettyName', () => {
+  describe('TOGGLE_IS_PRETTY_NAME', () => {
+    it('should toggle the value of isPrettyName', () => {
       const newState = reducer(mockState.spaceflights, {
-        type: TOGGLE_PRETTY_NAME,
-        prettyName: true,
+        type: TOGGLE_IS_PRETTY_NAME,
+        isPrettyName: true,
       });
-      expect(mockState.spaceflights.prettyName).toBe(true);
-      expect(newState.prettyName).toBe(true);
+      expect(mockState.spaceflights.isPrettyName).toBe(true);
+      expect(newState.isPrettyName).toBe(true);
     });
   });
 

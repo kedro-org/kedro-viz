@@ -1,6 +1,6 @@
 import React from 'react';
 import MetaData, { mapDispatchToProps } from './metadata';
-import { togglePrettyName } from '../../actions';
+import { toggleIsPrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
@@ -85,7 +85,7 @@ describe('MetaData', () => {
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
         beforeLayoutActions: [
-          () => togglePrettyName(false),
+          () => toggleIsPrettyName(false),
           () => toggleTypeDisabled('parameters', false),
         ],
         afterLayoutActions: [
@@ -108,7 +108,7 @@ describe('MetaData', () => {
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
         beforeLayoutActions: [
-          () => togglePrettyName(true),
+          () => toggleIsPrettyName(true),
           () => toggleTypeDisabled('parameters', false),
         ],
         afterLayoutActions: [
