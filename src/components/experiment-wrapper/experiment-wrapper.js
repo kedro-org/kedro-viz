@@ -10,8 +10,15 @@ import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
 import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
-import { tabLabels, errorMessages, params } from '../../config';
+import {
+  errorMessages,
+  linkToFlowchartInitialVal,
+  localStorageFlowchartLink,
+  params,
+  tabLabels,
+} from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
+import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.css';
 
@@ -157,6 +164,14 @@ const ExperimentWrapper = ({ theme }) => {
   };
 
   useEffect(() => {
+    const showGoBackBtnFromStorage = loadLocalStorage(
+      localStorageFlowchartLink
+    ).showGoBackBtn;
+
+    if (showGoBackBtnFromStorage) {
+      saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
+    }
+
     window.addEventListener('popstate', () => setUsedNavigationBtn(true));
 
     return () => {
