@@ -34,60 +34,60 @@ describe('test global toolbar', () => {
     /* ==== Generated with Cypress Studio ==== */
     // Click Tests
     
-    cy.get('[data-cy="Kedro Icon"]').click();
-    cy.get('[data-cy="View your pipeline"]').click();
-    cy.get('[data-cy="View your experiments"]').click();
-    cy.get('[data-cy="Toggle Theme"]').click();
-    cy.get('[data-cy="Toggle Theme"]').click();
-    cy.get('[data-cy="Change the settings flags"]').click();
+    cy.get('[data-test="Kedro Icon"]').click();
+    cy.get('[data-test="View your pipeline"]').click();
+    cy.get('[data-test="View your experiments"]').click();
+    cy.get('[data-test="Toggle Theme"]').click();
+    cy.get('[data-test="Toggle Theme"]').click();
+    cy.get('[data-test="Change the settings flags"]').click();
     cy.get('[role="dialog"]').should('be.visible').then(($dialog)=>{
-      cy.wrap($dialog).find('[data-cy="Cancel Button in Settings Modal"]').click()
+      cy.wrap($dialog).find('[data-test="Cancel Button in Settings Modal"]').click()
     });
     cy.get('[role="dialog"]').should('be.not.visible');
 
     // Hover/UnHover Tests
 
     // Hover View your pipeline
-    cy.hover('[data-cy="View your pipeline"]');
-    cy.get('[data-cy="View your pipeline"]').within(() => {
+    cy.hover('[data-test="View your pipeline"]');
+    cy.get('[data-test="View your pipeline"]').within(() => {
       return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
     })
     // UnHover View your pipeline
-    cy.unhover('[data-cy="View your pipeline"]');
-    cy.get('[data-cy="View your pipeline"]').within(() => {
+    cy.unhover('[data-test="View your pipeline"]');
+    cy.get('[data-test="View your pipeline"]').within(() => {
       return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
     })
 
     // Hover View your experiments
-    cy.hover('[data-cy="View your experiments"]');
-    cy.get('[data-cy="View your experiments"]').within(() => {
+    cy.hover('[data-test="View your experiments"]');
+    cy.get('[data-test="View your experiments"]').within(() => {
       return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
     })
     // UnHover View your experiments
-    cy.unhover('[data-cy="View your experiments"]');
-    cy.get('[data-cy="View your experiments"]').within(() => {
+    cy.unhover('[data-test="View your experiments"]');
+    cy.get('[data-test="View your experiments"]').within(() => {
       return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
     })
 
     // Hover Toggle Theme
-    cy.hover('[data-cy="Toggle Theme"]');
-    cy.get('[data-cy="Toggle Theme"]').within(() => {
+    cy.hover('[data-test="Toggle Theme"]');
+    cy.get('[data-test="Toggle Theme"]').within(() => {
       return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
     })
     // UnHover Toggle Theme
-    cy.unhover('[data-cy="Toggle Theme"]');
-    cy.get('[data-cy="Toggle Theme"]').within(() => {
+    cy.unhover('[data-test="Toggle Theme"]');
+    cy.get('[data-test="Toggle Theme"]').within(() => {
       return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
     })
 
     // Hover Change the settings flags
-    cy.hover('[data-cy="Change the settings flags"]');
-    cy.get('[data-cy="Change the settings flags"]').within(() => {
+    cy.hover('[data-test="Change the settings flags"]');
+    cy.get('[data-test="Change the settings flags"]').within(() => {
       return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
     })
     // UnHover Change the settings flags
-    cy.unhover('[data-cy="Change the settings flags"]');
-    cy.get('[data-cy="Change the settings flags"]').within(() => {
+    cy.unhover('[data-test="Change the settings flags"]');
+    cy.get('[data-test="Change the settings flags"]').within(() => {
       return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
     })
     /* ==== End Cypress Studio ==== */

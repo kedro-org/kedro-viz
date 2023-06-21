@@ -50,10 +50,10 @@ Cypress.Commands.add('interceptGql', (operationName) => {
 // Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
 Cypress.SelectorPlayground.defaults({
   onElement: ($el) => {
-    const customId = $el.attr('data-cy');
+    const customId = $el.attr('data-test');
 
     if (customId) {
-      return `[data-cy=${customId}]`;
+      return `[data-test=${customId}]`;
     }
   },
 });

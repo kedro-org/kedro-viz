@@ -6,7 +6,7 @@ import './button.css';
 /**
  * Generic Kedro Button
  */
-const Button = ({ children, dataCy, disabled, onClick, size, mode }) => (
+const Button = ({ children, dataTest, disabled, onClick, size, mode }) => (
   <span className="kedro button">
     <button
       className={classnames(
@@ -14,7 +14,7 @@ const Button = ({ children, dataCy, disabled, onClick, size, mode }) => (
         `button__btn--${size}`,
         `button__btn--${mode}`
       )}
-      data-cy={dataCy}
+      data-test={dataTest}
       disabled={disabled}
       onClick={onClick}
     >
@@ -24,7 +24,7 @@ const Button = ({ children, dataCy, disabled, onClick, size, mode }) => (
 );
 
 Button.defaultProps = {
-  dataCy: 'CypressDefaultDataValue',
+  dataTest: 'TestDefaultDataValue',
   disabled: false,
   mode: 'primary',
   onClick: null,
@@ -32,7 +32,7 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
-  dataCy: PropTypes.string,
+  dataTest: PropTypes.string,
   disabled: PropTypes.bool,
   mode: PropTypes.oneOf(['primary', 'secondary', 'success']),
   onClick: PropTypes.func,

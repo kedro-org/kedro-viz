@@ -15,7 +15,7 @@ const IconButton = ({
   children,
   className,
   container = 'li',
-  dataCy,
+  dataTest,
   dataHeapEvent,
   disabled,
   icon,
@@ -55,7 +55,7 @@ const IconButton = ({
           'pipeline-icon-toolbar__button': true,
           'pipeline-icon-toolbar__button--active': active,
         })}
-        data-cy={dataCy}
+        data-test={dataTest}
         data-heap-event={dataHeapEvent}
         disabled={disabled}
         onClick={onClick}
@@ -97,7 +97,7 @@ IconButton.propTypes = {
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
   children: PropTypes.node,
-  dataCy: PropTypes.string,
+  dataTest: PropTypes.string,
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.func,
@@ -111,7 +111,7 @@ IconButton.defaultProps = {
   ariaLabel: null,
   ariaLive: null,
   children: null,
-  dataCy: 'CypressDefaultDataValue',
+  dataTest: 'TestDefaultDataValue',
   dataHeapEvent: null,
   disabled: false,
   icon: null,
