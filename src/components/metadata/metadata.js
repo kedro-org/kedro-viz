@@ -38,7 +38,7 @@ const MetaData = ({
   visible = true,
   visibleCode,
 }) => {
-  const { toFlowchartPage } = useGeneratePathname();
+  const { toSelectedPipeline } = useGeneratePathname();
   const { toExperimentTrackingPath, toMetricsViewPath } =
     useGeneratePathnameForExperimentTracking();
 
@@ -86,8 +86,8 @@ const MetaData = ({
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
-    // and reset the URL to '/'
-    toFlowchartPage();
+    // and reset the URL to the current active pipeline
+    toSelectedPipeline();
   };
 
   const onExpandMetaDataClick = () => {
