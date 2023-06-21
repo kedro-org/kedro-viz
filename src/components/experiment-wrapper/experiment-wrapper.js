@@ -56,6 +56,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [activeTab, setActiveTab] = useState(tabLabels[0]);
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
+  const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -156,6 +157,14 @@ const ExperimentWrapper = ({ theme }) => {
   };
 
   useEffect(() => {
+    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+
+    return () => {
+      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+    };
+  }, []);
+
+  useEffect(() => {
     if (data) {
       /**
        * If we return runs and don't yet have a selected run, set the first one
@@ -222,8 +231,10 @@ const ExperimentWrapper = ({ theme }) => {
       }
     }
 
+    usedNavigationBtn && setUsedNavigationBtn(false);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, usedNavigationBtn]);
 
   useEffect(() => {
     if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
