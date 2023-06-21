@@ -89,16 +89,16 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
-export const TOGGLE_PRETTY_NAME = 'TOGGLE_PRETTY_NAME';
+export const TOGGLE_IS_PRETTY_NAME = 'TOGGLE_IS_PRETTY_NAME';
 
 /**
  * Toggle whether to show pretty name on/off
- * @param {Boolean} prettyName True if pretty name is to be shown
+ * @param {Boolean} isPrettyName True if pretty name is to be shown
  */
-export function togglePrettyName(prettyName) {
+export function toggleIsPrettyName(isPrettyName) {
   return {
-    type: TOGGLE_PRETTY_NAME,
-    prettyName,
+    type: TOGGLE_IS_PRETTY_NAME,
+    isPrettyName,
   };
 }
 

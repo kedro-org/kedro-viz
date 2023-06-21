@@ -77,3 +77,48 @@ export const replaceMatches = (str, toReplace) => {
     return str;
   }
 };
+
+/**
+ * Removes any parts of a string that match the regular expression
+ * @param {String} str The string to check
+ * @returns {String} The string with or without removed values
+ */
+export const stripNamespace = (str) => {
+  const pattern = new RegExp('[A-Za-z0-9-_]+\\.', 'g');
+  return str.replace(pattern, '');
+};
+
+/**
+ * Replaces any parts of a string that match the pattern with the target pattern and capitalizes each word in the string separated by a space
+ * @param {String} str The string to check
+ * @returns {String} The string with or without replaced values
+ */
+export const prettifyName = (str) => {
+  const replacedString = str
+    .replace(/-/g, ' ')
+    .replace(/_/g, ' ')
+    .replace(/:/g, ': ')
+    .trim();
+  return replacedString.replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+};
+
+/**
+ * Prettifies name property of the nested object in a modularPipeline
+ * @param {Object} modularPipelines The object whose nested object property needs to be prettified
+ * @returns {Object} The object with or without prettified name inside the nested object
+ */
+export const prettifyModularPipelineNames = (modularPipelines) => {
+  for (const key in modularPipelines) {
+    if (modularPipelines.hasOwnProperty(key)) {
+      const modularPipeline = modularPipelines[key];
+
+      if (modularPipeline.hasOwnProperty('name')) {
+        modularPipelines[key] = {
+          ...modularPipeline,
+          name: prettifyName(modularPipeline['name']),
+        };
+      }
+    }
+  }
+  return modularPipelines;
+};
