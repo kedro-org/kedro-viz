@@ -50,6 +50,7 @@ commands:
           name: Install Node dependencies
           command: npm install
 
+  nvm_use_npm_install:
     steps:
       - run:
           name: Use NVM to run Node v16
