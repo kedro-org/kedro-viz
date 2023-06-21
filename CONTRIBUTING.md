@@ -266,6 +266,20 @@ cd tools/test-lib/react-app
 npm test
 ```
 
+#### JavaScript application End-to-end tests
+
+Kedro-Viz uses [Cypress](https://www.cypress.io/) for running JavaScript end-to-end tests. You can run tests as follows:
+
+```bash
+npm run cy:test
+```
+
+You can also run Cypress in head mode for active development. Please note that you need to start your frontend and backend applications separately before running the below command.
+
+```bash
+npm run cy:dev
+```
+
 ### Python web server tests
 
 Before running Python tests, install test requirements:
