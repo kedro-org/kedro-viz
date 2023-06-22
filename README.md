@@ -16,13 +16,14 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 <br />
 
 [![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
-[![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
+[![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
+[![Downloads](https://static.pepy.tech/badge/kedro-viz/week)](https://pepy.tech/project/kedro-viz)
+[![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)
 [![License](https://img.shields.io/badge/license-Apache%202.0-3da639.svg)](https://opensource.org/licenses/Apache-2.0)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4355948.svg)](https://doi.org/10.5281/zenodo.4355948)
-[![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Slack Organisation](https://img.shields.io/badge/slack-chat-blueviolet.svg?label=Kedro%20Slack&logo=slack)](https://slack.kedro.org)
 
 ## Introduction
 
