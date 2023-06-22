@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
-# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
+# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access, catching-non-exception
 import logging
 from typing import Dict, Optional
 
@@ -29,17 +29,17 @@ class CatalogRepository:
 
     @property
     def layers_mapping(self):
-        """Return layer mapping: dataset_full_name -> layer it belongs to in the catalog
+        """Return layer mapping: dataset_name -> layer it belongs to in the catalog
         From kedro-datasets 1.3.0 onwards, the 'layers' attribute is defined inside the 'metadata'
         under 'kedro-viz' plugin.
 
         Catalog before kedro-datasets 1.3.0:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             layers: raw
 
         Catalog from kedro-datasets 1.3.0 onwards:
-            type: pandas.CSVDataSet
+            type: pandas.CSVDataset
             filepath: /filepath/to/dataset
             metadata:
                 kedro-viz:
@@ -98,7 +98,7 @@ class CatalogRepository:
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DataSetNotFoundError:
-            dataset_obj = MemoryDataSet()
+            dataset_obj = MemoryDataSet()  # type: ignore[assignment]
 
         return dataset_obj
 
