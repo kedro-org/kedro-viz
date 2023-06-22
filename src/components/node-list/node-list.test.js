@@ -1,5 +1,5 @@
 import React from 'react';
-import { togglePrettyName } from '../../actions';
+import { toggleIsPrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { localStorageName, sidebarElementTypes } from '../../config';
 import {
@@ -183,7 +183,7 @@ describe('NodeList', () => {
 
     it('shows full node names when pretty name is turned off', () => {
       const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => togglePrettyName(false)],
+        beforeLayoutActions: [() => toggleIsPrettyName(false)],
       });
       expect(elements(wrapper)).toEqual([
         ['data_processing'],
@@ -195,7 +195,7 @@ describe('NodeList', () => {
     });
     it('shows formatted node names when pretty name is turned on', () => {
       const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => togglePrettyName(true)],
+        beforeLayoutActions: [() => toggleIsPrettyName(true)],
       });
       expect(elements(wrapper)).toEqual([
         ['Data Processing'],

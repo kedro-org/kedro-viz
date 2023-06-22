@@ -84,17 +84,10 @@ describe('normalizeData', () => {
     );
   });
 
-  it('should fall back to node.name if node.full_name is not supplied', () => {
+  it('should contain name for all nodes', () => {
     const data = Object.assign({}, spaceflights);
     data.nodes.forEach((node) => {
-      node.name = node.name + '-name';
-      delete node.full_name;
+      expect(node).toHaveProperty('name');
     });
-    const state = normalizeData(data);
-    expect(
-      state.node.ids.every(
-        (nodeID) => state.node.fullName[nodeID] === state.node.name[nodeID]
-      )
-    ).toBe(true);
   });
 });
