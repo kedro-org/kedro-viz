@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
@@ -65,6 +65,7 @@ const ExperimentWrapper = ({ theme }) => {
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
+  const history = useHistory();
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
 
@@ -237,6 +238,15 @@ const ExperimentWrapper = ({ theme }) => {
 
   useEffect(() => {
     if (data) {
+      if (
+        !matchedExperimentTrackingMainPage &&
+        !matchedSelectedRuns &&
+        !matchedSelectedView
+      ) {
+        setErrorMessage(errorMessages.experimentTracking);
+        setInvalidUrl(true);
+      }
+
       if (matchedExperimentTrackingMainPage) {
         redirectToDefaultRun();
       }
@@ -326,7 +336,14 @@ const ExperimentWrapper = ({ theme }) => {
           Oops, this URL isn't valid
         </h2>
         <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
-        <Button onClick={() => toExperimentTrackingPath()}>Reset view</Button>
+        <Button
+          onClick={() => {
+            toExperimentTrackingPath();
+            history.go();
+          }}
+        >
+          Reset view
+        </Button>
       </div>
     );
   } else {
