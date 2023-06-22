@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
@@ -16,9 +17,20 @@ import {
   params,
   tabLabels,
 } from '../../config';
+import { findMatchedPath } from '../../utils/match-path';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.css';
+
+/**
+ * If the view from URL is not matched the tabLabels then set the default
+ * value to be the first one from tabLabels
+ * @param {object} searchParams
+ * @returns string
+ */
+const getDefaultTabLabel = (searchParams) => {
+  return tabLabels.includes(searchParams) ? searchParams : tabLabels[0];
+};
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
@@ -46,36 +58,27 @@ const ExperimentWrapper = ({ theme }) => {
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
-  // Reload state is to ensure it will call useRedirectLocationInExperimentTracking
-  // only when the component is re-rendered or reloaded.
-  const [reload, setReload] = useState(false);
+  const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [selectedRunIds, setSelectedRunIds] = useState([]);
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
+  const [errorMessage, setErrorMessage] = useState({});
+  const [invalidUrl, setInvalidUrl] = useState(false);
+  const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
-  useEffect(() => setReload(true), []);
+  const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const {
+    matchedExperimentTrackingMainPage,
+    matchedSelectedView,
+    matchedSelectedRuns,
+  } = findMatchedPath(pathname, search);
 
   const { toExperimentTrackingPath, toSelectedRunsPath } =
     useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
-
-  const {
-    activeTab,
-    enableComparisonView,
-    errorMessage,
-    invalidUrl,
-    selectedRunIds,
-    setActiveTab,
-    setEnableComparisonView,
-    setSelectedRunIds,
-  } = useRedirectLocationInExperimentTracking(data, reload);
 
   // Fetch all data for selected runs.
   const {
@@ -160,6 +163,62 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
+  const redirectToDefaultRun = () => {
+    if (selectedRunIds.length === 0) {
+      const bookmarkedRuns = data.runsList.filter(
+        (run) => run.bookmark === true
+      );
+
+      if (bookmarkedRuns.length > 0) {
+        const defaultRunFromBookmarked = bookmarkedRuns
+          .map((run) => run.id)
+          .slice(0, 1);
+
+        setSelectedRunIds(defaultRunFromBookmarked);
+        toSelectedRunsPath(
+          defaultRunFromBookmarked,
+          activeTab,
+          enableComparisonView
+        );
+      } else {
+        const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
+
+        setSelectedRunIds(defaultRun);
+        toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
+      }
+    }
+  };
+
+  const redirectToSelectedRuns = () => {
+    const runIds = searchParams.get(params.run).split(',');
+    const allRunIds = data?.runsList.map((run) => run.id);
+    const notFoundIds = runIds.find((id) => !allRunIds?.includes(id));
+
+    if (notFoundIds) {
+      setErrorMessage(errorMessages.runIds);
+      setInvalidUrl(true);
+    } else {
+      const view = getDefaultTabLabel(searchParams.get(params.view));
+      const isComparison =
+        runIds.length > 1
+          ? true
+          : searchParams.get(params.comparisonMode) === 'true';
+
+      setSelectedRunIds(runIds);
+      setEnableComparisonView(isComparison);
+      setActiveTab(view);
+    }
+  };
+
+  const redirectToSelectedView = () => {
+    const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
+    const view = getDefaultTabLabel(searchParams.get(params.view));
+
+    setSelectedRunIds(latestRun);
+    setEnableComparisonView(false);
+    setActiveTab(view);
+  };
+
   useEffect(() => {
     const showGoBackBtnFromStorage = loadLocalStorage(
       localStorageFlowchartLink
@@ -175,6 +234,35 @@ const ExperimentWrapper = ({ theme }) => {
       window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
     };
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      /**
+       * If we return runs and don't yet have a selected run, set the first one
+       * as the default, with precedence given to runs that are bookmarked.
+       */
+      if (matchedExperimentTrackingMainPage) {
+        redirectToDefaultRun();
+      }
+
+      if (matchedSelectedRuns) {
+        redirectToSelectedRuns();
+      }
+
+      /**
+       * This is for when there's only view= is defined in the URL, without any run_ids
+       * it should re-direct to the latest run
+       */
+      if (matchedSelectedView) {
+        redirectToSelectedView();
+      }
+    }
+
+    usedNavigationBtn && setUsedNavigationBtn(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, usedNavigationBtn]);
+
   useEffect(() => {
     if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
       setDisableRunSelection(true);
