@@ -12,13 +12,15 @@ process_ids=()
 # constants
 KEDRO_VIZ_FRONTEND_PORT=4141
 KEDRO_VIZ_BACKEND_PORT=4142
-KEDRO_VIZ_FRONTEND_TIME_OUT=30
-KEDRO_VIZ_BACKEND_TIME_OUT=60
+KEDRO_VIZ_FRONTEND_TIMEOUT=30
+KEDRO_VIZ_BACKEND_TIMEOUT=90
 
 # Function to terminate processes
 terminate_processes() {
   echo "Terminating processes..."
-  kill -- "-${process_group}"
+  for pgid in "${process_ids[@]}"; do
+    kill -- "-$pgid" >/dev/null 2>&1
+  done
 }
 
 # Function to wait for a service to start with a timeout
@@ -59,12 +61,12 @@ else
   echo "Starting Kedro-Viz Backend..."
   echo
   make run &
-  process_group=$(ps -o pgid $$ | tail -n 1)
-  process_ids+=($!)
+  process_group=$(ps -o pgid $$ | tail -n 1 | awk '{print $1}')
+  process_ids+=("$process_group")
 fi
 
 # Wait for Kedro-Viz Backend to start
-wait_for_service "Kedro-Viz Backend" "localhost" $KEDRO_VIZ_BACKEND_PORT $KEDRO_VIZ_BACKEND_TIME_OUT
+wait_for_service "Kedro-Viz Backend" "localhost" $KEDRO_VIZ_BACKEND_PORT $KEDRO_VIZ_BACKEND_TIMEOUT
 
 # Check if Kedro-Viz Frontend is already running
 if is_port_in_use $KEDRO_VIZ_FRONTEND_PORT; then
@@ -75,12 +77,12 @@ else
   echo "Starting Kedro-Viz frontend..."
   echo
   BROWSER=none npm start &
-  process_group=$(ps -o pgid $$ | tail -n 1)
-  process_ids+=($!)
+  process_group=$(ps -o pgid $$ | tail -n 1 | awk '{print $1}')
+  process_ids+=("$process_group")
 fi
 
 # Wait for Kedro-Viz Frontend to start
-wait_for_service "Kedro-Viz Frontend" "localhost" $KEDRO_VIZ_FRONTEND_PORT $KEDRO_VIZ_FRONTEND_TIME_OUT
+wait_for_service "Kedro-Viz Frontend" "localhost" $KEDRO_VIZ_FRONTEND_PORT $KEDRO_VIZ_FRONTEND_TIMEOUT
 
 # Run Cypress E2E tests
 echo

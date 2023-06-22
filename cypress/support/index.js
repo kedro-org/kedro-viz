@@ -1,32 +1,14 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+// This file gets loaded automatically before all the test files.
 
-// Import commands.js using ES2015 syntax:
-import './commands'
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+import './commands';
 
 // Command to perform before each test case run
 beforeEach(() => {
-    cy.intercept('/api/main', { fixture: 'rest/main' }).as('main')
-
-    // Intercept all Graphql operations in beforeEach or respective tests
-    // cy.interceptGql("getVersion")
-    // cy.interceptGql("getRunsList")
-
-    cy.visit('/')
-    cy.wait(['@main'])
-})
+  // For reference: We can intercept requests and use fixtures in case we do not start backend server
+  // Intercept all Graphql operations in beforeEach or respective tests
+  // cy.interceptGql("getVersion")
+  // cy.interceptGql("getRunsList")
+  // cy.intercept('/api/main', { fixture: 'rest/main' }).as('main')
+  // cy.wait(['@main'])
+  cy.visit('/');
+});
