@@ -163,6 +163,62 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
+  const redirectToDefaultRun = () => {
+    if (selectedRunIds.length === 0) {
+      const bookmarkedRuns = data.runsList.filter(
+        (run) => run.bookmark === true
+      );
+
+      if (bookmarkedRuns.length > 0) {
+        const defaultRunFromBookmarked = bookmarkedRuns
+          .map((run) => run.id)
+          .slice(0, 1);
+
+        setSelectedRunIds(defaultRunFromBookmarked);
+        toSelectedRunsPath(
+          defaultRunFromBookmarked,
+          activeTab,
+          enableComparisonView
+        );
+      } else {
+        const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
+
+        setSelectedRunIds(defaultRun);
+        toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
+      }
+    }
+  };
+
+  const redirectToSelectedRuns = () => {
+    const runIds = searchParams.get(params.run).split(',');
+    const allRunIds = data?.runsList.map((run) => run.id);
+    const notFoundIds = runIds.find((id) => !allRunIds?.includes(id));
+
+    if (notFoundIds) {
+      setErrorMessage(errorMessages.runIds);
+      setInvalidUrl(true);
+    } else {
+      const view = getDefaultTabLabel(searchParams.get(params.view));
+      const isComparison =
+        runIds.length > 1
+          ? true
+          : searchParams.get(params.comparisonMode) === 'true';
+
+      setSelectedRunIds(runIds);
+      setEnableComparisonView(isComparison);
+      setActiveTab(view);
+    }
+  };
+
+  const redirectToSelectedView = () => {
+    const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
+    const view = getDefaultTabLabel(searchParams.get(params.view));
+
+    setSelectedRunIds(latestRun);
+    setEnableComparisonView(false);
+    setActiveTab(view);
+  };
+
   useEffect(() => {
     const showGoBackBtnFromStorage = loadLocalStorage(
       localStorageFlowchartLink
@@ -186,50 +242,11 @@ const ExperimentWrapper = ({ theme }) => {
        * as the default, with precedence given to runs that are bookmarked.
        */
       if (matchedExperimentTrackingMainPage) {
-        if (selectedRunIds.length === 0) {
-          const bookmarkedRuns = data.runsList.filter(
-            (run) => run.bookmark === true
-          );
-
-          if (bookmarkedRuns.length > 0) {
-            const defaultRunFromBookmarked = bookmarkedRuns
-              .map((run) => run.id)
-              .slice(0, 1);
-
-            setSelectedRunIds(defaultRunFromBookmarked);
-            toSelectedRunsPath(
-              defaultRunFromBookmarked,
-              activeTab,
-              enableComparisonView
-            );
-          } else {
-            const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
-
-            setSelectedRunIds(defaultRun);
-            toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
-          }
-        }
+        redirectToDefaultRun();
       }
 
       if (matchedSelectedRuns) {
-        const runIds = searchParams.get(params.run).split(',');
-        const allRunIds = data?.runsList.map((run) => run.id);
-        const notFoundIds = runIds.find((id) => !allRunIds?.includes(id));
-
-        if (notFoundIds) {
-          setErrorMessage(errorMessages.runIds);
-          setInvalidUrl(true);
-        } else {
-          const view = getDefaultTabLabel(searchParams.get(params.view));
-          const isComparison =
-            runIds.length > 1
-              ? true
-              : searchParams.get(params.comparisonMode) === 'true';
-
-          setSelectedRunIds(runIds);
-          setEnableComparisonView(isComparison);
-          setActiveTab(view);
-        }
+        redirectToSelectedRuns();
       }
 
       /**
@@ -237,12 +254,7 @@ const ExperimentWrapper = ({ theme }) => {
        * it should re-direct to the latest run
        */
       if (matchedSelectedView) {
-        const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
-        const view = getDefaultTabLabel(searchParams.get(params.view));
-
-        setSelectedRunIds(latestRun);
-        setEnableComparisonView(false);
-        setActiveTab(view);
+        redirectToSelectedView();
       }
     }
 
