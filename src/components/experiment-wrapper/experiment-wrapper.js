@@ -9,7 +9,14 @@ import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
 import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
-import { useRedirectLocationInExperimentTracking } from '../../utils/hooks/use-redirect-location';
+import {
+  errorMessages,
+  linkToFlowchartInitialVal,
+  localStorageFlowchartLink,
+  params,
+  tabLabels,
+} from '../../config';
+import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.css';
 
@@ -153,6 +160,21 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
+  useEffect(() => {
+    const showGoBackBtnFromStorage = loadLocalStorage(
+      localStorageFlowchartLink
+    ).showGoBackBtn;
+
+    if (showGoBackBtnFromStorage) {
+      saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
+    }
+
+    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+
+    return () => {
+      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+    };
+  }, []);
   useEffect(() => {
     if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
       setDisableRunSelection(true);
