@@ -238,6 +238,9 @@ const ExperimentWrapper = ({ theme }) => {
 
   useEffect(() => {
     if (data) {
+      /**
+       * To display a generic error message when the URL is not matched any path at all
+       */
       if (
         !matchedExperimentTrackingMainPage &&
         !matchedSelectedRuns &&
