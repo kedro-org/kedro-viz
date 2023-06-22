@@ -28,7 +28,8 @@ class CatalogRepository:
         existing_layer = self._layers_mapping.get(dataset_name)
         if existing_layer is not None and existing_layer != layer:
             raise ValueError(
-                f"Transcoded datasets should have the same layer. Mismatch found for: {dataset_name}"
+                "Transcoded datasets should have the same layer."
+                f"Mismatch found for: {dataset_name}"
             )
 
     @property
