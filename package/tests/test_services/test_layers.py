@@ -159,7 +159,7 @@ from kedro_viz.services.layers import sort_layers
 def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
     nodes = {
         node_id: GraphNode.create_data_node(
-            full_name=node_dict["id"],
+            dataset_name=node_dict["id"],
             layer=node_dict.get("layer"),
             tags=None,
             dataset=None,
@@ -179,7 +179,7 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
     }
     nodes = {
         node_id: GraphNode.create_data_node(
-            full_name=node_dict["id"],
+            dataset_name=node_dict["id"],
             layer=node_dict.get("layer"),
             tags=None,
             dataset=None,

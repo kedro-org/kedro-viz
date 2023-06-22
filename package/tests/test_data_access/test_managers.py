@@ -308,7 +308,7 @@ class TestAddPipelines:
             "data_science",
             "data_processing",
         ]
-        assert {n.full_name for n in data_access_manager.nodes.as_list()} == {
+        assert {n.name for n in data_access_manager.nodes.as_list()} == {
             "process_data",
             "train_model",
             "uk.data_science.model",

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   changeFlag,
   toggleSettingsModal,
-  togglePrettyName,
+  toggleIsPrettyName,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -23,15 +23,15 @@ const SettingsModal = ({
   isOutdated,
   latestVersion,
   onToggleFlag,
-  onTogglePrettyName,
-  prettyName,
+  onToggleIsPrettyName,
+  isPrettyName,
   showSettingsModal,
   visible,
 }) => {
   const flagData = getFlagsState();
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
-  const [isPrettyNameOn, setIsPrettyNameOn] = useState(prettyName);
+  const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const SettingsModal = ({
           return onToggleFlag(name, value);
         });
 
-        onTogglePrettyName(isPrettyNameOn);
+        onToggleIsPrettyName(isPrettyNameValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -65,9 +65,9 @@ const SettingsModal = ({
     };
   }, [
     hasClickedApplyAndClose,
-    isPrettyNameOn,
+    isPrettyNameValue,
     onToggleFlag,
-    onTogglePrettyName,
+    onToggleIsPrettyName,
     showSettingsModal,
     toggleFlags,
   ]);
@@ -76,7 +76,7 @@ const SettingsModal = ({
     showSettingsModal(false);
     setHasNotInteracted(true);
     setToggleFlags(flags);
-    setIsPrettyNameOn(prettyName);
+    setIsPrettyName(isPrettyName);
   };
 
   return (
@@ -97,12 +97,12 @@ const SettingsModal = ({
               </div>
             </div>
             <SettingsModalRow
-              id="prettyName"
-              name={settingsConfig['prettyName'].name}
-              toggleValue={isPrettyNameOn}
-              description={settingsConfig['prettyName'].description}
+              id="isPrettyName"
+              name={settingsConfig['isPrettyName'].name}
+              toggleValue={isPrettyNameValue}
+              description={settingsConfig['isPrettyName'].description}
               onToggleChange={(event) => {
-                setIsPrettyNameOn(event.target.checked);
+                setIsPrettyName(event.target.checked);
                 setHasNotInteracted(false);
               }}
             />
@@ -179,7 +179,7 @@ const SettingsModal = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
-  prettyName: state.prettyName,
+  isPrettyName: state.isPrettyName,
   visible: state.visible,
 });
 
@@ -190,8 +190,8 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFlag: (name, value) => {
     dispatch(changeFlag(name, value));
   },
-  onTogglePrettyName: (value) => {
-    dispatch(togglePrettyName(value));
+  onToggleIsPrettyName: (value) => {
+    dispatch(toggleIsPrettyName(value));
   },
 });
 
