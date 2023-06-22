@@ -46,7 +46,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 
 There are two ways you can use Kedro-Viz:
 
-- As a [Kedro plugin](https://kedro.readthedocs.io/en/stable/07_extend_kedro/04_plugins.html) (the most common way).
+- As a [Kedro plugin](https://docs.kedro.org/en/stable/extend_kedro/plugins.html) (the most common way).
 
   To install Kedro-Viz as a Kedro plugin:
 
@@ -127,7 +127,7 @@ Options:
 
 ### Experiment Tracking usage
 
-To enable [experiment tracking](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
+To enable [experiment tracking](https://docs.kedro.org/en/stable/experiment_tracking/index.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
 
 This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project.
 
@@ -138,7 +138,7 @@ SESSION_STORE_CLASS = SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
-Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found [here](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html)
+Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found in the [experiment tracking documentation](https://docs.kedro.org/en/stable/experiment_tracking/index.html)
 
 **Notes:**
 
@@ -174,7 +174,7 @@ kedro viz --save-file=filename.json
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
-**_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/)_**
+**_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
 
 ## Feature Flags
 
@@ -191,7 +191,7 @@ Kedro-Viz also logs a message in your browser's [developer console](https://deve
 
 ## Maintainers
 
-Kedro-Viz is maintained by the [kedro team](https://kedro.readthedocs.io/en/stable/12_faq/01_faq.html#who-maintains-kedro) and a number of [contributors from across the world](https://github.com/kedro-org/Kedro-Viz/contributors).
+Kedro-Viz is maintained by the [Kedro team](https://docs.kedro.org/en/stable/contribution/technical_steering_committee.html#kedro-maintainers) and a number of [contributors from across the world](https://github.com/kedro-org/Kedro-Viz/contributors).
 
 ## Contribution
 
