@@ -163,29 +163,29 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
+  /**
+   * If we return runs and don't yet have a selected run, set the first one
+   * as the default, with precedence given to runs that are bookmarked.
+   */
   const redirectToDefaultRun = () => {
-    if (selectedRunIds.length === 0) {
-      const bookmarkedRuns = data.runsList.filter(
-        (run) => run.bookmark === true
+    const bookmarkedRuns = data.runsList.filter((run) => run.bookmark === true);
+
+    if (bookmarkedRuns.length > 0) {
+      const defaultRunFromBookmarked = bookmarkedRuns
+        .map((run) => run.id)
+        .slice(0, 1);
+
+      setSelectedRunIds(defaultRunFromBookmarked);
+      toSelectedRunsPath(
+        defaultRunFromBookmarked,
+        activeTab,
+        enableComparisonView
       );
+    } else {
+      const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
 
-      if (bookmarkedRuns.length > 0) {
-        const defaultRunFromBookmarked = bookmarkedRuns
-          .map((run) => run.id)
-          .slice(0, 1);
-
-        setSelectedRunIds(defaultRunFromBookmarked);
-        toSelectedRunsPath(
-          defaultRunFromBookmarked,
-          activeTab,
-          enableComparisonView
-        );
-      } else {
-        const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
-
-        setSelectedRunIds(defaultRun);
-        toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
-      }
+      setSelectedRunIds(defaultRun);
+      toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
     }
   };
 
@@ -237,10 +237,6 @@ const ExperimentWrapper = ({ theme }) => {
 
   useEffect(() => {
     if (data) {
-      /**
-       * If we return runs and don't yet have a selected run, set the first one
-       * as the default, with precedence given to runs that are bookmarked.
-       */
       if (matchedExperimentTrackingMainPage) {
         redirectToDefaultRun();
       }
