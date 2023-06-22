@@ -25,13 +25,11 @@ class CatalogRepository:
         self._catalog = value
 
     def _validate_layers_for_transcoding(self, dataset_name, layer):
-        if TRANSCODING_SEPARATOR in dataset_name:
-            dataset_name = _strip_transcoding(dataset_name)
-            existing_layer = self._layers_mapping.get(dataset_name)
-            if existing_layer is not None and existing_layer != layer:
-                raise ValueError(f"Transcoded datasets should have the same layer. Mismatch found for: {dataset_name}")
-        return dataset_name, layer
-
+        existing_layer = self._layers_mapping.get(dataset_name)
+        if existing_layer is not None and existing_layer != layer:
+            raise ValueError(
+                f"Transcoded datasets should have the same layer. Mismatch found for: {dataset_name}"
+            )
 
     @property
     def layers_mapping(self):
@@ -71,7 +69,9 @@ class CatalogRepository:
             else:
                 for layer, dataset_names in self._catalog.layers.items():
                     for dataset_name in dataset_names:
-                        dataset_name, layer = self._validate_layers_for_transcoding(dataset_name,layer)
+                        if TRANSCODING_SEPARATOR in dataset_name:
+                            dataset_name = _strip_transcoding(dataset_name)
+                            self._validate_layers_for_transcoding(dataset_name, layer)
                         self._layers_mapping[dataset_name] = layer
 
         # Maps layers according to the new format
@@ -88,7 +88,9 @@ class CatalogRepository:
                     dataset_name,
                 )
             else:
-                dataset_name,layer = self._validate_layers_for_transcoding(dataset_name,layer)
+                if TRANSCODING_SEPARATOR in dataset_name:
+                    dataset_name = _strip_transcoding(dataset_name)
+                    self._validate_layers_for_transcoding(dataset_name, layer)
                 self._layers_mapping[dataset_name] = layer
 
         return self._layers_mapping
