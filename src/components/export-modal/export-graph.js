@@ -49,7 +49,7 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   if (format === 'svg') {
     // Add webfont
     style.innerHTML =
-      '@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400);';
+      '@import url(https://fonts.googleapis.com/css?family=Inter:400);';
   } else {
     // Add websafe fallback font
     style.innerHTML = `.kedro {
