@@ -64,7 +64,8 @@ const ExperimentWrapper = ({ theme }) => {
     matchedSelectedRuns,
   } = findMatchedPath(pathname, search);
 
-  const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
+  const { toExperimentTrackingPath, toSelectedRunsPath } =
+    useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -152,17 +153,6 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
-  /**
-   * If we return runs and don't yet have a selected run,
-   * set the first one as the default
-   */
-  const redirectToDefaultRun = () => {
-    const defaultRun = data.runsList.map((run) => run.id).slice(0, 1);
-
-    setSelectedRunIds(defaultRun);
-    toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
-  };
-
   const redirectToSelectedRuns = () => {
     const runIds = searchParams.get(params.run).split(',');
     const allRunIds = data?.runsList.map((run) => run.id);
@@ -225,10 +215,6 @@ const ExperimentWrapper = ({ theme }) => {
         setInvalidUrl(true);
       }
 
-      if (matchedExperimentTrackingMainPage) {
-        redirectToDefaultRun();
-      }
-
       if (matchedSelectedRuns) {
         redirectToSelectedRuns();
       }
@@ -262,6 +248,7 @@ const ExperimentWrapper = ({ theme }) => {
      * If we return runs and aren't in comparison view, set a single selected
      * run data object for use in the ExperimentPrimaryToolbar component.
      */
+
     if (data?.runsList.length > 0 && !enableComparisonView) {
       const singleSelectedRunData = data.runsList.filter((run) => {
         return run.id === selectedRunIds[0];
@@ -270,6 +257,24 @@ const ExperimentWrapper = ({ theme }) => {
       setSelectedRunData(singleSelectedRunData);
     }
   }, [data, enableComparisonView, selectedRunIds]);
+
+  useEffect(() => {
+    if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
+      /**
+       * If we return runs and don't yet have a selected run, set the first one
+       * as the default, with precedence given to runs that are bookmarked.
+       */
+      const bookmarkedRuns = data.runsList.filter((run) => {
+        return run.bookmark === true;
+      });
+
+      if (bookmarkedRuns.length > 0) {
+        setSelectedRunIds(bookmarkedRuns.map((run) => run.id).slice(0, 1));
+      } else {
+        setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
+      }
+    }
+  }, [data, selectedRunIds]);
 
   useEffect(() => {
     if (
@@ -318,7 +323,7 @@ const ExperimentWrapper = ({ theme }) => {
         <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
         <Button
           onClick={() => {
-            redirectToDefaultRun();
+            toExperimentTrackingPath();
             setInvalidUrl(false);
           }}
         >
