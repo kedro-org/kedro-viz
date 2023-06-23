@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
@@ -55,7 +55,6 @@ const ExperimentWrapper = ({ theme }) => {
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
-  const history = useHistory();
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
 
