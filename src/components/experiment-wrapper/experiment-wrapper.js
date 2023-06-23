@@ -163,6 +163,10 @@ const ExperimentWrapper = ({ theme }) => {
 
     setSelectedRunIds(defaultRun);
     toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
+
+    if (invalidUrl) {
+      setInvalidUrl(false);
+    }
   };
 
   const redirectToSelectedRuns = () => {
@@ -244,7 +248,9 @@ const ExperimentWrapper = ({ theme }) => {
       }
     }
 
-    usedNavigationBtn && setUsedNavigationBtn(false);
+    if (usedNavigationBtn) {
+      setUsedNavigationBtn(false);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, usedNavigationBtn]);
@@ -316,14 +322,7 @@ const ExperimentWrapper = ({ theme }) => {
           Oops, this URL isn't valid
         </h2>
         <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
-        <Button
-          onClick={() => {
-            toExperimentTrackingPath();
-            history.go();
-          }}
-        >
-          Reset view
-        </Button>
+        <Button onClick={redirectToDefaultRun}>Reset view</Button>
       </div>
     );
   } else {
