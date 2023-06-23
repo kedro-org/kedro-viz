@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
-# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access, catching-non-exception
+# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
 from typing import Dict, Optional
 
