@@ -65,8 +65,7 @@ const ExperimentWrapper = ({ theme }) => {
     matchedSelectedRuns,
   } = findMatchedPath(pathname, search);
 
-  const { toExperimentTrackingPath, toSelectedRunsPath } =
-    useGeneratePathnameForExperimentTracking();
+  const { toSelectedRunsPath } = useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
@@ -163,10 +162,6 @@ const ExperimentWrapper = ({ theme }) => {
 
     setSelectedRunIds(defaultRun);
     toSelectedRunsPath(defaultRun, activeTab, enableComparisonView);
-
-    if (invalidUrl) {
-      setInvalidUrl(false);
-    }
   };
 
   const redirectToSelectedRuns = () => {
@@ -322,7 +317,14 @@ const ExperimentWrapper = ({ theme }) => {
           Oops, this URL isn't valid
         </h2>
         <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
-        <Button onClick={redirectToDefaultRun}>Reset view</Button>
+        <Button
+          onClick={() => {
+            redirectToDefaultRun();
+            setInvalidUrl(false);
+          }}
+        >
+          Reset view
+        </Button>
       </div>
     );
   } else {
