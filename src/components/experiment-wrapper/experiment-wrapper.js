@@ -22,16 +22,6 @@ import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.css';
 
-/**
- * If the view from URL is not matched the tabLabels then set the default
- * value to be the first one from tabLabels
- * @param {object} searchParams
- * @returns string
- */
-const getDefaultTabLabel = (searchParams) => {
-  return tabLabels.includes(searchParams) ? searchParams : tabLabels[0];
-};
-
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
 const defaultStyle = {
@@ -199,7 +189,6 @@ const ExperimentWrapper = ({ theme }) => {
       setErrorMessage(errorMessages.runIds);
       setInvalidUrl(true);
     } else {
-      const view = getDefaultTabLabel(searchParams.get(params.view));
       const isComparison =
         runIds.length > 1
           ? true
@@ -207,17 +196,20 @@ const ExperimentWrapper = ({ theme }) => {
 
       setSelectedRunIds(runIds);
       setEnableComparisonView(isComparison);
-      setActiveTab(view);
+      if (tabLabels.includes(searchParams.get(params.view))) {
+        setActiveTab(searchParams.get(params.view));
+      }
     }
   };
 
   const redirectToSelectedView = () => {
     const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
-    const view = getDefaultTabLabel(searchParams.get(params.view));
 
     setSelectedRunIds(latestRun);
     setEnableComparisonView(false);
-    setActiveTab(view);
+    if (tabLabels.includes(searchParams.get(params.view))) {
+      setActiveTab(searchParams.get(params.view));
+    }
   };
 
   useEffect(() => {
