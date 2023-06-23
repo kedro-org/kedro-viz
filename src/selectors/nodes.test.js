@@ -16,7 +16,7 @@ import {
 import {
   toggleTextLabels,
   toggleFocusMode,
-  togglePrettyName,
+  toggleIsPrettyName,
 } from '../actions';
 import { toggleTypeDisabled } from '../actions/node-type';
 import { updateActivePipeline } from '../actions/pipelines';
@@ -113,7 +113,7 @@ describe('Selectors', () => {
       const nodeFullName = nodes[0].fullName;
       const newMockState = reducer(
         mockState.spaceflights,
-        togglePrettyName(false)
+        toggleIsPrettyName(false)
       );
       const nodeLabels = getNodeLabel(newMockState);
 
@@ -126,7 +126,7 @@ describe('Selectors', () => {
       const nodePrettyName = nodes[0].name;
       const newMockState = reducer(
         mockState.spaceflights,
-        togglePrettyName(true)
+        toggleIsPrettyName(true)
       );
       const nodeLabels = getNodeLabel(newMockState);
       expect(nodeLabels[nodeId]).toEqual(nodePrettyName);

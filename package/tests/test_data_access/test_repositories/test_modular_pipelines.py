@@ -43,7 +43,7 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
-            full_name="data_science.model",
+            dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
@@ -58,7 +58,7 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
-            full_name="data_science.model",
+            dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
