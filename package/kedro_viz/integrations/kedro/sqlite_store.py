@@ -151,11 +151,8 @@ class SQLiteStore(BaseSessionStore):
         for downloaded_db_location in downloaded_db_locations:
             engine = create_engine(f"sqlite:///{downloaded_db_location}")
             with Session(engine) as session:
-                new_runs = (
-                    session.query(RunModel)
-                    .filter(RunModel.id.not_in(existing_run_ids))
-                    .all()
-                )
+                query = select(RunModel).where(RunModel.id.not_in(existing_run_ids))
+                new_runs = session.execute(query).scalars().all()
 
                 existing_run_ids.extend([run.id for run in new_runs])
                 all_new_runs.extend(new_runs)
