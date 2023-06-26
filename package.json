@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
@@ -39,7 +39,7 @@
     "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "cy:dev": "cypress open",
-    "cy:test": "./cypress/support/cy-local.start.sh", 
+    "cy:test": "./cypress/support/cy-local.start.sh",
     "eject": "react-scripts eject",
     "snyk-protect": "snyk protect",
     "snyk-test": "snyk test -prune-repeated-subdependencies"
