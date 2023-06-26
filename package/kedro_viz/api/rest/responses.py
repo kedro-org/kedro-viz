@@ -22,7 +22,6 @@ class BaseAPIResponse(BaseModel, abc.ABC):
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
     id: str
     name: str
-    full_name: str
     tags: List[str]
     pipelines: List[str]
     type: str
@@ -39,7 +38,6 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
             "example": {
                 "id": "6ab908b8",
                 "name": "split_data_node",
-                "full_name": "split_data_node",
                 "tags": [],
                 "pipelines": ["__default__", "ds"],
                 "modular_pipelines": [],
@@ -70,8 +68,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
         schema_extra = {
             "example": {
                 "id": "d7b83b05",
-                "name": "Master Table",
-                "full_name": "master_table",
+                "name": "master_table",
                 "tags": [],
                 "pipelines": ["__default__", "dp", "ds"],
                 "modular_pipelines": [],

@@ -226,7 +226,7 @@ Since Kedro 0.18, a session can only contain one run. In Kedro-Viz, once a sessi
 - Scope out major journeys from acceptance criteria from the ticket for manual end-to-end testing
 - Write any other necessary tests (e.g. unit tests, snapshot tests, etc.) needed to give us enough confidence on the implementation
 
-### JavaScript application tests
+### JavaScript unit and component tests
 
 Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, with [Enzyme](https://enzymejs.github.io/enzyme/) and [Testing-Library](https://testing-library.com/) to mount React components and mock the DOM. You can run tests as follows:
 
@@ -247,6 +247,25 @@ npm run test:coverage
 ```
 
 See the [Create-React-App docs](https://github.com/facebook/create-react-app) for further information on JS testing.
+
+### JavaScript end-to-end tests
+
+Kedro-Viz uses [Cypress](https://www.cypress.io/) for running JavaScript end-to-end tests. All the Kedro-Viz dependencies need to be installed before running the tests.
+
+- [Javascript dependencies](#javascript-development) 
+- [Python dependencies](#launch-a-development-server-with-a-real-kedro-project)
+
+Run end-to-end tests using the below command:
+
+```bash
+npm run cy:test
+```
+
+You can also run Cypress in head mode for active development. Please note that you need to start your frontend and backend applications separately before running the below command.
+
+```bash
+npm run cy:dev
+```
 
 ### Testing package imports
 

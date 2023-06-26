@@ -1,3 +1,6 @@
+# We need to disable pylint because of this issue -
+#  https://github.com/pylint-dev/pylint/issues/8138
+# pylint: disable=E1102
 import json
 import os
 from pathlib import Path
@@ -5,7 +8,7 @@ from pathlib import Path
 import boto3
 import pytest
 from moto import mock_s3
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import make_db_session_factory
@@ -155,7 +158,8 @@ class TestSQLiteStore:
         sqlite_store.data = {"project_path": store_path, "project_name": "test"}
         sqlite_store.save()
         with sqlite_store._db_session_class() as session:
-            loaded_runs = session.query(RunModel).all()
+            query = select(RunModel)
+            loaded_runs = session.execute(query).scalars().all()
             assert len(loaded_runs) == 1
             assert json.loads(loaded_runs[0].blob) == {
                 "project_path": str(store_path),
@@ -167,12 +171,14 @@ class TestSQLiteStore:
         sqlite_store = SQLiteStore(store_path, next(session))
         sqlite_store.save()
         with sqlite_store._db_session_class() as db_session:
-            assert db_session.query(RunModel).count() == 1
+            query = select(func.count()).select_from(RunModel)
+            assert db_session.execute(query).scalar() == 1
             # save another session
         sqlite_store2 = SQLiteStore(store_path, next(session))
         sqlite_store2.save()
         with sqlite_store2._db_session_class() as db_session:
-            assert db_session.query(RunModel).count() == 2
+            query = select(func.count()).select_from(RunModel)
+            assert db_session.execute(query).scalar() == 2
 
     def test_save_run_with_remote_path(self, mocker, store_path, remote_path):
         mocker.patch("fsspec.filesystem")

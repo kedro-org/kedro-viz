@@ -2,8 +2,7 @@
   "nodes": [
     {
       "id": "b7bb7198",
-      "name": "Preprocess Shuttles Node",
-      "full_name": "preprocess_shuttles_node",
+      "name": "preprocess_shuttles_node",
       "tags": ["preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "task",
@@ -12,8 +11,7 @@
     },
     {
       "id": "f192326a",
-      "name": "Shuttles",
-      "full_name": "data_processing.shuttles",
+      "name": "data_processing.shuttles",
       "tags": ["preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "data",
@@ -23,8 +21,7 @@
     },
     {
       "id": "e5a9ec27",
-      "name": "Preprocessed Shuttles",
-      "full_name": "data_processing.preprocessed_shuttles",
+      "name": "data_processing.preprocessed_shuttles",
       "tags": ["features", "preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "data",
@@ -34,8 +31,7 @@
     },
     {
       "id": "c09084f2",
-      "name": "Preprocess Companies Node",
-      "full_name": "preprocess_companies_node",
+      "name": "preprocess_companies_node",
       "tags": ["preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "task",
@@ -44,8 +40,7 @@
     },
     {
       "id": "0abef172",
-      "name": "Companies",
-      "full_name": "data_processing.companies",
+      "name": "data_processing.companies",
       "tags": ["preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "data",
@@ -55,8 +50,7 @@
     },
     {
       "id": "daf35ba0",
-      "name": "Preprocessed Companies",
-      "full_name": "data_processing.preprocessed_companies",
+      "name": "data_processing.preprocessed_companies",
       "tags": ["features", "preprocessing"],
       "pipelines": ["dp", "__default__"],
       "type": "data",
@@ -66,8 +60,7 @@
     },
     {
       "id": "47b81aa6",
-      "name": "Create Model Input Table Node",
-      "full_name": "create_model_input_table_node",
+      "name": "create_model_input_table_node",
       "tags": ["features"],
       "pipelines": ["dp", "__default__"],
       "type": "task",
@@ -76,8 +69,7 @@
     },
     {
       "id": "90ebe5f3",
-      "name": "Reviews",
-      "full_name": "data_processing.reviews",
+      "name": "data_processing.reviews",
       "tags": ["features"],
       "pipelines": ["dp", "__default__"],
       "type": "data",
@@ -87,8 +79,7 @@
     },
     {
       "id": "23c94afb",
-      "name": "Model Input Table",
-      "full_name": "model_input_table",
+      "name": "model_input_table",
       "tags": ["features", "split"],
       "pipelines": ["dp", "__default__", "ds"],
       "type": "data",
@@ -98,8 +89,7 @@
     },
     {
       "id": "65d0d789",
-      "name": "Split Data Node",
-      "full_name": "split_data_node",
+      "name": "split_data_node",
       "tags": ["split"],
       "pipelines": ["__default__", "ds"],
       "type": "task",
@@ -121,8 +111,7 @@
     },
     {
       "id": "f1f1425b",
-      "name": "Parameters",
-      "full_name": "parameters",
+      "name": "parameters",
       "tags": ["split"],
       "pipelines": ["__default__", "ds"],
       "type": "parameters",
@@ -132,8 +121,7 @@
     },
     {
       "id": "172a0602",
-      "name": "X Train",
-      "full_name": "data_science.X_train",
+      "name": "data_science.X_train",
       "tags": ["split", "train"],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -143,8 +131,7 @@
     },
     {
       "id": "9c2a8a5e",
-      "name": "X Test",
-      "full_name": "data_science.X_test",
+      "name": "data_science.X_test",
       "tags": ["split"],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -154,8 +141,7 @@
     },
     {
       "id": "e5cee9e2",
-      "name": "Y Train",
-      "full_name": "data_science.y_train",
+      "name": "data_science.y_train",
       "tags": ["split", "train"],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -165,8 +151,7 @@
     },
     {
       "id": "ecc63a8c",
-      "name": "Y Test",
-      "full_name": "data_science.y_test",
+      "name": "data_science.y_test",
       "tags": ["split"],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -176,8 +161,7 @@
     },
     {
       "id": "90f15f9d",
-      "name": "Train Model Node",
-      "full_name": "train_model_node",
+      "name": "train_model_node",
       "tags": ["train"],
       "pipelines": ["__default__", "ds"],
       "type": "task",
@@ -186,8 +170,7 @@
     },
     {
       "id": "04424659",
-      "name": "Regressor",
-      "full_name": "data_science.regressor",
+      "name": "data_science.regressor",
       "tags": ["train"],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -197,8 +180,7 @@
     },
     {
       "id": "f5e8d7df",
-      "name": "Evaluate Model Node",
-      "full_name": "evaluate_model_node",
+      "name": "evaluate_model_node",
       "tags": [],
       "pipelines": ["__default__", "ds"],
       "type": "task",
@@ -207,8 +189,7 @@
     },
     {
       "id": "966b9734",
-      "name": "Metrics",
-      "full_name": "metrics",
+      "name": "metrics",
       "tags": [],
       "pipelines": ["__default__", "ds"],
       "type": "data",
@@ -218,8 +199,7 @@
     },
     {
       "id": "data_processing",
-      "name": "Data Processing",
-      "full_name": "data_processing",
+      "name": "data_processing",
       "tags": [],
       "pipelines": ["dp", "__default__"],
       "type": "modularPipeline",
@@ -229,8 +209,7 @@
     },
     {
       "id": "data_science",
-      "name": "Data Science",
-      "full_name": "data_science",
+      "name": "data_science",
       "tags": [],
       "pipelines": ["__default__", "ds"],
       "type": "modularPipeline",
@@ -271,20 +250,20 @@
   ],
   "layers": ["raw", "intermediate", "primary", "models"],
   "tags": [
-    { "id": "features", "name": "Features" },
-    { "id": "preprocessing", "name": "Preprocessing" },
-    { "id": "split", "name": "Split" },
-    { "id": "train", "name": "Train" }
+    { "id": "features", "name": "features" },
+    { "id": "preprocessing", "name": "preprocessing" },
+    { "id": "split", "name": "split" },
+    { "id": "train", "name": "train" }
   ],
   "pipelines": [
-    { "id": "__default__", "name": "Default" },
-    { "id": "dp", "name": "Dp" },
-    { "id": "ds", "name": "Ds" }
+    { "id": "__default__", "name": "__default__" },
+    { "id": "dp", "name": "dp" },
+    { "id": "ds", "name": "ds" }
   ],
   "modular_pipelines": {
     "__root__": {
       "id": "__root__",
-      "name": "Root",
+      "name": "__root__",
       "inputs": [],
       "outputs": [],
       "children": [
@@ -297,7 +276,7 @@
     },
     "data_processing": {
       "id": "data_processing",
-      "name": "Data Processing",
+      "name": "data_processing",
       "inputs": ["90ebe5f3", "0abef172", "f192326a"],
       "outputs": ["23c94afb"],
       "children": [
@@ -313,7 +292,7 @@
     },
     "data_science": {
       "id": "data_science",
-      "name": "Data Science",
+      "name": "data_science",
       "inputs": ["f1f1425b", "23c94afb"],
       "outputs": ["966b9734"],
       "children": [

@@ -1,5 +1,4 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import SettingsModal, {
   mapStateToProps,
   mapDispatchToProps,
@@ -48,7 +47,7 @@ describe('SettingsModal', () => {
         settingsModal: expect.any(Boolean),
       }),
       flags: expect.any(Object),
-      prettyName: expect.any(Boolean),
+      isPrettyName: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
@@ -69,10 +68,10 @@ describe('SettingsModal', () => {
       value: false,
     });
 
-    mapDispatchToProps(dispatch).onTogglePrettyName(false);
+    mapDispatchToProps(dispatch).onToggleIsPrettyName(false);
     expect(dispatch.mock.calls[2][0]).toEqual({
-      type: 'TOGGLE_PRETTY_NAME',
-      prettyName: false,
+      type: 'TOGGLE_IS_PRETTY_NAME',
+      isPrettyName: false,
     });
   });
 });

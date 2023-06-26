@@ -29,7 +29,7 @@ import './styles/metadata.css';
  * Shows node meta data
  */
 const MetaData = ({
-  isPrettyNameOn,
+  isPrettyName,
   metadata,
   onToggleCode,
   onToggleMetadataModal,
@@ -38,7 +38,7 @@ const MetaData = ({
   visible = true,
   visibleCode,
 }) => {
-  const { toFlowchartPage } = useGeneratePathname();
+  const { toSelectedPipeline } = useGeneratePathname();
   const { toExperimentTrackingPath, toMetricsViewPath } =
     useGeneratePathnameForExperimentTracking();
 
@@ -86,8 +86,8 @@ const MetaData = ({
   const onCloseClick = () => {
     // Deselecting a node automatically hides MetaData panel
     onToggleNodeSelected(null);
-    // and reset the URL to '/'
-    toFlowchartPage();
+    // and reset the URL to the current active pipeline
+    toSelectedPipeline();
   };
 
   const onExpandMetaDataClick = () => {
@@ -144,7 +144,7 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
-                {isPrettyNameOn ? (
+                {isPrettyName ? (
                   <MetaDataRow
                     label="Original node name:"
                     value={metadata.fullName}
@@ -325,7 +325,7 @@ const MetaData = ({
 };
 
 export const mapStateToProps = (state, ownProps) => ({
-  isPrettyNameOn: state.prettyName,
+  isPrettyName: state.isPrettyName,
   metadata: getClickedNodeMetaData(state),
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),

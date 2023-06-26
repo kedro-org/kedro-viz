@@ -18,6 +18,19 @@ export const useGeneratePathname = () => {
   const toFlowchartPage = useCallback(() => {
     const url = generatePath(routes.flowchart.main);
     history.push(url);
+
+    // FIX: this is just a temporary solution for a known issue from https://github.com/kedro-org/kedro-viz/issues/1397
+    history.go(url);
+  }, [history]);
+
+  const toSelectedPipeline = useCallback(() => {
+    const activePipeline = getCurrentActivePipeline();
+
+    const url = generatePath(routes.flowchart.selectedPipeline, {
+      pipelineId: activePipeline,
+    });
+
+    history.push(url);
   }, [history]);
 
   const toSelectedNode = useCallback(
@@ -47,6 +60,7 @@ export const useGeneratePathname = () => {
   );
 
   return {
+    toSelectedPipeline,
     toFlowchartPage,
     toSelectedNode,
     toFocusedModularPipeline,
