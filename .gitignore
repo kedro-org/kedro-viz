@@ -18,6 +18,11 @@ node_modules
 /coverage
 kedro-viz.tgz
 
+# e2e testing
+cypress/videos
+cypress/screenshots
+cypress/downloads/ 
+
 # production
 build/
 lib/

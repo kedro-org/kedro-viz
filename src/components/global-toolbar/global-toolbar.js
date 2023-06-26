@@ -34,6 +34,7 @@ export const GlobalToolbar = ({
         <ul className="pipeline-global-routes-toolbar kedro">
           <IconButton
             ariaLabel={'Kedro Viz logo and link'}
+            dataTest={'Kedro Icon'}
             className={'pipeline-menu-button--logo pipeline-menu-button--large'}
             disabled={false}
             icon={LogoIcon}
@@ -41,9 +42,11 @@ export const GlobalToolbar = ({
           <NavLink exact to={{ pathname: sanitizedPathname }}>
             <IconButton
               ariaLabel={'View your pipeline'}
+              dataTest={'View your pipeline'}
               className={
                 'pipeline-menu-button--large pipeline-menu-button--link'
               }
+              data-test={'FlowChart Icon'}
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
@@ -58,6 +61,7 @@ export const GlobalToolbar = ({
               className={
                 'pipeline-menu-button--large pipeline-menu-button--link'
               }
+              dataTest={'View your experiments'}
               disabled={false}
               icon={ExperimentsIcon}
               labelText="Experiment tracking"
@@ -70,6 +74,7 @@ export const GlobalToolbar = ({
               theme === 'light' ? 'dark' : 'light'
             } theme`}
             ariaLive="polite"
+            dataTest={'Toggle Theme'}
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
@@ -83,6 +88,7 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
+            dataTest={'Change the settings flags'}
             disabled={false}
             icon={SettingsIcon}
             labelText={'Settings'}
