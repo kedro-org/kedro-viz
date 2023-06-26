@@ -138,13 +138,17 @@ export const FlowChartWrapper = ({
     checkIfPipelineExists();
   };
 
+  const handlePopState = useCallback(() => {
+    setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
   useEffect(() => {
-    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [handlePopState]);
 
   useEffect(() => {
     setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));

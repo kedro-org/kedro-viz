@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
@@ -185,6 +185,10 @@ const ExperimentWrapper = ({ theme }) => {
     }
   };
 
+  const handlePopState = useCallback(() => {
+    setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
   useEffect(() => {
     const showGoBackBtnFromStorage = loadLocalStorage(
       localStorageFlowchartLink
@@ -194,12 +198,12 @@ const ExperimentWrapper = ({ theme }) => {
       saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
     }
 
-    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [handlePopState]);
 
   useEffect(() => {
     if (data) {
