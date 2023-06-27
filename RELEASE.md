@@ -11,6 +11,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix broken URL link between experiment tracking and flowchart when the pipeline is not the default one. (#1388)
+- Update UI font to match updated Kedro branding. (#1414)
 
 # Release 6.3.0
 
