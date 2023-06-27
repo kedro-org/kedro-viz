@@ -221,7 +221,7 @@ const ExperimentWrapper = ({ theme }) => {
 
       /**
        * Resetting the selectedRunIds to be empty so it can be handled separately in the useEffect below
-       * specifccally the one with comment "we return to default main page and don't yet have a selected run ...
+       * specifccally the one with comment "If we return to default main page and don't yet have a selected run ...
        */
       if (matchedExperimentTrackingMainPage) {
         setSelectedRunIds([]);
@@ -273,7 +273,7 @@ const ExperimentWrapper = ({ theme }) => {
   useEffect(() => {
     if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
       /**
-       * If we return runs and don't yet have a selected run, set the first one
+       * If we return to default main page and don't yet have a selected run, set the first one
        * as the default, with precedence given to runs that are bookmarked.
        */
       const bookmarkedRuns = data.runsList.filter((run) => {
