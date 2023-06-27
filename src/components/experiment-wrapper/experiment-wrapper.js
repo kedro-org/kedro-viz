@@ -219,6 +219,14 @@ const ExperimentWrapper = ({ theme }) => {
         setInvalidUrl(true);
       }
 
+      /**
+       * Resetting the selectedRunIds to be empty so it can be handled separately in the useEffect below
+       * specifccally the one with comment "we return to default main page and don't yet have a selected run ...
+       */
+      if (matchedExperimentTrackingMainPage) {
+        setSelectedRunIds([]);
+      }
+
       if (matchedSelectedRuns) {
         redirectToSelectedRuns();
       }
