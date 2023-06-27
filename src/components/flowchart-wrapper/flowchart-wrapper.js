@@ -238,7 +238,7 @@ export const FlowChartWrapper = ({
       <div className="kedro-pipeline">
         <Sidebar />
         <MetaData />
-        <div className="pipeline-wrapper">
+        <div data-test="pipeline-wrapper" className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
           <div
