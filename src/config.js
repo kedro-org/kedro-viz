@@ -4,6 +4,11 @@ export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 
+export const linkToFlowchartInitialVal = {
+  fromURL: null,
+  showGoBackBtn: false,
+};
+
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
 // value here, please also update their corresponding value in src/styles/_variables.scss
@@ -119,8 +124,8 @@ export const routes = {
   },
   experimentTracking: {
     main: '/experiment-tracking',
-    selectedView: `/experiment-tracking?${params.view}:view`,
-    selectedRuns: `/experiment-tracking?${params.run}:ids&${params.view}:view&${params.comparisonMode}:isComparison`,
+    selectedView: `/experiment-tracking?${params.view}=:view`,
+    selectedRuns: `/experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
 
