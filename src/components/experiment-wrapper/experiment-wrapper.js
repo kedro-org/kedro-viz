@@ -271,7 +271,11 @@ const ExperimentWrapper = ({ theme }) => {
   }, [data, enableComparisonView, selectedRunIds]);
 
   useEffect(() => {
-    if (data?.runsList.length > 0 && selectedRunIds.length === 0) {
+    if (
+      matchedExperimentTrackingMainPage &&
+      data?.runsList.length > 0 &&
+      selectedRunIds.length === 0
+    ) {
       /**
        * If we return to default main page and don't yet have a selected run, set the first one
        * as the default, with precedence given to runs that are bookmarked.
@@ -286,7 +290,7 @@ const ExperimentWrapper = ({ theme }) => {
         setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
       }
     }
-  }, [data, selectedRunIds]);
+  }, [data, selectedRunIds, matchedExperimentTrackingMainPage]);
 
   useEffect(() => {
     if (
