@@ -6,19 +6,6 @@ import { configure, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
 
-const emptyRun = [
-  {
-    id: '',
-    author: '',
-    bookmark: true,
-    gitSha: '',
-    gitBranch: '',
-    runCommand: '',
-    notes: '',
-    title: '',
-  },
-];
-
 const twoRuns = [
   {
     id: 'run1',
