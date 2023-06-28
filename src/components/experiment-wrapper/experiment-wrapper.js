@@ -221,7 +221,7 @@ const ExperimentWrapper = ({ theme }) => {
 
       /**
        * Resetting the selectedRunIds to be empty so it can be handled separately in the useEffect below
-       * specifccally the one with comment "If we return to default main page and don't yet have a selected run ...
+       * specifically the one with comment "If we return to default main page and don't yet have a selected run ...
        */
       if (matchedExperimentTrackingMainPage) {
         setSelectedRunIds([]);
