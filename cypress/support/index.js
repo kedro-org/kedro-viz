@@ -10,5 +10,7 @@ beforeEach(() => {
   // cy.interceptGql("getRunsList")
   // cy.intercept('/api/main', { fixture: 'rest/main' }).as('main')
   // cy.wait(['@main'])
+  cy.intercept('/api/main').as('restMain')
+  cy.intercept('/graphql').as('gql')
   cy.visit('/');
 });

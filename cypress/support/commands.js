@@ -44,7 +44,32 @@ Cypress.Commands.add('unhover', (selector) => {
 
 // Custom command to check if all the classNames exist/not.exist
 Cypress.Commands.add('checkClassExistence', (classNames, condition) => {
-  classNames.forEach(className => {
+  classNames.forEach((className) => {
     cy.get(`.${className}`).should(condition);
   });
 });
+
+// Custom command to wait for page load before executing
+Cypress.Commands.add('waitForPageReload', (callback) => {
+  // Wait for pipeline loading icon to be visible
+  cy.get('.pipeline-loading-icon--visible').should('exist');
+
+  // Wait for pipeline loading icon to be not visible
+  cy.get('.pipeline-loading-icon--visible').should('not.exist').then(callback);
+});
+
+// Custom command to check if the attribute of a class satisfies a regex
+Cypress.Commands.add('checkAttribute', (className, attribute, regex) => {
+  cy.get(`.${className}`).then(($elements) => {
+    // Convert Cypress collection to an array
+    const elementsArray = $elements.toArray();
+  
+    // Filter elements that have a title matching the regex pattern
+    const filteredElements = elementsArray.filter(($element) => {
+      const title = $element.getAttribute(attribute);
+      return title && title.match(regex);
+    });
+    // Check if any filtered elements exist
+    expect(filteredElements.length).to.be.greaterThan(0);
+  })
+})

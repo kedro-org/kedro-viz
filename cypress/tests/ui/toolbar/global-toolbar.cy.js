@@ -95,11 +95,11 @@ describe('Global Toolbar', () => {
         cy.wrap($dialog)
           .find('[data-test="Cancel Button in Settings Modal"]')
           .click();
-      })
-      
-      cy.get('.pipeline-settings-modal > [role="dialog"]', { timeout: 5000 }).should('be.not.visible');
-    
-    
+      });
+
+    cy.get('.pipeline-settings-modal > [role="dialog"]', {
+      timeout: 5000,
+    }).should('be.not.visible');
   });
 
   describe.only('Settings Panel', () => {
@@ -108,41 +108,61 @@ describe('Global Toolbar', () => {
       cy.get('.pipeline-settings-modal > [role="dialog"]')
         .should('be.visible')
         .then(() => {
-         
-          cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').as('isPrettyNameCheckbox')
-        
+          cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').as(
+            'isPrettyNameCheckbox'
+          );
+
           // Assert that the checkbox is checked
           cy.get('@isPrettyNameCheckbox').should('be.checked');
 
           // Uncheck the checkbox and click on apply changes
-          cy.get('@isPrettyNameCheckbox').uncheck({force: true})
-          cy.get('[data-test="Apply changes and close in Settings Modal"]').click();
-        })
+          cy.get('@isPrettyNameCheckbox').uncheck({ force: true });
+          cy.get(
+            '[data-test="Apply changes and close in Settings Modal"]'
+          ).click();
+        });
 
-        cy.get('.pipeline-settings-modal > [role="dialog"]', { timeout: 5000 }).should('be.not.visible');
+      cy.get('.pipeline-settings-modal > [role="dialog"]', {
+        timeout: 5000,
+      }).should('be.not.visible');
+
+      cy.waitForPageReload(() => {
+        // Check if the pipeline names are original
+        // cy.get('.menu-option__content').then(($elements) => {
+        //   // Convert Cypress collection to an array
+        //   const elementsArray = $elements.toArray();
+
+        //   // Filter elements that have a title matching the regex pattern
+        //   const filteredElements = elementsArray.filter(($element) => {
+        //     const title = $element.getAttribute('title');
+        //     return title && title.match(/[_\-:]/);
+        //   });
+        //   // Check if any filtered elements exist
+        //   expect(filteredElements.length).to.be.greaterThan(0);
+        // });
+        cy.checkAttribute('menu-option__content', 'title', /[_\-:]/)
+        cy.checkAttribute('pipeline-nodelist__row', 'title', /[_\-:]/)
+        // Check if the node names show original names
+        // cy.get('.pipeline-nodelist__row').then(($elements) => {
+        //   // Convert Cypress collection to an array
+        //   const elementsArray = $elements.toArray();
+
+        //   // Filter elements that have a title matching the regex pattern
+        //   const filteredElements = elementsArray.filter(($element) => {
+        //     const title = $element.getAttribute('title');
+        //     cy.log(title)
+        //     return title && title.match(/[_\-:]/);
+        //   });
+        //   // Check if any filtered elements exist
+        //   expect(filteredElements.length).to.be.greaterThan(0);
+        // });
         
-        // Wait for pipeline node list to appear, due to a reload
-      
-        // The pipeline names should show original names
-        cy.get('.pipeline-nodelist__row__label').then(($elements) => {
-            
-          // Convert Cypress collection to an array
-          // const elementsArray = $elements.toArray();
-           
-          // Filter elements that have a title matching the regex pattern
-          // const filteredElements = elementsArray.filter(($element) => {
-          //     const title = $element.getAttribute('title');
-          //     cy.log(title)
-          //     return title && title.match(/[_\-:]/);
-          // });
-          // Check if any filtered elements exist
-          // expect(filteredElements.length).to.be.greaterThan(0);
-        })
-        // The node names should show original names
-    
-    });
-  })
 
+      });
+
+      
+    });
+  });
 });
 
 //   cy.get('[data-test="Toggle Theme"]').click();
