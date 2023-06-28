@@ -1,4 +1,5 @@
 // Add any reusable custom commands here
+import spaceflights from '../../src/utils/data/spaceflights.mock.json';
 
 const apiBaseUrl = Cypress.env('apiBaseUrl');
 
@@ -58,18 +59,50 @@ Cypress.Commands.add('waitForPageReload', (callback) => {
   cy.get('.pipeline-loading-icon--visible').should('not.exist').then(callback);
 });
 
-// Custom command to check if the attribute of a class satisfies a regex
-Cypress.Commands.add('checkAttribute', (className, attribute, regex) => {
-  cy.get(`.${className}`).then(($elements) => {
-    // Convert Cypress collection to an array
-    const elementsArray = $elements.toArray();
-  
-    // Filter elements that have a title matching the regex pattern
-    const filteredElements = elementsArray.filter(($element) => {
-      const title = $element.getAttribute(attribute);
-      return title && title.match(regex);
+// Custom command to filter elements based on className and attribute value satisfying/not-satisfying the regex
+Cypress.Commands.add(
+  'filterElementsByRegex',
+  (className, attribute = 'title', regex, isMatch = true) => {
+    cy.get(`.${className}`).then(($elements) => {
+      // Convert Cypress collection to an array
+      const elementsArray = $elements.toArray();
+
+      // Filter elements that have a title matching the regex pattern
+      const filteredElements = elementsArray.filter(($element) => {
+        const attrValue = $element.getAttribute(attribute);
+        return (
+          attrValue &&
+          (isMatch ? attrValue.match(regex) : !attrValue.match(regex))
+        );
+      });
+
+      return filteredElements;
     });
-    // Check if any filtered elements exist
-    expect(filteredElements.length).to.be.greaterThan(0);
-  })
-})
+  }
+);
+
+// Get application state
+Cypress.Commands.add('getApplicationState', () => cy.window().its('__store__'));
+
+// Prepare large dataset
+Cypress.Commands.add('prepareLargeDataset', () => {
+  const data = { ...spaceflights };
+  let extraNodes = [];
+  new Array(1000).fill().forEach((d, i) => {
+    const extraNodeGroup = data.nodes.map((node) => ({
+      ...node,
+      id: node.id + i,
+      //eslint-disable-next-line camelcase
+      modular_pipelines: [],
+    }));
+    extraNodes = extraNodes.concat(extraNodeGroup);
+  });
+  data.nodes = data.nodes.concat(extraNodes);
+  data.modular_pipelines['__root__'].children.push(
+    ...extraNodes.map((node) => ({
+      id: node.id,
+      type: node.type,
+    }))
+  );
+  return data;
+});

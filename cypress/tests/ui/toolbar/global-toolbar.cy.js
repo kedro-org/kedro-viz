@@ -102,119 +102,99 @@ describe('Global Toolbar', () => {
     }).should('be.not.visible');
   });
 
-  describe.only('Settings Panel', () => {
+  describe('Settings Panel', () => {
     it('verifies that users can change the display of the names of their kedro nodes', function () {
       cy.get('[data-test="Change the settings flags"]').click();
-      cy.get('.pipeline-settings-modal > [role="dialog"]')
-        .should('be.visible')
-        .then(() => {
-          cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').as(
-            'isPrettyNameCheckbox'
-          );
+      cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').as(
+        'isPrettyNameCheckbox'
+      );
 
-          // Assert that the checkbox is checked
-          cy.get('@isPrettyNameCheckbox').should('be.checked');
+      // Assert that the checkbox is checked
+      cy.get('@isPrettyNameCheckbox').should('be.checked');
 
-          // Uncheck the checkbox and click on apply changes
-          cy.get('@isPrettyNameCheckbox').uncheck({ force: true });
-          cy.get(
-            '[data-test="Apply changes and close in Settings Modal"]'
-          ).click();
-        });
+      // Check if the pipeline names are pretty
+      cy.filterElementsByRegex(
+        'menu-option__content',
+        'title',
+        /[_-]/,
+        true
+      ).then((elements) => {
+        expect(elements.length).to.be.eq(0);
+      });
 
-      cy.get('.pipeline-settings-modal > [role="dialog"]', {
-        timeout: 5000,
-      }).should('be.not.visible');
+      // Check if the node names are pretty
+      cy.filterElementsByRegex(
+        'pipeline-nodelist__row',
+        'title',
+        /[_-]/,
+        true
+      ).then((elements) => {
+        expect(elements.length).to.be.eq(0);
+      });
+
+      // Check if the metadata panel node name label matches
+      cy.get('.pipeline-node__bg').first().click({ force: true });
+      cy.get('.pipeline-metadata__properties > :nth-child(1)').should(
+        'have.text',
+        'Original node name:'
+      );
+
+      // Uncheck the checkbox and click on apply changes
+      cy.get('@isPrettyNameCheckbox').uncheck({ force: true });
+      cy.get('[data-test="Apply changes and close in Settings Modal"]').click();
 
       cy.waitForPageReload(() => {
         // Check if the pipeline names are original
-        // cy.get('.menu-option__content').then(($elements) => {
-        //   // Convert Cypress collection to an array
-        //   const elementsArray = $elements.toArray();
-
-        //   // Filter elements that have a title matching the regex pattern
-        //   const filteredElements = elementsArray.filter(($element) => {
-        //     const title = $element.getAttribute('title');
-        //     return title && title.match(/[_\-:]/);
-        //   });
-        //   // Check if any filtered elements exist
-        //   expect(filteredElements.length).to.be.greaterThan(0);
-        // });
-        cy.checkAttribute('menu-option__content', 'title', /[_\-:]/)
-        cy.checkAttribute('pipeline-nodelist__row', 'title', /[_\-:]/)
+        cy.filterElementsByRegex(
+          'menu-option__content',
+          'title',
+          /[_-]/,
+          true
+        ).then((elements) => {
+          expect(elements.length).to.be.greaterThan(0);
+        });
         // Check if the node names show original names
-        // cy.get('.pipeline-nodelist__row').then(($elements) => {
-        //   // Convert Cypress collection to an array
-        //   const elementsArray = $elements.toArray();
-
-        //   // Filter elements that have a title matching the regex pattern
-        //   const filteredElements = elementsArray.filter(($element) => {
-        //     const title = $element.getAttribute('title');
-        //     cy.log(title)
-        //     return title && title.match(/[_\-:]/);
-        //   });
-        //   // Check if any filtered elements exist
-        //   expect(filteredElements.length).to.be.greaterThan(0);
-        // });
-        
-
+        cy.filterElementsByRegex(
+          'pipeline-nodelist__row',
+          'title',
+          /[_-]/,
+          true
+        ).then((elements) => {
+          expect(elements.length).to.be.greaterThan(0);
+        });
+        // Check if the metadata panel node name label matches
+        cy.get('.pipeline-node__bg').first().click();
+        cy.get('.pipeline-metadata__properties > :nth-child(1)').should(
+          'have.text',
+          'Pretty node name:'
+        );
       });
+    });
 
-      
+    // TODO
+    it('verifies that users can show a warning before rendering very large graphs', function () {});
+
+    it('verifies that users can expand all modular pipelines on first load', function () {
+      cy.get('[data-test="Change the settings flags"]').click();
+      cy.get('[data-test="pipeline-toggle-input-expandAllPipelines"]').as(
+        'isExpandAllPipelinesCheckBox'
+      );
+      // Assert that the checkbox is not checked
+      cy.get('@isExpandAllPipelinesCheckBox').should('not.be.checked');
+
+      cy.get('[role="treeitem"]')
+        .should('have.attr', 'aria-expanded')
+        .and('eq', 'false');
+
+      // Uncheck the checkbox and click on apply changes
+      cy.get('@isExpandAllPipelinesCheckBox').check({ force: true });
+      cy.get('[data-test="Apply changes and close in Settings Modal"]').click();
+
+      cy.waitForPageReload(() => {
+        cy.get('[role="treeitem"]')
+          .should('have.attr', 'aria-expanded')
+          .and('eq', 'true');
+      });
     });
   });
 });
-
-//   cy.get('[data-test="Toggle Theme"]').click();
-//   cy.get('[data-test="Toggle Theme"]').click();
-//   cy.get('[data-test="Change the settings flags"]').click();
-//   cy.get('[role="dialog"]').should('be.visible').then(($dialog)=>{
-//     cy.wrap($dialog).find('[data-test="Cancel Button in Settings Modal"]').click()
-//   });
-//   cy.get('[role="dialog"]').should('be.not.visible');
-
-//   // Hover/UnHover Tests
-
-//   // Hover View your pipeline
-//   cy.hover('[data-test="View your pipeline"]');
-//   cy.get('[data-test="View your pipeline"]').within(() => {
-//     return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
-//   })
-//   // UnHover View your pipeline
-//   cy.unhover('[data-test="View your pipeline"]');
-//   cy.get('[data-test="View your pipeline"]').within(() => {
-//     return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
-//   })
-
-//   // Hover View your experiments
-//   cy.hover('[data-test="View your experiments"]');
-//   cy.get('[data-test="View your experiments"]').within(() => {
-//     return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
-//   })
-//   // UnHover View your experiments
-//   cy.unhover('[data-test="View your experiments"]');
-//   cy.get('[data-test="View your experiments"]').within(() => {
-//     return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
-//   })
-
-//   // Hover Toggle Theme
-//   cy.hover('[data-test="Toggle Theme"]');
-//   cy.get('[data-test="Toggle Theme"]').within(() => {
-//     return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
-//   })
-//   // UnHover Toggle Theme
-//   cy.unhover('[data-test="Toggle Theme"]');
-//   cy.get('[data-test="Toggle Theme"]').within(() => {
-//     return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
-//   })
-
-//   // Hover Change the settings flags
-//   cy.hover('[data-test="Change the settings flags"]');
-//   cy.get('[data-test="Change the settings flags"]').within(() => {
-//     return cy.get('span').should('have.class', 'pipeline-toolbar__label__visible')
-//   })
-//   // UnHover Change the settings flags
-//   cy.unhover('[data-test="Change the settings flags"]');
-//   cy.get('[data-test="Change the settings flags"]').within(() => {
-//     return cy.get('span').should('not.have.class', 'pipeline-toolbar__label__visible')
-//   })
