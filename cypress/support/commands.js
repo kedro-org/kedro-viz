@@ -41,3 +41,10 @@ Cypress.Commands.add('hover', (selector) => {
 Cypress.Commands.add('unhover', (selector) => {
   cy.get(selector).trigger('mouseout');
 });
+
+// Custom command to check if all the classNames exist/not.exist
+Cypress.Commands.add('checkClassExistence', (classNames, condition) => {
+  classNames.forEach(className => {
+    cy.get(`.${className}`).should(condition);
+  });
+});
