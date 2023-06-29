@@ -31,56 +31,60 @@ export const PipelineWarning = ({
     return () => clearTimeout(timer);
   }, []);
 
+  const WarningMessage = ({ isVisible, title, subtitle, buttons = [] }) => {
+    if (!isVisible) {
+      return null;
+    }
+    return (
+      <div
+        className={classnames('kedro', 'pipeline-warning', {
+          'pipeline-warning--sidebar-visible': sidebarVisible,
+        })}
+      >
+        <h2 className="pipeline-warning__title">{title}</h2>
+        <p className="pipeline-warning__subtitle">{subtitle}</p>
+        {buttons.map((buttonProps, index) => (
+          <Button key={index} {...buttonProps} />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <>
-      {visible && (
-        <div
-          className={classnames('kedro', 'pipeline-warning', {
-            'pipeline-warning--sidebar-visible': sidebarVisible,
-          })}
-        >
-          <h2 className="pipeline-warning__title">
-            Whoa, that’s a chonky pipeline!
-          </h2>
-          <p className="pipeline-warning__subtitle">
+      <WarningMessage
+        isVisible={visible}
+        title="Whoa, that’s a chonky pipeline!"
+        subtitle={
+          <>
             This graph contains <b>{nodes.length}</b> elements, which will take
             a while to render. You can use the sidebar controls to select a
             smaller graph.
-          </p>
-          <Button onClick={onHide}>Render it anyway</Button>
-          <Button mode="secondary" onClick={onDisable} size="small">
-            Don't show this again
-          </Button>
-        </div>
-      )}
-      {isEmptyPipeline && componentLoaded && (
-        <div
-          className={classnames('kedro', 'pipeline-warning', {
-            'pipeline-warning--sidebar-visible': sidebarVisible,
-          })}
-        >
-          <h2 className="pipeline-warning__title">
-            Oops, there's nothing to see here
-          </h2>
-          <p className="pipeline-warning__subtitle">
-            This selection has nothing. Please unselect your filters or modular
-            pipeline selection to see pipeline elements.
-          </p>
-        </div>
-      )}
-      {invalidUrl && componentLoaded && (
-        <div
-          className={classnames('kedro', 'pipeline-warning', {
-            'pipeline-warning--sidebar-visible': sidebarVisible,
-          })}
-        >
-          <h2 className="pipeline-warning__title">
-            Oops, this URL isn't valid
-          </h2>
-          <p className="pipeline-warning__subtitle">{`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}</p>
-          <Button onClick={() => toFlowchartPage()}>Reset view</Button>
-        </div>
-      )}
+          </>
+        }
+        buttons={[
+          { onClick: onHide, children: 'Render it anyway' },
+          {
+            mode: 'secondary',
+            onClick: onDisable,
+            size: 'small',
+            children: "Don't show this again",
+          },
+        ]}
+      />
+
+      <WarningMessage
+        isVisible={isEmptyPipeline && componentLoaded}
+        title="Oops, there's nothing to see here"
+        subtitle="This selection has nothing. Please unselect your filters or modular pipeline selection to see pipeline elements."
+      />
+
+      <WarningMessage
+        isVisible={invalidUrl && componentLoaded}
+        title="Oops, this URL isn't valid"
+        subtitle={`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}
+        buttons={[{ onClick: () => toFlowchartPage(), children: 'Reset view' }]}
+      />
     </>
   );
 };
