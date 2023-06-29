@@ -22,6 +22,15 @@ Cypress.Commands.add('interceptGql', (operationName) => {
   }).as(operationName);
 });
 
+// Intercepting Network request for REST api
+Cypress.Commands.add('interceptRest', (url, method, fixturePath) => {
+  cy.intercept(method, url, (req) => {
+    req.reply((res) => {
+      res.send({ fixture: fixturePath });
+    });
+  });
+});
+
 // Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
 Cypress.SelectorPlayground.defaults({
   onElement: ($el) => {
@@ -82,27 +91,4 @@ Cypress.Commands.add(
 );
 
 // Get application state
-Cypress.Commands.add('getApplicationState', () => cy.window().its('__store__'));
-
-// Prepare large dataset
-Cypress.Commands.add('prepareLargeDataset', () => {
-  const data = { ...spaceflights };
-  let extraNodes = [];
-  new Array(1000).fill().forEach((d, i) => {
-    const extraNodeGroup = data.nodes.map((node) => ({
-      ...node,
-      id: node.id + i,
-      //eslint-disable-next-line camelcase
-      modular_pipelines: [],
-    }));
-    extraNodes = extraNodes.concat(extraNodeGroup);
-  });
-  data.nodes = data.nodes.concat(extraNodes);
-  data.modular_pipelines['__root__'].children.push(
-    ...extraNodes.map((node) => ({
-      id: node.id,
-      type: node.type,
-    }))
-  );
-  return data;
-});
+Cypress.Commands.add('getApplicationState', () => cy.window().its('__store__'))
