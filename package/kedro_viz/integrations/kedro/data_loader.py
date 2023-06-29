@@ -80,35 +80,31 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
             context = session.load_context()
             session_store = session._store
             catalog = context.catalog
-
             # Pipelines is a lazy dict-like object, so we force it to populate here
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-
         return catalog, pipelines_dict, session_store
-
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
             context = session.load_context()
             session_store = session._store
 
         return context.catalog, context.pipelines, session_store
-
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
         from kedro.framework.session import KedroSession
@@ -118,9 +114,9 @@ def load_data(
         with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
-            env=env,
+            env=env,  # type: ignore
             save_on_close=False,
-            extra_params=extra_params,
+            extra_params=extra_params,  # type: ignore
         ) as session:
             context = session.load_context()
             session_store = session._store
