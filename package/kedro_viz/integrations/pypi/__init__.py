@@ -13,7 +13,7 @@ _PYPI_ENDPOINT = "https://pypi.python.org/pypi/kedro-viz/json"
 logger = logging.getLogger(__name__)
 
 
-def get_latest_version() -> VersionInfo:
+def get_latest_version() -> Optional[VersionInfo]:
     """Get latest Kedro-Viz version available on PyPI."""
     logger.info("Checking for update...")
     try:

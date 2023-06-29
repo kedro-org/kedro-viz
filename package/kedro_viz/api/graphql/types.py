@@ -3,9 +3,10 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import strawberry
+from semver import VersionInfo
 from strawberry import ID
 from strawberry.scalars import JSON
 
@@ -71,6 +72,6 @@ UpdateRunDetailsResponse = strawberry.union(
 
 @strawberry.type(description="Installed and latest Kedro-Viz versions")
 class Version:
-    installed: str
+    installed: VersionInfo
     is_outdated: bool
-    latest: str
+    latest: Union[VersionInfo, str]
