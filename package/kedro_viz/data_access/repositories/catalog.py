@@ -98,7 +98,7 @@ class CatalogRepository:
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
-            dataset_obj = MemoryDataset()  # type: ignore
+            dataset_obj = MemoryDataset()
 
         return dataset_obj
 
