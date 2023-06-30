@@ -1,81 +1,176 @@
+import { validateImage } from '../../utils/utils';
+
 describe('Pipeline Primary Toolbar', () => {
-  it('verifies that users can hide/show the side menu', () => {
-    cy.get('[data-test="btnToggleMenu"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Hide menu');
-    cy.get('.pipeline-sidebar--visible').should('exist');
+  it('verifies that users can hide/show the side menu. #TC-8', () => {
+    // Alias
+    cy.get('[data-test="btnToggleMenu"]').as('btnToggleMenu');
+    cy.get('.pipeline-sidebar--visible').as('pipelineSideBar');
 
-    cy.get('[data-test="btnToggleMenu"]').click();
+    // Assert before action
+    cy.__checkForAriaLabel__('@btnToggleMenu', 'Hide menu');
+    cy.get('@pipelineSideBar').should('exist');
 
-    cy.get('[data-test="btnToggleMenu"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Show menu');
-    cy.get('.pipeline-sidebar--visible').should('not.exist');
+    // Action
+    cy.get('@btnToggleMenu').click();
+
+    // Assert after action
+    cy.__checkForAriaLabel__('@btnToggleMenu', 'Show menu');
+    cy.get('@pipelineSideBar').should('not.exist');
   });
 
-  it('verifies that users can hide/show the text labels', () => {
-    cy.get('[data-test="btnToggleLabels"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Hide text labels');
-    cy.get('.pipeline-node__text').should('have.css', 'opacity').and('eq', '1');
+  it('verifies that users can hide/show the text labels. #TC-9', () => {
+    // Alias
+    cy.get('[data-test="btnToggleLabels"]').as('btnToggleLabels');
+    cy.get('.pipeline-node__text').as('pipelineNodeLabels');
 
-    cy.get('[data-test="btnToggleLabels"]').click();
+    // Assert before action
+    cy.__checkForAriaLabel__('@btnToggleLabels', 'Hide text labels');
+    cy.get('@pipelineNodeLabels').should('have.css', 'opacity').and('eq', '1');
 
-    cy.get('[data-test="btnToggleLabels"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Show text labels');
-    cy.get('.pipeline-node__text').should('have.css', 'opacity').and('eq', '0');
+    // Action
+    cy.get('@btnToggleLabels').click();
+
+    // Assert after action
+    cy.__checkForAriaLabel__('@btnToggleLabels', 'Show text labels');
+    cy.get('@pipelineNodeLabels').should('have.css', 'opacity').and('eq', '0');
   });
 
-  it('verifies that users can hide/show layers', () => {
-    cy.get('[data-test="btnToggleLayers"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Turn data layers off');
-    cy.get('.pipeline-layer').should('exist');
+  it('verifies that users can hide/show layers. #TC-10', () => {
+    // Alias
+    cy.get('[data-test="btnToggleLayers"]').as('btnToggleLayers');
+    cy.get('.pipeline-layer').as('pipelineLayer');
 
-    cy.get('[data-test="btnToggleLayers"]').click();
+    // Assert before action
+    cy.__checkForAriaLabel__('@btnToggleLayers', 'Turn data layers off');
+    cy.get('@pipelineLayer').should('exist');
 
-    cy.get('[data-test="btnToggleLayers"]')
-      .should('have.attr', 'aria-label')
-      .and('eq', 'Turn data layers on');
-    cy.get('.pipeline-layer').should('not.exist');
+    // Action
+    cy.get('@btnToggleLayers').click();
+
+    // Assert after action
+    cy.__checkForAriaLabel__('@btnToggleLayers', 'Turn data layers on');
+    cy.get('@pipelineLayer').should('not.exist');
   });
 
-  it.only('verifies that users can access the export pipeline visualisation page', () => {
+  it('verifies that users can access the export pipeline visualisation page. #TC-11', () => {
+    // Action
     cy.get('[data-test="btnExportGraph"]').click();
-    cy.get('.modal > [role="dialog"]')
-      .should('be.visible')
-      .then(($dialog) => {
-        cy.wrap($dialog)
-          .should('have.attr', 'class')
-          .and('contains', 'modal--visible');
 
-        cy.wrap($dialog).within(() => {
-          cy.get('.modal__title')
-            .should('have.class', 'modal__title')
-            .should('have.text', 'Export pipeline visualisation');
-        });
-
-        cy.wrap($dialog).within(() => {
-          cy.get('[data-test="btnDownloadPNG]')
-            .should('exist')
-            .and('have.text', 'Download PNG');
-        });
-
-        cy.wrap($dialog).within(() => {
-          cy.get('[data-test="btnDownloadSVG]')
-            .should('exist')
-            .and('have.text', 'Download SVG');
-        });
+    // Assertions
+    cy.get('.modal--visible').then(($dialog) => {
+      cy.wrap($dialog).within(() => {
+        cy.get('.modal__title')
+          .should('have.class', 'modal__title')
+          .should('have.text', 'Export pipeline visualisation');
       });
+
+      cy.wrap($dialog).within(() => {
+        cy.get('[data-test="btnDownloadPNG"]')
+          .should('exist')
+          .and('have.text', 'Download PNG');
+      });
+
+      cy.wrap($dialog).within(() => {
+        cy.get('[data-test="btnDownloadSVG"]')
+          .should('exist')
+          .and('have.text', 'Download SVG');
+      });
+    });
   });
 
-  it('verifies that users can download a PNG of their visualisation', () => {
-    cy.get('[data-test=btnDownloadPNG]').click();
+  it('verifies that users can download a PNG of their visualisation. #TC-12', () => {
+    // Action
+    cy.get('[data-test=btnDownloadPNG]').click({ force: true });
+    // Assertion
+    validateImage('kedro-pipeline.png');
   });
 
-  it('verifies that users can download an SVG of their visualisation', () => {
-    cy.get('[data-test=btnDownloadSVG]').click();
+  it('verifies that users can download an SVG of their visualisation. #TC-13', () => {
+    // Action
+    cy.get('[data-test=btnDownloadSVG]').click({ force: true });
+    // Assertion
+    validateImage('kedro-pipeline.svg');
   });
 });
-describe('Pipeline Minimap Toolbar', () => {});
+
+describe('Pipeline Minimap Toolbar', () => {
+  it('verifies that users can hide/show minimap. #TC-14', () => {
+    // Alias
+    cy.get('[data-test="btnToggleMinimap"]').as('btnToggleMinimap');
+    cy.get('.pipeline-minimap-container').as('minimapContainer');
+
+    // Assert before action
+    cy.__checkForAriaLabel__('@btnToggleMinimap', 'Turn minimap off');
+    cy.get('@minimapContainer')
+      .should('have.attr', 'style')
+      .and('include', 'transform');
+
+    // Action
+    cy.get('@btnToggleMinimap').click();
+
+    // Assert after action
+    cy.__checkForAriaLabel__('@btnToggleMinimap', 'Turn minimap on');
+    cy.get('@minimapContainer')
+      .should('have.attr', 'style')
+      .and('not.include', 'transform');
+  });
+
+  it('verifies that users can zoom in/out/reset. #TC-15', () => {
+    // Alias
+    cy.get('[data-test="btnZoomIn"]').as('btnZoomIn');
+    cy.get('[data-test="btnZoomOut"]').as('btnZoomOut');
+    cy.get('[data-test="btnResetZoom"]').as('btnResetZoom');
+    cy.get('.pipeline-minimap-toolbar__scale').as('zoomScale');
+
+    // Zoom values are calculated once the flowchart is drawn, so we wait for pageLoad to complete
+    cy.__waitForPageLoad__(() => {
+      let initialZoomValue;
+      let zoomInValue;
+
+      cy.get('@zoomScale')
+        .invoke('text')
+        .then((text) => {
+          initialZoomValue = parseFloat(text.replace('%', ''));
+        });
+
+      for (let i = 0; i < 3; i++) {
+        cy.get('@btnZoomIn').click();
+      }
+
+      // wait for the dom to update
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(100);
+
+      cy.get('@zoomScale')
+        .invoke('text')
+        .then((text) => {
+          zoomInValue = parseFloat(text.replace('%', ''));
+          expect(initialZoomValue).to.be.lt(zoomInValue);
+        });
+
+      cy.get('@btnZoomOut').click();
+
+      // wait for the dom to update
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(100);
+
+      cy.get('@zoomScale')
+        .invoke('text')
+        .then((text) => {
+          expect(zoomInValue).to.be.gt(parseFloat(text.replace('%', '')));
+        });
+
+      cy.get('@btnResetZoom').click();
+
+      // wait for the dom to update
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(600);
+
+      cy.get('@zoomScale')
+        .invoke('text')
+        .then((text) => {
+          expect(initialZoomValue).to.be.eq(parseFloat(text.replace('%', '')));
+        });
+    });
+  });
+});
