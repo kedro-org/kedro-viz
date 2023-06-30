@@ -3,7 +3,7 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Annotated, List, Optional, Union
 
 import strawberry
 from strawberry import ID
@@ -62,11 +62,13 @@ class UpdateRunDetailsFailure:
     error_message: str
 
 
-UpdateRunDetailsResponse = strawberry.union(
-    "UpdateRunDetailsResponse",
-    (UpdateRunDetailsSuccess, UpdateRunDetailsFailure),
-    description="Response for update of run metadata",
-)
+UpdateRunDetailsResponse = Annotated[
+    Union[UpdateRunDetailsSuccess, UpdateRunDetailsFailure],
+    strawberry.union(
+        "UpdateRunDetailsResponse",
+        description="Response for update of run metadata",
+    ),
+]
 
 
 @strawberry.type(description="Installed and latest Kedro-Viz versions")
