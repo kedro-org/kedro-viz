@@ -35,7 +35,6 @@ $secondary-underline-offset-hover: 4px;
   box-shadow: none;
   color: var(--color-button__text);
   cursor: pointer;
-  display: flex;
   font-family: inherit;
   font-size: 1.6em;
   font-weight: 600;
@@ -139,7 +138,6 @@ $secondary-underline-offset-hover: 4px;
 
 .success-check-mark {
   animation: grow 0.35s 0.4s ease forwards;
-  display: block;
   margin-left: 0.5em;
   transform: scale(0);
 }

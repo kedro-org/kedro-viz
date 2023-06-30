@@ -47,10 +47,12 @@ export const PipelineWarning = ({
             a while to render. You can use the sidebar controls to select a
             smaller graph.
           </p>
-          <Button onClick={onHide}>Render it anyway</Button>
-          <Button mode="secondary" onClick={onDisable} size="small">
-            Don't show this again
-          </Button>
+          <div className="pipeline-warning__button-wrapper">
+            <Button onClick={onHide}>Render it anyway</Button>
+            <Button mode="secondary" onClick={onDisable} size="small">
+              Don't show this again
+            </Button>
+          </div>
         </div>
       )}
       {isEmptyPipeline && componentLoaded && (
@@ -70,14 +72,9 @@ export const PipelineWarning = ({
       )}
       {invalidUrl && componentLoaded && (
         <div
-          className={classnames(
-            'kedro',
-            'pipeline-warning',
-            'pipeline-warning--invalid-url',
-            {
-              'pipeline-warning--sidebar-visible': sidebarVisible,
-            }
-          )}
+          className={classnames('kedro', 'pipeline-warning', {
+            'pipeline-warning--sidebar-visible': sidebarVisible,
+          })}
         >
           <h2 className="pipeline-warning__title">
             Oops, this URL isn't valid
