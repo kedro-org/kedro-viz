@@ -23,15 +23,22 @@ export const useGeneratePathname = () => {
     history.go(url);
   }, [history]);
 
-  const toSelectedPipeline = useCallback(() => {
-    const activePipeline = getCurrentActivePipeline();
+  const toSelectedPipeline = useCallback(
+    (pipelineValue) => {
+      // Get the value from param if existed first
+      // before checking from localStorage
+      const activePipeline = pipelineValue
+        ? pipelineValue
+        : getCurrentActivePipeline();
 
-    const url = generatePath(routes.flowchart.selectedPipeline, {
-      pipelineId: activePipeline,
-    });
+      const url = generatePath(routes.flowchart.selectedPipeline, {
+        pipelineId: activePipeline,
+      });
 
-    history.push(url);
-  }, [history]);
+      history.push(url);
+    },
+    [history]
+  );
 
   const toSelectedNode = useCallback(
     (item) => {
