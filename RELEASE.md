@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.3.2
+
+## Bug fixes and other changes
+
+- Fix kedro-viz command `--autoreload` to work again by updating the graphql library strawberry's type annotation for `strawberry.union`. (#1430)
+
 # Release 6.3.1
 
 ## Bug fixes and other changes
