@@ -47,10 +47,12 @@ export const PipelineWarning = ({
             a while to render. You can use the sidebar controls to select a
             smaller graph.
           </p>
-          <Button onClick={onHide}>Render it anyway</Button>
-          <Button mode="secondary" onClick={onDisable} size="small">
-            Don't show this again
-          </Button>
+          <div className="pipeline-warning__button-wrapper">
+            <Button onClick={onHide}>Render it anyway</Button>
+            <Button mode="secondary" onClick={onDisable} size="small">
+              Don't show this again
+            </Button>
+          </div>
         </div>
       )}
       {isEmptyPipeline && componentLoaded && (
