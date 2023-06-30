@@ -70,14 +70,9 @@ export const PipelineWarning = ({
       )}
       {invalidUrl && componentLoaded && (
         <div
-          className={classnames(
-            'kedro',
-            'pipeline-warning',
-            'pipeline-warning--invalid-url',
-            {
-              'pipeline-warning--sidebar-visible': sidebarVisible,
-            }
-          )}
+          className={classnames('kedro', 'pipeline-warning', {
+            'pipeline-warning--sidebar-visible': sidebarVisible,
+          })}
         >
           <h2 className="pipeline-warning__title">
             Oops, this URL isn't valid
