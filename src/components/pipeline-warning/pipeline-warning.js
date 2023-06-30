@@ -43,9 +43,11 @@ export const PipelineWarning = ({
       >
         <h2 className="pipeline-warning__title">{title}</h2>
         <p className="pipeline-warning__subtitle">{subtitle}</p>
-        {buttons.map((buttonProps, index) => (
-          <Button key={index} {...buttonProps} />
-        ))}
+        <div className="pipeline-warning__button-wrapper">
+          {buttons.map((buttonProps, index) => (
+            <Button key={index} {...buttonProps} />
+          ))}
+        </div>
       </div>
     );
   };
