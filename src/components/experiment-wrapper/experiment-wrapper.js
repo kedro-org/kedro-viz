@@ -175,6 +175,7 @@ const ExperimentWrapper = ({ theme }) => {
     }
   };
 
+  // Test
   const redirectToSelectedView = () => {
     const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
 
