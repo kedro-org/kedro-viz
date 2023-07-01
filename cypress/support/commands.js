@@ -1,17 +1,4 @@
 // Add any reusable custom commands here
-const apiBaseUrl = Cypress.env('apiBaseUrl');
-
-// Network requests
-Cypress.Commands.add('__main__', () => {
-  cy.request({
-    method: 'GET',
-    url: `${apiBaseUrl}/api/main`,
-  }).then((response) => {
-    expect(response).property('status').to.equal(200);
-    expect(response.body).property('pipelines').to.not.be.oneOf([null, '']);
-    window.localStorage.setItem('KedroViz', JSON.stringify(response.body));
-  });
-});
 
 // Intercepting Network requests using fixtures for GraphQL
 Cypress.Commands.add('__interceptGql__', (operationName) => {
@@ -89,9 +76,11 @@ Cypress.Commands.add(
 );
 
 // Get application state
-Cypress.Commands.add('__getApplicationState__', () => cy.window().its('__store__'))
+Cypress.Commands.add('__getApplicationState__', () =>
+  cy.window().its('__store__')
+);
 
 // Check for aria-label
 Cypress.Commands.add('__checkForAriaLabel__', (subject, ariaLabelValue) => {
   cy.get(subject).should('have.attr', 'aria-label').and('eq', ariaLabelValue);
-})
+});
