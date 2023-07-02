@@ -28,13 +28,13 @@ Cypress.SelectorPlayground.defaults({
 });
 
 // Custom hover command
-Cypress.Commands.add('__hover__', (selector) => {
-  cy.get(selector).trigger('mouseover');
+Cypress.Commands.add('__hover__', (subject) => {
+  cy.get(subject).trigger('mouseover');
 });
 
 // Custom unhover command
-Cypress.Commands.add('__unhover__', (selector) => {
-  cy.get(selector).trigger('mouseout');
+Cypress.Commands.add('__unhover__', (subject) => {
+  cy.get(subject).trigger('mouseout');
 });
 
 // Custom command to check if all the classNames exist/not.exist
@@ -83,4 +83,13 @@ Cypress.Commands.add('__getApplicationState__', () =>
 // Check for aria-label
 Cypress.Commands.add('__checkForAriaLabel__', (subject, ariaLabelValue) => {
   cy.get(subject).should('have.attr', 'aria-label').and('eq', ariaLabelValue);
+});
+
+// Check for text
+Cypress.Commands.add('__checkForText__', (subject, compareText) => {
+  cy.get(subject)
+    .invoke('text')
+    .then((selectedNodeText) => {
+      expect(selectedNodeText.toLowerCase()).to.eq(compareText.toLowerCase());
+    });
 });
