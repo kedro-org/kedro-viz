@@ -113,3 +113,16 @@ Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
     expect(buffer.length).to.be.gt(1000);
   });
 });
+
+/**
+ * Custom command to conditionally visit a page based on spec file path
+ */
+Cypress.Commands.add('__conditionalVisit__', () => {
+  const specPath = Cypress.spec.relative;
+
+  if (specPath.includes('experiment-tracking')) {
+    cy.visit('/experiment-tracking');
+  } else {
+    cy.visit('/');
+  }
+});
