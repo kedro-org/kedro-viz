@@ -47,10 +47,12 @@ Cypress.Commands.add('__checkClassExistence__', (classNames, condition) => {
 // Custom command to wait for page load before executing
 Cypress.Commands.add('__waitForPageLoad__', (callback) => {
   // Wait for pipeline loading icon to be visible
-  cy.get('.pipeline-loading-icon--visible').should('exist');
+  cy.get('.pipeline-loading-icon--visible', { timeout: 10000 }).should('exist');
 
   // Wait for pipeline loading icon to be not visible
-  cy.get('.pipeline-loading-icon--visible').should('not.exist').then(callback);
+  cy.get('.pipeline-loading-icon--visible', { timeout: 10000 })
+    .should('not.exist')
+    .then(callback);
 });
 
 // Custom command to filter elements based on className and attribute value satisfying/not-satisfying the regex

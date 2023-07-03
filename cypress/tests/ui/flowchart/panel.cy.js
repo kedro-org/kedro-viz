@@ -59,9 +59,10 @@ describe('Pipeline Primary Toolbar', () => {
     // Assertions
     cy.get('.modal--visible').then(($dialog) => {
       cy.wrap($dialog).within(() => {
-        cy.get('.modal__title')
-          .should('have.class', 'modal__title')
-          .should('have.text', 'Export pipeline visualisation');
+        cy.get('.modal__title').should(
+          'have.text',
+          'Export pipeline visualisation'
+        );
       });
 
       cy.wrap($dialog).within(() => {
@@ -81,6 +82,7 @@ describe('Pipeline Primary Toolbar', () => {
   it('verifies that users can download a PNG of their visualisation. #TC-12', () => {
     // Action
     cy.get('[data-test=btnDownloadPNG]').click({ force: true });
+
     // Assertion
     validateImage('kedro-pipeline.png');
   });
@@ -88,6 +90,7 @@ describe('Pipeline Primary Toolbar', () => {
   it('verifies that users can download an SVG of their visualisation. #TC-13', () => {
     // Action
     cy.get('[data-test=btnDownloadSVG]').click({ force: true });
+
     // Assertion
     validateImage('kedro-pipeline.svg');
   });

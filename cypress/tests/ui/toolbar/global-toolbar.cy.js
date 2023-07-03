@@ -50,9 +50,7 @@ describe('Global Toolbar', () => {
           .and('contains', 'modal--visible');
 
         cy.wrap($dialog).within(() => {
-          cy.get('.modal__title')
-            .should('have.class', 'modal__title')
-            .should('have.text', 'Settings');
+          cy.get('.modal__title').should('have.text', 'Settings');
         });
       });
   });
@@ -111,11 +109,7 @@ describe('Global Toolbar', () => {
       cy.get('@isSizeWarning').should('be.checked');
 
       // Intercept the network request to mock with a fixture
-      cy.__interceptRest__(
-        '/api/main',
-        'GET',
-        '../../../fixtures/mock/largeDataset.json'
-      );
+      cy.__interceptRest__('/api/main', 'GET', '/mock/largeDataset.json');
       cy.reload();
 
       cy.__waitForPageLoad__(() => {
