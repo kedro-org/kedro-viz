@@ -25,16 +25,16 @@ import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageFlowchartLink, params, errorMessages } from '../../config';
+import {
+  errorMessages,
+  linkToFlowchartInitialVal,
+  localStorageFlowchartLink,
+  params,
+} from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
 
 import './flowchart-wrapper.css';
-
-const linkToFlowchartInitialVal = {
-  fromURL: null,
-  showGoBackBtn: false,
-};
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -138,13 +138,17 @@ export const FlowChartWrapper = ({
     checkIfPipelineExists();
   };
 
+  const handlePopState = useCallback(() => {
+    setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
   useEffect(() => {
-    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [handlePopState]);
 
   useEffect(() => {
     setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));
