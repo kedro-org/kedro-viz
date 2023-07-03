@@ -8,7 +8,7 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import Button from '../ui/button';
 import './pipeline-warning.css';
 
-const WarningMessage = ({
+const PipelineWarningContent = ({
   isVisible,
   title,
   subtitle,
@@ -60,7 +60,7 @@ export const PipelineWarning = ({
 
   return (
     <>
-      <WarningMessage
+      <PipelineWarningContent
         isVisible={visible}
         title="Whoa, that’s a chonky pipeline!"
         subtitle={
@@ -82,14 +82,14 @@ export const PipelineWarning = ({
         sidebarVisible={sidebarVisible}
       />
 
-      <WarningMessage
+      <PipelineWarningContent
         isVisible={isEmptyPipeline && componentLoaded}
         title="Oops, there's nothing to see here"
         subtitle="This selection has nothing. Please unselect your filters or modular pipeline selection to see pipeline elements."
         sidebarVisible={sidebarVisible}
       />
 
-      <WarningMessage
+      <PipelineWarningContent
         isVisible={invalidUrl && componentLoaded}
         title="Oops, this URL isn't valid"
         subtitle={`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}
