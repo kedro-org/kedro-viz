@@ -138,7 +138,7 @@ describe('Flowchart', () => {
 
     // Assert before action
     cy.location('pathname').should('not.eq', '/experiment-tracking');
-    cy.location('search').should('not.eq', '?viewMetrics');
+    cy.location('search').should('not.eq', '?view=Metrics');
 
     // Action
     cy.contains('text', nodeToClickText).click({ force: true });
@@ -146,7 +146,7 @@ describe('Flowchart', () => {
 
     // Assert after action
     cy.location('pathname').should('eq', '/experiment-tracking');
-    cy.location('search').should('eq', '?viewMetrics');
+    cy.location('search').should('eq', '?view=Metrics');
     cy.get('.details-mainframe').should('exist');
     cy.get('.details__tabs').should('exist');
   });
