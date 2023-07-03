@@ -79,11 +79,6 @@ export default function configureStore(initialState, dataType) {
     store.dispatch(calculateGraph(getGraphInput(store.getState())));
   }
 
-  // expose store when run in Cypress
-  if (window.Cypress) {
-    window.__store__ = store;
-  }
-
   updateGraphOnChange(store);
   store.subscribe(() => {
     saveStateToLocalStorage(store.getState());

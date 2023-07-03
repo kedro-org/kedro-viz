@@ -1,13 +1,24 @@
 // Add any reusable custom commands here
+import { join } from 'path';
 
-// Intercepting Network requests using fixtures for GraphQL
+/**
+ * Custom command for intercepting network requests using fixtures for GraphQL
+ * @param {String} operationName
+ * @returns {Object} The mock/fixtured json response
+ */
 Cypress.Commands.add('__interceptGql__', (operationName) => {
   cy.intercept({ method: 'POST', url: `/graphql` }, (req) => {
     req.reply({ fixture: `/graphql/${operationName})}.json` });
   }).as(operationName);
 });
 
-// Intercepting Network request for REST api
+/**
+ * Custom command for intercepting network requests for REST
+ * @param {String} url
+ * @param {String} method
+ * @param {String} fixturePath
+ * @returns {Object} The mock/fixtured json response
+ */
 Cypress.Commands.add('__interceptRest__', (url, method, fixturePath) => {
   cy.intercept(method, url, (req) => {
     req.reply((res) => {
@@ -16,7 +27,10 @@ Cypress.Commands.add('__interceptRest__', (url, method, fixturePath) => {
   });
 });
 
-// Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
+/**
+ * Custom command for determining the selector for an element. Falls back to default behavior if returning a falsey value.
+ * @returns {String} The selector for an element
+ */
 Cypress.SelectorPlayground.defaults({
   onElement: ($el) => {
     const customId = $el.attr('data-test');
@@ -27,24 +41,28 @@ Cypress.SelectorPlayground.defaults({
   },
 });
 
-// Custom hover command
+/**
+ * Custom command for hovering an element
+ * @param {Object} subject
+ * @returns {Object} yields the subject passed
+ */
 Cypress.Commands.add('__hover__', (subject) => {
   cy.get(subject).trigger('mouseover');
 });
 
-// Custom unhover command
+/**
+ * Custom command for unhovering an element
+ * @param {Object} subject
+ * @returns {Object} yields the subject passed
+ */
 Cypress.Commands.add('__unhover__', (subject) => {
   cy.get(subject).trigger('mouseout');
 });
 
-// Custom command to check if all the classNames exist/not.exist
-Cypress.Commands.add('__checkClassExistence__', (classNames, condition) => {
-  classNames.forEach((className) => {
-    cy.get(`.${className}`).should(condition);
-  });
-});
-
-// Custom command to wait for page load before executing
+/**
+ * Custom command to wait for page load before executing the callback
+ * @param {Object} callback
+ */
 Cypress.Commands.add('__waitForPageLoad__', (callback) => {
   // Wait for pipeline loading icon to be visible
   cy.get('.pipeline-loading-icon--visible', { timeout: 10000 }).should('exist');
@@ -55,43 +73,43 @@ Cypress.Commands.add('__waitForPageLoad__', (callback) => {
     .then(callback);
 });
 
-// Custom command to filter elements based on className and attribute value satisfying/not-satisfying the regex
-Cypress.Commands.add(
-  '__filterElementsByRegex__',
-  (className, attribute = 'title', regex, isMatch = true) => {
-    cy.get(`.${className}`).then(($elements) => {
-      // Convert Cypress collection to an array
-      const elementsArray = $elements.toArray();
-
-      // Filter elements that have a title matching the regex pattern
-      const filteredElements = elementsArray.filter(($element) => {
-        const attrValue = $element.getAttribute(attribute);
-        return (
-          attrValue &&
-          (isMatch ? attrValue.match(regex) : !attrValue.match(regex))
-        );
-      });
-
-      return filteredElements;
-    });
-  }
-);
-
-// Get application state
-Cypress.Commands.add('__getApplicationState__', () =>
-  cy.window().its('__store__')
-);
-
-// Check for aria-label
+/**
+ * Custom command to check for aria label text value of an element
+ * @param {Object} subject
+ * @param {String} ariaLabelValue
+ */
 Cypress.Commands.add('__checkForAriaLabel__', (subject, ariaLabelValue) => {
   cy.get(subject).should('have.attr', 'aria-label').and('eq', ariaLabelValue);
 });
 
-// Check for text
+/**
+ * Custom command to compare text values of an element and a comparable text
+ * @param {Object} subject
+ * @param {String} compareText
+ */
 Cypress.Commands.add('__checkForText__', (subject, compareText) => {
   cy.get(subject)
     .invoke('text')
     .then((selectedNodeText) => {
       expect(selectedNodeText.toLowerCase()).to.eq(compareText.toLowerCase());
     });
+});
+
+/**
+ * Custom command to validate the downloaded image
+ * @param {String} downloadedFilename
+ */
+Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+
+  if (!downloadedFilename) {
+    downloadedFilename = join(downloadsFolder, 'logo.png');
+  }
+
+  // ensure the file has been saved before trying to parse it
+  cy.readFile(`${downloadsFolder}/${downloadedFilename}`, 'binary', {
+    timeout: 15000,
+  }).should((buffer) => {
+    expect(buffer.length).to.be.gt(1000);
+  });
 });

@@ -1,5 +1,3 @@
-import { validateImage } from '../../utils/utils';
-
 describe('Pipeline Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
@@ -84,7 +82,7 @@ describe('Pipeline Primary Toolbar', () => {
     cy.get('[data-test=btnDownloadPNG]').click({ force: true });
 
     // Assertion
-    validateImage('kedro-pipeline.png');
+    cy.__validateImage__('kedro-pipeline.png');
   });
 
   it('verifies that users can download an SVG of their visualisation. #TC-13', () => {
@@ -92,7 +90,7 @@ describe('Pipeline Primary Toolbar', () => {
     cy.get('[data-test=btnDownloadSVG]').click({ force: true });
 
     // Assertion
-    validateImage('kedro-pipeline.svg');
+    cy.__validateImage__('kedro-pipeline.svg');
   });
 });
 
