@@ -27,11 +27,29 @@ export const findMatchedPath = (pathname, search) => {
     path: [routes.flowchart.focusedNode],
   });
 
+  const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.main],
+  });
+
+  const matchedSelectedView = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.selectedView],
+  });
+
+  const matchedSelectedRuns = matchPath(pathname + search, {
+    exact: true,
+    path: [routes.experimentTracking.selectedRuns],
+  });
+
   return {
     matchedFlowchartMainPage,
     matchedSelectedPipeline,
     matchedSelectedNodeId,
     matchedSelectedNodeName,
     matchedFocusedNode,
+    matchedExperimentTrackingMainPage,
+    matchedSelectedView,
+    matchedSelectedRuns,
   };
 };
