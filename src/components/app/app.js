@@ -32,8 +32,6 @@ class App extends React.Component {
       this.store.dispatch(loadInitialPipelineData());
     }
     this.announceFlags(this.store.getState().flags);
-
-    window.addEventListener('popstate', this.handlePopState);
   }
 
   componentDidUpdate(prevProps) {
@@ -41,15 +39,6 @@ class App extends React.Component {
       this.updatePipelineData();
     }
   }
-
-  componentWillUnmount() {
-    window.removeEventListener('popstate', this.handlePopState);
-  }
-
-  handlePopState = () => {
-    // To ensure the pipeline data is loading again when navigating through back button
-    this.store.dispatch(loadInitialPipelineData());
-  };
 
   /**
    * Shows a console message regarding the given flags
