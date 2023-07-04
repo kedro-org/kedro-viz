@@ -248,6 +248,7 @@ export const FlowChartWrapper = ({
         <PipelineWarning
           errorMessage={errorMessage}
           invalidUrl={isInvalidUrl}
+          onResetClick={() => setIsInvalidUrl(false)}
         />
       </div>
     );
