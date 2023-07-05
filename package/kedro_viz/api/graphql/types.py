@@ -3,12 +3,8 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
+import sys
 from typing import List, Optional, Union
-
-try:
-    from typing import Annotated
-except ImportError:
-    from typing_extensions import Annotated
 
 import strawberry
 from strawberry import ID
@@ -17,6 +13,11 @@ from strawberry.scalars import JSON
 from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup as TrackingDatasetGroupModel,
 )
+
+if sys.version_info >= (3, 8):
+    from typing import Annotated
+else:
+    from typing_extensions import Annotated
 
 
 @strawberry.type(description="Run metadata")
