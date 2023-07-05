@@ -20,15 +20,26 @@ describe('Flowchart', () => {
     );
   });
 
-  it('verifies that users can open the metadata panel for nodes. #TC-24', () => {
+  it('verifies that users can open the metadata panel for nodes and see the node details. #TC-24', () => {
+    const nodeToClickText = 'Split Data';
+
     // Assert before action
     cy.get('.pipeline-metadata--visible').should('not.exist');
 
     // Action
-    cy.get('.pipeline-node.pipeline-node--task').first().click();
+    cy.contains('text', nodeToClickText).click({ force: true });
 
     // Assert after action
     cy.get('.pipeline-metadata--visible').should('exist');
+    cy.get('.pipeline-metadata__title').should('have.text', nodeToClickText);
+    cy.get('[data-label="Type:"] > .pipeline-metadata__value')
+      .invoke('text')
+      .then((nodeTypeText) =>
+        expect(nodeTypeText.toLowerCase()).to.be.eq('node')
+      );
+    cy.get('[data-label="Inputs:"]').should('exist');
+    cy.get('[data-label="Outputs:"]').should('exist');
+    cy.get('[data-label="Run Command:"]').should('exist');
   });
 
   it('verifies that users can open the code block in the metadata panel. #TC-25', () => {
@@ -44,7 +55,7 @@ describe('Flowchart', () => {
     cy.get('.pipeline-metadata-code__title').should('have.text', 'Code block');
   });
 
-  it('verifies that users can open the metadata panel for parameters. #TC-26', () => {
+  it('verifies that users can open the metadata panel for parameters and see the parameter details. #TC-26', () => {
     const nodeToToggleText = 'Parameters';
 
     // Alias
@@ -62,9 +73,16 @@ describe('Flowchart', () => {
 
     // Assert after action
     cy.get('.pipeline-metadata--visible').should('exist');
+    cy.get('[data-label="Type:"] > .pipeline-metadata__value')
+      .invoke('text')
+      .then((nodeTypeText) =>
+        expect(nodeTypeText.toLowerCase()).to.be.eq('parameters')
+      );
+    cy.get('[data-label="File Path:"]').should('exist');
+    cy.get('[data-label="Parameters:"]').should('exist');
   });
 
-  it('verifies that users can open the metadata panel for datasets. #TC-27', () => {
+  it('verifies that users can open the metadata panel for datasets and see the dataset details. #TC-27', () => {
     // Assert before action
     cy.get('.pipeline-metadata--visible').should('not.exist');
 
@@ -73,6 +91,14 @@ describe('Flowchart', () => {
 
     // Assert after action
     cy.get('.pipeline-metadata--visible').should('exist');
+    cy.get('[data-label="Type:"] > .pipeline-metadata__value')
+      .invoke('text')
+      .then((nodeTypeText) =>
+        expect(nodeTypeText.toLowerCase()).to.be.eq('dataset')
+      );
+    cy.get('[data-label="Dataset Type:"]').should('exist');
+    cy.get('[data-label="File Path:"]').should('exist');
+    cy.get('.preview-table').should('exist');
   });
 
   it('verifies that users can open and preview the dataset table in the metadata panel for datasets. #TC-28', () => {
@@ -119,7 +145,7 @@ describe('Flowchart', () => {
     cy.get('.pipeline-plotly-chart.pipeline-plotly__modal').should('exist');
   });
 
-  it('verifies that users can open the metadata panel showing the R2 score details. #TC-31', () => {
+  it('verifies that users can open the metadata panel showing tracking data from last run. #TC-31', () => {
     const nodeToClickText = 'R2 Score';
 
     // Assert before action
@@ -131,9 +157,12 @@ describe('Flowchart', () => {
     // Assert after action
     cy.get('.pipeline-metadata--visible').should('exist');
     cy.contains('.pipeline-metadata__title', nodeToClickText);
+    cy.get(
+      '[data-label="Tracking data from last run:"] > .pipeline-json__object'
+    ).should('exist');
   });
 
-  it('verifies that users can open and see the R2 score trend. #TC-32', () => {
+  it('verifies that users can navigate to experiment tracking by clicking on Open in Experiment Tracking button on the metadata panel. #TC-32', () => {
     const nodeToClickText = 'R2 Score';
 
     // Assert before action
