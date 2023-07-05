@@ -14,7 +14,7 @@ from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup as TrackingDatasetGroupModel,
 )
 
-if sys.version_info >= (3, 8):
+if sys.version_info > (3, 8):
     from typing import Annotated
 else:
     from typing_extensions import Annotated
