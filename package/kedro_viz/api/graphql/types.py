@@ -17,7 +17,7 @@ from kedro_viz.models.experiment_tracking import (
 if sys.version_info >= (3, 9):
     from typing import Annotated
 else:
-    from typing_extensions import Annotated
+    from typing_extensions import Annotated  # pragma: no cover
 
 
 @strawberry.type(description="Run metadata")
