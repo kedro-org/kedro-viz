@@ -3,7 +3,12 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
-from typing import Annotated, List, Optional, Union
+from typing import List, Optional, Union
+
+try: 
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated
 
 import strawberry
 from strawberry import ID
