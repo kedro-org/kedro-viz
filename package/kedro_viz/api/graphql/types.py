@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Union
 
-try: 
+try:
     from typing import Annotated
 except ImportError:
     from typing_extensions import Annotated
