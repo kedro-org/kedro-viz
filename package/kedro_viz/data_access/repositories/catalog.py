@@ -4,7 +4,7 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import Dict, Optional
 
-from kedro.io import AbstractDataSet, DataCatalog, DataSetNotFoundError, MemoryDataSet
+from kedro.io import AbstractDataSet, DataCatalog, DatasetNotFoundError, MemoryDataset
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -97,8 +97,8 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
-        except DataSetNotFoundError:
-            dataset_obj = MemoryDataSet()  # type: ignore[assignment]
+        except DatasetNotFoundError:
+            dataset_obj = MemoryDataset()
 
         return dataset_obj
 

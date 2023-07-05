@@ -74,10 +74,10 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(  # type: ignore
             registered_pipeline_id
         ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
+        edges=data_access_manager.get_edges_for_registered_pipeline(  # type: ignore
             registered_pipeline_id
         ),
         tags=data_access_manager.tags.as_list(),
@@ -86,5 +86,5 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=modular_pipelines_tree,  # type: ignore
     )
