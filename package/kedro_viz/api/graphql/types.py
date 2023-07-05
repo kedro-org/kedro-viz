@@ -14,10 +14,10 @@ from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup as TrackingDatasetGroupModel,
 )
 
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from typing import Annotated
+if sys.version_info >= (3, 9):
+    from typing import Annotated  # pragma: no cover
 else:
-    from typing_extensions import Annotated
+    from typing_extensions import Annotated  # pragma: no cover
 
 
 @strawberry.type(description="Run metadata")
