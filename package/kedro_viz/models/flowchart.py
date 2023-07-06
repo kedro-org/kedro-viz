@@ -11,7 +11,7 @@ from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
-from kedro.io.core import DataSetError
+from kedro.io.core import DatasetError
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
@@ -667,7 +667,7 @@ class ParametersNode(GraphNode):
         self.kedro_obj: AbstractDataSet
         try:
             return self.kedro_obj.load()
-        except (AttributeError, DataSetError):
+        except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
             # defined in the catalog (DataSetError) it also catches any case where
             # the kedro_obj is None (AttributeError) -- GH#1231

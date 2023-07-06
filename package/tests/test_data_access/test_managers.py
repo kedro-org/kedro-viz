@@ -2,7 +2,7 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog, MemoryDataSet
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets.pandas import CSVDataSet
@@ -230,7 +230,7 @@ class TestAddDataSet:
         assert len(nodes_list) == 1
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
-        assert isinstance(graph_node.kedro_obj, MemoryDataSet)
+        assert isinstance(graph_node.kedro_obj, MemoryDataset)
 
     def test_add_dataset_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
