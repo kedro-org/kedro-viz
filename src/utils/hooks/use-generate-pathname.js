@@ -22,7 +22,7 @@ export const useGeneratePathname = () => {
 
   const toSelectedPipeline = useCallback(
     (pipelineValue) => {
-      // Get the value from param if existed first
+      // Get the value from param if it exists first
       // before checking from localStorage
       const activePipeline = pipelineValue
         ? pipelineValue
