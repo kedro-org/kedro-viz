@@ -4,8 +4,8 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import Dict, Optional
 
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from kedro.io import AbstractDataSet, DataCatalog, DatasetNotFoundError, MemoryDataset
+from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 from kedro_viz.constants import KEDRO_VERSION
 
