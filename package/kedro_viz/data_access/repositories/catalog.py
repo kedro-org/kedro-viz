@@ -5,6 +5,7 @@ import logging
 from typing import Dict, Optional
 
 from kedro.io import AbstractDataSet, DataCatalog, DatasetNotFoundError, MemoryDataset
+from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -23,9 +24,14 @@ class CatalogRepository:
     def set_catalog(self, value: DataCatalog):
         self._catalog = value
 
-    @staticmethod
-    def strip_encoding(dataset_name: str) -> str:
-        return dataset_name.split("@")[0]
+    def _validate_layers_for_transcoding(self, dataset_name, layer):
+        existing_layer = self._layers_mapping.get(dataset_name)
+        if existing_layer is not None and existing_layer != layer:
+            raise ValueError(
+                "Transcoded datasets should have the same layer. "
+                "Please ensure consistent layering in your Kedro catalog. "
+                f"Mismatch found for: {dataset_name}"
+            )
 
     @property
     def layers_mapping(self):
@@ -59,17 +65,16 @@ class CatalogRepository:
         if KEDRO_VERSION.match("<0.19.0"):
             if self._catalog.layers is None:
                 self._layers_mapping = {
-                    self.strip_encoding(dataset_name): None
+                    _strip_transcoding(dataset_name): None
                     for dataset_name in self._catalog._data_sets
                 }
             else:
                 for layer, dataset_names in self._catalog.layers.items():
-                    self._layers_mapping.update(
-                        {
-                            self.strip_encoding(dataset_name): layer
-                            for dataset_name in dataset_names
-                        }
-                    )
+                    for dataset_name in dataset_names:
+                        if TRANSCODING_SEPARATOR in dataset_name:
+                            dataset_name = _strip_transcoding(dataset_name)
+                            self._validate_layers_for_transcoding(dataset_name, layer)
+                        self._layers_mapping[dataset_name] = layer
 
         # Maps layers according to the new format
         for dataset_name in self._catalog._data_sets:
@@ -78,14 +83,18 @@ class CatalogRepository:
             if not metadata:
                 continue
             try:
-                dataset_layer = dataset.metadata["kedro-viz"]["layer"]
+                layer = dataset.metadata["kedro-viz"]["layer"]
             except (AttributeError, KeyError):  # pragma: no cover
                 logger.debug(
                     "No layer info provided under metadata in the catalog for %s",
                     dataset_name,
                 )
             else:
-                self._layers_mapping[self.strip_encoding(dataset_name)] = dataset_layer
+                if TRANSCODING_SEPARATOR in dataset_name:
+                    dataset_name = _strip_transcoding(dataset_name)
+                    self._validate_layers_for_transcoding(dataset_name, layer)
+                self._layers_mapping[dataset_name] = layer
+
         return self._layers_mapping
 
     def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
@@ -103,7 +112,7 @@ class CatalogRepository:
         return dataset_obj
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
-        return self.layers_mapping.get(self.strip_encoding(dataset_name))
+        return self.layers_mapping.get(_strip_transcoding(dataset_name))
 
     def as_dict(self) -> Dict[str, Optional[AbstractDataSet]]:
         return {
