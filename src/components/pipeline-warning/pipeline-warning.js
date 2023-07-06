@@ -43,6 +43,7 @@ export const PipelineWarning = ({
   onHide,
   sidebarVisible,
   visible,
+  onResetClick,
 }) => {
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isEmptyPipeline = nodes.length === 0;
@@ -93,7 +94,15 @@ export const PipelineWarning = ({
         isVisible={invalidUrl && componentLoaded}
         title="Oops, this URL isn't valid"
         subtitle={`${errorMessage}. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`}
-        buttons={[{ onClick: () => toFlowchartPage(), children: 'Reset view' }]}
+        buttons={[
+          {
+            onClick: () => {
+              toFlowchartPage();
+              onResetClick();
+            },
+            children: 'Reset view',
+          },
+        ]}
         sidebarVisible={sidebarVisible}
       />
     </>
