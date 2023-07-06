@@ -45,7 +45,9 @@ class TestDataCatalogRepository:
         repo.set_catalog(catalog)
         with pytest.raises(
             ValueError,
-            match=r"Transcoded datasets should have the same layer. Mismatch found for",
+            match=r"Transcoded datasets should have the same layer. "
+            "Please ensure consistent layering in your Kedro catalog. "
+            "Mismatch found for: ",
         ):
             repo.get_layer_for_dataset("car@pandas1")
 

@@ -28,8 +28,8 @@ class CatalogRepository:
         existing_layer = self._layers_mapping.get(dataset_name)
         if existing_layer is not None and existing_layer != layer:
             raise ValueError(
-                "Transcoded datasets should have the same layer."
-                "Please ensure consistent layering in your Kedro catalog."
+                "Transcoded datasets should have the same layer. "
+                "Please ensure consistent layering in your Kedro catalog. "
                 f"Mismatch found for: {dataset_name}"
             )
 
