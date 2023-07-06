@@ -3,7 +3,8 @@
 # pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
-from typing import List, Optional
+import sys
+from typing import List, Optional, Union
 
 import strawberry
 from strawberry import ID
@@ -12,6 +13,11 @@ from strawberry.scalars import JSON
 from kedro_viz.models.experiment_tracking import (
     TrackingDatasetGroup as TrackingDatasetGroupModel,
 )
+
+if sys.version_info >= (3, 9):
+    from typing import Annotated  # pragma: no cover
+else:
+    from typing_extensions import Annotated  # pragma: no cover
 
 
 @strawberry.type(description="Run metadata")
@@ -62,11 +68,13 @@ class UpdateRunDetailsFailure:
     error_message: str
 
 
-UpdateRunDetailsResponse = strawberry.union(
-    "UpdateRunDetailsResponse",
-    (UpdateRunDetailsSuccess, UpdateRunDetailsFailure),
-    description="Response for update of run metadata",
-)
+UpdateRunDetailsResponse = Annotated[
+    Union[UpdateRunDetailsSuccess, UpdateRunDetailsFailure],
+    strawberry.union(
+        "UpdateRunDetailsResponse",
+        description="Response for update of run metadata",
+    ),
+]
 
 
 @strawberry.type(description="Installed and latest Kedro-Viz versions")
