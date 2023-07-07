@@ -10,9 +10,9 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix bug in layout for large pipeline warning message. (#1428)
-- Fix bug where flowchart wasn't updating on back/forward clicks after selecting a registered pipeline. (#1422)
 - Add validation for layers in transcoding datasets.(#1406)
+- Fix bug where flowchart wasn't updating on back/forward clicks after selecting a registered pipeline. (#1422)
+- Fix bug in layout for large pipeline warning message. (#1428)
 
 # Release 6.3.1
 
