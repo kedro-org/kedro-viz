@@ -16,7 +16,7 @@ describe('Experiment Tracking', () => {
       .should('contains.text', searchInput);
   });
 
-  it.only('verifies that users can bookmark a run. #TC-35', function () {
+  it('verifies that users can bookmark a run. #TC-35', function () {
     // Mutations
     cy.__interceptGql__('updateRunDetails', 'updateBookmark');
 

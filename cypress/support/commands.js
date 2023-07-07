@@ -8,16 +8,15 @@ import { join } from 'path';
  */
 Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
   const interceptAlias = mutationFor ? mutationFor : operationName;
+
   cy.intercept('POST', '/graphql', (req) => {
     const requestBody = req.body;
+
     if (requestBody?.operationName === operationName) {
-      req.reply((res) => {
-        if (mutationFor) {
-          res.send({ fixture: `graphql/${mutationFor}.json` });
-        } else {
-          res.send({ fixture: `graphql/${operationName}.json` });
-        }
-      });
+      const fixturePath = mutationFor
+        ? `graphql/${mutationFor}.json`
+        : `graphql/${operationName}.json`;
+      req.reply({ fixture: fixturePath });
     }
   }).as(interceptAlias);
 });
@@ -31,9 +30,7 @@ Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
  */
 Cypress.Commands.add('__interceptRest__', (url, method, fixturePath) => {
   cy.intercept(method, url, (req) => {
-    req.reply((res) => {
-      res.send({ fixture: fixturePath });
-    });
+    req.reply({ fixture: fixturePath });
   });
 });
 
