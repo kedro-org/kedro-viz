@@ -253,10 +253,10 @@ def get_default_response() -> GraphAPIResponse:
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(  # type: ignore
             default_selected_pipeline_id
         ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
+        edges=data_access_manager.get_edges_for_registered_pipeline(  # type: ignore
             default_selected_pipeline_id
         ),
         tags=data_access_manager.tags.as_list(),
@@ -264,7 +264,7 @@ def get_default_response() -> GraphAPIResponse:
             default_selected_pipeline_id
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=modular_pipelines_tree,  # type: ignore
         selected_pipeline=default_selected_pipeline_id,
     )
 

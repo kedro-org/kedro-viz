@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io import DataCatalog, MemoryDataSet, Version
+from kedro.io import DataCatalog, MemoryDataset, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
@@ -79,7 +79,7 @@ def example_catalog():
         data_sets={
             "uk.data_processing.raw_data": pandas.CSVDataSet(filepath="raw_data.csv"),
             "model_inputs": pandas.CSVDataSet(filepath="model_inputs.csv"),
-            "uk.data_science.model": MemoryDataSet(),
+            "uk.data_science.model": MemoryDataset(),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
