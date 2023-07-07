@@ -144,7 +144,8 @@ const Dropdown = (props) => {
         onClosed();
       }
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedObject, selectedObjRef]);
 
   // Event to be fired on componentWillUnmount
   useEffect(() => {

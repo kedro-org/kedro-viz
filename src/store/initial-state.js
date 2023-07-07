@@ -72,23 +72,25 @@ export const mergeLocalStorage = (state) => {
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-  if (applyFixes) {
-    const search = new URLSearchParams(window.location.search);
-    const pipelineFromURL = search.get(params.pipeline);
 
-    // Use main pipeline if active pipeline from localStorage isn't recognised
-    if (!state.pipeline.ids.includes(state.pipeline.active)) {
+  const search = new URLSearchParams(window.location.search);
+  const pipelineIdFromURL = search.get(params.pipeline);
+
+  if (pipelineIdFromURL) {
+    // Use main pipeline if pipeline from URL isn't recognised
+    if (!state.pipeline.ids.includes(pipelineIdFromURL)) {
       state.pipeline.active = state.pipeline.main;
-    } else if (pipelineFromURL) {
-      // Use main pipeline if pipeline from URL isn't recognised
-      if (!state.pipeline.ids.includes(pipelineFromURL)) {
-        state.pipeline.active = state.pipeline.main;
-      } else {
-        state.pipeline.active = pipelineFromURL;
-      }
+    } else {
+      state.pipeline.active = pipelineIdFromURL;
     }
   }
 
+  if (applyFixes) {
+    // Use main pipeline if active pipeline from localStorage isn't recognised
+    if (!state.pipeline.ids.includes(state.pipeline.active)) {
+      state.pipeline.active = state.pipeline.main;
+    }
+  }
   return state;
 };
 

@@ -18,20 +18,24 @@ export const useGeneratePathname = () => {
   const toFlowchartPage = useCallback(() => {
     const url = generatePath(routes.flowchart.main);
     history.push(url);
-
-    // FIX: this is just a temporary solution for a known issue from https://github.com/kedro-org/kedro-viz/issues/1397
-    history.go(url);
   }, [history]);
 
-  const toSelectedPipeline = useCallback(() => {
-    const activePipeline = getCurrentActivePipeline();
+  const toSelectedPipeline = useCallback(
+    (pipelineValue) => {
+      // Get the value from param if it exists first
+      // before checking from localStorage
+      const activePipeline = pipelineValue
+        ? pipelineValue
+        : getCurrentActivePipeline();
 
-    const url = generatePath(routes.flowchart.selectedPipeline, {
-      pipelineId: activePipeline,
-    });
+      const url = generatePath(routes.flowchart.selectedPipeline, {
+        pipelineId: activePipeline,
+      });
 
-    history.push(url);
-  }, [history]);
+      history.push(url);
+    },
+    [history]
+  );
 
   const toSelectedNode = useCallback(
     (item) => {

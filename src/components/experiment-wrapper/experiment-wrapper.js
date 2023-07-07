@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
@@ -9,7 +10,15 @@ import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
 import { HoverStateContextProvider } from '../experiment-tracking/utils/hover-state-context';
 import { useGeneratePathnameForExperimentTracking } from '../../utils/hooks/use-generate-pathname';
-import { useRedirectLocationInExperimentTracking } from '../../utils/hooks/use-redirect-location';
+import {
+  errorMessages,
+  linkToFlowchartInitialVal,
+  localStorageFlowchartLink,
+  params,
+  tabLabels,
+} from '../../config';
+import { findMatchedPath } from '../../utils/match-path';
+import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.css';
 
@@ -39,36 +48,27 @@ const ExperimentWrapper = ({ theme }) => {
   const [newRunAdded, setNewRunAdded] = useState(false);
   const [isDisplayingMetrics, setIsDisplayingMetrics] = useState(false);
 
-  // Reload state is to ensure it will call useRedirectLocationInExperimentTracking
-  // only when the component is re-rendered or reloaded.
-  const [reload, setReload] = useState(false);
+  const [enableComparisonView, setEnableComparisonView] = useState(false);
+  const [selectedRunIds, setSelectedRunIds] = useState([]);
+  const [activeTab, setActiveTab] = useState(tabLabels[0]);
+  const [errorMessage, setErrorMessage] = useState({});
+  const [invalidUrl, setInvalidUrl] = useState(false);
+  const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
 
-  useEffect(() => setReload(true), []);
+  const { pathname, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const {
+    matchedExperimentTrackingMainPage,
+    matchedSelectedView,
+    matchedSelectedRuns,
+  } = findMatchedPath(pathname, search);
 
   const { toExperimentTrackingPath, toSelectedRunsPath } =
     useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
   const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
-
-  const {
-    activeTab,
-    enableComparisonView,
-    errorMessage,
-    invalidUrl,
-    selectedRunIds,
-    setActiveTab,
-    setEnableComparisonView,
-    setSelectedRunIds,
-  } = useRedirectLocationInExperimentTracking(data, reload);
 
   // Fetch all data for selected runs.
   const {
@@ -153,6 +153,92 @@ const ExperimentWrapper = ({ theme }) => {
     toSelectedRunsPath(selectedRunIds, tab, enableComparisonView);
   };
 
+  const redirectToSelectedRuns = () => {
+    const runIds = searchParams.get(params.run).split(',');
+    const allRunIds = data?.runsList.map((run) => run.id);
+    const notFoundIds = runIds.find((id) => !allRunIds?.includes(id));
+
+    if (notFoundIds) {
+      setErrorMessage(errorMessages.runIds);
+      setInvalidUrl(true);
+    } else {
+      const isComparison =
+        runIds.length > 1
+          ? true
+          : searchParams.get(params.comparisonMode) === 'true';
+
+      setSelectedRunIds(runIds);
+      setEnableComparisonView(isComparison);
+      if (tabLabels.includes(searchParams.get(params.view))) {
+        setActiveTab(searchParams.get(params.view));
+      }
+    }
+  };
+
+  const redirectToSelectedView = () => {
+    const latestRun = data.runsList.map((run) => run.id).slice(0, 1);
+
+    setSelectedRunIds(latestRun);
+    setEnableComparisonView(false);
+    if (tabLabels.includes(searchParams.get(params.view))) {
+      setActiveTab(searchParams.get(params.view));
+    }
+  };
+
+  const handlePopState = useCallback(() => {
+    setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
+  useEffect(() => {
+    const showGoBackBtnFromStorage = loadLocalStorage(
+      localStorageFlowchartLink
+    ).showGoBackBtn;
+
+    if (showGoBackBtnFromStorage) {
+      saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
+    }
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [handlePopState]);
+
+  useEffect(() => {
+    if (data) {
+      /**
+       * To display a generic error message when the URL is not matched any path at all
+       */
+      if (
+        !matchedExperimentTrackingMainPage &&
+        !matchedSelectedRuns &&
+        !matchedSelectedView
+      ) {
+        setErrorMessage(errorMessages.experimentTracking);
+        setInvalidUrl(true);
+      }
+
+      if (matchedSelectedRuns) {
+        redirectToSelectedRuns();
+      }
+
+      /**
+       * This is for when there's only view= is defined in the URL, without any run_ids
+       * it should re-direct to the latest run
+       */
+      if (matchedSelectedView) {
+        redirectToSelectedView();
+      }
+    }
+
+    if (usedNavigationBtn) {
+      setUsedNavigationBtn(false);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, usedNavigationBtn]);
+
   useEffect(() => {
     if (selectedRunIds.length > MAX_NUMBER_COMPARISONS) {
       setDisableRunSelection(true);
@@ -166,6 +252,7 @@ const ExperimentWrapper = ({ theme }) => {
      * If we return runs and aren't in comparison view, set a single selected
      * run data object for use in the ExperimentPrimaryToolbar component.
      */
+
     if (data?.runsList.length > 0 && !enableComparisonView) {
       const singleSelectedRunData = data.runsList.filter((run) => {
         return run.id === selectedRunIds[0];
@@ -174,6 +261,28 @@ const ExperimentWrapper = ({ theme }) => {
       setSelectedRunData(singleSelectedRunData);
     }
   }, [data, enableComparisonView, selectedRunIds]);
+
+  useEffect(() => {
+    if (
+      matchedExperimentTrackingMainPage &&
+      data?.runsList.length > 0 &&
+      selectedRunIds.length === 0
+    ) {
+      /**
+       * If we return to default main page and don't yet have a selected run, set the first one
+       * as the default, with precedence given to runs that are bookmarked.
+       */
+      const bookmarkedRuns = data.runsList.filter((run) => {
+        return run.bookmark === true;
+      });
+
+      if (bookmarkedRuns.length > 0) {
+        setSelectedRunIds(bookmarkedRuns.map((run) => run.id).slice(0, 1));
+      } else {
+        setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
+      }
+    }
+  }, [data, selectedRunIds, matchedExperimentTrackingMainPage]);
 
   useEffect(() => {
     if (
@@ -220,7 +329,14 @@ const ExperimentWrapper = ({ theme }) => {
           Oops, this URL isn't valid
         </h2>
         <p className="experiment-wrapper__text">{`${errorMessage}.`}</p>
-        <Button onClick={() => toExperimentTrackingPath()}>Reset view</Button>
+        <Button
+          onClick={() => {
+            toExperimentTrackingPath();
+            setInvalidUrl(false);
+          }}
+        >
+          Reset view
+        </Button>
       </div>
     );
   } else {

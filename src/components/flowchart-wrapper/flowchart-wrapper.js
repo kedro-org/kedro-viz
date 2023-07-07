@@ -25,16 +25,16 @@ import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageFlowchartLink, params, errorMessages } from '../../config';
+import {
+  errorMessages,
+  linkToFlowchartInitialVal,
+  localStorageFlowchartLink,
+  params,
+} from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
 
 import './flowchart-wrapper.css';
-
-const linkToFlowchartInitialVal = {
-  fromURL: null,
-  showGoBackBtn: false,
-};
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -51,6 +51,7 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
+  onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
 }) => {
@@ -90,6 +91,21 @@ export const FlowChartWrapper = ({
       setIsInvalidUrl(true);
     }
   };
+
+  const redirectSelectedPipeline = () => {
+    const pipelineId = searchParams.get(params.pipeline);
+    const foundPipeline = pipelines.find((id) => id === pipelineId);
+
+    if (foundPipeline) {
+      onUpdateActivePipeline(foundPipeline);
+      onToggleNodeSelected(null);
+      onToggleFocusMode(null);
+    } else {
+      setErrorMessage(errorMessages.pipeline);
+      setIsInvalidUrl(true);
+    }
+  };
+
   const redirectToSelectedNode = () => {
     const node =
       searchParams.get(params.selected) ||
@@ -138,13 +154,17 @@ export const FlowChartWrapper = ({
     checkIfPipelineExists();
   };
 
+  const handlePopState = useCallback(() => {
+    setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
   useEffect(() => {
-    window.addEventListener('popstate', () => setUsedNavigationBtn(true));
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', () => setUsedNavigationBtn(false));
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, []);
+  }, [handlePopState]);
 
   useEffect(() => {
     setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));
@@ -173,11 +193,9 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedPipeline) {
-        // Redirecting to a different pipeline is handled at `preparePipelineState`
+        // Redirecting to a different pipeline is also handled at `preparePipelineState`
         // to ensure the data is ready before being passed to here
-        // If pipeline from URL isn't recognised then use main pipeline
-        // and display Not Found Pipeline error
-        checkIfPipelineExists();
+        redirectSelectedPipeline();
       }
 
       if (matchedSelectedNodeName || matchedSelectedNodeId) {
@@ -230,6 +248,7 @@ export const FlowChartWrapper = ({
         <PipelineWarning
           errorMessage={errorMessage}
           invalidUrl={isInvalidUrl}
+          onResetClick={() => setIsInvalidUrl(false)}
         />
       </div>
     );
