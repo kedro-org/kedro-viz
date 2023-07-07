@@ -123,7 +123,7 @@
     "react-scripts": "^4.0.3",
     "sass": "^1.54.4",
     "snyk": "^1.639.0",
-    "stylelint": "^13.13.1",
+    "stylelint": "^15.10.1",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-order": "^4.1.0",
     "stylelint-prettier": "^1.2.0",
