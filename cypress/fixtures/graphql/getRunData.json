@@ -1,0 +1,881 @@
+{
+  "data": {
+    "runMetadata": [
+      {
+        "id": "2022-12-24T21.05.59.296Z",
+        "author": "rashida_kanchwala",
+        "bookmark": false,
+        "gitBranch": "add-plots-to-demo",
+        "gitSha": "5f81cb5",
+        "notes": "",
+        "runCommand": "kedro run",
+        "title": "2022-12-24T21.05.59.296Z",
+        "__typename": "Run"
+      }
+    ],
+    "plots": [
+      {
+        "data": {
+          "feature_importance_plot.json": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": {
+                "data": [
+                  {
+                    "alignmentgroup": "True",
+                    "hovertemplate": "Score=%{marker.color}<br>Features=%{y}<extra></extra>",
+                    "legendgroup": "",
+                    "marker": {
+                      "color": [
+                        0.02499999999999991, 0.12199999999999989,
+                        0.1299999999999999, 0.1379999999999999,
+                        0.14900000000000002, 0.16399999999999992,
+                        0.16399999999999992, 0.30099999999999993,
+                        0.34799999999999986, 0.43699999999999983,
+                        0.5659999999999998, 0.6200000000000001,
+                        0.7130000000000001, 0.82, 0.94
+                      ],
+                      "coloraxis": "coloraxis",
+                      "pattern": {
+                        "shape": ""
+                      }
+                    },
+                    "name": "",
+                    "offsetgroup": "",
+                    "orientation": "h",
+                    "showlegend": false,
+                    "textposition": "auto",
+                    "type": "bar",
+                    "x": [
+                      0.02499999999999991, 0.12199999999999989,
+                      0.1299999999999999, 0.1379999999999999,
+                      0.14900000000000002, 0.16399999999999992,
+                      0.16399999999999992, 0.30099999999999993,
+                      0.34799999999999986, 0.43699999999999983,
+                      0.5659999999999998, 0.6200000000000001,
+                      0.7130000000000001, 0.82, 0.94
+                    ],
+                    "xaxis": "x",
+                    "y": [
+                      "feature_14",
+                      "feature_8",
+                      "feature_12",
+                      "feature_1",
+                      "feature_11",
+                      "feature_3",
+                      "feature_9",
+                      "feature_7",
+                      "feature_10",
+                      "feature_6",
+                      "feature_2",
+                      "feature_5",
+                      "feature_13",
+                      "feature_4",
+                      "feature_0"
+                    ],
+                    "yaxis": "y"
+                  }
+                ],
+                "layout": {
+                  "barmode": "relative",
+                  "coloraxis": {
+                    "colorbar": {
+                      "title": {
+                        "text": "Score"
+                      }
+                    },
+                    "colorscale": [
+                      [0.0, "rgb(103,0,31)"],
+                      [0.1, "rgb(178,24,43)"],
+                      [0.2, "rgb(214,96,77)"],
+                      [0.3, "rgb(244,165,130)"],
+                      [0.4, "rgb(253,219,199)"],
+                      [0.5, "rgb(247,247,247)"],
+                      [0.6, "rgb(209,229,240)"],
+                      [0.7, "rgb(146,197,222)"],
+                      [0.8, "rgb(67,147,195)"],
+                      [0.9, "rgb(33,102,172)"],
+                      [1.0, "rgb(5,48,97)"]
+                    ]
+                  },
+                  "legend": {
+                    "tracegroupgap": 0
+                  },
+                  "margin": {
+                    "t": 60
+                  },
+                  "template": {
+                    "data": {
+                      "bar": [
+                        {
+                          "error_x": {
+                            "color": "#2a3f5f"
+                          },
+                          "error_y": {
+                            "color": "#2a3f5f"
+                          },
+                          "marker": {
+                            "line": {
+                              "color": "#E5ECF6",
+                              "width": 0.5
+                            },
+                            "pattern": {
+                              "fillmode": "overlay",
+                              "size": 10,
+                              "solidity": 0.2
+                            }
+                          },
+                          "type": "bar"
+                        }
+                      ],
+                      "barpolar": [
+                        {
+                          "marker": {
+                            "line": {
+                              "color": "#E5ECF6",
+                              "width": 0.5
+                            },
+                            "pattern": {
+                              "fillmode": "overlay",
+                              "size": 10,
+                              "solidity": 0.2
+                            }
+                          },
+                          "type": "barpolar"
+                        }
+                      ],
+                      "carpet": [
+                        {
+                          "aaxis": {
+                            "endlinecolor": "#2a3f5f",
+                            "gridcolor": "white",
+                            "linecolor": "white",
+                            "minorgridcolor": "white",
+                            "startlinecolor": "#2a3f5f"
+                          },
+                          "baxis": {
+                            "endlinecolor": "#2a3f5f",
+                            "gridcolor": "white",
+                            "linecolor": "white",
+                            "minorgridcolor": "white",
+                            "startlinecolor": "#2a3f5f"
+                          },
+                          "type": "carpet"
+                        }
+                      ],
+                      "choropleth": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "type": "choropleth"
+                        }
+                      ],
+                      "contour": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "contour"
+                        }
+                      ],
+                      "contourcarpet": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "type": "contourcarpet"
+                        }
+                      ],
+                      "heatmap": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "heatmap"
+                        }
+                      ],
+                      "heatmapgl": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "heatmapgl"
+                        }
+                      ],
+                      "histogram": [
+                        {
+                          "marker": {
+                            "pattern": {
+                              "fillmode": "overlay",
+                              "size": 10,
+                              "solidity": 0.2
+                            }
+                          },
+                          "type": "histogram"
+                        }
+                      ],
+                      "histogram2d": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "histogram2d"
+                        }
+                      ],
+                      "histogram2dcontour": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "histogram2dcontour"
+                        }
+                      ],
+                      "mesh3d": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "type": "mesh3d"
+                        }
+                      ],
+                      "parcoords": [
+                        {
+                          "line": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "parcoords"
+                        }
+                      ],
+                      "pie": [
+                        {
+                          "automargin": true,
+                          "type": "pie"
+                        }
+                      ],
+                      "scatter": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scatter"
+                        }
+                      ],
+                      "scatter3d": [
+                        {
+                          "line": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scatter3d"
+                        }
+                      ],
+                      "scattercarpet": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scattercarpet"
+                        }
+                      ],
+                      "scattergeo": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scattergeo"
+                        }
+                      ],
+                      "scattergl": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scattergl"
+                        }
+                      ],
+                      "scattermapbox": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scattermapbox"
+                        }
+                      ],
+                      "scatterpolar": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scatterpolar"
+                        }
+                      ],
+                      "scatterpolargl": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scatterpolargl"
+                        }
+                      ],
+                      "scatterternary": [
+                        {
+                          "marker": {
+                            "colorbar": {
+                              "outlinewidth": 0,
+                              "ticks": ""
+                            }
+                          },
+                          "type": "scatterternary"
+                        }
+                      ],
+                      "surface": [
+                        {
+                          "colorbar": {
+                            "outlinewidth": 0,
+                            "ticks": ""
+                          },
+                          "colorscale": [
+                            [0.0, "#0d0887"],
+                            [0.1111111111111111, "#46039f"],
+                            [0.2222222222222222, "#7201a8"],
+                            [0.3333333333333333, "#9c179e"],
+                            [0.4444444444444444, "#bd3786"],
+                            [0.5555555555555556, "#d8576b"],
+                            [0.6666666666666666, "#ed7953"],
+                            [0.7777777777777778, "#fb9f3a"],
+                            [0.8888888888888888, "#fdca26"],
+                            [1.0, "#f0f921"]
+                          ],
+                          "type": "surface"
+                        }
+                      ],
+                      "table": [
+                        {
+                          "cells": {
+                            "fill": {
+                              "color": "#EBF0F8"
+                            },
+                            "line": {
+                              "color": "white"
+                            }
+                          },
+                          "header": {
+                            "fill": {
+                              "color": "#C8D4E3"
+                            },
+                            "line": {
+                              "color": "white"
+                            }
+                          },
+                          "type": "table"
+                        }
+                      ]
+                    },
+                    "layout": {
+                      "annotationdefaults": {
+                        "arrowcolor": "#2a3f5f",
+                        "arrowhead": 0,
+                        "arrowwidth": 1
+                      },
+                      "autotypenumbers": "strict",
+                      "coloraxis": {
+                        "colorbar": {
+                          "outlinewidth": 0,
+                          "ticks": ""
+                        }
+                      },
+                      "colorscale": {
+                        "diverging": [
+                          [0, "#8e0152"],
+                          [0.1, "#c51b7d"],
+                          [0.2, "#de77ae"],
+                          [0.3, "#f1b6da"],
+                          [0.4, "#fde0ef"],
+                          [0.5, "#f7f7f7"],
+                          [0.6, "#e6f5d0"],
+                          [0.7, "#b8e186"],
+                          [0.8, "#7fbc41"],
+                          [0.9, "#4d9221"],
+                          [1, "#276419"]
+                        ],
+                        "sequential": [
+                          [0.0, "#0d0887"],
+                          [0.1111111111111111, "#46039f"],
+                          [0.2222222222222222, "#7201a8"],
+                          [0.3333333333333333, "#9c179e"],
+                          [0.4444444444444444, "#bd3786"],
+                          [0.5555555555555556, "#d8576b"],
+                          [0.6666666666666666, "#ed7953"],
+                          [0.7777777777777778, "#fb9f3a"],
+                          [0.8888888888888888, "#fdca26"],
+                          [1.0, "#f0f921"]
+                        ],
+                        "sequentialminus": [
+                          [0.0, "#0d0887"],
+                          [0.1111111111111111, "#46039f"],
+                          [0.2222222222222222, "#7201a8"],
+                          [0.3333333333333333, "#9c179e"],
+                          [0.4444444444444444, "#bd3786"],
+                          [0.5555555555555556, "#d8576b"],
+                          [0.6666666666666666, "#ed7953"],
+                          [0.7777777777777778, "#fb9f3a"],
+                          [0.8888888888888888, "#fdca26"],
+                          [1.0, "#f0f921"]
+                        ]
+                      },
+                      "colorway": [
+                        "#636efa",
+                        "#EF553B",
+                        "#00cc96",
+                        "#ab63fa",
+                        "#FFA15A",
+                        "#19d3f3",
+                        "#FF6692",
+                        "#B6E880",
+                        "#FF97FF",
+                        "#FECB52"
+                      ],
+                      "font": {
+                        "color": "#2a3f5f"
+                      },
+                      "geo": {
+                        "bgcolor": "white",
+                        "lakecolor": "white",
+                        "landcolor": "#E5ECF6",
+                        "showlakes": true,
+                        "showland": true,
+                        "subunitcolor": "white"
+                      },
+                      "hoverlabel": {
+                        "align": "left"
+                      },
+                      "hovermode": "closest",
+                      "mapbox": {
+                        "style": "light"
+                      },
+                      "paper_bgcolor": "white",
+                      "plot_bgcolor": "#E5ECF6",
+                      "polar": {
+                        "angularaxis": {
+                          "gridcolor": "white",
+                          "linecolor": "white",
+                          "ticks": ""
+                        },
+                        "bgcolor": "#E5ECF6",
+                        "radialaxis": {
+                          "gridcolor": "white",
+                          "linecolor": "white",
+                          "ticks": ""
+                        }
+                      },
+                      "scene": {
+                        "xaxis": {
+                          "backgroundcolor": "#E5ECF6",
+                          "gridcolor": "white",
+                          "gridwidth": 2,
+                          "linecolor": "white",
+                          "showbackground": true,
+                          "ticks": "",
+                          "zerolinecolor": "white"
+                        },
+                        "yaxis": {
+                          "backgroundcolor": "#E5ECF6",
+                          "gridcolor": "white",
+                          "gridwidth": 2,
+                          "linecolor": "white",
+                          "showbackground": true,
+                          "ticks": "",
+                          "zerolinecolor": "white"
+                        },
+                        "zaxis": {
+                          "backgroundcolor": "#E5ECF6",
+                          "gridcolor": "white",
+                          "gridwidth": 2,
+                          "linecolor": "white",
+                          "showbackground": true,
+                          "ticks": "",
+                          "zerolinecolor": "white"
+                        }
+                      },
+                      "shapedefaults": {
+                        "line": {
+                          "color": "#2a3f5f"
+                        }
+                      },
+                      "ternary": {
+                        "aaxis": {
+                          "gridcolor": "white",
+                          "linecolor": "white",
+                          "ticks": ""
+                        },
+                        "baxis": {
+                          "gridcolor": "white",
+                          "linecolor": "white",
+                          "ticks": ""
+                        },
+                        "bgcolor": "#E5ECF6",
+                        "caxis": {
+                          "gridcolor": "white",
+                          "linecolor": "white",
+                          "ticks": ""
+                        }
+                      },
+                      "title": {
+                        "x": 0.05
+                      },
+                      "xaxis": {
+                        "automargin": true,
+                        "gridcolor": "white",
+                        "linecolor": "white",
+                        "ticks": "",
+                        "title": {
+                          "standoff": 15
+                        },
+                        "zerolinecolor": "white",
+                        "zerolinewidth": 2
+                      },
+                      "yaxis": {
+                        "automargin": true,
+                        "gridcolor": "white",
+                        "linecolor": "white",
+                        "ticks": "",
+                        "title": {
+                          "standoff": 15
+                        },
+                        "zerolinecolor": "white",
+                        "zerolinewidth": 2
+                      }
+                    }
+                  },
+                  "xaxis": {
+                    "anchor": "y",
+                    "domain": [0.0, 1.0],
+                    "title": {
+                      "text": "Score"
+                    }
+                  },
+                  "yaxis": {
+                    "anchor": "x",
+                    "domain": [0.0, 1.0],
+                    "title": {
+                      "text": "Features"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "datasetName": "reporting.feature_importance",
+        "datasetType": "plotly.json_dataset.JSONDataSet",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      },
+      {
+        "data": {
+          "confusion_matrix.png": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": "iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAYAAAA10dzkAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8qNh9FAAAACXBIWXMAAA9hAAAPYQGoP6dpAAAve0lEQVR4nO3de3RU5dn38V8SMnEREFQ0QTABRXgLWA4BJTxArGmqWDCAVDC2kuKBgxaKhZKkIlhtqBWIlOaRVjDElmJt3xJQIPhwEPQh4GuAoBjCoSISSADBAJJkksx+/7CmjjltyCR7svf3s9a9FnPPnr2vYRFzeV33vXeAJEMAAABwjECrAwAAAEDzIgEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJAAAAAhyEBBAAAcBgSQAAA0Chz586VYRheIz8/v97PjB07Vvn5+SotLdW+ffs0fPjwZooWEgkgAADwgY8++kjh4eHVY8iQIXUeGx0drVWrVmn58uXq16+fsrKylJWVpV69ejVjxM4WIMmwOggAANByzZ07V6NGjVK/fv1MHf/6668rNDRUI0eOrJ7LycnR3r17NWXKlKYKE99ABRAAADTarbfeqsLCQh05ckR/+ctfdNNNN9V5bHR0tDZt2uQ1t3HjRkVHRzd1mPi3VlYHAAAA/I/L5VJISIjXXHl5udxud41jd+3apcTERBUUFKhjx46aO3eu3n33XfXu3VsXL16scXx4eLiKi4u95oqLixUeHu7bL4E6kQA2UlDwjVaHAABoIaoqTjT5Ndynj/jkPL/5w2uaN2+e19y8efP07LPP1jg2Ozu7+s8ffvihdu3apU8//VQPPPCAXn31VZ/EA98iAQQAwE48VT45zfz587Vo0SKvufLyclOfLSkp0cGDB9WtW7da3y8qKlJYWJjXXFhYmIqKiq4sWFw21gACAGAnhscnw+1268KFC16jtvZvbUJDQ3XLLbfo5MmTtb6fk5Oj2NhYr7m4uDjl5OQ0+uvDHBJAAADQKC+++KKGDRumyMhIRUdHa/Xq1aqqqtKqVaskSZmZmUpNTa0+fvHixbrnnnv01FNPqUePHpo7d64GDBigP/zhD1Z9BcehBQwAgJ14PM1+yc6dO2vVqlW67rrrdPr0ab333nsaNGiQzpw5I0mKiIiQ5xtx5eTkKCEhQc8//7xSU1N16NAhjRo1Svv372/22J2K+wA2EptAAABmNccmkPLCj3xynpBOvX1yHvgnWsAAAAAOQwsYAAA7saAFjJaHBBAAADsxSADRMFrAAAAADkMFEAAAO/HRjaBhbySAAADYCS1gmEALGAAAwGGoAAIAYCfsAoYJJIAAANiIQQsYJpAAAgBgJ1QAYQJrAAEAAByGCiAAAHZCCxgmkAACAGAn3AcQJtACBgAAcBgqgAAA2AktYJhAAggAgJ2wCxgm0AIGAABwGCqAAADYCS1gmEACCACAndAChgm0gAEAAByGCiAAADZiGNwHEA0jAQQAwE5YAwgTSAABALAT1gDCBNYAAgAAOAwVQAAA7IQWMEwgAQQAwE48bAJBw2gBAwAAOAwVQAAA7IQWMEwgAQQAwE7YBQwTaAEDAAA4DBVAAADshBYwTCABBADATmgBwwRawAAAAA5DBRAAADuhAggTSAABALARw+BG0GgYLWAAAOzE4/HNuEKzZ8+WYRhKS0ur85gJEybIMAyvUVpaesXXxOWjAggAAHxiwIABmjRpkvLy8ho8tqSkRD169Kh+bRhGU4aGb6ECCACAnRge34zLFBoaqpUrV+qxxx7TuXPnGg7TMFRcXFw9Tp06dSXfFleIBBAAADuxqAWcnp6udevWafPmzaaOb9OmjY4ePapjx44pKytLPXv2vOxr4srRAgYAADW4XC6FhIR4zZWXl8vtdtc4dty4cerfv78GDhxo6twFBQWaOHGi9u3bp3bt2mnmzJnasWOHevXqpcLCQp/Ej/pRAQQAwE581AJOTk7W+fPnvUZycnKNy3Xu3FmLFy/WQw89pPLyclMh7ty5U3/+85+Vl5en7du3a8yYMTp9+rQmTZrk678N1CFAEqsuGyEo+EarQwAAtBBVFSea/BqXNqb75DztR84wVQGMj49XVlaWKisrq+datWolj8cjj8ejkJAQeUy0lN944w1VVlYqISHBJ/GjfrSAAQBADW63u9Z277dt3rxZvXv39prLyMjQgQMH9MILL5hK/gIDA3Xbbbdp/fr1VxwvLg8JIAAAdnIFO3gb4+LFi9q/f7/X3JdffqnPP/+8ej4zM1OFhYVKSUmRJM2ZM0c7d+7U4cOH1b59e82aNUuRkZFatmxZs8buZCSAAADYiR8+Ci4iIsKrEnjNNdfolVdeUXh4uM6dO6fc3FwNHjxY+fn5FkbpLKwBbCTWAAIAzGqWNYDrF/vkPK3vne6T88A/UQEEAMBO/LACCP9DAggAgJ008xpAtEwkgAAA2AkVQJjAjaABAAAchgogAAB2QgsYJpAAAgBgJ7SAYQItYAAAAIehAggAgJ3QAoYJJIAAANgJLWCYQAsYAADAYagAAgBgJ1QAYQIJIAAAdmIYVkeAFoAWMAAAgMNQAQQAwE5oAcMEEkAAAOyEBBAmkAACAGAn3AcQJrAGEAAAwGGoAAIAYCe0gGECCSAAAHbCbWBgAi1gAAAAh6ECCACAndAChgkkgAAA2AkJIEygBQwAAOAwVAABALAT7gMIE0gAAQCwEcPDLmA0jBYwAACAw1ABBADATtgEAhNIAAEAsBPWAMIEEkAAAOyENYAwgTWAAAAADkMFEAAAO2ENIEwgAQQAwE5IAGECLWAAAACHoQIIAICdGGwCQcOoAKJFGzrkDmWtXqFjR3NV6S7UfffdbXVIgF/gZ8PBPB7fDNgaCSBatNDQ1tq372P9bPqvrA4F8Cv8bACoDwkgWrTsjVv1zNzfac2abKtDAfwKPxsO5jF8M67Q7NmzZRiG0tLS6j1u7Nixys/PV2lpqfbt26fhw4df8TVx+RyzBvC6667TxIkTFR0drfDwcElSUVGRduzYoRUrVujMmTMWRwgAgA9Y+CSQAQMGaNKkScrLy6v3uOjoaK1atUrJycl66623lJCQoKysLPXv31/79+9vpmidzREVwAEDBujgwYOaNm2aSkpKtH37dm3fvl0lJSWaNm2aDhw4oKioKKvDBACgxQoNDdXKlSv12GOP6dy5c/UeO336dGVnZ2vBggU6cOCAnnnmGe3evVtPPvlkM0ULR1QAlyxZor///e+aPHlyre8vXbpUS5Ys0eDBg+s9j8vlUkhIiNdcpcclt9vts1gBAGgUHz0KrrbfeeXl5XX+zktPT9e6deu0efNmPf300/WeOzo6WosWLfKa27hxo0aNGtWomGGeIyqAffr0qXctQlpamvr27dvgeZKTk3X+/HmvkTSb/1sBAPgPw+Pxyajtd15ycnKt1xw3bpz69+9f5/vfFh4eruLiYq+54uLi6iVaaHqOqAAWFRXp9ttvV0FBQa3v33777TX+IdZm/vz5Nf6PpdJznU9iBADAJ3xUAaztd155eXmN4zp37qzFixcrLi6u1vfhnxyRAC5YsEB/+tOfFBUVpc2bN1cne2FhYYqNjdVjjz2mmTNnNnget9tdo/QdFNy2SWKGOaGhrdWtW9fq1127RKhPn146e/acPvvshIWRAdbiZwONVdvvvNpERUUpLCxMu3fvrp5r1aqVhg0bpieffFIhISHyfOu+gkVFRQoLC/OaCwsLU1FRkW+CR4MCJDniluEPPPCAZsyYoaioKAUFBUmSqqqqlJubq0WLFunvf//7FZ03KPhGX4aJyxQzLFqbN/2jxnzma2/okUdnWBAR4B/42fBPVRVNn3xffO4hn5ynzZyV5o5r00aRkZFecxkZGTpw4IBeeOGFWnf1vv7662rdurXuu+++6rn//d//1b59+zRlypTGBQ5THJMAfq1Vq1bq0KGDJOnMmTOqrKxs1PlIAAEAZjVLAvhsgk/O02buX6/4s1u3btXevXs1Y8ZX/7ORmZmpwsJCpaSkSPpqE8i2bduUlJSkdevWafz48UpJSeE2MM3IES3gb6qsrKTEDABAM4qIiPBqA+fk5CghIUHPP/+8UlNTdejQIY0aNYrkrxk5rgLoa1QAAQBmNUsFcO54n5ynzbOv++Q88E+OqwACAGBrPtoFDHtzxH0AAQAA8B9UAAEAsBMLnwWMloMEEAAAO6EFDBNoAQMAADgMFUAAAGzE8NACRsNIAAEAsBNawDCBBBAAADshAYQJrAEEAABwGCqAAADYCbeBgQkkgAAA2AktYJhACxgAAMBhqAACAGAjBhVAmEACCACAnZAAwgRawAAAAA5DBRAAADvhSSAwgQQQAAA7oQUME2gBAwAAOAwVQAAA7IQKIEwgAQQAwEYMgwQQDSMBBADATqgAwgTWAAIAADgMFUAAAOyECiBMIAEEAMBGeBQczKAFDAAA4DBUAAEAsBMqgDCBBBAAADvhSXAwgRYwAACAw1ABBADARtgEAjNIAAEAsBMSQJhACxgAAMBhqAACAGAnbAKBCSSAAADYCGsAYQYJIAAAdkIFECawBhAAAMBhSAABALARw2P4ZFyOyZMnKy8vTyUlJSopKdGOHTt0zz331Hn8hAkTZBiG1ygtLW3sV8dloAUMAICdWNACPn78uJKSknTo0CEFBARowoQJWrNmjfr166ePP/641s+UlJSoR48e1a8Ng7WLzYkEEAAANMpbb73l9frpp5/WlClTNGjQoDoTQMMwVFxc3BzhoRa0gAEAsBHD45vhcrnUtm1br+FyuRq8fmBgoMaNG6fQ0FDl5OTUeVybNm109OhRHTt2TFlZWerZs6cv/xrQABJAAADsxOObkZycrPPnz3uN5OTkOi/bu3dvXbhwQeXl5Vq6dKlGjx6t/Pz8Wo8tKCjQxIkTFR8frx//+McKDAzUjh071KlTJx/9JaAhAZJoujdCUPCNVocAAGghqipONPk1ztw7zCfnuXHTToWEhHjNlZeXy+1213p8cHCwIiIi1K5dO40dO1aPPvqoYmJi6kwCv6lVq1bKz8/XqlWr9Mwzz/gkftSPNYAAANiI4aNNIG63u85krzYVFRU6cuSIJGn37t0aOHCgpk+frsmTJzf42crKSu3Zs0fdunW74nhxeWgBAwBgJz5qATdWYGBgjQpifcfedtttOnnyZOMvDFOoAAIAgEZJTU3Vhg0bdOzYMbVt21YJCQm68847dffdd0uSMjMzVVhYqJSUFEnSnDlztHPnTh0+fFjt27fXrFmzFBkZqWXLlln5NRyFBBAAABvxVQv4ctxwww167bXX1LFjR5WUlGjfvn26++67tWnTJklSRESEPJ7/BHbNNdfolVdeUXh4uM6dO6fc3FwNHjzY1HpB+AabQBqJTSAAALOaYxNI8V2+2QQStmW7T84D/0QFEAAAG7GiAoiWh00gAAAADkMFEAAAOzECrI4ALQAJIAAANkILGGbQAgYAAHAYKoAAANiI4aEFjIaRAAIAYCO0gGEGLWAAAACHoQIIAICNGOwChgkkgAAA2AgtYJhBCxgAAMBhqAACAGAj7AKGGSSAAADYiGFYHQFaAhJAAABshAogzGANIAAAgMNQAQQAwEaoAMIMEkAAAGyENYAwgxYwAACAw1ABBADARmgBwwwSQAAAbIRHwcEMv0sAR44cafrYN998swkjAQAAsCe/SwCzsrJMHWcYhlq18rvwAQCwFM8Chhl+l0EFBQVZHQIAAC2WhxYwTGAXMAAAgMP4XQXw21q3bq2YmBhFRETI5XJ5vbdkyRKLogIAwD+xCQRm+HUC2LdvX61fv16tW7dWaGiozp49qw4dOujSpUs6deoUCSAAAN/CbWBghl+3gNPS0vTmm2/qmmuuUWlpqQYNGqTIyEjl5uZq5syZVocHAIDfMQzfDNibXyeAffv21cKFC2UYhqqqqhQSEqLjx4/rl7/8pVJTU60ODwAAoEXy6wSwoqJCHs9X+9lPnTqliIgISVJJSYluuukmK0MDAMAvGZ4AnwzYm1+vAdyzZ48GDhyow4cPa9u2bfr1r3+tDh066Cc/+Yk++ugjq8MDAMDvcBsYmOHXFcCUlBSdPHlSkvSrX/1K586d08svv6zrr79ejz/+uMXRAQAAtEwBkljq2QhBwTdaHQIAoIWoqjjR5NfY12WET87z3aNv+eQ88E9+3QIGAACXhx28MMOvE8B//etfMur5l3zLLbc0YzQAAAD24NcJ4EsvveT1Ojg4WP369dM999yjF1980ZqgAADwY2wCgRl+nQD+/ve/r3V+6tSpGjBgQDNHAwCA/7PiUXCTJ0/WlClT1KVLF0nS/v379etf/1rZ2dl1fmbs2LF67rnn1KVLFx06dEizZ8/Whg0bmili+PUu4Lps2LBB999/v9VhAAAAScePH1dSUpKioqI0YMAAbdmyRWvWrFHPnj1rPT46OlqrVq3S8uXL1a9fP2VlZSkrK0u9evVq5sidq0XuAp41a5amTp2qrl27Wh0Ku4ABAKY1xy7g3M73+eQ8UcfXNurzn3/+uWbNmqVXX321xnuvv/66QkNDNXLkyOq5nJwc7d27V1OmTGnUdWGOX7eAd+/e7bUJJCAgQOHh4br++us1depUCyMDAMA/+WoNoMvlUkhIiNdceXm53G53vZ8LDAzUj370I4WGhionJ6fWY6Kjo7Vo0SKvuY0bN2rUqFGNihnm+XUCuGbNGq8E0OPx6PTp03rnnXdUUFBgYWT/UXriXatDAPxOxfLnrA4B8EuhSSua/Bq+WgOYnJysefPmec3NmzdPzz77bK3H9+7dWzk5Obrqqqt08eJFjR49Wvn5+bUeGx4eruLiYq+54uJihYeH+yR2NMyvE8C6/pEBAICmNX/+/BpVuvLy8jqPLygoUN++fdWuXTuNHTtWmZmZiomJqTMJhLX8OgGsrKxUx44ddfr0aa/5a6+9VqdOnVKrVn4dPgAAzc5XLWC3291gu/ebKioqdOTIEUlfLeEaOHCgpk+frsmTJ9c4tqioSGFhYV5zYWFhKioqalzQMM2vdwEHBNT+jzgkJOSy/lECAOAUho9GYwUGBtZYQ/i1nJwcxcbGes3FxcXVuWYQvueXJbSf/exnkiTDMPToo4/q4sWL1e8FBQVp2LBhOnDggFXhAQCAb0hNTdWGDRt07NgxtW3bVgkJCbrzzjt19913S5IyMzNVWFiolJQUSdLixYu1bds2PfXUU1q3bp3Gjx+vAQMG6PHHH7fyaziKXyaAM2bMkPRVBXDy5Mmqqqqqfs/tduvo0aO1lpQBAHA6K54EcsMNN+i1115Tx44dVVJSon379unuu+/Wpk2bJEkRERHyeDzVx+fk5CghIUHPP/+8UlNTdejQIY0aNUr79+9v9tidyq/vA7hlyxaNGTNGX3zxhdWh1Ml9+ojVIQB+h13AQO2aYxfwe2G+eVDCkOL/65PzwD/5ZQXwa3fddZfVIQAAANiOX28C+cc//qFf/vKXNeZnzZqlN954w4KIAADwbx4fDdibXyeAw4YN0/r162vMb9iwQcOGDbMgIgAA/JuhAJ8M2JtfJ4Bt2rSp9XYvFRUVuvrqqy2ICAAAoOXz6wTwww8/1Lhx42rMjx8/Xh9//LEFEQEA4N88hm8G7M2vN4E899xz+uc//6lbbrlFW7ZskSTFxsYqISFBY8eOtTg6AAD8j4f2LUzw6wTwrbfe0qhRo5SSkqKxY8eqtLRUeXl5uuuuu3T27FmrwwMAwO+wfg9m+HUCKEnr16+v3gjStm1bPfjgg1qwYIGioqJ4FjAAAMAV8Os1gF8bOnSoVqxYoRMnTugXv/iFtmzZokGDBlkdFgAAfofbwMAMvy2hhYWFKTExUY888oiuvvpqvfHGGwoJCdGoUaOUn59vdXgAAPglWsAwwy8rgGvXrlVBQYG++93v6uc//7luvPFGTZs2zeqwAAAAbMEvK4DDhw/X73//e7388ss6fPiw1eEAANBi0L6FGX5ZARwyZIjatm2r3Nxc7dy5U0888YSuu+46q8MCAMDvsQYQZvhlArhr1y49/vjj6tixo/74xz9q/PjxOnHihAIDAxUXF6c2bdpYHSIAAECL5ZcJ4NcuXbqkjIwMDR06VLfddpsWLlyopKQknTp1SmvWrLE6PAAA/A7PAoYZfp0AftPBgwc1e/Zsde7cWQ8++KDV4QAA4Jc8Ab4ZsLcWkwB+zePxaM2aNYqPj7c6FAAAgBbJL3cBAwCAK8OzgGEGCSAAADZiWB0AWgQSQAAAbIRbuMCMFrcGEAAAAI1DBRAAABvxBLAGEA0jAQQAwEZYAwgzaAEDAAA4DBVAAABshE0gMIMEEAAAG+EpHjCDFjAAAIDDUAEEAMBGeBIIzCABBADARtgFDDNIAAEAsBHWAMIM1gACAAA4DBVAAABshNvAwAwSQAAAbIQ1gDCDFjAAAIDDUAEEAMBG2AQCM6gAAgBgIx4fjcuRlJSk999/X+fPn1dxcbFWr16t7t271/uZCRMmyDAMr1FaWnqZV8aVIgEEAACNEhMTo/T0dA0aNEhxcXEKDg7W22+/rdatW9f7uZKSEoWHh1ePyMjIZooYtIABALARK3YBDx8+3Ot1YmKiTp8+raioKL377rt1fs4wDBUXFzd1eKgFFUAAAGzECPDNaIx27dpJks6ePVvvcW3atNHRo0d17NgxZWVlqWfPno27MEwjAQQAADW4XC61bdvWa7hcrgY/FxAQoJdeeknvvfee9u/fX+dxBQUFmjhxouLj4/XjH/9YgYGB2rFjhzp16uTLr4E6kAACAGAjvtoEkpycrPPnz3uN5OTkBq+fnp6u3r17a/z48fUet3PnTv35z39WXl6etm/frjFjxuj06dOaNGnSlX1xXBbWAAIAYCO+WgM4f/58LVq0yGuuvLy83s8sWbJEI0aM0LBhw1RYWHhZ16usrNSePXvUrVu3y44Vl48EEAAAG/HVk0Dcbrfcbrfp45csWaLRo0frzjvv1NGjRy/7eoGBgbrtttu0fv36y/4sLh8JIAAAaJT09HQlJCQoPj5eFy5cUFhYmKSvbvNSVlYmScrMzFRhYaFSUlIkSXPmzNHOnTt1+PBhtW/fXrNmzVJkZKSWLVtm2fdwEhJAAABsxIongUydOlWStG3bNq/5xMREZWZmSpIiIiLk8fynQX3NNdfolVdeUXh4uM6dO6fc3FwNHjxY+fn5zRe4g5EAAgBgI1bcBzAgoOGs83vf+57X66eeekpPPfVUU4WEBrALGAAAwGGoAAIAYCNWVADR8pAAAgBgI77aBQx7owUMAADgMFQAAQCwESt2AaPlIQEEAMBGWAMIM2gBAwAAOAwVQAAAbIRNIDCDBBAAABvxkALCBBJAAABshDWAMIM1gAAAAA5DBRAAABuhAQwzSAABALARWsAwgxYwAACAw1ABBADARngSCMwgAQQAwEa4DQzMoAUMAADgMFQAAQCwEep/MIMEEAAAG2EXMMygBQwAAOAwVAABALARNoHADBJAAABshPQPZpAAAgBgI6wBhBmsAQQAAHAYKoAAANgIawBhBgkgAAA2QvoHM2gBAwAAOAwVQAAAbIRNIDCDBBAAABsxaALDBFrAAAAADkMFEAAAG6EFDDNIAAEAsBFuAwMzaAEDAAA4DBVAAABshPofzCABRIuWvvwvevnVlV5zXSM6681Vr1gUEeB/Wt1xr1x3/kgVH7ytis2rrA4HTYwWMMygBYwWr1vXSL2zdmX1eO3lBVaHBPiNwPCuatX3TnlOHbM6FDQTj4/G5UhKStL777+v8+fPq7i4WKtXr1b37t0b/NzYsWOVn5+v0tJS7du3T8OHD7/MK+NKkQCixQsKClKH666tHte0b2d1SIB/CA6Ra+TjcmevkFF2yepoYGMxMTFKT0/XoEGDFBcXp+DgYL399ttq3bp1nZ+Jjo7WqlWrtHz5cvXr109ZWVnKyspSr169mjFy56IFjBbv2PFCfe++hxQS4lKfXv9HP5/8U3UMv8HqsADLueJ+oqojefJ8+rE0eKTV4aCZWHEj6G9X7hITE3X69GlFRUXp3XffrfUz06dPV3Z2thYs+Kpr88wzzyguLk5PPvmkpkyZ0uQxOx0VwH/r3Lmzli9fbnUYuEzf7dlDz//qF1q66HnNmfmkjp8s1sNTZ+nLL6l2wNmCvnO7AsMjVbHtH1aHgmZmRQv429q1+6oTc/bs2TqPiY6O1qZNm7zmNm7cqOjo6EZeHWZQAfy3a6+9VhMmTNAjjzxS5zEul0shISHNGBUaMjR6YPWfe3Trqtt69tAP7p+g7C3v6v6Rd1sYGWCdgLbXyhWboLK/LZCqKq0OBy1Ubb/zysvL5Xa76/1cQECAXnrpJb333nvav39/nceFh4eruLjYa664uFjh4eFXHjRMc0wCOHJk/e2Pm2++ucFzJCcna968eV5zVZfOyXPpXGNCgw9d3baNIm/qpGPHT1gdCmCZwPBIBYS201WJ86rnAgKDFHhTd7XqH6vSBY9JBjtF7cpXLeDafufNmzdPzz77bL2fS09PV+/evTVkyBCfxIGm4ZgEMCsrS4ZhKCAgoM5jjAb+gzh//nwtWrTIa+7zf+31RXjwkUuXSvVZ4UmNvCfW6lAAy1R9mq/S5U97zbnufUTG5ydVsWs9yZ/N+epRcLX9zisvL6/3M0uWLNGIESM0bNgwFRYW1ntsUVGRwsLCvObCwsJUVFR0ZQHjsjhmDeDJkyc1ZswYBQUF1Tr69+/f4DncbrcuXLjgNWCtF//wiv7fnn0qPFmsPR9+rGnJzykoKFD3fj/G6tAA67jLZJwp9BqqKJdRdvGrPwMm1PY7r77275IlSzR69GjdddddOnr0aIPnz8nJUWys9/+sx8XFKScnp7GhwwTHVABzc3MVFRWltWvX1vp+Q9VB+KfiU2f0y7kv6Ivz53Vt+3bq991eWvnHNF17TXurQwMAS3gsqPCmp6crISFB8fHxunDhQnVlr6SkRGVlZZKkzMxMFRYWKiUlRZK0ePFibdu2TU899ZTWrVun8ePHa8CAAXr88cebPX4nckwC+OKLLyo0NLTO9w8fPqzvfe97zRgRfGHBr5OtDgFoEcpXvWB1CGgmVjT4p06dKknatm2b13xiYqIyMzMlSREREfJ4/tOgzsnJUUJCgp5//nmlpqbq0KFDGjVqVL0bR+A7AeKxgY3iPn3E6hAAv1Ox/DmrQwD8UmjSiia/xkMRo31ynpXHVvvkPPBPjqkAAgDgBDwLGGaQAAIAYCNWPAkELQ8JIAAANuKr28DA3hxzGxgAAAB8hQogAAA2whpAmEECCACAjbAGEGbQAgYAAHAYKoAAANgIm0BgBgkgAAA2YljwKDi0PLSAAQAAHIYKIAAANsIuYJhBAggAgI2wBhBm0AIGAABwGCqAAADYCPcBhBkkgAAA2AhrAGEGCSAAADbCbWBgBmsAAQAAHIYKIAAANsIuYJhBAggAgI2wCQRm0AIGAABwGCqAAADYCLuAYQYJIAAANsIuYJhBCxgAAMBhqAACAGAjtIBhBgkgAAA2wi5gmEELGAAAwGGoAAIAYCMeNoHABBJAAABshPQPZpAAAgBgI2wCgRmsAQQAAHAYKoAAANgIFUCYQQIIAICN8CQQmEELGAAAwGGoAAIAYCO0gGEGCSAAADbCk0BgBi1gAADQKEOHDtXatWtVWFgowzAUHx9f7/ExMTEyDKPGCAsLa6aIQQUQAAAbsWITSGhoqPLy8vTqq69q9erVpj/XvXt3nT9/vvr1qVOnmiI81IIEEAAAG7FiDWB2drays7Mv+3OnTp1SSUlJE0SEhtACBgAAlti7d69OnDiht99+W4MHD7Y6HEehAggAgI34qgXscrkUEhLiNVdeXi63293oc588eVKTJk3SBx98oJCQED366KN65513dMcdd2jPnj2NPj8aRgUQAAAb8cjwyUhOTtb58+e9RnJysk9iPHjwoP70pz9p9+7dysnJ0SOPPKIdO3ZoxowZPjk/GkYFEAAAG/HVbWDmz5+vRYsWec2Vl5f75Ny1ef/99zVkyJAmOz+8kQACAIAa3G63T9q9ZvXt21cnT55stus5HQkgAAA24rHoNjDdunWrft21a1f16dNHZ8+e1WeffabU1FR16tRJEyZMkCRNnz5dn3zyifbv36+rrrpKjz76qO666y794Ac/aPbYnYoEEAAAG7HiSSADBgzQO++8U/06LS1NkrRixQr99Kc/VceOHRUREVH9vsvl0sKFC9WpUyddunRJ+/bt0/e//32vc6BpBUg8M6Yx3KePWB0C4Hcqlj9ndQiAXwpNWtHk1+h5w+0+Oc/Hp973yXngn6gAAgBgI1a0gNHykAACAGAjVrSA0fJwH0AAAACHoQIIAICN0AKGGSSAAADYCC1gmEELGAAAwGGoAAIAYCO0gGEGCSAAADZCCxhmkAACAGAjhuGxOgS0AKwBBAAAcBgqgAAA2IiHFjBMIAEEAMBGDDaBwARawAAAAA5DBRAAABuhBQwzSAABALARWsAwgxYwAACAw1ABBADARngSCMwgAQQAwEZ4EgjMoAUMAADgMFQAAQCwETaBwAwSQAAAbITbwMAMEkAAAGyECiDMYA0gAACAw1ABBADARrgNDMwgAQQAwEZoAcMMWsAAAAAOQwUQAAAbYRcwzCABBADARmgBwwxawAAAAA5DBRAAABthFzDMIAEEAMBGDNYAwgRawAAAAA5DBRAAABuhBQwzSAABALARdgHDDBJAAABshDWAMIM1gAAAAA5DAggAgI0YhuGTcTmGDh2qtWvXqrCwUIZhKD4+vsHPxMTEKDc3V2VlZTp06JAmTJhwpV8ZV4AEEAAAG7EiAQwNDVVeXp6eeOIJU8d36dJF69at09atW9W3b1+99NJLWrZsmX7wgx9cyVfGFWANIAAAaJTs7GxlZ2ebPn7y5Mn65JNPNHPmTEnSgQMHNGTIEM2YMUNvv/12U4WJb6ACCACAjRg+Gi6XS23btvUaLpfLJzFGR0dr06ZNXnMbN25UdHS0T84Pc3z1b4XBsGy4XC5j7ty5hsvlsjwWBsOfBj8bjCsdc+fONb5t7ty5DX7OMAwjPj6+3mMKCgqMpKQkr7nhw4cbhmEYV111leXf3QmDCiBsISQkRPPmzVNISIjVoQB+hZ8NXKn58+fr6quv9hrz58+3Oiz4CGsAAQBADW63W263u0nOXVRUpLCwMK+5sLAwlZSUqKysrEmuCW9UAAEAQLPKyclRbGys11xcXJxycnIsish5SAABAECjhIaGqk+fPurTp48kqWvXrurTp49uuukmSVJqaqoyMzOrj1+6dKluvvlmvfDCC+rRo4emTJmiBx54QGlpaZbE71SWL0RkMBo7WOjOYNQ++NlgNMeIiYmpsWHEMAwjIyPDkGRkZGQYW7durfGZ3bt3G2VlZcbhw4eNCRMmWP49nDQC/v0HAAAAOAQtYAAAAIchAQQAAHAYEkAAAACHIQEEAABwGBJA2MLUqVP1ySefqLS0VDt37tTAgQOtDgmw1NChQ7V27VoVFhbKMAzFx8dbHRIAP0ICiBbvgQce0KJFi/Tss8+qf//+ysvL08aNG3X99ddbHRpgmdDQUOXl5emJJ56wOhQAfsrye9EwGI0ZO3fuNJYsWVL9OiAgwDh+/Lgxe/Zsy2NjMPxhGIZhxMfHWx4Hg8Hwn0EFEC1acHCwoqKitGnTpuo5wzC0adMmRUdHWxgZAAD+iwQQLVqHDh3UqlUrFRcXe80XFxcrPDzcoqgAAPBvJIAAAAAOQwKIFu3MmTOqrKxUWFiY13xYWJiKioosigoAAP9GAogWraKiQrm5uYqNja2eCwgIUGxsrHJyciyMDAAA/9XK6gCAxlq0aJEyMzP1wQcf6P3339fPf/5zhYaGKiMjw+rQAMuEhoaqW7du1a+7du2qPn366OzZs/rss88sjAyAv7B8KzKD0djxxBNPGEePHjXKysqMnTt3GrfffrvlMTEYVo6YmBijNhkZGZbHxmAwrB8B//4DAAAAHII1gAAAAA5DAggAAOAwJIAAAAAOQwIIAADgMCSAAAAADkMCCAAA4DAkgAAAAA5DAgigUTIyMrR69erq11u3blVaWlqzxxETEyPDMNSuXbtmvzYAtDQkgIBNZWRkyDAMGYah8vJyHTp0SHPmzFFQUFCTXnfMmDGaM2eOqWNJ2gDAGjwLGLCxDRs26Kc//alCQkJ07733Kj09XRUVFfrtb3/rdVxwcLAqKip8cs1z58755DwAgKZDBRCwsfLychUXF+vYsWNaunSpNm3apPvuu6+6bZuSkqLCwkIVFBRIkjp37qy//e1vOnfunD7//HNlZWUpMjKy+nyBgYFauHChzp07pzNnzuiFF15QQECA1zW/3QJ2uVz67W9/q2PHjqmsrEyHDh3SxIkTFRkZqXfeeUeS9MUXX8gwDGVkZEiSAgIClJSUpH/961+6dOmS9u7dq/vvv9/rOsOHD1dBQYEuXbqkLVu2qEuXLk3wNwgA9kQCCDhIaWmpXC6XJCk2NlY9evRQXFycRowYoVatWmnjxo26cOGChg4dqv/6r//SxYsXlZ2dreDgYEnSL37xCyUmJmrixIkaMmSIrr32Wo0ePbrea7722mt68MEHNW3aNH3nO9/RpEmTdPHiRX322WcaM2aMJKl79+4KDw/X9OnTJUnJycl6+OGHNXnyZPXq1UtpaWn6y1/+omHDhkn6KlH95z//qTfffFN9+/bVsmXLalQ1AQD1MxgMhv1GRkaGsXr16urXsbGxRmlpqfG73/3OyMjIME6ePGkEBwdXv//QQw8Z+fn5XucIDg42vvzySyMuLs6QZBQWFhozZ86sfj8oKMg4duyY13W2bt1qpKWlGZKMW2+91TAMw4iNja01xpiYGMMwDKNdu3bVcy6Xy7h48aIxaNAgr2NfeeUVY+XKlYYk4ze/+Y3x0Ucfeb0/f/78GudiMBgMRu2DNYCAjY0YMUIXLlxQcHCwAgMD9de//lXz5s1Tenq6PvzwQ691f3369FG3bt104cIFr3NcddVVuuWWW7Rr1y7deOON2rVrV/V7VVVV+uCDD2q0gb/Wt29fVVZWatu2baZj7tatm0JDQ/U///M/XvMul0t79uyRJH3nO9/xikOScnJyTF8DAJyOBBCwsa1bt2rKlClyu906ceKEqqqqqt/78ssvvY5t06aNcnNz9dBDD9U4z+nTp6/o+qWlpZf9mTZt2kiSfvjDH6qwsNDrvfLy8iuKAwDgjQQQsLEvv/xSR44cMXXs7t27NW7cOJ06dapGFfBrJ06c0B133KF3331XkhQUFKSoqCjt3r271uM//PBDBQYGKiYmRps3b67xvtvtrj7P1z7++GOVlZUpIiJC27dvr/W8+fn5uu+++7zmBg0a1PCXBABIYhMIgH9buXKlzpw5ozVr1mjIkCHq0qWLYmJitHjxYnXq1EmStHjxYiUlJSk+Pl49evTQf//3f6t9+/Z1nvPTTz9VZmamXn31VcXHx1ef80c/+lH1+x6PRyNGjFCHDh0UGhqqixcvasGCBUpLS9PDDz+sm2++Wf369dOTTz6phx9+WJK0dOlS3Xrrrfrd736n7t2768EHH1RiYmJT/xUBgK1YvhCRwWD4fnx7E4iZ98LCwowVK1YYp06dMkpLS43Dhw8bf/zjH422bdsa0lebPtLS0owvvvjCOHv2rLFgwQJjxYoVdW4CkWSEhIQYCxcuNAoLC42ysjLj4MGDRmJiYvX7Tz/9tHHixAmjqqrKyMjIqJ6fNm2akZ+fb5SXlxvFxcXGhg0bjKFDh1a//8Mf/tA4ePCgUVpaamzbts1ITExkEwiDwWCYHAH//gMAAAAcghYwAACAw5AAAgAAOAwJIAAAgMOQAAIAADgMCSAAAIDDkAACAAA4DAkgAACAw5AAAgAAOAwJIAAAgMOQAAIAADgMCSAAAIDDkAACAAA4zP8H04FbiARbBOYAAAAASUVORK5CYII="
+            }
+          ]
+        },
+        "datasetName": "reporting.confusion_matrix",
+        "datasetType": "matplotlib.matplotlib_writer.MatplotlibWriter",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      }
+    ],
+    "metrics": [
+      {
+        "data": {
+          "a2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 3.6
+            }
+          ],
+          "b2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 3.1
+            }
+          ],
+          "r2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 0.40296896595214116
+            }
+          ]
+        },
+        "datasetName": "train_evaluation.linear_regression.r2_score",
+        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      },
+      {
+        "data": {
+          "a2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 4.1000000000000005
+            }
+          ],
+          "b2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 8.4
+            }
+          ],
+          "r2_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 8.700000000000001
+            }
+          ]
+        },
+        "datasetName": "train_evaluation.random_forest.r2_score",
+        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      }
+    ],
+    "JSONData": [
+      {
+        "data": {
+          "model_type": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": "LinearRegression"
+            }
+          ],
+          "fit_intercept": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": true
+            }
+          ],
+          "normalize": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": false
+            }
+          ],
+          "copy_X": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": {
+                "precision": {
+                  "prec1": "BTS",
+                  "prec2": 0.4564,
+                  "prec4": "GHD",
+                  "prec5": 0.34343
+                },
+                "recall": 0.97154,
+                "f1_score": 0.984534,
+                "support": 0.2323
+              }
+            }
+          ],
+          "positive": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": false
+            }
+          ]
+        },
+        "datasetName": "train_evaluation.linear_regression.experiment_params",
+        "datasetType": "tracking.json_dataset.JSONDataSet",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      },
+      {
+        "data": {
+          "model_type": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": "RandomForestRegressor"
+            }
+          ],
+          "n_estimators": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 100
+            }
+          ],
+          "criterion": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": "squared_error"
+            }
+          ],
+          "min_samples_split": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 2
+            }
+          ],
+          "min_samples_leaf": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 1
+            }
+          ],
+          "min_weight_fraction_leaf": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 0
+            }
+          ],
+          "max_features": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": "auto"
+            }
+          ],
+          "min_impurity_decrease": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 0
+            }
+          ],
+          "bootstrap": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": true
+            }
+          ],
+          "oob_score": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": false
+            }
+          ],
+          "verbose": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 0
+            }
+          ],
+          "warm_start": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": false
+            }
+          ],
+          "ccp_alpha": [
+            {
+              "runId": "2022-12-24T21.05.59.296Z",
+              "value": 0
+            }
+          ]
+        },
+        "datasetName": "train_evaluation.random_forest.experiment_params",
+        "datasetType": "tracking.json_dataset.JSONDataSet",
+        "runIds": ["2022-12-24T21.05.59.296Z"],
+        "__typename": "TrackingDataset"
+      }
+    ]
+  }
+}

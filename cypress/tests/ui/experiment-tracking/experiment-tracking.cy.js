@@ -16,28 +16,28 @@ describe('Experiment Tracking', () => {
       .should('contains.text', searchInput);
   });
 
-  it('verifies that users can bookmark a run. #TC-35', function () {
+  it.only('verifies that users can bookmark a run. #TC-35', function () {
+    // Mutations
+    cy.__interceptGql__('updateRunDetails', 'updateBookmark');
+
     // Alias
     cy.get('.runs-list__accordion-header > .accordion__title').as(
       'accordionTitle'
     );
-    cy.intercept('POST', '/graphql').as('getRunData');
 
     // Assert before action
     cy.get('@accordionTitle').should('contains.text', 'All');
     cy.get('@accordionTitle').should('have.length', 1);
+    cy.get('.runs-list-card__bookmark--solid').should('not.exist');
 
     // Action
     cy.get('.runs-list-card__bookmark').first().click();
 
     // Assert after action
-    cy.wait('@getRunData').its('response.statusCode').should('eq', 200);
+    cy.wait('@updateBookmark').its('response.statusCode').should('eq', 200);
     cy.get('@accordionTitle').first().should('contains.text', 'Bookmarked');
     cy.get('@accordionTitle').should('have.length', 2);
-
-    // Clean up
-    cy.get('.runs-list-card__bookmark').first().click();
-    cy.wait('@getRunData').its('response.statusCode').should('eq', 200);
+    cy.get('.runs-list-card__bookmark--solid').should('exist');
   });
 
   it('verifies that users can toggle compare runs option. #TC-36', function () {
@@ -61,7 +61,6 @@ describe('Experiment Tracking', () => {
 
     // Alias
     cy.get('.switch__input').as('compareRunsToggle');
-    cy.intercept('POST', '/graphql').as('getRunData');
 
     // Assert before action
     cy.get(`.${runsSelectedClass}-first`).should('not.exist');

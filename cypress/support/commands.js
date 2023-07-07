@@ -6,10 +6,20 @@ import { join } from 'path';
  * @param {String} operationName
  * @returns {Object} The mock/fixtured json response
  */
-Cypress.Commands.add('__interceptGql__', (operationName) => {
-  cy.intercept({ method: 'POST', url: `/graphql` }, (req) => {
-    req.reply({ fixture: `/graphql/${operationName})}.json` });
-  }).as(operationName);
+Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
+  const interceptAlias = mutationFor ? mutationFor : operationName;
+  cy.intercept('POST', '/graphql', (req) => {
+    const requestBody = req.body;
+    if (requestBody?.operationName === operationName) {
+      req.reply((res) => {
+        if (mutationFor) {
+          res.send({ fixture: `graphql/${mutationFor}.json` });
+        } else {
+          res.send({ fixture: `graphql/${operationName}.json` });
+        }
+      });
+    }
+  }).as(interceptAlias);
 });
 
 /**
@@ -121,6 +131,11 @@ Cypress.Commands.add('__conditionalVisit__', () => {
   const specPath = Cypress.spec.relative;
 
   if (specPath.includes('experiment-tracking')) {
+    // Queries
+    cy.__interceptGql__('getRunsList');
+    cy.__interceptGql__('getRunData');
+    cy.__interceptGql__('getMetricPlotData');
+
     cy.visit('/experiment-tracking');
   } else {
     cy.visit('/');
