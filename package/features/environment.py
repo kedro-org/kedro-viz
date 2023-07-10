@@ -69,13 +69,7 @@ def _setup_context_with_venv(context, venv_dir):
             "pip",
             "install",
             "-U",
-            "pip>=21.2",
             "setuptools>=38.0",
-            "cookiecutter>=1.7.2",
-            "wheel",
-            "botocore",
-            "PyYAML>=4.2, <6.0",
-            "click<9.0",
         ],
         env=context.env,
     )

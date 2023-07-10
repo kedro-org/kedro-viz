@@ -456,7 +456,9 @@ class DataAccessManager:
                 or not node.belongs_to_pipeline(registered_pipeline_id)
             ):
                 continue
-            if not node.modular_pipelines or node_id in root_children_ids:
+            if not node.modular_pipelines or (
+                node_id in root_children_ids and not node.modular_pipelines
+            ):
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
                         node_id, self.nodes.get_node_by_id(node_id).type
