@@ -406,9 +406,6 @@ class DataAccessManager:
                     )
                     node_dependencies[input_id].add(modular_pipeline_id)
                     inputs_in_registered_pipeline.add(input_id)
-            root_children_ids.update(
-                modular_pipeline_node.external_inputs & inputs_in_registered_pipeline
-            )
 
             # only keep the modular pipeline's outputs belonging to the current registered pipeline
             outputs_in_registered_pipeline = set()
@@ -420,9 +417,6 @@ class DataAccessManager:
                     )
                     node_dependencies[modular_pipeline_id].add(output_id)
                     outputs_in_registered_pipeline.add(output_id)
-            root_children_ids.update(
-                modular_pipeline_node.external_outputs & outputs_in_registered_pipeline
-            )
 
         # After adding modular pipeline nodes into the graph,
         # There is a chance that the graph with these nodes contains cycles if
@@ -456,9 +450,7 @@ class DataAccessManager:
                 or not node.belongs_to_pipeline(registered_pipeline_id)
             ):
                 continue
-            if not node.modular_pipelines or (
-                node_id in root_children_ids and not node.modular_pipelines
-            ):
+            if not node.modular_pipelines:
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
                         node_id, self.nodes.get_node_by_id(node_id).type
