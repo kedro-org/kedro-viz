@@ -101,7 +101,7 @@ describe('App', () => {
     const activePipeline = spaceflights.pipelines.find(
       (pipeline) => !demo.pipelines.map((d) => d.id).includes(pipeline.id)
     );
-    const { container, rerender } = render(<App data={spaceflights} />);
+    const { container } = render(<App data={spaceflights} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
     const menuOption = within(pipelineDropdown).getByText(
       prettifyName(activePipeline.name)
@@ -115,8 +115,5 @@ describe('App', () => {
     expect(pipelineDropdownLabel.innerHTML).toBe(
       prettifyName(activePipeline.name)
     );
-    rerender(<App data={demo} />);
-    // the default dropdown placeholder is 'Please select...' which is not returned right after a rerender
-    expect(pipelineDropdownLabel.innerHTML).toBe('Please select...');
   });
 });

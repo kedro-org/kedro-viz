@@ -51,6 +51,7 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
+  onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
 }) => {
@@ -90,6 +91,21 @@ export const FlowChartWrapper = ({
       setIsInvalidUrl(true);
     }
   };
+
+  const redirectSelectedPipeline = () => {
+    const pipelineId = searchParams.get(params.pipeline);
+    const foundPipeline = pipelines.find((id) => id === pipelineId);
+
+    if (foundPipeline) {
+      onUpdateActivePipeline(foundPipeline);
+      onToggleNodeSelected(null);
+      onToggleFocusMode(null);
+    } else {
+      setErrorMessage(errorMessages.pipeline);
+      setIsInvalidUrl(true);
+    }
+  };
+
   const redirectToSelectedNode = () => {
     const node =
       searchParams.get(params.selected) ||
@@ -177,11 +193,9 @@ export const FlowChartWrapper = ({
       }
 
       if (matchedSelectedPipeline) {
-        // Redirecting to a different pipeline is handled at `preparePipelineState`
+        // Redirecting to a different pipeline is also handled at `preparePipelineState`
         // to ensure the data is ready before being passed to here
-        // If pipeline from URL isn't recognised then use main pipeline
-        // and display Not Found Pipeline error
-        checkIfPipelineExists();
+        redirectSelectedPipeline();
       }
 
       if (matchedSelectedNodeName || matchedSelectedNodeId) {
@@ -234,6 +248,7 @@ export const FlowChartWrapper = ({
         <PipelineWarning
           errorMessage={errorMessage}
           invalidUrl={isInvalidUrl}
+          onResetClick={() => setIsInvalidUrl(false)}
         />
       </div>
     );

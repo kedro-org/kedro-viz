@@ -188,9 +188,9 @@ class VersionQuery:
         installed_version = VersionInfo.parse(__version__)
         latest_version = get_latest_version()
         return Version(
-            installed=installed_version,
+            installed=str(installed_version),
             is_outdated=is_running_outdated_version(installed_version, latest_version),
-            latest=latest_version or "",
+            latest=str(latest_version) or "",
         )
 
 
