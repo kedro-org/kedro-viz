@@ -3,7 +3,7 @@
 import { prettifyName } from '../../../../src/utils';
 
 describe('Menu', () => {
-  it('verifies that users can select a section of the flowchart, through the drop down. #TC-16', function () {
+  it('verifies that users can select a section of the flowchart, through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
     cy.get(':nth-child(2) > .menu-option__content > span').as('menuOption');
@@ -20,23 +20,15 @@ describe('Menu', () => {
     cy.get('[data-test="kedro-pipeline-selector"]').click();
     cy.get('@menuOption').click({ force: true });
 
-    // Adding an extra wait time due to flakiness
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500);
-
     // Assert after action
     cy.wait('@pipelineRequest').then((interception) => {
       // API Request URL
-      const requestUrl = interception.request.url;
-      expect(decodeURIComponent(requestUrl).toLowerCase()).to.include(
-        `/api/pipelines/${menuOptionValue.toLowerCase()}`
-      );
+      cy.wrap(
+        decodeURIComponent(interception.request.url).toLowerCase()
+      ).should('contains', `/api/pipelines/${menuOptionValue.toLowerCase()}`);
 
-      // Browser URL
-      cy.url().then((url) => {
-        const decodedURI = decodeURIComponent(url);
-        const queryParamValue = decodedURI.split('?')[1].split('=')[1];
-        expect(queryParamValue.toLowerCase()).to.be.eq(
+      cy.location('search').should((queryParams) => {
+        expect(decodeURIComponent(queryParams).toLowerCase()).to.contain(
           menuOptionValue.toLowerCase()
         );
       });
@@ -45,7 +37,7 @@ describe('Menu', () => {
       cy.get('.pipeline-nodelist__row__label')
         .first()
         .invoke('text')
-        .then((pipelineLabel) => {
+        .should((pipelineLabel) => {
           expect(menuOptionValue.toLowerCase()).to.include(
             pipelineLabel.toLowerCase()
           );
@@ -53,25 +45,22 @@ describe('Menu', () => {
     });
   });
 
-  it('verifies that users can search/filter for a flowchart component using the search box. #TC-17', function () {
+  it('verifies that users can search/filter for a flowchart component using the search box. #TC-17', () => {
     const searchInput = 'Ingestion';
     cy.get('.search-input__field').type(searchInput);
-
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(200);
 
     // Pipeline Label in the Menu
     cy.get('.pipeline-nodelist__row__label')
       .first()
       .invoke('text')
-      .then((pipelineLabel) => {
+      .should((pipelineLabel) => {
         expect(searchInput.toLowerCase()).to.include(
           pipelineLabel.toLowerCase()
         );
       });
   });
 
-  it('verifies that users can select a node/dataset/parameters from the menu. #TC-18', function () {
+  it('verifies that users can select a node/dataset/parameters from the menu. #TC-18', () => {
     const nodeToClickText = 'Companies';
 
     // Action
@@ -88,7 +77,7 @@ describe('Menu', () => {
     cy.__checkForText__('.pipeline-metadata__title', nodeToClickText);
   });
 
-  it('verifies that users can highlight a node/dataset/parameters from the menu by hovering on their name. #TC-19', function () {
+  it('verifies that users can highlight a node/dataset/parameters from the menu by hovering on their name. #TC-19', () => {
     const nodeToHighlightText = 'Companies';
 
     // Action
@@ -104,7 +93,7 @@ describe('Menu', () => {
     );
   });
 
-  it('verifies that users can hide/show a node/dataset/parameters in the flowchart, by clicking on the eye icon. #TC-20', function () {
+  it('verifies that users can hide/show a node/dataset/parameters in the flowchart, by clicking on the eye icon. #TC-20', () => {
     const nodeToToggleText = 'Companies';
 
     // Alias
@@ -127,8 +116,11 @@ describe('Menu', () => {
     cy.get('.pipeline-node__text').should('not.contain', nodeToToggleText);
   });
 
-  it('verifies that users can select and only show a node/dataset/parameters in the flowchart, by clicking on the box icon. #TC-21', function () {
+  it('verifies that users can select and only show a node/dataset/parameters in the flowchart, by clicking on the focus mode. #TC-21', () => {
     const nodeToFocusText = 'feature_engineering';
+
+    // Assert before action
+    cy.get('.pipeline-node').should('exist').and('not.have.length', 5);
 
     // Action
     cy.get(
@@ -140,9 +132,10 @@ describe('Menu', () => {
       '.pipeline-node--active > .pipeline-node__text',
       prettifyName(nodeToFocusText)
     );
+    cy.get('.pipeline-node').should('have.length', 5);
   });
 
-  it('verifies that users can filter/hide an element type. #TC-22', function () {
+  it('verifies that users can filter/hide an element type. #TC-22', () => {
     const nodeToToggleText = 'Datasets';
     const visibleRowLabel = 'Companies';
 

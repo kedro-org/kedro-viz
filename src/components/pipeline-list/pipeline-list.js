@@ -33,10 +33,10 @@ export const PipelineList = ({
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}
-        onChanged={(value) => {
-          onUpdateActivePipeline(value);
+        onChanged={(selectedPipeline) => {
+          onUpdateActivePipeline(selectedPipeline);
           // Reset the URL to the current active pipeline when switching between different view
-          toSelectedPipeline();
+          toSelectedPipeline(selectedPipeline.value);
         }}
         defaultText={
           isPrettyName

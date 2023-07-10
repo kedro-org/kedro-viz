@@ -138,38 +138,26 @@ describe('Pipeline Minimap Toolbar', () => {
         cy.get('@btnZoomIn').click();
       }
 
-      // wait for the dom to update
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(100);
-
       cy.get('@zoomScale')
         .invoke('text')
-        .then((text) => {
+        .should((text) => {
           zoomInValue = parseFloat(text.replace('%', ''));
           expect(initialZoomValue).to.be.lt(zoomInValue);
         });
 
       cy.get('@btnZoomOut').click();
 
-      // wait for the dom to update
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(100);
-
       cy.get('@zoomScale')
         .invoke('text')
-        .then((text) => {
+        .should((text) => {
           expect(zoomInValue).to.be.gt(parseFloat(text.replace('%', '')));
         });
 
       cy.get('@btnResetZoom').click();
 
-      // wait for the dom to update
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(600);
-
       cy.get('@zoomScale')
         .invoke('text')
-        .then((text) => {
+        .should((text) => {
           expect(initialZoomValue).to.be.eq(parseFloat(text.replace('%', '')));
         });
     });
