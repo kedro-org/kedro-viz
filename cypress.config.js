@@ -19,6 +19,7 @@ module.exports = defineConfig({
   retries: {
     runMode: 2,
   },
+  video: false,
   viewportWidth: 1280,
   viewportHeight: 720,
 });
