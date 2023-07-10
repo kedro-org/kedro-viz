@@ -12,7 +12,7 @@ build:
 	npm run build
 	cp -R build package/kedro_viz/html
 
-PROJECT_PATH ?= demo_project
+PROJECT_PATH ?= demo-project
 
 run:
 	PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
