@@ -122,6 +122,34 @@ Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
 });
 
 /**
+ * Custom command to validate the downloaded csv
+ * @param {String} downloadedFilename
+ * @param {Array} recordToCompare
+ */
+Cypress.Commands.add(
+  '__validateCsv__',
+  (downloadedFilename, recordToCompare) => {
+    const downloadsFolder = Cypress.config('downloadsFolder');
+
+    if (!downloadedFilename) {
+      downloadedFilename = join(downloadsFolder, 'data.csv');
+    }
+
+    cy.readFile(`${downloadsFolder}/${downloadedFilename}`, {
+      timeout: 15000,
+    }).then((csvContent) => {
+      const modifiedCsvContent = csvContent.replace(/\\|"/g, '');
+
+      expect(modifiedCsvContent).to.have.length.gt(50);
+
+      const records = modifiedCsvContent.split('\n');
+
+      cy.wrap(records[0].trim()).should('eq', recordToCompare.join(',').trim());
+    });
+  }
+);
+
+/**
  * Custom command to conditionally visit a page based on spec file path
  */
 Cypress.Commands.add('__conditionalVisit__', () => {

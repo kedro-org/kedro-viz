@@ -61,15 +61,9 @@ describe('Pipeline Primary Toolbar', () => {
           'have.text',
           'Export pipeline visualisation'
         );
-      });
-
-      cy.wrap($dialog).within(() => {
         cy.get('[data-test="btnDownloadPNG"]')
           .should('exist')
           .and('have.text', 'Download PNG');
-      });
-
-      cy.wrap($dialog).within(() => {
         cy.get('[data-test="btnDownloadSVG"]')
           .should('exist')
           .and('have.text', 'Download SVG');
