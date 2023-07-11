@@ -1,8 +1,13 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-from kedro.io import AbstractDataSet
+try:
+    # kedro 0.18.12 onwards
+    from kedro.io.core import AbstractDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import AbstractDataSet as AbstractDataset
 
 
-def get_dataset_type(dataset: AbstractDataSet) -> str:
+def get_dataset_type(dataset: AbstractDataset) -> str:
     """Get the type of a dataset as a string: the abbreviated name of the module to
     which ``dataset`` belongs, joined with the name of its class.
     ::

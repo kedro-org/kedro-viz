@@ -10,12 +10,17 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
-from kedro.io import AbstractDataSet
-
 try:
     from kedro.io.core import DatasetError
-except ImportError:
+except ImportError:  # pragma: no cover
     from kedro.io.core import DataSetError as DatasetError
+
+try:
+    # kedro 0.18.12 onwards
+    from kedro.io.core import AbstractDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import AbstractDataSet as AbstractDataset
 
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
@@ -87,7 +92,7 @@ class GraphNode(abc.ABC):
     type: str
 
     # the underlying Kedro object for each graph node, if any
-    kedro_obj: Optional[Union[KedroNode, AbstractDataSet]] = field(default=None)
+    kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = field(default=None)
 
     # the tags associated with this node
     tags: Set[str] = field(default_factory=set)
@@ -171,7 +176,7 @@ class GraphNode(abc.ABC):
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
-        dataset: AbstractDataSet,
+        dataset: AbstractDataset,
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type DATA for a given Kedro DataSet instance.
@@ -212,7 +217,7 @@ class GraphNode(abc.ABC):
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
-        parameters: AbstractDataSet,
+        parameters: AbstractDataset,
     ) -> "ParametersNode":
         """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
         Args:
@@ -493,14 +498,14 @@ class TranscodedDataNode(GraphNode):
     # the layer that this data node belongs to
     layer: Optional[str] = field(default=None)
 
-    # the original Kedro's AbstractDataSet for this transcoded data node
-    original_version: AbstractDataSet = field(init=False)
+    # the original Kedro's AbstractDataset for this transcoded data node
+    original_version: AbstractDataset = field(init=False)
 
     # keep track of the original name for the generated run command
     original_name: str = field(init=False)
 
     # the transcoded versions of this transcoded data nodes
-    transcoded_versions: Set[AbstractDataSet] = field(init=False, default_factory=set)
+    transcoded_versions: Set[AbstractDataset] = field(init=False, default_factory=set)
 
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = field(init=False)
@@ -554,7 +559,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
-        dataset = cast(AbstractDataSet, data_node.kedro_obj)
+        dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
 
@@ -669,7 +674,7 @@ class ParametersNode(GraphNode):
     @property
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
-        self.kedro_obj: AbstractDataSet
+        self.kedro_obj: AbstractDataset
         try:
             return self.kedro_obj.load()
         except (AttributeError, DatasetError):

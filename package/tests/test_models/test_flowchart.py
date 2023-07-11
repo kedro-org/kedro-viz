@@ -6,7 +6,7 @@ from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from kedro.io import MemoryDataset, PartitionedDataSet
+from kedro.io import PartitionedDataSet
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataSet, ParquetDataSet
 
@@ -22,6 +22,11 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+
+try:
+    from kedro.io import MemoryDataset
+except ImportError:
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 def identity(x):
