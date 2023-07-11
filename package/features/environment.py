@@ -1,7 +1,9 @@
 """Behave environment setup commands"""
 
 import os
+import re
 import shutil
+import sys
 import tempfile
 import venv
 from pathlib import Path
@@ -25,6 +27,20 @@ def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
+    for step in scenario.steps:
+        if "I have installed kedro version" in step.name:
+            match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
+            if match:
+                kedro_version = match.group(0)
+                break
+    if kedro_version <= "0.18" and sys.version_info >= (3, 9):
+        print(
+            (
+                f"{scenario} will be skipped as {kedro_version} is not "
+                f"compatible with python {sys.version_info.major}.{sys.version_info.minor}"
+            )
+        )
+        scenario.skip()
 
     # make a venv
     kedro_install_venv_dir = _create_new_venv()
@@ -61,6 +77,11 @@ def _setup_context_with_venv(context, venv_dir):
     # Windows thinks the pip version check warning is a failure
     # so disable it here.
     context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
+
+    call(
+        [context.python, "-m", "pip", "install", "-U", "pip>=21.2", "setuptools>=38.0"],
+        env=context.env,
+    )
 
     call([context.python, "-m", "pip", "install", "."], env=context.env)
     return context
