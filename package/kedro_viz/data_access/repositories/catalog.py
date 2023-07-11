@@ -12,7 +12,8 @@ from kedro_viz.constants import KEDRO_VERSION
 try:
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:
-    from kedro.io import DataSetNotFoundError as DatasetNotFoundError, MemoryDataSet as MemoryDataset
+    from kedro.io import DataSetNotFoundError as DatasetNotFoundError
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 logger = logging.getLogger(__name__)
 
