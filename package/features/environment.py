@@ -6,9 +6,10 @@ import shutil
 import sys
 import tempfile
 import venv
-from distutils.version import LooseVersion
 from pathlib import Path
 from typing import Set
+
+from semver import Version
 
 from features.steps.sh_run import run
 
@@ -29,15 +30,15 @@ def before_scenario(context, scenario):
     Installs kedro by running pip in the top level directory.
     """
 
-    kedro_version = LooseVersion("0.0.0")
+    kedro_version = Version.parse("0.0.0")
     for step in scenario.steps:
         if "I have installed kedro version" in step.name:
             match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
             if match:
-                kedro_version = LooseVersion(match.group(0))
+                kedro_version = Version.parse(match.group(0))
                 break
 
-    if kedro_version <= LooseVersion("0.18") and sys.version_info >= (3, 9):
+    if kedro_version <= Version.parse("0.18") and sys.version_info >= (3, 9):
         print(
             (
                 f"{scenario} will be skipped as {kedro_version} is not "
