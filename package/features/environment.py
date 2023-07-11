@@ -38,7 +38,7 @@ def before_scenario(context, scenario):
                 kedro_version = Version.parse(match.group(0))
                 break
 
-    if kedro_version <= Version.parse("0.18") and sys.version_info >= (3, 9):
+    if kedro_version <= Version.parse("0.18.0") and sys.version_info >= (3, 9):
         print(
             (
                 f"{scenario} will be skipped as {kedro_version} is not "
