@@ -1,14 +1,17 @@
 {
-  extends: ['stylelint-prettier/recommended'],
-  plugins: ['stylelint-order'],
-  rules: {
-    'rule-empty-line-before': [
-      'always',
+  "extends": [
+    "stylelint-prettier/recommended",
+    "stylelint-config-standard-scss"
+  ],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "rule-empty-line-before": [
+      "always",
       {
-        except: ['first-nested'],
-        ignore: ['after-comment']
+        "except": ["first-nested"],
+        "ignore": ["after-comment"]
       }
     ],
-    'order/properties-order': [[], { severity: 'warning' }],
-  },
+    "order/properties-order": [[], { "severity": "warning" }]
+  }
 }
