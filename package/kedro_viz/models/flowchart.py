@@ -11,7 +11,12 @@ from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.io import AbstractDataSet
-from kedro.io.core import DatasetError
+
+try:
+    from kedro.io.core import DatasetError
+except ImportError:
+    from kedro.io.core import DataSetError as DatasetError
+
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
