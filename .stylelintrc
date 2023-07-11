@@ -12,6 +12,7 @@
         "ignore": ["after-comment"]
       }
     ],
-    "order/properties-order": [[], { "severity": "warning" }]
+    "order/properties-order": [[], { "severity": "warning" }],
+    "selector-class-pattern": null
   }
 }
