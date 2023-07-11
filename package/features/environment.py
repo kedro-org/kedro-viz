@@ -6,6 +6,7 @@ import shutil
 import sys
 import tempfile
 import venv
+from distutils.version import LooseVersion
 from pathlib import Path
 from typing import Set
 
@@ -27,13 +28,16 @@ def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
+
+    kedro_version = LooseVersion("0.0.0")
     for step in scenario.steps:
         if "I have installed kedro version" in step.name:
             match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
             if match:
-                kedro_version = match.group(0)
+                kedro_version = LooseVersion(match.group(0))
                 break
-    if kedro_version <= "0.18" and sys.version_info >= (3, 9):
+
+    if kedro_version <= LooseVersion("0.18") and sys.version_info >= (3, 9):
         print(
             (
                 f"{scenario} will be skipped as {kedro_version} is not "
