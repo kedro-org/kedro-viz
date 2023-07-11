@@ -26,6 +26,7 @@ export const PrimaryToolbar = ({
           'pipeline-menu-button--menu',
           { 'pipeline-menu-button--inverse': !visible.sidebar }
         )}
+        dataTest={'btnToggleMenu'}
         dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
