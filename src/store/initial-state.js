@@ -75,6 +75,22 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
 
   const search = new URLSearchParams(window.location.search);
   const pipelineIdFromURL = search.get(params.pipeline);
+  const nodeIdFromUrl = search.get(params.selected);
+
+  console.log(state.nodeType.disabled.parameters, 'start');
+
+  const isNodeIdFromUrlParameter =
+    data.nodes &&
+    nodeIdFromUrl &&
+    data.nodes.find(
+      (node) => node.id === nodeIdFromUrl && node.type === 'parameters'
+    );
+
+  if (isNodeIdFromUrlParameter) {
+    state.nodeType.disabled.parameters = false;
+
+    console.log(state.nodeType.disabled.parameters, 'foundID');
+  }
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised
@@ -91,6 +107,9 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
+
+  console.log(state.nodeType.disabled.parameters, 'return');
+
   return state;
 };
 
