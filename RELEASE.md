@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Bump `strawberry-graphql` to at least version 0.191 to support the new 
+- Bump `strawberry-graphql` to at least version 0.192 to support the new 
 `strawberry.union` syntax. (#1441)
 
 # Release 6.3.2
