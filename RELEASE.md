@@ -6,6 +6,13 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+
+## Bug fixes and other changes
+
+- Bump `strawberry-graphql` to at least version 0.192 to support the new 
+`strawberry.union` syntax. (#1441)
+- Resolve the incompatibility between Kedro-Viz and Kedro versions prior to 0.18.11. (#1445)
+
 # Release 6.3.2
 
 ## Bug fixes and other changes
