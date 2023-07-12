@@ -113,8 +113,8 @@ class CatalogRepository:
 
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataset]:
-        dataset_obj: Optional[AbstractDataset]
+    def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
+        dataset_obj: Optional["AbstractDataset"]
         try:
             # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
             # fuzzy-matching process.
@@ -130,7 +130,7 @@ class CatalogRepository:
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))
 
-    def as_dict(self) -> Dict[str, Optional[AbstractDataset]]:
+    def as_dict(self) -> Dict[str, Optional["AbstractDataset"]]:
         return {
             dataset_name: self.get_dataset(dataset_name)
             for dataset_name in self._catalog.list()
