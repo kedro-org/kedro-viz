@@ -87,6 +87,9 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   }
 
   if (state.node.type[nodeIdFromUrl] === 'parameters') {
+    // disabled.parameter is on/true by default
+    // turn it off if the nodeId from URL is parameter type
+    // so that we're able to show the parameter node on the viz
     state.nodeType.disabled.parameters = false;
   }
 
