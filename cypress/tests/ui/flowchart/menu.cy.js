@@ -1,8 +1,8 @@
-// All E2E Tests Related to menu goes here.
+// All E2E Tests Related to Flowchart Menu goes here.
 
 import { prettifyName } from '../../../../src/utils';
 
-describe('Menu', () => {
+describe('Flowchart Menu', () => {
   it('verifies that users can select a section of the flowchart, through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');

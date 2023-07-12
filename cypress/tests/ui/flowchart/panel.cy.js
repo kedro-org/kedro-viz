@@ -1,4 +1,6 @@
-describe('Pipeline Primary Toolbar', () => {
+// All E2E Tests Related to Flowchart Primary Toolbar goes here.
+
+describe('Flowchart Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
     cy.get('[data-test="btnToggleMenu"]').as('btnToggleMenu');

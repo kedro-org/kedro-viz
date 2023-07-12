@@ -1,3 +1,5 @@
+// All E2E Tests Related to Experiment Tracking Primary Toolbar goes here.
+
 describe('Experiment Tracking Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-38', () => {
     // Alias
