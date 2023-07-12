@@ -4,7 +4,7 @@ tracking datasets."""
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from kedro.io import Version
 from sqlalchemy import Column
