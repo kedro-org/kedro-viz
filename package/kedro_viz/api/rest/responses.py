@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
-# pylint: disable=missing-class-docstring,too-few-public-methods,invalid-name
+# pylint: disable=missing-class-docstring,too-few-public-methods
 import abc
 from typing import Any, Dict, List, Optional, Union
 

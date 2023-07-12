@@ -8,7 +8,7 @@ from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
