@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     try:
         # kedro 0.18.12 onwards
         from kedro.io.core import AbstractDataset
-    except ImportError:  # pragma: no cover
+    except ImportError:
         # older versions
         from kedro.io.core import AbstractDataSet as AbstractDataset
 
