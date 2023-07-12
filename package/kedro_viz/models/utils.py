@@ -10,7 +10,7 @@ if TYPE_CHECKING:
         from kedro.io.core import AbstractDataSet as AbstractDataset
 
 
-def get_dataset_type(dataset: AbstractDataset) -> str:
+def get_dataset_type(dataset: "AbstractDataset") -> str:
     """Get the type of a dataset as a string: the abbreviated name of the module to
     which ``dataset`` belongs, joined with the name of its class.
     ::
