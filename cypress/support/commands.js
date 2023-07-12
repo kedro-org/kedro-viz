@@ -162,7 +162,34 @@ Cypress.Commands.add('__conditionalVisit__', () => {
     cy.__interceptGql__('getMetricPlotData');
 
     cy.visit('/experiment-tracking');
+    
+    cy.wait(['@getRunsList', '@getRunData', '@getMetricPlotData']);
   } else {
     cy.visit('/');
   }
+});
+
+/**
+ * Custom command to go into comparison mode and select three runs
+ */
+Cypress.Commands.add('__comparisonMode__', () => {
+  // Alias
+  cy.get('.switch__input').as('compareRunsToggle');
+
+  // Action
+  cy.get('@compareRunsToggle').check({ force: true });
+
+  // Mutation for two run comparison
+  cy.__interceptGql__('getRunData', 'compareTwoRuns');
+
+  // Action and wait
+  cy.get(':nth-child(2) > .runs-list-card__checked').click();
+  cy.wait('@compareTwoRuns').its('response.statusCode').should('eq', 200);
+
+  // Mutations for three run comparison
+  cy.__interceptGql__('getRunData', 'compareThreeRuns');
+
+  // Action and wait
+  cy.get(':nth-child(3) > .runs-list-card__checked').click();
+  cy.wait('@compareThreeRuns').its('response.statusCode').should('eq', 200);
 });
