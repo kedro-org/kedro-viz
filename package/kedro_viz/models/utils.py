@@ -1,10 +1,13 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io.core import AbstractDataset
+    except ImportError:  # pragma: no cover
+        # older versions
+        from kedro.io.core import AbstractDataSet as AbstractDataset
 
 
 def get_dataset_type(dataset: AbstractDataset) -> str:

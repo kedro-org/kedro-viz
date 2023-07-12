@@ -8,7 +8,12 @@ from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Union, cast
+
+from kedro.pipeline.node import Node as KedroNode
+from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+
+from .utils import get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -17,17 +22,13 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import DataSetError as DatasetError
 
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset
-
-from kedro.pipeline.node import Node as KedroNode
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-
-from .utils import get_dataset_type
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io.core import AbstractDataset
+    except ImportError:  # pragma: no cover
+        # older versions
+        from kedro.io.core import AbstractDataSet as AbstractDataset
 
 logger = logging.getLogger(__name__)
 
@@ -681,7 +682,7 @@ class ParametersNode(GraphNode):
             return self.kedro_obj.load()
         except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
-            # defined in the catalog (DataSetError) it also catches any case where
+            # defined in the catalog (DatasetError) it also catches any case where
             # the kedro_obj is None (AttributeError) -- GH#1231
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name

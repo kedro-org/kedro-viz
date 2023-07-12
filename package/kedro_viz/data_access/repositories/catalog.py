@@ -2,7 +2,7 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
@@ -17,12 +17,13 @@ except ImportError:  # pragma: no cover
     from kedro.io import DataSetNotFoundError as DatasetNotFoundError
     from kedro.io import MemoryDataSet as MemoryDataset
 
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io.core import AbstractDataset
+    except ImportError:  # pragma: no cover
+        # older versions
+        from kedro.io.core import AbstractDataSet as AbstractDataset
 
 logger = logging.getLogger(__name__)
 
