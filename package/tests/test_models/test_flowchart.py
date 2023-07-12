@@ -28,7 +28,9 @@ try:
 except ImportError:
     # older versions
     from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
-    from kedro.io import PartitionedDataSet as PartitionedDataset  # type: ignore[assignment]
+    from kedro.io import (
+        PartitionedDataSet as PartitionedDataset,  # type: ignore[assignment]
+    )
 
 
 def identity(x):
