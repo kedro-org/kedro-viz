@@ -200,8 +200,7 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
-      - checkout
-      - install_node_dependencies
+      - setup
       - run:
           name: Test lib transpilation
           command: npm run lib
@@ -217,6 +216,9 @@ jobs:
       - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
+      - run:
+          name: Run Javascript end to end tests
+          command: npm run cy:test
 
   release_to_npm:
     executor:
