@@ -77,21 +77,6 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const pipelineIdFromURL = search.get(params.pipeline);
   const nodeIdFromUrl = search.get(params.selected);
 
-  console.log(state.nodeType.disabled.parameters, 'start');
-
-  const isNodeIdFromUrlParameter =
-    data.nodes &&
-    nodeIdFromUrl &&
-    data.nodes.find(
-      (node) => node.id === nodeIdFromUrl && node.type === 'parameters'
-    );
-
-  if (isNodeIdFromUrlParameter) {
-    state.nodeType.disabled.parameters = false;
-
-    console.log(state.nodeType.disabled.parameters, 'foundID');
-  }
-
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised
     if (!state.pipeline.ids.includes(pipelineIdFromURL)) {
@@ -101,14 +86,16 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
+  if (state.node.type[nodeIdFromUrl] === 'parameters') {
+    state.nodeType.disabled.parameters = false;
+  }
+
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
   }
-
-  console.log(state.nodeType.disabled.parameters, 'return');
 
   return state;
 };
