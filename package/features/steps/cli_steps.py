@@ -1,5 +1,6 @@
 """Behave step definitions for the cli_scenarios feature."""
 
+from pathlib import Path
 from time import sleep, time
 
 import requests
@@ -77,6 +78,19 @@ def create_project_with_starter(context, starter):
 def install_project_requirements(context):
     """Run ``pip install -r src/requirements.txt``."""
     requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+    cmd = [context.pip, "install", "-r", requirements_path]
+    res = run(cmd, env=context.env)
+
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+
+
+@given("I have installed the lower-bound Kedro-viz requirements")
+def install_lower_bound_requirements(context):
+    cwd = Path(__file__).resolve().parent
+    requirements_path = cwd / "lower_requirements.txt"
     cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 

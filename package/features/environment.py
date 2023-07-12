@@ -30,7 +30,7 @@ def before_scenario(context, scenario):
     Installs kedro by running pip in the top level directory.
     """
 
-    kedro_version = Version.parse("0.0.0")
+    kedro_version = Version.parse("1.0.0")
     for step in scenario.steps:
         if "I have installed kedro version" in step.name:
             match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
