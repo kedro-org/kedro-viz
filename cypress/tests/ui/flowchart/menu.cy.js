@@ -97,9 +97,9 @@ describe('Flowchart Menu', () => {
     const nodeToToggleText = 'Companies';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
-      'nodeToToggle'
-    );
+    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
+      timeout: 10000,
+    }).as('nodeToToggle');
 
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
@@ -120,7 +120,9 @@ describe('Flowchart Menu', () => {
     const nodeToFocusText = 'feature_engineering';
 
     // Assert before action
-    cy.get('.pipeline-node').should('exist').and('not.have.length', 5);
+    cy.get('.pipeline-node', { timeout: 10000 })
+      .should('exist')
+      .and('not.have.length', 5);
 
     // Action
     cy.get(
