@@ -22,13 +22,12 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import DataSetError as DatasetError
 
-if TYPE_CHECKING:
-    try:
-        # kedro 0.18.12 onwards
-        from kedro.io.core import AbstractDataset
-    except ImportError:  # pragma: no cover
-        # older versions
-        from kedro.io.core import AbstractDataSet as AbstractDataset
+try:
+    # kedro 0.18.12 onwards
+    from kedro.io.core import AbstractDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import AbstractDataSet as AbstractDataset
 
 logger = logging.getLogger(__name__)
 
