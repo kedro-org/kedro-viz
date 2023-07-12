@@ -20,7 +20,6 @@ if TYPE_CHECKING:
         from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
 
 
-
 class TrackingDatasetsRepository:
     def __init__(self):
         self.tracking_datasets_by_group: Dict[
