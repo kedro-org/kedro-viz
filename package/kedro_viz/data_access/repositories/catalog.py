@@ -14,8 +14,8 @@ try:
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io import (
-        DataSetNotFoundError as DatasetNotFoundError,  # type: ignore[assignment]
+    from kedro.io import (  # type: ignore[assignment]
+        DataSetNotFoundError as DatasetNotFoundError,
     )
     from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
 
