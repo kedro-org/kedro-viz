@@ -4,7 +4,7 @@ tracking datasets."""
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 
 from kedro.io import Version
 from sqlalchemy import Column
@@ -14,12 +14,13 @@ from sqlalchemy.types import JSON, Boolean, Integer, String
 
 from .utils import get_dataset_type
 
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io import AbstractVersionedDataset
-except ImportError:
-    # older versions
-    from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io import AbstractVersionedDataset
+    except ImportError:
+        # older versions
+        from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
