@@ -37,7 +37,7 @@ class TrackingDatasetsRepository:
         return tracking_datasets
 
     def add_tracking_dataset(
-        self, dataset_name: str, dataset: AbstractVersionedDataset
+        self, dataset_name: str, dataset: "AbstractVersionedDataset"
     ) -> None:
         tracking_dataset = TrackingDatasetModel(dataset_name, dataset)
         tracking_dataset_group = TRACKING_DATASET_GROUPS[tracking_dataset.dataset_type]
