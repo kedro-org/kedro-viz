@@ -239,8 +239,10 @@ const normalizeData = (data, expandAllPipelines) => {
         }
       });
     } else {
-      for (const child of data.modular_pipelines['__root__'].children) {
-        state.modularPipeline.visible[child.id] = true;
+      if (data.modular_pipelines && data.modular_pipelines['__root__']) {
+        for (const child of data.modular_pipelines['__root__'].children || []) {
+          state.modularPipeline.visible[child.id] = true;
+        }
       }
     }
   }
