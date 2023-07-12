@@ -34,7 +34,7 @@ commands:
       - run:
           name: Install Python dependencies
           command: |
-            pip install git+https://github.com/kedro-org/kedro@deepyaman-patch-1
+            pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
@@ -90,7 +90,7 @@ commands:
           name: Install Kedro-Viz dependencies
           command: |
             conda activate kedro-viz
-            pip install git+https://github.com/kedro-org/kedro@deepyaman-patch-1
+            pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
