@@ -6,7 +6,6 @@ from textwrap import dedent
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-from kedro.io import MemoryDataset, PartitionedDataSet
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataSet, ParquetDataSet
 
@@ -22,6 +21,17 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset, PartitionedDataset
+except ImportError:
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
+
+    from kedro.io import (  # type: ignore[assignment]  # isort: skip
+        PartitionedDataSet as PartitionedDataset,
+    )
 
 
 def identity(x):
@@ -432,7 +442,7 @@ class TestGraphNodeMetadata:
         ]
 
     def test_partitioned_data_node_metadata(self):
-        dataset = PartitionedDataSet(path="partitioned/", dataset="pandas.CSVDataSet")
+        dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataSet")
         data_node = GraphNode.create_data_node(
             dataset_name="dataset",
             layer="raw",

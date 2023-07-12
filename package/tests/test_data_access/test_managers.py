@@ -2,7 +2,7 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog, MemoryDataset
+from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets.pandas import CSVDataSet
@@ -17,6 +17,13 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TranscodedDataNode,
 )
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset
+except ImportError:
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
 
 
 def identity(x):
