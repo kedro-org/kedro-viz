@@ -29,7 +29,7 @@ except ImportError:
     # older versions
     from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
 
-    from kedro.io import (  # isort: skip  # type: ignore[assignment]
+    from kedro.io import (  # type: ignore[assignment]  # isort: skip
         PartitionedDataSet as PartitionedDataset,
     )
 
