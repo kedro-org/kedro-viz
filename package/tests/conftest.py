@@ -22,7 +22,7 @@ try:
 except ImportError:
     # older versions
     # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
 
 
 @pytest.fixture
