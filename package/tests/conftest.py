@@ -21,6 +21,7 @@ try:
     from kedro.io import MemoryDataset
 except ImportError:
     # older versions
+    # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
 
