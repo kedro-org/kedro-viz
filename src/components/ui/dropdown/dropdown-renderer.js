@@ -121,6 +121,7 @@ const DropdownRenderer = ({
   return (
     <div
       aria-expanded={open.toString()}
+      data-test="kedro-pipeline-selector"
       aria-haspopup="true"
       className={wrapperClasses}
       onKeyDown={_handleKeyDown}
