@@ -14,12 +14,13 @@ from sqlalchemy.types import JSON, Boolean, Integer, String
 
 from .utils import get_dataset_type
 
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io import AbstractVersionedDataset
-except ImportError:
-    # older versions
-    from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io import AbstractVersionedDataset
+    except ImportError:
+        # older versions
+        from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
