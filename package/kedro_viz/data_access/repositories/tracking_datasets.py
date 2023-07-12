@@ -2,9 +2,7 @@
 centralise access to datasets used in experiment tracking."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import defaultdict
-from typing import Dict, List
-
-from kedro.io import AbstractVersionedDataSet
+from typing import TYPE_CHECKING, Dict, List
 
 from kedro_viz.models.experiment_tracking import (
     TRACKING_DATASET_GROUPS,
@@ -12,6 +10,14 @@ from kedro_viz.models.experiment_tracking import (
     TrackingDatasetModel,
     get_dataset_type,
 )
+
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io import AbstractVersionedDataset
+    except ImportError:
+        # older versions
+        from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
 
 
 class TrackingDatasetsRepository:
@@ -31,7 +37,7 @@ class TrackingDatasetsRepository:
         return tracking_datasets
 
     def add_tracking_dataset(
-        self, dataset_name: str, dataset: AbstractVersionedDataSet
+        self, dataset_name: str, dataset: "AbstractVersionedDataset"
     ) -> None:
         tracking_dataset = TrackingDatasetModel(dataset_name, dataset)
         tracking_dataset_group = TRACKING_DATASET_GROUPS[tracking_dataset.dataset_type]
