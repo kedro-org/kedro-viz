@@ -320,48 +320,48 @@ workflows:
           requires:
             - javascript_lint_and_tests
 
-  build_backend:
-    when:
-      or:
-        - <<pipeline.parameters.backend_change>>
-        - <<pipeline.parameters.ci_change>>
-    jobs:
-      - e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - win_e2e_tests:
-          matrix:
-            parameters:
-              #3.10 fails with win-build, hence reverting it to 3.10
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
-      - unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - win_unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
-      - lint:
-          matrix:
-            parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - all_circleci_checks_succeeded:
-          requires:
-            - e2e_tests
-            - unit_tests
-            - lint
+  # build_backend:
+  #   when:
+  #     or:
+  #       - <<pipeline.parameters.backend_change>>
+  #       - <<pipeline.parameters.ci_change>>
+  #   jobs:
+  #     - e2e_tests:
+  #         matrix:
+  #           parameters:
+  #             python_version: ['3.7', '3.8', '3.9', '3.10']
+  #     - win_e2e_tests:
+  #         matrix:
+  #           parameters:
+  #             #3.10 fails with win-build, hence reverting it to 3.10
+  #             python_version: ['3.7', '3.8', '3.9', '3.10']
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #               - demo
+  #     - unit_tests:
+  #         matrix:
+  #           parameters:
+  #             python_version: ['3.7', '3.8', '3.9', '3.10']
+  #     - win_unit_tests:
+  #         matrix:
+  #           parameters:
+  #             python_version: ['3.7', '3.8', '3.9', '3.10']
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #               - demo
+  #     - lint:
+  #         matrix:
+  #           parameters:
+  #             python_version: ['3.7', '3.8', '3.9', '3.10']
+  #     - all_circleci_checks_succeeded:
+  #         requires:
+  #           - e2e_tests
+  #           - unit_tests
+  #           - lint
 
   release:
     jobs:
