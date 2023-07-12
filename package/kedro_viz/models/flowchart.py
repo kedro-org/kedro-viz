@@ -11,8 +11,10 @@ from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 try:
+    # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
+    # older versions
     from kedro.io.core import DataSetError as DatasetError
 
 try:

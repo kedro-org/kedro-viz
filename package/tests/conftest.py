@@ -17,8 +17,10 @@ from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
 
 try:
+    # kedro 0.18.11 onwards
     from kedro.io import MemoryDataset
 except ImportError:
+    # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
 

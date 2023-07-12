@@ -19,8 +19,10 @@ from kedro_viz.models.flowchart import (
 )
 
 try:
+    # kedro 0.18.11 onwards
     from kedro.io import MemoryDataset
 except ImportError:
+    # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
 

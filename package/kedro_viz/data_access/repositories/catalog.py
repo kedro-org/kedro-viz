@@ -10,8 +10,10 @@ from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from kedro_viz.constants import KEDRO_VERSION
 
 try:
+    # kedro 0.18.11 onwards
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:  # pragma: no cover
+    # older versions
     from kedro.io import DataSetNotFoundError as DatasetNotFoundError
     from kedro.io import MemoryDataSet as MemoryDataset
 
