@@ -11,7 +11,7 @@ module.exports = defineConfig({
   },
   e2e: {
     baseUrl: 'http://localhost:4141',
-    specPattern: 'cypress/tests/**/discovery.cy.{js,jsx}', // [TODO] Need to modify this to include all the test files once finalized
+    specPattern: 'cypress/tests/**/*.cy.{js,jsx}',
     supportFile: 'cypress/support/index.js',
     experimentalStudio: true,
     watchForFileChanges: true,
@@ -19,6 +19,7 @@ module.exports = defineConfig({
   retries: {
     runMode: 2,
   },
+  video: false,
   viewportWidth: 1280,
   viewportHeight: 720,
 });

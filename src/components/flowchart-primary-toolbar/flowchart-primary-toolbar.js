@@ -39,6 +39,7 @@ export const FlowchartPrimaryToolbar = ({
         active={textLabels}
         ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
         className={'pipeline-menu-button--labels'}
+        dataTest={'btnToggleLabels'}
         icon={LabelIcon}
         labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
         onClick={() => onToggleTextLabels(!textLabels)}
@@ -49,6 +50,7 @@ export const FlowchartPrimaryToolbar = ({
         ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
         className={'pipeline-menu-button--layers'}
         dataHeapEvent={`visible.layers.${visibleLayers}`}
+        dataTest={'btnToggleLayers'}
         disabled={disableLayerBtn}
         icon={LayersIcon}
         labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
@@ -58,6 +60,7 @@ export const FlowchartPrimaryToolbar = ({
       <IconButton
         ariaLabel="Export graph as SVG or PNG"
         className={'pipeline-menu-button--export'}
+        dataTest={'btnExportGraph'}
         icon={ExportIcon}
         labelText="Export visualisation"
         onClick={() => onToggleExportModal(true)}
