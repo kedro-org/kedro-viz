@@ -2,7 +2,7 @@
 centralise access to datasets used in experiment tracking."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 from collections import defaultdict
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     try:
