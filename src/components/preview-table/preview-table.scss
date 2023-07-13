@@ -43,15 +43,7 @@
     padding: 12px 42px 12px 22px;
     text-align: left;
   }
-}
 
-.preview-table__row:hover,
-.preview-table__header:hover {
-  cursor: pointer;
-}
-
-// Only need to highlight row when the table is in full view
-.preview-table__large {
   .preview-table__row-header {
     background: var(--color-bg);
     position: sticky;
@@ -64,6 +56,11 @@
   .preview-table__data-hovered {
     background: var(--color-highlight);
   }
+}
+
+.preview-table__row:hover,
+.preview-table__header:hover {
+  cursor: pointer;
 }
 
 .preview-table__header,

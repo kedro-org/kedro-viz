@@ -27,6 +27,7 @@
   @media (min-width: variables.$sidebar-width-breakpoint) {
     $sidebar-ui-width: variables.$sidebar-width-open -
       variables.$sidebar-width-closed;
+
     width: variables.$sidebar-width-open;
     transform: translateX(-$sidebar-ui-width);
   }

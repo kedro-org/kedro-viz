@@ -17,16 +17,14 @@
 
 .pipeline-metadata-modal {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: variables.$global-toolbar-width;
+  inset: 0 0 0 variables.$global-toolbar-width;
   z-index: 3;
   display: flex;
   flex-direction: column;
   align-content: center;
   align-items: center;
   height: 100%; /* Full height (cover the whole page) */
+
   /* We don't need full width as sometime the preview table can take up more than a width of the page */
   background-color: var(--color-bg-plot);
 

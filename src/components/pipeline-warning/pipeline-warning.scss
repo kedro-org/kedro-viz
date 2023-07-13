@@ -26,7 +26,7 @@
   width: 90%;
 }
 
-@-webkit-keyframes fadeIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
@@ -35,6 +35,7 @@
     opacity: 1;
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -47,7 +48,7 @@
 
 .pipeline-warning__title {
   @extend %warning-text;
-  -webkit-animation: fadeIn 1s;
+
   animation: fadeIn 1s;
   font-size: 2.8em;
   font-weight: normal;
@@ -60,7 +61,7 @@
 
 .pipeline-warning__subtitle {
   @extend %warning-text;
-  -webkit-animation: fadeIn 1s;
+
   animation: fadeIn 1s;
   font-size: 1.4em;
   margin-bottom: 2.4em;
