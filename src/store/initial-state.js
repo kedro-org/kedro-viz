@@ -78,6 +78,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const search = new URLSearchParams(window.location.search);
   const pipelineIdFromURL = search.get(params.pipeline);
   const nodeIdFromUrl = search.get(params.selected);
+  const nodeNameFromUrl = search.get(params.selectedName);
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised
@@ -88,8 +89,16 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
+  // Set the nodeType.disable to false depends on what type of data it is, eg: parameters, or data, etc
   if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
     state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
+  }
+
+  // If there is a "selected_name" in the URL
+  // we need to ensure task and data are on so it can redirect back to the selected node
+  if (nodeNameFromUrl) {
+    state.nodeType.disabled.task = false;
+    state.nodeType.disabled.data = false;
   }
 
   if (applyFixes) {
