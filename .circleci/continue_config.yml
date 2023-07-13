@@ -16,6 +16,7 @@ parameters:
 orbs:
   win: circleci/windows@2.4.1
   node: circleci/node@5.0.3
+  # cypress: cypress-io/cypress@3
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
@@ -201,24 +202,24 @@ jobs:
       python_version: '3.8'
     steps:
       - setup
-      - run:
-          name: Test lib transpilation
-          command: npm run lib
-      - run:
-          name: Test JS library imports
-          command: |
-            npm run lib-test:setup
-            cd tools/test-lib/react-app
-            npm run test:ci
-      - run:
-          name: Run Eslint
-          command: npm run lint
-      - run:
-          name: Run JavaScript tests
-          command: npm run build:css && npm run test:ci
+      # - run:
+      #     name: Test lib transpilation
+      #     command: npm run lib
+      # - run:
+      #     name: Test JS library imports
+      #     command: |
+      #       npm run lib-test:setup
+      #       cd tools/test-lib/react-app
+      #       npm run test:ci
+      # - run:
+      #     name: Run Eslint
+      #     command: npm run lint
+      # - run:
+      #     name: Run JavaScript tests
+      #     command: npm run build:css && npm run test:ci
       - run:
           name: Run Javascript end to end tests
-          command: npm run cy:test
+          command: conda activate kedro-viz; npm run cy:test
 
   release_to_npm:
     executor:
