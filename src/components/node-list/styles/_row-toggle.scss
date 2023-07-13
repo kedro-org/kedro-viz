@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as colors;
 @use './variables';
 
-//--- Toggle ---//
+// --- Toggle ---//
 
 .pipeline-row__toggle {
   cursor: pointer;
@@ -26,7 +26,7 @@
   variables.$row-selected-dark
 );
 
-.pipeline-row__toggle:before {
+.pipeline-row__toggle::before {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -45,7 +45,7 @@
   pointer-events: none;
 }
 
-.pipeline-row__toggle--selected:before {
+.pipeline-row__toggle--selected::before {
   opacity: 1;
 }
 
@@ -53,7 +53,7 @@
   @include mixins.screenReaderOnly;
 }
 
-//--- Toggle icon ---//
+// --- Toggle icon ---//
 
 .pipeline-row__toggle-icon {
   width: variables.$toggle-icon-size;
@@ -74,7 +74,7 @@
 // 1. 'Element': Used on elements, and features a white/black eye
 // 2. 'Filter': Used on categories, and features a blue square
 
-//--- Toggle (kind=element) icon opacities ---//
+// --- Toggle (kind=element) icon opacities ---//
 
 /*
  | row-hover | icon-hover | checked | opacity |
@@ -134,7 +134,7 @@ $element-icon-opacity-2: 1;
   }
 }
 
-//--- Toggle (kind=filter) icon opacities ---//
+// --- Toggle (kind=filter) icon opacities ---//
 
 /*
  Parent (toggle all tags):
@@ -230,7 +230,7 @@ $filter-icon-opacity-3: 1;
   }
 }
 
-//--- Toggle (kind=filter) icon fills and strokes ---//
+// --- Toggle (kind=filter) icon fills and strokes ---//
 
 .pipeline-row__toggle-icon--kind-filter {
   &.pipeline-row__toggle-icon--checked {

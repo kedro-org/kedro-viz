@@ -37,6 +37,7 @@ $triangle-size: 10px;
 
 .tooltip--show {
   @include fade-in('700ms');
+
   animation-fill-mode: forwards;
 }
 
@@ -44,10 +45,8 @@ $triangle-size: 10px;
   display: inline-block;
   height: 0;
   left: 1px;
-
   margin-right: 1.6em;
   margin-top: -1.2em;
-
   position: absolute;
   top: 22px;
   white-space: nowrap;
@@ -58,9 +57,7 @@ $triangle-size: 10px;
   &::before {
     border-left: $triangle-size solid transparent;
     border-top: $triangle-size solid var(--color-bg-alt);
-
     content: '';
-
     height: 0;
     left: -$triangle-size + 0.5;
     position: absolute;
@@ -73,9 +70,7 @@ $triangle-size: 10px;
   &::before {
     border-right: $triangle-size solid transparent;
     border-top: $triangle-size solid var(--color-bg-alt);
-
     content: '';
-
     height: 0;
     position: absolute;
     right: -225.5px;

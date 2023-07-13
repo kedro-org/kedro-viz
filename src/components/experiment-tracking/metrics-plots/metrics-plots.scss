@@ -11,9 +11,7 @@
 .metrics-plots-wrapper__header {
   display: flex;
   justify-content: space-between;
-}
 
-.metrics-plots-wrapper__header {
   .dropdown {
     margin-right: 30px;
   }
@@ -24,7 +22,7 @@
 }
 
 .chart-types-wrapper {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
   display: flex;
   width: 236px;
 

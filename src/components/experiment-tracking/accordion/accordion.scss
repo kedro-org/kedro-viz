@@ -75,13 +75,13 @@ $toggle-width: 1.15em;
     }
   }
 
-  &:before {
+  &::before {
     content: '▾';
     font-size: 1.8em;
     opacity: 0.55;
   }
 
-  &:hover:before {
+  &:hover::before {
     opacity: 1;
   }
 
