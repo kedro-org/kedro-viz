@@ -4,6 +4,8 @@ import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { settings, sidebarWidth, localStorageName, params } from '../config';
 
+const nodeTypes = ['parameters', 'task', 'data'];
+
 /**
  * Create new default state instance for properties that aren't overridden
  * when the pipeline is reset with new data via the App component's data prop
@@ -86,10 +88,8 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
-  if (state.node.type[nodeIdFromUrl] === 'parameters') {
-    // Turn disabled.parameter off/false if the nodeId from URL is parameter type
-    // so that we're able to show the parameter node on the viz
-    state.nodeType.disabled.parameters = false;
+  if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
   }
 
   if (applyFixes) {
