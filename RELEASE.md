@@ -6,6 +6,13 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release x.x.x
+
+## Bug fixes and other changes
+
+- Ensure URL parameters and parameter nodes are in sync. (#1449
+)
+
 # Release 6.3.2
 
 ## Bug fixes and other changes
