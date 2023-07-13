@@ -120,6 +120,47 @@ commands:
           python_version: <<parameters.python_version>>
       - nvm_use_npm_install
       - npm_build
+      
+  setup_cypress_requirements:
+    description: Install Cypress requirements and dependencies
+    steps:
+      - run:
+          name: Install Chrome browser
+          command: |
+            # Install Chrome browser if not found in the cache
+            if ! command -v google-chrome-stable >/dev/null; then
+              curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+              echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+              sudo apt-get update && sudo apt-get install -y google-chrome-stable
+            fi
+      - run:
+          name: Install Firefox browser
+          command: |
+            # Install Firefox browser if not found in the cache
+            if ! command -v firefox >/dev/null; then
+              sudo apt-get update
+              sudo apt-get install libpango1.0-0
+              sudo apt-get install -y firefox
+              sudo ln -sf /usr/lib/firefox/firefox /usr/bin/firefox
+            fi
+      - run:
+          name: Install system dependencies
+          command: |
+            sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
+            sudo apt-get update
+            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+      # - restore_cache:
+      #     key: deps-npm-{{ .Branch }}-{{ checksum "~/package-lock.json" }}
+      # - run:
+      #     name: Install node dependencies
+      #     command: npm ci
+      #     working_directory: ~/brix/e2e
+      # - save_cache:
+      #     key: deps-npm-{{ .Branch }}-{{ checksum "~/package-lock.json" }}
+      #     paths:
+      #       - ~/brix/e2e/node_modules
+      #       - ~/.cache/Cypress
+      #       - ~/.npm
 
 jobs:
   e2e_tests:
@@ -194,47 +235,6 @@ jobs:
       - run:
           name: Run Python formatters and linters
           command: make format-check lint-check
-
-  setup_cypress_requirements:
-    description: Install Cypress requirements and dependencies
-    steps:
-      - run:
-          name: Install Chrome browser
-          command: |
-            # Install Chrome browser if not found in the cache
-            if ! command -v google-chrome-stable >/dev/null; then
-              curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-              echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-              sudo apt-get update && sudo apt-get install -y google-chrome-stable
-            fi
-      - run:
-          name: Install Firefox browser
-          command: |
-            # Install Firefox browser if not found in the cache
-            if ! command -v firefox >/dev/null; then
-              sudo apt-get update
-              sudo apt-get install libpango1.0-0
-              sudo apt-get install -y firefox
-              sudo ln -sf /usr/lib/firefox/firefox /usr/bin/firefox
-            fi
-      - run:
-          name: Install system dependencies
-          command: |
-            sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
-            sudo apt-get update
-            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-      # - restore_cache:
-      #     key: deps-npm-{{ .Branch }}-{{ checksum "~/package-lock.json" }}
-      # - run:
-      #     name: Install node dependencies
-      #     command: npm ci
-      #     working_directory: ~/brix/e2e
-      # - save_cache:
-      #     key: deps-npm-{{ .Branch }}-{{ checksum "~/package-lock.json" }}
-      #     paths:
-      #       - ~/brix/e2e/node_modules
-      #       - ~/.cache/Cypress
-      #       - ~/.npm
 
   javascript_lint_and_tests:
     executor:
