@@ -1,1 +1,5 @@
 src/**/*.css
+src/components/search-list/search-list.scss
+src/components/sidebar/sidebar.scss
+src/components/experiment-tracking/time-series/time-series.scss
+src/components/node-list/styles/_row-toggle.scss

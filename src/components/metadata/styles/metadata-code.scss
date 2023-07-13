@@ -14,17 +14,15 @@
   @extend %sidebar;
 
   $margin: 24px;
-  bottom: -1px;
-  position: absolute;
-  right: 0;
-  top: -1px; /* Avoids pixel rounding gaps */
+
+  inset: -1px 0;
+  position: absolute; /* Avoids pixel rounding gaps */
 
   // On small screens anchor to the left side of the screen
 
   background: var(--color-metadata-code-bg);
   display: flex;
   flex-direction: column;
-  left: 0;
   padding: 0 variables.$metadata-sidebar-width-open 0 0;
   transform: translateX(100vw);
   transition: transform ease 0.5s 0.1s, left ease 0.5s;
@@ -45,6 +43,7 @@
     $sidebar-total-width: $sidebar-width + $margin +
       variables.$metadata-sidebar-code-open +
       variables.$metadata-sidebar-width-open;
+
     @media (min-width: #{$sidebar-total-width}) {
       // Anchor to right sidebar
       left: calc(
@@ -74,7 +73,7 @@
   font-size: 1.8em;
   font-weight: normal;
   line-height: 1.6;
-  margin: 2.1em 36px 1.8em 36px;
+  margin: 2.1em 36px 1.8em;
 }
 
 .pipeline-metadata-code__code {

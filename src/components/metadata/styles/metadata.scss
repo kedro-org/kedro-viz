@@ -23,6 +23,7 @@
 
 .pipeline-metadata {
   @extend %sidebar;
+
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
   right: -1px;
@@ -32,7 +33,7 @@
   flex-direction: column;
   width: 100%;
   max-width: variables.$metadata-sidebar-width-open;
-  padding: 6px 0 0 0;
+  padding: 6px 0 0;
   overflow-y: auto;
   overflow-x: hidden;
   background: var(--color-metadata-bg);
@@ -145,7 +146,7 @@
 
 .pipeline-metadata__value--kind-token {
   display: inline-block;
-  padding: 0.18em 0.6em 0.2em 0.6em;
+  padding: 0.18em 0.6em 0.2em;
   font-weight: 600;
   background: var(--color-metadata-kind-token-bg);
 
@@ -159,8 +160,8 @@
 
 .pipeline-metadata__value-list-expand {
   display: block;
-  margin: 0.6em 0 0 0;
-  padding: 0 0 0.12em 0;
+  margin: 0.6em 0 0;
+  padding: 0 0 0.12em;
   color: var(--color-text);
   font-size: 0.96em;
   background: none;
@@ -186,9 +187,10 @@
   position: relative;
   margin-left: 1em;
 
-  &:before {
+  &::before {
     position: absolute;
     margin-left: -1em;
+
     // For small square bullets
     content: '▪';
   }
@@ -207,7 +209,7 @@ $list-inline-spacing: 0.2em;
   }
 }
 
-.pipeline-metadata__value-list--commas li:not(:last-child):after {
+.pipeline-metadata__value-list--commas li:not(:last-child)::after {
   content: ', ';
 }
 
@@ -236,7 +238,7 @@ $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__properties {
   flex-grow: 1;
-  height: 0px;
+  height: 0;
   margin-top: -3em;
   overflow-y: auto;
 }
@@ -287,7 +289,7 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview-shadow-box-right {
   background-image: linear-gradient(
     to right,
-    rgba(0, 0, 0, 0),
+    rgb(0 0 0 / 0%),
     var(--color-metadata-preview-bg)
   );
   border: none;
@@ -302,7 +304,7 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview-shadow-box-bottom {
   background-image: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0),
+    rgb(0 0 0 / 0%),
     var(--color-metadata-preview-bg)
   );
   border: none;

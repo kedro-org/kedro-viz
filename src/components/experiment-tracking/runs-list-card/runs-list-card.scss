@@ -20,7 +20,7 @@
 
   &--active {
     background: var(--color-run-list-hover);
-    box-shadow: -1px 0px 0px inset colors.$blue-300;
+    box-shadow: -1px 0 0 inset colors.$blue-300;
   }
 
   &--disabled {
@@ -31,7 +31,6 @@
 
 .runs-list-card--hovered {
   background: var(--color-run-list-hover);
-
   cursor: pointer;
 
   .runs-list-card__bookmark--stroke {

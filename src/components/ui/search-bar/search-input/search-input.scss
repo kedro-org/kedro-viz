@@ -18,13 +18,11 @@ $padding-top-bottom: 7px;
 .search-input {
   /** padding top can be overriden if label is generated (see below) **/
   padding: $padding-top-bottom $padding-left-right;
-
   border: $height-tiny solid colors.$slate-0;
   box-sizing: border-box;
 
   &--disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
   }
 }
@@ -50,7 +48,7 @@ $padding-top-bottom: 7px;
 .search-input__field {
   background: transparent;
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: Inter, sans-serif;
   font-size: 1.6em;
   font-weight: 400;
   letter-spacing: 0.1px;

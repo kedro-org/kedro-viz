@@ -7,6 +7,7 @@
 
 .pipeline-minimap-container {
   $offsetBottom: 2px; /* Sub-pixel adjustment */
+
   position: absolute;
   top: calc(100% + #{$offsetBottom});
   left: 100%;

@@ -4,6 +4,7 @@
 .pipeline-nodelist__elements-panel .MuiTreeItem-label {
   // Handle MuiTreeItem icon offset for correct width
   $icon-offset: 15px + 4px;
+
   width: calc(100% - #{$icon-offset});
 }
 
