@@ -1,8 +1,8 @@
 // All E2E Tests Related to flowchart goes here.
-describe.only('Flowchart', () => {
-  it.only('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
+describe('Flowchart', () => {
+  it('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
     const modularPipelineText = 'feature_engineering';
-    const taskNodeText = 'Rams';
+    const taskNodeText = 'Create Derived Features';
 
     // Assert before action
     cy.get('.pipeline-node > .pipeline-node__text').should(
