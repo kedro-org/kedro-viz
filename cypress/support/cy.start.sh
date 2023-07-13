@@ -97,12 +97,22 @@ wait_for_service "Kedro-Viz Frontend" "localhost" $KEDRO_VIZ_FRONTEND_PORT $KEDR
 echo
 echo "Running Cypress E2E tests in headless mode ..."
 cypress run
+EXIT_CODE=$?
 
 # logging
 e2e_process_end_time=$(date +%s)
 
 total_e2e_process_time=$((e2e_process_end_time - e2e_process_start_time))
 echo "Total E2E process execution time: $total_e2e_process_time seconds"
+
+# Check if any tests failed
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "Cypress tests failed with exit code: $EXIT_CODE"
+  terminate_processes
+  exit $EXIT_CODE  # Return the exit code
+else
+  echo "Cypress tests passed"
+fi
 
 # Terminate the processes
 terminate_processes
