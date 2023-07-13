@@ -148,7 +148,6 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-
   const localStorageState = loadLocalStorage(localStorageName);
 
   // If the localStorage is empty
