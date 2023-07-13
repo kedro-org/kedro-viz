@@ -140,12 +140,18 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  saveLocalStorage(localStorageName, {
-    nodeType: {
-      // Default to disabled parameters and other types enabled
-      disabled: { parameters: true, task: false, data: false },
-    },
-  });
+
+  const localStorageState = loadLocalStorage(localStorageName);
+
+  // If the localStorage is empty
+  // Default to disabled parameters and other types enabled
+  if (Object.keys(localStorageState).length === 0) {
+    saveLocalStorage(localStorageName, {
+      nodeType: {
+        disabled: { parameters: true, task: false, data: false },
+      },
+    });
+  }
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
