@@ -7,15 +7,21 @@ import { join } from 'path';
  * @returns {Object} The mock/fixtured json response
  */
 Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
+  // Assign an alias to the intercept based on the graphql request (mutation or query).
   const interceptAlias = mutationFor ? mutationFor : operationName;
 
   cy.intercept('POST', '/graphql', (req) => {
     const requestBody = req.body;
 
+    // check for the operation name match in the graphql request body
     if (requestBody?.operationName === operationName) {
+      // Assign a fixture path based on the graphql request (mutation or query).
       const fixturePath = mutationFor
         ? `graphql/${mutationFor}.json`
         : `graphql/${operationName}.json`;
+
+      // Stub the server response (request will never reach the origin server, instead the response is
+      // served from the fixture)
       req.reply({ fixture: fixturePath });
     }
   }).as(interceptAlias);
@@ -72,10 +78,10 @@ Cypress.Commands.add('__unhover__', (subject) => {
  */
 Cypress.Commands.add('__waitForPageLoad__', (callback) => {
   // Wait for pipeline loading icon to be visible
-  cy.get('.pipeline-loading-icon--visible', { timeout: 10000 }).should('exist');
+  cy.get('.pipeline-loading-icon--visible', { timeout: 5000 }).should('exist');
 
   // Wait for pipeline loading icon to be not visible
-  cy.get('.pipeline-loading-icon--visible', { timeout: 10000 })
+  cy.get('.pipeline-loading-icon--visible', { timeout: 5000 })
     .should('not.exist')
     .then(callback);
 });
@@ -115,7 +121,7 @@ Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
 
   // ensure the file has been saved before trying to parse it
   cy.readFile(`${downloadsFolder}/${downloadedFilename}`, 'binary', {
-    timeout: 15000,
+    timeout: 5000,
   }).should((buffer) => {
     expect(buffer.length).to.be.gt(1000);
   });
@@ -136,7 +142,7 @@ Cypress.Commands.add(
     }
 
     cy.readFile(`${downloadsFolder}/${downloadedFilename}`, {
-      timeout: 15000,
+      timeout: 5000,
     }).then((csvContent) => {
       const modifiedCsvContent = csvContent.replace(/\\|"/g, '');
 
@@ -162,7 +168,7 @@ Cypress.Commands.add('__conditionalVisit__', () => {
     cy.__interceptGql__('getMetricPlotData');
 
     cy.visit('/experiment-tracking');
-    
+
     cy.wait(['@getRunsList', '@getRunData', '@getMetricPlotData']);
   } else {
     cy.visit('/');

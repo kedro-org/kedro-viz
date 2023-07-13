@@ -98,7 +98,7 @@ describe('Flowchart Menu', () => {
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
-      timeout: 10000,
+      timeout: 5000,
     }).as('nodeToToggle');
 
     // Assert before action
@@ -120,7 +120,7 @@ describe('Flowchart Menu', () => {
     const nodeToFocusText = 'feature_engineering';
 
     // Assert before action
-    cy.get('.pipeline-node', { timeout: 10000 })
+    cy.get('.pipeline-node', { timeout: 5000 })
       .should('exist')
       .and('not.have.length', 5);
 

@@ -8,7 +8,7 @@ describe('Experiment Tracking Menu', () => {
     cy.get('.search-input__field').type(searchInput);
 
     // Assert after action
-    cy.get('.runs-list-card', { timeout: 10000 })
+    cy.get('.runs-list-card', { timeout: 5000 })
       .should('exist')
       .should('have.length', 1);
     cy.get('.runs-list-card__title')
