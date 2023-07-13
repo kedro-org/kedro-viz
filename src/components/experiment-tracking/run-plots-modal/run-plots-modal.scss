@@ -12,14 +12,11 @@
 .pipeline-run-plots-modal {
   align-items: center;
   background-color: var(--color-bg-plot);
-  bottom: 0;
+  inset: 0 0 0 variables.$global-toolbar-width;
   display: flex;
   flex-direction: column;
-  left: variables.$global-toolbar-width;
   overflow-y: scroll;
   position: absolute;
-  right: 0;
-  top: 0;
   z-index: 3;
 }
 
@@ -76,7 +73,7 @@
 
   &--plotly {
     height: calc(100% - 66px - 6em);
-    margin: 3em auto 3em;
+    margin: 3em auto;
   }
 }
 

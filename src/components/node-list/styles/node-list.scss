@@ -37,7 +37,6 @@
   colors.$white-200,
   colors.$slate-700
 );
-
 @include mixins.transparentColour(
   '--color-nodelist-bg-filter-transparent',
   colors.$white-0,
@@ -51,18 +50,15 @@
   flex-grow: 1;
   padding-top: 1.8em;
 
-  &:before,
+  &::before,
   > * {
     // Transition opacity instead of background-color for GPU acceleration
     transition: opacity ease 0.2s;
   }
 
-  &:before {
+  &::before {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     background: var(--color-bg-2);
     opacity: 0;
     content: '';
@@ -73,7 +69,7 @@
       opacity: 0.2;
     }
 
-    &:before {
+    &::before {
       opacity: 1;
     }
   }
