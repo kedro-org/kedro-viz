@@ -150,8 +150,8 @@ const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
   const localStorageState = loadLocalStorage(localStorageName);
 
-  // If the localStorage is empty
-  // Default to disabled parameters and other types enabled
+  // If localStorage is empty, default to disabled parameters and enable the
+  // other element types in the filters panel
   if (Object.keys(localStorageState).length === 0) {
     saveLocalStorage(localStorageName, {
       nodeType: {
