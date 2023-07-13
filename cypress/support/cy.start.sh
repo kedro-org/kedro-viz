@@ -3,6 +3,13 @@
 # This file is used to run e2e tests on Kedro-Viz locally. 
 # Pre-requisite: All the Kedro-Viz dependencies need to be installed. You can find more info at https://github.com/kedro-org/kedro-viz/blob/main/CONTRIBUTING.md
 
+# Check if the argument is "ci"
+if [ "$1" = "ci" ]; then
+    is_terminate_process=false
+else
+    is_terminate_process=true
+fi
+
 # logging
 e2e_process_start_time=$(date +%s)
 
@@ -17,10 +24,12 @@ KEDRO_VIZ_BACKEND_TIMEOUT=90
 
 # Function to terminate processes
 terminate_processes() {
-  echo "Terminating processes..."
-  for pgid in "${process_ids[@]}"; do
-    kill -- "-$pgid" >/dev/null 2>&1
-  done
+  if [ "$is_terminate_process" = true ]; then
+    echo "Terminating processes..."
+    for pgid in "${process_ids[@]}"; do
+      kill -- "-$pgid" >/dev/null 2>&1
+    done
+  fi
 }
 
 # Function to wait for a service to start with a timeout
