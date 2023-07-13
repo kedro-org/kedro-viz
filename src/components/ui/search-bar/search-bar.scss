@@ -7,7 +7,6 @@ $size-pos-base: 10px;
 
 .search-bar {
   position: relative;
-
   width: 100%;
   max-width: $default-input-width;
 }
@@ -25,9 +24,7 @@ $size-pos-base: 10px;
     position: absolute;
     top: 50%;
     z-index: 1;
-
     opacity: 0.3;
-
     transform: translate(0, -50%);
   }
 
@@ -42,10 +39,8 @@ $size-pos-base: 10px;
   .icon {
     top: calc(#{$size-pos-base} * 2);
     left: calc(#{$size-icon} / 2);
-
     width: $size-icon;
     height: $size-icon;
-
     opacity: 0.45;
     fill: var(--color-default-alt) !important;
   }
@@ -96,7 +91,6 @@ $size-pos-base: 10px;
 
   .search-bar & {
     right: $size-pos-base;
-
     width: $size-icon;
     height: $size-icon;
   }
@@ -111,7 +105,6 @@ $size-pos-base: 10px;
 
 .search-bar__label {
   position: absolute;
-
   width: 1px;
   height: 1px;
   margin: -1px;
