@@ -10,8 +10,18 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Ensure URL parameters and parameter nodes are in sync. (#1449)
+
+# Release 6.3.3
+
+## Bug fixes and other changes
+
+- Bump `strawberry-graphql` to at least version 0.192 to support the new 
+`strawberry.union` syntax. (#1441)
+- Resolve the incompatibility between Kedro-Viz and Kedro versions prior to 0.18.11. (#1445)
 - Ensure URL parameters and parameter nodes are in sync. (#1449
-)
+  )
+
 
 # Release 6.3.2
 

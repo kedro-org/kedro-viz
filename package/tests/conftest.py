@@ -6,7 +6,7 @@ from unittest import mock
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io import DataCatalog, MemoryDataset, Version
+from kedro.io import DataCatalog, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
@@ -15,6 +15,14 @@ from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset
+except ImportError:
+    # older versions
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
 
 
 @pytest.fixture

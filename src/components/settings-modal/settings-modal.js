@@ -156,6 +156,7 @@ const SettingsModal = ({
               Cancel
             </Button>
             <Button
+              dataTest={'Apply changes and close in Settings Modal'}
               disabled={hasNotInteracted}
               onClick={() => {
                 setHasClickApplyAndClose(true);
