@@ -36,7 +36,7 @@ commands:
           name: Install Python dependencies
           command: |
             pip install git+https://github.com/kedro-org/kedro@main
-            pip install -r package/test_requirements.txt -U
+            pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
