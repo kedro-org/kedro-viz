@@ -89,7 +89,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
-  // Set the nodeType.disable to false depends on what type of data it is, eg: parameters, or data, etc
+  // Set the nodeType.disable to false depending on what type of data it is, e.g. parameters, data, etc.
   if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
     state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
   }
