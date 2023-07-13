@@ -201,9 +201,7 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
-      - checkout
-      - setup_python_env
-      - install_node_dependencies
+      - setup
       # - run:
       #     name: Test lib transpilation
       #     command: npm run lib
