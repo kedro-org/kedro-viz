@@ -31,11 +31,21 @@ executors:
 commands:
   setup_python_env:
     steps:
+      # look for existing cache and restore if found
+      - restore_cache:
+          keys:
+            - pip-v1-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
+            - pip-v1-deps-
       - run:
           name: Install Python dependencies
           command: |
             pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
+      # save any changes to the cache
+      - save_cache:
+          key: pip-v1-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
+          paths:
+            - ~/.cache/pip
       - run:
           name: Echo package versions
           command: |
@@ -46,9 +56,19 @@ commands:
     steps:
       - node/install:
           node-version: '16.13.2'
+      # look for existing cache and restore if found
+      - restore_cache:
+          keys:
+            - node-v1-deps-{{ checksum "package-lock.json" }}
+            - node-v1-deps-
       - run:
           name: Install Node dependencies
-          command: npm install
+          command: npm ci
+      # save any changes to the cache
+      - save_cache:
+          key: node-v1-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
 
   nvm_use_npm_install:
     steps:
