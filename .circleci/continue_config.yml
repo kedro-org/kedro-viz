@@ -56,19 +56,20 @@ commands:
     steps:
       - node/install:
           node-version: '16.13.2'
+      - node/install-packages
       # look for existing cache and restore if found
-      - restore_cache:
-          keys:
-            - node-v1-deps-{{ checksum "package-lock.json" }}
-            - node-v1-deps-
-      - run:
-          name: Install Node dependencies
-          command: npm ci
+      # - restore_cache:
+      #     keys:
+      #       - node-v1-deps-{{ checksum "package-lock.json" }}
+      #       - node-v1-deps-
+      # - run:
+      #     name: Install Node dependencies
+      #     command: npm ci
       # save any changes to the cache
-      - save_cache:
-          key: node-v1-deps-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
+      # - save_cache:
+      #     key: node-v1-deps-{{ checksum "package-lock.json" }}
+      #     paths:
+      #       - node_modules
 
   nvm_use_npm_install:
     steps:
