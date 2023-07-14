@@ -1,6 +1,6 @@
 @use '../../styles/variables' as colors;
 
-//-- Theme colors as CSS Custom Properties --//
+// -- Theme colors as CSS Custom Properties -- //
 
 .kui-theme--light {
   --color-default-alt: #{colors.$black-900};
@@ -89,7 +89,7 @@
 
 .kedro {
   -webkit-font-smoothing: antialiased;
-  font-family: 'Inter', sans-serif;
+  font-family: Inter, sans-serif;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.1px;
@@ -97,8 +97,7 @@
 }
 
 *,
-:after,
-:before {
-  -webkit-box-sizing: border-box;
+::after,
+::before {
   box-sizing: border-box;
 }

@@ -1,14 +1,23 @@
 {
-  extends: ['stylelint-prettier/recommended'],
-  plugins: ['stylelint-order'],
-  rules: {
-    'rule-empty-line-before': [
-      'always',
+  "extends": ["stylelint-config-standard", "stylelint-config-standard-scss"],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "rule-empty-line-before": [
+      "always",
       {
-        except: ['first-nested'],
-        ignore: ['after-comment']
+        "except": ["first-nested"],
+        "ignore": ["after-comment"]
       }
     ],
-    'order/properties-order': [[], { severity: 'warning' }],
-  },
+    "order/properties-order": [[], { "severity": "warning" }],
+    "selector-class-pattern": null,
+    "scss/percent-placeholder-pattern": null,
+    "custom-property-pattern": null,
+    "scss/operator-no-newline-after": null,
+    "no-descending-specificity": null,
+    "keyframes-name-pattern": null,
+    "scss/at-mixin-pattern": null,
+    "scss/dollar-variable-pattern": null,
+    "media-query-no-invalid": null
+  }
 }

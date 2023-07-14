@@ -18,7 +18,7 @@
 .details-metadata__buttons {
   display: flex;
   list-style: none;
-  margin: -2px 0 0 0;
+  margin: -2px 0 0;
   padding: 0;
 
   li,
@@ -50,7 +50,6 @@
 .details-metadata__run {
   flex-shrink: 0;
   margin-right: 12em;
-
   max-width: variables.$run-width;
 }
 
@@ -159,18 +158,21 @@
 
   &--selected-first {
     @extend %runs-list-card--selected-first;
+
     border-style: solid;
     flex-shrink: 0;
   }
 
   &--selected-second {
     @extend %runs-list-card--selected-second;
+
     border-style: solid;
     flex-shrink: 0;
   }
 
   &--selected-third {
     @extend %runs-list-card--selected-third;
+
     flex-shrink: 0;
   }
 }
@@ -212,7 +214,7 @@
   pointer-events: none;
   position: absolute;
   right: 0;
-  top: 0px;
+  top: 0;
   transition: opacity 0.1s ease, top 0.2s ease;
   width: 120px;
 
