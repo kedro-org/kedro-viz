@@ -34,8 +34,8 @@ commands:
       # look for existing cache and restore if found
       - restore_cache:
           keys:
-            - pip-v2-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
-            - pip-v2-deps-
+            - pip-v1-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
+            - pip-v1-deps-
       - run:
           name: Install Python dependencies
           command: |
@@ -43,7 +43,7 @@ commands:
             pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
       # save any changes to the cache
       - save_cache:
-          key: pip-v2-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
+          key: pip-v1-deps-{{ checksum "package/test_requirements.txt" }}-{{ checksum "demo-project/src/docker_requirements.txt" }}
           paths:
             - ~/.pyenv/versions/3.8.17/lib/python3.8/site-packages
             - ~/.pyenv/versions/3.8.17/bin
