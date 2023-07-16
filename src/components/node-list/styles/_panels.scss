@@ -25,10 +25,7 @@
 .pipeline-nodelist__split {
   // Required absolute for % sizing in Safari flexbox.
   position: absolute;
-  top: 58px;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 58px 0 0;
   display: flex;
   flex-direction: column;
 
@@ -47,7 +44,7 @@
   transition: border-color ease 0.1s 0.15s;
 
   // Add the handle grip.
-  &:after {
+  &::after {
     position: absolute;
     top: 7px;
     left: 50%;
@@ -64,7 +61,7 @@
   }
 
   // Filter panel hovered, show handle.
-  .pipeline-nodelist__filter-panel:hover &:after {
+  .pipeline-nodelist__filter-panel:hover &::after {
     opacity: 0.2;
   }
 
@@ -80,7 +77,7 @@
   }
 
   // Handle is hovered, highlight grip (note: this requires increased specificity).
-  .pipeline-nodelist__filter-panel:hover &:hover:after {
+  .pipeline-nodelist__filter-panel:hover &:hover::after {
     opacity: 0.3;
   }
 
@@ -93,7 +90,7 @@
 .pipeline-nodelist-scrollbars {
   flex-grow: 1;
 
-  &:after {
+  &::after {
     content: '';
     height: 22px;
     left: -1px;
@@ -103,7 +100,7 @@
     top: 0;
   }
 
-  .pipeline-nodelist__filter-panel &:after {
+  .pipeline-nodelist__filter-panel &::after {
     display: none;
   }
 }

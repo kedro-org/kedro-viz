@@ -1,5 +1,6 @@
 @use '../../../styles/variables' as colors;
-//-- Layout --//
+
+// -- Layout --//
 
 $row-padding-y: 0.6em;
 $row-padding-x: 2.2em;
@@ -14,7 +15,7 @@ $section-title-padding-x: $row-padding-x * 0.7;
 $row-offset-left: 2.6em;
 $row-offset-right: 1.6em;
 
-//-- Colours --//
+// -- Colours --//
 
 // Light:
 $row-active-light: colors.$white-0;
