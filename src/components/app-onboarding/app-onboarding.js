@@ -28,12 +28,14 @@ const AppOnboarding = () => {
     const findAndSetCoords = (elementId) => {
       const $element = document.getElementById(elementId);
 
-      const { left, top, width, height } = $element.getBoundingClientRect();
+      if ($element) {
+        const { left, top, width, height } = $element.getBoundingClientRect();
 
-      setElementCenter({
-        x: left + width / 2,
-        y: top + height / 2,
-      });
+        setElementCenter({
+          x: left + width / 2,
+          y: top + height / 2,
+        });
+      }
     };
 
     findAndSetCoords(onboardingContent[onboardingStep].elementId);
