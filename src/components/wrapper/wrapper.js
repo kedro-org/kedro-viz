@@ -8,6 +8,7 @@ import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
 
+import AppOnboarding from '../app-onboarding';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -69,6 +70,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
                 <ExperimentWrapper />
               </Route>
             </Switch>
+            <AppOnboarding />
           </Router>
         </GraphQLProvider>
       ) : (
