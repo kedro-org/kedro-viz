@@ -14,10 +14,8 @@ try:
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io import (  # type: ignore[assignment]  # isort: skip
-        DataSetNotFoundError as DatasetNotFoundError,
-    )
-    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
+    from kedro.io import DataSetNotFoundError as DatasetNotFoundError
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 if TYPE_CHECKING:
     try:
