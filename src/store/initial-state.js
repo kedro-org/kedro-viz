@@ -94,10 +94,9 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
   }
 
-  // If there is a "selected_name" in the URL we need to ensure task and
-  // data tags are on so the app can redirect back to the selected node
+  // If there is a "selected_name" in the URL we need to ensure
+  // data tags is on so the app can redirect back to the selected node
   if (nodeNameFromUrl) {
-    state.nodeType.disabled.task = false;
     state.nodeType.disabled.data = false;
   }
 
@@ -148,17 +147,6 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  const localStorageState = loadLocalStorage(localStorageName);
-
-  // If localStorage is empty, default to disabled parameters and enable the
-  // other element types in the filters panel
-  if (Object.keys(localStorageState).length === 0) {
-    saveLocalStorage(localStorageName, {
-      nodeType: {
-        disabled: { parameters: true, task: false, data: false },
-      },
-    });
-  }
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
