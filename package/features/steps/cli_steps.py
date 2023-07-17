@@ -142,8 +142,10 @@ def check_kedroviz_up(context):
 
     try:
         assert context.result.poll() is None
+        print(sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"])
         assert (
-            "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
+            "example_iris_data"
+            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
         context.result.terminate()
