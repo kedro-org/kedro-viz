@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { loadLocalStorage, saveLocalStorage } from './helpers';
+import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { settings, sidebarWidth, localStorageName, params } from '../config';
