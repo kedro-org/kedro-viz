@@ -20,7 +20,7 @@ try:
     from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore[assignment]
+    from kedro.io.core import DataSetError as DatasetError
 
 try:
     # kedro 0.18.12 onwards
