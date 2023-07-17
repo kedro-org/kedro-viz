@@ -27,11 +27,8 @@ try:
     from kedro.io import MemoryDataset, PartitionedDataset
 except ImportError:
     # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
-
-    from kedro.io import (  # type: ignore[assignment]  # isort: skip
-        PartitionedDataSet as PartitionedDataset,
-    )
+    from kedro.io import MemoryDataSet as MemoryDataset
+    from kedro.io import PartitionedDataSet as PartitionedDataset
 
 
 def identity(x):
