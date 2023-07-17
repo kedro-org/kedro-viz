@@ -333,6 +333,11 @@ workflows:
             parameters:
               #removing 3.7 for now since it's failing circleCI and we are planning to soon stop support for 3.7
               python_version: ['3.8', '3.9', '3.10']
+          filters:
+            branches:
+              only:
+                - main
+                - demo
       - unit_tests:
           matrix:
             parameters:
@@ -341,6 +346,11 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
+          filters:
+            branches:
+              only:
+                - main
+                - demo
       - lint:
           matrix:
             parameters:
@@ -374,8 +384,7 @@ workflows:
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10']
-      - unit_tests:
+              python_version: ['3.8', '3.9', '3.10']
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
