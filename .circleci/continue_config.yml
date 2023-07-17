@@ -385,6 +385,7 @@ workflows:
           matrix:
             parameters:
               python_version: ['3.8', '3.9', '3.10']
+      - unit_tests:
           matrix:
             parameters:
               python_version: ['3.7', '3.8', '3.9', '3.10']
