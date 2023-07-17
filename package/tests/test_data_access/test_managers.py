@@ -23,7 +23,7 @@ try:
     from kedro.io import MemoryDataset
 except ImportError:
     # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore[assignment]
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 def identity(x):
