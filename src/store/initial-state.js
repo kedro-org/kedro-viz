@@ -4,8 +4,6 @@ import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { settings, sidebarWidth, localStorageName, params } from '../config';
 
-const nodeTypes = ['parameters', 'task', 'data'];
-
 /**
  * Create new default state instance for properties that aren't overridden
  * when the pipeline is reset with new data via the App component's data prop
@@ -79,6 +77,8 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const pipelineIdFromURL = search.get(params.pipeline);
   const nodeIdFromUrl = search.get(params.selected);
   const nodeNameFromUrl = search.get(params.selectedName);
+
+  const nodeTypes = ['parameters', 'task', 'data'];
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised

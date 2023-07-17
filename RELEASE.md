@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Ensure URL parameters and parameter nodes are in sync. (#1449)
+- Ensure URL parameters and parameter nodes are in sync, and enable caching in the filter panel for task, data, and parameter nodes as set by the user. (#1449)
 
 # Release 6.3.3
 
