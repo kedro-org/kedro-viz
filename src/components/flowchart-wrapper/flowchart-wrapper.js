@@ -119,7 +119,13 @@ export const FlowChartWrapper = ({
       const modularPipeline = nodes[nodeId];
       const hasModularPipeline = modularPipeline?.length > 0;
 
-      if (hasModularPipeline) {
+      const isParameterType =
+        graph.nodes &&
+        graph.nodes.find(
+          (node) => node.id === nodeId && node.type === 'parameters'
+        );
+
+      if (hasModularPipeline && !isParameterType) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
       onToggleNodeSelected(nodeId);
