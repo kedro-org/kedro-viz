@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release x.x.x
+
+## Bug fixes and other changes
+
+- Ensure URL parameters and parameter nodes are in sync, and enable caching in the filter panel for task, data, and parameter nodes as set by the user. (#1449)
+
 # Release 6.3.3
 
 ## Bug fixes and other changes
@@ -13,6 +19,7 @@ Please follow the established format:
 - Bump `strawberry-graphql` to at least version 0.192 to support the new 
 `strawberry.union` syntax. (#1441)
 - Resolve the incompatibility between Kedro-Viz and Kedro versions prior to 0.18.11. (#1445)
+
 
 # Release 6.3.2
 

@@ -538,7 +538,10 @@ it('applies faded class to all nodes that are not included in the hovered focus 
       nodeActive={{
         [dataScienceNodeId]: true,
       }}
-    />
+    />,
+    {
+      beforeLayoutActions: [() => toggleTypeDisabled('parameters', true)],
+    }
   );
   expect(wrapper.render().find('.pipeline-node--faded').length).toBe(6);
 });
