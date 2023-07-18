@@ -56,7 +56,11 @@ export const createInitialPipelineState = () => ({
       parameters: 'Parameters',
       modularPipeline: 'Modular Pipelines',
     },
-    disabled: {},
+    disabled: {
+      parameters: true,
+      task: false,
+      data: false,
+    },
   },
   edge: {
     ids: [],
