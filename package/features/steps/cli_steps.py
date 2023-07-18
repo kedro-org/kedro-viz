@@ -147,7 +147,7 @@ def check_kedroviz_up(context):
             "example_iris_data"
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         ) or (
-            # for Kedro 18 onwards
+            # for Kedro 0.18.0 onwards
             "X_test"
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
