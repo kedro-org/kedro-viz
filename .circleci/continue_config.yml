@@ -121,10 +121,10 @@ commands:
       - npm_build
 
   setup_cypress_requirements:
-    description: Install Cypress requirements and dependencies
+    description: Install cypress requirements and dependencies
     steps:
       - run:
-          name: Install system dependencies
+          name: Install cypress system dependencies
           command: |
             sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
             sudo apt-get update
@@ -209,9 +209,7 @@ jobs:
       name: docker
       python_version: '3.8'
     steps:
-      - checkout
-      - setup_python_env
-      - install_node_dependencies
+      - setup
       - setup_cypress_requirements
       - run:
           name: Test lib transpilation
