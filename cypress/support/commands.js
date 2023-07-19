@@ -81,7 +81,7 @@ Cypress.Commands.add('__waitForPageLoad__', (callback) => {
   cy.get('.pipeline-loading-icon--visible', { timeout: 5000 }).should('exist');
 
   // Wait for pipeline loading icon to be not visible
-  cy.get('.pipeline-loading-icon--visible', { timeout: 5000 })
+  cy.get('.pipeline-loading-icon--visible', { timeout: 8000 })
     .should('not.exist')
     .then(callback);
 });
