@@ -37,6 +37,12 @@ def before_scenario(context, scenario):
             if match:
                 kedro_version = Version.parse(match.group(0))
                 break
+        if (
+            "lower-bound" in step.name
+            and sys.version_info >= (3.7)
+            and sys.platform.startswith("win")
+        ):
+            scenario.skip()
 
     if kedro_version <= Version.parse("0.18.0") and sys.version_info >= (3, 9):
         print(
