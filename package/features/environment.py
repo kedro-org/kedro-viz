@@ -63,15 +63,7 @@ def _setup_context_with_venv(context, venv_dir):
     context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
 
     call(
-        [
-            context.python,
-            "-m",
-            "pip",
-            "install",
-            "-U",
-            "pip>=21.2",
-            "setuptools>=38.0"
-        ],
+        [context.python, "-m", "pip", "install", "-U", "pip>=21.2", "setuptools>=38.0"],
         env=context.env,
     )
 
