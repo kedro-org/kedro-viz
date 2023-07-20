@@ -61,7 +61,7 @@ def create_api_app_from_project(
     app = _create_base_api_app()
     app.include_router(rest_router)
     app.include_router(graphql_router)
-    
+
     if Path(_HTML_DIR).is_dir():
         app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
