@@ -59,7 +59,11 @@ const RunExportModal = ({
             filename="run-data.csv"
             onClick={updateExportData}
           >
-            <Button mode={isSuccessful ? 'success' : 'primary'} size="small">
+            <Button
+              dataTest={'Export all and close'}
+              mode={isSuccessful ? 'success' : 'primary'}
+              size="small"
+            >
               {isSuccessful ? (
                 <>
                   Done <span className="success-check-mark">✅</span>

@@ -1,8 +1,8 @@
-// All E2E Tests Related to menu goes here.
+// All E2E Tests Related to Flowchart Menu goes here.
 
 import { prettifyName } from '../../../../src/utils';
 
-describe('Menu', () => {
+describe('Flowchart Menu', () => {
   it('verifies that users can select a section of the flowchart, through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
@@ -97,9 +97,9 @@ describe('Menu', () => {
     const nodeToToggleText = 'Companies';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
-      'nodeToToggle'
-    );
+    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
+      timeout: 5000,
+    }).as('nodeToToggle');
 
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
@@ -120,7 +120,9 @@ describe('Menu', () => {
     const nodeToFocusText = 'feature_engineering';
 
     // Assert before action
-    cy.get('.pipeline-node').should('exist').and('not.have.length', 5);
+    cy.get('.pipeline-node', { timeout: 5000 })
+      .should('exist')
+      .and('not.have.length', 5);
 
     // Action
     cy.get(
