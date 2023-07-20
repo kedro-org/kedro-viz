@@ -1,4 +1,6 @@
-describe('Pipeline Primary Toolbar', () => {
+// All E2E Tests Related to Flowchart Primary Toolbar goes here.
+
+describe('Flowchart Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
     cy.get('[data-test="btnToggleMenu"]').as('btnToggleMenu');
@@ -61,15 +63,9 @@ describe('Pipeline Primary Toolbar', () => {
           'have.text',
           'Export pipeline visualisation'
         );
-      });
-
-      cy.wrap($dialog).within(() => {
         cy.get('[data-test="btnDownloadPNG"]')
           .should('exist')
           .and('have.text', 'Download PNG');
-      });
-
-      cy.wrap($dialog).within(() => {
         cy.get('[data-test="btnDownloadSVG"]')
           .should('exist')
           .and('have.text', 'Download SVG');
