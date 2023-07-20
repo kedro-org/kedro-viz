@@ -124,8 +124,10 @@ class ModularPipelinesRepository:
 
         is_internal_input = modular_pipeline_id in input_node.modular_pipelines
         if is_internal_input:
+            print("((((Internal Input Added))))")
             self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
         else:
+            print("((((Internal Output Added))))")
             self.tree[modular_pipeline_id].external_inputs.add(input_node.id)
 
     def add_output(self, modular_pipeline_id: str, output_node: GraphNode):
@@ -157,8 +159,10 @@ class ModularPipelinesRepository:
 
         is_internal_output = modular_pipeline_id in output_node.modular_pipelines
         if is_internal_output:
+            print("((((Internal Output Added))))")
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
+            print("((((External Output Added))))")
             self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
 
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):

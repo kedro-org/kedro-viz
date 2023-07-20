@@ -39,7 +39,7 @@ def before_scenario(context, scenario):
                 break
         if (
             "lower-bound" in step.name
-            and sys.version_info == (3,7)
+            and sys.version_info == (3, 7)
             and sys.platform.startswith("win")
         ):
             scenario.skip()
