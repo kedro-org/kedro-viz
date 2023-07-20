@@ -36,10 +36,10 @@ def before_scenario(context, scenario):
     print(sys.platform)
     print(scenario.name)
     print("lower-bound" in scenario.name)
-    print(sys.version_info == (3, 7))
+    print(sys.version_info < (3, 8))
     print(sys.platform.startswith("win"))
 
-    if sys.version_info == (3, 7) and sys.platform.startswith("win"):
+    if sys.version_info < (3, 8) and sys.platform.startswith("win"):
         print("I go here")
         if "lower-bound" in scenario.name:
             print("I go here too")
