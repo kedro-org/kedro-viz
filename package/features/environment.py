@@ -32,10 +32,15 @@ def before_scenario(context, scenario):
 
     kedro_version = Version.parse("1.0.0")
 
+    print(sys.version_info)
+    print(sys.platform)
+    print(scenario.name)
+    print("lower-bound" in scenario.name)
+
     if sys.version_info == (3, 7) and sys.platform.startswith("win"):
         if "lower-bound" in scenario.name:
             print(f"{scenario} will be skipped on Windows with Python 3.7")
-            scenario.mark_skipped()
+            scenario.skip()
 
     for step in scenario.steps:
         if "I have installed kedro version" in step.name:
