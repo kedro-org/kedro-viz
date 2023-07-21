@@ -282,6 +282,7 @@ export const viewTransformToFit = ({
   minScaleX = 0,
   minScaleFocus = 0,
   focusOffset = 0.8,
+  preventZoom,
 }) => {
   let scale = origin.k;
   let x = origin.x;
@@ -298,7 +299,7 @@ export const viewTransformToFit = ({
   scale = Math.min(scaleXClamp, scaleY);
 
   // If there is a focus point
-  if (focus) {
+  if (focus || !preventZoom) {
     // Ensure scale is a reasonable size
     scale = Math.max(minScaleFocus, scale);
   }
