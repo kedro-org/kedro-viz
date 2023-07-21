@@ -35,7 +35,7 @@ commands:
           name: Install Python dependencies
           command: |
             pip install git+https://github.com/kedro-org/kedro@main
-            pip install -r package/test_requirements.txt -U
+            pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
@@ -46,9 +46,8 @@ commands:
     steps:
       - node/install:
           node-version: '16.13.2'
-      - run:
-          name: Install Node dependencies
-          command: npm install
+      # using install-packages command from node orb
+      - node/install-packages
 
   nvm_use_npm_install:
     steps:
@@ -120,6 +119,16 @@ commands:
           python_version: <<parameters.python_version>>
       - nvm_use_npm_install
       - npm_build
+
+  setup_cypress_requirements:
+    description: Install cypress requirements and dependencies
+    steps:
+      - run:
+          name: Install cypress system dependencies
+          command: |
+            sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
+            sudo apt-get update
+            sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 
 jobs:
   e2e_tests:
@@ -201,7 +210,9 @@ jobs:
       python_version: '3.8'
     steps:
       - checkout
+      - setup_python_env
       - install_node_dependencies
+      - setup_cypress_requirements
       - run:
           name: Test lib transpilation
           command: npm run lib
@@ -217,6 +228,9 @@ jobs:
       - run:
           name: Run JavaScript tests
           command: npm run build:css && npm run test:ci
+      - run:
+          name: Run Javascript end to end tests
+          command: npm run cy:ci
 
   release_to_npm:
     executor:
