@@ -3,7 +3,7 @@
 @use './metadata-code-themes.scss';
 
 .kui-theme--light {
-  --color-metadata-code-bg: #{variables.$grey-100};
+  --color-metadata-code-bg: #{variables.$grey-200};
 }
 
 .kui-theme--dark {
@@ -29,7 +29,7 @@
   z-index: 2;
 
   &--visible {
-    transform: translateX(0);
+    transform: translateX(variables.$global-toolbar-width);
   }
 
   @mixin breakpoints($sidebar-width) {
@@ -46,10 +46,7 @@
 
     @media (min-width: #{$sidebar-total-width}) {
       // Anchor to right sidebar
-      left: calc(
-        100% - #{$margin + variables.$metadata-sidebar-code-open +
-          variables.$metadata-sidebar-width-open}
-      );
+      left: variables.$metadata-sidebar-width-open;
     }
   }
 
