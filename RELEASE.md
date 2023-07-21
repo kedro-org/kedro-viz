@@ -6,20 +6,21 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release x.x.x
+# Release 6.3.4
 
 ## Bug fixes and other changes
 
-- Ensure URL parameters and parameter nodes are in sync, and enable caching in the filter panel for task, data, and parameter nodes as set by the user. (#1449)
+- Ensure URL parameters and parameter nodes are in sync and enable caching in the filter panel for task, data, and parameter nodes set by the user. (#1449)
+- Relax `semver` requirement bound. (#1452)
+- Improve the code block spacing and width. (#1455)
 
 # Release 6.3.3
 
 ## Bug fixes and other changes
 
-- Bump `strawberry-graphql` to at least version 0.192 to support the new 
-`strawberry.union` syntax. (#1441)
+- Bump `strawberry-graphql` to at least version 0.192 to support the new
+  `strawberry.union` syntax. (#1441)
 - Resolve the incompatibility between Kedro-Viz and Kedro versions prior to 0.18.11. (#1445)
-
 
 # Release 6.3.2
 
