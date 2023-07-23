@@ -30,7 +30,7 @@ def before_scenario(context, scenario):
     Installs kedro by running pip in the top level directory.
     """
 
-    kedro_version = Version.parse("1.0.0")
+    kedro_version = None
 
     if sys.version_info < (3, 8) and sys.platform.startswith("win"):
         if "lower-bound" in scenario.name:
@@ -44,7 +44,11 @@ def before_scenario(context, scenario):
                 kedro_version = Version.parse(match.group(0))
                 break
 
-    if kedro_version <= Version.parse("0.18.0") and sys.version_info >= (3, 9):
+    if (
+        kedro_version
+        and kedro_version <= Version.parse("0.18.0")
+        and sys.version_info >= (3, 9)
+    ):
         print(
             (
                 f"{scenario} will be skipped as {kedro_version} is not "
