@@ -311,7 +311,7 @@ make e2e-tests
 make lint
 ```
 
-# Managing python dependencies on Kedro-viz 
+### Managing python dependencies on Kedro-viz 
 
 Python dependencies in Kedro-viz are usually updated automatically through tools like Dependabot or triggered by deprecation warnings. When updating dependencies, especially the lower-bound version, it's essential to also update the 'lower-requirements.txt' file manually. This ensures that our e2e tests reflect the latest dependencies, maintaining project stability and compatibility.
 
