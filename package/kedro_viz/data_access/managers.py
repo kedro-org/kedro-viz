@@ -371,7 +371,7 @@ class DataAccessManager:
         modular_pipelines_tree = modular_pipelines_services.expand_tree(
             modular_pipelines.as_dict()
         )
-        root_parameters= set()
+        root_parameters = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
         # except for the artificial root node
@@ -406,7 +406,6 @@ class DataAccessManager:
                     node_dependencies[input_id].add(modular_pipeline_id)
                 if isinstance(input_node, ParametersNode):
                     root_parameters.add(input_id)
-                    
 
             # only keep the modular pipeline's outputs belonging to the current registered pipeline
             for output_id in modular_pipeline_node.outputs:
