@@ -118,6 +118,7 @@ const NodeListRow = memo(
             `pipeline-nodelist__row__text--${rowType}`
           )}
           data-heap-event={`clicked.sidebar.${icon}`}
+          data-test={`node-${children ? null : name}`}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}

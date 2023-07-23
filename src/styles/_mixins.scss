@@ -1,7 +1,7 @@
 // Force an element to self-clear its floated children
 // https://css-tricks.com/snippets/css/clear-fix/
 @mixin clearfix {
-  &:after {
+  &::after {
     display: table;
     clear: both;
     content: '';

@@ -2,12 +2,28 @@
 centralise access to Kedro data catalog."""
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
-from kedro.io import AbstractDataSet, DataCatalog, DatasetNotFoundError, MemoryDataset
+from kedro.io import DataCatalog
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 from kedro_viz.constants import KEDRO_VERSION
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import DatasetNotFoundError, MemoryDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io import DataSetNotFoundError as DatasetNotFoundError
+    from kedro.io import MemoryDataSet as MemoryDataset
+
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io.core import AbstractDataset
+    except ImportError:
+        # older versions
+        from kedro.io.core import AbstractDataSet as AbstractDataset
 
 logger = logging.getLogger(__name__)
 
@@ -97,8 +113,8 @@ class CatalogRepository:
 
         return self._layers_mapping
 
-    def get_dataset(self, dataset_name: str) -> Optional[AbstractDataSet]:
-        dataset_obj: Optional[AbstractDataSet]
+    def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
+        dataset_obj: Optional["AbstractDataset"]
         try:
             # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
             # fuzzy-matching process.
@@ -114,7 +130,7 @@ class CatalogRepository:
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))
 
-    def as_dict(self) -> Dict[str, Optional[AbstractDataSet]]:
+    def as_dict(self) -> Dict[str, Optional["AbstractDataset"]]:
         return {
             dataset_name: self.get_dataset(dataset_name)
             for dataset_name in self._catalog.list()

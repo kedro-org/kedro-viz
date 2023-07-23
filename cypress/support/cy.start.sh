@@ -3,6 +3,13 @@
 # This file is used to run e2e tests on Kedro-Viz locally. 
 # Pre-requisite: All the Kedro-Viz dependencies need to be installed. You can find more info at https://github.com/kedro-org/kedro-viz/blob/main/CONTRIBUTING.md
 
+# Check if the argument is "ci"
+if [ "$1" = "ci" ]; then
+    is_terminate_process=false
+else
+    is_terminate_process=true
+fi
+
 # logging
 e2e_process_start_time=$(date +%s)
 
@@ -17,10 +24,12 @@ KEDRO_VIZ_BACKEND_TIMEOUT=90
 
 # Function to terminate processes
 terminate_processes() {
-  echo "Terminating processes..."
-  for pgid in "${process_ids[@]}"; do
-    kill -- "-$pgid" >/dev/null 2>&1
-  done
+  if [ "$is_terminate_process" = true ]; then
+    echo "Terminating processes..."
+    for pgid in "${process_ids[@]}"; do
+      kill -- "-$pgid" >/dev/null 2>&1
+    done
+  fi
 }
 
 # Function to wait for a service to start with a timeout
@@ -88,12 +97,22 @@ wait_for_service "Kedro-Viz Frontend" "localhost" $KEDRO_VIZ_FRONTEND_PORT $KEDR
 echo
 echo "Running Cypress E2E tests in headless mode ..."
 cypress run
+EXIT_CODE=$?
 
 # logging
 e2e_process_end_time=$(date +%s)
 
 total_e2e_process_time=$((e2e_process_end_time - e2e_process_start_time))
 echo "Total E2E process execution time: $total_e2e_process_time seconds"
+
+# Check if any tests failed
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "Cypress tests failed with exit code: $EXIT_CODE"
+  terminate_processes
+  exit $EXIT_CODE  # Return the exit code
+else
+  echo "Cypress tests passed"
+fi
 
 # Terminate the processes
 terminate_processes

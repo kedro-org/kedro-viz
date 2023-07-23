@@ -1,27 +1,49 @@
 // Add any reusable custom commands here
+import { join } from 'path';
 
-const apiBaseUrl = Cypress.env('apiBaseUrl');
+/**
+ * Custom command for intercepting network requests using fixtures for GraphQL
+ * @param {String} operationName
+ * @returns {Object} The mock/fixtured json response
+ */
+Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
+  // Assign an alias to the intercept based on the graphql request (mutation or query).
+  const interceptAlias = mutationFor ? mutationFor : operationName;
 
-// Network requests
-Cypress.Commands.add('main', () => {
-  cy.request({
-    method: 'GET',
-    url: `${apiBaseUrl}/api/main`,
-  }).then((response) => {
-    expect(response).property('status').to.equal(200);
-    expect(response.body).property('pipelines').to.not.be.oneOf([null, '']);
-    window.localStorage.setItem('KedroViz', JSON.stringify(response.body));
+  cy.intercept('POST', '/graphql', (req) => {
+    const requestBody = req.body;
+
+    // check for the operation name match in the graphql request body
+    if (requestBody?.operationName === operationName) {
+      // Assign a fixture path based on the graphql request (mutation or query).
+      const fixturePath = mutationFor
+        ? `graphql/${mutationFor}.json`
+        : `graphql/${operationName}.json`;
+
+      // Stub the server response (request will never reach the origin server, instead the response is
+      // served from the fixture)
+      req.reply({ fixture: fixturePath });
+    }
+  }).as(interceptAlias);
+});
+
+/**
+ * Custom command for intercepting network requests for REST
+ * @param {String} url
+ * @param {String} method
+ * @param {String} fixturePath
+ * @returns {Object} The mock/fixtured json response
+ */
+Cypress.Commands.add('__interceptRest__', (url, method, fixturePath) => {
+  cy.intercept(method, url, (req) => {
+    req.reply({ fixture: fixturePath });
   });
 });
 
-// Intercepting Network requests using fixtures for GraphQL
-Cypress.Commands.add('interceptGql', (operationName) => {
-  cy.intercept({ method: 'POST', url: `/graphql` }, (req) => {
-    req.reply({ fixture: `/graphql/${operationName})}.json` });
-  }).as(operationName);
-});
-
-// Set a custom function for determining the selector for an element. Falls back to default behavior if returning a falsey value.
+/**
+ * Custom command for determining the selector for an element. Falls back to default behavior if returning a falsey value.
+ * @returns {String} The selector for an element
+ */
 Cypress.SelectorPlayground.defaults({
   onElement: ($el) => {
     const customId = $el.attr('data-test');
@@ -32,12 +54,148 @@ Cypress.SelectorPlayground.defaults({
   },
 });
 
-// Custom hover command
-Cypress.Commands.add('hover', (selector) => {
-  cy.get(selector).trigger('mouseover');
+/**
+ * Custom command for hovering an element
+ * @param {Object} subject
+ * @returns {Object} yields the subject passed
+ */
+Cypress.Commands.add('__hover__', (subject) => {
+  cy.get(subject).trigger('mouseover');
 });
 
-// Custom unhover command
-Cypress.Commands.add('unhover', (selector) => {
-  cy.get(selector).trigger('mouseout');
+/**
+ * Custom command for unhovering an element
+ * @param {Object} subject
+ * @returns {Object} yields the subject passed
+ */
+Cypress.Commands.add('__unhover__', (subject) => {
+  cy.get(subject).trigger('mouseout');
+});
+
+/**
+ * Custom command to wait for page load before executing the callback
+ * @param {Object} callback
+ */
+Cypress.Commands.add('__waitForPageLoad__', (callback) => {
+  // Wait for pipeline loading icon to be visible
+  cy.get('.pipeline-loading-icon--visible', { timeout: 5000 }).should('exist');
+
+  // Wait for pipeline loading icon to be not visible
+  cy.get('.pipeline-loading-icon--visible', { timeout: 8000 })
+    .should('not.exist')
+    .then(callback);
+});
+
+/**
+ * Custom command to check for aria label text value of an element
+ * @param {Object} subject
+ * @param {String} ariaLabelValue
+ */
+Cypress.Commands.add('__checkForAriaLabel__', (subject, ariaLabelValue) => {
+  cy.get(subject).should('have.attr', 'aria-label').and('eq', ariaLabelValue);
+});
+
+/**
+ * Custom command to compare text values of an element and a comparable text
+ * @param {Object} subject
+ * @param {String} compareText
+ */
+Cypress.Commands.add('__checkForText__', (subject, compareText) => {
+  cy.get(subject)
+    .invoke('text')
+    .then((selectedNodeText) => {
+      expect(selectedNodeText.toLowerCase()).to.eq(compareText.toLowerCase());
+    });
+});
+
+/**
+ * Custom command to validate the downloaded image
+ * @param {String} downloadedFilename
+ */
+Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+
+  if (!downloadedFilename) {
+    downloadedFilename = join(downloadsFolder, 'logo.png');
+  }
+
+  // ensure the file has been saved before trying to parse it
+  cy.readFile(`${downloadsFolder}/${downloadedFilename}`, 'binary', {
+    timeout: 5000,
+  }).should((buffer) => {
+    expect(buffer.length).to.be.gt(1000);
+  });
+});
+
+/**
+ * Custom command to validate the downloaded csv
+ * @param {String} downloadedFilename
+ * @param {Array} recordToCompare
+ */
+Cypress.Commands.add(
+  '__validateCsv__',
+  (downloadedFilename, recordToCompare) => {
+    const downloadsFolder = Cypress.config('downloadsFolder');
+
+    if (!downloadedFilename) {
+      downloadedFilename = join(downloadsFolder, 'data.csv');
+    }
+
+    cy.readFile(`${downloadsFolder}/${downloadedFilename}`, {
+      timeout: 5000,
+    }).then((csvContent) => {
+      const modifiedCsvContent = csvContent.replace(/\\|"/g, '');
+
+      expect(modifiedCsvContent).to.have.length.gt(50);
+
+      const records = modifiedCsvContent.split('\n');
+
+      cy.wrap(records[0].trim()).should('eq', recordToCompare.join(',').trim());
+    });
+  }
+);
+
+/**
+ * Custom command to conditionally visit a page based on spec file path
+ */
+Cypress.Commands.add('__conditionalVisit__', () => {
+  const specPath = Cypress.spec.relative;
+
+  if (specPath.includes('experiment-tracking')) {
+    // Queries
+    cy.__interceptGql__('getRunsList');
+    cy.__interceptGql__('getRunData');
+    cy.__interceptGql__('getMetricPlotData');
+
+    cy.visit('/experiment-tracking');
+
+    cy.wait(['@getRunsList', '@getRunData', '@getMetricPlotData']);
+  } else {
+    cy.visit('/');
+  }
+});
+
+/**
+ * Custom command to go into comparison mode and select three runs
+ */
+Cypress.Commands.add('__comparisonMode__', () => {
+  // Alias
+  cy.get('.switch__input').as('compareRunsToggle');
+
+  // Action
+  cy.get('@compareRunsToggle').check({ force: true });
+
+  // Mutation for two run comparison
+  cy.__interceptGql__('getRunData', 'compareTwoRuns');
+
+  // Action and wait
+  cy.get(':nth-child(2) > .runs-list-card__checked').click();
+  cy.wait('@compareTwoRuns').its('response.statusCode').should('eq', 200);
+
+  // Mutations for three run comparison
+  cy.__interceptGql__('getRunData', 'compareThreeRuns');
+
+  // Action and wait
+  cy.get(':nth-child(3) > .runs-list-card__checked').click();
+  cy.wait('@compareThreeRuns').its('response.statusCode').should('eq', 200);
 });

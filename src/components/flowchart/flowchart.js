@@ -94,25 +94,9 @@ export class FlowChart extends Component {
   update(prevProps = {}) {
     const { chartZoom } = this.props;
     const changed = (...names) => this.changed(names, prevProps, this.props);
+    const preventZoom = this.props.visibleMetaSidebar;
 
     if (changed('visibleSidebar', 'visibleCode', 'visibleMetaSidebar')) {
-      // Don't zoom out when the metadata or code panels are opened or closed
-      if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
-        drawNodes.call(this, changed);
-        drawEdges.call(this, changed);
-
-        return;
-      }
-
-      if (prevProps.visibleCode !== this.props.visibleCode) {
-        if (!this.props.visibleMetaSidebar) {
-          drawNodes.call(this, changed);
-          drawEdges.call(this, changed);
-
-          return;
-        }
-      }
-
       this.updateChartSize();
     }
 
@@ -152,7 +136,24 @@ export class FlowChart extends Component {
     }
 
     if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
-      this.resetView();
+      // Don't zoom out when the metadata or code panels are opened or closed
+      if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
+        drawNodes.call(this, changed);
+        drawEdges.call(this, changed);
+
+        return;
+      }
+
+      if (prevProps.visibleCode !== this.props.visibleCode) {
+        if (!this.props.visibleMetaSidebar) {
+          drawNodes.call(this, changed);
+          drawEdges.call(this, changed);
+
+          return;
+        }
+      }
+
+      this.resetView(preventZoom);
     } else {
       this.onChartZoomChanged(chartZoom);
     }
@@ -260,7 +261,7 @@ export class FlowChart extends Component {
 
   /**
    * On every frame of every view transform change (from reset, pan, zoom etc.)
-   * @param {Object} transform The current view transfrom
+   * @param {Object} transform The current view transform
    */
   onViewChange(transform) {
     const { k: scale, x, y } = transform;
@@ -366,7 +367,7 @@ export class FlowChart extends Component {
 
     // Apply reset if it was requested
     if (chartZoom.reset === true) {
-      this.resetView();
+      this.resetView(true);
       return;
     }
 
@@ -382,7 +383,7 @@ export class FlowChart extends Component {
   /**
    * Zoom and scale to fit graph and any selected node in view
    */
-  resetView() {
+  resetView(preventZoom) {
     const { chartSize, graphSize, clickedNode, nodes } = this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
@@ -409,10 +410,9 @@ export class FlowChart extends Component {
       objectWidth: graphWidth,
       objectHeight: graphHeight,
       minScaleX: 0.2,
-      minScaleFocus: this.props.visibleMetaSidebar
-        ? this.props.chartZoom.scale
-        : 0.3,
-      focusOffset: this.props.visibleMetaSidebar ? 0.01 : 0.8,
+      minScaleFocus: this.props.chartZoom.scale,
+      focusOffset: 0,
+      preventZoom,
     });
 
     // Detect first transform

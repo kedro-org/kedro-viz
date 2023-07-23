@@ -29,6 +29,7 @@ export const MiniMapToolbar = ({
             active={visible.miniMap}
             ariaLabel={`Turn minimap ${visible.miniMap ? 'off' : 'on'}`}
             className={'pipeline-minimap-button pipeline-minimap-button--map'}
+            dataTest={`btnToggleMinimap`}
             icon={MapIcon}
             labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
             onClick={() => onToggleMiniMap(!visible.miniMap)}
@@ -38,6 +39,7 @@ export const MiniMapToolbar = ({
         <IconButton
           ariaLabel={'Zoom in'}
           className={'pipeline-minimap-button pipeline-minimap-button--zoom-in'}
+          dataTest={`btnZoomIn`}
           disabled={scale >= maxScale}
           icon={PlusIcon}
           labelText={'Zoom in'}
@@ -49,6 +51,7 @@ export const MiniMapToolbar = ({
           className={
             'pipeline-minimap-button pipeline-minimap-button--zoom-out'
           }
+          dataTest={`btnZoomOut`}
           disabled={scale <= minScale}
           icon={MinusIcon}
           labelText={'Zoom out'}
@@ -58,6 +61,7 @@ export const MiniMapToolbar = ({
         <IconButton
           ariaLabel={'Reset zoom'}
           className={'pipeline-minimap-button pipeline-minimap-button--reset'}
+          dataTest={`btnResetZoom`}
           icon={ResetIcon}
           labelText={'Reset zoom'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0))}
