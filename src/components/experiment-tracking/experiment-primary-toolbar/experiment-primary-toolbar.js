@@ -49,6 +49,7 @@ export const ExperimentPrimaryToolbar = ({
               active={enableShowChanges}
               ariaLabel="Toggle show changes"
               className={'pipeline-menu-button--labels'}
+              dataTest={'btnToggleChange'}
               disabled={showChangesIconDisabled}
               icon={ShowChangesIcon}
               labelText={
@@ -75,6 +76,7 @@ export const ExperimentPrimaryToolbar = ({
               active={selectedRunData?.bookmark}
               ariaLabel="Toggle run bookmark"
               className={'pipeline-menu-button--labels'}
+              dataTest="btnToggleBookmark"
               icon={
                 selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon
               }
@@ -86,6 +88,7 @@ export const ExperimentPrimaryToolbar = ({
             <IconButton
               ariaLabel="Edit run details"
               className={'pipeline-menu-button--labels'}
+              dataTest="btnEditRunDetails"
               icon={PencilIcon}
               labelText={`Edit details`}
               onClick={() => showRunDetailsModal(true)}
@@ -93,6 +96,7 @@ export const ExperimentPrimaryToolbar = ({
             <IconButton
               ariaLabel="Export Run Data"
               className={'pipeline-menu-button--export-runs'}
+              dataTest="btnExportRunData"
               icon={ExportIcon}
               labelText="Export run data"
               onClick={() => setShowRunExportModal(true)}

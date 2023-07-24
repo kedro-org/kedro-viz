@@ -93,7 +93,6 @@ $secondary-underline-offset-hover: 4px;
   &::after {
     display: block;
     content: '';
-
     width: 100%;
     height: $secondary-underline-height;
 
@@ -101,7 +100,6 @@ $secondary-underline-offset-hover: 4px;
     margin-bottom: -$secondary-underline-height;
     transform: translateY($secondary-underline-offset);
     transition: transform ease 0.1s, background ease 0.1s;
-
     background: none;
   }
 

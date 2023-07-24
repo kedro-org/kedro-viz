@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import { loadLocalStorage, saveLocalStorage } from './helpers';
+import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
 import { settings, sidebarWidth, localStorageName, params } from '../config';
@@ -75,6 +75,10 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
 
   const search = new URLSearchParams(window.location.search);
   const pipelineIdFromURL = search.get(params.pipeline);
+  const nodeIdFromUrl = search.get(params.selected);
+  const nodeNameFromUrl = search.get(params.selectedName);
+
+  const nodeTypes = ['parameters', 'task', 'data'];
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised
@@ -85,12 +89,24 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     }
   }
 
+  // Set the nodeType.disable to false depending on what type of data it is, e.g. parameters, data, etc.
+  if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
+  }
+
+  // If there is a "selected_name" in the URL we need to ensure
+  // data tags is on so the app can redirect back to the selected node
+  if (nodeNameFromUrl) {
+    state.nodeType.disabled.data = false;
+  }
+
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
   }
+
   return state;
 };
 
@@ -131,12 +147,6 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  saveLocalStorage(localStorageName, {
-    nodeType: {
-      // Default to disabled parameters and other types enabled
-      disabled: { parameters: true, task: false, data: false },
-    },
-  });
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||

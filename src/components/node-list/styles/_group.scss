@@ -32,8 +32,8 @@ $placeholder-fade: 120px;
   pointer-events: none;
 }
 
-.pipeline-nodelist__placeholder-upper:after,
-.pipeline-nodelist__placeholder-lower:after {
+.pipeline-nodelist__placeholder-upper::after,
+.pipeline-nodelist__placeholder-lower::after {
   position: absolute;
   width: 100%;
   height: $placeholder-fade;
@@ -45,7 +45,7 @@ $placeholder-fade: 120px;
 
 // Add fade overlay at the lazy list boundaries visible during scroll
 .pipeline-nodelist__filter-panel {
-  .pipeline-nodelist__placeholder-upper:after {
+  .pipeline-nodelist__placeholder-upper::after {
     bottom: -$placeholder-fade;
     background: linear-gradient(
       0deg,
@@ -54,7 +54,7 @@ $placeholder-fade: 120px;
     );
   }
 
-  .pipeline-nodelist__placeholder-lower:after {
+  .pipeline-nodelist__placeholder-lower::after {
     top: -$placeholder-fade;
     background: linear-gradient(
       0deg,
@@ -64,8 +64,8 @@ $placeholder-fade: 120px;
   }
 }
 
-.pipeline-nodelist__placeholder-upper--fade:after,
-.pipeline-nodelist__placeholder-lower--fade:after {
+.pipeline-nodelist__placeholder-upper--fade::after,
+.pipeline-nodelist__placeholder-lower--fade::after {
   opacity: 1;
 }
 
@@ -91,7 +91,7 @@ $placeholder-fade: 120px;
 .pipeline-nodelist__elements-panel .pipeline-nodelist__heading {
   background: var(--color-nodelist-element-panel);
 
-  &:after {
+  &::after {
     position: absolute;
     bottom: -19px;
     z-index: -1;
@@ -111,7 +111,7 @@ $placeholder-fade: 120px;
 .pipeline-nodelist__filter-panel .pipeline-nodelist__heading {
   background: var(--color-nodelist-filter-panel);
 
-  &:after {
+  &::after {
     position: absolute;
     bottom: -19px;
     z-index: -1;
@@ -152,13 +152,13 @@ $placeholder-fade: 120px;
     }
   }
 
-  &:before {
+  &::before {
     font-size: 1.8em;
     opacity: 0.55;
     content: '▾';
   }
 
-  &:hover:before {
+  &:hover::before {
     opacity: 1;
   }
 
