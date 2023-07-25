@@ -345,7 +345,6 @@ workflows:
       - win_e2e_tests:
           matrix:
             parameters:
-              #3.10 fails with win-build, hence reverting it to 3.10
               python_version: ['3.7', '3.8', '3.9', '3.10']
           filters:
             branches:
