@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+
+## Bug fixes and other changes
+
+- Fix incorrect rendering of datasets in modular pipelines. (#1439) 
+
 # Release 6.3.4
 
 ## Bug fixes and other changes
