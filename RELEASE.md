@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix the incorrect rendering of datasets in the modular pipeline. (#1439) 
+- Fix incorrect rendering of datasets in modular pipelines. (#1439) 
 
 # Release 6.3.4
 
