@@ -401,6 +401,7 @@ describe('view', () => {
         minScaleX,
         minScaleFocus: 0.8,
         focusOffset: 0.8,
+        preventZoom: true,
       });
 
       // Resulting transform should clamp to minimum X scale and center

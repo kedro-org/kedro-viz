@@ -1,11 +1,15 @@
 """Behave environment setup commands"""
 
 import os
+import re
 import shutil
+import sys
 import tempfile
 import venv
 from pathlib import Path
 from typing import Set
+
+from semver import Version
 
 from features.steps.sh_run import run
 
@@ -25,6 +29,33 @@ def before_scenario(context, scenario):
     """Environment preparation before other cli tests are run.
     Installs kedro by running pip in the top level directory.
     """
+
+    kedro_version = None
+
+    if sys.version_info < (3, 8) and sys.platform.startswith("win"):
+        if "lower-bound" in scenario.name:
+            print(f"{scenario} will be skipped on Windows with Python 3.7")
+            scenario.skip()
+
+    for step in scenario.steps:
+        if "I have installed kedro version" in step.name:
+            match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
+            if match:
+                kedro_version = Version.parse(match.group(0))
+                break
+
+    if (
+        kedro_version
+        and kedro_version <= Version.parse("0.18.0")
+        and sys.version_info >= (3, 9)
+    ):
+        print(
+            (
+                f"{scenario} will be skipped as {kedro_version} is not "
+                f"compatible with python {sys.version_info.major}.{sys.version_info.minor}"
+            )
+        )
+        scenario.skip()
 
     # make a venv
     kedro_install_venv_dir = _create_new_venv()
@@ -63,20 +94,7 @@ def _setup_context_with_venv(context, venv_dir):
     context.env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
 
     call(
-        [
-            context.python,
-            "-m",
-            "pip",
-            "install",
-            "-U",
-            "pip>=21.2",
-            "setuptools>=38.0",
-            "cookiecutter>=1.7.2",
-            "wheel",
-            "botocore",
-            "PyYAML>=4.2, <6.0",
-            "click<9.0",
-        ],
+        [context.python, "-m", "pip", "install", "-U", "pip>=21.2", "setuptools>=38.0"],
         env=context.env,
     )
 

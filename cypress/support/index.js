@@ -4,5 +4,5 @@ import './commands';
 
 // Command to perform before each test case run
 beforeEach(() => {
-  cy.visit('/');
+  cy.__conditionalVisit__();
 });

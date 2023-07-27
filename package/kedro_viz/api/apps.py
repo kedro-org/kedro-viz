@@ -61,7 +61,12 @@ def create_api_app_from_project(
     app = _create_base_api_app()
     app.include_router(rest_router)
     app.include_router(graphql_router)
-    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+
+    # Check for html directory existence.
+    if Path(_HTML_DIR).is_dir():
+        # The html is needed when kedro_viz is used in cli but not required when running
+        # frontend e2e tests via Cypress
+        app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.

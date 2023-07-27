@@ -200,6 +200,7 @@ def assert_example_data(response_data):
             "children": [
                 {"id": "0ecea0de", "type": "data"},
                 {"id": "f1f1425b", "type": "parameters"},
+                {"id": "f0ebef01", "type": "parameters"},
                 {"id": "uk", "type": "modularPipeline"},
             ],
             "id": "__root__",
