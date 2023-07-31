@@ -13,6 +13,7 @@ import nodeDataProfiler from '../../utils/data/node_data_profiler.mock.json';
 import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
 import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
 import nodeJSONData from '../../utils/data/node_json_data.mock.json';
+import { formatFileSize } from '../../utils';
 
 const modelInputDataSetNodeId = '23c94afb';
 const splitDataTaskNodeId = '65d0d789';
@@ -385,7 +386,11 @@ describe('MetaData', () => {
           parseInt(wrapper.find('[data-test="profiler-value-columns"]').text())
         ).toEqual(2);
         expect(
-          wrapper.find('[data-test="profiler-value-file_size"]').text()
+          formatFileSize(
+            parseInt(
+              wrapper.find('[data-test="profiler-value-file_size"]').text()
+            )
+          )
         ).toEqual('1.1KB');
       });
     });
