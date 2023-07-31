@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+# from kedro_viz.data_access import data_access_manager
 
 from .utils import get_dataset_type
 
@@ -541,6 +542,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
+    dataset_stats: InitVar[Dict]
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
@@ -557,13 +559,17 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     preview: Optional[Dict] = field(init=False, default=None)
 
+    profiler: Optional[Dict] = field(init=False, default=None)
+
     # TODO: improve this scheme.
-    def __post_init__(self, data_node: DataNode):
+    def __post_init__(self, data_node: DataNode, dataset_stats: Dict):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
+        self.profiler = dataset_stats
 
+        print(self.profiler)
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f"kedro run --to-outputs={data_node.name}"

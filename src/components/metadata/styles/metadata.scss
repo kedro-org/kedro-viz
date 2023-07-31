@@ -315,3 +315,12 @@ $list-inline-spacing: 0.2em;
   bottom: 0;
   height: 40px;
 }
+
+.pipeline-metadata-label__profiler {
+  margin-left: 8px;
+  margin-right: 24px;
+}
+
+.pipeline-metadata-value__profiler {
+  font-size: 18px;
+}

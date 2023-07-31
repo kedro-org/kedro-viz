@@ -90,6 +90,9 @@ function nodeReducer(nodeState = {}, action) {
         preview: Object.assign({}, nodeState.preview, {
           [id]: data.preview,
         }),
+        profiler: Object.assign({}, nodeState.profiler, {
+          [id]: data.profiler,
+        }),
       });
     }
 

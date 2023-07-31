@@ -53,7 +53,18 @@ def _bootstrap(project_path: Path):
         configure_project(package_name)
         return
 
-
+def get_dataset_stats(project_path: Path):
+    """Return the stats saved"""
+    import json
+    stats_file_path = project_path / "stats.json"
+    if not stats_file_path.exists():
+        return None
+    with open(
+        stats_file_path, encoding="utf8"
+    ) as stats_file:  # pylint: disable: unspecified-encoding
+        stats = json.load(stats_file)
+        return stats
+        
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
@@ -91,7 +102,8 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-        return catalog, pipelines_dict, session_store
+            stats_dict = dict(get_dataset_stats(project_path))
+        return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 

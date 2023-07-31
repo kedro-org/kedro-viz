@@ -122,3 +122,24 @@ export const prettifyModularPipelineNames = (modularPipelines) => {
   }
   return modularPipelines;
 };
+
+/**
+ * Formats file size for the dataset metadata stats
+ * @param {Number} fileSizeInBytes The file size in bytes
+ * @returns {String} The formatted file size as e.g. "1.1KB"
+ */
+export const formatFileSize = (fileSizeInBytes) => {
+  debugger;
+  console.log(fileSizeInBytes);
+  if (fileSizeInBytes < 1024) {
+    // Less than 1 KB
+    return `${fileSizeInBytes}bytes`;
+  } else if (fileSizeInBytes < 1024 * 1024) {
+    //  Less than 1 MB
+    const sizeInKB = fileSizeInBytes / 1024;
+    return `${sizeInKB.toFixed(1)}KB`;
+  } else {
+    const sizeInMB = fileSizeInBytes / (1024 * 1024);
+    return `${sizeInMB.toFixed(1)}MB`;
+  }
+};

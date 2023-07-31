@@ -24,6 +24,7 @@ import {
 } from '../../utils/hooks/use-generate-pathname';
 
 import './styles/metadata.css';
+import { formatFileSize } from '../../utils';
 
 /**
  * Shows node meta data
@@ -58,6 +59,7 @@ const MetaData = ({
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasPreviewData = Boolean(metadata?.preview);
+  const hasProfilerData = Boolean(metadata?.profiler);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -105,6 +107,25 @@ const MetaData = ({
     return isList
       ? value.map((val) => val.split('.').pop())
       : value?.split('.').pop();
+  };
+
+  const profilerContent = (index, statValue, statLabel) => {
+    return (
+      <React.Fragment key={index}>
+        <li
+          className="pipeline-metadata__value pipeline-metadata-value__profiler"
+          data-test={`profiler-value-${statLabel}`}
+        >
+          {statLabel !== 'filesize' ? statValue : formatFileSize(statValue)}
+        </li>
+        <span
+          className="pipeline-metadata__label pipeline-metadata-label__profiler"
+          data-test={`profiler-label-${statLabel}`}
+        >
+          {statLabel && statLabel.replace(/_/g, ' ')}
+        </span>
+      </React.Fragment>
+    );
   };
 
   return (
@@ -232,6 +253,26 @@ const MetaData = ({
                     isCommand={metadata?.runCommand}
                   />
                 </MetaDataRow>
+                {hasProfilerData && (
+                  <>
+                    <span
+                      className="pipeline-metadata__label"
+                      data-label="Dataset statistics:"
+                    >
+                      Dataset statistics:
+                    </span>
+                    <ul>
+                      {Object.keys(metadata?.profiler).map(
+                        (profilerKey, index) =>
+                          profilerContent(
+                            index,
+                            metadata?.profiler[profilerKey],
+                            profilerKey
+                          )
+                      )}
+                    </ul>
+                  </>
+                )}
               </dl>
               {hasPlot && (
                 <>

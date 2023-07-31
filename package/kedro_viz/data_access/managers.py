@@ -62,6 +62,7 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
+        self.dataset_stats = {}
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -90,6 +91,15 @@ class DataAccessManager:
         for registered_pipeline_id, pipeline in pipelines.items():
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
+
+    def add_dataset_stats(self, stats_dict: Dict[str, object]):
+        self.dataset_stats = stats_dict
+
+    def get_dataset_stats(self, data_node: DataNode):
+        if not data_node and data_node.name not in self.dataset_stats:
+            return
+
+        return self.dataset_stats[data_node.name]
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline

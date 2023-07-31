@@ -9,6 +9,7 @@ import nodePlot from '../../utils/data/node_plot.mock.json';
 import nodeParameters from '../../utils/data/node_parameters.mock.json';
 import nodeTask from '../../utils/data/node_task.mock.json';
 import nodeData from '../../utils/data/node_data.mock.json';
+import nodeDataProfiler from '../../utils/data/node_data_profiler.mock.json';
 import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
 import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
 import nodeJSONData from '../../utils/data/node_json_data.mock.json';
@@ -356,6 +357,39 @@ describe('MetaData', () => {
         );
       });
     });
+
+    describe('when there is profiler returned by the backend', () => {
+      it('shows the node statistics', () => {
+        const wrapper = mount({
+          nodeId: modelInputDataSetNodeId,
+          mockMetadata: nodeDataProfiler,
+        });
+
+        expect(wrapper.find('[data-label="Dataset statistics:"]').length).toBe(
+          1
+        );
+        expect(wrapper.find('[data-test="profiler-label-rows"]').length).toBe(
+          1
+        );
+        expect(
+          wrapper.find('[data-test="profiler-label-columns"]').length
+        ).toBe(1);
+        expect(
+          wrapper.find('[data-test="profiler-label-file_size"]').length
+        ).toBe(1);
+
+        expect(
+          parseInt(wrapper.find('[data-test="profiler-value-rows"]').text())
+        ).toEqual(10);
+        expect(
+          parseInt(wrapper.find('[data-test="profiler-value-columns"]').text())
+        ).toEqual(2);
+        expect(
+          wrapper.find('[data-test="profiler-value-file_size"]').text()
+        ).toEqual('1.1KB');
+      });
+    });
+
     describe('Transcoded dataset nodes', () => {
       it('shows the node original type', () => {
         const wrapper = mount({

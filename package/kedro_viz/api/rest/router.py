@@ -49,7 +49,8 @@ async def get_single_node_metadata(node_id: str):
         return TaskNodeMetadata(node)
 
     if isinstance(node, DataNode):
-        return DataNodeMetadata(node)
+        dataset_stats = data_access_manager.get_dataset_stats(node)
+        return DataNodeMetadata(node, dataset_stats)
 
     if isinstance(node, TranscodedDataNode):
         return TranscodedDataNodeMetadata(node)

@@ -1,0 +1,45 @@
+{
+  "companies": { "filesize": 385480, "columns": 5, "rows": 77096 },
+  "reviews": { "filesize": 770960, "columns": 10, "rows": 77096 },
+  "shuttles": { "filesize": 1002248, "columns": 13, "rows": 77096 },
+  "ingestion.int_typed_companies": {
+    "filesize": 385480,
+    "columns": 5,
+    "rows": 77096
+  },
+  "ingestion.int_typed_shuttles@pandas2": {
+    "filesize": 1002248,
+    "columns": 13,
+    "rows": 77096
+  },
+  "ingestion.prm_agg_companies": {
+    "filesize": 250490,
+    "columns": 5,
+    "rows": 50098
+  },
+  "ingestion.int_typed_reviews": {
+    "filesize": 613690,
+    "columns": 11,
+    "rows": 55790
+  },
+  "prm_spine_table": { "filesize": 89304, "columns": 3, "rows": 29768 },
+  "prm_shuttle_company_reviews": {
+    "filesize": 803736,
+    "columns": 27,
+    "rows": 29768
+  },
+  "feature_engineering.feat_static_features": {
+    "filesize": 357216,
+    "columns": 12,
+    "rows": 29768
+  },
+  "feature_engineering.feat_derived_features": {
+    "filesize": 89304,
+    "columns": 3,
+    "rows": 29768
+  },
+  "feature_importance_output": { "filesize": 30, "columns": 2, "rows": 15 },
+  "model_input_table": { "filesize": 357216, "columns": 12, "rows": 29768 },
+  "X_train": { "filesize": 261954, "columns": 11, "rows": 23814 },
+  "X_test": { "filesize": 65494, "columns": 11, "rows": 5954 }
+}

@@ -192,4 +192,28 @@ describe('Flowchart DAG', () => {
       .should('exist')
       .and('have.text', `Oops, there's nothing to see here`);
   });
+
+  it('verifies that users can open and see the dataset statistics in the metadata panel for datasets. #TC-51', () => {
+    const dataNodeText = 'Companies';
+
+    // Assert before action
+    cy.get('[data-label="Dataset statistics:]').should('not.exist');
+
+    // Action
+    cy.get('.pipeline-node > .pipeline-node__text')
+      .contains(dataNodeText)
+      .click({ force: true });
+
+    // Assert after action
+    cy.get('[data-label="Dataset statistics:"]').should('exist');
+    cy.get('[data-test=profiler-value-rows]')
+      .invoke('text')
+      .should((rowsValue) => expect(parseInt(rowsValue)).to.be.eq(77096));
+    cy.get('[data-test=profiler-value-columns]')
+      .invoke('text')
+      .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
+    cy.get('[data-test=profiler-value-file_size]')
+      .invoke('text')
+      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.7MB'));
+  });
 });
