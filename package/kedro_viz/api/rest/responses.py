@@ -131,6 +131,7 @@ class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     original_type: str
     transcoded_types: List[str]
     run_command: Optional[str]
+    profiler: Optional[Dict]
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):

@@ -93,11 +93,22 @@ class DataAccessManager:
             self.add_pipeline(registered_pipeline_id, pipeline)
 
     def add_dataset_stats(self, stats_dict: Dict[str, object]):
+        """Add dataset statistics (eg. rows, columns) as a dictionary. This will help in showing the relevant stats in the metadata panel
+
+        Args:
+            stats_dict: A dictionary object loaded from stats.json file in the kedro project
+        """
         self.dataset_stats = stats_dict
 
-    def get_dataset_stats(self, data_node: DataNode):
-        if not data_node and data_node.name not in self.dataset_stats:
-            return
+    def get_dataset_stats(self, data_node: DataNode) -> Union[Dict[str, int], None]:
+        """Returns the dataset statistics for the data node if found else returns None
+
+        Args:
+            The data node for which we need the statistics
+        """
+        if not data_node or data_node.name not in self.dataset_stats:
+            print(data_node.name)
+            return None
 
         return self.dataset_stats[data_node.name]
 

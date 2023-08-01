@@ -1,5 +1,9 @@
+import logging
+
 from kedro.framework.hooks import hook_impl
 from collections import defaultdict
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetStatsHook:
@@ -7,28 +11,30 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_context_created(self, context):
-        self._catalog = context.catalog
-
-    @hook_impl
     def after_dataset_loaded(self, dataset_name, data):
-        import pandas as pd
+        try:
+            import pandas as pd
 
-        if isinstance(data, pd.DataFrame):
-            self._stats[dataset_name] = {}
-            self._stats[dataset_name]["rows"] = int(data.shape[0])
-            self._stats[dataset_name]["columns"] = int(data.shape[1])
-            self._stats[dataset_name]["file_size"] = int(data.size)
-           
+            if isinstance(data, pd.DataFrame):
+                self._stats[dataset_name] = {}
+                self._stats[dataset_name]["rows"] = int(data.shape[0])
+                self._stats[dataset_name]["columns"] = int(data.shape[1])
 
-            print(data)
+        except Exception as e:
+            logger.error(
+                f"Error creating the stats for the dataset {dataset_name} : {e}"
+            )
 
     @hook_impl
     def after_pipeline_run(self):
-        import json
+        try:
+            import json
 
-        with open("stats.json", "w") as f:
-            json.dump(self._stats, f)
+            with open("stats.json", "w") as f:
+                json.dump(self._stats, f)
+
+        except Exception as e:
+            logger.error(f"Error writing the stats for the pipeline: {e}")
 
 
 dataset_stats_hook = DatasetStatsHook()

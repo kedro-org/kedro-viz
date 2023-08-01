@@ -129,17 +129,21 @@ export const prettifyModularPipelineNames = (modularPipelines) => {
  * @returns {String} The formatted file size as e.g. "1.1KB"
  */
 export const formatFileSize = (fileSizeInBytes) => {
-  debugger;
-  console.log(fileSizeInBytes);
-  if (fileSizeInBytes < 1024) {
+  // This is to convert bytes to KB or MB. Can be configured to 1024.
+  const conversionUnit = 1000;
+
+  if (fileSizeInBytes === 0) {
+    // dataset not configured
+    return 'NA';
+  } else if (fileSizeInBytes < conversionUnit) {
     // Less than 1 KB
     return `${fileSizeInBytes}bytes`;
-  } else if (fileSizeInBytes < 1024 * 1024) {
+  } else if (fileSizeInBytes < conversionUnit * conversionUnit) {
     //  Less than 1 MB
-    const sizeInKB = fileSizeInBytes / 1024;
+    const sizeInKB = fileSizeInBytes / conversionUnit;
     return `${sizeInKB.toFixed(1)}KB`;
   } else {
-    const sizeInMB = fileSizeInBytes / (1024 * 1024);
+    const sizeInMB = fileSizeInBytes / (conversionUnit * conversionUnit);
     return `${sizeInMB.toFixed(1)}MB`;
   }
 };

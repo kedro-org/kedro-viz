@@ -116,7 +116,7 @@ const MetaData = ({
           className="pipeline-metadata__value pipeline-metadata-value__profiler"
           data-test={`profiler-value-${statLabel}`}
         >
-          {statLabel !== 'filesize' ? statValue : formatFileSize(statValue)}
+          {statLabel !== 'file_size' ? statValue : formatFileSize(statValue)}
         </li>
         <span
           className="pipeline-metadata__label pipeline-metadata-label__profiler"
