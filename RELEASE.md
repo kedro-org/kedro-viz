@@ -10,7 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix incorrect rendering of datasets in modular pipelines. (#1439)
-- Fix broken svg/png exports in light theme. (#1463)
+- Fix broken SVG/PNG exports in light theme. (#1463)
 
 # Release 6.3.4
 
