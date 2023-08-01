@@ -8,7 +8,7 @@ import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
 
-import AppOnboarding from '../app-onboarding';
+import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -70,7 +70,9 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
                 <ExperimentWrapper />
               </Route>
             </Switch>
-            <AppOnboarding />
+            <Delayed>
+              <FeatureHints />
+            </Delayed>
           </Router>
         </GraphQLProvider>
       ) : (
@@ -78,6 +80,20 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       )}
     </div>
   );
+};
+
+const Delayed = ({ children, waitBeforeShow = 550 }) => {
+  const [isShown, setIsShown] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsShown(true);
+    }, waitBeforeShow);
+
+    return () => clearTimeout(timer);
+  }, [waitBeforeShow]);
+
+  return isShown ? children : null;
 };
 
 export const mapStateToProps = (state) => ({
