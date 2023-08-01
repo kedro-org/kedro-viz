@@ -106,6 +106,16 @@ const SettingsModal = ({
                 setHasNotInteracted(false);
               }}
             />
+            <SettingsModalRow
+              id="isFeatureHint"
+              name={settingsConfig['isFeatureHint'].name}
+              toggleValue={isPrettyNameValue}
+              description={settingsConfig['isFeatureHint'].description}
+              onToggleChange={(event) => {
+                setIsPrettyName(event.target.checked);
+                setHasNotInteracted(false);
+              }}
+            />
           </div>
           <div className="pipeline-settings-modal__group">
             <div className="pipeline-settings-modal__subtitle">Experiments</div>

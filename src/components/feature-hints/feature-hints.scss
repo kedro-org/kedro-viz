@@ -10,6 +10,7 @@
   position: absolute;
   right: 36px;
   width: 367px;
+  z-index: 1;
 
   &__reopen-message {
     font-size: 14px;
@@ -93,5 +94,5 @@
   transform: translate(-50%, -50%);
   transition: left 0.3s ease-in-out, top 0.3s ease-in-out,
     opacity 0.1s ease-in-out;
-  z-index: 10;
+  z-index: 5;
 }
