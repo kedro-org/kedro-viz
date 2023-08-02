@@ -21,6 +21,10 @@ const FeatureHints = () => {
   useEffect(() => {
     const localStorageState = loadLocalStorage(localStorageName);
 
+    console.log(
+      'localStorageState[localStorageKey]: ',
+      localStorageState[localStorageKey]
+    );
     if (localStorageState[localStorageKey]) {
       setAreFeatureHintsHidden(true);
     } else {
@@ -81,7 +85,7 @@ const FeatureHints = () => {
       <div className="feature-hints">
         {requestedHintClose ? (
           <p className="feature-hints__reopen-message">
-            You can revisit these hints at any time in the ‘Settings’ window.
+            You can revisit these hints at any time in the ‘Settings’ panel.
           </p>
         ) : (
           <>
@@ -97,6 +101,12 @@ const FeatureHints = () => {
             <div className="feature-hints__header">
               {featureHintsContent[featureHintStep].title}
             </div>
+            {featureHintsContent[featureHintStep].image && (
+              <img
+                alt={featureHintsContent[featureHintStep].title}
+                src={featureHintsContent[featureHintStep].image}
+              />
+            )}
             <div className="feature-hints__description">
               {featureHintsContent[featureHintStep].description}
             </div>

@@ -6,9 +6,11 @@
   color: colors.$black-900;
   display: flex;
   flex-direction: column;
+  height: auto;
   padding: 32px 36px 36px;
   position: absolute;
   right: 36px;
+  transition: height 0.3s ease-in-out;
   width: 367px;
   z-index: 1;
 
@@ -44,6 +46,10 @@
     font-weight: 600;
     line-height: 28px;
     margin: 24px 0 12px;
+  }
+
+  img {
+    margin-bottom: 12px;
   }
 
   &__description {

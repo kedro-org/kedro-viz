@@ -102,6 +102,19 @@ export function toggleIsPrettyName(isPrettyName) {
   };
 }
 
+export const TOGGLE_HIDE_FEATURE_HINTS = 'TOGGLE_HIDE_FEATURE_HINTS';
+
+/**
+ * Toggle whether to show pretty name on/off
+ * @param {Boolean} hideFeatureHints True if features hints are to be hidden
+ */
+export function toggleHideFeatureHints(hideFeatureHints) {
+  return {
+    type: TOGGLE_HIDE_FEATURE_HINTS,
+    hideFeatureHints,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

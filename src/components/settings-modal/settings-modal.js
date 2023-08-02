@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   changeFlag,
-  toggleSettingsModal,
+  toggleHideFeatureHints,
   toggleIsPrettyName,
+  toggleSettingsModal,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -20,11 +21,13 @@ import './settings-modal.css';
 
 const SettingsModal = ({
   flags,
+  hideFeatureHints,
   isOutdated,
+  isPrettyName,
   latestVersion,
   onToggleFlag,
+  onToggleHideFeatureHints,
   onToggleIsPrettyName,
-  isPrettyName,
   showSettingsModal,
   visible,
 }) => {
@@ -32,6 +35,8 @@ const SettingsModal = ({
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
   const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
+  const [hideFeatureHintsValue, setHideFeatureHintsValue] =
+    useState(hideFeatureHints);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
@@ -52,6 +57,7 @@ const SettingsModal = ({
         });
 
         onToggleIsPrettyName(isPrettyNameValue);
+        onToggleHideFeatureHints(hideFeatureHintsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -65,8 +71,10 @@ const SettingsModal = ({
     };
   }, [
     hasClickedApplyAndClose,
+    hideFeatureHintsValue,
     isPrettyNameValue,
     onToggleFlag,
+    onToggleHideFeatureHints,
     onToggleIsPrettyName,
     showSettingsModal,
     toggleFlags,
@@ -77,6 +85,7 @@ const SettingsModal = ({
     setHasNotInteracted(true);
     setToggleFlags(flags);
     setIsPrettyName(isPrettyName);
+    setHideFeatureHintsValue(hideFeatureHintsValue);
   };
 
   return (
@@ -107,12 +116,12 @@ const SettingsModal = ({
               }}
             />
             <SettingsModalRow
-              id="isFeatureHint"
-              name={settingsConfig['isFeatureHint'].name}
-              toggleValue={isPrettyNameValue}
-              description={settingsConfig['isFeatureHint'].description}
+              id="hideFeatureHints"
+              name={settingsConfig['hideFeatureHints'].name}
+              toggleValue={hideFeatureHintsValue}
+              description={settingsConfig['hideFeatureHints'].description}
               onToggleChange={(event) => {
-                setIsPrettyName(event.target.checked);
+                setHideFeatureHintsValue(event.target.checked);
                 setHasNotInteracted(false);
               }}
             />
@@ -191,6 +200,7 @@ const SettingsModal = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
+  hideFeatureHints: state.hideFeatureHints,
   isPrettyName: state.isPrettyName,
   visible: state.visible,
 });
@@ -204,6 +214,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleIsPrettyName: (value) => {
     dispatch(toggleIsPrettyName(value));
+  },
+  onToggleHideFeatureHints: (value) => {
+    dispatch(toggleHideFeatureHints(value));
   },
 });
 
