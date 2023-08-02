@@ -64,7 +64,7 @@ def get_file_size(file_path: str) -> int:
         if file_info["type"] == "directory":
             files = fs.ls(paths[0])
             # Filter only directories from the list
-            directories = [f for f in files if fs.isdir(f)]
+            directories = [f for f in files if fs.isdir(f) and len(fs.ls(f)) > 0]
             resolved_file_path = fs.ls(
                 max(directories, key=lambda f: fs.info(f)["created"])
             )[0]
