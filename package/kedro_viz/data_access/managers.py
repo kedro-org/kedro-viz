@@ -92,8 +92,9 @@ class DataAccessManager:
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
 
-    def add_dataset_stats(self, stats_dict: Dict[str, object]):
-        """Add dataset statistics (eg. rows, columns) as a dictionary. This will help in showing the relevant stats in the metadata panel
+    def add_dataset_stats(self, stats_dict: Union[Dict[str, int], None]):
+        """Add dataset statistics (eg. rows, columns) as a dictionary.
+        This will help in showing the relevant stats in the metadata panel
 
         Args:
             stats_dict: A dictionary object loaded from stats.json file in the kedro project

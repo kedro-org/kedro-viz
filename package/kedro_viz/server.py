@@ -31,7 +31,7 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
-    stats_dict: Dict[str, object]
+    stats_dict: Dict[str, object] = None,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
@@ -90,7 +90,9 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
+        populate_data(
+            data_access_manager, catalog, pipelines, session_store, stats_dict
+        )
         if save_file:
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)

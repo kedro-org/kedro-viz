@@ -214,6 +214,6 @@ describe('Flowchart DAG', () => {
       .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
     cy.get('[data-test=profiler-value-file_size]')
       .invoke('text')
-      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.7MB'));
+      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
   });
 });

@@ -56,7 +56,7 @@ def _bootstrap(project_path: Path):
 
 def get_dataset_stats(project_path: Path):
     """Return the stats saved at stats.json"""
-    import json
+    import json as json_lib
 
     stats_file_path = project_path / "stats.json"
 
@@ -64,7 +64,7 @@ def get_dataset_stats(project_path: Path):
         return None
 
     with open(stats_file_path, encoding="utf8") as stats_file:
-        stats = json.load(stats_file)
+        stats = json_lib.load(stats_file)
         return stats
 
 
@@ -108,7 +108,7 @@ def load_data(
             stats_dict = (
                 dict(get_dataset_stats(project_path))
                 if get_dataset_stats(project_path) is not None
-                else dict()
+                else {}
             )
 
         return catalog, pipelines_dict, session_store, stats_dict
