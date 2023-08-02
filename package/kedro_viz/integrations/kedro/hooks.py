@@ -2,8 +2,9 @@
 functionalities for a kedro run."""
 
 import logging
-
 from collections import defaultdict
+from typing import Any
+
 from kedro.framework.hooks import hook_impl
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_dataset_loaded(self, dataset_name: str, data: any):
+    def after_dataset_loaded(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is loaded from the catalog.
         Once the dataset is loaded, extract the required dataset statistics
 
@@ -38,8 +39,7 @@ class DatasetStatsHook:
 
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
-                "Error creating the stats for the dataset %s : %s",
-                dataset_name, exc
+                "Error creating the stats for the dataset %s : %s", dataset_name, exc
             )
 
     @hook_impl

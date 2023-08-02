@@ -101,7 +101,9 @@ class DataAccessManager:
         """
         self.dataset_stats = stats_dict
 
-    def get_dataset_stats(self, data_node: DataNode) -> Union[Dict[str, int], None]:
+    def get_dataset_stats(
+        self, data_node: Union[DataNode, TranscodedDataNode]
+    ) -> Union[Dict[str, int], None]:
         """Returns the dataset statistics for the data node if found else returns None
 
         Args:

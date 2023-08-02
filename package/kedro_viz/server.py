@@ -1,7 +1,8 @@
-"""`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
+"""`kedro_viz.server` provides utilities to launch a webserver
+for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import uvicorn
 from fastapi.encoders import jsonable_encoder
@@ -31,7 +32,7 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
-    stats_dict: Dict[str, object] = None,
+    stats_dict: Union[Dict[str, int], None] = None,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.

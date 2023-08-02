@@ -1,6 +1,6 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import fsspec
 
@@ -46,7 +46,7 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     return f"{abbreviated_module_name}.{class_name}"
 
 
-def get_file_size(file_path: str) -> int:
+def get_file_size(file_path: Union[str, None]) -> int:
     """Get the dataset file size using fsspec. If the file_path is a directory,
     get the latest file created (this corresponds to the latest run)
 

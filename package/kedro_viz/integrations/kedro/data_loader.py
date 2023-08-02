@@ -72,7 +72,9 @@ def load_data(
     project_path: Path,
     env: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore]:
+) -> Tuple[
+    DataCatalog, Dict[str, Pipeline], BaseSessionStore, Optional[Dict[str, int]]
+]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
