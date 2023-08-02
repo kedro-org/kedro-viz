@@ -63,9 +63,7 @@ def get_dataset_stats(project_path: Path):
     if not stats_file_path.exists():
         return None
 
-    with open(
-        stats_file_path, encoding="utf8"
-    ) as stats_file:  # pylint: disable: unspecified-encoding
+    with open(stats_file_path, encoding="utf8") as stats_file:
         stats = json.load(stats_file)
         return stats
 

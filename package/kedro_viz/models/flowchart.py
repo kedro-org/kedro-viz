@@ -1,7 +1,6 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access
 import abc
-import glob
 import hashlib
 import inspect
 import logging
@@ -10,14 +9,8 @@ from enum import Enum
 from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
-
-import fsspec
-
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-
-# from kedro_viz.data_access import data_access_manager
-
 from .utils import get_dataset_type, get_file_size
 
 try:
@@ -573,7 +566,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         self.profiler = dataset_stats
 
-        # TODO: We can use _describe method of kedro-dataset plugin to get the file size. This will not help for intermediate datasets created
+        # TODO: Can we use _describe method of kedro-dataset plugin to get the file size by adding a file_size key to the return dict
         # self.profiler["file_size"] = (
         #     dataset_description["file_size"]
         #     if "file_size" in dataset_description
@@ -584,7 +577,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         # Use fsspec to get the file size
         self.profiler["file_size"] = get_file_size(self.filepath)
 
-        print(self.profiler)
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
             self.run_command = f"kedro run --to-outputs={data_node.name}"
@@ -657,7 +649,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         self.profiler = dataset_stats
 
-        # TODO: We can use _describe method of kedro-dataset plugin to get the file size. This will not help for intermediate datasets created
+        # TODO: Can we use _describe method of kedro-dataset plugin to get the file size by adding a file_size key to the return dict
         # self.profiler["file_size"] = (
         #     dataset_description["file_size"]
         #     if "file_size" in dataset_description
@@ -667,8 +659,6 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         # TODO: This will help to read the file size if the file path is present. If not, this will return 0. Not sure if this works for remote files
         # Use fsspec to get the file size
         self.profiler["file_size"] = get_file_size(self.filepath)
-
-        print(self.profiler)
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (
