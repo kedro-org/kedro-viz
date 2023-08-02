@@ -9,9 +9,8 @@
   height: auto;
   padding: 32px 36px 36px;
   position: absolute;
-  right: 36px;
-  transition: height 0.3s ease-in-out;
-  width: 367px;
+  transition: height 0.3s ease-in-out, right ease 0.4s;
+  width: 365px;
   z-index: 1;
 
   &__reopen-message {
@@ -21,7 +20,7 @@
   }
 
   &__nav {
-    color: colors.$black-200;
+    color: colors.$black-300;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.024px;

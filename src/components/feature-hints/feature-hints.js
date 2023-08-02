@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { localStorageName } from '../../config';
+import { localStorageName, metaSidebarWidth } from '../../config';
 
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
@@ -11,7 +13,7 @@ import './feature-hints.css';
 const localStorageKey = 'showFeatureHints';
 const numFeatureHints = featureHintsContent.length;
 
-const FeatureHints = () => {
+const FeatureHints = ({ metadataVisible }) => {
   const [areFeatureHintsShown, setAreFeatureHintsShown] = useState(false);
   const [featureHintStep, setFeatureHintStep] = useState(0);
   const [elementCenter, setElementCenter] = useState({ x: 0, y: 0 });
@@ -78,7 +80,12 @@ const FeatureHints = () => {
 
   return (
     <>
-      <div className="feature-hints">
+      <div
+        className="feature-hints"
+        style={{
+          right: metadataVisible ? `${metaSidebarWidth.open + 36}px` : '36px',
+        }}
+      >
         {requestedHintClose ? (
           <p className="feature-hints__reopen-message">
             You can revisit these hints at any time in the ‘Settings’ panel.
@@ -183,4 +190,9 @@ const FeatureHints = () => {
   );
 };
 
-export default FeatureHints;
+export const mapStateToProps = (state) => ({
+  metadataVisible: getVisibleMetaSidebar(state),
+  sidebarVisible: state.visible.sidebar,
+});
+
+export default connect(mapStateToProps)(FeatureHints);
