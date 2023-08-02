@@ -572,6 +572,7 @@ class TestTranscodedDataset:
                 "pandas.parquet_dataset.ParquetDataSet",
             ],
             "run_command": "kedro run --to-outputs=model_inputs@pandas2",
+            "profiler": {"file_size": 0},
         }
 
 
@@ -605,6 +606,7 @@ class TestNodeMetadataEndpoint:
             "filepath": "model_inputs.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
             "run_command": "kedro run --to-outputs=model_inputs",
+            "profiler": {"columns": 12, "file_size": 0, "rows": 29768},
         }
 
     def test_data_node_metadata_for_free_input(self, client):
@@ -612,6 +614,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "raw_data.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
+            "profiler": {"file_size": 0},
         }
 
     def test_parameters_node_metadata(self, client):

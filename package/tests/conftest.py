@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Union
 from unittest import mock
 
 import pytest
@@ -38,6 +38,16 @@ def session_store():
 @pytest.fixture
 def sqlite_session_store(tmp_path):
     yield SQLiteStore(tmp_path, "dummy_session_id")
+
+
+@pytest.fixture
+def example_stats_dict():
+    yield {
+        "companies": {"rows": 77096, "columns": 5},
+        "reviews": {"rows": 77096, "columns": 10},
+        "shuttles": {"rows": 77096, "columns": 13},
+        "model_inputs": {"rows": 29768, "columns": 12},
+    }
 
 
 @pytest.fixture
@@ -157,11 +167,16 @@ def example_api(
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     session_store: BaseSessionStore,
+    example_stats_dict: Union[Dict[str, int], None],
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_catalog, example_pipelines, session_store
+        data_access_manager,
+        example_catalog,
+        example_pipelines,
+        session_store,
+        example_stats_dict,
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager

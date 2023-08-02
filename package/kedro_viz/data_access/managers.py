@@ -109,7 +109,11 @@ class DataAccessManager:
         Args:
             The data node for which we need the statistics
         """
-        if not data_node or data_node.name not in self.dataset_stats:
+        if (
+            not data_node
+            or not self.dataset_stats
+            or data_node.name not in self.dataset_stats
+        ):
             return None
 
         return self.dataset_stats[data_node.name]
