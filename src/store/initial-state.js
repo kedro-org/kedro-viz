@@ -15,7 +15,7 @@ export const createInitialState = () => ({
   textLabels: true,
   theme: 'dark',
   isPrettyName: settings.isPrettyName.default,
-  hideFeatureHints: settings.hideFeatureHints.default,
+  showFeatureHints: settings.showFeatureHints.default,
   ignoreLargeWarning: false,
   loading: {
     graph: false,

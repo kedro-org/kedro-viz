@@ -76,10 +76,10 @@ export const settings = {
     description: 'Display a formatted name for the kedro nodes',
     default: true,
   },
-  hideFeatureHints: {
+  showFeatureHints: {
     name: 'New feature hints',
     description: 'Enable or disable all new feature hints in the interface.',
-    default: false,
+    default: true,
   },
 };
 

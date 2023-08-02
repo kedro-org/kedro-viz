@@ -11,7 +11,7 @@ import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import {
   RESET_DATA,
-  TOGGLE_HIDE_FEATURE_HINTS,
+  TOGGLE_SHOW_FEATURE_HINTS,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_IS_PRETTY_NAME,
@@ -73,10 +73,10 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   isPrettyName: createReducer(true, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
-  hideFeatureHints: createReducer(
+  showFeatureHints: createReducer(
     true,
-    TOGGLE_HIDE_FEATURE_HINTS,
-    'hideFeatureHints'
+    TOGGLE_SHOW_FEATURE_HINTS,
+    'showFeatureHints'
   ),
   hoveredParameters: createReducer(
     false,

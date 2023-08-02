@@ -102,16 +102,16 @@ export function toggleIsPrettyName(isPrettyName) {
   };
 }
 
-export const TOGGLE_HIDE_FEATURE_HINTS = 'TOGGLE_HIDE_FEATURE_HINTS';
+export const TOGGLE_SHOW_FEATURE_HINTS = 'TOGGLE_SHOW_FEATURE_HINTS';
 
 /**
  * Toggle whether to show pretty name on/off
- * @param {Boolean} hideFeatureHints True if features hints are to be hidden
+ * @param {Boolean} showFeatureHints True if features hints are to be hidden
  */
-export function toggleHideFeatureHints(hideFeatureHints) {
+export function toggleShowFeatureHints(showFeatureHints) {
   return {
-    type: TOGGLE_HIDE_FEATURE_HINTS,
-    hideFeatureHints,
+    type: TOGGLE_SHOW_FEATURE_HINTS,
+    showFeatureHints,
   };
 }
 

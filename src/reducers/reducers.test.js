@@ -14,7 +14,7 @@ import {
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_IS_PRETTY_NAME,
-  TOGGLE_HIDE_FEATURE_HINTS,
+  TOGGLE_SHOW_FEATURE_HINTS,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -128,14 +128,14 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_HIDE_FEATURE_HINTS', () => {
-    it('should toggle the value of hideFeatureHints', () => {
+  describe('TOGGLE_SHOW_FEATURE_HINTS', () => {
+    it('should toggle the value of showFeatureHints', () => {
       const newState = reducer(mockState.spaceflights, {
-        type: TOGGLE_HIDE_FEATURE_HINTS,
-        hideFeatureHints: false,
+        type: TOGGLE_SHOW_FEATURE_HINTS,
+        showFeatureHints: true,
       });
-      expect(mockState.spaceflights.hideFeatureHints).toBe(false);
-      expect(newState.hideFeatureHints).toBe(false);
+      expect(mockState.spaceflights.showFeatureHints).toBe(true);
+      expect(newState.showFeatureHints).toBe(true);
     });
   });
 

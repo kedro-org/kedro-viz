@@ -55,7 +55,7 @@ const saveStateToLocalStorage = (state) => {
     visible: otherVisibleProps,
     theme: state.theme,
     isPrettyName: state.isPrettyName,
-    hideFeatureHints: state.hideFeatureHints,
+    showFeatureHints: state.showFeatureHints,
     flags: state.flags,
   });
 };

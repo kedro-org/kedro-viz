@@ -8,11 +8,11 @@ import { featureHintsContent } from './feature-hints-content';
 
 import './feature-hints.css';
 
-const localStorageKey = 'hideFeatureHints';
+const localStorageKey = 'showFeatureHints';
 const numFeatureHints = featureHintsContent.length;
 
 const FeatureHints = () => {
-  const [areFeatureHintsHidden, setAreFeatureHintsHidden] = useState(true);
+  const [areFeatureHintsShown, setAreFeatureHintsShown] = useState(false);
   const [featureHintStep, setFeatureHintStep] = useState(0);
   const [elementCenter, setElementCenter] = useState({ x: 0, y: 0 });
   const [hideHighlightDot, setHideHighlightDot] = useState(false);
@@ -21,14 +21,10 @@ const FeatureHints = () => {
   useEffect(() => {
     const localStorageState = loadLocalStorage(localStorageName);
 
-    console.log(
-      'localStorageState[localStorageKey]: ',
-      localStorageState[localStorageKey]
-    );
     if (localStorageState[localStorageKey]) {
-      setAreFeatureHintsHidden(true);
+      setAreFeatureHintsShown(true);
     } else {
-      setAreFeatureHintsHidden(false);
+      setAreFeatureHintsShown(false);
     }
   }, []);
 
@@ -70,13 +66,13 @@ const FeatureHints = () => {
   };
 
   const triggerLocalStorageSave = () => {
-    setAreFeatureHintsHidden(true);
+    setAreFeatureHintsShown(false);
     saveLocalStorage(localStorageName, {
-      [localStorageKey]: true,
+      [localStorageKey]: false,
     });
   };
 
-  if (areFeatureHintsHidden) {
+  if (areFeatureHintsShown === false) {
     return null;
   }
 
