@@ -129,7 +129,7 @@ export const prettifyModularPipelineNames = (modularPipelines) => {
  * @returns {String} The formatted file size as e.g. "1.1KB"
  */
 export const formatFileSize = (fileSizeInBytes) => {
-  // This is to convert bytes to KB or MB. Can be configured to 1024.
+  // This is to convert bytes to KB or MB.
   const conversionUnit = 1000;
 
   if (fileSizeInBytes === 0) {

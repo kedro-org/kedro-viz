@@ -381,17 +381,13 @@ describe('MetaData', () => {
 
         expect(
           parseInt(wrapper.find('[data-test="profiler-value-rows"]').text())
-        ).toEqual(10);
+        ).toEqual(nodeDataProfiler.profiler.rows);
         expect(
           parseInt(wrapper.find('[data-test="profiler-value-columns"]').text())
-        ).toEqual(2);
+        ).toEqual(nodeDataProfiler.profiler.columns);
         expect(
-          formatFileSize(
-            parseInt(
-              wrapper.find('[data-test="profiler-value-file_size"]').text()
-            )
-          )
-        ).toEqual('1.1KB');
+          wrapper.find('[data-test="profiler-value-file_size"]').text()
+        ).toEqual(formatFileSize(nodeDataProfiler.profiler.file_size));
       });
     });
 
