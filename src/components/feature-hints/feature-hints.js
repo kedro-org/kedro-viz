@@ -17,7 +17,7 @@ const localStorageKeyShowHints = 'showFeatureHints';
 export const localStorageKeyHintsStep = 'featureHintStep';
 const numFeatureHints = featureHintsContent.length;
 
-const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints, state }) => {
+const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
   const [areFeatureHintsShown, setAreFeatureHintsShown] = useState(false);
   const [featureHintStep, setFeatureHintStep] = useState(0);
   const [hideHighlightDot, setHideHighlightDot] = useState(false);
@@ -45,7 +45,7 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints, state }) => {
     saveLocalStorage(localStorageName, {
       [localStorageKeyHintsStep]: featureHintStep,
     });
-  }, [featureHintStep, state]);
+  }, [featureHintStep]);
 
   const triggerCloseHints = () => {
     setRequestedHintClose(true);
@@ -123,7 +123,7 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints, state }) => {
                   </a>
                 ) : null}
               </div>
-              <div className="feature-hints__backNextBtns">
+              <div className="feature-hints__backNextButtons">
                 {featureHintStep > 0 ? (
                   <Button
                     mode="secondary"

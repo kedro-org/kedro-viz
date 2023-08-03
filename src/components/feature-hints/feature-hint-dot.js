@@ -6,10 +6,10 @@ import { featureHintsContent } from './feature-hints-content';
 import './feature-hints.css';
 
 const FeatureHintDot = ({
+  appState,
   featureHintStep,
   hideDot,
   requestedHintClose,
-  state,
 }) => {
   const [elementCenter, setElementCenter] = useState({ x: null, y: null });
   const [hideHighlightDot, setHideHighlightDot] = useState(hideDot);
@@ -44,7 +44,10 @@ const FeatureHintDot = ({
     }
 
     findAndSetCoords(featureHintsContent[featureHintStep].elementId);
-  }, [featureHintStep, requestedHintClose, state]);
+
+    // Use `appState` to track when the graph layout is changing, updating the
+    // position of the feature hint accordingly.
+  }, [appState, featureHintStep, requestedHintClose]);
 
   return (
     <div
@@ -83,10 +86,8 @@ const FeatureHintDot = ({
   );
 };
 
-export const mapStateToProps = (state) => {
-  return {
-    state: state,
-  };
-};
+export const mapStateToProps = (state) => ({
+  appState: state,
+});
 
 export default connect(mapStateToProps)(FeatureHintDot);
