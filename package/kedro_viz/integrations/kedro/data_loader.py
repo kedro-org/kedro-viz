@@ -125,8 +125,13 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
+            stats_dict = (
+                dict(get_dataset_stats(project_path))
+                if get_dataset_stats(project_path) is not None
+                else {}
+            )
 
-        return context.catalog, context.pipelines, session_store
+        return context.catalog, context.pipelines, session_store, stats_dict
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
         from kedro.framework.session import KedroSession
@@ -142,8 +147,13 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
+            stats_dict = (
+                dict(get_dataset_stats(project_path))
+                if get_dataset_stats(project_path) is not None
+                else {}
+            )
 
-        return context.catalog, context.pipelines, session_store
+        return context.catalog, context.pipelines, session_store, stats_dict
 
 
 # The dataset type is available as an attribute if and only if the import from kedro

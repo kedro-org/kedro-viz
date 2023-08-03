@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
@@ -37,7 +38,7 @@ class DatasetStatsHook:
         except ImportError as exc:  # pragma: no cover
             logger.warning("%s : %s", exc.__class__.__name__, exc.msg)
 
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except Exception as exc:  # pragma: no cover
             logger.error(
                 "Error creating the stats for the dataset %s : %s", dataset_name, exc
             )
@@ -58,7 +59,7 @@ class DatasetStatsHook:
         except ImportError as exc:  # pragma: no cover
             logger.warning("%s : %s", exc.__class__.__name__, exc.msg)
 
-        except Exception as exc:  # pylint: disable=broad-exception-caught
+        except Exception as exc:  # pragma: no cover
             logger.error("Error writing the stats for the pipeline: %s", exc)
 
 

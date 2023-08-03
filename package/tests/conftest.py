@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Union
 from unittest import mock
 
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
@@ -270,3 +271,15 @@ def mock_http_response():
             return self.data
 
     return MockHTTPResponse
+
+
+@pytest.fixture
+def example_data_frame():
+    data = {
+        "id": ["35029", "30292"],
+        "company_rating": ["100%", "67%"],
+        "company_location": ["Niue", "Anguilla"],
+        "total_fleet_count": ["4.0", "6.0"],
+        "iata_approved": ["f", "f"],
+    }
+    yield pd.DataFrame(data)
