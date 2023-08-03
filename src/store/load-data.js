@@ -11,6 +11,7 @@ import { getUrl } from '../utils';
  */
 const loadJsonData = (path = getUrl('main'), fallback = {}) =>
   json(path).catch(() => {
+    console.log(path);
     const fullPath = `/public${path.substr(1)}`;
 
     // For main route throw a user error
