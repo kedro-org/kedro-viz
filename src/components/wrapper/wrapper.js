@@ -47,9 +47,9 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       })}
     >
       <h1 className="pipeline-title">Kedro-Viz</h1>
-      {displayGlobalToolbar ? (
-        <GraphQLProvider>
-          <Router>
+      <Router>
+        {displayGlobalToolbar ? (
+          <GraphQLProvider>
             <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
@@ -69,11 +69,11 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
                 <ExperimentWrapper />
               </Route>
             </Switch>
-          </Router>
-        </GraphQLProvider>
-      ) : (
-        <FlowChartWrapper />
-      )}
+          </GraphQLProvider>
+        ) : (
+          <FlowChartWrapper />
+        )}
+      </Router>
     </div>
   );
 };

@@ -10,8 +10,7 @@ Please follow the established format:
 
 - Fix incorrect rendering of datasets in modular pipelines. (#1439)
 - Fix broken SVG/PNG exports in light theme. (#1463)
-- Fix error when setting globalToolbar prop value as false. (#1351)
-- Fix error error in dropdown component. (#1351)
+- Fix dataset and global tool bar error with standalone React component (#1351)
 
 # Release 6.3.4
 
