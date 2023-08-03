@@ -8,7 +8,9 @@ import {
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
-import { settings as settingsConfig } from '../../config';
+import { settings as settingsConfig, localStorageName } from '../../config';
+import { saveLocalStorage } from '../../store/helpers';
+import { localStorageKeyHintsStep } from '../../components/feature-hints/feature-hints';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -38,6 +40,10 @@ const SettingsModal = ({
   const [showFeatureHintsValue, setShowFeatureHintsValue] =
     useState(showFeatureHints);
   const [toggleFlags, setToggleFlags] = useState(flags);
+
+  useEffect(() => {
+    setShowFeatureHintsValue(showFeatureHints);
+  }, [showFeatureHints]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -123,6 +129,12 @@ const SettingsModal = ({
               onToggleChange={(event) => {
                 setShowFeatureHintsValue(event.target.checked);
                 setHasNotInteracted(false);
+
+                if (event.target.checked === false) {
+                  saveLocalStorage(localStorageName, {
+                    [localStorageKeyHintsStep]: 0,
+                  });
+                }
               }}
             />
           </div>

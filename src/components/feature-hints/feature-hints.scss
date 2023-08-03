@@ -11,7 +11,7 @@
   position: absolute;
   transition: height 0.3s ease-in-out, right ease 0.4s;
   width: 365px;
-  z-index: 1;
+  z-index: 5;
 
   &__reopen-message {
     font-size: 14px;
@@ -85,6 +85,10 @@
     .button__btn--secondary:active {
       background-color: unset;
       outline: unset;
+    }
+
+    & > div:first-of-type button {
+      padding-left: 0;
     }
   }
 

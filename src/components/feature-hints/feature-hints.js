@@ -3,60 +3,49 @@ import { connect } from 'react-redux';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import { localStorageName, metaSidebarWidth } from '../../config';
+import { toggleShowFeatureHints } from '../../actions';
 
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
+import DelayedRenderer from '../ui/delayed-renderer';
+import FeatureHintDot from './feature-hint-dot';
 import { featureHintsContent } from './feature-hints-content';
 
 import './feature-hints.css';
 
-const localStorageKey = 'showFeatureHints';
+const localStorageKeyShowHints = 'showFeatureHints';
+export const localStorageKeyHintsStep = 'featureHintStep';
 const numFeatureHints = featureHintsContent.length;
 
-const FeatureHints = ({ metadataVisible }) => {
+const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints, state }) => {
   const [areFeatureHintsShown, setAreFeatureHintsShown] = useState(false);
   const [featureHintStep, setFeatureHintStep] = useState(0);
-  const [elementCenter, setElementCenter] = useState({ x: 0, y: 0 });
   const [hideHighlightDot, setHideHighlightDot] = useState(false);
   const [requestedHintClose, setRequestedHintClose] = useState(false);
 
   useEffect(() => {
     const localStorageState = loadLocalStorage(localStorageName);
 
-    if (localStorageState[localStorageKey]) {
+    if (localStorageState[localStorageKeyShowHints]) {
       setAreFeatureHintsShown(true);
     } else {
       setAreFeatureHintsShown(false);
     }
+
+    if (localStorageState.featureHintStep) {
+      setFeatureHintStep(localStorageState.featureHintStep);
+    }
   }, []);
 
   useEffect(() => {
-    const findAndSetCoords = (elementId) => {
-      if (!elementId) {
-        return;
-      }
-
-      const $element = document.querySelector(elementId);
-
-      if ($element) {
-        const { left, top, width, height } = $element.getBoundingClientRect();
-
-        setHideHighlightDot(false);
-        setElementCenter({
-          x: left + width / 2,
-          y: top + height / 2,
-        });
-      } else {
-        setHideHighlightDot(true);
-      }
-    };
-
     if (!featureHintsContent[featureHintStep].elementId) {
       setHideHighlightDot(true);
     }
 
-    findAndSetCoords(featureHintsContent[featureHintStep].elementId);
-  }, [featureHintStep]);
+    saveLocalStorage(localStorageName, {
+      [localStorageKeyHintsStep]: featureHintStep,
+    });
+  }, [featureHintStep, state]);
 
   const triggerCloseHints = () => {
     setRequestedHintClose(true);
@@ -64,13 +53,15 @@ const FeatureHints = ({ metadataVisible }) => {
 
     setTimeout(() => {
       triggerLocalStorageSave();
+      onToggleShowFeatureHints(false);
     }, 4000);
   };
 
   const triggerLocalStorageSave = () => {
     setAreFeatureHintsShown(false);
     saveLocalStorage(localStorageName, {
-      [localStorageKey]: false,
+      [localStorageKeyHintsStep]: 0,
+      [localStorageKeyShowHints]: false,
     });
   };
 
@@ -79,7 +70,12 @@ const FeatureHints = ({ metadataVisible }) => {
   }
 
   return (
-    <>
+    <DelayedRenderer>
+      <FeatureHintDot
+        featureHintStep={featureHintStep}
+        hideDot={hideHighlightDot}
+        requestedHintClose={requestedHintClose}
+      />
       <div
         className="feature-hints"
         style={{
@@ -88,7 +84,7 @@ const FeatureHints = ({ metadataVisible }) => {
       >
         {requestedHintClose ? (
           <p className="feature-hints__reopen-message">
-            You can revisit these hints at any time in the ‘Settings’ panel.
+            You can revisit these hints at any time in the Settings panel.
           </p>
         ) : (
           <>
@@ -153,46 +149,21 @@ const FeatureHints = ({ metadataVisible }) => {
           </>
         )}
       </div>
-      <div
-        className="feature-hints__highlightDot"
-        style={{
-          left: `${elementCenter.x}px`,
-          opacity: hideHighlightDot ? 0 : 1,
-          top: `${elementCenter.y}px`,
-        }}
-      >
-        <svg fill="none" height="100" viewBox="0 0 100 100" width="100">
-          <circle
-            cx="50"
-            cy="50"
-            fillOpacity="0.1"
-            fill="url(#paint0_radial_103_11727)"
-            r="49.5"
-            stroke="#FFBC00"
-            strokeWidth={1.5}
-          />
-          <defs>
-            <radialGradient
-              cx="0"
-              cy="0"
-              gradientTransform="translate(50 50) rotate(90) scale(50)"
-              gradientUnits="userSpaceOnUse"
-              id="paint0_radial_103_11727"
-              r="1"
-            >
-              <stop offset="0.140625" stopColor="#FFE300" stopOpacity="0" />
-              <stop offset="1" stopColor="#FFE300" />
-            </radialGradient>
-          </defs>
-        </svg>
-      </div>
-    </>
+    </DelayedRenderer>
   );
 };
 
-export const mapStateToProps = (state) => ({
-  metadataVisible: getVisibleMetaSidebar(state),
-  sidebarVisible: state.visible.sidebar,
+export const mapDispatchToProps = (dispatch, ownProps) => ({
+  onToggleShowFeatureHints: () => {
+    dispatch(toggleShowFeatureHints(false));
+  },
+  ...ownProps,
 });
 
-export default connect(mapStateToProps)(FeatureHints);
+export const mapStateToProps = (state) => {
+  return {
+    metadataVisible: getVisibleMetaSidebar(state),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FeatureHints);

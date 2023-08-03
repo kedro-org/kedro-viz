@@ -32,17 +32,13 @@ export const featureHintsContent = [
     description:
       "Use filters and tags to adjust the view of your visualisation and see only what you want, whether that's Nodes, Datasets, or tags you've created yourself.",
     elementId: '.pipeline-nodelist-section__title span',
+    learnMoreLink:
+      'https://docs.kedro.org/en/latest/nodes_and_pipelines/nodes.html#how-to-tag-a-node',
   },
   {
     title: 'Settings panel',
     description:
       'Find additional settings and experiments by opening the settings panel. You can even show or hide this very onboarding journey.',
     elementId: '.pipeline-menu-button--settings',
-  },
-  {
-    title: 'Export visualisation',
-    description:
-      'Open the export modal, save your pipeline visualisation, and share it with your team or stakeholders of your project.',
-    elementId: '.pipeline-menu-button--export',
   },
 ];

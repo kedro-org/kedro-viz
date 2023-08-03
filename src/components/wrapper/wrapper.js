@@ -65,9 +65,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             <Switch>
               <Route exact path={sanitizedPathname}>
                 <FlowChartWrapper />
-                <Delayed>
-                  <FeatureHints />
-                </Delayed>
+                <FeatureHints />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
@@ -80,20 +78,6 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       )}
     </div>
   );
-};
-
-const Delayed = ({ children, waitBeforeShow = 500 }) => {
-  const [isShown, setIsShown] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsShown(true);
-    }, waitBeforeShow);
-
-    return () => clearTimeout(timer);
-  }, [waitBeforeShow]);
-
-  return isShown ? children : null;
 };
 
 export const mapStateToProps = (state) => ({
