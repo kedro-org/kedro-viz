@@ -50,11 +50,11 @@ async def get_single_node_metadata(node_id: str):
 
     if isinstance(node, DataNode):
         dataset_stats = data_access_manager.get_dataset_stats(node)
-        return DataNodeMetadata(node, dataset_stats if dataset_stats else {})
+        return DataNodeMetadata(node, dataset_stats)
 
     if isinstance(node, TranscodedDataNode):
         dataset_stats = data_access_manager.get_dataset_stats(node)
-        return TranscodedDataNodeMetadata(node, dataset_stats if dataset_stats else {})
+        return TranscodedDataNodeMetadata(node, dataset_stats)
 
     return ParametersNodeMetadata(node)
 

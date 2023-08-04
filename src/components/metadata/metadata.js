@@ -24,7 +24,7 @@ import {
 } from '../../utils/hooks/use-generate-pathname';
 
 import './styles/metadata.css';
-import { formatFileSize } from '../../utils';
+import { formatFileSize, formatNumberWithCommas } from '../../utils';
 
 /**
  * Shows node meta data
@@ -59,7 +59,7 @@ const MetaData = ({
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasPreviewData = Boolean(metadata?.preview);
-  const hasProfilerData = Boolean(metadata?.profiler);
+  const hasStatsData = Boolean(metadata?.stats);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -109,18 +109,20 @@ const MetaData = ({
       : value?.split('.').pop();
   };
 
-  const profilerContent = (index, statValue, statLabel) => {
+  const statsContent = (statValue, statLabel) => {
     return (
-      <React.Fragment key={index}>
+      <React.Fragment key={statLabel}>
         <li
-          className="pipeline-metadata__value pipeline-metadata-value__profiler"
-          data-test={`profiler-value-${statLabel}`}
+          className="pipeline-metadata__value pipeline-metadata-value__stats"
+          data-test={`stats-value-${statLabel}`}
         >
-          {statLabel !== 'file_size' ? statValue : formatFileSize(statValue)}
+          {statLabel !== 'file_size'
+            ? formatNumberWithCommas(statValue)
+            : formatFileSize(statValue)}
         </li>
         <span
-          className="pipeline-metadata__label pipeline-metadata-label__profiler"
-          data-test={`profiler-label-${statLabel}`}
+          className="pipeline-metadata__label pipeline-metadata-label__stats"
+          data-test={`stats-label-${statLabel}`}
         >
           {statLabel && statLabel.replace(/_/g, ' ')}
         </span>
@@ -253,7 +255,7 @@ const MetaData = ({
                     isCommand={metadata?.runCommand}
                   />
                 </MetaDataRow>
-                {hasProfilerData && (
+                {hasStatsData && (
                   <>
                     <span
                       className="pipeline-metadata__label"
@@ -262,13 +264,8 @@ const MetaData = ({
                       Dataset statistics:
                     </span>
                     <ul>
-                      {Object.keys(metadata?.profiler).map(
-                        (profilerKey, index) =>
-                          profilerContent(
-                            index,
-                            metadata?.profiler[profilerKey],
-                            profilerKey
-                          )
+                      {Object.keys(metadata?.stats).map((statsKey) =>
+                        statsContent(metadata?.stats[statsKey], statsKey)
                       )}
                     </ul>
                   </>

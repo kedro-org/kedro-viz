@@ -206,13 +206,13 @@ describe('Flowchart DAG', () => {
 
     // Assert after action
     cy.get('[data-label="Dataset statistics:"]').should('exist');
-    cy.get('[data-test=profiler-value-rows]')
+    cy.get('[data-test=stats-value-rows]')
       .invoke('text')
-      .should((rowsValue) => expect(parseInt(rowsValue)).to.be.eq(77096));
-    cy.get('[data-test=profiler-value-columns]')
+      .should((rowsValue) => expect(rowsValue).to.be.eq('77,096'));
+    cy.get('[data-test=stats-value-columns]')
       .invoke('text')
       .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
-    cy.get('[data-test=profiler-value-file_size]')
+    cy.get('[data-test=stats-value-file_size]')
       .invoke('text')
       .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
   });

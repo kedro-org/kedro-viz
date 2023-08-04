@@ -134,7 +134,7 @@ export const formatFileSize = (fileSizeInBytes) => {
 
   if (fileSizeInBytes === 0) {
     // dataset not configured
-    return 'NA';
+    return 'N/A';
   } else if (fileSizeInBytes < conversionUnit) {
     // Less than 1 KB
     return `${fileSizeInBytes}bytes`;
@@ -146,4 +146,13 @@ export const formatFileSize = (fileSizeInBytes) => {
     const sizeInMB = fileSizeInBytes / (conversionUnit * conversionUnit);
     return `${sizeInMB.toFixed(1)}MB`;
   }
+};
+
+/**
+ * Formats a number to a comma separated string
+ * @param {Number} number The number to be formatted
+ * @returns {String} The formatted number e.g. 2500 -> 2,500
+ */
+export const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };

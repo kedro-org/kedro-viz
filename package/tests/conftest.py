@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict
 from unittest import mock
 
 import pandas as pd
@@ -168,7 +168,7 @@ def example_api(
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     session_store: BaseSessionStore,
-    example_stats_dict: Union[Dict[str, int], None],
+    example_stats_dict: Dict,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -199,7 +199,7 @@ def example_api_no_default_pipeline(
     del example_pipelines["__default__"]
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
-        data_access_manager, example_catalog, example_pipelines, session_store
+        data_access_manager, example_catalog, example_pipelines, session_store, {}
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
@@ -224,6 +224,7 @@ def example_transcoded_api(
         example_transcoded_catalog,
         example_transcoded_pipelines,
         session_store,
+        {},
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
@@ -283,3 +284,11 @@ def example_data_frame():
         "iata_approved": ["f", "f"],
     }
     yield pd.DataFrame(data)
+
+@pytest.fixture
+def mock_pandas_series():
+    # Create a dictionary with sample data
+    data = {'A': 1, 'B': 2, 'C': 3}
+    # Convert the dictionary to a Pandas Series
+    series = pd.Series(data)
+    yield series

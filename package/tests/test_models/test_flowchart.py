@@ -361,8 +361,8 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
-        assert data_node_metadata.profiler["rows"] == 10
-        assert data_node_metadata.profiler["columns"] == 2
+        assert data_node_metadata.stats["rows"] == 10
+        assert data_node_metadata.stats["columns"] == 2
 
     def test_preview_args_not_exist(self):
         metadata = {"kedro-viz": {"something": 3}}
@@ -446,8 +446,8 @@ class TestGraphNodeMetadata:
         assert transcoded_data_node_metadata.transcoded_types == [
             "pandas.csv_dataset.CSVDataSet"
         ]
-        assert transcoded_data_node_metadata.profiler["rows"] == 10
-        assert transcoded_data_node_metadata.profiler["columns"] == 2
+        assert transcoded_data_node_metadata.stats["rows"] == 10
+        assert transcoded_data_node_metadata.stats["columns"] == 2
 
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataSet")

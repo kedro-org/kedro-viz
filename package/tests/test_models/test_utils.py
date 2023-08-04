@@ -26,3 +26,6 @@ def test_get_file_size(tmp_path):
     mock_file = tmp_path / "mock_file.txt"
     mock_file.write_text("This is a mock file content.")
     assert get_file_size(tmp_path) == 0
+
+    # Testing no file found exception
+    assert get_file_size("raw.txt") == 0

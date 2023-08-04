@@ -6,6 +6,8 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=missing-function-docstring, no-else-return
 
 import base64
+import json as json_lib
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
@@ -26,11 +28,13 @@ except ImportError:
         plotly,
         tracking,
     )
+
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
+logger = logging.getLogger(__name__)
 KEDRO_VERSION = VersionInfo.parse(__version__)
 
 
@@ -55,26 +59,33 @@ def _bootstrap(project_path: Path):
 
 
 def get_dataset_stats(project_path: Path):
-    """Return the stats saved at stats.json"""
-    import json as json_lib
+    """Return the stats saved at stats.json
 
-    stats_file_path = project_path / "stats.json"
+    Args:
+        project_path: the path where the Kedro project is located.
+    """
+    try:
+        stats_file_path = project_path / "stats.json"
 
-    if not stats_file_path.exists():
-        return None
+        if not stats_file_path.exists():
+            return {}
 
-    with open(stats_file_path, encoding="utf8") as stats_file:
-        stats = json_lib.load(stats_file)
-        return stats
+        with open(stats_file_path, encoding="utf8") as stats_file:
+            stats = json_lib.load(stats_file)
+            return stats
+
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning(
+            "Unable to get dataset stats from project path %s : %s", project_path, exc
+        )
+        return {}
 
 
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-) -> Tuple[
-    DataCatalog, Dict[str, Pipeline], BaseSessionStore, Optional[Dict[str, int]]
-]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
@@ -96,9 +107,9 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store
@@ -107,11 +118,7 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-            stats_dict = (
-                dict(get_dataset_stats(project_path))
-                if get_dataset_stats(project_path) is not None
-                else {}
-            )
+            stats_dict = dict(get_dataset_stats(project_path))
 
         return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
@@ -119,17 +126,13 @@ def load_data(
 
         with KedroSession.create(
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store
-            stats_dict = (
-                dict(get_dataset_stats(project_path))
-                if get_dataset_stats(project_path) is not None
-                else {}
-            )
+            stats_dict = dict(get_dataset_stats(project_path))
 
         return context.catalog, context.pipelines, session_store, stats_dict
     else:
@@ -141,17 +144,13 @@ def load_data(
         with KedroSession.create(
             package_name=metadata.package_name,
             project_path=project_path,
-            env=env,  # type: ignore
+            env=env,
             save_on_close=False,
-            extra_params=extra_params,  # type: ignore
+            extra_params=extra_params,
         ) as session:
             context = session.load_context()
             session_store = session._store
-            stats_dict = (
-                dict(get_dataset_stats(project_path))
-                if get_dataset_stats(project_path) is not None
-                else {}
-            )
+            stats_dict = dict(get_dataset_stats(project_path))
 
         return context.catalog, context.pipelines, session_store, stats_dict
 

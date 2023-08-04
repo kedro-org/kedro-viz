@@ -558,7 +558,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     preview: Optional[Dict] = field(init=False, default=None)
 
-    profiler: Optional[Dict] = field(init=False, default=None)
+    stats: Optional[Dict] = field(init=False, default=None)
 
     # TODO: improve this scheme.
     def __post_init__(self, data_node: DataNode, dataset_stats: Dict):
@@ -566,20 +566,10 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
-        self.profiler = dataset_stats
+        self.stats = dataset_stats
 
-        # TODO: Can we use _describe method of kedro-dataset plugin to get the file size
-        # by adding a file_size key to the return dict
-        # self.profiler["file_size"] = (
-        #     dataset_description["file_size"]
-        #     if "file_size" in dataset_description
-        #     else 0
-        # )
-
-        # TODO: This will help to read the file size if the file path is present.
-        # If not, this will return 0. Not sure if this works for remote files
-        # Use fsspec to get the file size
-        self.profiler["file_size"] = get_file_size(self.filepath)
+        if "file_size" not in self.stats:
+            self.stats["file_size"] = get_file_size(self.filepath)
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -632,7 +622,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     transcoded_types: List[str] = field(init=False)
 
-    profiler: Optional[Dict] = field(init=False, default=None)
+    stats: Optional[Dict] = field(init=False, default=None)
 
     # the underlying data node to which this metadata belongs
     transcoded_data_node: InitVar[TranscodedDataNode]
@@ -651,20 +641,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
         dataset_description = original_version._describe()
         self.filepath = _parse_filepath(dataset_description)
-        self.profiler = dataset_stats
+        self.stats = dataset_stats
 
-        # TODO: Can we use _describe method of kedro-dataset plugin to get the file size
-        # by adding a file_size key to the return dict
-        # self.profiler["file_size"] = (
-        #     dataset_description["file_size"]
-        #     if "file_size" in dataset_description
-        #     else 0
-        # )
-
-        # TODO: This will help to read the file size if the file path is present.
-        # If not, this will return 0. Not sure if this works for remote files
-        # Use fsspec to get the file size
-        self.profiler["file_size"] = get_file_size(self.filepath)
+        if "file_size" not in self.stats:
+            self.stats["file_size"] = get_file_size(self.filepath)
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (

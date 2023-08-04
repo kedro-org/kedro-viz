@@ -2,36 +2,36 @@
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
+import json as json_lib
 import logging
+import sys
 from collections import defaultdict
 from typing import Any
-import sys
+
 import pandas as pd
-import json as json_lib
-
-from kedro_viz.integrations.kedro.utils import profiler_order
-from kedro_viz.models.utils import get_file_size
-
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
+
+from kedro_viz.integrations.kedro.utils import stats_order
+from kedro_viz.models.utils import get_file_size
 
 try:
     # kedro 0.18.11 onwards
     from kedro.io import MemoryDataset
-except ImportError:
+except ImportError: # pragma: no cover
     # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
 logger = logging.getLogger(__name__)
 
 
-class DatasetProfilerHook:
+class DatasetStatsHook:
     """Class to collect dataset statistics during a kedro run
     and save it to a JSON file. The class currently supports
     (pd.DataFrame, list, dict and pd.core.series.Series) dataset instances"""
 
     def __init__(self):
-        self._profiler = defaultdict(dict)
+        self._stats = defaultdict(dict)
 
     @hook_impl
     def after_catalog_created(self, catalog: DataCatalog):
@@ -42,12 +42,12 @@ class DatasetProfilerHook:
             catalog: The catalog that was created.
         """
         try:
-            datasets = catalog._data_sets
+            datasets = catalog._data_sets  # pylint: disable=protected-access
 
             for dataset_name, dataset in datasets.items():
                 if not isinstance(dataset, MemoryDataset):
-                    file_path = dataset._filepath
-                    self._profiler[dataset_name]["file_size"] = get_file_size(file_path)
+                    file_path = dataset._filepath  # pylint: disable=protected-access
+                    self._stats[dataset_name]["file_size"] = get_file_size(file_path)
 
         except Exception as exc:  # pragma: no cover
             logger.warning(
@@ -69,14 +69,14 @@ class DatasetProfilerHook:
         """
         try:
             if isinstance(data, pd.DataFrame):
-                self._profiler[dataset_name]["rows"] = int(data.shape[0])
-                self._profiler[dataset_name]["columns"] = int(data.shape[1])
+                self._stats[dataset_name]["rows"] = int(data.shape[0])
+                self._stats[dataset_name]["columns"] = int(data.shape[1])
             elif isinstance(data, (list, dict)):
-                self._profiler[dataset_name]["rows"] = int(len(data))
-                self._profiler[dataset_name]["file_size"] = sys.getsizeof(data)
+                self._stats[dataset_name]["rows"] = int(len(data))
+                self._stats[dataset_name]["file_size"] = sys.getsizeof(data)
             elif isinstance(data, pd.core.series.Series):
-                self._profiler[dataset_name]["rows"] = int(len(data))
-                self._profiler[dataset_name]["file_size"] = data.memory_usage(deep=True)
+                self._stats[dataset_name]["rows"] = int(len(data))
+                self._stats[dataset_name]["file_size"] = data.memory_usage(deep=True)
 
         except Exception as exc:  # pragma: no cover
             logger.warning(
@@ -92,14 +92,14 @@ class DatasetProfilerHook:
         """
         try:
             with open("stats.json", "w", encoding="utf8") as file:
-                sorted_profiler_data = {
-                    dataset_name: profiler_order(stats)
-                    for dataset_name, stats in self._profiler.items()
+                sorted_stats_data = {
+                    dataset_name: stats_order(stats)
+                    for dataset_name, stats in self._stats.items()
                 }
-                json_lib.dump(sorted_profiler_data, file)
+                json_lib.dump(sorted_stats_data, file)
 
         except Exception as exc:  # pragma: no cover
             logger.warning("Error writing the stats for the pipeline: %s", exc)
 
 
-dataset_profiler_hook = DatasetProfilerHook()
+dataset_stats_hook = DatasetStatsHook()
