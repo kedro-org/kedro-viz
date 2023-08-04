@@ -1,4 +1,5 @@
 # pylint: disable=broad-exception-caught
+# pylint: disable=no-member
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
@@ -45,9 +46,7 @@ class DatasetStatsHook:
             datasets = catalog._data_sets  # pylint: disable=protected-access
 
             for dataset_name, dataset in datasets.items():
-                if not isinstance(dataset, MemoryDataset) and hasattr(
-                    dataset, "_filepath"
-                ):
+                if not isinstance(dataset, MemoryDataset):
                     file_path = dataset._filepath  # pylint: disable=protected-access
                     self._stats[dataset_name]["file_size"] = get_file_size(file_path)
 
