@@ -45,7 +45,9 @@ class DatasetStatsHook:
             datasets = catalog._data_sets  # pylint: disable=protected-access
 
             for dataset_name, dataset in datasets.items():
-                if not isinstance(dataset, MemoryDataset):
+                if not isinstance(dataset, MemoryDataset) and hasattr(
+                    dataset, "_filepath"
+                ):
                     file_path = dataset._filepath  # pylint: disable=protected-access
                     self._stats[dataset_name]["file_size"] = get_file_size(file_path)
 
