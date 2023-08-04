@@ -47,7 +47,7 @@ class DatasetStatsHook:
 
             for dataset_name, dataset in datasets.items():
                 if not isinstance(dataset, MemoryDataset):
-                    file_path = dataset._filepath  # pylint: disable=no-member
+                    file_path = dataset._filepath  # pylint: disable=attr-defined
                     self._stats[dataset_name]["file_size"] = get_file_size(file_path)
 
         except Exception as exc:  # pragma: no cover
