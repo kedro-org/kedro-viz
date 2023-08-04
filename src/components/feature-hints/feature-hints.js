@@ -14,7 +14,7 @@ import { featureHintsContent } from './feature-hints-content';
 import './feature-hints.css';
 
 const localStorageKeyShowHints = 'showFeatureHints';
-export const localStorageKeyHintsStep = 'featureHintStep';
+export const localStorageKeyFeatureHintsStep = 'featureHintStep';
 const numFeatureHints = featureHintsContent.length;
 
 const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
@@ -43,24 +43,24 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
     }
 
     saveLocalStorage(localStorageName, {
-      [localStorageKeyHintsStep]: featureHintStep,
+      [localStorageKeyFeatureHintsStep]: featureHintStep,
     });
   }, [featureHintStep]);
 
   const triggerCloseHints = () => {
     setRequestedHintClose(true);
     setHideHighlightDot(true);
+    onToggleShowFeatureHints(false);
 
     setTimeout(() => {
       triggerLocalStorageSave();
-      onToggleShowFeatureHints(false);
     }, 4000);
   };
 
   const triggerLocalStorageSave = () => {
     setAreFeatureHintsShown(false);
     saveLocalStorage(localStorageName, {
-      [localStorageKeyHintsStep]: 0,
+      [localStorageKeyFeatureHintsStep]: 0,
       [localStorageKeyShowHints]: false,
     });
   };

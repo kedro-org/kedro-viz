@@ -105,8 +105,8 @@ export function toggleIsPrettyName(isPrettyName) {
 export const TOGGLE_SHOW_FEATURE_HINTS = 'TOGGLE_SHOW_FEATURE_HINTS';
 
 /**
- * Toggle whether to show pretty name on/off
- * @param {Boolean} showFeatureHints True if features hints are to be hidden
+ * Toggle whether to turn feature hints on/off
+ * @param {Boolean} showFeatureHints True if features hints are to be shown
  */
 export function toggleShowFeatureHints(showFeatureHints) {
   return {

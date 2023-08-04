@@ -10,7 +10,7 @@ import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig, localStorageName } from '../../config';
 import { saveLocalStorage } from '../../store/helpers';
-import { localStorageKeyHintsStep } from '../../components/feature-hints/feature-hints';
+import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -132,7 +132,7 @@ const SettingsModal = ({
 
                 if (event.target.checked === false) {
                   saveLocalStorage(localStorageName, {
-                    [localStorageKeyHintsStep]: 0,
+                    [localStorageKeyFeatureHintsStep]: 0,
                   });
                 }
               }}
