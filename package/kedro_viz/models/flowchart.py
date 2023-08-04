@@ -568,7 +568,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         self.stats = dataset_stats
 
-        if "file_size" not in self.stats:
+        if "file_size" not in self.stats or self.stats["file_size"] == 0:
             self.stats["file_size"] = get_file_size(self.filepath)
 
         # Run command is only available if a node is an output, i.e. not a free input
@@ -643,7 +643,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         self.filepath = _parse_filepath(dataset_description)
         self.stats = dataset_stats
 
-        if "file_size" not in self.stats:
+        if "file_size" not in self.stats or self.stats["file_size"] == 0:
             self.stats["file_size"] = get_file_size(self.filepath)
 
         if not transcoded_data_node.is_free_input:

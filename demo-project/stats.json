@@ -1,0 +1,64 @@
+{
+  "companies": { "rows": 77096, "columns": 5, "file_size": 1810602 },
+  "reviews": { "rows": 77096, "columns": 10, "file_size": 2937144 },
+  "shuttles": { "rows": 77096, "columns": 13, "file_size": 4195290 },
+  "ingestion.int_typed_companies": {
+    "rows": 77096,
+    "columns": 5,
+    "file_size": 550616
+  },
+  "ingestion.int_typed_shuttles@pandas1": { "file_size": 1235685 },
+  "ingestion.int_typed_shuttles@pandas2": {
+    "rows": 77096,
+    "columns": 13,
+    "file_size": 1235685
+  },
+  "ingestion.int_typed_reviews": {
+    "rows": 55790,
+    "columns": 11,
+    "file_size": 1335600
+  },
+  "prm_shuttle_company_reviews": {
+    "rows": 29768,
+    "columns": 27,
+    "file_size": 1020356
+  },
+  "prm_spine_table": { "rows": 29768, "columns": 3, "file_size": 655994 },
+  "feature_engineering.feat_weighting_metrics": { "file_size": 0 },
+  "feature_engineering.feat_scaling_metrics": { "file_size": 0 },
+  "feature_importance_output": { "rows": 15, "columns": 2, "file_size": 455 },
+  "model_input_table": { "rows": 29768, "columns": 12, "file_size": 787351 },
+  "train_evaluation.linear_regression.regressor": { "file_size": 843 },
+  "train_evaluation.random_forest.regressor": { "file_size": 175421422 },
+  "reporting.cancellation_policy_breakdown": { "file_size": 8744 },
+  "reporting.price_histogram": { "file_size": 216598 },
+  "reporting.feature_importance": { "file_size": 8553 },
+  "reporting.cancellation_policy_grid": { "file_size": 3116 },
+  "reporting.confusion_matrix": { "file_size": 14748 },
+  "train_evaluation.linear_regression.r2_score": { "file_size": 37 },
+  "train_evaluation.random_forest.r2_score": { "file_size": 36 },
+  "train_evaluation.linear_regression.experiment_params": { "file_size": 102 },
+  "train_evaluation.random_forest.experiment_params": { "file_size": 338 },
+  "params:ingestion.typing.reviews.columns_as_floats": {
+    "rows": 1,
+    "file_size": 88
+  },
+  "ingestion.prm_agg_companies": { "rows": 50098, "columns": 5 },
+  "params:feature_engineering.feature.derived": { "rows": 3, "file_size": 88 },
+  "params:feature_engineering.feature.static": { "rows": 9, "file_size": 184 },
+  "feature_engineering.feat_static_features": { "rows": 29768, "columns": 12 },
+  "feature_engineering.feat_derived_features": { "rows": 29768, "columns": 3 },
+  "params:split_options": { "rows": 3, "file_size": 232 },
+  "X_train": { "rows": 23814, "columns": 11 },
+  "y_train": { "rows": 23814, "file_size": 381024 },
+  "params:train_evaluation.model_options.linear_regression": {
+    "rows": 3,
+    "file_size": 232
+  },
+  "params:train_evaluation.model_options.random_forest": {
+    "rows": 3,
+    "file_size": 232
+  },
+  "X_test": { "rows": 5954, "columns": 11 },
+  "y_test": { "rows": 5954, "file_size": 95264 }
+}
