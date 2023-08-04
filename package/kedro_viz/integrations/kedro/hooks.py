@@ -18,7 +18,7 @@ from kedro_viz.models.utils import get_file_size
 try:
     # kedro 0.18.11 onwards
     from kedro.io import MemoryDataset
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 

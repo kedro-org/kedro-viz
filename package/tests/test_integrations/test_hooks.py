@@ -1,4 +1,5 @@
 from unittest import mock
+
 from kedro_viz.integrations.kedro.hooks import dataset_stats_hook
 
 

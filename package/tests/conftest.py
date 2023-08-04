@@ -285,10 +285,11 @@ def example_data_frame():
     }
     yield pd.DataFrame(data)
 
+
 @pytest.fixture
 def mock_pandas_series():
     # Create a dictionary with sample data
-    data = {'A': 1, 'B': 2, 'C': 3}
+    data = {"A": 1, "B": 2, "C": 3}
     # Convert the dictionary to a Pandas Series
     series = pd.Series(data)
     yield series
