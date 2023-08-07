@@ -31,6 +31,7 @@ export const MiniMapToolbar = ({
             className={'pipeline-minimap-button pipeline-minimap-button--map'}
             dataTest={`btnToggleMinimap`}
             icon={MapIcon}
+            id="minimap-toggle-icon"
             labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
             onClick={() => onToggleMiniMap(!visible.miniMap)}
             visible={visible.miniMapBtn}

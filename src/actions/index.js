@@ -102,6 +102,19 @@ export function toggleIsPrettyName(isPrettyName) {
   };
 }
 
+export const TOGGLE_SHOW_FEATURE_HINTS = 'TOGGLE_SHOW_FEATURE_HINTS';
+
+/**
+ * Toggle whether to turn feature hints on/off
+ * @param {Boolean} showFeatureHints True if features hints are to be shown
+ */
+export function toggleShowFeatureHints(showFeatureHints) {
+  return {
+    type: TOGGLE_SHOW_FEATURE_HINTS,
+    showFeatureHints,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

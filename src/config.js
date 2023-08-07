@@ -76,6 +76,11 @@ export const settings = {
     description: 'Display a formatted name for the kedro nodes',
     default: true,
   },
+  showFeatureHints: {
+    name: 'New feature hints',
+    description: 'Enable or disable all new feature hints in the interface.',
+    default: true,
+  },
 };
 
 // Sidebar groups is an ordered map of { id: label }

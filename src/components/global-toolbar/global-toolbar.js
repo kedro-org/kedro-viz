@@ -34,8 +34,8 @@ export const GlobalToolbar = ({
         <ul className="pipeline-global-routes-toolbar kedro">
           <IconButton
             ariaLabel={'Kedro Viz logo and link'}
-            dataTest={'Kedro Icon'}
             className={'pipeline-menu-button--logo pipeline-menu-button--large'}
+            dataTest={'Kedro Icon'}
             disabled={false}
             icon={LogoIcon}
           />
@@ -54,6 +54,7 @@ export const GlobalToolbar = ({
           </NavLink>
           <NavLink
             exact
+            id="experiment-tracking-nav-button"
             to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
           >
             <IconButton
