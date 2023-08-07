@@ -101,3 +101,7 @@
 ::before {
   box-sizing: border-box;
 }
+
+body > iframe {
+  display: none;
+}

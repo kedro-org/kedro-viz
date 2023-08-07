@@ -14,6 +14,7 @@ import {
   TOGGLE_PARAMETERS_HOVERED,
   TOGGLE_SIDEBAR,
   TOGGLE_IS_PRETTY_NAME,
+  TOGGLE_SHOW_FEATURE_HINTS,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -124,6 +125,17 @@ describe('Reducer', () => {
       });
       expect(mockState.spaceflights.isPrettyName).toBe(true);
       expect(newState.isPrettyName).toBe(true);
+    });
+  });
+
+  describe('TOGGLE_SHOW_FEATURE_HINTS', () => {
+    it('should toggle the value of showFeatureHints', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_SHOW_FEATURE_HINTS,
+        showFeatureHints: true,
+      });
+      expect(mockState.spaceflights.showFeatureHints).toBe(true);
+      expect(newState.showFeatureHints).toBe(true);
     });
   });
 

@@ -34,6 +34,7 @@ const saveStateToLocalStorage = (state) => {
     modularPipelineFocusMode,
     ...otherVisibleProps
   } = state.visible;
+
   saveLocalStorage(localStorageName, {
     node: {
       disabled: pruneFalseyKeys(state.node.disabled),
@@ -54,6 +55,7 @@ const saveStateToLocalStorage = (state) => {
     visible: otherVisibleProps,
     theme: state.theme,
     isPrettyName: state.isPrettyName,
+    showFeatureHints: state.showFeatureHints,
     flags: state.flags,
   });
 };

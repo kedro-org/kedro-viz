@@ -48,6 +48,7 @@ describe('SettingsModal', () => {
       }),
       flags: expect.any(Object),
       isPrettyName: expect.any(Boolean),
+      showFeatureHints: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
