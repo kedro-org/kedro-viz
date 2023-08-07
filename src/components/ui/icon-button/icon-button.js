@@ -23,6 +23,7 @@ const IconButton = ({
   labelTextPosition = 'right',
   onClick,
   visible,
+  ...rest
 }) => {
   const Icon = icon;
   let inTimeout;
@@ -47,7 +48,7 @@ const IconButton = ({
   };
 
   return visible ? (
-    <Wrapper container={container}>
+    <Wrapper container={container} {...rest}>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -82,12 +83,14 @@ const IconButton = ({
   ) : null;
 };
 
-const Wrapper = ({ children, container: Container = 'li' }) => {
+const Wrapper = ({ children, container: Container = 'li', ...rest }) => {
   if (typeof Container === 'symbol') {
     return <React.Fragment>{children}</React.Fragment>;
   } else {
     return (
-      <Container className="pipeline-icon--container">{children}</Container>
+      <Container className="pipeline-icon--container" {...rest}>
+        {children}
+      </Container>
     );
   }
 };

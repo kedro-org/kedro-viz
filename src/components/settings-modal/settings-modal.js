@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   changeFlag,
-  toggleSettingsModal,
+  toggleShowFeatureHints,
   toggleIsPrettyName,
+  toggleSettingsModal,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
-import { settings as settingsConfig } from '../../config';
+import { settings as settingsConfig, localStorageName } from '../../config';
+import { saveLocalStorage } from '../../store/helpers';
+import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -20,11 +23,13 @@ import './settings-modal.css';
 
 const SettingsModal = ({
   flags,
+  showFeatureHints,
   isOutdated,
+  isPrettyName,
   latestVersion,
   onToggleFlag,
+  onToggleShowFeatureHints,
   onToggleIsPrettyName,
-  isPrettyName,
   showSettingsModal,
   visible,
 }) => {
@@ -32,7 +37,13 @@ const SettingsModal = ({
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
   const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
+  const [showFeatureHintsValue, setShowFeatureHintsValue] =
+    useState(showFeatureHints);
   const [toggleFlags, setToggleFlags] = useState(flags);
+
+  useEffect(() => {
+    setShowFeatureHintsValue(showFeatureHints);
+  }, [showFeatureHints]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -52,6 +63,7 @@ const SettingsModal = ({
         });
 
         onToggleIsPrettyName(isPrettyNameValue);
+        onToggleShowFeatureHints(showFeatureHintsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -65,8 +77,10 @@ const SettingsModal = ({
     };
   }, [
     hasClickedApplyAndClose,
+    showFeatureHintsValue,
     isPrettyNameValue,
     onToggleFlag,
+    onToggleShowFeatureHints,
     onToggleIsPrettyName,
     showSettingsModal,
     toggleFlags,
@@ -77,6 +91,7 @@ const SettingsModal = ({
     setHasNotInteracted(true);
     setToggleFlags(flags);
     setIsPrettyName(isPrettyName);
+    setShowFeatureHintsValue(showFeatureHintsValue);
   };
 
   return (
@@ -104,6 +119,22 @@ const SettingsModal = ({
               onToggleChange={(event) => {
                 setIsPrettyName(event.target.checked);
                 setHasNotInteracted(false);
+              }}
+            />
+            <SettingsModalRow
+              id="showFeatureHints"
+              name={settingsConfig['showFeatureHints'].name}
+              toggleValue={showFeatureHintsValue}
+              description={settingsConfig['showFeatureHints'].description}
+              onToggleChange={(event) => {
+                setShowFeatureHintsValue(event.target.checked);
+                setHasNotInteracted(false);
+
+                if (event.target.checked === false) {
+                  saveLocalStorage(localStorageName, {
+                    [localStorageKeyFeatureHintsStep]: 0,
+                  });
+                }
               }}
             />
           </div>
@@ -181,6 +212,7 @@ const SettingsModal = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
+  showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
   visible: state.visible,
 });
@@ -194,6 +226,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleIsPrettyName: (value) => {
     dispatch(toggleIsPrettyName(value));
+  },
+  onToggleShowFeatureHints: (value) => {
+    dispatch(toggleShowFeatureHints(value));
   },
 });
 

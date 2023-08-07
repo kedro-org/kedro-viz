@@ -188,7 +188,8 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr(
         'class',
-        (node) => `pipeline-node__bg pipeline-node__bg--${node.type}`
+        (node) =>
+          `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
       );
 
     enterNodes

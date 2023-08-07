@@ -1,0 +1,107 @@
+@use '../../styles/variables' as colors;
+
+.feature-hints {
+  background-color: colors.$yellow-0;
+  bottom: 36px;
+  color: colors.$black-900;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  padding: 32px 36px 36px;
+  position: absolute;
+  transition: height 0.3s ease-in-out, right ease 0.4s;
+  width: 365px;
+  z-index: 5;
+
+  &__reopen-message {
+    font-size: 14px;
+    line-height: 20px;
+    margin: -8px 0 -12px;
+  }
+
+  &__nav {
+    color: colors.$black-300;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.024px;
+    line-height: 16px;
+  }
+
+  &__close {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+
+    svg {
+      cursor: pointer;
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  &__header {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 28px;
+    margin: 24px 0 12px;
+  }
+
+  img {
+    margin-bottom: 12px;
+  }
+
+  &__description {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    margin-bottom: 36px;
+  }
+
+  &__buttonsWrapper {
+    display: flex;
+    justify-content: space-between;
+
+    a,
+    .button {
+      flex-shrink: 0;
+    }
+
+    .button button {
+      color: colors.$black-900;
+      border-color: colors.$black-900;
+
+      &:hover:not(.button__btn--secondary) {
+        background: colors.$black-900;
+        color: colors.$white-0;
+      }
+    }
+
+    .button__btn--secondary:hover::after {
+      background: colors.$black-900;
+    }
+
+    .button__btn--secondary:active {
+      background-color: unset;
+      outline: unset;
+    }
+
+    & > div:first-of-type button {
+      padding-left: 0;
+    }
+  }
+
+  &__backNextButtons .button__btn--primary {
+    margin-left: 12px;
+  }
+}
+
+.feature-hints__highlightDot {
+  pointer-events: none;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease-in-out, top 0.3s ease-in-out,
+    opacity 0.1s ease-in-out;
+  z-index: 5;
+}

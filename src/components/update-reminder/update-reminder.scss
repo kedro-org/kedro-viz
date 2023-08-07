@@ -3,6 +3,11 @@
 $panel-width: 484px;
 $spacing-left: 48px;
 
+.update-reminder {
+  position: relative;
+  z-index: 10;
+}
+
 %h3 {
   font-size: 20px;
   margin-top: 0;
