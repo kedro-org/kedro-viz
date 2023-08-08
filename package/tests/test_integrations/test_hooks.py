@@ -9,6 +9,14 @@ def test_after_dataset_loaded(example_data_frame, dataset_name: str = "raw_data"
         dataset_stats_hook.after_dataset_loaded(dataset_name, example_data_frame)
         is None
     )
+    # Test for Transcoded data node
+    transcoded_dataset_name = "raw_data@pandas1"
+    assert (
+        dataset_stats_hook.after_dataset_loaded(
+            transcoded_dataset_name, example_data_frame
+        )
+        is None
+    )
 
 
 @mock.patch("builtins.open", create=True)
