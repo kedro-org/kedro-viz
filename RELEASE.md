@@ -6,11 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-
 ## Bug fixes and other changes
 
 - Fix incorrect rendering of datasets in modular pipelines. (#1439)
 - Fix broken SVG/PNG exports in light theme. (#1463)
+- Fix dataset and global toolbar error with standalone React component (#1351)
 
 # Release 6.3.4
 
