@@ -82,6 +82,8 @@ def get_file_size(file_path: Union[str, None]) -> Union[int, None]:
 
     except FileNotFoundError as exc:
         logger.warning("File not found for %s : %s", file_path, exc)
+        return None
 
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.warning("Error getting file size for %s : %s", file_path, exc)
+        return None

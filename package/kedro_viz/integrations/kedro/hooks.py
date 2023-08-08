@@ -1,5 +1,4 @@
 # pylint: disable=broad-exception-caught
-# pylint: disable=protected-access
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
