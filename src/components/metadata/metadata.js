@@ -24,7 +24,7 @@ import {
 } from '../../utils/hooks/use-generate-pathname';
 
 import './styles/metadata.css';
-import { formatFileSize, formatNumberWithCommas } from '../../utils';
+import MetaDataStats from './metadata-stats';
 
 /**
  * Shows node meta data
@@ -107,27 +107,6 @@ const MetaData = ({
     return isList
       ? value.map((val) => val.split('.').pop())
       : value?.split('.').pop();
-  };
-
-  const statsContent = (statValue, statLabel) => {
-    return (
-      <React.Fragment key={statLabel}>
-        <li
-          className="pipeline-metadata__value pipeline-metadata-value__stats"
-          data-test={`stats-value-${statLabel}`}
-        >
-          {statLabel !== 'file_size'
-            ? formatNumberWithCommas(statValue)
-            : formatFileSize(statValue)}
-        </li>
-        <span
-          className="pipeline-metadata__label pipeline-metadata-label__stats"
-          data-test={`stats-label-${statLabel}`}
-        >
-          {statLabel && statLabel.replace(/_/g, ' ')}
-        </span>
-      </React.Fragment>
-    );
   };
 
   return (
@@ -263,11 +242,7 @@ const MetaData = ({
                     >
                       Dataset statistics:
                     </span>
-                    <ul>
-                      {Object.keys(metadata?.stats).map((statsKey) =>
-                        statsContent(metadata?.stats[statsKey], statsKey)
-                      )}
-                    </ul>
+                    <MetaDataStats stats={metadata?.stats}></MetaDataStats>
                   </>
                 )}
               </dl>

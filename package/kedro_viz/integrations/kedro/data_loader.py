@@ -58,8 +58,9 @@ def _bootstrap(project_path: Path):
         return
 
 
-def get_dataset_stats(project_path: Path):
-    """Return the stats saved at stats.json
+def get_dataset_stats(project_path: Path) -> Dict:
+    """Return the stats saved at stats.json as a dictionary if found.
+    If not, return an empty dictionary
 
     Args:
         project_path: the path where the Kedro project is located.
@@ -118,7 +119,7 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-            stats_dict = dict(get_dataset_stats(project_path))
+            stats_dict = get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
@@ -132,7 +133,7 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            stats_dict = dict(get_dataset_stats(project_path))
+            stats_dict = get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
     else:
@@ -150,7 +151,7 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
-            stats_dict = dict(get_dataset_stats(project_path))
+            stats_dict = get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
 
