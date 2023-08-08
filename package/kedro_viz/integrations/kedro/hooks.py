@@ -3,7 +3,7 @@
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
-import json as json_lib
+import json
 import logging
 from collections import defaultdict
 from typing import Any
@@ -42,7 +42,7 @@ class DatasetStatsHook:
 
         except Exception as exc:  # pragma: no cover
             logger.warning(
-                "Error creating the stats for the dataset %s : %s", dataset_name, exc
+                "Unable to create statistics for the dataset %s : %s", dataset_name, exc
             )
 
     @hook_impl
@@ -58,10 +58,12 @@ class DatasetStatsHook:
                     dataset_name: stats_order(stats)
                     for dataset_name, stats in self._stats.items()
                 }
-                json_lib.dump(sorted_stats_data, file)
+                json.dump(sorted_stats_data, file)
 
         except Exception as exc:  # pragma: no cover
-            logger.warning("Error writing the stats for the pipeline: %s", exc)
+            logger.warning(
+                "Unable to write dataset statistics for the pipeline: %s", exc
+            )
 
 
 dataset_stats_hook = DatasetStatsHook()

@@ -6,7 +6,7 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=missing-function-docstring, no-else-return
 
 import base64
-import json as json_lib
+import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
@@ -16,14 +16,14 @@ from kedro.framework.session.store import BaseSessionStore
 
 try:
     from kedro_datasets import (  # isort:skip
-        json,
+        json as json_dataset,
         matplotlib,
         plotly,
         tracking,
     )
 except ImportError:
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        json,
+        json as json_dataset,
         matplotlib,
         plotly,
         tracking,
@@ -72,12 +72,14 @@ def get_dataset_stats(project_path: Path) -> Dict:
             return {}
 
         with open(stats_file_path, encoding="utf8") as stats_file:
-            stats = json_lib.load(stats_file)
+            stats = json.load(stats_file)
             return stats
 
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.warning(
-            "Unable to get dataset stats from project path %s : %s", project_path, exc
+            "Unable to get dataset statistics from project path %s : %s",
+            project_path,
+            exc,
         )
         return {}
 
@@ -172,13 +174,13 @@ if hasattr(matplotlib, "MatplotlibWriter"):
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
 if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load
+    plotly.JSONDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load
+    plotly.PlotlyDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load
+    tracking.JSONDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load
+    tracking.MetricsDataSet._load = json_dataset.JSONDataSet._load

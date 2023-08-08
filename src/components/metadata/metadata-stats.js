@@ -1,24 +1,27 @@
 import React from 'react';
 import { formatFileSize, formatNumberWithCommas } from '../../utils';
+import { datasetStatLabels } from '../../config';
 import './styles/metadata-stats.css';
 
 const MetaDataStats = ({ stats }) => (
   <ul>
-    {Object.keys(stats).map((statsKey) => (
-      <React.Fragment key={statsKey}>
+    {datasetStatLabels.map((statLabel) => (
+      <React.Fragment key={statLabel}>
         <li
           className="pipeline-metadata__value pipeline-metadata-value__stats"
-          data-test={`stats-value-${statsKey}`}
+          data-test={`stats-value-${statLabel}`}
         >
-          {statsKey !== 'file_size'
-            ? formatNumberWithCommas(stats[statsKey])
-            : formatFileSize(stats[statsKey])}
+          {stats.hasOwnProperty(statLabel)
+            ? statLabel !== 'file_size'
+              ? formatNumberWithCommas(stats[statLabel])
+              : formatFileSize(stats[statLabel])
+            : 'N/A'}
         </li>
         <span
           className="pipeline-metadata__label pipeline-metadata-label__stats"
-          data-test={`stats-label-${statsKey}`}
+          data-test={`stats-label-${statLabel}`}
         >
-          {statsKey && statsKey.replace(/_/g, ' ')}
+          {statLabel && statLabel.replace(/_/g, ' ')}
         </span>
       </React.Fragment>
     ))}

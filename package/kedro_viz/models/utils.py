@@ -47,7 +47,7 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     return f"{abbreviated_module_name}.{class_name}"
 
 
-def get_file_size(file_path: Union[str, None]) -> int:
+def get_file_size(file_path: Union[str, None]) -> Union[int, None]:
     """Get the dataset file size using fsspec. If the file_path is a directory,
     get the latest file created (this corresponds to the latest run)
 
@@ -56,7 +56,7 @@ def get_file_size(file_path: Union[str, None]) -> int:
     """
     try:
         if not file_path:
-            return 0
+            return None
 
         resolved_file_path = file_path
         file_system, _, paths = fsspec.get_fs_token_paths(file_path)
@@ -82,8 +82,6 @@ def get_file_size(file_path: Union[str, None]) -> int:
 
     except FileNotFoundError as exc:
         logger.warning("File not found for %s : %s", file_path, exc)
-        return 0
 
     except Exception as exc:  # pylint: disable=broad-exception-caught
         logger.warning("Error getting file size for %s : %s", file_path, exc)
-        return 0

@@ -132,7 +132,7 @@ export const formatFileSize = (fileSizeInBytes) => {
   // This is to convert bytes to KB or MB.
   const conversionUnit = 1000;
 
-  if (fileSizeInBytes === 0) {
+  if (!fileSizeInBytes) {
     // dataset not configured
     return 'N/A';
   } else if (fileSizeInBytes < conversionUnit) {
