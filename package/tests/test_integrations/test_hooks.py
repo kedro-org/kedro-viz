@@ -1,24 +1,58 @@
-from unittest import mock
+from collections import defaultdict
+from unittest.mock import mock_open, patch
 
-from kedro_viz.integrations.kedro.hooks import dataset_stats_hook
+import pytest
+
+from kedro_viz.integrations.kedro.utils import get_stats_dataset_name
 
 
-def test_after_dataset_loaded(example_data_frame, dataset_name: str = "raw_data"):
-    # Test for pd.dataframe
-    assert (
-        dataset_stats_hook.after_dataset_loaded(dataset_name, example_data_frame)
-        is None
+def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
+    # Assert for an instance of defaultdict
+    assert hasattr(example_dataset_stats_hook_obj, "_stats")
+    assert isinstance(example_dataset_stats_hook_obj._stats, defaultdict)
+
+
+@pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
+def test_after_dataset_loaded(
+    dataset_name, example_dataset_stats_hook_obj, example_data_frame
+):
+    example_dataset_stats_hook_obj.after_dataset_loaded(
+        dataset_name, example_data_frame
     )
-    # Test for Transcoded data node
-    transcoded_dataset_name = "raw_data@pandas1"
-    assert (
-        dataset_stats_hook.after_dataset_loaded(
-            transcoded_dataset_name, example_data_frame
+
+    stats_dataset_name = get_stats_dataset_name(dataset_name)
+
+    assert stats_dataset_name in example_dataset_stats_hook_obj._stats
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["rows"] == int(
+        example_data_frame.shape[0]
+    )
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["columns"] == int(
+        example_data_frame.shape[1]
+    )
+
+
+@pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
+def test_after_pipeline_run(
+    dataset_name, example_dataset_stats_hook_obj, example_data_frame
+):
+    stats_dataset_name = get_stats_dataset_name(dataset_name)
+    stats_json = {
+        stats_dataset_name: {
+            "rows": int(example_data_frame.shape[0]),
+            "columns": int(example_data_frame.shape[1]),
+        }
+    }
+    # Create a mock_open context manager
+    with patch("builtins.open", mock_open()) as mock_file, patch(
+        "json.dump"
+    ) as mock_json_dump:
+        example_dataset_stats_hook_obj.after_dataset_loaded(
+            dataset_name, example_data_frame
         )
-        is None
-    )
+        example_dataset_stats_hook_obj.after_pipeline_run()
 
+        # Assert that the file was opened with the correct filename
+        mock_file.assert_called_once_with("stats.json", "w", encoding="utf8")
 
-@mock.patch("builtins.open", create=True)
-def test_after_pipeline_run(mock_open):
-    assert dataset_stats_hook.after_pipeline_run() is None
+        # Assert that json.dump was called with the expected arguments
+        mock_json_dump.assert_called_once_with(stats_json, mock_file.return_value)

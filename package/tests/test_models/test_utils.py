@@ -1,3 +1,5 @@
+import pytest
+
 from kedro_viz.models.utils import get_dataset_type, get_file_size
 
 try:
@@ -5,27 +7,27 @@ try:
     from kedro.io import MemoryDataset
 except ImportError:
     # older versions
-    # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
 
-def test_get_dataset_type(dataset=None):
-    assert get_dataset_type(dataset) == ""
-    assert get_dataset_type(MemoryDataset()) == "io.memory_dataset.MemoryDataset"
+@pytest.mark.parametrize(
+    "dataset,expected_type",
+    [(None, ""), (MemoryDataset(), "io.memory_dataset.MemoryDataset")],
+)
+def test_get_dataset_type(dataset, expected_type):
+    assert get_dataset_type(dataset) == expected_type
 
 
-def test_get_file_size(tmp_path):
-    assert get_file_size(None) == 0
+@pytest.mark.parametrize("file_path", [None, "raw.txt"])
+def test_get_file_size_invalid(file_path, example_text_file):
+    # Test invalid paths to get file size
+    assert get_file_size(file_path) is None
+    # Test invalid directory to get file size
+    assert get_file_size(example_text_file.parent) is None
 
-    # Create a mock file in the temporary directory
-    mock_file = tmp_path / "mock_file.txt"
-    mock_file.write_text("This is a mock file content.")
 
-    assert get_file_size(mock_file) == 28
-
-    mock_file = tmp_path / "mock_file.txt"
-    mock_file.write_text("This is a mock file content.")
-    assert get_file_size(tmp_path) == 0
-
-    # Testing no file found exception
-    assert get_file_size("raw.txt") == 0
+def test_get_file_size_valid(example_text_file):
+    # Test valid file path to get file size
+    assert get_file_size(example_text_file) == 12
+    # Test valid directory to get file size
+    assert get_file_size(example_text_file.parent.parent) == 12

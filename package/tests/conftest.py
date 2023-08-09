@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Dict
 from unittest import mock
 
+import fsspec
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
@@ -14,6 +16,7 @@ from kedro_datasets import pandas, tracking
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
 
@@ -284,3 +287,31 @@ def example_data_frame():
         "iata_approved": ["f", "f"],
     }
     yield pd.DataFrame(data)
+
+
+@pytest.fixture
+def example_text_file(tmp_path):
+    # Get the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    # Create the directory path using tmp_path and timestamp
+    directory_path = tmp_path / timestamp
+
+    # Create the directory using fsspec
+    fs = fsspec.filesystem("file")
+    fs.mkdir(directory_path)
+
+    # Create the file path inside the directory
+    file_path = directory_path / "file.txt"
+
+    # Create the mock file using fsspec
+    with fs.open(file_path, "w") as file:
+        file.write("Mock content")
+
+    yield file_path
+
+
+@pytest.fixture
+def example_dataset_stats_hook_obj():
+    # Create an instance of DatasetStatsHook
+    yield DatasetStatsHook()
