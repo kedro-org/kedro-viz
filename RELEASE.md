@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Major features and improvements
+
+- Add support for visualizing dataset statistics for dataset instances of type Pandas DataFrame in the metadata panel. Users need to run the kedro project after installing the latest kedro-viz package to generate the statistics (stats.json file will be created in the kedro project root folder). (#1472)
+
+# Release 6.3.5
 
 ## Bug fixes and other changes
 
