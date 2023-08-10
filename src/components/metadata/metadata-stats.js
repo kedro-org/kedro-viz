@@ -15,12 +15,10 @@ const MetaDataStats = ({ stats }) => {
     }
 
     const containerWidth = statsContainer.clientWidth;
-    console.log(containerWidth);
     const totalItemsWidth = Array.from(statsContainer.children).reduce(
       (total, item) => total + item.offsetWidth,
       0
     );
-    console.log(totalItemsWidth);
 
     setHasOverflow(totalItemsWidth > containerWidth);
   }, []);
