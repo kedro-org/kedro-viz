@@ -137,7 +137,7 @@ export const formatFileSize = (fileSizeInBytes) => {
     return 'N/A';
   } else if (fileSizeInBytes < conversionUnit) {
     // Less than 1 KB
-    return `${fileSizeInBytes}bytes`;
+    return `${fileSizeInBytes} bytes`;
   } else if (fileSizeInBytes < conversionUnit * conversionUnit) {
     //  Less than 1 MB
     const sizeInKB = fileSizeInBytes / conversionUnit;
