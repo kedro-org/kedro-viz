@@ -19,7 +19,7 @@ try:
         plotly,
         tracking,
     )
-except ImportError:
+except ImportError:  # kedro_datasets is not installed.
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
         json,
         matplotlib,
