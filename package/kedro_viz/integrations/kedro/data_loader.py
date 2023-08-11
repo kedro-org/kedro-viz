@@ -124,12 +124,12 @@ def load_data(
         return context.catalog, context.pipelines, session_store
 
 
-# The dataset type is available as an attribute if and only if the import from kedro
-# did not suppress an ImportError. i.e. hasattr(matplotlib, "MatplotlibWriter") is True
-# when matplotlib dependencies are installed.
+# Try to access the attribute to trigger the import of dependencies, only modify the _load
+# if dependencies are installed.
 # These datasets do not have _load methods defined (tracking and matplotlib) or do not
 # load to json (plotly), hence the need to define _load here.
-if hasattr(matplotlib, "MatplotlibWriter"):
+try:
+    hasattr(matplotlib, "MatplotlibWriter")
 
     def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
         load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
@@ -138,15 +138,28 @@ if hasattr(matplotlib, "MatplotlibWriter"):
         return base64_bytes.decode("utf-8")
 
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
+except ImportError:
+    pass
 
-if hasattr(plotly, "JSONDataSet"):
+try:
+    hasattr(plotly, "JSONDataSet")
     plotly.JSONDataSet._load = json.JSONDataSet._load
+except ImportError:
+    pass
 
-if hasattr(plotly, "PlotlyDataSet"):
+try:
+    hasattr(plotly, "PlotlyDataSet")
     plotly.PlotlyDataSet._load = json.JSONDataSet._load
+except ImportError:
+    pass
 
-if hasattr(tracking, "JSONDataSet"):
+try:
+    hasattr(tracking, "JSONDataSet")
     tracking.JSONDataSet._load = json.JSONDataSet._load
-
-if hasattr(tracking, "MetricsDataSet"):
+except ImportError:
+    pass
+try:
+    hasattr(tracking, "MetricsDataSet")
     tracking.MetricsDataSet._load = json.JSONDataSet._load
+except ImportError:
+    pass
