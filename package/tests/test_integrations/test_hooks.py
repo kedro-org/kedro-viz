@@ -1,9 +1,6 @@
 from collections import defaultdict
 from unittest.mock import mock_open, patch
-
 import pytest
-
-from kedro_viz.integrations.kedro.utils import get_stats_dataset_name
 
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
@@ -12,15 +9,28 @@ def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
     assert isinstance(example_dataset_stats_hook_obj._stats, defaultdict)
 
 
-@pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
+def test_after_catalog_created(example_dataset_stats_hook_obj, example_catalog):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    # Assert for catalog creation
+    assert hasattr(example_dataset_stats_hook_obj, "datasets")
+    assert example_dataset_stats_hook_obj.datasets == example_catalog._data_sets
+
+
+@pytest.mark.parametrize(
+    "dataset_name", ["companies", "companies@pandas1", "model_inputs"]
+)
 def test_after_dataset_loaded(
-    dataset_name, example_dataset_stats_hook_obj, example_data_frame
+    dataset_name, example_dataset_stats_hook_obj, example_catalog, example_data_frame
 ):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
     example_dataset_stats_hook_obj.after_dataset_loaded(
         dataset_name, example_data_frame
     )
 
-    stats_dataset_name = get_stats_dataset_name(dataset_name)
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
 
     assert stats_dataset_name in example_dataset_stats_hook_obj._stats
     assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["rows"] == int(
@@ -31,11 +41,51 @@ def test_after_dataset_loaded(
     )
 
 
+@pytest.mark.parametrize("dataset_name", ["model_inputs"])
+def test_after_dataset_saved(
+    dataset_name,
+    mocker,
+    example_dataset_stats_hook_obj,
+    example_catalog,
+    example_data_frame,
+):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    # Create a mock object for the 'get_file_size' function
+    mock_get_file_size = mocker.Mock()
+
+    # Replace the original 'get_file_size' function with the mock
+    mocker.patch(
+        "kedro_viz.integrations.kedro.hooks.DatasetStatsHook.get_file_size",
+        new=mock_get_file_size,
+    )
+
+    # Set the return value of the mock
+    mock_get_file_size.return_value = 10
+
+    example_dataset_stats_hook_obj.after_dataset_saved(dataset_name, example_data_frame)
+
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
+
+    assert stats_dataset_name in example_dataset_stats_hook_obj._stats
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["rows"] == int(
+        example_data_frame.shape[0]
+    )
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["columns"] == int(
+        example_data_frame.shape[1]
+    )
+    assert example_dataset_stats_hook_obj._stats[stats_dataset_name]["file_size"] == 10
+
+
 @pytest.mark.parametrize("dataset_name", ["companies", "companies@pandas1"])
 def test_after_pipeline_run(
     dataset_name, example_dataset_stats_hook_obj, example_data_frame
 ):
-    stats_dataset_name = get_stats_dataset_name(dataset_name)
+    stats_dataset_name = example_dataset_stats_hook_obj.get_stats_dataset_name(
+        dataset_name
+    )
     stats_json = {
         stats_dataset_name: {
             "rows": int(example_data_frame.shape[0]),
