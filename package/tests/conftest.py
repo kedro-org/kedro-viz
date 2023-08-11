@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import Dict
 from unittest import mock
 
-import fsspec
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient

@@ -1,12 +1,12 @@
 from collections import defaultdict
 from unittest.mock import mock_open, patch
+
 import pytest
 
 try:
     # kedro 0.18.11 onwards
     from kedro.io import MemoryDataset
 except ImportError:
-    # older versions
     # older versions
     from kedro.io import MemoryDataSet as MemoryDataset
 
