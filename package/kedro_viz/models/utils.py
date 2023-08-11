@@ -1,8 +1,6 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
 import logging
-from typing import TYPE_CHECKING, Union
-
-import fsspec
+from typing import TYPE_CHECKING
 
 logger = logging.getLogger(__name__)
 
@@ -45,45 +43,3 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
-
-
-def get_file_size(file_path: Union[str, None]) -> Union[int, None]:
-    """Get the dataset file size using fsspec. If the file_path is a directory,
-    get the latest file created (this corresponds to the latest run)
-
-    Args:
-        file_path: The file path for the dataset
-    """
-    try:
-        if not file_path:
-            return None
-
-        resolved_file_path = file_path
-        file_system, _, paths = fsspec.get_fs_token_paths(file_path)
-
-        # Get information about the file
-        file_info = file_system.info(paths[0])
-
-        if file_info["type"] == "directory":
-            files = file_system.ls(paths[0])
-            # Filter only directories from the list
-            directories = [
-                file
-                for file in files
-                if file_system.isdir(file) and len(file_system.ls(file)) > 0
-            ]
-            resolved_file_path = file_system.ls(
-                max(directories, key=lambda f: file_system.info(f)["created"])
-            )[0]
-
-        with file_system.open(resolved_file_path) as file:
-            file_size_in_bytes = file.size
-            return file_size_in_bytes
-
-    except FileNotFoundError as exc:
-        logger.warning("File not found for %s : %s", file_path, exc)
-        return None
-
-    except Exception as exc:  # pylint: disable=broad-exception-caught
-        logger.warning("Error getting file size for %s : %s", file_path, exc)
-        return None

@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from kedro_viz.models.utils import get_dataset_type, get_file_size
+from kedro_viz.models.utils import get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -567,7 +567,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
         self.stats = dataset_stats
-        self.stats["file_size"] = get_file_size(self.filepath)
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -640,7 +639,6 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         dataset_description = original_version._describe()
         self.filepath = _parse_filepath(dataset_description)
         self.stats = dataset_stats
-        self.stats["file_size"] = get_file_size(self.filepath)
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (

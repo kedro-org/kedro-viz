@@ -1,7 +1,14 @@
 from collections import defaultdict
 from unittest.mock import mock_open, patch
-
 import pytest
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset
+except ImportError:
+    # older versions
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
@@ -107,3 +114,19 @@ def test_after_pipeline_run(
 
         # Assert that json.dump was called with the expected arguments
         mock_json_dump.assert_called_once_with(stats_json, mock_file.return_value)
+
+
+@pytest.mark.parametrize(
+    "dataset",
+    [MemoryDataset()],
+)
+def test_get_file_size(
+    dataset, example_dataset_stats_hook_obj, example_multiple_run_tracking_dataset
+):
+    assert example_dataset_stats_hook_obj.get_file_size(dataset) is None
+    assert (
+        example_dataset_stats_hook_obj.get_file_size(
+            example_multiple_run_tracking_dataset
+        )
+        == 128
+    )

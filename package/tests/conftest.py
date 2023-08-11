@@ -290,28 +290,6 @@ def example_data_frame():
 
 
 @pytest.fixture
-def example_text_file(tmp_path):
-    # Get the current timestamp
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-
-    # Create the directory path using tmp_path and timestamp
-    directory_path = tmp_path / timestamp
-
-    # Create the directory using fsspec
-    fs = fsspec.filesystem("file")
-    fs.mkdir(directory_path)
-
-    # Create the file path inside the directory
-    file_path = directory_path / "file.txt"
-
-    # Create the mock file using fsspec
-    with fs.open(file_path, "w") as file:
-        file.write("Mock content")
-
-    yield file_path
-
-
-@pytest.fixture
 def example_dataset_stats_hook_obj():
     # Create an instance of DatasetStatsHook
     yield DatasetStatsHook()
