@@ -1,4 +1,4 @@
-# pylint: disable=broad-exception-caught
+# pylint: disable=broad-exception-caught, protected-access
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
@@ -8,9 +8,9 @@ from collections import defaultdict
 from typing import Any, Union
 
 from kedro.framework.hooks import hook_impl
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
+from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class DatasetStatsHook:
         self.create_dataset_stats(dataset_name, data)
 
     @hook_impl
-    def after_dataset_saved(self, dataset_name, data):
+    def after_dataset_saved(self, dataset_name: str, data: Any):
         """Hook to be invoked after a dataset is saved to the catalog.
         Once the dataset is saved, extract the required dataset statistics.
         The hook currently supports (pd.DataFrame) dataset instances
@@ -79,8 +79,9 @@ class DatasetStatsHook:
                 "Unable to write dataset statistics for the pipeline: %s", exc
             )
 
-    def create_dataset_stats(self, dataset_name, data):
-        """Helper method to create dataset statistics. Currently supports (pd.DataFrame) dataset instances
+    def create_dataset_stats(self, dataset_name: str, data: Any):
+        """Helper method to create dataset statistics.
+        Currently supports (pd.DataFrame) dataset instances.
 
         Args:
             dataset_name: The dataset name for which we need the statistics
@@ -116,7 +117,7 @@ class DatasetStatsHook:
                 exc,
             )
 
-    def get_file_size(self, dataset) -> Union[int, None]:
+    def get_file_size(self, dataset: Any) -> Union[int, None]:
         """Helper method to return the file size of a dataset
 
         Args:
@@ -126,14 +127,17 @@ class DatasetStatsHook:
         """
 
         try:
-            if hasattr(dataset, "_filepath") and dataset._filepath:
-                file_path = get_filepath_str(dataset._filepath, dataset._protocol)
-                return dataset._fs.size(file_path)
+            if not (hasattr(dataset, "_filepath") and dataset._filepath):
+                return None
+
+            file_path = get_filepath_str(dataset._filepath, dataset._protocol)
+            return dataset._fs.size(file_path)
 
         except Exception as exc:
             logger.warning(
                 "Unable to get file size for the dataset %s: %s", dataset, exc
             )
+            return None
 
     def format_stats(self, stats: dict) -> dict:
         """Sort the stats extracted from the datasets using the sort order
