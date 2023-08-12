@@ -2,6 +2,7 @@ from collections import defaultdict
 from unittest.mock import mock_open, patch
 
 import pytest
+from kedro.io.core import get_filepath_str
 
 try:
     # kedro 0.18.11 onwards
@@ -120,13 +121,11 @@ def test_after_pipeline_run(
     "dataset",
     [MemoryDataset()],
 )
-def test_get_file_size(
-    dataset, example_dataset_stats_hook_obj, example_multiple_run_tracking_dataset
-):
+def test_get_file_size(dataset, example_dataset_stats_hook_obj, example_csv_dataset):
     assert example_dataset_stats_hook_obj.get_file_size(dataset) is None
-    assert (
-        example_dataset_stats_hook_obj.get_file_size(
-            example_multiple_run_tracking_dataset
-        )
-        == 128
+    file_path = get_filepath_str(
+        example_csv_dataset._filepath, example_csv_dataset._protocol
     )
+    assert example_dataset_stats_hook_obj.get_file_size(
+        example_csv_dataset
+    ) == example_csv_dataset._fs.size(file_path)

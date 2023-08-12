@@ -291,3 +291,12 @@ def example_data_frame():
 def example_dataset_stats_hook_obj():
     # Create an instance of DatasetStatsHook
     yield DatasetStatsHook()
+
+
+@pytest.fixture
+def example_csv_dataset(tmp_path, example_data_frame):
+    new_csv_dataset = pandas.CSVDataSet(
+        filepath=Path(tmp_path / "model_inputs.csv").as_posix(),
+    )
+    new_csv_dataset.save(example_data_frame)
+    yield new_csv_dataset
