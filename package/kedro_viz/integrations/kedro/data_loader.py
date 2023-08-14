@@ -130,6 +130,7 @@ def load_data(
 # load to json (plotly), hence the need to define _load here.
 try:
     getattr(matplotlib, "MatplotlibWriter")  # Trigger the lazy import
+
     def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
         load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
         with dataset._fs.open(load_path, mode="rb") as img_file:
