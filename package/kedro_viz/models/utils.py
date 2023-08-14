@@ -1,11 +1,15 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
+import logging
 from typing import TYPE_CHECKING
 
+logger = logging.getLogger(__name__)
+
+
 if TYPE_CHECKING:
-    try:
+    try:  # pragma: no cover
         # kedro 0.18.12 onwards
         from kedro.io.core import AbstractDataset
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # older versions
         from kedro.io.core import AbstractDataSet as AbstractDataset
 

@@ -6,6 +6,8 @@ load data from projects created in a range of Kedro versions.
 # pylint: disable=missing-function-docstring, no-else-return
 
 import base64
+import json
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
@@ -14,23 +16,25 @@ from kedro.framework.session.store import BaseSessionStore
 
 try:
     from kedro_datasets import (  # isort:skip
-        json,
+        json as json_dataset,
         matplotlib,
         plotly,
         tracking,
     )
 except ImportError:
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        json,
+        json as json_dataset,
         matplotlib,
         plotly,
         tracking,
     )
+
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
+logger = logging.getLogger(__name__)
 KEDRO_VERSION = VersionInfo.parse(__version__)
 
 
@@ -54,11 +58,37 @@ def _bootstrap(project_path: Path):
         return
 
 
+def get_dataset_stats(project_path: Path) -> Dict:
+    """Return the stats saved at stats.json as a dictionary if found.
+    If not, return an empty dictionary
+
+    Args:
+        project_path: the path where the Kedro project is located.
+    """
+    try:
+        stats_file_path = project_path / "stats.json"
+
+        if not stats_file_path.exists():
+            return {}
+
+        with open(stats_file_path, encoding="utf8") as stats_file:
+            stats = json.load(stats_file)
+            return stats
+
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning(
+            "Unable to get dataset statistics from project path %s : %s",
+            project_path,
+            exc,
+        )
+        return {}
+
+
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path whether the Kedro project is located.
@@ -91,7 +121,9 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-        return catalog, pipelines_dict, session_store
+            stats_dict = get_dataset_stats(project_path)
+
+        return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
         from kedro.framework.session import KedroSession
 
@@ -103,8 +135,9 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
+            stats_dict = get_dataset_stats(project_path)
 
-        return context.catalog, context.pipelines, session_store
+        return context.catalog, context.pipelines, session_store, stats_dict
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
         from kedro.framework.session import KedroSession
@@ -120,8 +153,9 @@ def load_data(
         ) as session:
             context = session.load_context()
             session_store = session._store
+            stats_dict = get_dataset_stats(project_path)
 
-        return context.catalog, context.pipelines, session_store
+        return context.catalog, context.pipelines, session_store, stats_dict
 
 
 # The dataset type is available as an attribute if and only if the import from kedro
@@ -140,13 +174,13 @@ if hasattr(matplotlib, "MatplotlibWriter"):
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
 
 if hasattr(plotly, "JSONDataSet"):
-    plotly.JSONDataSet._load = json.JSONDataSet._load
+    plotly.JSONDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(plotly, "PlotlyDataSet"):
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load
+    plotly.PlotlyDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(tracking, "JSONDataSet"):
-    tracking.JSONDataSet._load = json.JSONDataSet._load
+    tracking.JSONDataSet._load = json_dataset.JSONDataSet._load
 
 if hasattr(tracking, "MetricsDataSet"):
-    tracking.MetricsDataSet._load = json.JSONDataSet._load
+    tracking.MetricsDataSet._load = json_dataset.JSONDataSet._load

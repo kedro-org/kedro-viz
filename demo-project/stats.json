@@ -1,0 +1,39 @@
+{
+  "companies": { "rows": 77096, "columns": 5, "file_size": 1810602 },
+  "ingestion.int_typed_companies": {
+    "rows": 77096,
+    "columns": 5,
+    "file_size": 550616
+  },
+  "reviews": { "rows": 77096, "columns": 10, "file_size": 2937144 },
+  "ingestion.int_typed_reviews": {
+    "rows": 55790,
+    "columns": 11,
+    "file_size": 1335600
+  },
+  "shuttles": { "rows": 77096, "columns": 13, "file_size": 4195290 },
+  "ingestion.int_typed_shuttles": {
+    "rows": 77096,
+    "columns": 13,
+    "file_size": 1235685
+  },
+  "ingestion.prm_agg_companies": { "rows": 50098, "columns": 5 },
+  "prm_shuttle_company_reviews": {
+    "rows": 29768,
+    "columns": 27,
+    "file_size": 1020356
+  },
+  "prm_spine_table": { "rows": 29768, "columns": 3, "file_size": 655994 },
+  "feature_engineering.feat_derived_features": { "rows": 29768, "columns": 3 },
+  "feature_importance_output": { "rows": 15, "columns": 2, "file_size": 460 },
+  "feature_engineering.feat_static_features": { "rows": 29768, "columns": 12 },
+  "ingestion.prm_spine_table_clone": { "rows": 29768, "columns": 3 },
+  "reporting.cancellation_policy_breakdown": {
+    "rows": 21,
+    "columns": 3,
+    "file_size": 8744
+  },
+  "model_input_table": { "rows": 29768, "columns": 12, "file_size": 787351 },
+  "X_train": { "rows": 23814, "columns": 11 },
+  "X_test": { "rows": 5954, "columns": 11 }
+}

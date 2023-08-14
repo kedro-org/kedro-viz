@@ -114,6 +114,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     tracking_data: Optional[Dict]
     run_command: Optional[str]
     preview: Optional[Dict]
+    stats: Optional[Dict]
 
     class Config:
         schema_extra = {
@@ -130,6 +131,7 @@ class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     original_type: str
     transcoded_types: List[str]
     run_command: Optional[str]
+    stats: Optional[Dict]
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):

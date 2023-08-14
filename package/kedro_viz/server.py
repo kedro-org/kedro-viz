@@ -1,4 +1,5 @@
-"""`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
+"""`kedro_viz.server` provides utilities to launch a webserver
+for Kedro pipeline visualisation."""
 import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -31,6 +32,7 @@ def populate_data(
     catalog: DataCatalog,
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
+    stats_dict: Dict,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
@@ -43,6 +45,7 @@ def populate_data(
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
+    data_access_manager.add_dataset_stats(stats_dict)
 
 
 def run_server(
@@ -80,7 +83,7 @@ def run_server(
     """
     if load_file is None:
         path = Path(project_path) if project_path else Path.cwd()
-        catalog, pipelines, session_store = kedro_data_loader.load_data(
+        catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
             path, env, extra_params
         )
         pipelines = (
@@ -88,7 +91,9 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
-        populate_data(data_access_manager, catalog, pipelines, session_store)
+        populate_data(
+            data_access_manager, catalog, pipelines, session_store, stats_dict
+        )
         if save_file:
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)
