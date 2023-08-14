@@ -129,7 +129,7 @@ def load_data(
 # These datasets do not have _load methods defined (tracking and matplotlib) or do not
 # load to json (plotly), hence the need to define _load here.
 try:
-    hasattr(matplotlib, "MatplotlibWriter")
+    getattr(matplotlib, "MatplotlibWriter")  # Trigger the lazy import
 
     def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
         load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
@@ -142,24 +142,24 @@ except ImportError:
     pass
 
 try:
-    hasattr(plotly, "JSONDataSet")
+    getattr(plotly, "JSONDataSet")  # Trigger import
     plotly.JSONDataSet._load = json.JSONDataSet._load
 except ImportError:
     pass
 
 try:
-    hasattr(plotly, "PlotlyDataSet")
+    getattr(plotly, "PlotlyDataSet")  # Trigger import
     plotly.PlotlyDataSet._load = json.JSONDataSet._load
 except ImportError:
     pass
 
 try:
-    hasattr(tracking, "JSONDataSet")
+    getattr(tracking, "JSONDataSet")  # Trigger import
     tracking.JSONDataSet._load = json.JSONDataSet._load
 except ImportError:
     pass
 try:
-    hasattr(tracking, "MetricsDataSet")
+    getattr(tracking, "MetricsDataSet")  # Trigger import
     tracking.MetricsDataSet._load = json.JSONDataSet._load
 except ImportError:
     pass
