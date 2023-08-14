@@ -130,7 +130,6 @@ def load_data(
 # load to json (plotly), hence the need to define _load here.
 try:
     getattr(matplotlib, "MatplotlibWriter")  # Trigger the lazy import
-
     def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
         load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
         with dataset._fs.open(load_path, mode="rb") as img_file:
@@ -138,28 +137,29 @@ try:
         return base64_bytes.decode("utf-8")
 
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
-except ImportError:
+except (ImportError, AttributeError):
     pass
 
 try:
     getattr(plotly, "JSONDataSet")  # Trigger import
     plotly.JSONDataSet._load = json.JSONDataSet._load
-except ImportError:
+except (ImportError, AttributeError):
     pass
 
 try:
     getattr(plotly, "PlotlyDataSet")  # Trigger import
     plotly.PlotlyDataSet._load = json.JSONDataSet._load
-except ImportError:
+except (ImportError, AttributeError):
     pass
 
 try:
     getattr(tracking, "JSONDataSet")  # Trigger import
     tracking.JSONDataSet._load = json.JSONDataSet._load
-except ImportError:
+except (ImportError, AttributeError):
     pass
+
 try:
     getattr(tracking, "MetricsDataSet")  # Trigger import
     tracking.MetricsDataSet._load = json.JSONDataSet._load
-except ImportError:
+except (ImportError, AttributeError):
     pass
