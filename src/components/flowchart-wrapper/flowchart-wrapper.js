@@ -12,7 +12,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode } from '../../actions';
+import { toggleFocusMode, toggleShareableUrlModal } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -21,6 +21,7 @@ import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
+import ShareableUrlModal from '../shareable-url-modal';
 import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
@@ -51,6 +52,7 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
+  onToggleShareableUrlModal,
   onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
@@ -291,6 +293,12 @@ export const FlowChartWrapper = ({
         </div>
         <ExportModal />
         <MetadataModal />
+        <ShareableUrlModal />
+        <div className="shareable-url-button">
+          <Button onClick={() => onToggleShareableUrlModal(true)} size="small">
+            Deploy and Share
+          </Button>
+        </div>
       </div>
     );
   }
@@ -319,6 +327,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineExpanded: (expanded) => {
     dispatch(toggleModularPipelinesExpanded(expanded));
+  },
+  onToggleShareableUrlModal: (value) => {
+    dispatch(toggleShareableUrlModal(value));
   },
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));

@@ -5,7 +5,14 @@ import './modal.css';
 /**
  * Generic Kedro Modal
  */
-const Modal = ({ title, closeModal, visible, message, children }) => {
+const Modal = ({
+  children,
+  className,
+  closeModal,
+  message,
+  title,
+  visible,
+}) => {
   const handleKeyDown = (event) => {
     if (event.keyCode === 27) {
       closeModal(true);
@@ -21,6 +28,7 @@ const Modal = ({ title, closeModal, visible, message, children }) => {
     <div
       className={classnames('modal', {
         'modal--visible': visible,
+        [className]: !!className,
       })}
       role="dialog"
     >
@@ -37,8 +45,8 @@ const Modal = ({ title, closeModal, visible, message, children }) => {
       >
         <div className="modal__wrapper">
           <div className="modal__title">{title}</div>
+          {message && <div className="modal__description">{message}</div>}
           {children}
-          {!children && <div className="modal__description">{message}</div>}
         </div>
       </div>
     </div>
