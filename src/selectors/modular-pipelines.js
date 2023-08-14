@@ -44,7 +44,12 @@ export const searchTree = (
       // if the child node is a leaf, simply search the leaf's name
       // and add to the search result if there is a match.
       const found = searchString(childNode.data.name, searchValue);
-      if (found) {
+      const foundOpposite = searchString(
+        childNode.data.oppositeForPrettyName,
+        searchValue
+      );
+
+      if (found || foundOpposite) {
         foundChildren.push({
           ...childNode,
           data: {
