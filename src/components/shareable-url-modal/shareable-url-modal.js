@@ -28,7 +28,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       title="Deploy and Share"
       visible={visible.shareableUrlModal}
     >
-      <div class="shareable-url-modal__input-wrapper">
+      <div className="shareable-url-modal__input-wrapper">
         <div className="shareable-url-modal__input-label">Access Key ID</div>
         <Input
           onChange={(value) => onChange('accessKey', value)}
@@ -37,7 +37,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           size="large"
         />
       </div>
-      <div class="shareable-url-modal__input-wrapper">
+      <div className="shareable-url-modal__input-wrapper">
         <div className="shareable-url-modal__input-label">
           Secret Access Key
         </div>
@@ -48,7 +48,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           size="large"
         />
       </div>
-      <div class="shareable-url-modal__button-wrapper">
+      <div className="shareable-url-modal__button-wrapper">
         <Button mode="secondary" onClick={() => onToggle(false)} size="small">
           Cancel
         </Button>
