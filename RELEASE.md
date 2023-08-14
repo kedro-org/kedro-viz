@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Major features and improvements
+
+- Add support for displaying dataset statistics in the metadata panel. (#1472)
+
+# Release 6.3.5
 
 ## Bug fixes and other changes
 

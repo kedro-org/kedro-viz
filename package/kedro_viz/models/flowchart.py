@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from .utils import get_dataset_type
+from kedro_viz.models.utils import get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -541,6 +541,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
+    dataset_stats: InitVar[Dict]
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
@@ -557,12 +558,15 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     preview: Optional[Dict] = field(init=False, default=None)
 
+    stats: Optional[Dict] = field(init=False, default=None)
+
     # TODO: improve this scheme.
-    def __post_init__(self, data_node: DataNode):
+    def __post_init__(self, data_node: DataNode, dataset_stats: Dict):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
+        self.stats = dataset_stats
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -615,10 +619,15 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     transcoded_types: List[str] = field(init=False)
 
+    stats: Optional[Dict] = field(init=False, default=None)
+
     # the underlying data node to which this metadata belongs
     transcoded_data_node: InitVar[TranscodedDataNode]
+    dataset_stats: InitVar[Dict]
 
-    def __post_init__(self, transcoded_data_node: TranscodedDataNode):
+    def __post_init__(
+        self, transcoded_data_node: TranscodedDataNode, dataset_stats: Dict
+    ):
         original_version = transcoded_data_node.original_version
 
         self.original_type = get_dataset_type(original_version)
@@ -629,6 +638,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
         dataset_description = original_version._describe()
         self.filepath = _parse_filepath(dataset_description)
+        self.stats = dataset_stats
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (
