@@ -26,8 +26,7 @@
   @mixin export {
     --node-fill-default: #{colors.$white-200};
     --node-stroke-default: #{colors.$white-900};
-    --edge-stroke: colors.$white-900;
-    --edge-arrowhead-fill: colors.$white-900;
+    --edge-stroke: #{colors.$black-100};
   }
 
   &.pipeline-graph--export {

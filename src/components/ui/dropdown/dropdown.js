@@ -107,11 +107,9 @@ const Dropdown = (props) => {
     if (!mounted.current) {
       // update mounted on componentDidMount
       mounted.current = true;
-    } else {
+    } else if (prevProps && _childrenHaveChanged(prevProps)) {
       // triggers every time on componentDidUpdate
-      if (_childrenHaveChanged(prevProps)) {
-        setSelectedOption(_findSelectedOption(prevProps));
-      }
+      setSelectedOption(_findSelectedOption(prevProps));
     }
   }, [_findSelectedOption, prevProps, props]);
 

@@ -8,6 +8,7 @@ import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
 
+import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -47,9 +48,9 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       })}
     >
       <h1 className="pipeline-title">Kedro-Viz</h1>
-      {displayGlobalToolbar ? (
-        <GraphQLProvider>
-          <Router>
+      <Router>
+        {displayGlobalToolbar ? (
+          <GraphQLProvider>
             <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
@@ -64,16 +65,17 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
             <Switch>
               <Route exact path={sanitizedPathname}>
                 <FlowChartWrapper />
+                <FeatureHints />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
               </Route>
             </Switch>
-          </Router>
-        </GraphQLProvider>
-      ) : (
-        <FlowChartWrapper />
-      )}
+          </GraphQLProvider>
+        ) : (
+          <FlowChartWrapper />
+        )}
+      </Router>
     </div>
   );
 };
