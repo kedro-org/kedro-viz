@@ -177,24 +177,24 @@ except (ImportError, AttributeError):
 
 try:
     getattr(plotly, "JSONDataSet")  # Trigger import
-    plotly.JSONDataSet._load = json.JSONDataSet._load
+    plotly.JSONDataSet._load = json_dataset.JSONDataSet._load
 except (ImportError, AttributeError):
     pass
 
 try:
     getattr(plotly, "PlotlyDataSet")  # Trigger import
-    plotly.PlotlyDataSet._load = json.JSONDataSet._load
+    plotly.PlotlyDataSet._load = json_dataset.JSONDataSet._load
 except (ImportError, AttributeError):
     pass
 
 try:
     getattr(tracking, "JSONDataSet")  # Trigger import
-    tracking.JSONDataSet._load = json.JSONDataSet._load
+    tracking.JSONDataSet._load = json_dataset.JSONDataSet._load
 except (ImportError, AttributeError):
     pass
 
 try:
     getattr(tracking, "MetricsDataSet")  # Trigger import
-    tracking.MetricsDataSet._load = json.JSONDataSet._load
+    tracking.MetricsDataSet._load = json_dataset.JSONDataSet._load
 except (ImportError, AttributeError):
     pass
