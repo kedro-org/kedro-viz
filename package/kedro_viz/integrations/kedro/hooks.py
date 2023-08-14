@@ -126,10 +126,10 @@ class DatasetStatsHook:
         Returns: file size for the dataset if file_path is valid, if not returns None
         """
 
-        try:
-            if not (hasattr(dataset, "_filepath") and dataset._filepath):
-                return None
+        if not (hasattr(dataset, "_filepath") and dataset._filepath):
+            return None
 
+        try:
             file_path = get_filepath_str(dataset._filepath, dataset._protocol)
             return dataset._fs.size(file_path)
 
