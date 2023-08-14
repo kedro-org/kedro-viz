@@ -57,6 +57,7 @@ describe('GlobalToolbar', () => {
         modularPipelineFocusMode: null,
         metadataModal: false,
         settingsModal: false,
+        shareableUrlModal: false,
         sidebar: true,
       },
     };
