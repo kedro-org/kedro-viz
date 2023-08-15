@@ -54,7 +54,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.10'
-        
+
     - name: Extract release notes from ${{needs.check-version.outputs.package_name}}/RELEASE.md
       id: extract
       run: |
@@ -65,8 +65,8 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{needs.check-version.outputs.package_name}}-${{needs.check-version.outputs.package_version}}
-        name: ${{needs.check-version.outputs.package_name}}-${{needs.check-version.outputs.package_version}}
+        tag_name: v${{needs.check-version.outputs.package_version}}
+        name: v${{needs.check-version.outputs.package_version}}
         body_path: release_body.txt
         draft: false
         prerelease: false
