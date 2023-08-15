@@ -21,7 +21,7 @@ try:
         plotly,
         tracking,
     )
-except ImportError:
+except ImportError:  # kedro_datasets is not installed.
     from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
         json as json_dataset,
         matplotlib,
@@ -158,12 +158,12 @@ def load_data(
         return context.catalog, context.pipelines, session_store, stats_dict
 
 
-# The dataset type is available as an attribute if and only if the import from kedro
-# did not suppress an ImportError. i.e. hasattr(matplotlib, "MatplotlibWriter") is True
-# when matplotlib dependencies are installed.
+# Try to access the attribute to trigger the import of dependencies, only modify the _load
+# if dependencies are installed.
 # These datasets do not have _load methods defined (tracking and matplotlib) or do not
 # load to json (plotly), hence the need to define _load here.
-if hasattr(matplotlib, "MatplotlibWriter"):
+try:
+    getattr(matplotlib, "MatplotlibWriter")  # Trigger the lazy import
 
     def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
         load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
@@ -172,15 +172,29 @@ if hasattr(matplotlib, "MatplotlibWriter"):
         return base64_bytes.decode("utf-8")
 
     matplotlib.MatplotlibWriter._load = matplotlib_writer_load
+except (ImportError, AttributeError):
+    pass
 
-if hasattr(plotly, "JSONDataSet"):
+try:
+    getattr(plotly, "JSONDataSet")  # Trigger import
     plotly.JSONDataSet._load = json_dataset.JSONDataSet._load
+except (ImportError, AttributeError):
+    pass
 
-if hasattr(plotly, "PlotlyDataSet"):
+try:
+    getattr(plotly, "PlotlyDataSet")  # Trigger import
     plotly.PlotlyDataSet._load = json_dataset.JSONDataSet._load
+except (ImportError, AttributeError):
+    pass
 
-if hasattr(tracking, "JSONDataSet"):
+try:
+    getattr(tracking, "JSONDataSet")  # Trigger import
     tracking.JSONDataSet._load = json_dataset.JSONDataSet._load
+except (ImportError, AttributeError):
+    pass
 
-if hasattr(tracking, "MetricsDataSet"):
+try:
+    getattr(tracking, "MetricsDataSet")  # Trigger import
     tracking.MetricsDataSet._load = json_dataset.JSONDataSet._load
+except (ImportError, AttributeError):
+    pass
