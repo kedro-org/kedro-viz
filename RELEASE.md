@@ -8,6 +8,15 @@ Please follow the established format:
 ## Major features and improvements
 
 - Add support for displaying dataset statistics in the metadata panel. (#1472)
+- Test something1. (#1471)
+- Test something2. (#1470)
+
+## Bug fixes and other changes
+
+- No bugs to fix. (#1472)
+- Test something3. (#1471)
+- Test something4. (#1470)
+
 
 # Release 6.3.5
 
