@@ -8,11 +8,11 @@ def extract_section(filename, heading):
     start_line, end_line = None, None
 
     for i, line in enumerate(lines):
-        if not start_line and line.startswith("##"):
-            start_line = i - 1
-        elif start_line is not None and line.startswith("# "):
+        if line.startswith("# "):
             current_heading = line.strip("#").replace(":", "").strip()
             if current_heading == heading:
+                start_line = i
+            elif start_line is not None:
                 end_line = i
                 break
 
