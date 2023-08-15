@@ -141,3 +141,5 @@ export const errorMessages = {
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
   runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
+
+export const datasetStatLabels = ['rows', 'columns', 'file_size'];
