@@ -333,14 +333,7 @@ make version VERSION=<version-to-release>
 > _Notes_: Kedro-Viz uses [Semantic Versioning](https://semver.org/) as the versioning scheme.
 
 - Commit, raise a PR and get it merged into `main`.
-
-- Once the release commit is in `main`, trigger the release by:
-
-  - Create a Release through [Github UI](https://github.com/kedro-org/kedro-viz/releases/new).
-  - Input the version as the tag version with Target set to `main`
-  - Paste the release note in the text box.
-  - Publish the release.
-
+- Once the release commit is in `main`, a github action workflow gets triggered which generates a release tag and release notes based on RELEASE.md file to publish.
 - Once the release tag is published on Github, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
 - Once the new version is on PyPI, you can deploy it to https://demo.kedro.org by merging `main` into the `demo` branch. A CI job will automatically build a container using the [demo project](./demo-project) with the newly released version and deploy it.
 

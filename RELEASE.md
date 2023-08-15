@@ -5,17 +5,18 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 6.3.5
-
 ## Major features and improvements
 
 - Add support for displaying dataset statistics in the metadata panel. (#1472)
+
+# Release 6.3.5
 
 ## Bug fixes and other changes
 
 - Fix incorrect rendering of datasets in modular pipelines. (#1439)
 - Fix broken SVG/PNG exports in light theme. (#1463)
 - Fix dataset and global toolbar error with standalone React component (#1351)
+- Fix `ImportError` as kedro-datasets is now lazily loaded (#1481).
 
 # Release 6.3.4
 
