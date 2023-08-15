@@ -122,3 +122,37 @@ export const prettifyModularPipelineNames = (modularPipelines) => {
   }
   return modularPipelines;
 };
+
+/**
+ * Formats file size for the dataset metadata stats
+ * @param {Number} fileSizeInBytes The file size in bytes
+ * @returns {String} The formatted file size as e.g. "1.1KB"
+ */
+export const formatFileSize = (fileSizeInBytes) => {
+  // This is to convert bytes to KB or MB.
+  const conversionUnit = 1000;
+
+  if (!fileSizeInBytes) {
+    // dataset not configured
+    return 'N/A';
+  } else if (fileSizeInBytes < conversionUnit) {
+    // Less than 1 KB
+    return `${fileSizeInBytes} bytes`;
+  } else if (fileSizeInBytes < conversionUnit * conversionUnit) {
+    //  Less than 1 MB
+    const sizeInKB = fileSizeInBytes / conversionUnit;
+    return `${sizeInKB.toFixed(1)}KB`;
+  } else {
+    const sizeInMB = fileSizeInBytes / (conversionUnit * conversionUnit);
+    return `${sizeInMB.toFixed(1)}MB`;
+  }
+};
+
+/**
+ * Formats a number to a comma separated string
+ * @param {Number} number The number to be formatted
+ * @returns {String} The formatted number e.g. 2500 -> 2,500
+ */
+export const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

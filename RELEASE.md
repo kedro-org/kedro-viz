@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+## Major features and improvements
+
+- Add support for displaying dataset statistics in the metadata panel. (#1472)
+
+# Release 6.3.5
 
 ## Bug fixes and other changes
 
@@ -12,6 +17,7 @@ Please follow the established format:
 - Fix broken SVG/PNG exports in light theme. (#1463)
 - Fix dataset and global toolbar error with standalone React component (#1351)
 - Fix Sidebar search result based on Pretty name setting (#1252)
+- Fix `ImportError` as kedro-datasets is now lazily loaded (#1481).
 
 # Release 6.3.4
 
