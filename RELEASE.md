@@ -18,7 +18,7 @@ Please follow the established format:
 - Fix broken SVG/PNG exports in light theme. (#1463)
 - Fix dataset and global toolbar error with standalone React component (#1351)
 - Fix `ImportError` as kedro-datasets is now lazily loaded (#1481).
-- Fix the issue of encountering a blank page in Safari when interacting with the modular pipeline. (#1462)
+- Fix the issue of encountering a blank page in Safari when interacting with the modular pipeline. (#1488)
 
 # Release 6.3.4
 
