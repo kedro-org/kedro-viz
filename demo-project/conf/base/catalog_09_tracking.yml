@@ -1,19 +1,9 @@
-train_evaluation.linear_regression.r2_score:
+"train_evaluation.{name}.r2_score":
   type: tracking.MetricsDataSet
-  filepath: ${base_location}/09_tracking/linear_score.json
+  filepath: ${base_location}/09_tracking/{name}_score.json
   versioned: True
 
-train_evaluation.random_forest.r2_score:
-  type: tracking.MetricsDataSet
-  filepath: ${base_location}/09_tracking/rf_score.json
-  versioned: True
-
-train_evaluation.linear_regression.experiment_params:
+"train_evaluation.{name}.experiment_params":
   type: tracking.JSONDataSet
-  filepath: ${base_location}/09_tracking/linear_params.json
-  versioned: True
-
-train_evaluation.random_forest.experiment_params:
-  type: tracking.JSONDataSet
-  filepath: ${base_location}/09_tracking/rf_params.json
+  filepath: ${base_location}/09_tracking/{name}_params.json
   versioned: True
