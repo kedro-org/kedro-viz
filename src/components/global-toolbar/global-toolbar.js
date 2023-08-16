@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleSettingsModal, toggleTheme } from '../../actions';
-import { replaceMatches } from '../../utils';
+import { isRunningLocally, replaceMatches } from '../../utils';
+
 import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
@@ -52,22 +53,24 @@ export const GlobalToolbar = ({
               labelText="Flowchart"
             />
           </NavLink>
-          <NavLink
-            exact
-            id="experiment-tracking-nav-button"
-            to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
-          >
-            <IconButton
-              ariaLabel={'View your experiments'}
-              className={
-                'pipeline-menu-button--large pipeline-menu-button--link'
-              }
-              dataTest={'View your experiments'}
-              disabled={false}
-              icon={ExperimentsIcon}
-              labelText="Experiment tracking"
-            />
-          </NavLink>
+          {isRunningLocally() ? (
+            <NavLink
+              exact
+              id="experiment-tracking-nav-button"
+              to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
+            >
+              <IconButton
+                ariaLabel={'View your experiments'}
+                className={
+                  'pipeline-menu-button--large pipeline-menu-button--link'
+                }
+                dataTest={'View your experiments'}
+                disabled={false}
+                icon={ExperimentsIcon}
+                labelText="Experiment tracking"
+              />
+            </NavLink>
+          ) : null}
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton

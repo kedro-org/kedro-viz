@@ -32,6 +32,7 @@ import {
   localStorageFlowchartLink,
   params,
 } from '../../config';
+import { isRunningLocally } from '../../utils';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
 
@@ -230,15 +231,21 @@ export const FlowChartWrapper = ({
   }, []);
 
   useEffect(() => {
-    const timer =
-      counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
+    if (goBackToExperimentTracking?.showGoBackBtn) {
+      const timer =
+        counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
 
-    if (counter === 0) {
-      resetLinkingToFlowchartLocalStorage();
+      if (counter === 0) {
+        resetLinkingToFlowchartLocalStorage();
+      }
+
+      return () => clearInterval(timer);
     }
-
-    return () => clearInterval(timer);
-  }, [counter, resetLinkingToFlowchartLocalStorage]);
+  }, [
+    counter,
+    goBackToExperimentTracking?.showGoBackBtn,
+    resetLinkingToFlowchartLocalStorage,
+  ]);
 
   const onGoBackToExperimentTrackingHandler = () => {
     const url = goBackToExperimentTracking.fromURL;
@@ -294,11 +301,16 @@ export const FlowChartWrapper = ({
         <ExportModal />
         <MetadataModal />
         <ShareableUrlModal />
-        <div className="shareable-url-button">
-          <Button onClick={() => onToggleShareableUrlModal(true)} size="small">
-            Deploy and Share
-          </Button>
-        </div>
+        {isRunningLocally() ? (
+          <div className="shareable-url-button">
+            <Button
+              onClick={() => onToggleShareableUrlModal(true)}
+              size="small"
+            >
+              Deploy and Share
+            </Button>
+          </div>
+        ) : null}
       </div>
     );
   }
