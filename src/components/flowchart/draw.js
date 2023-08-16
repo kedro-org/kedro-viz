@@ -351,7 +351,10 @@ export const drawEdges = function (changed) {
   const updateEdges = this.el.edges;
   const enterEdges = this.el.edges.enter().append('g');
   const exitEdges = this.el.edges.exit();
-  const allEdges = this.el.edges.merge(enterEdges).merge(exitEdges);
+  const allEdges = this.el.edges
+    .merge(enterEdges)
+    .merge(exitEdges)
+    .filter((edge) => edge);
 
   if (changed('edges', 'focusMode', 'inputOutputDataNodes')) {
     enterEdges.append('path');
