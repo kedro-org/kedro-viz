@@ -7,9 +7,8 @@ import uvicorn
 from fastapi.encoders import jsonable_encoder
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
+from kedro.io.core import DatasetNotFoundError
 from kedro.pipeline import Pipeline
-from watchgod import run_process
-
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
@@ -17,6 +16,7 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from watchgod import run_process
 
 DEV_PORT = 4142
 
@@ -24,6 +24,29 @@ DEV_PORT = 4142
 def is_localhost(host) -> bool:
     """Check whether a host is a localhost"""
     return host in ("127.0.0.1", "localhost", "0.0.0.0")
+
+
+def resolve_data_set_patterns(catalog: DataCatalog, pipelines: Dict[str, Pipeline]):
+    """Resolve data set patterns in the data catalog by matching them against
+    the data sets in the pipelines.
+    """
+
+    data_set_names = {
+        data_set_name
+        for pipeline in pipelines.values()
+        for data_set_name in pipeline.data_sets()
+    }
+
+    # Sort data sets by name, then by namespace to display similar data sets together
+    sorted_data_set_names = sorted(
+        data_set_names, key=lambda name: ".".join(reversed(name.split(".")))
+    )
+
+    for data_set_name in sorted_data_set_names:
+        try:
+            catalog._get_dataset(data_set_name)  # pylint: disable=protected-access
+        except DatasetNotFoundError:
+            continue
 
 
 def populate_data(
@@ -40,6 +63,8 @@ def populate_data(
         session_store.sync()
         session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
+
+    resolve_data_set_patterns(catalog, pipelines)
 
     data_access_manager.add_catalog(catalog)
     data_access_manager.add_pipelines(pipelines)
