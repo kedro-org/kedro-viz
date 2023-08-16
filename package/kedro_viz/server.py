@@ -9,6 +9,8 @@ from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetNotFoundError
 from kedro.pipeline import Pipeline
+from watchgod import run_process
+
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
@@ -16,7 +18,6 @@ from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from watchgod import run_process
 
 DEV_PORT = 4142
 
