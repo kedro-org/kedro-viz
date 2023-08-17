@@ -90,3 +90,10 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
         selected_pipeline=registered_pipeline_id,
         modular_pipelines=modular_pipelines_tree,  # type: ignore
     )
+
+
+@router.get("/deploy", response_model=GraphAPIResponse)
+async def deploy_kedro_viz():
+    return JSONResponse(
+        status_code=200, content={"message": "This should kick off the deploy to S3"}
+    )
