@@ -1,0 +1,23 @@
+.pipeline-metadata-label__stats {
+  margin: 0 24px 0 8px;
+}
+
+.pipeline-metadata-value__stats {
+  font-size: 18px;
+}
+
+.stats-container__overflow {
+  align-items: baseline;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: auto 1fr;
+
+  .pipeline-metadata-value__stats {
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .pipeline-metadata-label__stats {
+    margin-right: auto;
+  }
+}
