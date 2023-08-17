@@ -2,6 +2,7 @@
 # pylint: disable=missing-function-docstring
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
@@ -25,6 +26,13 @@ router = APIRouter(
     prefix="/api",
     responses={404: {"model": APIErrorMessage}},
 )
+
+
+class UserCredentials(BaseModel):
+    awsRegion: str
+    bucketName: str
+    accessKey: str
+    secretAccessKey: str
 
 
 @router.get("/main", response_model=GraphAPIResponse)
@@ -92,8 +100,19 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
     )
 
 
-@router.get("/deploy", response_model=GraphAPIResponse)
-async def deploy_kedro_viz():
-    return JSONResponse(
-        status_code=200, content={"message": "This should kick off the deploy to S3"}
-    )
+@router.post("/deploy")
+async def deploy_kedro_viz(user_credentials: UserCredentials):
+    awsRegion = user_credentials.awsRegion
+    bucketName = user_credentials.bucketName
+    accessKey = user_credentials.accessKey
+    secretAccessKey = user_credentials.secretAccessKey
+
+    response_data = {
+        "message": "This should kick off the deploy to S3",
+        "awsRegion": awsRegion,
+        "bucketName": bucketName,
+        "accessKey": accessKey,
+        "secretAccessKey": secretAccessKey,
+    }
+
+    return JSONResponse(status_code=200, content=response_data)

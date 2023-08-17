@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { toggleShareableUrlModal } from '../../actions';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import Button from '../ui/button';
 import Input from '../ui/input';
@@ -22,35 +22,53 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
     );
   };
 
-  const handleFileUpload = async (file) => {
-    const s3Client = new S3Client({
-      region: inputValues.awsRegion,
-      credentials: {
-        accessKeyId: inputValues.accessKey,
-        secretAccessKey: inputValues.secretAccessKey,
-      },
-    });
-
+  const handleSubmit = async () => {
+    console.log('inputValues: ', inputValues);
     try {
-      const params = {
-        Bucket: inputValues.bucketName,
-        Key: file.name,
-        Body: file,
-      };
+      const response = await fetch('/api/deploy', {
+        method: 'POST',
+        body: inputValues,
+      });
 
-      await s3Client.send(new PutObjectCommand(params));
-      console.log('File uploaded successfully.');
+      if (response.ok) {
+        console.log(response.data);
+      } else {
+        console.log('Something went wrong.');
+      }
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error(error);
     }
   };
 
-  const handleFileInput = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      handleFileUpload(selectedFile);
-    }
-  };
+  // const handleFileUpload = async (file) => {
+  //   const s3Client = new S3Client({
+  //     region: inputValues.awsRegion,
+  //     credentials: {
+  //       accessKeyId: inputValues.accessKey,
+  //       secretAccessKey: inputValues.secretAccessKey,
+  //     },
+  //   });
+
+  //   try {
+  //     const params = {
+  //       Bucket: inputValues.bucketName,
+  //       Key: file.name,
+  //       Body: file,
+  //     };
+
+  //     await s3Client.send(new PutObjectCommand(params));
+  //     console.log('File uploaded successfully.');
+  //   } catch (error) {
+  //     console.error('Error uploading file:', error);
+  //   }
+  // };
+
+  // const handleFileInput = (event) => {
+  //   const selectedFile = event.target.files[0];
+  //   if (selectedFile) {
+  //     handleFileUpload(selectedFile);
+  //   }
+  // };
 
   return (
     <Modal
@@ -102,8 +120,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
         <Button mode="secondary" onClick={() => onToggle(false)} size="small">
           Cancel
         </Button>
-        <input type="file" accept="*" onChange={handleFileInput} />
-        <Button disabled={hasNotInteracted} size="small">
+        {/* <input type="file" accept="*" onChange={handleFileInput} /> */}
+        <Button disabled={hasNotInteracted} size="small" onClick={handleSubmit}>
           Deploy
         </Button>
       </div>
