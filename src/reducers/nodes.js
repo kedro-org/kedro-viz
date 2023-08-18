@@ -90,6 +90,9 @@ function nodeReducer(nodeState = {}, action) {
         preview: Object.assign({}, nodeState.preview, {
           [id]: data.preview,
         }),
+        stats: Object.assign({}, nodeState.stats, {
+          [id]: data.stats,
+        }),
       });
     }
 

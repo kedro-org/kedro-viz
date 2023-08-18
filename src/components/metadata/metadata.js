@@ -24,6 +24,7 @@ import {
 } from '../../utils/hooks/use-generate-pathname';
 
 import './styles/metadata.css';
+import MetaDataStats from './metadata-stats';
 
 /**
  * Shows node meta data
@@ -58,6 +59,7 @@ const MetaData = ({
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasPreviewData = Boolean(metadata?.preview);
+  const hasStatsData = Boolean(metadata?.stats);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -232,6 +234,17 @@ const MetaData = ({
                     isCommand={metadata?.runCommand}
                   />
                 </MetaDataRow>
+                {hasStatsData && (
+                  <>
+                    <span
+                      className="pipeline-metadata__label"
+                      data-label="Dataset statistics:"
+                    >
+                      Dataset statistics:
+                    </span>
+                    <MetaDataStats stats={metadata?.stats}></MetaDataStats>
+                  </>
+                )}
               </dl>
               {hasPlot && (
                 <>

@@ -79,7 +79,9 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <h2 className="pipeline-nodelist-section__title">Filters</h2>
+                <h2 className="pipeline-nodelist-section__title">
+                  <span>Filters</span>
+                </h2>
                 <NodeListGroups
                   items={items}
                   groups={groups}

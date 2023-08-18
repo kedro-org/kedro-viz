@@ -62,6 +62,7 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
+        self.dataset_stats = {}
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -90,6 +91,28 @@ class DataAccessManager:
         for registered_pipeline_id, pipeline in pipelines.items():
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
+
+    def add_dataset_stats(self, stats_dict: Dict):
+        """Add dataset statistics (eg. rows, columns, file_size) as a dictionary.
+        This will help in showing the relevant stats in the metadata panel
+
+        Args:
+            stats_dict: A dictionary object loaded from stats.json file in the kedro project
+        """
+
+        self.dataset_stats = stats_dict
+
+    def get_stats_for_data_node(
+        self, data_node: Union[DataNode, TranscodedDataNode]
+    ) -> Dict:
+        """Returns the dataset statistics for the data node if found else returns an
+        empty dictionary
+
+        Args:
+            The data node for which we need the statistics
+        """
+
+        return self.dataset_stats.get(data_node.name, {})
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
@@ -371,7 +394,7 @@ class DataAccessManager:
         modular_pipelines_tree = modular_pipelines_services.expand_tree(
             modular_pipelines.as_dict()
         )
-        root_children_ids = set()
+        root_parameters = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
         # except for the artificial root node
@@ -397,7 +420,6 @@ class DataAccessManager:
             )
 
             # only keep the modular pipeline's inputs belonging to the current registered pipeline
-            inputs_in_registered_pipeline = set()
             for input_id in modular_pipeline_node.inputs:
                 input_node = self.nodes.get_node_by_id(input_id)
                 if input_node.belongs_to_pipeline(registered_pipeline_id):
@@ -405,13 +427,10 @@ class DataAccessManager:
                         GraphEdge(source=input_id, target=modular_pipeline_id)
                     )
                     node_dependencies[input_id].add(modular_pipeline_id)
-                    inputs_in_registered_pipeline.add(input_id)
-            root_children_ids.update(
-                modular_pipeline_node.external_inputs & inputs_in_registered_pipeline
-            )
+                if isinstance(input_node, ParametersNode):
+                    root_parameters.add(input_id)
 
             # only keep the modular pipeline's outputs belonging to the current registered pipeline
-            outputs_in_registered_pipeline = set()
             for output_id in modular_pipeline_node.outputs:
                 output_node = self.nodes.get_node_by_id(output_id)
                 if output_node.belongs_to_pipeline(registered_pipeline_id):
@@ -419,10 +438,6 @@ class DataAccessManager:
                         GraphEdge(source=modular_pipeline_id, target=output_id)
                     )
                     node_dependencies[modular_pipeline_id].add(output_id)
-                    outputs_in_registered_pipeline.add(output_id)
-            root_children_ids.update(
-                modular_pipeline_node.external_outputs & outputs_in_registered_pipeline
-            )
 
         # After adding modular pipeline nodes into the graph,
         # There is a chance that the graph with these nodes contains cycles if
@@ -456,7 +471,7 @@ class DataAccessManager:
                 or not node.belongs_to_pipeline(registered_pipeline_id)
             ):
                 continue
-            if not node.modular_pipelines or node_id in root_children_ids:
+            if not node.modular_pipelines or node_id in root_parameters:
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
                         node_id, self.nodes.get_node_by_id(node_id).type

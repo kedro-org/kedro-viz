@@ -76,6 +76,11 @@ export const settings = {
     description: 'Display a formatted name for the kedro nodes',
     default: true,
   },
+  showFeatureHints: {
+    name: 'New feature hints',
+    description: 'Enable or disable all new feature hints in the interface.',
+    default: true,
+  },
 };
 
 // Sidebar groups is an ordered map of { id: label }
@@ -136,3 +141,5 @@ export const errorMessages = {
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
   runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
+
+export const datasetStatLabels = ['rows', 'columns', 'file_size'];
