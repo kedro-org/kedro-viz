@@ -1,7 +1,6 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
 import io
 import webbrowser
-import zipfile
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -103,45 +102,39 @@ def run_server(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
         if save_file:
+            save_path = Path(save_file)
+            if not save_path.exists():
+                save_path.mkdir(parents=True, exist_ok=True) 
+
             default_response = get_default_response()
             jsonable_default_response = jsonable_encoder(default_response)
-            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
+            encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
                 jsonable_default_response
             )
 
-            encoded_node_response = {}
+            Path(f"{save_path}/main").write_bytes(encoded_response)
+
+            nodes_path = Path(f"{save_path}/nodes")
+            nodes_path.mkdir(parents=True, exist_ok=True) 
 
             for node in data_access_manager.nodes.get_node_ids():
                 node_response = get_node_metadata_response(node)
                 jsonable_node_response = jsonable_encoder(node_response)
-                encoded_node_response[
-                    node
-                ] = EnhancedORJSONResponse.encode_to_human_readable(
+                encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
                     jsonable_node_response
                 )
+                Path(nodes_path / node).write_bytes(encoded_response)
 
-            encoded_pipeline_response = {}
+            pipelines_path = Path(f"{save_path}/pipelines")
+            pipelines_path.mkdir(parents=True, exist_ok=True) 
 
             for pipeline in data_access_manager.registered_pipelines.get_pipeline_ids():
                 pipeline_response = get_selected_pipeline_response(pipeline)
                 jsonable_pipeline_response = jsonable_encoder(pipeline_response)
-                encoded_pipeline_response[
-                    pipeline
-                ] = EnhancedORJSONResponse.encode_to_human_readable(
+                encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
                     jsonable_pipeline_response
                 )
-
-            zip_buffer = io.BytesIO()
-
-            with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-                zip_file.writestr("main", encoded_default_response)
-                for node_id, node_metadata in encoded_node_response.items():
-                    zip_file.writestr(f"nodes/{node_id}", node_metadata)
-                for pipeline_id, pipeline_data in encoded_pipeline_response.items():
-                    zip_file.writestr(f"pipelines/{pipeline_id}", pipeline_data)
-
-            with open(f"/{path}/{save_file}.zip", "wb") as zip_file:
-                zip_file.write(zip_buffer.getvalue())
+                Path(pipelines_path / pipeline).write_bytes(encoded_response)
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:

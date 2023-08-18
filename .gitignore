@@ -65,3 +65,5 @@ coverage.xml
 
 # Kedro
 *.log
+
+demo-project/my_test/

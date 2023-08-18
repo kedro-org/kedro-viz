@@ -3,7 +3,8 @@ This data could either come from a real Kedro project or a file.
 """
 import json
 import time
-import zipfile
+import shutil
+import fsspec
 from pathlib import Path
 
 import secure
@@ -13,6 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
+from kedro.io.core import get_protocol_and_path
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
@@ -127,20 +129,29 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
-            main = zip_file.read("main")
-        return json.loads(main)
+        return json.loads((Path(filepath) / "main").read_text(encoding="utf8"))
+
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
-            node_metdata = zip_file.read(f"nodes/{node_id}")
-        return json.loads(node_metdata)
+        return json.loads((Path(filepath) / "nodes"/ node_id).read_text(encoding="utf8"))
+
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        with zipfile.ZipFile(f"{filepath}.zip", "r") as zip_file:
-            pipeline = zip_file.read(f"pipelines/{pipeline_id}")
-        return json.loads(pipeline)
+        return json.loads((Path(filepath) / "pipelines"/ pipeline_id).read_text(encoding="utf8"))
+    
+    upload_viz_to_cloud(filepath)
 
     return app
+
+def upload_viz_to_cloud(filepath: str) -> FastAPI:
+    """Upload the Kedro-viz app to cloud"""
+
+    remote_location = 's3://kedroviz/kedro-viz/html'
+    api_location = remote_location + '/api'
+    protocol, _ = get_protocol_and_path(remote_location)
+    remote_fs = fsspec.filesystem(protocol)
+    remote_fs.put(str(_HTML_DIR),remote_location,recursive=True)
+    remote_fs.put(filepath,api_location,recursive=True)
+    
