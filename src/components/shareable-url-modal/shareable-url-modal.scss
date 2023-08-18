@@ -1,0 +1,43 @@
+.shareable-url-modal {
+  .modal__content {
+    max-width: 640px;
+  }
+
+  .modal__wrapper {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .modal__title {
+    margin-bottom: 24px;
+  }
+
+  .modal__description {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  &__input-wrapper {
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  &__input-label {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    margin-bottom: 12px;
+  }
+
+  &__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 48px;
+    width: 100%;
+
+    .button__btn--secondary {
+      padding-left: 0;
+    }
+  }
+}

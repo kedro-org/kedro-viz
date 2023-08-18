@@ -4,7 +4,6 @@ import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
 import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
-import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
@@ -68,7 +67,7 @@ const ExperimentWrapper = ({ theme }) => {
     useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
-  const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+  const { data, loading } = useApolloQuery(GET_RUNS);
 
   // Fetch all data for selected runs.
   const {
@@ -293,26 +292,6 @@ const ExperimentWrapper = ({ theme }) => {
       setPinnedRun(selectedRunIds[0]);
     }
   }, [selectedRunIds, pinnedRun]);
-
-  useEffect(() => {
-    if (!data?.runsList || data.runsList.length === 0) {
-      return;
-    }
-
-    subscribeToMore({
-      document: NEW_RUN_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data || !prev?.runsList) {
-          return prev;
-        }
-        const newRuns = subscriptionData.data.runsAdded;
-
-        return Object.assign({}, prev, {
-          runsList: [...newRuns, ...prev.runsList],
-        });
-      },
-    });
-  }, [data, subscribeToMore]);
 
   if (loading) {
     return (

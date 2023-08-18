@@ -31,6 +31,7 @@ const saveStateToLocalStorage = (state) => {
     exportModal,
     metadataModal,
     settingsModal,
+    shareableUrlModal,
     modularPipelineFocusMode,
     ...otherVisibleProps
   } = state.visible;

@@ -1,6 +1,10 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring
 from fastapi import APIRouter
+from pydantic import BaseModel
+
+from kedro_viz.data_access import data_access_manager
+
 
 from .responses import (
     APIErrorMessage,
@@ -15,6 +19,13 @@ router = APIRouter(
     prefix="/api",
     responses={404: {"model": APIErrorMessage}},
 )
+
+
+class UserCredentials(BaseModel):
+    awsRegion: str
+    bucketName: str
+    accessKey: str
+    secretAccessKey: str
 
 
 @router.get("/main", response_model=GraphAPIResponse)
