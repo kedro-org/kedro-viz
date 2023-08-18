@@ -114,6 +114,15 @@ export const getNodeLabel = createSelector(
 );
 
 /**
+ * Returns opposite node label based on if pretty name is turned on/off
+ */
+export const getOppositeForPrettyName = createSelector(
+  [getIsPrettyName, getNodeName, getNodeFullName],
+  (isPrettyName, nodeName, nodeFullName) =>
+    isPrettyName ? nodeFullName : nodeName
+);
+
+/**
  * Returns formatted nodes as an array, with all relevant properties
  */
 export const getNodeData = createSelector(
@@ -182,6 +191,7 @@ export const getNodeDataObject = createSelector(
     getNodeDisabledTag,
     getNodeTypeDisabled,
     getNodeModularPipelines,
+    getOppositeForPrettyName,
   ],
   (
     nodeIDs,
@@ -193,12 +203,14 @@ export const getNodeDataObject = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     typeDisabled,
-    nodeModularPipelines
+    nodeModularPipelines,
+    oppositeForPrettyName
   ) =>
     nodeIDs.reduce((obj, id) => {
       obj[id] = {
         id,
         name: nodeLabel[id],
+        oppositeForPrettyName: oppositeForPrettyName[id],
         type: nodeType[id],
         icon: getShortType(nodeDatasetType[id], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],
