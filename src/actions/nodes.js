@@ -76,7 +76,6 @@ export function addNodeMetadata(data) {
 export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {
     const { dataSource, node } = getState();
-
     dispatch(toggleNodeClicked(nodeID));
 
     if (dataSource === 'json' && nodeID && !node.fetched[nodeID]) {

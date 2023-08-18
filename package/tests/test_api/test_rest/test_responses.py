@@ -92,8 +92,7 @@ def assert_example_data(response_data):
     expected_nodes = [
         {
             "id": "f2e4bf0e",
-            "name": "Process Data",
-            "full_name": "process_data",
+            "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -102,8 +101,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "13399a82",
-            "name": "Raw Data",
-            "full_name": "uk.data_processing.raw_data",
+            "name": "uk.data_processing.raw_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -113,8 +111,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "f0ebef01",
-            "name": "Params: Train Test Split",
-            "full_name": "params:uk.data_processing.train_test_split",
+            "name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -124,8 +121,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "0ecea0de",
-            "name": "Model Inputs",
-            "full_name": "model_inputs",
+            "name": "model_inputs",
             "tags": ["train", "split"],
             "pipelines": ["__default__", "data_science", "data_processing"],
             "modular_pipelines": [],
@@ -135,8 +131,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "7b140b3f",
-            "name": "Train Model",
-            "full_name": "train_model",
+            "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
@@ -148,8 +143,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "f1f1425b",
-            "name": "Parameters",
-            "full_name": "parameters",
+            "name": "parameters",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": [],
@@ -159,19 +153,17 @@ def assert_example_data(response_data):
         },
         {
             "id": "d5a8b994",
-            "name": "Model",
-            "full_name": "uk.data_science.model",
+            "name": "uk.data_science.model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "uk.data_processing",
-            "name": "Data Processing",
-            "full_name": "uk.data_processing",
+            "name": "uk.data_processing",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -181,8 +173,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "uk.data_science",
-            "name": "Data Science",
-            "full_name": "uk.data_science",
+            "name": "uk.data_science",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -192,8 +183,7 @@ def assert_example_data(response_data):
         },
         {
             "id": "uk",
-            "name": "Uk",
-            "full_name": "uk",
+            "name": "uk",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -210,11 +200,12 @@ def assert_example_data(response_data):
             "children": [
                 {"id": "0ecea0de", "type": "data"},
                 {"id": "f1f1425b", "type": "parameters"},
+                {"id": "f0ebef01", "type": "parameters"},
                 {"id": "uk", "type": "modularPipeline"},
             ],
             "id": "__root__",
             "inputs": [],
-            "name": "Root",
+            "name": "__root__",
             "outputs": [],
         },
         "uk": {
@@ -224,7 +215,7 @@ def assert_example_data(response_data):
             ],
             "id": "uk",
             "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
-            "name": "Uk",
+            "name": "uk",
             "outputs": ["d5a8b994"],
         },
         "uk.data_processing": {
@@ -234,7 +225,7 @@ def assert_example_data(response_data):
             ],
             "id": "uk.data_processing",
             "inputs": ["f0ebef01", "13399a82"],
-            "name": "Data Processing",
+            "name": "uk.data_processing",
             "outputs": ["0ecea0de"],
         },
         "uk.data_science": {
@@ -244,7 +235,7 @@ def assert_example_data(response_data):
             ],
             "id": "uk.data_science",
             "inputs": ["0ecea0de", "f1f1425b"],
-            "name": "Data Science",
+            "name": "uk.data_science",
             "outputs": ["d5a8b994"],
         },
     }
@@ -254,12 +245,12 @@ def assert_example_data(response_data):
 
     # compare the rest
     assert response_data == {
-        "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
+        "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
         "layers": ["raw", "model_inputs"],
         "pipelines": [
-            {"id": "__default__", "name": "Default"},
-            {"id": "data_science", "name": "Data Science"},
-            {"id": "data_processing", "name": "Data Processing"},
+            {"id": "__default__", "name": "__default__"},
+            {"id": "data_science", "name": "data_science"},
+            {"id": "data_processing", "name": "data_processing"},
         ],
         "selected_pipeline": "__default__",
     }
@@ -292,8 +283,7 @@ def assert_example_data_from_file(response_data):
     expected_nodes = [
         {
             "id": "f2e4bf0e",
-            "name": "Process Data",
-            "full_name": "process_data",
+            "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -302,8 +292,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "13399a82",
-            "name": "Raw Data",
-            "full_name": "uk.data_processing.raw_data",
+            "name": "uk.data_processing.raw_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -313,8 +302,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "f0ebef01",
-            "name": "Params: Train Test Split",
-            "full_name": "params:uk.data_processing.train_test_split",
+            "name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
@@ -324,8 +312,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "0ecea0de",
-            "name": "Model Inputs",
-            "full_name": "model_inputs",
+            "name": "model_inputs",
             "tags": ["train", "split"],
             "pipelines": ["__default__", "data_science", "data_processing"],
             "modular_pipelines": [],
@@ -335,8 +322,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "7b140b3f",
-            "name": "Train Model",
-            "full_name": "train_model",
+            "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
@@ -348,8 +334,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "f1f1425b",
-            "name": "Parameters",
-            "full_name": "parameters",
+            "name": "parameters",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": [],
@@ -359,19 +344,17 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "d5a8b994",
-            "name": "Model",
-            "full_name": "uk.data_science.model",
+            "name": "uk.data_science.model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
             "modular_pipelines": ["uk", "uk.data_science"],
             "type": "data",
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "uk.data_processing",
-            "name": "Data Processing",
-            "full_name": "uk.data_processing",
+            "name": "uk.data_processing",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -381,8 +364,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "uk.data_science",
-            "name": "Data Science",
-            "full_name": "uk.data_science",
+            "name": "uk.data_science",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -392,8 +374,7 @@ def assert_example_data_from_file(response_data):
         },
         {
             "id": "uk",
-            "name": "Uk",
-            "full_name": "uk",
+            "name": "uk",
             "tags": [],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
@@ -414,7 +395,7 @@ def assert_example_data_from_file(response_data):
             ],
             "id": "__root__",
             "inputs": [],
-            "name": "Root",
+            "name": "__root__",
             "outputs": [],
         },
         "uk": {
@@ -424,7 +405,7 @@ def assert_example_data_from_file(response_data):
             ],
             "id": "uk",
             "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
-            "name": "Uk",
+            "name": "uk",
             "outputs": ["d5a8b994"],
         },
         "uk.data_processing": {
@@ -434,7 +415,7 @@ def assert_example_data_from_file(response_data):
             ],
             "id": "uk.data_processing",
             "inputs": ["f0ebef01", "13399a82"],
-            "name": "Data Processing",
+            "name": "uk.data_processing",
             "outputs": ["0ecea0de"],
         },
         "uk.data_science": {
@@ -444,7 +425,7 @@ def assert_example_data_from_file(response_data):
             ],
             "id": "uk.data_science",
             "inputs": ["0ecea0de", "f1f1425b"],
-            "name": "Data Science",
+            "name": "uk.data_science",
             "outputs": ["d5a8b994"],
         },
     }
@@ -454,12 +435,12 @@ def assert_example_data_from_file(response_data):
 
     # compare the rest
     assert response_data == {
-        "tags": [{"id": "split", "name": "Split"}, {"id": "train", "name": "Train"}],
+        "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
         "layers": ["raw", "model_inputs"],
         "pipelines": [
-            {"id": "__default__", "name": "Default"},
-            {"id": "data_science", "name": "Data Science"},
-            {"id": "data_processing", "name": "Data Processing"},
+            {"id": "__default__", "name": "__default__"},
+            {"id": "data_science", "name": "data_science"},
+            {"id": "data_processing", "name": "data_processing"},
         ],
         "selected_pipeline": "__default__",
     }
@@ -483,8 +464,7 @@ def assert_example_transcoded_data(response_data):
     expected_nodes = [
         {
             "id": "2a1abe98",
-            "name": "Process Data",
-            "full_name": "process_data",
+            "name": "process_data",
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "task",
@@ -493,19 +473,17 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "7c58d8e6",
-            "name": "Raw Data",
-            "full_name": "raw_data",
+            "name": "raw_data",
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
         {
             "id": "f0ebef01",
-            "name": "Params: Train Test Split",
-            "full_name": "params:uk.data_processing.train_test_split",
+            "name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
@@ -515,8 +493,7 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "0ecea0de",
-            "name": "Model Inputs",
-            "full_name": "model_inputs",
+            "name": "model_inputs",
             "tags": ["train", "split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
@@ -526,8 +503,7 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "2302ea78",
-            "name": "Train Model",
-            "full_name": "train_model",
+            "name": "train_model",
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "task",
@@ -536,8 +512,7 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "f1f1425b",
-            "name": "Parameters",
-            "full_name": "parameters",
+            "name": "parameters",
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
@@ -547,14 +522,13 @@ def assert_example_transcoded_data(response_data):
         },
         {
             "id": "1d06a0d7",
-            "name": "Model",
-            "full_name": "model",
+            "name": "model",
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
             "modular_pipelines": [],
             "layer": None,
-            "dataset_type": "io.memory_dataset.MemoryDataSet",
+            "dataset_type": "io.memory_dataset.MemoryDataset",
         },
     ]
 
@@ -574,8 +548,8 @@ class TestMainEndpoint:
         assert len(response.json()["nodes"]) == 6
         assert len(response.json()["edges"]) == 9
         assert response.json()["pipelines"] == [
-            {"id": "data_science", "name": "Data Science"},
-            {"id": "data_processing", "name": "Data Processing"},
+            {"id": "data_science", "name": "data_science"},
+            {"id": "data_processing", "name": "data_processing"},
         ]
 
 
@@ -598,6 +572,7 @@ class TestTranscodedDataset:
                 "pandas.parquet_dataset.ParquetDataSet",
             ],
             "run_command": "kedro run --to-outputs=model_inputs@pandas2",
+            "stats": {},
         }
 
 
@@ -614,8 +589,11 @@ class TestNodeMetadataEndpoint:
             == "def process_data(raw_data, train_test_split):\n        ...\n"
         )
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
-        assert metadata["inputs"] == ["Raw Data", "Params: Train Test Split"]
-        assert metadata["outputs"] == ["Model Inputs"]
+        assert metadata["inputs"] == [
+            "uk.data_processing.raw_data",
+            "params:uk.data_processing.train_test_split",
+        ]
+        assert metadata["outputs"] == ["model_inputs"]
         assert (
             metadata["run_command"]
             == "kedro run --to-nodes=uk.data_processing.process_data"
@@ -628,6 +606,7 @@ class TestNodeMetadataEndpoint:
             "filepath": "model_inputs.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
             "run_command": "kedro run --to-outputs=model_inputs",
+            "stats": {"columns": 12, "rows": 29768},
         }
 
     def test_data_node_metadata_for_free_input(self, client):
@@ -635,6 +614,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "raw_data.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
+            "stats": {},
         }
 
     def test_parameters_node_metadata(self, client):
@@ -677,8 +657,7 @@ class TestSinglePipelineEndpoint:
         expected_nodes = [
             {
                 "id": "0ecea0de",
-                "name": "Model Inputs",
-                "full_name": "model_inputs",
+                "name": "model_inputs",
                 "tags": ["train", "split"],
                 "pipelines": ["__default__", "data_science", "data_processing"],
                 "modular_pipelines": [],
@@ -688,8 +667,7 @@ class TestSinglePipelineEndpoint:
             },
             {
                 "id": "7b140b3f",
-                "name": "Train Model",
-                "full_name": "train_model",
+                "name": "train_model",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
                 "modular_pipelines": ["uk", "uk.data_science"],
@@ -701,8 +679,7 @@ class TestSinglePipelineEndpoint:
             },
             {
                 "id": "f1f1425b",
-                "name": "Parameters",
-                "full_name": "parameters",
+                "name": "parameters",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
                 "modular_pipelines": [],
@@ -712,19 +689,17 @@ class TestSinglePipelineEndpoint:
             },
             {
                 "id": "d5a8b994",
-                "name": "Model",
-                "full_name": "uk.data_science.model",
+                "name": "uk.data_science.model",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
                 "modular_pipelines": ["uk", "uk.data_science"],
                 "type": "data",
                 "layer": None,
-                "dataset_type": "io.memory_dataset.MemoryDataSet",
+                "dataset_type": "io.memory_dataset.MemoryDataset",
             },
             {
                 "id": "uk",
-                "name": "Uk",
-                "full_name": "uk",
+                "name": "uk",
                 "tags": [],
                 "pipelines": ["data_science"],
                 "type": "modularPipeline",
@@ -734,8 +709,7 @@ class TestSinglePipelineEndpoint:
             },
             {
                 "id": "uk.data_science",
-                "name": "Data Science",
-                "full_name": "uk.data_science",
+                "name": "uk.data_science",
                 "tags": [],
                 "pipelines": ["data_science"],
                 "type": "modularPipeline",
@@ -755,7 +729,7 @@ class TestSinglePipelineEndpoint:
                 ],
                 "id": "__root__",
                 "inputs": [],
-                "name": "Root",
+                "name": "__root__",
                 "outputs": [],
             },
             "uk": {
@@ -764,7 +738,7 @@ class TestSinglePipelineEndpoint:
                 ],
                 "id": "uk",
                 "inputs": ["0ecea0de", "f1f1425b"],
-                "name": "Uk",
+                "name": "uk",
                 "outputs": ["d5a8b994"],
             },
             "uk.data_science": {
@@ -774,7 +748,7 @@ class TestSinglePipelineEndpoint:
                 ],
                 "id": "uk.data_science",
                 "inputs": ["0ecea0de", "f1f1425b"],
-                "name": "Data Science",
+                "name": "uk.data_science",
                 "outputs": ["d5a8b994"],
             },
         }
@@ -785,14 +759,14 @@ class TestSinglePipelineEndpoint:
         )
         assert response_data == {
             "tags": [
-                {"id": "split", "name": "Split"},
-                {"id": "train", "name": "Train"},
+                {"id": "split", "name": "split"},
+                {"id": "train", "name": "train"},
             ],
             "layers": ["model_inputs", "raw"],
             "pipelines": [
-                {"id": "__default__", "name": "Default"},
-                {"id": "data_science", "name": "Data Science"},
-                {"id": "data_processing", "name": "Data Processing"},
+                {"id": "__default__", "name": "__default__"},
+                {"id": "data_science", "name": "data_science"},
+                {"id": "data_processing", "name": "data_processing"},
             ],
             "selected_pipeline": "data_science",
         }

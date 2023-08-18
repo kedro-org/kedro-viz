@@ -11,13 +11,14 @@ import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import {
   RESET_DATA,
+  TOGGLE_SHOW_FEATURE_HINTS,
+  TOGGLE_HOVERED_FOCUS_MODE,
+  TOGGLE_IGNORE_LARGE_WARNING,
+  TOGGLE_IS_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
-  TOGGLE_IGNORE_LARGE_WARNING,
-  TOGGLE_PRETTY_NAME,
-  TOGGLE_HOVERED_FOCUS_MODE,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -71,7 +72,12 @@ const combinedReducer = combineReducers({
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
-  prettyName: createReducer(true, TOGGLE_PRETTY_NAME, 'prettyName'),
+  isPrettyName: createReducer(true, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
+  showFeatureHints: createReducer(
+    true,
+    TOGGLE_SHOW_FEATURE_HINTS,
+    'showFeatureHints'
+  ),
   hoveredParameters: createReducer(
     false,
     TOGGLE_PARAMETERS_HOVERED,

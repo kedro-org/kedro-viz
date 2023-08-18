@@ -2,8 +2,9 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-metadata-bg: #{variables.$white-200};
-  --color-metadata-kind-token-bg: #{variables.$white-400};
+  --color-metadata-bg: #{variables.$grey-100};
+  --color-metadata-preview-bg: #{variables.$grey-200};
+  --color-metadata-kind-token-bg: #{variables.$grey-300};
   --color-plot-bg: #{variables.$white-400};
   --color-button-plot: #{variables.$blue-900};
   --color-button-plot-hovered: #{variables.$blue-900};
@@ -11,8 +12,9 @@
 }
 
 .kui-theme--dark {
-  --color-metadata-bg: #{variables.$slate-500};
-  --color-metadata-kind-token-bg: #{variables.$slate-0};
+  --color-metadata-bg: #{variables.$slate-300};
+  --color-metadata-preview-bg: #{variables.$slate-800};
+  --color-metadata-kind-token-bg: #{variables.$black-600};
   --color-plot-bg: #{variables.$slate-700};
   --color-button-plot: #{variables.$blue-900};
   --color-button-plot-hovered: #{variables.$blue-900};
@@ -21,18 +23,21 @@
 
 .pipeline-metadata {
   @extend %sidebar;
+
   position: absolute;
   top: -1px; /* Avoids pixel rounding gaps */
-  right: 0;
+  right: -1px;
   bottom: -1px;
   z-index: 2;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: variables.$metadata-sidebar-width-open;
-  padding: 6px 0 0 0;
+  padding: 6px 0 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--color-metadata-bg);
+  border-left: 1px solid var(--color-border-line);
   transform: translateX(100%);
   transition: transform ease 0.4s;
 
@@ -141,7 +146,7 @@
 
 .pipeline-metadata__value--kind-token {
   display: inline-block;
-  padding: 0.18em 0.6em 0.2em 0.6em;
+  padding: 0.18em 0.6em 0.2em;
   font-weight: 600;
   background: var(--color-metadata-kind-token-bg);
 
@@ -155,8 +160,8 @@
 
 .pipeline-metadata__value-list-expand {
   display: block;
-  margin: 0.6em 0 0 0;
-  padding: 0 0 0.12em 0;
+  margin: 0.6em 0 0;
+  padding: 0 0 0.12em;
   color: var(--color-text);
   font-size: 0.96em;
   background: none;
@@ -182,9 +187,10 @@
   position: relative;
   margin-left: 1em;
 
-  &:before {
+  &::before {
     position: absolute;
     margin-left: -1em;
+
     // For small square bullets
     content: '▪';
   }
@@ -203,7 +209,7 @@ $list-inline-spacing: 0.2em;
   }
 }
 
-.pipeline-metadata__value-list--commas li:not(:last-child):after {
+.pipeline-metadata__value-list--commas li:not(:last-child)::after {
   content: ', ';
 }
 
@@ -232,33 +238,35 @@ $list-inline-spacing: 0.2em;
 
 .pipeline-metadata__properties {
   flex-grow: 1;
-  height: 0px;
+  height: 0;
   margin-top: -3em;
   overflow-y: auto;
 }
 
-.pipeline-metadata__expand-plot {
+.pipeline-metadata__link {
   @extend %button;
 
+  align-items: center;
+  background-color: var(--color-button-plot);
   display: flex;
   flex-direction: row;
-  align-items: center;
+  justify-content: center;
   padding: 0;
-  background-color: var(--color-button-plot);
+  z-index: 1;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);
   }
 }
 
-.pipeline-metadata__expand-plot-icon {
+.pipeline-metadata__link-icon {
   width: 1.9em;
   height: 1.9em;
   margin: 0 6px 0 36px;
   fill: var(--color-button-text);
 }
 
-.pipeline-metadata__expand-plot-text {
+.pipeline-metadata__link-text {
   margin: 12px 10px 12px 5px;
   color: var(--color-button-text);
   font-size: 1.6em;
@@ -269,4 +277,41 @@ $list-inline-spacing: 0.2em;
     font-family: variables.$font-monospace;
     font-size: 0.87em;
   }
+}
+
+.pipeline-metadata__preview {
+  background: var(--color-metadata-preview-bg);
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pipeline-metadata__preview-shadow-box-right {
+  background-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0%),
+    var(--color-metadata-preview-bg)
+  );
+  border: none;
+  content: ' ';
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50px;
+}
+
+.pipeline-metadata__preview-shadow-box-bottom {
+  background-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0%),
+    var(--color-metadata-preview-bg)
+  );
+  border: none;
+  content: ' ';
+  width: 100%;
+  left: 0%;
+  position: absolute;
+  bottom: 0;
+  height: 40px;
 }

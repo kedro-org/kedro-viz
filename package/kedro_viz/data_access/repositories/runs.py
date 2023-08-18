@@ -5,6 +5,7 @@ import logging
 from functools import wraps
 from typing import Callable, Dict, Iterable, List, Optional
 
+from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
@@ -46,73 +47,71 @@ class RunsRepository:
     def get_all_runs(
         self, limit_amount: Optional[int] = None
     ) -> Optional[Iterable[RunModel]]:
-        all_runs = (
-            self._db_session_class()  # type: ignore
-            .query(RunModel)
-            .order_by(RunModel.id.desc())
-        )
+        with self._db_session_class() as session:  # type: ignore
+            query = select(RunModel).order_by(RunModel.id.desc())
 
-        if limit_amount:
-            all_runs = all_runs.limit(limit_amount)
-        all_runs = all_runs.all()
+            if limit_amount:
+                query = query.limit(limit_amount)
 
-        if all_runs:
-            self.last_run_id = all_runs[0].id
-        return all_runs
+            all_runs = session.execute(query).scalars().all()
+
+            if all_runs:
+                self.last_run_id = all_runs[0].id
+            return all_runs
 
     @check_db_session
     def get_run_by_id(self, run_id: str) -> Optional[RunModel]:
-        return self._db_session_class().query(RunModel).get(run_id)  # type: ignore
+        with self._db_session_class() as session:  # type: ignore
+            return session.get(RunModel, run_id)
 
     @check_db_session
     def get_runs_by_ids(self, run_ids: List[str]) -> Optional[Iterable[RunModel]]:
-        return (
-            self._db_session_class()  # type: ignore
-            .query(RunModel)
-            .filter(RunModel.id.in_(run_ids))
-            .all()
-        )
+        with self._db_session_class() as session:  # type: ignore
+            query = select(RunModel).where(RunModel.id.in_(run_ids))
+            return session.execute(query).scalars().all()
 
     @check_db_session
     def get_user_run_details(self, run_id: str) -> Optional[UserRunDetailsModel]:
-        return (
-            self._db_session_class()  # type: ignore
-            .query(UserRunDetailsModel)
-            .filter(UserRunDetailsModel.run_id == run_id)
-            .first()
-        )
+        with self._db_session_class() as session:  # type: ignore
+            query = select(UserRunDetailsModel).where(
+                UserRunDetailsModel.run_id == run_id
+            )
+            return session.execute(query).scalars().first()
 
     @check_db_session
     def get_new_runs(self) -> Optional[Iterable[RunModel]]:
-        query = self._db_session_class().query(RunModel)  # type: ignore
+        with self._db_session_class() as session:  # type: ignore
+            query = select(RunModel)
 
-        if self.last_run_id:
-            query = query.filter(RunModel.id > self.last_run_id)
+            if self.last_run_id:
+                query = query.where(RunModel.id > self.last_run_id)
 
-        return query.order_by(RunModel.id.desc()).all()
+            query = query.order_by(RunModel.id.desc())
+            return session.execute(query).scalars().all()
 
     @check_db_session
     def get_user_run_details_by_run_ids(
         self, run_ids: List[str]
     ) -> Optional[Dict[str, UserRunDetailsModel]]:
-        return {
-            user_run_details.run_id: user_run_details
-            for user_run_details in self._db_session_class()  # type: ignore
-            .query(UserRunDetailsModel)
-            .filter(UserRunDetailsModel.run_id.in_(run_ids))
-            .all()
-        }
+        with self._db_session_class() as session:  # type: ignore
+            query = select(UserRunDetailsModel).where(
+                UserRunDetailsModel.run_id.in_(run_ids)
+            )
+            results = session.execute(query)
+            return {
+                user_run_details.run_id: user_run_details
+                for user_run_details in results.scalars().all()
+            }
 
     @check_db_session
     def create_or_update_user_run_details(
         self, run_id: str, title: str, bookmark: bool, notes: str
     ) -> Optional[UserRunDetailsModel]:
         with self._db_session_class.begin() as session:  # type: ignore
-            user_run_details = (
-                session.query(UserRunDetailsModel)
-                .filter(UserRunDetailsModel.run_id == run_id)
-                .first()
+            query = select(UserRunDetailsModel).where(
+                UserRunDetailsModel.run_id == run_id
             )
+            user_run_details = session.execute(query).scalars().first()
             if not user_run_details:
                 user_run_details = UserRunDetailsModel(
                     run_id=run_id, title=title, bookmark=bookmark, notes=notes
@@ -122,4 +121,4 @@ class RunsRepository:
                 user_run_details.title = title
                 user_run_details.bookmark = bookmark
                 user_run_details.notes = notes
-        return user_run_details
+            return user_run_details

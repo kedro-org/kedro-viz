@@ -35,7 +35,7 @@
   }
 
   .pipeline-toggle {
-    margin-bottom: 0;
+    margin: 0;
   }
 }
 
@@ -44,11 +44,12 @@
 }
 
 .pipeline-settings-modal__column {
-  margin-bottom: 1.145em;
+  margin: 1.145em 0;
 }
 
 .pipeline-settings-modal__column,
 .pipeline-settings-modal__header {
+  align-items: baseline;
   display: flex;
   flex-wrap: wrap;
   font-size: 1.4em;
@@ -74,6 +75,8 @@
 
 .pipeline-settings-modal__state {
   @include mixins.flexColumn(3);
+
+  display: flex;
 }
 
 .pipeline-settings-modal__upgrade-reminder {

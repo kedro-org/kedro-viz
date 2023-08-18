@@ -20,6 +20,23 @@ export const useGeneratePathname = () => {
     history.push(url);
   }, [history]);
 
+  const toSelectedPipeline = useCallback(
+    (pipelineValue) => {
+      // Get the value from param if it exists first
+      // before checking from localStorage
+      const activePipeline = pipelineValue
+        ? pipelineValue
+        : getCurrentActivePipeline();
+
+      const url = generatePath(routes.flowchart.selectedPipeline, {
+        pipelineId: activePipeline,
+      });
+
+      history.push(url);
+    },
+    [history]
+  );
+
   const toSelectedNode = useCallback(
     (item) => {
       const activePipeline = getCurrentActivePipeline();
@@ -47,8 +64,45 @@ export const useGeneratePathname = () => {
   );
 
   return {
+    toSelectedPipeline,
     toFlowchartPage,
     toSelectedNode,
     toFocusedModularPipeline,
+  };
+};
+
+export const useGeneratePathnameForExperimentTracking = () => {
+  const history = useHistory();
+
+  const toExperimentTrackingPath = useCallback(() => {
+    const url = generatePath(routes.experimentTracking.main);
+
+    history.push(url);
+  }, [history]);
+
+  const toMetricsViewPath = useCallback(() => {
+    const url = generatePath(routes.experimentTracking.selectedView, {
+      view: 'Metrics',
+    });
+    history.push(url);
+  }, [history]);
+
+  const toSelectedRunsPath = useCallback(
+    (ids, view, isComparison) => {
+      const url = generatePath(routes.experimentTracking.selectedRuns, {
+        ids: ids.length === 1 ? ids[0] : ids.toString(),
+        view,
+        isComparison,
+      });
+
+      history.push(url);
+    },
+    [history]
+  );
+
+  return {
+    toExperimentTrackingPath,
+    toMetricsViewPath,
+    toSelectedRunsPath,
   };
 };

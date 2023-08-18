@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
-import { loadState, saveState } from './helpers';
+import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { settings, sidebarWidth } from '../config';
+import { settings, sidebarWidth, localStorageName, params } from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -14,7 +14,8 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
-  prettyName: settings.prettyName.default,
+  isPrettyName: settings.isPrettyName.default,
+  showFeatureHints: settings.showFeatureHints.default,
   ignoreLargeWarning: false,
   loading: {
     graph: false,
@@ -22,18 +23,18 @@ export const createInitialState = () => ({
     node: false,
   },
   visible: {
+    code: false,
+    exportBtn: true,
+    exportModal: false,
     graph: true,
     labelBtn: true,
     layerBtn: true,
-    exportBtn: true,
-    exportModal: false,
     metadataModal: false,
+    miniMap: true,
+    miniMapBtn: true,
+    modularPipelineFocusMode: null,
     settingsModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
-    code: false,
-    miniMapBtn: true,
-    miniMap: true,
-    modularPipelineFocusMode: null,
   },
   display: {
     globalToolbar: true,
@@ -51,7 +52,7 @@ export const createInitialState = () => ({
  * @return {Object} Combined state from localStorage
  */
 export const mergeLocalStorage = (state) => {
-  const localStorageState = loadState();
+  const localStorageState = loadLocalStorage(localStorageName);
   Object.keys(localStorageState).forEach((key) => {
     if (!state[key]) {
       delete localStorageState[key];
@@ -72,6 +73,34 @@ export const mergeLocalStorage = (state) => {
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
   const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
+
+  const search = new URLSearchParams(window.location.search);
+  const pipelineIdFromURL = search.get(params.pipeline);
+  const nodeIdFromUrl = search.get(params.selected);
+  const nodeNameFromUrl = search.get(params.selectedName);
+
+  const nodeTypes = ['parameters', 'task', 'data'];
+
+  if (pipelineIdFromURL) {
+    // Use main pipeline if pipeline from URL isn't recognised
+    if (!state.pipeline.ids.includes(pipelineIdFromURL)) {
+      state.pipeline.active = state.pipeline.main;
+    } else {
+      state.pipeline.active = pipelineIdFromURL;
+    }
+  }
+
+  // Set the nodeType.disable to false depending on what type of data it is, e.g. parameters, data, etc.
+  if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
+  }
+
+  // If there is a "selected_name" in the URL we need to ensure
+  // data tags is on so the app can redirect back to the selected node
+  if (nodeNameFromUrl) {
+    state.nodeType.disabled.data = false;
+  }
+
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
@@ -119,12 +148,6 @@ export const prepareNonPipelineState = (props) => {
  */
 const getInitialState = (props = {}) => {
   const nonPipelineState = prepareNonPipelineState(props);
-  saveState({
-    nodeType: {
-      // Default to disabled parameters and other types enabled
-      disabled: { parameters: true, task: false, data: false },
-    },
-  });
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||

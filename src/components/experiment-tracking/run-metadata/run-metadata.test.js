@@ -1,23 +1,10 @@
 import React from 'react';
 import RunMetadata from '.';
 import { runs } from '../../experiment-wrapper/mock-data';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { configure, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
-
-const emptyRun = [
-  {
-    id: '',
-    author: '',
-    bookmark: true,
-    gitSha: '',
-    gitBranch: '',
-    runCommand: '',
-    notes: '',
-    title: '',
-  },
-];
 
 const twoRuns = [
   {

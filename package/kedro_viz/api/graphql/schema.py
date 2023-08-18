@@ -10,8 +10,10 @@ import logging
 from typing import AsyncGenerator, List, Optional
 
 import strawberry
+from graphql.validation import NoSchemaIntrospectionCustomRule
 from semver import VersionInfo
 from strawberry import ID
+from strawberry.extensions import AddValidationRules
 from strawberry.tools import merge_types
 
 from kedro_viz import __version__
@@ -186,9 +188,9 @@ class VersionQuery:
         installed_version = VersionInfo.parse(__version__)
         latest_version = get_latest_version()
         return Version(
-            installed=installed_version,
+            installed=str(installed_version),
             is_outdated=is_running_outdated_version(installed_version, latest_version),
-            latest=latest_version or "",
+            latest=str(latest_version) or "",
         )
 
 
@@ -196,4 +198,7 @@ schema = strawberry.Schema(
     query=(merge_types("Query", (RunsQuery, VersionQuery))),
     mutation=Mutation,
     subscription=Subscription,
+    extensions=[
+        AddValidationRules([NoSchemaIntrospectionCustomRule]),
+    ],
 )

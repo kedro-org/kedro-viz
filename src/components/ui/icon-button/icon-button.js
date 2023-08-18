@@ -15,6 +15,7 @@ const IconButton = ({
   children,
   className,
   container = 'li',
+  dataTest,
   dataHeapEvent,
   disabled,
   icon,
@@ -22,6 +23,7 @@ const IconButton = ({
   labelTextPosition = 'right',
   onClick,
   visible,
+  ...rest
 }) => {
   const Icon = icon;
   let inTimeout;
@@ -46,7 +48,7 @@ const IconButton = ({
   };
 
   return visible ? (
-    <Wrapper container={container}>
+    <Wrapper container={container} {...rest}>
       <button
         aria-label={ariaLabel}
         aria-live={ariaLive}
@@ -54,6 +56,7 @@ const IconButton = ({
           'pipeline-icon-toolbar__button': true,
           'pipeline-icon-toolbar__button--active': active,
         })}
+        data-test={dataTest}
         data-heap-event={dataHeapEvent}
         disabled={disabled}
         onClick={onClick}
@@ -80,12 +83,14 @@ const IconButton = ({
   ) : null;
 };
 
-const Wrapper = ({ children, container: Container = 'li' }) => {
+const Wrapper = ({ children, container: Container = 'li', ...rest }) => {
   if (typeof Container === 'symbol') {
     return <React.Fragment>{children}</React.Fragment>;
   } else {
     return (
-      <Container className="pipeline-icon--container">{children}</Container>
+      <Container className="pipeline-icon--container" {...rest}>
+        {children}
+      </Container>
     );
   }
 };
@@ -95,6 +100,7 @@ IconButton.propTypes = {
   ariaLabel: PropTypes.string,
   ariaLive: PropTypes.string,
   children: PropTypes.node,
+  dataTest: PropTypes.string,
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.func,
@@ -108,6 +114,7 @@ IconButton.defaultProps = {
   ariaLabel: null,
   ariaLive: null,
   children: null,
+  dataTest: 'TestDefaultDataValue',
   dataHeapEvent: null,
   disabled: false,
   icon: null,

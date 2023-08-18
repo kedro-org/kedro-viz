@@ -1,26 +1,14 @@
-# pylint: disable=import-outside-toplevel
-
 import base64
 import json
 from pathlib import Path
 
 import pytest
-
-try:
-    from kedro_datasets import pandas, tracking, matplotlib, plotly  # isort:skip
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas,
-        tracking,
-        matplotlib,
-        plotly,
-    )
-
 from kedro.io import DataCatalog, Version
+from kedro_datasets import matplotlib, pandas, plotly, tracking
 
 from kedro_viz.api.graphql.types import Run
-from kedro_viz.database import create_db_engine
-from kedro_viz.models.experiment_tracking import Base, RunModel, UserRunDetailsModel
+from kedro_viz.database import make_db_session_factory
+from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
 
 
 @pytest.fixture
@@ -31,8 +19,7 @@ def example_run_ids():
 @pytest.fixture
 def example_db_session(tmp_path):
     session_store_location = Path(tmp_path / "session_store.db")
-    engine, session_class = create_db_engine(session_store_location)
-    Base.metadata.create_all(bind=engine)
+    session_class = make_db_session_factory(session_store_location)
     yield session_class
 
 

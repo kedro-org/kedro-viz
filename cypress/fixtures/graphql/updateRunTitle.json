@@ -1,0 +1,14 @@
+{
+    "data": {
+        "updateRunDetails": {
+            "run": {
+                "bookmark": false,
+                "id": "2022-12-24T21.05.59.296Z",
+                "notes": "",
+                "title": "2022-12-25T21.05.59.296Z",
+                "__typename": "Run"
+            },
+            "__typename": "UpdateRunDetailsSuccess"
+        }
+    }
+}

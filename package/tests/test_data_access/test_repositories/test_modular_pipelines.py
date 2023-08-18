@@ -1,6 +1,6 @@
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
 from kedro.pipeline import node
+from kedro_datasets.pandas import CSVDataSet
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
@@ -43,7 +43,7 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
-            full_name="data_science.model",
+            dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
@@ -58,7 +58,7 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
-            full_name="data_science.model",
+            dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,

@@ -3,7 +3,10 @@ import classnames from 'classnames';
 import { formatTimestamp } from '../../../utils/date-utils';
 import { usePrevious } from '../../../utils/hooks';
 import { HoverStateContext } from '../utils/hover-state-context';
-import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import {
+  ExperimentTrackingTooltip,
+  tooltipDefaultProps,
+} from '../tooltip/tooltip';
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import * as d3 from 'd3';
 
@@ -138,7 +141,7 @@ export const TimeSeries = ({
 
   return (
     <div className="time-series">
-      <MetricsChartsTooltip
+      <ExperimentTrackingTooltip
         content={showTooltip.content}
         direction={showTooltip.direction}
         position={showTooltip.position}

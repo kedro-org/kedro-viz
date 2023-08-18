@@ -6,18 +6,128 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Next release
+# Release 6.4.0
+
+## Major features and improvements
+
+- Add feature hint cards to illuminate features of the app. (#1454)
+- Add support for displaying dataset statistics in the metadata panel. (#1472)
+
+## Bug fixes and other changes
+
+- Fix dataset and global toolbar error with standalone React component (#1351)
+- Fix incorrect rendering of datasets in modular pipelines. (#1439)
+- Fix broken SVG/PNG exports in light theme. (#1463)
+- Fix `ImportError` as kedro-datasets is now lazily loaded (#1481).
+- Fix Sidebar search result based on Pretty name setting (#1485)
+- Fix issue of encountering a blank page in Safari when interacting with modular pipelines. (#1488)
+
+# Release 6.3.4
+
+## Bug fixes and other changes
+
+- Ensure URL parameters and parameter nodes are in sync and enable caching in the filter panel for task, data, and parameter nodes set by the user. (#1449)
+- Relax `semver` requirement bound. (#1452)
+- Improve the code block spacing and width. (#1455)
+
+# Release 6.3.3
+
+## Bug fixes and other changes
+
+- Bump `strawberry-graphql` to at least version 0.192 to support the new
+  `strawberry.union` syntax. (#1441)
+- Resolve the incompatibility between Kedro-Viz and Kedro versions prior to 0.18.11. (#1445)
+
+# Release 6.3.2
+
+## Bug fixes and other changes
+
+- Add validation for layers in transcoding datasets.(#1406)
+- Fix bug where flowchart wasn't updating on back/forward clicks after selecting a registered pipeline. (#1422)
+- Fix bug in layout for large pipeline warning message. (#1428)
+
+# Release 6.3.1
+
+## Bug fixes and other changes
+
+- Fix broken URL link between experiment tracking and flowchart when the pipeline is not the default one. (#1388)
+- Update UI font to match updated Kedro branding. (#1414)
+
+# Release 6.3.0
+
+## Major features and improvements
+
+- Update UI with new Kedro rebrand look and feel. (#1359)
+- Add support for new layer configuration in kedro-datasets version >=1.3.0. (#1373)
+- Add support for new `preview_args` configuration in kedro-datasets version >=1.3.0. (#1374)
+
+## Bug fixes and other changes
+
+- Fix bug where git caused a Kedro-Viz panic. (#1380)
+- Show original node input and output names in metadata panel. (#1381)
+
+# Release 6.2.0
+
+## Major features and improvements
+
+- Enable collaborative experiment tracking on Kedro-viz. (#1286)
+
+# Release 6.1.1
+
+## Bug fixes and other changes
+
+- Update API response headers for added application security. (#1355)
+
+# Release 6.1.0
+
+## Major features and improvements
+
+- Allow showing and hiding of metrics visualisations in experiment tracking. (#1313)
+
+## Bug fixes and other changes
+
+- Fix SQLAlchemy QueuePool Overflow Error. (#1301)
+- Bug fix for where some elements on the flowchart weren't clickable. (#1322)
+- Fixed link to Kedro experiment tracking docs. (#1325)
+- Bug fix for pretty name option in settings panel being updated even when clicking on cancel button. (#1341)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PRs to this release:
+
+- [MattRossetti](https://github.com/MattRossetti)
+
+# Release 6.0.1
+
+## Bug fixes and other changes
+
+- Fix SQLalchemy dependency conflict with Kedro. (#1300)
+
+# Release 6.0.0
+
+## Major features and improvements
+
+- Link plot and JSON dataset names from experiment tracking to the flowchart. (#1165)
+- Remove metrics plots from metadata panel and add link to the plots on experiment tracking. (#1268)
+- Bump minimum version of React from 16.8.6 to 17.0.2. (#1282)
+- Show preview of data in metadata panel. (#1288)
+
+## Bug fixes and other changes
+
+- Remove pandas and plotly dependencies from Kedro-viz. (#1268)
+
+# Release 5.3.0
 
 ## Major features and improvements
 
 - Enable the display of json objects with `react-json-viewer` in experiment tracking. (#1236)
 - Always show pretty and original node names in the metadata panel. (#1254)
+- Display delta value for metrics when comparing runs in experiment tracking. (#1257)
 
 ## Bug fixes and other changes
 
 - Fix run command for task nodes on metadata panel. (#1245)
 - Fix URL query params with expand all modular pipelines toggle. (#1256)
-- Display delta value for metrics when comparing runs in experiment tracking. (#1257)
 
 # Release 5.2.1
 

@@ -7,10 +7,12 @@ import spaceflights from '../../utils/data/spaceflights.mock.json';
 import demo from '../../utils/data/demo.mock.json';
 import { mockState } from '../../utils/state.mock';
 import { Flags } from '../../utils/flags';
-import { saveState } from '../../store/helpers';
+import { saveLocalStorage } from '../../store/helpers';
+import { localStorageName } from '../../config';
 import { prepareNonPipelineState } from '../../store/initial-state';
 import reducer from '../../reducers/index';
 import { TOGGLE_GRAPH_LOADING } from '../../actions/graph';
+import { prettifyName } from '../../utils/index';
 
 describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();
@@ -60,7 +62,7 @@ describe('App', () => {
 
     test('but does not override localStorage values', () => {
       const localState = { node: { disabled: { foo: true } } };
-      saveState(localState);
+      saveLocalStorage(localStorageName, localState);
       const wrapper = shallow(<App data={demo} />);
       wrapper.setProps({ data: spaceflights });
       expect(getState(wrapper).node.disabled).toEqual(localState.node.disabled);
@@ -99,18 +101,19 @@ describe('App', () => {
     const activePipeline = spaceflights.pipelines.find(
       (pipeline) => !demo.pipelines.map((d) => d.id).includes(pipeline.id)
     );
-    const { container, rerender } = render(<App data={spaceflights} />);
+    const { container } = render(<App data={spaceflights} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
-    const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
+    const menuOption = within(pipelineDropdown).getByText(
+      prettifyName(activePipeline.name)
+    );
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
       '.dropdown__label > span:first-child'
     );
 
     expect(pipelineDropdownLabel.innerHTML).toBe('Default');
     fireEvent.click(menuOption);
-    expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
-    rerender(<App data={demo} />);
-    // the default dropdown placeholder is 'Please select...' which is not returned right after a rerender
-    expect(pipelineDropdownLabel.innerHTML).toBe('Please select...');
+    expect(pipelineDropdownLabel.innerHTML).toBe(
+      prettifyName(activePipeline.name)
+    );
   });
 });

@@ -2,10 +2,10 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.extras.datasets.pandas import CSVDataSet
-from kedro.io import DataCatalog, MemoryDataSet
+from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
+from kedro_datasets.pandas import CSVDataSet
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
@@ -17,6 +17,13 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TranscodedDataNode,
 )
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset
+except ImportError:
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 def identity(x):
@@ -230,7 +237,7 @@ class TestAddDataSet:
         assert len(nodes_list) == 1
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
-        assert isinstance(graph_node.kedro_obj, MemoryDataSet)
+        assert isinstance(graph_node.kedro_obj, MemoryDataset)
 
     def test_add_dataset_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
@@ -308,7 +315,7 @@ class TestAddPipelines:
             "data_science",
             "data_processing",
         ]
-        assert {n.full_name for n in data_access_manager.nodes.as_list()} == {
+        assert {n.name for n in data_access_manager.nodes.as_list()} == {
             "process_data",
             "train_model",
             "uk.data_science.model",

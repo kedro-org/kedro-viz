@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
   changeFlag,
+  toggleShowFeatureHints,
+  toggleIsPrettyName,
   toggleSettingsModal,
-  togglePrettyName,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
-import { settings as settingsConfig } from '../../config';
+import { settings as settingsConfig, localStorageName } from '../../config';
+import { saveLocalStorage } from '../../store/helpers';
+import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -20,18 +23,27 @@ import './settings-modal.css';
 
 const SettingsModal = ({
   flags,
+  showFeatureHints,
   isOutdated,
+  isPrettyName,
   latestVersion,
   onToggleFlag,
-  onTogglePrettyName,
-  prettyName,
+  onToggleShowFeatureHints,
+  onToggleIsPrettyName,
   showSettingsModal,
   visible,
 }) => {
   const flagData = getFlagsState();
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [hasClickedApplyAndClose, setHasClickApplyAndClose] = useState(false);
-  const [isPrettyNameOn, setIsPrettyNameOn] = useState(prettyName);
+  const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
+  const [showFeatureHintsValue, setShowFeatureHintsValue] =
+    useState(showFeatureHints);
+  const [toggleFlags, setToggleFlags] = useState(flags);
+
+  useEffect(() => {
+    setShowFeatureHintsValue(showFeatureHints);
+  }, [showFeatureHints]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -43,7 +55,15 @@ const SettingsModal = ({
 
       // Delay the reset so the user can't see the button text change.
       resetTimeout = setTimeout(() => {
-        onTogglePrettyName(isPrettyNameOn);
+        const updatedFlags = Object.entries(toggleFlags);
+        updatedFlags.map((each) => {
+          const [name, value] = each;
+
+          return onToggleFlag(name, value);
+        });
+
+        onToggleIsPrettyName(isPrettyNameValue);
+        onToggleShowFeatureHints(showFeatureHintsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -57,20 +77,27 @@ const SettingsModal = ({
     };
   }, [
     hasClickedApplyAndClose,
-    isPrettyNameOn,
-    onTogglePrettyName,
+    showFeatureHintsValue,
+    isPrettyNameValue,
+    onToggleFlag,
+    onToggleShowFeatureHints,
+    onToggleIsPrettyName,
     showSettingsModal,
+    toggleFlags,
   ]);
 
   const resetStateCloseModal = () => {
     showSettingsModal(false);
     setHasNotInteracted(true);
+    setToggleFlags(flags);
+    setIsPrettyName(isPrettyName);
+    setShowFeatureHintsValue(showFeatureHintsValue);
   };
 
   return (
     <div className="pipeline-settings-modal">
       <Modal
-        closeModal={() => resetStateCloseModal()}
+        closeModal={resetStateCloseModal}
         title="Settings"
         visible={visible.settingsModal}
       >
@@ -85,13 +112,29 @@ const SettingsModal = ({
               </div>
             </div>
             <SettingsModalRow
-              id="prettyName"
-              name={settingsConfig['prettyName'].name}
-              toggleValue={isPrettyNameOn}
-              description={settingsConfig['prettyName'].description}
+              id="isPrettyName"
+              name={settingsConfig['isPrettyName'].name}
+              toggleValue={isPrettyNameValue}
+              description={settingsConfig['isPrettyName'].description}
               onToggleChange={(event) => {
-                setIsPrettyNameOn(event.target.checked);
+                setIsPrettyName(event.target.checked);
                 setHasNotInteracted(false);
+              }}
+            />
+            <SettingsModalRow
+              id="showFeatureHints"
+              name={settingsConfig['showFeatureHints'].name}
+              toggleValue={showFeatureHintsValue}
+              description={settingsConfig['showFeatureHints'].description}
+              onToggleChange={(event) => {
+                setShowFeatureHintsValue(event.target.checked);
+                setHasNotInteracted(false);
+
+                if (event.target.checked === false) {
+                  saveLocalStorage(localStorageName, {
+                    [localStorageKeyFeatureHintsStep]: 0,
+                  });
+                }
               }}
             />
           </div>
@@ -104,10 +147,14 @@ const SettingsModal = ({
                 key={value}
                 name={name}
                 onToggleChange={(event) => {
-                  onToggleFlag(value, event.target.checked);
+                  setToggleFlags({
+                    ...toggleFlags,
+                    [value]: event.target.checked,
+                  });
+
                   setHasNotInteracted(false);
                 }}
-                toggleValue={flags[value]}
+                toggleValue={toggleFlags[value]}
               />
             ))}
             {isOutdated ? (
@@ -132,16 +179,15 @@ const SettingsModal = ({
           </div>
           <div className="run-details-modal-button-wrapper">
             <Button
+              dataTest={'Cancel Button in Settings Modal'}
               mode="secondary"
-              onClick={() => {
-                showSettingsModal(false);
-                setHasNotInteracted(true);
-              }}
+              onClick={resetStateCloseModal}
               size="small"
             >
               Cancel
             </Button>
             <Button
+              dataTest={'Apply changes and close in Settings Modal'}
               disabled={hasNotInteracted}
               onClick={() => {
                 setHasClickApplyAndClose(true);
@@ -166,7 +212,8 @@ const SettingsModal = ({
 
 export const mapStateToProps = (state) => ({
   flags: state.flags,
-  prettyName: state.prettyName,
+  showFeatureHints: state.showFeatureHints,
+  isPrettyName: state.isPrettyName,
   visible: state.visible,
 });
 
@@ -177,8 +224,11 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFlag: (name, value) => {
     dispatch(changeFlag(name, value));
   },
-  onTogglePrettyName: (value) => {
-    dispatch(togglePrettyName(value));
+  onToggleIsPrettyName: (value) => {
+    dispatch(toggleIsPrettyName(value));
+  },
+  onToggleShowFeatureHints: (value) => {
+    dispatch(toggleShowFeatureHints(value));
   },
 });
 

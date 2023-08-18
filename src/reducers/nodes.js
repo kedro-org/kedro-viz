@@ -87,6 +87,12 @@ function nodeReducer(nodeState = {}, action) {
         runCommand: Object.assign({}, nodeState.runCommand, {
           [id]: data.run_command,
         }),
+        preview: Object.assign({}, nodeState.preview, {
+          [id]: data.preview,
+        }),
+        stats: Object.assign({}, nodeState.stats, {
+          [id]: data.stats,
+        }),
       });
     }
 

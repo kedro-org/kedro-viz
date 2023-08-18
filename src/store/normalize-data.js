@@ -1,4 +1,9 @@
-import { arrayToObject } from '../utils';
+import {
+  arrayToObject,
+  prettifyName,
+  stripNamespace,
+  prettifyModularPipelineNames,
+} from '../utils';
 
 /**
  * Create new default pipeline state instance
@@ -51,7 +56,11 @@ export const createInitialPipelineState = () => ({
       parameters: 'Parameters',
       modularPipeline: 'Modular Pipelines',
     },
-    disabled: {},
+    disabled: {
+      parameters: true,
+      task: false,
+      data: false,
+    },
   },
   edge: {
     ids: [],
@@ -115,7 +124,7 @@ const addPipeline = (state) => (pipeline) => {
     return;
   }
   state.pipeline.ids.push(id);
-  state.pipeline.name[id] = pipeline.name;
+  state.pipeline.name[id] = prettifyName(pipeline.name || '');
 };
 
 /**
@@ -130,8 +139,8 @@ const addNode = (state) => (node) => {
     return;
   }
   state.node.ids.push(id);
-  state.node.name[id] = node.name;
-  state.node.fullName[id] = node.full_name || node.name;
+  state.node.name[id] = prettifyName(stripNamespace(node.name || ''));
+  state.node.fullName[id] = node.name;
   state.node.type[id] = node.type;
   state.node.layer[id] = node.layer;
   state.node.pipelines[id] = node.pipelines
@@ -175,7 +184,7 @@ const addEdge =
 const addTag = (state) => (tag) => {
   const { id } = tag;
   state.tag.ids.push(id);
-  state.tag.name[id] = tag.name;
+  state.tag.name[id] = prettifyName(tag.name || '');
 };
 
 /**
@@ -218,7 +227,9 @@ const normalizeData = (data, expandAllPipelines) => {
   }
   if (data.modular_pipelines) {
     state.modularPipeline.ids = Object.keys(data.modular_pipelines);
-    state.modularPipeline.tree = data.modular_pipelines;
+    state.modularPipeline.tree = prettifyModularPipelineNames(
+      data.modular_pipelines
+    );
 
     // Case for expandAllPipelines in component props or within flag
     if (expandAllPipelines) {
@@ -232,8 +243,10 @@ const normalizeData = (data, expandAllPipelines) => {
         }
       });
     } else {
-      for (const child of data.modular_pipelines['__root__'].children) {
-        state.modularPipeline.visible[child.id] = true;
+      if (data.modular_pipelines && data.modular_pipelines['__root__']) {
+        for (const child of data.modular_pipelines['__root__'].children || []) {
+          state.modularPipeline.visible[child.id] = true;
+        }
       }
     }
   }

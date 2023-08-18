@@ -4,15 +4,23 @@ tracking datasets."""
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
-from kedro.io import AbstractVersionedDataSet, Version
+from kedro.io import Version
 from sqlalchemy import Column
 from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
 from .utils import get_dataset_type
+
+if TYPE_CHECKING:
+    try:
+        # kedro 0.18.12 onwards
+        from kedro.io import AbstractVersionedDataset
+    except ImportError:
+        # older versions
+        from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
@@ -70,7 +78,7 @@ class TrackingDatasetModel:
     dataset_name: str
     # dataset is the actual dataset instance, whereas dataset_type is a string.
     # e.g. "tracking.metrics_dataset.MetricsDataSet"
-    dataset: AbstractVersionedDataSet
+    dataset: "AbstractVersionedDataset"
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.
     runs: Dict[str, Any] = field(init=False, default_factory=dict)

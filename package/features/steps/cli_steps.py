@@ -1,5 +1,6 @@
 """Behave step definitions for the cli_scenarios feature."""
 
+from pathlib import Path
 from time import sleep, time
 
 import requests
@@ -76,7 +77,21 @@ def create_project_with_starter(context, starter):
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
     """Run ``pip install -r src/requirements.txt``."""
-    cmd = [context.pip, "install", "-r", str(context.requirements_path)]
+    requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+    cmd = [context.pip, "install", "-r", requirements_path]
+    res = run(cmd, env=context.env)
+
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
+
+
+@given("I have installed the lower-bound Kedro-viz requirements")
+def install_lower_bound_requirements(context):
+    cwd = Path(__file__).resolve().parent
+    requirements_path = cwd / "lower_requirements.txt"
+    cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
@@ -128,8 +143,13 @@ def check_kedroviz_up(context):
     try:
         assert context.result.poll() is None
         assert (
+            # for Kedro 0.17.5
+            "example_iris_data"
+            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
+        ) or (
+            # for Kedro 0.18.0 onwards
             "X_test"
-            == sorted(data_json["nodes"], key=lambda i: i["full_name"])[0]["full_name"]
+            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
         context.result.terminate()

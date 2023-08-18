@@ -18,10 +18,10 @@ export const PipelineList = ({
   asyncDataSource,
   onUpdateActivePipeline,
   pipeline,
-  prettyName,
+  isPrettyName,
   onToggleOpen,
 }) => {
-  const { toFlowchartPage } = useGeneratePathname();
+  const { toSelectedPipeline } = useGeneratePathname();
 
   if (!pipeline.ids.length && !asyncDataSource) {
     return null;
@@ -33,13 +33,13 @@ export const PipelineList = ({
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}
-        onChanged={(value) => {
-          onUpdateActivePipeline(value);
-          // Reset the URL to '/' when switching between different view
-          toFlowchartPage();
+        onChanged={(selectedPipeline) => {
+          onUpdateActivePipeline(selectedPipeline);
+          // Reset the URL to the current active pipeline when switching between different view
+          toSelectedPipeline(selectedPipeline.value);
         }}
         defaultText={
-          prettyName
+          isPrettyName
             ? pipeline.name[pipeline.active]
             : pipeline.active || 'Default'
         }
@@ -51,7 +51,7 @@ export const PipelineList = ({
               'pipeline-list__option--active': pipeline.active === id,
             })}
             value={id}
-            primaryText={prettyName ? pipeline.name[id] : id}
+            primaryText={isPrettyName ? pipeline.name[id] : id}
           />
         ))}
       </Dropdown>
@@ -62,7 +62,7 @@ export const PipelineList = ({
 export const mapStateToProps = (state) => ({
   asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
-  prettyName: state.prettyName,
+  isPrettyName: state.isPrettyName,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

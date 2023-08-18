@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import classnames from 'classnames';
 import { replaceMatches } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
-import classnames from 'classnames';
+
+import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
@@ -24,25 +26,10 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
     'experiment-tracking': '',
   });
 
-  // Reload state is to ensure it will call redirectLocation in FlowchartWrapper
-  // only when the page is reloaded.
-  const [reload, setReload] = useState(false);
-
-  useEffect(() => setReload(true), []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setReload(false);
-    }, 200);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar,
   });
-  const [dismissed, setDismissed] = useState(false);
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
 
@@ -61,34 +48,34 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
       })}
     >
       <h1 className="pipeline-title">Kedro-Viz</h1>
-      {displayGlobalToolbar ? (
-        <GraphQLProvider>
-          <Router>
+      <Router>
+        {displayGlobalToolbar ? (
+          <GraphQLProvider>
             <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
-            {versionData && isOutdated && !dismissed && (
+            {versionData && (
               <UpdateReminder
-                dismissed={dismissed}
-                setDismiss={setDismissed}
+                isOutdated={isOutdated}
                 versions={versionData.version}
               />
             )}
             <Switch>
               <Route exact path={sanitizedPathname}>
-                <FlowChartWrapper reload={reload} />
+                <FlowChartWrapper />
+                <FeatureHints />
               </Route>
               <Route path={`${sanitizedPathname}experiment-tracking`}>
                 <ExperimentWrapper />
               </Route>
             </Switch>
-          </Router>
-        </GraphQLProvider>
-      ) : (
-        <FlowChartWrapper />
-      )}
+          </GraphQLProvider>
+        ) : (
+          <FlowChartWrapper />
+        )}
+      </Router>
     </div>
   );
 };

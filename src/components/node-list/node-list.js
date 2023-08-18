@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
 import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
@@ -79,7 +79,9 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <h2 className="pipeline-nodelist-section__title">Filters</h2>
+                <h2 className="pipeline-nodelist-section__title">
+                  <span>Filters</span>
+                </h2>
                 <NodeListGroups
                   items={items}
                   groups={groups}

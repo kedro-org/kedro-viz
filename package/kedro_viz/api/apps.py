@@ -6,6 +6,7 @@ import time
 import zipfile
 from pathlib import Path
 
+import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
@@ -21,6 +22,8 @@ from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
+secure_headers = secure.Secure()
+
 
 def _create_etag() -> str:
     """Generate the current timestamp to use as etag."""
@@ -28,12 +31,20 @@ def _create_etag() -> str:
 
 
 def _create_base_api_app() -> FastAPI:
-    return FastAPI(
+    app = FastAPI(
         title="Kedro-Viz API",
         description="REST API for Kedro-Viz",
         version=__version__,
         default_response_class=EnhancedORJSONResponse,
     )
+
+    @app.middleware("http")
+    async def set_secure_headers(request, call_next):
+        response = await call_next(request)
+        secure_headers.framework.fastapi(response)
+        return response
+
+    return app
 
 
 def create_api_app_from_project(
@@ -51,7 +62,12 @@ def create_api_app_from_project(
     app = _create_base_api_app()
     app.include_router(rest_router)
     app.include_router(graphql_router)
-    app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
+
+    # Check for html directory existence.
+    if Path(_HTML_DIR).is_dir():
+        # The html is needed when kedro_viz is used in cli but not required when running
+        # frontend e2e tests via Cypress
+        app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.

@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
-# pylint: disable=missing-class-docstring,too-few-public-methods
+# pylint: disable=missing-class-docstring,too-few-public-methods,invalid-name
 import abc
 from typing import Any, Dict, List, Optional, Union
 
@@ -31,7 +31,6 @@ class BaseAPIResponse(BaseModel, abc.ABC):
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
     id: str
     name: str
-    full_name: str
     tags: List[str]
     pipelines: List[str]
     type: str
@@ -48,7 +47,6 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
             "example": {
                 "id": "6ab908b8",
                 "name": "split_data_node",
-                "full_name": "split_data_node",
                 "tags": [],
                 "pipelines": ["__default__", "ds"],
                 "modular_pipelines": [],
@@ -79,8 +77,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
         schema_extra = {
             "example": {
                 "id": "d7b83b05",
-                "name": "Master Table",
-                "full_name": "master_table",
+                "name": "master_table",
                 "tags": [],
                 "pipelines": ["__default__", "dp", "ds"],
                 "modular_pipelines": [],
@@ -125,6 +122,8 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     image: Optional[str]
     tracking_data: Optional[Dict]
     run_command: Optional[str]
+    preview: Optional[Dict]
+    stats: Optional[Dict]
 
     class Config:
         schema_extra = {
@@ -141,6 +140,7 @@ class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     original_type: str
     transcoded_types: List[str]
     run_command: Optional[str]
+    stats: Optional[Dict]
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
@@ -282,10 +282,10 @@ def get_default_response() -> GraphAPIResponse:
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(  # type: ignore
             default_selected_pipeline_id
         ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
+        edges=data_access_manager.get_edges_for_registered_pipeline(  # type: ignore
             default_selected_pipeline_id
         ),
         tags=data_access_manager.tags.as_list(),
@@ -293,7 +293,7 @@ def get_default_response() -> GraphAPIResponse:
             default_selected_pipeline_id
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=modular_pipelines_tree,  # type: ignore
         selected_pipeline=default_selected_pipeline_id,
     )
 

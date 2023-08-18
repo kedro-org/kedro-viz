@@ -3,32 +3,53 @@ from pathlib import Path
 from typing import Dict
 from unittest import mock
 
+import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
-
-try:
-    from kedro_datasets import (  # isort:skip
-        pandas,
-        tracking,
-    )
-except ImportError:
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        pandas,
-        tracking,
-    )
-
-from kedro.io import DataCatalog, MemoryDataSet, Version
+from kedro.framework.session.store import BaseSessionStore
+from kedro.io import DataCatalog, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
+from kedro_datasets import pandas, tracking
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.server import populate_data
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io import MemoryDataset
+except ImportError:
+    # older versions
+    # older versions
+    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 @pytest.fixture
 def data_access_manager():
     yield DataAccessManager()
+
+
+@pytest.fixture
+def session_store():
+    yield BaseSessionStore("dummy_path", "dummy_session_id")
+
+
+@pytest.fixture
+def sqlite_session_store(tmp_path):
+    yield SQLiteStore(tmp_path, "dummy_session_id")
+
+
+@pytest.fixture
+def example_stats_dict():
+    yield {
+        "companies": {"rows": 77096, "columns": 5},
+        "reviews": {"rows": 77096, "columns": 10},
+        "shuttles": {"rows": 77096, "columns": 13},
+        "model_inputs": {"rows": 29768, "columns": 12},
+    }
 
 
 @pytest.fixture
@@ -78,7 +99,7 @@ def example_catalog():
         data_sets={
             "uk.data_processing.raw_data": pandas.CSVDataSet(filepath="raw_data.csv"),
             "model_inputs": pandas.CSVDataSet(filepath="model_inputs.csv"),
-            "uk.data_science.model": MemoryDataSet(),
+            "uk.data_science.model": MemoryDataset(),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
@@ -147,10 +168,18 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    session_store: BaseSessionStore,
+    example_stats_dict: Dict,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines, None)
+    populate_data(
+        data_access_manager,
+        example_catalog,
+        example_pipelines,
+        session_store,
+        example_stats_dict,
+    )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
     )
@@ -165,11 +194,14 @@ def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
+    session_store: BaseSessionStore,
     mocker,
 ):
     del example_pipelines["__default__"]
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(data_access_manager, example_catalog, example_pipelines, None)
+    populate_data(
+        data_access_manager, example_catalog, example_pipelines, session_store, {}
+    )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
     )
@@ -184,6 +216,7 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
+    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -191,7 +224,8 @@ def example_transcoded_api(
         data_access_manager,
         example_transcoded_catalog,
         example_transcoded_pipelines,
-        None,
+        session_store,
+        {},
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
@@ -239,3 +273,30 @@ def mock_http_response():
             return self.data
 
     return MockHTTPResponse
+
+
+@pytest.fixture
+def example_data_frame():
+    data = {
+        "id": ["35029", "30292"],
+        "company_rating": ["100%", "67%"],
+        "company_location": ["Niue", "Anguilla"],
+        "total_fleet_count": ["4.0", "6.0"],
+        "iata_approved": ["f", "f"],
+    }
+    yield pd.DataFrame(data)
+
+
+@pytest.fixture
+def example_dataset_stats_hook_obj():
+    # Create an instance of DatasetStatsHook
+    yield DatasetStatsHook()
+
+
+@pytest.fixture
+def example_csv_dataset(tmp_path, example_data_frame):
+    new_csv_dataset = pandas.CSVDataSet(
+        filepath=Path(tmp_path / "model_inputs.csv").as_posix(),
+    )
+    new_csv_dataset.save(example_data_frame)
+    yield new_csv_dataset

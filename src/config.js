@@ -1,6 +1,13 @@
 export const pathRoot = './api';
 
 export const localStorageName = 'KedroViz';
+export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
+export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
+
+export const linkToFlowchartInitialVal = {
+  fromURL: null,
+  showGoBackBtn: false,
+};
 
 // These values are used in both SCSS and JS, and we don't have variable-sharing
 // across Sass and JavaScript, so they're defined in two places. If you update their
@@ -64,9 +71,14 @@ export const flags = {
 };
 
 export const settings = {
-  prettyName: {
+  isPrettyName: {
     name: 'Pretty name',
     description: 'Display a formatted name for the kedro nodes',
+    default: true,
+  },
+  showFeatureHints: {
+    name: 'New feature hints',
+    description: 'Enable or disable all new feature hints in the interface.',
     default: true,
   },
 };
@@ -92,19 +104,42 @@ export const shortTypeMapping = {
   'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
 
+export const tabLabels = ['Overview', 'Metrics', 'Plots'];
+
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id=',
-  selected: 'selected_id=',
-  pipeline: 'pipeline_id=',
+  focused: 'focused_id',
+  selected: 'selected_id',
+  selectedName: 'selected_name',
+  pipeline: 'pipeline_id',
+  run: 'run_ids',
+  view: 'view',
+  comparisonMode: 'comparison',
 };
 
-const activePipeline = `${params.pipeline}:pipelineId`;
+const activePipeline = `${params.pipeline}=:pipelineId`;
 
 export const routes = {
   flowchart: {
     main: '/',
-    focusedNode: `/?${activePipeline}&${params.focused}:id`,
-    selectedNode: `/?${activePipeline}&${params.selected}:id`,
+    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `/?${activePipeline}`,
+  },
+  experimentTracking: {
+    main: '/experiment-tracking',
+    selectedView: `/experiment-tracking?${params.view}=:view`,
+    selectedRuns: `/experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
+
+export const errorMessages = {
+  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
+  modularPipeline: 'Please check the value of "focused_id" in the URL',
+  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
+  runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
+};
+
+export const datasetStatLabels = ['rows', 'columns', 'file_size'];

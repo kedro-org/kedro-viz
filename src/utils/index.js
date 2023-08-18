@@ -77,3 +77,82 @@ export const replaceMatches = (str, toReplace) => {
     return str;
   }
 };
+
+/**
+ * Removes any parts of a string that match the regular expression
+ * @param {String} str The string to check
+ * @returns {String} The string with or without removed values
+ */
+export const stripNamespace = (str) => {
+  const pattern = new RegExp('[A-Za-z0-9-_]+\\.', 'g');
+  return str.replace(pattern, '');
+};
+
+/**
+ * Replaces any parts of a string that match the pattern with the target pattern and capitalizes each word in the string separated by a space
+ * @param {String} str The string to check
+ * @returns {String} The string with or without replaced values
+ */
+export const prettifyName = (str) => {
+  const replacedString = str
+    .replace(/-/g, ' ')
+    .replace(/_/g, ' ')
+    .replace(/:/g, ': ')
+    .trim();
+  return replacedString.replace(/(^|\s)\S/g, (match) => match.toUpperCase());
+};
+
+/**
+ * Prettifies name property of the nested object in a modularPipeline
+ * @param {Object} modularPipelines The object whose nested object property needs to be prettified
+ * @returns {Object} The object with or without prettified name inside the nested object
+ */
+export const prettifyModularPipelineNames = (modularPipelines) => {
+  for (const key in modularPipelines) {
+    if (modularPipelines.hasOwnProperty(key)) {
+      const modularPipeline = modularPipelines[key];
+
+      if (modularPipeline.hasOwnProperty('name')) {
+        modularPipelines[key] = {
+          ...modularPipeline,
+          name: prettifyName(modularPipeline['name']),
+        };
+      }
+    }
+  }
+  return modularPipelines;
+};
+
+/**
+ * Formats file size for the dataset metadata stats
+ * @param {Number} fileSizeInBytes The file size in bytes
+ * @returns {String} The formatted file size as e.g. "1.1KB"
+ */
+export const formatFileSize = (fileSizeInBytes) => {
+  // This is to convert bytes to KB or MB.
+  const conversionUnit = 1000;
+
+  if (!fileSizeInBytes) {
+    // dataset not configured
+    return 'N/A';
+  } else if (fileSizeInBytes < conversionUnit) {
+    // Less than 1 KB
+    return `${fileSizeInBytes} bytes`;
+  } else if (fileSizeInBytes < conversionUnit * conversionUnit) {
+    //  Less than 1 MB
+    const sizeInKB = fileSizeInBytes / conversionUnit;
+    return `${sizeInKB.toFixed(1)}KB`;
+  } else {
+    const sizeInMB = fileSizeInBytes / (conversionUnit * conversionUnit);
+    return `${sizeInMB.toFixed(1)}MB`;
+  }
+};
+
+/**
+ * Formats a number to a comma separated string
+ * @param {Number} number The number to be formatted
+ * @returns {String} The formatted number e.g. 2500 -> 2,500
+ */
+export const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

@@ -20,7 +20,7 @@ const getNodeType = (state) => state.node.type;
 const getNodeDatasetType = (state) => state.node.datasetType;
 const getNodeLayer = (state) => state.node.layer;
 const getHoveredNode = (state) => state.node.hovered;
-const getPrettyName = (state) => state.prettyName;
+const getIsPrettyName = (state) => state.isPrettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
@@ -108,8 +108,18 @@ export const getNodeSelected = createSelector(
  * Returns node label based on if pretty name is turned on/off
  */
 export const getNodeLabel = createSelector(
-  [getPrettyName, getNodeName, getNodeFullName],
-  (prettyName, nodeName, nodeFullName) => (prettyName ? nodeName : nodeFullName)
+  [getIsPrettyName, getNodeName, getNodeFullName],
+  (isPrettyName, nodeName, nodeFullName) =>
+    isPrettyName ? nodeName : nodeFullName
+);
+
+/**
+ * Returns opposite node label based on if pretty name is turned on/off
+ */
+export const getOppositeForPrettyName = createSelector(
+  [getIsPrettyName, getNodeName, getNodeFullName],
+  (isPrettyName, nodeName, nodeFullName) =>
+    isPrettyName ? nodeFullName : nodeName
 );
 
 /**
@@ -181,6 +191,7 @@ export const getNodeDataObject = createSelector(
     getNodeDisabledTag,
     getNodeTypeDisabled,
     getNodeModularPipelines,
+    getOppositeForPrettyName,
   ],
   (
     nodeIDs,
@@ -192,12 +203,14 @@ export const getNodeDataObject = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     typeDisabled,
-    nodeModularPipelines
+    nodeModularPipelines,
+    oppositeForPrettyName
   ) =>
     nodeIDs.reduce((obj, id) => {
       obj[id] = {
         id,
         name: nodeLabel[id],
+        oppositeForPrettyName: oppositeForPrettyName[id],
         type: nodeType[id],
         icon: getShortType(nodeDatasetType[id], nodeType[id]),
         modularPipelines: nodeModularPipelines[id],

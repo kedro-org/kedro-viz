@@ -8,10 +8,23 @@
   width: 100%;
 }
 
-.chart-types-wrapper {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.metrics-plots-wrapper__header {
   display: flex;
-  width: 206px;
+  justify-content: space-between;
+
+  .dropdown {
+    margin-right: 30px;
+  }
+}
+
+.metrics-plots-wrapper__charts-empty {
+  font-size: 13px;
+}
+
+.chart-types-wrapper {
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  display: flex;
+  width: 236px;
 
   &__tab {
     cursor: pointer;

@@ -1,6 +1,6 @@
 import React from 'react';
 import MetaData, { mapDispatchToProps } from './metadata';
-import { togglePrettyName } from '../../actions';
+import { toggleIsPrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleNodeClicked, addNodeMetadata } from '../../actions/nodes';
 import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
@@ -9,9 +9,11 @@ import nodePlot from '../../utils/data/node_plot.mock.json';
 import nodeParameters from '../../utils/data/node_parameters.mock.json';
 import nodeTask from '../../utils/data/node_task.mock.json';
 import nodeData from '../../utils/data/node_data.mock.json';
+import nodeDataStats from '../../utils/data/node_data_stats.mock.json';
 import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
 import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
 import nodeJSONData from '../../utils/data/node_json_data.mock.json';
+import { formatFileSize } from '../../utils';
 
 const modelInputDataSetNodeId = '23c94afb';
 const splitDataTaskNodeId = '65d0d789';
@@ -85,7 +87,7 @@ describe('MetaData', () => {
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
         beforeLayoutActions: [
-          () => togglePrettyName(false),
+          () => toggleIsPrettyName(false),
           () => toggleTypeDisabled('parameters', false),
         ],
         afterLayoutActions: [
@@ -108,7 +110,7 @@ describe('MetaData', () => {
       };
       const wrapper = setup.mount(<MetaData visible={true} />, {
         beforeLayoutActions: [
-          () => togglePrettyName(true),
+          () => toggleIsPrettyName(true),
           () => toggleTypeDisabled('parameters', false),
         ],
         afterLayoutActions: [
@@ -356,6 +358,37 @@ describe('MetaData', () => {
         );
       });
     });
+
+    describe('when there is stats returned by the backend', () => {
+      it('shows the node statistics', () => {
+        const wrapper = mount({
+          nodeId: modelInputDataSetNodeId,
+          mockMetadata: nodeDataStats,
+        });
+
+        expect(wrapper.find('[data-label="Dataset statistics:"]').length).toBe(
+          1
+        );
+        expect(wrapper.find('[data-test="stats-label-rows"]').length).toBe(1);
+        expect(wrapper.find('[data-test="stats-label-columns"]').length).toBe(
+          1
+        );
+        expect(wrapper.find('[data-test="stats-label-file_size"]').length).toBe(
+          1
+        );
+
+        expect(
+          parseInt(wrapper.find('[data-test="stats-value-rows"]').text())
+        ).toEqual(nodeDataStats.stats.rows);
+        expect(
+          parseInt(wrapper.find('[data-test="stats-value-columns"]').text())
+        ).toEqual(nodeDataStats.stats.columns);
+        expect(
+          wrapper.find('[data-test="stats-value-file_size"]').text()
+        ).toEqual(formatFileSize(nodeDataStats.stats.file_size));
+      });
+    });
+
     describe('Transcoded dataset nodes', () => {
       it('shows the node original type', () => {
         const wrapper = mount({
@@ -363,9 +396,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual([
-          'spark.spark_dataset.SparkDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['SparkDataSet']);
       });
 
       it('shows the node transcoded type', () => {
@@ -374,9 +405,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual([
-          'pandas.parquet_dataset.ParquetDataSet',
-        ]);
+        expect(textOf(rowValue(row))).toEqual(['ParquetDataSet']);
       });
     });
     describe('Metrics dataset nodes', () => {
@@ -390,20 +419,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-
-      describe('shows the time series plot for metrics node', () => {
+      it('shows the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeMetricsData,
         });
-        it('shows the plotly chart', () => {
-          expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
-        });
-        it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
-        });
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
@@ -418,12 +439,12 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-      it('does not show the plotly chart', () => {
+      it('shows the experiment link', () => {
         const wrapper = mount({
           nodeId: modelInputDataSetNodeId,
           mockMetadata: nodeJSONData,
         });
-        expect(wrapper.find('.pipeline-metadata__plot').length).toBe(0);
+        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
@@ -437,9 +458,7 @@ describe('MetaData', () => {
           expect(wrapper.find('.pipeline-metadata__plot').length).toBe(1);
         });
         it('shows the plotly expand button', () => {
-          expect(wrapper.find('.pipeline-metadata__expand-plot').length).toBe(
-            1
-          );
+          expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
         });
       });
     });

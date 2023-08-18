@@ -24,19 +24,19 @@ describe('Plotly Modal', () => {
 
   it('modal closes when collapse button is clicked', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
-    wrapper.find('.pipeline-plot-modal__collapse-plot').simulate('click');
+    wrapper.find('.pipeline-metadata-modal__collapse-plot').simulate('click');
     expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
   });
 
   it('modal closes when back button is clicked', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
-    wrapper.find('.pipeline-plot-modal__back').simulate('click');
+    wrapper.find('.pipeline-metadata-modal__back').simulate('click');
     expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
   });
 
   it('shows plot when a plot node is clicked', () => {
     const wrapper = mount({ nodeId: metricsNodeID });
-    expect(wrapper.find('.pipeline-plot-modal__header').length).toBe(1);
+    expect(wrapper.find('.pipeline-metadata-modal__header').length).toBe(1);
     expect(wrapper.find('.pipeline-plotly-chart').length).toBe(1);
   });
 });

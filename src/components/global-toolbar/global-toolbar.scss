@@ -3,6 +3,7 @@
 
 .pipeline-global-toolbar {
   background: var(--color-global-toolbar-background);
+  border-right: 1px solid var(--color-border-line);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -31,6 +32,7 @@
 .pipeline-menu-button--link {
   &:hover {
     background-color: var(--color-bg-2);
+    border-right: 1px solid var(--color-border-line);
   }
 }
 
@@ -45,7 +47,8 @@
 }
 
 .pipeline-global-routes-toolbar a.active .pipeline-menu-button--link {
-  background-color: var(--color-bg-2);
+  background-color: var(--color-global-toolbar-active-btn);
+  border-right: 1px solid var(--color-border-line);
 }
 
 .pipeline-global-routes-toolbar a.active .pipeline-menu-button--link svg {

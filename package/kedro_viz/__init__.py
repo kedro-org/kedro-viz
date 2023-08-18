@@ -1,3 +1,3 @@
 """Kedro plugin for visualising a Kedro pipeline"""
 
-__version__ = "5.2.1"
+__version__ = "6.4.0"

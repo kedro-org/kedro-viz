@@ -1,9 +1,16 @@
 import React from 'react';
 import Accordion from '.';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import { configure, mount, shallow } from 'enzyme';
 
 configure({ adapter: new Adapter() });
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: 'localhost:3000/',
+  }),
+}));
 
 describe('Accordion', () => {
   it('renders without crashing', () => {

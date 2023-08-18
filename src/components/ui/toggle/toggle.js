@@ -21,6 +21,7 @@ const Toggle = ({
   >
     <input
       id={`pipeline-toggle-input-${id}`}
+      data-test={`pipeline-toggle-input-${id}`}
       className="pipeline-toggle-input"
       type="checkbox"
       data-heap-event={`visible.code.${checked}`}

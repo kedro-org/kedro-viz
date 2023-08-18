@@ -3,7 +3,10 @@ import classnames from 'classnames';
 import * as d3 from 'd3';
 import { HoverStateContext } from '../utils/hover-state-context';
 import { v4 as uuidv4 } from 'uuid';
-import { MetricsChartsTooltip, tooltipDefaultProps } from '../tooltip/tooltip';
+import {
+  ExperimentTrackingTooltip,
+  tooltipDefaultProps,
+} from '../tooltip/tooltip';
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import { formatTimestamp } from '../../../utils/date-utils';
 
@@ -20,8 +23,6 @@ const paddingTopBottom = 38;
 const paddingLeftRight = 80;
 const axisGapBuffer = 3;
 const selectedMarkerRotate = [45, 0, 0];
-
-const selectedMarkerColors = ['#0084B2', '#FFBC00', '#31E27B'];
 
 const yAxis = {};
 const yScales = {};
@@ -164,7 +165,7 @@ export const ParallelCoordinates = ({
 
   return (
     <div className="parallel-coordinates">
-      <MetricsChartsTooltip
+      <ExperimentTrackingTooltip
         content={showTooltip.content}
         direction={showTooltip.direction}
         position={showTooltip.position}
@@ -360,9 +361,9 @@ export const ParallelCoordinates = ({
               return (
                 <React.Fragment key={uuidv4()}>
                   <path
+                    className={`marker-path--selected-${i}`}
                     d={`${d3.symbol(selectedMarkerShape[i], 20)()}`}
                     key={`marker-path--${index}`}
-                    stroke={selectedMarkerColors[i]}
                     transform={`translate(${transformX}, ${transformY}) rotate(${rotate})`}
                   />
                   <text
