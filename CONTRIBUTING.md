@@ -323,7 +323,10 @@ If the lower-bound e2e test fails, it indicates that some dependencies may not w
 
 ## Release process
 
-- Update [RELEASE.md](./RELEASE.md) with the latest release note.
+- Create a branch for release. The branch name should follow the pattern `release/* (e.g. release/6.4.0)`
+- Update [RELEASE.md](./RELEASE.md) with the latest release note. 
+
+> _Notes_: The heading for the release should follow the pattern `# Release <release-number> (e.g. # Release 6.4.0)`
 - Bump the release version number by running:
 
 ```bash
@@ -333,7 +336,10 @@ make version VERSION=<version-to-release>
 > _Notes_: Kedro-Viz uses [Semantic Versioning](https://semver.org/) as the versioning scheme.
 
 - Commit, raise a PR and get it merged into `main`.
-- Once the release commit is in `main`, a github action workflow gets triggered which generates a release tag and release notes based on RELEASE.md file to publish.
+- Once the release commit is in `main`, a github action workflow gets triggered which generates a release tag and notes based on [RELEASE.md](./RELEASE.md) to publish.
+
+> _Notes_: The release tag corresponds to `__version__` from `package/kedro_viz/__init__.py` and the release notes is the content under the heading `# Release <release-number> (e.g. # Release 6.4.0)` in [RELEASE.md](./RELEASE.md).
+
 - Once the release tag is published on Github, a CircleCI job will be triggered to push it to npm and PyPI accordingly.
 - Once the new version is on PyPI, you can deploy it to https://demo.kedro.org by merging `main` into the `demo` branch. A CI job will automatically build a container using the [demo project](./demo-project) with the newly released version and deploy it.
 
