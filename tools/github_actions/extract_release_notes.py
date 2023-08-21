@@ -16,14 +16,12 @@ def extract_section(filename, heading):
                 end_line = i
                 break
 
-    if start_line is not None:
-        if end_line is None:
-            end_line = len(lines)
-        section_lines = lines[start_line + 1 : end_line]
-        section = "".join(section_lines).strip()
-        return section
-    else:
+    if start_line is None:
         return None
+
+    end_line = end_line or len(lines)
+    section = "".join(lines[start_line + 1 : end_line]).strip()
+    return section
 
 
 if __name__ == "__main__":
