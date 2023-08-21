@@ -63,6 +63,7 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
     layer: Optional[str]
     dataset_type: Optional[str]
+    stats: Optional[Dict]
 
     class Config:
         schema_extra = {
@@ -75,6 +76,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
                 "type": "data",
                 "layer": "primary",
                 "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "stats": {"rows": 10, "columns": 2, "file_size": 2300},
             }
         }
 
