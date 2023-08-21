@@ -44,6 +44,13 @@ export const searchTree = (
       // if the child node is a leaf, simply search the leaf's name
       // and add to the search result if there is a match.
       const found = searchString(childNode.data.name, searchValue);
+      const foundOpposite = searchString(
+        childNode.data.oppositeForPrettyName,
+        searchValue
+      );
+
+      //First looking for match based on prettyName flag and render accordingly
+      // and if not found than rendering based on opposite of prettyName flag
       if (found) {
         foundChildren.push({
           ...childNode,
@@ -55,6 +62,19 @@ export const searchTree = (
             ),
           },
         });
+      } else {
+        if (foundOpposite) {
+          foundChildren.push({
+            ...childNode,
+            data: {
+              ...childNode.data,
+              highlightedLabel: getHighlightedText(
+                childNode.data.oppositeForPrettyName,
+                searchValue
+              ),
+            },
+          });
+        }
       }
     } else {
       // if the child node is a tree, recursively search it
