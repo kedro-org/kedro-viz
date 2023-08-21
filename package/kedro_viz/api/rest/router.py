@@ -104,15 +104,11 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 async def deploy_kedro_viz(user_credentials: UserCredentials):
     awsRegion = user_credentials.awsRegion
     bucketName = user_credentials.bucketName
-    accessKey = user_credentials.accessKey
-    secretAccessKey = user_credentials.secretAccessKey
 
     response_data = {
         "message": "This should kick off the deploy to S3",
         "awsRegion": awsRegion,
         "bucketName": bucketName,
-        "accessKey": accessKey,
-        "secretAccessKey": secretAccessKey,
     }
 
     return JSONResponse(status_code=200, content=response_data)

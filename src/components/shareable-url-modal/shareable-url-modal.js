@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { toggleShareableUrlModal } from '../../actions';
-// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import Button from '../ui/button';
 import Input from '../ui/input';
@@ -23,7 +22,6 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   };
 
   const handleSubmit = async () => {
-    console.log('inputValues: ', inputValues);
     try {
       const response = await fetch('/api/deploy', {
         method: 'POST',
@@ -40,46 +38,18 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
     }
   };
 
-  // const handleFileUpload = async (file) => {
-  //   const s3Client = new S3Client({
-  //     region: inputValues.awsRegion,
-  //     credentials: {
-  //       accessKeyId: inputValues.accessKey,
-  //       secretAccessKey: inputValues.secretAccessKey,
-  //     },
-  //   });
-
-  //   try {
-  //     const params = {
-  //       Bucket: inputValues.bucketName,
-  //       Key: file.name,
-  //       Body: file,
-  //     };
-
-  //     await s3Client.send(new PutObjectCommand(params));
-  //     console.log('File uploaded successfully.');
-  //   } catch (error) {
-  //     console.error('Error uploading file:', error);
-  //   }
-  // };
-
-  // const handleFileInput = (event) => {
-  //   const selectedFile = event.target.files[0];
-  //   if (selectedFile) {
-  //     handleFileUpload(selectedFile);
-  //   }
-  // };
-
   return (
     <Modal
       className="shareable-url-modal"
       closeModal={() => onToggle(false)}
-      message="Please enter your AWS credentials and a hosted link will be generated."
+      message="Please enter your AWS information and a hosted link will be generated."
       title="Deploy and Share"
       visible={visible.shareableUrlModal}
     >
       <div className="shareable-url-modal__input-wrapper">
-        <div className="shareable-url-modal__input-label">AWS Region</div>
+        <div className="shareable-url-modal__input-label">
+          AWS Bucket Region
+        </div>
         <Input
           onChange={(value) => onChange('awsRegion', value)}
           placeholder="Enter details"
@@ -96,31 +66,10 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           size="large"
         />
       </div>
-      <div className="shareable-url-modal__input-wrapper">
-        <div className="shareable-url-modal__input-label">Access Key ID</div>
-        <Input
-          onChange={(value) => onChange('accessKey', value)}
-          placeholder="Enter details"
-          resetValueTrigger={visible}
-          size="large"
-        />
-      </div>
-      <div className="shareable-url-modal__input-wrapper">
-        <div className="shareable-url-modal__input-label">
-          Secret Access Key
-        </div>
-        <Input
-          onChange={(value) => onChange('secretAccessKey', value)}
-          placeholder="Enter details"
-          resetValueTrigger={visible}
-          size="large"
-        />
-      </div>
       <div className="shareable-url-modal__button-wrapper">
         <Button mode="secondary" onClick={() => onToggle(false)} size="small">
           Cancel
         </Button>
-        {/* <input type="file" accept="*" onChange={handleFileInput} /> */}
         <Button disabled={hasNotInteracted} size="small" onClick={handleSubmit}>
           Deploy
         </Button>
