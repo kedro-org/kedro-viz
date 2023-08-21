@@ -95,7 +95,7 @@ $padding-top-bottom: 7px;
   &::before {
     content: attr(data-value);
     overflow: hidden;
-    white-space: pre;
+    word-break: break-all;
     background-color: transparent;
     color: transparent;
     transition: background-color $duration-input-transition;
