@@ -32,20 +32,23 @@ def patched_create_api_app_from_file(mocker):
 
 
 @pytest.fixture(autouse=True)
-def patched_load_data(mocker, example_catalog, example_pipelines, session_store):
+def patched_load_data(
+    mocker, example_catalog, example_pipelines, session_store, example_stats_dict
+):
     yield mocker.patch(
         "kedro_viz.server.kedro_data_loader.load_data",
         return_value=(
             example_catalog,
             example_pipelines,
             session_store,
+            example_stats_dict,
         ),
     )
 
 
 @pytest.fixture
 def patched_load_data_with_sqlite_session_store(
-    mocker, example_catalog, example_pipelines, sqlite_session_store
+    mocker, example_catalog, example_pipelines, sqlite_session_store, example_stats_dict
 ):
     yield mocker.patch(
         "kedro_viz.server.kedro_data_loader.load_data",
@@ -53,6 +56,7 @@ def patched_load_data_with_sqlite_session_store(
             example_catalog,
             example_pipelines,
             sqlite_session_store,
+            example_stats_dict,
         ),
     )
 

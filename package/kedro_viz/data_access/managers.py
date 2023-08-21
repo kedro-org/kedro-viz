@@ -62,6 +62,7 @@ class DataAccessManager:
         )
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
+        self.dataset_stats = {}
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -90,6 +91,28 @@ class DataAccessManager:
         for registered_pipeline_id, pipeline in pipelines.items():
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
+
+    def add_dataset_stats(self, stats_dict: Dict):
+        """Add dataset statistics (eg. rows, columns, file_size) as a dictionary.
+        This will help in showing the relevant stats in the metadata panel
+
+        Args:
+            stats_dict: A dictionary object loaded from stats.json file in the kedro project
+        """
+
+        self.dataset_stats = stats_dict
+
+    def get_stats_for_data_node(
+        self, data_node: Union[DataNode, TranscodedDataNode]
+    ) -> Dict:
+        """Returns the dataset statistics for the data node if found else returns an
+        empty dictionary
+
+        Args:
+            The data node for which we need the statistics
+        """
+
+        return self.dataset_stats.get(data_node.name, {})
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
