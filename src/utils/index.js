@@ -61,11 +61,29 @@ export const changed = (props, objectA, objectB) => {
 };
 
 /**
+ * Replace any parts of a string that match the keys in the toReplace object
+ * @param {String} str The string to check
+ * @param {Object} toReplace The object of strings to replace and their replacements
+ * @returns {String} The string with or without replaced values
+ */
+export const replaceMatches = (str, toReplace) => {
+  if (str?.length > 0) {
+    const regex = new RegExp(Object.keys(toReplace).join('|'), 'gi');
+
+    return str.replace(regex, (matched) => {
+      return toReplace[matched];
+    });
+  } else {
+    return str;
+  }
+};
+
+/**
  * Replace any parts of a string that match the '<' & '>' except '<b>' & '</b>'
  * @param {String} str The string to check
  * @returns {String} The string with or without replaced values
  */
-export const replaceMatches = (str) => {
+export const replaceAngleBracketMatches = (str) => {
   if (str?.length > 0) {
     // Handling string like '<lambda>' or '<partial>' in 3 steps
     // 1. replacing all '<b>' & '</b>' with unique '@$1$@' & '@$2$@' respectively

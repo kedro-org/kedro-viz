@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { changed, replaceMatches } from '../../utils';
+import { changed, replaceAngleBracketMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
@@ -128,7 +128,7 @@ const NodeListRow = memo(
               }
             )}
             dangerouslySetInnerHTML={{
-              __html: replaceMatches(label),
+              __html: replaceAngleBracketMatches(label),
             }}
           />
         </TextButton>
