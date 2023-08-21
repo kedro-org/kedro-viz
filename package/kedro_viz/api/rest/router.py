@@ -3,9 +3,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from kedro_viz.data_access import data_access_manager
-
-
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,

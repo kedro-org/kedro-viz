@@ -3,20 +3,22 @@ This data could either come from a real Kedro project or a file.
 """
 import json
 import time
-import shutil
-import fsspec
 from pathlib import Path
 
+import fsspec
 import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
-
 from kedro.io.core import get_protocol_and_path
+
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse
+from kedro_viz.api.rest.responses import (
+    EnhancedORJSONResponse,
+    save_api_responses_to_fs,
+)
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router
@@ -114,6 +116,22 @@ def create_api_app_from_project(
 
         return Response()
 
+    @app.get("/deploy")
+    async def deploy_to_remote_location():
+        """Upload the Kedro-viz app to cloud"""
+
+        remote_location = "s3://kedroviz"
+        region = "us-east-1"
+        save_api_responses_to_fs(remote_location)
+        protocol, path = get_protocol_and_path(remote_location)
+        remote_fs = fsspec.filesystem(protocol)
+        source_files = [str(p) for p in _HTML_DIR.rglob("*") if p.is_file()]
+        remote_fs.put(source_files, remote_location)
+        url = None
+        if protocol == "s3":
+            url = f"http://{path}.s3-website-{region}.amazonaws.com/"
+        return Response(content=url, media_type="text/plain")
+
     return app
 
 
@@ -131,27 +149,16 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
     async def main():
         return json.loads((Path(filepath) / "main").read_text(encoding="utf8"))
 
-
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        return json.loads((Path(filepath) / "nodes"/ node_id).read_text(encoding="utf8"))
-
+        return json.loads(
+            (Path(filepath) / "nodes" / node_id).read_text(encoding="utf8")
+        )
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        return json.loads((Path(filepath) / "pipelines"/ pipeline_id).read_text(encoding="utf8"))
-    
-    upload_viz_to_cloud(filepath)
+        return json.loads(
+            (Path(filepath) / "pipelines" / pipeline_id).read_text(encoding="utf8")
+        )
 
     return app
-
-def upload_viz_to_cloud(filepath: str) -> FastAPI:
-    """Upload the Kedro-viz app to cloud"""
-
-    remote_location = 's3://kedroviz/kedro-viz/html'
-    api_location = remote_location + '/api'
-    protocol, _ = get_protocol_and_path(remote_location)
-    remote_fs = fsspec.filesystem(protocol)
-    remote_fs.put(str(_HTML_DIR),remote_location,recursive=True)
-    remote_fs.put(filepath,api_location,recursive=True)
-    
