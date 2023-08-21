@@ -12,6 +12,7 @@ import {
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
   getNodeLabel,
+  getOppositeForPrettyName,
 } from './nodes';
 import {
   toggleTextLabels,
@@ -130,6 +131,33 @@ describe('Selectors', () => {
       );
       const nodeLabels = getNodeLabel(newMockState);
       expect(nodeLabels[nodeId]).toEqual(nodePrettyName);
+    });
+  });
+
+  describe('getOppositeForPrettyName', () => {
+    it('returns opposite node labels with full name when pretty name is turned off', () => {
+      const nodes = getVisibleNodes(mockState.spaceflights);
+      const nodeId = nodes[0].id;
+      const nodePrettyName = nodes[0].name;
+      const newMockState = reducer(
+        mockState.spaceflights,
+        toggleIsPrettyName(false)
+      );
+      const nodeLabels = getOppositeForPrettyName(newMockState);
+
+      expect(nodeLabels[nodeId]).toEqual(nodePrettyName);
+    });
+
+    it('returns opposite node labels with pretty name when pretty name is turned on', () => {
+      const nodes = getVisibleNodes(mockState.spaceflights);
+      const nodeId = nodes[0].id;
+      const nodeFullName = nodes[0].fullName;
+      const newMockState = reducer(
+        mockState.spaceflights,
+        toggleIsPrettyName(true)
+      );
+      const nodeLabels = getOppositeForPrettyName(newMockState);
+      expect(nodeLabels[nodeId]).toEqual(nodeFullName);
     });
   });
 });
