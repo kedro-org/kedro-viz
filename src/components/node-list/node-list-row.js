@@ -12,12 +12,6 @@ import { toggleHoveredFocusMode } from '../../actions';
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
 
-// This allows lambda and partial Python functions to render via dangerouslySetInnerHTML
-const replaceTagsWithEntities = {
-  '<lambda>': '&lt;lambda&gt;',
-  '<partial>': '&lt;partial&gt;',
-};
-
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
  * Performance: Checks only the minimal set of props known to change after first render.
@@ -134,7 +128,7 @@ const NodeListRow = memo(
               }
             )}
             dangerouslySetInnerHTML={{
-              __html: replaceMatches(label, replaceTagsWithEntities),
+              __html: replaceMatches(label),
             }}
           />
         </TextButton>
