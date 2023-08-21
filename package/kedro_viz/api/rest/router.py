@@ -2,6 +2,7 @@
 # pylint: disable=missing-function-docstring
 from fastapi import APIRouter
 
+
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,

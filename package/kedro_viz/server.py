@@ -1,23 +1,17 @@
 """`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
-import io
+
 import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 import uvicorn
-from fastapi.encoders import jsonable_encoder
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import (
-    EnhancedORJSONResponse,
-    get_default_response,
-    get_node_metadata_response,
-    get_selected_pipeline_response,
-)
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -102,39 +96,7 @@ def run_server(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
         if save_file:
-            save_path = Path(save_file)
-            if not save_path.exists():
-                save_path.mkdir(parents=True, exist_ok=True) 
-
-            default_response = get_default_response()
-            jsonable_default_response = jsonable_encoder(default_response)
-            encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-                jsonable_default_response
-            )
-
-            Path(f"{save_path}/main").write_bytes(encoded_response)
-
-            nodes_path = Path(f"{save_path}/nodes")
-            nodes_path.mkdir(parents=True, exist_ok=True) 
-
-            for node in data_access_manager.nodes.get_node_ids():
-                node_response = get_node_metadata_response(node)
-                jsonable_node_response = jsonable_encoder(node_response)
-                encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-                    jsonable_node_response
-                )
-                Path(nodes_path / node).write_bytes(encoded_response)
-
-            pipelines_path = Path(f"{save_path}/pipelines")
-            pipelines_path.mkdir(parents=True, exist_ok=True) 
-
-            for pipeline in data_access_manager.registered_pipelines.get_pipeline_ids():
-                pipeline_response = get_selected_pipeline_response(pipeline)
-                jsonable_pipeline_response = jsonable_encoder(pipeline_response)
-                encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-                    jsonable_pipeline_response
-                )
-                Path(pipelines_path / pipeline).write_bytes(encoded_response)
+            save_api_responses_to_fs(save_file)
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:
