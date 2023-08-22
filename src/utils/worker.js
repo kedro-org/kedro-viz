@@ -6,19 +6,20 @@
 
 /* eslint-disable import/no-webpack-loader-syntax */
 
-// Check for test environment
-const isTest = typeof jest !== 'undefined';
+// Check if the application is rendered on the server and whether it's in a test environment
+const isTestEnvOrSSR =
+  typeof jest !== 'undefined' || typeof window === 'undefined';
 
-// Conditionally load task via web worker only in non-test env
-const graphWorker = isTest
+// Conditionally load task via web worker only in non-test env and not server side rendering
+const graphWorker = isTestEnvOrSSR
   ? require('./graph')
   : require('workerize-loader?inline!./graph');
 
 /**
- * Emulate a web worker for testing purposes
+ * Emulate a web worker for testing purposes and server-side rendering scenarios
  */
 const createMockWorker = (worker) => {
-  if (!isTest) {
+  if (!isTestEnvOrSSR) {
     return worker;
   }
   return () => {
