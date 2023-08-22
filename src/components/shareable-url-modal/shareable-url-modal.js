@@ -11,6 +11,8 @@ import './shareable-url-modal.css';
 const ShareableUrlModal = ({ onToggle, visible }) => {
   const [inputValues, setInputValues] = useState({});
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState(null);
 
   const onChange = (key, value) => {
     setHasNotInteracted(false);
@@ -22,6 +24,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
+
     try {
       const request = await fetch('/api/deploy', {
         headers: {
@@ -30,15 +34,18 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
         method: 'POST',
         body: JSON.stringify(inputValues),
       });
-      const response = request.json();
 
-      if (response.ok) {
-        console.log(response.data);
+      const response = await request.json(); // Add 'await' here
+
+      if (request.ok) {
+        setResult(response.url);
       } else {
-        console.log('Something went wrong.');
+        setResult('Something went wrong.');
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
@@ -50,34 +57,57 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       title="Deploy and Share"
       visible={visible.shareableUrlModal}
     >
-      <div className="shareable-url-modal__input-wrapper">
-        <div className="shareable-url-modal__input-label">
-          AWS Bucket Region
+      {!isLoading && !result && (
+        <>
+          <div className="shareable-url-modal__input-wrapper">
+            <div className="shareable-url-modal__input-label">
+              AWS Bucket Region
+            </div>
+            <Input
+              onChange={(value) => onChange('awsRegion', value)}
+              placeholder="Enter details"
+              resetValueTrigger={visible}
+              size="large"
+            />
+          </div>
+          <div className="shareable-url-modal__input-wrapper">
+            <div className="shareable-url-modal__input-label">Bucket Name</div>
+            <Input
+              onChange={(value) => onChange('bucketName', value)}
+              placeholder="Enter details"
+              resetValueTrigger={visible}
+              size="large"
+            />
+          </div>
+          <div className="shareable-url-modal__button-wrapper">
+            <Button
+              mode="secondary"
+              onClick={() => onToggle(false)}
+              size="small"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={hasNotInteracted}
+              size="small"
+              onClick={handleSubmit}
+            >
+              Deploy
+            </Button>
+          </div>
+        </>
+      )}
+      {isLoading && (
+        <div className="shareable-url-modal__loading">Loading...</div>
+      )}
+      {result && (
+        <div className="shareable-url-modal__result">
+          URL:{' '}
+          <a href={result} target="_blank" rel="noopener noreferrer">
+            {result}
+          </a>
         </div>
-        <Input
-          onChange={(value) => onChange('awsRegion', value)}
-          placeholder="Enter details"
-          resetValueTrigger={visible}
-          size="large"
-        />
-      </div>
-      <div className="shareable-url-modal__input-wrapper">
-        <div className="shareable-url-modal__input-label">Bucket Name</div>
-        <Input
-          onChange={(value) => onChange('bucketName', value)}
-          placeholder="Enter details"
-          resetValueTrigger={visible}
-          size="large"
-        />
-      </div>
-      <div className="shareable-url-modal__button-wrapper">
-        <Button mode="secondary" onClick={() => onToggle(false)} size="small">
-          Cancel
-        </Button>
-        <Button disabled={hasNotInteracted} size="small" onClick={handleSubmit}>
-          Deploy
-        </Button>
-      </div>
+      )}
     </Modal>
   );
 };

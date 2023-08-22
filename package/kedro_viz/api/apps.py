@@ -5,20 +5,15 @@ import json
 import time
 from pathlib import Path
 
-import fsspec
 import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
-from kedro.io.core import get_protocol_and_path
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import (
-    EnhancedORJSONResponse,
-    save_api_responses_to_fs,
-)
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router
@@ -115,22 +110,6 @@ def create_api_app_from_project(
             return Response(status_code=304)
 
         return Response()
-
-    @app.get("/deploy")
-    async def deploy_to_remote_location():
-        """Upload the Kedro-viz app to cloud"""
-
-        remote_location = "s3://thd-img-uploads"
-        region = "eu-north-1"
-        save_api_responses_to_fs(remote_location)
-        protocol, path = get_protocol_and_path(remote_location)
-        remote_fs = fsspec.filesystem(protocol)
-        source_files = [str(p) for p in _HTML_DIR.rglob("*") if p.is_file()]
-        remote_fs.put(source_files, remote_location)
-        url = None
-        if protocol == "s3":
-            url = f"http://{path}.s3-website-{region}.amazonaws.com/"
-        return Response(content=url, media_type="text/plain")
 
     return app
 
