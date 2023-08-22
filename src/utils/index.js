@@ -89,10 +89,10 @@ export const replaceAngleBracketMatches = (str) => {
     // 1. replacing all '<b>' & '</b>' with unique '@$1$@' & '@$2$@' respectively
     // 2. replacing all '<' & '>' with '&lt;' & '&gt;' respectively
     // 3. replacing back all '@$1$@' & '@$2$@' with <b> & </b> respectively
-    const stgWithoutBTag = str
+    const strWithoutBTag = str
       .replaceAll('<b>', '@$1$@')
       .replaceAll('</b>', '@$2$@');
-    const replacedWithAngleBracket = stgWithoutBTag
+    const replacedWithAngleBracket = strWithoutBTag
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;');
     const result = replacedWithAngleBracket
