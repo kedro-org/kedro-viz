@@ -15,10 +15,10 @@ build:
 PROJECT_PATH ?= demo-project
 
 run:
-	PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
+	PYTHONWARNINGS="ignore:Kedro is not yet fully compatible" PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
 pytest:
-	cd package && pytest --cov-fail-under=100
+	cd package && PYTHONWARNINGS="ignore:Kedro is not yet fully compatible" pytest --cov-fail-under=100
 
 e2e-tests:
 	cd package && behave
