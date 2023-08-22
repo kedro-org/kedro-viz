@@ -9,6 +9,7 @@ import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
+from kedro.pipeline.pipeline import _strip_transcoding
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
@@ -275,7 +276,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 dataset=obj,
-                stats=self.get_stats_for_data_node(dataset_name),
+                stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 is_free_input=is_free_input,
             )
         graph_node = self.nodes.add_node(graph_node)

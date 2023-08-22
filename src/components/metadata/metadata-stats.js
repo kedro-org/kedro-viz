@@ -33,7 +33,7 @@ const MetaDataStats = ({ stats }) => {
             className="pipeline-metadata__value pipeline-metadata-value__stats"
             data-test={`stats-value-${statLabel}`}
           >
-            {stats.hasOwnProperty(statLabel)
+            {stats?.hasOwnProperty(statLabel)
               ? statLabel !== 'file_size'
                 ? formatNumberWithCommas(stats[statLabel])
                 : formatFileSize(stats[statLabel])
