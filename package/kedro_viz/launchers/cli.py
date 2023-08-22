@@ -41,7 +41,6 @@ def commands():  # pylint: disable=missing-function-docstring
 @click.option(
     "--load-file",
     default=None,
-    type=click.Path(exists=True, dir_okay=False),
     help="Path to load the pipeline JSON file",
 )
 @click.option(

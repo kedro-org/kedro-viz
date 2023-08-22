@@ -3,11 +3,23 @@
 import abc
 from typing import Any, Dict, List, Optional, Union
 
+import fsspec
 import orjson
-from fastapi.responses import ORJSONResponse
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse, ORJSONResponse
+from kedro.io.core import get_protocol_and_path
 from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
+from kedro_viz.models.flowchart import (
+    DataNode,
+    DataNodeMetadata,
+    ParametersNodeMetadata,
+    TaskNode,
+    TaskNodeMetadata,
+    TranscodedDataNode,
+    TranscodedDataNodeMetadata,
+)
 
 
 class APIErrorMessage(BaseModel):
@@ -242,6 +254,24 @@ class GraphAPIResponse(BaseAPIResponse):
     selected_pipeline: str
 
 
+class EnhancedORJSONResponse(ORJSONResponse):
+    @staticmethod
+    def encode_to_human_readable(content: Any) -> bytes:
+        """A method to encode the given content to JSON, with the
+        proper formatting to write a human-readable file.
+
+        Returns:
+            A bytes object containing the JSON to write.
+
+        """
+        return orjson.dumps(
+            content,
+            option=orjson.OPT_INDENT_2
+            | orjson.OPT_NON_STR_KEYS
+            | orjson.OPT_SERIALIZE_NUMPY,
+        )
+
+
 def get_default_response() -> GraphAPIResponse:
     """Default response for `/api/main`."""
     default_selected_pipeline_id = (
@@ -271,19 +301,94 @@ def get_default_response() -> GraphAPIResponse:
     )
 
 
-class EnhancedORJSONResponse(ORJSONResponse):
-    @staticmethod
-    def encode_to_human_readable(content: Any) -> bytes:
-        """A method to encode the given content to JSON, with the
-        proper formatting to write a human-readable file.
+def get_node_metadata_response(node_id: str):
+    """API response for `/api/nodes/node_id`."""
+    node = data_access_manager.nodes.get_node_by_id(node_id)
+    if not node:
+        return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
 
-        Returns:
-            A bytes object containing the JSON to write.
+    if not node.has_metadata():
+        return JSONResponse(content={})
 
-        """
-        return orjson.dumps(
-            content,
-            option=orjson.OPT_INDENT_2
-            | orjson.OPT_NON_STR_KEYS
-            | orjson.OPT_SERIALIZE_NUMPY,
+    if isinstance(node, TaskNode):
+        return TaskNodeMetadata(node)
+
+    if isinstance(node, DataNode):
+        dataset_stats = data_access_manager.get_stats_for_data_node(node)
+        return DataNodeMetadata(node, dataset_stats)
+
+    if isinstance(node, TranscodedDataNode):
+        dataset_stats = data_access_manager.get_stats_for_data_node(node)
+        return TranscodedDataNodeMetadata(node, dataset_stats)
+
+    return ParametersNodeMetadata(node)
+
+
+def get_selected_pipeline_response(registered_pipeline_id: str):
+    """API response for `/api/pipeline/pipeline_id`."""
+    if not data_access_manager.registered_pipelines.has_pipeline(
+        registered_pipeline_id
+    ):
+        return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
+
+    modular_pipelines_tree = (
+        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+            registered_pipeline_id
         )
+    )
+
+    return GraphAPIResponse(
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+            registered_pipeline_id
+        ),
+        edges=data_access_manager.get_edges_for_registered_pipeline(
+            registered_pipeline_id
+        ),
+        tags=data_access_manager.tags.as_list(),
+        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
+            registered_pipeline_id
+        ),
+        pipelines=data_access_manager.registered_pipelines.as_list(),
+        selected_pipeline=registered_pipeline_id,
+        modular_pipelines=modular_pipelines_tree,
+    )
+
+
+def save_api_responses_to_fs(filepath: str):
+    protocol, path = get_protocol_and_path(filepath)
+    remote_fs = fsspec.filesystem(protocol)
+    default_response = get_default_response()
+    jsonable_default_response = jsonable_encoder(default_response)
+    encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
+        jsonable_default_response
+    )
+
+    main_loc = f"{path}/api/main"
+    nodes_loc = f"{path}/api/nodes"
+    pipelines_loc = f"{path}/api/pipelines"
+
+    if protocol == "file":
+        remote_fs.makedirs(path, exist_ok=True)
+        remote_fs.makedirs(nodes_loc, exist_ok=True)
+        remote_fs.makedirs(pipelines_loc, exist_ok=True)
+
+    with remote_fs.open(main_loc, "wb") as f:
+        f.write(encoded_response)
+
+    for node in data_access_manager.nodes.get_node_ids():
+        node_response = get_node_metadata_response(node)
+        jsonable_node_response = jsonable_encoder(node_response)
+        encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
+            jsonable_node_response
+        )
+        with remote_fs.open(f"{nodes_loc}/{node}", "wb") as f:
+            f.write(encoded_response)
+
+    for pipeline in data_access_manager.registered_pipelines.get_pipeline_ids():
+        pipeline_response = get_selected_pipeline_response(pipeline)
+        jsonable_pipeline_response = jsonable_encoder(pipeline_response)
+        encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
+            jsonable_pipeline_response
+        )
+        with remote_fs.open(f"{pipelines_loc}/{pipeline}", "wb") as f:
+            f.write(encoded_response)
