@@ -102,15 +102,14 @@ class DataAccessManager:
 
         self.dataset_stats = stats_dict
 
-    def get_stats_for_data_node(self, data_node_name: str) -> Dict:
-        """Returns the dataset statistics for the data node if found else returns an
-        empty dictionary
+    def get_stats_for_data_node(self, data_node_name: str) -> Union[Dict, None]:
+        """Returns the dataset statistics for the data node if found
 
         Args:
             The data node name for which we need the statistics
         """
 
-        return self.dataset_stats.get(data_node_name, {})
+        return self.dataset_stats.get(data_node_name, None)
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
