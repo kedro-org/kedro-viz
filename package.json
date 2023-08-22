@@ -47,7 +47,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
-    "@aws-sdk/client-s3": "^3.388.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@graphql-tools/schema": "7.1.5",
