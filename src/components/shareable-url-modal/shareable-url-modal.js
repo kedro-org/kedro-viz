@@ -23,10 +23,14 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('/api/deploy', {
+      const request = await fetch('/api/deploy', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
         method: 'POST',
-        body: inputValues,
+        body: JSON.stringify(inputValues),
       });
+      const response = request.json();
 
       if (response.ok) {
         console.log(response.data);

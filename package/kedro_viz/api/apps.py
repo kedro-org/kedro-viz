@@ -120,8 +120,8 @@ def create_api_app_from_project(
     async def deploy_to_remote_location():
         """Upload the Kedro-viz app to cloud"""
 
-        remote_location = "s3://kedroviz"
-        region = "us-east-1"
+        remote_location = "s3://thd-img-uploads"
+        region = "eu-north-1"
         save_api_responses_to_fs(remote_location)
         protocol, path = get_protocol_and_path(remote_location)
         remote_fs = fsspec.filesystem(protocol)

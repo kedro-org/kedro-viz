@@ -22,8 +22,6 @@ router = APIRouter(
 class UserCredentials(BaseModel):
     awsRegion: str
     bucketName: str
-    accessKey: str
-    secretAccessKey: str
 
 
 @router.get("/main", response_model=GraphAPIResponse)
@@ -49,9 +47,9 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 
 @router.post("/deploy")
-async def deploy_kedro_viz(user_credentials: UserCredentials):
-    awsRegion = user_credentials.awsRegion
-    bucketName = user_credentials.bucketName
+async def deploy_kedro_viz(inputValues: UserCredentials):
+    awsRegion = inputValues.awsRegion
+    bucketName = inputValues.bucketName
 
     response_data = {
         "message": "This should kick off the deploy to S3",
