@@ -60,12 +60,7 @@ async def deploy_kedro_viz(inputValues: UserCredentials):
     save_api_responses_to_fs(bucketName)
     protocol, path = get_protocol_and_path(bucketName)
     remote_fs = fsspec.filesystem(protocol)
-    source_files = [
-        str(p)
-        for p in _HTML_DIR.rglob("*")
-        if p.is_file() and not p.name.endswith(".map")
-    ]
-    remote_fs.put(source_files, bucketName)
+    remote_fs.put(f'{_HTML_DIR}/*', bucketName,recursive = True)
     url = None
     if protocol == "s3":
         url = f"http://{path}.s3-website-{awsRegion}.amazonaws.com/"
