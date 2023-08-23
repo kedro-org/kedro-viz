@@ -1,4 +1,10 @@
-import { arrayToObject, getUrl, unique, replaceMatches } from './index';
+import {
+  arrayToObject,
+  getUrl,
+  unique,
+  replaceMatches,
+  replaceAngleBracketMatches,
+} from './index';
 
 describe('utils', () => {
   describe('arrayToObject', () => {
@@ -57,6 +63,18 @@ describe('utils', () => {
       expect(replaceMatches('&lt;lambda&gt;', entitiesToReplace)).toEqual(
         '<lambda>'
       );
+    });
+  });
+
+  describe('replaceAngleBracketMatches', () => {
+    it('replaces angle bracket matched characters from a string', () => {
+      expect(replaceAngleBracketMatches('<b><lam</b>bda>')).toEqual(
+        '<b>&lt;lam</b>bda&gt;'
+      );
+      expect(replaceAngleBracketMatches('<b><lambda></b>')).toEqual(
+        '<b>&lt;lambda&gt;</b>'
+      );
+      expect(replaceAngleBracketMatches('<lambda>')).toEqual('&lt;lambda&gt;');
     });
   });
 });
