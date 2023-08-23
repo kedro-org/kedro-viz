@@ -79,6 +79,33 @@ export const replaceMatches = (str, toReplace) => {
 };
 
 /**
+ * Replace any parts of a string that match the '<' & '>' except '<b>' & '</b>'
+ * @param {String} str The string to check
+ * @returns {String} The string with or without replaced values
+ */
+export const replaceAngleBracketMatches = (str) => {
+  if (str?.length > 0) {
+    // Handling string like '<lambda>' or '<partial>' in 3 steps
+    // 1. replacing all '<b>' & '</b>' with unique '@$1$@' & '@$2$@' respectively
+    // 2. replacing all '<' & '>' with '&lt;' & '&gt;' respectively
+    // 3. replacing back all '@$1$@' & '@$2$@' with <b> & </b> respectively
+    const strWithoutBTag = str
+      .replaceAll('<b>', '@$1$@')
+      .replaceAll('</b>', '@$2$@');
+    const replacedWithAngleBracket = strWithoutBTag
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
+    const result = replacedWithAngleBracket
+      .replaceAll('@$1$@', '<b>')
+      .replaceAll('@$2$@', '</b>');
+
+    return result;
+  } else {
+    return str;
+  }
+};
+
+/**
  * Removes any parts of a string that match the regular expression
  * @param {String} str The string to check
  * @returns {String} The string with or without removed values
