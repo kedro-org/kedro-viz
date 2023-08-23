@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { changed, replaceMatches } from '../../utils';
+import { changed, replaceAngleBracketMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
@@ -11,12 +11,6 @@ import { toggleHoveredFocusMode } from '../../actions';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
-
-// This allows lambda and partial Python functions to render via dangerouslySetInnerHTML
-const replaceTagsWithEntities = {
-  '<lambda>': '&lt;lambda&gt;',
-  '<partial>': '&lt;partial&gt;',
-};
 
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
@@ -134,7 +128,7 @@ const NodeListRow = memo(
               }
             )}
             dangerouslySetInnerHTML={{
-              __html: replaceMatches(label, replaceTagsWithEntities),
+              __html: replaceAngleBracketMatches(label),
             }}
           />
         </TextButton>
