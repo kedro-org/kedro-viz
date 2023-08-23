@@ -77,11 +77,11 @@
     "lodash.noop": "^3.0.1",
     "lodash.sortby": "^4.7.0",
     "plotly.js-dist-min": "^1.58.4",
-    "react-content-loader": "^6.2.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react-content-loader": "^6.2.0",
     "react-csv": "^2.2.2",
     "react-custom-scrollbars-2": "^4.5.0",
+    "react-dom": "^17.0.2",
     "react-json-view": "^1.21.3",
     "react-plotly.js": "^2.5.1",
     "react-redux": "^7.2.6",
@@ -97,6 +97,7 @@
     "sinon": "^12.0.1",
     "subscriptions-transport-ws": "^0.11.0",
     "svg-crowbar": "^0.6.5",
+    "uuid": "^9.0.0",
     "what-input": "^5.2.10"
   },
   "peerDependencies": {
