@@ -1,3 +1,15 @@
+@use '../../styles/variables' as variables;
+
+.kui-theme--light {
+  --color-description-text: #{variables.$black-300};
+  --color-deployed-link: #{variables.$black-900};
+}
+
+.kui-theme--dark {
+  --color-description-text: #{variables.$white-900};
+  --color-deployed-link: #{variables.$white-0};
+}
+
 .shareable-url-modal {
   .modal__content {
     max-width: 640px;
@@ -36,8 +48,38 @@
     margin-top: 48px;
     width: 100%;
 
+    &--single {
+      justify-content: flex-end;
+    }
+
     .button__btn--secondary {
       padding-left: 0;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__result {
+    margin-bottom: 48px;
+
+    div {
+      color: var(--color-description-text);
+      font-size: 16px;
+      line-height: 20px;
+    }
+
+    a {
+      color: var(--color-deployed-link);
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 24px;
+      margin-top: 12px;
+      text-overflow: ellipsis;
     }
   }
 }

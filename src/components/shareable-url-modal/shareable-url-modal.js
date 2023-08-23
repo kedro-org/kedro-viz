@@ -4,15 +4,26 @@ import { toggleShareableUrlModal } from '../../actions';
 
 import Button from '../ui/button';
 import Input from '../ui/input';
+import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 
 import './shareable-url-modal.css';
 
+const modalMessages = {
+  default:
+    'Please enter your AWS information and a hosted link will be generated.',
+  failure: 'Something went wrong. Please try again later.',
+  loading: 'Shooting your files through space. Sit tight...',
+  success:
+    'The pipeline has successfully been deployed and the visualisation is hosted via the link below.',
+};
+
 const ShareableUrlModal = ({ onToggle, visible }) => {
+  const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [responseUrl, setResponseUrl] = useState(null);
 
   const onChange = (key, value) => {
     setHasNotInteracted(false);
@@ -24,6 +35,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   };
 
   const handleSubmit = async () => {
+    setDeploymentState('loading');
     setIsLoading(true);
 
     try {
@@ -34,30 +46,50 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
         method: 'POST',
         body: JSON.stringify(inputValues),
       });
-
-      const response = await request.json(); // Add 'await' here
+      const response = await request.json();
 
       if (request.ok) {
-        setResult(response.url);
+        setResponseUrl(response.url);
+        setDeploymentState('success');
       } else {
-        setResult('Something went wrong.');
+        setResponseUrl('Something went wrong.');
+        setDeploymentState('failure');
       }
     } catch (error) {
       console.error(error);
+      setDeploymentState('failure');
     } finally {
-      setIsLoading(false); // End loading
+      setIsLoading(false);
     }
+  };
+
+  const copyToClipboard = (str) => {
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(str).then(
+        () => {},
+        (reason) => {
+          console.error("Couldn't copy the link to the clipboard: " + reason);
+        }
+      );
+    }
+  };
+
+  const handleModalClose = () => {
+    onToggle(false);
+    setDeploymentState('default');
+    setIsLoading(false);
+    setResponseUrl(null);
   };
 
   return (
     <Modal
       className="shareable-url-modal"
-      closeModal={() => onToggle(false)}
-      message="Please enter your AWS information and a hosted link will be generated."
+      closeModal={() => handleModalClose()}
+      message={modalMessages[deploymentState]}
       title="Deploy and Share"
       visible={visible.shareableUrlModal}
     >
-      {!isLoading && !result && (
+      {!isLoading && !responseUrl ? (
         <>
           <div className="shareable-url-modal__input-wrapper">
             <div className="shareable-url-modal__input-label">
@@ -82,7 +114,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           <div className="shareable-url-modal__button-wrapper">
             <Button
               mode="secondary"
-              onClick={() => onToggle(false)}
+              onClick={() => handleModalClose()}
               size="small"
             >
               Cancel
@@ -96,18 +128,34 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
             </Button>
           </div>
         </>
-      )}
-      {isLoading && (
-        <div className="shareable-url-modal__loading">Loading...</div>
-      )}
-      {result && (
-        <div className="shareable-url-modal__result">
-          URL:{' '}
-          <a href={result} target="_blank" rel="noopener noreferrer">
-            {result}
-          </a>
+      ) : null}
+      {isLoading ? (
+        <div className="shareable-url-modal__loading">
+          <LoadingIcon visible={isLoading} />
         </div>
-      )}
+      ) : null}
+      {responseUrl ? (
+        <>
+          <div className="shareable-url-modal__result">
+            <div>Hosted link</div>
+            <a href={responseUrl} target="_blank" rel="noopener noreferrer">
+              {responseUrl}
+            </a>
+          </div>
+          <Button onClick={() => copyToClipboard(responseUrl)} size="small">
+            Copy link
+          </Button>
+          <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--single">
+            <Button
+              mode="secondary"
+              onClick={() => handleModalClose()}
+              size="small"
+            >
+              Close
+            </Button>
+          </div>
+        </>
+      ) : null}
     </Modal>
   );
 };
