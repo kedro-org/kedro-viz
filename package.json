@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "6.5.0-alpha.4",
+  "version": "6.5.0-alpha.5",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
@@ -76,6 +76,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.noop": "^3.0.1",
     "lodash.sortby": "^4.7.0",
+    "lodash.uniqueid": "^4.0.1",
     "plotly.js-dist-min": "^1.58.4",
     "react": "^17.0.2",
     "react-content-loader": "^6.2.0",
