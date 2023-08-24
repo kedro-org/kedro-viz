@@ -47,6 +47,7 @@ class TestModularPipelinesRepository:
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
+            stats=None,
         )
         modular_pipelines.add_input("data_science", data_node)
         assert data_node.id in data_science_pipeline.inputs
@@ -62,6 +63,7 @@ class TestModularPipelinesRepository:
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
+            stats=None,
         )
         modular_pipelines.add_output("data_science", data_node)
         assert data_node.id in data_science_pipeline.outputs
