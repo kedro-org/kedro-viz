@@ -44,8 +44,11 @@ def populate_data(
         data_access_manager.set_db_session(session_class)
 
     data_access_manager.add_catalog(catalog)
-    data_access_manager.add_pipelines(pipelines)
+
+    # add dataset stats before adding pipelines
     data_access_manager.add_dataset_stats(stats_dict)
+
+    data_access_manager.add_pipelines(pipelines)
 
 
 def run_server(
