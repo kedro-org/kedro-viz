@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 import NodeList from './node-list';
 import {
   getFilteredItems,

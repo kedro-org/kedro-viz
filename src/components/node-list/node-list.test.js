@@ -13,7 +13,7 @@ import IndicatorPartialIcon from '../icons/indicator-partial';
 import SplitPanel from '../split-panel';
 import NodeList, { mapStateToProps } from './index';
 
-jest.mock('lodash.debounce', () => (func) => {
+jest.mock('lodash/debounce', () => (func) => {
   func.cancel = jest.fn();
   return func;
 });

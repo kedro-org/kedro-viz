@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 import { textMatchesSearch } from '../../../utils/search-utils';
 import SearchList from '../../search-list';
 import Switch from '../../ui/switch';
