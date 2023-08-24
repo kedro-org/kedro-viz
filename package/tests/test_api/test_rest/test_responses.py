@@ -108,6 +108,7 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": "raw",
             "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "stats": None,
         },
         {
             "id": "f0ebef01",
@@ -118,6 +119,7 @@ def assert_example_data(response_data):
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "0ecea0de",
@@ -128,6 +130,7 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "stats": {"columns": 12, "rows": 29768},
         },
         {
             "id": "7b140b3f",
@@ -150,6 +153,7 @@ def assert_example_data(response_data):
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "d5a8b994",
@@ -160,6 +164,7 @@ def assert_example_data(response_data):
             "type": "data",
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
+            "stats": None,
         },
         {
             "id": "uk.data_processing",
@@ -170,6 +175,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "uk.data_science",
@@ -180,6 +186,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "uk",
@@ -190,6 +197,7 @@ def assert_example_data(response_data):
             "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
     ]
     assert_nodes_equal(response_data.pop("nodes"), expected_nodes)
@@ -480,6 +488,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": [],
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
+            "stats": None,
         },
         {
             "id": "f0ebef01",
@@ -490,6 +499,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "0ecea0de",
@@ -500,6 +510,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "2302ea78",
@@ -519,6 +530,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": [],
             "layer": None,
             "dataset_type": None,
+            "stats": None,
         },
         {
             "id": "1d06a0d7",
@@ -529,6 +541,7 @@ def assert_example_transcoded_data(response_data):
             "modular_pipelines": [],
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
+            "stats": None,
         },
     ]
 
@@ -572,7 +585,6 @@ class TestTranscodedDataset:
                 "pandas.parquet_dataset.ParquetDataSet",
             ],
             "run_command": "kedro run --to-outputs=model_inputs@pandas2",
-            "stats": {},
         }
 
 
@@ -614,7 +626,6 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "raw_data.csv",
             "type": "pandas.csv_dataset.CSVDataSet",
-            "stats": {},
         }
 
     def test_parameters_node_metadata(self, client):
@@ -664,6 +675,7 @@ class TestSinglePipelineEndpoint:
                 "type": "data",
                 "layer": "model_inputs",
                 "dataset_type": "pandas.csv_dataset.CSVDataSet",
+                "stats": {"columns": 12, "rows": 29768},
             },
             {
                 "id": "7b140b3f",
@@ -686,6 +698,7 @@ class TestSinglePipelineEndpoint:
                 "type": "parameters",
                 "layer": None,
                 "dataset_type": None,
+                "stats": None,
             },
             {
                 "id": "d5a8b994",
@@ -696,6 +709,7 @@ class TestSinglePipelineEndpoint:
                 "type": "data",
                 "layer": None,
                 "dataset_type": "io.memory_dataset.MemoryDataset",
+                "stats": None,
             },
             {
                 "id": "uk",
@@ -706,6 +720,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": None,
                 "layer": None,
                 "dataset_type": None,
+                "stats": None,
             },
             {
                 "id": "uk.data_science",
@@ -716,6 +731,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": None,
                 "layer": None,
                 "dataset_type": None,
+                "stats": None,
             },
         ]
         assert_nodes_equal(response_data.pop("nodes"), expected_nodes)

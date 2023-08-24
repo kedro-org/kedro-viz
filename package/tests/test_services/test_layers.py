@@ -163,6 +163,7 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
             layer=node_dict.get("layer"),
             tags=None,
             dataset=None,
+            stats=None,
         )
         for node_id, node_dict in nodes.items()
     }
@@ -183,6 +184,7 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
             layer=node_dict.get("layer"),
             tags=None,
             dataset=None,
+            stats=None,
         )
         for node_id, node_dict in data.items()
     }

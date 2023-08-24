@@ -178,6 +178,7 @@ class GraphNode(abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         dataset: AbstractDataset,
+        stats: Optional[Dict],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type DATA for a given Kedro DataSet instance.
@@ -188,6 +189,8 @@ class GraphNode(abc.ABC):
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             dataset: A dataset in a Kedro pipeline.
+            stats: The dictionary of dataset statistics, e.g.
+                {"rows":2, "columns":3, "file_size":100}
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
@@ -201,6 +204,7 @@ class GraphNode(abc.ABC):
                 tags=tags,
                 layer=layer,
                 is_free_input=is_free_input,
+                stats=stats,
             )
 
         return DataNode(
@@ -210,6 +214,7 @@ class GraphNode(abc.ABC):
             layer=layer,
             kedro_obj=dataset,
             is_free_input=is_free_input,
+            stats=stats,
         )
 
     @classmethod
@@ -434,6 +439,9 @@ class DataNode(GraphNode):
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
+    # statistics for the data node
+    stats: Optional[Dict] = field(default=None)
+
     def __post_init__(self):
         self.dataset_type = get_dataset_type(self.kedro_obj)
 
@@ -517,6 +525,9 @@ class TranscodedDataNode(GraphNode):
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
+    # statistics for the data node
+    stats: Optional[Dict] = field(default=None)
+
     def has_metadata(self) -> bool:
         return True
 
@@ -541,7 +552,6 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the underlying data node to which this metadata belongs
     data_node: InitVar[DataNode]
-    dataset_stats: InitVar[Dict]
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
@@ -561,12 +571,12 @@ class DataNodeMetadata(GraphNodeMetadata):
     stats: Optional[Dict] = field(init=False, default=None)
 
     # TODO: improve this scheme.
-    def __post_init__(self, data_node: DataNode, dataset_stats: Dict):
+    def __post_init__(self, data_node: DataNode):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
-        self.stats = dataset_stats
+        self.stats = data_node.stats
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
@@ -625,11 +635,8 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     # the underlying data node to which this metadata belongs
     transcoded_data_node: InitVar[TranscodedDataNode]
-    dataset_stats: InitVar[Dict]
 
-    def __post_init__(
-        self, transcoded_data_node: TranscodedDataNode, dataset_stats: Dict
-    ):
+    def __post_init__(self, transcoded_data_node: TranscodedDataNode):
         original_version = transcoded_data_node.original_version
 
         self.original_type = get_dataset_type(original_version)
@@ -640,7 +647,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
         dataset_description = original_version._describe()
         self.filepath = _parse_filepath(dataset_description)
-        self.stats = dataset_stats
+        self.stats = transcoded_data_node.stats
 
         if not transcoded_data_node.is_free_input:
             self.run_command = (
