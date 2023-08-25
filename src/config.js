@@ -143,3 +143,5 @@ export const errorMessages = {
 };
 
 export const datasetStatLabels = ['rows', 'columns', 'file_size'];
+
+export const statsRowLen = 33;
