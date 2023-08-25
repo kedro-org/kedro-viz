@@ -141,6 +141,7 @@ def check_kedroviz_up(context):
             break
 
     try:
+        print(data_json)
         assert context.result.poll() is None
         assert (
             # for Kedro 0.17.5
@@ -148,7 +149,7 @@ def check_kedroviz_up(context):
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         ) or (
             # for Kedro 0.18.0 onwards
-            "<lambda>"
+            "X_test"
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
