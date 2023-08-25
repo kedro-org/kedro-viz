@@ -38,7 +38,7 @@ def before_scenario(context, scenario):
             scenario.skip()
 
     # skip lower-bound scenario for python versions greater than 3.10
-    if sys.version_info > (3, 10) and "lower-bound" in scenario.name:
+    if sys.version_info >= (3, 11) and "lower-bound" in scenario.name:
         print(f"{scenario} will be skipped for Python version greater than 3.10")
         scenario.skip()
 
