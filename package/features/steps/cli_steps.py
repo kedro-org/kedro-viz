@@ -148,7 +148,7 @@ def check_kedroviz_up(context):
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         ) or (
             # for Kedro 0.18.0 onwards
-            "X_test"
+            "<lambda>"
             == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
