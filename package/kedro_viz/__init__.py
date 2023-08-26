@@ -9,9 +9,6 @@ class KedroVizPythonVersionWarning(UserWarning):
     """Custom class for warnings about incompatibilities with Python versions."""
 
 
-if not sys.warnoptions:
-    warnings.simplefilter("error", KedroVizPythonVersionWarning)
-
 if sys.version_info >= (3, 11):
     warnings.warn(
         """Please be advised that Kedro Viz is not yet fully
