@@ -89,18 +89,15 @@ def install_project_requirements(context):
 
 @given("I have installed the lower-bound Kedro-viz requirements")
 def install_lower_bound_requirements(context):
-    try:
-        cwd = Path(__file__).resolve().parent
-        requirements_path = cwd / "lower_requirements.txt"
-        cmd = [context.pip, "install", "-r", requirements_path]
-        res = run(cmd, env=context.env)
+    cwd = Path(__file__).resolve().parent
+    requirements_path = cwd / "lower_requirements.txt"
+    cmd = [context.pip, "install", "-r", requirements_path]
+    res = run(cmd, env=context.env)
 
-        if res.returncode != OK_EXIT_CODE:
-            print(res.stdout)
-            print(res.stderr)
-            assert False
-    except Exception as exc:
-        print(exc)
+    if res.returncode != OK_EXIT_CODE:
+        print(res.stdout)
+        print(res.stderr)
+        assert False
 
 
 @given('I have installed kedro version "{version}"')
