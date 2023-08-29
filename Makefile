@@ -13,15 +13,16 @@ build:
 	cp -R build package/kedro_viz/html
 
 PROJECT_PATH ?= demo-project
+PYTHONWARNINGS ?= "ignore:Kedro is not yet fully compatible"
 
 run:
-	PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
+	PYTHONWARNINGS=$(PYTHONWARNINGS) PYTHONPATH="$(shell pwd)/package" python3 package/kedro_viz/server.py $(PROJECT_PATH)
 
 pytest:
-	cd package && pytest --cov-fail-under=100
+	cd package && PYTHONWARNINGS=$(PYTHONWARNINGS) pytest --cov-fail-under=100
 
 e2e-tests:
-	cd package && behave
+	cd package && PYTHONWARNINGS=$(PYTHONWARNINGS) behave
 
 lint: format-fix lint-check
 
