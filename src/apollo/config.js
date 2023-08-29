@@ -39,7 +39,7 @@ if (typeof window !== 'undefined') {
   });
 
   // Conditionally split between HTTP and WebSocket links
-  split(
+  link = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
 
