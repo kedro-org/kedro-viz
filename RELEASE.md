@@ -13,6 +13,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
+- Resolved various bugs affecting server-side rendering, updated dependencies to ensure compatibility with Vite and Next.js environments (#1508)
 
 # Release 6.4.0
 
