@@ -10,6 +10,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Add support for Python 3.11 (#1502)
+
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
