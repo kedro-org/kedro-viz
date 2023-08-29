@@ -108,8 +108,6 @@ def run_server(
     else:
         app = apps.create_api_app_from_file(load_file)
 
-    if browser and is_localhost(host):
-        webbrowser.open_new(f"http://{host}:{port}/")
     uvicorn.run(app, host=host, port=port, log_config=None)
 
 

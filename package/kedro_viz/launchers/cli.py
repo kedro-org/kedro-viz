@@ -1,8 +1,10 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
+import multiprocessing
 import traceback
 import webbrowser
 from pathlib import Path
+from typing import Dict
 
 import click
 from kedro.framework.cli.project import PARAMS_ARG_HELP
@@ -13,6 +15,9 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
+from kedro_viz.launchers.utils import check_viz_up, wait_for
+
+_VIZ_PROCESSES: Dict[str, int] = {}
 
 
 @click.group(name="Kedro-Viz")
@@ -102,6 +107,9 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
         )
 
     try:
+        if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
+            _VIZ_PROCESSES[port].terminate()
+
         run_server_kwargs = {
             "host": host,
             "port": port,
@@ -114,24 +122,33 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
             "extra_params": params,
         }
         if autoreload:
-            if browser and is_localhost(host):
-                webbrowser.open_new(f"http://{host}:{port}/")
-
             project_path = Path.cwd()
             run_server_kwargs["project_path"] = project_path
             # we don't want to launch a new browser tab on reload
             run_server_kwargs["browser"] = False
-
-            run_process(
-                path=project_path,
-                target=run_server,
-                kwargs=run_server_kwargs,
-                watcher_cls=RegExpWatcher,
-                watcher_kwargs={"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            run_process_kwargs = {
+                "path": project_path,
+                "target": run_server,
+                "kwargs": run_server_kwargs,
+                "watcher_cls": RegExpWatcher,
+                "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            }
+            viz_process = multiprocessing.Process(
+                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            )
+        else:
+            viz_process = multiprocessing.Process(
+                target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        else:
-            run_server(**run_server_kwargs)
+        viz_process.start()
+        _VIZ_PROCESSES[port] = viz_process
+
+        wait_for(func=check_viz_up, host=host, port=port)
+
+        if browser and is_localhost(host):
+            webbrowser.open_new(f"http://{host}:{port}/")
+
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
