@@ -58,7 +58,7 @@ def wait_for(
     )
 
 
-def check_viz_up(host: str, port: int):  # pragma: no cover
+def check_viz_up(host: str, port: int):
     """Checks if Kedro Viz Server has started and is responding to requests
 
     Args:
