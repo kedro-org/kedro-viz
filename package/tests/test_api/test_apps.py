@@ -65,7 +65,6 @@ class TestReloadEndpoint:
 
 
 class TestFaviconEndpoint:
-
     @pytest.fixture
     def test_client(self):
         app = apps.create_api_app_from_project(mock.MagicMock(), autoreload=True)
