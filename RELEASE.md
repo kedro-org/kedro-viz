@@ -16,6 +16,7 @@ Please follow the established format:
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
 - Remove python upper-bound requirements and add KedroVizPythonVersion warning. (#1506)
+- Resolved various bugs affecting server-side rendering, updated dependencies to ensure compatibility with Vite and Next.js environments (#1508)
 
 # Release 6.4.0
 
