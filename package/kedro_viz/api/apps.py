@@ -73,7 +73,7 @@ def create_api_app_from_project(
     app_etag = _create_etag()
 
     # Serve the favicon.ico file from the "html" directory
-    @app.get('/favicon.ico', include_in_schema=False)
+    @app.get("/favicon.ico", include_in_schema=False)
     async def favicon():
         return FileResponse(_HTML_DIR / "favicon.ico")
 
