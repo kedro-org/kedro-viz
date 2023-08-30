@@ -68,6 +68,9 @@ def create_api_app_from_project(
         # frontend e2e tests via Cypress
         app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
+        # Mount the public directory for serving image files
+        app.mount("/images", StaticFiles(directory=_HTML_DIR), name="images")
+
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
     app_etag = _create_etag()
