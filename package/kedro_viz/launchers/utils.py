@@ -1,7 +1,13 @@
+"""`kedro_viz.launchers.utils` contains utility functions
+used in the `kedro_viz.launchers` package."""
+import logging
+import webbrowser
 from time import sleep, time
 from typing import Any, Callable
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 class WaitForException(Exception):
@@ -53,6 +59,13 @@ def wait_for(
 
 
 def check_viz_up(host: str, port: int):  # pragma: no cover
+    """Checks if Kedro Viz Server has started and is responding to requests
+
+    Args:
+        host: the host that launched the webserver
+        port: the port the webserver is listening
+    """
+
     url = f"http://{host}:{port}"
     try:
         response = requests.get(url, timeout=10)
@@ -60,3 +73,20 @@ def check_viz_up(host: str, port: int):  # pragma: no cover
         return False
 
     return response.status_code == 200
+
+
+def is_localhost(host: str) -> bool:
+    """Check whether a host is a localhost"""
+    return host in ("127.0.0.1", "localhost", "0.0.0.0")
+
+
+def start_browser(host: str, port: int):
+    """Starts a new browser window
+
+    Args:
+        host: browser url host
+        port: browser url port
+    """
+
+    if is_localhost(host):
+        webbrowser.open_new(f"http://{host}:{port}/")

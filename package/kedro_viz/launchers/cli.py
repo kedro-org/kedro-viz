@@ -2,7 +2,6 @@
 
 import multiprocessing
 import traceback
-import webbrowser
 from pathlib import Path
 from typing import Dict
 
@@ -88,11 +87,11 @@ def commands():  # pylint: disable=missing-function-docstring
 # pylint: disable=import-outside-toplevel, too-many-locals
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
     """Visualise a Kedro pipeline using Kedro viz."""
-    from kedro_viz.server import is_localhost, run_server
+    from kedro_viz.launchers.utils import start_browser
+    from kedro_viz.server import run_server
 
     installed_version = VersionInfo.parse(__version__)
     latest_version = get_latest_version()
-
     if is_running_outdated_version(installed_version, latest_version):
         click.echo(
             click.style(
@@ -117,15 +116,12 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
             "save_file": save_file,
             "pipeline_name": pipeline,
             "env": env,
-            "browser": browser,
             "autoreload": autoreload,
             "extra_params": params,
         }
         if autoreload:
             project_path = Path.cwd()
             run_server_kwargs["project_path"] = project_path
-            # we don't want to launch a new browser tab on reload
-            run_server_kwargs["browser"] = False
             run_process_kwargs = {
                 "path": project_path,
                 "target": run_server,
@@ -146,8 +142,10 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
 
         wait_for(func=check_viz_up, host=host, port=port)
 
-        if browser and is_localhost(host):
-            webbrowser.open_new(f"http://{host}:{port}/")
+        print("Kedro Viz Backend Server started successfully...")
+
+        if browser:
+            start_browser(host, port)
 
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
