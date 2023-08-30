@@ -62,3 +62,10 @@ class TestReloadEndpoint:
         # when the etag has changed, the server will return a 200
         response = client.get("/api/reload", headers={"If-None-Match": "new etag"})
         assert response.status_code == 200
+
+
+class TestFaviconEndpoint:
+    def test_favicon_endpoint(client):
+        response = client.get("/favicon.ico")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/x-icon"
