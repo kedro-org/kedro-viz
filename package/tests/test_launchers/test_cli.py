@@ -17,7 +17,6 @@ from kedro_viz.server import run_server
             {
                 "host": "127.0.0.1",
                 "port": 4141,
-                "browser": True,
                 "load_file": None,
                 "save_file": None,
                 "pipeline_name": None,
@@ -46,7 +45,6 @@ from kedro_viz.server import run_server
             {
                 "host": "8.8.8.8",
                 "port": 4142,
-                "browser": False,
                 "load_file": None,
                 "save_file": "save.json",
                 "pipeline_name": "data_science",
@@ -138,7 +136,6 @@ def test_kedro_viz_command_with_autoreload(mocker):
             "pipeline_name": None,
             "env": None,
             "autoreload": True,
-            "browser": False,
             "project_path": mock_project_path,
             "extra_params": {},
         },
