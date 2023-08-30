@@ -76,9 +76,7 @@ def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
     # Reduce the timeout argument from 60 to 1 to make test run faster.
-    mocker.patch(
-        "kedro_viz.launchers.utils.wait_for.__defaults__", (True, 1, True, 1)
-    )
+    mocker.patch("kedro_viz.launchers.utils.wait_for.__defaults__", (True, 1, True, 1))
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
 
@@ -146,9 +144,7 @@ def test_kedro_viz_command_with_autoreload(mocker):
     mock_project_path = "/tmp/project_path"
     mocker.patch("pathlib.Path.cwd", return_value=mock_project_path)
     # Reduce the timeout argument from 60 to 1 to make test run faster.
-    mocker.patch(
-        "kedro_viz.launchers.utils.wait_for.__defaults__", (True, 1, True, 1)
-    )
+    mocker.patch("kedro_viz.launchers.utils.wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz", "--autoreload"])
