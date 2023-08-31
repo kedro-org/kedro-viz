@@ -13,6 +13,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
+- Favicon added to Kedro-viz Demo site. (#1509)
 
 # Release 6.4.0
 
