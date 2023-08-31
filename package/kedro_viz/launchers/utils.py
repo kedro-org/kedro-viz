@@ -81,7 +81,7 @@ def is_localhost(host: str) -> bool:
 
 
 def start_browser(host: str, port: int):
-    """Starts a new browser window
+    """Starts a new browser window only on a local interface
 
     Args:
         host: browser url host
