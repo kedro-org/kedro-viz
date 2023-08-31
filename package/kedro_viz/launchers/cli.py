@@ -14,7 +14,7 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.launchers.utils import check_viz_up, wait_for
+from kedro_viz.launchers.utils import check_viz_up, start_browser, wait_for
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -87,7 +87,6 @@ def commands():  # pylint: disable=missing-function-docstring
 # pylint: disable=import-outside-toplevel, too-many-locals
 def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
     """Visualise a Kedro pipeline using Kedro viz."""
-    from kedro_viz.launchers.utils import start_browser
     from kedro_viz.server import run_server
 
     installed_version = VersionInfo.parse(__version__)

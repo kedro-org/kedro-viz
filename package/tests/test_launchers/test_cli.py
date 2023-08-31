@@ -9,6 +9,16 @@ from kedro_viz.launchers import cli
 from kedro_viz.server import run_server
 
 
+@pytest.fixture
+def patched_check_viz_up(mocker):
+    mocker.patch("kedro_viz.launchers.cli.check_viz_up", return_value=True)
+
+
+@pytest.fixture
+def patched_start_browser(mocker):
+    mocker.patch("kedro_viz.launchers.cli.start_browser")
+
+
 @pytest.mark.parametrize(
     "command_options,run_server_args",
     [
@@ -72,7 +82,13 @@ from kedro_viz.server import run_server
         ),
     ],
 )
-def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
+def test_kedro_viz_command_run_server(
+    command_options,
+    run_server_args,
+    mocker,
+    patched_check_viz_up,
+    patched_start_browser,
+):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
     # Reduce the timeout argument from 60 to 1 to make test run faster.
@@ -138,9 +154,10 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     mock_click_echo.assert_not_called()
 
 
-def test_kedro_viz_command_with_autoreload(mocker):
+def test_kedro_viz_command_with_autoreload(
+    mocker, patched_check_viz_up, patched_start_browser
+):
     process_init = mocker.patch("multiprocessing.Process")
-    mocker.patch("webbrowser.open_new")
     mock_project_path = "/tmp/project_path"
     mocker.patch("pathlib.Path.cwd", return_value=mock_project_path)
     # Reduce the timeout argument from 60 to 1 to make test run faster.
