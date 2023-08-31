@@ -1,8 +1,10 @@
 from unittest import mock
+from unittest.mock import Mock
 
 import pytest
+import requests
 
-from kedro_viz.launchers.utils import start_browser
+from kedro_viz.launchers.utils import check_viz_up, start_browser
 
 
 @pytest.mark.parametrize(
@@ -26,3 +28,21 @@ def test_browser_open(
         webbrowser.open_new.assert_called_once()
     else:
         webbrowser.open_new.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "host, port, status_code, expected_result",
+    [
+        ("localhost", 8080, 200, True),  # Successful response
+        ("localhost", 8080, 500, False),  # Non-200 response
+        ("localhost", 8080, None, False),  # Connection error
+    ],
+)
+def test_check_viz_up(host, port, status_code, expected_result, mocker):
+    if status_code is not None:
+        mocker.patch("requests.get", return_value=Mock(status_code=status_code))
+    else:
+        mocker.patch("requests.get", side_effect=requests.ConnectionError())
+
+    result = check_viz_up(host, port)
+    assert result == expected_result
