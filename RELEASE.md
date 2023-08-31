@@ -15,7 +15,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
-- Favicon added to Kedro-viz Demo site. (#1509)
+- Add favicon to Kedro-Viz. (#1509)
 - Remove python upper-bound requirements and add KedroVizPythonVersion warning. (#1506)
 
 
