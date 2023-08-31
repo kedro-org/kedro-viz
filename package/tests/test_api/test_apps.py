@@ -65,13 +65,8 @@ class TestReloadEndpoint:
 
 
 class TestFaviconEndpoint:
-    @pytest.fixture
-    def test_client(self):
-        app = apps.create_api_app_from_project(mock.MagicMock(), autoreload=True)
-        return TestClient(app)
-
-    def test_favicon_endpoint(self, test_client):
-        response = test_client.get("/favicon.ico")
+    def test_favicon_endpoint(self, client):
+        response = client.get("/favicon.ico")
         assert response.status_code == 200
         assert response.headers["content-type"] in [
             "image/x-icon",
