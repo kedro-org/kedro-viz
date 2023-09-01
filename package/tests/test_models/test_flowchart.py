@@ -98,7 +98,7 @@ class TestGraphNodeCreation:
         assert task_node.modular_pipelines == expected_modular_pipelines
 
     @pytest.mark.parametrize(
-        "dataset_name,expected_modular_pipelines",
+        "dataset_name, expected_modular_pipelines",
         [
             ("dataset", []),
             (
@@ -118,6 +118,7 @@ class TestGraphNodeCreation:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
+            stats={"rows": 10, "columns": 5, "file_size": 1024},
         )
         assert isinstance(data_node, DataNode)
         assert data_node.kedro_obj is kedro_dataset
@@ -127,6 +128,9 @@ class TestGraphNodeCreation:
         assert data_node.tags == set()
         assert data_node.pipelines == set()
         assert data_node.modular_pipelines == expected_modular_pipelines
+        assert data_node.stats["rows"] == 10
+        assert data_node.stats["columns"] == 5
+        assert data_node.stats["file_size"] == 1024
         assert not data_node.is_plot_node()
         assert not data_node.is_metric_node()
         assert not data_node.is_image_node()
@@ -150,6 +154,7 @@ class TestGraphNodeCreation:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
+            stats={"rows": 10, "columns": 2, "file_size": 1048},
         )
         assert isinstance(data_node, TranscodedDataNode)
         assert data_node.id == GraphNode._hash(original_name)
@@ -157,6 +162,9 @@ class TestGraphNodeCreation:
         assert data_node.layer == "raw"
         assert data_node.tags == set()
         assert data_node.pipelines == set()
+        assert data_node.stats["rows"] == 10
+        assert data_node.stats["columns"] == 2
+        assert data_node.stats["file_size"] == 1048
 
     def test_create_parameters_all_parameters(self):
         parameters_dataset = MemoryDataset(
@@ -252,6 +260,7 @@ class TestGraphNodePipelines:
             layer="raw",
             tags=set(),
             dataset=kedro_dataset,
+            stats={"rows": 10, "columns": 2, "file_size": 1048},
         )
         assert data_node.pipelines == set()
         data_node.add_pipeline(default_pipeline.id)
@@ -265,7 +274,7 @@ class TestGraphNodeMetadata:
     )
     def test_node_has_metadata(self, dataset, has_metadata):
         data_node = GraphNode.create_data_node(
-            "test_dataset", layer=None, tags=set(), dataset=dataset
+            "test_dataset", layer=None, tags=set(), dataset=dataset, stats=None
         )
         assert data_node.has_metadata() == has_metadata
 
@@ -354,10 +363,9 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
+            stats={"rows": 10, "columns": 2},
         )
-        data_node_metadata = DataNodeMetadata(
-            data_node=data_node, dataset_stats={"rows": 10, "columns": 2}
-        )
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
@@ -368,10 +376,7 @@ class TestGraphNodeMetadata:
         metadata = {"kedro-viz": {"something": 3}}
         dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
-            dataset_name="dataset",
-            tags=set(),
-            layer=None,
-            dataset=dataset,
+            dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
         )
         assert not data_node.is_preview_node()
 
@@ -379,10 +384,7 @@ class TestGraphNodeMetadata:
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
         dataset = CSVDataSet(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
-            dataset_name="dataset",
-            tags=set(),
-            layer=None,
-            dataset=dataset,
+            dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
         )
         assert data_node.is_preview_node()
         assert data_node.get_preview_args() == {"nrows": 3}
@@ -405,9 +407,7 @@ class TestGraphNodeMetadata:
         preview_data_node.is_tracking_node.return_value = False
         preview_data_node.is_preview_node.return_value = True
         preview_data_node.kedro_obj._preview.return_value = mock_preview_data
-        preview_node_metadata = DataNodeMetadata(
-            data_node=preview_data_node, dataset_stats={}
-        )
+        preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
         assert preview_node_metadata.preview == mock_preview_data
 
     def test_preview_data_node_metadata_not_exist(self):
@@ -418,9 +418,7 @@ class TestGraphNodeMetadata:
         preview_data_node.is_tracking_node.return_value = False
         preview_data_node.is_preview_node.return_value = True
         preview_data_node.kedro_obj._preview.return_value = False
-        preview_node_metadata = DataNodeMetadata(
-            data_node=preview_data_node, dataset_stats={}
-        )
+        preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
         assert preview_node_metadata.plot is None
 
     def test_transcoded_data_node_metadata(self):
@@ -430,13 +428,13 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
+            stats={"rows": 10, "columns": 2},
         )
         transcoded_data_node.original_name = "dataset"
         transcoded_data_node.original_version = ParquetDataSet(filepath="foo.parquet")
         transcoded_data_node.transcoded_versions = [CSVDataSet(filepath="foo.csv")]
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
-            transcoded_data_node=transcoded_data_node,
-            dataset_stats={"rows": 10, "columns": 2},
+            transcoded_data_node=transcoded_data_node
         )
         assert (
             transcoded_data_node_metadata.original_type
@@ -456,8 +454,9 @@ class TestGraphNodeMetadata:
             layer="raw",
             tags=set(),
             dataset=dataset,
+            stats=None,
         )
-        data_node_metadata = DataNodeMetadata(data_node=data_node, dataset_stats={})
+        data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.filepath == "partitioned/"
 
     # TODO: these test should ideally use a "real" catalog entry to create actual rather
@@ -479,9 +478,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.is_preview_node.return_value = False
         plotly_data_node.kedro_obj.load.return_value = mock_plot_data
-        plotly_node_metadata = DataNodeMetadata(
-            data_node=plotly_data_node, dataset_stats={}
-        )
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
     def test_plotly_data_node_dataset_not_exist(self):
@@ -491,9 +488,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_data_node.is_preview_node.return_value = False
-        plotly_node_metadata = DataNodeMetadata(
-            data_node=plotly_data_node, dataset_stats={}
-        )
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot is None
 
     def test_plotly_json_dataset_node_metadata(self):
@@ -512,9 +507,7 @@ class TestGraphNodeMetadata:
         plotly_json_dataset_node.is_tracking_node.return_value = False
         plotly_json_dataset_node.is_preview_node.return_value = False
         plotly_json_dataset_node.kedro_obj.load.return_value = mock_plot_data
-        plotly_node_metadata = DataNodeMetadata(
-            data_node=plotly_json_dataset_node, dataset_stats={}
-        )
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_json_dataset_node)
         assert plotly_node_metadata.plot == mock_plot_data
 
     # @patch("base64.b64encode")
@@ -529,9 +522,7 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_tracking_node.return_value = False
         image_dataset_node.is_preview_node.return_value = False
         image_dataset_node.kedro_obj.load.return_value = mock_image_data
-        image_node_metadata = DataNodeMetadata(
-            data_node=image_dataset_node, dataset_stats={}
-        )
+        image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image == mock_image_data
 
     def test_image_data_node_dataset_not_exist(self):
@@ -540,9 +531,7 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.kedro_obj.exists.return_value = False
         image_dataset_node.is_preview_node.return_value = False
-        image_node_metadata = DataNodeMetadata(
-            data_node=image_dataset_node, dataset_stats={}
-        )
+        image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image is None
 
     def test_json_data_node_metadata(self):
@@ -559,9 +548,7 @@ class TestGraphNodeMetadata:
         json_data_node.is_metric_node.return_value = False
         json_data_node.is_preview_node.return_value = False
         json_data_node.kedro_obj.load.return_value = mock_json_data
-        json_node_metadata = DataNodeMetadata(
-            data_node=json_data_node, dataset_stats={}
-        )
+        json_node_metadata = DataNodeMetadata(data_node=json_data_node)
         assert json_node_metadata.tracking_data == mock_json_data
         assert json_node_metadata.plot is None
 
@@ -572,9 +559,7 @@ class TestGraphNodeMetadata:
         metrics_data_node.is_metric_node.return_value = True
         metrics_data_node.is_preview_node.return_value = False
         metrics_data_node.kedro_obj.exists.return_value = False
-        metrics_node_metadata = DataNodeMetadata(
-            data_node=metrics_data_node, dataset_stats={}
-        )
+        metrics_node_metadata = DataNodeMetadata(data_node=metrics_data_node)
         assert metrics_node_metadata.plot is None
 
     def test_data_node_metadata_latest_tracking_data_not_exist(self):
@@ -584,9 +569,7 @@ class TestGraphNodeMetadata:
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
-        plotly_node_metadata = DataNodeMetadata(
-            data_node=plotly_data_node, dataset_stats={}
-        )
+        plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot is None
 
     def test_parameters_metadata_all_parameters(self):
