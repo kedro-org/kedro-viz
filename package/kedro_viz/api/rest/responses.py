@@ -27,9 +27,10 @@ class BaseAPIResponse(BaseModel, abc.ABC):
     class Config:
         orm_mode = True
 
+
 class UserCredentials(BaseModel):
-    awsRegion: str
-    bucketName: str
+    aws_region: str
+    bucket_name: str
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):

@@ -5,20 +5,15 @@ import json
 import time
 from pathlib import Path
 
-import fsspec
 import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
-from kedro.io.core import get_protocol_and_path
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import (
-    EnhancedORJSONResponse,
-    save_api_responses_to_fs,
-)
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router

@@ -1,12 +1,14 @@
 import fsspec
 from fastapi.encoders import jsonable_encoder
 from kedro.io.core import get_protocol_and_path
-from kedro_viz.data_access import data_access_manager
+
 from kedro_viz.api.rest.responses import (
+    EnhancedORJSONResponse,
     get_default_response,
     get_node_metadata_response,
     get_selected_pipeline_response,
-    EnhancedORJSONResponse)
+)
+from kedro_viz.data_access import data_access_manager
 
 
 def save_api_responses_to_fs(filepath: str):
