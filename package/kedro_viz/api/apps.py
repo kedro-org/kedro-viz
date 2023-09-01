@@ -116,22 +116,6 @@ def create_api_app_from_project(
 
         return Response()
 
-    @app.get("/deploy")
-    async def deploy_to_remote_location():
-        """Upload the Kedro-viz app to cloud"""
-
-        remote_location = "s3://kedroviz"
-        region = "us-east-1"
-        save_api_responses_to_fs(remote_location)
-        protocol, path = get_protocol_and_path(remote_location)
-        remote_fs = fsspec.filesystem(protocol)
-        source_files = [str(p) for p in _HTML_DIR.rglob("*") if p.is_file()]
-        remote_fs.put(source_files, remote_location)
-        url = None
-        if protocol == "s3":
-            url = f"http://{path}.s3-website-{region}.amazonaws.com/"
-        return Response(content=url, media_type="text/plain")
-
     return app
 
 
