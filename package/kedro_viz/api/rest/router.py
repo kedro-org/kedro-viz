@@ -5,12 +5,12 @@ from fastapi.responses import JSONResponse
 from pathlib import Path
 import fsspec
 from kedro.io.core import get_protocol_and_path
-from pydantic import BaseModel
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
+    UserCredentials,
     NodeMetadataAPIResponse,
     get_default_response,
     get_node_metadata_response,
@@ -19,9 +19,6 @@ from .responses import (
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
 
-class UserCredentials(BaseModel):
-    awsRegion: str
-    bucketName: str
 
 router = APIRouter(
     prefix="/api",
