@@ -8,7 +8,7 @@ from pathlib import Path
 import secure
 from fastapi import FastAPI, HTTPException
 from fastapi.requests import Request
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
@@ -71,6 +71,11 @@ def create_api_app_from_project(
     # everytime the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
     app_etag = _create_etag()
+
+    # Serve the favicon.ico file from the "html" directory
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        return FileResponse(_HTML_DIR / "favicon.ico")
 
     @app.get("/")
     @app.get("/experiment-tracking")
