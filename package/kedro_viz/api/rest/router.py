@@ -1,13 +1,9 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring
-from pathlib import Path
 
-import fsspec
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from kedro.io.core import get_protocol_and_path
 
-from kedro_viz.utils.api_tools import save_api_responses_to_fs
 
 from .responses import (
     APIErrorMessage,
@@ -19,7 +15,8 @@ from .responses import (
     get_selected_pipeline_response,
 )
 
-_HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
+from kedro_viz.integrations.deployer.deployment import S3Deployer
+
 
 
 router = APIRouter(
@@ -52,22 +49,7 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(inputValues: UserCredentials):
-    aws_region = inputValues.awsRegion
-    bucket_name = inputValues.bucketName
-    save_api_responses_to_fs(bucket_name)
-    protocol, path = get_protocol_and_path(bucket_name)
-    remote_fs = fsspec.filesystem(protocol)
-    source_files = [
-        str(p)
-        for p in _HTML_DIR.rglob("*")
-        if p.is_file() and not p.name.endswith(".map")
-    ]
-    remote_fs.put(source_files, bucket_name)
-
-    url = None
-    if protocol == "s3":
-        url = f"http://{path}.s3-website.{aws_region}.amazonaws.com"
-
+    deployer = S3Deployer(inputValues.aws_region, inputValues.bucket_name)
+    url  = deployer.deploy()
     response_data = {"message": "Website deployed on S3", "url": url}
-
     return JSONResponse(status_code=200, content=response_data)
