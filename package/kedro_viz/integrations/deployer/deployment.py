@@ -26,10 +26,12 @@ class S3Deployer:
         ]
         self._remote_fs.put(source_files, self._bucket_name)
 
-    def _get_url(self):
-        return f"http://{self._path}.s3-website.{self._region}.amazonaws.com"
-
-    def deploy(self):
+    def _deploy(self):
         self._upload_api_responses()
         self._upload_static_files()
-        return self._get_url()
+
+    def get_deployed_url(self):
+        self._deploy()
+        return f"http://{self._path}.s3-website.{self._region}.amazonaws.com"
+    
+

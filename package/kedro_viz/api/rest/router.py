@@ -2,9 +2,7 @@
 # pylint: disable=missing-function-docstring
 
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
 
-from kedro_viz.integrations.deployer.deployment import S3Deployer
 
 from .responses import (
     APIErrorMessage,
@@ -14,6 +12,7 @@ from .responses import (
     get_default_response,
     get_node_metadata_response,
     get_selected_pipeline_response,
+    get_deployment_response
 )
 
 router = APIRouter(
@@ -46,7 +45,6 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(inputValues: UserCredentials):
-    deployer = S3Deployer(inputValues.aws_region, inputValues.bucket_name)
-    url = deployer.deploy()
-    response_data = {"message": "Website deployed on S3", "url": url}
-    return JSONResponse(status_code=200, content=response_data)
+    return get_deployment_response(inputValues.region,inputValues.bucket_name)
+
+
