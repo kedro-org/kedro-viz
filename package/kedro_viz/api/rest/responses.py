@@ -316,12 +316,10 @@ def get_node_metadata_response(node_id: str):
         return TaskNodeMetadata(node)
 
     if isinstance(node, DataNode):
-        dataset_stats = data_access_manager.get_stats_for_data_node(node)
-        return DataNodeMetadata(node, dataset_stats)
+        return DataNodeMetadata(node)
 
     if isinstance(node, TranscodedDataNode):
-        dataset_stats = data_access_manager.get_stats_for_data_node(node)
-        return TranscodedDataNodeMetadata(node, dataset_stats)
+        return TranscodedDataNodeMetadata(node)
 
     return ParametersNodeMetadata(node)
 
