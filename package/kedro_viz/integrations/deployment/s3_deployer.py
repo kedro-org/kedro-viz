@@ -1,6 +1,10 @@
+"""`kedro_viz.integrations.deployment.s3_deployer` defines
+deployment class for S3"""
+
 import logging
-from pathlib import Path
 import os
+from pathlib import Path
+
 import fsspec
 from kedro.io.core import get_protocol_and_path
 
@@ -12,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class S3Deployer:
+    """Deployer class for AWS S3"""
+
     def __init__(self, region, bucket_name):
         self._region = region
         self._bucket_name = bucket_name
@@ -49,11 +55,13 @@ class S3Deployer:
 
         except Exception as exc:
             logger.exception("Upload failed: %s ", exc)
+            raise exc
 
     def _deploy(self):
         self._upload_api_responses()
         self._upload_static_files()
 
     def get_deployed_url(self):
+        """Returns an S3 URL where Kedro viz is deployed"""
         self._deploy()
         return f"http://{self._path}.s3-website.{self._region}.amazonaws.com"

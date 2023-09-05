@@ -1,5 +1,6 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring
+import logging
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -15,6 +16,8 @@ from .responses import (
     get_node_metadata_response,
     get_selected_pipeline_response,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api",
@@ -46,7 +49,18 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(input_values: AWSCredentials):
-    deployer = S3Deployer(input_values.region, input_values.bucket_name)
-    url = deployer.get_deployed_url()
-    response = {"message": "Website deployed on S3", "url": url}
-    return JSONResponse(status_code=200, content=response)
+    try:
+        deployer = S3Deployer(input_values.region, input_values.bucket_name)
+        url = deployer.get_deployed_url()
+        response = {"message": "Website deployed on S3", "url": url}
+        return JSONResponse(status_code=200, content=response)
+    except PermissionError as exc:
+        logger.exception("Permission error in deploying Kedro Viz : %s ", exc)
+        return JSONResponse(
+            status_code=401, content={"message": "Please provide valid credentials"}
+        )
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.exception("Deploying Kedro Viz failed: %s ", exc)
+        return JSONResponse(
+            status_code=500, content={"message": "Failed to deploy Kedro Viz"}
+        )
