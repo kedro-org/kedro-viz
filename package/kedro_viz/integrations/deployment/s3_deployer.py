@@ -4,7 +4,7 @@ import os
 import fsspec
 from kedro.io.core import get_protocol_and_path
 
-from kedro_viz.utils.api_tools import save_api_responses_to_fs
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
 
