@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-
+import os
 import fsspec
 from kedro.io.core import get_protocol_and_path
 
@@ -23,13 +23,30 @@ class S3Deployer:
 
     def _upload_static_files(self):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
-        source_files = [
-            str(p)
-            for p in _HTML_DIR.rglob("*")
-            if p.is_file() and not p.name.endswith(".map")
-        ]
         try:
-            self._remote_fs.put(source_files, self._bucket_name)
+            # Iterate through the local directory and its subdirectories
+            for root, _, files in os.walk(_HTML_DIR):
+                for file_name in files:
+                    file_path = os.path.join(root, file_name)
+                    rel_path = os.path.relpath(file_path, _HTML_DIR)
+
+                    # Skip .map files
+                    if file_name.endswith(".map"):
+                        continue
+
+                    # Determine the S3 key (object key) based on the prefix and relative path
+                    s3_key = os.path.join(self._bucket_name, rel_path).replace(
+                        os.path.sep, "/"
+                    )
+
+                    # Create S3 directories if they don't exist
+                    s3_dir = os.path.dirname(s3_key)
+                    if not self._remote_fs.exists(s3_dir):
+                        self._remote_fs.mkdir(s3_dir)
+
+                    # Upload the file to S3
+                    self._remote_fs.put(file_path, s3_key)
+
         except Exception as exc:
             logger.exception("Upload failed: %s ", exc)
 
