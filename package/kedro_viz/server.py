@@ -103,6 +103,8 @@ def run_server(
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:
+        if not Path(load_file).exists():
+            raise ValueError(f"The provided filepath '{load_file}' does not exist.")
         app = apps.create_api_app_from_file(f"{path}/{load_file}")
 
     if browser and is_localhost(host):

@@ -17,7 +17,6 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
-from kedro_viz.integrations.deployer.deployment import S3Deployer
 
 
 class APIErrorMessage(BaseModel):
@@ -355,9 +354,3 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
         selected_pipeline=registered_pipeline_id,
         modular_pipelines=modular_pipelines_tree,
     )
-
-def get_deployment_response(region, bucket_name):
-    deployer = S3Deployer(region, bucket_name)
-    url = deployer.get_deployed_url()
-    response = {"message": "Website deployed on S3", "url": url}
-    return JSONResponse(status_code=200, content=response)

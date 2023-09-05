@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import fsspec
@@ -6,6 +7,8 @@ from kedro.io.core import get_protocol_and_path
 from kedro_viz.utils.api_tools import save_api_responses_to_fs
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
+
+logger = logging.getLogger(__name__)
 
 
 class S3Deployer:
@@ -19,12 +22,16 @@ class S3Deployer:
         save_api_responses_to_fs(self._bucket_name)
 
     def _upload_static_files(self):
+        logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         source_files = [
             str(p)
             for p in _HTML_DIR.rglob("*")
             if p.is_file() and not p.name.endswith(".map")
         ]
-        self._remote_fs.put(source_files, self._bucket_name)
+        try:
+            self._remote_fs.put(source_files, self._bucket_name)
+        except Exception as exc:
+            logger.exception("Upload failed: %s ", exc)
 
     def _deploy(self):
         self._upload_api_responses()
@@ -33,5 +40,3 @@ class S3Deployer:
     def get_deployed_url(self):
         self._deploy()
         return f"http://{self._path}.s3-website.{self._region}.amazonaws.com"
-    
-
