@@ -362,32 +362,32 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
+def write_api_response_to_fs(file_path: str, response: Any, fs_obj: Any):
     """Encodes, enhances responses and writes it to a file"""
     jsonable_response = jsonable_encoder(response)
     encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
         jsonable_response
     )
 
-    with remote_fs.open(file_path, "wb") as file:
+    with fs_obj.open(file_path, "wb") as file:
         file.write(encoded_response)
 
 
-def save_api_main_response_to_fs(main_loc: str, remote_fs: Any):
+def save_api_main_response_to_fs(main_loc: str, fs_obj: Any):
     """Saves API /main response to a file."""
     try:
-        write_api_response_to_fs(main_loc, get_default_response(), remote_fs)
+        write_api_response_to_fs(main_loc, get_default_response(), fs_obj)
     except Exception as exc:
         logger.exception("Failed to save default response. Error: %s", str(exc))
         raise exc
 
 
-def save_api_node_response_to_fs(nodes_loc: str, remote_fs: Any):
+def save_api_node_response_to_fs(nodes_loc: str, fs_obj: Any):
     """Saves API /nodes/{node} response to a file."""
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
-                f"{nodes_loc}/{nodeId}", get_node_metadata_response(nodeId), remote_fs
+                f"{nodes_loc}/{nodeId}", get_node_metadata_response(nodeId), fs_obj
             )
         except Exception as exc:
             logger.exception(
@@ -396,14 +396,14 @@ def save_api_node_response_to_fs(nodes_loc: str, remote_fs: Any):
             raise exc
 
 
-def save_api_pipeline_response_to_fs(pipelines_loc: str, remote_fs: Any):
+def save_api_pipeline_response_to_fs(pipelines_loc: str, fs_obj: Any):
     """Saves API /pipelines/{pipeline} response to a file."""
     for pipelineId in data_access_manager.registered_pipelines.get_pipeline_ids():
         try:
             write_api_response_to_fs(
                 f"{pipelines_loc}/{pipelineId}",
                 get_selected_pipeline_response(pipelineId),
-                remote_fs,
+                fs_obj,
             )
         except Exception as exc:
             logger.exception(
@@ -418,7 +418,7 @@ def save_api_responses_to_fs(filepath: str):
     """Saves all Kedro Viz API responses to a file."""
     try:
         protocol, path = get_protocol_and_path(filepath)
-        remote_fs = fsspec.filesystem(protocol)
+        fs_obj = fsspec.filesystem(protocol)
 
         logger.debug(
             """Saving/Uploading api files to %s""",
@@ -430,13 +430,13 @@ def save_api_responses_to_fs(filepath: str):
         pipelines_loc = f"{path}/api/pipelines"
 
         if protocol == "file":
-            remote_fs.makedirs(path, exist_ok=True)
-            remote_fs.makedirs(nodes_loc, exist_ok=True)
-            remote_fs.makedirs(pipelines_loc, exist_ok=True)
+            fs_obj.makedirs(path, exist_ok=True)
+            fs_obj.makedirs(nodes_loc, exist_ok=True)
+            fs_obj.makedirs(pipelines_loc, exist_ok=True)
 
-        save_api_main_response_to_fs(main_loc, remote_fs)
-        save_api_node_response_to_fs(nodes_loc, remote_fs)
-        save_api_pipeline_response_to_fs(pipelines_loc, remote_fs)
+        save_api_main_response_to_fs(main_loc, fs_obj)
+        save_api_node_response_to_fs(nodes_loc, fs_obj)
+        save_api_pipeline_response_to_fs(pipelines_loc, fs_obj)
 
     except Exception as exc:
         logger.exception(
