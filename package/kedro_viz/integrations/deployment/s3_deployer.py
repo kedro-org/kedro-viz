@@ -2,7 +2,6 @@
 deployment class for S3"""
 
 import logging
-import os
 from pathlib import Path
 
 import fsspec
@@ -30,7 +29,9 @@ class S3Deployer:
     def _upload_static_files(self):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         try:
-            self._remote_fs.put(f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True)
+            self._remote_fs.put(
+                f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True
+            )
         except Exception as exc:
             logger.exception("Upload failed: %s ", exc)
             raise exc
