@@ -20,7 +20,7 @@ import {
 import { findMatchedPath } from '../../utils/match-path';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
-import './experiment-wrapper.css';
+import './experiment-wrapper.scss';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 

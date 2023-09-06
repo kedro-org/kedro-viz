@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { CSSTransition } from 'react-transition-group';
 
-import './delayed-renderer.css';
+import './delayed-renderer.scss';
 
 const DelayedRenderer = ({ children, waitBeforeShow = 1200 }) => {
   const [isShown, setIsShown] = useState(false);

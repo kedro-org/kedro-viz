@@ -15,7 +15,7 @@ import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/
 import Button from '../ui/button';
 import Modal from '../ui/modal';
 
-import './settings-modal.css';
+import './settings-modal.scss';
 
 /**
  * Modal to allow users to change the flag settings

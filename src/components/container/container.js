@@ -1,7 +1,7 @@
 import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
-import './container.css';
+import './container.scss';
 
 /**
  * Top-level component for the use-case where Kedro-Viz is run as a standalone
