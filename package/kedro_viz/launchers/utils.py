@@ -14,7 +14,7 @@ class WaitForException(Exception):
     """WaitForException: if func doesn't return expected result within the specified time"""
 
 
-def wait_for(
+def _wait_for(
     func: Callable,
     expected_result: Any = True,
     timeout: int = 60,
@@ -58,7 +58,7 @@ def wait_for(
     )
 
 
-def check_viz_up(host: str, port: int):
+def _check_viz_up(host: str, port: int):
     """Checks if Kedro Viz Server has started and is responding to requests
 
     Args:
@@ -75,12 +75,12 @@ def check_viz_up(host: str, port: int):
     return response.status_code == 200
 
 
-def is_localhost(host: str) -> bool:
+def _is_localhost(host: str) -> bool:
     """Check whether a host is a localhost"""
     return host in ("127.0.0.1", "localhost", "0.0.0.0")
 
 
-def start_browser(host: str, port: int):
+def _start_browser(host: str, port: int):
     """Starts a new browser window only on a local interface
 
     Args:
@@ -88,5 +88,5 @@ def start_browser(host: str, port: int):
         port: browser url port
     """
 
-    if is_localhost(host):
+    if _is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")

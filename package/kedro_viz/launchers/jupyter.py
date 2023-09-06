@@ -12,7 +12,7 @@ from typing import Any, Dict
 import IPython
 from IPython.display import HTML, display
 
-from kedro_viz.launchers.utils import check_viz_up, wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
 _VIZ_PROCESSES: Dict[str, int] = {}
@@ -116,7 +116,7 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    wait_for(func=check_viz_up, host=host, port=port)
+    _wait_for(func=_check_viz_up, host=host, port=port)
 
     if _is_databricks():
         _display_databricks_html(port)

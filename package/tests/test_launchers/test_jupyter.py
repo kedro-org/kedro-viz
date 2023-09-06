@@ -7,7 +7,7 @@ from kedro_viz.server import run_server
 
 @pytest.fixture
 def patched_check_viz_up(mocker):
-    mocker.patch("kedro_viz.launchers.jupyter.check_viz_up", return_value=True)
+    mocker.patch("kedro_viz.launchers.jupyter._check_viz_up", return_value=True)
 
 
 class TestRunVizLineMagic:
@@ -47,11 +47,11 @@ class TestRunVizLineMagic:
 
     def test_exception_when_viz_cannot_be_launched(self, mocker):
         mocker.patch(
-            "kedro_viz.launchers.jupyter.check_viz_up", side_effect=Exception("Test")
+            "kedro_viz.launchers.jupyter._check_viz_up", side_effect=Exception("Test")
         )
         # Reduce the timeout argument from 60 to 1 to make test run faster.
         mocker.patch(
-            "kedro_viz.launchers.jupyter.wait_for.__defaults__", (True, 1, True, 1)
+            "kedro_viz.launchers.jupyter._wait_for.__defaults__", (True, 1, True, 1)
         )
         with pytest.raises(WaitForException):
             run_viz()

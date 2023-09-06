@@ -14,7 +14,7 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.launchers.utils import check_viz_up, start_browser, wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -139,12 +139,12 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
         viz_process.start()
         _VIZ_PROCESSES[port] = viz_process
 
-        wait_for(func=check_viz_up, host=host, port=port)
+        _wait_for(func=_check_viz_up, host=host, port=port)
 
         print("Kedro Viz Backend Server started successfully...")
 
         if browser:
-            start_browser(host, port)
+            _start_browser(host, port)
 
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()

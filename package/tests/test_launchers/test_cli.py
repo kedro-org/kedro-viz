@@ -11,12 +11,12 @@ from kedro_viz.server import run_server
 
 @pytest.fixture
 def patched_check_viz_up(mocker):
-    mocker.patch("kedro_viz.launchers.cli.check_viz_up", return_value=True)
+    mocker.patch("kedro_viz.launchers.cli._check_viz_up", return_value=True)
 
 
 @pytest.fixture
 def patched_start_browser(mocker):
-    mocker.patch("kedro_viz.launchers.cli.start_browser")
+    mocker.patch("kedro_viz.launchers.cli._start_browser")
 
 
 @pytest.mark.parametrize(
@@ -92,7 +92,7 @@ def test_kedro_viz_command_run_server(
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
     # Reduce the timeout argument from 60 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
 
@@ -161,7 +161,7 @@ def test_kedro_viz_command_with_autoreload(
     mock_project_path = "/tmp/project_path"
     mocker.patch("pathlib.Path.cwd", return_value=mock_project_path)
     # Reduce the timeout argument from 60 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz", "--autoreload"])

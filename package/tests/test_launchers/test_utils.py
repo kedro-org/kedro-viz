@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 import requests
 
-from kedro_viz.launchers.utils import check_viz_up, start_browser
+from kedro_viz.launchers.utils import _check_viz_up, _start_browser
 
 
 @pytest.mark.parametrize(
@@ -23,7 +23,7 @@ def test_browser_open(
     should_browser_open,
     mocker,
 ):
-    start_browser(ip, port=4141)
+    _start_browser(ip, port=4141)
     if should_browser_open:
         webbrowser.open_new.assert_called_once()
     else:
@@ -44,5 +44,5 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
     else:
         mocker.patch("requests.get", side_effect=requests.ConnectionError())
 
-    result = check_viz_up(host, port)
+    result = _check_viz_up(host, port)
     assert result == expected_result
