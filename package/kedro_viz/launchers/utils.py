@@ -26,7 +26,7 @@ def _wait_for(
     Run specified function until it returns expected result until timeout.
 
     Args:
-        func (Callable): Specified function
+        func (Callable): Specified function to call
         expected_result (Any): result that is expected. Defaults to None.
         timeout (int): Time out in seconds. Defaults to 10.
         print_error (boolean): whether any exceptions raised should be printed.
