@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "6.5.1",
+  "version": "6.5.0",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
@@ -21,7 +21,7 @@
     "lib": "npm-run-all -s lib:clean lib:copy lib:css lib:webpack lib:babel lib:prune",
     "lib:clean": "rm -rf lib",
     "lib:copy": "cp -rf src lib",
-    "lib:css": "sass --no-source-map lib/. && cleancss -o lib/styles/styles.min.css lib/**/*.css",
+    "lib:css": "sass --no-source-map lib/. && cleancss -o lib/styles.min.css lib/**/*.css",
     "lib:webpack": "webpack --config webpack.lib.js",
     "lib:babel": "babel lib --out-dir lib",
     "lib:prune": "find lib -type f -name '*.test.*' -delete && find lib -type f -name '*.scss' -delete && find lib/components -type f -name '*.css' -delete",
