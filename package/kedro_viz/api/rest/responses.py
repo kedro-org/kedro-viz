@@ -34,7 +34,7 @@ class BaseAPIResponse(BaseModel, abc.ABC):
         orm_mode = True
 
 
-class AWSCredentials(BaseModel):
+class S3DeployerCredentials(BaseModel):
     region: str
     bucket_name: str
 

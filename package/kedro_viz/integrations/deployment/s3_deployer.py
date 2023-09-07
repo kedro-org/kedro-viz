@@ -32,7 +32,7 @@ class S3Deployer:
             self._remote_fs.put(
                 f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True
             )
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
 

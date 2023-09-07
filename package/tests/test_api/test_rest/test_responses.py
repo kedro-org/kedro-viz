@@ -794,14 +794,14 @@ class TestSinglePipelineEndpoint:
 
 class TestAPIAppFromFile:
     def test_api_app_from_json_file_main_api(self):
-        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
+        filepath = str(Path(__file__).parent.parent)
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/api/main")
         assert_example_data_from_file(response.json())
 
     def test_api_app_from_json_file_index(self):
-        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
+        filepath = str(Path(__file__).parent.parent)
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/")
