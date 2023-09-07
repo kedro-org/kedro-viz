@@ -34,11 +34,6 @@ class BaseAPIResponse(BaseModel, abc.ABC):
         orm_mode = True
 
 
-class S3DeployerCredentials(BaseModel):
-    region: str
-    bucket_name: str
-
-
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
     id: str
     name: str
@@ -377,7 +372,7 @@ def save_api_main_response_to_fs(main_loc: str, fs_obj: Any):
     """Saves API /main response to a file."""
     try:
         write_api_response_to_fs(main_loc, get_default_response(), fs_obj)
-    except Exception as exc:
+    except Exception as exc:  # pragma: no cover
         logger.exception("Failed to save default response. Error: %s", str(exc))
         raise exc
 
@@ -389,7 +384,7 @@ def save_api_node_response_to_fs(nodes_loc: str, fs_obj: Any):
             write_api_response_to_fs(
                 f"{nodes_loc}/{nodeId}", get_node_metadata_response(nodeId), fs_obj
             )
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
                 "Failed to save node data for node ID %s. Error: %s", nodeId, str(exc)
             )
@@ -405,7 +400,7 @@ def save_api_pipeline_response_to_fs(pipelines_loc: str, fs_obj: Any):
                 get_selected_pipeline_response(pipelineId),
                 fs_obj,
             )
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.exception(
                 "Failed to save pipeline data for pipeline ID %s. Error: %s",
                 pipelineId,
@@ -438,7 +433,7 @@ def save_api_responses_to_fs(filepath: str):
         save_api_node_response_to_fs(nodes_loc, fs_obj)
         save_api_pipeline_response_to_fs(pipelines_loc, fs_obj)
 
-    except Exception as exc:
+    except Exception as exc:  # pragma: no cover
         logger.exception(
             "An error occurred while preparing data for saving. Error: %s", str(exc)
         )

@@ -5,13 +5,13 @@ import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
+from kedro_viz.api.rest.requests import S3DeployerCredentials
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
-    S3DeployerCredentials,
     get_default_response,
     get_node_metadata_response,
     get_selected_pipeline_response,
