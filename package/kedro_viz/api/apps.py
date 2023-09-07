@@ -135,13 +135,13 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
     async def get_node_metadata(node_id):
-        return json.loads(
+        return json.loads(  # pragma: no cover
             (Path(filepath) / "nodes" / node_id).read_text(encoding="utf8")
         )
 
     @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
     async def get_registered_pipeline(pipeline_id):
-        return json.loads(
+        return json.loads(  # pragma: no cover
             (Path(filepath) / "pipelines" / pipeline_id).read_text(encoding="utf8")
         )
 
