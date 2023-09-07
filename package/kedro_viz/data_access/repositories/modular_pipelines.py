@@ -210,6 +210,8 @@ class ModularPipelinesRepository:
 
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
 
+        modular_pipeline.inherit_tags(node.tags)
+
         # Add the node's registered pipelines to the modular pipeline's registered pipelines.
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.

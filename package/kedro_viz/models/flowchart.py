@@ -342,6 +342,8 @@ class ModularPipelineNode(GraphNode):
     external_inputs: Set[str] = field(default_factory=set)
     external_outputs: Set[str] = field(default_factory=set)
 
+    tags: Set[str] = field(default_factory=set)
+
     @property
     def inputs(self) -> Set[str]:
         """Return a set of inputs for this modular pipeline.
@@ -362,6 +364,9 @@ class ModularPipelineNode(GraphNode):
         return (self.external_outputs | self.internal_outputs) - (
             self.external_inputs | self.internal_inputs
         )
+
+    def inherit_tags(self, tags: Set[str]):
+        self.tags.update(tags)
 
 
 @dataclass
