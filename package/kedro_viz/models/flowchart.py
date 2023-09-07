@@ -366,6 +366,7 @@ class ModularPipelineNode(GraphNode):
         )
 
     def inherit_tags(self, tags: Set[str]):
+        """Update the current set of tags with the given tags."""
         self.tags.update(tags)
 
 

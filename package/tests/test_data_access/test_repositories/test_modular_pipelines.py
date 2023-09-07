@@ -36,12 +36,22 @@ class TestModularPipelinesRepository:
         modular_pipelines.extract_from_node(task_node)
         assert modular_pipelines.has_modular_pipeline("data_science")
 
-    def test_tags_inheritance(self):
-        task_node = GraphNode.create_task_node(namespace="data_science", tags={"tag1", "tag2"})
+    def test_tags_inheritance(self, identity):
+        task_node = GraphNode.create_task_node(
+            node(
+                identity,
+                inputs="x",
+                outputs=None,
+                namespace="data_science",
+                tags={"tag1", "tag2"},
+            )
+        )
         modular_pipelines = ModularPipelinesRepository()
 
         modular_pipelines.extract_from_node(task_node)
-        modular_pipeline = modular_pipelines.get_or_create_modular_pipeline("data_science")
+        modular_pipeline = modular_pipelines.get_or_create_modular_pipeline(
+            "data_science"
+        )
 
         assert "tag1" in modular_pipeline.tags
         assert "tag2" in modular_pipeline.tags
