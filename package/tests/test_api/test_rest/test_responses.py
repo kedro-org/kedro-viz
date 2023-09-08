@@ -169,7 +169,7 @@ def assert_example_data(response_data):
         {
             "id": "uk.data_processing",
             "name": "uk.data_processing",
-            "tags": [],
+            "tags": ["split"],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
             "modular_pipelines": None,
@@ -180,7 +180,7 @@ def assert_example_data(response_data):
         {
             "id": "uk.data_science",
             "name": "uk.data_science",
-            "tags": [],
+            "tags": ["train"],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
             "modular_pipelines": None,
@@ -725,7 +725,7 @@ class TestSinglePipelineEndpoint:
             {
                 "id": "uk.data_science",
                 "name": "uk.data_science",
-                "tags": [],
+                "tags": ["train"],
                 "pipelines": ["data_science"],
                 "type": "modularPipeline",
                 "modular_pipelines": None,

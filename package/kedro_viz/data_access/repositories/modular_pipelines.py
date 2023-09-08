@@ -210,6 +210,7 @@ class ModularPipelinesRepository:
 
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
 
+        # Inherit tags from the nodes of the modular pipeline.
         modular_pipeline.inherit_tags(node.tags)
 
         # Add the node's registered pipelines to the modular pipeline's registered pipelines.
