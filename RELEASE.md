@@ -6,13 +6,18 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 6.4.1
+# Release 6.5.0
 
 ## Major features and improvements
+
+- Add support for Python 3.11 (#1502)
 
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
+- Add favicon to Kedro-Viz. (#1509)
+- Remove python upper-bound requirements and add KedroVizPythonVersion warning. (#1506)
+
 
 # Release 6.4.0
 

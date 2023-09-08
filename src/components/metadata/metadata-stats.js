@@ -1,6 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { formatFileSize, formatNumberWithCommas } from '../../utils';
-import { datasetStatLabels } from '../../config';
+import { datasetStatLabels, statsRowLen } from '../../config';
 import './styles/metadata-stats.css';
 
 const MetaDataStats = ({ stats }) => {
@@ -14,14 +14,13 @@ const MetaDataStats = ({ stats }) => {
       return;
     }
 
-    const containerWidth = statsContainer.clientWidth;
-    const totalItemsWidth = Array.from(statsContainer.children).reduce(
-      (total, item) => total + item.offsetWidth,
+    const statsLen = Array.from(statsContainer.children).reduce(
+      (total, item) => total + item.outerText?.length,
       0
     );
 
-    setHasOverflow(totalItemsWidth > containerWidth);
-  }, []);
+    setHasOverflow(statsLen > statsRowLen);
+  }, [stats]);
 
   return (
     <ul
@@ -34,7 +33,7 @@ const MetaDataStats = ({ stats }) => {
             className="pipeline-metadata__value pipeline-metadata-value__stats"
             data-test={`stats-value-${statLabel}`}
           >
-            {stats.hasOwnProperty(statLabel)
+            {stats?.hasOwnProperty(statLabel)
               ? statLabel !== 'file_size'
                 ? formatNumberWithCommas(stats[statLabel])
                 : formatFileSize(stats[statLabel])
