@@ -1,7 +1,8 @@
 from unittest.mock import patch
 
 import pytest
-
+import json
+from datetime import datetime
 from kedro_viz.integrations.deployment.s3_deployer import _HTML_DIR, S3Deployer
 
 
@@ -57,16 +58,34 @@ class TestS3Deployer:
         "region, bucket_name",
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
+    def test_upload_timestamp_file(self, region, bucket_name):
+        deployer = S3Deployer(region, bucket_name)
+
+        # Mock the _remote_fs.open method to simulate a successful upload
+        with patch.object(deployer._remote_fs, "open") as mock_open:
+            deployer._upload_timestamp_file()
+
+            mock_open.assert_called_once_with(f"{bucket_name}/api/timestamp", "w")
+            mock_open().__enter__().write.assert_called_once_with(
+                json.dumps({"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")})
+            )
+
+    @pytest.mark.parametrize(
+        "region, bucket_name",
+        [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
+    )
     def test_deploy(self, region, bucket_name, mocker):
         deployer = S3Deployer(region, bucket_name)
 
         mocker.patch.object(deployer, "_upload_api_responses")
         mocker.patch.object(deployer, "_upload_static_files")
+        mocker.patch.object(deployer, "_upload_timestamp_file")
 
         deployer._deploy()
 
         deployer._upload_api_responses.assert_called_once()
         deployer._upload_static_files.assert_called_once()
+        deployer._upload_timestamp_file.assert_called_once()
 
     @pytest.mark.parametrize(
         "region, bucket_name",
