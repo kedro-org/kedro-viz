@@ -1,8 +1,9 @@
+import json
+from datetime import datetime
 from unittest.mock import patch
 
 import pytest
-import json
-from datetime import datetime
+
 from kedro_viz.integrations.deployment.s3_deployer import _HTML_DIR, S3Deployer
 
 
@@ -60,15 +61,14 @@ class TestS3Deployer:
     )
     def test_upload_timestamp_file(self, region, bucket_name):
         deployer = S3Deployer(region, bucket_name)
+        mock_open = patch.object(deployer._remote_fs, "open").start()
 
-        # Mock the _remote_fs.open method to simulate a successful upload
-        with patch.object(deployer._remote_fs, "open") as mock_open:
-            deployer._upload_timestamp_file()
+        deployer._upload_timestamp_file()
 
-            mock_open.assert_called_once_with(f"{bucket_name}/api/timestamp", "w")
-            mock_open().__enter__().write.assert_called_once_with(
-                json.dumps({"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")})
-            )
+        mock_open.assert_called_once_with(f"{bucket_name}/api/timestamp", "w")
+        mock_open.return_value.__enter__.return_value.write.assert_called_once_with(
+            json.dumps({"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")})
+        )
 
     @pytest.mark.parametrize(
         "region, bucket_name",
