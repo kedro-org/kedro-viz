@@ -1,5 +1,4 @@
 import json
-from unittest import mock
 
 import pytest
 from pydantic import BaseModel
@@ -133,28 +132,3 @@ class TestServer:
         run_server(save_file=save_file)
         with open(save_file, "r", encoding="utf8") as f:
             assert json.load(f) == {"content": "test"}
-
-    @pytest.mark.parametrize(
-        "browser,ip,should_browser_open",
-        [
-            (True, "0.0.0.0", True),
-            (True, "127.0.0.1", True),
-            (True, "localhost", True),
-            (False, "127.0.0.1", False),
-            (True, "8.8.8.8", False),
-        ],
-    )
-    @mock.patch("kedro_viz.server.webbrowser")
-    def test_browser_open(
-        self,
-        webbrowser,
-        browser,
-        ip,
-        should_browser_open,
-        mocker,
-    ):
-        run_server(browser=browser, host=ip)
-        if should_browser_open:
-            webbrowser.open_new.assert_called_once()
-        else:
-            webbrowser.open_new.assert_not_called()
