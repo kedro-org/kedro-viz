@@ -160,11 +160,7 @@ To use Kedro-Viz as a standalone React component, you can follow the example bel
 import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => (
-  <div style={{ height: '100vh' }}>
-    <KedroViz data={json} />
-  </div>
-);
+const MyApp = () => <KedroViz data={json} />;
 ```
 
 To use with NextJS:
@@ -177,11 +173,7 @@ const NoSSRKedro = dynamic(() => import('@quantumblack/kedro-viz'), {
   ssr: false,
 });
 
-const MyApp = () => (
-  <div style={{ height: '100vh' }}>
-    <NoSSRKedro data={json} />
-  </div>
-);
+const MyApp = () => <NoSSRKedro data={json} />;
 ```
 
 The JSON can be obtained by running:
