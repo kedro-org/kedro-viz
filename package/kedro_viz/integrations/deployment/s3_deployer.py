@@ -1,7 +1,9 @@
 """`kedro_viz.integrations.deployment.s3_deployer` defines
 deployment class for S3"""
 
+import json
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import fsspec
@@ -36,9 +38,28 @@ class S3Deployer:
             logger.exception("Upload failed: %s ", exc)
             raise exc
 
+    def _upload_timestamp_file(self):
+        logger.debug(
+            """Creating and Uploading timestamp file to %s.""", self._bucket_name
+        )
+
+        try:
+            with self._remote_fs.open(
+                f"{self._bucket_name}/api/timestamp", "w"
+            ) as timestamp_file:
+                timestamp_file.write(
+                    json.dumps(
+                        {"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")}
+                    )
+                )
+        except Exception as exc:  # pragma: no cover
+            logger.exception("Upload failed: %s ", exc)
+            raise exc
+
     def _deploy(self):
         self._upload_api_responses()
         self._upload_static_files()
+        self._upload_timestamp_file()
 
     def get_deployed_url(self):
         """Returns an S3 URL where Kedro viz is deployed"""
