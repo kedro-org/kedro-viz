@@ -7,7 +7,7 @@ from kedro_viz.server import run_server
 
 @pytest.fixture
 def patched_check_viz_up(mocker):
-    mocker.patch("kedro_viz.launchers.jupyter.check_viz_up", return_value=True)
+    mocker.patch("kedro_viz.launchers.jupyter._check_viz_up", return_value=True)
 
 
 class TestRunVizLineMagic:
