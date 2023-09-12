@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import orjson
 from fastapi.responses import ORJSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.data_access import data_access_manager
 
@@ -15,8 +15,7 @@ class APIErrorMessage(BaseModel):
 
 
 class BaseAPIResponse(BaseModel, abc.ABC):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
@@ -27,14 +26,13 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     type: str
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
-    modular_pipelines: Optional[List[str]]
+    modular_pipelines: Optional[List[str]] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "6ab908b8",
                 "name": "split_data_node",
@@ -58,15 +56,15 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
                 },
             }
         }
+    )
 
 
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
-    layer: Optional[str]
-    dataset_type: Optional[str]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
+    layer: Optional[str] = None
+    dataset_type: Optional[str] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "d7b83b05",
                 "name": "master_table",
@@ -79,6 +77,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
                 "stats": {"rows": 10, "columns": 2, "file_size": 2300},
             }
         }
+    )
 
 
 NodeAPIResponse = Union[
@@ -88,15 +87,14 @@ NodeAPIResponse = Union[
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
-    code: Optional[str]
-    filepath: Optional[str]
-    parameters: Optional[Dict]
+    code: Optional[str] = None
+    filepath: Optional[str] = None
+    parameters: Optional[Dict] = None
     inputs: List[str]
     outputs: List[str]
-    run_command: Optional[str]
-
-    class Config:
-        schema_extra = {
+    run_command: Optional[str] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
@@ -106,41 +104,41 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "run_command": "kedro run --to-nodes=split_data",
             }
         }
+    )
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
-    filepath: Optional[str]
+    filepath: Optional[str] = None
     type: str
-    plot: Optional[Dict]
-    image: Optional[str]
-    tracking_data: Optional[Dict]
-    run_command: Optional[str]
-    preview: Optional[Dict]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
+    plot: Optional[Dict] = None
+    image: Optional[str] = None
+    tracking_data: Optional[Dict] = None
+    run_command: Optional[str] = None
+    preview: Optional[Dict] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "pandas.csv_dataset.CSVDataSet",
                 "run_command": "kedro run --to-outputs=master_table",
             }
         }
+    )
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     filepath: str
     original_type: str
     transcoded_types: List[str]
-    run_command: Optional[str]
-    stats: Optional[Dict]
+    run_command: Optional[str] = None
+    stats: Optional[Dict] = None
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "parameters": {
                     "test_size": 0.2,
@@ -158,6 +156,7 @@ class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
                 }
             }
         }
+    )
 
 
 NodeMetadataAPIResponse = Union[
@@ -179,7 +178,7 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     """
 
     id: str
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class ModularPipelineChildAPIResponse(BaseAPIResponse):
