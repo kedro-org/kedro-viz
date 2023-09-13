@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import modifiers from '../../utils/modifiers';
 import MetaDataValue from './metadata-value';
-import './styles/metadata.css';
+import './styles/metadata.scss';
 
 /**
  * Shows a list of MetaDataValue

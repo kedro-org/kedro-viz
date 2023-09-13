@@ -5,7 +5,7 @@ import { routes } from '../../../config';
 import { saveLocalStorage } from '../../../store/helpers';
 import { localStorageFlowchartLink } from '../../../config';
 
-import './accordion.css';
+import './accordion.scss';
 
 /**
  * A collapsable container component.

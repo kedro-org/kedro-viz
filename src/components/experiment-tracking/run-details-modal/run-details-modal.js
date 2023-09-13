@@ -7,8 +7,8 @@ import Button from '../../ui/button';
 import Modal from '../../ui/modal';
 import Input from '../../ui/input';
 
-import '../../settings-modal/settings-modal.css';
-import './run-details-modal.css';
+import '../../settings-modal/settings-modal.scss';
+import './run-details-modal.scss';
 
 const RunDetailsModal = ({
   runMetadataToEdit,

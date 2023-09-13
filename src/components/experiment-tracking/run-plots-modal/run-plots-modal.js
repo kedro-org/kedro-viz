@@ -5,7 +5,7 @@ import NodeIcon from '../../icons/node-icon';
 import getShortType from '../../../utils/short-type';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import classNames from 'classnames';
-import './run-plots-modal.css';
+import './run-plots-modal.scss';
 
 const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
   const { datasetKey, datasetType, datasetValues } = runDatasetToShow;

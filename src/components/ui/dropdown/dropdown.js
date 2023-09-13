@@ -6,7 +6,7 @@ import EventController from './event-controller.js';
 import { usePrevious } from '../../../utils/hooks';
 import DropdownRenderer from './dropdown-renderer';
 
-import './dropdown.css';
+import './dropdown.scss';
 
 const Dropdown = (props) => {
   const {

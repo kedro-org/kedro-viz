@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import SearchBar from '../ui/search-bar';
 import { connect } from 'react-redux';
-import './search-list.css';
+import './search-list.scss';
 
 /**
  * Handle Searching of List
