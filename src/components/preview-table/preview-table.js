@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import className from 'classnames';
 
-import './preview-table.css';
+import './preview-table.scss';
 
 const PreviewTable = ({ data, size = 'small', onClick }) => {
   const [hoveredHeaderIndex, setHoveredHeaderIndex] = useState(null);

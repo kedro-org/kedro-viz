@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { formatFileSize, formatNumberWithCommas } from '../../utils';
 import { datasetStatLabels, statsRowLen } from '../../config';
-import './styles/metadata-stats.css';
+import './styles/metadata-stats.scss';
 
 const MetaDataStats = ({ stats }) => {
   const [hasOverflow, setHasOverflow] = useState(false);

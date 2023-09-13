@@ -14,7 +14,7 @@ import {
   setViewTransformExact,
 } from '../../utils/view';
 import { drawNodes, drawViewport } from './draw';
-import './styles/minimap.css';
+import './styles/minimap.scss';
 
 /**
  * Display a pipeline minimap, mostly rendered with D3

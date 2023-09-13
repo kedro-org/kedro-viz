@@ -5,7 +5,7 @@ import { makeStyles, withStyles } from '@mui/styles';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import sortBy from 'lodash.sortby';
+import sortBy from 'lodash/sortBy';
 
 import { loadNodeData } from '../../actions/nodes';
 import { getNodeSelected } from '../../selectors/nodes';

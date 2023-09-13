@@ -8,7 +8,7 @@ import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
-import './metadata-modal.css';
+import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible }) => {
   const hasPlot = Boolean(metadata?.plot);

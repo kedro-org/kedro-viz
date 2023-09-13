@@ -7,7 +7,7 @@ import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 import Button from '../../ui/button';
 import Modal from '../../ui/modal';
 
-import './run-export-modal.css';
+import './run-export-modal.scss';
 
 const RunExportModal = ({
   runMetadata,

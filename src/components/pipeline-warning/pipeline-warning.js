@@ -6,7 +6,7 @@ import { getVisibleNodes } from '../../selectors/nodes';
 import { getTriggerLargeGraphWarning } from '../../selectors/layout';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import Button from '../ui/button';
-import './pipeline-warning.css';
+import './pipeline-warning.scss';
 
 const PipelineWarningContent = ({
   isVisible,

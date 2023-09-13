@@ -6,7 +6,7 @@ import MenuOption from '../ui/menu-option';
 import { loadPipelineData } from '../../actions/pipelines';
 import { toggleFocusMode } from '../../actions';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
-import './pipeline-list.css';
+import './pipeline-list.scss';
 
 /**
  * A Dropdown displaying a list of selectable pipelines

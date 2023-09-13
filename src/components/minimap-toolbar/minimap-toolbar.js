@@ -7,7 +7,7 @@ import MapIcon from '../icons/map';
 import PlusIcon from '../icons/plus';
 import MinusIcon from '../icons/minus';
 import ResetIcon from '../icons/reset';
-import './minimap-toolbar.css';
+import './minimap-toolbar.scss';
 
 /**
  * Controls for minimap

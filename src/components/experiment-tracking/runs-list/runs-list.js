@@ -7,7 +7,7 @@ import Accordion from '../accordion';
 import RunsListCard from '../runs-list-card';
 import { metricLimit } from '../../../config';
 
-import './runs-list.css';
+import './runs-list.scss';
 
 /**
  * Return only the runs that match the search text

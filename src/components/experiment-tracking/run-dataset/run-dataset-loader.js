@@ -5,7 +5,7 @@ import {
   experimentTrackingLazyLoadingGap,
 } from '../../../config';
 
-import './run-dataset.css';
+import './run-dataset.scss';
 
 const GAP = experimentTrackingLazyLoadingGap;
 

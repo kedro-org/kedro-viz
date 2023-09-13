@@ -15,7 +15,7 @@ import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 
-import './wrapper.css';
+import './wrapper.scss';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.

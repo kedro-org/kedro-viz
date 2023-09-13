@@ -1,11 +1,8 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import './json-object.css';
+import './json-object.scss';
 import ReactJson from 'react-json-view';
-import {
-  darkjsonViewerTheme,
-  lightjsonViewerTheme,
-} from './json-theme';
+import { darkjsonViewerTheme, lightjsonViewerTheme } from './json-theme';
 
 /**
  * Shows a metadata object
@@ -24,7 +21,7 @@ const JSONObject = ({ className, value, kind, theme, empty }) => (
         enableClipboard={true}
         displayDataTypes={false}
         src={value}
-        style={{backgroundColor:'transparent'}}
+        style={{ backgroundColor: 'transparent' }}
       />
     )}
   </div>
