@@ -36,7 +36,7 @@ import { isRunningLocally } from '../../utils';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
 
-import './flowchart-wrapper.css';
+import './flowchart-wrapper.scss';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,

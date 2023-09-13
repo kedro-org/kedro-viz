@@ -1,6 +1,5 @@
-"""`kedro_viz.server` provides utilities to launch a webserver for Kedro pipeline visualisation."""
-
-import webbrowser
+"""`kedro_viz.server` provides utilities to launch a webserver
+for Kedro pipeline visualisation."""
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -19,11 +18,6 @@ from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
 DEV_PORT = 4142
-
-
-def is_localhost(host) -> bool:
-    """Check whether a host is a localhost"""
-    return host in ("127.0.0.1", "localhost", "0.0.0.0")
 
 
 def populate_data(
@@ -53,7 +47,6 @@ def populate_data(
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
-    browser: Optional[bool] = None,
     load_file: Optional[str] = None,
     save_file: Optional[str] = None,
     pipeline_name: Optional[str] = None,
@@ -68,7 +61,6 @@ def run_server(
     Args:
         host: the host to launch the webserver
         port: the port to launch the webserver
-        browser: whether to open the default browser automatically
         load_file: if a valid JSON containing API response data is provided,
             the API of the server is created from the JSON.
         save_file: if provided, the data returned by the API will be saved to a file.
@@ -85,6 +77,7 @@ def run_server(
     """
     path = Path(project_path) if project_path else Path.cwd()
 
+    print("Starting Kedro Viz Backend Server...")
     if load_file is None:
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
             path, env, extra_params
@@ -105,8 +98,6 @@ def run_server(
     else:
         app = apps.create_api_app_from_file(f"{path}/{load_file}")
 
-    if browser and is_localhost(host):
-        webbrowser.open_new(f"http://{host}:{port}/")
     uvicorn.run(app, host=host, port=port, log_config=None)
 
 

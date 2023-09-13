@@ -28,7 +28,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
-import './styles/flowchart.css';
+import './styles/flowchart.scss';
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3

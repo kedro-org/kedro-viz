@@ -10,7 +10,7 @@ import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
-import './app.css';
+import './app.scss';
 
 /**
  * Entry-point component for the use-case where Kedro-Viz is imported as a

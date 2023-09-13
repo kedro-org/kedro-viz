@@ -14,7 +14,7 @@ import {
   removeElementsFromObjectValues,
 } from '../../../utils/object-utils';
 
-import './metrics-plots.css';
+import './metrics-plots.scss';
 
 const tabLabels = ['Time-series', 'Parallel coordinates'];
 

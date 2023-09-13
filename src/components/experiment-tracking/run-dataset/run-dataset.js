@@ -9,8 +9,8 @@ import { DataSetLoader } from './run-dataset-loader';
 import JSONObject from '../../json-object';
 
 import getShortType from '../../../utils/short-type';
-import './run-dataset.css';
-import '../run-metadata/animation.css';
+import './run-dataset.scss';
+import '../run-metadata/animation.scss';
 
 const determinePinIcon = (data, pinValue, pinnedRun) => {
   if (data.runId !== pinnedRun && typeof data.value === 'number') {

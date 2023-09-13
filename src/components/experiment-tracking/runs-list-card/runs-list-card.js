@@ -10,7 +10,7 @@ import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import { HoverStateContext } from '../utils/hover-state-context';
 
-import './runs-list-card.css';
+import './runs-list-card.scss';
 
 /**
  * Display a card showing run info from an experiment
