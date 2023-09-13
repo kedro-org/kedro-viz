@@ -1,11 +1,12 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
-# pylint: disable=missing-function-docstring
-from pathlib import Path
+# pylint: disable=missing-function-docstring, broad-exception-caught
+import logging
 
-import fsspec
 from fastapi import APIRouter
-from kedro.io.core import get_protocol_and_path
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+
+from kedro_viz.api.rest.requests import S3DeployerCredentials
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 from .responses import (
     APIErrorMessage,
@@ -18,17 +19,12 @@ from .responses import (
     save_api_responses_to_fs,
 )
 
-_HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api",
     responses={404: {"model": APIErrorMessage}},
 )
-
-
-class UserCredentials(BaseModel):
-    awsRegion: str
-    bucketName: str
 
 
 @router.get("/main", response_model=GraphAPIResponse)
@@ -53,23 +49,19 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 
 @router.post("/deploy")
-async def deploy_kedro_viz(inputValues: UserCredentials):
-    awsRegion = inputValues.awsRegion
-    bucketName = inputValues.bucketName
-    save_api_responses_to_fs(bucketName)
-    protocol, path = get_protocol_and_path(bucketName)
-    remote_fs = fsspec.filesystem(protocol)
-    source_files = [
-        str(p)
-        for p in _HTML_DIR.rglob("*")
-        if p.is_file() and not p.name.endswith(".map")
-    ]
-    remote_fs.put(source_files, bucketName)
-
-    url = None
-    if protocol == "s3":
-        url = f"http://{path}.s3-website.{awsRegion}.amazonaws.com"
-
-    response_data = {"message": "Website deployed on S3", "url": url}
-
-    return JSONResponse(status_code=200, content=response_data)
+async def deploy_kedro_viz(input_values: S3DeployerCredentials):
+    try:
+        deployer = S3Deployer(input_values.region, input_values.bucket_name)
+        url = deployer.get_deployed_url()
+        response = {"message": "Website deployed on S3", "url": url}
+        return JSONResponse(status_code=200, content=response)
+    except PermissionError as exc:  # pragma: no cover
+        logger.exception("Permission error in deploying Kedro Viz : %s ", exc)
+        return JSONResponse(
+            status_code=401, content={"message": "Please provide valid credentials"}
+        )
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Deploying Kedro Viz failed: %s ", exc)
+        return JSONResponse(
+            status_code=500, content={"message": "Failed to deploy Kedro Viz"}
+        )

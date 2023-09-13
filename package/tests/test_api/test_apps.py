@@ -72,3 +72,39 @@ class TestFaviconEndpoint:
             "image/x-icon",
             "image/vnd.microsoft.icon",
         ]
+
+
+class TestNodeMetadataEndpoint:
+    @pytest.mark.parametrize(
+        "node_id, expected_status, expected_response",
+        [
+            ("test", 404, {"message": "Invalid node ID"}),
+            (
+                "13399a82",
+                200,
+                {"filepath": "raw_data.csv", "type": "pandas.csv_dataset.CSVDataSet"},
+            ),
+        ],
+    )
+    def test_get_node_metadata(
+        self, node_id, expected_status, expected_response, client
+    ):
+        response = client.get(f"/api/nodes/{node_id}")
+        assert response.status_code == expected_status
+        assert response.json() == expected_response
+
+
+class TestRegisteredPipelineEndpoint:
+    @pytest.mark.parametrize(
+        "pipeline_id, expected_status",
+        [
+            ("test", 404),
+            ("data_science", 200),
+        ],
+    )
+    def test_get_registered_pipeline(self, pipeline_id, expected_status, client):
+        response = client.get(f"/api/pipelines/{pipeline_id}")
+        assert response.status_code == expected_status
+
+        if response.status_code == 200:
+            assert response.json()["selected_pipeline"] == pipeline_id

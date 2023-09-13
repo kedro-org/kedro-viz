@@ -1,6 +1,7 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
 # pylint: disable=missing-class-docstring,too-few-public-methods,invalid-name
 import abc
+import logging
 from typing import Any, Dict, List, Optional, Union
 
 import fsspec
@@ -20,6 +21,8 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class APIErrorMessage(BaseModel):
@@ -338,10 +341,10 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
     return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(
+        nodes=data_access_manager.get_nodes_for_registered_pipeline(  # type: ignore
             registered_pipeline_id
         ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(
+        edges=data_access_manager.get_edges_for_registered_pipeline(  # type: ignore
             registered_pipeline_id
         ),
         tags=data_access_manager.tags.as_list(),
@@ -350,45 +353,88 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
         ),
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines_tree,
+        modular_pipelines=modular_pipelines_tree,  # type: ignore
     )
+
+
+def write_api_response_to_fs(file_path: str, response: Any, fs_obj: Any):
+    """Encodes, enhances responses and writes it to a file"""
+    jsonable_response = jsonable_encoder(response)
+    encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
+        jsonable_response
+    )
+
+    with fs_obj.open(file_path, "wb") as file:
+        file.write(encoded_response)
+
+
+def save_api_main_response_to_fs(main_loc: str, fs_obj: Any):
+    """Saves API /main response to a file."""
+    try:
+        write_api_response_to_fs(main_loc, get_default_response(), fs_obj)
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Failed to save default response. Error: %s", str(exc))
+        raise exc
+
+
+def save_api_node_response_to_fs(nodes_loc: str, fs_obj: Any):
+    """Saves API /nodes/{node} response to a file."""
+    for nodeId in data_access_manager.nodes.get_node_ids():
+        try:
+            write_api_response_to_fs(
+                f"{nodes_loc}/{nodeId}", get_node_metadata_response(nodeId), fs_obj
+            )
+        except Exception as exc:  # pragma: no cover
+            logger.exception(
+                "Failed to save node data for node ID %s. Error: %s", nodeId, str(exc)
+            )
+            raise exc
+
+
+def save_api_pipeline_response_to_fs(pipelines_loc: str, fs_obj: Any):
+    """Saves API /pipelines/{pipeline} response to a file."""
+    for pipelineId in data_access_manager.registered_pipelines.get_pipeline_ids():
+        try:
+            write_api_response_to_fs(
+                f"{pipelines_loc}/{pipelineId}",
+                get_selected_pipeline_response(pipelineId),
+                fs_obj,
+            )
+        except Exception as exc:  # pragma: no cover
+            logger.exception(
+                "Failed to save pipeline data for pipeline ID %s. Error: %s",
+                pipelineId,
+                str(exc),
+            )
+            raise exc
 
 
 def save_api_responses_to_fs(filepath: str):
-    protocol, path = get_protocol_and_path(filepath)
-    remote_fs = fsspec.filesystem(protocol)
-    default_response = get_default_response()
-    jsonable_default_response = jsonable_encoder(default_response)
-    encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-        jsonable_default_response
-    )
+    """Saves all Kedro Viz API responses to a file."""
+    try:
+        protocol, path = get_protocol_and_path(filepath)
+        fs_obj = fsspec.filesystem(protocol)
 
-    main_loc = f"{path}/api/main"
-    nodes_loc = f"{path}/api/nodes"
-    pipelines_loc = f"{path}/api/pipelines"
-
-    if protocol == "file":
-        remote_fs.makedirs(path, exist_ok=True)
-        remote_fs.makedirs(nodes_loc, exist_ok=True)
-        remote_fs.makedirs(pipelines_loc, exist_ok=True)
-
-    with remote_fs.open(main_loc, "wb") as f:
-        f.write(encoded_response)
-
-    for node in data_access_manager.nodes.get_node_ids():
-        node_response = get_node_metadata_response(node)
-        jsonable_node_response = jsonable_encoder(node_response)
-        encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-            jsonable_node_response
+        logger.debug(
+            """Saving/Uploading api files to %s""",
+            filepath,
         )
-        with remote_fs.open(f"{nodes_loc}/{node}", "wb") as f:
-            f.write(encoded_response)
 
-    for pipeline in data_access_manager.registered_pipelines.get_pipeline_ids():
-        pipeline_response = get_selected_pipeline_response(pipeline)
-        jsonable_pipeline_response = jsonable_encoder(pipeline_response)
-        encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
-            jsonable_pipeline_response
+        main_loc = f"{path}/api/main"
+        nodes_loc = f"{path}/api/nodes"
+        pipelines_loc = f"{path}/api/pipelines"
+
+        if protocol == "file":
+            fs_obj.makedirs(path, exist_ok=True)
+            fs_obj.makedirs(nodes_loc, exist_ok=True)
+            fs_obj.makedirs(pipelines_loc, exist_ok=True)
+
+        save_api_main_response_to_fs(main_loc, fs_obj)
+        save_api_node_response_to_fs(nodes_loc, fs_obj)
+        save_api_pipeline_response_to_fs(pipelines_loc, fs_obj)
+
+    except Exception as exc:  # pragma: no cover
+        logger.exception(
+            "An error occurred while preparing data for saving. Error: %s", str(exc)
         )
-        with remote_fs.open(f"{pipelines_loc}/{pipeline}", "wb") as f:
-            f.write(encoded_response)
+        raise exc

@@ -2,10 +2,20 @@ import operator
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 from unittest import mock
+from unittest.mock import Mock, call, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
 from kedro_viz.api import apps
+from kedro_viz.api.rest.responses import (
+    EnhancedORJSONResponse,
+    save_api_main_response_to_fs,
+    save_api_node_response_to_fs,
+    save_api_pipeline_response_to_fs,
+    save_api_responses_to_fs,
+    write_api_response_to_fs,
+)
 from kedro_viz.models.flowchart import TaskNode
 
 
@@ -794,15 +804,196 @@ class TestSinglePipelineEndpoint:
 
 class TestAPIAppFromFile:
     def test_api_app_from_json_file_main_api(self):
-        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
+        filepath = str(Path(__file__).parent.parent)
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/api/main")
         assert_example_data_from_file(response.json())
 
     def test_api_app_from_json_file_index(self):
-        filepath = str(Path(__file__).parent.parent / "example_pipelines.json")
+        filepath = str(Path(__file__).parent.parent)
         api_app = apps.create_api_app_from_file(filepath)
         client = TestClient(api_app)
         response = client.get("/")
         assert response.status_code == 200
+
+
+class TestEnhancedORJSONResponse:
+    @pytest.mark.parametrize(
+        "content, expected",
+        [
+            (
+                {"key1": "value1", "key2": "value2"},
+                b'{\n  "key1": "value1",\n  "key2": "value2"\n}',
+            ),
+            (["item1", "item2"], b'[\n  "item1",\n  "item2"\n]'),
+        ],
+    )
+    def test_encode_to_human_readable(self, content, expected):
+        result = EnhancedORJSONResponse.encode_to_human_readable(content)
+        assert result == expected
+
+    @pytest.mark.parametrize(
+        "file_path, response, encoded_response",
+        [
+            (
+                "test_output.json",
+                {"key1": "value1", "key2": "value2"},
+                b'{"key1": "value1", "key2": "value2"}',
+            ),
+        ],
+    )
+    def test_write_api_response_to_fs(
+        self, file_path, response, encoded_response, mocker
+    ):
+        mock_encode_to_human_readable = mocker.patch(
+            "kedro_viz.api.rest.responses.EnhancedORJSONResponse.encode_to_human_readable",
+            return_value=encoded_response,
+        )
+        with patch("kedro_viz.api.rest.responses.fsspec.filesystem") as mock_filesystem:
+            mock_fs_obj = mock_filesystem.return_value
+            mock_fs_obj.open.return_value.__enter__.return_value = Mock()
+            write_api_response_to_fs(file_path, response, mock_fs_obj)
+            mock_fs_obj.open.assert_called_once_with(file_path, "wb")
+            mock_encode_to_human_readable.assert_called_once()
+
+    @pytest.mark.parametrize(
+        "main_loc, expected_default_response",
+        [
+            ("/main", {"test": "json"}),
+        ],
+    )
+    def test_save_api_main_response_to_fs(self, main_loc, expected_default_response):
+        with patch(
+            "kedro_viz.api.rest.responses.get_default_response",
+            return_value=expected_default_response,
+        ) as mock_get_default_response:
+            with patch(
+                "kedro_viz.api.rest.responses.write_api_response_to_fs"
+            ) as mock_write_api_response_to_fs:
+                main_loc = "test_main_loc"
+                fs_obj = Mock()
+                save_api_main_response_to_fs(main_loc, fs_obj)
+
+        mock_get_default_response.assert_called_once()
+        mock_write_api_response_to_fs.assert_called_once_with(
+            main_loc, mock_get_default_response.return_value, fs_obj
+        )
+
+    @pytest.mark.parametrize(
+        "nodes_loc, nodeIds, expected_metadata_response",
+        [
+            ("/nodes", ["01f456", "01f457"], {"test": "json"}),
+        ],
+    )
+    def test_save_api_node_response_to_fs(
+        self, nodes_loc, nodeIds, expected_metadata_response, mocker
+    ):
+        mock_get_node_metadata_response = mocker.patch(
+            "kedro_viz.api.rest.responses.get_node_metadata_response",
+            return_value=expected_metadata_response,
+        )
+        mock_write_api_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.write_api_response_to_fs"
+        )
+        mocker.patch(
+            "kedro_viz.api.rest.responses.data_access_manager.nodes.get_node_ids",
+            return_value=nodeIds,
+        )
+        fs_obj = Mock()
+
+        save_api_node_response_to_fs(nodes_loc, fs_obj)
+
+        assert mock_write_api_response_to_fs.call_count == len(nodeIds)
+        assert mock_get_node_metadata_response.call_count == len(nodeIds)
+
+        expected_calls = [
+            call(
+                f"{nodes_loc}/{nodeId}",
+                mock_get_node_metadata_response.return_value,
+                fs_obj,
+            )
+            for nodeId in nodeIds
+        ]
+        mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
+
+    @pytest.mark.parametrize(
+        "pipelines_loc, pipelineIds, expected_selected_pipeline_response",
+        [
+            ("/pipelines", ["01f456", "01f457"], {"test": "json"}),
+        ],
+    )
+    def test_save_api_pipeline_response_to_fs(
+        self, pipelines_loc, pipelineIds, expected_selected_pipeline_response, mocker
+    ):
+        mock_get_selected_pipeline_response = mocker.patch(
+            "kedro_viz.api.rest.responses.get_selected_pipeline_response",
+            return_value=expected_selected_pipeline_response,
+        )
+        mock_write_api_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.write_api_response_to_fs"
+        )
+
+        mocker.patch(
+            (
+                "kedro_viz.api.rest.responses.data_access_manager."
+                "registered_pipelines.get_pipeline_ids"
+            ),
+            return_value=pipelineIds,
+        )
+
+        fs_obj = Mock()
+
+        save_api_pipeline_response_to_fs(pipelines_loc, fs_obj)
+
+        assert mock_write_api_response_to_fs.call_count == len(pipelineIds)
+        assert mock_get_selected_pipeline_response.call_count == len(pipelineIds)
+
+        expected_calls = [
+            call(
+                f"{pipelines_loc}/{pipelineId}",
+                mock_get_selected_pipeline_response.return_value,
+                fs_obj,
+            )
+            for pipelineId in pipelineIds
+        ]
+        mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
+
+    @pytest.mark.parametrize(
+        "file_path, protocol, path",
+        [
+            ("s3://shareableviz", "s3", "shareableviz"),
+            ("shareableviz", "file", "shareableviz"),
+        ],
+    )
+    def test_save_api_responses_to_fs(self, file_path, protocol, path, mocker):
+        mock_api_main_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_api_main_response_to_fs"
+        )
+        mock_api_node_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_api_node_response_to_fs"
+        )
+        mock_api_pipeline_response_to_fs = mocker.patch(
+            "kedro_viz.api.rest.responses.save_api_pipeline_response_to_fs"
+        )
+        mock_get_protocol_and_path = mocker.patch(
+            "kedro_viz.api.rest.responses.get_protocol_and_path",
+            return_value=(protocol, path),
+        )
+        mock_fs_obj = mocker.patch(
+            "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
+        )
+
+        save_api_responses_to_fs(file_path)
+
+        mock_fs_obj.assert_called_once_with(protocol)
+        mock_get_protocol_and_path.assert_called_once_with(file_path)
+        mock_api_main_response_to_fs.assert_called_once_with(
+            f"{path}/api/main", mock_fs_obj.return_value
+        )
+        mock_api_node_response_to_fs.assert_called_once_with(
+            f"{path}/api/nodes", mock_fs_obj.return_value
+        )
+        mock_api_pipeline_response_to_fs.assert_called_once_with(
+            f"{path}/api/pipelines", mock_fs_obj.return_value
+        )

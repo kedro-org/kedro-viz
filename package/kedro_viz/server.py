@@ -2,7 +2,7 @@
 for Kedro pipeline visualisation."""
 from pathlib import Path
 from typing import Any, Dict, Optional
-
+from fastapi.encoders import jsonable_encoder
 import uvicorn
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
@@ -10,7 +10,7 @@ from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
+from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -75,14 +75,12 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
-    path = Path(project_path) if project_path else Path.cwd()
-
     print("Starting Kedro Viz Backend Server...")
     if load_file is None:
+        path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
             path, env, extra_params
         )
-
         pipelines = (
             pipelines
             if pipeline_name is None
@@ -92,11 +90,15 @@ def run_server(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
         if save_file:
-            save_api_responses_to_fs(save_file)
-
+            default_response = get_default_response()
+            jsonable_default_response = jsonable_encoder(default_response)
+            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
+                jsonable_default_response
+            )
+            Path(save_file).write_bytes(encoded_default_response)
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(f"{path}/{load_file}")
+        app = apps.create_api_app_from_file(load_file)
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 
