@@ -7,77 +7,18 @@ import multiprocessing
 import os
 import socket
 from contextlib import closing
-from time import sleep, time
-from typing import Any, Callable, Dict
+from typing import Any, Dict
 
 import IPython
-import requests
 from IPython.display import HTML, display
 
+from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _DATABRICKS_HOST = "0.0.0.0"
 
 logger = logging.getLogger(__name__)
-
-
-class WaitForException(Exception):
-    """WaitForException: if func doesn't return expected result within the specified time"""
-
-
-def _wait_for(
-    func: Callable,
-    expected_result: Any = True,
-    timeout: int = 60,
-    print_error: bool = True,
-    sleep_for: int = 1,
-    **kwargs,
-) -> None:
-    """
-    Run specified function until it returns expected result until timeout.
-
-    Args:
-        func (Callable): Specified function
-        expected_result (Any): result that is expected. Defaults to None.
-        timeout (int): Time out in seconds. Defaults to 10.
-        print_error (boolean): whether any exceptions raised should be printed.
-            Defaults to False.
-        sleep_for (int): Execute func every specified number of seconds.
-            Defaults to 1.
-        **kwargs: Arguments to be passed to func
-
-    Raises:
-         WaitForException: if func doesn't return expected result within the
-         specified time
-
-    """
-    end = time() + timeout
-
-    while time() <= end:
-        try:
-            retval = func(**kwargs)
-        except Exception as err:  # pylint: disable=broad-except
-            if print_error:
-                logger.error(err)
-        else:
-            if retval == expected_result:
-                return None
-        sleep(sleep_for)
-
-    raise WaitForException(
-        f"func: {func}, didn't return {expected_result} within specified timeout: {timeout}"
-    )
-
-
-def _check_viz_up(host: str, port: int):  # pragma: no cover
-    url = f"http://{host}:{port}"
-    try:
-        response = requests.get(url, timeout=10)
-    except requests.ConnectionError:
-        return False
-
-    return response.status_code == 200
 
 
 def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:

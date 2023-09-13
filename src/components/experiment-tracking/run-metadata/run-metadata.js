@@ -11,8 +11,8 @@ import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { MetaDataLoader } from './run-metadata-loader';
 
-import './run-metadata.css';
-import './animation.css';
+import './run-metadata.scss';
+import './animation.scss';
 
 // Return a '-' character if the value is empty or null
 const sanitiseEmptyValue = (value) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 import Dropdown from '../../ui/dropdown';
 
-import './select-dropdown.css';
+import './select-dropdown.scss';
 
 const CheckboxOption = ({ text, selectedValues, onChange }) => {
   return (
