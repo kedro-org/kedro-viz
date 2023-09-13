@@ -118,17 +118,37 @@ class TestServer:
             {"data_science": example_pipelines["data_science"]}
         )
 
-    def test_load_file(self, patched_create_api_app_from_file):
-        load_file = "test.json"
-        run_server(load_file=load_file)
-        patched_create_api_app_from_file.assert_called_once_with(load_file)
+    @pytest.mark.parametrize(
+        "file_path, expected_exception",
+        [
+            ("test.json", ValueError),  # File does not exist, expect ValueError
+            ("test.json", None),  # File exists, expect no ValueError
+        ],
+    )
+    def test_load_file(
+        self, file_path, expected_exception, patched_create_api_app_from_file, tmp_path
+    ):
+        if expected_exception is not None:
+            with pytest.raises(expected_exception) as exc_info:
+                run_server(load_file=file_path)
+
+            # Check if the error message contains the expected message
+            assert "The provided filepath" in str(exc_info.value)
+            assert "does not exist." in str(exc_info.value)
+        else:
+            json_file_path = tmp_path / file_path
+
+            # File exists, no exception expected
+            with json_file_path.open("w") as file:
+                json.dump({"name": "John", "age": 30}, file)
+
+            run_server(load_file=json_file_path)
+            patched_create_api_app_from_file.assert_called_once()
 
     def test_save_file(self, tmp_path, mocker):
-        mocker.patch(
-            "kedro_viz.server.get_default_response",
-            return_value=ExampleAPIResponse(content="test"),
+        save_api_responses_to_fs_mock = mocker.patch(
+            "kedro_viz.server.save_api_responses_to_fs"
         )
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)
-        with open(save_file, "r", encoding="utf8") as f:
-            assert json.load(f) == {"content": "test"}
+        save_api_responses_to_fs_mock.assert_called_once_with(save_file)
