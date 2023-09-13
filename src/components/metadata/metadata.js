@@ -23,7 +23,7 @@ import {
   useGeneratePathnameForExperimentTracking,
 } from '../../utils/hooks/use-generate-pathname';
 
-import './styles/metadata.css';
+import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
 
 /**
@@ -59,7 +59,6 @@ const MetaData = ({
   const hasImage = Boolean(metadata?.image);
   const hasTrackingData = Boolean(metadata?.trackingData);
   const hasPreviewData = Boolean(metadata?.preview);
-  const hasStatsData = Boolean(metadata?.stats);
   const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
@@ -234,7 +233,7 @@ const MetaData = ({
                     isCommand={metadata?.runCommand}
                   />
                 </MetaDataRow>
-                {hasStatsData && (
+                {isDataNode && (
                   <>
                     <span
                       className="pipeline-metadata__label"

@@ -5,14 +5,29 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 6.5.1
 
-# Release 6.4.1
+## Bug fixes and other changes
+
+- Fix for Kedro Viz Connection Error (#1507)
+
+# Release 6.5.1
+
+## Bug fixes and other changes
+
+- Updated dependencies to ensure compatibility with Vite and Next.js environments; combine CSS into a single file when used as a React component. (#1510)
+
+# Release 6.5.0
 
 ## Major features and improvements
+
+- Add support for Python 3.11 (#1502)
 
 ## Bug fixes and other changes
 
 - Fix to search for a '<lambda' Python function in the sidebar. (#1497)
+- Add favicon to Kedro-Viz. (#1509)
+- Remove python upper-bound requirements and add KedroVizPythonVersion warning. (#1506)
 
 # Release 6.4.0
 

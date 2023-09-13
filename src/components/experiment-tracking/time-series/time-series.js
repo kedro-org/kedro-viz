@@ -10,7 +10,7 @@ import {
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import * as d3 from 'd3';
 
-import './time-series.css';
+import './time-series.scss';
 
 export const getSelectedOrderedData = (runData, selectedRuns) => {
   return runData

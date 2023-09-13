@@ -11,7 +11,7 @@ import RunMetadata from '../run-metadata';
 import RunPlotsModal from '../run-plots-modal';
 import { tabLabels } from '../../../config';
 
-import './details.css';
+import './details.scss';
 
 const Details = ({
   activeTab,

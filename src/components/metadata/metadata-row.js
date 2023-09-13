@@ -2,7 +2,7 @@ import React from 'react';
 import MetaDataList from './metadata-list';
 import JSONObject from '../json-object';
 import MetaDataValue from './metadata-value';
-import './styles/metadata.css';
+import './styles/metadata.scss';
 
 /**
  * Shows metadata label and a given single value, or a list of values, or child elements

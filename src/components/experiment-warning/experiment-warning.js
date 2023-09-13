@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './experiment-warning.css';
+import './experiment-warning.scss';
 
 const ExperimentWarning = ({ title, subTitle }) => (
   <div className="experiment-warning__wrapper">

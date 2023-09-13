@@ -9,7 +9,7 @@ import NodeList from '../node-list';
 import PipelineList from '../pipeline-list';
 import RunsList from '../experiment-tracking/runs-list';
 
-import './sidebar.css';
+import './sidebar.scss';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.

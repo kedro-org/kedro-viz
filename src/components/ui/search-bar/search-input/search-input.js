@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import 'what-input';
 
-import './search-input.css';
+import './search-input.scss';
 
 const SearchInput = ({
   disabled,
