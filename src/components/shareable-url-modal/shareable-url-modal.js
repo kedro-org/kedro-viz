@@ -28,6 +28,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
+  const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
 
   const onChange = (key, value) => {
     setHasNotInteracted(false);
@@ -78,6 +79,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
     setDeploymentState('default');
     setIsLoading(false);
     setResponseUrl(null);
+    setIsLinkSettingsClick(false);
+    setInputValues({});
   };
 
   return (
@@ -87,7 +90,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       message={modalMessages[deploymentState]}
       title={
         deploymentState === 'success'
-          ? 'Kedro-Viz Hosted Link'
+          ? 'Kedro-Viz Hosted and Deployed'
           : 'Deploy and Share'
       }
       visible={visible.shareableUrlModal}
@@ -99,6 +102,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
               AWS Bucket Region
             </div>
             <Input
+              defaultValue={inputValues.region}
               onChange={(value) => onChange('region', value)}
               placeholder="Enter details"
               resetValueTrigger={visible}
@@ -108,6 +112,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           <div className="shareable-url-modal__input-wrapper">
             <div className="shareable-url-modal__input-label">Bucket Name</div>
             <Input
+              defaultValue={inputValues.bucket_name}
               onChange={(value) => onChange('bucket_name', value)}
               placeholder="Enter details"
               resetValueTrigger={visible}
@@ -127,7 +132,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
               size="small"
               onClick={handleSubmit}
             >
-              Deploy
+              {isLinkSettingsClick ? 'Re-Deploy' : 'Deploy'}
             </Button>
           </div>
         </>
@@ -179,6 +184,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
                 setDeploymentState('default');
                 setIsLoading(false);
                 setResponseUrl(null);
+                setIsLinkSettingsClick(true);
               }}
               size="small"
             >
