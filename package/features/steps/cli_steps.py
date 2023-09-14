@@ -3,7 +3,6 @@
 from pathlib import Path
 from time import sleep, time
 
-import pkg_resources
 import requests
 import yaml
 from behave import given, then, when
