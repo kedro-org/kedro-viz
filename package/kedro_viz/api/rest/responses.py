@@ -2,6 +2,7 @@
 # pylint: disable=missing-class-docstring,too-few-public-methods,invalid-name
 import abc
 import logging
+import subprocess
 from typing import Any, Dict, List, Optional, Union
 
 import fsspec
@@ -259,6 +260,13 @@ class GraphAPIResponse(BaseAPIResponse):
     selected_pipeline: str
 
 
+class ProjectMetadataAPIResponse(BaseAPIResponse):
+    package_versions: Dict[str, str]
+
+    class Config:
+        schema_extra = {"example": {"package_versions": {"fsspec": "2023.9.0"}}}
+
+
 class EnhancedORJSONResponse(ORJSONResponse):
     @staticmethod
     def encode_to_human_readable(content: Any) -> bytes:
@@ -354,6 +362,36 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
         pipelines=data_access_manager.registered_pipelines.as_list(),
         selected_pipeline=registered_pipeline_id,
         modular_pipelines=modular_pipelines_tree,  # type: ignore
+    )
+
+
+def get_package_versions():
+    """Get installed packages version information."""
+    # Run pip freeze command to get a list of installed packages and their versions
+    result = subprocess.run(
+        ["pip", "freeze"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=True,
+    )
+
+    # Split the output into lines and create a dictionary of package versions
+    package_versions = {}
+    package_list = result.stdout.strip().split("\n")
+
+    for package in package_list:
+        if "==" in package:
+            package_name, package_version = package.split("==")
+            package_versions[package_name] = package_version
+
+    return package_versions
+
+
+def get_project_metadata_response():
+    """API response for `/api/project-metadata`."""
+    return ProjectMetadataAPIResponse(
+        package_versions=get_package_versions(),
     )
 
 
