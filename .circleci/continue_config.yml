@@ -164,8 +164,7 @@ jobs:
       name: docker
       python_version: <<parameters.python_version>>
     steps:
-      - checkout
-      - setup_python_env
+      - setup
       - run:
           name: Run Python tests
           command: make pytest
