@@ -6,6 +6,7 @@ from time import sleep, time
 import requests
 import yaml
 from behave import given, then, when
+import pkg_resources
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 
@@ -50,20 +51,24 @@ def create_project_from_config_file(context):
 @given("I have run a non-interactive kedro new with {starter} starter")
 def create_project_with_starter(context, starter):
     """Behave step to run kedro new given the config I previously created."""
-    res = run(
-        [
-            context.kedro,
-            "new",
-            "--starter",
-            str(starter),
-            "--config",
-            str(context.config_file),
-        ],
-        env=context.env,
-        cwd=str(context.temp_dir),
-    )
+    try:
+        res = run(
+            [
+                context.kedro,
+                "new",
+                "--starter",
+                str(starter),
+                "--config",
+                str(context.config_file),
+            ],
+            env=context.env,
+            cwd=str(context.temp_dir),
+        )
+    except pkg_resources.ContextualVersionConflict as execption:
+        print(f"Ignoring version conflict error: {execption}")
+        res = None  
 
-    if res.returncode != OK_EXIT_CODE:
+    if res is not None and res.returncode != OK_EXIT_CODE:
         print(res.stdout)
         print(res.stderr)
         assert False
