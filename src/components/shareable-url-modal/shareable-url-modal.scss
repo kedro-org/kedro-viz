@@ -17,6 +17,7 @@
 
   .modal__wrapper {
     align-items: flex-start;
+    padding: 48px;
     text-align: left;
   }
 
@@ -43,13 +44,18 @@
   }
 
   &__button-wrapper {
+    align-items: baseline;
     display: flex;
     justify-content: space-between;
     margin-top: 48px;
     width: 100%;
 
-    &--single {
+    &--right {
       justify-content: flex-end;
+
+      .button:first-of-type {
+        margin-right: 32px;
+      }
     }
 
     .button__btn--secondary {
@@ -65,21 +71,68 @@
 
   &__result {
     margin-bottom: 48px;
+    width: 100%;
 
-    div {
-      color: var(--color-description-text);
+    .toolbox {
+      margin: 0 4px 0 20px;
+    }
+
+    .pipeline-icon {
+      position: relative;
+      top: unset;
+      right: unset;
+    }
+  }
+
+  &__url-wrapper {
+    background: rgb(255 255 255 / 4%);
+    display: flex;
+    height: 50px;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 8px 8px 8px 16px;
+    position: relative;
+    text-overflow: ellipsis;
+
+    a,
+    .copy-message {
+      color: var(--color-deployed-link);
       font-size: 16px;
-      line-height: 20px;
+      line-height: 32px;
     }
 
     a {
-      color: var(--color-deployed-link);
+      cursor: pointer;
       display: block;
-      font-size: 18px;
-      font-weight: 600;
-      line-height: 24px;
-      margin-top: 12px;
+      flex-grow: 0;
+      font-family: inherit;
+      overflow: hidden;
+      text-decoration: underline;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 90%;
+
+      &.shareable-url-modal__result-url--no-visible {
+        display: none;
+      }
     }
+
+    .copy-message {
+      left: 16px;
+      padding-top: 0;
+    }
+
+    .pipeline-icon--container {
+      display: block;
+      margin: 0 12px 0 16px;
+      position: absolute;
+      right: 6px;
+    }
+  }
+
+  &__label {
+    color: var(--color-description-text);
+    font-size: 16px;
+    line-height: 20px;
   }
 }
