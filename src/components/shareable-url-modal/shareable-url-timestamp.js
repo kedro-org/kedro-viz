@@ -17,8 +17,6 @@ const ShareableUrlTimestamp = () => {
         },
       });
       const result = await response.json();
-      console.log('response: ', response);
-      console.log('result: ', result);
 
       setTimestamp(result.timestamp);
     }
