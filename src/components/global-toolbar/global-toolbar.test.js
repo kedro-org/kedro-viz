@@ -14,7 +14,7 @@ describe('GlobalToolbar', () => {
         <ConnectedGlobalToolbar />
       </MemoryRouter>
     );
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(6);
   });
 
   const functionCalls = [

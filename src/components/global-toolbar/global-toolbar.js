@@ -97,7 +97,7 @@ export const GlobalToolbar = ({
             <IconButton
               ariaLabel={'Deploy and share'}
               className={
-                'pipeline-menu-button--settings pipeline-menu-button--large'
+                'pipeline-menu-button--deploy pipeline-menu-button--large'
               }
               dataTest={'Deploy and share Kedro-Viz'}
               disabled={false}
