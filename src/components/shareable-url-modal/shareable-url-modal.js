@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { toggleShareableUrlModal } from '../../actions';
 import modifiers from '../../utils/modifiers';
@@ -29,6 +29,23 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   const [responseUrl, setResponseUrl] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
   const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
+  const [isOutdated, setIsOutdated] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/timestamp', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      const result = await response.json();
+
+      setIsOutdated(result.timestamp);
+    }
+
+    fetchData();
+  }, []);
 
   const onChange = (key, value) => {
     setHasNotInteracted(false);
