@@ -1,38 +1,41 @@
 import { useEffect, useState } from 'react';
 import { isRunningLocally } from '../../utils';
 
-const ShareableUrlTimestamp = () => {
-  const [timestamp, setTimestamp] = useState(null);
+const ShareableUrlMetadata = () => {
+  const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
-    if (isRunningLocally()) {
+    if (!isRunningLocally()) {
       return;
     }
 
     async function fetchData() {
-      const response = await fetch('/api/timestamp', {
+      const response = await fetch('/api/deploy-viz-metadata', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
       });
       const result = await response.json();
+      console.log('result: ', result);
 
-      setTimestamp(result.timestamp);
+      setMetadata(result);
     }
 
     fetchData();
   }, []);
 
-  if (isRunningLocally()) {
+  if (!isRunningLocally() || metadata === null) {
     return null;
   }
 
   return (
     <div className="shareable-url-timestamp">
-      <p>{timestamp}</p>
+      <p>{`Kedro-Viz ${metadata.version} – ${metadata.timestamp
+        .split(' ')
+        .join(' – ')}`}</p>
     </div>
   );
 };
 
-export default ShareableUrlTimestamp;
+export default ShareableUrlMetadata;
