@@ -5,7 +5,7 @@ const ShareableUrlMetadata = () => {
   const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
-    if (!isRunningLocally()) {
+    if (isRunningLocally()) {
       return;
     }
 
@@ -25,7 +25,7 @@ const ShareableUrlMetadata = () => {
     fetchData();
   }, []);
 
-  if (!isRunningLocally() || metadata === null) {
+  if (isRunningLocally() || metadata === null) {
     return null;
   }
 
