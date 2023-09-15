@@ -136,3 +136,15 @@
     line-height: 20px;
   }
 }
+
+.shareable-url-timestamp {
+  padding: 4px 8px 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  p {
+    font-size: 12px;
+    margin: 0;
+  }
+}

@@ -22,6 +22,7 @@ import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import ShareableUrlModal from '../shareable-url-modal';
+import ShareableUrlTimestamp from '../shareable-url-modal/shareable-url-timestamp';
 import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
@@ -295,6 +296,7 @@ export const FlowChartWrapper = ({
           >
             <LoadingIcon visible={loading} />
           </div>
+          <ShareableUrlTimestamp />
         </div>
         <ExportModal />
         <MetadataModal />
