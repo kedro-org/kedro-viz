@@ -3,7 +3,9 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+from semver import VersionInfo
 
+from kedro_viz import __version__
 from kedro_viz.integrations.deployment.s3_deployer import _HTML_DIR, S3Deployer
 
 
@@ -46,11 +48,11 @@ class TestS3Deployer:
     def test_upload_static_files(self, region, bucket_name):
         deployer = S3Deployer(region, bucket_name)
 
-        # Mock the _remote_fs.put method to simulate a successful upload
-        with patch.object(deployer._remote_fs, "put") as mock_put:
+        # Mock the _fs_obj.put method to simulate a successful upload
+        with patch.object(deployer._fs_obj, "put") as mock_put:
             deployer._upload_static_files()
 
-            # Assert that _remote_fs.put was called with the expected arguments
+            # Assert that _fs_obj.put was called with the expected arguments
             mock_put.assert_called_once_with(
                 f"{str(_HTML_DIR)}/*", deployer._bucket_name, recursive=True
             )
@@ -59,15 +61,20 @@ class TestS3Deployer:
         "region, bucket_name",
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
-    def test_upload_timestamp_file(self, region, bucket_name):
+    def test_upload_deploy_viz_metadata_file(self, region, bucket_name):
         deployer = S3Deployer(region, bucket_name)
-        mock_open = patch.object(deployer._remote_fs, "open").start()
+        mock_open = patch.object(deployer._fs_obj, "open").start()
 
-        deployer._upload_timestamp_file()
+        deployer._upload_deploy_viz_metadata_file()
 
-        mock_open.assert_called_once_with(f"{bucket_name}/api/timestamp", "w")
+        mock_open.assert_called_once_with(f"{bucket_name}/api/deploy-viz-metadata", "w")
         mock_open.return_value.__enter__.return_value.write.assert_called_once_with(
-            json.dumps({"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")})
+            json.dumps(
+                {
+                    "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                    "version": str(VersionInfo.parse(__version__)),
+                }
+            )
         )
 
     @pytest.mark.parametrize(
@@ -79,13 +86,13 @@ class TestS3Deployer:
 
         mocker.patch.object(deployer, "_upload_api_responses")
         mocker.patch.object(deployer, "_upload_static_files")
-        mocker.patch.object(deployer, "_upload_timestamp_file")
+        mocker.patch.object(deployer, "_upload_deploy_viz_metadata_file")
 
         deployer._deploy()
 
         deployer._upload_api_responses.assert_called_once()
         deployer._upload_static_files.assert_called_once()
-        deployer._upload_timestamp_file.assert_called_once()
+        deployer._upload_deploy_viz_metadata_file.assert_called_once()
 
     @pytest.mark.parametrize(
         "region, bucket_name",
