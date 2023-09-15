@@ -86,7 +86,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   return (
     <Modal
       className="shareable-url-modal"
-      closeModal={() => handleModalClose()}
+      closeModal={() => onToggle(false)}
       message={modalMessages[deploymentState]}
       title={
         deploymentState === 'success'

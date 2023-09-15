@@ -12,7 +12,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode, toggleShareableUrlModal } from '../../actions';
+import { toggleFocusMode } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -32,7 +32,6 @@ import {
   localStorageFlowchartLink,
   params,
 } from '../../config';
-import { isRunningLocally } from '../../utils';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
 
@@ -53,7 +52,6 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
-  onToggleShareableUrlModal,
   onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
@@ -301,16 +299,6 @@ export const FlowChartWrapper = ({
         <ExportModal />
         <MetadataModal />
         <ShareableUrlModal />
-        {isRunningLocally() ? (
-          <div className="shareable-url-button">
-            <Button
-              onClick={() => onToggleShareableUrlModal(true)}
-              size="small"
-            >
-              Deploy and Share
-            </Button>
-          </div>
-        ) : null}
       </div>
     );
   }
@@ -339,9 +327,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineExpanded: (expanded) => {
     dispatch(toggleModularPipelinesExpanded(expanded));
-  },
-  onToggleShareableUrlModal: (value) => {
-    dispatch(toggleShareableUrlModal(value));
   },
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
