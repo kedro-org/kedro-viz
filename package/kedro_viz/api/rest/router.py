@@ -76,7 +76,7 @@ async def deploy_kedro_viz(input_values: S3DeployerCredentials):
 async def get_project_metadata():
     try:
         return get_project_metadata_response()
-    except ValueError as exc:  # pragma: no cover
+    except ValueError as exc:
         logger.exception("ValueError while getting project metadata : %s", exc)
         return JSONResponse(
             status_code=422, content={"message": "Failed to get project metadata"}
@@ -86,7 +86,7 @@ async def get_project_metadata():
         return JSONResponse(
             status_code=422, content={"message": "Failed to get project metadata"}
         )
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         logger.exception(
             "An exception occured while getting project metadata : %s", exc
         )
