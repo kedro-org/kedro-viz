@@ -33,7 +33,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch('/api/timestamp', {
+      const response = await fetch('/api/deploy-viz-metadata', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

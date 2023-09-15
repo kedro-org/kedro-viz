@@ -17,7 +17,6 @@ const ShareableUrlMetadata = () => {
         },
       });
       const result = await response.json();
-      console.log('result: ', result);
 
       setMetadata(result);
     }
