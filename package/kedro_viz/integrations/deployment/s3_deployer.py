@@ -8,7 +8,9 @@ from pathlib import Path
 
 import fsspec
 from kedro.io.core import get_protocol_and_path
+from semver import VersionInfo
 
+from kedro_viz import __version__
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
@@ -23,7 +25,7 @@ class S3Deployer:
         self._region = region
         self._bucket_name = bucket_name
         self._protocol, self._path = get_protocol_and_path(bucket_name)
-        self._remote_fs = fsspec.filesystem(self._protocol)
+        self._fs_obj = fsspec.filesystem(self._protocol)
 
     def _upload_api_responses(self):
         save_api_responses_to_fs(self._bucket_name)
@@ -31,25 +33,27 @@ class S3Deployer:
     def _upload_static_files(self):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         try:
-            self._remote_fs.put(
-                f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True
-            )
+            self._fs_obj.put(f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True)
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
 
-    def _upload_timestamp_file(self):
+    def _upload_deploy_viz_metadata_file(self):
         logger.debug(
-            """Creating and Uploading timestamp file to %s.""", self._bucket_name
+            """Creating and Uploading deploy viz metadata file to %s.""",
+            self._bucket_name,
         )
 
         try:
-            with self._remote_fs.open(
-                f"{self._bucket_name}/api/timestamp", "w"
-            ) as timestamp_file:
-                timestamp_file.write(
+            with self._fs_obj.open(
+                f"{self._bucket_name}/api/deploy-viz-metadata", "w"
+            ) as metadata_file:
+                metadata_file.write(
                     json.dumps(
-                        {"timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")}
+                        {
+                            "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                            "version": str(VersionInfo.parse(__version__)),
+                        }
                     )
                 )
         except Exception as exc:  # pragma: no cover
@@ -59,7 +63,7 @@ class S3Deployer:
     def _deploy(self):
         self._upload_api_responses()
         self._upload_static_files()
-        self._upload_timestamp_file()
+        self._upload_deploy_viz_metadata_file()
 
     def get_deployed_url(self):
         """Returns an S3 URL where Kedro viz is deployed"""

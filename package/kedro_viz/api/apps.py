@@ -145,10 +145,10 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
             (Path(filepath) / "pipelines" / pipeline_id).read_text(encoding="utf8")
         )
 
-    @app.get("/api/timestamp", response_class=JSONResponse)
-    async def get_deployed_timestamp():
+    @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
+    async def get_deployed_viz_metadata():
         return json.loads(  # pragma: no cover
-            (Path(filepath) / "timestamp").read_text(encoding="utf8")
+            (Path(filepath) / "deploy-viz-metadata").read_text(encoding="utf8")
         )
 
     return app
