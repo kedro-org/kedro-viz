@@ -14,6 +14,7 @@ from kedro_viz import __version__
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
+_METADATA_PATH = "api/deploy-viz-metadata"
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class S3Deployer:
         self._region = region
         self._bucket_name = bucket_name
         self._protocol, self._path = get_protocol_and_path(bucket_name)
-        self._fs_obj = fsspec.filesystem(self._protocol)
+        self._remote_fs = fsspec.filesystem(self._protocol)
 
     def _upload_api_responses(self):
         save_api_responses_to_fs(self._bucket_name)
@@ -33,7 +34,7 @@ class S3Deployer:
     def _upload_static_files(self):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         try:
-            self._fs_obj.put(f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True)
+            self._remote_fs.put(f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True)
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
@@ -45,16 +46,15 @@ class S3Deployer:
         )
 
         try:
-            with self._fs_obj.open(
-                f"{self._bucket_name}/api/deploy-viz-metadata", "w"
-            ) as metadata_file:
-                metadata_file.write(
-                    json.dumps(
-                        {
+            metadata = {
                             "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
                             "version": str(VersionInfo.parse(__version__)),
                         }
-                    )
+            with self._remote_fs.open(
+                f"{self._bucket_name}/{_METADATA_PATH}", "w"
+            ) as metadata_file:
+                metadata_file.write(
+                    json.dumps(metadata)
                 )
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
