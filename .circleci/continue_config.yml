@@ -227,7 +227,7 @@ jobs:
           command: npm run lint
       - run:
           name: Run JavaScript tests
-          command: npm run build:css && npm run test:ci
+          command: npm run test:ci
       - run:
           name: Run Javascript end to end tests
           command: npm run cy:ci

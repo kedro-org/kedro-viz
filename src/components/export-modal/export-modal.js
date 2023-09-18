@@ -4,7 +4,7 @@ import Modal from '../ui/modal';
 import Button from '../ui/button';
 import { toggleExportModal } from '../../actions';
 import exportGraph from './export-graph';
-import './export-modal.css';
+import './export-modal.scss';
 
 /**
  * Modal to allow users to choose between SVG/PNG export formats

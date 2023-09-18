@@ -10,7 +10,7 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 
-import './global-toolbar.css';
+import './global-toolbar.scss';
 
 /**
  * Main controls for filtering the chart data

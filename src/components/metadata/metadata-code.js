@@ -5,7 +5,7 @@ import python from 'highlight.js/lib/languages/python';
 import yaml from 'highlight.js/lib/languages/yaml';
 import javascript from 'highlight.js/lib/languages/javascript';
 import modifiers from '../../utils/modifiers';
-import './styles/metadata-code.css';
+import './styles/metadata-code.scss';
 
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('yaml', yaml);

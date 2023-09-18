@@ -3,7 +3,7 @@ import modifiers from '../../../utils/modifiers';
 import MetaDataValue from '../../metadata/metadata-value';
 import IconButton from '../../ui/icon-button';
 import CopyIcon from '../../icons/copy';
-import './command-copier.css';
+import './command-copier.scss';
 
 const CommandCopier = ({ command, isCommand }) => {
   const [showCopied, setShowCopied] = useState(false);
