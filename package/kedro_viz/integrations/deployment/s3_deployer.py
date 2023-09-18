@@ -34,7 +34,9 @@ class S3Deployer:
     def _upload_static_files(self):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         try:
-            self._remote_fs.put(f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True)
+            self._remote_fs.put(
+                f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True
+            )
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
@@ -47,15 +49,13 @@ class S3Deployer:
 
         try:
             metadata = {
-                            "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
-                            "version": str(VersionInfo.parse(__version__)),
-                        }
+                "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                "version": str(VersionInfo.parse(__version__)),
+            }
             with self._remote_fs.open(
                 f"{self._bucket_name}/{_METADATA_PATH}", "w"
             ) as metadata_file:
-                metadata_file.write(
-                    json.dumps(metadata)
-                )
+                metadata_file.write(json.dumps(metadata))
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
