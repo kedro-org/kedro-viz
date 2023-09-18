@@ -1,7 +1,6 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
-from subprocess import CalledProcessError
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -14,10 +13,10 @@ from .responses import (
     GraphAPIResponse,
     JSONResponse,
     NodeMetadataAPIResponse,
-    ProjectMetadataAPIResponse,
+    PackageCompatibilityAPIResponse,
     get_default_response,
     get_node_metadata_response,
-    get_project_metadata_response,
+    get_package_compatibilities_response,
     get_selected_pipeline_response,
     save_api_responses_to_fs,
 )
@@ -71,26 +70,17 @@ async def deploy_kedro_viz(input_values: S3DeployerCredentials):
 
 
 @router.get(
-    "/project-metadata",
-    response_model=ProjectMetadataAPIResponse,
+    "/package_compatibilities",
+    response_model=PackageCompatibilityAPIResponse,
 )
-async def get_project_metadata():
+async def get_package_compatibilities():
     try:
-        return get_project_metadata_response()
-    except ValueError as exc:
-        logger.exception("ValueError while getting project metadata : %s", exc)
-        return JSONResponse(
-            status_code=422, content={"message": "Failed to get project metadata"}
-        )
-    except CalledProcessError as exc:  # pragma: no cover
-        logger.exception("CalledProcessError while getting project metadata : %s", exc)
-        return JSONResponse(
-            status_code=422, content={"message": "Failed to get project metadata"}
-        )
+        return get_package_compatibilities_response()
     except Exception as exc:
         logger.exception(
-            "An exception occured while getting project metadata : %s", exc
+            "An exception occured while getting package compatibility info : %s", exc
         )
         return JSONResponse(
-            status_code=500, content={"message": "Failed to get project metadata"}
+            status_code=500,
+            content={"message": "Failed to get package compatibility info"},
         )

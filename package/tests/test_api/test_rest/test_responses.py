@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
 import operator
-import subprocess
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 from unittest import mock
@@ -12,8 +11,7 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
     EnhancedORJSONResponse,
-    get_package_versions,
-    get_project_metadata_response,
+    get_package_compatibilities_response,
     save_api_main_response_to_fs,
     save_api_node_response_to_fs,
     save_api_pipeline_response_to_fs,
@@ -21,18 +19,6 @@ from kedro_viz.api.rest.responses import (
     write_api_response_to_fs,
 )
 from kedro_viz.models.flowchart import TaskNode
-
-
-@pytest.fixture
-def pip_freeze_result():
-    result = subprocess.run(
-        ["pip", "freeze"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        check=True,
-    )
-    return result
 
 
 def _is_dict_list(collection: Any) -> bool:
@@ -834,26 +820,28 @@ class TestAPIAppFromFile:
         assert response.status_code == 200
 
 
-class TestProjectMetadataResponse:
-    def test_get_project_metadata_response(self, mocker):
-        mock_get_package_versions = mocker.patch(
-            "kedro_viz.api.rest.responses.get_package_versions"
+class TestPackageCompatibilities:
+    def test_get_package_compatibilities_response_compatible(self, mocker):
+        expected_version = "2023.9.1"
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_version",
+            return_value=expected_version,
         )
+        response = get_package_compatibilities_response()
+        assert response.package_name == "fsspec"
+        assert response.package_version == expected_version
+        assert response.is_compatible is True
 
-        get_project_metadata_response()
-
-        mock_get_package_versions.assert_called_once()
-
-    def test_get_package_versions(self, pip_freeze_result):
-        package_versions = {}
-        package_list = pip_freeze_result.stdout.strip().split("\n")
-
-        for package in package_list:
-            if "==" in package:
-                package_name, package_version = package.split("==")
-                package_versions[package_name] = package_version
-
-        assert get_package_versions() == package_versions
+    def test_get_package_compatibilities_response_incompatible(self, mocker):
+        expected_version = "2023.8.1"
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_version",
+            return_value=expected_version,
+        )
+        response = get_package_compatibilities_response()
+        assert response.package_name == "fsspec"
+        assert response.package_version == expected_version
+        assert response.is_compatible is False
 
 
 class TestEnhancedORJSONResponse:
