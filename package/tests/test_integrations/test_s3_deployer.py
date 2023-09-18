@@ -18,8 +18,9 @@ class TestS3Deployer:
             ("us-east-1", "shareableviz", "file", "shareableviz"),
         ],
     )
-    def test_init(self, region, bucket_name, expected_protocol, expected_path):
+    def test_init(self, mocker, region, bucket_name, expected_protocol, expected_path):
         # Test the __init__ method
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
 
         # Assertions to verify the initialization
@@ -32,7 +33,8 @@ class TestS3Deployer:
         "region, bucket_name",
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
-    def test_upload_api_responses(self, region, bucket_name, mocker):
+    def test_upload_api_responses(self, mocker, region, bucket_name):
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
         save_api_responses_to_fs_mock = mocker.patch(
             "kedro_viz.integrations.deployment.s3_deployer.save_api_responses_to_fs"
@@ -45,7 +47,8 @@ class TestS3Deployer:
         "region, bucket_name",
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
-    def test_upload_static_files(self, region, bucket_name):
+    def test_upload_static_files(self, mocker, region, bucket_name):
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
 
         # Mock the _fs_obj.put method to simulate a successful upload
@@ -61,7 +64,8 @@ class TestS3Deployer:
         "region, bucket_name",
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
-    def test_upload_deploy_viz_metadata_file(self, region, bucket_name):
+    def test_upload_deploy_viz_metadata_file(self, mocker, region, bucket_name):
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
         mock_open = patch.object(deployer._fs_obj, "open").start()
 
@@ -82,6 +86,7 @@ class TestS3Deployer:
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
     def test_deploy(self, region, bucket_name, mocker):
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
 
         mocker.patch.object(deployer, "_upload_api_responses")
@@ -99,6 +104,7 @@ class TestS3Deployer:
         [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
     )
     def test_get_deployed_url(self, region, bucket_name, mocker):
+        mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
 
         mocker.patch.object(deployer, "_deploy")
