@@ -1,8 +1,4 @@
-import json
-from datetime import datetime
-
 import pytest
-from semver import VersionInfo
 
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.s3_deployer import _HTML_DIR, S3Deployer
@@ -36,7 +32,7 @@ class TestS3Deployer:
         mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
         deployer._remote_fs.put.side_effect = Exception("Error")
-        with pytest.raises(Exception) as exc_info:
+        with pytest.raises(Exception) as _:
             deployer._upload_static_files()
         assert "Upload failed: Error" in caplog.text
 
@@ -55,7 +51,7 @@ class TestS3Deployer:
         mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
         deployer._remote_fs.open.side_effect = Exception("Error")
-        with pytest.raises(Exception) as exc_info:
+        with pytest.raises(Exception) as _:
             deployer._upload_deploy_viz_metadata_file()
         assert "Upload failed: Error" in caplog.text
 
