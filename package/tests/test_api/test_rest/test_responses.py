@@ -1,6 +1,5 @@
 # pylint: disable=too-many-lines
 import operator
-import subprocess
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 from unittest import mock
@@ -12,8 +11,7 @@ from fastapi.testclient import TestClient
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
     EnhancedORJSONResponse,
-    get_package_versions,
-    get_project_metadata_response,
+    get_package_compatibilities_response,
     save_api_main_response_to_fs,
     save_api_node_response_to_fs,
     save_api_pipeline_response_to_fs,
@@ -21,18 +19,6 @@ from kedro_viz.api.rest.responses import (
     write_api_response_to_fs,
 )
 from kedro_viz.models.flowchart import TaskNode
-
-
-@pytest.fixture
-def pip_freeze_result():
-    result = subprocess.run(
-        ["pip", "freeze"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        check=True,
-    )
-    return result
 
 
 def _is_dict_list(collection: Any) -> bool:
@@ -834,26 +820,28 @@ class TestAPIAppFromFile:
         assert response.status_code == 200
 
 
-class TestProjectMetadataResponse:
-    def test_get_project_metadata_response(self, mocker):
-        mock_get_package_versions = mocker.patch(
-            "kedro_viz.api.rest.responses.get_package_versions"
+class TestPackageCompatibilities:
+    def test_get_package_compatibilities_response_compatible(self, mocker):
+        expected_version = "2023.9.1"
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_version",
+            return_value=expected_version,
         )
+        response = get_package_compatibilities_response()
+        assert response.package_name == "fsspec"
+        assert response.package_version == expected_version
+        assert response.is_compatible is True
 
-        get_project_metadata_response()
-
-        mock_get_package_versions.assert_called_once()
-
-    def test_get_package_versions(self, pip_freeze_result):
-        package_versions = {}
-        package_list = pip_freeze_result.stdout.strip().split("\n")
-
-        for package in package_list:
-            if "==" in package:
-                package_name, package_version = package.split("==")
-                package_versions[package_name] = package_version
-
-        assert get_package_versions() == package_versions
+    def test_get_package_compatibilities_response_incompatible(self, mocker):
+        expected_version = "2023.8.1"
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_version",
+            return_value=expected_version,
+        )
+        response = get_package_compatibilities_response()
+        assert response.package_name == "fsspec"
+        assert response.package_version == expected_version
+        assert response.is_compatible is False
 
 
 class TestEnhancedORJSONResponse:
@@ -889,10 +877,10 @@ class TestEnhancedORJSONResponse:
             return_value=encoded_response,
         )
         with patch("kedro_viz.api.rest.responses.fsspec.filesystem") as mock_filesystem:
-            mock_fs_obj = mock_filesystem.return_value
-            mock_fs_obj.open.return_value.__enter__.return_value = Mock()
-            write_api_response_to_fs(file_path, response, mock_fs_obj)
-            mock_fs_obj.open.assert_called_once_with(file_path, "wb")
+            mock_remote_fs = mock_filesystem.return_value
+            mock_remote_fs.open.return_value.__enter__.return_value = Mock()
+            write_api_response_to_fs(file_path, response, mock_remote_fs)
+            mock_remote_fs.open.assert_called_once_with(file_path, "wb")
             mock_encode_to_human_readable.assert_called_once()
 
     @pytest.mark.parametrize(
@@ -910,12 +898,12 @@ class TestEnhancedORJSONResponse:
                 "kedro_viz.api.rest.responses.write_api_response_to_fs"
             ) as mock_write_api_response_to_fs:
                 main_loc = "test_main_loc"
-                fs_obj = Mock()
-                save_api_main_response_to_fs(main_loc, fs_obj)
+                _remote_fs = Mock()
+                save_api_main_response_to_fs(main_loc, _remote_fs)
 
         mock_get_default_response.assert_called_once()
         mock_write_api_response_to_fs.assert_called_once_with(
-            main_loc, mock_get_default_response.return_value, fs_obj
+            main_loc, mock_get_default_response.return_value, _remote_fs
         )
 
     @pytest.mark.parametrize(
@@ -938,9 +926,9 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.data_access_manager.nodes.get_node_ids",
             return_value=nodeIds,
         )
-        fs_obj = Mock()
+        _remote_fs = Mock()
 
-        save_api_node_response_to_fs(nodes_loc, fs_obj)
+        save_api_node_response_to_fs(nodes_loc, _remote_fs)
 
         assert mock_write_api_response_to_fs.call_count == len(nodeIds)
         assert mock_get_node_metadata_response.call_count == len(nodeIds)
@@ -949,7 +937,7 @@ class TestEnhancedORJSONResponse:
             call(
                 f"{nodes_loc}/{nodeId}",
                 mock_get_node_metadata_response.return_value,
-                fs_obj,
+                _remote_fs,
             )
             for nodeId in nodeIds
         ]
@@ -980,9 +968,9 @@ class TestEnhancedORJSONResponse:
             return_value=pipelineIds,
         )
 
-        fs_obj = Mock()
+        _remote_fs = Mock()
 
-        save_api_pipeline_response_to_fs(pipelines_loc, fs_obj)
+        save_api_pipeline_response_to_fs(pipelines_loc, _remote_fs)
 
         assert mock_write_api_response_to_fs.call_count == len(pipelineIds)
         assert mock_get_selected_pipeline_response.call_count == len(pipelineIds)
@@ -991,7 +979,7 @@ class TestEnhancedORJSONResponse:
             call(
                 f"{pipelines_loc}/{pipelineId}",
                 mock_get_selected_pipeline_response.return_value,
-                fs_obj,
+                _remote_fs,
             )
             for pipelineId in pipelineIds
         ]
@@ -1018,20 +1006,20 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.get_protocol_and_path",
             return_value=(protocol, path),
         )
-        mock_fs_obj = mocker.patch(
+        mock_remote_fs = mocker.patch(
             "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
         )
 
         save_api_responses_to_fs(file_path)
 
-        mock_fs_obj.assert_called_once_with(protocol)
+        mock_remote_fs.assert_called_once_with(protocol)
         mock_get_protocol_and_path.assert_called_once_with(file_path)
         mock_api_main_response_to_fs.assert_called_once_with(
-            f"{path}/api/main", mock_fs_obj.return_value
+            f"{path}/api/main", mock_remote_fs.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{path}/api/nodes", mock_fs_obj.return_value
+            f"{path}/api/nodes", mock_remote_fs.return_value
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
-            f"{path}/api/pipelines", mock_fs_obj.return_value
+            f"{path}/api/pipelines", mock_remote_fs.return_value
         )

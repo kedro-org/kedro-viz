@@ -74,6 +74,8 @@ Ensure your Kedro-Viz and Kedro versions are compatible by referencing the follo
 | >=3.8.0, <4.7     | >=0.16.6, <0.17.5 |
 | <3.8.0            | <0.16.6           |
 
+For **Python 3.6** users, the last supported version of Kedro-Viz is **3.16.0**
+
 ### CLI Usage
 
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
