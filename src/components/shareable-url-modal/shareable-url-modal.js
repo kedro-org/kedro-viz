@@ -66,7 +66,6 @@ const modalMessages = (status, info = '') => {
 const ShareableUrlModal = ({ onToggle, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
-  console.log('inputValues: ', inputValues);
   const [hasNotInteracted, setHasNotInteracted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
@@ -76,8 +75,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
 
   useEffect(() => {
-    try {
-      async function fetchPackageCompatibility() {
+    async function fetchPackageCompatibility() {
+      try {
         const request = await fetch('/api/package-compatibilities', {
           headers: {
             'Content-Type': 'application/json',
@@ -96,13 +95,13 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
             setDeploymentState(!response.is_compatible && 'incompatible');
           }
         }
+      } catch (error) {
+        console.log('package-compatibilities fetch error: ', error);
       }
+    }
 
-      if (isRunningLocally()) {
-        fetchPackageCompatibility();
-      }
-    } catch (error) {
-      console.log('package_compatibilities fetch error: ', error);
+    if (isRunningLocally()) {
+      fetchPackageCompatibility();
     }
   }, []);
 

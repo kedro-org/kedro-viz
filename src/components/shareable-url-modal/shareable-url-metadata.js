@@ -10,15 +10,21 @@ const ShareableUrlMetadata = () => {
     }
 
     async function fetchData() {
-      const response = await fetch('/api/deploy-viz-metadata', {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
-      const result = await response.json();
+      try {
+        const request = await fetch('/api/deploy-viz-metadata', {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+        const response = await request.json();
 
-      setMetadata(result);
+        if (request.ok) {
+          setMetadata(response);
+        }
+      } catch (error) {
+        console.log('deploy-viz-metadata fetch error: ', error);
+      }
     }
 
     fetchData();
