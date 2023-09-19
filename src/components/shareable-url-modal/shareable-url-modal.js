@@ -78,7 +78,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   useEffect(() => {
     try {
       async function fetchPackageCompatibility() {
-        const request = await fetch('/api/package_compatibilities', {
+        const request = await fetch('/api/package-compatibilities', {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
