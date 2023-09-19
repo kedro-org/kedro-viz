@@ -6,7 +6,9 @@ describe('Flowchart Menu', () => {
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
-    cy.get(':nth-child(2) > .menu-option__content > span').as('menuOption');
+    cy.get('.pipeline-list :nth-child(2) > .menu-option__content > span').as(
+      'menuOption'
+    );
 
     let menuOptionValue;
 
