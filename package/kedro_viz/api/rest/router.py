@@ -42,6 +42,7 @@ async def main():
 async def get_single_node_metadata(node_id: str):
     return get_node_metadata_response(node_id)
 
+
 @router.get(
     "/pipelines/{registered_pipeline_id}",
     response_model=GraphAPIResponse,
