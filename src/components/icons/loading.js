@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import './loading.css';
+import './loading.scss';
 
 const d = 'M 50 50 100 100 50 150 0 100 Z';
 

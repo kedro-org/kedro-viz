@@ -11,7 +11,7 @@ import DelayedRenderer from '../ui/delayed-renderer';
 import FeatureHintDot from './feature-hint-dot';
 import { featureHintsContent } from './feature-hints-content';
 
-import './feature-hints.css';
+import './feature-hints.scss';
 
 const localStorageKeyShowHints = 'showFeatureHints';
 export const localStorageKeyFeatureHintsStep = 'featureHintStep';

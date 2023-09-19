@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import SearchBarRenderer from './search-bar-renderer';
 
-import './search-bar.css';
+import './search-bar.scss';
 
 const SearchBar = ({
   children,

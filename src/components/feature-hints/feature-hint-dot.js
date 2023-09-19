@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { featureHintsContent } from './feature-hints-content';
 
-import './feature-hints.css';
+import './feature-hints.scss';
 
 const FeatureHintDot = ({
   appState,

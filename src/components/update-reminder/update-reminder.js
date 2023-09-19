@@ -9,7 +9,7 @@ import CommandCopier from '../ui/command-copier/command-copier';
 import IconButton from '../ui/icon-button';
 import CloseIcon from '../icons/close';
 
-import './update-reminder.css';
+import './update-reminder.scss';
 
 const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
   const [dismissed, setDismissed] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import modifiers from '../../../utils/modifiers';
-import './toggle.css';
+import './toggle.scss';
 
 /**
  * Shows a toggle button for code panel
