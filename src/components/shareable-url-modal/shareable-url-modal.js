@@ -73,7 +73,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
-  const [canUseShareableUrls, setCanUseShareableUrls] = useState(false);
+  const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
 
   useEffect(() => {
     try {
