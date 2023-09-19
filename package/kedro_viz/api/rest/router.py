@@ -11,7 +11,6 @@ from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
-    JSONResponse,
     NodeMetadataAPIResponse,
     PackageCompatibilityAPIResponse,
     get_default_response,
@@ -70,7 +69,7 @@ async def deploy_kedro_viz(input_values: S3DeployerCredentials):
 
 
 @router.get(
-    "/package_compatibilities",
+    "/package-compatibilities",
     response_model=PackageCompatibilityAPIResponse,
 )
 async def get_package_compatibilities():
