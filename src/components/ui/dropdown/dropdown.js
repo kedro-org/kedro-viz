@@ -164,7 +164,11 @@ const Dropdown = (props) => {
    * @param {Object} e - event object
    */
   const _handleBodyClicked = (e) => {
-    if (!dropdownRef.current.contains(e.target) && open) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target) &&
+      open
+    ) {
       _handleClose();
     }
   };
