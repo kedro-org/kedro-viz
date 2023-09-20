@@ -68,7 +68,7 @@ def test_get_package_compatibilities(
             side_effect=exception_type("Test Exception"),
         )
 
-    response = client.get("/api/package_compatibilities")
+    response = client.get("/api/package-compatibilities")
 
     assert response.status_code == expected_status_code
     assert response.json() == expected_response

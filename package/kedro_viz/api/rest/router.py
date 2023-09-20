@@ -69,7 +69,7 @@ async def deploy_kedro_viz(input_values: S3DeployerCredentials):
 
 
 @router.get(
-    "/package_compatibilities",
+    "/package-compatibilities",
     response_model=PackageCompatibilityAPIResponse,
 )
 async def get_package_compatibilities():
