@@ -8,7 +8,7 @@ class MockS3Deployer:
     def __init__(self, region, bucket_name):
         pass
 
-    def get_deployed_url(self):
+    def deploy_and_get_url(self):
         return "http://mocked-url.com"
 
 

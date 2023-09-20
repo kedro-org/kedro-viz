@@ -5,7 +5,7 @@ import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from kedro_viz.api.rest.requests import S3DeployerCredentials
+from kedro_viz.api.rest.requests import S3DeployerConfiguration
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 from .responses import (
@@ -50,10 +50,10 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 
 @router.post("/deploy")
-async def deploy_kedro_viz(input_values: S3DeployerCredentials):
+async def deploy_kedro_viz(input_values: S3DeployerConfiguration):
     try:
         deployer = S3Deployer(input_values.region, input_values.bucket_name)
-        url = deployer.get_deployed_url()
+        url = deployer.deploy_and_get_url()
         response = {"message": "Website deployed on S3", "url": url}
         return JSONResponse(status_code=200, content=response)
     except PermissionError as exc:  # pragma: no cover
