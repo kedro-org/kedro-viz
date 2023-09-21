@@ -65,7 +65,7 @@ class S3Deployer:
         self._upload_static_files()
         self._upload_deploy_viz_metadata_file()
 
-    def get_deployed_url(self):
-        """Returns an S3 URL where Kedro viz is deployed"""
+    def deploy_and_get_url(self):
+        """Deploy Kedro-viz to S3 and return its URL."""
         self._deploy()
         return f"http://{self._path}.s3-website.{self._region}.amazonaws.com"

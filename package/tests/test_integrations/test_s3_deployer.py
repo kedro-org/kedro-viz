@@ -69,12 +69,12 @@ class TestS3Deployer:
         deployer._upload_static_files.assert_called_once()
         deployer._upload_deploy_viz_metadata_file.assert_called_once()
 
-    def test_get_deployed_url(self, region, bucket_name, mocker):
+    def test_deploy_and_get_url(self, region, bucket_name, mocker):
         mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
 
         mocker.patch.object(deployer, "_deploy")
-        url = deployer.get_deployed_url()
+        url = deployer.deploy_and_get_url()
 
         deployer._deploy.assert_called_once()
         expected_url = (
