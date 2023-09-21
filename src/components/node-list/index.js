@@ -38,7 +38,7 @@ import {
   toggleNodesDisabled,
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
-import './styles/node-list.css';
+import './styles/node-list.scss';
 
 /**
  * Provides data from the store to populate a NodeList component.

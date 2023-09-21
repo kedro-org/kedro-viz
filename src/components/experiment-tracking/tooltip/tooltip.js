@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import './tooltip.css';
+import './tooltip.scss';
 
 export const tooltipDefaultProps = {
   content: { label1: '', value1: '', label2: '', value2: '' },

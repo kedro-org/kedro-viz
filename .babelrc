@@ -5,5 +5,20 @@
     ["@babel/plugin-proposal-private-property-in-object", { "loose": true }],
     ["@babel/plugin-proposal-private-methods", { "loose": true }]
   ],
-  "presets": ["@babel/preset-env", "@babel/preset-react"]
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
+  "env": {
+    "lib": {
+      "plugins": [
+        "@babel/plugin-transform-runtime",
+        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+        [
+          "@babel/plugin-proposal-private-property-in-object",
+          { "loose": true }
+        ],
+        ["@babel/plugin-proposal-private-methods", { "loose": true }],
+        ["babel-plugin-transform-remove-imports", { "test": "\\.(scss)$" }]
+      ],
+      "presets": ["@babel/preset-env", "@babel/preset-react"]
+    }
+  }
 }

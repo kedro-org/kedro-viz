@@ -10,7 +10,7 @@ import {
 import { getTooltipPosition } from '../tooltip/get-tooltip-position';
 import { formatTimestamp } from '../../../utils/date-utils';
 
-import './parallel-coordinates.css';
+import './parallel-coordinates.scss';
 
 export const getUniqueValues = (values) => {
   return values

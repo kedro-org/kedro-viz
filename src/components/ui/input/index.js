@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-import './input.css';
+import './input.scss';
 
 const MIN_HEIGHT = 20;
 

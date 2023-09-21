@@ -2,11 +2,21 @@ import pytest
 import requests
 from click.testing import CliRunner
 from semver import VersionInfo
-from watchgod import RegExpWatcher
+from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.launchers import cli
 from kedro_viz.server import run_server
+
+
+@pytest.fixture
+def patched_check_viz_up(mocker):
+    mocker.patch("kedro_viz.launchers.cli._check_viz_up", return_value=True)
+
+
+@pytest.fixture
+def patched_start_browser(mocker):
+    mocker.patch("kedro_viz.launchers.cli._start_browser")
 
 
 @pytest.mark.parametrize(
@@ -17,7 +27,23 @@ from kedro_viz.server import run_server
             {
                 "host": "127.0.0.1",
                 "port": 4141,
-                "browser": True,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "extra_params": {},
+            },
+        ),
+        (
+            [
+                "viz",
+                "--host",
+                "localhost",
+            ],
+            {
+                "host": "localhost",
+                "port": 4141,
                 "load_file": None,
                 "save_file": None,
                 "pipeline_name": None,
@@ -46,7 +72,6 @@ from kedro_viz.server import run_server
             {
                 "host": "8.8.8.8",
                 "port": 4142,
-                "browser": False,
                 "load_file": None,
                 "save_file": "save.json",
                 "pipeline_name": "data_science",
@@ -57,13 +82,24 @@ from kedro_viz.server import run_server
         ),
     ],
 )
-def test_kedro_viz_command_run_server(command_options, run_server_args, mocker):
-    run_server = mocker.patch("kedro_viz.server.run_server")
+def test_kedro_viz_command_run_server(
+    command_options,
+    run_server_args,
+    mocker,
+    patched_check_viz_up,
+    patched_start_browser,
+):
+    process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
+    # Reduce the timeout argument from 60 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
 
-    run_server.assert_called_once_with(**run_server_args)
+    process_init.assert_called_once_with(
+        target=run_server, daemon=False, kwargs={**run_server_args}
+    )
+    assert run_server_args["port"] in cli._VIZ_PROCESSES
 
 
 def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_response):
@@ -118,19 +154,22 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     mock_click_echo.assert_not_called()
 
 
-def test_kedro_viz_command_with_autoreload(mocker):
-    mocker.patch("webbrowser.open_new")
+def test_kedro_viz_command_with_autoreload(
+    mocker, patched_check_viz_up, patched_start_browser
+):
+    process_init = mocker.patch("multiprocessing.Process")
     mock_project_path = "/tmp/project_path"
     mocker.patch("pathlib.Path.cwd", return_value=mock_project_path)
-    run_process = mocker.patch("kedro_viz.launchers.cli.run_process")
+    # Reduce the timeout argument from 60 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz", "--autoreload"])
 
-    run_process.assert_called_once_with(
-        path=mock_project_path,
-        target=run_server,
-        kwargs={
+    run_process_kwargs = {
+        "path": mock_project_path,
+        "target": run_server,
+        "kwargs": {
             "host": "127.0.0.1",
             "port": 4141,
             "load_file": None,
@@ -138,10 +177,14 @@ def test_kedro_viz_command_with_autoreload(mocker):
             "pipeline_name": None,
             "env": None,
             "autoreload": True,
-            "browser": False,
             "project_path": mock_project_path,
             "extra_params": {},
         },
-        watcher_cls=RegExpWatcher,
-        watcher_kwargs={"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
+        "watcher_cls": RegExpWatcher,
+        "watcher_kwargs": {"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
+    }
+
+    process_init.assert_called_once_with(
+        target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
+    assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES

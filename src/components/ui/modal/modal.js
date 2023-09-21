@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
-import './modal.css';
+import './modal.scss';
 
 /**
  * Generic Kedro Modal

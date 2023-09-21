@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import handleKeyEvent from '../../../utils/key-events';
-import './menu-option.css';
+import './menu-option.scss';
 
 /**
  * Generic Kedro Menu Option
