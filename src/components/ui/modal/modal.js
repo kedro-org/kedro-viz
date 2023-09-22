@@ -22,7 +22,7 @@ const Modal = ({
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [visible]);
 
   return (
     <div
