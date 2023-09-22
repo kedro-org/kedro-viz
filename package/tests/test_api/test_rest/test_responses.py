@@ -948,7 +948,8 @@ class TestEnhancedORJSONResponse:
         )
 
         mocker.patch(
-            "kedro_viz.api.rest.responses.data_access_manager.registered_pipelines.get_pipeline_ids",
+            "kedro_viz.api.rest.responses.data_access_manager."
+            "registered_pipelines.get_pipeline_ids",
             return_value=pipelineIds,
         )
 
