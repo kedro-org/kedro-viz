@@ -23,7 +23,7 @@ class TestS3Deployer:
     def test_upload_static_files(self, mocker, region, bucket_name):
         mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
-        deployer._upload_static_files()
+        deployer._upload_static_files(_HTML_DIR)
         deployer._remote_fs.put.assert_called_once_with(
             f"{str(_HTML_DIR)}/*", deployer._bucket_name, recursive=True
         )
@@ -33,7 +33,7 @@ class TestS3Deployer:
         deployer = S3Deployer(region, bucket_name)
         deployer._remote_fs.put.side_effect = Exception("Error")
         with pytest.raises(Exception) as _:
-            deployer._upload_static_files()
+            deployer._upload_static_files(_HTML_DIR)
         assert "Upload failed: Error" in caplog.text
 
     def test_upload_deploy_viz_metadata_file(self, mocker, region, bucket_name):

@@ -31,12 +31,10 @@ class S3Deployer:
     def _upload_api_responses(self):
         save_api_responses_to_fs(self._bucket_name)
 
-    def _upload_static_files(self):
+    def _upload_static_files(self, html_dir: Path):
         logger.debug("""Uploading static html files to %s.""", self._bucket_name)
         try:
-            self._remote_fs.put(
-                f"{str(_HTML_DIR)}/*", self._bucket_name, recursive=True
-            )
+            self._remote_fs.put(f"{str(html_dir)}/*", self._bucket_name, recursive=True)
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
@@ -62,7 +60,7 @@ class S3Deployer:
 
     def _deploy(self):
         self._upload_api_responses()
-        self._upload_static_files()
+        self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()
 
     def deploy_and_get_url(self):

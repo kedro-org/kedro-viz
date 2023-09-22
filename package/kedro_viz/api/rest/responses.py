@@ -377,12 +377,14 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-def get_package_compatibilities_response():
+def get_package_compatibilities_response(
+    package_name: str = _FSSPEC_PACKAGE_NAME,
+    compatible_version: str = _FSSPEC_COMPATIBLE_VERSION,
+):
     """API response for `/api/package_compatibility`."""
-    package_name = _FSSPEC_PACKAGE_NAME
     package_version = get_package_version(package_name)
     is_compatible = packaging.version.parse(package_version) >= packaging.version.parse(
-        _FSSPEC_COMPATIBLE_VERSION
+        compatible_version
     )
     return PackageCompatibilityAPIResponse(
         package_name=package_name,
@@ -402,21 +404,21 @@ def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
         file.write(encoded_response)
 
 
-def save_api_main_response_to_fs(main_loc: str, remote_fs: Any):
+def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
     """Saves API /main response to a file."""
     try:
-        write_api_response_to_fs(main_loc, get_default_response(), remote_fs)
+        write_api_response_to_fs(main_path, get_default_response(), remote_fs)
     except Exception as exc:  # pragma: no cover
         logger.exception("Failed to save default response. Error: %s", str(exc))
         raise exc
 
 
-def save_api_node_response_to_fs(nodes_loc: str, remote_fs: Any):
+def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
     """Saves API /nodes/{node} response to a file."""
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
-                f"{nodes_loc}/{nodeId}", get_node_metadata_response(nodeId), remote_fs
+                f"{nodes_path}/{nodeId}", get_node_metadata_response(nodeId), remote_fs
             )
         except Exception as exc:  # pragma: no cover
             logger.exception(
@@ -425,12 +427,12 @@ def save_api_node_response_to_fs(nodes_loc: str, remote_fs: Any):
             raise exc
 
 
-def save_api_pipeline_response_to_fs(pipelines_loc: str, remote_fs: Any):
+def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
     """Saves API /pipelines/{pipeline} response to a file."""
     for pipelineId in data_access_manager.registered_pipelines.get_pipeline_ids():
         try:
             write_api_response_to_fs(
-                f"{pipelines_loc}/{pipelineId}",
+                f"{pipelines_path}/{pipelineId}",
                 get_selected_pipeline_response(pipelineId),
                 remote_fs,
             )
@@ -454,18 +456,18 @@ def save_api_responses_to_fs(filepath: str):
             filepath,
         )
 
-        main_loc = f"{path}/api/main"
-        nodes_loc = f"{path}/api/nodes"
-        pipelines_loc = f"{path}/api/pipelines"
+        main_path = f"{path}/api/main"
+        nodes_path = f"{path}/api/nodes"
+        pipelines_path = f"{path}/api/pipelines"
 
         if protocol == "file":
             remote_fs.makedirs(path, exist_ok=True)
-            remote_fs.makedirs(nodes_loc, exist_ok=True)
-            remote_fs.makedirs(pipelines_loc, exist_ok=True)
+            remote_fs.makedirs(nodes_path, exist_ok=True)
+            remote_fs.makedirs(pipelines_path, exist_ok=True)
 
-        save_api_main_response_to_fs(main_loc, remote_fs)
-        save_api_node_response_to_fs(nodes_loc, remote_fs)
-        save_api_pipeline_response_to_fs(pipelines_loc, remote_fs)
+        save_api_main_response_to_fs(main_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover
         logger.exception(
