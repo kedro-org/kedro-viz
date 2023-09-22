@@ -164,6 +164,7 @@ const Dropdown = (props) => {
       document.addEventListener('click', _handleBodyClicked);
     }
     return () => document.removeEventListener('click', _handleBodyClicked);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   /**
