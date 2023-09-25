@@ -66,7 +66,11 @@ const modalMessages = (status, info = '') => {
 const ShareableUrlModal = ({ onToggle, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
-  const [hasNotInteracted, setHasNotInteracted] = useState(true);
+  const [isFormDirty, setIsFormDirty] = useState({
+    /* eslint-disable camelcase */
+    bucket_name: false,
+    region: false,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
@@ -106,7 +110,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   }, []);
 
   const onChange = (key, value) => {
-    setHasNotInteracted(false);
+    setIsFormDirty((prevState) => ({ ...prevState, [key]: !!value }));
     setInputValues(
       Object.assign({}, inputValues, {
         [key]: value,
@@ -156,6 +160,10 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
     setResponseUrl(null);
     setIsLinkSettingsClick(false);
     setInputValues({});
+    setIsFormDirty({
+      bucket_name: false,
+      region: false,
+    }); /* eslint-disable camelcase */
   };
 
   return (
@@ -220,7 +228,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
               Cancel
             </Button>
             <Button
-              disabled={hasNotInteracted}
+              disabled={!Object.values(isFormDirty).every((value) => value)}
               size="small"
               onClick={handleSubmit}
             >
