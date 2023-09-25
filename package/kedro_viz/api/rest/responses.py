@@ -64,7 +64,7 @@ task_node_api_response_example = {
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
     if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=task_node_api_response_example)
+        model_config = ConfigDict(json_schema_extra=task_node_api_response_example)  # type: ignore
     else:
 
         class Config:
@@ -91,7 +91,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
     dataset_type: Optional[str] = None
     stats: Optional[Dict] = None
     if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=data_node_api_response_example)
+        model_config = ConfigDict(json_schema_extra=data_node_api_response_example)  # type: ignore
     else:
 
         class Config:
@@ -124,7 +124,7 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     outputs: List[str]
     run_command: Optional[str] = None
     if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=task_node_metadata_api_example)
+        model_config = ConfigDict(json_schema_extra=task_node_metadata_api_example)  # type: ignore
     else:
 
         class Config:
@@ -150,7 +150,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     preview: Optional[Dict] = None
     stats: Optional[Dict] = None
     if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=data_node_metadata_api_example)
+        model_config = ConfigDict(json_schema_extra=data_node_metadata_api_example)  # type: ignore
     else:
 
         class Config:
@@ -189,7 +189,7 @@ class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
     if PYDANTIC_V2:
         model_config = ConfigDict(
-            json_schema_extra=parameters_node_metaxata_api_example
+            json_schema_extra=parameters_node_metaxata_api_example  # type: ignore
         )
     else:
 
