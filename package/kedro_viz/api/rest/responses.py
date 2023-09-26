@@ -5,7 +5,12 @@ from typing import Any, Dict, List, Optional, Union
 
 import orjson
 from fastapi.responses import ORJSONResponse
-from pydantic import BaseModel
+try:
+    # Triggered if pydantic v2 is installed
+    from pydantic.v1 import BaseModel
+except ImportError:
+    # Triggered if pydantic v1 is installed
+    from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
 
