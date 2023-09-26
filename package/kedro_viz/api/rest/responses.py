@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import orjson
 from fastapi.responses import ORJSONResponse
+
 try:
     # Triggered if pydantic v2 is installed
     from pydantic.v1 import BaseModel
