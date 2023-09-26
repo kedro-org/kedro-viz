@@ -31,7 +31,7 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
-// These colours variables come from styles/variables;
+// These colours variables come from styles/variables
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
 
