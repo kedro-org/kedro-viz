@@ -214,7 +214,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
             <Input
               defaultValue={inputValues.bucket_name}
               onChange={(value) => onChange('bucket_name', value)}
-              placeholder="s3://my-bucket-name"
+              placeholder="my-bucket-name"
               resetValueTrigger={visible}
               size="large"
             />
