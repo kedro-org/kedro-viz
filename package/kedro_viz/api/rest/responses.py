@@ -405,7 +405,7 @@ def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
 
 
 def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
-    """Saves API /main response to a file."""
+    """Saves API /main response to a directory."""
     try:
         write_api_response_to_fs(main_path, get_default_response(), remote_fs)
     except Exception as exc:  # pragma: no cover
@@ -414,7 +414,7 @@ def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
 
 
 def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
-    """Saves API /nodes/{node} response to a file."""
+    """Saves API /nodes/{node} response to a directory."""
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
@@ -428,7 +428,7 @@ def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
 
 
 def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
-    """Saves API /pipelines/{pipeline} response to a file."""
+    """Saves API /pipelines/{pipeline} response to a directory."""
     for pipelineId in data_access_manager.registered_pipelines.get_pipeline_ids():
         try:
             write_api_response_to_fs(
