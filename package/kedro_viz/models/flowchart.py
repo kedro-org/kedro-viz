@@ -365,10 +365,6 @@ class ModularPipelineNode(GraphNode):
             self.external_inputs | self.internal_inputs
         )
 
-    def inherit_tags(self, tags: Set[str]):
-        """Update the current set of tags with the given tags."""
-        self.tags.update(tags)
-
 
 @dataclass
 class TaskNodeMetadata(GraphNodeMetadata):
