@@ -183,9 +183,6 @@ def example_api(
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
     )
-    mocker.patch(
-        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
-    )
     yield api
 
 
@@ -204,9 +201,6 @@ def example_api_no_default_pipeline(
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
     )
     yield api
 
@@ -229,9 +223,6 @@ def example_transcoded_api(
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
-    )
-    mocker.patch(
-        "kedro_viz.api.rest.router.data_access_manager", new=data_access_manager
     )
     yield api
 

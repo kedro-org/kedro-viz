@@ -68,7 +68,7 @@ def create_api_app_from_project(
         # frontend e2e tests via Cypress
         app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
 
-    # everytime the server reloads, a new app with a new timestamp will be created.
+    # every time the server reloads, a new app with a new timestamp will be created.
     # this is used as an etag embedded in the frontend for client to use when making requests.
     app_etag = _create_etag()
 
@@ -119,7 +119,7 @@ def create_api_app_from_project(
     return app
 
 
-def create_api_app_from_file(filepath: str) -> FastAPI:
+def create_api_app_from_file(api_dir: str) -> FastAPI:
     """Create an API from a json file."""
     app = _create_base_api_app()
     app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
@@ -131,6 +131,24 @@ def create_api_app_from_file(filepath: str) -> FastAPI:
 
     @app.get("/api/main", response_class=JSONResponse)
     async def main():
-        return json.loads(Path(filepath).read_text(encoding="utf8"))
+        return json.loads((Path(api_dir) / "main").read_text(encoding="utf8"))
+
+    @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
+    async def get_node_metadata(node_id):
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
+        )
+
+    @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
+    async def get_registered_pipeline(pipeline_id):
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
+        )
+
+    @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
+    async def get_deployed_viz_metadata():
+        return json.loads(  # pragma: no cover
+            (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
+        )
 
     return app

@@ -1,25 +1,25 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
-# pylint: disable=missing-function-docstring
+# pylint: disable=missing-function-docstring, broad-exception-caught
+import logging
+
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.flowchart import (
-    DataNode,
-    DataNodeMetadata,
-    ParametersNodeMetadata,
-    TaskNode,
-    TaskNodeMetadata,
-    TranscodedDataNode,
-    TranscodedDataNodeMetadata,
-)
+from kedro_viz.api.rest.requests import S3DeployerConfiguration
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
+    PackageCompatibilityAPIResponse,
     get_default_response,
+    get_node_metadata_response,
+    get_package_compatibilities_response,
+    get_selected_pipeline_response,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api",
@@ -38,23 +38,7 @@ async def main():
     response_model_exclude_none=True,
 )
 async def get_single_node_metadata(node_id: str):
-    node = data_access_manager.nodes.get_node_by_id(node_id)
-    if not node:
-        return JSONResponse(status_code=404, content={"message": "Invalid node ID"})
-
-    if not node.has_metadata():
-        return JSONResponse(content={})
-
-    if isinstance(node, TaskNode):
-        return TaskNodeMetadata(node)
-
-    if isinstance(node, DataNode):
-        return DataNodeMetadata(node)
-
-    if isinstance(node, TranscodedDataNode):
-        return TranscodedDataNodeMetadata(node)
-
-    return ParametersNodeMetadata(node)
+    return get_node_metadata_response(node_id)
 
 
 @router.get(
@@ -62,29 +46,40 @@ async def get_single_node_metadata(node_id: str):
     response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(registered_pipeline_id: str):
-    if not data_access_manager.registered_pipelines.has_pipeline(
-        registered_pipeline_id
-    ):
-        return JSONResponse(status_code=404, content={"message": "Invalid pipeline ID"})
+    return get_selected_pipeline_response(registered_pipeline_id)
 
-    modular_pipelines_tree = (
-        data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-            registered_pipeline_id
+
+@router.post("/deploy")
+async def deploy_kedro_viz(input_values: S3DeployerConfiguration):
+    try:
+        deployer = S3Deployer(input_values.region, input_values.bucket_name)
+        url = deployer.deploy_and_get_url()
+        response = {"message": "Website deployed on S3", "url": url}
+        return JSONResponse(status_code=200, content=response)
+    except PermissionError as exc:  # pragma: no cover
+        logger.exception("Permission error in deploying Kedro Viz : %s ", exc)
+        return JSONResponse(
+            status_code=401, content={"message": "Please provide valid credentials"}
         )
-    )
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Deploying Kedro Viz failed: %s ", exc)
+        return JSONResponse(
+            status_code=500, content={"message": "Failed to deploy Kedro Viz"}
+        )
 
-    return GraphAPIResponse(
-        nodes=data_access_manager.get_nodes_for_registered_pipeline(  # type: ignore
-            registered_pipeline_id
-        ),
-        edges=data_access_manager.get_edges_for_registered_pipeline(  # type: ignore
-            registered_pipeline_id
-        ),
-        tags=data_access_manager.tags.as_list(),
-        layers=data_access_manager.get_sorted_layers_for_registered_pipeline(
-            registered_pipeline_id
-        ),
-        pipelines=data_access_manager.registered_pipelines.as_list(),
-        selected_pipeline=registered_pipeline_id,
-        modular_pipelines=modular_pipelines_tree,  # type: ignore
-    )
+
+@router.get(
+    "/package-compatibilities",
+    response_model=PackageCompatibilityAPIResponse,
+)
+async def get_package_compatibilities():
+    try:
+        return get_package_compatibilities_response()
+    except Exception as exc:
+        logger.exception(
+            "An exception occured while getting package compatibility info : %s", exc
+        )
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Failed to get package compatibility info"},
+        )

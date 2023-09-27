@@ -45,14 +45,13 @@ def commands():  # pylint: disable=missing-function-docstring
 @click.option(
     "--load-file",
     default=None,
-    type=click.Path(exists=True, dir_okay=False),
-    help="Path to load the pipeline JSON file",
+    help="Load Kedro-Viz using JSON files from the specified directory.",
 )
 @click.option(
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Path to save the pipeline JSON file",
+    help="Save all API responses from the backend as JSON files in the specified directory.",
 )
 @click.option(
     "--pipeline",
