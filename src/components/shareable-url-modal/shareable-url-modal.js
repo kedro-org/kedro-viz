@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import modifiers from '../../utils/modifiers';
 import { isRunningLocally } from '../../utils';
+import { s3BucketRegions } from '../../config';
 
 import Button from '../ui/button';
 import CopyIcon from '../icons/copy';
@@ -15,39 +16,6 @@ import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
 
 import './shareable-url-modal.scss';
-
-const s3BucketRegions = [
-  'us-east-2',
-  'us-east-1',
-  'us-west-1',
-  'us-west-2',
-  'af-south-1',
-  'ap-east-1',
-  'ap-south-2',
-  'ap-southeast-3',
-  'ap-southeast-4',
-  'ap-south-1',
-  'ap-northeast-3',
-  'ap-northeast-2',
-  'ap-southeast-1',
-  'ap-southeast-2',
-  'ap-northeast-1',
-  'ca-central-1',
-  'cn-north-1',
-  'cn-northwest-1',
-  'eu-central-1',
-  'eu-west-1',
-  'eu-west-2',
-  'eu-south-1',
-  'eu-west-3',
-  'eu-north-1',
-  'eu-south-2',
-  'eu-central-2',
-  'sa-east-1',
-  'me-south-1',
-  'me-central-1',
-  'il-central-1',
-];
 
 const modalMessages = (status, info = '') => {
   const messages = {
@@ -73,6 +41,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
+  const [responseError, setResponseError] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
   const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
@@ -136,7 +105,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
         setResponseUrl(response.url);
         setDeploymentState('success');
       } else {
-        setResponseUrl('Something went wrong.');
+        setResponseUrl(null);
+        setResponseError(response.message);
         setDeploymentState('failure');
       }
     } catch (error) {
@@ -156,6 +126,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   const handleModalClose = () => {
     onToggle(false);
     setDeploymentState('default');
+    setResponseError(null);
     setIsLoading(false);
     setResponseUrl(null);
     setIsLinkSettingsClick(false);
@@ -181,7 +152,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       }
       visible={visible.shareableUrlModal}
     >
-      {!isLoading && !responseUrl && canUseShareableUrls ? (
+      {!isLoading && !responseUrl && canUseShareableUrls && !responseError ? (
         <>
           <div className="shareable-url-modal__input-wrapper">
             <div className="shareable-url-modal__input-label">
@@ -240,6 +211,11 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       {isLoading ? (
         <div className="shareable-url-modal__loading">
           <LoadingIcon visible={isLoading} />
+        </div>
+      ) : null}
+      {responseError ? (
+        <div className="shareable-url-modal__error">
+          <p>Error message: {responseError}</p>
         </div>
       ) : null}
       {responseUrl ? (

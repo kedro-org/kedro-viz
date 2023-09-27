@@ -85,6 +85,12 @@
     }
   }
 
+  &__error {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
   &__url-wrapper {
     background: rgb(255 255 255 / 4%);
     display: flex;

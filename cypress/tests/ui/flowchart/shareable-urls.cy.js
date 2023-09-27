@@ -13,7 +13,7 @@ describe('Shareable URLs', () => {
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
-      `Deploy and Share Kedro-Viz`
+      `Publish and share Kedro-Viz`
     );
   });
 
