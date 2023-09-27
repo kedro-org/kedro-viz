@@ -22,11 +22,13 @@ def new_train_eval_template() -> Pipeline:
                 func=train_model,
                 inputs=["X_train", "y_train", "params:dummy_model_options"],
                 outputs=["regressor", "experiment_params"],
+                tags="train"
             ),
             node(
                 func=evaluate_model,
                 inputs=["regressor", "X_test", "y_test"],
                 outputs="r2_score",
+                tags="evaluate"
             ),
         ]
     )
