@@ -56,8 +56,8 @@ const modalMessages = (status, info = '') => {
     failure: 'Something went wrong. Please try again later.',
     loading: 'Shooting your files through space. Sit tight...',
     success:
-      'The current version of Kedro-Viz has been deployed and hosted via the link below.',
-    incompatible: `Deploying and hosting Kedro-Viz is only supported with fsspec >=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
+      'The current version of Kedro-Viz has been published and hosted via the link below.',
+    incompatible: `Publishing Kedro-Viz is only supported with fsspec >=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
   };
 
   return messages[status];
@@ -176,8 +176,8 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       )}
       title={
         deploymentState === 'success'
-          ? 'Kedro-Viz Hosted and Deployed'
-          : 'Deploy and Share Kedro-Viz'
+          ? 'Kedro-Viz Published and Deployed'
+          : 'Publish and Share Kedro-Viz'
       }
       visible={visible.shareableUrlModal}
     >
@@ -232,7 +232,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
               size="small"
               onClick={handleSubmit}
             >
-              {isLinkSettingsClick ? 'Re-Deploy' : 'Deploy'}
+              {isLinkSettingsClick ? 'Republish' : 'Publish'}
             </Button>
           </div>
         </>
