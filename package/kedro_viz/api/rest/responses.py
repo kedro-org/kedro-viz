@@ -377,18 +377,11 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-<<<<<<< HEAD
-def get_package_compatibilities_response():
-    """API response for `/api/package_compatibility`."""
-
-    package_name = _FSSPEC_PACKAGE_NAME
-=======
 def get_package_compatibilities_response(
     package_name: str = _FSSPEC_PACKAGE_NAME,
     compatible_version: str = _FSSPEC_COMPATIBLE_VERSION,
 ):
     """API response for `/api/package_compatibility`."""
->>>>>>> shareable-flowchart
     package_version = get_package_version(package_name)
     is_compatible = packaging.version.parse(package_version) >= packaging.version.parse(
         compatible_version
