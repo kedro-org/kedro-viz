@@ -25,6 +25,7 @@ import {
 
 import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
+import Switch from '../ui/switch';
 
 /**
  * Shows node meta data
@@ -145,6 +146,10 @@ const MetaData = ({
             </div>
             <div className="pipeline-metadata__list">
               <dl className="pipeline-metadata__properties">
+                <MetaDataRow
+                  label="Preview original code:"
+                  children={<Switch defaultChecked={false} />}
+                />
                 {isPrettyName ? (
                   <MetaDataRow
                     label="Original node name:"
