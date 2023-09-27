@@ -228,6 +228,13 @@ class ModularPipelinesRepository:
         return modular_pipeline_id
 
     def inherit_tags_recursive(self, modular_pipeline_id: str, tags: Set[str]):
+        """Recursively collects a set of tags from a modular pipeline to all of its
+        child modular pipelines.
+        Args:
+            modular_pipeline_id: ID of the modular pipeline to check existence in the repository.
+            tags: A set of tags to be added to the modular pipeline and its children.
+        """
+
         modular_pipeline = self.tree.get(modular_pipeline_id)
         if modular_pipeline:
             modular_pipeline.tags.update(tags)
