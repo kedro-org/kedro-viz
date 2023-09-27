@@ -5,10 +5,16 @@ from kedro_viz.integrations.deployment.s3_deployer import _HTML_DIR, S3Deployer
 
 
 # Test the S3Deployer class
-@pytest.mark.parametrize(
-    "region, bucket_name",
-    [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
-)
+@pytest.fixture
+def region():
+    return "us-east-2"
+
+
+@pytest.fixture
+def bucket_name():
+    return "shareableviz"
+
+
 class TestS3Deployer:
     def test_upload_api_responses(self, mocker, region, bucket_name):
         mocker.patch("fsspec.filesystem")
@@ -18,14 +24,14 @@ class TestS3Deployer:
         )
 
         deployer._upload_api_responses()
-        save_api_responses_to_fs_mock.assert_called_once_with(bucket_name)
+        save_api_responses_to_fs_mock.assert_called_once_with(deployer._bucket_path)
 
     def test_upload_static_files(self, mocker, region, bucket_name):
         mocker.patch("fsspec.filesystem")
         deployer = S3Deployer(region, bucket_name)
         deployer._upload_static_files(_HTML_DIR)
         deployer._remote_fs.put.assert_called_once_with(
-            f"{str(_HTML_DIR)}/*", deployer._bucket_name, recursive=True
+            f"{str(_HTML_DIR)}/*", deployer._bucket_path, recursive=True
         )
 
     def test_upload_static_file_failed(self, mocker, region, bucket_name, caplog):
@@ -41,7 +47,7 @@ class TestS3Deployer:
         deployer = S3Deployer(region, bucket_name)
         deployer._upload_deploy_viz_metadata_file()
         deployer._remote_fs.open.assert_called_once_with(
-            f"{bucket_name}/api/deploy-viz-metadata", "w"
+            f"{deployer._bucket_path}/api/deploy-viz-metadata", "w"
         )
         deployer._remote_fs.open.return_value.__enter__.return_value.write.assert_called_once()
 
@@ -77,8 +83,6 @@ class TestS3Deployer:
         url = deployer.deploy_and_get_url()
 
         deployer._deploy.assert_called_once()
-        expected_url = (
-            f"http://{deployer._path}.s3-website.{deployer._region}.amazonaws.com"
-        )
+        expected_url = f"http://{deployer._bucket_name}.s3-website.{deployer._region}.amazonaws.com"
         assert url.startswith("http://")
         assert url == expected_url
