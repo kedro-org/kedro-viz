@@ -3,7 +3,7 @@ import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeActive,
   getNodeSelected,
-  getAllNodesWithTags,
+  getTaggedNodesAndModularPipelines,
   getNodeData,
   getGroupedNodes,
   getNodeTextWidth,
@@ -39,8 +39,10 @@ const parameterNodesID = ['65d0d789'];
 const dataSetNode = ['f192326a'];
 
 describe('Selectors', () => {
-  describe('getAllNodesWithTags', () => {
-    const allNodesWithTags = getAllNodesWithTags(mockState.spaceflights);
+  describe('getTaggedNodesAndModularPipelines', () => {
+    const allNodesWithTags = getTaggedNodesAndModularPipelines(
+      mockState.spaceflights
+    );
 
     it('returns an object', () => {
       expect(allNodesWithTags).toEqual(expect.any(Object));
