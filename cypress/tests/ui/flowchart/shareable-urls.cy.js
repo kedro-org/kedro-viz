@@ -63,9 +63,9 @@ describe('Shareable URLs', () => {
     );
   });
 
-  it('verifies that deploy button should be disabled when region is not selected and bucket name is empty #TC-56', () => {
+  it('verifies that publish button should be disabled when region is not selected and bucket name is empty #TC-56', () => {
     const selectedRegion = 'Choose a region...';
-    const primaryButtonNodeText = 'Deploy';
+    const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
@@ -80,8 +80,8 @@ describe('Shareable URLs', () => {
       .should('be.disabled');
   });
 
-  it('verifies that deploy button should be disabled when region is not selected or bucket name is empty #TC-57', () => {
-    const primaryButtonNodeText = 'Deploy';
+  it('verifies that publish button should be disabled when region is not selected or bucket name is empty #TC-57', () => {
+    const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
@@ -97,9 +97,9 @@ describe('Shareable URLs', () => {
       .should('be.disabled');
   });
 
-  it('verifies that deploy button should be enabled when region is selected and bucket name is not empty #TC-58', () => {
+  it('verifies that publish button should be enabled when region is selected and bucket name is not empty #TC-58', () => {
     const bucketName = 'myBucketName';
-    const primaryButtonNodeText = 'Deploy';
+    const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
@@ -115,9 +115,9 @@ describe('Shareable URLs', () => {
       .should('be.enabled');
   });
 
-  it('verifies that error message appears with wrong inputs on deploy button click #TC-59', () => {
+  it('verifies that error message appears with wrong inputs on publish button click #TC-59', () => {
     const bucketName = 'myBucketName';
-    const primaryButtonNodeText = 'Deploy';
+    const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
@@ -136,16 +136,16 @@ describe('Shareable URLs', () => {
     );
   });
 
-  it('verifies that AWS link is generated with correct inputs on deploy button click #TC-60', () => {
+  it('verifies that AWS link is generated with correct inputs on publish button click #TC-60', () => {
     const bucketName = 'myBucketName';
-    const primaryButtonNodeText = 'Deploy';
+    const primaryButtonNodeText = 'Publish';
 
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
       '/api/deploy',
       'POST',
       '/mock/deploySuccessResponse.json'
-    ).as('deployRequest');
+    ).as('publishRequest');
 
     // Action
     cy.reload();
@@ -160,7 +160,7 @@ describe('Shareable URLs', () => {
       .click();
 
     // Wait for the POST request to complete and check the mocked response
-    cy.wait('@deployRequest').then((interception) => {
+    cy.wait('@publishRequest').then((interception) => {
       // Assert after action
       cy.get('.shareable-url-modal__result-url').contains(
         interception.response.body.url
@@ -168,10 +168,10 @@ describe('Shareable URLs', () => {
     });
   });
 
-  it('verifies that AWS link is generated with correct inputs on re-deploy button click #TC-61', () => {
+  it('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
     const bucketName = 'myBucketName';
-    const primaryButtonNodeText = 'Deploy';
-    const primaryButtonNodeTextVariant = 'Re-Deploy';
+    const primaryButtonNodeText = 'Publish';
+    const primaryButtonNodeTextVariant = 'Republish';
     const secondaryButtonNodeText = 'Link Settings';
 
     // Intercept the network request to mock with a fixture
@@ -179,7 +179,7 @@ describe('Shareable URLs', () => {
       '/api/deploy',
       'POST',
       '/mock/deploySuccessResponse.json'
-    ).as('deployRequest');
+    ).as('publishRequest');
 
     // Action
     cy.reload();
@@ -194,7 +194,7 @@ describe('Shareable URLs', () => {
       .click();
 
     // Wait for the POST request to complete
-    cy.wait('@deployRequest');
+    cy.wait('@publishRequest');
 
     // Action
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -205,7 +205,7 @@ describe('Shareable URLs', () => {
       .click();
 
     // Wait for the POST request to complete and check the mocked response
-    cy.wait('@deployRequest').then((interception) => {
+    cy.wait('@publishRequest').then((interception) => {
       // Assert after action
       cy.get('.shareable-url-modal__result-url').contains(
         interception.response.body.url
