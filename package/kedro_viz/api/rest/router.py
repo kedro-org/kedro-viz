@@ -63,9 +63,7 @@ async def deploy_kedro_viz(input_values: S3DeployerConfiguration):
         )
     except Exception as exc:  # pragma: no cover
         logger.exception("Deploying Kedro Viz failed: %s ", exc)
-        return JSONResponse(
-            status_code=500, content={"message": "Failed to deploy Kedro Viz"}
-        )
+        return JSONResponse(status_code=500, content={"message": f"{exc}"})
 
 
 @router.get(

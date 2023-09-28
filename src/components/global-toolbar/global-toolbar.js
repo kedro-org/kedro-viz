@@ -95,14 +95,14 @@ export const GlobalToolbar = ({
           />
           {isRunningLocally() ? (
             <IconButton
-              ariaLabel={'Deploy and share'}
+              ariaLabel={'Publish and share'}
               className={
                 'pipeline-menu-button--deploy pipeline-menu-button--large'
               }
-              dataTest={'Deploy and share Kedro-Viz'}
+              dataTest={'Publish and share Kedro-Viz'}
               disabled={false}
               icon={DownloadIcon}
-              labelText={'Deploy and share'}
+              labelText={'Publish and share'}
               onClick={() => onToggleShareableUrlModal(true)}
             />
           ) : null}
