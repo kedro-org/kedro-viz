@@ -45,7 +45,7 @@ export const getGraphNodes = createSelector(
 /**
  * Retrieves tags associated with both nodes and their corresponding modular pipelines.
  */
-export const getTaggedNodesAndModularPipelines = createSelector(
+export const getTagsforNodesAndModularPipelines = createSelector(
   [getNodeTags, getNodeModularPipelines],
   (nodeTags, nodeModularPipelines) => {
     const updatedNodeTags = { ...nodeTags };
@@ -78,7 +78,7 @@ export const getNodeActive = createSelector(
   [
     getPipelineNodeIDs,
     getHoveredNode,
-    getTaggedNodesAndModularPipelines,
+    getTagsforNodesAndModularPipelines,
     getTagActive,
     getNodeModularPipelines,
     getModularPipelineActive,

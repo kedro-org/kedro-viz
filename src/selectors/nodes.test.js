@@ -3,7 +3,7 @@ import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeActive,
   getNodeSelected,
-  getTaggedNodesAndModularPipelines,
+  getTagsforNodesAndModularPipelines,
   getNodeData,
   getGroupedNodes,
   getNodeTextWidth,
@@ -39,8 +39,8 @@ const parameterNodesID = ['65d0d789'];
 const dataSetNode = ['f192326a'];
 
 describe('Selectors', () => {
-  describe('getTaggedNodesAndModularPipelines', () => {
-    const allNodesWithTags = getTaggedNodesAndModularPipelines(
+  describe('getTagsforNodesAndModularPipelines', () => {
+    const allNodesWithTags = getTagsforNodesAndModularPipelines(
       mockState.spaceflights
     );
 
