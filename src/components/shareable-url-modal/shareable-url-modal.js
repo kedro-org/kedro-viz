@@ -216,6 +216,18 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       {responseError ? (
         <div className="shareable-url-modal__error">
           <p>Error message: {responseError}</p>
+          <Button
+            mode="primary"
+            onClick={() => {
+              setDeploymentState('default');
+              setIsLoading(false);
+              setResponseUrl(null);
+              setResponseError(null);
+            }}
+            size="small"
+          >
+            Go back
+          </Button>
         </div>
       ) : null}
       {responseUrl ? (
