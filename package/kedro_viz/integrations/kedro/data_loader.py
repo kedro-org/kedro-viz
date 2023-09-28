@@ -103,7 +103,8 @@ def load_data(
         and the session store.
     """
     _bootstrap(project_path)
-
+    import pdb
+    pdb.set_trace()
     if KEDRO_VERSION.match(">=0.17.3"):
         from kedro.framework.project import pipelines
         from kedro.framework.session import KedroSession
