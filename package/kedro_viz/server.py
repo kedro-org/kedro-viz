@@ -53,6 +53,7 @@ def run_server(
     env: Optional[str] = None,
     project_path: Optional[str] = None,
     autoreload: bool = False,
+    ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
@@ -81,7 +82,7 @@ def run_server(
 
     if load_file is None:
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-            path, env, extra_params
+            path, env, ignore_plugins, extra_params
         )
         pipelines = (
             pipelines

@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 
 try:
@@ -34,8 +35,9 @@ from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 from semver import VersionInfo
 
+from kedro_viz.constants import KEDRO_VERSION, KEDRO_VIZ_PLUGIN_NAMES
+
 logger = logging.getLogger(__name__)
-KEDRO_VERSION = VersionInfo.parse(__version__)
 
 
 def _bootstrap(project_path: Path):
@@ -84,9 +86,18 @@ def get_dataset_stats(project_path: Path) -> Dict:
         return {}
 
 
+def unregister_plugins(session: KedroSession):
+    registered_plugin_names = list(session._hook_manager._name2plugin.keys())
+
+    for plugin_name in registered_plugin_names:
+        if plugin_name not in KEDRO_VIZ_PLUGIN_NAMES:
+            session._hook_manager.unregister(name=plugin_name)
+
+
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
+    ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
@@ -94,6 +105,7 @@ def load_data(
         project_path: the path whether the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
+        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -104,10 +116,10 @@ def load_data(
     """
     _bootstrap(project_path)
     import pdb
+
     pdb.set_trace()
     if KEDRO_VERSION.match(">=0.17.3"):
         from kedro.framework.project import pipelines
-        from kedro.framework.session import KedroSession
 
         with KedroSession.create(
             project_path=project_path,
@@ -115,9 +127,13 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            if ignore_plugins:
+                unregister_plugins(session)
+
             context = session.load_context()
             session_store = session._store
             catalog = context.catalog
+
             # Pipelines is a lazy dict-like object, so we force it to populate here
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
@@ -126,14 +142,15 @@ def load_data(
 
         return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
-        from kedro.framework.session import KedroSession
-
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            if ignore_plugins:
+                unregister_plugins(session)
+
             context = session.load_context()
             session_store = session._store
             stats_dict = get_dataset_stats(project_path)
@@ -141,7 +158,6 @@ def load_data(
         return context.catalog, context.pipelines, session_store, stats_dict
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
-        from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
 
         metadata = _get_project_metadata(project_path)
@@ -152,6 +168,9 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            if ignore_plugins:
+                unregister_plugins(session)
+
             context = session.load_context()
             session_store = session._store
             stats_dict = get_dataset_stats(project_path)
