@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.hooks.manager import _NullPluginManager
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 
@@ -34,7 +35,7 @@ from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 
-from kedro_viz.constants import KEDRO_VERSION, KEDRO_VIZ_PLUGIN_NAMES
+from kedro_viz.constants import KEDRO_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -85,14 +86,6 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         return {}
 
 
-def _unregister_plugins(session: KedroSession):
-    registered_plugin_names = list(session._hook_manager._name2plugin.keys())
-
-    for plugin_name in registered_plugin_names:
-        if plugin_name not in KEDRO_VIZ_PLUGIN_NAMES:
-            session._hook_manager.unregister(name=plugin_name)
-
-
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
@@ -126,7 +119,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                _unregister_plugins(session)
+                session._hook_manager = _NullPluginManager()
 
             context = session.load_context()
             session_store = session._store
@@ -148,7 +141,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                _unregister_plugins(session)
+                session._hook_manager = _NullPluginManager()
 
             context = session.load_context()
             session_store = session._store
@@ -169,7 +162,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                _unregister_plugins(session)
+                session._hook_manager = _NullPluginManager()
 
             context = session.load_context()
             session_store = session._store
