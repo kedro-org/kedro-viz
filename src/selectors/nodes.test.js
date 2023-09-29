@@ -3,6 +3,7 @@ import { getPipelineNodeIDs } from './pipeline';
 import {
   getNodeActive,
   getNodeSelected,
+  getTagsforNodesAndModularPipelines,
   getNodeData,
   getGroupedNodes,
   getNodeTextWidth,
@@ -35,8 +36,33 @@ const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
 const parameterNodesID = ['65d0d789'];
+const dataSetNode = ['f192326a'];
 
 describe('Selectors', () => {
+  describe('getTagsforNodesAndModularPipelines', () => {
+    const allNodesWithTags = getTagsforNodesAndModularPipelines(
+      mockState.spaceflights
+    );
+
+    it('returns an object', () => {
+      expect(allNodesWithTags).toEqual(expect.any(Object));
+    });
+
+    it('copies tags from node to associated modular pipelines', () => {
+      const nodeID = dataSetNode; // ID of the node you provided
+      const tagsForNode = allNodesWithTags[nodeID];
+      expect(tagsForNode).toEqual(expect.arrayContaining(['preprocessing']));
+
+      // Assert that the modular pipelines associated with the node also get the tags
+      const modularPipelines = ['data_processing'];
+      modularPipelines.forEach((modPipeline) => {
+        expect(allNodesWithTags[modPipeline]).toEqual(
+          expect.arrayContaining(['preprocessing'])
+        );
+      });
+    });
+  });
+
   describe('getNodeActive', () => {
     const nodeActive = getNodeActive(mockState.spaceflights);
 

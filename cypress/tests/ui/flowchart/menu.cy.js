@@ -64,7 +64,9 @@ describe('Flowchart Menu', () => {
     const nodeToClickText = 'Companies';
 
     // Action
-    cy.get(`[data-test=node-${nodeToClickText}]`)
+    cy.get(
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToClickText}]`
+    )
       .should('exist')
       .as('nodeToClick');
     cy.get('@nodeToClick').click();
@@ -81,7 +83,9 @@ describe('Flowchart Menu', () => {
     const nodeToHighlightText = 'Companies';
 
     // Action
-    cy.get(`[data-test=node-${nodeToHighlightText}]`)
+    cy.get(
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToHighlightText}]`
+    )
       .should('exist')
       .as('nodeToHighlight');
     cy.__hover__('@nodeToHighlight');

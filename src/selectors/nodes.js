@@ -43,16 +43,46 @@ export const getGraphNodes = createSelector(
 );
 
 /**
+ * Retrieves tags associated with both nodes and their corresponding modular pipelines.
+ */
+export const getTagsforNodesAndModularPipelines = createSelector(
+  [getNodeTags, getNodeModularPipelines],
+  (nodeTags, nodeModularPipelines) => {
+    const updatedNodeTags = { ...nodeTags };
+
+    Object.entries(nodeTags)
+      .filter(([, tags]) => tags.length > 0)
+      .forEach(([nodeID, tags]) => {
+        const modularPipelineIDs = nodeModularPipelines[nodeID] || [];
+        modularPipelineIDs.forEach((modularPipelineID) => {
+          if (!updatedNodeTags[modularPipelineID]) {
+            updatedNodeTags[modularPipelineID] = [];
+          }
+
+          tags.forEach((tag) => {
+            if (!updatedNodeTags[modularPipelineID].includes(tag)) {
+              updatedNodeTags[modularPipelineID].push(tag);
+            }
+          });
+        });
+      });
+
+    return updatedNodeTags;
+  }
+);
+
+/**
  * Set active status if the node is specifically highlighted, and/or via an associated tag or modular pipeline
  */
 export const getNodeActive = createSelector(
   [
     getPipelineNodeIDs,
     getHoveredNode,
-    getNodeTags,
+    getTagsforNodesAndModularPipelines,
     getTagActive,
     getNodeModularPipelines,
     getModularPipelineActive,
+
     (state) => state.modularPipeline.tree,
   ],
   (
