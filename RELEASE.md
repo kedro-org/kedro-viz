@@ -6,7 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 7.0.0
+# Release 6.6.0
 
 ## Bug fixes and other changes
 
