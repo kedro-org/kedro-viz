@@ -84,11 +84,7 @@ def patched_start_browser(mocker):
             },
         ),
         (
-            [
-                "viz",
-                "--ignore-plugins",
-                "True",
-            ],
+            ["viz", "--ignore-plugins"],
             {
                 "host": "127.0.0.1",
                 "port": 4141,

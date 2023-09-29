@@ -78,8 +78,8 @@ def commands():  # pylint: disable=missing-function-docstring
 )
 @click.option(
     "--ignore-plugins",
-    default=False,
-    help="Ignore all installed plugins in the Kedro Project",
+    is_flag=True,
+    help="A flag to ignore all installed plugins in the Kedro Project",
 )
 @click.option(
     "--params",

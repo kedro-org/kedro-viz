@@ -39,6 +39,20 @@ from kedro_viz.constants import KEDRO_VERSION
 logger = logging.getLogger(__name__)
 
 
+class _VizNullPluginManager:
+    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks,
+    allowing the runner to function if no ``hook_manager`` has been instantiated."""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __getattr__(self, name):
+        return self
+
+    def __call__(self, *args, **kwargs):
+        pass
+
+
 def _bootstrap(project_path: Path):
     """Bootstrap the integration by running various Kedro bootstrapping methods
     depending on the version
@@ -118,7 +132,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = None
+                session._hook_manager = _VizNullPluginManager()
 
             context = session.load_context()
             session_store = session._store
@@ -140,7 +154,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = None
+                session._hook_manager = _VizNullPluginManager()
 
             context = session.load_context()
             session_store = session._store
@@ -161,7 +175,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = None
+                session._hook_manager = _VizNullPluginManager()
 
             context = session.load_context()
             session_store = session._store
