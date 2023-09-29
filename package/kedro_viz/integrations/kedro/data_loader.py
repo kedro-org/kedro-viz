@@ -33,7 +33,6 @@ except ImportError:  # kedro_datasets is not installed.
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
-from semver import VersionInfo
 
 from kedro_viz.constants import KEDRO_VERSION, KEDRO_VIZ_PLUGIN_NAMES
 
@@ -60,7 +59,7 @@ def _bootstrap(project_path: Path):
         return
 
 
-def get_dataset_stats(project_path: Path) -> Dict:
+def _get_dataset_stats(project_path: Path) -> Dict:
     """Return the stats saved at stats.json as a dictionary if found.
     If not, return an empty dictionary
 
@@ -86,7 +85,7 @@ def get_dataset_stats(project_path: Path) -> Dict:
         return {}
 
 
-def unregister_plugins(session: KedroSession):
+def _unregister_plugins(session: KedroSession):
     registered_plugin_names = list(session._hook_manager._name2plugin.keys())
 
     for plugin_name in registered_plugin_names:
@@ -115,9 +114,7 @@ def load_data(
         and the session store.
     """
     _bootstrap(project_path)
-    import pdb
 
-    pdb.set_trace()
     if KEDRO_VERSION.match(">=0.17.3"):
         from kedro.framework.project import pipelines
 
@@ -127,8 +124,9 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
             if ignore_plugins:
-                unregister_plugins(session)
+                _unregister_plugins(session)
 
             context = session.load_context()
             session_store = session._store
@@ -138,7 +136,7 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
@@ -148,12 +146,13 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
             if ignore_plugins:
-                unregister_plugins(session)
+                _unregister_plugins(session)
 
             context = session.load_context()
             session_store = session._store
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
     else:
@@ -168,12 +167,13 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
             if ignore_plugins:
-                unregister_plugins(session)
+                _unregister_plugins(session)
 
             context = session.load_context()
             session_store = session._store
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
 
