@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
-from kedro.framework.hooks.manager import _NullPluginManager
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 
@@ -119,7 +118,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = _NullPluginManager()
+                session._hook_manager = None
 
             context = session.load_context()
             session_store = session._store
@@ -141,7 +140,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = _NullPluginManager()
+                session._hook_manager = None
 
             context = session.load_context()
             session_store = session._store
@@ -162,7 +161,7 @@ def load_data(
         ) as session:
             # check for --ignore-plugins option
             if ignore_plugins:
-                session._hook_manager = _NullPluginManager()
+                session._hook_manager = None
 
             context = session.load_context()
             session_store = session._store
