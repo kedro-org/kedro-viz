@@ -9,4 +9,4 @@ ROOT_MODULAR_PIPELINE_ID = "__root__"
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 4141
 
-KEDRO_VIZ_PLUGIN_NAMES = ["kedro-dataset-stats", "kedro-telemetry"]
+KEDRO_VIZ_PLUGIN_NAMES = ["kedro-telemetry"]
