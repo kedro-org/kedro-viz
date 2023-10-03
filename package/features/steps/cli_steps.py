@@ -50,22 +50,18 @@ def create_project_from_config_file(context):
 @given("I have run a non-interactive kedro new with {starter} starter")
 def create_project_with_starter(context, starter):
     """Behave step to run kedro new given the config I previously created."""
-    try :
-        res = run(
-            [
-                context.kedro,
-                "new",
-                "--starter",
-                str(starter),
-                "--config",
-                str(context.config_file),
-            ],
-            env=context.env,
-            cwd=str(context.temp_dir),
-        )
-    except Exception as e:
-        print("THIS IS THE ERROR")
-        print(e)
+    res = run(
+        [
+            context.kedro,
+            "new",
+            "--starter",
+            str(starter),
+            "--config",
+            str(context.config_file),
+        ],
+        env=context.env,
+        cwd=str(context.temp_dir),
+    )
 
     if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
