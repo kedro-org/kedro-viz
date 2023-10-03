@@ -20,7 +20,7 @@ import './shareable-url-modal.scss';
 const modalMessages = (status, info = '') => {
   const messages = {
     default:
-      'Please enter your AWS information and a hosted link will be generated.',
+      'Prerequisite: Deploying and sharing Kedro-Viz requires AWS access keys. To use this feature, please add your AWS access keys as environment variables in your project.',
     failure: 'Something went wrong. Please try again later.',
     loading: 'Shooting your files through space. Sit tight...',
     success:
@@ -69,7 +69,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
           }
         }
       } catch (error) {
-        console.log('package-compatibilities fetch error: ', error);
+        console.error('package-compatibilities fetch error: ', error);
       }
     }
 
@@ -154,6 +154,19 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
     >
       {!isLoading && !responseUrl && canUseShareableUrls && !responseError ? (
         <>
+          <div className="modal__description">
+            Enter your AWS information below and a hosted link will be
+            generated. View the{' '}
+            <a
+              className="link"
+              href="https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html"
+              rel="noreferrer"
+              target="_blank"
+            >
+              docs
+            </a>{' '}
+            for more information.
+          </div>
           <div className="shareable-url-modal__input-wrapper">
             <div className="shareable-url-modal__input-label">
               AWS Bucket Region
@@ -287,6 +300,24 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
             </Button>
           </div>
         </>
+      ) : null}
+      {!canUseShareableUrls ? (
+        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
+          <Button
+            mode="secondary"
+            onClick={() => handleModalClose()}
+            size="small"
+          >
+            Cancel
+          </Button>
+          <a
+            href="https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <Button size="small">View documentation</Button>
+          </a>
+        </div>
       ) : null}
     </Modal>
   );

@@ -28,12 +28,17 @@
   .modal__description {
     font-size: 16px;
     font-weight: 400;
-    line-height: 20px;
+    line-height: 24px;
     white-space: pre-line;
+
+    a {
+      color: inherit;
+      text-decoration-color: inherit;
+    }
   }
 
   &__input-wrapper {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     width: 100%;
   }
 
@@ -48,7 +53,6 @@
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    margin-top: 48px;
     width: 100%;
 
     &--right {
@@ -56,6 +60,10 @@
 
       .button:first-of-type {
         margin-right: 32px;
+      }
+
+      a .button:first-of-type {
+        margin-right: 0;
       }
     }
 
