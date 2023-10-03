@@ -98,6 +98,8 @@ def _setup_context_with_venv(context, venv_dir):
         env=context.env,
     )
 
+    call([context.python, "-m", "pip", "install", "fsspec[s3]"], env=context.env)
+
     call([context.python, "-m", "pip", "install", "."], env=context.env)
     return context
 
