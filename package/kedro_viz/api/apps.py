@@ -126,21 +126,7 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
 
     @app.get("/")
     async def index():
-        heap_app_id = kedro_telemetry.get_heap_app_id(api_dir)
-        heap_user_identity = kedro_telemetry.get_heap_identity()
-        should_add_telemetry = bool(heap_app_id) and bool(heap_user_identity)
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
-        injected_head_content = []
-
-        env = Environment(loader=FileSystemLoader(_HTML_DIR))
-        if should_add_telemetry:
-            telemetry_content = env.get_template("telemetry.html").render(
-                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
-            )
-            injected_head_content.append(telemetry_content)
-
-        injected_head_content.append("</head>")
-        html_content = html_content.replace("</head>", "\n".join(injected_head_content))
         return HTMLResponse(html_content)
 
     @app.get("/api/main", response_class=JSONResponse)
