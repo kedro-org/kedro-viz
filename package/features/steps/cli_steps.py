@@ -6,7 +6,6 @@ from time import sleep, time
 import requests
 import yaml
 from behave import given, then, when
-from pkg_resources import ContextualVersionConflict
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 
@@ -51,8 +50,6 @@ def create_project_from_config_file(context):
 @given("I have run a non-interactive kedro new with {starter} starter")
 def create_project_with_starter(context, starter):
     """Behave step to run kedro new given the config I previously created."""
-    
-    conflict_error_occurred = False  # flag to track if ContextualVersionConflict occurs
     try :
         res = run(
             [
@@ -66,13 +63,13 @@ def create_project_with_starter(context, starter):
             env=context.env,
             cwd=str(context.temp_dir),
         )
-    except ContextualVersionConflict:
+    except Exception as e:
         print("I GO HERE")
-        conflict_error_occurred = True
+        print(e)
 
-    if not conflict_error_occurred and res.returncode != OK_EXIT_CODE:
+    if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
-        print(res.stderr)
+        # print(res.stderr)
         assert False
 
     # add a consent file to prevent telemetry from prompting for input during e2e test
