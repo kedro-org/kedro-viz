@@ -65,7 +65,7 @@ def create_project_with_starter(context, starter):
 
     if res.returncode != OK_EXIT_CODE:
         print(res.stdout)
-        # print(res.stderr)
+        print(res.stderr)
         assert False
 
     # add a consent file to prevent telemetry from prompting for input during e2e test
