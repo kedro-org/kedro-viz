@@ -64,19 +64,13 @@ def create_project_with_starter(context, starter):
             env=context.env,
             cwd=str(context.temp_dir),
         )
-
+    except ContextualVersionConflict:
+        assert True
+    else:  # this block will run only if no exception was raised in the try block
         if res.returncode != OK_EXIT_CODE:
             print(res.stdout)
             print(res.stderr)
             assert False
-
-        # add a consent file to prevent telemetry from prompting for input during e2e test
-        telemetry_file = context.root_project_dir / ".telemetry"
-        telemetry_file.write_text("consent: false", encoding="utf-8")
-        assert res.returncode == OK_EXIT_CODE
-
-    except ContextualVersionConflict:
-        pass
 
     # add a consent file to prevent telemetry from prompting for input during e2e test
     telemetry_file = context.root_project_dir / ".telemetry"
