@@ -64,7 +64,7 @@ def create_project_with_starter(context, starter):
             cwd=str(context.temp_dir),
         )
     except Exception as e:
-        print("I GO HERE")
+        print("THIS IS THE ERROR")
         print(e)
 
     if res.returncode != OK_EXIT_CODE:
