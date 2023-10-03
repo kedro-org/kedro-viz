@@ -14,7 +14,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix for Kedro Viz Connection Error. (#1507)
+- Fix for Kedro-Viz Connection Error. (#1507)
 - Fix display of modular pipeline nodes that are associated with tags. (#1542)
 
 # Release 6.5.1
