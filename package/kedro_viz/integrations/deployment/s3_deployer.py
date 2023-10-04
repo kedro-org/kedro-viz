@@ -75,7 +75,7 @@ class S3Deployer:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = f"{temp_dir}/index.html"
 
-            with fsspec.open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
+            with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
                 temp_index_file.write(html_content)
 
             self._remote_fs.put(temp_file_path, f"{self._bucket_path}/")

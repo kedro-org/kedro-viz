@@ -34,7 +34,7 @@ class TestS3Deployer:
         deployer = S3Deployer(region, bucket_name)
         deployer._upload_static_files(_HTML_DIR)
 
-        deployer._remote_fs.put.call_count == 2
+        assert deployer._remote_fs.put.call_count == 2
 
     def test_upload_static_file_failed(self, mocker, region, bucket_name, caplog):
         mocker.patch("fsspec.filesystem")
