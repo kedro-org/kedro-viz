@@ -28,11 +28,13 @@ class TestS3Deployer:
 
     def test_upload_static_files(self, mocker, region, bucket_name):
         mocker.patch("fsspec.filesystem")
+        mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")
+        mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_identity")
+
         deployer = S3Deployer(region, bucket_name)
         deployer._upload_static_files(_HTML_DIR)
-        deployer._remote_fs.put.assert_called_once_with(
-            f"{str(_HTML_DIR)}/*", deployer._bucket_path, recursive=True
-        )
+
+        assert deployer._remote_fs.put.call_count == 2
 
     def test_upload_static_file_failed(self, mocker, region, bucket_name, caplog):
         mocker.patch("fsspec.filesystem")
