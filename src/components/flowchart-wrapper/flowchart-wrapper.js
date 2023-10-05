@@ -35,6 +35,7 @@ import {
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
+import { isRunningLocally } from '../../utils';
 
 import './flowchart-wrapper.scss';
 
@@ -296,11 +297,11 @@ export const FlowChartWrapper = ({
           >
             <LoadingIcon visible={loading} />
           </div>
-          <ShareableUrlMetadata />
+          {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
         <ExportModal />
         <MetadataModal />
-        <ShareableUrlModal />
+        {isRunningLocally() ? <ShareableUrlModal /> : null}
       </div>
     );
   }

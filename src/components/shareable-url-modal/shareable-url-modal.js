@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import modifiers from '../../utils/modifiers';
-import { isRunningLocally } from '../../utils';
 import { s3BucketRegions } from '../../config';
 
 import Button from '../ui/button';
@@ -31,7 +30,7 @@ const modalMessages = (status, info = '') => {
   return messages[status];
 };
 
-const ShareableUrlModal = ({ onToggle, visible }) => {
+const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
   const [isFormDirty, setIsFormDirty] = useState({
@@ -73,9 +72,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       }
     }
 
-    if (isRunningLocally()) {
-      fetchPackageCompatibility();
-    }
+    fetchPackageCompatibility();
   }, []);
 
   const onChange = (key, value) => {
@@ -124,7 +121,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
   };
 
   const handleModalClose = () => {
-    onToggle(false);
+    onToggleModal(false);
     setDeploymentState('default');
     setResponseError(null);
     setIsLoading(false);
@@ -328,7 +325,7 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = (dispatch) => ({
-  onToggle: (value) => {
+  onToggleModal: (value) => {
     dispatch(toggleShareableUrlModal(value));
   },
 });

@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
-import { isRunningLocally } from '../../utils';
 
 const ShareableUrlMetadata = () => {
   const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
-    if (isRunningLocally()) {
-      return;
-    }
-
     async function fetchData() {
       try {
         const request = await fetch('/api/deploy-viz-metadata', {
@@ -30,7 +25,7 @@ const ShareableUrlMetadata = () => {
     fetchData();
   }, []);
 
-  if (isRunningLocally() || metadata === null) {
+  if (metadata === null) {
     return null;
   }
 
