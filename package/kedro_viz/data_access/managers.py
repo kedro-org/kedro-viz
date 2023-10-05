@@ -473,7 +473,7 @@ class DataAccessManager:
             if not node.modular_pipelines or node_id in root_parameters:
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
-                        node_id, self.nodes.get_node_by_id(node_id).type
+                        id=node_id, type=self.nodes.get_node_by_id(node_id).type
                     )
                 )
 

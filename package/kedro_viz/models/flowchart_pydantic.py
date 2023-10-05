@@ -72,7 +72,6 @@ class RegisteredPipeline(BaseModel):
     """Represent a registered pipeline in a Kedro project"""
 
     id: str
-    name: str
 
     def __init__(self, **data):
         super().__init__(**data)
