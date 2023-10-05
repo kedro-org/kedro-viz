@@ -25,7 +25,7 @@ const modalMessages = (status, info = '') => {
     loading: 'Shooting your files through space. Sit tight...',
     success:
       'The current version of Kedro-Viz has been published and hosted via the link below.',
-    incompatible: `Publishing Kedro-Viz is only supported with fsspec >=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
+    incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
   };
 
   return messages[status];
@@ -147,7 +147,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
       )}
       title={
         deploymentState === 'success'
-          ? 'Kedro-Viz Published and Deployed'
+          ? 'Kedro-Viz Published and Hosted'
           : 'Publish and Share Kedro-Viz'
       }
       visible={visible.shareableUrlModal}
@@ -172,7 +172,7 @@ const ShareableUrlModal = ({ onToggle, visible }) => {
               AWS Bucket Region
             </div>
             <Dropdown
-              defaultText={inputValues?.region || 'Choose a region...'}
+              defaultText={inputValues?.region || 'Select a region'}
               onChanged={(selectedRegion) => {
                 onChange('region', selectedRegion.value);
               }}

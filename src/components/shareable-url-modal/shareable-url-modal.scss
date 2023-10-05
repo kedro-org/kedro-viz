@@ -40,6 +40,10 @@
   &__input-wrapper {
     margin-bottom: 32px;
     width: 100%;
+
+    .dropdown {
+      width: 240px;
+    }
   }
 
   &__input-label {

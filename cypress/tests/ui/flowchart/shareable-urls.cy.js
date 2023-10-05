@@ -64,7 +64,7 @@ describe('Shareable URLs', () => {
   });
 
   it('verifies that publish button should be disabled when region is not selected and bucket name is empty #TC-56', () => {
-    const selectedRegion = 'Choose a region...';
+    const selectedRegion = 'Select a region';
     const primaryButtonNodeText = 'Publish';
 
     // Action
