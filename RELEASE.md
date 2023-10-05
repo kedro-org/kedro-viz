@@ -14,14 +14,9 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Updated dependencies to ensure compatibility with Vite and Next.js environments; combine CSS into a single file when used as a React component. (#1510)
 - Fix for Kedro-Viz Connection Error. (#1507)
 - Fix display of modular pipeline nodes that are associated with tags. (#1542)
-
-# Release 6.5.1
-
-## Bug fixes and other changes
-
-- Updated dependencies to ensure compatibility with Vite and Next.js environments; combine CSS into a single file when used as a React component. (#1510)
 
 # Release 6.5.0
 
