@@ -31,7 +31,7 @@ describe('Shareable URLs', () => {
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
-      `Publishing Kedro-Viz is only supported with fsspec >=2023.9.0. You are currently on version 2023.8.1.`
+      `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version 2023.8.1.`
     );
   });
 
