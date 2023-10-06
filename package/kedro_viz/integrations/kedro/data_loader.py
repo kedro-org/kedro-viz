@@ -40,8 +40,10 @@ logger = logging.getLogger(__name__)
 
 
 class _VizNullPluginManager:
-    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks,
-    allowing the runner to function if no ``hook_manager`` has been instantiated."""
+    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
+    and registered plugins allowing the runner to function if no ``hook_manager``
+    has been instantiated.
+    """
 
     def __init__(self, *args, **kwargs):
         pass
