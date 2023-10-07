@@ -38,7 +38,8 @@ def populate_data(
 
     data_access_manager.add_catalog(catalog)
 
-    # add dataset stats before adding pipelines
+    # add dataset stats before adding pipelines as the data nodes
+    # getting created during add_pipelines need stats information
     data_access_manager.add_dataset_stats(stats_dict)
 
     data_access_manager.add_pipelines(pipelines)
@@ -80,6 +81,7 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
+        # Loads data from underlying Kedro Project
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
             path, env, extra_params
         )
@@ -88,6 +90,7 @@ def run_server(
             if pipeline_name is None
             else {pipeline_name: pipelines[pipeline_name]}
         )
+        # Creates data repositories which are used by Kedro Viz Backend APIs
         populate_data(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
