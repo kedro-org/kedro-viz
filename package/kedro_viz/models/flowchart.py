@@ -309,6 +309,27 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     # return the original function if it's not a decorated function
     return func if wrapped_func is None else wrapped_func
 
+def extract_data_source(node_type, data_desc):
+    extracted_format_type = node_type.split(".")[-1]
+
+    match extracted_format_type:
+        case "SQLQueryDataSet" | "GBQQueryDataSet":
+            return data_desc["sql"]
+        case "APIDataSet":
+            source = f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
+            return source
+        case "SparkHiveDataSet" | "SnowparkTableDataSet":
+            extracted_table = data_desc["table_name"] if extracted_format_type == "SnowparkTableDataSet" else data_desc["table"]
+            source = f'Derived from {extracted_table} table, within {data_desc["database"]} database.'
+            return source
+        case "SparkJDBCDataSet":
+            source = f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
+            return source
+        case "PickleDataSet":
+            source = f'Derived from {data_desc["url"]} url.'
+            return source
+        case "_": # Default case
+            return None
 
 @dataclass
 class ModularPipelineNode(GraphNode):
@@ -543,6 +564,9 @@ class TranscodedDataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
+    # the source of the node's data
+    code: Optional[str] = field(init=False, default=None)
+
     # the dataset type for this data node, e.g. CSVDataSet
     type: Optional[str] = field(init=False)
 
@@ -575,6 +599,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
+        self.code = extract_data_source(self.type, dataset_description)
         self.filepath = _parse_filepath(dataset_description)
         self.stats = data_node.stats
 
