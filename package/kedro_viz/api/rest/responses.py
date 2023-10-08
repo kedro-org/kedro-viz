@@ -109,6 +109,8 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
+    code: Optional[str]
+    type: str
     filepath: Optional[str]
     type: str
     plot: Optional[Dict]
@@ -121,6 +123,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     class Config:
         schema_extra = {
             "example": {
+                "code": "SELECT * FROM test",
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "pandas.csv_dataset.CSVDataSet",
                 "run_command": "kedro run --to-outputs=master_table",
