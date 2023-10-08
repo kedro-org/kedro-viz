@@ -136,7 +136,7 @@ const MetaData = ({
                   id="code"
                   checked={visibleCode}
                   enabled={hasCode}
-                  title="Show Code"
+                  title="Show Source"
                   onChange={(event) => {
                     onToggleCode(event.target.checked);
                   }}
