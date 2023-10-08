@@ -4,6 +4,7 @@ from kedro.pipeline.modular_pipeline import pipeline
 from .nodes import (
     aggregate_company_data,
     apply_types_to_companies,
+    apply_basic_logic_to_sql_example_data,
     apply_types_to_reviews,
     apply_types_to_shuttles,
     combine_shuttle_level_information,
