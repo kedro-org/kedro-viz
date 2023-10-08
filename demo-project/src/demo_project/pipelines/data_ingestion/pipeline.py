@@ -30,6 +30,12 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name='apply_types_to_companies'
             ),
             node(
+                func=apply_basic_logic_to_sql_example_data,
+                inputs="SQL_Query_Dataset_Example",
+                outputs="result_sql_example_data",
+                name='apply_basic_logic_to_sql_example_data'
+            ),
+            node(
                 func=apply_types_to_shuttles,
                 inputs="shuttles",
                 outputs="int_typed_shuttles@pandas1",
@@ -64,7 +70,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
         ],
         namespace="ingestion",  # provide inputs
-        inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace
+        inputs={"reviews", "shuttles", "companies", "SQL_Query_Dataset_Example"},  # map inputs outside of namespace
         outputs={
             "prm_spine_table",
             "prm_shuttle_company_reviews",
