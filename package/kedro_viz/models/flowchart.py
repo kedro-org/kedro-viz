@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from kedro_viz.models.utils import get_dataset_type, extract_data_source
+from kedro_viz.models.utils import extract_data_source, get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -308,6 +308,7 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
     # return the original function if it's not a decorated function
     return func if wrapped_func is None else wrapped_func
+
 
 @dataclass
 class ModularPipelineNode(GraphNode):

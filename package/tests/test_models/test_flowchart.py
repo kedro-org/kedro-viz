@@ -19,7 +19,7 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TaskNodeMetadata,
     TranscodedDataNode,
-    TranscodedDataNodeMetadata
+    TranscodedDataNodeMetadata,
 )
 
 try:
@@ -368,24 +368,30 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
-        assert data_node_metadata.code == None
+        assert data_node_metadata.code is None
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats["rows"] == 10
         assert data_node_metadata.stats["columns"] == 2
 
     def test_data_node_metadata_with_sql_source(self):
-        dataset = SQLQueryDataSet("SELECT * FROM test_data_node_metadata_with_sql_source", {"con": "postgresql://test_test@localhost/test"})
+        dataset = SQLQueryDataSet(
+            "SELECT * FROM test_data_node_metadata_with_sql_source",
+            {"con": "postgresql://test_test@localhost/test"},
+        )
         data_node = GraphNode.create_data_node(
             dataset_name="sql_dataset",
             layer="raw",
             tags=set(),
             dataset=dataset,
-            stats={}
+            stats={},
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.sql_dataset.SQLQueryDataSet"
         assert data_node_metadata.filepath == "None"
-        assert data_node_metadata.code == "SELECT * FROM test_data_node_metadata_with_sql_source"
+        assert (
+            data_node_metadata.code
+            == "SELECT * FROM test_data_node_metadata_with_sql_source"
+        )
 
     def test_preview_args_not_exist(self):
         metadata = {"kedro-viz": {"something": 3}}

@@ -1,6 +1,6 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 logger = logging.getLogger(__name__)
 
@@ -44,24 +44,43 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
 
-def extract_data_source(node_type, data_desc):
+
+def extract_data_source(node_type: str, data_desc: Dict) -> str:
+    """Get the relevant source logic used in generating this node's data, based
+    on dataset type
+
+    Args:
+        node_type: The dataset object to get the type of
+        data_desc: Dict whose values store useful contextual information about the dataset
+
+    Returns:
+        String to display to user as the node source code
+    """
     extracted_format_type = node_type.split(".")[-1]
 
     match extracted_format_type:
         case "SQLQueryDataSet" | "GBQQueryDataSet":
             return data_desc["sql"]
         case "APIDataSet":
-            source = f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
+            source = (
+                f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
+            )
             return source
         case "SparkHiveDataSet" | "SnowparkTableDataSet":
-            extracted_table = data_desc["table_name"] if extracted_format_type == "SnowparkTableDataSet" else data_desc["table"]
-            source = f'Derived from {extracted_table} table, within {data_desc["database"]} database.'
+            extracted_table = (
+                data_desc["table_name"]
+                if extracted_format_type == "SnowparkTableDataSet"
+                else data_desc["table"]
+            )
+            source = f'Derived from {extracted_table} table, in {data_desc["database"]} database.'
             return source
         case "SparkJDBCDataSet":
-            source = f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
+            source = (
+                f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
+            )
             return source
         case "PickleDataSet":
             source = f'Derived from {data_desc["url"]} url.'
             return source
-        case "_": # Default case
+        case "_":  # Default case
             return None
