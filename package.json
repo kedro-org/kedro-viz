@@ -13,7 +13,7 @@
   },
   "proxy": "http://localhost:4142/",
   "scripts": {
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
@@ -89,7 +89,6 @@
     "reselect": "^4.1.5",
     "seedrandom": "^3.0.5",
     "sinon": "^12.0.1",
-    "subscriptions-transport-ws": "^0.11.0",
     "svg-crowbar": "^0.6.5",
     "uuid": "^9.0.0",
     "what-input": "^5.2.10"

@@ -28,7 +28,8 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=apply_types_to_companies,
                 inputs="companies",
                 outputs="int_typed_companies",
-                name='apply_types_to_companies'
+                name='apply_types_to_companies',
+                tags='companies'
             ),
             node(
                 func=apply_basic_logic_to_sql_example_data,
@@ -40,13 +41,15 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=apply_types_to_shuttles,
                 inputs="shuttles",
                 outputs="int_typed_shuttles@pandas1",
-                name='apply_types_to_shuttles'
+                name='apply_types_to_shuttles',
+                tags='shuttles'
             ),
             node(
                 func=apply_types_to_reviews,
                 inputs=["reviews", "params:typing.reviews.columns_as_floats"],
                 outputs="int_typed_reviews",
                 name='apply_types_to_reviews'
+                
             ),
             node(
                 func=aggregate_company_data,

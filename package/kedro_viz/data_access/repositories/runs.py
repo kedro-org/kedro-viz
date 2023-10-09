@@ -79,17 +79,6 @@ class RunsRepository:
             return session.execute(query).scalars().first()
 
     @check_db_session
-    def get_new_runs(self) -> Optional[Iterable[RunModel]]:
-        with self._db_session_class() as session:  # type: ignore
-            query = select(RunModel)
-
-            if self.last_run_id:
-                query = query.where(RunModel.id > self.last_run_id)
-
-            query = query.order_by(RunModel.id.desc())
-            return session.execute(query).scalars().all()
-
-    @check_db_session
     def get_user_run_details_by_run_ids(
         self, run_ids: List[str]
     ) -> Optional[Dict[str, UserRunDetailsModel]]:
