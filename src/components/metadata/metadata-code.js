@@ -35,7 +35,7 @@ export const MetaDataCode = ({
         'kedro'
       )}
     >
-      <h2 className="pipeline-metadata-code__title">Code block</h2>
+      <h2 className="pipeline-metadata-code__title">Source block</h2>
       <code className="pipeline-metadata-code__code">
         <pre ref={codeRef} dangerouslySetInnerHTML={{ __html: highlighted }} />
       </code>
