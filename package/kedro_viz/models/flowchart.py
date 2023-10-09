@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from kedro_viz.models.utils import get_dataset_type
+from kedro_viz.models.utils import extract_data_source, get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -543,6 +543,9 @@ class TranscodedDataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
+    # the source of the node's data
+    code: Optional[str] = field(init=False, default=None)
+
     # the dataset type for this data node, e.g. CSVDataSet
     type: Optional[str] = field(init=False)
 
@@ -575,6 +578,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
+        self.code = extract_data_source(self.type, dataset_description)
         self.filepath = _parse_filepath(dataset_description)
         self.stats = data_node.stats
 
