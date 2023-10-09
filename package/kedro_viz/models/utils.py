@@ -43,3 +43,25 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
+
+def extract_data_source(node_type, data_desc):
+    extracted_format_type = node_type.split(".")[-1]
+
+    match extracted_format_type:
+        case "SQLQueryDataSet" | "GBQQueryDataSet":
+            return data_desc["sql"]
+        case "APIDataSet":
+            source = f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
+            return source
+        case "SparkHiveDataSet" | "SnowparkTableDataSet":
+            extracted_table = data_desc["table_name"] if extracted_format_type == "SnowparkTableDataSet" else data_desc["table"]
+            source = f'Derived from {extracted_table} table, within {data_desc["database"]} database.'
+            return source
+        case "SparkJDBCDataSet":
+            source = f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
+            return source
+        case "PickleDataSet":
+            source = f'Derived from {data_desc["url"]} url.'
+            return source
+        case "_": # Default case
+            return None

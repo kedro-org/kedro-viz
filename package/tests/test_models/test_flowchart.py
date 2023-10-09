@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 from kedro.pipeline.node import node
-from kedro_datasets.pandas import CSVDataSet, ParquetDataSet, SQLQueryDataSet, GBQQueryDataSet
+from kedro_datasets.pandas import CSVDataSet, ParquetDataSet, SQLQueryDataSet
 
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -19,7 +19,7 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TaskNodeMetadata,
     TranscodedDataNode,
-    TranscodedDataNodeMetadata,
+    TranscodedDataNodeMetadata
 )
 
 try:
@@ -373,31 +373,19 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.stats["rows"] == 10
         assert data_node_metadata.stats["columns"] == 2
 
-    data_node_metadata_sources = [
-         (
-            SQLQueryDataSet("SELECT * FROM test_data_node_metadata_with_sql_source", {"con": "postgresql://test_test@localhost/test"}),
-            "sql_dataset",
-            "pandas.sql_dataset.SQLQueryDataSet",
-            "SELECT * FROM test_data_node_metadata_with_source"
-         ),
-         (
-            DataNode()
-         )
-
-     ]
-    @pytest.mark.parametrize("dataset,dataset_name,expected_type,expected_code", data_node_metadata_sources)
-    def test_data_node_metadata_with_different_source(self, dataset, dataset_name, expected_type, expected_code):
+    def test_data_node_metadata_with_sql_source(self):
+        dataset = SQLQueryDataSet("SELECT * FROM test_data_node_metadata_with_sql_source", {"con": "postgresql://test_test@localhost/test"})
         data_node = GraphNode.create_data_node(
-            dataset_name=dataset_name,
+            dataset_name="sql_dataset",
             layer="raw",
             tags=set(),
             dataset=dataset,
             stats={}
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
-        assert data_node_metadata.type == expected_type
+        assert data_node_metadata.type == "pandas.sql_dataset.SQLQueryDataSet"
         assert data_node_metadata.filepath == "None"
-        assert data_node_metadata.code == expected_code
+        assert data_node_metadata.code == "SELECT * FROM test_data_node_metadata_with_sql_source"
 
     def test_preview_args_not_exist(self):
         metadata = {"kedro-viz": {"something": 3}}

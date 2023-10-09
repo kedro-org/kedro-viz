@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from kedro_viz.models.utils import get_dataset_type
+from kedro_viz.models.utils import get_dataset_type, extract_data_source
 
 try:
     # kedro 0.18.11 onwards
@@ -308,28 +308,6 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
     # return the original function if it's not a decorated function
     return func if wrapped_func is None else wrapped_func
-
-def extract_data_source(node_type, data_desc):
-    extracted_format_type = node_type.split(".")[-1]
-
-    match extracted_format_type:
-        case "SQLQueryDataSet" | "GBQQueryDataSet":
-            return data_desc["sql"]
-        case "APIDataSet":
-            source = f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
-            return source
-        case "SparkHiveDataSet" | "SnowparkTableDataSet":
-            extracted_table = data_desc["table_name"] if extracted_format_type == "SnowparkTableDataSet" else data_desc["table"]
-            source = f'Derived from {extracted_table} table, within {data_desc["database"]} database.'
-            return source
-        case "SparkJDBCDataSet":
-            source = f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
-            return source
-        case "PickleDataSet":
-            source = f'Derived from {data_desc["url"]} url.'
-            return source
-        case "_": # Default case
-            return None
 
 @dataclass
 class ModularPipelineNode(GraphNode):
