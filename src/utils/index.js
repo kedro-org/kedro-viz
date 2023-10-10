@@ -183,3 +183,18 @@ export const formatFileSize = (fileSizeInBytes) => {
 export const formatNumberWithCommas = (number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
+
+/**
+ * Test if Kedro-Viz is running on our known local ports.
+ * @returns {Boolean} True if the app is running locally.
+ */
+export const isRunningLocally = () => {
+  const localHosts = ['localhost', '127.0.0.1'];
+  const itemFoundIndex = localHosts.indexOf(window.location.hostname);
+
+  if (itemFoundIndex === -1) {
+    return false; // The hostname isn't in our list of local hosts
+  } else {
+    return true;
+  }
+};

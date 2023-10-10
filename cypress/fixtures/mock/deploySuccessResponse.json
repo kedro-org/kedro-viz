@@ -1,0 +1,4 @@
+{
+  "message": "Website deployed on S3",
+  "url": "http://myBucketName.s3-website.us-east-1.amazonaws.com"
+}
