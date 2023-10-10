@@ -46,7 +46,9 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     return f"{abbreviated_module_name}.{class_name}"
 
 
-def extract_data_source(node_type: Union[str, None], data_desc: Dict) -> Union[Optional[str], Any]:
+def extract_data_source(
+    node_type: Union[str, None], data_desc: Dict
+) -> Union[Optional[str], Any]:
     """Get the relevant source logic used in generating this node's data, based
     on dataset type
 
