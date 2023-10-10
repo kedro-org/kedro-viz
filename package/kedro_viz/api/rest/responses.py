@@ -132,7 +132,6 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     code: Optional[str]
     type: str
     filepath: Optional[str]
-    type: str
     plot: Optional[Dict]
     image: Optional[str]
     tracking_data: Optional[Dict]

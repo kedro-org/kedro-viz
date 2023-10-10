@@ -1,6 +1,7 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
+# pylint: disable=no-else-return
 import logging
-from typing import TYPE_CHECKING, Dict, Union, Any, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     return f"{abbreviated_module_name}.{class_name}"
 
 
-def extract_data_source(node_type: str, data_desc: Dict) -> Union[Optional[str], Any]:
+def extract_data_source(node_type: Union[str, None], data_desc: Dict) -> Union[Optional[str], Any]:
     """Get the relevant source logic used in generating this node's data, based
     on dataset type
 
@@ -56,23 +57,23 @@ def extract_data_source(node_type: str, data_desc: Dict) -> Union[Optional[str],
     Returns:
         String to display to user as the node source code
     """
-    extracted_format_type = node_type.split(".")[-1]
+    format_type = node_type.split(".")[-1]
 
-    if extracted_format_type ==  "SQLQueryDataSet" or extracted_format_type == "GBQQueryDataSet":
+    if format_type in {"SQLQueryDataSet", "GBQQueryDataSet"}:
         return data_desc["sql"]
-    elif extracted_format_type ==  "APIDataSet":
+    elif format_type == "APIDataSet":
         return f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
-    elif extracted_format_type ==  "SparkHiveDataSet" or extracted_format_type == "SnowparkTableDataSet":
+    elif format_type in {"SparkHiveDataSet", "SnowparkTableDataSet"}:
         extracted_table = (
             data_desc["table_name"]
-            if extracted_format_type == "SnowparkTableDataSet"
+            if format_type == "SnowparkTableDataSet"
             else data_desc["table"]
         )
         source = f'Derived from {extracted_table} table, in {data_desc["database"]} database.'
         return source
-    elif extracted_format_type ==  "SparkJDBCDataSet":
+    elif format_type == "SparkJDBCDataSet":
         return f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
-    elif extracted_format_type == "PickleDataSet":
+    elif format_type == "PickleDataSet":
         return f'Derived from {data_desc["url"]} url.'
-    else:
-        return None
+
+    return None
