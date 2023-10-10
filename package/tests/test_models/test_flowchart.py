@@ -173,7 +173,7 @@ class TestGraphNodeCreation:
         parameters_node = GraphNode.create_parameters_node(
             dataset_name="parameters",
             layer=None,
-            tags={},
+            tags=set(),
             parameters=parameters_dataset,
         )
         assert isinstance(parameters_node, ParametersNode)
@@ -204,7 +204,7 @@ class TestGraphNodeCreation:
         parameters_node = GraphNode.create_parameters_node(
             dataset_name=dataset_name,
             layer=None,
-            tags={},
+            tags=set(),
             parameters=parameters_dataset,
         )
         assert isinstance(parameters_node, ParametersNode)
@@ -218,7 +218,7 @@ class TestGraphNodeCreation:
     def test_create_non_existing_parameter_node(self, patched_warning):
         """Test the case where ``parameters`` is equal to None"""
         parameters_node = GraphNode.create_parameters_node(
-            dataset_name="non_existing", layer=None, tags={}, parameters=None
+            dataset_name="non_existing", layer=None, tags=set(), parameters=None
         )
         assert isinstance(parameters_node, ParametersNode)
         assert parameters_node.parameter_value is None
@@ -233,7 +233,7 @@ class TestGraphNodeCreation:
         parameters_node = GraphNode.create_parameters_node(
             dataset_name="non_existing",
             layer=None,
-            tags={},
+            tags=set(),
             parameters=parameters_dataset,
         )
         assert parameters_node.parameter_value is None
@@ -244,7 +244,7 @@ class TestGraphNodeCreation:
 
 class TestGraphNodePipelines:
     def test_registered_pipeline_name(self):
-        pipeline = RegisteredPipeline("__default__")
+        pipeline = RegisteredPipeline(id="__default__")
         assert pipeline.name == "__default__"
 
     def test_modular_pipeline_name(self):
@@ -252,8 +252,8 @@ class TestGraphNodePipelines:
         assert pipeline.name == "data_engineering"
 
     def test_add_node_to_pipeline(self):
-        default_pipeline = RegisteredPipeline("__default__")
-        another_pipeline = RegisteredPipeline("testing")
+        default_pipeline = RegisteredPipeline(id="__default__")
+        another_pipeline = RegisteredPipeline(id="testing")
         kedro_dataset = CSVDataSet(filepath="foo.csv")
         data_node = GraphNode.create_data_node(
             dataset_name="dataset@transcoded",
@@ -350,8 +350,8 @@ class TestGraphNodeMetadata:
         task_node = GraphNode.create_task_node(kedro_node)
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
         assert task_node.name == "<partial>"
-        assert not hasattr(task_node_metadata, "code")
-        assert not hasattr(task_node_metadata, "filepath")
+        assert task_node_metadata.code is None
+        assert task_node_metadata.filepath is None
         assert task_node_metadata.parameters == {}
         assert task_node_metadata.inputs == ["x"]
         assert task_node_metadata.outputs == ["y"]
@@ -578,7 +578,7 @@ class TestGraphNodeMetadata:
         parameters_node = GraphNode.create_parameters_node(
             dataset_name="parameters",
             layer=None,
-            tags={},
+            tags=set(),
             parameters=parameters_dataset,
         )
         parameters_node_metadata = ParametersNodeMetadata(parameters_node)
@@ -589,7 +589,7 @@ class TestGraphNodeMetadata:
         parameters_node = GraphNode.create_parameters_node(
             dataset_name="params:test_split_ratio",
             layer=None,
-            tags={},
+            tags=set(),
             parameters=parameters_dataset,
         )
         parameters_node_metadata = ParametersNodeMetadata(parameters_node)

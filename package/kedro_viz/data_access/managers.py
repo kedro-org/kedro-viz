@@ -463,7 +463,9 @@ class DataAccessManager:
             bad_inputs = modular_pipeline.inputs.intersection(descendants)
             for bad_input in bad_inputs:
                 digraph.remove_edge(bad_input, modular_pipeline_id)
-                edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
+                edges.remove_edge(
+                    GraphEdge(source=bad_input, target=modular_pipeline_id)
+                )
                 node_dependencies[bad_input].remove(modular_pipeline_id)
 
         for node_id, node in self.nodes.as_dict().items():
