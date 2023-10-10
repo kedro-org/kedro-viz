@@ -96,10 +96,9 @@ class S3Deployer:
             self._bucket_path,
         )
 
-        utc_timestamp = datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S")
         try:
             metadata = {
-                "timestamp": f"{utc_timestamp} UTC",
+                "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
                 "version": str(VersionInfo.parse(__version__)),
             }
             with self._remote_fs.open(
