@@ -1,5 +1,5 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-# pylint: disable=no-else-return
+# pylint: disable=no-else-return,too-many-return-statements
 import logging
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
@@ -59,6 +59,9 @@ def extract_data_source(
     Returns:
         String to display to user as the node source code
     """
+    if node_type is None:
+        return None
+
     format_type = node_type.split(".")[-1]
 
     if format_type in {"SQLQueryDataSet", "GBQQueryDataSet"}:
