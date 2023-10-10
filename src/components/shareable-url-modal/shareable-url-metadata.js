@@ -33,7 +33,7 @@ const ShareableUrlMetadata = () => {
     <div className="shareable-url-timestamp">
       <p>{`Kedro-Viz ${metadata.version} – ${metadata.timestamp
         .split(' ')
-        .join(' – ')}`}</p>
+        .join(' – ')} UTC`}</p>
     </div>
   );
 };

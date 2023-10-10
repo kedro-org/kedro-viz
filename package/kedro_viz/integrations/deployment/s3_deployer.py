@@ -98,7 +98,7 @@ class S3Deployer:
 
         try:
             metadata = {
-                "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
+                "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
                 "version": str(VersionInfo.parse(__version__)),
             }
             with self._remote_fs.open(
