@@ -185,7 +185,7 @@ class TestGraphNodeCreation:
             "test_split_ratio": 0.3,
             "num_epochs": 1000,
         }
-        assert parameters_node.modular_pipelines == []
+        assert not parameters_node.modular_pipelines
 
     @pytest.mark.parametrize(
         "dataset_name,expected_modular_pipelines",

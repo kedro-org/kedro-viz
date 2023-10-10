@@ -1,5 +1,6 @@
-"""`kedro_viz.models.flowchart_pydantic` defines pydantic data models to represent Kedro entities in a viz graph."""
-# pylint: disable=protected-access
+"""`kedro_viz.models.flowchart` defines pydantic data models 
+to represent Kedro entities in a viz graph."""
+# pylint: disable=protected-access, too-few-public-methods
 import hashlib
 import inspect
 import logging
@@ -84,10 +85,6 @@ class ModularPipelineChild(BaseModel):
     def __hash__(self) -> int:
         return hash(self.id)
 
-    class Config:
-        strict = True
-        arbitrary_types_allowed = True
-
 
 class Tag(RegisteredPipeline):
     """Represent a tag"""
@@ -129,6 +126,9 @@ class GraphNode(BaseModel):
     modular_pipelines: Optional[List[str]] = []
 
     class Config:
+        """Config class for pydantic GraphNode model to allow
+        arbitrary data types"""
+
         strict = True
         arbitrary_types_allowed = True
 
@@ -300,17 +300,68 @@ class GraphNode(BaseModel):
         return self.kedro_obj is not None
 
 
-class GraphEdge(BaseModel):
-    """Represent an edge in the graph"""
+class ModularPipelineNode(GraphNode):
+    """Represent a modular pipeline node in the graph"""
 
-    source: str
-    target: str
+    type: str = GraphNodeType.MODULAR_PIPELINE.value
+
+    # A modular pipeline doesn't belong to any other modular pipeline,
+    # in the same sense as other types of GraphNode do.
+    # Therefore it's default to None.
+    # The parent-child relationship between modular pipeline themselves is modelled explicitly.
+    modular_pipelines: Optional[List[str]] = None
+
+    # Model the modular pipelines tree using a child-references representation of a tree.
+    # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
+    # for more details.
+    # For example, if a node namespace is "uk.data_science",
+    # the "uk" modular pipeline node's children are ["uk.data_science"]
+    children: Set[ModularPipelineChild] = set()
+
+    # Keep track of a modular pipeline's inputs and outputs, both internal and external.
+    # Internal inputs/outputs are IDs of the datasets not connected to any nodes external
+    # to the pipeline.External inputs/outputs are IDs of the datasets used to connect
+    # this modular pipeline to other modular pipelines in the whole registered pipeline.
+    # In practical term, external inputs/outputs are the ones explicitly specified
+    # when using the pipeline() factory function.
+    # More information can be found here:
+    # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
+    internal_inputs: Set[str] = set()
+    internal_outputs: Set[str] = set()
+    external_inputs: Set[str] = set()
+    external_outputs: Set[str] = set()
 
     def __init__(self, **data):
         super().__init__(**data)
 
-    def __hash__(self) -> int:
-        return hash((self.source, self.target))
+    def __getitem__(self, key):
+        if key in self:
+            return super().__getitem__(key)
+
+    @property
+    def inputs(self) -> Set[str]:
+        """Return a set of inputs for this modular pipeline.
+        Visually, these are inputs displayed as the inputs of the modular pipeline,
+        both when collapsed and focused.
+        Intuitively, the set of inputs for this modular pipeline is the set of all
+        external and internal inputs, excluding the ones also serving as outputs.
+        """
+        return (self.external_inputs | self.internal_inputs) - (
+            self.external_outputs | self.internal_outputs
+        )
+
+    @property
+    def outputs(self) -> Set[str]:
+        """Return a set of outputs for this modular pipeline.
+        Follow the same logic as the inputs calculation.
+        """
+        return (self.external_outputs | self.internal_outputs) - (
+            self.external_inputs | self.internal_inputs
+        )
+
+
+class GraphNodeMetadata(BaseModel):
+    """Represent a graph node's metadata"""
 
 
 class TaskNode(GraphNode):
@@ -326,6 +377,58 @@ class TaskNode(GraphNode):
 
         # the modular pipelines that a task node belongs to are derived from its namespace.
         self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
+
+
+class TaskNodeMetadata(GraphNodeMetadata):
+    """Represent the metadata of a TaskNode"""
+
+    # the source code of the node's function
+    code: Optional[str] = None
+
+    # path to the file where the node is defined
+    filepath: Optional[str] = None
+
+    # parameters of the node, if available
+    parameters: Optional[Dict] = None
+
+    # command to run the pipeline to this node
+    run_command: Optional[str] = None
+
+    inputs: List[str] = None
+
+    outputs: List[str] = None
+
+    def __init__(self, task_node: TaskNode, **data):
+        super().__init__(**data)
+
+        kedro_node = cast(KedroNode, task_node.kedro_obj)
+
+        # this is required to handle partial, curry functions
+        if inspect.isfunction(kedro_node.func):
+            self.code = inspect.getsource(_extract_wrapped_func(kedro_node.func))
+            code_full_path = (
+                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+            )
+            try:
+                filepath = code_full_path.relative_to(Path.cwd().parent)
+            except ValueError:  # pragma: no cover
+                # if the filepath can't be resolved relative to the current directory,
+                # e.g. either during tests or during launching development server
+                # outside of a Kedro project, simply return the fullpath to the file.
+                filepath = code_full_path
+
+            self.filepath = str(filepath)
+
+        self.parameters = task_node.parameters
+        self.inputs = kedro_node.inputs
+        self.outputs = kedro_node.outputs
+
+        # if a node doesn't have a user-supplied `_name` attribute,
+        # a human-readable run command `kedro run --to-nodes/nodes` is not available
+        if kedro_node._name is not None:
+            self.run_command = (
+                f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
+            )
 
 
 class DataNode(GraphNode):
@@ -410,221 +513,15 @@ class DataNode(GraphNode):
         return self.viz_metadata["preview_args"]
 
 
-class TranscodedDataNode(GraphNode):
-    """Represent a graph node of type DATA"""
-
-    # whether the data node is a free input
-    is_free_input: bool = False
-
-    # the layer that this data node belongs to
-    layer: Optional[str] = None
-
-    # the original Kedro's AbstractDataset for this transcoded data node
-    original_version: AbstractDataset = None
-
-    # keep track of the original name for the generated run command
-    original_name: str = ""
-
-    # the transcoded versions of this transcoded data nodes
-    transcoded_versions: Set[AbstractDataset] = set()
-
-    # the list of modular pipelines this data node belongs to
-    modular_pipelines: List[str] = []
-
-    # command to run the pipeline to this node
-    run_command: Optional[str] = None
-
-    # the type of this graph node, which is DATA
-    type: str = GraphNodeType.DATA.value
-
-    # statistics for the data node
-    stats: Optional[Dict] = None
-
-    class Config:
-        strict = True
-        arbitrary_types_allowed = True
-
-    def __init__(self, **data):
-        # the modular pipelines that a data node belongs to
-        # are derived from its namespace, which in turn
-        # is derived from the dataset's name.
-        super().__init__(**data)
-        self.namespace = self._get_namespace(self.name)
-        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
-
-    def has_metadata(self) -> bool:
-        return True
-
-
-class ParametersNode(GraphNode):
-    """Represent a graph node of type PARAMETERS"""
-
-    layer: Optional[str] = None
-    modular_pipelines: List[str] = []
-    type: str = GraphNodeType.PARAMETERS.value
-
-    def __init__(self, **data):
-        super().__init__(**data)
-
-        if self.is_all_parameters():
-            self.namespace = None
-            self.modular_pipelines = []
-        else:
-            self.namespace = self._get_namespace(self.parameter_name)
-            self.modular_pipelines = self._expand_namespaces(
-                self._get_namespace(self.parameter_name)
-            )
-
-    def is_all_parameters(self) -> bool:
-        """Checks whether the graph node represents all parameters in the pipeline"""
-        return self.name == "parameters"
-
-    def is_single_parameter(self) -> bool:
-        """Checks whether the graph node represents a single parameter in the pipeline"""
-        return not self.is_all_parameters()
-
-    @property
-    def parameter_name(self) -> str:
-        """Get a normalized parameter name without the "params:" prefix"""
-        return self.name.replace("params:", "")
-
-    @property
-    def parameter_value(self) -> Any:
-        """Load the parameter value from the underlying dataset"""
-        try:
-            return self.kedro_obj.load()
-        except (AttributeError, DatasetError):
-            # This except clause triggers if the user passes a parameter that is not
-            # defined in the catalog (DatasetError) it also catches any case where
-            # the kedro_obj is None (AttributeError) -- GH#1231
-            logger.warning(
-                "Cannot find parameter `%s` in the catalog.", self.parameter_name
-            )
-            return None
-
-
-class ModularPipelineNode(GraphNode):
-    """Represent a modular pipeline node in the graph"""
-
-    type: str = GraphNodeType.MODULAR_PIPELINE.value
-
-    # A modular pipeline doesn't belong to any other modular pipeline,
-    # in the same sense as other types of GraphNode do.
-    # Therefore it's default to None.
-    # The parent-child relationship between modular pipeline themselves is modelled explicitly.
-    modular_pipelines: Optional[List[str]] = None
-
-    # Model the modular pipelines tree using a child-references representation of a tree.
-    # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
-    # for more details.
-    # For example, if a node namespace is "uk.data_science",
-    # the "uk" modular pipeline node's children are ["uk.data_science"]
-    children: Set[ModularPipelineChild] = set()
-
-    # Keep track of a modular pipeline's inputs and outputs, both internal and external.
-    # Internal inputs/outputs are IDs of the datasets not connected to any nodes external
-    # to the pipeline.External inputs/outputs are IDs of the datasets used to connect
-    # this modular pipeline to other modular pipelines in the whole registered pipeline.
-    # In practical term, external inputs/outputs are the ones explicitly specified
-    # when using the pipeline() factory function.
-    # More information can be found here:
-    # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
-    internal_inputs: Set[str] = set()
-    internal_outputs: Set[str] = set()
-    external_inputs: Set[str] = set()
-    external_outputs: Set[str] = set()
-
-    def __init__(self, **data):
-        super().__init__(**data)
-
-    @property
-    def inputs(self) -> Set[str]:
-        """Return a set of inputs for this modular pipeline.
-        Visually, these are inputs displayed as the inputs of the modular pipeline,
-        both when collapsed and focused.
-        Intuitively, the set of inputs for this modular pipeline is the set of all
-        external and internal inputs, excluding the ones also serving as outputs.
-        """
-        return (self.external_inputs | self.internal_inputs) - (
-            self.external_outputs | self.internal_outputs
-        )
-
-    @property
-    def outputs(self) -> Set[str]:
-        """Return a set of outputs for this modular pipeline.
-        Follow the same logic as the inputs calculation.
-        """
-        return (self.external_outputs | self.internal_outputs) - (
-            self.external_inputs | self.internal_inputs
-        )
-
-
-# Metadata classes
-class GraphNodeMetadata(BaseModel):
-    """Represent a graph node's metadata"""
-
-
-class TaskNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a TaskNode"""
-
-    # the source code of the node's function
-    code: Optional[str] = None
-
-    # path to the file where the node is defined
-    filepath: Optional[str] = None
-
-    # parameters of the node, if available
-    parameters: Optional[Dict] = None
-
-    # command to run the pipeline to this node
-    run_command: Optional[str] = None
-
-    inputs: List[str] = None
-
-    outputs: List[str] = None
-
-    def __init__(self, task_node: TaskNode, **data):
-        super().__init__(**data)
-
-        kedro_node = cast(KedroNode, task_node.kedro_obj)
-
-        # this is required to handle partial, curry functions
-        if inspect.isfunction(kedro_node.func):
-            self.code = inspect.getsource(_extract_wrapped_func(kedro_node.func))
-            code_full_path = (
-                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
-            )
-            try:
-                filepath = code_full_path.relative_to(Path.cwd().parent)
-            except ValueError:  # pragma: no cover
-                # if the filepath can't be resolved relative to the current directory,
-                # e.g. either during tests or during launching development server
-                # outside of a Kedro project, simply return the fullpath to the file.
-                filepath = code_full_path
-
-            self.filepath = str(filepath)
-
-        self.parameters = task_node.parameters
-        self.inputs = kedro_node.inputs
-        self.outputs = kedro_node.outputs
-
-        # if a node doesn't have a user-supplied `_name` attribute,
-        # a human-readable run command `kedro run --to-nodes/nodes` is not available
-        if kedro_node._name is not None:
-            self.run_command = (
-                f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
-            )
-
-
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
     # the dataset type for this data node, e.g. CSVDataSet
-    type: Optional[str] = None
+    type: Optional[str]
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = None
+    filepath: Optional[str]
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
@@ -692,18 +589,60 @@ class DataNodeMetadata(GraphNodeMetadata):
                 )
 
 
+class TranscodedDataNode(GraphNode):
+    """Represent a graph node of type DATA"""
+
+    # whether the data node is a free input
+    is_free_input: bool = False
+
+    # the layer that this data node belongs to
+    layer: Optional[str] = None
+
+    # the original Kedro's AbstractDataset for this transcoded data node
+    original_version: AbstractDataset = None
+
+    # keep track of the original name for the generated run command
+    original_name: str = ""
+
+    # the transcoded versions of this transcoded data nodes
+    transcoded_versions: Set[AbstractDataset] = set()
+
+    # the list of modular pipelines this data node belongs to
+    modular_pipelines: List[str] = []
+
+    # command to run the pipeline to this node
+    run_command: Optional[str] = None
+
+    # the type of this graph node, which is DATA
+    type: str = GraphNodeType.DATA.value
+
+    # statistics for the data node
+    stats: Optional[Dict] = None
+
+    def __init__(self, **data):
+        # the modular pipelines that a data node belongs to
+        # are derived from its namespace, which in turn
+        # is derived from the dataset's name.
+        super().__init__(**data)
+        self.namespace = self._get_namespace(self.name)
+        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
+
+    def has_metadata(self) -> bool:
+        return True
+
+
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TranscodedDataNode"""
 
     # the path to the actual data file for the underlying dataset.
     # only available if the dataset has filepath set.
-    filepath: Optional[str] = None
+    filepath: Optional[str]
 
-    run_command: Optional[str] = None
+    run_command: Optional[str]
 
     original_type: str = None
 
-    transcoded_types: List[str] = None
+    transcoded_types: List[str] = []
 
     stats: Optional[Dict] = None
 
@@ -728,6 +667,53 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
             )
 
 
+class ParametersNode(GraphNode):
+    """Represent a graph node of type PARAMETERS"""
+
+    layer: Optional[str] = None
+    modular_pipelines: List[str] = []
+    type: str = GraphNodeType.PARAMETERS.value
+
+    def __init__(self, **data):
+        super().__init__(**data)
+
+        if self.is_all_parameters():
+            self.namespace = None
+            self.modular_pipelines = []
+        else:
+            self.namespace = self._get_namespace(self.parameter_name)
+            self.modular_pipelines = self._expand_namespaces(
+                self._get_namespace(self.parameter_name)
+            )
+
+    def is_all_parameters(self) -> bool:
+        """Checks whether the graph node represents all parameters in the pipeline"""
+        return self.name == "parameters"
+
+    def is_single_parameter(self) -> bool:
+        """Checks whether the graph node represents a single parameter in the pipeline"""
+        return not self.is_all_parameters()
+
+    @property
+    def parameter_name(self) -> str:
+        """Get a normalized parameter name without the "params:" prefix"""
+        return self.name.replace("params:", "")
+
+    @property
+    def parameter_value(self) -> Any:
+        """Load the parameter value from the underlying dataset"""
+        try:
+            return self.kedro_obj.load()
+        except (AttributeError, DatasetError):
+            # This except clause triggers if the user passes a parameter that is not
+            # defined in the catalog (DatasetError) it also catches any case where
+            # the kedro_obj is None (AttributeError) -- GH#1231
+            logger.warning(
+                "Cannot find parameter `%s` in the catalog.", self.parameter_name
+            )
+            return None
+
+
 class ParametersNodeMetadata(BaseModel):
     """Represent the metadata of a ParametersNode"""
 
@@ -742,3 +728,16 @@ class ParametersNodeMetadata(BaseModel):
             }
         else:
             self.parameters = parameters_node.parameter_value
+
+
+class GraphEdge(BaseModel):
+    """Represent an edge in the graph"""
+
+    source: str
+    target: str
+
+    def __init__(self, **data):
+        super().__init__(**data)
+
+    def __hash__(self) -> int:
+        return hash((self.source, self.target))
