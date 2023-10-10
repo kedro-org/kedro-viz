@@ -58,8 +58,7 @@ data_node_inputs = [
         "Derived from www.test_redis_pickle_dataset_url.com url.",
     ),
     ("unrecognised_dataset_type", {}, None),
-    ("_", {}, None),
-    ("", {}, None),
+    (None, {}, None),
 ]
 
 
