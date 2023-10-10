@@ -1,8 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { toggleSettingsModal, toggleTheme } from '../../actions';
-import { replaceMatches } from '../../utils';
+import {
+  toggleSettingsModal,
+  toggleShareableUrlModal,
+  toggleTheme,
+} from '../../actions';
+import { isRunningLocally, replaceMatches } from '../../utils';
+
+import DownloadIcon from '../icons/download';
 import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
@@ -20,6 +26,7 @@ import './global-toolbar.scss';
 export const GlobalToolbar = ({
   isOutdated,
   onToggleSettingsModal,
+  onToggleShareableUrlModal,
   onToggleTheme,
   theme,
 }) => {
@@ -52,22 +59,24 @@ export const GlobalToolbar = ({
               labelText="Flowchart"
             />
           </NavLink>
-          <NavLink
-            exact
-            id="experiment-tracking-nav-button"
-            to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
-          >
-            <IconButton
-              ariaLabel={'View your experiments'}
-              className={
-                'pipeline-menu-button--large pipeline-menu-button--link'
-              }
-              dataTest={'View your experiments'}
-              disabled={false}
-              icon={ExperimentsIcon}
-              labelText="Experiment tracking"
-            />
-          </NavLink>
+          {isRunningLocally() ? (
+            <NavLink
+              exact
+              id="experiment-tracking-nav-button"
+              to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
+            >
+              <IconButton
+                ariaLabel={'View your experiments'}
+                className={
+                  'pipeline-menu-button--large pipeline-menu-button--link'
+                }
+                dataTest={'View your experiments'}
+                disabled={false}
+                icon={ExperimentsIcon}
+                labelText="Experiment tracking"
+              />
+            </NavLink>
+          ) : null}
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton
@@ -84,6 +93,19 @@ export const GlobalToolbar = ({
             labelText="Toggle theme"
             onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
           />
+          {isRunningLocally() ? (
+            <IconButton
+              ariaLabel={'Publish and share'}
+              className={
+                'pipeline-menu-button--deploy pipeline-menu-button--large'
+              }
+              dataTest={'Publish and share Kedro-Viz'}
+              disabled={false}
+              icon={DownloadIcon}
+              labelText={'Publish and share'}
+              onClick={() => onToggleShareableUrlModal(true)}
+            />
+          ) : null}
           <IconButton
             ariaLabel={'Change the settings flags'}
             className={
@@ -111,6 +133,9 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onToggleSettingsModal: (value) => {
     dispatch(toggleSettingsModal(value));
+  },
+  onToggleShareableUrlModal: (value) => {
+    dispatch(toggleShareableUrlModal(value));
   },
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));

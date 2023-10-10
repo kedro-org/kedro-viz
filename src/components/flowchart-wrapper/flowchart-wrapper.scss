@@ -78,3 +78,9 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
     transform: translate(-50px, -140%);
   }
 }
+
+.shareable-url-button .button__btn {
+  position: absolute;
+  right: 36px;
+  top: 36px;
+}

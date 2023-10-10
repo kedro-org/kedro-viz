@@ -4,6 +4,7 @@ import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import { localStorageName, metaSidebarWidth } from '../../config';
 import { toggleShowFeatureHints } from '../../actions';
+import { isRunningLocally } from '../../utils';
 
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
@@ -15,7 +16,10 @@ import './feature-hints.scss';
 
 const localStorageKeyShowHints = 'showFeatureHints';
 export const localStorageKeyFeatureHintsStep = 'featureHintStep';
-const numFeatureHints = featureHintsContent.length;
+const updatedFeatureHintsContent = isRunningLocally()
+  ? featureHintsContent
+  : featureHintsContent.slice(1);
+const numFeatureHints = updatedFeatureHintsContent.length;
 
 const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
   const [areFeatureHintsShown, setAreFeatureHintsShown] = useState(false);
@@ -38,7 +42,7 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
   }, []);
 
   useEffect(() => {
-    if (!featureHintsContent[featureHintStep].elementId) {
+    if (!updatedFeatureHintsContent[featureHintStep].elementId) {
       setHideHighlightDot(true);
     }
 
@@ -72,6 +76,7 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
   return (
     <DelayedRenderer>
       <FeatureHintDot
+        featureHintsContent={updatedFeatureHintsContent}
         featureHintStep={featureHintStep}
         hideDot={hideHighlightDot}
         requestedHintClose={requestedHintClose}
@@ -98,22 +103,24 @@ const FeatureHints = ({ metadataVisible, onToggleShowFeatureHints }) => {
               </div>
             </div>
             <div className="feature-hints__header">
-              {featureHintsContent[featureHintStep].title}
+              {updatedFeatureHintsContent[featureHintStep].title}
             </div>
-            {featureHintsContent[featureHintStep].image && (
+            {updatedFeatureHintsContent[featureHintStep].image && (
               <img
-                alt={featureHintsContent[featureHintStep].title}
-                src={featureHintsContent[featureHintStep].image}
+                alt={updatedFeatureHintsContent[featureHintStep].title}
+                src={updatedFeatureHintsContent[featureHintStep].image}
               />
             )}
             <div className="feature-hints__description">
-              {featureHintsContent[featureHintStep].description}
+              {updatedFeatureHintsContent[featureHintStep].description}
             </div>
             <div className="feature-hints__buttonsWrapper">
               <div>
-                {featureHintsContent[featureHintStep].learnMoreLink ? (
+                {updatedFeatureHintsContent[featureHintStep].learnMoreLink ? (
                   <a
-                    href={featureHintsContent[featureHintStep].learnMoreLink}
+                    href={
+                      updatedFeatureHintsContent[featureHintStep].learnMoreLink
+                    }
                     rel="noreferrer"
                     target="_blank"
                   >
