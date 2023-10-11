@@ -8,12 +8,7 @@ import { useQuery } from '@apollo/client';
  */
 export const useApolloQuery = (query, options) => {
   const [data, setData] = useState(undefined);
-  const {
-    subscribeToMore,
-    data: queryData,
-    error,
-    loading,
-  } = useQuery(query, options);
+  const { data: queryData, error, loading } = useQuery(query, options);
 
   useEffect(() => {
     if (queryData !== undefined) {
@@ -21,5 +16,5 @@ export const useApolloQuery = (query, options) => {
     }
   }, [queryData]);
 
-  return { subscribeToMore, data, error, loading };
+  return { data, error, loading };
 };

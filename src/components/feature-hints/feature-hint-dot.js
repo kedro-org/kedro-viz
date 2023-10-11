@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { featureHintsContent } from './feature-hints-content';
-
 import './feature-hints.scss';
 
 const FeatureHintDot = ({
   appState,
+  featureHintsContent,
   featureHintStep,
   hideDot,
   requestedHintClose,
@@ -47,7 +46,7 @@ const FeatureHintDot = ({
 
     // Use `appState` to track when the graph layout is changing, updating the
     // position of the feature hint accordingly.
-  }, [appState, featureHintStep, requestedHintClose]);
+  }, [appState, featureHintStep, featureHintsContent, requestedHintClose]);
 
   return (
     <div

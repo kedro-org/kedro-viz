@@ -34,6 +34,7 @@ export const createInitialState = () => ({
     miniMapBtn: true,
     modularPipelineFocusMode: null,
     settingsModal: false,
+    shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
   },
   display: {
