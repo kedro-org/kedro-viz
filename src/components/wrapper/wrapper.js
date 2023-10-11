@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
-import { replaceMatches } from '../../utils';
+import { isRunningLocally, replaceMatches } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
@@ -28,7 +28,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
 
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
-    skip: !displayGlobalToolbar,
+    skip: !displayGlobalToolbar || !isRunningLocally(),
   });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);

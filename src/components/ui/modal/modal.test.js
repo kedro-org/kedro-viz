@@ -29,7 +29,11 @@ describe('Modal', () => {
 
   it('should have button and description when supplied no children', () => {
     const wrapper = setup.mount(
-      <Modal title="Hello Test" closeModal={closeModal} />
+      <Modal
+        closeModal={closeModal}
+        message="This is a description."
+        title="Hello Test"
+      />
     );
     expect(wrapper.find('.modal__description').length === 1).toBeTruthy();
   });
