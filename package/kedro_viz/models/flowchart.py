@@ -123,7 +123,7 @@ class GraphNode(BaseModel):
     namespace: Optional[str]
 
     # The list of modular pipeline this node belongs to.
-    modular_pipelines: Optional[List[str]] = []
+    modular_pipelines: Optional[List[str]]
 
     class Config:
         """Config class for pydantic GraphNode model to allow
@@ -309,7 +309,7 @@ class ModularPipelineNode(GraphNode):
     # in the same sense as other types of GraphNode do.
     # Therefore it's default to None.
     # The parent-child relationship between modular pipeline themselves is modelled explicitly.
-    modular_pipelines: Optional[List[str]] = None
+    modular_pipelines: Optional[List[str]]
 
     # Model the modular pipelines tree using a child-references representation of a tree.
     # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
@@ -390,9 +390,9 @@ class TaskNodeMetadata(GraphNodeMetadata):
     # command to run the pipeline to this node
     run_command: Optional[str]
 
-    inputs: Union[List[str], None] = None
+    inputs: List[str] = []
 
-    outputs: Union[List[str], None] = None
+    outputs: List[str] = []
 
     def __init__(self, task_node: TaskNode, **data):
         super().__init__(**data)
@@ -598,7 +598,7 @@ class TranscodedDataNode(GraphNode):
     layer: Optional[str]
 
     # the original Kedro's AbstractDataset for this transcoded data node
-    original_version: Union[AbstractDataset, None] = None
+    original_version: Optional[AbstractDataset]
 
     # keep track of the original name for the generated run command
     original_name: str = ""
@@ -648,22 +648,23 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     def __init__(self, transcoded_data_node: TranscodedDataNode, **data):
         super().__init__(**data)
 
-        original_version = transcoded_data_node.original_version
+        if transcoded_data_node and transcoded_data_node.original_version:
+            original_version = transcoded_data_node.original_version
 
-        self.original_type = get_dataset_type(original_version)
-        self.transcoded_types = [
-            get_dataset_type(transcoded_version)
-            for transcoded_version in transcoded_data_node.transcoded_versions
-        ]
+            self.original_type = get_dataset_type(original_version)
+            self.transcoded_types = [
+                get_dataset_type(transcoded_version)
+                for transcoded_version in transcoded_data_node.transcoded_versions
+            ]
 
-        dataset_description = original_version._describe()
-        self.filepath = _parse_filepath(dataset_description)
-        self.stats = transcoded_data_node.stats
+            dataset_description = original_version._describe()
+            self.filepath = _parse_filepath(dataset_description)
+            self.stats = transcoded_data_node.stats
 
-        if not transcoded_data_node.is_free_input:
-            self.run_command = (
-                f"kedro run --to-outputs={transcoded_data_node.original_name}"
-            )
+            if not transcoded_data_node.is_free_input:
+                self.run_command = (
+                    f"kedro run --to-outputs={transcoded_data_node.original_name}"
+                )
 
 
 class ParametersNode(GraphNode):
@@ -720,7 +721,7 @@ class ParametersNode(GraphNode):
 class ParametersNodeMetadata(BaseModel):
     """Represent the metadata of a ParametersNode"""
 
-    parameters: Union[Dict, None] = None
+    parameters: Dict = {}
 
     def __init__(self, parameters_node: ParametersNode, **data):
         super().__init__(**data)
