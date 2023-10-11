@@ -1,6 +1,6 @@
 """`kedro_viz.models.flowchart` defines pydantic data models
 to represent Kedro entities in a viz graph."""
-# pylint: disable=protected-access, too-few-public-methods
+# pylint: disable=protected-access,too-few-public-methods
 import hashlib
 import inspect
 import logging
