@@ -1,12 +1,13 @@
 import {
-  TOGGLE_GRAPH,
-  TOGGLE_EXPORT_MODAL,
-  TOGGLE_SETTINGS_MODAL,
-  TOGGLE_METADATA_MODAL,
-  TOGGLE_SIDEBAR,
   TOGGLE_CODE,
+  TOGGLE_EXPORT_MODAL,
+  TOGGLE_GRAPH,
+  TOGGLE_METADATA_MODAL,
   TOGGLE_MINIMAP,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
+  TOGGLE_SETTINGS_MODAL,
+  TOGGLE_SHAREABLE_URL_MODAL,
+  TOGGLE_SIDEBAR,
 } from '../actions';
 
 function visibleReducer(visibleState = {}, action) {
@@ -26,6 +27,12 @@ function visibleReducer(visibleState = {}, action) {
     case TOGGLE_EXPORT_MODAL: {
       return Object.assign({}, visibleState, {
         exportModal: action.visible,
+      });
+    }
+
+    case TOGGLE_SHAREABLE_URL_MODAL: {
+      return Object.assign({}, visibleState, {
+        shareableUrlModal: action.visible,
       });
     }
 

@@ -6,7 +6,7 @@ import EventController from './event-controller.js';
 import { usePrevious } from '../../../utils/hooks';
 import DropdownRenderer from './dropdown-renderer';
 
-import './dropdown.css';
+import './dropdown.scss';
 
 const Dropdown = (props) => {
   const {
@@ -159,12 +159,24 @@ const Dropdown = (props) => {
     dropdownRef.current.querySelector(focusClass).focus();
   }, [focusedOption]);
 
+  useEffect(() => {
+    if (open) {
+      document.addEventListener('click', _handleBodyClicked);
+    }
+    return () => document.removeEventListener('click', _handleBodyClicked);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   /**
    * Handler for closing a dropdown if a click occurred outside the dropdown.
    * @param {Object} e - event object
    */
   const _handleBodyClicked = (e) => {
-    if (!dropdownRef.current.contains(e.target) && open) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target) &&
+      open
+    ) {
       _handleClose();
     }
   };

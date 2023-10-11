@@ -1,18 +1,16 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
-import webbrowser
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 import uvicorn
-from fastapi.encoders import jsonable_encoder
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -20,11 +18,6 @@ from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 
 DEV_PORT = 4142
-
-
-def is_localhost(host) -> bool:
-    """Check whether a host is a localhost"""
-    return host in ("127.0.0.1", "localhost", "0.0.0.0")
 
 
 def populate_data(
@@ -54,7 +47,6 @@ def populate_data(
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
-    browser: Optional[bool] = None,
     load_file: Optional[str] = None,
     save_file: Optional[str] = None,
     pipeline_name: Optional[str] = None,
@@ -62,14 +54,13 @@ def run_server(
     project_path: Optional[str] = None,
     autoreload: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
-):  # pylint: disable=redefined-outer-name, too-many-locals
+):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
     Args:
         host: the host to launch the webserver
         port: the port to launch the webserver
-        browser: whether to open the default browser automatically
         load_file: if a valid JSON containing API response data is provided,
             the API of the server is created from the JSON.
         save_file: if provided, the data returned by the API will be saved to a file.
@@ -84,8 +75,11 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
+    print("Starting Kedro Viz Backend Server...")
+
+    path = Path(project_path) if project_path else Path.cwd()
+
     if load_file is None:
-        path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
             path, env, extra_params
         )
@@ -97,19 +91,17 @@ def run_server(
         populate_data(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
+
         if save_file:
-            default_response = get_default_response()
-            jsonable_default_response = jsonable_encoder(default_response)
-            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
-                jsonable_default_response
-            )
-            Path(save_file).write_bytes(encoded_default_response)
+            save_api_responses_to_fs(save_file)
+
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(load_file)
+        if not Path(load_file).exists():
+            raise ValueError(f"The provided filepath '{load_file}' does not exist.")
 
-    if browser and is_localhost(host):
-        webbrowser.open_new(f"http://{host}:{port}/")
+        app = apps.create_api_app_from_file(f"{path}/{load_file}")
+
     uvicorn.run(app, host=host, port=port, log_config=None)
 
 

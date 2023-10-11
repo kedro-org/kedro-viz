@@ -49,11 +49,6 @@ input RunInput {
   title: String = null
 }
 
-type Subscription {
-  """Add new runs in real time"""
-  runsAdded: [Run!]!
-}
-
 """Tracking data for a Run"""
 type TrackingDataset {
   data: JSON!

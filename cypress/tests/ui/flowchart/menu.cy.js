@@ -3,10 +3,12 @@
 import { prettifyName } from '../../../../src/utils';
 
 describe('Flowchart Menu', () => {
-  it('verifies that users can select a section of the flowchart, through the drop down. #TC-16', () => {
+  it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
-    cy.get(':nth-child(2) > .menu-option__content > span').as('menuOption');
+    cy.get('.pipeline-list :nth-child(2) > .menu-option__content > span').as(
+      'menuOption'
+    );
 
     let menuOptionValue;
 
@@ -17,7 +19,7 @@ describe('Flowchart Menu', () => {
       });
 
     // Action
-    cy.get('[data-test="kedro-pipeline-selector"]').click();
+    cy.get('.pipeline-list [data-test="kedro-pipeline-selector"]').click();
     cy.get('@menuOption').click({ force: true });
 
     // Assert after action
@@ -64,7 +66,9 @@ describe('Flowchart Menu', () => {
     const nodeToClickText = 'Companies';
 
     // Action
-    cy.get(`[data-test=node-${nodeToClickText}]`)
+    cy.get(
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToClickText}]`
+    )
       .should('exist')
       .as('nodeToClick');
     cy.get('@nodeToClick').click();
@@ -81,7 +85,9 @@ describe('Flowchart Menu', () => {
     const nodeToHighlightText = 'Companies';
 
     // Action
-    cy.get(`[data-test=node-${nodeToHighlightText}]`)
+    cy.get(
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToHighlightText}]`
+    )
       .should('exist')
       .as('nodeToHighlight');
     cy.__hover__('@nodeToHighlight');

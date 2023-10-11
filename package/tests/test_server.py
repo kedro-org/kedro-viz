@@ -1,5 +1,4 @@
 import json
-from unittest import mock
 
 import pytest
 from pydantic import BaseModel
@@ -119,42 +118,37 @@ class TestServer:
             {"data_science": example_pipelines["data_science"]}
         )
 
-    def test_load_file(self, patched_create_api_app_from_file):
-        load_file = "test.json"
-        run_server(load_file=load_file)
-        patched_create_api_app_from_file.assert_called_once_with(load_file)
+    @pytest.mark.parametrize(
+        "file_path, expected_exception",
+        [
+            ("test.json", ValueError),  # File does not exist, expect ValueError
+            ("test.json", None),  # File exists, expect no ValueError
+        ],
+    )
+    def test_load_file(
+        self, file_path, expected_exception, patched_create_api_app_from_file, tmp_path
+    ):
+        if expected_exception is not None:
+            with pytest.raises(expected_exception) as exc_info:
+                run_server(load_file=file_path)
+
+            # Check if the error message contains the expected message
+            assert "The provided filepath" in str(exc_info.value)
+            assert "does not exist." in str(exc_info.value)
+        else:
+            json_file_path = tmp_path / file_path
+
+            # File exists, no exception expected
+            with json_file_path.open("w") as file:
+                json.dump({"name": "John", "age": 30}, file)
+
+            run_server(load_file=json_file_path)
+            patched_create_api_app_from_file.assert_called_once()
 
     def test_save_file(self, tmp_path, mocker):
-        mocker.patch(
-            "kedro_viz.server.get_default_response",
-            return_value=ExampleAPIResponse(content="test"),
+        save_api_responses_to_fs_mock = mocker.patch(
+            "kedro_viz.server.save_api_responses_to_fs"
         )
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)
-        with open(save_file, "r", encoding="utf8") as f:
-            assert json.load(f) == {"content": "test"}
-
-    @pytest.mark.parametrize(
-        "browser,ip,should_browser_open",
-        [
-            (True, "0.0.0.0", True),
-            (True, "127.0.0.1", True),
-            (True, "localhost", True),
-            (False, "127.0.0.1", False),
-            (True, "8.8.8.8", False),
-        ],
-    )
-    @mock.patch("kedro_viz.server.webbrowser")
-    def test_browser_open(
-        self,
-        webbrowser,
-        browser,
-        ip,
-        should_browser_open,
-        mocker,
-    ):
-        run_server(browser=browser, host=ip)
-        if should_browser_open:
-            webbrowser.open_new.assert_called_once()
-        else:
-            webbrowser.open_new.assert_not_called()
+        save_api_responses_to_fs_mock.assert_called_once_with(save_file)

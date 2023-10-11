@@ -1,6 +1,7 @@
 import pytest
 
-from kedro_viz.launchers.jupyter import _VIZ_PROCESSES, WaitForException, run_viz
+from kedro_viz.launchers.jupyter import _VIZ_PROCESSES, run_viz
+from kedro_viz.launchers.utils import WaitForException
 from kedro_viz.server import run_server
 
 

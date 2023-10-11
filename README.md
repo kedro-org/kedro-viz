@@ -74,6 +74,8 @@ Ensure your Kedro-Viz and Kedro versions are compatible by referencing the follo
 | >=3.8.0, <4.7     | >=0.16.6, <0.17.5 |
 | <3.8.0            | <0.16.6           |
 
+For **Python 3.6** users, the last supported version of Kedro-Viz is **3.16.0**
+
 ### CLI Usage
 
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
@@ -154,16 +156,26 @@ train_evaluation.r2_score_linear_regression:
 
 ### Standalone React component usage
 
-To use Kedro-Viz as a standalone React component, import the component and supply a data JSON as prop:
+To use Kedro-Viz as a standalone React component, you can follow the example below. However, please note that Kedro-Viz does not support server-side rendering (SSR). If you're using Next.js or another SSR framework, you should be aware of this limitation.
 
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
+import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => (
-  <div style={{ height: '100vh' }}>
-    <KedroViz data={json} />
-  </div>
-);
+const MyApp = () => <KedroViz data={json} />;
+```
+
+To use with NextJS:
+
+```javascript
+import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
+import dynamic from 'next/dynamic';
+
+const NoSSRKedro = dynamic(() => import('@quantumblack/kedro-viz'), {
+  ssr: false,
+});
+
+const MyApp = () => <NoSSRKedro data={json} />;
 ```
 
 The JSON can be obtained by running:

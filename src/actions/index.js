@@ -37,6 +37,19 @@ export function toggleExportModal(visible) {
   };
 }
 
+export const TOGGLE_SHAREABLE_URL_MODAL = 'TOGGLE_SHAREABLE_URL_MODAL';
+
+/**
+ * Toggle whether to show the shareable URL modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function toggleShareableUrlModal(visible) {
+  return {
+    type: TOGGLE_SHAREABLE_URL_MODAL,
+    visible,
+  };
+}
+
 export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
 
 /**
