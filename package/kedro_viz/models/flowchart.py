@@ -181,7 +181,7 @@ class GraphNode(abc.ABC):
         stats: Optional[Dict],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
-        """Create a graph node of type DATA for a given Kedro DataSet instance.
+        """Create a graph node of type DATA for a given Kedro Dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -465,7 +465,9 @@ class DataNode(GraphNode):
         """
         return self.dataset_type in (
             "plotly.plotly_dataset.PlotlyDataSet",
+            "plotly.plotly_dataset.PlotlyDataset",
             "plotly.json_dataset.JSONDataSet",
+            "plotly.json_dataset.JSONDataset",
         )
 
     def is_image_node(self):
@@ -474,11 +476,15 @@ class DataNode(GraphNode):
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return self.dataset_type == "tracking.metrics_dataset.MetricsDataSet"
+        return self.dataset_type in (
+            "tracking.metrics_dataset.MetricsDataSet",
+            "tracking.metrics_dataset.MetricsDataset")
 
     def is_json_node(self):
-        """Check if the current node is a JSONDataSet node."""
-        return self.dataset_type == "tracking.json_dataset.JSONDataSet"
+        """Check if the current node is a JSONDataset node."""
+        return self.dataset_type in (
+            "tracking.json_dataset.JSONDataSet",
+            "tracking.json_dataset.JSONDataset")
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
@@ -543,7 +549,7 @@ class TranscodedDataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
-    # the dataset type for this data node, e.g. CSVDataSet
+    # the dataset type for this data node, e.g. CSVDataset
     type: Optional[str] = field(init=False)
 
     # the path to the actual data file for the underlying dataset.
@@ -554,7 +560,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     data_node: InitVar[DataNode]
 
     # the optional plot data if the underlying dataset has a plot.
-    # currently only applicable for PlotlyDataSet
+    # currently only applicable for PlotlyDataset
     plot: Optional[Dict] = field(init=False, default=None)
 
     # the optional image data if the underlying dataset has a image.

@@ -95,7 +95,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "primary",
-                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
                 "stats": {"rows": 10, "columns": 2, "file_size": 2300},
             }
         }
@@ -142,7 +142,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
         schema_extra = {
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
-                "type": "pandas.csv_dataset.CSVDataSet",
+                "type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
                 "run_command": "kedro run --to-outputs=master_table",
             }
         }
