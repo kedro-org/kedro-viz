@@ -598,7 +598,7 @@ class TranscodedDataNode(GraphNode):
     layer: Optional[str]
 
     # the original Kedro's AbstractDataset for this transcoded data node
-    original_version: AbstractDataset = None
+    original_version: Union[AbstractDataset, None] = None
 
     # keep track of the original name for the generated run command
     original_name: str = ""
@@ -702,7 +702,7 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         try:
-            if self.kedro_obj:
+            if isinstance(self.kedro_obj, AbstractDataset):
                 return self.kedro_obj.load()
 
             raise AttributeError(DatasetError)
