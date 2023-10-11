@@ -478,13 +478,15 @@ class DataNode(GraphNode):
         """Check if the current node is a metrics node."""
         return self.dataset_type in (
             "tracking.metrics_dataset.MetricsDataSet",
-            "tracking.metrics_dataset.MetricsDataset")
+            "tracking.metrics_dataset.MetricsDataset",
+        )
 
     def is_json_node(self):
         """Check if the current node is a JSONDataset node."""
         return self.dataset_type in (
             "tracking.json_dataset.JSONDataSet",
-            "tracking.json_dataset.JSONDataset")
+            "tracking.json_dataset.JSONDataset",
+        )
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
