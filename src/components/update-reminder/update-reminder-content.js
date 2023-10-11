@@ -1,12 +1,13 @@
 export const updateContent = {
-  date: '31 August 2023',
+  date: '10 October 2023',
   features: [
     {
-      title: 'Support for Python 3.11',
+      title: 'Make Kedro-Viz shareable via a hosted URL',
       image: '',
-      copy: 'Kedro-Viz now supports Python 3.11, and we have removed upper bounds on Python versions. Please note that we will soon discontinue support for Python 3.7. If you are using Python 3.7, we recommend upgrading to Python 3.8 or newer.',
-      buttonLink: '',
-      buttonText: '',
+      copy: 'You can now publish Kedro-Viz and share it with others by hosting your project on Amazon S3, making sharing with collaborators and stakeholders easier and faster.',
+      buttonLink:
+        'https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html',
+      buttonText: 'View the docs',
     },
   ],
 };
