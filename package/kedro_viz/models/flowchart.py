@@ -1,4 +1,4 @@
-"""`kedro_viz.models.flowchart` defines pydantic data models 
+"""`kedro_viz.models.flowchart` defines pydantic data models
 to represent Kedro entities in a viz graph."""
 # pylint: disable=protected-access, too-few-public-methods
 import hashlib
@@ -52,7 +52,7 @@ class RegisteredPipeline(BaseModel):
     """Represent a registered pipeline in a Kedro project"""
 
     id: str
-    name: str = None
+    name: str = ""
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -108,7 +108,7 @@ class GraphNode(BaseModel):
     type: str
 
     # the underlying Kedro object for each graph node, if any
-    kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = None
+    kedro_obj: Optional[Union[KedroNode, AbstractDataset]]
 
     # the tags associated with this node
     tags: Set[str] = set()
@@ -120,7 +120,7 @@ class GraphNode(BaseModel):
     # N.B.: in Kedro, modular pipeline is implemented by declaring namespace on a node.
     # For example, node(func, namespace="uk.de") means this node belongs
     # to the modular pipeline "uk" and "uk.de"
-    namespace: Optional[str] = None
+    namespace: Optional[str]
 
     # The list of modular pipeline this node belongs to.
     modular_pipelines: Optional[List[str]] = []
@@ -334,10 +334,6 @@ class ModularPipelineNode(GraphNode):
     def __init__(self, **data):
         super().__init__(**data)
 
-    def __getitem__(self, key):
-        if key in self:
-            return super().__getitem__(key)
-
     @property
     def inputs(self) -> Set[str]:
         """Return a set of inputs for this modular pipeline.
@@ -383,20 +379,20 @@ class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode"""
 
     # the source code of the node's function
-    code: Optional[str] = None
+    code: Optional[str]
 
     # path to the file where the node is defined
-    filepath: Optional[str] = None
+    filepath: Optional[str]
 
     # parameters of the node, if available
-    parameters: Optional[Dict] = None
+    parameters: Optional[Dict]
 
     # command to run the pipeline to this node
-    run_command: Optional[str] = None
+    run_command: Optional[str]
 
-    inputs: List[str] = None
+    inputs: Union[List[str], None] = None
 
-    outputs: List[str] = None
+    outputs: Union[List[str], None] = None
 
     def __init__(self, task_node: TaskNode, **data):
         super().__init__(**data)
@@ -438,24 +434,24 @@ class DataNode(GraphNode):
     is_free_input: bool = False
 
     # the layer that this data node belongs to
-    layer: Optional[str] = None
+    layer: Optional[str]
 
     # the concrete type of the underlying kedro_obj
-    dataset_type: Optional[str] = None
+    dataset_type: Optional[str]
 
     # the list of modular pipelines this data node belongs to
     modular_pipelines: List[str] = []
 
-    viz_metadata: Optional[Dict] = None
+    viz_metadata: Optional[Dict]
 
     # command to run the pipeline to this node
-    run_command: Optional[str] = None
+    run_command: Optional[str]
 
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
     # statistics for the data node
-    stats: Optional[Dict] = None
+    stats: Optional[Dict]
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -466,12 +462,15 @@ class DataNode(GraphNode):
         # is derived from the dataset's name.
         self.namespace = self._get_namespace(self.name)
         self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
-        metadata = getattr(self.kedro_obj, "metadata", None)
-        if metadata:
-            try:
+
+        try:
+            metadata = getattr(self.kedro_obj, "metadata", None)
+
+            if isinstance(metadata, dict):
                 self.viz_metadata = metadata["kedro-viz"]
-            except (AttributeError, KeyError):  # pragma: no cover
-                logger.debug("Kedro-viz metadata not found for %s", self.name)
+
+        except (AttributeError, KeyError):  # pragma: no cover
+            logger.debug("Kedro-viz metadata not found for %s", self.name)
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -525,20 +524,20 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     # the optional plot data if the underlying dataset has a plot.
     # currently only applicable for PlotlyDataSet
-    plot: Optional[Dict] = None
+    plot: Optional[Dict]
 
     # the optional image data if the underlying dataset has a image.
     # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = None
+    image: Optional[str]
 
-    tracking_data: Optional[Dict] = None
+    tracking_data: Optional[Dict]
 
     # command to run the pipeline to this data node
-    run_command: Optional[str] = None
+    run_command: Optional[str]
 
-    preview: Optional[Dict] = None
+    preview: Optional[Dict]
 
-    stats: Optional[Dict] = None
+    stats: Optional[Dict]
 
     # TODO: improve this scheme.
     def __init__(self, data_node: DataNode, **data):
@@ -596,7 +595,7 @@ class TranscodedDataNode(GraphNode):
     is_free_input: bool = False
 
     # the layer that this data node belongs to
-    layer: Optional[str] = None
+    layer: Optional[str]
 
     # the original Kedro's AbstractDataset for this transcoded data node
     original_version: AbstractDataset = None
@@ -611,13 +610,13 @@ class TranscodedDataNode(GraphNode):
     modular_pipelines: List[str] = []
 
     # command to run the pipeline to this node
-    run_command: Optional[str] = None
+    run_command: Optional[str]
 
     # the type of this graph node, which is DATA
     type: str = GraphNodeType.DATA.value
 
     # statistics for the data node
-    stats: Optional[Dict] = None
+    stats: Optional[Dict]
 
     def __init__(self, **data):
         # the modular pipelines that a data node belongs to
@@ -640,11 +639,11 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
     run_command: Optional[str]
 
-    original_type: str = None
+    original_type: str = ""
 
     transcoded_types: List[str] = []
 
-    stats: Optional[Dict] = None
+    stats: Optional[Dict]
 
     def __init__(self, transcoded_data_node: TranscodedDataNode, **data):
         super().__init__(**data)
@@ -670,7 +669,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 class ParametersNode(GraphNode):
     """Represent a graph node of type PARAMETERS"""
 
-    layer: Optional[str] = None
+    layer: Optional[str]
     modular_pipelines: List[str] = []
     type: str = GraphNodeType.PARAMETERS.value
 
@@ -703,7 +702,11 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         try:
-            return self.kedro_obj.load()
+            if self.kedro_obj:
+                return self.kedro_obj.load()
+
+            raise AttributeError(DatasetError)
+
         except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
             # defined in the catalog (DatasetError) it also catches any case where
@@ -717,7 +720,7 @@ class ParametersNode(GraphNode):
 class ParametersNodeMetadata(BaseModel):
     """Represent the metadata of a ParametersNode"""
 
-    parameters: Dict = None
+    parameters: Union[Dict, None] = None
 
     def __init__(self, parameters_node: ParametersNode, **data):
         super().__init__(**data)
