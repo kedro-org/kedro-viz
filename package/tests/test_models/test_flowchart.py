@@ -304,6 +304,28 @@ class TestGraphNodeMetadata:
             == "kedro run --to-nodes=namespace.identity_node"
         )
 
+    def test_task_node_metadata_no_namespace(self):
+        kedro_node = node(
+            identity,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+        )
+        task_node = GraphNode.create_task_node(kedro_node)
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code == dedent(
+            """\
+            def identity(x):
+                return x
+            """
+        )
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
+        assert task_node_metadata.parameters == {}
+        assert task_node_metadata.run_command == "kedro run --to-nodes=identity_node"
+
     def test_task_node_metadata_no_run_command(self):
         kedro_node = node(
             identity,
