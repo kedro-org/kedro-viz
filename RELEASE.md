@@ -9,7 +9,7 @@ Please follow the established format:
 # Next Release
 
 ## Bug fixes and other changes
-- Fix improper display of 'run-command' inside the metadata panel. (#1548)
+- Fix improper display of 'run-command' inside the metadata panel. (#1569)
 
 # Release 6.6.0
 
