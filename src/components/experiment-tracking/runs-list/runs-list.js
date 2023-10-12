@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import { textMatchesSearch } from '../../../utils/search-utils';
 import SearchList from '../../search-list';
@@ -15,12 +16,12 @@ import './runs-list.scss';
  * @param {String} searchValue Search term
  * @return {Object} Grouped nodes
  */
-const getFilteredRunList = (runData, searchValue) => {
+const getFilteredRunList = (runData, searchValue, runsMetaData) => {
   // filter the runs that matches the runId
   const filteredRuns = runData?.filter(
     (run) =>
-      textMatchesSearch(run.title, searchValue) ||
-      textMatchesSearch(run.notes, searchValue) ||
+      textMatchesSearch(runsMetaData[run.id]?.title || run.id, searchValue) ||
+      textMatchesSearch(runsMetaData[run.id]?.notes || '', searchValue) ||
       textMatchesSearch(run.gitSha, searchValue)
   );
 
@@ -35,17 +36,24 @@ const RunsList = ({
   onToggleComparisonView,
   runData,
   selectedRunIds,
+  runsMetaData,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
   const condensedRunsList = isDisplayingMetrics
     ? runData.slice(0, metricLimit)
     : runData;
-  const filteredRunList = getFilteredRunList(condensedRunsList, searchValue);
+  const filteredRunList = getFilteredRunList(
+    condensedRunsList,
+    searchValue,
+    runsMetaData
+  );
 
-  const bookmarkedRuns = filteredRunList.filter((run) => run.bookmark === true);
+  const bookmarkedRuns = filteredRunList.filter(
+    (run) => runsMetaData[run.id] && runsMetaData[run.id].bookmark === true
+  );
   const unbookmarkedRuns = filteredRunList.filter(
-    (run) => run.bookmark === false
+    (run) => !runsMetaData[run.id] || !runsMetaData[run.id].bookmark
   );
 
   return (
@@ -115,4 +123,8 @@ const RunsList = ({
   );
 };
 
-export default RunsList;
+export const mapStateToProps = (state) => ({
+  runsMetaData: state.runsMetaData,
+});
+
+export default connect(mapStateToProps)(RunsList);

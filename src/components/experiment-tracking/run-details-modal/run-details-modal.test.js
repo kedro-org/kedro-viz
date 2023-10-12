@@ -7,22 +7,6 @@ import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
 configure({ adapter: new Adapter() });
 
-// Mocked methods
-
-const mockReset = jest.fn();
-const mockUpdateRunDetails = jest.fn();
-
-jest.mock('../../../apollo/mutations', () => {
-  return {
-    useUpdateRunDetails: () => {
-      return {
-        reset: mockReset,
-        updateRunDetails: mockUpdateRunDetails,
-      };
-    },
-  };
-});
-
 const mockValue = {
   handleClick: jest.fn(),
   hasNotInteracted: true,

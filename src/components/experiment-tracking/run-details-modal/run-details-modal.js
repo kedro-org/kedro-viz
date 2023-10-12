@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useUpdateRunDetails } from '../../../apollo/mutations';
+import { connect } from 'react-redux';
+import { updateRunTitle, updateRunNotes } from '../../../actions';
 
 import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 
@@ -15,9 +16,11 @@ const RunDetailsModal = ({
   setShowRunDetailsModal,
   theme,
   visible,
+  runsMetaData,
+  onUpdateRunTitle,
+  onUpdateRunNotes,
 }) => {
   const [valuesToUpdate, setValuesToUpdate] = useState({});
-  const { updateRunDetails, error, reset } = useUpdateRunDetails();
   const {
     handleClick,
     hasNotInteracted,
@@ -28,16 +31,11 @@ const RunDetailsModal = ({
   } = useContext(ButtonTimeoutContext);
 
   const onApplyChanges = () => {
-    updateRunDetails({
-      runId: runMetadataToEdit.id,
-      runInput: { notes: valuesToUpdate.notes, title: valuesToUpdate.title },
-    });
+    onUpdateRunTitle(valuesToUpdate.title, runMetadataToEdit.id);
+    onUpdateRunNotes(valuesToUpdate.notes, runMetadataToEdit.id);
 
     handleClick();
-
-    if (!error) {
-      setIsSuccessful(true);
-    }
+    setIsSuccessful(true);
   };
 
   const onChange = (key, value) => {
@@ -57,20 +55,12 @@ const RunDetailsModal = ({
   }, [showModal, setShowRunDetailsModal, isSuccessful, visible]);
 
   useEffect(() => {
-    setValuesToUpdate({
-      notes: runMetadataToEdit?.notes,
-      title: runMetadataToEdit?.title,
-    });
+    if (runMetadataToEdit?.id) {
+      const { notes = '', title = runMetadataToEdit.id } =
+        runsMetaData[runMetadataToEdit.id] || {};
+      setValuesToUpdate({ notes, title });
+    }
   }, [runMetadataToEdit]);
-
-  useEffect(() => {
-    /**
-     * If there's a GraphQL error when trying to update the title/notes,
-     * reset the mutation when the modal closes so the error doesn't appear
-     * the next time the modal opens.
-     */
-    reset();
-  }, [runMetadataToEdit, visible, setHasNotInteracted, reset]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
@@ -85,7 +75,7 @@ const RunDetailsModal = ({
             <div className="pipeline-settings-modal__name">Run name</div>
           </div>
           <Input
-            defaultValue={runMetadataToEdit?.title}
+            defaultValue={valuesToUpdate.title}
             onChange={(value) => onChange('title', value)}
             resetValueTrigger={visible}
             size="large"
@@ -97,7 +87,7 @@ const RunDetailsModal = ({
           </div>
           <Input
             characterLimit={500}
-            defaultValue={runMetadataToEdit?.notes || ''}
+            defaultValue={valuesToUpdate.notes || ''}
             onChange={(value) => onChange('notes', value)}
             placeholder="Add here"
             resetValueTrigger={visible}
@@ -128,14 +118,22 @@ const RunDetailsModal = ({
             )}
           </Button>
         </div>
-        {error ? (
-          <div className="run-details-modal-error-wrapper">
-            <p>Couldn't update run details. Please try again later.</p>
-          </div>
-        ) : null}
       </Modal>
     </div>
   );
 };
 
-export default RunDetailsModal;
+export const mapStateToProps = (state) => ({
+  runsMetaData: state.runsMetaData,
+});
+
+export const mapDispatchToProps = (dispatch) => ({
+  onUpdateRunTitle: (title, runId) => {
+    dispatch(updateRunTitle(title, runId));
+  },
+  onUpdateRunNotes: (notes, runId) => {
+    dispatch(updateRunNotes(notes, runId));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RunDetailsModal);

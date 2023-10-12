@@ -5,7 +5,7 @@ import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
 import { saveLocalStorage, pruneFalseyKeys } from './helpers';
-import { localStorageName } from '../config';
+import { localStorageName, localStorageRunsMetaData } from '../config';
 
 /**
  * Watch the getGraphInput selector, and dispatch an asynchronous action to
@@ -59,6 +59,9 @@ const saveStateToLocalStorage = (state) => {
     showFeatureHints: state.showFeatureHints,
     flags: state.flags,
   });
+
+  // Store Run's metadata to localstorage
+  saveLocalStorage(localStorageRunsMetaData, state.runsMetaData);
 };
 
 /**
