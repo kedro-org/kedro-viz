@@ -43,6 +43,10 @@ class _VizNullPluginManager:
     """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
     and registered plugins allowing the runner to function if no ``hook_manager``
     has been instantiated.
+
+    NOTE: _VizNullPluginManager is a clone of _NullPluginManager class in Kedro.
+    This was introduced to support the earliest version of Kedro which does not
+    have _NullPluginManager defined
     """
 
     def __init__(self, *args, **kwargs):
