@@ -464,9 +464,7 @@ class DataNode(GraphNode):
         In the future, we might want to make this generic.
         """
         return self.dataset_type in (
-            "plotly.plotly_dataset.PlotlyDataSet",
             "plotly.plotly_dataset.PlotlyDataset",
-            "plotly.json_dataset.JSONDataSet",
             "plotly.json_dataset.JSONDataset",
         )
 
@@ -477,14 +475,12 @@ class DataNode(GraphNode):
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
         return self.dataset_type in (
-            "tracking.metrics_dataset.MetricsDataSet",
             "tracking.metrics_dataset.MetricsDataset",
         )
 
     def is_json_node(self):
         """Check if the current node is a JSONDataset node."""
         return self.dataset_type in (
-            "tracking.json_dataset.JSONDataSet",
             "tracking.json_dataset.JSONDataset",
         )
 
