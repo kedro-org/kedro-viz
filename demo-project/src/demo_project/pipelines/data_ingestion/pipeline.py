@@ -3,7 +3,6 @@ from kedro.pipeline.modular_pipeline import pipeline
 
 from .nodes import (
     aggregate_company_data,
-    apply_basic_logic_to_sql_example_data,
     apply_types_to_companies,
     apply_types_to_reviews,
     apply_types_to_shuttles,
@@ -30,12 +29,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="int_typed_companies",
                 name='apply_types_to_companies',
                 tags='companies'
-            ),
-            node(
-                func=apply_basic_logic_to_sql_example_data,
-                inputs="SQL_Query_Dataset_Example",
-                outputs="result_sql_example_data",
-                name='apply_basic_logic_to_sql_example_data'
             ),
             node(
                 func=apply_types_to_shuttles,
@@ -74,7 +67,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
         ],
         namespace="ingestion",  # provide inputs
-        inputs={"reviews", "shuttles", "companies", "SQL_Query_Dataset_Example"},  # map inputs outside of namespace
+        inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace
         outputs={
             "prm_spine_table",
             "prm_shuttle_company_reviews",
