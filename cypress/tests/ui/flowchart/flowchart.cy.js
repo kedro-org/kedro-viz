@@ -42,7 +42,7 @@ describe('Flowchart DAG', () => {
     cy.get('[data-label="Run Command:"]').should('exist');
   });
 
-  it('verifies that users can open the source block in the metadata panel. #TC-25', () => {
+  it('verifies that users can open the code block in the metadata panel. #TC-25', () => {
     // Assert before action
     cy.get('.pipeline-metadata-code--visible').should('not.exist');
 
@@ -52,7 +52,7 @@ describe('Flowchart DAG', () => {
 
     // Assert after action
     cy.get('.pipeline-metadata-code--visible').should('exist');
-    cy.get('.pipeline-metadata-code__title').should('have.text', 'Source block');
+    cy.get('.pipeline-metadata-code__title').should('have.text', 'Code block');
   });
 
   it('verifies that users can open the metadata panel for parameters and see the parameter details. #TC-26', () => {
