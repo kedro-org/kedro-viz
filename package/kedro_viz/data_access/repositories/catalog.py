@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -78,7 +79,7 @@ class CatalogRepository:
         self._layers_mapping = {}
 
         # Maps layers according to the old format
-        if KEDRO_VERSION.match("<0.19.0"):
+        if KEDRO_VERSION < parse("0.19.0"):
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     _strip_transcoding(dataset_name): None
@@ -118,7 +119,7 @@ class CatalogRepository:
         try:
             # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
             # fuzzy-matching process.
-            if KEDRO_VERSION.match(">=0.18.1"):
+            if KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)

@@ -3,7 +3,7 @@
 import json
 
 import pytest
-from semver import VersionInfo
+from packaging.version import parse
 
 from kedro_viz import __version__
 
@@ -402,7 +402,7 @@ class TestQueryVersion:
     def test_graphql_version_endpoint(self, client, mocker):
         mocker.patch(
             "kedro_viz.api.graphql.schema.get_latest_version",
-            return_value=VersionInfo.parse("1.0.0"),
+            return_value=parse("1.0.0"),
         )
         response = client.post(
             "/graphql",
