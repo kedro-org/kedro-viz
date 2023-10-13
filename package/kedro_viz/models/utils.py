@@ -53,7 +53,7 @@ def extract_data_source(
     on dataset type
 
     Args:
-        node_type: The dataset object to get the type of
+        node_type: Datatype for the dataset object as a string
         data_desc: Dict whose values store useful contextual information about the dataset
 
     Returns:
@@ -66,19 +66,5 @@ def extract_data_source(
 
     if format_type in {"SQLQueryDataSet", "GBQQueryDataSet"}:
         return data_desc["sql"]
-    elif format_type == "APIDataSet":
-        return f'Derived from {data_desc["url"]} using {data_desc["method"]} method.'
-    elif format_type in {"SparkHiveDataSet", "SnowparkTableDataSet"}:
-        extracted_table = (
-            data_desc["table_name"]
-            if format_type == "SnowparkTableDataSet"
-            else data_desc["table"]
-        )
-        source = f'Derived from {extracted_table} table, in {data_desc["database"]} database.'
-        return source
-    elif format_type == "SparkJDBCDataSet":
-        return f'Derived from {data_desc["table"]} table, from {data_desc["url"]} url.'
-    elif format_type == "PickleDataSet":
-        return f'Derived from {data_desc["url"]} url.'
 
     return None
