@@ -66,7 +66,7 @@ def _check_viz_up(host: str, port: int):
         port: the port the webserver is listening
     """
 
-    url = f"http://{host}:{port}"
+    url = f"http://{host}:{port}/api/main"
     try:
         response = requests.get(url, timeout=10)
     except requests.ConnectionError:
