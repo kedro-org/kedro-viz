@@ -411,6 +411,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
         if kedro_node._name is not None:
             self.run_command = (
                 f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
+                if task_node.namespace is not None
+                else f"kedro run --to-nodes={kedro_node._name}"
             )
 
 

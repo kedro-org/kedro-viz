@@ -6,6 +6,11 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next Release
+
+## Bug fixes and other changes
+- Fix improper display of 'run-command' inside the metadata panel. (#1569)
+
 # Release 6.6.0
 
 ## Major features and improvements
