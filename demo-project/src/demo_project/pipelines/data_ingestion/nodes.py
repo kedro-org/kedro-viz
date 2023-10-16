@@ -116,9 +116,3 @@ def combine_shuttle_level_information(
     working_table = combined_table.dropna(how="any")
     id_columns = [x for x in working_table.columns if x.endswith("id")]
     return working_table, working_table[id_columns]
-
-
-def apply_basic_logic_to_sql_example_data(
-    sqlExampleParam
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    return sqlExampleParam
