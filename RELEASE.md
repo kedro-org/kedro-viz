@@ -6,6 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Next Release
+
+## Major features and improvements
+
+- Skip all plugins while running Kedro Viz using the `--ignore-plugins` option. (#1544)
+
+## Bug fixes and other changes
+- Fix improper display of 'run-command' inside the metadata panel. (#1569)
+
 # Release 6.6.0
 
 ## Major features and improvements
