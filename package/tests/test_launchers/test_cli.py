@@ -32,6 +32,7 @@ def patched_start_browser(mocker):
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {},
             },
         ),
@@ -49,6 +50,7 @@ def patched_start_browser(mocker):
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {},
             },
         ),
@@ -77,7 +79,22 @@ def patched_start_browser(mocker):
                 "pipeline_name": "data_science",
                 "env": "local",
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {"extra_param": "param"},
+            },
+        ),
+        (
+            ["viz", "--ignore-plugins"],
+            {
+                "host": "127.0.0.1",
+                "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": True,
+                "extra_params": {},
             },
         ),
     ],
@@ -91,8 +108,9 @@ def test_kedro_viz_command_run_server(
 ):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
-    # Reduce the timeout argument from 60 to 1 to make test run faster.
+
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
 
@@ -178,6 +196,7 @@ def test_kedro_viz_command_with_autoreload(
             "env": None,
             "autoreload": True,
             "project_path": mock_project_path,
+            "ignore_plugins": False,
             "extra_params": {},
         },
         "watcher_cls": RegExpWatcher,
