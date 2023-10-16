@@ -1,6 +1,6 @@
 import pytest
 from kedro.pipeline import node
-from kedro_datasets.pandas import CSVDataSet
+from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
@@ -37,7 +37,7 @@ class TestModularPipelinesRepository:
         assert modular_pipelines.has_modular_pipeline("data_science")
 
     def test_add_input(self):
-        kedro_dataset = CSVDataSet(filepath="foo.csv")
+        kedro_dataset = CSVDataset(filepath="foo.csv")
         modular_pipelines = ModularPipelinesRepository()
         data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
             "data_science"
@@ -53,7 +53,7 @@ class TestModularPipelinesRepository:
         assert data_node.id in data_science_pipeline.inputs
 
     def test_add_output(self):
-        kedro_dataset = CSVDataSet(filepath="foo.csv")
+        kedro_dataset = CSVDataset(filepath="foo.csv")
         modular_pipelines = ModularPipelinesRepository()
         data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
             "data_science"

@@ -1,5 +1,5 @@
 {
-  "type": "plotly.plotly_dataset.PlotlyDataSet",
+  "type": "plotly.plotly_dataset.PlotlyDataset",
   "plot": {
     "data": [
       {

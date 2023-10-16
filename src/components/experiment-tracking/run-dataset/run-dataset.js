@@ -5,7 +5,7 @@ import PinArrowIcon from '../../icons/pin-arrow';
 import PlotlyChart from '../../plotly-chart';
 import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { DataSetLoader } from './run-dataset-loader';
+import { DatasetLoader } from './run-dataset-loader';
 import JSONObject from '../../json-object';
 
 import getShortType from '../../../utils/short-type';
@@ -282,7 +282,7 @@ function buildDatasetDataMarkup(
             ))}
           </TransitionGroup>
           {showLoader && (
-            <DataSetLoader
+            <DatasetLoader
               length={datasetValues.length}
               theme={theme}
               x={0}
@@ -372,7 +372,7 @@ function buildDatasetDataMarkup(
           })}
         </TransitionGroup>
         {showLoader && (
-          <DataSetLoader
+          <DatasetLoader
             length={datasetValues.length}
             theme={theme}
             x={0}

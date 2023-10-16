@@ -33,7 +33,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "7a65da0d",
@@ -75,7 +75,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "95cd6bf9",
@@ -111,7 +111,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "845526ea",
@@ -146,7 +146,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "16cae681",
@@ -185,7 +185,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "ddc6c97b",
@@ -222,7 +222,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "3464b488",
@@ -312,7 +312,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "d28f4db6",
@@ -322,7 +322,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "31fb7cc8",
@@ -358,7 +358,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "a771381b",
@@ -368,7 +368,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "intermediate",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "dec9c820",
@@ -1017,7 +1017,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "shuttle_factory.utilities.io.tag_dict_datasets.CustomCSVDataSet"
+      "dataset_type": "shuttle_factory.utilities.io.tag_dict_datasets.CustomCSVDataset"
     },
     {
       "id": "c3f72bfd",
@@ -1116,7 +1116,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "893a3f7f",
@@ -1148,7 +1148,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "b10165f4",
@@ -1180,7 +1180,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "93d3a479",
@@ -1212,7 +1212,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "7be9f72e",
@@ -1243,7 +1243,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "11a72273",
@@ -1274,7 +1274,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "22cfe9cd",
@@ -1293,7 +1293,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "2978a7f5",
@@ -1312,7 +1312,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "72ac6e43",
@@ -1331,7 +1331,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "1d7fffba",
@@ -1350,7 +1350,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "fe81cbe2",
@@ -1387,7 +1387,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "690d415b",
@@ -1414,7 +1414,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "eb1aa767",
@@ -1433,7 +1433,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "4b7d240f",
@@ -1452,7 +1452,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "feature",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "a8bef9b5",
@@ -1696,7 +1696,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_input",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "2ea5719f",
@@ -1727,7 +1727,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_input",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "602f06fc",
@@ -2038,7 +2038,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "10ce7f66",
@@ -2048,7 +2048,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pandas.json_dataset.JSONDataSet"
+      "dataset_type": "pandas.json_dataset.JSONDataset"
     },
     {
       "id": "e6c1e1d0",
@@ -2058,7 +2058,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "models",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "68d6f757",
@@ -2249,7 +2249,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "9a97cfe0",
@@ -2259,7 +2259,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "c0020a3e",
@@ -2349,7 +2349,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "9b9921db",
@@ -2359,7 +2359,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "c329efd1",
@@ -2401,7 +2401,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "ae98f5f5",
@@ -2450,7 +2450,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "tracking.metrics_dataset.MetricsDataSet"
+      "dataset_type": "tracking.metrics_dataset.MetricsDataset"
     },
     {
       "id": "d1733133",
@@ -2473,7 +2473,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pandas.json_dataset.JSONDataSet"
+      "dataset_type": "pandas.json_dataset.JSONDataset"
     },
     {
       "id": "b7c5a4e0",
@@ -2483,7 +2483,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "24c3ce33",
@@ -2493,7 +2493,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "7ba4e963",
@@ -2503,7 +2503,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "70c65095",
@@ -2513,7 +2513,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+      "dataset_type": "pickle.pickle_dataset.PickleDataset"
     },
     {
       "id": "55758695",
@@ -2532,7 +2532,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "model_output",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "bf435119",
@@ -2570,7 +2570,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "plotly.plotly_dataset.PlotlyDataSet"
+      "dataset_type": "plotly.plotly_dataset.PlotlyDataset"
     },
     {
       "id": "0298a817",
@@ -2613,7 +2613,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "f8e6b6f3",
@@ -2632,7 +2632,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "raw",
-      "dataset_type": "pandas.csv_dataset.CSVDataSet"
+      "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
       "id": "6526dd55",
@@ -2661,7 +2661,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": "primary",
-      "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset"
     },
     {
       "id": "factory.pandas_profiling",

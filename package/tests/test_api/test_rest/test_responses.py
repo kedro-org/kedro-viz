@@ -119,7 +119,7 @@ def assert_example_data(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataset",
             "stats": None,
         },
         {
@@ -141,7 +141,7 @@ def assert_example_data(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataset",
             "stats": {"columns": 12, "rows": 29768},
         },
         {
@@ -318,7 +318,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
             "layer": "raw",
-            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataset",
         },
         {
             "id": "f0ebef01",
@@ -338,7 +338,7 @@ def assert_example_data_from_file(response_data):
             "modular_pipelines": [],
             "type": "data",
             "layer": "model_inputs",
-            "dataset_type": "pandas.csv_dataset.CSVDataSet",
+            "dataset_type": "pandas.csv_dataset.CSVDataset",
         },
         {
             "id": "7b140b3f",
@@ -592,9 +592,9 @@ class TestTranscodedDataset:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "original_type": "pandas.csv_dataset.CSVDataSet",
+            "original_type": "pandas.csv_dataset.CSVDataset",
             "transcoded_types": [
-                "pandas.parquet_dataset.ParquetDataSet",
+                "pandas.parquet_dataset.ParquetDataset",
             ],
             "run_command": "kedro run --to-outputs=model_inputs@pandas2",
         }
@@ -628,7 +628,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/0ecea0de")
         assert response.json() == {
             "filepath": "model_inputs.csv",
-            "type": "pandas.csv_dataset.CSVDataSet",
+            "type": "pandas.csv_dataset.CSVDataset",
             "run_command": "kedro run --to-outputs=model_inputs",
             "stats": {"columns": 12, "rows": 29768},
         }
@@ -637,7 +637,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
-            "type": "pandas.csv_dataset.CSVDataSet",
+            "type": "pandas.csv_dataset.CSVDataset",
         }
 
     def test_parameters_node_metadata(self, client):
@@ -686,7 +686,7 @@ class TestSinglePipelineEndpoint:
                 "modular_pipelines": [],
                 "type": "data",
                 "layer": "model_inputs",
-                "dataset_type": "pandas.csv_dataset.CSVDataSet",
+                "dataset_type": "pandas.csv_dataset.CSVDataset",
                 "stats": {"columns": 12, "rows": 29768},
             },
             {
