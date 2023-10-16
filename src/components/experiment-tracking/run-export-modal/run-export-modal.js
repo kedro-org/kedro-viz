@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { CSVLink } from 'react-csv';
 
 import { constructExportData } from '../../../utils/experiment-tracking-utils';
@@ -15,13 +16,24 @@ const RunExportModal = ({
   setShowRunExportModal,
   theme,
   visible,
+  runsMetaData,
 }) => {
   const [exportData, setExportData] = useState([]);
   const { isSuccessful, showModal, handleClick } =
     useContext(ButtonTimeoutContext);
 
   const updateExportData = useCallback(() => {
-    setExportData(constructExportData(runMetadata, runTrackingData));
+    const mergedRunsMetadata = runMetadata?.map((run) => {
+      return {
+        ...run,
+        ...{
+          title: runsMetaData[run.id]?.title || run.id,
+          note: runsMetaData[run.id]?.title || '',
+        },
+      };
+    });
+
+    setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
     handleClick();
   }, [runMetadata, runTrackingData, handleClick]);
 
@@ -79,4 +91,8 @@ const RunExportModal = ({
   );
 };
 
-export default RunExportModal;
+export const mapStateToProps = (state) => ({
+  runsMetaData: state.runsMetaData,
+});
+
+export default connect(mapStateToProps)(RunExportModal);
