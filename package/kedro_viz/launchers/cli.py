@@ -8,7 +8,7 @@ from typing import Dict
 import click
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
-from semver import VersionInfo
+from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
@@ -104,7 +104,7 @@ def viz(
     """Visualise a Kedro pipeline using Kedro viz."""
     from kedro_viz.server import run_server
 
-    installed_version = VersionInfo.parse(__version__)
+    installed_version = parse(__version__)
     latest_version = get_latest_version()
     if is_running_outdated_version(installed_version, latest_version):
         click.echo(

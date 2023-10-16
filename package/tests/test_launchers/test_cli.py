@@ -1,7 +1,7 @@
 import pytest
 import requests
 from click.testing import CliRunner
-from semver import VersionInfo
+from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
@@ -121,7 +121,7 @@ def test_kedro_viz_command_run_server(
 
 
 def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_response):
-    installed_version = VersionInfo.parse(__version__)
+    installed_version = parse(__version__)
     mock_version = f"{installed_version.major + 1}.0.0"
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
@@ -147,7 +147,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
 def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_response):
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
-        data={"info": {"version": VersionInfo.parse(__version__)}}
+        data={"info": {"version": str(parse(__version__))}}
     )
     mock_click_echo = mocker.patch("click.echo")
 
