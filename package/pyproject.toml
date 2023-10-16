@@ -1,0 +1,55 @@
+# PEP-518 https://peps.python.org/pep-0518/
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = ["setuptools>=65.5.1"]  # PEP 518 specifications
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kedro-viz"
+authors = [
+    {name = "Kedro"}
+]
+description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
+requires-python = ">=3.7"
+dependencies = [
+    "semver>=2.10",  # Needs to be at least 2.10.0 to make use of `VersionInfo.match`.
+    "packaging~=23.0",
+    "kedro>=0.17.5",
+    "ipython>=7.0.0, <9.0",
+    "fastapi>=0.73.0, <0.96.0",
+    "fsspec[s3]>=2021.4, <2024.1",
+    "aiofiles==22.1.0",
+    "uvicorn[standard]~=0.22.0",
+    "watchgod~=0.8.2",
+    "plotly>=4.0",
+    "pandas>=1.3",
+    "sqlalchemy>=1.4, <3",
+    "strawberry-graphql>=0.192.0, <1.0",
+    "networkx>=2.5",
+    "orjson~=3.9",
+    "secure>=0.3.0",
+]
+keywords = [
+    "pipelines",
+    "machine learning",
+    "data pipelines",
+    "data science",
+    "data engineering",
+    "visualisation",
+]
+license = {text = "Apache Software License (Apache 2.0)"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dynamic = ["readme", "version", "optional-dependencies"]
+
+[project.urls]
+Homepage = "https://kedro.org"
+Source = "https://github.com/kedro-org/kedro-viz/tree/main"
+Documentation = "https://docs.kedro.org"
+Tracker = "https://github.com/kedro-org/kedro-viz/issues"
