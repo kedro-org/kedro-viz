@@ -14,7 +14,7 @@ const setHoveredElementId = jest.fn();
 
 // Setup
 
-const randomRunId = new Date('October 15, 2021 03:24:00').toISOString();
+const randomRunId = '2021-10-15T02:24:00.000Z';
 const randomRun = {
   id: randomRunId,
 };
@@ -22,16 +22,16 @@ const randomRun = {
 const selectedRunIds = [randomRunId];
 
 const savedRun = {
-  id: new Date('September 08 2021 11:55:36:810').toISOString(),
+  id: '2021-09-08T10:55:36.810Z',
 };
 
 const nonActiveRun = {
-  id: new Date('October 15, 2021 03:28:00').toISOString(),
+  id: '2021-10-15T02:28:00.000Z',
 };
 
 const mockContextValue = {
   setHoveredElementId,
-  hoveredElementId: [new Date('October 25, 2021 03:30:00').toISOString()],
+  hoveredElementId: ['2021-10-25T02:30:00.000Z'],
 };
 
 // Tests
