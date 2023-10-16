@@ -46,9 +46,8 @@ commands:
     steps:
       - node/install:
           node-version: '16.13.2'
-      - run:
-          name: Install Node dependencies
-          command: npm install
+      # using install-packages command from node orb
+      - node/install-packages
 
   nvm_use_npm_install:
     steps:
