@@ -6,7 +6,7 @@ conf/local/**
 !conf/local/.gitkeep
 
 # ignore potentially sensitive credentials files
-conf/prod/*credentials*
+conf/**/*credentials*
 
 # ignore everything in the following folders
 data/**
