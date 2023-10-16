@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 
 try:
@@ -32,10 +33,30 @@ except ImportError:  # kedro_datasets is not installed.
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
-from semver import VersionInfo
+
+from kedro_viz.constants import KEDRO_VERSION
 
 logger = logging.getLogger(__name__)
-KEDRO_VERSION = VersionInfo.parse(__version__)
+
+
+class _VizNullPluginManager:
+    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
+    and registered plugins allowing the runner to function if no ``hook_manager``
+    has been instantiated.
+
+    NOTE: _VizNullPluginManager is a clone of _NullPluginManager class in Kedro.
+    This was introduced to support the earliest version of Kedro which does not
+    have _NullPluginManager defined
+    """
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __getattr__(self, name):
+        return self
+
+    def __call__(self, *args, **kwargs):
+        pass
 
 
 def _bootstrap(project_path: Path):
@@ -58,7 +79,7 @@ def _bootstrap(project_path: Path):
         return
 
 
-def get_dataset_stats(project_path: Path) -> Dict:
+def _get_dataset_stats(project_path: Path) -> Dict:
     """Return the stats saved at stats.json as a dictionary if found.
     If not, return an empty dictionary
 
@@ -87,6 +108,7 @@ def get_dataset_stats(project_path: Path) -> Dict:
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
+    ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
@@ -94,6 +116,7 @@ def load_data(
         project_path: the path whether the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
+        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -106,7 +129,6 @@ def load_data(
 
     if KEDRO_VERSION.match(">=0.17.3"):
         from kedro.framework.project import pipelines
-        from kedro.framework.session import KedroSession
 
         with KedroSession.create(
             project_path=project_path,
@@ -114,33 +136,39 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
+            if ignore_plugins:
+                session._hook_manager = _VizNullPluginManager()
+
             context = session.load_context()
             session_store = session._store
             catalog = context.catalog
+
             # Pipelines is a lazy dict-like object, so we force it to populate here
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict
     elif KEDRO_VERSION.match(">=0.17.1"):
-        from kedro.framework.session import KedroSession
-
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
+            if ignore_plugins:
+                session._hook_manager = _VizNullPluginManager()
+
             context = session.load_context()
             session_store = session._store
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
     else:
         # Since Viz is only compatible with kedro>=0.17.0, this just matches 0.17.0
-        from kedro.framework.session import KedroSession
         from kedro.framework.startup import _get_project_metadata
 
         metadata = _get_project_metadata(project_path)
@@ -151,9 +179,13 @@ def load_data(
             save_on_close=False,
             extra_params=extra_params,  # type: ignore
         ) as session:
+            # check for --ignore-plugins option
+            if ignore_plugins:
+                session._hook_manager = _VizNullPluginManager()
+
             context = session.load_context()
             session_store = session._store
-            stats_dict = get_dataset_stats(project_path)
+            stats_dict = _get_dataset_stats(project_path)
 
         return context.catalog, context.pipelines, session_store, stats_dict
 

@@ -77,6 +77,11 @@ def commands():  # pylint: disable=missing-function-docstring
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 @click.option(
+    "--ignore-plugins",
+    is_flag=True,
+    help="A flag to ignore all installed plugins in the Kedro Project",
+)
+@click.option(
     "--params",
     type=click.UNPROCESSED,
     default="",
@@ -84,7 +89,18 @@ def commands():  # pylint: disable=missing-function-docstring
     callback=_split_params,
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
-def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
+def viz(
+    host,
+    port,
+    browser,
+    load_file,
+    save_file,
+    pipeline,
+    env,
+    autoreload,
+    ignore_plugins,
+    params,
+):
     """Visualise a Kedro pipeline using Kedro viz."""
     from kedro_viz.server import run_server
 
@@ -115,6 +131,7 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
             "pipeline_name": pipeline,
             "env": env,
             "autoreload": autoreload,
+            "ignore_plugins": ignore_plugins,
             "extra_params": params,
         }
         if autoreload:
