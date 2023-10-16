@@ -39,7 +39,7 @@ def populate_data(
     data_access_manager.add_catalog(catalog)
 
     # add dataset stats before adding pipelines as the data nodes
-    # getting created during add_pipelines need stats information
+    # need stats information and they are created during add_pipelines
     data_access_manager.add_dataset_stats(stats_dict)
 
     data_access_manager.add_pipelines(pipelines)
