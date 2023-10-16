@@ -1,7 +1,7 @@
 import React from 'react';
 import RunDetailsModal from './index';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import { configure, mount } from 'enzyme';
+import { configure } from 'enzyme';
 import { waitFor } from '@testing-library/react';
 import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 import { setup } from '../../../utils/state.mock';

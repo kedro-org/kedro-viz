@@ -60,7 +60,7 @@ const RunDetailsModal = ({
         runsMetaData[runMetadataToEdit.id] || {};
       setValuesToUpdate({ notes, title });
     }
-  }, [runMetadataToEdit]);
+  }, [runMetadataToEdit, runsMetaData]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
