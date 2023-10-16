@@ -115,6 +115,8 @@ Options:
   --autoreload              Autoreload viz server when a Python or YAML file change in
                             the Kedro project
 
+  --ignore-plugins          A flag to ignore all installed plugins in the Kedro Project
+  
   --params TEXT             Specify extra parameters that you want to pass to
                             the context initializer. Items must be separated
                             by comma, keys - by colon, example:
@@ -149,7 +151,7 @@ Once the above set-up is complete, tracking datasets can be used to track releva
 
 ```yaml
 train_evaluation.r2_score_linear_regression:
-  type: tracking.MetricsDataSet
+  type: tracking.MetricsDataset
   filepath: ${base_location}/09_tracking/linear_score.json
   versioned: true
 ```

@@ -203,7 +203,7 @@ class GraphNode(BaseModel):
         stats: Optional[Dict],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
-        """Create a graph node of type DATA for a given Kedro DataSet instance.
+        """Create a graph node of type DATA for a given Kedro Dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -424,6 +424,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
         if kedro_node._name is not None:
             self.run_command = (
                 f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
+                if task_node.namespace is not None
+                else f"kedro run --to-nodes={kedro_node._name}"
             )
 
 
@@ -479,8 +481,8 @@ class DataNode(GraphNode):
         In the future, we might want to make this generic.
         """
         return self.dataset_type in (
-            "plotly.plotly_dataset.PlotlyDataSet",
-            "plotly.json_dataset.JSONDataSet",
+            "plotly.plotly_dataset.PlotlyDataset",
+            "plotly.json_dataset.JSONDataset",
         )
 
     def is_image_node(self):
