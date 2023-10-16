@@ -132,12 +132,12 @@ class GraphNode(BaseModel):
         strict = True
         arbitrary_types_allowed = True
 
-    @classmethod
-    def _hash(cls, value: str):
+    @staticmethod
+    def _hash(value: str):
         return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
-    @classmethod
-    def _get_namespace(cls, dataset_name: str) -> Optional[str]:
+    @staticmethod
+    def _get_namespace(dataset_name: str) -> Optional[str]:
         """Extract the namespace from the dataset/parameter name.
         Args:
             dataset_name: The name of the dataset.
@@ -152,8 +152,8 @@ class GraphNode(BaseModel):
 
         return dataset_name.rsplit(".", 1)[0]
 
-    @classmethod
-    def _expand_namespaces(cls, namespace: Optional[str]) -> List[str]:
+    @staticmethod
+    def _expand_namespaces(namespace: Optional[str]) -> List[str]:
         """Expand a node's namespace to the list of modular pipelines
         that this node belongs to.
         Args:
