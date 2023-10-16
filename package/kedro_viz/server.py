@@ -53,8 +53,9 @@ def run_server(
     env: Optional[str] = None,
     project_path: Optional[str] = None,
     autoreload: bool = False,
+    ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
-):  # pylint: disable=redefined-outer-name
+):  # pylint: disable=redefined-outer-name, too-many-locals
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
@@ -70,6 +71,7 @@ def run_server(
         autoreload: Whether the API app should support autoreload.
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
+        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -81,7 +83,7 @@ def run_server(
 
     if load_file is None:
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-            path, env, extra_params
+            path, env, ignore_plugins, extra_params
         )
         pipelines = (
             pipelines
