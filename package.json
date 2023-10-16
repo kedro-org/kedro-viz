@@ -1,6 +1,6 @@
 {
   "name": "@quantumblack/kedro-viz",
-  "version": "6.5.0",
+  "version": "6.6.0",
   "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
@@ -13,7 +13,7 @@
   },
   "proxy": "http://localhost:4142/",
   "scripts": {
-    "build": "react-scripts build",
+    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
@@ -89,7 +89,6 @@
     "reselect": "^4.1.5",
     "seedrandom": "^3.0.5",
     "sinon": "^12.0.1",
-    "subscriptions-transport-ws": "^0.11.0",
     "svg-crowbar": "^0.6.5",
     "uuid": "^9.0.0",
     "what-input": "^5.2.10"
@@ -109,8 +108,9 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "babel-plugin-transform-remove-imports": "^1.7.0",
     "canvas": "^2.7.0",
+    "cross-env": "7.0.3",
     "css-loader": "^4.3.0",
-    "cypress": "^12.14.0",
+    "cypress": "^13.3.0",
     "enzyme": "^3.11.0",
     "eslint-plugin-cypress": "^2.13.3",
     "graphqlviz": "^4.0.1",

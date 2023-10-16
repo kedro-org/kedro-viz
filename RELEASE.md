@@ -5,17 +5,28 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 6.5.1
+
+# Next Release
+
+## Major features and improvements
+
+- Skip all plugins while running Kedro Viz using the `--ignore-plugins` option. (#1544)
 
 ## Bug fixes and other changes
+- Fix improper display of 'run-command' inside the metadata panel. (#1569)
 
-- Fix for Kedro Viz Connection Error (#1507)
+# Release 6.6.0
 
-# Release 6.5.1
+## Major features and improvements
+
+- Make Kedro-Viz shareable via a hosted URL. (#1487)
 
 ## Bug fixes and other changes
 
 - Updated dependencies to ensure compatibility with Vite and Next.js environments; combine CSS into a single file when used as a React component. (#1510)
+- Fix for Kedro Viz Connection Error. (#1507)
+- Fix display of modular pipeline nodes that are associated with tags. (#1542)
+- Remove GraphQL subscription. (#1554)
 
 # Release 6.5.0
 
