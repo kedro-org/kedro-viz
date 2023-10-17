@@ -86,7 +86,7 @@ def format_run_tracking_data(
         Dictionary with formatted tracking data for selected runs
 
     Example:
-        >>> from kedro_datasets.tracking import MetricsDataSet
+        >>> from kedro_datasets.tracking import MetricsDataset
         >>> tracking_data = {
         >>>     'My Favorite Sprint': {
         >>>         'bootstrap':0.8

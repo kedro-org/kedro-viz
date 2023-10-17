@@ -9,7 +9,7 @@ from typing import List, Optional
 
 import strawberry
 from graphql.validation import NoSchemaIntrospectionCustomRule
-from semver import VersionInfo
+from packaging.version import parse
 from strawberry import ID
 from strawberry.extensions import AddValidationRules
 from strawberry.tools import merge_types
@@ -163,7 +163,7 @@ class Mutation:
 class VersionQuery:
     @strawberry.field(description="Get the installed and latest Kedro-Viz versions")
     def version(self) -> Version:
-        installed_version = VersionInfo.parse(__version__)
+        installed_version = parse(__version__)
         latest_version = get_latest_version()
         return Version(
             installed=str(installed_version),

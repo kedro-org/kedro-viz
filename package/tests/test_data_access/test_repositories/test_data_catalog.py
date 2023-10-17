@@ -9,7 +9,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "cars@pandas": {
-                "type": "pandas.CSVDataSet",
+                "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
                 "layer": "raw",
             },
@@ -23,7 +23,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "car@pandas1": {
-                "type": "pandas.CSVDataSet",
+                "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
                 "metadata": {
                     "kedro-viz": {
@@ -32,7 +32,7 @@ class TestDataCatalogRepository:
                 },
             },
             "car@pandas2": {
-                "type": "pandas.ParquetDataSet",
+                "type": "pandas.ParquetDataset",
                 "filepath": "cars.pq",
                 "metadata": {
                     "kedro-viz": {
@@ -55,7 +55,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "car@pandas1": {
-                "type": "pandas.CSVDataSet",
+                "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
                 "metadata": {
                     "kedro-viz": {
@@ -73,7 +73,7 @@ class TestDataCatalogRepository:
         repo = CatalogRepository()
         catalog_config = {
             "car_1": {
-                "type": "pandas.CSVDataSet",
+                "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
                 "metadata": {
                     "kedro-viz": {
@@ -82,7 +82,7 @@ class TestDataCatalogRepository:
                 },
             },
             "car_2": {
-                "type": "pandas.CSVDataSet",
+                "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
                 "layer": "raw",
             },

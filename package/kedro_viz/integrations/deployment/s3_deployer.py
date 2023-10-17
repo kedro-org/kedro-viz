@@ -9,7 +9,7 @@ from pathlib import Path
 
 import fsspec
 from jinja2 import Environment, FileSystemLoader
-from semver import VersionInfo
+from packaging.version import parse
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
@@ -99,7 +99,7 @@ class S3Deployer:
         try:
             metadata = {
                 "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
-                "version": str(VersionInfo.parse(__version__)),
+                "version": str(parse(__version__)),
             }
             with self._remote_fs.open(
                 f"{self._bucket_path}/{_METADATA_PATH}", "w"

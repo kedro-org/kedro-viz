@@ -9,7 +9,7 @@ import venv
 from pathlib import Path
 from typing import Set
 
-from semver import Version
+from packaging.version import parse
 
 from features.steps.sh_run import run
 
@@ -41,12 +41,12 @@ def before_scenario(context, scenario):
         if "I have installed kedro version" in step.name:
             match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)
             if match:
-                kedro_version = Version.parse(match.group(0))
+                kedro_version = parse(match.group(0))
                 break
 
     if (
         kedro_version
-        and kedro_version <= Version.parse("0.18.12")
+        and kedro_version <= parse("0.18.12")
         and sys.version_info >= (3, 11)
     ):
         print(

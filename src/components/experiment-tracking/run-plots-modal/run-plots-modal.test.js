@@ -9,7 +9,7 @@ function generateTestData(numberOfRuns = 2, dataType = 'plotly') {
     datasetType:
       dataType === 'matplotlib'
         ? 'matplotlib.matplotlib_writer.MatplotlibWriter'
-        : 'plotly.plotly_dataset.PlotlyDataSet',
+        : 'plotly.plotly_dataset.PlotlyDataset',
     datasetValues: [...Array(numberOfRuns).keys()].map((run) => {
       if (dataType === 'matplotlib') {
         return {
