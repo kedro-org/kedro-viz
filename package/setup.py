@@ -47,7 +47,7 @@ setup(
         "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
         "kedro.hooks": [
-            "plugin_name = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+            "kedro-dataset-stats = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
         ],
     },
 )

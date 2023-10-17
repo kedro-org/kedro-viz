@@ -1,6 +1,6 @@
 {
   "filepath": "/Users/Documents/project-src/test/data/01_raw/iris.csv",
-  "type": "tracking.metrics_dataset.MetricsDataSet",
+  "type": "tracking.metrics_dataset.MetricsDataset",
   "tracking_data": {
     "recommendations": 0.2160981834063107,
     "recommended_controls": 0.2701227292578884,
