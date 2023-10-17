@@ -36,18 +36,6 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     return str(filepath) if filepath else None
 
 
-def _extract_wrapped_func(func: FunctionType) -> FunctionType:
-    """Extract a wrapped decorated function to inspect the source code if available.
-    Adapted from https://stackoverflow.com/a/43506509/1684058
-    """
-    if func.__closure__ is None:
-        return func
-    closure = (c.cell_contents for c in func.__closure__)
-    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
-    # return the original function if it's not a decorated function
-    return func if wrapped_func is None else wrapped_func
-
-
 class RegisteredPipeline(BaseModel):
     """Represent a registered pipeline in a Kedro project"""
 
@@ -300,6 +288,37 @@ class GraphNode(BaseModel):
         return self.kedro_obj is not None
 
 
+class GraphNodeMetadata(BaseModel):
+    """Represent a graph node's metadata"""
+
+
+class TaskNode(GraphNode):
+    """Represent a graph node of type TASK"""
+
+    modular_pipelines: List[str] = []
+    parameters: Dict = {}
+    type: str = GraphNodeType.TASK.value
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.namespace = self.kedro_obj.namespace
+
+        # the modular pipelines that a task node belongs to are derived from its namespace.
+        self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
+
+
+def _extract_wrapped_func(func: FunctionType) -> FunctionType:
+    """Extract a wrapped decorated function to inspect the source code if available.
+    Adapted from https://stackoverflow.com/a/43506509/1684058
+    """
+    if func.__closure__ is None:
+        return func
+    closure = (c.cell_contents for c in func.__closure__)
+    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
+    # return the original function if it's not a decorated function
+    return func if wrapped_func is None else wrapped_func
+
+
 class ModularPipelineNode(GraphNode):
     """Represent a modular pipeline node in the graph"""
 
@@ -354,25 +373,6 @@ class ModularPipelineNode(GraphNode):
         return (self.external_outputs | self.internal_outputs) - (
             self.external_inputs | self.internal_inputs
         )
-
-
-class GraphNodeMetadata(BaseModel):
-    """Represent a graph node's metadata"""
-
-
-class TaskNode(GraphNode):
-    """Represent a graph node of type TASK"""
-
-    modular_pipelines: List[str] = []
-    parameters: Dict = {}
-    type: str = GraphNodeType.TASK.value
-
-    def __init__(self, **data):
-        super().__init__(**data)
-        self.namespace = self.kedro_obj.namespace
-
-        # the modular pipelines that a task node belongs to are derived from its namespace.
-        self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
 
 
 class TaskNodeMetadata(GraphNodeMetadata):
@@ -514,6 +514,48 @@ class DataNode(GraphNode):
         return self.viz_metadata["preview_args"]
 
 
+class TranscodedDataNode(GraphNode):
+    """Represent a graph node of type DATA"""
+
+    # whether the data node is a free input
+    is_free_input: bool = False
+
+    # the layer that this data node belongs to
+    layer: Optional[str]
+
+    # the original Kedro's AbstractDataset for this transcoded data node
+    original_version: Optional[AbstractDataset]
+
+    # keep track of the original name for the generated run command
+    original_name: str = ""
+
+    # the transcoded versions of this transcoded data nodes
+    transcoded_versions: Set[AbstractDataset] = set()
+
+    # the list of modular pipelines this data node belongs to
+    modular_pipelines: List[str] = []
+
+    # command to run the pipeline to this node
+    run_command: Optional[str]
+
+    # the type of this graph node, which is DATA
+    type: str = GraphNodeType.DATA.value
+
+    # statistics for the data node
+    stats: Optional[Dict]
+
+    def __init__(self, **data):
+        # the modular pipelines that a data node belongs to
+        # are derived from its namespace, which in turn
+        # is derived from the dataset's name.
+        super().__init__(**data)
+        self.namespace = self._get_namespace(self.name)
+        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
+
+    def has_metadata(self) -> bool:
+        return True
+
+
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
@@ -588,48 +630,6 @@ class DataNodeMetadata(GraphNodeMetadata):
                     type(exc).__name__,
                     exc,
                 )
-
-
-class TranscodedDataNode(GraphNode):
-    """Represent a graph node of type DATA"""
-
-    # whether the data node is a free input
-    is_free_input: bool = False
-
-    # the layer that this data node belongs to
-    layer: Optional[str]
-
-    # the original Kedro's AbstractDataset for this transcoded data node
-    original_version: Optional[AbstractDataset]
-
-    # keep track of the original name for the generated run command
-    original_name: str = ""
-
-    # the transcoded versions of this transcoded data nodes
-    transcoded_versions: Set[AbstractDataset] = set()
-
-    # the list of modular pipelines this data node belongs to
-    modular_pipelines: List[str] = []
-
-    # command to run the pipeline to this node
-    run_command: Optional[str]
-
-    # the type of this graph node, which is DATA
-    type: str = GraphNodeType.DATA.value
-
-    # statistics for the data node
-    stats: Optional[Dict]
-
-    def __init__(self, **data):
-        # the modular pipelines that a data node belongs to
-        # are derived from its namespace, which in turn
-        # is derived from the dataset's name.
-        super().__init__(**data)
-        self.namespace = self._get_namespace(self.name)
-        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
-
-    def has_metadata(self) -> bool:
-        return True
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
