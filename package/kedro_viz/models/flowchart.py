@@ -464,10 +464,9 @@ class DataNode(GraphNode):
         # is derived from the dataset's name.
         self.namespace = self._get_namespace(self.name)
         self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
+        metadata = getattr(self.kedro_obj, "metadata", None)
 
         try:
-            metadata = getattr(self.kedro_obj, "metadata", None)
-
             if isinstance(metadata, dict):
                 self.viz_metadata = metadata["kedro-viz"]
 
@@ -476,7 +475,7 @@ class DataNode(GraphNode):
 
     # TODO: improve this scheme.
     def is_plot_node(self):
-        """Checks if the current node is a plot node.
+        """Check if the current node is a plot node.
         Currently it only recognises one underlying dataset as a plot node.
         In the future, we might want to make this generic.
         """
@@ -486,23 +485,23 @@ class DataNode(GraphNode):
         )
 
     def is_image_node(self):
-        """Checks if the current node is a matplotlib image node."""
+        """Check if the current node is a matplotlib image node."""
         return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
 
     def is_metric_node(self):
-        """Checks if the current node is a metrics node."""
-        return self.dataset_type == "tracking.metrics_dataset.MetricsDataSet"
+        """Check if the current node is a metrics node."""
+        return self.dataset_type == "tracking.metrics_dataset.MetricsDataset"
 
     def is_json_node(self):
-        """Checks if the current node is a JSONDataSet node."""
-        return self.dataset_type == "tracking.json_dataset.JSONDataSet"
+        """Check if the current node is a JSONDataset node."""
+        return self.dataset_type == "tracking.json_dataset.JSONDataset"
 
     def is_tracking_node(self):
-        """Checks if the current node is a tracking data node."""
+        """Check if the current node is a tracking data node"""
         return self.is_json_node() or self.is_metric_node()
 
     def is_preview_node(self):
-        """Checks if the current node has a preview."""
+        """Check if the current node has a preview"""
         try:
             is_preview = bool(self.viz_metadata and self.viz_metadata["preview_args"])
         except (AttributeError, KeyError):
@@ -510,7 +509,7 @@ class DataNode(GraphNode):
         return is_preview
 
     def get_preview_args(self):
-        """Gets the preview arguments for a dataset."""
+        """Gets the preview arguments for a dataset"""
         return self.viz_metadata["preview_args"]
 
 
@@ -559,7 +558,7 @@ class TranscodedDataNode(GraphNode):
 class DataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a DataNode"""
 
-    # the dataset type for this data node, e.g. CSVDataSet
+    # the dataset type for this data node, e.g. CSVDataset
     type: Optional[str]
 
     # the path to the actual data file for the underlying dataset.
@@ -567,7 +566,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     filepath: Optional[str]
 
     # the optional plot data if the underlying dataset has a plot.
-    # currently only applicable for PlotlyDataSet
+    # currently only applicable for PlotlyDataset
     plot: Optional[Dict]
 
     # the optional image data if the underlying dataset has a image.
