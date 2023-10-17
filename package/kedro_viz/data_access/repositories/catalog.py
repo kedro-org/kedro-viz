@@ -78,12 +78,16 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
+        try:
+            datasets = self._catalog._data_sets
+        except:
+            datasets = self._catalog._datasets
         # Maps layers according to the old format
         if KEDRO_VERSION < parse("0.19.0"):
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     _strip_transcoding(dataset_name): None
-                    for dataset_name in self._catalog._datasets
+                    for dataset_name in datasets
                 }
             else:
                 for layer, dataset_names in self._catalog.layers.items():
@@ -94,7 +98,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         # Maps layers according to the new format
-        for dataset_name in self._catalog._datasets:
+        for dataset_name in datasets:
             dataset = self._catalog._get_dataset(dataset_name)
             metadata = getattr(dataset, "metadata", None)
             if not metadata:

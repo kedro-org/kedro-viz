@@ -23,7 +23,7 @@ def test_after_catalog_created(example_dataset_stats_hook_obj, example_catalog):
 
     # Assert for catalog creation
     assert hasattr(example_dataset_stats_hook_obj, "datasets")
-    assert example_dataset_stats_hook_obj.datasets == example_catalog._datasets
+    assert example_dataset_stats_hook_obj.datasets == example_catalog._data_sets
 
 
 @pytest.mark.parametrize(
