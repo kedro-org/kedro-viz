@@ -279,7 +279,7 @@ export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
 /**
  * Toggle bookmark of Run
  * @param {boolean} bookmark
- * @param {string} RunId
+ * @param {string} runId
  */
 export function toggleBookmark(bookmark, runId) {
   return {
@@ -294,7 +294,7 @@ export const UPDATE_RUN_TITLE = 'UPDATE_RUN_TITLE';
 /**
  * Update Run title
  * @param {String} title
- * @param {string} RunId
+ * @param {string} runId
  */
 export function updateRunTitle(title, runId) {
   return {
@@ -309,7 +309,7 @@ export const UPDATE_RUN_NOTES = 'UPDATE_RUN_NOTES';
 /**
  * Update Run Notes
  * @param {String} notes
- * @param {string} RunId
+ * @param {string} runId
  */
 export function updateRunNotes(notes, runId) {
   return {

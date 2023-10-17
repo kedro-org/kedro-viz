@@ -28,14 +28,14 @@ const RunExportModal = ({
         ...run,
         ...{
           title: runsMetaData[run.id]?.title || run.id,
-          note: runsMetaData[run.id]?.title || '',
+          notes: runsMetaData[run.id]?.notes || '',
         },
       };
     });
 
     setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
     handleClick();
-  }, [runMetadata, runTrackingData, handleClick]);
+  }, [runMetadata, runTrackingData, handleClick, runsMetaData]);
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {

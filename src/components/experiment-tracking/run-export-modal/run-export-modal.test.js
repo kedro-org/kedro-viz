@@ -2,7 +2,7 @@ import React from 'react';
 import configureMockStore from 'redux-mock-store';
 import RunExportModal from './index';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import { configure, mount } from 'enzyme';
+import { configure } from 'enzyme';
 import { render, screen } from '@testing-library/react';
 import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 import { setup } from '../../../utils/state.mock';

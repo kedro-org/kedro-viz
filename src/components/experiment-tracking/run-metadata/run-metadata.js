@@ -117,6 +117,13 @@ const RunMetadata = ({
     return runId;
   };
 
+  // Initialize title and notes for each run
+  const runsWithMetadata = runs.map((run) => ({
+    ...run,
+    title: getTitleByRunId(run.id),
+    notes: getNotesByRunId(run.id),
+  }));
+
   return (
     <div
       className={classnames('details-metadata', {
@@ -128,7 +135,7 @@ const RunMetadata = ({
           'details-metadata__table-comparison-view': enableComparisonView,
         })}
       >
-        {runs.map((run, i) => (
+        {runsWithMetadata.map((run, i) => (
           <React.Fragment key={run.id + i}>
             {i === 0 ? (
               <tbody>
@@ -146,9 +153,9 @@ const RunMetadata = ({
                     <span
                       className="details-metadata__title-detail"
                       onClick={() => onTitleOrNoteClick(run.id)}
-                      title={sanitiseEmptyValue(getTitleByRunId(run.id))}
+                      title={sanitiseEmptyValue(run.title)}
                     >
-                      {sanitiseEmptyValue(getTitleByRunId(run.id))}
+                      {sanitiseEmptyValue(run.title)}
                     </span>
                   </td>
                   {activeTab !== 'Plots' ? (
@@ -178,7 +185,7 @@ const RunMetadata = ({
           className="details-metadata__run--wrapper"
           component={'tbody'}
         >
-          {runs.map((run, i) => {
+          {runsWithMetadata.map((run, i) => {
             const humanReadableTime = toHumanReadableTime(run.id);
 
             return (
@@ -207,9 +214,9 @@ const RunMetadata = ({
                     <span
                       className="details-metadata__title-detail"
                       onClick={() => onTitleOrNoteClick(run.id)}
-                      title={sanitiseEmptyValue(getTitleByRunId(run.id))}
+                      title={sanitiseEmptyValue(run.title)}
                     >
-                      {sanitiseEmptyValue(getTitleByRunId(run.id))}
+                      {sanitiseEmptyValue(run.title)}
                     </span>
                     <ul className="details-metadata__buttons">
                       {!isSingleRun ? (
@@ -280,11 +287,9 @@ const RunMetadata = ({
                           onClick={() => onTitleOrNoteClick(run.id)}
                           style={toggleNotes[i] ? { display: 'block' } : null}
                         >
-                          {getNotesByRunId(run.id) !== ''
-                            ? getNotesByRunId(run.id)
-                            : '- Add notes here'}
+                          {run.notes !== '' ? run.notes : '- Add notes here'}
                         </p>
-                        {getNotesByRunId(run.id).length > 100 ? (
+                        {run.notes.length > 100 ? (
                           <button
                             className="details-metadata__show-more kedro"
                             onClick={() => onToggleNoteExpand(i)}
