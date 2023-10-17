@@ -1,9 +1,9 @@
 # Visualise the spaceflights project
 
 
-This section assumes you are familiar with the basic Kedro concepts described in the [spaceflights tutorial](../tutorial/spaceflights_tutorial.md). If you have not yet worked through the tutorial, you can still follow this example.
+This section assumes you are familiar with the basic Kedro concepts described in the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html). If you have not yet worked through the tutorial, you can still follow this example.
 
-If you haven't installed Kedro [follow the documentation to get set up](../get_started/install.md).
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html).
 
 Then, in your terminal window, navigate to the folder you want to store the project.
 
@@ -37,7 +37,7 @@ The command opens a browser tab to serve the visualisation at `http://127.0.0.1:
 
 You should see the following:
 
-![](../meta/images/pipeline_visualisation.png)
+![](./images/pipeline_visualisation.png)
 
 If a visualisation panel opens up and a pipeline is not visible, refresh the view, and check that your tutorial project code is complete if you've not generated it from the starter template. If you still don't see the visualisation, the Kedro community can help:
 
@@ -54,15 +54,15 @@ You can use the `--autoreload` flag to autoreload Kedro-Viz when a `Python` or `
 kedro viz --autoreload
 ```
 
-![](../meta/images/kedro_viz_autoreload.gif)
+![](./images/kedro_viz_autoreload.gif)
 
 The `autoreload` flag reflects changes to the project as they happen. For example, commenting out `create_model_input_table_node` in `pipeline.py` will trigger a re-render of the pipeline:
 
-![autoreload](../meta/images/autoreload.gif)
+![](./images/autoreload.gif)
 
 ## Visualise layers
 
-By convention, a [pipeline can be defined as having different layers](../resources/glossary.md#layers-data-engineering-convention) according to how data is processed, which makes it easier to collaborate.
+By convention, a [pipeline can be defined as having different layers](https://docs.kedro.org/en/stable/resources/glossary.html#layers-data-engineering-convention) according to how data is processed, which makes it easier to collaborate.
 
 For example, the [data engineering convention](https://towardsdatascience.com/the-importance-of-layered-thinking-in-data-engineering-a09f685edc71) labels datasets according to the stage of the pipeline (e.g. whether the data has been cleaned).
 
@@ -147,7 +147,7 @@ regressor:
 
 The visualisation now includes the layers:
 
-![](../meta/images/pipeline_visualisation_with_layers.png)
+![](./images/pipeline_visualisation_with_layers.png)
 
 ## Share a pipeline visualisation
 

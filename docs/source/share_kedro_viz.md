@@ -4,9 +4,9 @@
 Kedro-Viz sharing was introduced in version 6.6.0.
 ```
 
-This page describes how to publish Kedro-Viz so you can share it with others. It uses the [spaceflights tutorial](../tutorial/spaceflights_tutorial.md) as an example.
+This page describes how to publish Kedro-Viz so you can share it with others. It uses the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) as an example.
 
-If you haven't installed Kedro [follow the documentation to get set up](../get_started/install.md). In your terminal window, navigate to the folder you want to store the project.
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html). In your terminal window, navigate to the folder you want to store the project.
 
 If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights) to generate the project with working code in place. Type the following in your terminal:
 
@@ -62,7 +62,7 @@ Once those two details are complete, click **Publish**. A hosted, shareable URL 
 
 Here's an example of the flow:
 
-![](../meta/images/kedro-publish-share.gif)
+![](./images/kedro-publish-share.gif)
 
 ## Permissions and access control
 

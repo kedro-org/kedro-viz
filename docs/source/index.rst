@@ -18,3 +18,5 @@ Welcome to Kedro-Viz documentation!
    share_kedro_viz
    preview_datasets
    visualise_charts_with_plotly
+   visualise_charts_with_matplotlib
+   experiment_tracking

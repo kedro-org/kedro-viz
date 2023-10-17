@@ -2,9 +2,9 @@
 
 This page describes how to preview data from different datasets in a Kedro project with Kedro-Viz. Dataset preview was introduced in Kedro-Viz version 6.3.0, which offers preview for `CSVDatasets` and `ExcelDatasets`.
 
-We use the [spaceflights tutorial](../tutorial/spaceflights_tutorial.md) to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights) to generate a copy of the project with working code in place.
+We use the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights) to generate a copy of the project with working code in place.
 
-If you haven't installed Kedro [follow the documentation to get set up](../get_started/install.md).
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html).
 
 Then, in your terminal window, navigate to the folder you want to store the project.
 
@@ -72,10 +72,10 @@ The previews are shown as follows:
 Click on each dataset node to see a small preview in the metadata panel:
 
 
-![](../meta/images/preview_datasets_metadata.png)
+![](./images/preview_datasets_metadata.png)
 
 
 View the larger preview of the dataset by clicking the `Expand Preview Table` button on the bottom of the metadata panel.
 
 
-![](../meta/images/preview_datasets_expanded.png)
+![](./images/preview_datasets_expanded.png)
