@@ -33,6 +33,7 @@ except ImportError:  # kedro_datasets is not installed.
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
+from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
 
@@ -63,13 +64,13 @@ def _bootstrap(project_path: Path):
     """Bootstrap the integration by running various Kedro bootstrapping methods
     depending on the version
     """
-    if KEDRO_VERSION.match(">=0.17.3"):
+    if KEDRO_VERSION >= parse("0.17.3"):
         from kedro.framework.startup import bootstrap_project
 
         bootstrap_project(project_path)
         return
 
-    if KEDRO_VERSION.match(">=0.17.1"):
+    if KEDRO_VERSION >= parse("0.17.1"):
         from kedro.framework.project import configure_project
         from kedro.framework.startup import _get_project_metadata
 
@@ -127,7 +128,7 @@ def load_data(
     """
     _bootstrap(project_path)
 
-    if KEDRO_VERSION.match(">=0.17.3"):
+    if KEDRO_VERSION >= parse("0.17.3"):
         from kedro.framework.project import pipelines
 
         with KedroSession.create(
@@ -151,7 +152,7 @@ def load_data(
             stats_dict = _get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict
-    elif KEDRO_VERSION.match(">=0.17.1"):
+    elif KEDRO_VERSION >= parse("0.17.1"):
         with KedroSession.create(
             project_path=project_path,
             env=env,  # type: ignore

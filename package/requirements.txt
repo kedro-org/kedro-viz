@@ -1,4 +1,3 @@
-semver>=2.10  # Needs to be at least 2.10.0 to make use of `VersionInfo.match`.
 packaging~=23.0
 kedro>=0.17.5
 ipython>=7.0.0, <9.0
