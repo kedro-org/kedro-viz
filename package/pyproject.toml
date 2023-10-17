@@ -86,6 +86,28 @@ test = [
     "types-ujson==0.1.0",
     "typing_extensions~=4.7.0; python_version < '3.9'",
 ]
+
+[tool.setuptools.packages.find]
+include = ["kedro_viz*"]
+exclude=["tests*", "features*"]
+
+[project.entry-points."kedro.global_commands"]
+kedro-viz = "kedro_viz.launchers.cli:commands"
+
+[project.entry-points."kedro.line_magic"]
+line_magic = "kedro_viz.launchers.jupyter:run_viz"
+
+[project.entry-points."kedro.hooks"]
+kedro-dataset-stats = "kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+readme = {file = "../README.md", content-type = "text/markdown"}
+version = {attr = "kedro_viz.__version__"}
+
+
 [project.urls]
 Homepage = "https://kedro.org"
 Source = "https://github.com/kedro-org/kedro-viz/tree/main"
