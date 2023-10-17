@@ -83,7 +83,7 @@ class CatalogRepository:
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     _strip_transcoding(dataset_name): None
-                    for dataset_name in self._catalog._data_sets
+                    for dataset_name in self._catalog._datasets
                 }
             else:
                 for layer, dataset_names in self._catalog.layers.items():
@@ -94,7 +94,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         # Maps layers according to the new format
-        for dataset_name in self._catalog._data_sets:
+        for dataset_name in self._catalog._datasets:
             dataset = self._catalog._get_dataset(dataset_name)
             metadata = getattr(dataset, "metadata", None)
             if not metadata:

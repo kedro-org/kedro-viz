@@ -31,7 +31,7 @@ class DatasetStatsHook:
             catalog: The catalog that was created.
         """
 
-        self.datasets = catalog._data_sets
+        self.datasets = catalog._datasets
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):
