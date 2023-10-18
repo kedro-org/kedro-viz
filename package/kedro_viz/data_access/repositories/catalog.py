@@ -52,6 +52,7 @@ class CatalogRepository:
 
     @property
     def layers_mapping(self):
+        # pylint: disable=too-many-branches
         """Return layer mapping: dataset_name -> layer it belongs to in the catalog
         From kedro-datasets 1.3.0 onwards, the 'layers' attribute is defined inside the 'metadata'
         under 'kedro-viz' plugin.
@@ -78,12 +79,18 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
+        # Temporary try/except block so the Kedro develop branch can work with Viz.
+        try:
+            datasets = self._catalog._data_sets
+        # pylint: disable=broad-exception-caught
+        except Exception:  # pragma: no cover
+            datasets = self._catalog._datasets
+
         # Maps layers according to the old format
         if KEDRO_VERSION < parse("0.19.0"):
             if self._catalog.layers is None:
                 self._layers_mapping = {
-                    _strip_transcoding(dataset_name): None
-                    for dataset_name in self._catalog._data_sets
+                    _strip_transcoding(dataset_name): None for dataset_name in datasets
                 }
             else:
                 for layer, dataset_names in self._catalog.layers.items():
@@ -94,7 +101,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         # Maps layers according to the new format
-        for dataset_name in self._catalog._data_sets:
+        for dataset_name in datasets:
             dataset = self._catalog._get_dataset(dataset_name)
             metadata = getattr(dataset, "metadata", None)
             if not metadata:
