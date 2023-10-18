@@ -82,6 +82,22 @@ class DataAccessManager:
             if self.tracking_datasets.is_tracking_dataset(dataset):
                 self.tracking_datasets.add_tracking_dataset(dataset_name, dataset)
 
+    def resolve_dataset_factory_patterns(
+        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
+    ):
+        """Resolve dataset factory patterns in data catalog by matching
+        them against the datasets in the pipelines.
+        """
+        for pipeline in pipelines.values():
+            # Temporary try/except block so the Kedro develop branch can work with Viz.
+            try:
+                datasets = pipeline.data_sets()
+            except Exception:  # pragma: no cover
+                datasets = pipeline.datasets()
+
+            for dataset_name in datasets:
+                catalog.exists(dataset_name)
+
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
         into the relevant repositories.
