@@ -36,6 +36,7 @@ version = re.match(r"^([0-9]+\.[0-9]+).*", release).group(1)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "myst_parser",
     "notfound.extension",
@@ -50,6 +51,10 @@ exclude_patterns = []
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
 myst_heading_anchors = 2
+
+intersphinx_mapping = {
+    "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-1.7.1/", None),
+}
 
 # -- Options for HTML output -------------------------------------------------
 
