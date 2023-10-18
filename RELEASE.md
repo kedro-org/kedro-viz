@@ -15,6 +15,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 - Fix improper display of 'run-command' inside the metadata panel. (#1569)
 - Replace semver with packaging. (#1578)
+- Fix dataset factory discovery in Kedro Viz Experiment Tracking. (#1588)
 
 # Release 6.6.0
 
