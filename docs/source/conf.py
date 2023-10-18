@@ -49,7 +49,7 @@ html_static_path = ["_static"]
 exclude_patterns = []
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
-
+myst_heading_anchors = 2
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -72,4 +72,3 @@ html_context = {
     "display_github": True,
     "github_url": "https://github.com/kedro-org/kedro/tree/main/docs/source",
 }
-
