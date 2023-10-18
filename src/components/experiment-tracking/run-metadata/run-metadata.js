@@ -21,9 +21,9 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ runsMetaData, runId, onToggleBookmark }) => {
+const HiddenMenu = ({ runsMetadata, runId, onToggleBookmark }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const { bookmark = false } = runsMetaData[runId] || {};
+  const { bookmark = false } = runsMetadata[runId] || {};
 
   const handleClickOutside = useCallback(() => {
     setIsVisible(false);
@@ -82,7 +82,7 @@ const RunMetadata = ({
   setShowRunDetailsModal,
   showLoader,
   theme,
-  runsMetaData,
+  runsMetadata,
   onToggleBookmark,
 }) => {
   let initialState = {};
@@ -104,16 +104,18 @@ const RunMetadata = ({
   };
 
   const getNotesByRunId = (runId) => {
-    if (runsMetaData[runId]) {
-      return runsMetaData[runId][RUN_NOTES] || '';
+    if (runsMetadata[runId]) {
+      return runsMetadata[runId][RUN_NOTES] || '';
     }
+
     return '';
   };
 
   const getTitleByRunId = (runId) => {
-    if (runsMetaData[runId]) {
-      return runsMetaData[runId][RUN_TITLE] || runId;
+    if (runsMetadata[runId]) {
+      return runsMetadata[runId][RUN_TITLE] || runId;
     }
+
     return runId;
   };
 
@@ -255,7 +257,7 @@ const RunMetadata = ({
                         </>
                       ) : null}
                       <HiddenMenu
-                        runsMetaData={runsMetaData}
+                        runsMetadata={runsMetadata}
                         onToggleBookmark={onToggleBookmark}
                         runId={run.id}
                       />
@@ -312,7 +314,7 @@ const RunMetadata = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

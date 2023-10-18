@@ -34,7 +34,7 @@ describe('RunExportModal', () => {
   let store;
   beforeEach(() => {
     const initialState = {
-      runsMetaData: { [runs[0].id]: runs[0], [runs[1].id]: runs[1] },
+      runsMetadata: { [runs[0].id]: runs[0], [runs[1].id]: runs[1] },
     };
 
     store = mockStore(initialState);

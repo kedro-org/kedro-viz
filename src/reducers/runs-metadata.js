@@ -4,36 +4,36 @@ import {
   UPDATE_RUN_NOTES,
 } from '../actions';
 
-function runsMetaDataReducer(runsMetaDataState = {}, action) {
+function runsMetadataReducer(runsMetadataState = {}, action) {
   switch (action.type) {
     case TOGGLE_BOOKMARK: {
-      return Object.assign({}, runsMetaDataState, {
+      return Object.assign({}, runsMetadataState, {
         [action.runId]: {
-          ...runsMetaDataState[action.runId],
+          ...runsMetadataState[action.runId],
           bookmark: action.bookmark,
         },
       });
     }
     case UPDATE_RUN_TITLE: {
-      return Object.assign({}, runsMetaDataState, {
+      return Object.assign({}, runsMetadataState, {
         [action.runId]: {
-          ...runsMetaDataState[action.runId],
+          ...runsMetadataState[action.runId],
           title: action.title,
         },
       });
     }
     case UPDATE_RUN_NOTES: {
-      return Object.assign({}, runsMetaDataState, {
+      return Object.assign({}, runsMetadataState, {
         [action.runId]: {
-          ...runsMetaDataState[action.runId],
+          ...runsMetadataState[action.runId],
           notes: action.notes,
         },
       });
     }
 
     default:
-      return runsMetaDataState;
+      return runsMetadataState;
   }
 }
 
-export default runsMetaDataReducer;
+export default runsMetadataReducer;

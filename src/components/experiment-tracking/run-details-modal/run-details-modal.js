@@ -16,7 +16,7 @@ const RunDetailsModal = ({
   setShowRunDetailsModal,
   theme,
   visible,
-  runsMetaData,
+  runsMetadata,
   onUpdateRunTitle,
   onUpdateRunNotes,
 }) => {
@@ -57,10 +57,10 @@ const RunDetailsModal = ({
   useEffect(() => {
     if (runMetadataToEdit?.id) {
       const { notes = '', title = runMetadataToEdit.id } =
-        runsMetaData[runMetadataToEdit.id] || {};
+        runsMetadata[runMetadataToEdit.id] || {};
       setValuesToUpdate({ notes, title });
     }
-  }, [runMetadataToEdit, runsMetaData]);
+  }, [runMetadataToEdit, runsMetadata]);
 
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
@@ -124,7 +124,7 @@ const RunDetailsModal = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

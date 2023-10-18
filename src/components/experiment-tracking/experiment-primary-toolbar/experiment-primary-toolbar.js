@@ -28,9 +28,9 @@ export const ExperimentPrimaryToolbar = ({
   sidebarVisible,
   setShowRunExportModal,
   onToggleBookmark,
-  runsMetaData,
+  runsMetadata,
 }) => {
-  const bookmark = runsMetaData[selectedRunData?.id]?.bookmark;
+  const bookmark = runsMetadata[selectedRunData?.id]?.bookmark;
 
   const toggleBookmark = () => {
     onToggleBookmark(!bookmark, selectedRunData?.id);
@@ -105,7 +105,7 @@ export const ExperimentPrimaryToolbar = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

@@ -6,7 +6,7 @@ import {
   settings,
   sidebarWidth,
   localStorageName,
-  localStorageRunsMetaData,
+  localStorageRunsMetadata,
   params,
 } from '../config';
 
@@ -50,7 +50,7 @@ export const createInitialState = () => ({
     expandAllPipelines: false,
   },
   zoom: {},
-  runsMetaData: {},
+  runsMetadata: {},
 });
 
 /**
@@ -61,8 +61,8 @@ export const createInitialState = () => ({
  */
 export const mergeLocalStorage = (state) => {
   const localStorageState = loadLocalStorage(localStorageName);
-  const localStorageRunsMetaDataState = loadLocalStorage(
-    localStorageRunsMetaData
+  const localStorageRunsMetadataState = loadLocalStorage(
+    localStorageRunsMetadata
   );
   Object.keys(localStorageState).forEach((key) => {
     if (!state[key]) {
@@ -71,7 +71,7 @@ export const mergeLocalStorage = (state) => {
   });
   const allLocalStorageState = {
     ...localStorageState,
-    ...{ runsMetaData: localStorageRunsMetaDataState },
+    ...{ runsMetadata: localStorageRunsMetadataState },
   };
   return deepmerge(state, allLocalStorageState);
 };

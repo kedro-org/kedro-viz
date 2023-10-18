@@ -16,12 +16,12 @@ import './runs-list.scss';
  * @param {String} searchValue Search term
  * @return {Object} Grouped nodes
  */
-const getFilteredRunList = (runData, searchValue, runsMetaData) => {
+const getFilteredRunList = (runData, searchValue, runsMetadata) => {
   // filter the runs that matches the runId
   const filteredRuns = runData?.filter(
     (run) =>
-      textMatchesSearch(runsMetaData[run.id]?.title || run.id, searchValue) ||
-      textMatchesSearch(runsMetaData[run.id]?.notes || '', searchValue) ||
+      textMatchesSearch(runsMetadata[run.id]?.title || run.id, searchValue) ||
+      textMatchesSearch(runsMetadata[run.id]?.notes || '', searchValue) ||
       textMatchesSearch(run.gitSha, searchValue)
   );
 
@@ -36,7 +36,7 @@ const RunsList = ({
   onToggleComparisonView,
   runData,
   selectedRunIds,
-  runsMetaData,
+  runsMetadata,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
@@ -46,14 +46,14 @@ const RunsList = ({
   const filteredRunList = getFilteredRunList(
     condensedRunsList,
     searchValue,
-    runsMetaData
+    runsMetadata
   );
 
   const bookmarkedRuns = filteredRunList.filter(
-    (run) => runsMetaData[run.id] && runsMetaData[run.id].bookmark === true
+    (run) => runsMetadata[run.id] && runsMetadata[run.id].bookmark === true
   );
   const unbookmarkedRuns = filteredRunList.filter(
-    (run) => !runsMetaData[run.id] || !runsMetaData[run.id].bookmark
+    (run) => !runsMetadata[run.id] || !runsMetadata[run.id].bookmark
   );
 
   return (
@@ -124,7 +124,7 @@ const RunsList = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export default connect(mapStateToProps)(RunsList);

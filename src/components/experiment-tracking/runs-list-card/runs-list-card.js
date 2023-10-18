@@ -25,11 +25,11 @@ const RunsListCard = ({
   selectedRunIds = [],
   searchValue,
   selectedIndex,
-  runsMetaData,
+  runsMetadata,
   onToggleBookmark,
 }) => {
   const { id, gitSha } = data;
-  const { notes = '', title = id, bookmark = false } = runsMetaData[id] || {};
+  const { notes = '', title = id, bookmark = false } = runsMetadata[id] || {};
   const [active, setActive] = useState(false);
   const humanReadableTime = toHumanReadableTime(id);
 
@@ -127,7 +127,7 @@ const RunsListCard = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

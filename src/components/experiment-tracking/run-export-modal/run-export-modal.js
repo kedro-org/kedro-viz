@@ -16,7 +16,7 @@ const RunExportModal = ({
   setShowRunExportModal,
   theme,
   visible,
-  runsMetaData,
+  runsMetadata,
 }) => {
   const [exportData, setExportData] = useState([]);
   const { isSuccessful, showModal, handleClick } =
@@ -27,15 +27,15 @@ const RunExportModal = ({
       return {
         ...run,
         ...{
-          title: runsMetaData[run.id]?.title || run.id,
-          notes: runsMetaData[run.id]?.notes || '',
+          title: runsMetadata[run.id]?.title || run.id,
+          notes: runsMetadata[run.id]?.notes || '',
         },
       };
     });
 
     setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
     handleClick();
-  }, [runMetadata, runTrackingData, handleClick, runsMetaData]);
+  }, [runMetadata, runTrackingData, handleClick, runsMetadata]);
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
@@ -92,7 +92,7 @@ const RunExportModal = ({
 };
 
 export const mapStateToProps = (state) => ({
-  runsMetaData: state.runsMetaData,
+  runsMetadata: state.runsMetadata,
 });
 
 export default connect(mapStateToProps)(RunExportModal);
