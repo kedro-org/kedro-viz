@@ -77,3 +77,10 @@ html_context = {
     "display_github": True,
     "github_url": "https://github.com/kedro-org/kedro/tree/main/docs/source",
 }
+
+
+def setup(app):
+    app.add_css_file("css/qb1-sphinx-rtd.css")
+    # fix a bug with table wraps in Read the Docs Sphinx theme:
+    # https://rackerlabs.github.io/docs-rackspace/tools/rtd-tables.html
+    app.add_css_file("css/theme-overrides.css")
