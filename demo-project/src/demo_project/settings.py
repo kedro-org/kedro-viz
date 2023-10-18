@@ -24,4 +24,3 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 from kedro.config import OmegaConfigLoader  # NOQA
 
 CONFIG_LOADER_CLASS = OmegaConfigLoader
-CONFIG_LOADER_ARGS = {"globals_pattern": "*globals.yml", "globals_dict": {}}
