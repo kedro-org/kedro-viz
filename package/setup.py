@@ -50,4 +50,11 @@ setup(
             "kedro-dataset-stats = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
         ],
     },
+    extras_require={
+        "docs": [
+            "sphinx~=5.3.0",
+            "sphinx_rtd_theme==1.2.0",
+            "myst-parser~=1.0.0",
+        ],
+    },
 )
