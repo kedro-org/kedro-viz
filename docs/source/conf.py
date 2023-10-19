@@ -40,6 +40,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "notfound.extension",
+    "sphinxcontrib.jquery",
 ]
 
 
