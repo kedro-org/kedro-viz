@@ -1,7 +1,6 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
-# pylint: disable=no-else-return,too-many-return-statements
 import logging
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING
 
 logger = logging.getLogger(__name__)
 
@@ -44,27 +43,3 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
-
-
-def extract_data_source(
-    node_type: Union[str, None], data_desc: Dict
-) -> Union[Optional[str], Any]:
-    """Get the relevant source logic used in generating this node's data, based
-    on dataset type
-
-    Args:
-        node_type: Datatype for the dataset object as a string
-        data_desc: Dict whose values store useful contextual information about the dataset
-
-    Returns:
-        String to display to user as the node source code
-    """
-    if node_type is None:
-        return None
-
-    format_type = node_type.split(".")[-1]
-
-    if format_type in {"SQLQueryDataSet", "GBQQueryDataSet"}:
-        return data_desc["sql"]
-
-    return None
