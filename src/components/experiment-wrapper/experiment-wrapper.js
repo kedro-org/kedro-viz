@@ -281,7 +281,7 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
         setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
       }
     }
-  }, [data, selectedRunIds, matchedExperimentTrackingMainPage]);
+  }, [data, selectedRunIds, matchedExperimentTrackingMainPage, runsMetadata]);
 
   useEffect(() => {
     if (
