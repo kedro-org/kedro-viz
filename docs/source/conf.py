@@ -18,7 +18,7 @@ from pathlib import Path
 
 from click import secho, style
 
-from kedro import __version__ as release
+from kedro_viz import __version__ as release
 
 # -- Project information -----------------------------------------------------
 
