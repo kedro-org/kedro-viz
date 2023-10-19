@@ -46,7 +46,6 @@ extensions = [
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
-html_static_path = ["_static"]
 
 exclude_patterns = []
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
