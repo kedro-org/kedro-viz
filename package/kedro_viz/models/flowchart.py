@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from kedro_viz.models.utils import extract_data_source, get_dataset_type
+from kedro_viz.models.utils import get_dataset_type
 
 try:
     # kedro 0.18.11 onwards
@@ -470,6 +470,10 @@ class DataNode(GraphNode):
             "plotly.json_dataset.JSONDataSet",
         )
 
+    def is_sql_node(self):
+        """Check if the current node should have code displayed e.g. SQL query"""
+        return self.dataset_type in ("pandas.sql_dataset.SQLQueryDataset",)
+
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
         return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
@@ -580,9 +584,11 @@ class DataNodeMetadata(GraphNodeMetadata):
         self.type = data_node.dataset_type
         dataset = cast(AbstractDataset, data_node.kedro_obj)
         dataset_description = dataset._describe()
-        self.code = extract_data_source(self.type, dataset_description)
         self.filepath = _parse_filepath(dataset_description)
         self.stats = data_node.stats
+
+        if data_node.is_sql_node():
+            self.code = dataset_description.get("sql")
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:
