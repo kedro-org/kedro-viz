@@ -47,6 +47,15 @@ const RunDetailsModal = ({
     setHasNotInteracted(false);
   };
 
+  const onCloseModal = () => {
+    if (runMetadataToEdit?.id) {
+      const { notes = '', title = runMetadataToEdit.id } =
+        runsMetadata[runMetadataToEdit.id] || {};
+      setValuesToUpdate({ notes, title });
+    }
+    setShowRunDetailsModal(false);
+  };
+
   // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
     if (visible && isSuccessful) {
@@ -65,7 +74,7 @@ const RunDetailsModal = ({
   return (
     <div className="pipeline-settings-modal pipeline-settings-modal--experiment-tracking">
       <Modal
-        closeModal={() => setShowRunDetailsModal(false)}
+        closeModal={onCloseModal}
         theme={theme}
         title="Edit run details"
         visible={visible}
@@ -95,11 +104,7 @@ const RunDetailsModal = ({
           />
         </div>
         <div className="run-details-modal-button-wrapper">
-          <Button
-            mode="secondary"
-            onClick={() => setShowRunDetailsModal(false)}
-            size="small"
-          >
+          <Button mode="secondary" onClick={onCloseModal} size="small">
             Cancel
           </Button>
           <Button
