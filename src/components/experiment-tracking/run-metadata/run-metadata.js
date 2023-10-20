@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { useOutsideClick } from '../../../utils/hooks';
-import { useUpdateRunDetails } from '../../../apollo/mutations';
 import { toHumanReadableTime } from '../../../utils/date-utils';
 import CloseIcon from '../../icons/close';
 import IconButton from '../../ui/icon-button';
@@ -10,6 +10,8 @@ import SelectedPin from '../../icons/selected-pin';
 import UnSelectedPin from '../../icons/un-selected-pin';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { MetaDataLoader } from './run-metadata-loader';
+import { toggleBookmark } from '../../../actions';
+import { RUN_NOTES, RUN_TITLE } from '../../../config';
 
 import './run-metadata.scss';
 import './animation.scss';
@@ -19,9 +21,9 @@ const sanitiseEmptyValue = (value) => {
   return value === '' || value === null ? '-' : value;
 };
 
-const HiddenMenu = ({ isBookmarked, runId }) => {
+const HiddenMenu = ({ runsMetadata, runId, onToggleBookmark }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const { updateRunDetails } = useUpdateRunDetails();
+  const { bookmark = false } = runsMetadata[runId] || {};
 
   const handleClickOutside = useCallback(() => {
     setIsVisible(false);
@@ -30,10 +32,7 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
   const menuRef = useOutsideClick(handleClickOutside);
 
   const toggleBookmark = () => {
-    updateRunDetails({
-      runId,
-      runInput: { bookmark: !isBookmarked },
-    });
+    onToggleBookmark(!bookmark, runId);
 
     // Close the menu when the bookmark is toggled.
     setIsVisible(false);
@@ -57,7 +56,7 @@ const HiddenMenu = ({ isBookmarked, runId }) => {
             e.stopPropagation();
           }}
         >
-          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
+          {bookmark ? 'Unbookmark' : 'Bookmark'}
         </div>
       </div>
       <IconButton
@@ -83,6 +82,8 @@ const RunMetadata = ({
   setShowRunDetailsModal,
   showLoader,
   theme,
+  runsMetadata,
+  onToggleBookmark,
 }) => {
   let initialState = {};
   for (let i = 0; i < runs.length; i++) {
@@ -102,6 +103,29 @@ const RunMetadata = ({
     setShowRunDetailsModal(true);
   };
 
+  const getNotesByRunId = (runId) => {
+    if (runsMetadata[runId]) {
+      return runsMetadata[runId][RUN_NOTES] || '';
+    }
+
+    return '';
+  };
+
+  const getTitleByRunId = (runId) => {
+    if (runsMetadata[runId]) {
+      return runsMetadata[runId][RUN_TITLE] || runId;
+    }
+
+    return runId;
+  };
+
+  // Initialize title and notes for each run
+  const runsWithMetadata = runs.map((run) => ({
+    ...run,
+    title: getTitleByRunId(run.id),
+    notes: getNotesByRunId(run.id),
+  }));
+
   return (
     <div
       className={classnames('details-metadata', {
@@ -113,7 +137,7 @@ const RunMetadata = ({
           'details-metadata__table-comparison-view': enableComparisonView,
         })}
       >
-        {runs.map((run, i) => (
+        {runsWithMetadata.map((run, i) => (
           <React.Fragment key={run.id + i}>
             {i === 0 ? (
               <tbody>
@@ -163,7 +187,7 @@ const RunMetadata = ({
           className="details-metadata__run--wrapper"
           component={'tbody'}
         >
-          {runs.map((run, i) => {
+          {runsWithMetadata.map((run, i) => {
             const humanReadableTime = toHumanReadableTime(run.id);
 
             return (
@@ -232,7 +256,11 @@ const RunMetadata = ({
                           />
                         </>
                       ) : null}
-                      <HiddenMenu isBookmarked={run.bookmark} runId={run.id} />
+                      <HiddenMenu
+                        runsMetadata={runsMetadata}
+                        onToggleBookmark={onToggleBookmark}
+                        runId={run.id}
+                      />
                     </ul>
                   </td>
                   {activeTab !== 'Plots' ? (
@@ -285,4 +313,14 @@ const RunMetadata = ({
   );
 };
 
-export default RunMetadata;
+export const mapStateToProps = (state) => ({
+  runsMetadata: state.runsMetadata,
+});
+
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleBookmark: (bookmark, runId) => {
+    dispatch(toggleBookmark(bookmark, runId));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RunMetadata);
