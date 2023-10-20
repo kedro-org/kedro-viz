@@ -1,4 +1,4 @@
 kedro==0.18.4
 kedro-datasets[plotly.PlotlyDataSet, plotly.JSONDataSet, matplotlib.MatplotlibWriter]==1.0.1
-pillow==10.0.1
+pillow==9.3.0
 seaborn==0.11.2
