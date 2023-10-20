@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useUpdateRunDetails } from '../../../apollo/mutations';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import {
   getHighlightedText,
@@ -9,6 +9,7 @@ import { toHumanReadableTime } from '../../../utils/date-utils';
 import BookmarkIcon from '../../icons/bookmark';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import { HoverStateContext } from '../utils/hover-state-context';
+import { toggleBookmark } from '../../../actions';
 
 import './runs-list-card.scss';
 
@@ -24,10 +25,12 @@ const RunsListCard = ({
   selectedRunIds = [],
   searchValue,
   selectedIndex,
+  runsMetadata,
+  onToggleBookmark,
 }) => {
-  const { id, notes, title = null, bookmark, gitSha } = data;
+  const { id, gitSha } = data;
+  const { notes = '', title = id, bookmark = false } = runsMetadata[id] || {};
   const [active, setActive] = useState(false);
-  const { updateRunDetails } = useUpdateRunDetails();
   const humanReadableTime = toHumanReadableTime(id);
 
   const { setHoveredElementId, hoveredElementId } =
@@ -51,11 +54,7 @@ const RunsListCard = ({
       e.target.classList.contains('runs-list-card__bookmark') ||
       e.target.tagName === 'path'
     ) {
-      updateRunDetails({
-        runId: id,
-        runInput: { bookmark: !bookmark },
-      });
-
+      onToggleBookmark(!bookmark, id);
       return;
     }
 
@@ -127,4 +126,14 @@ const RunsListCard = ({
   );
 };
 
-export default RunsListCard;
+export const mapStateToProps = (state) => ({
+  runsMetadata: state.runsMetadata,
+});
+
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleBookmark: (bookmark, runId) => {
+    dispatch(toggleBookmark(bookmark, runId));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RunsListCard);

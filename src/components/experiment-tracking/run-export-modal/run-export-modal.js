@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { CSVLink } from 'react-csv';
 
 import { constructExportData } from '../../../utils/experiment-tracking-utils';
@@ -15,15 +16,26 @@ const RunExportModal = ({
   setShowRunExportModal,
   theme,
   visible,
+  runsMetadata,
 }) => {
   const [exportData, setExportData] = useState([]);
   const { isSuccessful, showModal, handleClick } =
     useContext(ButtonTimeoutContext);
 
   const updateExportData = useCallback(() => {
-    setExportData(constructExportData(runMetadata, runTrackingData));
+    const mergedRunsMetadata = runMetadata?.map((run) => {
+      return {
+        ...run,
+        ...{
+          title: runsMetadata[run.id]?.title || run.id,
+          notes: runsMetadata[run.id]?.notes || '',
+        },
+      };
+    });
+
+    setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
     handleClick();
-  }, [runMetadata, runTrackingData, handleClick]);
+  }, [runMetadata, runTrackingData, handleClick, runsMetadata]);
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
   useEffect(() => {
@@ -79,4 +91,8 @@ const RunExportModal = ({
   );
 };
 
-export default RunExportModal;
+export const mapStateToProps = (state) => ({
+  runsMetadata: state.runsMetadata,
+});
+
+export default connect(mapStateToProps)(RunExportModal);

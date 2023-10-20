@@ -4,11 +4,8 @@ import gql from 'graphql-tag';
 export const GET_RUNS = gql`
   query getRunsList {
     runsList {
-      bookmark
       gitSha
       id
-      title
-      notes
     }
   }
 `;
@@ -19,12 +16,9 @@ export const GET_RUN_DATA = gql`
     runMetadata(runIds: $runIds) {
       id
       author
-      bookmark
       gitBranch
       gitSha
-      notes
       runCommand
-      title
     }
     plots: runTrackingData(runIds: $runIds, showDiff: $showDiff, group: PLOT) {
       ...trackingDatasetFields

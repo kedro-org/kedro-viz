@@ -63,11 +63,11 @@ class TrackingDatasetGroup(str, Enum):
 
 # Map dataset types (as produced by get_dataset_type) to their group
 TRACKING_DATASET_GROUPS = {
-    "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
-    "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "plotly.plotly_dataset.PlotlyDataset": TrackingDatasetGroup.PLOT,
+    "plotly.json_dataset.JSONDataset": TrackingDatasetGroup.PLOT,
     "matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
-    "tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
-    "tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+    "tracking.metrics_dataset.MetricsDataset": TrackingDatasetGroup.METRIC,
+    "tracking.json_dataset.JSONDataset": TrackingDatasetGroup.JSON,
 }
 
 
@@ -77,7 +77,7 @@ class TrackingDatasetModel:
 
     dataset_name: str
     # dataset is the actual dataset instance, whereas dataset_type is a string.
-    # e.g. "tracking.metrics_dataset.MetricsDataSet"
+    # e.g. "tracking.metrics_dataset.MetricsDataset"
     dataset: "AbstractVersionedDataset"
     dataset_type: str = field(init=False)
     # runs is a mapping from run_id to loaded data.

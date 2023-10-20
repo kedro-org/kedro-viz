@@ -1,42 +1,32 @@
 import React from 'react';
+import configureMockStore from 'redux-mock-store';
 import RunsList from '.';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../../../apollo/config';
-import { shallow } from 'enzyme';
 import { setup } from '../../../utils/state.mock';
 import { HoverStateContext } from '../utils/hover-state-context';
+import { runs } from '../../experiment-wrapper/mock-data';
 
 const runDataList = [
   {
-    bookmark: false,
     id: new Date('October 15, 2021 03:24:00').toISOString(),
-    title: 'Run 1',
-    notes: 'notes of run 1 is a duck',
   },
   {
-    bookmark: false,
     id: new Date('October 15, 2021 03:26:00').toISOString(),
-    title: 'Run 2',
-    notes: 'notes of run 2 is a fish',
   },
   {
-    bookmark: false,
     id: new Date('October 15, 2021 03:29:00').toISOString(),
-    title: 'Run 3',
-    notes: 'notes of run 3 is a star',
   },
   {
-    bookmark: true,
-    id: new Date('October 15, 2021 03:29:00').toISOString(),
-    title: 'Run 4',
-    notes: 'notes of run 4 is a star',
+    id: new Date('October 15, 2021 03:32:00').toISOString(),
   },
 ];
 
+const mockStore = configureMockStore();
 const setHoveredElementId = jest.fn();
 const mockContextValue = {
   setHoveredElementId,
-  hoveredElementId: [new Date('October 15, 2021 03:29:00').toISOString()],
+  hoveredElementId: [new Date('October 15, 2021 03:35:00').toISOString()],
 };
 
 jest.mock('react-router-dom', () => ({
@@ -47,17 +37,38 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('RunsListCard', () => {
+  let store;
+  beforeEach(() => {
+    const initialState = {
+      runsMetadata: { [runs[0].id]: runs[0], [runs[1].id]: runs[1] },
+    };
+
+    store = mockStore(initialState);
+  });
+
   it('renders without crashing', () => {
-    const wrapper = shallow(
-      <RunsList runData={runDataList} selectedRunIds={['run3']} />
+    const wrapper = setup.mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <RunsList
+          runData={runDataList}
+          selectedRunIds={['run3']}
+          store={store}
+        />
+      </HoverStateContext.Provider>
     );
 
-    expect(wrapper.find('.runs-list__wrapper').length).toBe(2);
+    expect(wrapper.find('.runs-list__wrapper').length).toBe(1);
   });
 
   it('renders the search bar', () => {
-    const wrapper = shallow(
-      <RunsList runData={runDataList} selectedRunIds={['run3']} />
+    const wrapper = setup.mount(
+      <HoverStateContext.Provider value={mockContextValue}>
+        <RunsList
+          runData={runDataList}
+          selectedRunIds={['run3']}
+          store={store}
+        />
+      </HoverStateContext.Provider>
     );
 
     expect(wrapper.find('.search-bar-wrapper').length).toBe(1);
