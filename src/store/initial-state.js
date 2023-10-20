@@ -2,7 +2,13 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { settings, sidebarWidth, localStorageName, params } from '../config';
+import {
+  settings,
+  sidebarWidth,
+  localStorageName,
+  localStorageRunsMetadata,
+  params,
+} from '../config';
 
 /**
  * Create new default state instance for properties that aren't overridden
@@ -34,6 +40,7 @@ export const createInitialState = () => ({
     miniMapBtn: true,
     modularPipelineFocusMode: null,
     settingsModal: false,
+    shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
   },
   display: {
@@ -43,6 +50,7 @@ export const createInitialState = () => ({
     expandAllPipelines: false,
   },
   zoom: {},
+  runsMetadata: {},
 });
 
 /**
@@ -53,12 +61,19 @@ export const createInitialState = () => ({
  */
 export const mergeLocalStorage = (state) => {
   const localStorageState = loadLocalStorage(localStorageName);
+  const localStorageRunsMetadataState = loadLocalStorage(
+    localStorageRunsMetadata
+  );
   Object.keys(localStorageState).forEach((key) => {
     if (!state[key]) {
       delete localStorageState[key];
     }
   });
-  return deepmerge(state, localStorageState);
+  const allLocalStorageState = {
+    ...localStorageState,
+    ...{ runsMetadata: localStorageRunsMetadataState },
+  };
+  return deepmerge(state, allLocalStorageState);
 };
 
 /**

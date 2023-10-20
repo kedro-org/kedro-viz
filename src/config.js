@@ -3,6 +3,7 @@ export const pathRoot = './api';
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
+export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -31,7 +32,7 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
-// These colours variables come from styles/variables;
+// These colours variables come from styles/variables
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
 
@@ -97,11 +98,11 @@ export const sidebarElementTypes = {
 };
 
 export const shortTypeMapping = {
-  'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
-  'plotly.json_dataset.JSONDataSet': 'plotly',
+  'plotly.plotly_dataset.PlotlyDataset': 'plotly',
+  'plotly.json_dataset.JSONDataset': 'plotly',
   'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
-  'tracking.json_dataset.JSONDataSet': 'JSONTracking',
-  'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
+  'tracking.json_dataset.JSONDataset': 'JSONTracking',
+  'tracking.metrics_dataset.MetricsDataset': 'metricsTracking',
 };
 
 export const tabLabels = ['Overview', 'Metrics', 'Plots'];
@@ -145,3 +146,39 @@ export const errorMessages = {
 export const datasetStatLabels = ['rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
+
+export const s3BucketRegions = [
+  'us-east-2',
+  'us-east-1',
+  'us-west-1',
+  'us-west-2',
+  'af-south-1',
+  'ap-east-1',
+  'ap-south-2',
+  'ap-southeast-3',
+  'ap-southeast-4',
+  'ap-south-1',
+  'ap-northeast-3',
+  'ap-northeast-2',
+  'ap-southeast-1',
+  'ap-southeast-2',
+  'ap-northeast-1',
+  'ca-central-1',
+  'cn-north-1',
+  'cn-northwest-1',
+  'eu-central-1',
+  'eu-west-1',
+  'eu-west-2',
+  'eu-south-1',
+  'eu-west-3',
+  'eu-north-1',
+  'eu-south-2',
+  'eu-central-2',
+  'sa-east-1',
+  'me-south-1',
+  'me-central-1',
+  'il-central-1',
+];
+
+export const RUN_TITLE = 'title';
+export const RUN_NOTES = 'notes';

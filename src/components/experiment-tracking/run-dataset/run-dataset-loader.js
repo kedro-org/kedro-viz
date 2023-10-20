@@ -5,7 +5,7 @@ import {
   experimentTrackingLazyLoadingGap,
 } from '../../../config';
 
-import './run-dataset.css';
+import './run-dataset.scss';
 
 const GAP = experimentTrackingLazyLoadingGap;
 
@@ -66,7 +66,7 @@ export const SingleRunDatasetLoader = ({ theme }) => (
   </div>
 );
 
-export const DataSetLoader = ({ x, y, length, theme }) => {
+export const DatasetLoader = ({ x, y, length, theme }) => {
   return (
     <ContentLoader
       viewBox="0 10 200 30"

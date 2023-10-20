@@ -23,7 +23,7 @@ import {
   useGeneratePathnameForExperimentTracking,
 } from '../../utils/hooks/use-generate-pathname';
 
-import './styles/metadata.css';
+import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
 
 /**

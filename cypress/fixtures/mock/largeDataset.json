@@ -48,7 +48,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "primary",
-        "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+        "dataset_type": "pandas.parquet_dataset.ParquetDataset"
       },
       {
         "id": "9f266f06",
@@ -63,7 +63,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "primary",
-        "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+        "dataset_type": "pandas.parquet_dataset.ParquetDataset"
       },
       {
         "id": "abed6a4d",
@@ -126,7 +126,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "feature",
-        "dataset_type": "pandas.csv_dataset.CSVDataSet"
+        "dataset_type": "pandas.csv_dataset.CSVDataset"
       },
       {
         "id": "9c43f772",
@@ -215,7 +215,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "raw",
-        "dataset_type": "pandas.csv_dataset.CSVDataSet"
+        "dataset_type": "pandas.csv_dataset.CSVDataset"
       },
       {
         "id": "f23ad217",
@@ -231,7 +231,7 @@
           "ingestion"
         ],
         "layer": "intermediate",
-        "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+        "dataset_type": "pandas.parquet_dataset.ParquetDataset"
       },
       {
         "id": "82d36a1b",
@@ -264,7 +264,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "raw",
-        "dataset_type": "pandas.csv_dataset.CSVDataSet"
+        "dataset_type": "pandas.csv_dataset.CSVDataset"
       },
       {
         "id": "b5609df0",
@@ -298,7 +298,7 @@
           "ingestion"
         ],
         "layer": "intermediate",
-        "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+        "dataset_type": "pandas.parquet_dataset.ParquetDataset"
       },
       {
         "id": "f33b9291",
@@ -327,7 +327,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "raw",
-        "dataset_type": "pandas.excel_dataset.ExcelDataSet"
+        "dataset_type": "pandas.excel_dataset.ExcelDataset"
       },
       {
         "id": "c0ddbcbf",
@@ -401,7 +401,7 @@
           "reporting"
         ],
         "layer": "reporting",
-        "dataset_type": "plotly.plotly_dataset.PlotlyDataSet"
+        "dataset_type": "plotly.plotly_dataset.PlotlyDataset"
       },
       {
         "id": "3fb71518",
@@ -430,7 +430,7 @@
           "reporting"
         ],
         "layer": null,
-        "dataset_type": "datasets.image_dataset.ImageDataSet"
+        "dataset_type": "datasets.image_dataset.ImageDataset"
       },
       {
         "id": "40886786",
@@ -459,7 +459,7 @@
           "reporting"
         ],
         "layer": "reporting",
-        "dataset_type": "plotly.json_dataset.JSONDataSet"
+        "dataset_type": "plotly.json_dataset.JSONDataset"
       },
       {
         "id": "178d37bb",
@@ -489,7 +489,7 @@
         "type": "data",
         "modular_pipelines": [],
         "layer": "model_input",
-        "dataset_type": "pandas.parquet_dataset.ParquetDataSet"
+        "dataset_type": "pandas.parquet_dataset.ParquetDataset"
       },
       {
         "id": "8de402c1",
@@ -549,7 +549,7 @@
           "reporting"
         ],
         "layer": "reporting",
-        "dataset_type": "plotly.json_dataset.JSONDataSet"
+        "dataset_type": "plotly.json_dataset.JSONDataset"
       },
       {
         "id": "25b1f0cf",
@@ -29736,7 +29736,7 @@
           "train_evaluation.linear_regression"
         ],
         "layer": null,
-        "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+        "dataset_type": "pickle.pickle_dataset.PickleDataset"
       },
       {
         "id": "b701864d",
@@ -29752,7 +29752,7 @@
           "train_evaluation.linear_regression"
         ],
         "layer": null,
-        "dataset_type": "tracking.json_dataset.JSONDataSet"
+        "dataset_type": "tracking.json_dataset.JSONDataset"
       },
       {
         "id": "1c0614b4",
@@ -29818,7 +29818,7 @@
           "train_evaluation.random_forest"
         ],
         "layer": null,
-        "dataset_type": "pickle.pickle_dataset.PickleDataSet"
+        "dataset_type": "pickle.pickle_dataset.PickleDataset"
       },
       {
         "id": "4f79de77",
@@ -29834,7 +29834,7 @@
           "train_evaluation.random_forest"
         ],
         "layer": null,
-        "dataset_type": "tracking.json_dataset.JSONDataSet"
+        "dataset_type": "tracking.json_dataset.JSONDataset"
       },
       {
         "id": "d6a09df8",
@@ -29865,7 +29865,7 @@
           "train_evaluation.linear_regression"
         ],
         "layer": null,
-        "dataset_type": "tracking.metrics_dataset.MetricsDataSet"
+        "dataset_type": "tracking.metrics_dataset.MetricsDataset"
       },
       {
         "id": "0b70ae9d",
@@ -29896,7 +29896,7 @@
           "train_evaluation.random_forest"
         ],
         "layer": null,
-        "dataset_type": "tracking.metrics_dataset.MetricsDataSet"
+        "dataset_type": "tracking.metrics_dataset.MetricsDataset"
       },
       {
         "id": "feature_engineering",

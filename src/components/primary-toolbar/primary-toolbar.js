@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import IconButton from '../ui/icon-button';
 import MenuIcon from '../icons/menu';
 
-import './primary-toolbar.css';
+import './primary-toolbar.scss';
 
 /**
  * Toolbar to house buttons that controls display options for the main panel (flowchart, experiment details, etc)

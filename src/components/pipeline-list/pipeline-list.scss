@@ -14,11 +14,11 @@
   .dropdown__label,
   .menu-option {
     height: 58px;
-
-    &.pipeline-list__option--active {
-      background: var(--pipeline-list-option-bg-active);
-      border-left: 2px solid colors.$blue-300;
-      color: var(--pipeline-list-option-text-color);
-    }
   }
+}
+
+.pipeline-list__option--active {
+  background: var(--pipeline-list-option-bg-active);
+  border-left: 2px solid colors.$blue-300;
+  color: var(--pipeline-list-option-text-color);
 }

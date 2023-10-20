@@ -6,7 +6,7 @@ import NodeListGroups from './node-list-groups';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
 
-import './styles/node-list.css';
+import './styles/node-list.scss';
 
 /**
  * Scrollable list of toggleable items, with search & filter functionality

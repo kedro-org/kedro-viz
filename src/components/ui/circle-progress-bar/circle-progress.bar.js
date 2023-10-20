@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 
-import './circle-progress.bar.css';
+import './circle-progress.bar.scss';
 
 const FULL_DASH_ARRAY = 283;
 const TIME_LIMIT = 60;

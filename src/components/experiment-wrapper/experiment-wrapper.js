@@ -4,7 +4,6 @@ import { Transition } from 'react-transition-group';
 import { useApolloQuery } from '../../apollo/utils';
 import { connect } from 'react-redux';
 import { GET_RUNS, GET_RUN_DATA } from '../../apollo/queries';
-import { NEW_RUN_SUBSCRIPTION } from '../../apollo/subscriptions';
 import Button from '../ui/button';
 import Details from '../experiment-tracking/details';
 import Sidebar from '../sidebar';
@@ -20,7 +19,7 @@ import {
 import { findMatchedPath } from '../../utils/match-path';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
-import './experiment-wrapper.css';
+import './experiment-wrapper.scss';
 
 const MAX_NUMBER_COMPARISONS = 2; // 0-based, so three.
 
@@ -36,7 +35,7 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const ExperimentWrapper = ({ theme }) => {
+const ExperimentWrapper = ({ theme, runsMetadata }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -68,7 +67,7 @@ const ExperimentWrapper = ({ theme }) => {
     useGeneratePathnameForExperimentTracking();
 
   // Fetch all runs.
-  const { subscribeToMore, data, loading } = useApolloQuery(GET_RUNS);
+  const { data, loading } = useApolloQuery(GET_RUNS);
 
   // Fetch all data for selected runs.
   const {
@@ -273,7 +272,7 @@ const ExperimentWrapper = ({ theme }) => {
        * as the default, with precedence given to runs that are bookmarked.
        */
       const bookmarkedRuns = data.runsList.filter((run) => {
-        return run.bookmark === true;
+        return runsMetadata[run.id]?.bookmark === true;
       });
 
       if (bookmarkedRuns.length > 0) {
@@ -282,7 +281,7 @@ const ExperimentWrapper = ({ theme }) => {
         setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
       }
     }
-  }, [data, selectedRunIds, matchedExperimentTrackingMainPage]);
+  }, [data, selectedRunIds, matchedExperimentTrackingMainPage, runsMetadata]);
 
   useEffect(() => {
     if (
@@ -293,26 +292,6 @@ const ExperimentWrapper = ({ theme }) => {
       setPinnedRun(selectedRunIds[0]);
     }
   }, [selectedRunIds, pinnedRun]);
-
-  useEffect(() => {
-    if (!data?.runsList || data.runsList.length === 0) {
-      return;
-    }
-
-    subscribeToMore({
-      document: NEW_RUN_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data || !prev?.runsList) {
-          return prev;
-        }
-        const newRuns = subscriptionData.data.runsAdded;
-
-        return Object.assign({}, prev, {
-          runsList: [...newRuns, ...prev.runsList],
-        });
-      },
-    });
-  }, [data, subscribeToMore]);
 
   if (loading) {
     return (
@@ -439,6 +418,7 @@ const ExperimentWrapper = ({ theme }) => {
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
+  runsMetadata: state.runsMetadata,
 });
 
 export default connect(mapStateToProps)(ExperimentWrapper);

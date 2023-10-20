@@ -668,7 +668,7 @@
           ]
         },
         "datasetName": "reporting.feature_importance",
-        "datasetType": "plotly.json_dataset.JSONDataSet",
+        "datasetType": "plotly.json_dataset.JSONDataset",
         "runIds": ["2022-12-24T21.05.59.296Z"],
         "__typename": "TrackingDataset"
       },
@@ -710,7 +710,7 @@
           ]
         },
         "datasetName": "train_evaluation.linear_regression.r2_score",
-        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+        "datasetType": "tracking.metrics_dataset.MetricsDataset",
         "runIds": ["2022-12-24T21.05.59.296Z"],
         "__typename": "TrackingDataset"
       },
@@ -736,7 +736,7 @@
           ]
         },
         "datasetName": "train_evaluation.random_forest.r2_score",
-        "datasetType": "tracking.metrics_dataset.MetricsDataSet",
+        "datasetType": "tracking.metrics_dataset.MetricsDataset",
         "runIds": ["2022-12-24T21.05.59.296Z"],
         "__typename": "TrackingDataset"
       }
@@ -786,7 +786,7 @@
           ]
         },
         "datasetName": "train_evaluation.linear_regression.experiment_params",
-        "datasetType": "tracking.json_dataset.JSONDataSet",
+        "datasetType": "tracking.json_dataset.JSONDataset",
         "runIds": ["2022-12-24T21.05.59.296Z"],
         "__typename": "TrackingDataset"
       },
@@ -872,7 +872,7 @@
           ]
         },
         "datasetName": "train_evaluation.random_forest.experiment_params",
-        "datasetType": "tracking.json_dataset.JSONDataSet",
+        "datasetType": "tracking.json_dataset.JSONDataset",
         "runIds": ["2022-12-24T21.05.59.296Z"],
         "__typename": "TrackingDataset"
       }

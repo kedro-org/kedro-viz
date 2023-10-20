@@ -1,18 +1,22 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
+import multiprocessing
 import traceback
-import webbrowser
 from pathlib import Path
+from typing import Dict
 
 import click
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
-from semver import VersionInfo
+from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
+from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
+
+_VIZ_PROCESSES: Dict[str, int] = {}
 
 
 @click.group(name="Kedro-Viz")
@@ -41,14 +45,13 @@ def commands():  # pylint: disable=missing-function-docstring
 @click.option(
     "--load-file",
     default=None,
-    type=click.Path(exists=True, dir_okay=False),
-    help="Path to load the pipeline JSON file",
+    help="Load Kedro-Viz using JSON files from the specified directory.",
 )
 @click.option(
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Path to save the pipeline JSON file",
+    help="Save all API responses from the backend as JSON files in the specified directory.",
 )
 @click.option(
     "--pipeline",
@@ -74,6 +77,11 @@ def commands():  # pylint: disable=missing-function-docstring
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 @click.option(
+    "--ignore-plugins",
+    is_flag=True,
+    help="A flag to ignore all installed plugins in the Kedro Project",
+)
+@click.option(
     "--params",
     type=click.UNPROCESSED,
     default="",
@@ -81,13 +89,23 @@ def commands():  # pylint: disable=missing-function-docstring
     callback=_split_params,
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
-def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, params):
+def viz(
+    host,
+    port,
+    browser,
+    load_file,
+    save_file,
+    pipeline,
+    env,
+    autoreload,
+    ignore_plugins,
+    params,
+):
     """Visualise a Kedro pipeline using Kedro viz."""
-    from kedro_viz.server import is_localhost, run_server
+    from kedro_viz.server import run_server
 
-    installed_version = VersionInfo.parse(__version__)
+    installed_version = parse(__version__)
     latest_version = get_latest_version()
-
     if is_running_outdated_version(installed_version, latest_version):
         click.echo(
             click.style(
@@ -102,6 +120,9 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
         )
 
     try:
+        if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
+            _VIZ_PROCESSES[port].terminate()
+
         run_server_kwargs = {
             "host": host,
             "port": port,
@@ -109,29 +130,38 @@ def viz(host, port, browser, load_file, save_file, pipeline, env, autoreload, pa
             "save_file": save_file,
             "pipeline_name": pipeline,
             "env": env,
-            "browser": browser,
             "autoreload": autoreload,
+            "ignore_plugins": ignore_plugins,
             "extra_params": params,
         }
         if autoreload:
-            if browser and is_localhost(host):
-                webbrowser.open_new(f"http://{host}:{port}/")
-
             project_path = Path.cwd()
             run_server_kwargs["project_path"] = project_path
-            # we don't want to launch a new browser tab on reload
-            run_server_kwargs["browser"] = False
-
-            run_process(
-                path=project_path,
-                target=run_server,
-                kwargs=run_server_kwargs,
-                watcher_cls=RegExpWatcher,
-                watcher_kwargs={"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            run_process_kwargs = {
+                "path": project_path,
+                "target": run_server,
+                "kwargs": run_server_kwargs,
+                "watcher_cls": RegExpWatcher,
+                "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            }
+            viz_process = multiprocessing.Process(
+                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            )
+        else:
+            viz_process = multiprocessing.Process(
+                target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        else:
-            run_server(**run_server_kwargs)
+        viz_process.start()
+        _VIZ_PROCESSES[port] = viz_process
+
+        _wait_for(func=_check_viz_up, host=host, port=port)
+
+        print("Kedro Viz Backend Server started successfully...")
+
+        if browser:
+            _start_browser(host, port)
+
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
