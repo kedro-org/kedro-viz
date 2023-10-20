@@ -3,6 +3,7 @@ export const pathRoot = './api';
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
+export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -178,3 +179,6 @@ export const s3BucketRegions = [
   'me-central-1',
   'il-central-1',
 ];
+
+export const RUN_TITLE = 'title';
+export const RUN_NOTES = 'notes';

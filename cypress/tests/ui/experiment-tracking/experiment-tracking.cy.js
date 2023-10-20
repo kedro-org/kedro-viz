@@ -7,9 +7,6 @@ describe('Experiment Tracking', () => {
     it('verifies that users can edit the run name, apply changes, and see the changes reflected from the overview page. #TC-43', () => {
       const modifiedRunTitleText = '2022-12-25T21.05.59.296Z';
 
-      // Mutations
-      cy.__interceptGql__('updateRunDetails', 'updateRunTitle');
-
       // Alias
       cy.get('.details-metadata__title').first().as('metadataTitle');
       cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
@@ -34,7 +31,6 @@ describe('Experiment Tracking', () => {
       });
 
       cy.get('.modal--visible').should('not.exist');
-      cy.wait('@updateRunTitle').its('response.statusCode').should('eq', 200);
       cy.get('.runs-list-card__title')
         .first()
         .should('have.text', modifiedRunTitleText);
@@ -43,9 +39,6 @@ describe('Experiment Tracking', () => {
 
     it('verifies that users can add notes to the run, apply changes, and see the changes reflected from the overview page. #TC-44', () => {
       const modifiedRunNotesText = 'Test';
-
-      // Mutations
-      cy.__interceptGql__('updateRunDetails', 'updateRunNotes');
 
       // Alias
       cy.get('.details-metadata__notes').as('metadataNotes');
@@ -71,7 +64,6 @@ describe('Experiment Tracking', () => {
       });
 
       cy.get('.modal--visible').should('not.exist');
-      cy.wait('@updateRunNotes').its('response.statusCode').should('eq', 200);
       cy.get('@metadataNotes').should('have.text', modifiedRunNotesText);
     });
   });
