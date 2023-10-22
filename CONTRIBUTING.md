@@ -179,7 +179,7 @@ Before launching a development server with a real Kedro project, you'd need to h
 The Kedro-Viz repository comes with an example project in the `demo-project` folder. This is used on the [public demo](https://demo.kedro.org/). To use it in your development environment, you need to install both the Kedro-Viz dependencies and a minimal set of dependencies for the demo project:
 
 ```bash
-pip3 install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt
+pip3 install package/".[docs]" package/".[test]" -r demo-project/src/docker_requirements.txt
 ```
 
 Now build the application with:
@@ -290,7 +290,7 @@ npm test
 Before running Python tests, install test requirements:
 
 ```bash
-pip install -r test_requirements.txt
+pip3 install package/".[test]"
 ```
 
 #### Unit tests, 100% coverage (`pytest`, `pytest-cov`)
@@ -315,7 +315,7 @@ make lint
 
 Python dependencies in Kedro-Viz are usually updated automatically through tools like Dependabot or triggered by deprecation warnings. When updating dependencies, especially the lower-bound version, it's essential to also update the `lower-requirements.txt` file manually. This ensures that our e2e tests reflect the latest dependencies, maintaining project stability and compatibility.
 
-If the lower-bound e2e test fails, it indicates that some dependencies may not work correctly with Kedro-Viz. To resolve this, update the problematic dependency in both `requirements.txt` and `lower-requirements.txt`.
+If the lower-bound e2e test fails, it indicates that some dependencies may not work correctly with Kedro-Viz. To resolve this, update the problematic dependency in both `pyproject.toml` and `lower-requirements.txt`.
 
 # Release guidelines
 

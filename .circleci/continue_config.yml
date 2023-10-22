@@ -34,8 +34,9 @@ commands:
       - run:
           name: Install Python dependencies
           command: |
-            pip install git+https://github.com/kedro-org/kedro@main
-            pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
+            cd package
+            pip install ".[docs]"
+            pip install ".[test]"
       - run:
           name: Echo package versions
           command: |
@@ -84,19 +85,10 @@ commands:
           command: conda init powershell
       - run:
           name: Create 'kedro-viz' conda environment
-          command: conda create --name kedro-viz python=<<parameters.python_version>> -y
-      - run:
-          name: Install Kedro-Viz dependencies
           command: |
+            conda create --name kedro-viz python=<<parameters.python_version>> -y
             conda activate kedro-viz
-            pip install git+https://github.com/kedro-org/kedro@main
-            pip install -r package/test_requirements.txt -U
-      - run:
-          name: Echo package versions
-          command: |
-            conda activate kedro-viz
-            python -V
-            pip freeze
+      - setup_python_env
       - run:
           name: Install 'make' command
           command: choco install make
