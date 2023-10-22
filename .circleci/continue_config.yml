@@ -33,10 +33,7 @@ commands:
     steps:
       - run:
           name: Install Python dependencies
-          command: |
-            cd package
-            pip install ".[docs]"
-            pip install ".[test]"
+          command: pip install package/".[docs]" package/".[test]" -r demo-project/src/docker_requirements.txt 
       - run:
           name: Echo package versions
           command: |
