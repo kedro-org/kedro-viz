@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUpdateRunDetails } from '../../../apollo/mutations';
+import { connect } from 'react-redux';
 import IconButton from '../../ui/icon-button';
 import PencilIcon from '../../icons/pencil';
 import BookmarkIcon from '../../icons/bookmark';
@@ -7,6 +7,7 @@ import ExportIcon from '../../icons/export';
 import BookmarkStrokeIcon from '../../icons/bookmark-stroke';
 import PrimaryToolbar from '../../primary-toolbar';
 import ShowChangesIcon from '../../icons/show-changes';
+import { toggleBookmark } from '../../../actions';
 
 import {
   SlideFromLeftToRight,
@@ -26,14 +27,13 @@ export const ExperimentPrimaryToolbar = ({
   showRunDetailsModal,
   sidebarVisible,
   setShowRunExportModal,
+  onToggleBookmark,
+  runsMetadata,
 }) => {
-  const { updateRunDetails } = useUpdateRunDetails();
+  const bookmark = runsMetadata[selectedRunData?.id]?.bookmark;
 
   const toggleBookmark = () => {
-    updateRunDetails({
-      runId: selectedRunData.id,
-      runInput: { bookmark: !selectedRunData?.bookmark },
-    });
+    onToggleBookmark(!bookmark, selectedRunData?.id);
   };
 
   return (
@@ -73,16 +73,12 @@ export const ExperimentPrimaryToolbar = ({
         {!enableComparisonView && (
           <>
             <IconButton
-              active={selectedRunData?.bookmark}
+              active={bookmark}
               ariaLabel="Toggle run bookmark"
               className={'pipeline-menu-button--labels'}
               dataTest="btnToggleBookmark"
-              icon={
-                selectedRunData?.bookmark ? BookmarkIcon : BookmarkStrokeIcon
-              }
-              labelText={`${
-                selectedRunData?.bookmark ? 'Unbookmark' : 'Bookmark'
-              }`}
+              icon={bookmark ? BookmarkIcon : BookmarkStrokeIcon}
+              labelText={`${bookmark ? 'Unbookmark' : 'Bookmark'}`}
               onClick={() => toggleBookmark()}
             />
             <IconButton
@@ -108,4 +104,17 @@ export const ExperimentPrimaryToolbar = ({
   );
 };
 
-export default ExperimentPrimaryToolbar;
+export const mapStateToProps = (state) => ({
+  runsMetadata: state.runsMetadata,
+});
+
+export const mapDispatchToProps = (dispatch) => ({
+  onToggleBookmark: (bookmark, runId) => {
+    dispatch(toggleBookmark(bookmark, runId));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ExperimentPrimaryToolbar);

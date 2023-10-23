@@ -21,9 +21,6 @@ describe('Experiment Tracking Primary Toolbar', () => {
   it('verifies that users can bookmark a run using the bookmark button in the options panel. #TC-39', () => {
     const runGitShaText = '5f81cb5';
 
-    // Mutations
-    cy.__interceptGql__('updateRunDetails', 'updateBookmark');
-
     // Alias
     cy.get('[data-test="btnToggleBookmark"]').as('btnToggleBookmark');
     cy.get('.runs-list__accordion-header > .accordion__title').as(
@@ -41,7 +38,6 @@ describe('Experiment Tracking Primary Toolbar', () => {
     cy.get('@btnToggleBookmark').click();
 
     // Assert after action
-    cy.wait('@updateBookmark').its('response.statusCode').should('eq', 200);
     cy.get('@accordionTitle').first().should('contains.text', 'Bookmarked');
     cy.get('@accordionTitle').should('have.length', 2);
     cy.get('@btnToggleBookmark').should(
@@ -59,9 +55,6 @@ describe('Experiment Tracking Primary Toolbar', () => {
   it('verifies that users can edit the details of a run by using the ‘Edit details’ button in the options panel. #TC-40', () => {
     const modifiedRunTitleText = '2022-12-25T21.05.59.296Z';
     const modifiedRunNotesText = 'Test';
-
-    // Mutations
-    cy.__interceptGql__('updateRunDetails', 'updateRunContent');
 
     // Alias
     cy.get('[data-test="btnEditRunDetails"]').as('btnEditRunDetails');
@@ -100,7 +93,6 @@ describe('Experiment Tracking Primary Toolbar', () => {
     });
 
     cy.get('.modal--visible').should('not.exist');
-    cy.wait('@updateRunContent').its('response.statusCode').should('eq', 200);
     cy.get('.runs-list-card__title')
       .first()
       .should('have.text', modifiedRunTitleText);

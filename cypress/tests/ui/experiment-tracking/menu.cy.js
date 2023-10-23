@@ -17,8 +17,6 @@ describe('Experiment Tracking Menu', () => {
   });
 
   it('verifies that users can bookmark a run. #TC-35', () => {
-    // Mutations
-    cy.__interceptGql__('updateRunDetails', 'updateBookmark');
 
     // Alias
     cy.get('.runs-list__accordion-header > .accordion__title').as(
@@ -34,7 +32,6 @@ describe('Experiment Tracking Menu', () => {
     cy.get('.runs-list-card__bookmark').first().click();
 
     // Assert after action
-    cy.wait('@updateBookmark').its('response.statusCode').should('eq', 200);
     cy.get('@accordionTitle').first().should('contains.text', 'Bookmarked');
     cy.get('@accordionTitle').should('have.length', 2);
     cy.get('.runs-list-card__bookmark--solid').should('exist');

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import runsMetadata from './runs-metadata';
 import flags from './flags';
 import graph from './graph';
 import layer from './layers';
@@ -63,6 +64,7 @@ const combinedReducer = combineReducers({
   tag,
   modularPipeline,
   visible,
+  runsMetadata,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
