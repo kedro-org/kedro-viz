@@ -468,6 +468,8 @@ class DataNode(GraphNode):
         return self.dataset_type in (
             "plotly.plotly_dataset.PlotlyDataset",
             "plotly.json_dataset.JSONDataset",
+            "plotly.plotly_dataset.PlotlyDataSet",
+            "plotly.json_dataset.JSONDataSet",
         )
 
     def is_image_node(self):
@@ -476,11 +478,17 @@ class DataNode(GraphNode):
 
     def is_metric_node(self):
         """Check if the current node is a metrics node."""
-        return self.dataset_type in ("tracking.metrics_dataset.MetricsDataset",)
+        return self.dataset_type in (
+            "tracking.metrics_dataset.MetricsDataset",
+            "tracking.metrics_dataset.MetricsDataSet",
+        )
 
     def is_json_node(self):
         """Check if the current node is a JSONDataset node."""
-        return self.dataset_type in ("tracking.json_dataset.JSONDataset",)
+        return self.dataset_type in (
+            "tracking.json_dataset.JSONDataset",
+            "tracking.json_dataset.JSONDataSet",
+        )
 
     def is_tracking_node(self):
         """Checks if the current node is a tracking data node"""
