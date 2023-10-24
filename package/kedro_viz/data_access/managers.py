@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 
-# pylint: disable=too-many-instance-attributes, broad-exception-caught
+# pylint: disable=too-many-instance-attributes
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
@@ -89,11 +89,10 @@ class DataAccessManager:
         them against the datasets in the pipelines.
         """
         for pipeline in pipelines.values():
-            # Temporary try/except block so the Kedro develop branch can work with Viz.
-            try:
-                datasets = pipeline.data_sets()
-            except Exception:  # pragma: no cover
+            if hasattr(pipeline, "datasets"):
                 datasets = pipeline.datasets()
+            else:
+                datasets = pipeline.data_sets()
 
             for dataset_name in datasets:
                 catalog.exists(dataset_name)
