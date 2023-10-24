@@ -11,7 +11,6 @@ authors = [
 ]
 description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
 requires-python = ">=3.7"
-dependencies = {file = ["requirements.txt"]}
 keywords = [
     "pipelines",
     "machine learning",
@@ -21,7 +20,10 @@ keywords = [
     "visualisation",
 ]
 license = {text = "Apache Software License (Apache 2.0)"}
-dynamic = ["readme", "version"]
+dynamic = ["dependencies", "readme", "version"]
+
+[tools.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [project.optional-dependencies]
 test = [
