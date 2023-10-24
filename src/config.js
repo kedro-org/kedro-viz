@@ -3,6 +3,7 @@ export const pathRoot = './api';
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
+export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -97,9 +98,13 @@ export const sidebarElementTypes = {
 };
 
 export const shortTypeMapping = {
+  'plotly.plotly_dataset.PlotlyDataset': 'plotly',
+  'plotly.json_dataset.JSONDataset': 'plotly',
+  'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
+  'tracking.json_dataset.JSONDataset': 'JSONTracking',
+  'tracking.metrics_dataset.MetricsDataset': 'metricsTracking',
   'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
   'plotly.json_dataset.JSONDataSet': 'plotly',
-  'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
   'tracking.json_dataset.JSONDataSet': 'JSONTracking',
   'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
@@ -178,3 +183,6 @@ export const s3BucketRegions = [
   'me-central-1',
   'il-central-1',
 ];
+
+export const RUN_TITLE = 'title';
+export const RUN_NOTES = 'notes';
