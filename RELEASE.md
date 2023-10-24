@@ -16,6 +16,7 @@ Please follow the established format:
 
 - Fix improper display of 'run-command' inside the metadata panel. (#1569)
 - Replace semver with packaging. (#1578)
+- Fix a bug in Kedro-Viz experiment tracking to ensure compatibility with `kedro-datasets>=1.7.1`. (#1600)
 
 # Release 6.6.0
 
