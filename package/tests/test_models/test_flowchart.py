@@ -390,7 +390,6 @@ class TestGraphNodeMetadata:
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataSet"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
-        assert data_node_metadata.code is None
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats["rows"] == 10
         assert data_node_metadata.stats["columns"] == 2
@@ -432,7 +431,6 @@ class TestGraphNodeMetadata:
         preview_data_node.kedro_obj._preview.return_value = mock_preview_data
         preview_node_metadata = DataNodeMetadata(data_node=preview_data_node)
         assert preview_node_metadata.preview == mock_preview_data
-        assert preview_node_metadata.code is None
 
     def test_preview_data_node_metadata_not_exist(self):
         preview_data_node = MagicMock()
@@ -482,7 +480,6 @@ class TestGraphNodeMetadata:
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.filepath == "partitioned/"
-        assert data_node_metadata.code is None
 
     # TODO: these test should ideally use a "real" catalog entry to create actual rather
     # than mock DataNode. Or if the loading functionality is tested elsewhere,
@@ -505,7 +502,6 @@ class TestGraphNodeMetadata:
         plotly_data_node.kedro_obj.load.return_value = mock_plot_data
         plotly_node_metadata = DataNodeMetadata(data_node=plotly_data_node)
         assert plotly_node_metadata.plot == mock_plot_data
-        assert plotly_node_metadata.code is None
 
     def test_plotly_data_node_dataset_not_exist(self):
         plotly_data_node = MagicMock()
@@ -550,7 +546,6 @@ class TestGraphNodeMetadata:
         image_dataset_node.kedro_obj.load.return_value = mock_image_data
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image == mock_image_data
-        assert image_node_metadata.code is None
 
     def test_image_data_node_dataset_not_exist(self):
         image_dataset_node = MagicMock()
@@ -560,28 +555,6 @@ class TestGraphNodeMetadata:
         image_dataset_node.is_preview_node.return_value = False
         image_node_metadata = DataNodeMetadata(data_node=image_dataset_node)
         assert image_node_metadata.image is None
-
-    def test_sql_data_node_metadata(self):
-        mock_sql_data = {"sql": "SELECT * FROM TEST"}
-        sql_dataset_node = MagicMock()
-        sql_dataset_node.is_image_node.return_value = False
-        sql_dataset_node.is_plot_node.return_value = False
-        sql_dataset_node.is_tracking_node.return_value = False
-        sql_dataset_node.is_preview_node.return_value = False
-        sql_dataset_node.kedro_obj._describe.return_value = mock_sql_data
-        sql_node_metadata = DataNodeMetadata(data_node=sql_dataset_node)
-        assert sql_node_metadata.code == "SELECT * FROM TEST"
-
-    def test_sql_data_node_dataset_not_exist(self):
-        mock_sql_data = {"different-attribute-naming": "SELECT * FROM TEST"}
-        sql_dataset_node = MagicMock()
-        sql_dataset_node.is_image_node.return_value = False
-        sql_dataset_node.is_plot_node.return_value = False
-        sql_dataset_node.kedro_obj.exists.return_value = False
-        sql_dataset_node.is_preview_node.return_value = False
-        sql_dataset_node.kedro_obj._describe.return_value = mock_sql_data
-        sql_node_metadata = DataNodeMetadata(data_node=sql_dataset_node)
-        assert sql_node_metadata.code is None
 
     def test_json_data_node_metadata(self):
         mock_json_data = {
@@ -600,7 +573,6 @@ class TestGraphNodeMetadata:
         json_node_metadata = DataNodeMetadata(data_node=json_data_node)
         assert json_node_metadata.tracking_data == mock_json_data
         assert json_node_metadata.plot is None
-        assert json_node_metadata.code is None
 
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
