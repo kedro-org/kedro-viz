@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix dataset factory discovery in Kedro Viz Experiment Tracking. (#1588)
+- Fix dataset factory patterns in Experiment Tracking. (#1588)
 
 # Release 6.6.1
 
