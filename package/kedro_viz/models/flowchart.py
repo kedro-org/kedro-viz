@@ -470,10 +470,6 @@ class DataNode(GraphNode):
             "plotly.json_dataset.JSONDataSet",
         )
 
-    def is_sql_node(self):
-        """Check if the current node should have code displayed e.g. SQL query"""
-        return self.dataset_type in ("pandas.sql_dataset.SQLQueryDataset",)
-
     def is_image_node(self):
         """Check if the current node is a matplotlib image node."""
         return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
@@ -586,9 +582,6 @@ class DataNodeMetadata(GraphNodeMetadata):
         dataset_description = dataset._describe()
         self.filepath = _parse_filepath(dataset_description)
         self.stats = data_node.stats
-
-        if data_node.is_sql_node():
-            self.code = dataset_description.get("sql")
 
         # Run command is only available if a node is an output, i.e. not a free input
         if not data_node.is_free_input:

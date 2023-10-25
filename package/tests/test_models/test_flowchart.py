@@ -426,7 +426,6 @@ class TestGraphNodeMetadata:
         preview_data_node = MagicMock()
 
         preview_data_node.is_plot_node.return_value = False
-        preview_data_node.is_sql_node.return_value = False
         preview_data_node.is_image_node.return_value = False
         preview_data_node.is_tracking_node.return_value = False
         preview_data_node.is_preview_node.return_value = True
@@ -439,7 +438,6 @@ class TestGraphNodeMetadata:
         preview_data_node = MagicMock()
 
         preview_data_node.is_plot_node.return_value = False
-        preview_data_node.is_sql_node.return_value = False
         preview_data_node.is_image_node.return_value = False
         preview_data_node.is_tracking_node.return_value = False
         preview_data_node.is_preview_node.return_value = True
@@ -501,7 +499,6 @@ class TestGraphNodeMetadata:
         }
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
-        plotly_data_node.is_sql_node.return_value = False
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.is_preview_node.return_value = False
@@ -513,7 +510,6 @@ class TestGraphNodeMetadata:
     def test_plotly_data_node_dataset_not_exist(self):
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
-        plotly_data_node.is_sql_node.return_value = False
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
@@ -533,7 +529,6 @@ class TestGraphNodeMetadata:
         }
         plotly_json_dataset_node = MagicMock()
         plotly_json_dataset_node.is_plot_node.return_value = True
-        plotly_json_dataset_node.is_sql_node.return_value = False
         plotly_json_dataset_node.is_image_node.return_value = False
         plotly_json_dataset_node.is_tracking_node.return_value = False
         plotly_json_dataset_node.is_preview_node.return_value = False
@@ -549,7 +544,6 @@ class TestGraphNodeMetadata:
         )
         image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
-        image_dataset_node.is_sql_node.return_value = False
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.is_tracking_node.return_value = False
         image_dataset_node.is_preview_node.return_value = False
@@ -561,7 +555,6 @@ class TestGraphNodeMetadata:
     def test_image_data_node_dataset_not_exist(self):
         image_dataset_node = MagicMock()
         image_dataset_node.is_image_node.return_value = True
-        image_dataset_node.is_sql_node.return_value = False
         image_dataset_node.is_plot_node.return_value = False
         image_dataset_node.kedro_obj.exists.return_value = False
         image_dataset_node.is_preview_node.return_value = False
@@ -572,7 +565,6 @@ class TestGraphNodeMetadata:
         mock_sql_data = {"sql": "SELECT * FROM TEST"}
         sql_dataset_node = MagicMock()
         sql_dataset_node.is_image_node.return_value = False
-        sql_dataset_node.is_sql_node.return_value = True
         sql_dataset_node.is_plot_node.return_value = False
         sql_dataset_node.is_tracking_node.return_value = False
         sql_dataset_node.is_preview_node.return_value = False
@@ -584,7 +576,6 @@ class TestGraphNodeMetadata:
         mock_sql_data = {"different-attribute-naming": "SELECT * FROM TEST"}
         sql_dataset_node = MagicMock()
         sql_dataset_node.is_image_node.return_value = False
-        sql_dataset_node.is_sql_node.return_value = True
         sql_dataset_node.is_plot_node.return_value = False
         sql_dataset_node.kedro_obj.exists.return_value = False
         sql_dataset_node.is_preview_node.return_value = False
@@ -601,7 +592,6 @@ class TestGraphNodeMetadata:
 
         json_data_node = MagicMock()
         json_data_node.is_plot_node.return_value = False
-        json_data_node.is_sql_node.return_value = False
         json_data_node.is_image_node.return_value = False
         json_data_node.is_tracking_node.return_value = True
         json_data_node.is_metric_node.return_value = False
@@ -615,7 +605,6 @@ class TestGraphNodeMetadata:
     def test_metrics_data_node_metadata_dataset_not_exist(self):
         metrics_data_node = MagicMock()
         metrics_data_node.is_plot_node.return_value = False
-        metrics_data_node.is_sql_node.return_value = False
         metrics_data_node.is_image_node.return_value = False
         metrics_data_node.is_metric_node.return_value = True
         metrics_data_node.is_preview_node.return_value = False
@@ -626,7 +615,6 @@ class TestGraphNodeMetadata:
     def test_data_node_metadata_latest_tracking_data_not_exist(self):
         plotly_data_node = MagicMock()
         plotly_data_node.is_plot_node.return_value = True
-        plotly_data_node.is_sql_node.return_value = False
         plotly_data_node.is_image_node.return_value = False
         plotly_data_node.is_tracking_node.return_value = False
         plotly_data_node.kedro_obj.exists.return_value = False
