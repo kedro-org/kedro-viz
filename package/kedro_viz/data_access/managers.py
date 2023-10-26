@@ -77,7 +77,7 @@ class DataAccessManager:
         """
         for pipeline in pipelines.values():
             if hasattr(pipeline, "datasets"):
-                datasets = pipeline.datasets()
+                datasets = pipeline.datasets()  # kedro 0.19.0 onwards
             else:
                 datasets = pipeline.data_sets()
 
