@@ -273,3 +273,48 @@ export function toggleHoveredFocusMode(hoveredFocusMode) {
     hoveredFocusMode,
   };
 }
+
+export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
+
+/**
+ * Toggle bookmark of Run
+ * @param {boolean} bookmark
+ * @param {string} runId
+ */
+export function toggleBookmark(bookmark, runId) {
+  return {
+    type: TOGGLE_BOOKMARK,
+    bookmark,
+    runId,
+  };
+}
+
+export const UPDATE_RUN_TITLE = 'UPDATE_RUN_TITLE';
+
+/**
+ * Update Run title
+ * @param {String} title
+ * @param {string} runId
+ */
+export function updateRunTitle(title, runId) {
+  return {
+    type: UPDATE_RUN_TITLE,
+    title,
+    runId,
+  };
+}
+
+export const UPDATE_RUN_NOTES = 'UPDATE_RUN_NOTES';
+
+/**
+ * Update Run Notes
+ * @param {String} notes
+ * @param {string} runId
+ */
+export function updateRunNotes(notes, runId) {
+  return {
+    type: UPDATE_RUN_NOTES,
+    notes,
+    runId,
+  };
+}

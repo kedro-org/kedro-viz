@@ -35,7 +35,7 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const ExperimentWrapper = ({ theme }) => {
+const ExperimentWrapper = ({ theme, runsMetadata }) => {
   const [disableRunSelection, setDisableRunSelection] = useState(false);
   const [enableShowChanges, setEnableShowChanges] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -272,7 +272,7 @@ const ExperimentWrapper = ({ theme }) => {
        * as the default, with precedence given to runs that are bookmarked.
        */
       const bookmarkedRuns = data.runsList.filter((run) => {
-        return run.bookmark === true;
+        return runsMetadata[run.id]?.bookmark === true;
       });
 
       if (bookmarkedRuns.length > 0) {
@@ -281,7 +281,7 @@ const ExperimentWrapper = ({ theme }) => {
         setSelectedRunIds(data.runsList.map((run) => run.id).slice(0, 1));
       }
     }
-  }, [data, selectedRunIds, matchedExperimentTrackingMainPage]);
+  }, [data, selectedRunIds, matchedExperimentTrackingMainPage, runsMetadata]);
 
   useEffect(() => {
     if (
@@ -418,6 +418,7 @@ const ExperimentWrapper = ({ theme }) => {
 
 export const mapStateToProps = (state) => ({
   theme: state.theme,
+  runsMetadata: state.runsMetadata,
 });
 
 export default connect(mapStateToProps)(ExperimentWrapper);

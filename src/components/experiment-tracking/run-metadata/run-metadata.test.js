@@ -1,37 +1,17 @@
 import React from 'react';
+import configureMockStore from 'redux-mock-store';
 import RunMetadata from '.';
 import { runs } from '../../experiment-wrapper/mock-data';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import { configure, shallow } from 'enzyme';
+import { configure, mount } from 'enzyme';
+import { setup } from '../../../utils/state.mock';
 
 configure({ adapter: new Adapter() });
-
-const twoRuns = [
-  {
-    id: 'run1',
-    author: '',
-    bookmark: true,
-    gitSha: '',
-    gitBranch: '',
-    runCommand: '',
-    notes: '',
-    title: '',
-  },
-  {
-    id: 'run2',
-    author: '',
-    bookmark: true,
-    gitSha: '',
-    gitBranch: '',
-    runCommand: '',
-    notes: '',
-    title: '',
-  },
-];
+const mockStore = configureMockStore();
 
 describe('RunMetadata', () => {
   it('renders without crashing', () => {
-    const wrapper = shallow(
+    const wrapper = setup.mount(
       <RunMetadata isSingleRun={runs.length === 1 ? true : false} runs={runs} />
     );
 
@@ -40,7 +20,7 @@ describe('RunMetadata', () => {
   });
 
   it('renders a first run for when theres a single run', () => {
-    const wrapper = shallow(
+    const wrapper = setup.mount(
       <RunMetadata
         enableComparisonView={true}
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
@@ -53,7 +33,7 @@ describe('RunMetadata', () => {
   });
 
   it('contains "-comparison-view" classname for when the comparison mode is enabled', () => {
-    const wrapper = shallow(
+    const wrapper = setup.mount(
       <RunMetadata enableComparisonView={true} runs={runs.slice(0, 1)} />
     );
 
@@ -63,7 +43,7 @@ describe('RunMetadata', () => {
   });
 
   it('shows a "--first-run" for the first run when comparison mode is on', () => {
-    const wrapper = shallow(
+    const wrapper = setup.mount(
       <RunMetadata
         enableComparisonView={true}
         isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
@@ -76,14 +56,22 @@ describe('RunMetadata', () => {
     ).toBe(1);
   });
 
+  let wrapper, store;
+
+  beforeEach(() => {
+    const initialState = {
+      runsMetadata: { [runs[0].id]: runs[0], [runs[1].id]: runs[1] },
+    };
+
+    store = mockStore(initialState);
+
+    wrapper = mount(
+      <RunMetadata runs={runs.slice(0, 2)} isSingleRun={false} store={store} />
+    );
+  });
+
   it('handles show more/less button click event', () => {
     const setToggleNotes = jest.fn();
-    const wrapper = shallow(
-      <RunMetadata
-        isSingleRun={runs.slice(0, 1).length === 1 ? true : false}
-        runs={runs.slice(0, 1)}
-      />
-    );
     const onClick = jest.spyOn(React, 'useState');
     onClick.mockImplementation((toggleNotes) => [toggleNotes, setToggleNotes]);
 
@@ -105,15 +93,6 @@ describe('RunMetadata', () => {
   });
 
   it('enables the pin button when show changes is enabled ', () => {
-    const wrapper = shallow(
-      <RunMetadata
-        enableComparisonView={true}
-        enableShowChanges={true}
-        isSingleRun={false}
-        runs={twoRuns}
-      />
-    );
-
     expect(wrapper.find('.pipeline-menu-button__pin').length).toEqual(2);
   });
 });
