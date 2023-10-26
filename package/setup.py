@@ -52,7 +52,7 @@ setup(
     },
     extras_require={
         "docs": [
-            "sphinx~=5.3.0",
+            "sphinx>=5.3,<7.3",
             "sphinx_copybutton==0.3.1",
             "sphinx-notfound-page",
             "sphinx_rtd_theme==1.2.0",
