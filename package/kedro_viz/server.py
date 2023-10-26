@@ -127,12 +127,13 @@ if __name__ == "__main__":  # pragma: no cover
 
     project_path = (Path.cwd() / args.project_path).absolute()
     bootstrap_project(project_path)
-    run_process(
-        project_path,
-        run_server,
-        kwargs={
-            "host": args.host,
-            "port": args.port,
-            "project_path": str(project_path),
-        },
-    )
+    run_server(host=args.host, port=args.port, project_path=str(project_path))
+    # run_process(
+    #     project_path,
+    #     run_server,
+    #     kwargs={
+    #         "host": args.host,
+    #         "port": args.port,
+    #         "project_path": str(project_path),
+    #     },
+    # )
