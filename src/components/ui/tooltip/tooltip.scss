@@ -3,6 +3,7 @@
 $x-offset: 20px;
 $y-offset: 10px;
 $triangle-size: 10px;
+$triangle-size-sm: 5px;
 
 .pipeline-tooltip {
   position: absolute;
@@ -29,30 +30,8 @@ $triangle-size: 10px;
     top: $y-offset;
   }
 
-  &::after {
-    position: absolute;
-    bottom: -$y-offset + 0.5;
-    left: calc($x-offset / 2);
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: $triangle-size $triangle-size 0 $triangle-size;
-    border-top-color: var(--color-bg-alt);
-    content: '';
-  }
-
-  &--right::after {
-    right: calc($x-offset / 2);
-    left: auto;
-  }
-
-  &--top::after {
-    top: -$y-offset + 0.5;
-    bottom: auto;
-    border-width: 0 $triangle-size $triangle-size $triangle-size;
-    border-top-color: transparent;
-    border-bottom-color: var(--color-bg-alt);
+  &--no-delay {
+    transition-delay: 0s;
   }
 }
 
@@ -67,13 +46,67 @@ $triangle-size: 10px;
   font-size: 1.5em;
   overflow-wrap: break-word;
 
+  &::after {
+    position: absolute;
+    bottom: -$y-offset + 0.5;
+    left: calc($x-offset / 2);
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: $triangle-size $triangle-size 0 $triangle-size;
+    border-top-color: var(--color-bg-alt);
+    content: '';
+  }
+
   .pipeline-tooltip--right & {
     right: 0;
     left: auto;
+
+    &::after {
+      right: calc($x-offset / 2);
+      left: auto;
+    }
   }
 
   .pipeline-tooltip--top & {
     top: 0;
     bottom: auto;
+
+    &::after {
+      top: -$y-offset + 0.5;
+      bottom: auto;
+      border-width: 0 $triangle-size $triangle-size $triangle-size;
+      border-top-color: transparent;
+      border-bottom-color: var(--color-bg-alt);
+    }
+  }
+
+  .pipeline-tooltip--small-arrow & {
+    &::after {
+      bottom: -$y-offset / 2 + 0.5;
+      border-width: $triangle-size-sm $triangle-size-sm 0 $triangle-size-sm;
+    }
+  }
+
+  .pipeline-tooltip--top.pipeline-tooltip--small-arrow & {
+    &::after {
+      top: -$y-offset / 2 + 0.5;
+      border-width: 0 $triangle-size-sm $triangle-size-sm $triangle-size-sm;
+    }
+  }
+
+  .pipeline-tooltip--center-arrow:not(.pipeline-tooltip--right) & {
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .pipeline-tooltip--right.pipeline-tooltip--center-arrow & {
+    &::after {
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
-import modifiers from '../../utils/modifiers';
 import { s3BucketRegions } from '../../config';
 
 import Button from '../ui/button';
@@ -13,6 +12,7 @@ import Input from '../ui/input';
 import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
+import Tooltip from '../ui/tooltip';
 
 import './shareable-url-modal.scss';
 
@@ -42,6 +42,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [responseUrl, setResponseUrl] = useState(null);
   const [responseError, setResponseError] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
+  const [tooltipTargetRect, setTooltipTargetRect] = useState({});
   const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
@@ -114,10 +115,24 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const onCopyClick = () => {
+  const onCopyClick = (event) => {
+    const { width, height } = event.target.getBoundingClientRect();
+    // currentTarget is the element that has click handler attached
+    // offsetParent is he first parent that has a css position
+    const { offsetLeft, offsetTop } = event.currentTarget.offsetParent;
+
     window.navigator.clipboard.writeText(responseUrl);
+    setTooltipTargetRect({
+      left: offsetLeft,
+      top: offsetTop,
+      height,
+      width,
+    });
     setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 1500);
+
+    setTimeout(() => {
+      setShowCopied(false);
+    }, 1500);
   };
 
   const handleModalClose = () => {
@@ -246,33 +261,30 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             <div className="shareable-url-modal__label">Hosted link</div>
             <div className="shareable-url-modal__url-wrapper">
               <a
-                className={modifiers('shareable-url-modal__result-url', {
-                  visible: !showCopied,
-                })}
-                href={responseUrl}
+                className="shareable-url-modal__result-url"
+                href="/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {responseUrl}
               </a>
               {window.navigator.clipboard && (
-                <>
-                  <span
-                    className={modifiers('copy-message', {
-                      visible: showCopied,
-                    })}
-                  >
-                    Copied to clipboard.
-                  </span>
-                  <IconButton
-                    ariaLabel="Copy run command to clipboard."
-                    className="copy-button"
-                    dataHeapEvent={`clicked.run_command`}
-                    icon={CopyIcon}
-                    onClick={onCopyClick}
-                  />
-                </>
+                <IconButton
+                  ariaLabel="Copy run command to clipboard."
+                  className="copy-button"
+                  dataHeapEvent={`clicked.run_command`}
+                  icon={CopyIcon}
+                  onClick={onCopyClick}
+                />
               )}
+              <Tooltip
+                text="Copied!"
+                visible={showCopied}
+                targetRect={tooltipTargetRect}
+                noDelay
+                centerArrow
+                arrowSize="small"
+              />
             </div>
           </div>
           <div className="shareable-url-modal__button-wrapper ">
