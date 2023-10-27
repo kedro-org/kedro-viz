@@ -110,6 +110,12 @@ def example_catalog():
             },
             "model_inputs": {"model_inputs"},
         },
+        dataset_patterns={
+            "{dataset_name}#csv": {
+                "type": "pandas.CSVDataset",
+                "filepath": "data/01_raw/{dataset_name}#csv.csv",
+            },
+        },
     )
 
 
@@ -290,3 +296,19 @@ def example_csv_dataset(tmp_path, example_data_frame):
     )
     new_csv_dataset.save(example_data_frame)
     yield new_csv_dataset
+
+
+# Create a mock for KedroPipeline with datasets method
+@pytest.fixture
+def pipeline_with_datasets_mock():
+    pipeline = mock.MagicMock()
+    pipeline.datasets.return_value = ["model_inputs#csv"]
+    return pipeline
+
+
+# Create a mock for KedroPipeline with data_sets method
+@pytest.fixture
+def pipeline_with_data_sets_mock():
+    pipeline = mock.MagicMock()
+    pipeline.data_sets.return_value = ["model_inputs#csv"]
+    return pipeline
