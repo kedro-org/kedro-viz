@@ -4,9 +4,14 @@ import abc
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-from fastapi._compat import PYDANTIC_V2
 from fastapi.responses import ORJSONResponse
-from pydantic import BaseModel, ConfigDict
+
+try:
+    # Triggered if pydantic v2 is installed
+    from pydantic.v1 import BaseModel
+except ImportError:
+    # Triggered if pydantic v1 is installed
+    from pydantic import BaseModel
 
 from kedro_viz.data_access import data_access_manager
 
@@ -16,12 +21,8 @@ class APIErrorMessage(BaseModel):
 
 
 class BaseAPIResponse(BaseModel, abc.ABC):
-    if PYDANTIC_V2:
-        model_config = ConfigDict(from_attributes=True)
-    else:
-
-        class Config:
-            orm_mode = True
+    class Config:
+        orm_mode = True
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
@@ -35,85 +36,61 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     modular_pipelines: Optional[List[str]] = None
 
 
-task_node_api_response_example = {
-    "example": {
-        "id": "6ab908b8",
-        "name": "split_data_node",
-        "tags": [],
-        "pipelines": ["__default__", "ds"],
-        "modular_pipelines": [],
-        "type": "task",
-        "parameters": {
-            "test_size": 0.2,
-            "random_state": 3,
-            "features": [
-                "engines",
-                "passenger_capacity",
-                "crew",
-                "d_check_complete",
-                "moon_clearance_complete",
-                "iata_approved",
-                "company_rating",
-                "review_scores_rating",
-            ],
-        },
-    }
-}
-
-
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
-    if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=task_node_api_response_example)  # type: ignore
-    else:
 
-        class Config:
-            schema_extra = task_node_api_response_example
-
-
-data_node_api_response_example = {
-    "example": {
-        "id": "d7b83b05",
-        "name": "master_table",
-        "tags": [],
-        "pipelines": ["__default__", "dp", "ds"],
-        "modular_pipelines": [],
-        "type": "data",
-        "layer": "primary",
-        "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
-        "stats": {"rows": 10, "columns": 2, "file_size": 2300},
-    }
-}
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "6ab908b8",
+                "name": "split_data_node",
+                "tags": [],
+                "pipelines": ["__default__", "ds"],
+                "modular_pipelines": [],
+                "type": "task",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 3,
+                    "features": [
+                        "engines",
+                        "passenger_capacity",
+                        "crew",
+                        "d_check_complete",
+                        "moon_clearance_complete",
+                        "iata_approved",
+                        "company_rating",
+                        "review_scores_rating",
+                    ],
+                },
+            }
+        }
 
 
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
     layer: Optional[str] = None
     dataset_type: Optional[str] = None
     stats: Optional[Dict] = None
-    if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=data_node_api_response_example)  # type: ignore
-    else:
 
-        class Config:
-            schema_extra = data_node_api_response_example
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "d7b83b05",
+                "name": "master_table",
+                "tags": [],
+                "pipelines": ["__default__", "dp", "ds"],
+                "modular_pipelines": [],
+                "type": "data",
+                "layer": "primary",
+                "dataset_type": "kedro.extras.datasets.pandas.csv_dataset.CSVDataSet",
+                "stats": {"rows": 10, "columns": 2, "file_size": 2300},
+            }
+        }
 
 
 NodeAPIResponse = Union[
     TaskNodeAPIResponse,
     DataNodeAPIResponse,
 ]
-
-
-task_node_metadata_api_example = {
-    "example": {
-        "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
-        "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
-        "parameters": {"test_size": 0.2},
-        "inputs": ["params:input1", "input2"],
-        "outputs": ["output1"],
-        "run_command": "kedro run --to-nodes=split_data",
-    }
-}
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
@@ -123,21 +100,18 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
     inputs: List[str]
     outputs: List[str]
     run_command: Optional[str] = None
-    if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=task_node_metadata_api_example)  # type: ignore
-    else:
 
-        class Config:
-            schema_extra = task_node_metadata_api_example
-
-
-data_node_metadata_api_example = {
-    "example": {
-        "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
-        "type": "pandas.csv_dataset.CSVDataSet",
-        "run_command": "kedro run --to-outputs=master_table",
-    }
-}
+    class Config:
+        schema_extra = {
+            "example": {
+                "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
+                "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
+                "parameters": {"test_size": 0.2},
+                "inputs": ["params:input1", "input2"],
+                "outputs": ["output1"],
+                "run_command": "kedro run --to-nodes=split_data",
+            }
+        }
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
@@ -149,12 +123,15 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     run_command: Optional[str] = None
     preview: Optional[Dict] = None
     stats: Optional[Dict] = None
-    if PYDANTIC_V2:
-        model_config = ConfigDict(json_schema_extra=data_node_metadata_api_example)  # type: ignore
-    else:
 
-        class Config:
-            schema_extra = data_node_metadata_api_example
+    class Config:
+        schema_extra = {
+            "example": {
+                "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
+                "type": "pandas.csv_dataset.CSVDataSet",
+                "run_command": "kedro run --to-outputs=master_table",
+            }
+        }
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
@@ -165,36 +142,28 @@ class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     stats: Optional[Dict] = None
 
 
-parameters_node_metaxata_api_example = {
-    "example": {
-        "parameters": {
-            "test_size": 0.2,
-            "random_state": 3,
-            "features": [
-                "engines",
-                "passenger_capacity",
-                "crew",
-                "d_check_complete",
-                "moon_clearance_complete",
-                "iata_approved",
-                "company_rating",
-                "review_scores_rating",
-            ],
-        }
-    }
-}
-
-
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
-    if PYDANTIC_V2:
-        model_config = ConfigDict(
-            json_schema_extra=parameters_node_metaxata_api_example  # type: ignore
-        )
-    else:
 
-        class Config:
-            schema_extra = parameters_node_metaxata_api_example
+    class Config:
+        schema_extra = {
+            "example": {
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 3,
+                    "features": [
+                        "engines",
+                        "passenger_capacity",
+                        "crew",
+                        "d_check_complete",
+                        "moon_clearance_complete",
+                        "iata_approved",
+                        "company_rating",
+                        "review_scores_rating",
+                    ],
+                }
+            }
+        }
 
 
 NodeMetadataAPIResponse = Union[

@@ -6,9 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict
 
-from fastapi._compat import PYDANTIC_V2
 from kedro.io import Version
-from pydantic import ConfigDict
 from sqlalchemy import Column
 from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
@@ -35,12 +33,9 @@ class RunModel(Base):  # type: ignore
 
     id = Column(String, primary_key=True, index=True)
     blob = Column(JSON)
-    if PYDANTIC_V2:
-        model_config = ConfigDict(from_attributes=True)
-    else:
 
-        class Config:
-            orm_mode = True
+    class Config:
+        orm_mode = True
 
 
 class UserRunDetailsModel(Base):  # type: ignore
@@ -53,12 +48,9 @@ class UserRunDetailsModel(Base):  # type: ignore
     bookmark = Column(Boolean, default=False)
     title = Column(String)
     notes = Column(String)
-    if PYDANTIC_V2:
-        model_config = ConfigDict(from_attributes=True)
-    else:
 
-        class Config:
-            orm_mode = True
+    class Config:
+        orm_mode = True
 
 
 class TrackingDatasetGroup(str, Enum):

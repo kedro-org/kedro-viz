@@ -10,7 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix for Kedro Viz Connection Error (#1507)
-- Add support for pydantic v2 and fastapi >= 0.100.0 (#1529)
+- Add support for fastapi >= 0.100.0 (#1529)
 
 # Release 6.5.1
 
