@@ -21,7 +21,7 @@ kedro-viz.tgz
 # e2e testing
 cypress/videos
 cypress/screenshots
-cypress/downloads/ 
+cypress/downloads/
 
 # production
 build/

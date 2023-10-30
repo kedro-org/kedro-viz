@@ -64,7 +64,7 @@ The `localStorage` state is updated automatically on every Redux store update, v
 
 ![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
 
-Kedro-Viz currently utilizes two different methods of data ingestion: the Redux setup for the pipeline and flowchart-view related components, and GraphQL via Apollo Client for the experiment tracking components. 
+Kedro-Viz currently utilizes two different methods of data ingestion: the Redux setup for the pipeline and flowchart-view related components, and GraphQL via Apollo Client for the experiment tracking components.
 
 On initialisation for the Redux setup, Kedro-Viz [manually normalises pipeline data](/src/store/normalize-data.js), in order to [make immutable state updates as performant as possible](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape).
 
@@ -72,9 +72,9 @@ Next, it [initialises the Redux data store](https://github.com/kedro-org/kedro-v
 
 During preparation, the initial state is separated into two parts: pipeline and non-pipeline state. This is because the non-pipeline state should persist for the session duration, even if the pipeline state is reset/overwritten - i.e. if the user selects a new top-level pipeline.
 
-Kedro run data used for experiment tracking are stored in a SQLite database that is generated automatically once [experiment tracking is enabled in your Kedro project](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html). By default, the session store database sits under the `/data` directory of your Kedro project as `session_store.db`. On loading Kedro-Viz from the Kedro project, the Kedro-Viz backend will consume the run data stored in the database and serve the data via the GraphQL endpoint via GraphQL query requests from the Apollo client on the front end. 
+Kedro run data used for experiment tracking are stored in a SQLite database that is generated automatically once [experiment tracking is enabled in your Kedro project](https://kedro.readthedocs.io/en/stable/08_logging/02_experiment_tracking.html). By default, the session store database sits under the `/data` directory of your Kedro project as `session_store.db`. On loading Kedro-Viz from the Kedro project, the Kedro-Viz backend will consume the run data stored in the database and serve the data via the GraphQL endpoint via GraphQL query requests from the Apollo client on the front end.
 
-The server also allows updates to the database for certain fields of the run data (name, notes, etc.) via mutations, while subscriptions enabled by ASGI WebSocket allow real-time updates of run data. 
+The server also allows updates to the database for certain fields of the run data (name, notes, etc.) via mutations.
 
 ## React components
 
@@ -86,7 +86,7 @@ The `App` component contains the [Redux store Provider](https://react-redux.js.o
 
 ## State management
 
-The following sections outline the Redux state management used to manage the data and app state for the flowchart view. The data for the runs view (experiment tracking features) are managed by React hooks and the Apollo GraphQL client. 
+The following sections outline the Redux state management used to manage the data and app state for the flowchart view. The data for the runs view (experiment tracking features) are managed by React hooks and the Apollo GraphQL client.
 
 ![Kedro-Viz app architecture](.github/img/app-architecture.png)
 
@@ -108,7 +108,7 @@ We have used Kedro-Viz to visualize the selector dependency graph - [visit the d
 
 ## Apollo
 
-The `src/apollo` directory contains all the related setup for ingesting data from the GraphQL endpoint for the experiment tracking features. This includes the schema that defines all query, mutation, and subscription types, the config that sets up the Apollo Client to be used within React components, and other files containing helper functions, such as mocks to generate random data for the mock server. 
+The `src/apollo` directory contains all the related setup for ingesting data from the GraphQL endpoint for the experiment tracking features. This includes the schema that defines all query and mutation types, the config that sets up the Apollo Client to be used within React components, and other files containing helper functions, such as mocks to generate random data for the mock server.
 
 The GraphQL schema is defined on the backend by Strawberry and automatically converted to GraphQL SDL (schema definition language) with `make schema-fix`. A CI check ensures that the resulting `schema.graphql` and below visualization are always in sync with the backend definition.
 
@@ -116,7 +116,7 @@ The GraphQL schema is defined on the backend by Strawberry and automatically con
 
 You can see documentation for the schema and run mock queries using GraphiQL, the GraphQL integrated development environment. This is possible without launching the full backend server: run `make strawberry-server` and then go to [http://127.0.0.1:8000/graphql](http://127.0.0.1:8000/graphql).
 
-⚠️ When a query supplies an ordered argument, the backend response must maintain the same ordering. For example, a the response to a query that calls for `runIds = [2, 3, 1]` should respond with runs in that same order. 
+⚠️ When a query supplies an ordered argument, the backend response must maintain the same ordering. For example, a the response to a query that calls for `runIds = [2, 3, 1]` should respond with runs in that same order.
 
 ## Utils
 

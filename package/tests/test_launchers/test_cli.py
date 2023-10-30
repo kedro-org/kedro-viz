@@ -1,7 +1,7 @@
 import pytest
 import requests
 from click.testing import CliRunner
-from semver import VersionInfo
+from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
@@ -32,6 +32,7 @@ def patched_start_browser(mocker):
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {},
             },
         ),
@@ -49,6 +50,7 @@ def patched_start_browser(mocker):
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {},
             },
         ),
@@ -77,7 +79,22 @@ def patched_start_browser(mocker):
                 "pipeline_name": "data_science",
                 "env": "local",
                 "autoreload": False,
+                "ignore_plugins": False,
                 "extra_params": {"extra_param": "param"},
+            },
+        ),
+        (
+            ["viz", "--ignore-plugins"],
+            {
+                "host": "127.0.0.1",
+                "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": True,
+                "extra_params": {},
             },
         ),
     ],
@@ -91,8 +108,9 @@ def test_kedro_viz_command_run_server(
 ):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
-    # Reduce the timeout argument from 60 to 1 to make test run faster.
+
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, command_options)
 
@@ -103,7 +121,7 @@ def test_kedro_viz_command_run_server(
 
 
 def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_response):
-    installed_version = VersionInfo.parse(__version__)
+    installed_version = parse(__version__)
     mock_version = f"{installed_version.major + 1}.0.0"
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
@@ -129,7 +147,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
 def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_response):
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
-        data={"info": {"version": VersionInfo.parse(__version__)}}
+        data={"info": {"version": str(parse(__version__))}}
     )
     mock_click_echo = mocker.patch("click.echo")
 
@@ -178,6 +196,7 @@ def test_kedro_viz_command_with_autoreload(
             "env": None,
             "autoreload": True,
             "project_path": mock_project_path,
+            "ignore_plugins": False,
             "extra_params": {},
         },
         "watcher_cls": RegExpWatcher,

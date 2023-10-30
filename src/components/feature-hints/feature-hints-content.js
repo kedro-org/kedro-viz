@@ -1,5 +1,13 @@
 export const featureHintsContent = [
   {
+    title: 'Publish and share Kedro-Viz',
+    description:
+      'You can publish Kedro-Viz and share it with others by hosting your project on Amazon S3, making sharing with collaborators and stakeholders easier and faster.',
+    learnMoreLink:
+      'https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html',
+    elementId: '.pipeline-menu-button--deploy',
+  },
+  {
     title: 'Preview your datasets in the metadata panel',
     description:
       'View a small preview of datasets by clicking on a node and opening the metadata panel. The ability to expand to view a larger preview is also possible when the panel is open. Along with a preview, there will also be information about your dataset, such as the file path and the dataset type.',

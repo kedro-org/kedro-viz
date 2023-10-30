@@ -47,7 +47,16 @@ setup(
         "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
         "kedro.hooks": [
-            "plugin_name = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+            "kedro-dataset-stats = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+        ],
+    },
+    extras_require={
+        "docs": [
+            "sphinx>=5.3,<7.3",
+            "sphinx_copybutton==0.3.1",
+            "sphinx-notfound-page",
+            "sphinx_rtd_theme==1.2.0",
+            "myst-parser~=1.0.0",
         ],
     },
 )

@@ -1,17 +1,15 @@
-"""`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries, mutations
- and subscriptions.."""
+"""`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries and mutations."""
 # pylint: disable=missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
-from typing import AsyncGenerator, List, Optional
+from typing import List, Optional
 
 import strawberry
 from graphql.validation import NoSchemaIntrospectionCustomRule
-from semver import VersionInfo
+from packaging.version import parse
 from strawberry import ID
 from strawberry.extensions import AddValidationRules
 from strawberry.tools import merge_types
@@ -162,30 +160,10 @@ class Mutation:
 
 
 @strawberry.type
-class Subscription:
-    @strawberry.subscription(description="Add new runs in real time")  # type: ignore
-    async def runs_added(self) -> AsyncGenerator[List[Run], None]:
-        """Subscription to new runs in real-time"""
-        while True:
-            new_runs = data_access_manager.runs.get_new_runs()
-            if new_runs:
-                data_access_manager.runs.last_run_id = new_runs[0].id
-                yield [
-                    format_run(
-                        run.id,
-                        json.loads(run.blob),
-                        data_access_manager.runs.get_user_run_details(run.id),
-                    )
-                    for run in new_runs
-                ]
-            await asyncio.sleep(3)  # pragma: no cover
-
-
-@strawberry.type
 class VersionQuery:
     @strawberry.field(description="Get the installed and latest Kedro-Viz versions")
     def version(self) -> Version:
-        installed_version = VersionInfo.parse(__version__)
+        installed_version = parse(__version__)
         latest_version = get_latest_version()
         return Version(
             installed=str(installed_version),
@@ -197,7 +175,6 @@ class VersionQuery:
 schema = strawberry.Schema(
     query=(merge_types("Query", (RunsQuery, VersionQuery))),
     mutation=Mutation,
-    subscription=Subscription,
     extensions=[
         AddValidationRules([NoSchemaIntrospectionCustomRule]),
     ],

@@ -8,7 +8,7 @@ const booleanTrackingData = {
   JSONData: [
     {
       datasetName: 'train_evaluation.hyperparams_linear_regression',
-      datasetType: 'tracking.json_dataset.JSONDataSet',
+      datasetType: 'tracking.json_dataset.JSONDataset',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: false }],
       },
@@ -21,7 +21,7 @@ const objectTrackingData = {
   JSONData: [
     {
       datasetName: 'train_evaluation.hyperparams_linear_regression',
-      datasetType: 'tracking.json_dataset.JSONDataSet',
+      datasetType: 'tracking.json_dataset.JSONDataset',
       data: {
         classWeight: [{ runId: 'My Favorite Sprint', value: { a: true } }],
       },
@@ -34,7 +34,7 @@ const comparisonTrackingData = {
   metrics: [
     {
       datasetName: 'train_evaluation.r2_score_linear_regression',
-      datasetType: 'tracking.metrics_dataset.MetricsDataSet',
+      datasetType: 'tracking.metrics_dataset.MetricsDataset',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -50,7 +50,7 @@ const jsonTrackingData = {
   json: [
     {
       datasetName: 'train_evaluation.r2_score_linear_regression',
-      datasetType: 'tracking.json_dataset.JSONDataSet',
+      datasetType: 'tracking.json_dataset.JSONDataset',
       data: {
         classWeight: [
           {
@@ -84,7 +84,7 @@ const showDiffTrackingData = {
   metrics: [
     {
       datasetName: 'train_evaluation.r2_score_linear_regression',
-      datasetType: 'tracking.metrics_dataset.MetricsDataSet',
+      datasetType: 'tracking.metrics_dataset.MetricsDataset',
       data: {
         classWeight: [
           { runId: 'My Favorite Sprint', value: 12 },
@@ -137,7 +137,7 @@ const plotlyTrackingData = {
   metrics: [
     {
       datasetName: 'plotly',
-      datasetType: 'plotly.plotly_dataset.PlotlyDataSet',
+      datasetType: 'plotly.plotly_dataset.PlotlyDataset',
       data: {
         plotlyVisualization: [
           {

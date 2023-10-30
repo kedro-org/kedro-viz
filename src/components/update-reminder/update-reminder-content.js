@@ -1,10 +1,17 @@
 export const updateContent = {
-  date: '31 August 2023',
+  date: '20 October 2023',
   features: [
     {
-      title: 'Support for Python 3.11',
+      title: 'Skipping plugins',
       image: '',
-      copy: 'Kedro-Viz now supports Python 3.11, and we have removed upper bounds on Python versions. Please note that we will soon discontinue support for Python 3.7. If you are using Python 3.7, we recommend upgrading to Python 3.8 or newer.',
+      copy: 'You can now skip all plugins while running Kedro-Viz by using the --ignore-plugins CLI option.',
+      buttonLink: '',
+      buttonText: '',
+    },
+    {
+      title: 'Improved run-command display',
+      image: '',
+      copy: "We've fixed the improper display of the run-command within the metadata panel.",
       buttonLink: '',
       buttonText: '',
     },

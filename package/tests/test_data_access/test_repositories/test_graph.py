@@ -32,6 +32,12 @@ class TestGraphNodeRepository:
         assert task_nodes[-1] not in filtered
         assert repo.get_nodes_by_ids({"not exist"}) == []
 
+    def test_get_node_ids(self, identity):
+        repo = GraphNodesRepository()
+        task_node = GraphNode.create_task_node(node(identity, inputs="x", outputs=None))
+        repo.add_node(task_node)
+        assert repo.get_node_ids() == ["0b1b5ea2"]
+
 
 class TestGraphEdgesRepository:
     def test_filter_by_node_is(self):

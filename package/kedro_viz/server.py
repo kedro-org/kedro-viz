@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import uvicorn
-from fastapi.encoders import jsonable_encoder
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 from watchgod import run_process
 
 from kedro_viz.api import apps
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse, get_default_response
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -37,6 +36,10 @@ def populate_data(
         session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
 
+    # resolve the dataset factory patterns
+    data_access_manager.resolve_dataset_factory_patterns(catalog, pipelines)
+
+    # add catalog and relevant tracking datasets
     data_access_manager.add_catalog(catalog)
 
     # add dataset stats before adding pipelines
@@ -54,6 +57,7 @@ def run_server(
     env: Optional[str] = None,
     project_path: Optional[str] = None,
     autoreload: bool = False,
+    ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name, too-many-locals
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
@@ -71,16 +75,19 @@ def run_server(
         autoreload: Whether the API app should support autoreload.
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
+        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
     """
     print("Starting Kedro Viz Backend Server...")
+
+    path = Path(project_path) if project_path else Path.cwd()
+
     if load_file is None:
-        path = Path(project_path) if project_path else Path.cwd()
         catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-            path, env, extra_params
+            path, env, ignore_plugins, extra_params
         )
         pipelines = (
             pipelines
@@ -90,16 +97,16 @@ def run_server(
         populate_data(
             data_access_manager, catalog, pipelines, session_store, stats_dict
         )
+
         if save_file:
-            default_response = get_default_response()
-            jsonable_default_response = jsonable_encoder(default_response)
-            encoded_default_response = EnhancedORJSONResponse.encode_to_human_readable(
-                jsonable_default_response
-            )
-            Path(save_file).write_bytes(encoded_default_response)
+            save_api_responses_to_fs(save_file)
+
         app = apps.create_api_app_from_project(path, autoreload)
     else:
-        app = apps.create_api_app_from_file(load_file)
+        if not Path(load_file).exists():
+            raise ValueError(f"The provided filepath '{load_file}' does not exist.")
+
+        app = apps.create_api_app_from_file(f"{path}/{load_file}")
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 

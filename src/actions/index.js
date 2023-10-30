@@ -37,6 +37,19 @@ export function toggleExportModal(visible) {
   };
 }
 
+export const TOGGLE_SHAREABLE_URL_MODAL = 'TOGGLE_SHAREABLE_URL_MODAL';
+
+/**
+ * Toggle whether to show the shareable URL modal
+ * @param {Boolean} visible True if the modal is to be shown
+ */
+export function toggleShareableUrlModal(visible) {
+  return {
+    type: TOGGLE_SHAREABLE_URL_MODAL,
+    visible,
+  };
+}
+
 export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
 
 /**
@@ -258,5 +271,50 @@ export function toggleHoveredFocusMode(hoveredFocusMode) {
   return {
     type: TOGGLE_HOVERED_FOCUS_MODE,
     hoveredFocusMode,
+  };
+}
+
+export const TOGGLE_BOOKMARK = 'TOGGLE_BOOKMARK';
+
+/**
+ * Toggle bookmark of Run
+ * @param {boolean} bookmark
+ * @param {string} runId
+ */
+export function toggleBookmark(bookmark, runId) {
+  return {
+    type: TOGGLE_BOOKMARK,
+    bookmark,
+    runId,
+  };
+}
+
+export const UPDATE_RUN_TITLE = 'UPDATE_RUN_TITLE';
+
+/**
+ * Update Run title
+ * @param {String} title
+ * @param {string} runId
+ */
+export function updateRunTitle(title, runId) {
+  return {
+    type: UPDATE_RUN_TITLE,
+    title,
+    runId,
+  };
+}
+
+export const UPDATE_RUN_NOTES = 'UPDATE_RUN_NOTES';
+
+/**
+ * Update Run Notes
+ * @param {String} notes
+ * @param {string} runId
+ */
+export function updateRunNotes(notes, runId) {
+  return {
+    type: UPDATE_RUN_NOTES,
+    notes,
+    runId,
   };
 }
