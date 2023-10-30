@@ -11,7 +11,7 @@ from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 SESSION_STORE_CLASS = SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 
-#Setup for collaborative experiment tracking. 
+# Setup for collaborative experiment tracking.
 # SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data"),
 #                       "remote_path": "s3://{path-to-session_store}" }
 
@@ -21,7 +21,6 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 # Define the configuration folder. Defaults to `conf`
 # CONF_ROOT = "conf"
 
-from kedro.config import TemplatedConfigLoader  # NOQA
+from kedro.config import OmegaConfigLoader  # NOQA
 
-CONFIG_LOADER_CLASS = TemplatedConfigLoader
-CONFIG_LOADER_ARGS = {"globals_pattern": "*globals.yml", "globals_dict": {}}
+CONFIG_LOADER_CLASS = OmegaConfigLoader
