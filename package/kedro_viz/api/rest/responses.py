@@ -13,10 +13,10 @@ from kedro.io.core import get_protocol_and_path
 
 try:
     # Triggered if pydantic v2 is installed
-    from pydantic.v1 import BaseModel
+    from pydantic.v1 import BaseModel  # type: ignore
 except ImportError:
     # Triggered if pydantic v1 is installed
-    from pydantic import BaseModel
+    from pydantic import BaseModel  # type: ignore
 
 from kedro_viz.api.rest.utils import get_package_version
 from kedro_viz.data_access import data_access_manager

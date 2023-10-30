@@ -9,7 +9,6 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix for Kedro Viz Connection Error (#1507)
 - Add support for fastapi >= 0.100.0 (#1529)
 - Fix dataset factory patterns in Experiment Tracking. (#1588)
 
