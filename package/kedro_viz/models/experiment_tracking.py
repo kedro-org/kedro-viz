@@ -68,6 +68,10 @@ TRACKING_DATASET_GROUPS = {
     "matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
     "tracking.metrics_dataset.MetricsDataset": TrackingDatasetGroup.METRIC,
     "tracking.json_dataset.JSONDataset": TrackingDatasetGroup.JSON,
+    "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
 
 
