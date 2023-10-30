@@ -11,16 +11,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
 from kedro.io.core import get_protocol_and_path
 
-if TYPE_CHECKING:
-    from pydantic import BaseModel
-else:
-    try:
-        # Triggered if pydantic v2 is installed
-        from pydantic.v1 import BaseModel
-    except ImportError:
-        # Triggered if pydantic v1 is installed
-        from pydantic import BaseModel
-
 from kedro_viz.api.rest.utils import get_package_version
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
@@ -32,6 +22,16 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
+else:
+    try:
+        # Triggered if pydantic v2 is installed
+        from pydantic.v1 import BaseModel
+    except ImportError:
+        # Triggered if pydantic v1 is installed
+        from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
