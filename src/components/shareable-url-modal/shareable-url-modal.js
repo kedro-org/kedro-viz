@@ -42,7 +42,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [responseUrl, setResponseUrl] = useState(null);
   const [responseError, setResponseError] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
-  const [tooltipTargetRect, setTooltipTargetRect] = useState({});
   const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
@@ -115,19 +114,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const onCopyClick = (event) => {
-    const { width, height } = event.target.getBoundingClientRect();
-    // currentTarget is the element that has click handler attached
-    // offsetParent is he first parent that has a css position
-    const { offsetLeft, offsetTop } = event.currentTarget.offsetParent;
-
+  const onCopyClick = () => {
     window.navigator.clipboard.writeText(responseUrl);
-    setTooltipTargetRect({
-      left: offsetLeft,
-      top: offsetTop,
-      height,
-      width,
-    });
     setShowCopied(true);
 
     setTimeout(() => {
@@ -269,22 +257,23 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 {responseUrl}
               </a>
               {window.navigator.clipboard && (
-                <IconButton
-                  ariaLabel="Copy run command to clipboard."
-                  className="copy-button"
-                  dataHeapEvent={`clicked.run_command`}
-                  icon={CopyIcon}
-                  onClick={onCopyClick}
-                />
+                <div className="shareable-url-modal__result-action">
+                  <IconButton
+                    ariaLabel="Copy run command to clipboard."
+                    className="copy-button"
+                    dataHeapEvent={`clicked.run_command`}
+                    icon={CopyIcon}
+                    onClick={onCopyClick}
+                  />
+                  <Tooltip
+                    text="Copied!"
+                    visible={showCopied}
+                    noDelay
+                    centerArrow
+                    arrowSize="small"
+                  />
+                </div>
               )}
-              <Tooltip
-                text="Copied!"
-                visible={showCopied}
-                targetRect={tooltipTargetRect}
-                noDelay
-                centerArrow
-                arrowSize="small"
-              />
             </div>
           </div>
           <div className="shareable-url-modal__button-wrapper ">

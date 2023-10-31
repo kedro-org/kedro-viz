@@ -7,14 +7,22 @@ $triangle-size-sm: 5px;
 
 .pipeline-tooltip {
   position: absolute;
-  top: -$y-offset;
-  left: -$x-offset;
+  bottom: calc(100% + 10px);
+  left: 50%;
   z-index: 9;
-  width: 100vw;
+  transform: translate(-50%, 0);
+  font-size: 12px;
   visibility: hidden;
   opacity: 0;
   transition: opacity ease 0.1s, visibility ease 0.1s 1s;
   pointer-events: none;
+
+  &--chart {
+    width: 100vw;
+    top: -$y-offset;
+    left: -$x-offset;
+    bottom: auto;
+  }
 
   &--visible {
     visibility: visible;
@@ -38,12 +46,10 @@ $triangle-size-sm: 5px;
 .pipeline-tooltip__text {
   @extend %tooltip;
 
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  position: relative;
+  width: max-content;
   max-width: calc(50vw - 150px);
   padding: 12px 20px;
-  font-size: 1.5em;
   overflow-wrap: break-word;
 
   &::after {
@@ -59,7 +65,13 @@ $triangle-size-sm: 5px;
     content: '';
   }
 
-  .pipeline-tooltip--right & {
+  .pipeline-tooltip--chart & {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .pipeline-tooltip--right.pipeline-tooltip--chart & {
     right: 0;
     left: auto;
 
@@ -69,7 +81,7 @@ $triangle-size-sm: 5px;
     }
   }
 
-  .pipeline-tooltip--top & {
+  .pipeline-tooltip--top.pipeline-tooltip--chart & {
     top: 0;
     bottom: auto;
 

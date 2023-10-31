@@ -21,6 +21,7 @@ export const insertZeroWidthSpace = (text) =>
  * @param {boolean}  noDelay Where to show the tooltip immediately or after 1 sec delay
  * @param {boolean}  centerArrow Where to center tooltip arrow or not
  * @param {string}  arrowSize Tooltip arrow size regular | small
+ * @param {Object}  style Tooltip custom css
  */
 const Tooltip = ({
   chartSize,
@@ -30,21 +31,28 @@ const Tooltip = ({
   noDelay,
   centerArrow,
   arrowSize,
+  style,
 }) => {
-  let isTop, isRight, x, y;
+  let isTop = false,
+    isRight = false;
+  const isFlowchartTooltip = chartSize && Object.keys(chartSize).length;
+  const styles = { ...style };
 
-  if (chartSize && Object.keys(chartSize).length) {
+  if (isFlowchartTooltip) {
+    let x = 0,
+      y = 0;
     const { left, top, width, height, outerWidth, sidebarWidth } = chartSize;
 
     isRight = targetRect.left - sidebarWidth > width / 2;
     isTop = targetRect.top < height / 2;
+
     const xOffset = isRight ? targetRect.left - outerWidth : targetRect.left;
     const yOffset = isTop ? targetRect.top + targetRect.height : targetRect.top;
+
     x = xOffset - left + targetRect.width / 2;
     y = yOffset - top;
-  } else {
-    x = targetRect.left - targetRect.width / 2;
-    y = targetRect.top;
+
+    styles.transform = `translate(${x}px, ${y}px)`;
   }
 
   return (
@@ -53,17 +61,14 @@ const Tooltip = ({
         'pipeline-tooltip--visible': visible,
         'pipeline-tooltip--right': isRight,
         'pipeline-tooltip--top': isTop,
+        'pipeline-tooltip--chart': isFlowchartTooltip,
         'pipeline-tooltip--no-delay': noDelay,
         'pipeline-tooltip--center-arrow': centerArrow,
         'pipeline-tooltip--small-arrow': arrowSize === 'small',
       })}
-      style={{
-        transform: `translate(${x}px, ${y}px)`,
-      }}
+      style={styles}
     >
-      <div className={classnames('pipeline-tooltip__text', {})}>
-        {insertZeroWidthSpace(text)}
-      </div>
+      <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>
     </div>
   );
 };
@@ -76,6 +81,7 @@ Tooltip.defaultProps = {
   noDelay: false,
   centerArrow: false,
   arrowSize: 'regular',
+  style: {},
 };
 
 export default Tooltip;
