@@ -62,6 +62,8 @@ intersphinx_mapping = {
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+here = Path(__file__).parent.absolute()
+html_logo = str(here / "kedro-horizontal-color-on-light.svg")
 
 
 # Theme options are theme-specific and customise the look and feel of a theme
