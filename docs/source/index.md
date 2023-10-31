@@ -1,17 +1,17 @@
-```{image} https://raw.githubusercontent.com/kedro-org/kedro/main/static/img/kedro_banner.png
-:alt: Kedro logo
-:class: kedro-logo
-```
-
 # Welcome to Kedro-Viz documentation!
 
+<p align="center">
+
+![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.png)
+
+</p>
 
 Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
 
 Kedro-Viz features include:
 
 ✨ Complete visualisation of a Kedro project and its pipelines.    
-🎨 Support for light & dark themes out of the box.    
+☯ Support for light & dark themes out of the box.    
 🚀 Scalable to big pipelines with hundreds of nodes.   
 🔎 Highly interactive, filterable and searchable.    
 🔬 Focus mode for modular pipeline visualisation.    
@@ -21,6 +21,7 @@ Kedro-Viz features include:
 🧪 Support for experiment tracking and comparing runs in a Kedro project.
 
 
+Check out the [live demo](https://demo.kedro.org/) for a preview of Kedro-Viz.
 
 ```{toctree}
 :caption: Learn about Kedro-Viz
