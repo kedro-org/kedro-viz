@@ -1,5 +1,5 @@
 //--- Useful JS utility functions ---//
-import { pathRoot } from '../config';
+const pathRoot = './api';
 
 /**
  * Loop through an array and output to an object

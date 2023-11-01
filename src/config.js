@@ -1,4 +1,4 @@
-export const pathRoot = './api';
+import { replaceMatches } from './utils';
 
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
@@ -124,20 +124,25 @@ export const params = {
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
 const { pathname } = window.location;
-const sanitizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+const sanitizedPathname = replaceMatches(pathname, {
+  'experiment-tracking': '',
+});
+const pathnameWithTrailingSlash = sanitizedPathname.endsWith('/')
+  ? sanitizedPathname
+  : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
 
 export const routes = {
   flowchart: {
-    main: sanitizedPathname,
-    focusedNode: `${sanitizedPathname}?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `${sanitizedPathname}?${activePipeline}&${params.selected}=:id`,
-    selectedName: `${sanitizedPathname}?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `${sanitizedPathname}?${activePipeline}`,
+    main: pathnameWithTrailingSlash,
+    focusedNode: `${pathnameWithTrailingSlash}?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `${pathnameWithTrailingSlash}?${activePipeline}&${params.selected}=:id`,
+    selectedName: `${pathnameWithTrailingSlash}?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `${pathnameWithTrailingSlash}?${activePipeline}`,
   },
   experimentTracking: {
-    main: `${sanitizedPathname}experiment-tracking`,
-    selectedView: `${sanitizedPathname}experiment-tracking?${params.view}=:view`,
-    selectedRuns: `${sanitizedPathname}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
+    main: `${pathnameWithTrailingSlash}experiment-tracking`,
+    selectedView: `${pathnameWithTrailingSlash}experiment-tracking?${params.view}=:view`,
+    selectedRuns: `${pathnameWithTrailingSlash}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
 
