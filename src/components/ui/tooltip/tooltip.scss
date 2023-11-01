@@ -49,12 +49,12 @@ $triangle-size-sm: 5px;
   position: relative;
   width: max-content;
   max-width: calc(50vw - 150px);
-  padding: 12px 20px;
+  padding: 8px 12px;
   overflow-wrap: break-word;
 
   &::after {
     position: absolute;
-    bottom: -$y-offset + 0.5;
+    bottom: calc(-#{$y-offset} + 0.5px);
     left: calc($x-offset / 2);
     width: 0;
     height: 0;
@@ -69,6 +69,7 @@ $triangle-size-sm: 5px;
     position: absolute;
     bottom: 0;
     left: 0;
+    padding: 12px 20px;
   }
 
   .pipeline-tooltip--right.pipeline-tooltip--chart & {
@@ -86,7 +87,7 @@ $triangle-size-sm: 5px;
     bottom: auto;
 
     &::after {
-      top: -$y-offset + 0.5;
+      top: calc(-#{$y-offset} + 0.5px);
       bottom: auto;
       border-width: 0 $triangle-size $triangle-size $triangle-size;
       border-top-color: transparent;
@@ -96,14 +97,14 @@ $triangle-size-sm: 5px;
 
   .pipeline-tooltip--small-arrow & {
     &::after {
-      bottom: -$y-offset / 2 + 0.5;
+      bottom: calc(-#{$y-offset} / 2 + 0.5px);
       border-width: $triangle-size-sm $triangle-size-sm 0 $triangle-size-sm;
     }
   }
 
   .pipeline-tooltip--top.pipeline-tooltip--small-arrow & {
     &::after {
-      top: -$y-offset / 2 + 0.5;
+      top: calc(-#{$y-offset} / 2 + 0.5px);
       border-width: 0 $triangle-size-sm $triangle-size-sm $triangle-size-sm;
     }
   }

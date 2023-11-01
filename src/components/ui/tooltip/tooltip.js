@@ -14,24 +14,24 @@ export const insertZeroWidthSpace = (text) =>
 
 /**
  * Display flowchart node tooltip
- * @param {Object} chartSize Chart dimensions in pixels
- * @param {Object} targetRect event.target.getBoundingClientRect()
- * @param {Boolean} visible Whether to show the tooltip
- * @param {String} text Tooltip display label
- * @param {boolean}  noDelay Where to show the tooltip immediately or after 1 sec delay
- * @param {boolean}  centerArrow Where to center tooltip arrow or not
  * @param {string}  arrowSize Tooltip arrow size regular | small
+ * @param {boolean}  centerArrow Where to center tooltip arrow or not
+ * @param {Object} chartSize Chart dimensions in pixels
+ * @param {boolean}  noDelay Where to show the tooltip immediately or after 1 sec delay
  * @param {Object}  style Tooltip custom css
+ * @param {Object} targetRect event.target.getBoundingClientRect()
+ * @param {String} text Tooltip display label
+ * @param {Boolean} visible Whether to show the tooltip
  */
 const Tooltip = ({
-  chartSize,
-  targetRect,
-  visible,
-  text,
-  noDelay,
-  centerArrow,
   arrowSize,
+  centerArrow,
+  chartSize,
+  noDelay,
   style,
+  targetRect,
+  text,
+  visible,
 }) => {
   let isTop = false,
     isRight = false;
@@ -74,14 +74,14 @@ const Tooltip = ({
 };
 
 Tooltip.defaultProps = {
-  chartSize: {},
-  targetRect: {},
-  visible: false,
-  text: '',
-  noDelay: false,
-  centerArrow: false,
   arrowSize: 'regular',
+  centerArrow: false,
+  chartSize: {},
+  noDelay: false,
   style: {},
+  targetRect: {},
+  text: '',
+  visible: false,
 };
 
 export default Tooltip;
