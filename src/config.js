@@ -123,19 +123,21 @@ export const params = {
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
+const { pathname } = window.location;
+const sanitizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
 
 export const routes = {
   flowchart: {
-    main: '/',
-    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
-    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `/?${activePipeline}`,
+    main: sanitizedPathname,
+    focusedNode: `${sanitizedPathname}?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `${sanitizedPathname}?${activePipeline}&${params.selected}=:id`,
+    selectedName: `${sanitizedPathname}?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `${sanitizedPathname}?${activePipeline}`,
   },
   experimentTracking: {
-    main: '/experiment-tracking',
-    selectedView: `/experiment-tracking?${params.view}=:view`,
-    selectedRuns: `/experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
+    main: `${sanitizedPathname}experiment-tracking`,
+    selectedView: `${sanitizedPathname}experiment-tracking?${params.view}=:view`,
+    selectedRuns: `${sanitizedPathname}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
 
