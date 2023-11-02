@@ -12,7 +12,7 @@
   </div>
 
   <div class="wy-main-nav">
-    <a href="https://docs.kedro.org/" >Kedro</a>
+    <a href="https://docs.kedro.org/">Kedro</a>
     <a href="/" class="active">Kedro-Viz</a>
     <a href="#">Kedro-Datasets</a>
   </div>
@@ -20,22 +20,31 @@
   {%- include "searchbox.html" %}
 </div>
 
-{% endblock %}
-
-{%- block extrahead %}
+{% endblock %} {%- block extrahead %}
 <script type="text/javascript">
-  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
 
-  heap.load({{ "522942930" }});
+    heap.load({{ "522942930" }});
 
-  // Wait for DOM to load and clone main nav into the sidebar
-  document.addEventListener("DOMContentLoaded", function() {
-      var sidebarSearch = document.querySelector('.wy-side-nav-search div[role="search"]');
-      sidebarSearch.parentNode.insertBefore(document.querySelector('.wy-main-nav').cloneNode(true), sidebarSearch);
-  });
+    // Wait for DOM to load and clone main nav into the sidebar
+    document.addEventListener("DOMContentLoaded", function() {
+        var sidebarSearch = document.querySelector('.wy-side-nav-search div[role="search"]');
+        sidebarSearch.parentNode.insertBefore(document.querySelector('.wy-main-nav').cloneNode(true), sidebarSearch);
+    });
+  // Prepend close icon to mobile header
+  var closeBtn = document.querySelector('.wy-nav-top i.fa-bars').cloneNode(true);
+        closeBtn.classList.remove('fa-bars');
+        closeBtn.classList.add('fa-times');
+        document.querySelector('.wy-nav-top').prepend(closeBtn)
 </script>
-<link rel="stylesheet" href="https://kedro-shared-files.s3.eu-west-2.amazonaws.com/qb1-sphinx-rtd.css" type="text/css"
+<link
+  rel="stylesheet"
+  href="https://kedro-shared-files.s3.eu-west-2.amazonaws.com/qb1-sphinx-rtd.css"
+  type="text/css"
 />
-<link rel="stylesheet" href="https://kedro-shared-files.s3.eu-west-2.amazonaws.com/theme-overrides.css" type="text/css"
+<link
+  rel="stylesheet"
+  href="https://kedro-shared-files.s3.eu-west-2.amazonaws.com/theme-overrides.css"
+  type="text/css"
 />
 {% endblock %}
