@@ -1,14 +1,13 @@
 prm_shuttle_company_reviews:
   type: pandas.ParquetDataSet
-  filepath: ${base_location}/03_primary/prm_shuttle_company_reviews.pq
+  filepath: ${_base_location}/03_primary/prm_shuttle_company_reviews.pq
   metadata:
     kedro-viz:
       layer: primary
 
 prm_spine_table:
   type: pandas.ParquetDataSet
-  filepath: ${base_location}/03_primary/prm_spine_table.pq
+  filepath: ${_base_location}/03_primary/prm_spine_table.pq
   metadata:
     kedro-viz:
       layer: primary
-
