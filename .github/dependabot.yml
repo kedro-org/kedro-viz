@@ -9,6 +9,7 @@ updates:
     directory: "/package" # Location of package manifests
     schedule:
       interval: "monthly"
+    versioning-strategy: increase-if-necessary
     ignore:
       - dependency-name: "types-*"
     labels:
