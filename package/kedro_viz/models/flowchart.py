@@ -8,7 +8,6 @@ from enum import Enum
 from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
-
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from pydantic import BaseModel, Field, root_validator, validator
@@ -100,11 +99,11 @@ class GraphNode(BaseModel, abc.ABC):
         id (str): A unique identifier for the node in the graph,
                   obtained by hashing the node's string representation.
         name (str): The full name of this node obtained from the underlying Kedro object
-        type (str): The type of the graph node
-        tags (Set[str]): The tags associated with this node. Defaults to `set()`.
+        type (Optional[str]): The type of the graph node
+        tags (Optional[Set[str]]): The tags associated with this node. Defaults to `set()`.
         kedro_obj (Optional[Union[KedroNode, AbstractDataset]]): The underlying Kedro object
         for each graph node, if any. Defaults to `None`.
-        pipelines (Set[str]): The set of registered pipeline IDs this
+        pipelines (Optional[Set[str]]): The set of registered pipeline IDs this
         node belongs to. Defaults to `set()`.
         namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
         modular_pipelines (Optional[List[str]]): The list of modular pipeline this node belongs to.
@@ -113,12 +112,14 @@ class GraphNode(BaseModel, abc.ABC):
 
     id: str
     name: str
-    type: str
-    tags: Set[str] = Field(set(), description="The tags associated with this node")
+    type: Optional[str]
+    tags: Optional[Set[str]] = Field(
+        set(), description="The tags associated with this node"
+    )
     kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = Field(
         None, description="The underlying Kedro object for each graph node, if any"
     )
-    pipelines: Set[str] = Field(
+    pipelines: Optional[Set[str]] = Field(
         set(), description="The set of registered pipeline IDs this node belongs to"
     )
 
@@ -307,6 +308,11 @@ class GraphNode(BaseModel, abc.ABC):
 class GraphNodeMetadata(BaseModel, abc.ABC):
     """Represent a graph node's metadata"""
 
+    class Config:
+        """Pydantic Config for GraphNodeMetadata"""
+
+        arbitrary_types_allowed = True
+
 
 class TaskNode(GraphNode):
     """Represent a graph node of type TASK
@@ -316,8 +322,11 @@ class TaskNode(GraphNode):
     """
 
     parameters: Dict = Field(
-        dict, description="A dictionary of parameter values for the task node"
+        dict(), description="A dictionary of parameter values for the task node"
     )
+
+    # The type for Task node
+    type: str = GraphNodeType.TASK.value
 
     @root_validator(pre=True)
     def check_kedro_obj_exists(cls, values):
@@ -331,10 +340,6 @@ class TaskNode(GraphNode):
     @validator("modular_pipelines", pre=True, always=True)
     def set_modular_pipelines(cls, _, values):
         return cls._expand_namespaces(values["kedro_obj"].namespace)
-
-    @validator("type", pre=True, always=True)
-    def set_type(cls):
-        return GraphNodeType.TASK.value
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -386,6 +391,9 @@ class ModularPipelineNode(GraphNode):
         pipeline node with other modular pipelines""",
     )
 
+    # The type for Modular Pipeline Node
+    type: str = GraphNodeType.MODULAR_PIPELINE.value
+
     @property
     def inputs(self) -> Set[str]:
         """Return a set of inputs for this modular pipeline.
@@ -406,10 +414,6 @@ class ModularPipelineNode(GraphNode):
         return (self.external_outputs | self.internal_outputs) - (
             self.external_inputs | self.internal_inputs
         )
-
-    @validator("type", pre=True, always=True)
-    def set_type(cls):
-        return GraphNodeType.MODULAR_PIPELINE.value
 
 
 class TaskNodeMetadata(GraphNodeMetadata):
@@ -441,23 +445,24 @@ class TaskNodeMetadata(GraphNodeMetadata):
     )
 
     # Inputs to the TaskNode
-    inputs: List[str]
+    inputs: Optional[List[str]]
 
     # Outputs from the TaskNode
-    outputs: List[str]
+    outputs: Optional[List[str]]
 
     @root_validator(pre=True)
     def check_task_node_exists(cls, values):
         assert "task_node" in values
-        cls.set_kedro_node(values["task_node"])
+        cls.set_task_and_kedro_node(values["task_node"])
         return values
 
     @classmethod
-    def set_kedro_node(cls, task_node):
+    def set_task_and_kedro_node(cls, task_node):
+        cls.task_node = task_node
         cls.kedro_node = cast(KedroNode, task_node.kedro_obj)
 
-    @validator("code", pre=True, always=True)
-    def set_code(cls):
+    @validator("code", always=True)
+    def set_code(cls, code, values):
         # this is required to handle partial, curry functions
         if inspect.isfunction(cls.kedro_node.func):
             code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
@@ -465,8 +470,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
         return None
 
-    @validator("filepath", pre=True, always=True)
-    def set_filepath(cls):
+    @validator("filepath", always=True)
+    def set_filepath(cls, filepath, values):
         # this is required to handle partial, curry functions
         if inspect.isfunction(cls.kedro_node.func):
             code_full_path = (
@@ -485,29 +490,27 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
         return None
 
-    @validator("parameters", pre=True, always=True)
-    def set_parameters(cls, task_node):
-        return task_node.parameters
+    @validator("parameters", always=True)
+    def set_parameters(cls, parameters, values):
+        return cls.task_node.parameters
 
-    @validator("run_command", pre=True, always=True)
-    def set_run_command(cls, task_node):
+    @validator("run_command", always=True)
+    def set_run_command(cls, run_command, values):
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if cls.kedro_node._name is not None:
-            if task_node.namespace is not None:
-                return (
-                    f"kedro run --to-nodes={task_node.namespace}.{cls.kedro_node._name}"
-                )
+            if cls.task_node.namespace is not None:
+                return f"kedro run --to-nodes={cls.task_node.namespace}.{cls.kedro_node._name}"
             return f"kedro run --to-nodes={cls.kedro_node._name}"
 
         return None
 
-    @validator("inputs", pre=True, always=True)
-    def set_inputs(cls):
+    @validator("inputs", always=True)
+    def set_inputs(cls, inputs, values):
         return cls.kedro_node.inputs
 
-    @validator("outputs", pre=True, always=True)
-    def set_outputs(cls):
+    @validator("outputs", always=True)
+    def set_outputs(cls, outputs, values):
         return cls.kedro_node.outputs
 
 
@@ -538,6 +541,9 @@ class DataNode(GraphNode):
     # The metadata for data node
     viz_metadata: Optional[Dict]
 
+    # The type for data node
+    type: str = GraphNodeType.DATA.value
+
     @root_validator(pre=True)
     def check_kedro_obj_exists(cls, values):
         assert "kedro_obj" in values
@@ -566,19 +572,14 @@ class DataNode(GraphNode):
         namespace = cls._get_namespace(name)
         return cls._expand_namespaces(namespace)
 
-    @validator("viz_metadata", pre=True, always=True)
+    @validator("viz_metadata", always=True)
     def set_viz_metadata(cls, _, values):
         kedro_obj = values.get("kedro_obj")
 
-        try:
-            return kedro_obj.metadata["kedro-viz"]
-        except (AttributeError, KeyError):  # pragma: no cover
-            logger.debug("Kedro-viz metadata not found for %s", values.get("name"))
-            return None
+        if hasattr(kedro_obj, "metadata") and kedro_obj.metadata:
+            return kedro_obj.metadata.get("kedro-viz", None)
 
-    @validator("type", pre=True, always=True)
-    def set_type(cls):
-        return GraphNodeType.DATA.value
+        return None
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -617,15 +618,14 @@ class DataNode(GraphNode):
 
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        try:
-            is_preview = bool(self.viz_metadata["preview_args"])
-        except (AttributeError, KeyError):
+        if not (self.viz_metadata and self.viz_metadata.get("preview_args", None)):
             return False
-        return is_preview
+
+        return True
 
     def get_preview_args(self):
         """Gets the preview arguments for a dataset"""
-        return self.viz_metadata["preview_args"]
+        return self.viz_metadata.get("preview_args", None)
 
 
 class TranscodedDataNode(GraphNode):
@@ -652,15 +652,18 @@ class TranscodedDataNode(GraphNode):
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
     # The original Kedro's AbstractDataset for this transcoded data node.
-    original_version: AbstractDataset
+    original_version: Optional[AbstractDataset]
 
     # The original name for the generated run command.
-    original_name: str
+    original_name: Optional[str]
 
     # The transcoded versions of the transcoded data nodes.
     transcoded_versions: Set[AbstractDataset] = Field(
-        None, description="The transcoded versions of the transcoded data nodes"
+        set(), description="The transcoded versions of the transcoded data nodes"
     )
+
+    # The type for data node
+    type: str = GraphNodeType.DATA.value
 
     @validator("namespace", pre=True, always=True)
     def set_namespace(cls, _, values):
@@ -680,10 +683,6 @@ class TranscodedDataNode(GraphNode):
         namespace = cls._get_namespace(name)
         return cls._expand_namespaces(namespace)
 
-    @validator("type", pre=True, always=True)
-    def set_type(cls):
-        return GraphNodeType.DATA.value
-
     def has_metadata(self) -> bool:
         return True
 
@@ -701,7 +700,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     data_node: DataNode
 
     # The type of the data node
-    type: str = GraphNodeType.DATA.value
+    type: Optional[str]
 
     # The path to the actual data file for the underlying dataset
     filepath: Optional[str]
@@ -739,64 +738,70 @@ class DataNodeMetadata(GraphNodeMetadata):
     @root_validator(pre=True)
     def check_data_node_exists(cls, values):
         assert "data_node" in values
-        cls.set_dataset(values["data_node"])
+        cls.set_data_node_and_dataset(values["data_node"])
         return values
 
     @classmethod
-    def set_dataset(cls, data_node):
+    def set_data_node_and_dataset(cls, data_node):
+        cls.data_node = data_node
         cls.dataset = cast(AbstractDataset, data_node.kedro_obj)
 
         # dataset.release clears the cache before loading to ensure that this issue
         # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
         cls.dataset.release()
 
-    @validator("filepath", pre=True, always=True)
-    def set_filepath(cls):
+    @validator("type", always=True)
+    def set_type(cls, type, values):
+        return cls.data_node.dataset_type
+
+    @validator("filepath", always=True)
+    def set_filepath(cls, filepath, values):
         dataset_description = cls.dataset._describe()
         return _parse_filepath(dataset_description)
 
-    @validator("run_command", pre=True, always=True)
-    def set_run_command(cls, data_node):
-        if not data_node.is_free_input:
-            return f"kedro run --to-outputs={data_node.name}"
+    @validator("run_command", always=True)
+    def set_run_command(cls, run_command, values):
+        if not cls.data_node.is_free_input:
+            return f"kedro run --to-outputs={cls.data_node.name}"
         return None
 
-    @validator("plot", pre=True, always=True)
-    def set_plot(cls, data_node):
-        if data_node.is_plot_node():
-            return data_node.kedro_obj.load()
+    @validator("plot", always=True)
+    def set_plot(cls, plot, values):
+        if cls.data_node.is_plot_node():
+            return cls.data_node.kedro_obj.load()
         return None
 
-    @validator("image", pre=True, always=True)
-    def set_image(cls, data_node):
-        if data_node.is_image_node():
-            return data_node.kedro_obj.load()
+    @validator("image", always=True)
+    def set_image(cls, image, values):
+        if cls.data_node.is_image_node():
+            return cls.data_node.kedro_obj.load()
         return None
 
-    @validator("tracking_data", pre=True, always=True)
-    def set_tracking_data(cls, data_node):
-        if data_node.is_tracking_node():
-            return data_node.kedro_obj.load()
+    @validator("tracking_data", always=True)
+    def set_tracking_data(cls, tracking_data, values):
+        if cls.data_node.is_tracking_node():
+            return cls.data_node.kedro_obj.load()
         return None
 
-    @validator("preview", pre=True, always=True)
-    def set_preview(cls, data_node):
-        if data_node.is_preview_node():
+    @validator("preview", always=True)
+    def set_preview(cls, preview, values):
+        if cls.data_node.is_preview_node():
             try:
-                if hasattr(data_node.kedro_obj, "_preview"):
-                    return data_node.kedro_obj._preview(**data_node.get_preview_args())
-            except Exception as exc:
+                if hasattr(cls.dataset, "_preview"):
+                    return cls.dataset._preview(**cls.data_node.get_preview_args())
+
+            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
                 logger.warning(
                     "'%s' could not be previewed. Full exception: %s: %s",
-                    data_node.name,
+                    cls.data_node.name,
                     type(exc).__name__,
                     exc,
                 )
-        return None
+                return None
 
     @validator("stats", pre=True, always=True)
-    def set_stats(cls, data_node):
-        return data_node.stats
+    def set_stats(cls, stats, values):
+        return cls.data_node.stats
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
@@ -821,10 +826,10 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     )
 
     # The dataset type of the underlying transcoded data node original version.
-    original_type: str
+    original_type: Optional[str]
 
     # The list of all dataset types for the transcoded versions.
-    transcoded_types: List[str]
+    transcoded_types: Optional[List[str]]
 
     # Statistics for the underlying data node
     stats: Optional[Dict] = Field(
@@ -834,33 +839,34 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     @root_validator(pre=True)
     def check_transcoded_data_node_exists(cls, values):
         assert "transcoded_data_node" in values
+        cls.transcoded_data_node = values["transcoded_data_node"]
         return values
 
-    @validator("filepath", pre=True, always=True)
-    def set_filepath(cls, transcoded_data_node):
-        dataset_description = transcoded_data_node.original_version._describe()
+    @validator("filepath", always=True)
+    def set_filepath(cls, filepath, values):
+        dataset_description = cls.transcoded_data_node.original_version._describe()
         return _parse_filepath(dataset_description)
 
-    @validator("run_command", pre=True, always=True)
-    def set_run_command(cls, transcoded_data_node):
-        if not transcoded_data_node.is_free_input:
-            return f"kedro run --to-outputs={transcoded_data_node.original_name}"
+    @validator("run_command", always=True)
+    def set_run_command(cls, run_command, values):
+        if not cls.transcoded_data_node.is_free_input:
+            return f"kedro run --to-outputs={cls.transcoded_data_node.original_name}"
         return None
 
-    @validator("original_type", pre=True, always=True)
-    def set_original_type(cls, transcoded_data_node):
-        return get_dataset_type(transcoded_data_node.original_version)
+    @validator("original_type", always=True)
+    def set_original_type(cls, original_type, values):
+        return get_dataset_type(cls.transcoded_data_node.original_version)
 
-    @validator("transcoded_types", pre=True, always=True)
-    def set_transcoded_types(cls, transcoded_data_node):
+    @validator("transcoded_types", always=True)
+    def set_transcoded_types(cls, transcoded_types, values):
         return [
             get_dataset_type(transcoded_version)
-            for transcoded_version in transcoded_data_node.transcoded_versions
+            for transcoded_version in cls.transcoded_data_node.transcoded_versions
         ]
 
-    @validator("stats", pre=True, always=True)
-    def set_stats(cls, transcoded_data_node):
-        return transcoded_data_node.stats
+    @validator("stats", always=True)
+    def set_stats(cls, stats, values):
+        return cls.transcoded_data_node.stats
 
 
 class ParametersNode(GraphNode):
@@ -876,32 +882,30 @@ class ParametersNode(GraphNode):
         None, description="The layer that this parameters node belongs to"
     )
 
+    # The type for Parameters Node
+    type: str = GraphNodeType.PARAMETERS.value
+
     @root_validator(pre=True)
     def check_kedro_obj_and_name_exists(cls, values):
         assert "kedro_obj" in values
         assert "name" in values
         return values
 
-    @validator("namespace", pre=True, always=True)
-    def set_namespace(cls):
-        if cls.is_all_parameters():
-            return None
-        return cls._get_namespace(cls.parameter_name)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    @validator("modular_pipelines", pre=True, always=True)
-    def set_modular_pipelines(cls):
-        if cls.is_all_parameters():
-            return []
-        return cls._expand_namespaces(cls._get_namespace(cls.parameter_name))
+        if self.is_all_parameters():
+            self.namespace = None
+            self.modular_pipelines = []
+        else:
+            self.namespace = self._get_namespace(self.parameter_name)
+            self.modular_pipelines = self._expand_namespaces(
+                self._get_namespace(self.parameter_name)
+            )
 
-    @validator("type", pre=True, always=True)
-    def set_type(cls):
-        return GraphNodeType.PARAMETERS.value
-
-    @classmethod
-    def is_all_parameters(cls) -> bool:
+    def is_all_parameters(self) -> bool:
         """Check whether the graph node represent all parameters in the pipeline"""
-        return cls.name == "parameters"
+        return self.name == "parameters"
 
     def is_single_parameter(self) -> bool:
         """Check whether the graph node represent a single parameter in the pipeline"""
@@ -942,18 +946,21 @@ class ParametersNodeMetadata(GraphNodeMetadata):
     parameters_node: ParametersNode
 
     # The parameters dictionary for the parameters metadata node.
-    parameters: Dict
+    parameters: Optional[Dict]
 
     @root_validator(pre=True)
     def check_parameters_node_exists(cls, values):
         assert "parameters_node" in values
+        cls.parameters_node = values["parameters_node"]
         return values
 
-    @validator("parameters", pre=True, always=True)
-    def set_parameters(cls, parameters_node):
-        if parameters_node.is_single_parameter():
-            return {parameters_node.parameter_name: parameters_node.parameter_value}
-        return parameters_node.parameter_value
+    @validator("parameters", always=True)
+    def set_parameters(cls, parameters, values):
+        if cls.parameters_node.is_single_parameter():
+            return {
+                cls.parameters_node.parameter_name: cls.parameters_node.parameter_value
+            }
+        return cls.parameters_node.parameter_value
 
 
 class GraphEdge(BaseModel, frozen=True):

@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
 from unittest import mock
-
+from kedro_viz.models.flowchart import GraphNode
+from kedro_datasets.pandas import CSVDataset
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
@@ -290,3 +291,18 @@ def example_csv_dataset(tmp_path, example_data_frame):
     )
     new_csv_dataset.save(example_data_frame)
     yield new_csv_dataset
+
+@pytest.fixture
+def example_data_node():
+        dataset_name = "uk.data_science.model_training.dataset"
+        metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
+        kedro_dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+        data_node = GraphNode.create_data_node(
+            dataset_name=dataset_name,
+            layer="raw",
+            tags=set(),
+            dataset=kedro_dataset,
+            stats={"rows": 10, "columns": 5, "file_size": 1024},
+        )
+
+        yield data_node

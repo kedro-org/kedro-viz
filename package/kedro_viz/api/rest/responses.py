@@ -336,15 +336,15 @@ def get_node_metadata_response(node_id: str):
         return JSONResponse(content={})
 
     if isinstance(node, TaskNode):
-        return TaskNodeMetadata(node)
+        return TaskNodeMetadata(task_node=node)
 
     if isinstance(node, DataNode):
-        return DataNodeMetadata(node)
+        return DataNodeMetadata(data_node=node)
 
     if isinstance(node, TranscodedDataNode):
-        return TranscodedDataNodeMetadata(node)
+        return TranscodedDataNodeMetadata(transcoded_data_node=node)
 
-    return ParametersNodeMetadata(node)
+    return ParametersNodeMetadata(parameters_node=node)
 
 
 def get_selected_pipeline_response(registered_pipeline_id: str):
