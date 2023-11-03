@@ -658,7 +658,11 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <Tooltip chartSize={chartSize} {...this.state.tooltip} />
+        <Tooltip
+          chartSize={chartSize}
+          {...this.state.tooltip}
+          style={{ fontSize: '1.5em' }}
+        />
       </div>
     );
   }
