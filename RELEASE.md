@@ -5,11 +5,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
 # Upcoming Release
 
 ## Bug fixes and other changes
 
 - Fix dataset factory patterns in Experiment Tracking. (#1588)
+- Improved feedback for copy to clipboard feature. (#1614)
 
 # Release 6.6.1
 

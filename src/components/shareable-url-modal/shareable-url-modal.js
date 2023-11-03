@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
-import modifiers from '../../utils/modifiers';
 import { s3BucketRegions } from '../../config';
 
 import Button from '../ui/button';
@@ -13,6 +12,7 @@ import Input from '../ui/input';
 import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
+import Tooltip from '../ui/tooltip';
 
 import './shareable-url-modal.scss';
 
@@ -117,7 +117,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(responseUrl);
     setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 1500);
+
+    setTimeout(() => {
+      setShowCopied(false);
+    }, 1500);
   };
 
   const handleModalClose = () => {
@@ -246,24 +249,15 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             <div className="shareable-url-modal__label">Hosted link</div>
             <div className="shareable-url-modal__url-wrapper">
               <a
-                className={modifiers('shareable-url-modal__result-url', {
-                  visible: !showCopied,
-                })}
-                href={responseUrl}
+                className="shareable-url-modal__result-url"
+                href="/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {responseUrl}
               </a>
               {window.navigator.clipboard && (
-                <>
-                  <span
-                    className={modifiers('copy-message', {
-                      visible: showCopied,
-                    })}
-                  >
-                    Copied to clipboard.
-                  </span>
+                <div className="shareable-url-modal__result-action">
                   <IconButton
                     ariaLabel="Copy run command to clipboard."
                     className="copy-button"
@@ -271,7 +265,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                     icon={CopyIcon}
                     onClick={onCopyClick}
                   />
-                </>
+                  <Tooltip
+                    text="Copied!"
+                    visible={showCopied}
+                    noDelay
+                    centerArrow
+                    arrowSize="small"
+                  />
+                </div>
               )}
             </div>
           </div>
