@@ -198,3 +198,19 @@ export const isRunningLocally = () => {
     return true;
   }
 };
+
+/**
+ * Sanitized pathname with experiment-tracking string and check if path containing trailing slash
+ * @returns {string} Sanitized pathname
+ */
+export const sanitizedPathname = () => {
+  const { pathname } = window.location;
+  const sanitizedPathname = replaceMatches(pathname, {
+    'experiment-tracking': '',
+  });
+  const pathnameWithTrailingSlash = sanitizedPathname.endsWith('/')
+    ? sanitizedPathname
+    : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+
+  return pathnameWithTrailingSlash;
+};

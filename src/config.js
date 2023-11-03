@@ -1,4 +1,4 @@
-import { replaceMatches } from './utils';
+import { sanitizedPathname } from './utils';
 
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
@@ -123,26 +123,20 @@ export const params = {
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
-const { pathname } = window.location;
-const sanitizedPathname = replaceMatches(pathname, {
-  'experiment-tracking': '',
-});
-const pathnameWithTrailingSlash = sanitizedPathname.endsWith('/')
-  ? sanitizedPathname
-  : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+const pathname = sanitizedPathname();
 
 export const routes = {
   flowchart: {
-    main: pathnameWithTrailingSlash,
-    focusedNode: `${pathnameWithTrailingSlash}?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `${pathnameWithTrailingSlash}?${activePipeline}&${params.selected}=:id`,
-    selectedName: `${pathnameWithTrailingSlash}?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `${pathnameWithTrailingSlash}?${activePipeline}`,
+    main: pathname,
+    focusedNode: `${pathname}?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `${pathname}?${activePipeline}&${params.selected}=:id`,
+    selectedName: `${pathname}?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `${pathname}?${activePipeline}`,
   },
   experimentTracking: {
-    main: `${pathnameWithTrailingSlash}experiment-tracking`,
-    selectedView: `${pathnameWithTrailingSlash}experiment-tracking?${params.view}=:view`,
-    selectedRuns: `${pathnameWithTrailingSlash}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
+    main: `${pathname}experiment-tracking`,
+    selectedView: `${pathname}experiment-tracking?${params.view}=:view`,
+    selectedRuns: `${pathname}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
 
