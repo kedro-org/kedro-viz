@@ -150,8 +150,6 @@
 
     .pipeline-icon--container {
       display: block;
-      margin: 0 12px 0 16px;
-      position: absolute;
       right: 6px;
     }
   }
@@ -160,6 +158,11 @@
     color: var(--color-description-text);
     font-size: 16px;
     line-height: 20px;
+  }
+
+  &__result-action {
+    position: relative;
+    margin: 0 12px 0 16px;
   }
 }
 
