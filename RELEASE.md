@@ -12,7 +12,7 @@ Please follow the established format:
 
 - Fix dataset factory patterns in Experiment Tracking. (#1588)
 - Improved feedback for copy to clipboard feature. (#1614)
-- Fix for Kedro-Viz doesn't work when hosted via a URL subpath (#1621)
+- Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
 
 # Release 6.6.1
 
