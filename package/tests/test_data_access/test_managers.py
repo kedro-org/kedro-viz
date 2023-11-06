@@ -9,6 +9,7 @@ from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
+from kedro_viz.data_access.repositories.catalog import CatalogRepository
 from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
@@ -464,3 +465,25 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
+
+
+class TestResolveDatasetFactoryPatterns:
+    def test_resolve_dataset_factory_patterns(
+        self,
+        example_catalog,
+        pipeline_with_datasets_mock,
+        pipeline_with_data_sets_mock,
+        data_access_manager: DataAccessManager,
+    ):
+        pipelines = {
+            "pipeline1": pipeline_with_datasets_mock,
+            "pipeline2": pipeline_with_data_sets_mock,
+        }
+        new_catalog = CatalogRepository()
+        new_catalog.set_catalog(example_catalog)
+
+        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
+
+        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
+
+        assert "model_inputs#csv" in new_catalog.as_dict().keys()

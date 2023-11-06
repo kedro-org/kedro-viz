@@ -69,6 +69,21 @@ class DataAccessManager:
         """Set db session on repositories that need it."""
         self.runs.set_db_session(db_session_class)
 
+    def resolve_dataset_factory_patterns(
+        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
+    ):
+        """Resolve dataset factory patterns in data catalog by matching
+        them against the datasets in the pipelines.
+        """
+        for pipeline in pipelines.values():
+            if hasattr(pipeline, "datasets"):
+                datasets = pipeline.datasets()  # kedro 0.19.0 onwards
+            else:
+                datasets = pipeline.data_sets()
+
+            for dataset_name in datasets:
+                catalog.exists(dataset_name)
+
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to
         TrackingDatasetRepository.

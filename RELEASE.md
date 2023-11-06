@@ -6,6 +6,14 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Upcoming Release
+
+## Bug fixes and other changes
+
+- Fix dataset factory patterns in Experiment Tracking. (#1588)
+- Improved feedback for copy to clipboard feature. (#1614)
+- Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
+
 # Release 6.6.1
 
 ## Major features and improvements

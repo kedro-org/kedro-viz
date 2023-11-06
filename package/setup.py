@@ -55,7 +55,7 @@ setup(
             "sphinx>=5.3,<7.3",
             "sphinx_copybutton==0.3.1",
             "sphinx-notfound-page",
-            "sphinx_rtd_theme==1.2.0",
+            "sphinx_rtd_theme==1.3.0",
             "myst-parser~=1.0.0",
         ],
     },
