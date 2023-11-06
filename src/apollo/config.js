@@ -6,16 +6,11 @@ import {
   split,
 } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { replaceMatches } from '../utils';
-
-const { pathname } = window.location;
-const sanitizedPathname = replaceMatches(pathname, {
-  'experiment-tracking': '',
-});
+import { sanitizedPathname } from '../utils';
 
 const httpLink = createHttpLink({
   // our graphql endpoint, normally here: http://localhost:4141/graphql
-  uri: `${sanitizedPathname}graphql`,
+  uri: `${sanitizedPathname()}graphql`,
   fetch,
 });
 
