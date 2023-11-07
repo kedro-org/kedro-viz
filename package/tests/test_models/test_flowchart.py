@@ -214,17 +214,13 @@ class TestGraphNodeCreation:
         assert parameters_node.parameter_value == 0.3
         assert parameters_node.modular_pipelines == expected_modular_pipelines
 
-    @patch("logging.Logger.warning")
-    def test_create_non_existing_parameter_node(self, patched_warning):
+    def test_create_non_existing_parameter_node(self):
         """Test the case where ``parameters`` is equal to None"""
         parameters_node = GraphNode.create_parameters_node(
             dataset_name="non_existing", layer=None, tags=set(), parameters=None
         )
         assert isinstance(parameters_node, ParametersNode)
         assert parameters_node.parameter_value is None
-        patched_warning.assert_has_calls(
-            [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
-        )
 
     @patch("logging.Logger.warning")
     def test_create_non_existing_parameter_node_empty_dataset(self, patched_warning):

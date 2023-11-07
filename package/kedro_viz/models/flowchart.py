@@ -47,7 +47,7 @@ class RegisteredPipeline(BaseModel):
     """
 
     id: str
-    name: str = Field(None, description="The name of the registered pipeline")
+    name: Optional[str] = Field(None, description="The name of the registered pipeline")
 
     @validator("name", always=True)
     def set_name(cls, _, values):
@@ -80,9 +80,6 @@ class ModularPipelineChild(BaseModel, frozen=True):
     id: str
     type: GraphNodeType
 
-    def __hash__(self) -> int:
-        return hash(self.id)
-
 
 class Tag(RegisteredPipeline):
     """Represent a tag"""
@@ -106,7 +103,7 @@ class GraphNode(BaseModel, abc.ABC):
         pipelines (Set[str]): The set of registered pipeline IDs this
                 node belongs to. Defaults to `set()`.
         namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
-        modular_pipelines (List[str]): The list of modular pipeline this node belongs to.
+        modular_pipelines (Optional[List[str]]): The list of modular pipeline this node belongs to.
 
     """
 
@@ -127,7 +124,7 @@ class GraphNode(BaseModel, abc.ABC):
     namespace: Optional[str] = Field(
         None, description="The original namespace on this node"
     )
-    modular_pipelines: List[str] = Field(
+    modular_pipelines: Optional[List[str]] = Field(
         None, description="The modular_pipelines this node belongs to"
     )
 
@@ -315,6 +312,9 @@ class TaskNode(GraphNode):
         AssertionError: If kedro_obj is not supplied during instantiation
     """
 
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
     parameters: Dict = Field(
         {}, description="A dictionary of parameter values for the task node"
     )
@@ -350,6 +350,12 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
 
 class ModularPipelineNode(GraphNode):
     """Represent a modular pipeline node in the graph"""
+
+    # A modular pipeline doesn't belong to any other modular pipeline,
+    # in the same sense as other types of GraphNode do.
+    # Therefore it's default to None.
+    # The parent-child relationship between modular pipeline themselves is modelled explicitly.
+    modular_pipelines: Optional[List[str]] = None
 
     # Model the modular pipelines tree using a child-references representation of a tree.
     # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
@@ -435,8 +441,10 @@ class TaskNodeMetadata(GraphNodeMetadata):
         None, description="The command to run the pipeline to this node"
     )
 
-    inputs: List[str] = Field(None, description="The inputs to the TaskNode")
-    outputs: List[str] = Field(None, description="The outputs from the TaskNode")
+    inputs: Optional[List[str]] = Field(None, description="The inputs to the TaskNode")
+    outputs: Optional[List[str]] = Field(
+        None, description="The outputs from the TaskNode"
+    )
 
     @root_validator(pre=True)
     def check_task_node_exists(cls, values):
@@ -525,6 +533,10 @@ class DataNode(GraphNode):
 
     # The concrete type of the underlying kedro_obj.
     dataset_type: Optional[str]
+
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
 
     # The metadata for data node
     viz_metadata: Optional[Dict]
@@ -642,12 +654,16 @@ class TranscodedDataNode(GraphNode):
         False, description="Determines whether the transcoded data node is a free input"
     )
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
-    original_version: AbstractDataset = Field(
+    original_version: Optional[AbstractDataset] = Field(
         None,
         description="The original Kedro's AbstractDataset for this transcoded data node",
     )
-    original_name: str = Field(
+    original_name: Optional[str] = Field(
         None, description="The original name for the generated run command"
+    )
+
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
     )
 
     run_command: Optional[str] = Field(
@@ -811,11 +827,11 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     run_command: Optional[str] = Field(
         None, description="Command to run the pipeline to this node"
     )
-    original_type: str = Field(
+    original_type: Optional[str] = Field(
         None,
         description="The dataset type of the underlying transcoded data node original version",
     )
-    transcoded_types: List[str] = Field(
+    transcoded_types: Optional[List[str]] = Field(
         None, description="The list of all dataset types for the transcoded versions"
     )
 
@@ -870,6 +886,10 @@ class ParametersNode(GraphNode):
         None, description="The layer that this parameters node belongs to"
     )
 
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
+
     # The type for Parameters Node
     type: str = GraphNodeType.PARAMETERS.value
 
@@ -908,6 +928,9 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         self.kedro_obj: AbstractDataset
+        if not (self.kedro_obj and hasattr(self.kedro_obj, "load")):
+            return None
+
         try:
             return self.kedro_obj.load()
         except (AttributeError, DatasetError):
@@ -932,7 +955,7 @@ class ParametersNodeMetadata(GraphNodeMetadata):
     """
 
     parameters_node: ParametersNode
-    parameters: Dict = Field(
+    parameters: Optional[Dict] = Field(
         None, description="The parameters dictionary for the parameters metadata node"
     )
 
@@ -961,6 +984,3 @@ class GraphEdge(BaseModel, frozen=True):
 
     source: str
     target: str
-
-    def __hash__(self) -> int:
-        return hash((self.source, self.target))
