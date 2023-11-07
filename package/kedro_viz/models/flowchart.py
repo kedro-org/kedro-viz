@@ -80,9 +80,6 @@ class ModularPipelineChild(BaseModel, frozen=True):
     id: str
     type: GraphNodeType
 
-    def __hash__(self) -> int:
-        return hash(self.id)
-
 
 class Tag(RegisteredPipeline):
     """Represent a tag"""
@@ -97,14 +94,14 @@ class GraphNode(BaseModel, abc.ABC):
 
     Args:
         id (str): A unique identifier for the node in the graph,
-                  obtained by hashing the node's string representation.
+                obtained by hashing the node's string representation.
         name (str): The full name of this node obtained from the underlying Kedro object
         type (str): The type of the graph node
         tags (Set[str]): The tags associated with this node. Defaults to `set()`.
         kedro_obj (Optional[Union[KedroNode, AbstractDataset]]): The underlying Kedro object
-        for each graph node, if any. Defaults to `None`.
+                for each graph node, if any. Defaults to `None`.
         pipelines (Set[str]): The set of registered pipeline IDs this
-        node belongs to. Defaults to `set()`.
+                node belongs to. Defaults to `set()`.
         namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
         modular_pipelines (List[str]): The list of modular pipeline this node belongs to.
 
@@ -183,7 +180,7 @@ class GraphNode(BaseModel, abc.ABC):
 
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
-        """Create a graph node of type TASK for a given Kedro Node instance.
+        """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
         Returns:
@@ -207,7 +204,7 @@ class GraphNode(BaseModel, abc.ABC):
         stats: Optional[Dict],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
-        """Create a graph node of type DATA for a given Kedro Dataset instance.
+        """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -251,7 +248,7 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         parameters: AbstractDataset,
     ) -> "ParametersNode":
-        """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
+        """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
@@ -274,7 +271,7 @@ class GraphNode(BaseModel, abc.ABC):
     def create_modular_pipeline_node(
         cls, modular_pipeline_id: str
     ) -> "ModularPipelineNode":
-        """Create a graph node of type MODULAR_PIPELINE for a given modular pipeline ID.
+        """Create a graph node of type modularPipeline for a given modular pipeline ID.
         This is used to visualise all modular pipelines in a Kedro project on the graph.
         Args:
             modular_pipeline_id: The ID of the modular pipeline to convert into a graph node.
@@ -309,7 +306,7 @@ class GraphNodeMetadata(BaseModel, abc.ABC):
 
 
 class TaskNode(GraphNode):
-    """Represent a graph node of type TASK
+    """Represent a graph node of type task
 
     Raises:
         AssertionError: If kedro_obj is not supplied during instantiation
@@ -504,7 +501,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
 # pylint: disable=missing-function-docstring
 class DataNode(GraphNode):
-    """Represent a graph node of type DATA
+    """Represent a graph node of type data
 
     Args:
         layer (Optional[str]): The layer that this data node belongs to. Defaults to `None`.
@@ -621,13 +618,13 @@ class DataNode(GraphNode):
 
 
 class TranscodedDataNode(GraphNode):
-    """Represent a graph node of type DATA
+    """Represent a graph node of type data
 
     Args:
         layer (Optional[str]): The layer that this transcoded data
-        node belongs to. Defaults to `None`.
+                node belongs to. Defaults to `None`.
         is_free_input (bool): Determines whether the transcoded data
-        node is a free input. Defaults to `False`.
+                node is a free input. Defaults to `False`.
         stats (Optional[Dict]): Statistics for the data node
 
     Raises:
@@ -772,20 +769,21 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @validator("preview", always=True)
     def set_preview(cls, _):
-        if cls.data_node.is_preview_node():
-            try:
-                if hasattr(cls.dataset, "_preview"):
-                    return cls.dataset._preview(**cls.data_node.get_preview_args())
+        if not cls.data_node.is_preview_node():
+            return None
 
-            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
-                logger.warning(
-                    "'%s' could not be previewed. Full exception: %s: %s",
-                    cls.data_node.name,
-                    type(exc).__name__,
-                    exc,
-                )
-                return None
-        return None
+        try:
+            if hasattr(cls.dataset, "_preview"):
+                return cls.dataset._preview(**cls.data_node.get_preview_args())
+
+        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+            logger.warning(
+                "'%s' could not be previewed. Full exception: %s: %s",
+                cls.data_node.name,
+                type(exc).__name__,
+                exc,
+            )
+            return None
 
     @validator("stats", always=True)
     def set_stats(cls, _):
@@ -796,7 +794,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TranscodedDataNode
     Args:
         transcoded_data_node (TranscodedDataNode): The underlying transcoded
-        data node to which this metadata belongs to.
+                data node to which this metadata belongs to.
 
     Raises:
         AssertionError: If transcoded_data_node is not supplied during instantiation
@@ -858,7 +856,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
 
 class ParametersNode(GraphNode):
-    """Represent a graph node of type PARAMETERS
+    """Represent a graph node of type parameters
     Args:
         layer (Optional[str]): The layer that this parameters node belongs to. Defaults to `None`.
 
@@ -925,7 +923,7 @@ class ParametersNodeMetadata(GraphNodeMetadata):
 
     Args:
         parameters_node (ParametersNode): The underlying parameters node
-        for the parameters metadata node.
+                for the parameters metadata node.
 
     Raises:
         AssertionError: If parameters_node is not supplied during instantiation
@@ -961,6 +959,3 @@ class GraphEdge(BaseModel, frozen=True):
 
     source: str
     target: str
-
-    def __hash__(self) -> int:
-        return hash((self.source, self.target))
