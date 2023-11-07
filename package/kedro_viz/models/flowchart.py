@@ -80,6 +80,9 @@ class ModularPipelineChild(BaseModel, frozen=True):
     id: str
     type: GraphNodeType
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
 
 class Tag(RegisteredPipeline):
     """Represent a tag"""
@@ -958,3 +961,6 @@ class GraphEdge(BaseModel, frozen=True):
 
     source: str
     target: str
+
+    def __hash__(self) -> int:
+        return hash((self.source, self.target))
