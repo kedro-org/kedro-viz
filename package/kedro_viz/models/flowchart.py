@@ -769,12 +769,11 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @validator("preview", always=True)
     def set_preview(cls, _):
-        if not cls.data_node.is_preview_node():
+        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
             return None
 
         try:
-            if hasattr(cls.dataset, "_preview"):
-                return cls.dataset._preview(**cls.data_node.get_preview_args())
+            return cls.dataset._preview(**cls.data_node.get_preview_args())
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
