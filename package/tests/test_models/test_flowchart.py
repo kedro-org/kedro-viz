@@ -3,17 +3,9 @@ import base64
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from typing import cast
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import call, patch
 
 import pytest
-
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
 
@@ -648,7 +640,7 @@ class TestGraphNodeMetadata:
 
         tracking_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
-        assert tracking_node_metadata.tracking_data == None
+        assert tracking_node_metadata.tracking_data is None
         assert tracking_node_metadata.plot is None
 
     def test_metrics_data_node_metadata_dataset_not_exist(
