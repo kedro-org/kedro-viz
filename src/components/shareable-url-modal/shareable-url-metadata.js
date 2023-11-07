@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { sanitizedPathname } from '../../utils';
 
 const ShareableUrlMetadata = () => {
   const [metadata, setMetadata] = useState(null);
@@ -6,12 +7,15 @@ const ShareableUrlMetadata = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const request = await fetch('/api/deploy-viz-metadata', {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        });
+        const request = await fetch(
+          `${sanitizedPathname()}api/deploy-viz-metadata`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          }
+        );
         const response = await request.json();
 
         if (request.ok) {
