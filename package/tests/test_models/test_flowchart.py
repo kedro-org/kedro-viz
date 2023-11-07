@@ -472,6 +472,7 @@ class TestGraphNodeMetadata:
         transcoded_data_node.original_name = "dataset"
         transcoded_data_node.original_version = ParquetDataset(filepath="foo.parquet")
         transcoded_data_node.transcoded_versions = [CSVDataset(filepath="foo.csv")]
+        transcoded_data_node.is_free_input = True
         transcoded_data_node_metadata = TranscodedDataNodeMetadata(
             transcoded_data_node=transcoded_data_node
         )
