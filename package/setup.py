@@ -53,7 +53,7 @@ setup(
     extras_require={
         "docs": [
             "sphinx>=5.3,<7.3",
-            "sphinx_copybutton==0.3.1",
+            "sphinx_copybutton==0.5.2",
             "sphinx-notfound-page",
             "sphinx_rtd_theme==1.3.0",
             "myst-parser>=1.0,<2.1",
