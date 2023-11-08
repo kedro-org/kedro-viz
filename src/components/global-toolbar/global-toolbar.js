@@ -6,7 +6,7 @@ import {
   toggleShareableUrlModal,
   toggleTheme,
 } from '../../actions';
-import { isRunningLocally, replaceMatches } from '../../utils';
+import { isRunningLocally, sanitizedPathname } from '../../utils';
 
 import DownloadIcon from '../icons/download';
 import ExperimentsIcon from '../icons/experiments';
@@ -30,11 +30,6 @@ export const GlobalToolbar = ({
   onToggleTheme,
   theme,
 }) => {
-  const { pathname } = window.location;
-  const sanitizedPathname = replaceMatches(pathname, {
-    'experiment-tracking': '',
-  });
-
   return (
     <>
       <div className="pipeline-global-toolbar">
@@ -46,7 +41,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: sanitizedPathname }}>
+          <NavLink exact to={{ pathname: sanitizedPathname() }}>
             <IconButton
               ariaLabel={'View your pipeline'}
               dataTest={'View your pipeline'}
@@ -63,7 +58,7 @@ export const GlobalToolbar = ({
             <NavLink
               exact
               id="experiment-tracking-nav-button"
-              to={{ pathname: `${sanitizedPathname}experiment-tracking` }}
+              to={{ pathname: `${sanitizedPathname()}experiment-tracking` }}
             >
               <IconButton
                 ariaLabel={'View your experiments'}
