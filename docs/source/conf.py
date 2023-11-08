@@ -79,9 +79,15 @@ html_context = {
     "github_url": "https://github.com/kedro-org/kedro/tree/main/docs/source",
 }
 
-def setup(app):
-    app.add_css_file("css/qb1-sphinx-rtd.css")
+
+def _override_permalinks_icon(app):
+    # https://github.com/readthedocs/sphinx_rtd_theme/issues/98#issuecomment-1503211439
     app.config.html_permalinks_icon = "¶"
+
+
+def setup(app):
+    app.connect("builder-inited", _override_permalinks_icon)
+    app.add_css_file("css/qb1-sphinx-rtd.css")
     # fix a bug with table wraps in Read the Docs Sphinx theme:
     # https://rackerlabs.github.io/docs-rackspace/tools/rtd-tables.html
     app.add_css_file("css/theme-overrides.css")
