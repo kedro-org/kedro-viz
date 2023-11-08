@@ -1,13 +1,14 @@
-# Visualise the spaceflights project
+# How to visualise a Kedro project
 
 
-This section assumes you are familiar with the basic Kedro concepts described in the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html). If you have not yet worked through the tutorial, you can still follow this example.
+This section assumes you are familiar with the basic Kedro concepts described in the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>`. If you have not yet worked through the tutorial, you can still follow this example.
 
-If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html).
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`.
 
 Then, in your terminal window, navigate to the folder you want to store the project.
 
 Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights):
+
 
 ```bash
 kedro new --starter=spaceflights
@@ -62,7 +63,7 @@ The `autoreload` flag reflects changes to the project as they happen. For exampl
 
 ## Visualise layers
 
-By convention, a [pipeline can be defined as having different layers](https://docs.kedro.org/en/stable/resources/glossary.html#layers-data-engineering-convention) according to how data is processed, which makes it easier to collaborate.
+By convention, a {doc}`pipeline can be defined as having different layers<kedro:resources/glossary#layers-data-engineering-convention>`. 
 
 For example, the [data engineering convention](https://towardsdatascience.com/the-importance-of-layered-thinking-in-data-engineering-a09f685edc71) labels datasets according to the stage of the pipeline (e.g. whether the data has been cleaned).
 

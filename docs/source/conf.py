@@ -53,6 +53,7 @@ source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 myst_heading_anchors = 2
 
 intersphinx_mapping = {
+    "kedro": ("https://docs.kedro.org/en/stable/", None),
     "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-1.7.1/", None),
 }
 
@@ -78,9 +79,9 @@ html_context = {
     "github_url": "https://github.com/kedro-org/kedro/tree/main/docs/source",
 }
 
-
 def setup(app):
     app.add_css_file("css/qb1-sphinx-rtd.css")
+    app.config.html_permalinks_icon = "¶"
     # fix a bug with table wraps in Read the Docs Sphinx theme:
     # https://rackerlabs.github.io/docs-rackspace/tools/rtd-tables.html
     app.add_css_file("css/theme-overrides.css")
