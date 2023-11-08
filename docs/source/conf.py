@@ -87,7 +87,4 @@ def _override_permalinks_icon(app):
 
 def setup(app):
     app.connect("builder-inited", _override_permalinks_icon)
-    app.add_css_file("css/qb1-sphinx-rtd.css")
-    # fix a bug with table wraps in Read the Docs Sphinx theme:
-    # https://rackerlabs.github.io/docs-rackspace/tools/rtd-tables.html
-    app.add_css_file("css/theme-overrides.css")
+    
