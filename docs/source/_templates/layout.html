@@ -36,6 +36,12 @@
       closeBtn.dataset.toggle = 'wy-nav-top';
       closeBtn.classList.add('wy-nav-top-close');
       document.querySelector('.wy-nav-top').prepend(closeBtn);
+
+      // Prepend open button to mobile header
+      var openBtn = document.createElement("span");
+      openBtn.dataset.toggle = 'wy-nav-top';
+      openBtn.classList.add('wy-nav-top-open');
+      document.querySelector('.wy-nav-top').prepend(openBtn);
  
 </script>
 <link
