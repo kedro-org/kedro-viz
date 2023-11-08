@@ -14,7 +14,7 @@ The metadata you store may include:
 
 You can use Kedro-Viz experiment tracking to store and access results, and to share them with others for comparison. Storage can be local or remote, such as cloud storage on AWS S3.
 
-Kedro's [experiment tracking demo](https://demo.kedro.org/experiment-tracking) enables you to explore the experiment tracking capabilities of Kedro-Viz.
+The <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">experiment tracking demo</a> enables you to explore the experiment tracking capabilities of Kedro-Viz.
 
 ![](./images/experiment-tracking_demo.gif)
 
