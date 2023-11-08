@@ -1,13 +1,14 @@
-# Visualise the spaceflights project
+# How to visualise a Kedro project
 
 
-This section assumes you are familiar with the basic Kedro concepts described in the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html). If you have not yet worked through the tutorial, you can still follow this example.
+This section assumes you are familiar with the basic Kedro concepts described in the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>`. If you have not yet worked through the tutorial, you can still follow this example.
 
-If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html).
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`.
 
 Then, in your terminal window, navigate to the folder you want to store the project.
 
 Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights):
+
 
 ```bash
 kedro new --starter=spaceflights

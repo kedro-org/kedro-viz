@@ -20,8 +20,7 @@ Kedro-Viz features include:
 ♻️ Autoreload on code change.   
 🧪 Support for experiment tracking and comparing runs in a Kedro project.
 
-
-Check out the [live demo](https://demo.kedro.org/) for a preview of Kedro-Viz.
+Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">live demo</a> for a preview of Kedro-Viz.
 
 ```{toctree}
 :caption: Learn about Kedro-Viz
