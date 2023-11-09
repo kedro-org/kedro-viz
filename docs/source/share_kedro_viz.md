@@ -95,6 +95,6 @@ You can control who can view your visualisation using [bucket and user policies]
 
 ## Billing
 
-You pay for storing objects in your S3 buckets. This depends on your objects’ size, how long you stored the object during the month, and the storage class.
+You pay for storing objects in your S3 buckets. The amount you pay depends on your objects’ size, how long you stored the object during the month, and the storage class.
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information. 
