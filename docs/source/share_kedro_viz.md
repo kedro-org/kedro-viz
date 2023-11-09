@@ -51,7 +51,7 @@ Create a user group from the IAM dashboard, ensuring the user group has full acc
 
 ![](../meta/images/kedro_viz_share_credentials2.png)
 
-"A user group is a collection of IAM users. User groups simplify permissions management because you can grant, change, and remove permissions for multiple users at the same time". For more information, see the official AWS documentation about [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel).
+For more information, see the official AWS documentation about [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel).
 
 Add the IAM user to the user group (this is only possible if the group has been created).
 
