@@ -40,7 +40,7 @@ pip install -r src/requirements.txt
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
 
 
-Once the s3 bucket is created, you'll need to creat an (Identity and Access Management) IAM user account, user group, and access keys:
+Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
 
 Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an  IAM user account.
 For more information, see the official AWS documentation about [IAM Identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html).
