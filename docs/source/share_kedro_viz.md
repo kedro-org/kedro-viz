@@ -47,7 +47,7 @@ For more information, see the official AWS documentation about [IAM Identities](
 
 ![](../meta/images/kedro_viz_share_credentials1.png)
 
-Create a user group from the IAM dashboard (ensuring the user group has full access to AWS S3 policy).
+Create a user group from the IAM dashboard, ensuring the user group has full access to the AWS S3 policy.
 
 ![](../meta/images/kedro_viz_share_credentials2.png)
 
