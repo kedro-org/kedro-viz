@@ -45,21 +45,21 @@ Once the S3 bucket is created, you'll need to create an Identity and Access Mana
 Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an IAM user account.
 For more information, see the official AWS documentation about [IAM Identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html).
 
-![](../meta/images/kedro_viz_share_credentials1.png)
+![](./images/kedro_viz_share_credentials1.png)
 
 Create a user group from the IAM dashboard, ensuring the user group has full access to the AWS S3 policy.
 
-![](../meta/images/kedro_viz_share_credentials2.png)
+![](./images/kedro_viz_share_credentials2.png)
 
 For more information, see the official AWS documentation about [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel).
 
 Add the IAM user to the user group (this is only possible if the group has been created).
 
-![](../meta/images/kedro_viz_share_credentials3.png)
+![](./images/kedro_viz_share_credentials3.png)
 
 Select the user, then select `Create access key`. Follow the steps and create your keys.
 
-![](../meta/images/kedro_viz_share_credentials4.png)
+![](./images/kedro_viz_share_credentials4.png)
 
 
 Once that's completed, you'll need to set your AWS credentials as environment variables in your terminal window, as shown below:
