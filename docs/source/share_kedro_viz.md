@@ -57,7 +57,7 @@ Add the IAM user to the user group (this is only possible if the group has been 
 
 ![](../meta/images/kedro_viz_share_credentials3.png)
 
-Select the user, and select ‘create access key’. Follow the steps and create your access credential.
+Select the user, then select `Create access key`. Follow the steps and create your keys.
 
 ![](../meta/images/kedro_viz_share_credentials4.png)
 
