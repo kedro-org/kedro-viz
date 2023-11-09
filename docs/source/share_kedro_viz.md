@@ -42,7 +42,7 @@ You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bu
 
 Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
 
-Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an  IAM user account.
+Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an IAM user account.
 For more information, see the official AWS documentation about [IAM Identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html).
 
 ![](../meta/images/kedro_viz_share_credentials1.png)
