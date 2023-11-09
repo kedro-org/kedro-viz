@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import modifiers from '../../../utils/modifiers';
 import MetaDataValue from '../../metadata/metadata-value';
 import IconButton from '../../ui/icon-button';
+import Tooltip from '../tooltip';
 import CopyIcon from '../../icons/copy';
 import './command-copier.scss';
 
@@ -11,6 +11,7 @@ const CommandCopier = ({ command, isCommand }) => {
   const onCopyClick = () => {
     window.navigator.clipboard.writeText(command);
     setShowCopied(true);
+
     setTimeout(() => setShowCopied(false), 1500);
   };
 
@@ -18,30 +19,26 @@ const CommandCopier = ({ command, isCommand }) => {
     <div className="container">
       <MetaDataValue
         container={'code'}
-        className={modifiers('command-value', {
-          visible: !showCopied,
-        })}
+        className="command-value"
         value={command}
       />
       {window.navigator.clipboard && isCommand && (
-        <>
-          <span
-            className={modifiers('copy-message', {
-              visible: showCopied,
-            })}
-          >
-            Copied to clipboard.
-          </span>
-          <ul className="toolbox">
-            <IconButton
-              ariaLabel="Copy run command to clipboard."
-              className="copy-button"
-              dataHeapEvent={`clicked.run_command`}
-              icon={CopyIcon}
-              onClick={onCopyClick}
-            />
-          </ul>
-        </>
+        <ul className="toolbox">
+          <IconButton
+            ariaLabel="Copy run command to clipboard."
+            className="copy-button"
+            dataHeapEvent={`clicked.run_command`}
+            icon={CopyIcon}
+            onClick={onCopyClick}
+          />
+          <Tooltip
+            text="Copied!"
+            visible={showCopied}
+            noDelay
+            centerArrow
+            arrowSize="small"
+          />
+        </ul>
       )}
     </div>
   );

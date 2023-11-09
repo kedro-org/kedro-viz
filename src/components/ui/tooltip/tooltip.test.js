@@ -72,6 +72,48 @@ describe('Tooltip', () => {
     const container = wrapper.find('.pipeline-tooltip--right');
     expect(container.length).toBe(1);
   });
+
+  it("should add the 'no-delay' class to the tooltip when noDelay prop is true", () => {
+    const targetRect = {
+      ...mockProps.targetRect,
+      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+    };
+    const wrapper = setup.shallow(Tooltip, {
+      ...mockProps,
+      targetRect,
+      noDelay: true,
+    });
+    const container = wrapper.find('.pipeline-tooltip--no-delay');
+    expect(container.length).toBe(1);
+  });
+
+  it("should add the 'center-arrow' class to the tooltip when centerArrow prop is true", () => {
+    const targetRect = {
+      ...mockProps.targetRect,
+      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+    };
+    const wrapper = setup.shallow(Tooltip, {
+      ...mockProps,
+      targetRect,
+      centerArrow: true,
+    });
+    const container = wrapper.find('.pipeline-tooltip--center-arrow');
+    expect(container.length).toBe(1);
+  });
+
+  it("should add the 'small-arrow' class to the tooltip when arrowSize prop is 'small'", () => {
+    const targetRect = {
+      ...mockProps.targetRect,
+      left: mockProps.chartSize.width - 10 + globalToolbarWidth,
+    };
+    const wrapper = setup.shallow(Tooltip, {
+      ...mockProps,
+      targetRect,
+      arrowSize: 'small',
+    });
+    const container = wrapper.find('.pipeline-tooltip--small-arrow');
+    expect(container.length).toBe(1);
+  });
 });
 
 describe('insertZeroWidthSpace', () => {

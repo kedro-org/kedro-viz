@@ -1,4 +1,4 @@
-export const pathRoot = './api';
+import { sanitizedPathname } from './utils';
 
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
@@ -123,19 +123,20 @@ export const params = {
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
+const pathname = sanitizedPathname();
 
 export const routes = {
   flowchart: {
-    main: '/',
-    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
-    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `/?${activePipeline}`,
+    main: pathname,
+    focusedNode: `${pathname}?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `${pathname}?${activePipeline}&${params.selected}=:id`,
+    selectedName: `${pathname}?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `${pathname}?${activePipeline}`,
   },
   experimentTracking: {
-    main: '/experiment-tracking',
-    selectedView: `/experiment-tracking?${params.view}=:view`,
-    selectedRuns: `/experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
+    main: `${pathname}experiment-tracking`,
+    selectedView: `${pathname}experiment-tracking?${params.view}=:view`,
+    selectedRuns: `${pathname}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
   },
 };
 
