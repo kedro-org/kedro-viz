@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { makeStyles, withStyles } from '@mui/styles';
-import TreeView from '@mui/lab/TreeView';
+import { TreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import sortBy from 'lodash/sortBy';
