@@ -8,7 +8,7 @@ This page describes how to publish Kedro-Viz so you can share it with others. It
 
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. In your terminal window, navigate to the folder you want to store the project.
 
-If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights) to generate the project with working code in place. Type the following in your terminal:
+If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas) to generate the project with working code in place. Type the following in your terminal:
 
 ```bash
 kedro new --starter=spaceflights
