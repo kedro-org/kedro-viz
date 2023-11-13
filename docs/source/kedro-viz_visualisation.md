@@ -5,7 +5,7 @@ This section assumes you are familiar with the basic Kedro concepts described in
 
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. Then, in your terminal window, navigate to the folder you want to store the project.
 
-Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights):
+Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
 
 ```bash

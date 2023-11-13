@@ -2,11 +2,11 @@
 
 This page describes how to make interactive visualisations of a Kedro project with Kedro-Viz, which supports integration with [Plotly](https://plotly.com/python/).
 
-We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` and add a reporting pipeline. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas) to generate a copy of the project with working code in place.
+We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` and add a reporting pipeline. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
 
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. Then, in your terminal window, navigate to the folder you want to store the project.
 
-Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights):
+Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
 ```bash
 kedro new --starter=spaceflights
