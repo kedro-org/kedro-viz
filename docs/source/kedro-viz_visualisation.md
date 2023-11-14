@@ -1,13 +1,12 @@
-# Visualise the spaceflights project
+# How to visualise a Kedro project
 
 
-This section assumes you are familiar with the basic Kedro concepts described in the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html). If you have not yet worked through the tutorial, you can still follow this example.
+This section assumes you are familiar with the basic Kedro concepts described in the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>`. If you have not yet worked through the tutorial, you can still follow this example.
 
-If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html).
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. Then, in your terminal window, navigate to the folder you want to store the project.
 
-Then, in your terminal window, navigate to the folder you want to store the project.
+Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
-Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights):
 
 ```bash
 kedro new --starter=spaceflights
@@ -39,10 +38,10 @@ You should see the following:
 
 ![](./images/pipeline_visualisation.png)
 
-If a visualisation panel opens up and a pipeline is not visible, refresh the view, and check that your tutorial project code is complete if you've not generated it from the starter template. If you still don't see the visualisation, the Kedro community can help:
+If a visualisation panel opens up and a pipeline is not visible, refresh the view. If you still don't see the visualisation, the Kedro community can help:
 
 * use the [#questions channel](https://slack.kedro.org/) on our Slack channel to ask the community for help
-* search the [searchable archive of Slack discussions](https://linen-slack.kedro.org/)
+* search the [online archive of Slack discussions](https://linen-slack.kedro.org/)
 
 To exit the visualisation, close the browser tab. To regain control of the terminal, enter `^+c` on Mac or `Ctrl+c` on Windows or Linux machines.
 
@@ -62,7 +61,7 @@ The `autoreload` flag reflects changes to the project as they happen. For exampl
 
 ## Visualise layers
 
-By convention, a [pipeline can be defined as having different layers](https://docs.kedro.org/en/stable/resources/glossary.html#layers-data-engineering-convention) according to how data is processed, which makes it easier to collaborate.
+By convention, a [pipeline can be defined as having different layers](https://docs.kedro.org/en/stable/resources/glossary.html#layers-data-engineering-convention) according to how data is processed.
 
 For example, the [data engineering convention](https://towardsdatascience.com/the-importance-of-layered-thinking-in-data-engineering-a09f685edc71) labels datasets according to the stage of the pipeline (e.g. whether the data has been cleaned).
 
@@ -151,7 +150,7 @@ The visualisation now includes the layers:
 
 ## Share a pipeline visualisation
 
-You can share a the pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
+You can share a pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
 
 ```bash
 kedro viz --save-file=my_shareable_pipeline.json
@@ -164,3 +163,5 @@ To visualise the shared file, type the following to load it from the terminal:
 ```bash
 kedro viz --load-file=my_shareable_pipeline.json
 ```
+
+You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 
