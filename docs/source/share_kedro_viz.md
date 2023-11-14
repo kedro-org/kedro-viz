@@ -4,11 +4,11 @@
 Kedro-Viz sharing was introduced in version 6.6.0.
 ```
 
-This page describes how to publish Kedro-Viz so you can share it with others. It uses the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) as an example.
+This page describes how to publish Kedro-Viz so you can share it with others. It uses the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` as an example.
 
-If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html). In your terminal window, navigate to the folder you want to store the project.
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. In your terminal window, navigate to the folder you want to store the project.
 
-If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights) to generate the project with working code in place. Type the following in your terminal:
+If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas) to generate the project with working code in place. Type the following in your terminal:
 
 ```bash
 kedro new --starter=spaceflights
@@ -38,6 +38,29 @@ pip install -r src/requirements.txt
 ## Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
+
+
+Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
+
+Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an IAM user account.
+For more information, see the official AWS documentation about [IAM Identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html).
+
+![](./images/kedro_viz_share_credentials1.png)
+
+Create a user group from the IAM dashboard, ensuring the user group has full access to the AWS S3 policy.
+
+![](./images/kedro_viz_share_credentials2.png)
+
+For more information, see the official AWS documentation about [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel).
+
+Add the IAM user to the user group (this is only possible if the group has been created).
+
+![](./images/kedro_viz_share_credentials3.png)
+
+Select the user, then select `Create access key`. Follow the steps and create your keys.
+
+![](./images/kedro_viz_share_credentials4.png)
+
 
 Once that's completed, you'll need to set your AWS credentials as environment variables in your terminal window, as shown below:
 
@@ -69,3 +92,9 @@ Here's an example of the flow:
 All permissions and access control are controlled by AWS. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
 
 You can control who can view your visualisation using [bucket and user policies](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html) or [access control lists](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acls.html). See the official AWS documentation for more information.
+
+## Billing
+
+You pay for storing objects in your S3 buckets. The amount you pay depends on your objects’ size, how long you stored the object during the month, and the storage class.
+
+See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information. 

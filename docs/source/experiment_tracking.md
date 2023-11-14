@@ -14,7 +14,7 @@ The metadata you store may include:
 
 You can use Kedro-Viz experiment tracking to store and access results, and to share them with others for comparison. Storage can be local or remote, such as cloud storage on AWS S3.
 
-Kedro's [experiment tracking demo](https://demo.kedro.org/experiment-tracking) enables you to explore the experiment tracking capabilities of Kedro-Viz.
+The <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">experiment tracking demo</a> enables you to explore the experiment tracking capabilities of Kedro-Viz.
 
 ![](./images/experiment-tracking_demo.gif)
 
@@ -35,11 +35,11 @@ The choice of experiment tracking tool depends on your use case and choice of co
 - **MLflow** - You can combine MLflow with Kedro by using [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) if you require experiment tracking, model registry and/or model serving capabilities or have access to Managed MLflow within the Databricks ecosystem.
 - **Neptune** - If you require experiment tracking and model registry functionality, improved visualisation of metrics and support for collaborative data science, you may consider [`kedro-neptune`](https://docs.neptune.ai/integrations/kedro/) for your workflow.
 
-[We support a growing list of integrations](https://docs.kedro.org/en/stable/extend_kedro/plugins.html).
+{doc}`We support a growing list of integrations<kedro:extend_kedro/plugins>`.
 
 ## Set up a project
 
-This section describes the steps necessary to set up experiment tracking and access logged metrics, using the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) with a version of Kedro equal to or higher than 0.18.4, and a version of Kedro-Viz equal to or higher than 5.2.
+This section describes the steps necessary to set up experiment tracking and access logged metrics, using the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` with a version of Kedro equal to or higher than 0.18.4, and a version of Kedro-Viz equal to or higher than 5.2.
 
 There are three steps to enable experiment tracking features with Kedro-Viz. We illustrate how to:
 
@@ -48,7 +48,7 @@ There are three steps to enable experiment tracking features with Kedro-Viz. We 
 - [Modify your nodes and pipelines to output those metrics](#modify-your-nodes-and-pipelines-to-log-metrics)
 
 ### Install Kedro and Kedro-Viz
-To use this tutorial code, you must already have [installed Kedro](https://docs.kedro.org/en/stable/get_started/install.html) and [Kedro-Viz](./kedro-viz_visualisation.md). You can confirm the versions you have installed by running `kedro info`
+To use this tutorial code, you must already have {doc}`installed Kedro<kedro:get_started/install>` and [Kedro-Viz](./kedro-viz_visualisation.md). You can confirm the versions you have installed by running `kedro info`
 
 ```{note}
 The example code uses a version of Kedro-Viz `>6.2.0`.

@@ -36,9 +36,8 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     return str(filepath) if filepath else None
 
 
-class RegisteredPipeline(BaseModel):
-    """Represent a registered pipeline in a Kedro project
-
+class NamedEntity(BaseModel):
+    """Represent a named entity (Tag/Registered Pipeline) in a Kedro project
     Args:
         id (str): Id of the registered pipeline
 
@@ -53,6 +52,10 @@ class RegisteredPipeline(BaseModel):
     def set_name(cls, _, values):
         assert "id" in values
         return values["id"]
+
+
+class RegisteredPipeline(NamedEntity):
+    """Represent a registered pipeline in a Kedro project"""
 
 
 class GraphNodeType(str, Enum):
@@ -81,8 +84,8 @@ class ModularPipelineChild(BaseModel, frozen=True):
     type: GraphNodeType
 
 
-class Tag(RegisteredPipeline):
-    """Represent a tag"""
+class Tag(NamedEntity):
+    """Represent a tag in a Kedro project"""
 
     def __hash__(self) -> int:
         return hash(self.id)
