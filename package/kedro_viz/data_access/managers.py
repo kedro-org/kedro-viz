@@ -148,7 +148,7 @@ class DataAccessManager:
             task_node = self.add_node(registered_pipeline_id, node)
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
-            current_modular_pipeline = modular_pipelines.extract_from_node(task_node)
+            current_modular_pipeline_id = modular_pipelines.extract_from_node(task_node)
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -169,8 +169,8 @@ class DataAccessManager:
                 # The method `add_input` will take care of figuring out whether
                 # it is an internal or external input of the modular pipeline.
                 modular_pipelines.extract_from_node(input_node)
-                if current_modular_pipeline is not None:
-                    modular_pipelines.add_input(current_modular_pipeline, input_node)
+                if current_modular_pipeline_id is not None:
+                    modular_pipelines.add_input(current_modular_pipeline_id, input_node)
 
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
@@ -186,8 +186,10 @@ class DataAccessManager:
                     output_node.original_version = self.catalog.get_dataset(output)
 
                 modular_pipelines.extract_from_node(output_node)
-                if current_modular_pipeline is not None:
-                    modular_pipelines.add_output(current_modular_pipeline, output_node)
+                if current_modular_pipeline_id is not None:
+                    modular_pipelines.add_output(
+                        current_modular_pipeline_id, output_node
+                    )
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
@@ -476,7 +478,9 @@ class DataAccessManager:
             bad_inputs = modular_pipeline.inputs.intersection(descendants)
             for bad_input in bad_inputs:
                 digraph.remove_edge(bad_input, modular_pipeline_id)
-                edges.remove_edge(GraphEdge(bad_input, modular_pipeline_id))
+                edges.remove_edge(
+                    GraphEdge(source=bad_input, target=modular_pipeline_id)
+                )
                 node_dependencies[bad_input].remove(modular_pipeline_id)
 
         for node_id, node in self.nodes.as_dict().items():
@@ -488,7 +492,7 @@ class DataAccessManager:
             if not node.modular_pipelines or node_id in root_parameters:
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
-                        node_id, self.nodes.get_node_by_id(node_id).type
+                        id=node_id, type=self.nodes.get_node_by_id(node_id).type
                     )
                 )
 

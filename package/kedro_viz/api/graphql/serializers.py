@@ -10,9 +10,8 @@ from typing import Dict, Iterable, List, Optional, cast
 
 from strawberry import ID
 
+from kedro_viz.api.graphql.types import Run
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
-
-from .types import Run
 
 
 def format_run(

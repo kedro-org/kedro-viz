@@ -1,10 +1,9 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access, missing-function-docstring
 import abc
 import hashlib
 import inspect
 import logging
-from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
@@ -12,6 +11,7 @@ from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+from pydantic import BaseModel, Field, root_validator, validator
 
 from kedro_viz.models.utils import get_dataset_type
 
@@ -36,15 +36,26 @@ def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
     return str(filepath) if filepath else None
 
 
-@dataclass
-class RegisteredPipeline:
-    """Represent a registered pipeline in a Kedro project"""
+class NamedEntity(BaseModel):
+    """Represent a named entity (Tag/Registered Pipeline) in a Kedro project
+    Args:
+        id (str): Id of the registered pipeline
+
+    Raises:
+        AssertionError: If id is not supplied during instantiation
+    """
 
     id: str
-    name: str = field(init=False)
+    name: Optional[str] = Field(None, description="The name of the registered pipeline")
 
-    def __post_init__(self):
-        self.name = self.id
+    @validator("name", always=True)
+    def set_name(cls, _, values):
+        assert "id" in values
+        return values["id"]
+
+
+class RegisteredPipeline(NamedEntity):
+    """Represent a registered pipeline in a Kedro project"""
 
 
 class GraphNodeType(str, Enum):
@@ -61,54 +72,69 @@ class GraphNodeType(str, Enum):
     )
 
 
-@dataclass(frozen=True)
-class ModularPipelineChild:
-    """Represent a child of a modular pipeline."""
+class ModularPipelineChild(BaseModel, frozen=True):
+    """Represent a child of a modular pipeline.
+
+    Args:
+        id (str): Id of the modular pipeline child
+        type (GraphNodeType): Type of modular pipeline child
+    """
 
     id: str
     type: GraphNodeType
 
 
-@dataclass
-class Tag(RegisteredPipeline):
-    """Represent a tag"""
+class Tag(NamedEntity):
+    """Represent a tag in a Kedro project"""
 
     def __hash__(self) -> int:
         return hash(self.id)
 
 
-# pylint: disable=too-many-instance-attributes
-@dataclass
-class GraphNode(abc.ABC):
-    """Represent a node in the graph representation of a Kedro pipeline"""
+class GraphNode(BaseModel, abc.ABC):
+    """Represent a node in the graph representation of a Kedro pipeline.
+    All node models except the metadata node models should inherit from this class
 
-    # a unique identifier for the node in the graph
-    # obtained by hashing the node's string representation
+    Args:
+        id (str): A unique identifier for the node in the graph,
+                obtained by hashing the node's string representation.
+        name (str): The full name of this node obtained from the underlying Kedro object
+        type (str): The type of the graph node
+        tags (Set[str]): The tags associated with this node. Defaults to `set()`.
+        kedro_obj (Optional[Union[KedroNode, AbstractDataset]]): The underlying Kedro object
+                for each graph node, if any. Defaults to `None`.
+        pipelines (Set[str]): The set of registered pipeline IDs this
+                node belongs to. Defaults to `set()`.
+        namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
+        modular_pipelines (Optional[List[str]]): The list of modular pipeline this node belongs to.
+
+    """
+
     id: str
-
-    # the full name of this node obtained from the underlying Kedro object
     name: str
-
-    # the type of the graph node
     type: str
+    tags: Set[str] = Field(set(), description="The tags associated with this node")
+    kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = Field(
+        None, description="The underlying Kedro object for each graph node, if any"
+    )
+    pipelines: Set[str] = Field(
+        set(), description="The set of registered pipeline IDs this node belongs to"
+    )
 
-    # the underlying Kedro object for each graph node, if any
-    kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = field(default=None)
-
-    # the tags associated with this node
-    tags: Set[str] = field(default_factory=set)
-
-    # the set of registered pipeline IDs this node belongs to
-    pipelines: Set[str] = field(default_factory=set)
-
-    # The original namespace on this node.
-    # N.B.: in Kedro, modular pipeline is implemented by declaring namespace on a node.
+    # In Kedro, modular pipeline is implemented by declaring namespace on a node.
     # For example, node(func, namespace="uk.de") means this node belongs
     # to the modular pipeline "uk" and "uk.de"
-    namespace: Optional[str] = field(init=False, default=None)
+    namespace: Optional[str] = Field(
+        None, description="The original namespace on this node"
+    )
+    modular_pipelines: Optional[List[str]] = Field(
+        None, description="The modular_pipelines this node belongs to"
+    )
 
-    # The list of modular pipeline this node belongs to.
-    modular_pipelines: Optional[List[str]] = field(init=False)
+    class Config:
+        """Pydantic Config for GraphNode"""
+
+        arbitrary_types_allowed = True
 
     @staticmethod
     def _hash(value: str):
@@ -157,7 +183,7 @@ class GraphNode(abc.ABC):
 
     @classmethod
     def create_task_node(cls, node: KedroNode) -> "TaskNode":
-        """Create a graph node of type TASK for a given Kedro Node instance.
+        """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
         Returns:
@@ -181,7 +207,7 @@ class GraphNode(abc.ABC):
         stats: Optional[Dict],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
-        """Create a graph node of type DATA for a given Kedro Dataset instance.
+        """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
@@ -225,7 +251,7 @@ class GraphNode(abc.ABC):
         tags: Set[str],
         parameters: AbstractDataset,
     ) -> "ParametersNode":
-        """Create a graph node of type PARAMETERS for a given Kedro parameters dataset instance.
+        """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
@@ -248,7 +274,7 @@ class GraphNode(abc.ABC):
     def create_modular_pipeline_node(
         cls, modular_pipeline_id: str
     ) -> "ModularPipelineNode":
-        """Create a graph node of type MODULAR_PIPELINE for a given modular pipeline ID.
+        """Create a graph node of type modularPipeline for a given modular pipeline ID.
         This is used to visualise all modular pipelines in a Kedro project on the graph.
         Args:
             modular_pipeline_id: The ID of the modular pipeline to convert into a graph node.
@@ -278,24 +304,39 @@ class GraphNode(abc.ABC):
         return self.kedro_obj is not None
 
 
-@dataclass
-class GraphNodeMetadata(abc.ABC):
+class GraphNodeMetadata(BaseModel, abc.ABC):
     """Represent a graph node's metadata"""
 
 
-@dataclass
 class TaskNode(GraphNode):
-    """Represent a graph node of type TASK"""
+    """Represent a graph node of type task
 
-    modular_pipelines: List[str] = field(init=False)
-    parameters: Dict = field(init=False, default_factory=dict)
+    Raises:
+        AssertionError: If kedro_obj is not supplied during instantiation
+    """
+
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
+    parameters: Dict = Field(
+        {}, description="A dictionary of parameter values for the task node"
+    )
+
+    # The type for Task node
     type: str = GraphNodeType.TASK.value
 
-    def __post_init__(self):
-        self.namespace = self.kedro_obj.namespace
+    @root_validator(pre=True)
+    def check_kedro_obj_exists(cls, values):
+        assert "kedro_obj" in values
+        return values
 
-        # the modular pipelines that a task node belongs to are derived from its namespace.
-        self.modular_pipelines = self._expand_namespaces(self.kedro_obj.namespace)
+    @validator("namespace", always=True)
+    def set_namespace(cls, _, values):
+        return values["kedro_obj"].namespace
+
+    @validator("modular_pipelines", always=True)
+    def set_modular_pipelines(cls, _, values):
+        return cls._expand_namespaces(values["kedro_obj"].namespace)
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -310,11 +351,8 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     return func if wrapped_func is None else wrapped_func
 
 
-@dataclass
 class ModularPipelineNode(GraphNode):
     """Represent a modular pipeline node in the graph"""
-
-    type: str = GraphNodeType.MODULAR_PIPELINE.value
 
     # A modular pipeline doesn't belong to any other modular pipeline,
     # in the same sense as other types of GraphNode do.
@@ -327,7 +365,9 @@ class ModularPipelineNode(GraphNode):
     # for more details.
     # For example, if a node namespace is "uk.data_science",
     # the "uk" modular pipeline node's children are ["uk.data_science"]
-    children: Set[ModularPipelineChild] = field(default_factory=set)
+    children: Set[ModularPipelineChild] = Field(
+        set(), description="The children for the modular pipeline node"
+    )
 
     # Keep track of a modular pipeline's inputs and outputs, both internal and external.
     # Internal inputs/outputs are IDs of the datasets not connected to any nodes external
@@ -337,10 +377,25 @@ class ModularPipelineNode(GraphNode):
     # when using the pipeline() factory function.
     # More information can be found here:
     # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
-    internal_inputs: Set[str] = field(default_factory=set)
-    internal_outputs: Set[str] = field(default_factory=set)
-    external_inputs: Set[str] = field(default_factory=set)
-    external_outputs: Set[str] = field(default_factory=set)
+    internal_inputs: Set[str] = Field(
+        set(), description="The dataset inputs within the modular pipeline node"
+    )
+    internal_outputs: Set[str] = Field(
+        set(), description="The dataset outputs within the modular pipeline node"
+    )
+    external_inputs: Set[str] = Field(
+        set(),
+        description="""The dataset inputs connecting the modular
+        pipeline node with other modular pipelines""",
+    )
+    external_outputs: Set[str] = Field(
+        set(),
+        description="""The dataset outputs connecting the modular
+        pipeline node with other modular pipelines""",
+    )
+
+    # The type for Modular Pipeline Node
+    type: str = GraphNodeType.MODULAR_PIPELINE.value
 
     @property
     def inputs(self) -> Set[str]:
@@ -364,37 +419,64 @@ class ModularPipelineNode(GraphNode):
         )
 
 
-@dataclass
 class TaskNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a TaskNode"""
+    """Represent the metadata of a TaskNode
 
-    # the source code of the node's function
-    code: Optional[str] = field(init=False)
+    Args:
+        task_node (TaskNode): Task node to which this metadata belongs to.
 
-    # path to the file where the node is defined
-    filepath: Optional[str] = field(init=False)
+    Raises:
+        AssertionError: If task_node is not supplied during instantiation
+    """
 
-    # parameters of the node, if available
-    parameters: Optional[Dict] = field(init=False, default=None)
+    task_node: TaskNode
 
-    # command to run the pipeline to this node
-    run_command: Optional[str] = field(init=False, default=None)
+    # Source code of the node's function
+    code: Optional[str]
 
-    inputs: List[str] = field(init=False)
+    # Path to the file where the node is defined
+    filepath: Optional[str]
 
-    outputs: List[str] = field(init=False)
+    parameters: Optional[Dict] = Field(
+        None, description="The parameters of the node, if available"
+    )
+    run_command: Optional[str] = Field(
+        None, description="The command to run the pipeline to this node"
+    )
 
-    # the task node to which this metadata belongs
-    task_node: InitVar[TaskNode]
+    inputs: Optional[List[str]] = Field(None, description="The inputs to the TaskNode")
+    outputs: Optional[List[str]] = Field(
+        None, description="The outputs from the TaskNode"
+    )
 
-    def __post_init__(self, task_node: TaskNode):
-        kedro_node = cast(KedroNode, task_node.kedro_obj)
+    @root_validator(pre=True)
+    def check_task_node_exists(cls, values):
+        assert "task_node" in values
+        cls.set_task_and_kedro_node(values["task_node"])
+        return values
+
+    @classmethod
+    def set_task_and_kedro_node(cls, task_node):
+        cls.task_node = task_node
+        cls.kedro_node = cast(KedroNode, task_node.kedro_obj)
+
+    @validator("code", always=True)
+    def set_code(cls, code):
         # this is required to handle partial, curry functions
-        if inspect.isfunction(kedro_node.func):
-            self.code = inspect.getsource(_extract_wrapped_func(kedro_node.func))
+        if inspect.isfunction(cls.kedro_node.func):
+            code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
+            return code
+
+        return None
+
+    @validator("filepath", always=True)
+    def set_filepath(cls, filepath):
+        # this is required to handle partial, curry functions
+        if inspect.isfunction(cls.kedro_node.func):
             code_full_path = (
-                Path(inspect.getfile(kedro_node.func)).expanduser().resolve()
+                Path(inspect.getfile(cls.kedro_node.func)).expanduser().resolve()
             )
+
             try:
                 filepath = code_full_path.relative_to(Path.cwd().parent)
             except ValueError:  # pragma: no cover
@@ -402,62 +484,109 @@ class TaskNodeMetadata(GraphNodeMetadata):
                 # e.g. either during tests or during launching development server
                 # outside of a Kedro project, simply return the fullpath to the file.
                 filepath = code_full_path
-            self.filepath = str(filepath)
-        self.parameters = task_node.parameters
-        self.inputs = kedro_node.inputs
-        self.outputs = kedro_node.outputs
+
+            return str(filepath)
+
+        return None
+
+    @validator("parameters", always=True)
+    def set_parameters(cls, _):
+        return cls.task_node.parameters
+
+    @validator("run_command", always=True)
+    def set_run_command(cls, _):
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
-        if kedro_node._name is not None:
-            self.run_command = (
-                f"kedro run --to-nodes={task_node.namespace}.{kedro_node._name}"
-                if task_node.namespace is not None
-                else f"kedro run --to-nodes={kedro_node._name}"
-            )
+        if cls.kedro_node._name is not None:
+            if cls.task_node.namespace is not None:
+                return f"kedro run --to-nodes={cls.task_node.namespace}.{cls.kedro_node._name}"
+            return f"kedro run --to-nodes={cls.kedro_node._name}"
+
+        return None
+
+    @validator("inputs", always=True)
+    def set_inputs(cls, _):
+        return cls.kedro_node.inputs
+
+    @validator("outputs", always=True)
+    def set_outputs(cls, _):
+        return cls.kedro_node.outputs
 
 
-# pylint: disable=too-many-instance-attributes
-@dataclass
+# pylint: disable=missing-function-docstring
 class DataNode(GraphNode):
-    """Represent a graph node of type DATA"""
+    """Represent a graph node of type data
 
-    # whether the data node is a free input
-    is_free_input: bool = field(default=False)
+    Args:
+        layer (Optional[str]): The layer that this data node belongs to. Defaults to `None`.
+        is_free_input (bool): Determines whether the data node is a free input. Defaults to `False`.
+        stats (Optional[Dict]): Statistics for the data node. Defaults to `None`.
 
-    # the layer that this data node belongs to
-    layer: Optional[str] = field(default=None)
+    Raises:
+        AssertionError: If kedro_obj, name are not supplied during instantiation
+    """
 
-    # the concrete type of the underlying kedro_obj
-    dataset_type: Optional[str] = field(init=False)
+    layer: Optional[str] = Field(
+        None, description="The layer that this data node belongs to"
+    )
+    is_free_input: bool = Field(
+        False, description="Determines whether the data node is a free input"
+    )
+    stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
-    # the list of modular pipelines this data node belongs to
-    modular_pipelines: List[str] = field(init=False)
+    # The concrete type of the underlying kedro_obj.
+    dataset_type: Optional[str]
 
-    viz_metadata: Optional[Dict] = field(init=False)
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
 
-    # command to run the pipeline to this node
-    run_command: Optional[str] = field(init=False, default=None)
+    # The metadata for data node
+    viz_metadata: Optional[Dict]
 
-    # the type of this graph node, which is DATA
+    run_command: Optional[str] = Field(
+        None, description="The command to run the pipeline to this node"
+    )
+
+    # The type for data node
     type: str = GraphNodeType.DATA.value
 
-    # statistics for the data node
-    stats: Optional[Dict] = field(default=None)
+    @root_validator(pre=True)
+    def check_kedro_obj_exists(cls, values):
+        assert "kedro_obj" in values
+        return values
 
-    def __post_init__(self):
-        self.dataset_type = get_dataset_type(self.kedro_obj)
+    @validator("dataset_type", always=True)
+    def set_dataset_type(cls, _, values):
+        kedro_obj = values.get("kedro_obj")
+        return get_dataset_type(kedro_obj)
+
+    @validator("namespace", always=True)
+    def set_namespace(cls, _, values):
+        assert "name" in values
 
         # the modular pipelines that a data node belongs to
         # are derived from its namespace, which in turn
         # is derived from the dataset's name.
-        self.namespace = self._get_namespace(self.name)
-        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
-        metadata = getattr(self.kedro_obj, "metadata", None)
-        if metadata:
-            try:
-                self.viz_metadata = metadata["kedro-viz"]
-            except (AttributeError, KeyError):  # pragma: no cover
-                logger.debug("Kedro-viz metadata not found for %s", self.name)
+        name = values.get("name")
+        return cls._get_namespace(name)
+
+    @validator("modular_pipelines", always=True)
+    def set_modular_pipelines(cls, _, values):
+        assert "name" in values
+
+        name = values.get("name")
+        namespace = cls._get_namespace(name)
+        return cls._expand_namespaces(namespace)
+
+    @validator("viz_metadata", always=True)
+    def set_viz_metadata(cls, _, values):
+        kedro_obj = values.get("kedro_obj")
+
+        if hasattr(kedro_obj, "metadata") and kedro_obj.metadata:
+            return kedro_obj.metadata.get("kedro-viz", None)
+
+        return None
 
     # TODO: improve this scheme.
     def is_plot_node(self):
@@ -496,189 +625,286 @@ class DataNode(GraphNode):
 
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        try:
-            is_preview = bool(self.viz_metadata["preview_args"])
-        except (AttributeError, KeyError):
+        if not (self.viz_metadata and self.viz_metadata.get("preview_args", None)):
             return False
-        return is_preview
+
+        return True
 
     def get_preview_args(self):
         """Gets the preview arguments for a dataset"""
-        return self.viz_metadata["preview_args"]
+        return self.viz_metadata.get("preview_args", None)
 
 
-@dataclass
 class TranscodedDataNode(GraphNode):
-    """Represent a graph node of type DATA"""
+    """Represent a graph node of type data
 
-    # whether the data node is a free input
-    is_free_input: bool = field(default=False)
+    Args:
+        layer (Optional[str]): The layer that this transcoded data
+                node belongs to. Defaults to `None`.
+        is_free_input (bool): Determines whether the transcoded data
+                node is a free input. Defaults to `False`.
+        stats (Optional[Dict]): Statistics for the data node
 
-    # the layer that this data node belongs to
-    layer: Optional[str] = field(default=None)
+    Raises:
+        AssertionError: If name is not supplied during instantiation
 
-    # the original Kedro's AbstractDataset for this transcoded data node
-    original_version: AbstractDataset = field(init=False)
+    """
 
-    # keep track of the original name for the generated run command
-    original_name: str = field(init=False)
+    layer: Optional[str] = Field(
+        None, description="The layer that this transcoded data node belongs to"
+    )
+    is_free_input: bool = Field(
+        False, description="Determines whether the transcoded data node is a free input"
+    )
+    stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
+    original_version: Optional[AbstractDataset] = Field(
+        None,
+        description="The original Kedro's AbstractDataset for this transcoded data node",
+    )
+    original_name: Optional[str] = Field(
+        None, description="The original name for the generated run command"
+    )
 
-    # the transcoded versions of this transcoded data nodes
-    transcoded_versions: Set[AbstractDataset] = field(init=False, default_factory=set)
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
 
-    # the list of modular pipelines this data node belongs to
-    modular_pipelines: List[str] = field(init=False)
+    run_command: Optional[str] = Field(
+        None, description="The command to run the pipeline to this node"
+    )
+    # The transcoded versions of the transcoded data nodes.
+    transcoded_versions: Set[AbstractDataset] = Field(
+        set(), description="The transcoded versions of the transcoded data nodes"
+    )
 
-    # command to run the pipeline to this node
-    run_command: Optional[str] = field(init=False, default=None)
-
-    # the type of this graph node, which is DATA
+    # The type for data node
     type: str = GraphNodeType.DATA.value
 
-    # statistics for the data node
-    stats: Optional[Dict] = field(default=None)
+    @validator("namespace", always=True)
+    def set_namespace(cls, _, values):
+        assert "name" in values
+
+        # the modular pipelines that a data node belongs to
+        # are derived from its namespace, which in turn
+        # is derived from the dataset's name.
+        name = values.get("name")
+        return cls._get_namespace(name)
+
+    @validator("modular_pipelines", always=True)
+    def set_modular_pipelines(cls, _, values):
+        assert "name" in values
+
+        name = values.get("name")
+        namespace = cls._get_namespace(name)
+        return cls._expand_namespaces(namespace)
 
     def has_metadata(self) -> bool:
         return True
 
-    def __post_init__(self):
-        # the modular pipelines that a data node belongs to
-        # are derived from its namespace, which in turn
-        # is derived from the dataset's name.
-        self.namespace = self._get_namespace(self.name)
-        self.modular_pipelines = self._expand_namespaces(self._get_namespace(self.name))
 
-
-@dataclass
 class DataNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a DataNode"""
+    """Represent the metadata of a DataNode
 
-    # the dataset type for this data node, e.g. CSVDataset
-    type: Optional[str] = field(init=False)
+    Args:
+        data_node (DataNode): Data node to which this metadata belongs to.
 
-    # the path to the actual data file for the underlying dataset.
-    # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False)
+    Raises:
+        AssertionError: If data_node is not supplied during instantiation
+    """
 
-    # the underlying data node to which this metadata belongs
-    data_node: InitVar[DataNode]
+    data_node: DataNode
 
-    # the optional plot data if the underlying dataset has a plot.
-    # currently only applicable for PlotlyDataset
-    plot: Optional[Dict] = field(init=False, default=None)
+    # The type of the data node
+    type: Optional[str]
 
-    # the optional image data if the underlying dataset has a image.
+    # The path to the actual data file for the underlying dataset
+    filepath: Optional[str]
+
+    plot: Optional[Dict] = Field(
+        None, description="The optional plot data if the underlying dataset has a plot"
+    )
+
+    # The image data if the underlying dataset has a image
     # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = field(init=False, default=None)
+    image: Optional[str] = Field(
+        None, description="The image data if the underlying dataset has a image"
+    )
+    tracking_data: Optional[Dict] = Field(
+        None,
+        description="The tracking data if the underlying dataset has a tracking dataset",
+    )
+    run_command: Optional[str] = Field(
+        None, description="Command to run the pipeline to this node"
+    )
+    preview: Optional[Dict] = Field(
+        None, description="Preview data for the underlying datanode"
+    )
+    stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
-    tracking_data: Optional[Dict] = field(init=False, default=None)
+    @root_validator(pre=True)
+    def check_data_node_exists(cls, values):
+        assert "data_node" in values
+        cls.set_data_node_and_dataset(values["data_node"])
+        return values
 
-    # command to run the pipeline to this data node
-    run_command: Optional[str] = field(init=False, default=None)
-
-    preview: Optional[Dict] = field(init=False, default=None)
-
-    stats: Optional[Dict] = field(init=False, default=None)
-
-    # TODO: improve this scheme.
-    def __post_init__(self, data_node: DataNode):
-        self.type = data_node.dataset_type
-        dataset = cast(AbstractDataset, data_node.kedro_obj)
-        dataset_description = dataset._describe()
-        self.filepath = _parse_filepath(dataset_description)
-        self.stats = data_node.stats
-
-        # Run command is only available if a node is an output, i.e. not a free input
-        if not data_node.is_free_input:
-            self.run_command = f"kedro run --to-outputs={data_node.name}"
-
-        # Only check for existence of dataset if we might want to load it.
-        if not (
-            data_node.is_plot_node()
-            or data_node.is_image_node()
-            or data_node.is_tracking_node()
-            or data_node.is_preview_node()
-        ):
-            return
+    @classmethod
+    def set_data_node_and_dataset(cls, data_node):
+        cls.data_node = data_node
+        cls.dataset = cast(AbstractDataset, data_node.kedro_obj)
 
         # dataset.release clears the cache before loading to ensure that this issue
         # does not arise: https://github.com/kedro-org/kedro-viz/pull/573.
-        dataset.release()
-        if not dataset.exists():
-            return
+        cls.dataset.release()
 
-        if data_node.is_plot_node():
-            self.plot = dataset.load()
-        elif data_node.is_image_node():
-            self.image = dataset.load()
-        elif data_node.is_tracking_node():
-            self.tracking_data = dataset.load()
-        elif data_node.is_preview_node():
-            try:
-                if hasattr(dataset, "_preview"):
-                    self.preview = dataset._preview(**data_node.get_preview_args())
+    @validator("type", always=True)
+    def set_type(cls, _):
+        return cls.data_node.dataset_type
 
-            except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
-                logger.warning(
-                    "'%s' could not be previewed. Full exception: %s: %s",
-                    data_node.name,
-                    type(exc).__name__,
-                    exc,
-                )
+    @validator("filepath", always=True)
+    def set_filepath(cls, _):
+        dataset_description = cls.dataset._describe()
+        return _parse_filepath(dataset_description)
+
+    @validator("run_command", always=True)
+    def set_run_command(cls, _):
+        if not cls.data_node.is_free_input:
+            return f"kedro run --to-outputs={cls.data_node.name}"
+        return None
+
+    @validator("plot", always=True)
+    def set_plot(cls, _):
+        if cls.data_node.is_plot_node():
+            return cls.data_node.kedro_obj.load()
+        return None
+
+    @validator("image", always=True)
+    def set_image(cls, _):
+        if cls.data_node.is_image_node():
+            return cls.data_node.kedro_obj.load()
+        return None
+
+    @validator("tracking_data", always=True)
+    def set_tracking_data(cls, _):
+        if cls.data_node.is_tracking_node():
+            return cls.data_node.kedro_obj.load()
+        return None
+
+    @validator("preview", always=True)
+    def set_preview(cls, _):
+        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
+            return None
+
+        try:
+            return cls.dataset._preview(**cls.data_node.get_preview_args())
+
+        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+            logger.warning(
+                "'%s' could not be previewed. Full exception: %s: %s",
+                cls.data_node.name,
+                type(exc).__name__,
+                exc,
+            )
+            return None
+
+    @validator("stats", always=True)
+    def set_stats(cls, _):
+        return cls.data_node.stats
 
 
-@dataclass
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a TranscodedDataNode"""
+    """Represent the metadata of a TranscodedDataNode
+    Args:
+        transcoded_data_node (TranscodedDataNode): The underlying transcoded
+                data node to which this metadata belongs to.
 
-    # the path to the actual data file for the underlying dataset.
-    # only available if the dataset has filepath set.
-    filepath: Optional[str] = field(init=False)
+    Raises:
+        AssertionError: If transcoded_data_node is not supplied during instantiation
+    """
 
-    run_command: Optional[str] = field(init=False)
+    transcoded_data_node: TranscodedDataNode
 
-    original_type: str = field(init=False)
+    # The path to the actual data file for the underlying dataset.
+    # Only available if the dataset has filepath set.
+    filepath: Optional[str]
 
-    transcoded_types: List[str] = field(init=False)
+    run_command: Optional[str] = Field(
+        None, description="Command to run the pipeline to this node"
+    )
+    original_type: Optional[str] = Field(
+        None,
+        description="The dataset type of the underlying transcoded data node original version",
+    )
+    transcoded_types: Optional[List[str]] = Field(
+        None, description="The list of all dataset types for the transcoded versions"
+    )
 
-    stats: Optional[Dict] = field(init=False, default=None)
+    # Statistics for the underlying data node
+    stats: Optional[Dict] = Field(
+        None, description="The statistics for the transcoded data node metadata."
+    )
 
-    # the underlying data node to which this metadata belongs
-    transcoded_data_node: InitVar[TranscodedDataNode]
+    @root_validator(pre=True)
+    def check_transcoded_data_node_exists(cls, values):
+        assert "transcoded_data_node" in values
+        cls.transcoded_data_node = values["transcoded_data_node"]
+        return values
 
-    def __post_init__(self, transcoded_data_node: TranscodedDataNode):
-        original_version = transcoded_data_node.original_version
+    @validator("filepath", always=True)
+    def set_filepath(cls, _):
+        dataset_description = cls.transcoded_data_node.original_version._describe()
+        return _parse_filepath(dataset_description)
 
-        self.original_type = get_dataset_type(original_version)
-        self.transcoded_types = [
+    @validator("run_command", always=True)
+    def set_run_command(cls, _):
+        if not cls.transcoded_data_node.is_free_input:
+            return f"kedro run --to-outputs={cls.transcoded_data_node.original_name}"
+        return None
+
+    @validator("original_type", always=True)
+    def set_original_type(cls, _):
+        return get_dataset_type(cls.transcoded_data_node.original_version)
+
+    @validator("transcoded_types", always=True)
+    def set_transcoded_types(cls, _):
+        return [
             get_dataset_type(transcoded_version)
-            for transcoded_version in transcoded_data_node.transcoded_versions
+            for transcoded_version in cls.transcoded_data_node.transcoded_versions
         ]
 
-        dataset_description = original_version._describe()
-        self.filepath = _parse_filepath(dataset_description)
-        self.stats = transcoded_data_node.stats
-
-        if not transcoded_data_node.is_free_input:
-            self.run_command = (
-                f"kedro run --to-outputs={transcoded_data_node.original_name}"
-            )
+    @validator("stats", always=True)
+    def set_stats(cls, _):
+        return cls.transcoded_data_node.stats
 
 
-@dataclass
 class ParametersNode(GraphNode):
-    """Represent a graph node of type PARAMETERS"""
+    """Represent a graph node of type parameters
+    Args:
+        layer (Optional[str]): The layer that this parameters node belongs to. Defaults to `None`.
 
-    # the layer that this parameters node belongs to
-    layer: Optional[str] = field(default=None)
+    Raises:
+        AssertionError: If kedro_obj, name are not supplied during instantiation
+    """
 
-    # the list of modular pipelines this parameters node belongs to
-    modular_pipelines: List[str] = field(init=False)
+    layer: Optional[str] = Field(
+        None, description="The layer that this parameters node belongs to"
+    )
 
-    # the type of this graph node, which is PARAMETERS
+    modular_pipelines: List[str] = Field(
+        [], description="The modular pipelines this node belongs to"
+    )
+
+    # The type for Parameters Node
     type: str = GraphNodeType.PARAMETERS.value
 
-    def __post_init__(self):
+    @root_validator(pre=True)
+    def check_kedro_obj_and_name_exists(cls, values):
+        assert "kedro_obj" in values
+        assert "name" in values
+        return values
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         if self.is_all_parameters():
             self.namespace = None
             self.modular_pipelines = []
@@ -705,6 +931,9 @@ class ParametersNode(GraphNode):
     def parameter_value(self) -> Any:
         """Load the parameter value from the underlying dataset"""
         self.kedro_obj: AbstractDataset
+        if not (self.kedro_obj and hasattr(self.kedro_obj, "load")):
+            return None
+
         try:
             return self.kedro_obj.load()
         except (AttributeError, DatasetError):
@@ -717,25 +946,44 @@ class ParametersNode(GraphNode):
             return None
 
 
-@dataclass
-class ParametersNodeMetadata:
-    """Represent the metadata of a ParametersNode"""
+class ParametersNodeMetadata(GraphNodeMetadata):
+    """Represent the metadata of a ParametersNode
 
-    parameters: Dict = field(init=False)
-    parameters_node: InitVar[ParametersNode]
+    Args:
+        parameters_node (ParametersNode): The underlying parameters node
+                for the parameters metadata node.
 
-    def __post_init__(self, parameters_node: ParametersNode):
-        if parameters_node.is_single_parameter():
-            self.parameters = {
-                parameters_node.parameter_name: parameters_node.parameter_value
+    Raises:
+        AssertionError: If parameters_node is not supplied during instantiation
+    """
+
+    parameters_node: ParametersNode
+    parameters: Optional[Dict] = Field(
+        None, description="The parameters dictionary for the parameters metadata node"
+    )
+
+    @root_validator(pre=True)
+    def check_parameters_node_exists(cls, values):
+        assert "parameters_node" in values
+        cls.parameters_node = values["parameters_node"]
+        return values
+
+    @validator("parameters", always=True)
+    def set_parameters(cls, _):
+        if cls.parameters_node.is_single_parameter():
+            return {
+                cls.parameters_node.parameter_name: cls.parameters_node.parameter_value
             }
-        else:
-            self.parameters = parameters_node.parameter_value
+        return cls.parameters_node.parameter_value
 
 
-@dataclass(frozen=True)
-class GraphEdge:
-    """Represent an edge in the graph"""
+class GraphEdge(BaseModel, frozen=True):
+    """Represent an edge in the graph
+
+    Args:
+        source (str): The id of the source node.
+        target (str): The id of the target node.
+    """
 
     source: str
     target: str
