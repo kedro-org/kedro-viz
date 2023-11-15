@@ -1,3 +1,5 @@
+from unittest.mock import call
+
 import pytest
 import requests
 from click.testing import CliRunner
@@ -134,14 +136,22 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
 
-    mock_click_echo.assert_called_once_with(
-        "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
-        f"You are using version {installed_version}; "
-        f"however, version {mock_version} is now available.\n"
-        "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
-        "You can view the complete changelog at "
-        "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
-    )
+    mock_click_echo_calls = [
+        call(
+            "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
+            f"You are using version {installed_version}; "
+            f"however, version {mock_version} is now available.\n"
+            "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+            "You can view the complete changelog at "
+            "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
+        ),
+        call(
+            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
+            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
+        ),
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
 def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_response):
@@ -156,7 +166,14 @@ def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_respo
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
 
-    mock_click_echo.assert_not_called()
+    mock_click_echo_calls = [
+        call(
+            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
+            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
 def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_response):
@@ -169,7 +186,14 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     with runner.isolated_filesystem():
         runner.invoke(cli.commands, ["viz"])
 
-    mock_click_echo.assert_not_called()
+    mock_click_echo_calls = [
+        call(
+            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
+            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
 def test_kedro_viz_command_with_autoreload(

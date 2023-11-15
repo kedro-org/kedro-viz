@@ -122,7 +122,7 @@ def viz(
     click.echo(
         click.style(
             "WARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool. ",
+            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.",
             fg="yellow",
         ),
     )
