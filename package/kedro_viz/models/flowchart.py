@@ -115,7 +115,9 @@ class GraphNode(BaseModel, abc.ABC):
     type: str
     tags: Set[str] = Field(set(), description="The tags associated with this node")
     kedro_obj: Optional[Union[KedroNode, AbstractDataset]] = Field(
-        None, description="The underlying Kedro object for each graph node, if any"
+        None,
+        description="The underlying Kedro object for each graph node, if any",
+        exclude=True,
     )
     pipelines: Set[str] = Field(
         set(), description="The set of registered pipeline IDs this node belongs to"
@@ -429,7 +431,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
         AssertionError: If task_node is not supplied during instantiation
     """
 
-    task_node: TaskNode
+    task_node: TaskNode = Field(..., exclude=True)
 
     # Source code of the node's function
     code: Optional[str]
@@ -712,7 +714,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         AssertionError: If data_node is not supplied during instantiation
     """
 
-    data_node: DataNode
+    data_node: DataNode = Field(..., exclude=True)
 
     # The type of the data node
     type: Optional[str]
@@ -821,7 +823,7 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
         AssertionError: If transcoded_data_node is not supplied during instantiation
     """
 
-    transcoded_data_node: TranscodedDataNode
+    transcoded_data_node: TranscodedDataNode = Field(..., exclude=True)
 
     # The path to the actual data file for the underlying dataset.
     # Only available if the dataset has filepath set.
@@ -957,7 +959,7 @@ class ParametersNodeMetadata(GraphNodeMetadata):
         AssertionError: If parameters_node is not supplied during instantiation
     """
 
-    parameters_node: ParametersNode
+    parameters_node: ParametersNode = Field(..., exclude=True)
     parameters: Optional[Dict] = Field(
         None, description="The parameters dictionary for the parameters metadata node"
     )
