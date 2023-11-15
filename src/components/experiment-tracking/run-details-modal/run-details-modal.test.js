@@ -1,8 +1,8 @@
 import React from 'react';
 import RunDetailsModal from './index';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { configure } from 'enzyme';
-import { waitFor } from '@testing-library/react';
+import { waitFor, act } from '@testing-library/react';
 import { ButtonTimeoutContext } from '../../../utils/button-timeout-context';
 import { setup } from '../../../utils/state.mock';
 
@@ -48,7 +48,7 @@ describe('RunDetailsModal', () => {
     waitFor(() => expect(primaryButton).toBeDisabled());
   });
 
-  it('modal closes when cancel button is clicked', () => {
+  it('modal closes when cancel button is clicked', async () => {
     const setVisible = jest.fn();
     const wrapper = setup.mount(
       <ButtonTimeoutContext.Provider value={mockValue}>
@@ -62,7 +62,9 @@ describe('RunDetailsModal', () => {
 
     onClick.mockImplementation((visible) => [visible, setVisible]);
 
-    closeButton.simulate('click');
+    await act(() => {
+      closeButton.simulate('click');
+    });
 
     expect(
       wrapper.find(

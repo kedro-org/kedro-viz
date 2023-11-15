@@ -5,7 +5,7 @@ import '@testing-library/jest-dom/extend-expect';
 // Configure enzyme
 // See https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs
 import { configure } from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 
 // Require to create jest using Plotly.js library
 window.URL.createObjectURL = jest.fn();

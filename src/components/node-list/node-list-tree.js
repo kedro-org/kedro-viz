@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { makeStyles, withStyles } from '@mui/styles';
+import { styled } from '@mui/system';
 import { TreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -25,19 +25,15 @@ const GROUPED_NODES_DISPLAY_ORDER = {
 
 // please note that this setup is unique for initialization of the material-ui tree,
 // and setup is only used here and not anywhere else in the app.
-const useStyles = makeStyles({
-  root: {
-    height: 110,
-    flexGrow: 1,
-    maxWidth: 400,
-  },
+const RootStyles = styled('div')({
+  height: 110,
+  flexGrow: 1,
+  maxWidth: 400,
 });
 
-const StyledTreeView = withStyles({
-  root: {
-    padding: '0 0 0 20px',
-  },
-})(TreeView);
+const StyledTreeView = styled(TreeView)({
+  padding: '0 0 0 20px',
+});
 
 /**
  * Return whether the given modular pipeline ID is on focus mode path, i.e.
@@ -124,8 +120,6 @@ const TreeListProvider = ({
   expanded,
   onToggleNodeSelected,
 }) => {
-  const classes = useStyles();
-
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
     const disabled =
@@ -220,7 +214,7 @@ const TreeListProvider = ({
 
   return modularPipelinesSearchResult ? (
     <StyledTreeView
-      className={classes.root}
+      className={RootStyles}
       expanded={Object.keys(modularPipelinesSearchResult)}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
@@ -231,7 +225,7 @@ const TreeListProvider = ({
   ) : (
     <StyledTreeView
       expanded={expanded}
-      className={classes.root}
+      className={RootStyles}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeToggle={onItemExpandCollapseToggle}
