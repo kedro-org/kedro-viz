@@ -21,8 +21,6 @@ import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
-import ShareableUrlModal from '../shareable-url-modal';
-import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 import Sidebar from '../sidebar';
 import Button from '../ui/button';
 import CircleProgressBar from '../ui/circle-progress-bar';
@@ -35,7 +33,6 @@ import {
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue } from '../../utils/get-key-by-value';
-import { isRunningLocally } from '../../utils';
 
 import './flowchart-wrapper.scss';
 
@@ -297,11 +294,9 @@ export const FlowChartWrapper = ({
           >
             <LoadingIcon visible={loading} />
           </div>
-          {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
         <ExportModal />
         <MetadataModal />
-        {isRunningLocally() ? <ShareableUrlModal /> : null}
       </div>
     );
   }
