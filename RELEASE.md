@@ -14,7 +14,7 @@ Please follow the established format:
 - Improved feedback for copy to clipboard feature. (#1614)
 - Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
 - Refactor flowchart dataclasses to pydantic base models. (#1565)
-- Bump minimum version of FAST API from 0.73.0 to 0.100.0. (#1634)
+- Bump FAST API upper bounds. (#1634)
 
 # Release 6.6.1
 
