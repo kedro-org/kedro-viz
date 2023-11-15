@@ -14,6 +14,7 @@ Please follow the established format:
 - Improved feedback for copy to clipboard feature. (#1614)
 - Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
 - Fix shareable URL modal to appear across the app. (#1639)
+- Refactor flowchart dataclasses to pydantic base models. (#1565)
 
 # Release 6.6.1
 

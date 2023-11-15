@@ -55,7 +55,7 @@ class TestAddNode:
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
-        assert data_access_manager.tags.as_list() == [Tag("tag1"), Tag("tag2")]
+        assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
 
     def test_add_node_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
@@ -325,7 +325,7 @@ class TestAddPipelines:
             "parameters",
             "params:uk.data_processing.train_test_split",
         }
-        assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
+        assert data_access_manager.tags.as_list() == [Tag(id="split"), Tag(id="train")]
         assert sorted(
             data_access_manager.modular_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
             .as_dict()
