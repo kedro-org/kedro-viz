@@ -15,6 +15,7 @@ Please follow the established format:
 - Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
 - Fix shareable URL modal to appear across the app. (#1639)
 - Refactor flowchart dataclasses to pydantic base models. (#1565)
+- Bump FAST API upper bounds. (#1634)
 
 # Release 6.6.1
 
