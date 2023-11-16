@@ -16,6 +16,7 @@ Please follow the established format:
 - Fix shareable URL modal to appear across the app. (#1639)
 - Refactor flowchart dataclasses to pydantic base models. (#1565)
 - Add kedro viz CLI command deprecation warning. (#1641)
+- Bump FAST API upper bounds. (#1634)
 
 # Release 6.6.1
 
