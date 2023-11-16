@@ -14,6 +14,8 @@ import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
+import ShareableUrlModal from '../shareable-url-modal';
+import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 
 import './wrapper.scss';
 
@@ -51,6 +53,8 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
+            {isRunningLocally() ? null : <ShareableUrlMetadata />}
+            {isRunningLocally() ? <ShareableUrlModal /> : null}
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}
