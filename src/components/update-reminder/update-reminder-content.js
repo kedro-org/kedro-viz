@@ -9,9 +9,9 @@ export const updateContent = {
       buttonText: '',
     },
     {
-      title: 'Fix Kedro-Viz Compatibility on URL Subpaths',
+      title: 'Fixed Kedro-Viz when hosted via URL Subpaths',
       image: '',
-      copy: 'Kedro-Viz now works properly when hosted on a URL subpath.',
+      copy: 'Kedro-Viz now works properly when hosted via a URL subpath.',
       buttonLink: '',
       buttonText: '',
     },
