@@ -32,6 +32,11 @@ To start Kedro-Viz, type the following into your terminal from the project direc
 kedro viz
 ```
 
+```{important}
+The `kedro viz` command will be deprecated with the release of Kedro-Viz 7.0.0. 
+`kedro viz run` will be the new way to run the tool.
+```
+
 The command opens a browser tab to serve the visualisation at `http://127.0.0.1:4141/`.
 
 You should see the following:

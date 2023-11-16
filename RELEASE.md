@@ -11,10 +11,11 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix dataset factory patterns in Experiment Tracking. (#1588)
-- Improved feedback for copy to clipboard feature. (#1614)
+- Improve feedback for copy to clipboard feature. (#1614)
 - Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
 - Fix shareable URL modal to appear across the app. (#1639)
 - Refactor flowchart dataclasses to pydantic base models. (#1565)
+- Add kedro viz CLI command deprecation warning. (#1641)
 - Bump FAST API upper bounds. (#1634)
 
 # Release 6.6.1
