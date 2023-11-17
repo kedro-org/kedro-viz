@@ -165,7 +165,10 @@ def viz(
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
-        print("Kedro Viz Backend Server started successfully...")
+        print(
+            "Kedro Viz Backend Server started successfully. \n\n"
+            f"\u2728 Kedro Viz is running at \n http://{host}:{port}/"
+        )
 
         if browser:
             _start_browser(host, port)
