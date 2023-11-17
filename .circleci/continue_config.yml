@@ -40,6 +40,7 @@ commands:
           name: Echo package versions
           command: |
             python -V
+            pip -V
             pip freeze
 
   install_node_dependencies:
