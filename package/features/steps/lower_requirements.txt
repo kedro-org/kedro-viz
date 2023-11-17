@@ -13,3 +13,4 @@ strawberry-graphql==0.192.0
 networkx==2.5
 orjson==3.9
 secure==0.3.0
+pydantic==1.10

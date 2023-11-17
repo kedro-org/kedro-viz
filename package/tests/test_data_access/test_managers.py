@@ -9,6 +9,7 @@ from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
+from kedro_viz.data_access.repositories.catalog import CatalogRepository
 from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
@@ -54,7 +55,7 @@ class TestAddNode:
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert graph_node.has_metadata()
         assert graph_node.kedro_obj is kedro_node
-        assert data_access_manager.tags.as_list() == [Tag("tag1"), Tag("tag2")]
+        assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
 
     def test_add_node_with_modular_pipeline(
         self, data_access_manager: DataAccessManager
@@ -324,7 +325,7 @@ class TestAddPipelines:
             "parameters",
             "params:uk.data_processing.train_test_split",
         }
-        assert data_access_manager.tags.as_list() == [Tag("split"), Tag("train")]
+        assert data_access_manager.tags.as_list() == [Tag(id="split"), Tag(id="train")]
         assert sorted(
             data_access_manager.modular_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
             .as_dict()
@@ -464,3 +465,25 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
+
+
+class TestResolveDatasetFactoryPatterns:
+    def test_resolve_dataset_factory_patterns(
+        self,
+        example_catalog,
+        pipeline_with_datasets_mock,
+        pipeline_with_data_sets_mock,
+        data_access_manager: DataAccessManager,
+    ):
+        pipelines = {
+            "pipeline1": pipeline_with_datasets_mock,
+            "pipeline2": pipeline_with_data_sets_mock,
+        }
+        new_catalog = CatalogRepository()
+        new_catalog.set_catalog(example_catalog)
+
+        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
+
+        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
+
+        assert "model_inputs#csv" in new_catalog.as_dict().keys()

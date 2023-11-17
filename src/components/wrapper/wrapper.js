@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
-import { isRunningLocally, replaceMatches } from '../../utils';
+import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
@@ -14,6 +14,8 @@ import FlowChartWrapper from '../flowchart-wrapper';
 import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
+import ShareableUrlModal from '../shareable-url-modal';
+import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 
 import './wrapper.scss';
 
@@ -21,11 +23,6 @@ import './wrapper.scss';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ displayGlobalToolbar, theme }) => {
-  const { pathname } = window.location;
-  const sanitizedPathname = replaceMatches(pathname, {
-    'experiment-tracking': '',
-  });
-
   const { data: versionData } = useApolloQuery(GET_VERSIONS, {
     client,
     skip: !displayGlobalToolbar || !isRunningLocally(),
@@ -56,6 +53,8 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
+            {isRunningLocally() ? null : <ShareableUrlMetadata />}
+            {isRunningLocally() ? <ShareableUrlModal /> : null}
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}
@@ -63,11 +62,11 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               />
             )}
             <Switch>
-              <Route exact path={sanitizedPathname}>
+              <Route exact path={sanitizedPathname()}>
                 <FlowChartWrapper />
                 <FeatureHints />
               </Route>
-              <Route path={`${sanitizedPathname}experiment-tracking`}>
+              <Route path={`${sanitizedPathname()}experiment-tracking`}>
                 <ExperimentWrapper />
               </Route>
             </Switch>
