@@ -6,17 +6,18 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Upcoming Release
+# Release 6.7.0 
 
 ## Bug fixes and other changes
 
+- Refactor flowchart dataclasses to pydantic base models. (#1565)
 - Fix dataset factory patterns in Experiment Tracking. (#1588)
+- Update demo-project to use `OmegaConfigLoader`. (#1590)
 - Improve feedback for copy to clipboard feature. (#1614)
 - Ensure Kedro-Viz works when hosted on a URL subpath. (#1621)
+- Bump `fastapi` upper bounds. (#1634)
 - Fix shareable URL modal to appear across the app. (#1639)
-- Refactor flowchart dataclasses to pydantic base models. (#1565)
-- Add kedro viz CLI command deprecation warning. (#1641)
-- Bump FAST API upper bounds. (#1634)
+- Add Kedro-Viz CLI command deprecation warning. (#1641)
 
 # Release 6.6.1
 

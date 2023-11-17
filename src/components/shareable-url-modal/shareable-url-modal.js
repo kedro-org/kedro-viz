@@ -250,7 +250,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             <div className="shareable-url-modal__url-wrapper">
               <a
                 className="shareable-url-modal__result-url"
-                href="/"
+                href={responseUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
