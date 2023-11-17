@@ -2,7 +2,7 @@
 import sys
 import warnings
 
-__version__ = "6.6.1"
+__version__ = "6.7.0"
 
 
 class KedroVizPythonVersionWarning(UserWarning):
