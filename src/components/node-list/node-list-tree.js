@@ -25,13 +25,12 @@ const GROUPED_NODES_DISPLAY_ORDER = {
 
 // please note that this setup is unique for initialization of the material-ui tree,
 // and setup is only used here and not anywhere else in the app.
-const RootStyles = styled('div')({
-  height: 110,
-  flexGrow: 1,
-  maxWidth: 400,
-});
-
 const StyledTreeView = styled(TreeView)({
+  root: {
+    height: 110,
+    flexGrow: 1,
+    maxWidth: 400,
+  },
   padding: '0 0 0 20px',
 });
 
@@ -214,7 +213,6 @@ const TreeListProvider = ({
 
   return modularPipelinesSearchResult ? (
     <StyledTreeView
-      className={RootStyles}
       expanded={Object.keys(modularPipelinesSearchResult)}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
@@ -225,7 +223,6 @@ const TreeListProvider = ({
   ) : (
     <StyledTreeView
       expanded={expanded}
-      className={RootStyles}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeToggle={onItemExpandCollapseToggle}
