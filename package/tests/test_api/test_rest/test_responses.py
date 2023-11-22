@@ -96,6 +96,7 @@ def assert_example_data(response_data):
         {"source": "uk.data_science", "target": "d5a8b994"},
         {"source": "0ecea0de", "target": "uk.data_science"},
         {"source": "uk", "target": "d5a8b994"},
+        {"source": "uk", "target": "0ecea0de"},
     ]
     assert_dict_list_equal(
         response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -234,9 +235,9 @@ def assert_example_data(response_data):
                 {"id": "uk.data_processing", "type": "modularPipeline"},
             ],
             "id": "uk",
-            "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
+            "inputs": ["f0ebef01", "13399a82", "f1f1425b", "0ecea0de"],
             "name": "uk",
-            "outputs": ["d5a8b994"],
+            "outputs": ["d5a8b994", "0ecea0de"],
         },
         "uk.data_processing": {
             "children": [
