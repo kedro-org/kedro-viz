@@ -102,6 +102,28 @@ describe('Experiment Tracking Primary Toolbar', () => {
     );
   });
 
+  it('verifies that users can export the selected run data, using the ‘Export run data’ button. #TC-41', () => {
+    const exportRunTitleText = '2022-12-24T21.05.59.296Z';
+
+    // Alias
+    cy.get('[data-test="btnExportRunData"]').as('btnExportRunData');
+    cy.get('[data-test="Export all and close"]').as('btnExportAll');
+
+    // Action
+    cy.get('@btnExportRunData').click();
+
+    // Assert after action
+    cy.get('.modal--visible').then(($dialog) => {
+      cy.wrap($dialog).within(() => {
+        cy.get('.modal__title').should('have.text', 'Export experiment run');
+        cy.get('@btnExportAll').click();
+      });
+    });
+
+    cy.get('.modal--visible').should('not.exist');
+    cy.__validateCsv__('run-data.csv', ['Title', exportRunTitleText]);
+  });
+
   it('verifies that in the comparison mode, users can disable/enable the metrics changes  using the ‘disable/enable show changes’ button. #TC-42', () => {
     // Alias
     cy.get('.switch__input').as('compareRunsToggle');
