@@ -407,7 +407,7 @@ class ModularPipelineNode(GraphNode):
         Intuitively, the set of inputs for this modular pipeline is the set of all
         external and internal inputs, excluding the ones also serving as outputs.
         """
-        return self.external_inputs | (self.internal_inputs - self.internal_outputs)
+        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
 
     @property
     def outputs(self) -> Set[str]:
