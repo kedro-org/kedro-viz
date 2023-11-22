@@ -22,7 +22,7 @@ jobs=1
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint.extensions.docparams
+load-plugins=pylint.extensions.docparams,pylint_pydantic
 
 # Pickle collected data for later comparisons.
 persistent=yes

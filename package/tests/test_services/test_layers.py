@@ -161,7 +161,7 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
         node_id: GraphNode.create_data_node(
             dataset_name=node_dict["id"],
             layer=node_dict.get("layer"),
-            tags=None,
+            tags=set(),
             dataset=None,
             stats=None,
         )
@@ -182,7 +182,7 @@ def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
         node_id: GraphNode.create_data_node(
             dataset_name=node_dict["id"],
             layer=node_dict.get("layer"),
-            tags=None,
+            tags=set(),
             dataset=None,
             stats=None,
         )

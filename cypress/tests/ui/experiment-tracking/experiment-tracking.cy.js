@@ -117,7 +117,7 @@ describe('Experiment Tracking', () => {
         });
 
       // Action
-      cy.get('[data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
       cy.get('[data-test="btnMetricsChange"]').click();
 
@@ -170,7 +170,7 @@ describe('Experiment Tracking', () => {
         .and('eq', plotToCheckText);
 
       // Action
-      cy.get('[data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
       cy.get('[data-test="btnMetricsChange"]').click();
 

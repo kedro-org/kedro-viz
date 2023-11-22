@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
 from unittest import mock
@@ -11,11 +10,14 @@ from kedro.io import DataCatalog, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
+from kedro_datasets.pandas import CSVDataset
+from pydantic import BaseModel
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from kedro_viz.models.flowchart import GraphNode
 from kedro_viz.server import populate_data
 
 try:
@@ -261,8 +263,7 @@ def client(example_api):
 
 @pytest.fixture
 def mock_http_response():
-    @dataclass(frozen=True)
-    class MockHTTPResponse:
+    class MockHTTPResponse(BaseModel, frozen=True):
         data: dict
 
         def json(self):
@@ -296,6 +297,22 @@ def example_csv_dataset(tmp_path, example_data_frame):
     )
     new_csv_dataset.save(example_data_frame)
     yield new_csv_dataset
+
+
+@pytest.fixture
+def example_data_node():
+    dataset_name = "uk.data_science.model_training.dataset"
+    metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
+    kedro_dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+    data_node = GraphNode.create_data_node(
+        dataset_name=dataset_name,
+        layer="raw",
+        tags=set(),
+        dataset=kedro_dataset,
+        stats={"rows": 10, "columns": 5, "file_size": 1024},
+    )
+
+    yield data_node
 
 
 # Create a mock for KedroPipeline with datasets method

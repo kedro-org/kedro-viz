@@ -13,6 +13,7 @@ def test_expand_tree_no_nested_key():
     assert expanded_tree[modular_pipeline_id].name == "data_science"
 
 
+# pylint: disable=unhashable-member
 def test_expanded_tree_with_nested_key():
     modular_pipeline_id = "uk.data_science.model_training"
     modular_pipeline_node = GraphNode.create_modular_pipeline_node(modular_pipeline_id)
@@ -33,7 +34,8 @@ def test_expanded_tree_with_nested_key():
     }
     assert expanded_tree["uk.data_science"].children == {
         ModularPipelineChild(
-            id="uk.data_science.model_training", type=GraphNodeType.MODULAR_PIPELINE
+            id="uk.data_science.model_training",
+            type=GraphNodeType.MODULAR_PIPELINE,
         )
     }
 

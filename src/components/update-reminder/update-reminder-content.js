@@ -1,17 +1,17 @@
 export const updateContent = {
-  date: '20 October 2023',
+  date: '16 November 2023',
   features: [
     {
-      title: 'Skipping plugins',
+      title: 'Deprecation warning for Kedro-Viz',
       image: '',
-      copy: 'You can now skip all plugins while running Kedro-Viz by using the --ignore-plugins CLI option.',
+      copy: 'The `kedro viz` command will be deprecated with the release of Kedro-Viz 7.0.0. `kedro viz run` will be the new way to start Kedro Viz',
       buttonLink: '',
       buttonText: '',
     },
     {
-      title: 'Improved run-command display',
+      title: 'Fixed Kedro-Viz when hosted via URL Subpaths',
       image: '',
-      copy: "We've fixed the improper display of the run-command within the metadata panel.",
+      copy: 'Kedro-Viz now works properly when hosted via a URL subpath.',
       buttonLink: '',
       buttonText: '',
     },
