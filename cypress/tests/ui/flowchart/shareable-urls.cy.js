@@ -58,8 +58,8 @@ describe('Shareable URLs', () => {
 
     // Assert after action
     cy.get('.shareable-url-modal .menu-option').should(
-        'have.length',
-        regionCount
+      'have.length',
+      regionCount
     );
   });
 
@@ -72,12 +72,12 @@ describe('Shareable URLs', () => {
 
     // Assert after action
     cy.get(
-        '.shareable-url-modal [data-test=kedro-pipeline-selector] .dropdown__label span'
+      '.shareable-url-modal [data-test=kedro-pipeline-selector] .dropdown__label span'
     ).contains(selectedRegion);
     cy.get('.shareable-url-modal textarea').should('have.value', '');
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .should('be.disabled');
+      .contains(primaryButtonNodeText)
+      .should('be.disabled');
   });
 
   it('verifies that publish button should be disabled when a bucket region is selected and bucket name is empty #TC-57', () => {
@@ -87,14 +87,14 @@ describe('Shareable URLs', () => {
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
-        .first()
-        .click();
+      .first()
+      .click();
 
     // Assert after action
     cy.get('.shareable-url-modal textarea').should('have.value', '');
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .should('be.disabled');
+      .contains(primaryButtonNodeText)
+      .should('be.disabled');
   });
 
   it('verifies that publish button should be enabled when region is selected and bucket name is not empty #TC-58', () => {
@@ -105,14 +105,14 @@ describe('Shareable URLs', () => {
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
-        .first()
-        .click();
+      .first()
+      .click();
     cy.get('.shareable-url-modal textarea').type(bucketName);
 
     // Assert after action
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .should('be.enabled');
+      .contains(primaryButtonNodeText)
+      .should('be.enabled');
   });
 
   it('verifies that error message appears with wrong inputs on publish button click #TC-59', () => {
@@ -124,16 +124,16 @@ describe('Shareable URLs', () => {
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
-        .first()
-        .click();
+      .first()
+      .click();
     cy.get('.shareable-url-modal textarea').type(bucketName);
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .click();
+      .contains(primaryButtonNodeText)
+      .click();
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
-        'Something went wrong. Please try again later.'
+      'Something went wrong. Please try again later.'
     );
     cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
   });
@@ -144,9 +144,9 @@ describe('Shareable URLs', () => {
 
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
-        '/api/deploy',
-        'POST',
-        '/mock/deploySuccessResponse.json'
+      '/api/deploy',
+      'POST',
+      '/mock/deploySuccessResponse.json'
     ).as('publishRequest');
 
     // Action
@@ -154,18 +154,18 @@ describe('Shareable URLs', () => {
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
-        .first()
-        .click();
+      .first()
+      .click();
     cy.get('.shareable-url-modal textarea').type(bucketName);
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .click();
+      .contains(primaryButtonNodeText)
+      .click();
 
     // Wait for the POST request to complete and check the mocked response
     cy.wait('@publishRequest').then((interception) => {
       // Assert after action
       cy.get('.shareable-url-modal__result-url').contains(
-          interception.response.body.url
+        interception.response.body.url
       );
     });
   });
@@ -178,9 +178,9 @@ describe('Shareable URLs', () => {
 
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
-        '/api/deploy',
-        'POST',
-        '/mock/deploySuccessResponse.json'
+      '/api/deploy',
+      'POST',
+      '/mock/deploySuccessResponse.json'
     ).as('publishRequest');
 
     // Action
@@ -188,29 +188,29 @@ describe('Shareable URLs', () => {
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
-        .first()
-        .click();
+      .first()
+      .click();
     cy.get('.shareable-url-modal textarea').type(bucketName);
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeText)
-        .click();
+      .contains(primaryButtonNodeText)
+      .click();
 
     // Wait for the POST request to complete
     cy.wait('@publishRequest');
 
     // Action
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(secondaryButtonNodeText)
-        .click();
+      .contains(secondaryButtonNodeText)
+      .click();
     cy.get('.shareable-url-modal__button-wrapper button')
-        .contains(primaryButtonNodeTextVariant)
-        .click();
+      .contains(primaryButtonNodeTextVariant)
+      .click();
 
     // Wait for the POST request to complete and check the mocked response
     cy.wait('@publishRequest').then((interception) => {
       // Assert after action
       cy.get('.shareable-url-modal__result-url').contains(
-          interception.response.body.url
+        interception.response.body.url
       );
     });
   });
