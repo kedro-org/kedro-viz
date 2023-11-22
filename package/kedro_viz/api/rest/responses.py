@@ -131,9 +131,6 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: Optional[str]
     type: str
-    plot: Optional[Dict]
-    image: Optional[str]
-    tracking_data: Optional[Dict]
     run_command: Optional[str]
     preview: Optional[Dict]
     stats: Optional[Dict]

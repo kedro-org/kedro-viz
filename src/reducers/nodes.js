@@ -75,15 +75,6 @@ function nodeReducer(nodeState = {}, action) {
         transcodedTypes: Object.assign({}, nodeState.transcodedTypes, {
           [id]: data.transcoded_types,
         }),
-        plot: Object.assign({}, nodeState.plot, {
-          [id]: data.plot,
-        }),
-        image: Object.assign({}, nodeState.image, {
-          [id]: data.image,
-        }),
-        trackingData: Object.assign({}, nodeState.trackingData, {
-          [id]: data.tracking_data,
-        }),
         runCommand: Object.assign({}, nodeState.runCommand, {
           [id]: data.run_command,
         }),

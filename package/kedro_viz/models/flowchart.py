@@ -586,47 +586,9 @@ class DataNode(GraphNode):
 
         return None
 
-    # TODO: improve this scheme.
-    def is_plot_node(self):
-        """Check if the current node is a plot node.
-        Currently it only recognises one underlying dataset as a plot node.
-        In the future, we might want to make this generic.
-        """
-        return self.dataset_type in (
-            "plotly.plotly_dataset.PlotlyDataset",
-            "plotly.json_dataset.JSONDataset",
-            "plotly.plotly_dataset.PlotlyDataSet",
-            "plotly.json_dataset.JSONDataSet",
-        )
-
-    def is_image_node(self):
-        """Check if the current node is a matplotlib image node."""
-        return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
-
-    def is_metric_node(self):
-        """Check if the current node is a metrics node."""
-        return self.dataset_type in (
-            "tracking.metrics_dataset.MetricsDataset",
-            "tracking.metrics_dataset.MetricsDataSet",
-        )
-
-    def is_json_node(self):
-        """Check if the current node is a JSONDataset node."""
-        return self.dataset_type in (
-            "tracking.json_dataset.JSONDataset",
-            "tracking.json_dataset.JSONDataSet",
-        )
-
-    def is_tracking_node(self):
-        """Checks if the current node is a tracking data node"""
-        return self.is_json_node() or self.is_metric_node()
-
     def is_preview_node(self):
         """Checks if the current node has a preview"""
-        if not (self.viz_metadata and self.viz_metadata.get("preview_args", None)):
-            return False
-
-        return True
+        return bool(self.viz_metadata and "preview_args" in self.viz_metadata)
 
     def get_preview_args(self):
         """Gets the preview arguments for a dataset"""
@@ -718,19 +680,6 @@ class DataNodeMetadata(GraphNodeMetadata):
     # The path to the actual data file for the underlying dataset
     filepath: Optional[str]
 
-    plot: Optional[Dict] = Field(
-        None, description="The optional plot data if the underlying dataset has a plot"
-    )
-
-    # The image data if the underlying dataset has a image
-    # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = Field(
-        None, description="The image data if the underlying dataset has a image"
-    )
-    tracking_data: Optional[Dict] = Field(
-        None,
-        description="The tracking data if the underlying dataset has a tracking dataset",
-    )
     run_command: Optional[str] = Field(
         None, description="Command to run the pipeline to this node"
     )
@@ -767,24 +716,6 @@ class DataNodeMetadata(GraphNodeMetadata):
     def set_run_command(cls, _):
         if not cls.data_node.is_free_input:
             return f"kedro run --to-outputs={cls.data_node.name}"
-        return None
-
-    @validator("plot", always=True)
-    def set_plot(cls, _):
-        if cls.data_node.is_plot_node():
-            return cls.data_node.kedro_obj.load()
-        return None
-
-    @validator("image", always=True)
-    def set_image(cls, _):
-        if cls.data_node.is_image_node():
-            return cls.data_node.kedro_obj.load()
-        return None
-
-    @validator("tracking_data", always=True)
-    def set_tracking_data(cls, _):
-        if cls.data_node.is_tracking_node():
-            return cls.data_node.kedro_obj.load()
         return None
 
     @validator("preview", always=True)

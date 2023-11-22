@@ -20,6 +20,7 @@ reporting.price_histogram:
   metadata:
     kedro-viz:
       layer: reporting
+      preview_args: {}
   versioned: true
 
 reporting.feature_importance:
@@ -28,6 +29,7 @@ reporting.feature_importance:
   metadata:
     kedro-viz:
       layer: reporting
+      preview_args: {}
   versioned: true
 
 reporting.cancellation_policy_grid:
@@ -37,4 +39,8 @@ reporting.cancellation_policy_grid:
 reporting.confusion_matrix:
   type: matplotlib.MatplotlibWriter
   filepath: ${_base_location}/08_reporting/confusion_matrix.png
+  metadata:
+    kedro-viz:
+      layer: reporting
+      preview_args: {}
   versioned: true

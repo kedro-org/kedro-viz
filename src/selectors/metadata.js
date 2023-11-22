@@ -34,9 +34,6 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.outputs,
     (state) => state.node.code,
     (state) => state.node.parameters,
-    (state) => state.node.plot,
-    (state) => state.node.image,
-    (state) => state.node.trackingData,
     (state) => state.node.datasetType,
     (state) => state.node.originalType,
     (state) => state.node.transcodedTypes,
@@ -59,9 +56,6 @@ export const getClickedNodeMetaData = createSelector(
     nodeOutputs,
     nodeCodes,
     nodeParameters,
-    nodePlot,
-    nodeImage,
-    nodeTrackingData,
     nodeDatasetTypes,
     nodeOriginalTypes,
     nodeTranscodedTypes,
@@ -73,13 +67,13 @@ export const getClickedNodeMetaData = createSelector(
     if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
     }
-    //rounding of tracking data
-    nodeTrackingData[nodeId] &&
-      Object.entries(nodeTrackingData[nodeId]).forEach(([key, value]) => {
-        if (typeof value === 'number') {
-          nodeTrackingData[nodeId][key] = Math.round(value * 100) / 100;
-        }
-      });
+    // //rounding of tracking data
+    // nodeTrackingData[nodeId] &&
+    //   Object.entries(nodeTrackingData[nodeId]).forEach(([key, value]) => {
+    //     if (typeof value === 'number') {
+    //       nodeTrackingData[nodeId][key] = Math.round(value * 100) / 100;
+    //     }
+    //   });
 
     const metadata = {
       id: nodeId,
@@ -95,9 +89,6 @@ export const getClickedNodeMetaData = createSelector(
       runCommand: nodeRunCommand[nodeId],
       code: nodeCodes[nodeId],
       filepath: nodeFilepaths[nodeId],
-      plot: nodePlot[nodeId],
-      image: nodeImage[nodeId],
-      trackingData: nodeTrackingData[nodeId],
       datasetType: nodeDatasetTypes[nodeId],
       originalType: nodeOriginalTypes[nodeId],
       transcodedTypes: nodeTranscodedTypes[nodeId],
