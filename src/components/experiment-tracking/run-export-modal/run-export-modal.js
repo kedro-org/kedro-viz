@@ -34,6 +34,7 @@ const RunExportModal = ({
       };
     });
 
+    // Require to opt-out of automatic batching in React 18
     flushSync(() => {
       setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
       handleClick();

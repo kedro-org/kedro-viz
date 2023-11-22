@@ -6,6 +6,12 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 6.8.0
+
+## Major features and improvements
+
+- Bump minimum version of React from 17.0.2 to 18.2.0. (#1652)
+
 # Release 6.7.0 
 
 ## Bug fixes and other changes

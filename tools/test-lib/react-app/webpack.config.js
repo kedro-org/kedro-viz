@@ -11,7 +11,6 @@ module.exports = {
     onAfterSetupMiddleware: () => {
       openBrowser && openBrowser('http://localhost:1337');
     },
-    // contentBase: path.join(__dirname, 'dist'),
     static: {
       directory: path.join(__dirname, 'dist'),
     },
