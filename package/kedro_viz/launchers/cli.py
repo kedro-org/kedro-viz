@@ -160,13 +160,16 @@ def viz(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
+        print("Starting Kedro Viz ...")
+
         viz_process.start()
+
         _VIZ_PROCESSES[port] = viz_process
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
         print(
-            "Kedro Viz Backend Server started successfully. \n\n"
+            "Kedro Viz started successfully. \n\n"
             f"\u2728 Kedro Viz is running at \n http://{host}:{port}/"
         )
 
