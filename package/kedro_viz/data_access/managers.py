@@ -82,7 +82,16 @@ class DataAccessManager:
                 datasets = pipeline.data_sets()
 
             for dataset_name in datasets:
-                catalog.exists(dataset_name)
+                try:
+                    catalog.exists(dataset_name)
+                # pylint: disable=broad-except
+                except Exception as exc:  # pragma: no cover
+                    logger.warning(
+                        "'%s' does not exist. Full exception: %s: %s",
+                        dataset_name,
+                        type(exc).__name__,
+                        exc,
+                    )
 
     def add_catalog(self, catalog: DataCatalog):
         """Add a catalog to the CatalogRepository and relevant tracking datasets to
