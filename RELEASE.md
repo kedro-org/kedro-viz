@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+
+- Remove support for Python 3.7 (#1660)
 
 # Release 6.7.0 
 
