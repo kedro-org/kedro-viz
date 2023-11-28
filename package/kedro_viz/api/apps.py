@@ -1,8 +1,8 @@
 """`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
 This data could either come from a real Kedro project or a file.
 """
-import os
 import json
+import os
 import time
 from pathlib import Path
 
@@ -22,6 +22,7 @@ from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
+
 def _create_etag() -> str:
     """Generate the current timestamp to use as etag."""
     return str(time.time())
@@ -35,8 +36,9 @@ def _create_base_api_app() -> FastAPI:
         default_response_class=EnhancedORJSONResponse,
     )
 
-    if os.getenv('ADD_SECURITY_HEADERS', '').lower() == 'true':
+    if os.getenv("ADD_SECURITY_HEADERS", "").lower() == "true":
         secure_headers = secure.Secure()
+
         @app.middleware("http")
         async def set_secure_headers(request, call_next):
             response = await call_next(request)
