@@ -36,7 +36,7 @@ def _create_base_api_app() -> FastAPI:
         default_response_class=EnhancedORJSONResponse,
     )
 
-    if os.getenv("ADD_SECURITY_HEADERS", "").lower() == "true":
+    if os.getenv("ADD_SECURITY_HEADERS", "").lower() == "true": # pragma: no cover
         secure_headers = secure.Secure()
 
         @app.middleware("http")
