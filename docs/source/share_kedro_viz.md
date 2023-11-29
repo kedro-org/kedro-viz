@@ -6,12 +6,17 @@ Kedro-Viz sharing was introduced in version 6.6.0.
 
 This page describes how to publish Kedro-Viz so you can share it with others. It uses the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` as an example.
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. In your terminal window, navigate to the folder you want to store the project.
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
-If you have not yet worked through the tutorial, use the [Kedro starter for spaceflights](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas) to generate the project with working code in place. Type the following in your terminal:
+```{important}
+We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
+```
+
+In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
+
 
 ```bash
-kedro new --starter=spaceflights
+kedro new --starter=spaceflights-pandas
 ```
 
 When prompted for a project name, you can enter anything, but we will assume `Spaceflights` throughout.
