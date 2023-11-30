@@ -231,3 +231,80 @@ def test_kedro_viz_command_with_autoreload(
         target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
     assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES
+
+
+@pytest.mark.parametrize(
+    "command_options, deployer_args",
+    [
+        (
+            ["vizdeploy", "--region", "us-east-2", "--bucket-name", "example-bucket"],
+            {"region": "us-east-2", "bucket_name": "example-bucket"},
+        ),
+        (
+            ["vizdeploy", "--region", "us-east-1", "--bucket-name", "shareable"],
+            {"region": "us-east-1", "bucket_name": "shareable"},
+        ),
+    ],
+)
+def test_vizdeploy_valid_region_and_bucket(command_options, deployer_args, mocker):
+    runner = CliRunner()
+    mocker.patch("fsspec.filesystem")
+    load_and_populate_data_mock = mocker.patch(
+        "kedro_viz.launchers.cli.load_and_populate_data"
+    )
+
+    expected_url = f"http://{deployer_args.get('bucket_name')} \
+    .s3-website.{deployer_args.get('region')}.amazonaws.com"
+
+    s3_deployer_mock_instance = mocker.patch(
+        "kedro_viz.launchers.cli.S3Deployer"
+    ).return_value
+    s3_deployer_mock_instance.deploy_and_get_url.return_value = expected_url
+
+    mock_click_echo = mocker.patch("click.echo")
+
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli.commands, command_options)
+
+    assert result.exit_code == 0
+
+    load_and_populate_data_mock.assert_called_once()
+
+    mock_click_echo_calls = [
+        call(
+            "\x1b[32m\u2728 Success! Kedro Viz has been deployed on AWS S3. "
+            "It can be accessed at :\n"
+            f"{expected_url}\x1b[0m"
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
+def test_vizdeploy_invalid_region(mocker):
+    runner = CliRunner()
+    mock_click_echo = mocker.patch("click.echo")
+    with runner.isolated_filesystem():
+        result = runner.invoke(
+            cli.commands,
+            [
+                "vizdeploy",
+                "--region",
+                "invalid-region",
+                "--bucket-name",
+                "example-bucket",
+            ],
+        )
+
+    assert result.exit_code == 0
+    mock_click_echo_calls = [
+        call(
+            "\x1b[31mERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
+            "Please find the complete list of available regions at :\n"
+            "https://docs.aws.amazon.com/AmazonRDS/latest"
+            "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
+            "#Concepts.RegionsAndAvailabilityZones.Regions\x1b[0m"
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)

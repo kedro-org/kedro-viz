@@ -13,12 +13,10 @@ from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.data_access import data_access_manager
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
-from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
-from kedro_viz.server import populate_data
+from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -208,15 +206,8 @@ def vizdeploy(region, bucket_name):
             )
             return
 
-        # Loads data from underlying Kedro Project
-        catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-            Path.cwd(), None, True, None
-        )
-
-        # Creates data repositories which are used by Kedro Viz Backend APIs
-        populate_data(
-            data_access_manager, catalog, pipelines, session_store, stats_dict
-        )
+        # Loads and populates data from underlying Kedro Project
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
         # Start the deployment
         deployer = S3Deployer(region, bucket_name)
