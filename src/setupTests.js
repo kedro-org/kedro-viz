@@ -1,6 +1,6 @@
 // Configure react-testing-library
 // See https://create-react-app.dev/docs/running-tests/#option-2-react-testing-library
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 
 // Configure enzyme
 // See https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs
