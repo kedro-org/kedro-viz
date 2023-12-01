@@ -192,20 +192,20 @@ def viz(
 )
 def vizdeploy(region, bucket_name):
     """Deploy and Host Kedro-Viz on AWS S3"""
-    try:
-        if region not in AWS_REGIONS:
-            click.echo(
-                click.style(
-                    "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
-                    "Please find the complete list of available regions at :\n"
-                    "https://docs.aws.amazon.com/AmazonRDS/latest"
-                    "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
-                    "#Concepts.RegionsAndAvailabilityZones.Regions",
-                    fg="red",
-                ),
-            )
-            return
+    if region not in AWS_REGIONS:
+        click.echo(
+            click.style(
+                "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
+                "Please find the complete list of available regions at :\n"
+                "https://docs.aws.amazon.com/AmazonRDS/latest"
+                "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
+                "#Concepts.RegionsAndAvailabilityZones.Regions",
+                fg="red",
+            ),
+        )
+        return
 
+    try:
         # Loads and populates data from underlying Kedro Project
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
@@ -220,7 +220,6 @@ def vizdeploy(region, bucket_name):
                 fg="green",
             ),
         )
-
     except PermissionError:  # pragma: no cover
         click.echo(
             click.style(
