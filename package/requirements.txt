@@ -6,7 +6,7 @@ fastapi>=0.73.0,<0.104.0; python_version < '3.8'
 pydantic<2
 fsspec[s3]>=2021.4, <2024.1 
 aiofiles>=22.1.0
-uvicorn[standard]~=0.22.0
+uvicorn[standard]~=0.24.0
 watchgod~=0.8.2
 plotly>=4.0
 pandas>=1.3
