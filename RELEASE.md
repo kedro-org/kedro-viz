@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Major features and improvements
+
+- Display hosted URL in CLI while launching kedro viz. (#1644)
 
 # Release 6.7.0 
 
