@@ -32,11 +32,6 @@ def before_scenario(context, scenario):
 
     kedro_version = None
 
-    if sys.version_info < (3, 8) and sys.platform.startswith("win"):
-        if "lower-bound" in scenario.name:
-            print(f"{scenario} will be skipped on Windows with Python 3.7")
-            scenario.skip()
-
     for step in scenario.steps:
         if "I have installed kedro version" in step.name:
             match = re.search(r"\b\d+\.\d+\.\d+\b", step.name)

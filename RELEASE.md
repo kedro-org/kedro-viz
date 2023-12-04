@@ -5,6 +5,16 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Major features and improvements
+
+- Display hosted URL in CLI while launching kedro viz. (#1644)
+
+## Bug fixes and other changes
+
+- Fix for dataset existence check in factory pattern discovery (#1659)
+- Remove support for Python 3.7 (#1660)
 
 # Release 6.7.0 
 
