@@ -11,6 +11,10 @@ Please follow the established format:
 
 - Display hosted URL in CLI while launching kedro viz. (#1644)
 
+## Bug fixes and other changes
+
+- Remove support for Python 3.7 (#1660)
+
 # Release 6.7.0 
 
 ## Bug fixes and other changes
