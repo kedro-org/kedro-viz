@@ -13,6 +13,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Fix for dataset existence check in factory pattern discovery (#1659)
 - Remove support for Python 3.7 (#1660)
 
 # Release 6.7.0 
