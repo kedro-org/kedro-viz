@@ -7,6 +7,10 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+
+- Display hosted URL in CLI while launching kedro viz. (#1644)
+
 ## Bug fixes and other changes
 
 - Remove support for Python 3.7 (#1660)
