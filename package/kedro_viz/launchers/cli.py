@@ -160,7 +160,12 @@ def viz(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        print("Starting Kedro Viz ...")
+        click.echo(
+            click.style(
+                "Starting Kedro Viz ...",
+                fg="green",
+            ),
+        )
 
         viz_process.start()
 
@@ -168,9 +173,12 @@ def viz(
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
-        print(
-            "Kedro Viz started successfully. \n\n"
-            f"\u2728 Kedro Viz is running at \n http://{host}:{port}/"
+        click.echo(
+            click.style(
+                "Kedro Viz started successfully. \n\n"
+                f"\u2728 Kedro Viz is running at \n http://{host}:{port}/",
+                fg="green",
+            )
         )
 
         if browser:
