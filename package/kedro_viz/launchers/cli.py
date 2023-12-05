@@ -39,7 +39,7 @@ def viz(ctx):
     if ctx.invoked_subcommand is None:
         click.echo(
             click.style(
-                "\nDid you mean this ? \n" "  kedro viz run \n\n",
+                "\nDid you mean this ? \n kedro viz run \n\n",
                 fg="yellow",
             )
         )

@@ -25,7 +25,7 @@ def patched_start_browser(mocker):
     "command_options,run_server_args",
     [
         (
-            ["viz"],
+            ["viz", "run"],
             {
                 "host": "127.0.0.1",
                 "port": 4141,
@@ -41,6 +41,7 @@ def patched_start_browser(mocker):
         (
             [
                 "viz",
+                "run",
                 "--host",
                 "localhost",
             ],
@@ -59,6 +60,7 @@ def patched_start_browser(mocker):
         (
             [
                 "viz",
+                "run",
                 "--host",
                 "8.8.8.8",
                 "--port",
@@ -86,7 +88,7 @@ def patched_start_browser(mocker):
             },
         ),
         (
-            ["viz", "--ignore-plugins"],
+            ["viz", "run", "--ignore-plugins"],
             {
                 "host": "127.0.0.1",
                 "port": 4141,
@@ -114,7 +116,7 @@ def test_kedro_viz_command_run_server(
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
 
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, command_options)
+        runner.invoke(cli.viz_cli, command_options)
 
     process_init.assert_called_once_with(
         target=run_server, daemon=False, kwargs={**run_server_args}
@@ -134,7 +136,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
     mock_click_echo_calls = [
         call(
@@ -144,11 +146,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
             "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
             "You can view the complete changelog at "
             "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
-        ),
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        ),
+        )
     ]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
@@ -164,14 +162,9 @@ def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_respo
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
-    mock_click_echo_calls = [
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        )
-    ]
+    mock_click_echo_calls = [call("\x1b[32mStarting Kedro Viz ...\x1b[0m")]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
@@ -184,14 +177,9 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
-    mock_click_echo_calls = [
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        )
-    ]
+    mock_click_echo_calls = [call("\x1b[32mStarting Kedro Viz ...\x1b[0m")]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
@@ -206,7 +194,7 @@ def test_kedro_viz_command_with_autoreload(
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz", "--autoreload"])
+        runner.invoke(cli.viz_cli, ["viz", "run", "--autoreload"])
 
     run_process_kwargs = {
         "path": mock_project_path,
@@ -231,3 +219,23 @@ def test_kedro_viz_command_with_autoreload(
         target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
     assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES
+
+
+def test_kedro_viz_command_group(mocker):
+    mock_click_echo = mocker.patch("click.echo")
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        runner.invoke(cli.viz_cli, ["viz"])
+
+    mock_click_echo_calls = [
+        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
+        call(
+            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
+            "Visualise a Kedro pipeline using Kedro viz.\n\n"
+            "Options:\n  --help  Show this message and exit.\n\n"
+            "Commands:\n  run  Launch local Kedro Viz instance\x1b[0m"
+        ),
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
