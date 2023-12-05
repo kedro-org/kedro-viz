@@ -3,7 +3,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel, protected-access
-# pylint: disable=missing-function-docstring, no-else-return
+# pylint: disable=missing-function-docstring
 
 import base64
 import json
@@ -33,8 +33,6 @@ except ImportError:  # kedro_datasets is not installed.
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
-
-from kedro_viz.constants import KEDRO_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +64,6 @@ def _bootstrap(project_path: Path):
     from kedro.framework.startup import bootstrap_project
 
     bootstrap_project(project_path)
-    return
-
 
 
 def _get_dataset_stats(project_path: Path) -> Dict:
@@ -141,7 +137,6 @@ def load_data(
         stats_dict = _get_dataset_stats(project_path)
 
     return catalog, pipelines_dict, session_store, stats_dict
-
 
 
 # Try to access the attribute to trigger the import of dependencies, only modify the _load
