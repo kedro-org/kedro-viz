@@ -44,7 +44,7 @@ setup(
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
     entry_points={
-        "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
+        "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:viz_cli"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
         "kedro.hooks": [
             "kedro-dataset-stats = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"

@@ -19,12 +19,25 @@ from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
+class VizCommandGroup(click.Group):
+    """A custom class for ordering the `kedro viz` command groups"""
+
+    def list_commands(self, ctx):
+        """List commands according to a custom order"""
+        return ["run", "deploy"]
+
+
 @click.group(name="Kedro-Viz")
-def commands():  # pylint: disable=missing-function-docstring
+def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@commands.command(context_settings={"help_option_names": ["-h", "--help"]})
+@viz_cli.group(cls=VizCommandGroup)
+def viz():
+    """Visualise a Kedro pipeline using Kedro viz."""
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--host",
     default=DEFAULT_HOST,
@@ -89,7 +102,7 @@ def commands():  # pylint: disable=missing-function-docstring
     callback=_split_params,
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
-def viz(
+def run(
     host,
     port,
     browser,
@@ -101,7 +114,7 @@ def viz(
     ignore_plugins,
     params,
 ):
-    """Visualise a Kedro pipeline using Kedro viz."""
+    """Opens a visualizer of your Kedro project using Kedro Viz"""
     from kedro_viz.server import run_server
 
     installed_version = parse(__version__)
