@@ -221,20 +221,48 @@ def test_kedro_viz_command_with_autoreload(
     assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES
 
 
+def test_viz_command_group(mocker):
+    mock_click_echo = mocker.patch("click.echo")
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        runner.invoke(cli.viz_cli, ["viz"])
+
+    mock_click_echo_calls = [
+        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
+        call(
+            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
+            "Visualise a Kedro pipeline using Kedro viz.\n\n"
+            "Options:\n  --help  Show this message and exit.\n\n"
+            "Commands:\n  run     Launch local Kedro Viz instance\n  "
+            "deploy  Deploy and host Kedro Viz on AWS S3\x1b[0m"
+        ),
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
 @pytest.mark.parametrize(
     "command_options, deployer_args",
     [
         (
-            ["vizdeploy", "--region", "us-east-2", "--bucket-name", "example-bucket"],
+            [
+                "viz",
+                "deploy",
+                "--region",
+                "us-east-2",
+                "--bucket-name",
+                "example-bucket",
+            ],
             {"region": "us-east-2", "bucket_name": "example-bucket"},
         ),
         (
-            ["vizdeploy", "--region", "us-east-1", "--bucket-name", "shareable"],
+            ["viz", "deploy", "--region", "us-east-1", "--bucket-name", "shareable"],
             {"region": "us-east-1", "bucket_name": "shareable"},
         ),
     ],
 )
-def test_vizdeploy_valid_region_and_bucket(command_options, deployer_args, mocker):
+def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mocker):
     runner = CliRunner()
     mocker.patch("fsspec.filesystem")
     load_and_populate_data_mock = mocker.patch(
@@ -252,7 +280,7 @@ def test_vizdeploy_valid_region_and_bucket(command_options, deployer_args, mocke
     mock_click_echo = mocker.patch("click.echo")
 
     with runner.isolated_filesystem():
-        result = runner.invoke(cli.commands, command_options)
+        result = runner.invoke(cli.viz_cli, command_options)
 
     assert result.exit_code == 0
 
@@ -269,14 +297,15 @@ def test_vizdeploy_valid_region_and_bucket(command_options, deployer_args, mocke
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
-def test_vizdeploy_invalid_region(mocker):
+def test_viz_deploy_invalid_region(mocker):
     runner = CliRunner()
     mock_click_echo = mocker.patch("click.echo")
     with runner.isolated_filesystem():
         result = runner.invoke(
-            cli.commands,
+            cli.viz_cli,
             [
-                "vizdeploy",
+                "viz",
+                "deploy",
                 "--region",
                 "invalid-region",
                 "--bucket-name",
@@ -294,24 +323,4 @@ def test_vizdeploy_invalid_region(mocker):
             "#Concepts.RegionsAndAvailabilityZones.Regions\x1b[0m"
         )
     ]
-    mock_click_echo.assert_has_calls(mock_click_echo_calls)
-
-
-def test_kedro_viz_command_group(mocker):
-    mock_click_echo = mocker.patch("click.echo")
-    runner = CliRunner()
-
-    with runner.isolated_filesystem():
-        runner.invoke(cli.viz_cli, ["viz"])
-
-    mock_click_echo_calls = [
-        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
-        call(
-            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
-            "Visualise a Kedro pipeline using Kedro viz.\n\n"
-            "Options:\n  --help  Show this message and exit.\n\n"
-            "Commands:\n  run  Launch local Kedro Viz instance\x1b[0m"
-        ),
-    ]
-
     mock_click_echo.assert_has_calls(mock_click_echo_calls)

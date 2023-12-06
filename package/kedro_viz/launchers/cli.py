@@ -205,7 +205,7 @@ def run(
         raise KedroCliError(str(ex)) from ex
 
 
-@commands.command(context_settings={"help_option_names": ["-h", "--help"]})
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--region",
     type=str,
@@ -218,8 +218,8 @@ def run(
     required=True,
     help="AWS S3 bucket name where Kedro Viz will be hosted",
 )
-def vizdeploy(region, bucket_name):
-    """Deploy and Host Kedro-Viz on AWS S3"""
+def deploy(region, bucket_name):
+    """Deploy and host Kedro Viz on AWS S3"""
     if region not in AWS_REGIONS:
         click.echo(
             click.style(
