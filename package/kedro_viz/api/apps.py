@@ -2,6 +2,7 @@
 This data could either come from a real Kedro project or a file.
 """
 import json
+import os
 import time
 from pathlib import Path
 
@@ -21,8 +22,6 @@ from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
 
-secure_headers = secure.Secure()
-
 
 def _create_etag() -> str:
     """Generate the current timestamp to use as etag."""
@@ -37,11 +36,14 @@ def _create_base_api_app() -> FastAPI:
         default_response_class=EnhancedORJSONResponse,
     )
 
-    @app.middleware("http")
-    async def set_secure_headers(request, call_next):
-        response = await call_next(request)
-        secure_headers.framework.fastapi(response)
-        return response
+    if os.getenv("ADD_SECURITY_HEADERS", "").lower() == "true":  # pragma: no cover
+        secure_headers = secure.Secure()
+
+        @app.middleware("http")
+        async def set_secure_headers(request, call_next):
+            response = await call_next(request)
+            secure_headers.framework.fastapi(response)
+            return response
 
     return app
 
