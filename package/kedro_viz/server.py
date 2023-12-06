@@ -38,11 +38,7 @@ def populate_data(
         session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
 
-    # resolve the dataset factory patterns
-    data_access_manager.resolve_dataset_factory_patterns(catalog, pipelines)
-
-    # add catalog and relevant tracking datasets
-    data_access_manager.add_catalog(catalog)
+    data_access_manager.add_catalog(catalog, pipelines)
 
     # add dataset stats before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines

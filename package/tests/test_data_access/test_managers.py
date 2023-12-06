@@ -32,10 +32,14 @@ def identity(x):
 
 
 class TestAddCatalog:
-    def test_add_catalog(self, data_access_manager: DataAccessManager):
+    def test_add_catalog(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         dataset = CSVDataset(filepath="dataset.csv")
         catalog = DataCatalog(data_sets={"dataset": dataset})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         assert data_access_manager.catalog.get_catalog() is catalog
 
 
@@ -73,7 +77,11 @@ class TestAddNode:
             "uk.data_science.modular_pipeline",
         ]
 
-    def test_add_node_input(self, data_access_manager: DataAccessManager):
+    def test_add_node_input(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
         registered_pipeline_id = "my_pipeline"
@@ -88,7 +96,7 @@ class TestAddNode:
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
         data_node = data_access_manager.add_node_input(
             registered_pipeline_id, dataset_name, task_node
@@ -112,11 +120,15 @@ class TestAddNode:
             }
         }
 
-    def test_add_parameters_as_node_input(self, data_access_manager: DataAccessManager):
+    def test_add_parameters_as_node_input(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
         catalog.add_feed_dict({"parameters": parameters})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
         task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
@@ -127,11 +139,13 @@ class TestAddNode:
         assert task_node.parameters == parameters
 
     def test_add_single_parameter_as_node_input(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params:train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
         task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
@@ -142,12 +156,14 @@ class TestAddNode:
         assert task_node.parameters == {"train_test_split": 0.1}
 
     def test_parameters_yaml_namespace_not_added_to_modular_pipelines(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
         catalog.add_feed_dict({parameter_name: 0.1})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(
             identity,
@@ -167,7 +183,11 @@ class TestAddNode:
         # make sure parameters YAML namespace not accidentally added to the modular pipeline tree
         assert "uk.data_science.train_test_split" not in modular_pipelines_tree
 
-    def test_add_node_output(self, data_access_manager: DataAccessManager):
+    def test_add_node_output(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         dataset = CSVDataset(filepath="dataset.csv")
         registered_pipeline_id = "my_pipeline"
         dataset_name = "x"
@@ -182,7 +202,7 @@ class TestAddNode:
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
         data_node = data_access_manager.add_node_output(
             registered_pipeline_id, dataset_name, task_node
@@ -207,14 +227,18 @@ class TestAddNode:
 
 
 class TestAddDataset:
-    def test_add_dataset(self, data_access_manager: DataAccessManager):
+    def test_add_dataset(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
             layers={"raw": {dataset_name}},
         )
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
 
         # dataset should be added as a graph node
@@ -228,10 +252,12 @@ class TestAddDataset:
         assert not graph_node.modular_pipelines
 
     def test_add_memory_dataset_when_dataset_not_in_catalog(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
     ):
         catalog = DataCatalog()
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", "memory_dataset")
         # dataset should be added as a graph node
         nodes_list = data_access_manager.nodes.as_list()
@@ -241,14 +267,16 @@ class TestAddDataset:
         assert isinstance(graph_node.kedro_obj, MemoryDataset)
 
     def test_add_dataset_with_modular_pipeline(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
     ):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "uk.data_science.x"
         catalog = DataCatalog(
             data_sets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
         nodes_list = data_access_manager.nodes.as_list()
         graph_node: DataNode = nodes_list[0]
@@ -257,12 +285,16 @@ class TestAddDataset:
             "uk.data_science",
         ]
 
-    def test_add_all_parameters(self, data_access_manager: DataAccessManager):
+    def test_add_all_parameters(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         catalog = DataCatalog()
         catalog.add_feed_dict(
             {"parameters": {"train_test_split": 0.1, "num_epochs": 1000}}
         )
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", "parameters")
 
         nodes_list = data_access_manager.nodes.as_list()
@@ -275,10 +307,14 @@ class TestAddDataset:
             "num_epochs": 1000,
         }
 
-    def test_add_single_parameter(self, data_access_manager: DataAccessManager):
+    def test_add_single_parameter(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+    ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params:train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", "params:train_test_split")
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
@@ -288,11 +324,13 @@ class TestAddDataset:
         assert graph_node.parameter_value == 0.1
 
     def test_add_dataset_with_params_prefix(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params_train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog)
+        data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", "params_train_test_split")
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
@@ -308,7 +346,7 @@ class TestAddPipelines:
         example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_catalog)
+        data_access_manager.add_catalog(example_catalog, example_pipelines)
         data_access_manager.add_pipelines(example_pipelines)
 
         assert [p.id for p in data_access_manager.registered_pipelines.as_list()] == [
@@ -354,7 +392,9 @@ class TestAddPipelines:
         example_transcoded_pipelines: Dict[str, Pipeline],
         example_transcoded_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_transcoded_catalog)
+        data_access_manager.add_catalog(
+            example_transcoded_catalog, example_transcoded_pipelines
+        )
         data_access_manager.add_pipelines(example_transcoded_pipelines)
         assert any(
             isinstance(node, TranscodedDataNode)
@@ -376,7 +416,7 @@ class TestAddPipelines:
             ),
         }
 
-        data_access_manager.add_catalog(DataCatalog())
+        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
         data_access_manager.add_pipelines(registered_pipelines)
         modular_pipeline_tree = (
             data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
@@ -391,7 +431,7 @@ class TestAddPipelines:
         example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_catalog)
+        data_access_manager.add_catalog(example_catalog, example_pipelines)
         del example_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
         data_access_manager.add_pipelines(example_pipelines)
         assert not data_access_manager.registered_pipelines.get_pipeline_by_id(
@@ -446,7 +486,7 @@ class TestAddPipelines:
         registered_pipelines = {
             "__default__": internal + external,
         }
-        data_access_manager.add_catalog(DataCatalog())
+        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
         data_access_manager.add_pipelines(registered_pipelines)
         data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
             DEFAULT_REGISTERED_PIPELINE_ID

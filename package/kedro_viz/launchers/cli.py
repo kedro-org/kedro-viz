@@ -21,12 +21,34 @@ from kedro_viz.server import load_and_populate_data
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
+class VizCommandGroup(click.Group):
+    """A custom class for ordering the `kedro viz` command groups"""
+
+    def list_commands(self, ctx):
+        """List commands according to a custom order"""
+        return ["run", "deploy"]
+
+
 @click.group(name="Kedro-Viz")
-def commands():  # pylint: disable=missing-function-docstring
+def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@commands.command(context_settings={"help_option_names": ["-h", "--help"]})
+@viz_cli.group(cls=VizCommandGroup, invoke_without_command=True)
+@click.pass_context
+def viz(ctx):
+    """Visualise a Kedro pipeline using Kedro viz."""
+    if ctx.invoked_subcommand is None:
+        click.echo(
+            click.style(
+                "\nDid you mean this ? \n kedro viz run \n\n",
+                fg="yellow",
+            )
+        )
+        click.echo(click.style(f"{ctx.get_help()}"))
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--host",
     default=DEFAULT_HOST,
@@ -91,7 +113,7 @@ def commands():  # pylint: disable=missing-function-docstring
     callback=_split_params,
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
-def viz(
+def run(
     host,
     port,
     browser,
@@ -103,7 +125,7 @@ def viz(
     ignore_plugins,
     params,
 ):
-    """Visualise a Kedro pipeline using Kedro viz."""
+    """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
 
     installed_version = parse(__version__)
@@ -120,14 +142,6 @@ def viz(
                 fg="yellow",
             ),
         )
-
-    click.echo(
-        click.style(
-            "WARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.",
-            fg="yellow",
-        ),
-    )
 
     try:
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():

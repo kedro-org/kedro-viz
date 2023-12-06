@@ -11,6 +11,13 @@ Please follow the established format:
 
 - Display hosted URL in CLI while launching kedro viz. (#1644)
 
+## Bug fixes and other changes
+
+- Fix for dataset existence check in factory pattern discovery (#1659)
+- Remove support for Python 3.7 (#1660)
+- Adjust CLI to use 'kedro viz run' instead of 'kedro run' (#1671)
+- Add 'viz' as new CLI command group (#1671)
+
 # Release 6.7.0 
 
 ## Bug fixes and other changes

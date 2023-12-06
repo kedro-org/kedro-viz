@@ -36,7 +36,7 @@ setup(
     long_description_content_type="text/markdown",
     license="Apache Software License (Apache 2.0)",
     url="https://github.com/kedro-org/kedro-viz",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=requires,
     keywords="pipelines, machine learning, data pipelines, data science, data engineering, visualisation",
     author="Kedro",
@@ -44,7 +44,7 @@ setup(
     package_data={"kedro_viz": list(files)},
     zip_safe=False,
     entry_points={
-        "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:commands"],
+        "kedro.global_commands": ["kedro-viz = kedro_viz.launchers.cli:viz_cli"],
         "kedro.line_magic": ["line_magic = kedro_viz.launchers.jupyter:run_viz"],
         "kedro.hooks": [
             "kedro-dataset-stats = kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
