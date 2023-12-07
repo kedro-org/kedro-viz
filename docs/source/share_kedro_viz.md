@@ -81,7 +81,7 @@ For more information, see the official AWS documentation about [how to work with
 You're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
 
 ```bash
-kedro viz
+kedro viz run
 ```
 
 Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
