@@ -93,7 +93,7 @@ def create_pipeline(**kwargs) -> Pipeline:
 
 ## Run the pipeline
 
-Run the pipelines with `kedro run` and then visualise the result with `kedro viz`.
+Run the pipelines with `kedro run` and then visualise the result with `kedro viz run`.
 
 Click to see a small preview of the Matplotlib image in the metadata panel.
 

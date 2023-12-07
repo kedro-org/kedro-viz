@@ -89,7 +89,7 @@ A browser tab opens automatically to serve the visualisation at `http://127.0.0.
 Kedro-Viz also supports the following additional arguments on the command line:
 
 ```bash
-Usage: kedro viz [OPTIONS]
+Usage: kedro viz run [OPTIONS]
 
   Visualise a Kedro pipeline using Kedro-Viz.
 
