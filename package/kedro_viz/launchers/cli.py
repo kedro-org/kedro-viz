@@ -24,7 +24,7 @@ class VizCommandGroup(click.Group):
 
     def list_commands(self, ctx):
         """List commands according to a custom order"""
-        return ["run", "deploy"]
+        return ["run"]
 
 
 @click.group(name="Kedro-Viz")
