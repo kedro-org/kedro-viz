@@ -19,20 +19,12 @@ from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
-class VizCommandGroup(click.Group):
-    """A custom class for ordering the `kedro viz` command groups"""
-
-    def list_commands(self, ctx):
-        """List commands according to a custom order"""
-        return ["run"]
-
-
 @click.group(name="Kedro-Viz")
 def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@viz_cli.group(cls=VizCommandGroup, invoke_without_command=True)
+@viz_cli.group(invoke_without_command=True)
 @click.pass_context
 def viz(ctx):
     """Visualise a Kedro pipeline using Kedro viz."""
