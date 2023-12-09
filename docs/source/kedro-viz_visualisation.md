@@ -33,12 +33,12 @@ kedro run
 To start Kedro-Viz, type the following into your terminal from the project directory:
 
 ```bash
-kedro viz
+kedro viz run
 ```
 
 ```{important}
-The `kedro viz` command will be deprecated with the release of Kedro-Viz 7.0.0. 
-`kedro viz run` will be the new way to run the tool.
+The former `kedro viz` command used here is now deprecated with the release of Kedro-Viz 7.0.0. 
+`kedro viz run` is now the new way to run the tool.
 ```
 
 The command opens a browser tab to serve the visualisation at `http://127.0.0.1:4141/`.
@@ -59,7 +59,7 @@ To exit the visualisation, close the browser tab. To regain control of the termi
 You can use the `--autoreload` flag to autoreload Kedro-Viz when a `Python` or `YAML` file changes in the project. Add the flag to the command you use to start Kedro-Viz:
 
 ```bash
-kedro viz --autoreload
+kedro viz run --autoreload
 ```
 
 ![](./images/kedro_viz_autoreload.gif)
@@ -162,7 +162,7 @@ The visualisation now includes the layers:
 You can share a pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
 
 ```bash
-kedro viz --save-file=my_shareable_pipeline.json
+kedro viz run --save-file=my_shareable_pipeline.json
 ```
 
 This command will save a visualisation of the `__default__` pipeline as a JSON file called `my_shareable_pipeline.json`. It doesn't share data, such as that in the code panel, nor can you share images or charts.
@@ -170,7 +170,7 @@ This command will save a visualisation of the `__default__` pipeline as a JSON f
 To visualise the shared file, type the following to load it from the terminal:
 
 ```bash
-kedro viz --load-file=my_shareable_pipeline.json
+kedro viz run --load-file=my_shareable_pipeline.json
 ```
 
 You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 

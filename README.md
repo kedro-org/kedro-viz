@@ -81,7 +81,7 @@ For **Python 3.6** users, the last supported version of Kedro-Viz is **3.16.0**
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
 
 ```bash
-kedro viz
+kedro viz run
 ```
 
 A browser tab opens automatically to serve the visualisation at `http://127.0.0.1:4141/`.
@@ -89,7 +89,7 @@ A browser tab opens automatically to serve the visualisation at `http://127.0.0.
 Kedro-Viz also supports the following additional arguments on the command line:
 
 ```bash
-Usage: kedro viz [OPTIONS]
+Usage: kedro viz run [OPTIONS]
 
   Visualise a Kedro pipeline using Kedro-Viz.
 
@@ -183,7 +183,7 @@ const MyApp = () => <NoSSRKedro data={json} />;
 The JSON can be obtained by running:
 
 ```bash
-kedro viz --save-file=filename.json
+kedro viz run --save-file=filename.json
 ```
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
