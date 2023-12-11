@@ -151,7 +151,7 @@ Now run the pipelines:
 kedro run
 ```
 
-Then visualise with `kedro viz`
+Then visualise with `kedro viz run`
 
 The generated charts are shown as follows:
 
