@@ -119,7 +119,7 @@ def install_kedro(context, version):
 def exec_viz_command(context):
     """Execute Kedro-Viz command."""
     context.result = ChildTerminatingPopen(
-        [context.kedro, "viz", "--no-browser"],
+        [context.kedro, "viz", "run", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
@@ -143,13 +143,7 @@ def check_kedroviz_up(context):
     try:
         assert context.result.poll() is None
         assert (
-            # for Kedro 0.17.5
-            "example_iris_data"
-            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
-        ) or (
-            # for Kedro 0.18.0 onwards
-            "X_test"
-            == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
+            "X_test" == sorted(data_json["nodes"], key=lambda i: i["name"])[0]["name"]
         )
     finally:
         context.result.terminate()
