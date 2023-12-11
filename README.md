@@ -129,6 +129,24 @@ Options:
   -h, --help                Show this message and exit.
 ```
 
+To deploy Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
+
+```bash
+kedro viz deploy
+```
+
+```bash
+Usage: kedro viz deploy [OPTIONS]
+
+  Deploy and host Kedro Viz on AWS S3.
+
+Options:
+  --region TEXT       AWS region where your S3 bucket is located  [required]
+  --bucket-name TEXT  AWS S3 bucket name where Kedro Viz will be hosted
+                      [required]
+  -h, --help          Show this message and exit.
+```
+
 ### Experiment Tracking usage
 
 To enable [experiment tracking](https://docs.kedro.org/en/stable/experiment_tracking/index.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
