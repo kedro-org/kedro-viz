@@ -462,9 +462,6 @@ def save_api_responses_to_fs(api_dir: str):
         pipelines_path = f"{path}{path_suffix}/pipelines"
 
         if protocol == "file":
-            main_path = f"{path}/main"
-            nodes_path = f"{path}/nodes"
-            pipelines_path = f"{path}/pipelines"
             remote_fs.makedirs(path, exist_ok=True)
             remote_fs.makedirs(nodes_path, exist_ok=True)
             remote_fs.makedirs(pipelines_path, exist_ok=True)
