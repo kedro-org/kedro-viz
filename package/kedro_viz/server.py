@@ -105,7 +105,7 @@ def run_server(
         if not Path(load_file).exists():
             raise ValueError(f"The provided filepath '{load_file}' does not exist.")
 
-        app = apps.create_api_app_from_file(f"{path}/{load_file}")
+        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 
