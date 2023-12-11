@@ -341,11 +341,11 @@ workflows:
       - e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
           filters:
             branches:
               only:
@@ -354,11 +354,11 @@ workflows:
       - unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
           filters:
             branches:
               only:
@@ -367,7 +367,7 @@ workflows:
       - lint:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - all_circleci_checks_succeeded:
           requires:
             - e2e_tests
@@ -393,21 +393,21 @@ workflows:
       - e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - win_e2e_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - lint:
           matrix:
             parameters:
-              python_version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+              python_version: ['3.8', '3.9', '3.10', '3.11']
       - javascript_lint_and_tests
