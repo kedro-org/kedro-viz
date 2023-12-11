@@ -410,7 +410,9 @@ export class FlowChart extends Component {
       objectWidth: graphWidth,
       objectHeight: graphHeight,
       minScaleX: 0.2,
-      minScaleFocus: this.props.chartZoom.scale,
+      minScaleFocus: this.props.visibleMetaSidebar
+        ? this.props.chartZoom.scale
+        : 0.3,
       focusOffset: 0,
       preventZoom,
     });
