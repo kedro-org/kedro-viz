@@ -50,7 +50,7 @@
     "@graphql-tools/schema": "7.1.5",
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.11.10",
-    "@mui/styles": "^5.11.9",
+    "@mui/system": "^5.14.18",
     "@mui/x-tree-view": "^6.17.0",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
@@ -78,10 +78,9 @@
     "react-custom-scrollbars-2": "^4.5.0",
     "react-json-view": "^1.21.3",
     "react-plotly.js": "^2.5.1",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.1.3",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
-    "react-test-renderer": "^17.0.2",
     "redux": "^4.1.2",
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.4.1",
@@ -93,19 +92,26 @@
     "uuid": "^9.0.0",
     "what-input": "^5.2.10"
   },
+  "overrides": {
+    "react-json-view": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "react-json-view": "^1.21.3"
+    }
+  },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
+    "@cfaester/enzyme-adapter-react-18": "^0.7.1",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
     "babel-plugin-transform-remove-imports": "^1.7.0",
     "canvas": "^2.7.0",
     "cross-env": "7.0.3",
@@ -120,8 +126,8 @@
     "npm-run-all": "^4.1.5",
     "postcss-loader": "^4.3.0",
     "prettier": "^2.3.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-error-overlay": "^6.0.9",
     "react-scripts": "^4.0.3",
     "sass": "^1.54.4",
