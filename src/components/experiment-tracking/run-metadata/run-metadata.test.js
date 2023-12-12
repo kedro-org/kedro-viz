@@ -2,7 +2,7 @@ import React from 'react';
 import configureMockStore from 'redux-mock-store';
 import RunMetadata from '.';
 import { runs } from '../../experiment-wrapper/mock-data';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { configure, mount } from 'enzyme';
 import { setup } from '../../../utils/state.mock';
 
