@@ -19,7 +19,9 @@ if TYPE_CHECKING:
         # kedro 0.18.12 onwards
         from kedro.io import AbstractVersionedDataset
     except ImportError:
-        from kedro.io import AbstractVersionedDataSet as AbstractVersionedDataset
+        from kedro.io import (  # type: ignore # isort:skip
+            AbstractVersionedDataSet as AbstractVersionedDataset,
+        )
 
 logger = logging.getLogger(__name__)
 Base = declarative_base()
