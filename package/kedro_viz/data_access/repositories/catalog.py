@@ -15,8 +15,8 @@ try:
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io import DataSetNotFoundError as DatasetNotFoundError
-    from kedro.io import MemoryDataSet as MemoryDataset
+    from kedro.io import DataSetNotFoundError as DatasetNotFoundError  # type: ignore
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore
 
 if TYPE_CHECKING:
     try:
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
         from kedro.io.core import AbstractDataset
     except ImportError:
         # older versions
-        from kedro.io.core import AbstractDataSet as AbstractDataset
+        from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 logger = logging.getLogger(__name__)
 

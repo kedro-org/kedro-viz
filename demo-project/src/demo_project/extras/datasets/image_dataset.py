@@ -4,11 +4,11 @@ from typing import Any, Dict
 import fsspec
 import numpy as np
 import PIL
-from kedro.io.core import AbstractDataSet, get_protocol_and_path
+from kedro.io.core import AbstractDataset, get_protocol_and_path
 from PIL import Image
 
 
-class ImageDataSet(AbstractDataSet):
+class ImageDataSet(AbstractDataset):
     """``ImageDataSet`` loads / save image data from a given filepath as `numpy` array
     using Pillow.
 

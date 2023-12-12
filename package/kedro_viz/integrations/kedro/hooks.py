@@ -32,9 +32,9 @@ class DatasetStatsHook:
         """
         # Temporary try/except block so the Kedro develop branch can work with Viz.
         try:
-            self.datasets = catalog._data_sets
+            self.datasets = catalog._datasets
         except Exception:  # pragma: no cover
-            self.datasets = catalog._datasets  # type: ignore[attr-defined]
+            self.datasets = catalog._data_sets  # type: ignore[attr-defined]
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):

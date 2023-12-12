@@ -9,7 +9,7 @@ try:
     from kedro.io import MemoryDataset
 except ImportError:
     # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore
 
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
