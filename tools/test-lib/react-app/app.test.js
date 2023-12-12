@@ -1,30 +1,26 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App, { dataSources } from './app';
-
-configure({ adapter: new Adapter() });
 
 const keys = Object.keys(dataSources).filter((key) => key !== 'random');
 
 describe('lib-test', () => {
   test('renders without crashing', () => {
-    mount(<App />);
+    render(<App />);
   });
 
   /**
    * Get the name of the first node in the NodeList, and check that it's
    * included in the list of the node names in the dataset
-   * @param {object} wrapper App component mounted by Enzyme
+   * * @param {object} container App component mounted
    * @param {string} key dataSources key: spaceflights/demo/random
    */
-  const testFirstNodeNameMatch = (wrapper, key) => {
-    const firstNodeName = wrapper
-      .find('.pipeline-nodelist__row')
-      .find('.pipeline-nodelist__row__text--tree')
-      .find('.pipeline-nodelist__row__label')
-      .first()
-      .text();
+  const testFirstNodeNameMatch = (container, key) => {
+    const firstNodeName = container
+      .querySelector('.pipeline-nodelist__row')
+      .querySelector('.pipeline-nodelist__row__text--tree')
+      .querySelector('.pipeline-nodelist__row__label')
+      .textContent;
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
@@ -34,20 +30,18 @@ describe('lib-test', () => {
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {
-    const wrapper = mount(<App initialData={key} />);
-    testFirstNodeNameMatch(wrapper, key);
+    const { container } =  render(<App initialData={key} />);
+    testFirstNodeNameMatch(container, key);
   });
 
   test.each(keys)(
     `updates to %s dataset when radio button triggers change`,
     (key) => {
-      const wrapper = mount(<App />);
-      wrapper
-        .find('Radio')
-        .filter(`[value="${key}"]`)
-        .find('input')
-        .simulate('change');
-      testFirstNodeNameMatch(wrapper, key);
+      const { container } = render(<App />);
+
+      const radioInput = container.querySelector(`[value="${key}"]`);
+      fireEvent.click(radioInput, { target: { value: key } });
+      testFirstNodeNameMatch(container, key);
     }
   );
 });
