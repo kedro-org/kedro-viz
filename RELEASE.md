@@ -17,6 +17,12 @@ Please follow the established format:
 - Remove support for Python 3.7 (#1660)
 - Adjust CLI to use 'kedro viz run' instead of 'kedro viz' (#1671)
 
+# Release 7.0.0
+
+## Major features and improvements
+
+- Bump minimum version of React from 17.0.2 to 18.2.0. (#1652)
+
 # Release 6.7.0 
 
 ## Bug fixes and other changes
