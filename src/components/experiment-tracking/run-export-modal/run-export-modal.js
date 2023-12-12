@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { connect } from 'react-redux';
 import { CSVLink } from 'react-csv';
 
@@ -33,8 +34,11 @@ const RunExportModal = ({
       };
     });
 
-    setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
-    handleClick();
+    // Require to opt-out of automatic batching in React 18
+    flushSync(() => {
+      setExportData(constructExportData(mergedRunsMetadata, runTrackingData));
+      handleClick();
+    });
   }, [runMetadata, runTrackingData, handleClick, runsMetadata]);
 
   // only if the component is visible first, then apply isSuccessful to show or hide modal
