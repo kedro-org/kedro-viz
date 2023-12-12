@@ -231,10 +231,8 @@ def deploy(region, bucket_name):
         return
 
     try:
-        viz_deploy_progress_timer_process = multiprocessing.Process(
-            target=viz_deploy_progress_timer
-        )
-        viz_deploy_progress_timer_process.start()
+        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
+        viz_deploy_timer.start()
 
         # Loads and populates data from underlying Kedro Project
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
@@ -271,5 +269,4 @@ def deploy(region, bucket_name):
             )
         )
     finally:
-        pass
-        # viz_deploy_progress_timer_process.terminate()
+        viz_deploy_timer.terminate()
