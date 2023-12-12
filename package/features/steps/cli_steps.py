@@ -119,7 +119,7 @@ def install_kedro(context, version):
 def exec_viz_command(context):
     """Execute Kedro-Viz command."""
     context.result = ChildTerminatingPopen(
-        [context.kedro, "viz", "--no-browser"],
+        [context.kedro, "viz", "run", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
