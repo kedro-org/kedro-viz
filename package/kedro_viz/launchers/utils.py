@@ -4,6 +4,7 @@ import logging
 import webbrowser
 from time import sleep, time
 from typing import Any, Callable
+from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
 
 import requests
 
@@ -90,3 +91,15 @@ def _start_browser(host: str, port: int):
 
     if _is_localhost(host):
         webbrowser.open_new(f"http://{host}:{port}/")
+
+
+def viz_deploy_progress_timer():  # pragma: no cover
+    """Shows progress timer and message for kedro viz deploy"""
+    seconds = 0
+    try:
+        while seconds <= VIZ_DEPLOY_TIME_LIMIT:
+            print(f"...Creating your webpage ({seconds}s)", end="\r", flush=True)
+            sleep(1)
+            seconds += 1
+    except KeyboardInterrupt:
+        print("\nCreating your webpage interrupted. Exiting...")

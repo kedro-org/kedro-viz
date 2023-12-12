@@ -63,7 +63,7 @@ class S3Deployer:
         env = Environment(loader=FileSystemLoader(_HTML_DIR))
 
         if should_add_telemetry:
-            logger.debug("Ingesting heap analytics.")
+            logger.info("Ingesting heap analytics.")
             telemetry_content = env.get_template("telemetry.html").render(
                 heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
             )
@@ -82,7 +82,7 @@ class S3Deployer:
 
     def _upload_static_files(self, html_dir: Path):
         """Upload static HTML files to S3."""
-        logger.debug("Uploading static html files to %s.", self._bucket_path)
+        logger.info("Uploading static html files to %s.", self._bucket_path)
         try:
             self._remote_fs.put(f"{str(html_dir)}/*", self._bucket_path, recursive=True)
             self._ingest_heap_analytics()
@@ -91,7 +91,7 @@ class S3Deployer:
             raise exc
 
     def _upload_deploy_viz_metadata_file(self):
-        logger.debug(
+        logger.info(
             "Creating and Uploading deploy viz metadata file to %s.",
             self._bucket_path,
         )

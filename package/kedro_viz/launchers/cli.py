@@ -15,7 +15,12 @@ from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
+from kedro_viz.launchers.utils import (
+    _check_viz_up,
+    _start_browser,
+    _wait_for,
+    viz_deploy_progress_timer,
+)
 from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
@@ -226,6 +231,11 @@ def deploy(region, bucket_name):
         return
 
     try:
+        viz_deploy_progress_timer_process = multiprocessing.Process(
+            target=viz_deploy_progress_timer
+        )
+        viz_deploy_progress_timer_process.start()
+
         # Loads and populates data from underlying Kedro Project
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
@@ -260,3 +270,6 @@ def deploy(region, bucket_name):
                 fg="red",
             )
         )
+    finally:
+        pass
+        # viz_deploy_progress_timer_process.terminate()

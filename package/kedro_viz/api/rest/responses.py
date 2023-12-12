@@ -451,7 +451,7 @@ def save_api_responses_to_fs(api_dir: str):
         protocol, path = get_protocol_and_path(api_dir)
         remote_fs = fsspec.filesystem(protocol)
 
-        logger.debug(
+        logger.info(
             """Saving/Uploading api files to %s""",
             api_dir,
         )
