@@ -67,7 +67,7 @@ def patched_start_browser(mocker):
                 "4142",
                 "--no-browser",
                 "--save-file",
-                "save.json",
+                "save",
                 "--pipeline",
                 "data_science",
                 "--env",

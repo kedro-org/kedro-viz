@@ -11,8 +11,8 @@ class TestDataCatalogRepository:
             "cars@pandas": {
                 "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
-                "layer": "raw",
-            },
+                "metadata": {"kedro-viz": {"layer": "raw"}},
+            }
         }
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
@@ -80,14 +80,8 @@ class TestDataCatalogRepository:
                         "layer": "raw",
                     },
                 },
-            },
-            "car_2": {
-                "type": "pandas.CSVDataset",
-                "filepath": "cars.csv",
-                "layer": "raw",
-            },
+            }
         }
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("car_1") == "raw"
-        assert repo.get_layer_for_dataset("car_2") == "raw"

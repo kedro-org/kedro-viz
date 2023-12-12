@@ -97,7 +97,7 @@ def example_pipelines():
 @pytest.fixture
 def example_catalog():
     yield DataCatalog(
-        data_sets={
+        datasets={
             "uk.data_processing.raw_data": pandas.CSVDataset(filepath="raw_data.csv"),
             "model_inputs": pandas.CSVDataset(filepath="model_inputs.csv"),
             "uk.data_science.model": MemoryDataset(),
@@ -105,12 +105,6 @@ def example_catalog():
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
             "params:uk.data_processing.train_test_split": 0.1,
-        },
-        layers={
-            "raw": {
-                "uk.data_processing.raw_data",
-            },
-            "model_inputs": {"model_inputs"},
         },
         dataset_patterns={
             "{dataset_name}#csv": {
@@ -157,7 +151,7 @@ def example_transcoded_pipelines():
 @pytest.fixture
 def example_transcoded_catalog():
     yield DataCatalog(
-        data_sets={
+        datasets={
             "model_inputs@pandas": pandas.ParquetDataset(
                 filepath="model_inputs.parquet"
             ),
@@ -324,6 +318,7 @@ def pipeline_with_datasets_mock():
 
 
 # Create a mock for KedroPipeline with data_sets method
+# for older versions (<0.19.0) of kedro
 @pytest.fixture
 def pipeline_with_data_sets_mock():
     pipeline = mock.MagicMock()
