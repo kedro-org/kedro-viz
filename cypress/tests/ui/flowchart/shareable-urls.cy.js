@@ -132,8 +132,7 @@ describe('Shareable URLs', () => {
       .click();
 
     // Assert after action
-    cy.get('.modal__description', { timeout: 5000 }).should(
-      'have.text',
+    cy.get('.shareable-url-modal .modal__wrapper', { timeout: 5000 }).contains(
       'Something went wrong. Please try again later.'
     );
     cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
