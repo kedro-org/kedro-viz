@@ -39,6 +39,9 @@ def before_scenario(context, scenario):
                 kedro_version = parse(match.group(0))
                 break
 
+    # add kedro_version to context
+    context.kedro_version = kedro_version
+
     if (
         kedro_version
         and kedro_version <= parse("0.18.12")
