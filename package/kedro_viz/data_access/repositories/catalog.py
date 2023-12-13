@@ -87,7 +87,7 @@ class CatalogRepository:
             datasets = self._catalog._datasets
 
         # Maps layers according to the old format
-        if KEDRO_VERSION < parse("0.19.0"):
+        if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     _strip_transcoding(dataset_name): None for dataset_name in datasets
