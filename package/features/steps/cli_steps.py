@@ -78,7 +78,7 @@ def create_project_with_starter(context, starter):
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
     """Run ``pip install -r requirements.txt``."""
-    if context.kedro_version < parse("0.19.0"):
+    if context.kedro_version != "latest":
         requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
     else:
         requirements_path = str(context.root_project_dir) + "/requirements.txt"
@@ -108,6 +108,9 @@ def install_lower_bound_requirements(context):
 @given('I have installed kedro version "{version}"')
 def install_kedro(context, version):
     """Install Kedro using pip."""
+    # add kedro_version to context
+    context.kedro_version = version
+
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
     else:
