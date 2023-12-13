@@ -311,7 +311,7 @@ def pipeline_with_datasets_mock():
 
 
 # Create a mock for KedroPipeline with data_sets method
-# older versions (kedro < 0.19.0)
+# older versions
 @pytest.fixture
 def pipeline_with_data_sets_mock():
     pipeline = mock.MagicMock()
