@@ -2,14 +2,8 @@ from collections import defaultdict
 from unittest.mock import mock_open, patch
 
 import pytest
+from kedro.io import MemoryDataset
 from kedro.io.core import get_filepath_str
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore
 
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):

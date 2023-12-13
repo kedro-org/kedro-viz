@@ -77,9 +77,11 @@ class DataAccessManager:
         """
         for pipeline in pipelines.values():
             if hasattr(pipeline, "data_sets"):
+                # older versions
                 datasets = pipeline.data_sets()
             else:
-                datasets = pipeline.datasets()  # kedro 0.19.0 onwards
+                # kedro 0.19.0 onwards
+                datasets = pipeline.datasets()
 
             for dataset_name in datasets:
                 try:

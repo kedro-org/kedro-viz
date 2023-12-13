@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io import DataCatalog, Version
+from kedro.io import DataCatalog, MemoryDataset, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
@@ -19,13 +19,6 @@ from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.flowchart import GraphNode
 from kedro_viz.server import populate_data
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore
 
 
 @pytest.fixture
@@ -318,7 +311,7 @@ def pipeline_with_datasets_mock():
 
 
 # Create a mock for KedroPipeline with data_sets method
-# for older versions (<0.19.0) of kedro
+# older versions (kedro < 0.19.0)
 @pytest.fixture
 def pipeline_with_data_sets_mock():
     pipeline = mock.MagicMock()
