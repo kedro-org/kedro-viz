@@ -91,8 +91,8 @@ def example_pipelines():
 def example_catalog():
     yield DataCatalog(
         datasets={
-            "uk.data_processing.raw_data": pandas.CSVDataset(filepath="raw_data.csv"),
-            "model_inputs": pandas.CSVDataset(filepath="model_inputs.csv"),
+            "uk.data_processing.raw_data": pandas.CSVDataset(filepath="raw_data.csv", metadata={"kedro-viz": {"layer": "raw"}}),
+            "model_inputs": pandas.CSVDataset(filepath="model_inputs.csv", metadata={"kedro-viz": {"layer": "model_inputs"}}),
             "uk.data_science.model": MemoryDataset(),
         },
         feed_dict={

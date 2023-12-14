@@ -26,7 +26,7 @@
       "pipelines": ["data_processing", "__default__"],
       "type": "data",
       "modular_pipelines": ["uk", "uk.data_processing"],
-      "layer": null,
+      "layer": "raw",
       "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
@@ -36,7 +36,7 @@
       "pipelines": ["data_processing", "__default__", "data_science"],
       "type": "data",
       "modular_pipelines": [],
-      "layer": null,
+      "layer": "model_inputs",
       "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
@@ -75,7 +75,7 @@
       "pipelines": ["__default__"],
       "type": "modularPipeline",
       "modular_pipelines": null,
-      "layer": null,
+      "layer": "raw",
       "dataset_type": null
     },
     {
@@ -117,7 +117,7 @@
     { "source": "13399a82", "target": "uk" },
     { "source": "13399a82", "target": "uk.data_processing" }
   ],
-  "layers": [],
+  "layers": ["raw", "model_inputs"],
   "tags": [
     { "id": "split", "name": "split" },
     { "id": "train", "name": "train" }

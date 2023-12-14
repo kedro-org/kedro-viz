@@ -119,7 +119,7 @@ def assert_example_data(response_data):
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
-            "layer": None,
+            "layer": "raw",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
             "stats": None,
         },
@@ -141,7 +141,7 @@ def assert_example_data(response_data):
             "pipelines": ["__default__", "data_science", "data_processing"],
             "modular_pipelines": [],
             "type": "data",
-            "layer": None,
+            "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
             "stats": {"columns": 12, "rows": 29768},
         },
@@ -267,7 +267,7 @@ def assert_example_data(response_data):
     # compare the rest
     assert response_data == {
         "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
-        "layers": [],
+        "layers": ["raw","model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "__default__"},
             {"id": "data_science", "name": "data_science"},
@@ -318,7 +318,7 @@ def assert_example_data_from_file(response_data):
             "pipelines": ["__default__", "data_processing"],
             "modular_pipelines": ["uk", "uk.data_processing"],
             "type": "data",
-            "layer": None,
+            "layer": "raw",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
         },
         {
@@ -338,7 +338,7 @@ def assert_example_data_from_file(response_data):
             "pipelines": ["__default__", "data_science", "data_processing"],
             "modular_pipelines": [],
             "type": "data",
-            "layer": None,
+            "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
         },
         {
@@ -380,7 +380,7 @@ def assert_example_data_from_file(response_data):
             "pipelines": ["__default__"],
             "type": "modularPipeline",
             "modular_pipelines": None,
-            "layer": None,
+            "layer": "raw",
             "dataset_type": None,
         },
         {
@@ -457,7 +457,7 @@ def assert_example_data_from_file(response_data):
     # compare the rest
     assert response_data == {
         "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
-        "layers": [],
+        "layers": ["raw","model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "__default__"},
             {"id": "data_science", "name": "data_science"},
@@ -686,7 +686,7 @@ class TestSinglePipelineEndpoint:
                 "pipelines": ["__default__", "data_science", "data_processing"],
                 "modular_pipelines": [],
                 "type": "data",
-                "layer": None,
+                "layer": "model_inputs",
                 "dataset_type": "pandas.csv_dataset.CSVDataset",
                 "stats": {"columns": 12, "rows": 29768},
             },
@@ -791,7 +791,7 @@ class TestSinglePipelineEndpoint:
                 {"id": "split", "name": "split"},
                 {"id": "train", "name": "train"},
             ],
-            "layers": [],
+            "layers": ["model_inputs","raw"],
             "pipelines": [
                 {"id": "__default__", "name": "__default__"},
                 {"id": "data_science", "name": "data_science"},
