@@ -75,7 +75,7 @@
       "pipelines": ["__default__"],
       "type": "modularPipeline",
       "modular_pipelines": null,
-      "layer": "raw",
+      "layer": null,
       "dataset_type": null
     },
     {

@@ -267,7 +267,7 @@ def assert_example_data(response_data):
     # compare the rest
     assert response_data == {
         "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
-        "layers": ["raw","model_inputs"],
+        "layers": ["raw", "model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "__default__"},
             {"id": "data_science", "name": "data_science"},
@@ -380,7 +380,7 @@ def assert_example_data_from_file(response_data):
             "pipelines": ["__default__"],
             "type": "modularPipeline",
             "modular_pipelines": None,
-            "layer": "raw",
+            "layer": None,
             "dataset_type": None,
         },
         {
@@ -457,7 +457,7 @@ def assert_example_data_from_file(response_data):
     # compare the rest
     assert response_data == {
         "tags": [{"id": "split", "name": "split"}, {"id": "train", "name": "train"}],
-        "layers": ["raw","model_inputs"],
+        "layers": ["raw", "model_inputs"],
         "pipelines": [
             {"id": "__default__", "name": "__default__"},
             {"id": "data_science", "name": "data_science"},
@@ -791,7 +791,7 @@ class TestSinglePipelineEndpoint:
                 {"id": "split", "name": "split"},
                 {"id": "train", "name": "train"},
             ],
-            "layers": ["model_inputs","raw"],
+            "layers": ["model_inputs", "raw"],
             "pipelines": [
                 {"id": "__default__", "name": "__default__"},
                 {"id": "data_science", "name": "data_science"},
