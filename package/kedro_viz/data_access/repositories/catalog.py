@@ -86,7 +86,7 @@ class CatalogRepository:
         except Exception:  # pragma: no cover
             datasets = self._catalog._datasets
 
-        # Maps layers according to the old format
+        # Support for Kedro 0.18.x
         if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
             if self._catalog.layers is None:
                 self._layers_mapping = {
@@ -100,7 +100,6 @@ class CatalogRepository:
                             self._validate_layers_for_transcoding(dataset_name, layer)
                         self._layers_mapping[dataset_name] = layer
 
-        # Maps layers according to the new format
         for dataset_name in datasets:
             dataset = self._catalog._get_dataset(dataset_name)
             metadata = getattr(dataset, "metadata", None)

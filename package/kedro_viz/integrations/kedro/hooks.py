@@ -32,10 +32,9 @@ class DatasetStatsHook:
         """
         # Temporary try/except block so the Kedro develop branch can work with Viz.
         try:
-            # kedro 0.19.0 onwards
             self.datasets = catalog._datasets
         except Exception:  # pragma: no cover
-            # older versions
+            # Support for Kedro 0.18.x
             self.datasets = catalog._data_sets  # type: ignore[attr-defined]
 
     @hook_impl
