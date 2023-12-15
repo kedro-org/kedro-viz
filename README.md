@@ -104,8 +104,8 @@ Options:
                             browser or not. Browser will only be opened if
                             host is localhost. Defaults to True.
 
-  --load-file FILE          Path to load the pipeline JSON file
-  --save-file FILE          Path to save the pipeline JSON file
+  --load-file FILE          Path to load kedro-viz data from a directory
+  --save-file FILE          Path to save kedro-viz data to a directory 
   --pipeline TEXT           Name of the registered pipeline to visualise. If not
                             set, the default pipeline is visualised
 
@@ -183,7 +183,7 @@ const MyApp = () => <NoSSRKedro data={json} />;
 The JSON can be obtained by running:
 
 ```bash
-kedro viz run --save-file=filename.json
+kedro viz run --save-file=filename
 ```
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.

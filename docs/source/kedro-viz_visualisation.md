@@ -162,7 +162,7 @@ The visualisation now includes the layers:
 You can share a pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
 
 ```bash
-kedro viz run --save-file=my_shareable_pipeline.json
+kedro viz run --save-file=my_shareable_pipeline
 ```
 
 This command will save a visualisation of the `__default__` pipeline as a JSON file called `my_shareable_pipeline.json`. It doesn't share data, such as that in the code panel, nor can you share images or charts.
@@ -170,7 +170,7 @@ This command will save a visualisation of the `__default__` pipeline as a JSON f
 To visualise the shared file, type the following to load it from the terminal:
 
 ```bash
-kedro viz run --load-file=my_shareable_pipeline.json
+kedro viz run --load-file=my_shareable_pipeline
 ```
 
 You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 
