@@ -6,6 +6,7 @@ from time import sleep, time
 import requests
 import yaml
 from behave import given, then, when
+from packaging.version import parse
 
 from features.steps.sh_run import ChildTerminatingPopen, run
 
@@ -76,8 +77,12 @@ def create_project_with_starter(context, starter):
 
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
-    """Run ``pip install -r src/requirements.txt``."""
-    requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+    """Run ``pip install -r requirements.txt``."""
+    if context.kedro_version != "latest":
+        requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+    else:
+        requirements_path = str(context.root_project_dir) + "/requirements.txt"
+
     cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 
@@ -103,6 +108,9 @@ def install_lower_bound_requirements(context):
 @given('I have installed kedro version "{version}"')
 def install_kedro(context, version):
     """Install Kedro using pip."""
+    # add kedro_version to context
+    context.kedro_version = version
+
     if version == "latest":
         cmd = [context.pip, "install", "-U", "kedro"]
     else:

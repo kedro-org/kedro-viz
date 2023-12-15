@@ -11,7 +11,7 @@ if TYPE_CHECKING:
         from kedro.io.core import AbstractDataset
     except ImportError:  # pragma: no cover
         # older versions
-        from kedro.io.core import AbstractDataSet as AbstractDataset
+        from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 
 def get_dataset_type(dataset: "AbstractDataset") -> str:

@@ -76,10 +76,11 @@ class DataAccessManager:
         them against the datasets in the pipelines.
         """
         for pipeline in pipelines.values():
-            if hasattr(pipeline, "datasets"):
-                datasets = pipeline.datasets()  # kedro 0.19.0 onwards
-            else:
+            if hasattr(pipeline, "data_sets"):
+                # Support for Kedro 0.18.x
                 datasets = pipeline.data_sets()
+            else:
+                datasets = pipeline.datasets()
 
             for dataset_name in datasets:
                 try:
