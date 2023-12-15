@@ -11,8 +11,8 @@ class TestDataCatalogRepository:
             "cars@pandas": {
                 "type": "pandas.CSVDataset",
                 "filepath": "cars.csv",
-                "layer": "raw",
-            },
+                "metadata": {"kedro-viz": {"layer": "raw"}},
+            }
         }
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
@@ -67,27 +67,3 @@ class TestDataCatalogRepository:
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("car") == "raw"
-
-    # TODO : Update test after Kedro 19 release.
-    def test_get_layer_mapping_from_metadata_and_top_level_layer(self):
-        repo = CatalogRepository()
-        catalog_config = {
-            "car_1": {
-                "type": "pandas.CSVDataset",
-                "filepath": "cars.csv",
-                "metadata": {
-                    "kedro-viz": {
-                        "layer": "raw",
-                    },
-                },
-            },
-            "car_2": {
-                "type": "pandas.CSVDataset",
-                "filepath": "cars.csv",
-                "layer": "raw",
-            },
-        }
-        catalog = DataCatalog.from_config(catalog_config)
-        repo.set_catalog(catalog)
-        assert repo.get_layer_for_dataset("car_1") == "raw"
-        assert repo.get_layer_for_dataset("car_2") == "raw"

@@ -1,13 +1,7 @@
 import pytest
+from kedro.io import MemoryDataset
 
 from kedro_viz.models.utils import get_dataset_type
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 @pytest.mark.parametrize(

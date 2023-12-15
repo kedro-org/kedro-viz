@@ -2,14 +2,8 @@ from collections import defaultdict
 from unittest.mock import mock_open, patch
 
 import pytest
+from kedro.io import MemoryDataset
 from kedro.io.core import get_filepath_str
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
@@ -23,7 +17,7 @@ def test_after_catalog_created(example_dataset_stats_hook_obj, example_catalog):
 
     # Assert for catalog creation
     assert hasattr(example_dataset_stats_hook_obj, "datasets")
-    assert example_dataset_stats_hook_obj.datasets == example_catalog._data_sets
+    assert example_dataset_stats_hook_obj.datasets == example_catalog._datasets
 
 
 @pytest.mark.parametrize(

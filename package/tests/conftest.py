@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 from kedro.framework.session.store import BaseSessionStore
-from kedro.io import DataCatalog, Version
+from kedro.io import DataCatalog, MemoryDataset, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets import pandas, tracking
@@ -19,13 +19,6 @@ from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.flowchart import GraphNode
 from kedro_viz.server import populate_data
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
 
 
 @pytest.fixture
@@ -97,20 +90,19 @@ def example_pipelines():
 @pytest.fixture
 def example_catalog():
     yield DataCatalog(
-        data_sets={
-            "uk.data_processing.raw_data": pandas.CSVDataset(filepath="raw_data.csv"),
-            "model_inputs": pandas.CSVDataset(filepath="model_inputs.csv"),
+        datasets={
+            "uk.data_processing.raw_data": pandas.CSVDataset(
+                filepath="raw_data.csv", metadata={"kedro-viz": {"layer": "raw"}}
+            ),
+            "model_inputs": pandas.CSVDataset(
+                filepath="model_inputs.csv",
+                metadata={"kedro-viz": {"layer": "model_inputs"}},
+            ),
             "uk.data_science.model": MemoryDataset(),
         },
         feed_dict={
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
             "params:uk.data_processing.train_test_split": 0.1,
-        },
-        layers={
-            "raw": {
-                "uk.data_processing.raw_data",
-            },
-            "model_inputs": {"model_inputs"},
         },
         dataset_patterns={
             "{dataset_name}#csv": {
@@ -157,7 +149,7 @@ def example_transcoded_pipelines():
 @pytest.fixture
 def example_transcoded_catalog():
     yield DataCatalog(
-        data_sets={
+        datasets={
             "model_inputs@pandas": pandas.ParquetDataset(
                 filepath="model_inputs.parquet"
             ),
@@ -324,6 +316,7 @@ def pipeline_with_datasets_mock():
 
 
 # Create a mock for KedroPipeline with data_sets method
+# older versions
 @pytest.fixture
 def pipeline_with_data_sets_mock():
     pipeline = mock.MagicMock()

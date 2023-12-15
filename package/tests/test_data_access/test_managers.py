@@ -2,7 +2,7 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets.pandas import CSVDataset
@@ -19,13 +19,6 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
-
 
 def identity(x):
     return x
@@ -38,7 +31,7 @@ class TestAddCatalog:
         example_pipelines: Dict[str, Pipeline],
     ):
         dataset = CSVDataset(filepath="dataset.csv")
-        catalog = DataCatalog(data_sets={"dataset": dataset})
+        catalog = DataCatalog(datasets={"dataset": dataset})
         data_access_manager.add_catalog(catalog, example_pipelines)
         assert data_access_manager.catalog.get_catalog() is catalog
 
@@ -94,7 +87,7 @@ class TestAddNode:
 
         # add its input to the graph
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
@@ -200,7 +193,7 @@ class TestAddNode:
 
         # add its output to the graph
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
@@ -234,10 +227,7 @@ class TestAddDataset:
     ):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
-        catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
-            layers={"raw": {dataset_name}},
-        )
+        catalog = DataCatalog(datasets={dataset_name: dataset})
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
 
@@ -247,7 +237,6 @@ class TestAddDataset:
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
         assert graph_node.kedro_obj is dataset
-        assert graph_node.layer == "raw"
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert not graph_node.modular_pipelines
 
@@ -274,7 +263,7 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "uk.data_science.x"
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog, example_pipelines)
         data_access_manager.add_dataset("my_pipeline", dataset_name)

@@ -6,8 +6,10 @@ from textwrap import dedent
 from unittest.mock import call, patch
 
 import pytest
+from kedro.io import MemoryDataset
 from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
+from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
 
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -21,14 +23,6 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
-
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset, PartitionedDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
-    from kedro.io import PartitionedDataSet as PartitionedDataset
 
 
 def identity(x):
