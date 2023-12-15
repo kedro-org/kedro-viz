@@ -1,7 +1,7 @@
 [tool.kedro]
 package_name = "demo_project"
 project_name = "modular-spaceflights"
-kedro_init_version = "0.18.14"
+kedro_init_version = "0.19.0"
 
 [tool.isort]
 multi_line_output = 3

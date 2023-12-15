@@ -95,7 +95,7 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     metrics_dataset.save({"col1": 1, "col2": 2, "col3": 3})
 
     csv_dataset = pandas.CSVDataset(
-        Path(tmp_path / "metrics.csv").as_posix(),
+        filepath=Path(tmp_path / "metrics.csv").as_posix(),
         version=Version(None, example_run_id),
     )
 
@@ -153,7 +153,7 @@ def example_tracking_catalog(example_run_ids, tmp_path):
     matplotlib_dataset.save(MockMatplotData)
 
     catalog = DataCatalog(
-        data_sets={
+        datasets={
             "metrics": metrics_dataset,
             "csv_dataset": csv_dataset,
             "more_metrics": more_metrics,
@@ -180,7 +180,7 @@ def example_multiple_run_tracking_catalog(example_run_ids, tmp_path):
     new_data = {"col1": 3, "col2": 3.23}
     new_metrics_dataset.save(new_data)
     catalog = DataCatalog(
-        data_sets={
+        datasets={
             "new_metrics": new_metrics_dataset,
         }
     )
@@ -202,7 +202,7 @@ def example_multiple_run_tracking_catalog_at_least_one_empty_run(
         version=Version(None, example_run_ids[0]),
     )
     catalog = DataCatalog(
-        data_sets={
+        datasets={
             "new_metrics": new_metrics_dataset,
         }
     )
@@ -221,7 +221,7 @@ def example_multiple_run_tracking_catalog_all_empty_runs(example_run_ids, tmp_pa
         version=Version(None, example_run_ids[0]),
     )
     catalog = DataCatalog(
-        data_sets={
+        datasets={
             "new_metrics": new_metrics_dataset,
         }
     )
