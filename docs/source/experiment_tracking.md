@@ -57,7 +57,7 @@ The example code uses a version of Kedro-Viz `>6.2.0`.
 Create a new project using the spaceflights starter. From the terminal run:
 
 ```bash
-kedro new --starter=spaceflights
+kedro new --starter=spaceflights-pandas
 ```
 
 Feel free to name your project as you like, but this guide assumes the project is named `Spaceflights`.
@@ -247,7 +247,7 @@ Execute `kedro run` a few times in a row to generate a larger set of experiment 
 Here comes the fun part of accessing your run data on Kedro-Viz. Having generated some run data, execute the following command:
 
 ```bash
-kedro viz
+kedro viz run
 ```
 
 When you open the Kedro-Viz web app, you see an experiment tracking icon on the left-hand side of the screen.
@@ -323,7 +323,7 @@ confusion_matrix:
   versioned: true
 ```
 
-After running the pipeline with `kedro run`, the plot is saved and you can see it in the experiment tracking panel when you execute `kedro viz`. Clicking on a plot expands it. When in comparison view, expanding a plot shows all the plots in that view for side-by-side comparison.
+After running the pipeline with `kedro run`, the plot is saved and you can see it in the experiment tracking panel when you execute `kedro viz run`. Clicking on a plot expands it. When in comparison view, expanding a plot shows all the plots in that view for side-by-side comparison.
 
 ![](./images/experiment-tracking-plots-comparison.png)
 

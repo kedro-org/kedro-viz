@@ -76,21 +76,33 @@ class DataAccessManager:
         them against the datasets in the pipelines.
         """
         for pipeline in pipelines.values():
-            if hasattr(pipeline, "datasets"):
-                datasets = pipeline.datasets()  # kedro 0.19.0 onwards
-            else:
+            if hasattr(pipeline, "data_sets"):
+                # Support for Kedro 0.18.x
                 datasets = pipeline.data_sets()
+            else:
+                datasets = pipeline.datasets()
 
             for dataset_name in datasets:
-                catalog.exists(dataset_name)
+                try:
+                    catalog.exists(dataset_name)
+                # pylint: disable=broad-except
+                except Exception as exc:  # pragma: no cover
+                    logger.warning(
+                        "'%s' does not exist. Full exception: %s: %s",
+                        dataset_name,
+                        type(exc).__name__,
+                        exc,
+                    )
 
-    def add_catalog(self, catalog: DataCatalog):
-        """Add a catalog to the CatalogRepository and relevant tracking datasets to
-        TrackingDatasetRepository.
+    def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
+        """Resolve dataset factory patterns, add the catalog to the CatalogRepository
+        and relevant tracking datasets to TrackingDatasetRepository.
 
         Args:
             catalog: The DataCatalog instance to add.
+            pipelines: A dictionary which holds project pipelines
         """
+        self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
 
         for dataset_name, dataset in self.catalog.as_dict().items():

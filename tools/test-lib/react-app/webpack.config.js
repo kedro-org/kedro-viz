@@ -8,10 +8,12 @@ module.exports = {
   entry: './index.js',
   devtool: 'inline-source-map',
   devServer: {
-    after: () => {
+    onAfterSetupMiddleware: () => {
       openBrowser && openBrowser('http://localhost:1337');
     },
-    contentBase: path.join(__dirname, 'dist'),
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
     port: 1337,
     historyApiFallback: true,
   },

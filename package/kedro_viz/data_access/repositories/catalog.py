@@ -15,8 +15,8 @@ try:
     from kedro.io import DatasetNotFoundError, MemoryDataset
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io import DataSetNotFoundError as DatasetNotFoundError
-    from kedro.io import MemoryDataSet as MemoryDataset
+    from kedro.io import DataSetNotFoundError as DatasetNotFoundError  # type: ignore
+    from kedro.io import MemoryDataSet as MemoryDataset  # type: ignore
 
 if TYPE_CHECKING:
     try:
@@ -24,7 +24,7 @@ if TYPE_CHECKING:
         from kedro.io.core import AbstractDataset
     except ImportError:
         # older versions
-        from kedro.io.core import AbstractDataSet as AbstractDataset
+        from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -86,8 +86,8 @@ class CatalogRepository:
         except Exception:  # pragma: no cover
             datasets = self._catalog._datasets
 
-        # Maps layers according to the old format
-        if KEDRO_VERSION < parse("0.19.0"):
+        # Support for Kedro 0.18.x
+        if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
             if self._catalog.layers is None:
                 self._layers_mapping = {
                     _strip_transcoding(dataset_name): None for dataset_name in datasets
@@ -100,7 +100,6 @@ class CatalogRepository:
                             self._validate_layers_for_transcoding(dataset_name, layer)
                         self._layers_mapping[dataset_name] = layer
 
-        # Maps layers according to the new format
         for dataset_name in datasets:
             dataset = self._catalog._get_dataset(dataset_name)
             metadata = getattr(dataset, "metadata", None)

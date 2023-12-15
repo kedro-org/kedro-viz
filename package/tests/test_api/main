@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "f2e4bf0e",
+      "id": "782e4a43",
       "name": "process_data",
       "tags": ["split"],
       "pipelines": ["data_processing", "__default__"],
@@ -40,7 +40,7 @@
       "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
     {
-      "id": "7b140b3f",
+      "id": "f2b25286",
       "name": "train_model",
       "tags": ["train"],
       "pipelines": ["__default__", "data_science"],
@@ -100,20 +100,20 @@
     }
   ],
   "edges": [
-    { "source": "f1f1425b", "target": "7b140b3f" },
+    { "source": "f1f1425b", "target": "f2b25286" },
     { "source": "0ecea0de", "target": "uk.data_science" },
     { "source": "f0ebef01", "target": "uk" },
-    { "source": "7b140b3f", "target": "d5a8b994" },
+    { "source": "f2b25286", "target": "d5a8b994" },
     { "source": "f0ebef01", "target": "uk.data_processing" },
-    { "source": "13399a82", "target": "f2e4bf0e" },
+    { "source": "13399a82", "target": "782e4a43" },
     { "source": "uk.data_science", "target": "d5a8b994" },
     { "source": "f1f1425b", "target": "uk" },
-    { "source": "0ecea0de", "target": "7b140b3f" },
+    { "source": "0ecea0de", "target": "f2b25286" },
     { "source": "uk", "target": "d5a8b994" },
     { "source": "f1f1425b", "target": "uk.data_science" },
-    { "source": "f2e4bf0e", "target": "0ecea0de" },
+    { "source": "782e4a43", "target": "0ecea0de" },
     { "source": "uk.data_processing", "target": "0ecea0de" },
-    { "source": "f0ebef01", "target": "f2e4bf0e" },
+    { "source": "f0ebef01", "target": "782e4a43" },
     { "source": "13399a82", "target": "uk" },
     { "source": "13399a82", "target": "uk.data_processing" }
   ],
@@ -146,7 +146,7 @@
       "outputs": ["0ecea0de"],
       "children": [
         { "id": "13399a82", "type": "data" },
-        { "id": "f2e4bf0e", "type": "task" }
+        { "id": "782e4a43", "type": "task" }
       ]
     },
     "uk": {
@@ -166,7 +166,7 @@
       "outputs": ["d5a8b994"],
       "children": [
         { "id": "d5a8b994", "type": "data" },
-        { "id": "7b140b3f", "type": "task" }
+        { "id": "f2b25286", "type": "task" }
       ]
     }
   },

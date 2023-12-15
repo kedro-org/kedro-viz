@@ -8,7 +8,6 @@ import click
 from kedro.framework.cli.utils import (
     KedroCliError,
     _config_file_callback,
-    _reformat_load_versions,
     _split_params,
     env_option,
     split_string,
@@ -83,8 +82,7 @@ def cli():
     "-lv",
     type=str,
     multiple=True,
-    help=LOAD_VERSION_HELP,
-    callback=_reformat_load_versions,
+    help=LOAD_VERSION_HELP
 )
 @click.option("--pipeline", type=str, default=None, help=PIPELINE_ARG_HELP)
 @click.option(
