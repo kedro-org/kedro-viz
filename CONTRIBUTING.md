@@ -172,8 +172,6 @@ Finally, you can use pseudo-random data, which is procedurally-generated on page
 
 ### Launch a development server with a real Kedro project
 
-> **Note**: Kedro-Viz>=3.8.0 will not work with projects created with Kedro<=0.16.6. Please consider migrating your project to Kedro>=0.17.0 before you develop against the latest version of Kedro-Viz.
-
 > **Note**: Kedro-Viz>=7.0.0 will not work with projects created with Kedro<=0.17.0. Please consider migrating your project to Kedro>=0.18.0 before you develop against the latest version of Kedro-Viz.
 
 

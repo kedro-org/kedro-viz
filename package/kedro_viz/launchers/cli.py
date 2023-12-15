@@ -12,9 +12,16 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
+from kedro_viz.launchers.utils import (
+    _check_viz_up,
+    _start_browser,
+    _wait_for,
+    viz_deploy_progress_timer,
+)
+from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -193,3 +200,73 @@ def run(
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
+@click.option(
+    "--region",
+    type=str,
+    required=True,
+    help="AWS region where your S3 bucket is located",
+)
+@click.option(
+    "--bucket-name",
+    type=str,
+    required=True,
+    help="AWS S3 bucket name where Kedro Viz will be hosted",
+)
+def deploy(region, bucket_name):
+    """Deploy and host Kedro Viz on AWS S3"""
+    if region not in AWS_REGIONS:
+        click.echo(
+            click.style(
+                "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
+                "Please find the complete list of available regions at :\n"
+                "https://docs.aws.amazon.com/AmazonRDS/latest"
+                "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
+                "#Concepts.RegionsAndAvailabilityZones.Regions",
+                fg="red",
+            ),
+        )
+        return
+
+    try:
+        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
+        viz_deploy_timer.start()
+
+        # Loads and populates data from underlying Kedro Project
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+
+        # Start the deployment
+        deployer = S3Deployer(region, bucket_name)
+        url = deployer.deploy_and_get_url()
+
+        click.echo(
+            click.style(
+                "\u2728 Success! Kedro Viz has been deployed on AWS S3. It can be accessed at :\n"
+                f"{url}",
+                fg="green",
+            ),
+        )
+    except PermissionError:  # pragma: no cover
+        click.echo(
+            click.style(
+                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
+                "AWS access keys, a valid AWS region and bucket name.\n"
+                "Please supply your AWS access keys as environment variables "
+                "and make sure the AWS region and bucket name are valid.\n"
+                "More information can be found at : "
+                "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
+                fg="red",
+            )
+        )
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        click.echo(
+            click.style(
+                f"ERROR: Failed to deploy and host Kedro-Viz on AWS S3 : {exc} ",
+                fg="red",
+            )
+        )
+    finally:
+        viz_deploy_timer.terminate()

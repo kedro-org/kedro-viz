@@ -92,6 +92,12 @@ Here's an example of the flow:
 
 ![](./images/kedro-publish-share.gif)
 
+From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
+```
+
 ## Permissions and access control
 
 All permissions and access control are controlled by AWS. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.

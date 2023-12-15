@@ -47,6 +47,30 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
+def load_and_populate_data(
+    path: Path,
+    env: Optional[str] = None,
+    ignore_plugins: bool = False,
+    extra_params: Optional[Dict[str, Any]] = None,
+    pipeline_name: Optional[str] = None,
+):
+    """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
+
+    # Loads data from underlying Kedro Project
+    catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
+        path, env, ignore_plugins, extra_params
+    )
+
+    pipelines = (
+        pipelines
+        if pipeline_name is None
+        else {pipeline_name: pipelines[pipeline_name]}
+    )
+
+    # Creates data repositories which are used by Kedro Viz Backend APIs
+    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
+
+
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -58,7 +82,7 @@ def run_server(
     autoreload: bool = False,
     ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
-):  # pylint: disable=redefined-outer-name, too-many-locals
+):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
@@ -83,19 +107,7 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        # Loads data from underlying Kedro Project
-        catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-            path, env, ignore_plugins, extra_params
-        )
-        pipelines = (
-            pipelines
-            if pipeline_name is None
-            else {pipeline_name: pipelines[pipeline_name]}
-        )
-        # Creates data repositories which are used by Kedro Viz Backend APIs
-        populate_data(
-            data_access_manager, catalog, pipelines, session_store, stats_dict
-        )
+        load_and_populate_data(path, env, ignore_plugins, extra_params, pipeline_name)
 
         if save_file:
             save_api_responses_to_fs(save_file)

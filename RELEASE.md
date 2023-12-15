@@ -10,6 +10,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Display hosted URL in CLI while launching kedro viz. (#1644)
+- AWS focussed CLI implementation `kedro viz deploy` for shareable viz. (#1661)
 
 ## Bug fixes and other changes
 
