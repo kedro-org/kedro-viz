@@ -57,15 +57,6 @@ class _VizNullPluginManager:
         pass
 
 
-def _bootstrap(project_path: Path):
-    """Bootstrap the integration by running various Kedro bootstrapping methods
-    depending on the version
-    """
-    from kedro.framework.startup import bootstrap_project
-
-    bootstrap_project(project_path)
-
-
 def _get_dataset_stats(project_path: Path) -> Dict:
     """Return the stats saved at stats.json as a dictionary if found.
     If not, return an empty dictionary
@@ -112,9 +103,10 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    _bootstrap(project_path)
-
     from kedro.framework.project import pipelines
+    from kedro.framework.startup import bootstrap_project
+
+    bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
