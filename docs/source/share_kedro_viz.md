@@ -92,7 +92,7 @@ Here's an example of the flow:
 
 ![](./images/kedro-publish-share.gif)
 
-From Kedro-Viz version 7.0.0, you can publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
+From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
 
 ```bash
 kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
