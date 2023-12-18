@@ -1,2 +1,0 @@
-kedro==0.18.4
-kedro-datasets[pandas.ParquetDataSet]==1.0.1

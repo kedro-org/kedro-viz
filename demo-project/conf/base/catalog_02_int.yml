@@ -1,26 +1,26 @@
 ingestion.int_typed_companies:
-  type: pandas.ParquetDataSet
+  type: pandas.ParquetDataset
   filepath: ${_base_location}/02_intermediate/typed_companies.pq
   metadata:
     kedro-viz:
       layer: intermediate
 
 ingestion.int_typed_shuttles@pandas1:
-  type: pandas.ParquetDataSet
+  type: pandas.ParquetDataset
   filepath: ${_base_location}/02_intermediate/typed_shuttles.pq
   metadata:
     kedro-viz:
       layer: intermediate
 
 ingestion.int_typed_shuttles@pandas2:
-  type: pandas.ParquetDataSet
+  type: pandas.ParquetDataset
   filepath: ${_base_location}/02_intermediate/typed_shuttles.pq
   metadata:
     kedro-viz:
       layer: intermediate
 
 ingestion.int_typed_reviews:
-  type: pandas.ParquetDataSet
+  type: pandas.ParquetDataset
   filepath: ${_base_location}/02_intermediate/typed_reviews.pq
   metadata:
     kedro-viz:
