@@ -12,7 +12,7 @@ Please follow the established format:
 - Upgrade to `React 18`. (#1652)
 - Change CLI command to run Kedro-viz to`kedro viz run`. (#1671)
 - Add deploy command to the CLI using `kedro viz deploy` for sharing Kedro-viz on AWS. (#1661)
-- Adds support for `kedro==0.19`and `kedro-datasets==2.0`. (#1677)
+- Add support for `kedro==0.19`and `kedro-datasets==2.0`. (#1677)
 - Drop support for `python=3.7`. (#1660)
 - Drop support for `kedro==0.17.x`. (#1669)
 
@@ -23,7 +23,7 @@ Please follow the established format:
 - Fix Kedro-viz display on Jupyter notebooks. (#1658)
 - Fix zoom issues on the flowchart. (#1672)
 - Fix bug on `kedro-viz run --load-file`. (#1677)
-- Fix bug on adding timestamps to shareable-viz. (_#1679)
+- Fix bug on adding timestamps to shareable-viz. (#1679)
 
 # Release 6.7.0 
 
