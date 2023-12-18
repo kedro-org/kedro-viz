@@ -136,7 +136,7 @@ def exec_viz_command(context):
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that Kedro-Viz is up and responding to requests."""
-    max_duration = 60  # 60 seconds
+    max_duration = 30  # 30 seconds
     end_by = time() + max_duration
 
     while time() < end_by:
