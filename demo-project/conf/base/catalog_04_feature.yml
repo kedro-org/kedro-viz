@@ -1,11 +1,11 @@
 # Use dataset factories to reduce duplication
 "feature_engineering.feat_{metric_type}_metrics":
- type: pandas.ParquetDataSet
+ type: pandas.ParquetDataset
  filepath: ${_base_location}/04_feature/feat_{metric_type}_metrics.pq
  layer: feature
 
 feature_importance_output:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: ${_base_location}/04_feature/feature_importance_output.csv
   metadata:
     kedro-viz:

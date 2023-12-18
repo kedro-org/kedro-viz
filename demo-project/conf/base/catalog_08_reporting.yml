@@ -1,5 +1,5 @@
 reporting.cancellation_policy_breakdown:
-  type: plotly.PlotlyDataSet # Constructed via plotly_args below
+  type: plotly.PlotlyDataset # Constructed via plotly_args below
   filepath: ${_base_location}/08_reporting/cancellation_breakdown.json
   metadata:
     kedro-viz:
@@ -15,7 +15,7 @@ reporting.cancellation_policy_breakdown:
         price: 'fleet_price'
 
 reporting.price_histogram:
-  type: plotly.JSONDataSet # Constructed via Python API
+  type: plotly.JSONDataset # Constructed via Python API
   filepath: ${_base_location}/08_reporting/price_histogram.json
   metadata:
     kedro-viz:
@@ -23,7 +23,7 @@ reporting.price_histogram:
   versioned: true
 
 reporting.feature_importance:
-  type: plotly.JSONDataSet # Constructed via Python API
+  type: plotly.JSONDataset # Constructed via Python API
   filepath: ${_base_location}/08_reporting/feature_importance_plot.json
   metadata:
     kedro-viz:
@@ -31,7 +31,7 @@ reporting.feature_importance:
   versioned: true
 
 reporting.cancellation_policy_grid:
-  type: demo_project.extras.datasets.image_dataset.ImageDataSet
+  type: demo_project.extras.datasets.image_dataset.ImageDataset
   filepath: ${_base_location}/08_reporting/cancellation_policy_grid.png
 
 reporting.confusion_matrix:
