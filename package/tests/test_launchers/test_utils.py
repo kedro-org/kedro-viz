@@ -1,10 +1,15 @@
 from unittest import mock
-from unittest.mock import Mock
+from unittest.mock import Mock, call, patch
 
 import pytest
 import requests
 
-from kedro_viz.launchers.utils import _check_viz_up, _start_browser
+from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
+from kedro_viz.launchers.utils import (
+    _check_viz_up,
+    _start_browser,
+    viz_deploy_progress_timer,
+)
 
 
 @pytest.mark.parametrize(
@@ -46,3 +51,18 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
 
     result = _check_viz_up(host, port)
     assert result == expected_result
+
+
+def test_viz_deploy_progress_timer(capsys):
+    with patch("kedro_viz.launchers.utils.sleep") as mock_sleep:
+        viz_deploy_progress_timer()
+
+    assert mock_sleep.call_count == VIZ_DEPLOY_TIME_LIMIT + 1
+
+    expected_sleep_calls = [call(1)] * (VIZ_DEPLOY_TIME_LIMIT + 1)
+    mock_sleep.assert_has_calls(expected_sleep_calls)
+    captured = capsys.readouterr()
+
+    for second in range(1, VIZ_DEPLOY_TIME_LIMIT + 1):
+        expected_output = f"...Creating your webpage ({second}s)"
+        assert expected_output in captured.out

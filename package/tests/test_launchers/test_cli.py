@@ -25,7 +25,7 @@ def patched_start_browser(mocker):
     "command_options,run_server_args",
     [
         (
-            ["viz"],
+            ["viz", "run"],
             {
                 "host": "127.0.0.1",
                 "port": 4141,
@@ -41,6 +41,7 @@ def patched_start_browser(mocker):
         (
             [
                 "viz",
+                "run",
                 "--host",
                 "localhost",
             ],
@@ -59,25 +60,26 @@ def patched_start_browser(mocker):
         (
             [
                 "viz",
+                "run",
                 "--host",
                 "8.8.8.8",
                 "--port",
                 "4142",
                 "--no-browser",
                 "--save-file",
-                "save.json",
+                "save_dir",
                 "--pipeline",
                 "data_science",
                 "--env",
                 "local",
                 "--params",
-                "extra_param:param",
+                "extra_param=param",
             ],
             {
                 "host": "8.8.8.8",
                 "port": 4142,
                 "load_file": None,
-                "save_file": "save.json",
+                "save_file": "save_dir",
                 "pipeline_name": "data_science",
                 "env": "local",
                 "autoreload": False,
@@ -86,7 +88,7 @@ def patched_start_browser(mocker):
             },
         ),
         (
-            ["viz", "--ignore-plugins"],
+            ["viz", "run", "--ignore-plugins"],
             {
                 "host": "127.0.0.1",
                 "port": 4141,
@@ -114,7 +116,7 @@ def test_kedro_viz_command_run_server(
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
 
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, command_options)
+        runner.invoke(cli.viz_cli, command_options)
 
     process_init.assert_called_once_with(
         target=run_server, daemon=False, kwargs={**run_server_args}
@@ -134,7 +136,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
     mock_click_echo_calls = [
         call(
@@ -144,11 +146,7 @@ def test_kedro_viz_command_should_log_outdated_version(mocker, mock_http_respons
             "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
             "You can view the complete changelog at "
             "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
-        ),
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        ),
+        )
     ]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
@@ -164,14 +162,9 @@ def test_kedro_viz_command_should_not_log_latest_version(mocker, mock_http_respo
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
-    mock_click_echo_calls = [
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        )
-    ]
+    mock_click_echo_calls = [call("\x1b[32mStarting Kedro Viz ...\x1b[0m")]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
@@ -184,14 +177,9 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_http_resp
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz"])
+        runner.invoke(cli.viz_cli, ["viz", "run"])
 
-    mock_click_echo_calls = [
-        call(
-            "\x1b[33mWARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.\x1b[0m",
-        )
-    ]
+    mock_click_echo_calls = [call("\x1b[32mStarting Kedro Viz ...\x1b[0m")]
 
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
@@ -206,7 +194,7 @@ def test_kedro_viz_command_with_autoreload(
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
-        runner.invoke(cli.commands, ["viz", "--autoreload"])
+        runner.invoke(cli.viz_cli, ["viz", "run", "--autoreload"])
 
     run_process_kwargs = {
         "path": mock_project_path,
@@ -231,3 +219,108 @@ def test_kedro_viz_command_with_autoreload(
         target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
     assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES
+
+
+def test_viz_command_group(mocker):
+    mock_click_echo = mocker.patch("click.echo")
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        runner.invoke(cli.viz_cli, ["viz"])
+
+    mock_click_echo_calls = [
+        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
+        call(
+            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
+            "Visualise a Kedro pipeline using Kedro viz.\n\n"
+            "Options:\n  --help  Show this message and exit.\n\n"
+            "Commands:\n  deploy  Deploy and host Kedro Viz on AWS S3\n  "
+            "run     Launch local Kedro Viz instance\x1b[0m"
+        ),
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
+@pytest.mark.parametrize(
+    "command_options, deployer_args",
+    [
+        (
+            [
+                "viz",
+                "deploy",
+                "--region",
+                "us-east-2",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {"region": "us-east-2", "bucket_name": "example-bucket"},
+        ),
+        (
+            ["viz", "deploy", "--region", "us-east-1", "--bucket-name", "shareable"],
+            {"region": "us-east-1", "bucket_name": "shareable"},
+        ),
+    ],
+)
+def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mocker):
+    runner = CliRunner()
+    mocker.patch("fsspec.filesystem")
+    load_and_populate_data_mock = mocker.patch(
+        "kedro_viz.launchers.cli.load_and_populate_data"
+    )
+
+    expected_url = f"http://{deployer_args.get('bucket_name')} \
+    .s3-website.{deployer_args.get('region')}.amazonaws.com"
+
+    s3_deployer_mock_instance = mocker.patch(
+        "kedro_viz.launchers.cli.S3Deployer"
+    ).return_value
+    s3_deployer_mock_instance.deploy_and_get_url.return_value = expected_url
+
+    mock_click_echo = mocker.patch("click.echo")
+
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli.viz_cli, command_options)
+
+    assert result.exit_code == 0
+
+    load_and_populate_data_mock.assert_called_once()
+
+    mock_click_echo_calls = [
+        call(
+            "\x1b[32m\u2728 Success! Kedro Viz has been deployed on AWS S3. "
+            "It can be accessed at :\n"
+            f"{expected_url}\x1b[0m"
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
+def test_viz_deploy_invalid_region(mocker):
+    runner = CliRunner()
+    mock_click_echo = mocker.patch("click.echo")
+    with runner.isolated_filesystem():
+        result = runner.invoke(
+            cli.viz_cli,
+            [
+                "viz",
+                "deploy",
+                "--region",
+                "invalid-region",
+                "--bucket-name",
+                "example-bucket",
+            ],
+        )
+
+    assert result.exit_code == 0
+    mock_click_echo_calls = [
+        call(
+            "\x1b[31mERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
+            "Please find the complete list of available regions at :\n"
+            "https://docs.aws.amazon.com/AmazonRDS/latest"
+            "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
+            "#Concepts.RegionsAndAvailabilityZones.Regions\x1b[0m"
+        )
+    ]
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)

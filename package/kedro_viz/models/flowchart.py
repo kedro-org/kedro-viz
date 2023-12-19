@@ -20,13 +20,13 @@ try:
     from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io.core import DataSetError as DatasetError
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
 try:
     # kedro 0.18.12 onwards
     from kedro.io.core import AbstractDataset
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset
+    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -407,18 +407,14 @@ class ModularPipelineNode(GraphNode):
         Intuitively, the set of inputs for this modular pipeline is the set of all
         external and internal inputs, excluding the ones also serving as outputs.
         """
-        return (self.external_inputs | self.internal_inputs) - (
-            self.external_outputs | self.internal_outputs
-        )
+        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
 
     @property
     def outputs(self) -> Set[str]:
         """Return a set of inputs for this modular pipeline.
         Follow the same logic as the inputs calculation.
         """
-        return (self.external_outputs | self.internal_outputs) - (
-            self.external_inputs | self.internal_inputs
-        )
+        return self.external_outputs | (self.internal_outputs - self.internal_inputs)
 
 
 class TaskNodeMetadata(GraphNodeMetadata):

@@ -12,19 +12,40 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
-from kedro_viz.launchers.utils import _check_viz_up, _start_browser, _wait_for
+from kedro_viz.launchers.utils import (
+    _check_viz_up,
+    _start_browser,
+    _wait_for,
+    viz_deploy_progress_timer,
+)
+from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
 @click.group(name="Kedro-Viz")
-def commands():  # pylint: disable=missing-function-docstring
+def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@commands.command(context_settings={"help_option_names": ["-h", "--help"]})
+@viz_cli.group(invoke_without_command=True)
+@click.pass_context
+def viz(ctx):
+    """Visualise a Kedro pipeline using Kedro viz."""
+    if ctx.invoked_subcommand is None:
+        click.echo(
+            click.style(
+                "\nDid you mean this ? \n kedro viz run \n\n",
+                fg="yellow",
+            )
+        )
+        click.echo(click.style(f"{ctx.get_help()}"))
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--host",
     default=DEFAULT_HOST,
@@ -89,7 +110,7 @@ def commands():  # pylint: disable=missing-function-docstring
     callback=_split_params,
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
-def viz(
+def run(
     host,
     port,
     browser,
@@ -101,7 +122,7 @@ def viz(
     ignore_plugins,
     params,
 ):
-    """Visualise a Kedro pipeline using Kedro viz."""
+    """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
 
     installed_version = parse(__version__)
@@ -118,14 +139,6 @@ def viz(
                 fg="yellow",
             ),
         )
-
-    click.echo(
-        click.style(
-            "WARNING: The `kedro viz` command will be deprecated with the release of "
-            "Kedro-Viz 7.0.0. `kedro viz run` will be the new way to run the tool.",
-            fg="yellow",
-        ),
-    )
 
     try:
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
@@ -160,12 +173,26 @@ def viz(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
+        click.echo(
+            click.style(
+                "Starting Kedro Viz ...",
+                fg="green",
+            ),
+        )
+
         viz_process.start()
+
         _VIZ_PROCESSES[port] = viz_process
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
-        print("Kedro Viz Backend Server started successfully...")
+        click.echo(
+            click.style(
+                "Kedro Viz started successfully. \n\n"
+                f"\u2728 Kedro Viz is running at \n http://{host}:{port}/",
+                fg="green",
+            )
+        )
 
         if browser:
             _start_browser(host, port)
@@ -173,3 +200,73 @@ def viz(
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
+@click.option(
+    "--region",
+    type=str,
+    required=True,
+    help="AWS region where your S3 bucket is located",
+)
+@click.option(
+    "--bucket-name",
+    type=str,
+    required=True,
+    help="AWS S3 bucket name where Kedro Viz will be hosted",
+)
+def deploy(region, bucket_name):
+    """Deploy and host Kedro Viz on AWS S3"""
+    if region not in AWS_REGIONS:
+        click.echo(
+            click.style(
+                "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
+                "Please find the complete list of available regions at :\n"
+                "https://docs.aws.amazon.com/AmazonRDS/latest"
+                "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
+                "#Concepts.RegionsAndAvailabilityZones.Regions",
+                fg="red",
+            ),
+        )
+        return
+
+    try:
+        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
+        viz_deploy_timer.start()
+
+        # Loads and populates data from underlying Kedro Project
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+
+        # Start the deployment
+        deployer = S3Deployer(region, bucket_name)
+        url = deployer.deploy_and_get_url()
+
+        click.echo(
+            click.style(
+                "\u2728 Success! Kedro Viz has been deployed on AWS S3. It can be accessed at :\n"
+                f"{url}",
+                fg="green",
+            ),
+        )
+    except PermissionError:  # pragma: no cover
+        click.echo(
+            click.style(
+                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
+                "AWS access keys, a valid AWS region and bucket name.\n"
+                "Please supply your AWS access keys as environment variables "
+                "and make sure the AWS region and bucket name are valid.\n"
+                "More information can be found at : "
+                "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
+                fg="red",
+            )
+        )
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        click.echo(
+            click.style(
+                f"ERROR: Failed to deploy and host Kedro-Viz on AWS S3 : {exc} ",
+                fg="red",
+            )
+        )
+    finally:
+        viz_deploy_timer.terminate()

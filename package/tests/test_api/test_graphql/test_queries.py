@@ -170,10 +170,7 @@ class TestQueryWithRuns:
         assert response.json() == expected_response
 
     def test_metrics_data(
-        self,
-        client,
-        example_tracking_catalog,
-        data_access_manager_with_runs,
+        self, client, example_tracking_catalog, data_access_manager_with_runs
     ):
         data_access_manager_with_runs.add_catalog(example_tracking_catalog)
 

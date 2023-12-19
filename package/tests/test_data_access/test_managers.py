@@ -2,14 +2,13 @@ from typing import Dict
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
-from kedro_viz.data_access.repositories.catalog import CatalogRepository
 from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
@@ -19,13 +18,6 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 
-try:
-    # kedro 0.18.11 onwards
-    from kedro.io import MemoryDataset
-except ImportError:
-    # older versions
-    from kedro.io import MemoryDataSet as MemoryDataset
-
 
 def identity(x):
     return x
@@ -34,7 +26,7 @@ def identity(x):
 class TestAddCatalog:
     def test_add_catalog(self, data_access_manager: DataAccessManager):
         dataset = CSVDataset(filepath="dataset.csv")
-        catalog = DataCatalog(data_sets={"dataset": dataset})
+        catalog = DataCatalog(datasets={"dataset": dataset})
         data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
 
@@ -86,7 +78,7 @@ class TestAddNode:
 
         # add its input to the graph
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
@@ -142,7 +134,8 @@ class TestAddNode:
         assert task_node.parameters == {"train_test_split": 0.1}
 
     def test_parameters_yaml_namespace_not_added_to_modular_pipelines(
-        self, data_access_manager: DataAccessManager
+        self,
+        data_access_manager: DataAccessManager,
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
@@ -180,7 +173,7 @@ class TestAddNode:
 
         # add its output to the graph
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(registered_pipeline_id, dataset_name)
@@ -210,10 +203,7 @@ class TestAddDataset:
     def test_add_dataset(self, data_access_manager: DataAccessManager):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
-        catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
-            layers={"raw": {dataset_name}},
-        )
+        catalog = DataCatalog(datasets={dataset_name: dataset})
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
 
@@ -223,7 +213,6 @@ class TestAddDataset:
         graph_node = nodes_list[0]
         assert isinstance(graph_node, DataNode)
         assert graph_node.kedro_obj is dataset
-        assert graph_node.layer == "raw"
         assert graph_node.belongs_to_pipeline("my_pipeline")
         assert not graph_node.modular_pipelines
 
@@ -246,7 +235,7 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "uk.data_science.x"
         catalog = DataCatalog(
-            data_sets={dataset_name: dataset},
+            datasets={dataset_name: dataset},
         )
         data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset("my_pipeline", dataset_name)
@@ -465,25 +454,3 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
-
-
-class TestResolveDatasetFactoryPatterns:
-    def test_resolve_dataset_factory_patterns(
-        self,
-        example_catalog,
-        pipeline_with_datasets_mock,
-        pipeline_with_data_sets_mock,
-        data_access_manager: DataAccessManager,
-    ):
-        pipelines = {
-            "pipeline1": pipeline_with_datasets_mock,
-            "pipeline2": pipeline_with_data_sets_mock,
-        }
-        new_catalog = CatalogRepository()
-        new_catalog.set_catalog(example_catalog)
-
-        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
-
-        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
-
-        assert "model_inputs#csv" in new_catalog.as_dict().keys()

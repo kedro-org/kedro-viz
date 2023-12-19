@@ -3,13 +3,17 @@
 
 This section assumes you are familiar with the basic Kedro concepts described in the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>`. If you have not yet worked through the tutorial, you can still follow this example.
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. Then, in your terminal window, navigate to the folder you want to store the project.
+If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
-Generate a copy of the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
+```{important}
+We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
+```
+
+In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
 
 ```bash
-kedro new --starter=spaceflights
+kedro new --starter=spaceflights-pandas
 ```
 
 When prompted for a project name, you can enter anything, but we will assume `Spaceflights` throughout.
@@ -29,12 +33,12 @@ kedro run
 To start Kedro-Viz, type the following into your terminal from the project directory:
 
 ```bash
-kedro viz
+kedro viz run
 ```
 
 ```{important}
-The `kedro viz` command will be deprecated with the release of Kedro-Viz 7.0.0. 
-`kedro viz run` will be the new way to run the tool.
+The former `kedro viz` command used here is now deprecated with the release of Kedro-Viz 7.0.0. 
+`kedro viz run` is now the new way to run the tool.
 ```
 
 The command opens a browser tab to serve the visualisation at `http://127.0.0.1:4141/`.
@@ -55,7 +59,7 @@ To exit the visualisation, close the browser tab. To regain control of the termi
 You can use the `--autoreload` flag to autoreload Kedro-Viz when a `Python` or `YAML` file changes in the project. Add the flag to the command you use to start Kedro-Viz:
 
 ```bash
-kedro viz --autoreload
+kedro viz run --autoreload
 ```
 
 ![](./images/kedro_viz_autoreload.gif)
@@ -158,7 +162,7 @@ The visualisation now includes the layers:
 You can share a pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
 
 ```bash
-kedro viz --save-file=my_shareable_pipeline.json
+kedro viz run --save-file=my_shareable_pipeline
 ```
 
 This command will save a visualisation of the `__default__` pipeline as a JSON file called `my_shareable_pipeline.json`. It doesn't share data, such as that in the code panel, nor can you share images or charts.
@@ -166,7 +170,7 @@ This command will save a visualisation of the `__default__` pipeline as a JSON f
 To visualise the shared file, type the following to load it from the terminal:
 
 ```bash
-kedro viz --load-file=my_shareable_pipeline.json
+kedro viz run --load-file=my_shareable_pipeline
 ```
 
 You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 

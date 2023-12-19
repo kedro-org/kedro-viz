@@ -1,9 +1,9 @@
 train_evaluation.linear_regression.regressor:
-  type: pickle.PickleDataSet
+  type: pickle.PickleDataset
   filepath: ${_base_location}/06_models/linear_regression.pkl
   versioned: True
 
 train_evaluation.random_forest.regressor:
-  type: pickle.PickleDataSet
+  type: pickle.PickleDataset
   filepath: ${_base_location}/06_models/random_forest.pkl
   versioned: True

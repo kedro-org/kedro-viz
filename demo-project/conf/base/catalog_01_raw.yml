@@ -1,5 +1,5 @@
 companies:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: ${_base_location}/01_raw/companies.csv
   metadata:
     kedro-viz:
@@ -8,7 +8,7 @@ companies:
         nrows: 5
 
 reviews:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: ${_base_location}/01_raw/reviews.csv
   metadata:
     kedro-viz:
@@ -18,7 +18,7 @@ reviews:
 
 
 shuttles:
-  type: pandas.ExcelDataSet
+  type: pandas.ExcelDataset
   filepath: ${_base_location}/01_raw/shuttles.xlsx
   metadata:
     kedro-viz:

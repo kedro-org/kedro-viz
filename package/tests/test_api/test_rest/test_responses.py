@@ -80,12 +80,12 @@ def assert_modular_pipelines_tree_equal(response: Dict, expected: Dict):
 def assert_example_data(response_data):
     """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
     expected_edges = [
-        {"source": "7b140b3f", "target": "d5a8b994"},
-        {"source": "f2e4bf0e", "target": "0ecea0de"},
-        {"source": "13399a82", "target": "f2e4bf0e"},
-        {"source": "f1f1425b", "target": "7b140b3f"},
-        {"source": "0ecea0de", "target": "7b140b3f"},
-        {"source": "f0ebef01", "target": "f2e4bf0e"},
+        {"source": "f2b25286", "target": "d5a8b994"},
+        {"source": "782e4a43", "target": "0ecea0de"},
+        {"source": "13399a82", "target": "782e4a43"},
+        {"source": "f1f1425b", "target": "f2b25286"},
+        {"source": "0ecea0de", "target": "f2b25286"},
+        {"source": "f0ebef01", "target": "782e4a43"},
         {"source": "13399a82", "target": "uk.data_processing"},
         {"source": "uk.data_processing", "target": "0ecea0de"},
         {"source": "f0ebef01", "target": "uk.data_processing"},
@@ -96,6 +96,7 @@ def assert_example_data(response_data):
         {"source": "uk.data_science", "target": "d5a8b994"},
         {"source": "0ecea0de", "target": "uk.data_science"},
         {"source": "uk", "target": "d5a8b994"},
+        {"source": "uk", "target": "0ecea0de"},
     ]
     assert_dict_list_equal(
         response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -103,7 +104,7 @@ def assert_example_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "f2e4bf0e",
+            "id": "782e4a43",
             "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
@@ -145,7 +146,7 @@ def assert_example_data(response_data):
             "stats": {"columns": 12, "rows": 29768},
         },
         {
-            "id": "7b140b3f",
+            "id": "f2b25286",
             "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
@@ -234,14 +235,14 @@ def assert_example_data(response_data):
                 {"id": "uk.data_processing", "type": "modularPipeline"},
             ],
             "id": "uk",
-            "inputs": ["f0ebef01", "13399a82", "f1f1425b"],
+            "inputs": ["f0ebef01", "13399a82", "f1f1425b", "0ecea0de"],
             "name": "uk",
-            "outputs": ["d5a8b994"],
+            "outputs": ["d5a8b994", "0ecea0de"],
         },
         "uk.data_processing": {
             "children": [
                 {"id": "13399a82", "type": "data"},
-                {"id": "f2e4bf0e", "type": "task"},
+                {"id": "782e4a43", "type": "task"},
             ],
             "id": "uk.data_processing",
             "inputs": ["f0ebef01", "13399a82"],
@@ -250,7 +251,7 @@ def assert_example_data(response_data):
         },
         "uk.data_science": {
             "children": [
-                {"id": "7b140b3f", "type": "task"},
+                {"id": "f2b25286", "type": "task"},
                 {"id": "d5a8b994", "type": "data"},
             ],
             "id": "uk.data_science",
@@ -279,12 +280,12 @@ def assert_example_data(response_data):
 def assert_example_data_from_file(response_data):
     """Assert graph response for the `example_pipelines` and `example_catalog` fixtures."""
     expected_edges = [
-        {"source": "7b140b3f", "target": "d5a8b994"},
-        {"source": "f2e4bf0e", "target": "0ecea0de"},
-        {"source": "13399a82", "target": "f2e4bf0e"},
-        {"source": "f1f1425b", "target": "7b140b3f"},
-        {"source": "0ecea0de", "target": "7b140b3f"},
-        {"source": "f0ebef01", "target": "f2e4bf0e"},
+        {"source": "f2b25286", "target": "d5a8b994"},
+        {"source": "782e4a43", "target": "0ecea0de"},
+        {"source": "13399a82", "target": "782e4a43"},
+        {"source": "f1f1425b", "target": "f2b25286"},
+        {"source": "0ecea0de", "target": "f2b25286"},
+        {"source": "f0ebef01", "target": "782e4a43"},
         {"source": "13399a82", "target": "uk.data_processing"},
         {"source": "uk.data_processing", "target": "0ecea0de"},
         {"source": "f0ebef01", "target": "uk.data_processing"},
@@ -302,7 +303,7 @@ def assert_example_data_from_file(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "f2e4bf0e",
+            "id": "782e4a43",
             "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
@@ -341,7 +342,7 @@ def assert_example_data_from_file(response_data):
             "dataset_type": "pandas.csv_dataset.CSVDataset",
         },
         {
-            "id": "7b140b3f",
+            "id": "f2b25286",
             "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
@@ -431,7 +432,7 @@ def assert_example_data_from_file(response_data):
         "uk.data_processing": {
             "children": [
                 {"id": "13399a82", "type": "data"},
-                {"id": "f2e4bf0e", "type": "task"},
+                {"id": "782e4a43", "type": "task"},
             ],
             "id": "uk.data_processing",
             "inputs": ["f0ebef01", "13399a82"],
@@ -440,7 +441,7 @@ def assert_example_data_from_file(response_data):
         },
         "uk.data_science": {
             "children": [
-                {"id": "7b140b3f", "type": "task"},
+                {"id": "f2b25286", "type": "task"},
                 {"id": "d5a8b994", "type": "data"},
             ],
             "id": "uk.data_science",
@@ -470,12 +471,12 @@ def assert_example_transcoded_data(response_data):
     """Assert graph response for the `example_transcoded_pipelines`
     and `example_transcoded_catalog` fixtures."""
     expected_edges = [
-        {"source": "f1f1425b", "target": "2302ea78"},
-        {"source": "f0ebef01", "target": "2a1abe98"},
-        {"source": "7c58d8e6", "target": "2a1abe98"},
-        {"source": "2a1abe98", "target": "0ecea0de"},
-        {"source": "2302ea78", "target": "1d06a0d7"},
-        {"source": "0ecea0de", "target": "2302ea78"},
+        {"source": "f1f1425b", "target": "7e29e365"},
+        {"source": "f0ebef01", "target": "58a383dd"},
+        {"source": "7c58d8e6", "target": "58a383dd"},
+        {"source": "58a383dd", "target": "0ecea0de"},
+        {"source": "7e29e365", "target": "1d06a0d7"},
+        {"source": "0ecea0de", "target": "7e29e365"},
     ]
     assert_dict_list_equal(
         response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -483,7 +484,7 @@ def assert_example_transcoded_data(response_data):
     # compare nodes
     expected_nodes = [
         {
-            "id": "2a1abe98",
+            "id": "58a383dd",
             "name": "process_data",
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
@@ -525,7 +526,7 @@ def assert_example_transcoded_data(response_data):
             "stats": None,
         },
         {
-            "id": "2302ea78",
+            "id": "7e29e365",
             "name": "train_model",
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
@@ -606,7 +607,7 @@ class TestNodeMetadataEndpoint:
         assert response.status_code == 404
 
     def test_task_node_metadata(self, client):
-        response = client.get("/api/nodes/f2e4bf0e")
+        response = client.get("/api/nodes/782e4a43")
         metadata = response.json()
         assert (
             metadata["code"].lstrip()
@@ -654,7 +655,7 @@ class TestNodeMetadataEndpoint:
 
     def test_no_metadata(self, client):
         with mock.patch.object(TaskNode, "has_metadata", return_value=False):
-            response = client.get("/api/nodes/f2e4bf0e")
+            response = client.get("/api/nodes/782e4a43")
         assert response.json() == {}
 
 
@@ -664,15 +665,15 @@ class TestSinglePipelineEndpoint:
         assert response.status_code == 200
         response_data = response.json()
         expected_edges = [
-            {"source": "7b140b3f", "target": "d5a8b994"},
+            {"source": "f2b25286", "target": "d5a8b994"},
             {"source": "f1f1425b", "target": "uk.data_science"},
-            {"source": "f1f1425b", "target": "7b140b3f"},
+            {"source": "f1f1425b", "target": "f2b25286"},
             {"source": "uk.data_science", "target": "d5a8b994"},
             {"source": "uk", "target": "d5a8b994"},
             {"source": "0ecea0de", "target": "uk"},
             {"source": "0ecea0de", "target": "uk.data_science"},
             {"source": "f1f1425b", "target": "uk"},
-            {"source": "0ecea0de", "target": "7b140b3f"},
+            {"source": "0ecea0de", "target": "f2b25286"},
         ]
         assert_dict_list_equal(
             response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -690,7 +691,7 @@ class TestSinglePipelineEndpoint:
                 "stats": {"columns": 12, "rows": 29768},
             },
             {
-                "id": "7b140b3f",
+                "id": "f2b25286",
                 "name": "train_model",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
@@ -772,7 +773,7 @@ class TestSinglePipelineEndpoint:
             "uk.data_science": {
                 "children": [
                     {"id": "d5a8b994", "type": "data"},
-                    {"id": "7b140b3f", "type": "task"},
+                    {"id": "f2b25286", "type": "task"},
                 ],
                 "id": "uk.data_science",
                 "inputs": ["0ecea0de", "f1f1425b"],
