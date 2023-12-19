@@ -79,7 +79,7 @@ class DataAccessManager:
 
         # TODO: Implement dataset factory pattern discovery for
         # experiment tracking datasets.
-        
+
         self.catalog.set_catalog(catalog)
 
         for dataset_name, dataset in self.catalog.as_dict().items():
