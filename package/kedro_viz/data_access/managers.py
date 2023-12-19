@@ -102,7 +102,7 @@ class DataAccessManager:
             catalog: The DataCatalog instance to add.
             pipelines: A dictionary which holds project pipelines
         """
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
+        # self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
 
         for dataset_name, dataset in self.catalog.as_dict().items():

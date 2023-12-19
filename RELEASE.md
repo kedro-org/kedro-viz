@@ -19,7 +19,6 @@ Please follow the established format:
 ## Bug fixes and other changes
 - Fix modular pipelines breaking when collapsed on the flowchart. (#1651)
 - Display hosted URL in CLI while launching Kedro viz. (#1644)
-- Fix dataset existence check in factory pattern discovery (#1659)
 - Fix Kedro-viz display on Jupyter notebooks. (#1658)
 - Fix zoom issues on the flowchart. (#1672)
 - Fix bug on `kedro-viz run --load-file`. (#1677)
