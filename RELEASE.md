@@ -5,24 +5,24 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
-
-## Major features and improvements
-
-- Display hosted URL in CLI while launching kedro viz. (#1644)
-- AWS focussed CLI implementation `kedro viz deploy` for shareable viz. (#1661)
-
-## Bug fixes and other changes
-
-- Fix for dataset existence check in factory pattern discovery (#1659)
-- Remove support for Python 3.7 (#1660)
-- Adjust CLI to use 'kedro viz run' instead of 'kedro viz' (#1671)
-
 # Release 7.0.0
 
 ## Major features and improvements
 
-- Bump minimum version of React from 17.0.2 to 18.2.0. (#1652)
+- Upgrade to `React 18`. (#1652)
+- Change CLI command to run Kedro-viz to`kedro viz run`. (#1671)
+- Add deploy command to the CLI using `kedro viz deploy` for sharing Kedro-viz on AWS. (#1661)
+- Add support for `kedro==0.19`and `kedro-datasets==2.0`. (#1677)
+- Drop support for `python=3.7`. (#1660)
+- Drop support for `kedro==0.17.x`. (#1669)
+
+## Bug fixes and other changes
+- Fix modular pipelines breaking when collapsed on the flowchart. (#1651)
+- Display hosted URL in CLI while launching Kedro viz. (#1644)
+- Fix Kedro-viz display on Jupyter notebooks. (#1658)
+- Fix zoom issues on the flowchart. (#1672)
+- Fix bug on `kedro-viz run --load-file`. (#1677)
+- Fix bug on adding timestamps to shareable-viz. (#1679)
 
 # Release 6.7.0 
 
