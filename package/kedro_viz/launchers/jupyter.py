@@ -107,6 +107,7 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
         else None
     )
 
+    multiprocessing.set_start_method("spawn")
     viz_process = multiprocessing.Process(
         target=run_server,
         daemon=True,
