@@ -249,7 +249,8 @@ def test_viz_command_group(mocker):
             "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
             "Visualise a Kedro pipeline using Kedro viz.\n\n"
             "Options:\n  --help  Show this message and exit.\n\n"
-            "Commands:\n  build   Create build directory of local Kedro Viz instance with static data\n  "
+            "Commands:\n  build   Create build directory of local Kedro Viz "
+            "instance with static data\n  "
             "deploy  Deploy and host Kedro Viz on AWS S3\n  "
             "run     Launch local Kedro Viz instance\x1b[0m"
         ),
@@ -374,3 +375,21 @@ def test_copy_static_files_with_existing_build_directory(mocker, path_operation)
 
     assert len(os.listdir(env["build_path"])) == 2
     assert not os.path.exists(env["build_path"] / "static")
+
+
+def test_build_with_exception(tmp_path, mocker):
+    static_files = tmp_path / "static"
+    build_path = tmp_path / "build"
+    static_files.mkdir(parents=True, exist_ok=True)
+    (static_files / "file1.txt").touch()
+
+    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", static_files)
+    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", build_path)
+
+    mocker.patch("shutil.copytree", side_effect=Exception("Test exception"))
+
+    runner = CliRunner()
+    result = runner.invoke(cli.build)
+
+    assert result.exit_code != 0
+    assert "Test exception" in result.output    

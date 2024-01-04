@@ -298,7 +298,8 @@ def build():
 
         click.echo(
             click.style(
-                f"Kedro-Viz build files have been successfully added to the {build_path} directory.",
+                f"Kedro-Viz build files have been successfully added to the "
+                f"{build_path} directory.",
                 fg="green",
             )
         )
@@ -315,6 +316,6 @@ def copy_static_files(build_path: Path):
     if build_path.exists():
         # Remove existing directory
         shutil.rmtree(build_path)
-    
+
     # Copy static files directly to the build directory
     shutil.copytree(_HTML_DIR, build_path)
