@@ -377,14 +377,10 @@ def test_copy_static_files_with_existing_build_directory(mocker, path_operation)
     assert not os.path.exists(env["build_path"] / "static")
 
 
-def test_build_with_exception(tmp_path, mocker):
-    static_files = tmp_path / "static"
-    build_path = tmp_path / "build"
-    static_files.mkdir(parents=True, exist_ok=True)
-    (static_files / "file1.txt").touch()
-
-    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", static_files)
-    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", build_path)
+def test_build_with_exception(mocker, path_operation):
+    env = path_operation
+    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
+    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
 
     mocker.patch("shutil.copytree", side_effect=Exception("Test exception"))
 
@@ -392,4 +388,4 @@ def test_build_with_exception(tmp_path, mocker):
     result = runner.invoke(cli.build)
 
     assert result.exit_code != 0
-    assert "Test exception" in result.output    
+    assert "Test exception" in result.output
