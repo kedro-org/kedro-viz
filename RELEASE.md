@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 7.1.0
+
+## Major features and improvements
+- Add build command to the CLI using `kedro viz build` for creating build directory of local Kedro Viz instance with static data. (#1615)
+
 # Release 7.0.0
 
 ## Major features and improvements

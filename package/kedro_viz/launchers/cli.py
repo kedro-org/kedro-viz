@@ -1,6 +1,7 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
 import multiprocessing
+import shutil
 import traceback
 from pathlib import Path
 from typing import Dict
@@ -24,6 +25,8 @@ from kedro_viz.launchers.utils import (
 from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
+_HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
+_BUILD_PATH = "build"
 
 
 @click.group(name="Kedro-Viz")
@@ -270,3 +273,48 @@ def deploy(region, bucket_name):
         )
     finally:
         viz_deploy_timer.terminate()
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
+def build():
+    """Create build directory of local Kedro Viz instance with static data"""
+
+    if not _HTML_DIR.exists():
+        click.echo(
+            click.style(
+                "ERROR: Directory containing Kedro Viz static files not found.",
+                fg="red",
+            ),
+        )
+        return
+
+    try:
+        # Create the build directory if not present
+        build_path = Path(_BUILD_PATH)
+        build_path.mkdir(parents=True, exist_ok=True)
+
+        # Copy static files from Kedro Viz app to the build directory
+        copy_static_files(build_path)
+
+        click.echo(
+            click.style(
+                f"Kedro-Viz build files have been successfully added to the {build_path} directory.",
+                fg="green",
+            )
+        )
+
+    except Exception as ex:
+        traceback.print_exc()
+        raise KedroCliError(str(ex)) from ex
+
+
+def copy_static_files(build_path: Path):
+    """Copy static files from Kedro-Viz app to the build directory."""
+
+    # Check if the destination directory already exists
+    if build_path.exists():
+        # Remove existing directory
+        shutil.rmtree(build_path)
+    
+    # Copy static files directly to the build directory
+    shutil.copytree(_HTML_DIR, build_path)
