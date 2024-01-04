@@ -1,5 +1,5 @@
 train_evaluation.linear_regression.r2_score:
-  type: tracking.MetricsDataSet
+  type: tracking.MetricsDataset
   filepath: ${_base_location}/09_tracking/linear_score.json
   metadata:
     kedro-viz:
@@ -7,7 +7,7 @@ train_evaluation.linear_regression.r2_score:
   versioned: True
 
 train_evaluation.random_forest.r2_score:
-  type: tracking.MetricsDataSet
+  type: tracking.MetricsDataset
   filepath: ${_base_location}/09_tracking/rf_score.json
   metadata:
     kedro-viz:
@@ -15,7 +15,7 @@ train_evaluation.random_forest.r2_score:
   versioned: True
 
 train_evaluation.linear_regression.experiment_params:
-  type: tracking.JSONDataSet
+  type: tracking.JSONDataset
   filepath: ${_base_location}/09_tracking/linear_params.json
   metadata:
     kedro-viz:
@@ -23,7 +23,7 @@ train_evaluation.linear_regression.experiment_params:
   versioned: True
 
 train_evaluation.random_forest.experiment_params:
-  type: tracking.JSONDataSet
+  type: tracking.JSONDataset
   filepath: ${_base_location}/09_tracking/rf_params.json
   metadata:
     kedro-viz:

@@ -123,7 +123,7 @@ def install_kedro(context, version):
         assert False
 
 
-@when("I execute the kedro viz command")
+@when("I execute the kedro viz run command")
 def exec_viz_command(context):
     """Execute Kedro-Viz command."""
     context.result = ChildTerminatingPopen(
