@@ -1,8 +1,8 @@
+import os
 from unittest.mock import call
 
 import pytest
 import requests
-import os
 from click.testing import CliRunner
 from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
@@ -21,18 +21,19 @@ def patched_check_viz_up(mocker):
 def patched_start_browser(mocker):
     mocker.patch("kedro_viz.launchers.cli._start_browser")
 
+
 @pytest.fixture
 def path_operation(tmp_path):
     build_path = tmp_path / "build"
     static_files = tmp_path / "static"
     static_files.mkdir(parents=True, exist_ok=True)
     (static_files / "file1.txt").touch()
-    (static_files / "file2.txt").touch()    
+    (static_files / "file2.txt").touch()
 
     return {
         "build_path": build_path,
         "static_files": static_files,
-    }  
+    }
 
 
 @pytest.mark.parametrize(
@@ -243,14 +244,14 @@ def test_viz_command_group(mocker):
         runner.invoke(cli.viz_cli, ["viz"])
 
     mock_click_echo_calls = [
-        call('\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m'),
+        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
         call(
-            'Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  '
-            'Visualise a Kedro pipeline using Kedro viz.\n\n'
-            'Options:\n  --help  Show this message and exit.\n\n'
-            'Commands:\n  build   Create build directory of local Kedro Viz instance with static data\n  '
-            'deploy  Deploy and host Kedro Viz on AWS S3\n  '
-            'run     Launch local Kedro Viz instance\x1b[0m'
+            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
+            "Visualise a Kedro pipeline using Kedro viz.\n\n"
+            "Options:\n  --help  Show this message and exit.\n\n"
+            "Commands:\n  build   Create build directory of local Kedro Viz instance with static data\n  "
+            "deploy  Deploy and host Kedro Viz on AWS S3\n  "
+            "run     Launch local Kedro Viz instance\x1b[0m"
         ),
     ]
 
@@ -352,6 +353,7 @@ def test_successful_build_with_existing_static_files(mocker, path_operation):
     assert result.exit_code == 0
     assert "successfully added" in result.output
 
+
 def test_build_failure_with_missing_static_files(mocker, tmp_path):
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", tmp_path / "non_existing")
     mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", tmp_path / "build")
@@ -361,6 +363,7 @@ def test_build_failure_with_missing_static_files(mocker, tmp_path):
 
     assert "ERROR" in result.output
     assert "not found" in result.output
+
 
 def test_copy_static_files_with_existing_build_directory(mocker, path_operation):
     env = path_operation
