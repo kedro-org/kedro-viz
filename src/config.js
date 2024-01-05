@@ -98,15 +98,11 @@ export const sidebarElementTypes = {
 };
 
 export const shortTypeMapping = {
-  'plotly.plotly_dataset.PlotlyDataset': 'plotly',
-  'plotly.json_dataset.JSONDataset': 'plotly',
+  'plotly.plotly_dataset.PlotlyDataset': 'plot',
+  'plotly.json_dataset.JSONDataset': 'plot',
   'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
-  'tracking.json_dataset.JSONDataset': 'JSONTracking',
-  'tracking.metrics_dataset.MetricsDataset': 'metricsTracking',
-  'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
-  'plotly.json_dataset.JSONDataSet': 'plotly',
-  'tracking.json_dataset.JSONDataSet': 'JSONTracking',
-  'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
+  'plotly.plotly_dataset.PlotlyDataSet': 'plot',
+  'plotly.json_dataset.JSONDataSet': 'plot',
 };
 
 export const tabLabels = ['Overview', 'Metrics', 'Plots'];

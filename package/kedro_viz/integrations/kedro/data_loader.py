@@ -3,9 +3,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 # pylint: disable=import-outside-toplevel, protected-access
-# pylint: disable=missing-function-docstring
 
-import base64
 import json
 import logging
 from pathlib import Path
@@ -14,24 +12,7 @@ from typing import Any, Dict, Optional, Tuple
 from kedro import __version__
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
-
-try:
-    from kedro_datasets import (  # isort:skip
-        json as json_dataset,
-        matplotlib,
-        plotly,
-        tracking,
-    )
-except ImportError:  # kedro_datasets is not installed.
-    from kedro.extras.datasets import (  # Safe since ImportErrors are suppressed within kedro.
-        json as json_dataset,
-        matplotlib,
-        plotly,
-        tracking,
-    )
-
 from kedro.io import DataCatalog
-from kedro.io.core import get_filepath_str
 from kedro.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
@@ -129,50 +110,3 @@ def load_data(
         stats_dict = _get_dataset_stats(project_path)
 
     return catalog, pipelines_dict, session_store, stats_dict
-
-
-# Try to access the attribute to trigger the import of dependencies, only modify the _load
-# if dependencies are installed.
-# These datasets do not have _load methods defined (tracking and matplotlib) or do not
-# load to json (plotly), hence the need to define _load here.
-try:
-    getattr(matplotlib, "MatplotlibWriter")  # Trigger the lazy import
-
-    def matplotlib_writer_load(dataset: matplotlib.MatplotlibWriter) -> str:
-        load_path = get_filepath_str(dataset._get_load_path(), dataset._protocol)
-        with dataset._fs.open(load_path, mode="rb") as img_file:
-            base64_bytes = base64.b64encode(img_file.read())
-        return base64_bytes.decode("utf-8")
-
-    matplotlib.MatplotlibWriter._load = matplotlib_writer_load
-except (ImportError, AttributeError):
-    pass
-
-try:
-    getattr(plotly, "JSONDataset")  # Trigger import
-    plotly.JSONDataset._load = json_dataset.JSONDataset._load
-except (ImportError, AttributeError):
-    getattr(plotly, "JSONDataSet")  # Trigger import
-    plotly.JSONDataSet._load = json_dataset.JSONDataSet._load
-
-
-try:
-    getattr(plotly, "PlotlyDataset")  # Trigger import
-    plotly.PlotlyDataset._load = json_dataset.JSONDataset._load
-except (ImportError, AttributeError):
-    getattr(plotly, "PlotlyDataSet")  # Trigger import
-    plotly.PlotlyDataSet._load = json_dataset.JSONDataSet._load
-
-try:
-    getattr(tracking, "JSONDataset")  # Trigger import
-    tracking.JSONDataset._load = json_dataset.JSONDataset._load
-except (ImportError, AttributeError):
-    getattr(tracking, "JSONDataSet")  # Trigger import
-    tracking.JSONDataSet._load = json_dataset.JSONDataSet._load
-
-try:
-    getattr(tracking, "MetricsDataset")  # Trigger import
-    tracking.MetricsDataset._load = json_dataset.JSONDataset._load
-except (ImportError, AttributeError):
-    getattr(tracking, "MetricsDataSet")  # Trigger import
-    tracking.MetricsDataSet._load = json_dataset.JSONDataSet._load

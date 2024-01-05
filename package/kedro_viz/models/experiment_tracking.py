@@ -1,6 +1,7 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
 # pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
+import inspect
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -11,8 +12,6 @@ from sqlalchemy import Column
 from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
-
-from .utils import get_dataset_type
 
 if TYPE_CHECKING:
     try:
@@ -63,17 +62,12 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# Map dataset types (as produced by get_dataset_type) to their group
+# Map dataset types to their group
 TRACKING_DATASET_GROUPS = {
-    "plotly.plotly_dataset.PlotlyDataset": TrackingDatasetGroup.PLOT,
-    "plotly.json_dataset.JSONDataset": TrackingDatasetGroup.PLOT,
-    "matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
-    "tracking.metrics_dataset.MetricsDataset": TrackingDatasetGroup.METRIC,
-    "tracking.json_dataset.JSONDataset": TrackingDatasetGroup.JSON,
-    "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
-    "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
-    "tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
-    "tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
+    "plot": TrackingDatasetGroup.PLOT,
+    "image": TrackingDatasetGroup.PLOT,
+    "metricsTracking": TrackingDatasetGroup.METRIC,
+    "JSONTracking": TrackingDatasetGroup.JSON,
 }
 
 
@@ -90,7 +84,9 @@ class TrackingDatasetModel:
     runs: Dict[str, Any] = field(init=False, default_factory=dict)
 
     def __post_init__(self):
-        self.dataset_type = get_dataset_type(self.dataset)
+        self.dataset_type = inspect.signature(
+            self.dataset._preview
+        ).return_annotation.__name__
 
     def load_tracking_data(self, run_id: str):
         # No need to reload data that has already been loaded.
@@ -110,9 +106,11 @@ class TrackingDatasetModel:
 
         try:
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
-                self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
+                self.runs[run_id] = {
+                    self.dataset._filepath.name: self.dataset._preview()
+                }
             else:
-                self.runs[run_id] = self.dataset.load()
+                self.runs[run_id] = self.dataset._preview()
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s: %s",

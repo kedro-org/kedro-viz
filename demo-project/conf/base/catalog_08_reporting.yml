@@ -4,6 +4,7 @@ reporting.cancellation_policy_breakdown:
   metadata:
     kedro-viz:
       layer: reporting
+      preview_args: {}
   plotly_args:
     type: bar
     fig:

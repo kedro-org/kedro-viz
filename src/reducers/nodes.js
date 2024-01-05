@@ -81,6 +81,9 @@ function nodeReducer(nodeState = {}, action) {
         preview: Object.assign({}, nodeState.preview, {
           [id]: data.preview,
         }),
+        previewType: Object.assign({}, nodeState.previewType, {
+          [id]: data.preview_type,
+        }),
         stats: Object.assign({}, nodeState.stats, {
           [id]: data.stats,
         }),

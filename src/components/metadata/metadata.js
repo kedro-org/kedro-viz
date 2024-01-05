@@ -55,11 +55,13 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = metadata?.preview?.type === 'plotly';
-  const hasImage = metadata?.preview?.type === 'image';
-  const hasJson = metadata?.preview?.type === 'json';
-  const hasDataFrame = metadata?.preview?.type === 'dataframe';
-  const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
+  const hasPlot = metadata?.previewType === 'plot';
+  const hasImage = metadata?.previewType === 'image';
+  const hasJson =
+    metadata?.previewType === 'JSONData' ||
+    metadata?.previewType === 'JSONTracking';
+  const hasDataFrame = metadata?.previewType === 'dataframe';
+  const isMetricsTrackingDataset = metadata?.previewType === 'metricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -196,7 +198,7 @@ const MetaData = ({
                     kind="trackingData"
                     commas={false}
                     inline={false}
-                    value={metadata.preview.content}
+                    value={metadata.preview}
                   />
                 )}
                 <MetaDataRow
@@ -252,8 +254,8 @@ const MetaData = ({
                     onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
-                      data={metadata.preview.content.data}
-                      layout={metadata.preview.content.layout}
+                      data={metadata.preview.data}
+                      layout={metadata.preview.layout}
                       view="preview"
                     />
                   </div>
@@ -277,7 +279,7 @@ const MetaData = ({
                     <img
                       alt="Matplotlib rendering"
                       className="pipeline-metadata__plot-image"
-                      src={`data:image/png;base64,${metadata.preview.content}`}
+                      src={`data:image/png;base64,${metadata.preview}`}
                     />
                   </div>
                   <button
@@ -310,7 +312,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable
-                      data={metadata.preview.content}
+                      data={metadata.preview}
                       size="small"
                       onClick={onExpandMetaDataClick}
                     />

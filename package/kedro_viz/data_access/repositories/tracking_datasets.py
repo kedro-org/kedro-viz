@@ -8,8 +8,8 @@ from kedro_viz.models.experiment_tracking import (
     TRACKING_DATASET_GROUPS,
     TrackingDatasetGroup,
     TrackingDatasetModel,
-    get_dataset_type,
 )
+from kedro_viz.models.utils import get_dataset_type
 
 if TYPE_CHECKING:
     try:
@@ -47,7 +47,11 @@ class TrackingDatasetsRepository:
 
     @staticmethod
     def is_tracking_dataset(dataset) -> bool:
+        dataset_type = get_dataset_type(dataset)
         return (
-            get_dataset_type(dataset) in TRACKING_DATASET_GROUPS
+            any(
+                keyword in dataset_type
+                for keyword in ["plotly", "matplotlib", "tracking"]
+            )
             and dataset._version is not None
         )

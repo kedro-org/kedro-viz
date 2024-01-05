@@ -683,8 +683,12 @@ class DataNodeMetadata(GraphNodeMetadata):
     run_command: Optional[str] = Field(
         None, description="Command to run the pipeline to this node"
     )
-    preview: Optional[Dict] = Field(
+    preview: Optional[Union[Dict, str]] = Field(
         None, description="Preview data for the underlying datanode"
+    )
+
+    preview_type: Optional[str] = Field(
+        None, description="Type of preview for the dataset"
     )
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
@@ -729,6 +733,23 @@ class DataNodeMetadata(GraphNodeMetadata):
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
+                cls.data_node.name,
+                type(exc).__name__,
+                exc,
+            )
+            return None
+
+    @validator("preview_type", always=True)
+    def set_preview_type(cls, _):
+        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
+            return None
+
+        try:
+            return inspect.signature(cls.dataset._preview).return_annotation.__name__
+
+        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+            logger.warning(
+                "'%s' did not have preview type. Full exception: %s: %s",
                 cls.data_node.name,
                 type(exc).__name__,
                 exc,

@@ -132,7 +132,8 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: Optional[str]
     type: str
     run_command: Optional[str]
-    preview: Optional[Dict]
+    preview: Optional[Union[Dict, str]]
+    preview_type: Optional[str]
     stats: Optional[Dict]
 
     class Config:

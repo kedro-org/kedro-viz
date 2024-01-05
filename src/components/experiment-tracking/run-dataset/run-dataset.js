@@ -8,7 +8,6 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DatasetLoader } from './run-dataset-loader';
 import JSONObject from '../../json-object';
 
-import getShortType from '../../../utils/short-type';
 import './run-dataset.scss';
 import '../run-metadata/animation.scss';
 
@@ -241,11 +240,10 @@ function buildDatasetDataMarkup(
   showLoader,
   theme
 ) {
-  const isPlotlyDataset = getShortType(datasetType) === 'plotly';
-  const isImageDataset = getShortType(datasetType) === 'image';
-  const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
-  const isMetricsTrackingDataset =
-    getShortType(datasetType) === 'metricsTracking';
+  const isPlotlyDataset = datasetType === 'Plot';
+  const isImageDataset = datasetType === 'Image';
+  const isJSONTrackingDataset = datasetType === 'JSONTracking';
+  const isMetricsTrackingDataset = datasetType === 'metricsTracking';
   const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset;
 
   const onExpandVizClick = () => {
