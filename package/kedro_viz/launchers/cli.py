@@ -16,6 +16,7 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
@@ -26,7 +27,6 @@ from kedro_viz.launchers.utils import (
     viz_deploy_progress_timer,
 )
 from kedro_viz.server import load_and_populate_data
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
@@ -334,6 +334,7 @@ def copy_static_files(build_path: Path):
 
 
 def add_viz_metadata_file(build_path: Path):
+    """Adding metadta file to api folder"""
     try:
         metadata = {
             "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
@@ -345,7 +346,9 @@ def add_viz_metadata_file(build_path: Path):
             parents=True, exist_ok=True
         )  # Create directory if it doesn't exist
 
-        with open(metadata_dir / _METADATA_PATH, "w") as metadata_file:
+        with open(
+            metadata_dir / _METADATA_PATH, "w", encoding="utf-8"
+        ) as metadata_file:
             metadata_file.write(json.dumps(metadata))
 
     except Exception as exc:  # pragma: no cover
