@@ -344,12 +344,21 @@ def test_viz_deploy_invalid_region(mocker):
 
 
 def test_successful_build_with_existing_static_files(mocker, path_operation):
+    load_and_populate_data_mock = mocker.patch(
+        "kedro_viz.launchers.cli.load_and_populate_data"
+    )
+    save_api_responses_to_fs_mock = mocker.patch(
+        "kedro_viz.launchers.cli.save_api_responses_to_fs"
+    )
     env = path_operation
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
     mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
+
+    load_and_populate_data_mock.assert_called_once()
+    save_api_responses_to_fs_mock.assert_called_once()
 
     assert result.exit_code == 0
     assert "successfully added" in result.output
@@ -379,6 +388,9 @@ def test_copy_static_files_with_existing_build_directory(mocker, path_operation)
 
 def test_build_with_exception(mocker, path_operation):
     env = path_operation
+
+    mocker.patch("kedro_viz.launchers.cli.load_and_populate_data")
+    mocker.patch("kedro_viz.launchers.cli.save_api_responses_to_fs")
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
     mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
 

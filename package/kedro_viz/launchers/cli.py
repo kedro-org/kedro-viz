@@ -1,8 +1,11 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
+import json
+import logging
 import multiprocessing
 import shutil
 import traceback
+from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
@@ -23,10 +26,14 @@ from kedro_viz.launchers.utils import (
     viz_deploy_progress_timer,
 )
 from kedro_viz.server import load_and_populate_data
+from kedro_viz.api.rest.responses import save_api_responses_to_fs
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
+_METADATA_PATH = "deploy-viz-metadata"
 _BUILD_PATH = "build"
+
+logger = logging.getLogger(__name__)
 
 
 @click.group(name="Kedro-Viz")
@@ -289,12 +296,17 @@ def build():
         return
 
     try:
+        # Loads and populates data from underlying Kedro Project
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+
         # Create the build directory if not present
         build_path = Path(_BUILD_PATH)
         build_path.mkdir(parents=True, exist_ok=True)
 
         # Copy static files from Kedro Viz app to the build directory
         copy_static_files(build_path)
+        save_api_responses_to_fs(build_path)
+        add_viz_metadata_file(build_path)
 
         click.echo(
             click.style(
@@ -319,3 +331,23 @@ def copy_static_files(build_path: Path):
 
     # Copy static files directly to the build directory
     shutil.copytree(_HTML_DIR, build_path)
+
+
+def add_viz_metadata_file(build_path: Path):
+    try:
+        metadata = {
+            "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
+            "version": str(parse(__version__)),
+        }
+
+        metadata_dir = build_path / "api"
+        metadata_dir.mkdir(
+            parents=True, exist_ok=True
+        )  # Create directory if it doesn't exist
+
+        with open(metadata_dir / _METADATA_PATH, "w") as metadata_file:
+            metadata_file.write(json.dumps(metadata))
+
+    except Exception as exc:  # pragma: no cover
+        logger.exception("Creating metadata file failed: %s ", exc)
+        raise exc
