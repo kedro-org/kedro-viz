@@ -66,3 +66,14 @@ class TestBaseDeployer:
         build._copy_static_files_to_build.assert_called_once_with(_HTML_DIR)
         build._copy_api_responses_to_build.assert_called_once()
         build._copy_deploy_viz_metadata_file_to_build.assert_called_once()
+
+    def test_build_failure_with_missing_static_files(self, mocker):
+        mocker.patch("fsspec.filesystem")
+        mocker.patch(
+            "kedro_viz.integrations.deployment.base_deployer._HTML_DIR",
+            Path("non_existing"),
+        )
+        build = BaseDeployer()
+
+        result = build.build()
+        assert result is None

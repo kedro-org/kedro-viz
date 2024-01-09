@@ -1,10 +1,7 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
-import json
-import logging
 import multiprocessing
 import traceback
-from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
@@ -15,7 +12,6 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
@@ -29,9 +25,6 @@ from kedro_viz.launchers.utils import (
 from kedro_viz.server import load_and_populate_data
 
 _VIZ_PROCESSES: Dict[str, int] = {}
-_HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
-
-logger = logging.getLogger(__name__)
 
 
 @click.group(name="Kedro-Viz")
@@ -283,15 +276,6 @@ def deploy(region, bucket_name):
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
     """Create build directory of local Kedro Viz instance with static data"""
-
-    if not _HTML_DIR.exists():
-        click.echo(
-            click.style(
-                "ERROR: Directory containing Kedro Viz static files not found.",
-                fg="red",
-            ),
-        )
-        return
 
     try:
         base_deployer = BaseDeployer()

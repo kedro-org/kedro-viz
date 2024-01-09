@@ -1,6 +1,7 @@
 """`kedro_viz.integrations.deployment.base_deployer` defines
 creation of Kedro-viz build"""
 
+import click
 import json
 import logging
 import tempfile
@@ -116,6 +117,15 @@ class BaseDeployer:
             raise exc
 
     def build(self):
+        if not _HTML_DIR.exists():
+            click.echo(
+                click.style(
+                    "ERROR: Directory containing Kedro Viz static files not found.",
+                    fg="red",
+                ),
+            )
+            return
+
         # Loads and populates data from underlying Kedro Project
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 

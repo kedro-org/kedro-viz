@@ -22,18 +22,6 @@ def patched_start_browser(mocker):
     mocker.patch("kedro_viz.launchers.cli._start_browser")
 
 
-@pytest.fixture
-def path_operation(tmp_path):
-    static_files = tmp_path / "static"
-    static_files.mkdir(parents=True, exist_ok=True)
-    (static_files / "file1.txt").touch()
-    (static_files / "file2.txt").touch()
-
-    return {
-        "static_files": static_files,
-    }
-
-
 @pytest.mark.parametrize(
     "command_options,run_server_args",
     [
@@ -341,10 +329,8 @@ def test_viz_deploy_invalid_region(mocker):
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
-def test_successful_build_with_existing_static_files(mocker, path_operation):
+def test_successful_build_with_existing_static_files(mocker):
     mocker.patch("kedro_viz.launchers.cli.BaseDeployer")
-    env = path_operation
-    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
@@ -353,19 +339,7 @@ def test_successful_build_with_existing_static_files(mocker, path_operation):
     assert "successfully added" in result.output
 
 
-def test_build_failure_with_missing_static_files(mocker, tmp_path):
-    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", tmp_path / "non_existing")
-
-    runner = CliRunner()
-    result = runner.invoke(cli.build)
-
-    assert "ERROR" in result.output
-    assert "not found" in result.output
-
-
-def test_build_with_exception(mocker, path_operation):
-    env = path_operation
-    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
+def test_build_with_exception(mocker):
     mocker.patch(
         "kedro_viz.launchers.cli.BaseDeployer", side_effect=Exception("Test exception")
     )
