@@ -24,14 +24,12 @@ def patched_start_browser(mocker):
 
 @pytest.fixture
 def path_operation(tmp_path):
-    build_path = tmp_path / "build"
     static_files = tmp_path / "static"
     static_files.mkdir(parents=True, exist_ok=True)
     (static_files / "file1.txt").touch()
     (static_files / "file2.txt").touch()
 
     return {
-        "build_path": build_path,
         "static_files": static_files,
     }
 
@@ -344,21 +342,12 @@ def test_viz_deploy_invalid_region(mocker):
 
 
 def test_successful_build_with_existing_static_files(mocker, path_operation):
-    load_and_populate_data_mock = mocker.patch(
-        "kedro_viz.launchers.cli.load_and_populate_data"
-    )
-    save_api_responses_to_fs_mock = mocker.patch(
-        "kedro_viz.launchers.cli.save_api_responses_to_fs"
-    )
+    mocker.patch("kedro_viz.launchers.cli.BaseDeployer")
     env = path_operation
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
-    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
-
-    load_and_populate_data_mock.assert_called_once()
-    save_api_responses_to_fs_mock.assert_called_once()
 
     assert result.exit_code == 0
     assert "successfully added" in result.output
@@ -366,7 +355,6 @@ def test_successful_build_with_existing_static_files(mocker, path_operation):
 
 def test_build_failure_with_missing_static_files(mocker, tmp_path):
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", tmp_path / "non_existing")
-    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", tmp_path / "build")
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
@@ -375,26 +363,12 @@ def test_build_failure_with_missing_static_files(mocker, tmp_path):
     assert "not found" in result.output
 
 
-def test_copy_static_files_with_existing_build_directory(mocker, path_operation):
-    env = path_operation
-    mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
-    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
-
-    cli.copy_static_files(env["build_path"])
-
-    assert len(os.listdir(env["build_path"])) == 2
-    assert not os.path.exists(env["build_path"] / "static")
-
-
 def test_build_with_exception(mocker, path_operation):
     env = path_operation
-
-    mocker.patch("kedro_viz.launchers.cli.load_and_populate_data")
-    mocker.patch("kedro_viz.launchers.cli.save_api_responses_to_fs")
     mocker.patch("kedro_viz.launchers.cli._HTML_DIR", env["static_files"])
-    mocker.patch("kedro_viz.launchers.cli._BUILD_PATH", env["build_path"])
-
-    mocker.patch("shutil.copytree", side_effect=Exception("Test exception"))
+    mocker.patch(
+        "kedro_viz.launchers.cli.BaseDeployer", side_effect=Exception("Test exception")
+    )
 
     runner = CliRunner()
     result = runner.invoke(cli.build)

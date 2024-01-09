@@ -147,7 +147,7 @@ Options:
   -h, --help          Show this message and exit.
 ```
 
-To create build directory of local Kedro Viz instance with static data from the command line, use the following command from the root folder of your Kedro project:
+To create a build directory of your local Kedro-Viz instance with static data from the command line, use the following command from the root folder of your Kedro project:
 
 ```bash
 kedro viz build
