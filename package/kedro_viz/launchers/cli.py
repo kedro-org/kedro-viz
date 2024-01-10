@@ -14,6 +14,7 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
+from kedro_viz.integrations.deployment.az_deployer import AZDeployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
     _check_viz_up,
@@ -270,3 +271,57 @@ def deploy(region, bucket_name):
         )
     finally:
         viz_deploy_timer.terminate()
+
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
+# @click.option(
+#     "--region",
+#     type=str,
+#     required=True,
+#     help="Azure region where your Blob storage is located",
+# )
+# @click.option(
+#     "--bucket-name",
+#     type=str,
+#     required=True,
+#     help="Azure bucket name where Kedro Viz will be hosted",
+# )
+def azdeploy():
+    """Deploy and host Kedro Viz on Azure Blob Storage"""
+    try:
+        # viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
+        # viz_deploy_timer.start()
+
+        # Loads and populates data from underlying Kedro Project
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+
+        # Start the deployment
+        deployer = AZDeployer("eastus", "shareableviz")
+        url = deployer.deploy_and_get_url()
+
+        click.echo(
+            click.style(
+                "\u2728 Success! Kedro Viz has been deployed on Azure. It can be accessed at :\n"
+                f"{url}",
+                fg="green",
+            ),
+        )
+    except PermissionError:  # pragma: no cover
+        click.echo(
+            click.style(
+                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires access keys",
+                fg="red",
+            )
+        )
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        click.echo(
+            click.style(
+                f"ERROR: Failed to deploy and host Kedro-Viz on Azure : {exc} ",
+                fg="red",
+            )
+        )
+    finally:
+        pass
+        # viz_deploy_timer.terminate()
