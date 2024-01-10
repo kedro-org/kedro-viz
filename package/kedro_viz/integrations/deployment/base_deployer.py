@@ -1,13 +1,13 @@
 """`kedro_viz.integrations.deployment.base_deployer` defines
 creation of Kedro-viz build"""
 
-import click
 import json
 import logging
 import tempfile
 from datetime import datetime
 from pathlib import Path
 
+import click
 import fsspec
 from jinja2 import Environment, FileSystemLoader
 from packaging.version import parse
@@ -117,6 +117,7 @@ class BaseDeployer:
             raise exc
 
     def build(self):
+        """Create and write all Kedro-viz static files to build folder"""
         if not _HTML_DIR.exists():
             click.echo(
                 click.style(
