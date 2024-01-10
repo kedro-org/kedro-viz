@@ -13,7 +13,7 @@ from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
+from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
 from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
@@ -278,8 +278,9 @@ def build():
     """Create build directory of local Kedro Viz instance with static data"""
 
     try:
-        base_deployer = BaseDeployer()
-        base_deployer.build()
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+        base_deployer = LocalDeployer()
+        base_deployer.deploy_and_get_url()
 
         click.echo(
             click.style(
