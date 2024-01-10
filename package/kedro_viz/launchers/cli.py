@@ -284,8 +284,8 @@ def build():
 
         click.echo(
             click.style(
-                f"\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                f"build directory.",
+                "\u2728 Success! Kedro-Viz build files have been successfully added to the "
+                "build directory.",
                 fg="green",
             )
         )

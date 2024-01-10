@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import call
 
 import pytest
 
@@ -52,6 +53,24 @@ class TestBaseDeployer:
             build._copy_deploy_viz_metadata_file_to_build()
         assert "Creating metadata file failed: Error" in caplog.text
 
+    def test_build_failure_with_missing_static_files(self, mocker):
+        mocker.patch("fsspec.filesystem")
+        mocker.patch(
+            "kedro_viz.integrations.deployment.base_deployer._HTML_DIR",
+            Path("non_existing"),
+        )
+        mock_click_echo = mocker.patch("click.echo")
+        mock_click_echo_calls = [
+            call(
+                "\x1b[31mERROR: Directory containing Kedro Viz static files not found.\x1b[0m"
+            )
+        ]
+
+        base_deployer = BaseDeployer()
+        base_deployer.build()
+
+        mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
     def test_build(self, mocker):
         mocker.patch("fsspec.filesystem")
         build = BaseDeployer()
@@ -66,14 +85,3 @@ class TestBaseDeployer:
         build._copy_static_files_to_build.assert_called_once_with(_HTML_DIR)
         build._copy_api_responses_to_build.assert_called_once()
         build._copy_deploy_viz_metadata_file_to_build.assert_called_once()
-
-    def test_build_failure_with_missing_static_files(self, mocker):
-        mocker.patch("fsspec.filesystem")
-        mocker.patch(
-            "kedro_viz.integrations.deployment.base_deployer._HTML_DIR",
-            Path("non_existing"),
-        )
-        build = BaseDeployer()
-
-        result = build.build()
-        assert result is None
