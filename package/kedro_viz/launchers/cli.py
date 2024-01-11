@@ -13,8 +13,7 @@ from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
-from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
+from kedro_viz.integrations.deployment import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
     _check_viz_up,
@@ -239,7 +238,7 @@ def deploy(region, bucket_name):
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
         # Start the deployment
-        deployer = S3Deployer(region, bucket_name)
+        deployer = DeployerFactory.create_deployer("s3", region, bucket_name)
         url = deployer.deploy_and_get_url()
 
         click.echo(
@@ -279,8 +278,8 @@ def build():
 
     try:
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
-        base_deployer = LocalDeployer()
-        base_deployer.deploy_and_get_url()
+        deployer = DeployerFactory.create_deployer("local")
+        deployer.deploy_and_get_url()
 
         click.echo(
             click.style(
