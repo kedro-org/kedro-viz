@@ -1,9 +1,10 @@
+import glob
 import json
 import logging
-import tempfile
+import mimetypes
 from datetime import datetime
 from pathlib import Path
-
+from azure.storage.blob import ContentSettings, BlobServiceClient
 import fsspec
 from jinja2 import Environment, FileSystemLoader
 from packaging.version import parse
@@ -25,20 +26,15 @@ class AZDeployer:
         self._region=region
         self._bucket_name = bucket_name
         self._bucket_path = f"{_AZ_PROTOCOL}://$web"
-        
-        # storage_options = {"connection_string":"DefaultEndpointsProtocol=https;AccountName=shareableviz;AccountKey=+VYLVhjQiW7qC8l5DvjHJ6Af/0cG4w5sju3a1AGNzNpRDLKEXg90xt6J+PkluLAWN2GUNepE46/a+AStAejXqA==;EndpointSuffix=core.windows.net", 
-        #                    "account_key":"+VYLVhjQiW7qC8l5DvjHJ6Af/0cG4w5sju3a1AGNzNpRDLKEXg90xt6J+PkluLAWN2GUNepE46/a+AStAejXqA=="}
 
         storage_options = {
             "account_name": bucket_name
         }
 
         self._remote_fs = fsspec.filesystem(_AZ_PROTOCOL, **storage_options)
-        print(self._remote_fs.info(self._bucket_path))
-
+        
 
     def _upload_api_responses(self):
-        """Upload API responses to S3."""
         save_api_responses_to_fs(self._bucket_path, self._remote_fs)
 
     def _ingest_heap_analytics(self):
@@ -61,21 +57,31 @@ class AZDeployer:
 
         injected_head_content.append("</head>")
         html_content = html_content.replace("</head>", "\n".join(injected_head_content))
-
-        with tempfile.TemporaryDirectory() as temp_dir:
-            temp_file_path = f"{temp_dir}/index.html"
-
-            with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
-                temp_index_file.write(html_content)
-
-            self._remote_fs.put(temp_file_path, f"{self._bucket_path}/", overwrite=True)
+        self._remote_fs.write_bytes(path=f"{self._bucket_path}/index.html", value=html_content, overwrite=True, **{"content_settings": ContentSettings(content_type="text/html")})
 
     def _upload_static_files(self, html_dir: Path):
-        """Upload static HTML files to S3."""
         logger.debug("Uploading static html files to %s.", self._bucket_path)
         try:
-            self._remote_fs.put(f"{str(html_dir)}/*", self._bucket_path, recursive=True, overwrite=True)
+            file_list = glob.glob(f"{str(html_dir)}/**/*", recursive=True)
+
+            for local_file_path in file_list:
+                content_type, _ = mimetypes.guess_type(local_file_path)
+                
+                # ignore directories
+                if content_type is None:
+                    continue
+
+                relative_path = local_file_path[len(str(html_dir)) + 1:]
+                remote_file_path = f"{self._bucket_path}/{relative_path}"
+
+                # Read the contents of the local file
+                with open(local_file_path, "rb") as file:
+                    content = file.read()
+
+                self._remote_fs.write_bytes(path=remote_file_path, value=content, overwrite=True, **{"content_settings": ContentSettings(content_type=content_type)})
+            
             self._ingest_heap_analytics()
+        
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
@@ -106,6 +112,10 @@ class AZDeployer:
 
     def deploy_and_get_url(self):
         """Deploy Kedro-viz to S3 and return its URL."""
-        self._deploy()
+        # self._deploy()
+        blob_service_client = BlobServiceClient(account_url=f"https://{self._bucket_name}.blob.core.windows.net")
+        import pdb
+        pdb.set_trace()
+        print(blob_service_client.get_service_properties.static_website)
         return f"https://{self._bucket_name}.z13.web.core.windows.net/"
         

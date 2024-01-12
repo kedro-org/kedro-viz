@@ -49,7 +49,7 @@ class S3Deployer:
 
     def _upload_api_responses(self):
         """Upload API responses to S3."""
-        save_api_responses_to_fs(self._bucket_path)
+        save_api_responses_to_fs(self._bucket_path, self._remote_fs)
 
     def _ingest_heap_analytics(self):
         """Ingest heap analytics to index file in the build folder."""

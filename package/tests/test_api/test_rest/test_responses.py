@@ -996,7 +996,7 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
         )
 
-        save_api_responses_to_fs(file_path)
+        save_api_responses_to_fs(file_path, mockremote_fs)
 
         mockremote_fs.assert_called_once_with(protocol)
         mock_get_protocol_and_path.assert_called_once_with(file_path)

@@ -145,9 +145,10 @@ class TestServer:
             patched_create_api_app_from_file.assert_called_once()
 
     def test_save_file(self, tmp_path, mocker):
+        mockremote_fs = mocker.patch("fsspec.filesystem")
         save_api_responses_to_fs_mock = mocker.patch(
             "kedro_viz.server.save_api_responses_to_fs"
         )
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)
-        save_api_responses_to_fs_mock.assert_called_once_with(save_file)
+        save_api_responses_to_fs_mock.assert_called_once_with(save_file, mockremote_fs)
