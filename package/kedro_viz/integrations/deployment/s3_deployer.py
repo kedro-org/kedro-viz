@@ -40,7 +40,6 @@ class S3Deployer(BaseDeployer):
         self._path = f"{_S3_PROTOCOL}://{bucket_name}"
         self._fs = fsspec.filesystem(_S3_PROTOCOL)
 
-
     def deploy_and_get_url(self):
         """Deploy Kedro-viz to S3 and return its URL."""
         self._deploy()

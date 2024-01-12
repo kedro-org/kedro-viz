@@ -23,7 +23,7 @@ class LocalDeployer(BaseDeployer):
         _local_fs (fsspec.filesystem): Filesystem for local file protocol.
 
     Methods:
-        build(): The creation of Kedro-viz build folder.
+        deploy_and_get_url(): The creation of Kedro-viz build folder.
     """
 
     def __init__(self):
@@ -33,4 +33,6 @@ class LocalDeployer(BaseDeployer):
         self._fs = fsspec.filesystem(_FILE_PROTOCOL)
 
     def deploy_and_get_url(self):
+        """Copy Kedro-viz to local build folder and return its URL."""
         self._deploy()
+        return self._path

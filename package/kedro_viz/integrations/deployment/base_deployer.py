@@ -22,14 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 class BaseDeployer(abc.ABC):
-    """A class to handle the creation of Kedro-viz build folder.
+    """A class to handle the creation of Kedro-viz build.
 
     Attributes:
         _build_path (str): build path name.
-        _local_fs (fsspec.filesystem): Filesystem for local file protocol.
+        _fs (fsspec.filesystem): Filesystem for local/remote protocol.
 
     Methods:
-        build(): The creation of Kedro-viz build folder.
+        deploy_and_get_url(): Deploy Kedro-viz to cloud storage provider/local and return its URL.
     """
 
     def __init__(self):
@@ -37,11 +37,11 @@ class BaseDeployer(abc.ABC):
         self._fs = None
 
     def _upload_api_responses(self):
-        """Write API responses to the build folder."""
+        """Write API responses to the build."""
         save_api_responses_to_fs(self._path)
 
     def _ingest_heap_analytics(self):
-        """Ingest heap analytics to index file in the build folder."""
+        """Ingest heap analytics to index file in the build."""
         project_path = Path.cwd().absolute()
         heap_app_id = kedro_telemetry.get_heap_app_id(project_path)
         heap_user_identity = kedro_telemetry.get_heap_identity()
@@ -70,7 +70,7 @@ class BaseDeployer(abc.ABC):
             self._fs.put(temp_file_path, f"{self._path}/")
 
     def _upload_static_files(self, html_dir: Path):
-        """Upload static HTML files to S3."""
+        """Upload static HTML files to Build."""
         logger.debug("Uploading static html files to %s.", self._path)
         try:
             self._fs.put(f"{str(html_dir)}/*", str(self._path), recursive=True)
@@ -92,14 +92,12 @@ class BaseDeployer(abc.ABC):
                 "timestamp": datetime.utcnow().strftime("%d.%m.%Y %H:%M:%S"),
                 "version": str(parse(__version__)),
             }
-            with self._fs.open(
-                f"{self._path}/{_METADATA_PATH}", "w"
-            ) as metadata_file:
+            with self._fs.open(f"{self._path}/{_METADATA_PATH}", "w") as metadata_file:
                 metadata_file.write(json.dumps(metadata))
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
-        
+
     def _deploy(self):
         self._upload_api_responses()
         self._upload_static_files(_HTML_DIR)
