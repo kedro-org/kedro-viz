@@ -12,10 +12,17 @@ def patched_check_viz_up(mocker):
 
 class TestRunVizLineMagic:
     def test_run_viz(self, mocker, patched_check_viz_up):
-        process_init = mocker.patch("multiprocessing.Process")
-        jupyter_display = mocker.patch("kedro_viz.launchers.jupyter.display")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+        mock_jupyter_display = mocker.patch("kedro_viz.launchers.jupyter.display")
+
         run_viz()
-        process_init.assert_called_once_with(
+
+        mock_process_context.assert_called_once_with("spawn")
+        mock_process.assert_called_once_with(
             target=run_server,
             daemon=True,
             kwargs={
@@ -24,13 +31,15 @@ class TestRunVizLineMagic:
                 "port": 4141,
             },
         )
-        jupyter_display.assert_called_once()
+        mock_jupyter_display.assert_called_once()
         assert set(_VIZ_PROCESSES.keys()) == {4141}
 
         # call run_viz another time should reuse the same port
-        process_init.reset_mock()
+        mock_process.reset_mock()
+
         run_viz()
-        process_init.assert_called_once_with(
+
+        mock_process.assert_called_once_with(
             target=run_server,
             daemon=True,
             kwargs={
@@ -58,14 +67,18 @@ class TestRunVizLineMagic:
 
     def test_run_viz_on_databricks(self, mocker, patched_check_viz_up, monkeypatch):
         monkeypatch.setenv("DATABRICKS_RUNTIME_VERSION", "1")
-        process_init = mocker.patch("multiprocessing.Process")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
         mocker.patch("kedro_viz.launchers.jupyter._is_databricks", return_value=True)
         databricks_display = mocker.patch(
             "kedro_viz.launchers.jupyter._display_databricks_html"
         )
-        process_init.reset_mock()
+        mock_process.reset_mock()
         run_viz()
-        process_init.assert_called_once_with(
+        mock_process.assert_called_once_with(
             target=run_server,
             daemon=True,
             kwargs={

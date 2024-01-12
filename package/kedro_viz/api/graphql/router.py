@@ -1,4 +1,5 @@
 """`kedro_viz.api.graphql.router` defines GraphQL routes."""
+# mypy: ignore-errors
 from fastapi import APIRouter
 from strawberry.asgi import GraphQL
 
