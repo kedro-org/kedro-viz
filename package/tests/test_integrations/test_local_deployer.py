@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
 
