@@ -25,7 +25,7 @@ class BaseDeployer(abc.ABC):
     """A class to handle the creation of Kedro-viz build.
 
     Attributes:
-        _build_path (str): build path name.
+        _path (str): build path name.
         _fs (fsspec.filesystem): Filesystem for local/remote protocol.
 
     Methods:

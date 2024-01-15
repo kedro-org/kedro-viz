@@ -2,6 +2,7 @@ from pathlib import Path
 from unittest.mock import call
 
 import pytest
+import fsspec
 
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.base_deployer import _HTML_DIR, BaseDeployer
@@ -9,79 +10,84 @@ from kedro_viz.integrations.deployment.base_deployer import _HTML_DIR, BaseDeplo
 
 # Test the BaseDeployer class
 class TestBaseDeployer:
-    def test_copy_api_responses_to_build(self, mocker):
+    def test_upload_api_responses(self, mocker):
         mocker.patch("fsspec.filesystem")
-        build = BaseDeployer()
         save_api_responses_to_fs_mock = mocker.patch(
             "kedro_viz.integrations.deployment.base_deployer.save_api_responses_to_fs"
         )
+        build = ConcreteBaseDeployer()
+        build._upload_api_responses()
 
-        build._copy_api_responses_to_build()
-        save_api_responses_to_fs_mock.assert_called_once_with(build._build_path)
+        save_api_responses_to_fs_mock.assert_called_once_with(build._path)
 
-    def test_copy_static_files_to_build(self, mocker):
+    def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")
         mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")
         mocker.patch("kedro_viz.integrations.kedro.telemetry.get_heap_identity")
 
-        build = BaseDeployer()
-        build._copy_static_files_to_build(_HTML_DIR)
+        build = ConcreteBaseDeployer()
+        build._upload_static_files(_HTML_DIR)
 
-        assert build._local_fs.cp.call_count == 1
+        assert build._fs.put.call_count == 2
 
     def test_upload_static_file_failed(self, mocker, caplog):
         mocker.patch("fsspec.filesystem")
-        build = BaseDeployer()
-        build._local_fs.cp.side_effect = Exception("Error")
+        build = ConcreteBaseDeployer()
+        
+        build._fs.put.side_effect = Exception("Error")
         with pytest.raises(Exception) as _:
-            build._copy_static_files_to_build(_HTML_DIR)
-        assert "Copying static files failed: Error" in caplog.text
+            build._upload_static_files(_HTML_DIR)
+        assert "Upload failed: Error" in caplog.text
 
-    def test_copy_deploy_viz_metadata_file_to_build(self, mocker):
+    def test_upload_deploy_viz_metadata_file(self, mocker):
         mocker.patch("fsspec.filesystem")
-        build = BaseDeployer()
-        build._copy_deploy_viz_metadata_file_to_build()
+        build = ConcreteBaseDeployer()
+        build._upload_deploy_viz_metadata_file()
 
-        expected_path = Path("build/api/deploy-viz-metadata")
-        build._local_fs.open.assert_called_once_with(expected_path, "w")
+        expected_path = "build/api/deploy-viz-metadata"
+        build._fs.open.assert_called_once_with(expected_path, "w")
 
-    def test_copy_deploy_viz_metadata_file_to_build_failed(self, mocker, caplog):
+    def test_upload_deploy_viz_metadata_file_failed(self, mocker, caplog):
         mocker.patch("fsspec.filesystem")
-        build = BaseDeployer()
-        build._local_fs.open.side_effect = Exception("Error")
+        build = ConcreteBaseDeployer()
+        build._fs.open.side_effect = Exception("Error")
         with pytest.raises(Exception) as _:
-            build._copy_deploy_viz_metadata_file_to_build()
-        assert "Creating metadata file failed: Error" in caplog.text
+            build._upload_deploy_viz_metadata_file()
+        assert "Upload failed: Error" in caplog.text
 
-    def test_build_failure_with_missing_static_files(self, mocker):
+    def test_deploy(self, mocker):
         mocker.patch("fsspec.filesystem")
-        mocker.patch(
-            "kedro_viz.integrations.deployment.base_deployer._HTML_DIR",
-            Path("non_existing"),
-        )
-        mock_click_echo = mocker.patch("click.echo")
-        mock_click_echo_calls = [
-            call(
-                "\x1b[31mERROR: Directory containing Kedro Viz static files not found.\x1b[0m"
-            )
-        ]
-
-        base_deployer = BaseDeployer()
-        base_deployer.build()
-
-        mock_click_echo.assert_has_calls(mock_click_echo_calls)
-
-    def test_build(self, mocker):
-        mocker.patch("fsspec.filesystem")
-        build = BaseDeployer()
+        build = ConcreteBaseDeployer()
 
         mocker.patch("kedro_viz.server.load_and_populate_data")
-        mocker.patch.object(build, "_copy_static_files_to_build")
-        mocker.patch.object(build, "_copy_api_responses_to_build")
-        mocker.patch.object(build, "_copy_deploy_viz_metadata_file_to_build")
+        mocker.patch.object(build, "_upload_static_files")
+        mocker.patch.object(build, "_upload_api_responses")
+        mocker.patch.object(build, "_upload_deploy_viz_metadata_file")
 
-        build.build()
+        build._deploy()
 
-        build._copy_static_files_to_build.assert_called_once_with(_HTML_DIR)
-        build._copy_api_responses_to_build.assert_called_once()
-        build._copy_deploy_viz_metadata_file_to_build.assert_called_once()
+        build._upload_static_files.assert_called_once_with(_HTML_DIR)
+        build._upload_api_responses.assert_called_once()
+        build._upload_deploy_viz_metadata_file.assert_called_once()
+
+    def test_deploy_and_get_url(self, mocker):
+        mocker.patch("fsspec.filesystem")
+        mocker.patch("kedro_viz.server.load_and_populate_data")
+        build = ConcreteBaseDeployer()
+        
+        url = build.deploy_and_get_url()
+
+        expected_url = Path("build")
+        assert url == expected_url
+
+class ConcreteBaseDeployer(BaseDeployer):
+    """a concrete subclass that inherits from BaseDeployer for test purpose."""
+
+    def __init__(self):
+        """Initialize ConcreteBaseDeployer with path and fs."""
+        super().__init__()
+        self._path = Path("build")
+        self._fs = fsspec.filesystem("file")
+
+    def deploy_and_get_url(self):
+        return self._path
