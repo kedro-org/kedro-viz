@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+
+- Set Kedro Viz start method to spawn process while launching it from Jupyter Notebook. (#1696)
+
 # Release 7.0.0
 
 ## Major features and improvements
