@@ -279,12 +279,12 @@ def build():
     try:
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
         deployer = DeployerFactory.create_deployer("local")
-        deployer.deploy_and_get_url()
+        url = deployer.deploy_and_get_url()
 
         click.echo(
             click.style(
                 "\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                "build directory.",
+                f"{url} directory.",
                 fg="green",
             )
         )
