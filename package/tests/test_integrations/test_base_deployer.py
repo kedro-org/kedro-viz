@@ -1,5 +1,4 @@
 from pathlib import Path
-from unittest.mock import call
 
 import fsspec
 import pytest
