@@ -13,8 +13,7 @@ from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.integrations.deployment.az_deployer import AZDeployer
-from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
+from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
     _check_viz_up,
@@ -239,7 +238,7 @@ def deploy(region, bucket_name):
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
         # Start the deployment
-        deployer = S3Deployer(region, bucket_name)
+        deployer = DeployerFactory.create_deployer("aws", region, bucket_name)
         url = deployer.deploy_and_get_url()
 
         click.echo(
@@ -274,6 +273,28 @@ def deploy(region, bucket_name):
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
+def build():
+    """Create build directory of local Kedro Viz instance with static data"""
+
+    try:
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+        deployer = DeployerFactory.create_deployer("local")
+        deployer.deploy_and_get_url()
+
+        click.echo(
+            click.style(
+                "\u2728 Success! Kedro-Viz build files have been successfully added to the "
+                "build directory.",
+                fg="green",
+            )
+        )
+
+    except Exception as ex:
+        traceback.print_exc()
+        raise KedroCliError(str(ex)) from ex
+
+
+@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 # @click.option(
 #     "--region",
 #     type=str,
@@ -289,14 +310,14 @@ def deploy(region, bucket_name):
 def azdeploy():
     """Deploy and host Kedro Viz on Azure Blob Storage"""
     try:
-        # viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
-        # viz_deploy_timer.start()
+        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
+        viz_deploy_timer.start()
 
         # Loads and populates data from underlying Kedro Project
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
         # Start the deployment
-        deployer = AZDeployer("eastus", "shareableviz")
+        deployer = DeployerFactory.create_deployer("az", "eastus", "shareableviz")
         url = deployer.deploy_and_get_url()
 
         click.echo(
@@ -322,5 +343,4 @@ def azdeploy():
             )
         )
     finally:
-        pass
-        # viz_deploy_timer.terminate()
+        viz_deploy_timer.terminate()

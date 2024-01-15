@@ -4,7 +4,6 @@ import abc
 import logging
 from typing import Any, Dict, List, Optional, Union
 
-import fsspec
 import orjson
 import packaging
 from fastapi.encoders import jsonable_encoder

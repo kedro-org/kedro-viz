@@ -147,6 +147,12 @@ Options:
   -h, --help          Show this message and exit.
 ```
 
+To create a build directory of your local Kedro-Viz instance with static data from the command line, use the following command from the root folder of your Kedro project:
+
+```bash
+kedro viz build
+```
+
 ### Experiment Tracking usage
 
 To enable [experiment tracking](https://docs.kedro.org/en/stable/experiment_tracking/index.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.

@@ -5,8 +5,8 @@ import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from kedro_viz.api.rest.requests import S3DeployerConfiguration
-from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
+from kedro_viz.api.rest.requests import AWSDeployerConfiguration
+from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
 
 from .responses import (
     APIErrorMessage,
@@ -50,9 +50,9 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 
 @router.post("/deploy")
-async def deploy_kedro_viz(input_values: S3DeployerConfiguration):
+async def deploy_kedro_viz(input_values: AWSDeployerConfiguration):
     try:
-        deployer = S3Deployer(input_values.region, input_values.bucket_name)
+        deployer = AWSDeployer(input_values.region, input_values.bucket_name)
         url = deployer.deploy_and_get_url()
         response = {"message": "Website deployed on S3", "url": url}
         return JSONResponse(status_code=200, content=response)

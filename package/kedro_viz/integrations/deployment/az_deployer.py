@@ -1,3 +1,5 @@
+"""`kedro_viz.integrations.deployment.az_deployer` defines
+deployment class for Azure Blob Storage"""
 import glob
 import json
 import logging
@@ -25,7 +27,9 @@ _AZ_PROTOCOL = "abfs"
 logger = logging.getLogger(__name__)
 
 
-class AZDeployer:
+class AzureDeployer:
+    """A class to handle the deployment of Kedro-viz to Azure Blob Storage."""
+
     def __init__(self, region, bucket_name):
         self._region = region
         self._bucket_name = bucket_name
