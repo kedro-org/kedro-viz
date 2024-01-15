@@ -1,5 +1,8 @@
 import pytest
-from kedro_viz.integrations.deployment import LocalDeployer, S3Deployer, DeployerFactory
+
+from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
+from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 def test_create_deployer_s3():
     deployer = DeployerFactory.create_deployer("s3", region="us-east-1", bucket_name="my-bucket")
