@@ -4,7 +4,12 @@ import logging
 import mimetypes
 from datetime import datetime
 from pathlib import Path
-from azure.storage.blob import ContentSettings, BlobServiceClient
+
+try:
+    from azure.storage.blob import ContentSettings
+except ImportError:
+    pass
+
 import fsspec
 from jinja2 import Environment, FileSystemLoader
 from packaging.version import parse
@@ -21,18 +26,14 @@ logger = logging.getLogger(__name__)
 
 
 class AZDeployer:
-   
     def __init__(self, region, bucket_name):
-        self._region=region
+        self._region = region
         self._bucket_name = bucket_name
         self._bucket_path = f"{_AZ_PROTOCOL}://$web"
 
-        storage_options = {
-            "account_name": bucket_name
-        }
+        storage_options = {"account_name": bucket_name}
 
         self._remote_fs = fsspec.filesystem(_AZ_PROTOCOL, **storage_options)
-        
 
     def _upload_api_responses(self):
         save_api_responses_to_fs(self._bucket_path, self._remote_fs)
@@ -57,7 +58,12 @@ class AZDeployer:
 
         injected_head_content.append("</head>")
         html_content = html_content.replace("</head>", "\n".join(injected_head_content))
-        self._remote_fs.write_bytes(path=f"{self._bucket_path}/index.html", value=html_content, overwrite=True, **{"content_settings": ContentSettings(content_type="text/html")})
+        self._remote_fs.write_bytes(
+            path=f"{self._bucket_path}/index.html",
+            value=html_content,
+            overwrite=True,
+            **{"content_settings": ContentSettings(content_type="text/html")},
+        )
 
     def _upload_static_files(self, html_dir: Path):
         logger.debug("Uploading static html files to %s.", self._bucket_path)
@@ -66,22 +72,27 @@ class AZDeployer:
 
             for local_file_path in file_list:
                 content_type, _ = mimetypes.guess_type(local_file_path)
-                
+
                 # ignore directories
                 if content_type is None:
                     continue
 
-                relative_path = local_file_path[len(str(html_dir)) + 1:]
+                relative_path = local_file_path[len(str(html_dir)) + 1 :]
                 remote_file_path = f"{self._bucket_path}/{relative_path}"
 
                 # Read the contents of the local file
                 with open(local_file_path, "rb") as file:
                     content = file.read()
 
-                self._remote_fs.write_bytes(path=remote_file_path, value=content, overwrite=True, **{"content_settings": ContentSettings(content_type=content_type)})
-            
+                self._remote_fs.write_bytes(
+                    path=remote_file_path,
+                    value=content,
+                    overwrite=True,
+                    **{"content_settings": ContentSettings(content_type=content_type)},
+                )
+
             self._ingest_heap_analytics()
-        
+
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
@@ -112,10 +123,5 @@ class AZDeployer:
 
     def deploy_and_get_url(self):
         """Deploy Kedro-viz to S3 and return its URL."""
-        # self._deploy()
-        blob_service_client = BlobServiceClient(account_url=f"https://{self._bucket_name}.blob.core.windows.net")
-        import pdb
-        pdb.set_trace()
-        print(blob_service_client.get_service_properties.static_website)
+        self._deploy()
         return f"https://{self._bucket_name}.z13.web.core.windows.net/"
-        

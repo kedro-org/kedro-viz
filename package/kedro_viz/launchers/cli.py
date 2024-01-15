@@ -13,8 +13,8 @@ from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.deployment.az_deployer import AZDeployer
+from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
     _check_viz_up,
@@ -271,7 +271,6 @@ def deploy(region, bucket_name):
         )
     finally:
         viz_deploy_timer.terminate()
-
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})

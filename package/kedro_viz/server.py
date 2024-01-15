@@ -3,8 +3,8 @@ for Kedro pipeline visualisation."""
 import multiprocessing
 from pathlib import Path
 from typing import Any, Dict, Optional
-import fsspec
 
+import fsspec
 import uvicorn
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog

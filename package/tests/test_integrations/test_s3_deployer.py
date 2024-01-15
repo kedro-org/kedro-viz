@@ -23,7 +23,9 @@ class TestS3Deployer:
             "kedro_viz.integrations.deployment.s3_deployer.save_api_responses_to_fs"
         )
         deployer._upload_api_responses()
-        save_api_responses_to_fs_mock.assert_called_once_with(deployer._bucket_pat, mockremote_fs)
+        save_api_responses_to_fs_mock.assert_called_once_with(
+            deployer._bucket_pat, mockremote_fs
+        )
 
     def test_upload_static_files(self, mocker, region, bucket_name):
         mocker.patch("fsspec.filesystem")
