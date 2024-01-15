@@ -1,8 +1,8 @@
 from pathlib import Path
 from unittest.mock import call
 
-import pytest
 import fsspec
+import pytest
 
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.base_deployer import _HTML_DIR, BaseDeployer
@@ -33,7 +33,7 @@ class TestBaseDeployer:
     def test_upload_static_file_failed(self, mocker, caplog):
         mocker.patch("fsspec.filesystem")
         build = ConcreteBaseDeployer()
-        
+
         build._fs.put.side_effect = Exception("Error")
         with pytest.raises(Exception) as _:
             build._upload_static_files(_HTML_DIR)
@@ -74,11 +74,12 @@ class TestBaseDeployer:
         mocker.patch("fsspec.filesystem")
         mocker.patch("kedro_viz.server.load_and_populate_data")
         build = ConcreteBaseDeployer()
-        
+
         url = build.deploy_and_get_url()
 
         expected_url = Path("build")
         assert url == expected_url
+
 
 class ConcreteBaseDeployer(BaseDeployer):
     """a concrete subclass that inherits from BaseDeployer for test purpose."""
