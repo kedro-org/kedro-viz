@@ -2,7 +2,6 @@
 deployment class for AWS S3"""
 
 import logging
-from pathlib import Path
 
 import fsspec
 

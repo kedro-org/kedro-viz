@@ -106,4 +106,3 @@ class BaseDeployer(abc.ABC):
     @abc.abstractmethod
     def deploy_and_get_url(self):
         """Abstract method to deploy and return the URL."""
-        pass
