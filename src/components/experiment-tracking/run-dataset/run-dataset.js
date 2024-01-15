@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import Accordion from '../accordion';
 import PinArrowIcon from '../../icons/pin-arrow';
@@ -76,7 +76,12 @@ const RunDataset = ({
   trackingData,
   theme,
 }) => {
-  if (!trackingData) {
+  const clonedTrackingData = useMemo(
+    () => structuredClone(trackingData),
+    [trackingData]
+  );
+
+  if (!clonedTrackingData) {
     return null;
   }
 
@@ -86,7 +91,7 @@ const RunDataset = ({
         'details-dataset--not-overview': activeTab !== 'Overview',
       })}
     >
-      {Object.keys(trackingData)
+      {Object.keys(clonedTrackingData)
         .filter((group) => {
           if (activeTab === 'Plots' && group === activeTab) {
             return true;
@@ -121,7 +126,7 @@ const RunDataset = ({
               layout="left"
               size="large"
             >
-              {trackingData[group].length === 0 && (
+              {clonedTrackingData[group].length === 0 && (
                 <div className="details-dataset__row">
                   <span
                     className="details-dataset__name-header"
@@ -164,7 +169,7 @@ const RunDataset = ({
                   </TransitionGroup>
                 </div>
               )}
-              {trackingData[group].map((dataset) => {
+              {clonedTrackingData[group].map((dataset) => {
                 const { data, datasetType, datasetName, runIds } = dataset;
 
                 return (

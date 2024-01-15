@@ -107,7 +107,8 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
         else None
     )
 
-    viz_process = multiprocessing.Process(
+    process_context = multiprocessing.get_context("spawn")
+    viz_process = process_context.Process(
         target=run_server,
         daemon=True,
         kwargs={"project_path": project_path, "host": host, "port": port},
