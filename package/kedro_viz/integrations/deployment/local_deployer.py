@@ -34,5 +34,5 @@ class LocalDeployer(BaseDeployer):
 
     def deploy_and_get_url(self):
         """Copy Kedro-viz to local build folder and return its URL."""
-        self._deploy()
+        self.deploy()
         return self._path

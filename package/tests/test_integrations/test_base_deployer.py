@@ -63,7 +63,7 @@ class TestBaseDeployer:
         mocker.patch.object(build, "_upload_api_responses")
         mocker.patch.object(build, "_upload_deploy_viz_metadata_file")
 
-        build._deploy()
+        build.deploy()
 
         build._upload_static_files.assert_called_once_with(_HTML_DIR)
         build._upload_api_responses.assert_called_once()

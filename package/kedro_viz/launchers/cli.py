@@ -289,6 +289,11 @@ def build():
             )
         )
 
-    except Exception as ex:
-        traceback.print_exc()
-        raise KedroCliError(str(ex)) from ex
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        click.echo(
+            click.style(
+                f"ERROR: Failed to build Kedro-Viz : {exc} ",
+                fg="red",
+            )
+        )

@@ -41,5 +41,5 @@ class S3Deployer(BaseDeployer):
 
     def deploy_and_get_url(self):
         """Deploy Kedro-viz to S3 and return its URL."""
-        self._deploy()
+        self.deploy()
         return f"http://{self._bucket_name}.s3-website.{self._region}.amazonaws.com"

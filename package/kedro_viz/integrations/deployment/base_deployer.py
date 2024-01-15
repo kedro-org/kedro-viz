@@ -98,7 +98,9 @@ class BaseDeployer(abc.ABC):
             logger.exception("Upload failed: %s ", exc)
             raise exc
 
-    def _deploy(self):
+    def deploy(self):
+        """Create and deploy all static files to local/remote file system"""
+
         self._upload_api_responses()
         self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()
