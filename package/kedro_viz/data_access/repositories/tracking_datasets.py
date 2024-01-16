@@ -49,9 +49,6 @@ class TrackingDatasetsRepository:
     def is_tracking_dataset(dataset) -> bool:
         dataset_type = get_dataset_type(dataset)
         return (
-            any(
-                keyword in dataset_type
-                for keyword in ["plotly", "matplotlib", "tracking"]
-            )
+            get_dataset_type(dataset) in TRACKING_DATASET_GROUPS
             and dataset._version is not None
         )

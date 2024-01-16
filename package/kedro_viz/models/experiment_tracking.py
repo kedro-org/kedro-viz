@@ -13,6 +13,8 @@ from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
+from .utils import get_dataset_type
+
 if TYPE_CHECKING:
     try:
         # kedro 0.18.12 onwards
@@ -64,10 +66,15 @@ class TrackingDatasetGroup(str, Enum):
 
 # Map dataset types to their group
 TRACKING_DATASET_GROUPS = {
-    "plot": TrackingDatasetGroup.PLOT,
-    "image": TrackingDatasetGroup.PLOT,
-    "metricsTracking": TrackingDatasetGroup.METRIC,
-    "JSONTracking": TrackingDatasetGroup.JSON,
+    "plotly.plotly_dataset.PlotlyDataset": TrackingDatasetGroup.PLOT,
+    "plotly.json_dataset.JSONDataset": TrackingDatasetGroup.PLOT,
+    "matplotlib.matplotlib_writer.MatplotlibWriter": TrackingDatasetGroup.PLOT,
+    "tracking.metrics_dataset.MetricsDataset": TrackingDatasetGroup.METRIC,
+    "tracking.json_dataset.JSONDataset": TrackingDatasetGroup.JSON,
+    "plotly.plotly_dataset.PlotlyDataSet": TrackingDatasetGroup.PLOT,
+    "plotly.json_dataset.JSONDataSet": TrackingDatasetGroup.PLOT,
+    "tracking.metrics_dataset.MetricsDataSet": TrackingDatasetGroup.METRIC,
+    "tracking.json_dataset.JSONDataSet": TrackingDatasetGroup.JSON,
 }
 
 
@@ -84,9 +91,7 @@ class TrackingDatasetModel:
     runs: Dict[str, Any] = field(init=False, default_factory=dict)
 
     def __post_init__(self):
-        self.dataset_type = inspect.signature(
-            self.dataset._preview
-        ).return_annotation.__name__
+        self.dataset_type = get_dataset_type(self.dataset)
 
     def load_tracking_data(self, run_id: str):
         # No need to reload data that has already been loaded.
