@@ -234,7 +234,9 @@ def test_viz_command_group(mocker):
             "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
             "Visualise a Kedro pipeline using Kedro viz.\n\n"
             "Options:\n  --help  Show this message and exit.\n\n"
-            "Commands:\n  deploy  Deploy and host Kedro Viz on AWS S3\n  "
+            "Commands:\n  build   Create build directory of local Kedro Viz "
+            "instance with static data\n  "
+            "deploy  Deploy and host Kedro Viz on AWS S3\n  "
             "run     Launch local Kedro Viz instance\x1b[0m"
         ),
     ]
@@ -273,7 +275,7 @@ def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mock
     .s3-website.{deployer_args.get('region')}.amazonaws.com"
 
     s3_deployer_mock_instance = mocker.patch(
-        "kedro_viz.launchers.cli.S3Deployer"
+        "kedro_viz.launchers.cli.DeployerFactory.create_deployer"
     ).return_value
     s3_deployer_mock_instance.deploy_and_get_url.return_value = expected_url
 
@@ -324,3 +326,27 @@ def test_viz_deploy_invalid_region(mocker):
         )
     ]
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
+def test_successful_build_with_existing_static_files(mocker):
+    mocker.patch("kedro_viz.launchers.cli.load_and_populate_data")
+    mocker.patch("kedro_viz.launchers.cli.DeployerFactory.create_deployer")
+
+    runner = CliRunner()
+    result = runner.invoke(cli.build)
+
+    assert result.exit_code == 0
+    assert "successfully added" in result.output
+
+
+def test_build_with_exception(mocker):
+    mocker.patch("kedro_viz.launchers.cli.load_and_populate_data")
+    mocker.patch(
+        "kedro_viz.launchers.cli.DeployerFactory.create_deployer",
+        side_effect=Exception("ERROR: Failed to build Kedro-Viz"),
+    )
+
+    runner = CliRunner()
+    result = runner.invoke(cli.build)
+
+    assert "ERROR: Failed to build Kedro-Viz" in result.output
