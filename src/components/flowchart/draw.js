@@ -135,6 +135,7 @@ export const drawNodes = function (changed) {
     nodes,
     focusMode,
     hoveredFocusMode,
+    flags,
   } = this.props;
 
   const isInputOutputNode = (nodeID) =>
@@ -171,6 +172,10 @@ export const drawNodes = function (changed) {
       )
       .classed('pipeline-node--data', (node) => node.type === 'data')
       .classed('pipeline-node--task', (node) => node.type === 'task')
+      .classed(
+        'pipeline-node--memory-data',
+        (node) => flags?.diffMemoryDatasets && node?.dataset?.includes('memory')
+      )
       .on('click', this.handleNodeClick)
       .on('mouseover', this.handleNodeMouseOver)
       .on('mouseout', this.handleNodeMouseOut)

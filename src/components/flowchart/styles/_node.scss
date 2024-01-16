@@ -136,3 +136,7 @@
 .pipeline-node__text {
   transition: opacity 0.15s ease;
 }
+
+.pipeline-node--memory-data {
+  opacity: 0.3;
+}

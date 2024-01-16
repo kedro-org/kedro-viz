@@ -69,6 +69,13 @@ export const flags = {
     default: false,
     icon: '🔛',
   },
+  diffMemoryDatasets: {
+    name: 'Distinctive Memory Dataset flowchart view',
+    description:
+      'Fades non-persistent i.e. MemoryDatasets to distinguish them from persistent datasets in the flowchart',
+    default: false,
+    icon: '🔛',
+  },
 };
 
 export const settings = {
