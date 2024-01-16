@@ -20,5 +20,7 @@ def test_create_deployer_local():
 
 
 def test_create_deployer_invalid_platform():
-    with pytest.raises(ValueError, match="Invalid platform specified"):
+    with pytest.raises(
+        ValueError, match="Invalid platform 'invalid_platform' specified"
+    ):
         DeployerFactory.create_deployer("invalid_platform")
