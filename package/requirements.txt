@@ -6,7 +6,7 @@ pydantic<2
 fsspec>=2021.4, <2024.1
 s3fs>=2021.4, <2024.1
 aiofiles>=22.1.0
-uvicorn[standard]~=0.22.0
+uvicorn[standard]~=0.25.0
 watchgod~=0.8.2
 plotly>=4.0
 pandas>=1.3
