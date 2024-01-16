@@ -15,4 +15,4 @@ class DeployerFactory:
             return S3Deployer(region, bucket_name)
         if platform == "local":
             return LocalDeployer()
-        raise ValueError("Invalid platform specified")
+        raise ValueError(f"Invalid platform '{platform}' specified")
