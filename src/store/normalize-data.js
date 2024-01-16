@@ -49,9 +49,10 @@ export const createInitialPipelineState = () => ({
     modularPipelines: {},
   },
   nodeType: {
-    ids: ['task', 'data', 'parameters', 'modularPipeline'],
+    ids: ['task', 'data', 'memoryData', 'parameters', 'modularPipeline'],
     name: {
       data: 'Datasets',
+      memoryData: 'Memory Datasets',
       task: 'Nodes',
       parameters: 'Parameters',
       modularPipeline: 'Modular Pipelines',
@@ -141,7 +142,11 @@ const addNode = (state) => (node) => {
   state.node.ids.push(id);
   state.node.name[id] = prettifyName(stripNamespace(node.name || ''));
   state.node.fullName[id] = node.name;
-  state.node.type[id] = node.type;
+  if (node?.dataset_type?.includes('Memory')) {
+    state.node.type[id] = 'memoryData';
+  } else {
+    state.node.type[id] = node.type;
+  }
   state.node.layer[id] = node.layer;
   state.node.pipelines[id] = node.pipelines
     ? arrayToObject(node.pipelines, () => true)

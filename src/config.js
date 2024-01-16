@@ -101,6 +101,7 @@ export const sidebarGroups = {
 export const sidebarElementTypes = {
   task: 'Nodes',
   data: 'Datasets',
+  memoryData: 'Memory Datasets',
   parameters: 'Parameters',
 };
 
