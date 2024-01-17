@@ -3,7 +3,6 @@ deployment class for Azure Blob Storage"""
 import glob
 import logging
 import mimetypes
-
 from pathlib import Path
 
 from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
@@ -14,15 +13,12 @@ except ImportError:
     pass
 
 import fsspec
-from jinja2 import Environment, FileSystemLoader
-from packaging.version import parse
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
-from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 _AZ_PROTOCOL = "abfs"
 logger = logging.getLogger(__name__)
+
 
 class AzureDeployer(BaseDeployer):
     """A class to handle the deployment of Kedro-viz to AzureBlobStorage.
@@ -49,7 +45,7 @@ class AzureDeployer(BaseDeployer):
         self._bucket_name = bucket_name
         self._path = f"{_AZ_PROTOCOL}://$web"
         self._fs = fsspec.filesystem(_AZ_PROTOCOL, **{"account_name": bucket_name})
-   
+
     def _write_heap_injected_index(self, html_content):
         self._fs.write_bytes(
             path=f"{self._path}/index.html",
@@ -89,7 +85,7 @@ class AzureDeployer(BaseDeployer):
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
-    
+
     def deploy_and_get_url(self):
         """Deploy Kedro-viz to AzureBlobStorage and return its URL."""
         self.deploy()

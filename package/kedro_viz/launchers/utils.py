@@ -1,7 +1,6 @@
 """`kedro_viz.launchers.utils` contains utility functions
 used in the `kedro_viz.launchers` package."""
 import logging
-import sys
 import webbrowser
 from time import sleep, time
 from typing import Any, Callable
@@ -107,11 +106,5 @@ def viz_deploy_progress_timer():
             )
             sleep(1)
             seconds += 1
-        # else:
-        #     raise Exception(
-        #         "Time limit exceeded, please check your internet connection and try again"
-        #     )
     except KeyboardInterrupt:  # pragma: no cover
         print("\nCreating your build/static-website interrupted. Exiting...")
-    # except Exception as exc:  # pragma: no cover
-    #     print(f"\n ERROR: Failed to create your build/static-website: {exc}")

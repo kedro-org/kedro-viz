@@ -17,7 +17,9 @@ class TestBaseDeployer:
         build = ConcreteBaseDeployer()
         build._upload_api_responses()
 
-        save_api_responses_to_fs_mock.assert_called_once_with(build._path, mockremote_fs)
+        save_api_responses_to_fs_mock.assert_called_once_with(
+            build._path, mockremote_fs
+        )
 
     def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")

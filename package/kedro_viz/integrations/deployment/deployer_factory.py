@@ -19,4 +19,7 @@ class DeployerFactory:
             return AzureDeployer(endpoint, bucket_name)
         if platform == "local":
             return LocalDeployer()
-        raise ValueError(f"Invalid platform specified. Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}")
+        raise ValueError(
+            "Invalid platform specified."
+            f"Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}"
+        )

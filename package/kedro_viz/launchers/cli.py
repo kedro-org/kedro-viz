@@ -231,7 +231,8 @@ def deploy(platform, endpoint, bucket_name):
     if platform not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         click.echo(
             click.style(
-                f"ERROR: Invalid platform specified. Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
+                "ERROR: Invalid platform specified. Kedro-Viz supports"
+                f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
                 fg="red",
             ),
         )
@@ -248,6 +249,7 @@ def build():
 
 
 def platform_deployer(platform, endpoint=None, bucket_name=None):
+    """Creates platform specific deployer and deploys Kedro Viz"""
     try:
         viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
         viz_deploy_timer.start()
@@ -262,7 +264,8 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         if platform != "local":
             click.echo(
                 click.style(
-                    f"\u2728 Success! Kedro Viz has been deployed on {platform}. It can be accessed at :\n"
+                    f"\u2728 Success! Kedro Viz has been deployed on {platform}."
+                    "It can be accessed at :\n"
                     f"{url}",
                     fg="green",
                 ),
@@ -291,7 +294,8 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         else:
             click.echo(
                 click.style(
-                    "PERMISSION ERROR: Please make sure, you have write access to the current directory",
+                    "PERMISSION ERROR: Please make sure,"
+                    "you have write access to the current directory",
                     fg="red",
                 )
             )

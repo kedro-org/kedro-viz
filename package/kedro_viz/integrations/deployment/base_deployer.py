@@ -63,16 +63,14 @@ class BaseDeployer(abc.ABC):
 
         self._write_heap_injected_index(html_content)
 
-       
     def _write_heap_injected_index(self, html_content):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = f"{temp_dir}/index.html"
-            
+
             with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
                 temp_index_file.write(html_content)
 
             self._fs.put(temp_file_path, f"{self._path}/")
-
 
     def _upload_static_files(self, html_dir: Path):
         """Upload static HTML files to Build."""
