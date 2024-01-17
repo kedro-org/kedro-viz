@@ -24,7 +24,7 @@ class TestAWSDeployer:
         mocker.patch.object(deployer, "_upload_static_files")
         mocker.patch.object(deployer, "_upload_deploy_viz_metadata_file")
 
-        deployer._deploy()
+        deployer.deploy()
 
         deployer._upload_api_responses.assert_called_once()
         deployer._upload_static_files.assert_called_once()
@@ -34,10 +34,10 @@ class TestAWSDeployer:
         mocker.patch("fsspec.filesystem")
         deployer = AWSDeployer(region, bucket_name)
 
-        mocker.patch.object(deployer, "_deploy")
+        mocker.patch.object(deployer, "deploy")
         url = deployer.deploy_and_get_url()
 
-        deployer._deploy.assert_called_once()
+        deployer.deploy.assert_called_once()
         expected_url = f"http://{deployer._bucket_name}.s3-website.{deployer._region}.amazonaws.com"
         assert url.startswith("http://")
         assert url == expected_url

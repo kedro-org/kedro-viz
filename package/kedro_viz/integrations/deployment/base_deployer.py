@@ -1,5 +1,5 @@
 """`kedro_viz.integrations.deployment.base_deployer` defines
-creation of Kedro-viz build"""
+an abstract class for all deployers"""
 
 import abc
 import json
@@ -25,7 +25,7 @@ class BaseDeployer(abc.ABC):
     """A class to handle the creation of Kedro-viz build.
 
     Attributes:
-        _build_path (str): build path name.
+        _path (str): build path name.
         _fs (fsspec.filesystem): Filesystem for local/remote protocol.
 
     Methods:
@@ -61,13 +61,18 @@ class BaseDeployer(abc.ABC):
         injected_head_content.append("</head>")
         html_content = html_content.replace("</head>", "\n".join(injected_head_content))
 
+        self._write_heap_injected_index(html_content)
+
+       
+    def _write_heap_injected_index(self, html_content):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = f"{temp_dir}/index.html"
-
+            
             with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
                 temp_index_file.write(html_content)
 
             self._fs.put(temp_file_path, f"{self._path}/")
+
 
     def _upload_static_files(self, html_dir: Path):
         """Upload static HTML files to Build."""
@@ -98,7 +103,9 @@ class BaseDeployer(abc.ABC):
             logger.exception("Upload failed: %s ", exc)
             raise exc
 
-    def _deploy(self):
+    def deploy(self):
+        """Create and deploy all static files to local/remote file system"""
+
         self._upload_api_responses()
         self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()

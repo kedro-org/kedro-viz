@@ -12,7 +12,11 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.constants import (
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    SHAREABLEVIZ_SUPPORTED_PLATFORMS,
+)
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
@@ -204,111 +208,46 @@ def run(
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
-    "--region",
+    "--platform",
     type=str,
     required=True,
-    help="AWS region where your S3 bucket is located",
+    help=f"Supported Cloud Platforms like {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,} to host Kedro Viz",
+)
+@click.option(
+    "--endpoint",
+    type=str,
+    required=True,
+    help="Static Website hosted endpoint."
+    "(eg., For AWS - http://<bucket_name>.s3-website.<region_name>.amazonaws.com/)",
 )
 @click.option(
     "--bucket-name",
     type=str,
     required=True,
-    help="AWS S3 bucket name where Kedro Viz will be hosted",
+    help="Bucket Name where Kedro Viz will be hosted",
 )
-def deploy(region, bucket_name):
-    """Deploy and host Kedro Viz on AWS S3"""
-    if region not in AWS_REGIONS:
+def deploy(platform, endpoint, bucket_name):
+    """Deploy and host Kedro Viz on provided platform"""
+    if platform not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         click.echo(
             click.style(
-                "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
-                "Please find the complete list of available regions at :\n"
-                "https://docs.aws.amazon.com/AmazonRDS/latest"
-                "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
-                "#Concepts.RegionsAndAvailabilityZones.Regions",
+                f"ERROR: Invalid platform specified. Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
                 fg="red",
             ),
         )
         return
 
-    try:
-        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
-        viz_deploy_timer.start()
-
-        # Loads and populates data from underlying Kedro Project
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
-
-        # Start the deployment
-        deployer = DeployerFactory.create_deployer("aws", region, bucket_name)
-        url = deployer.deploy_and_get_url()
-
-        click.echo(
-            click.style(
-                "\u2728 Success! Kedro Viz has been deployed on AWS S3. It can be accessed at :\n"
-                f"{url}",
-                fg="green",
-            ),
-        )
-    except PermissionError:  # pragma: no cover
-        click.echo(
-            click.style(
-                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
-                "AWS access keys, a valid AWS region and bucket name.\n"
-                "Please supply your AWS access keys as environment variables "
-                "and make sure the AWS region and bucket name are valid.\n"
-                "More information can be found at : "
-                "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
-                fg="red",
-            )
-        )
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
-        click.echo(
-            click.style(
-                f"ERROR: Failed to deploy and host Kedro-Viz on AWS S3 : {exc} ",
-                fg="red",
-            )
-        )
-    finally:
-        viz_deploy_timer.terminate()
+    platform_deployer(platform, endpoint, bucket_name)
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
-    """Create build directory of local Kedro Viz instance with static data"""
+    """Creates viz-build directory of local Kedro Viz instance with static data"""
 
-    try:
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
-        deployer = DeployerFactory.create_deployer("local")
-        deployer.deploy_and_get_url()
-
-        click.echo(
-            click.style(
-                "\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                "build directory.",
-                fg="green",
-            )
-        )
-
-    except Exception as ex:
-        traceback.print_exc()
-        raise KedroCliError(str(ex)) from ex
+    platform_deployer("local")
 
 
-@viz.command(context_settings={"help_option_names": ["-h", "--help"]})
-# @click.option(
-#     "--region",
-#     type=str,
-#     required=True,
-#     help="Azure region where your Blob storage is located",
-# )
-# @click.option(
-#     "--bucket-name",
-#     type=str,
-#     required=True,
-#     help="Azure bucket name where Kedro Viz will be hosted",
-# )
-def azdeploy():
-    """Deploy and host Kedro Viz on Azure Blob Storage"""
+def platform_deployer(platform, endpoint=None, bucket_name=None):
     try:
         viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
         viz_deploy_timer.start()
@@ -317,30 +256,61 @@ def azdeploy():
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
 
         # Start the deployment
-        deployer = DeployerFactory.create_deployer("az", "eastus", "shareableviz")
+        deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
         url = deployer.deploy_and_get_url()
 
-        click.echo(
-            click.style(
-                "\u2728 Success! Kedro Viz has been deployed on Azure. It can be accessed at :\n"
-                f"{url}",
-                fg="green",
-            ),
-        )
-    except PermissionError:  # pragma: no cover
-        click.echo(
-            click.style(
-                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires access keys",
-                fg="red",
+        if platform != "local":
+            click.echo(
+                click.style(
+                    f"\u2728 Success! Kedro Viz has been deployed on {platform}. It can be accessed at :\n"
+                    f"{url}",
+                    fg="green",
+                ),
             )
-        )
+        else:
+            click.echo(
+                click.style(
+                    "\u2728 Success! Kedro-Viz build files have been successfully added to the "
+                    f"{url} directory.",
+                    fg="green",
+                )
+            )
+    except PermissionError:  # pragma: no cover
+        if platform != "local":
+            click.echo(
+                click.style(
+                    "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
+                    f"{platform} access keys, a valid {platform} endpoint and bucket name.\n"
+                    f"Please supply your {platform} access keys as environment variables "
+                    f"and make sure the {platform} endpoint and bucket name are valid.\n"
+                    "More information can be found at : "
+                    "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
+                    fg="red",
+                )
+            )
+        else:
+            click.echo(
+                click.style(
+                    "PERMISSION ERROR: Please make sure, you have write access to the current directory",
+                    fg="red",
+                )
+            )
+
     # pylint: disable=broad-exception-caught
     except Exception as exc:  # pragma: no cover
-        click.echo(
-            click.style(
-                f"ERROR: Failed to deploy and host Kedro-Viz on Azure : {exc} ",
-                fg="red",
+        if platform != "local":
+            click.echo(
+                click.style(
+                    f"ERROR: Failed to deploy and host Kedro-Viz on {platform} : {exc} ",
+                    fg="red",
+                )
             )
-        )
+        else:
+            click.echo(
+                click.style(
+                    f"ERROR: Failed to build Kedro-Viz : {exc} ",
+                    fg="red",
+                )
+            )
     finally:
         viz_deploy_timer.terminate()

@@ -1,5 +1,5 @@
-"""`kedro_viz.integrations.deployment.base_deployer` defines
-creation of Kedro-viz build"""
+"""`kedro_viz.integrations.deployment.local_deployer` defines
+deployment class for local file system"""
 
 import logging
 from pathlib import Path
@@ -9,7 +9,7 @@ import fsspec
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
 
-_BUILD_PATH = "build"
+_BUILD_PATH = "viz-build"
 _FILE_PROTOCOL = "file"
 
 logger = logging.getLogger(__name__)
@@ -34,5 +34,5 @@ class LocalDeployer(BaseDeployer):
 
     def deploy_and_get_url(self):
         """Copy Kedro-viz to local build folder and return its URL."""
-        self._deploy()
+        self.deploy()
         return self._path

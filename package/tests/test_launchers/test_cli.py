@@ -343,11 +343,10 @@ def test_build_with_exception(mocker):
     mocker.patch("kedro_viz.launchers.cli.load_and_populate_data")
     mocker.patch(
         "kedro_viz.launchers.cli.DeployerFactory.create_deployer",
-        side_effect=Exception("Test exception"),
+        side_effect=Exception("ERROR: Failed to build Kedro-Viz"),
     )
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
 
-    assert result.exit_code != 0
-    assert "Test exception" in result.output
+    assert "ERROR: Failed to build Kedro-Viz" in result.output
