@@ -25,7 +25,7 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Platform-Agnostic sharing with Kedro-viz 
 
-Starting from Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a developer runs this command from the command line interface (CLI), it will create a `build`` folder within their Kedro project. This build folder contains the entire static Kedro-Viz app package, which users can manually publish to any hosting platform of their choice.
+Starting from Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a developer runs this command from the command line interface (CLI), it will create a `build` folder within their Kedro project. This build folder contains the entire static Kedro-Viz app package, which users can manually publish to any hosting platform of their choice.
 
 Some suggested platforms that have been explored with kedro viz build include:
 * For static website hosting platforms like GitHub Pages:
