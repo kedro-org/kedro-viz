@@ -728,7 +728,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            return cls.dataset._preview(**cls.data_node.get_preview_args())
+            return cls.dataset.preview(**cls.data_node.get_preview_args())
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
@@ -745,7 +745,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            return inspect.signature(cls.dataset._preview).return_annotation.__name__
+            return inspect.signature(cls.dataset.preview).return_annotation.__name__
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(

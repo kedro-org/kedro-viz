@@ -112,10 +112,10 @@ class TrackingDatasetModel:
         try:
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
                 self.runs[run_id] = {
-                    self.dataset._filepath.name: self.dataset._preview()
+                    self.dataset._filepath.name: self.dataset.preview()
                 }
             else:
-                self.runs[run_id] = self.dataset._preview()
+                self.runs[run_id] = self.dataset.preview()
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s: %s",

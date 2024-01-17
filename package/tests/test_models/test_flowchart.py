@@ -425,7 +425,7 @@ class TestGraphNodeMetadata:
             "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=True
         )
         mocker.patch(
-            "kedro_datasets.pandas.CSVDataset._preview", return_value=mock_preview_data
+            "kedro_datasets.pandas.CSVDataset.preview", return_value=mock_preview_data
         )
 
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
@@ -445,7 +445,7 @@ class TestGraphNodeMetadata:
         mocker.patch(
             "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=True
         )
-        mocker.patch("kedro_datasets.pandas.CSVDataset._preview", return_value=False)
+        mocker.patch("kedro_datasets.pandas.CSVDataset.preview", return_value=False)
 
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
         assert preview_node_metadata.plot is None
