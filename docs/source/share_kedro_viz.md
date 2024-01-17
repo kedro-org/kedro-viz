@@ -27,20 +27,20 @@ When your project is ready, navigate to the root directory of the project.
 
 Starting from Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a developer runs this command from the command line interface (CLI), it will create a `build` folder within their Kedro project. This build folder contains the entire static Kedro-Viz app package, which users can manually publish to any hosting platform of their choice.
 
-Some suggested platforms that have been explored with kedro viz build include:
+Some suggested platforms that have been explored with `kedro viz build` include:
 * For static website hosting platforms like GitHub Pages:
     * Follow the steps linked [here](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages.
-    * Once that's done, simply push the contents of the `build`` folder to this new repository.
-    * Your site will be available at the following URL: http://<username>.github.io
+    * Once that's done, simply push the contents of the `build` folder to this new repository.
+    * Your site will be available at the following URL: `http://<username>.github.io`
 * For cloud providers such as AWS, Azure, and GCP:
-    * After setting up your bucket and enabling static hosting, manually update the contents of the 'build' folder in the bucket.
-    * Access the bucket via its endpoint.
+    * After setting up your bucket and enabling static hosting, manually update the contents of the `build` folder in the bucket.
+    * Access the Kedro-viz app via the bucket endpoint.
 
 For AWS (and in the future Azure and GCP) we also offer deploy orchestration, which automates the upload process for you. This is explained in the next section.
 
 ## Publish and share Kedro-viz on AWS 
 
-While kedro viz build offers a platform-agnostic and more manual way of publishing and sharing your Kedro-Viz, you can also automate the process using kedro viz deploy, which is currently supported only for AWS. More cloud platform support will be coming soon. Below are the steps to follow when deploying to AWS.
+While `kedro viz build` offers a platform-agnostic and more manual way of publishing and sharing your Kedro-Viz, you can also automate the process using `kedro viz deploy`, which is currently supported only for AWS. More cloud platform support will be coming soon. Below are the steps to follow when deploying to AWS.
 
 ### Update and install the dependencies
 
