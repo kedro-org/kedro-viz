@@ -25,7 +25,7 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Platform-Agnostic sharing with Kedro-viz 
 
-As of Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a user runs this command from the command line interface (CLI), it will create a `build` folder within their Kedro project. The `build` folder contains a static Kedro-Viz app package, which users can be used as a source to publish to any static website hosting platforms.
+As of Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a user runs this command from the command line interface (CLI), it will create a `build` folder within their Kedro project. The `build` folder contains a static Kedro-Viz app package, which can be used as a source to publish to any static website hosting platforms.
 
 Some suggested platforms that have been explored with `kedro viz build` include:
 * For static website hosting platforms like GitHub Pages:
@@ -40,7 +40,7 @@ For AWS (and in the future Azure and GCP) we offer deploy orchestration, which a
 
 ## Publish and share Kedro-viz on AWS 
 
-While kedro viz build offers a platform-agnostic, manual way of publishing and sharing your Kedro-Viz, you can also automate the process using kedro viz deploy, which currently supports AWS. Support for other cloud providers namely Azure, GCP are in pipeline. 
+While `kedro viz build` offers a platform-agnostic, manual way of publishing and sharing your Kedro-Viz, you can also automate the process using `kedro viz deploy`, which currently supports AWS. Support for other cloud providers namely Azure, GCP are in pipeline. 
 
 Below are the steps to follow when deploying to AWS.
 
