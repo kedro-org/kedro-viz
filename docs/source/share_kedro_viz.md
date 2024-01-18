@@ -25,9 +25,7 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Publish and share Kedro-Viz automatically
 
-You can automate the process of publishing and sharing your Kedro-Viz. Currently we support sharing through AWS, but integration with other cloud providers, namely Azure and GCP, will be added soon. [There is a manual, platform-agnostic publish and share process described below](#platform-agnostic-sharing-with-kedro-viz) for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
-
-This section describes the steps to automate your Kedro-Viz deployment on AWS.
+You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps to automate your Kedro-Viz deployment on AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. [In the absence of automated publish and share for other platforms, there is a manual, platform-agnostic publish and share process described below](#platform-agnostic-sharing-with-kedro-viz). You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
 
 ### Update and install the dependencies
 You can ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
@@ -115,7 +113,7 @@ See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&lo
 
 ## Platform-agnostic sharing with Kedro-Viz 
 
-In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project, which contains a static Kedro-Viz app package ready for to publish.
+In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project. The build folder contains a static Kedro-Viz app package, which can be used as a source to publish on any static website hosting platform.
 
 ### Static website hosting platforms such as GitHub Pages
 
