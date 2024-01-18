@@ -25,7 +25,7 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Publish and share Kedro-Viz automatically
 
-You can automate the process of publishing and sharing your Kedro-Viz. Currently we support AWS, but other cloud providers, namely Azure and GCP, are in pipeline. [There is a manual, platform-agnostic publish and share process described below](#platform-agnostic-sharing-with-kedro-viz) for static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+You can automate the process of publishing and sharing your Kedro-Viz. Currently we support sharing through AWS, but integration with other cloud providers, namely Azure and GCP, will be added soon. [There is a manual, platform-agnostic publish and share process described below](#platform-agnostic-sharing-with-kedro-viz) for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
 
 This section describes the steps to automate your Kedro-Viz deployment on AWS.
 
