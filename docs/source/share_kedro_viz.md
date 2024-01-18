@@ -122,4 +122,4 @@ Follow the steps [listed in the GitHub pages documentation](https://docs.github.
 
 After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
 
-For AWS, we offer deploy orchestration to [automate the upload process as described above](#publish-and-share-kedro-viz-automatically).
+For AWS, we offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
