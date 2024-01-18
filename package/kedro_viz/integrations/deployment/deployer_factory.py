@@ -4,6 +4,7 @@ Kedro-viz deployer class instances"""
 from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS
 from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
 from kedro_viz.integrations.deployment.azure_deployer import AzureDeployer
+from kedro_viz.integrations.deployment.gcp_deployer import GCPDeployer
 from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
 
 
@@ -17,6 +18,8 @@ class DeployerFactory:
             return AWSDeployer(endpoint, bucket_name)
         if platform == "azure":
             return AzureDeployer(endpoint, bucket_name)
+        if platform == "gcp":
+            return GCPDeployer(endpoint, bucket_name)
         if platform == "local":
             return LocalDeployer()
         raise ValueError(

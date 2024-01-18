@@ -70,7 +70,7 @@ class BaseDeployer(abc.ABC):
             with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
                 temp_index_file.write(html_content)
 
-            self._fs.put(temp_file_path, f"{self._path}/")
+            self._fs.put(temp_file_path, f"{self._path}/", content_type="text/html")
 
     def _upload_static_files(self, html_dir: Path):
         """Upload static HTML files to Build."""

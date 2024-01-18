@@ -231,8 +231,18 @@ def deploy(platform, endpoint, bucket_name):
     if platform not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         click.echo(
             click.style(
-                "ERROR: Invalid platform specified. Kedro-Viz supports"
+                "ERROR: Invalid platform specified. Kedro-Viz supports \n"
                 f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
+                fg="red",
+            ),
+        )
+        return
+
+    if not endpoint:
+        click.echo(
+            click.style(
+                "ERROR: Invalid endpoint specified. If you are looking for platform \n"
+                "agnostic shareable viz solution, please use `kedro viz build` command",
                 fg="red",
             ),
         )
@@ -264,7 +274,7 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         if platform != "local":
             click.echo(
                 click.style(
-                    f"\u2728 Success! Kedro Viz has been deployed on {platform}."
+                    f"\u2728 Success! Kedro Viz has been deployed on {platform}. \n"
                     "It can be accessed at :\n"
                     f"{url}",
                     fg="green",
@@ -274,7 +284,7 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
             click.echo(
                 click.style(
                     "\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                    f"{url} directory.",
+                    f"`{url}` directory.",
                     fg="green",
                 )
             )
@@ -294,7 +304,7 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         else:
             click.echo(
                 click.style(
-                    "PERMISSION ERROR: Please make sure,"
+                    "PERMISSION ERROR: Please make sure, "
                     "you have write access to the current directory",
                     fg="red",
                 )
