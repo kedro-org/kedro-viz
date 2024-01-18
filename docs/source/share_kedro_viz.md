@@ -115,7 +115,7 @@ See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&lo
 
 ## Platform-agnostic sharing with Kedro-Viz 
 
-In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command to enable you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project, which contains a static Kedro-Viz app package ready for to publish.
+In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project, which contains a static Kedro-Viz app package ready for to publish.
 
 ### Static website hosting platforms such as GitHub Pages
 
