@@ -28,7 +28,7 @@ When your project is ready, navigate to the root directory of the project.
 You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
 
 ### Update and install the dependencies
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
+Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
 fsspec[s3]>=2023.9.0
