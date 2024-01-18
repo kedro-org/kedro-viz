@@ -27,11 +27,11 @@ When your project is ready, navigate to the root directory of the project.
 
 As of Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command. When a user runs this command from the command line interface (CLI), it will create a `build` folder within their Kedro project. The `build` folder contains a static Kedro-Viz app package, which users can be used as a source to publish to any static website hosting platforms.
 
-Some suggested platforms that have been explored with kedro viz build include:
+Some suggested platforms that have been explored with `kedro viz build` include:
 * For static website hosting platforms like GitHub Pages:
     * Follow the steps linked [here](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages.
-    * Once that's done, simply push the contents of the `build`` folder to this new repository.
-    * Your site will be available at the following URL: http://<username>.github.io
+    * Once that's done, simply push the contents of the `build` folder to this new repository.
+    * Your site will be available at the following URL: `http://<username>.github.io`
 * For cloud providers such as AWS, Azure, and GCP:
     * After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually
     * Access the bucket via its endpoint.
@@ -45,9 +45,6 @@ While kedro viz build offers a platform-agnostic, manual way of publishing and s
 Below are the steps to follow when deploying to AWS.
 
 ### Update and install the dependencies
-
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project.
-
 You can ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
 
 ```text
