@@ -25,10 +25,10 @@ When your project is ready, navigate to the root directory of the project.
 
 ## Publish and share Kedro-Viz automatically
 
-You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. [In the absence of automated publish and share for other platforms, there is a manual, platform-agnostic publish and share process described below](#platform-agnostic-sharing-with-kedro-viz). You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
 
 ### Update and install the dependencies
-You can ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
+Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
 
 ```text
 fsspec[s3]>=2023.9.0
@@ -44,7 +44,6 @@ pip install -r src/requirements.txt
 ## Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
-
 
 Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
 
@@ -123,4 +122,4 @@ Follow the steps [listed in the GitHub pages documentation](https://docs.github.
 
 After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
 
-For AWS, we offer deploy orchestration to [automate the upload process as described above](#publish-and-share-kedro-viz-on-aws).
+For AWS, we offer deploy orchestration to [automate the upload process as described above](#publish-and-share-kedro-viz-automatically).
