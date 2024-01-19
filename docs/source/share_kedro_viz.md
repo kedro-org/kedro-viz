@@ -4,7 +4,7 @@
 Kedro-Viz sharing was introduced in version 6.6.0.
 ```
 
-This page describes how to publish Kedro-Viz so you can share it with others. It uses the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` as an example.
+This page describes how to publish Kedro-Viz to a static website hosting platform to share it with others. It uses the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` as an example.
 
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
@@ -23,11 +23,23 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 
 When your project is ready, navigate to the root directory of the project.
 
-## Update and install the dependencies
 
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project.
+## Publish and share Kedro-Viz automatically
 
-You can ensure you have these correct versions by updating the `requirements.txt` file in the `src` folder of the Kedro project to the following:
+
+When your project is ready, navigate to the root directory of the project.
+
+There are two ways to publish and share your Kedro-Viz: 
+    1. You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. 
+    2. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+
+
+### Update and install the dependencies
+Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+
+
+### Update and install the dependencies
+Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
 fsspec[s3]>=2023.9.0
@@ -43,7 +55,6 @@ pip install -r src/requirements.txt
 ## Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
-
 
 Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
 
@@ -109,3 +120,17 @@ You can control who can view your visualisation using [bucket and user policies]
 You pay for storing objects in your S3 buckets. The amount you pay depends on your objects’ size, how long you stored the object during the month, and the storage class.
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information. 
+
+## Platform-agnostic sharing with Kedro-Viz 
+
+In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project. The build folder contains a static Kedro-Viz app package, which can be used as a source to publish on any static website hosting platform.
+
+### Static website hosting platforms such as GitHub Pages
+
+Follow the steps [listed in the GitHub pages documentation](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages. On completion, push the contents of the `build` folder to this new repository. Your site will be available at the following URL: `http://<username>.github.io`
+
+### Cloud providers such as AWS, Azure, and GCP
+
+After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
+
+For AWS, we also offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
