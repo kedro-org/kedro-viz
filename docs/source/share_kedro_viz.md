@@ -23,9 +23,20 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 
 When your project is ready, navigate to the root directory of the project.
 
+
 ## Publish and share Kedro-Viz automatically
 
-You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+
+When your project is ready, navigate to the root directory of the project.
+
+There are two ways to publish and share your Kedro-Viz: 
+    1. You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon. 
+    2. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+
+
+### Update and install the dependencies
+Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+
 
 ### Update and install the dependencies
 Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
@@ -118,8 +129,8 @@ In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that ena
 
 Follow the steps [listed in the GitHub pages documentation](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages. On completion, push the contents of the `build` folder to this new repository. Your site will be available at the following URL: `http://<username>.github.io`
 
-### Cloud providers such as Azure, and GCP
+### Cloud providers such as AWS, Azure, and GCP
 
 After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
 
-For AWS, we offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
+For AWS, we also offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
