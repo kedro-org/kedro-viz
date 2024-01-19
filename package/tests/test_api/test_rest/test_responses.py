@@ -874,7 +874,7 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.EnhancedORJSONResponse.encode_to_human_readable",
             return_value=encoded_response,
         )
-        with patch("kedro_viz.api.rest.responses.fsspec.filesystem") as mock_filesystem:
+        with patch("fsspec.filesystem") as mock_filesystem:
             mockremote_fs = mock_filesystem.return_value
             mockremote_fs.open.return_value.__enter__.return_value = Mock()
             write_api_response_to_fs(file_path, response, mockremote_fs)
@@ -975,6 +975,7 @@ class TestEnhancedORJSONResponse:
         "file_path, protocol, path",
         [
             ("s3://shareableviz", "s3", "shareableviz"),
+            ("abfs://shareableviz", "abfs", "shareableviz"),
             ("shareableviz", "file", "shareableviz"),
         ],
     )
@@ -992,20 +993,18 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.get_protocol_and_path",
             return_value=(protocol, path),
         )
-        mockremote_fs = mocker.patch(
-            "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
-        )
+
+        mockremote_fs = mocker.MagicMock()
 
         save_api_responses_to_fs(file_path, mockremote_fs)
 
-        mockremote_fs.assert_called_once_with(protocol)
         mock_get_protocol_and_path.assert_called_once_with(file_path)
         mock_api_main_response_to_fs.assert_called_once_with(
-            f"{path}/api/main", mockremote_fs.return_value
+            f"{path}/api/main", mockremote_fs
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{path}/api/nodes", mockremote_fs.return_value
+            f"{path}/api/nodes", mockremote_fs
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
-            f"{path}/api/pipelines", mockremote_fs.return_value
+            f"{path}/api/pipelines", mockremote_fs
         )

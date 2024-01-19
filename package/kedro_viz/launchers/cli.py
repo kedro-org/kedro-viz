@@ -253,7 +253,7 @@ def deploy(platform, endpoint, bucket_name):
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
-    """Creates viz-build directory of local Kedro Viz instance with static data"""
+    """Create build directory of local Kedro Viz instance with static data"""
 
     platform_deployer("local")
 
@@ -274,7 +274,7 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         if platform != "local":
             click.echo(
                 click.style(
-                    f"\u2728 Success! Kedro Viz has been deployed on {platform}. \n"
+                    f"\u2728 Success! Kedro Viz has been deployed on {platform.upper()}. \n"
                     "It can be accessed at :\n"
                     f"{url}",
                     fg="green",

@@ -10,16 +10,13 @@ from kedro_viz.integrations.deployment.base_deployer import _HTML_DIR, BaseDeplo
 # Test the BaseDeployer class
 class TestBaseDeployer:
     def test_upload_api_responses(self, mocker):
-        mockremote_fs = mocker.patch("fsspec.filesystem")
         save_api_responses_to_fs_mock = mocker.patch(
             "kedro_viz.integrations.deployment.base_deployer.save_api_responses_to_fs"
         )
         build = ConcreteBaseDeployer()
         build._upload_api_responses()
 
-        save_api_responses_to_fs_mock.assert_called_once_with(
-            build._path, mockremote_fs
-        )
+        save_api_responses_to_fs_mock.assert_called_once_with(build._path, build._fs)
 
     def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")

@@ -7,6 +7,7 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
+from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS
 from kedro_viz.launchers import cli
 from kedro_viz.server import run_server
 
@@ -236,7 +237,7 @@ def test_viz_command_group(mocker):
             "Options:\n  --help  Show this message and exit.\n\n"
             "Commands:\n  build   Create build directory of local Kedro Viz "
             "instance with static data\n  "
-            "deploy  Deploy and host Kedro Viz on AWS S3\n  "
+            "deploy  Deploy and host Kedro Viz on provided platform\n  "
             "run     Launch local Kedro Viz instance\x1b[0m"
         ),
     ]
@@ -251,33 +252,51 @@ def test_viz_command_group(mocker):
             [
                 "viz",
                 "deploy",
-                "--region",
-                "us-east-2",
+                "--platform",
+                "aws",
+                "--endpoint",
+                "http://some-test.amazonaws.com",
                 "--bucket-name",
                 "example-bucket",
             ],
-            {"region": "us-east-2", "bucket_name": "example-bucket"},
+            {
+                "platform": "aws",
+                "endpoint": "http://some-test.amazonaws.com",
+                "bucket_name": "example-bucket",
+            },
         ),
         (
-            ["viz", "deploy", "--region", "us-east-1", "--bucket-name", "shareable"],
-            {"region": "us-east-1", "bucket_name": "shareable"},
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "azure",
+                "--endpoint",
+                "https://some-test.web.core.windows.net",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "azure",
+                "endpoint": "https://some-test.web.core.windows.net",
+                "bucket_name": "example-bucket",
+            },
         ),
     ],
 )
-def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mocker):
+def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mocker):
     runner = CliRunner()
     mocker.patch("fsspec.filesystem")
     load_and_populate_data_mock = mocker.patch(
         "kedro_viz.launchers.cli.load_and_populate_data"
     )
 
-    expected_url = f"http://{deployer_args.get('bucket_name')} \
-    .s3-website.{deployer_args.get('region')}.amazonaws.com"
+    expected_url = deployer_args.get("endpoint")
 
-    s3_deployer_mock_instance = mocker.patch(
+    deployer_mock_instance = mocker.patch(
         "kedro_viz.launchers.cli.DeployerFactory.create_deployer"
     ).return_value
-    s3_deployer_mock_instance.deploy_and_get_url.return_value = expected_url
+    deployer_mock_instance.deploy_and_get_url.return_value = expected_url
 
     mock_click_echo = mocker.patch("click.echo")
 
@@ -290,7 +309,8 @@ def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mock
 
     mock_click_echo_calls = [
         call(
-            "\x1b[32m\u2728 Success! Kedro Viz has been deployed on AWS S3. "
+            "\x1b[32m\u2728 Success! Kedro Viz has been deployed on "
+            f"{deployer_args.get('platform').upper()}. \n"
             "It can be accessed at :\n"
             f"{expected_url}\x1b[0m"
         )
@@ -299,7 +319,7 @@ def test_viz_deploy_valid_region_and_bucket(command_options, deployer_args, mock
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
-def test_viz_deploy_invalid_region(mocker):
+def test_viz_deploy_invalid_platform(mocker):
     runner = CliRunner()
     mock_click_echo = mocker.patch("click.echo")
     with runner.isolated_filesystem():
@@ -308,8 +328,10 @@ def test_viz_deploy_invalid_region(mocker):
             [
                 "viz",
                 "deploy",
-                "--region",
-                "invalid-region",
+                "--platform",
+                "random",
+                "--endpoint",
+                "",
                 "--bucket-name",
                 "example-bucket",
             ],
@@ -318,13 +340,40 @@ def test_viz_deploy_invalid_region(mocker):
     assert result.exit_code == 0
     mock_click_echo_calls = [
         call(
-            "\x1b[31mERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
-            "Please find the complete list of available regions at :\n"
-            "https://docs.aws.amazon.com/AmazonRDS/latest"
-            "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
-            "#Concepts.RegionsAndAvailabilityZones.Regions\x1b[0m"
+            "\x1b[31mERROR: Invalid platform specified. Kedro-Viz supports \n"
+            f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}\x1b[0m"
         )
     ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
+def test_viz_deploy_invalid_endpoint(mocker):
+    runner = CliRunner()
+    mock_click_echo = mocker.patch("click.echo")
+    with runner.isolated_filesystem():
+        result = runner.invoke(
+            cli.viz_cli,
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "aws",
+                "--endpoint",
+                "",
+                "--bucket-name",
+                "example-bucket",
+            ],
+        )
+
+    assert result.exit_code == 0
+    mock_click_echo_calls = [
+        call(
+            "\x1b[31mERROR: Invalid endpoint specified. If you are looking for platform \n"
+            "agnostic shareable viz solution, please use `kedro viz build` command\x1b[0m"
+        )
+    ]
+
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 

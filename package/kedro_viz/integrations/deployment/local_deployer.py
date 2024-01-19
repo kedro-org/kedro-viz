@@ -9,7 +9,7 @@ import fsspec
 from kedro_viz import __version__
 from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
 
-_BUILD_PATH = "viz-build"
+_BUILD_PATH = "build"
 _FILE_PROTOCOL = "file"
 
 logger = logging.getLogger(__name__)

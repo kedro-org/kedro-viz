@@ -9,7 +9,7 @@ from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
 
 try:
     from azure.storage.blob import ContentSettings
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 import fsspec

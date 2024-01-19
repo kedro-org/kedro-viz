@@ -2,8 +2,9 @@
 from pydantic import BaseModel
 
 
-class AWSDeployerConfiguration(BaseModel):
-    """Credentials for AWS Deployer."""
+class DeployerConfiguration(BaseModel):
+    """Credentials for Deployers."""
 
-    region: str
+    platform: str
+    endpoint: str
     bucket_name: str

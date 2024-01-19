@@ -1,19 +1,26 @@
+import re
+from kedro_viz.integrations.deployment.azure_deployer import AzureDeployer
+
 import pytest
 
+from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS
 from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
 
 
-def test_create_deployer_s3():
-    deployer = DeployerFactory.create_deployer(
-        "aws",
-        endpoint="http://my-bucket.s3-website.us-east-2.amazonaws.com/",
-        bucket_name="my-bucket",
-    )
-    assert isinstance(deployer, AWSDeployer)
-    assert deployer._endpoint == "http://my-bucket.s3-website.us-east-2.amazonaws.com/"
-    assert deployer._bucket_name == "my-bucket"
+@pytest.mark.parametrize(
+    "platform, endpoint, bucket_name, deployer_class",
+    [
+        ("aws", "http://mocked-url.com", "s3://shareableviz", AWSDeployer),
+        ("azure", "http://mocked-url.com", "abfs://shareableviz", AzureDeployer),
+    ],
+)
+def test_create_deployer(platform, endpoint, bucket_name, deployer_class):
+    deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
+    assert isinstance(deployer, deployer_class)
+    assert deployer._endpoint == endpoint
+    assert deployer._bucket_name == bucket_name
 
 
 def test_create_deployer_local():
@@ -23,6 +30,10 @@ def test_create_deployer_local():
 
 def test_create_deployer_invalid_platform():
     with pytest.raises(
-        ValueError, match="Invalid platform 'invalid_platform' specified"
+        ValueError,
+        match=re.escape(
+            f"Invalid platform 'invalid_platform' specified. \n"
+            f"Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}"
+        ),
     ):
         DeployerFactory.create_deployer("invalid_platform")
