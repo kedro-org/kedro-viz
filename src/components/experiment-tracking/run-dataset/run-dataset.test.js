@@ -3,6 +3,7 @@ import RunDataset from '.';
 import { runs, trackingData } from '../../experiment-wrapper/mock-data';
 import JSONObject from '../../json-object';
 import { shallow, mount } from 'enzyme';
+import 'core-js/stable/structured-clone';
 
 const booleanTrackingData = {
   JSONData: [
