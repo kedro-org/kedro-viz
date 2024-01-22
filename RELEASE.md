@@ -9,7 +9,7 @@ Please follow the established format:
 # Release 7.1.0
 
 ## Major features and improvements
-- Add build command to the CLI using `kedro viz build` for creating build directory of local Kedro Viz instance with Kedro project data. (#1697)
+- Add build command `kedro viz build` to the CLI to allow users to create a build directory of local Kedro Viz instance with Kedro project data. (#1697)
 
 ## Bug fixes and other changes
 
