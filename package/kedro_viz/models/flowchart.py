@@ -586,13 +586,16 @@ class DataNode(GraphNode):
 
         return None
 
-    def is_preview_node(self):
-        """Checks if the current node has a preview"""
-        return bool(self.viz_metadata and "preview_args" in self.viz_metadata)
-
     def get_preview_args(self):
         """Gets the preview arguments for a dataset"""
         return self.viz_metadata.get("preview_args", None)
+    
+    def disable_preview(self):
+        """Checks if the dataset has a preview disabled"""
+        preview_args = self.get_preview_args()
+        if preview_args:
+            return not preview_args.get("show", True)
+        return False 
 
 
 class TranscodedDataNode(GraphNode):
@@ -724,11 +727,12 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @validator("preview", always=True)
     def set_preview(cls, _):
-        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
+        if not (not cls.data_node.disable_preview() and hasattr(cls.dataset, "preview")):
             return None
 
         try:
-            return cls.dataset.preview(**cls.data_node.get_preview_args())
+            preview_args = cls.data_node.get_preview_args()
+            return cls.dataset.preview(**preview_args) if preview_args is not None else cls.dataset.preview()
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
@@ -741,7 +745,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @validator("preview_type", always=True)
     def set_preview_type(cls, _):
-        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
+        if not (not cls.data_node.disable_preview() and hasattr(cls.dataset, "preview")):
             return None
 
         try:

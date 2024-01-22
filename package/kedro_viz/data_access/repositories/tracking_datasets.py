@@ -47,7 +47,6 @@ class TrackingDatasetsRepository:
 
     @staticmethod
     def is_tracking_dataset(dataset) -> bool:
-        dataset_type = get_dataset_type(dataset)
         return (
             get_dataset_type(dataset) in TRACKING_DATASET_GROUPS
             and dataset._version is not None
