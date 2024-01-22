@@ -235,7 +235,7 @@ def test_viz_command_group(mocker):
             "Visualise a Kedro pipeline using Kedro viz.\n\n"
             "Options:\n  --help  Show this message and exit.\n\n"
             "Commands:\n  build   Create build directory of local Kedro Viz "
-            "instance with static data\n  "
+            "instance with Kedro...\n  "
             "deploy  Deploy and host Kedro Viz on AWS S3\n  "
             "run     Launch local Kedro Viz instance\x1b[0m"
         ),

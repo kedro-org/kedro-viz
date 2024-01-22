@@ -6,14 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Upcoming Release
+# Release 7.1.0
 
 ## Major features and improvements
-- Add build command to the CLI using `kedro viz build` for creating build directory of local Kedro Viz instance with static data. (#1615)
+- Add build command `kedro viz build` to the CLI to allow users to create a build directory of local Kedro Viz instance with Kedro project data. (#1697)
 
 ## Bug fixes and other changes
 
 - Set Kedro Viz start method to spawn process while launching it from Jupyter Notebook. (#1696)
+- Fix bug on Plotly graph rendering. (#1701)
 
 # Release 7.0.0
 
