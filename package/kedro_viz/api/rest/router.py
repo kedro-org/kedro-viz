@@ -55,11 +55,11 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name
         )
-        url = deployer.deploy_and_get_url()
+        deployer.deploy()
         response = {
             "message": "Website deployed on "
             f"{input_values.platform and input_values.platform.upper()}",
-            "url": url,
+            "url": input_values.endpoint,
         }
         return JSONResponse(status_code=200, content=response)
     except PermissionError as exc:  # pragma: no cover

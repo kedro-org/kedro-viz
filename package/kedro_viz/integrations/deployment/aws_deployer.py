@@ -21,9 +21,6 @@ class AWSDeployer(BaseDeployer):
         _bucket_name (str): Name of the S3 bucket.
         _path (str): S3 protocol with bucket name.
         _fs (fsspec.filesystem): Filesystem for S3 protocol.
-
-    Methods:
-        deploy_and_get_url(): Deploy Kedro-viz to S3 and return its URL.
     """
 
     def __init__(self, endpoint, bucket_name):
@@ -38,8 +35,3 @@ class AWSDeployer(BaseDeployer):
         self._bucket_name = bucket_name
         self._path = f"{_S3_PROTOCOL}://{bucket_name}"
         self._fs = fsspec.filesystem(_S3_PROTOCOL)
-
-    def deploy_and_get_url(self):
-        """Deploy Kedro-viz to S3 and return its URL."""
-        self.deploy()
-        return self._endpoint

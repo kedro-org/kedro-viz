@@ -27,9 +27,6 @@ class BaseDeployer(abc.ABC):
     Attributes:
         _path (str): build path name.
         _fs (fsspec.filesystem): Filesystem for local/remote protocol.
-
-    Methods:
-        deploy_and_get_url(): Deploy Kedro-viz to cloud storage provider/local and return its URL.
     """
 
     def __init__(self):
@@ -107,7 +104,3 @@ class BaseDeployer(abc.ABC):
         self._upload_api_responses()
         self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()
-
-    @abc.abstractmethod
-    def deploy_and_get_url(self):
-        """Abstract method to deploy and return the URL."""

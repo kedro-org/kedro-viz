@@ -77,14 +77,3 @@ class TestAzureDeployer:
             )
 
             mock_ingest_heap_analytics.assert_called_once()
-
-    def test_deploy_and_get_url(self, endpoint, bucket_name, mocker):
-        deployer = AzureDeployer(endpoint, bucket_name)
-
-        mocker.patch.object(deployer, "deploy")
-        url = deployer.deploy_and_get_url()
-
-        deployer.deploy.assert_called_once()
-        expected_url = endpoint
-        assert url.startswith("https://")
-        assert url == expected_url

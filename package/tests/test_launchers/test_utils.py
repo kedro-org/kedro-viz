@@ -1,3 +1,4 @@
+import multiprocessing
 from unittest import mock
 from unittest.mock import Mock, call, patch
 
@@ -54,8 +55,9 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
 
 
 def test_viz_deploy_progress_timer(capsys):
+    process_completed = multiprocessing.Value("i", 0)
     with patch("kedro_viz.launchers.utils.sleep") as mock_sleep:
-        viz_deploy_progress_timer()
+        viz_deploy_progress_timer(process_completed, VIZ_DEPLOY_TIME_LIMIT)
 
     assert mock_sleep.call_count == VIZ_DEPLOY_TIME_LIMIT + 1
 

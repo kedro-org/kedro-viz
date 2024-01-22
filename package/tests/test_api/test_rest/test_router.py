@@ -6,8 +6,8 @@ class MockDeployer:
     def __init__(self, platform, endpoint, bucket_name):
         pass
 
-    def deploy_and_get_url(self):
-        return "http://mocked-url.com"
+    def deploy(self):
+        pass
 
 
 @pytest.mark.parametrize(

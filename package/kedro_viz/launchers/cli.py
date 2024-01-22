@@ -16,6 +16,7 @@ from kedro_viz.constants import (
     DEFAULT_HOST,
     DEFAULT_PORT,
     SHAREABLEVIZ_SUPPORTED_PLATFORMS,
+    VIZ_DEPLOY_TIME_LIMIT,
 )
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
@@ -228,7 +229,7 @@ def run(
 )
 def deploy(platform, endpoint, bucket_name):
     """Deploy and host Kedro Viz on provided platform"""
-    if platform not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
+    if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         click.echo(
             click.style(
                 "ERROR: Invalid platform specified. Kedro-Viz supports \n"
@@ -259,43 +260,75 @@ def build():
 
 
 def platform_deployer(platform, endpoint=None, bucket_name=None):
-    """Creates platform specific deployer and deploys Kedro Viz"""
+    """Creates platform specific deployer process and deploys Kedro Viz"""
     try:
-        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
-        viz_deploy_timer.start()
+        process_completed = multiprocessing.Value("i", 0)
+        viz_deploy_process = multiprocessing.Process(
+            target=load_and_deploy_viz,
+            args=(platform, endpoint, bucket_name, process_completed),
+        )
 
-        # Loads and populates data from underlying Kedro Project
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+        viz_deploy_process.start()
+        viz_deploy_progress_timer(process_completed, VIZ_DEPLOY_TIME_LIMIT)
 
-        # Start the deployment
-        deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
-        url = deployer.deploy_and_get_url()
+        if viz_deploy_process.exitcode is None:
+            raise TimeoutError()
 
         if platform != "local":
             click.echo(
                 click.style(
                     f"\u2728 Success! Kedro Viz has been deployed on {platform.upper()}. \n"
                     "It can be accessed at :\n"
-                    f"{url}",
+                    f"{endpoint}",
                     fg="green",
                 ),
             )
         else:
             click.echo(
                 click.style(
-                    "\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                    f"`{url}` directory.",
+                    "\u2728 Success! Kedro-Viz build files have been "
+                    "successfully added to the `build` directory.",
                     fg="green",
                 )
             )
+    except TimeoutError:  # pragma: no cover
+        click.echo(
+            click.style(
+                "TIMEOUT ERROR: Failed to deploy and host Kedro-Viz as the "
+                f"deployment process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. \n"
+                "Please try again later.",
+                fg="red",
+            )
+        )
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        click.echo(
+            click.style(
+                f"ERROR: Failed to deploy and host Kedro-Viz : {exc} ",
+                fg="red",
+            )
+        )
+    finally:
+        viz_deploy_process.terminate()
+
+
+def load_and_deploy_viz(platform, endpoint, bucket_name, process_completed):
+    """Loads Kedro Project data, creates a deployer and deploys to a platform"""
+    try:
+        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+
+        # Start the deployment
+        deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
+        deployer.deploy()
     except PermissionError:  # pragma: no cover
         if platform != "local":
             click.echo(
                 click.style(
                     "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
-                    f"{platform} access keys, a valid {platform} endpoint and bucket name.\n"
-                    f"Please supply your {platform} access keys as environment variables "
-                    f"and make sure the {platform} endpoint and bucket name are valid.\n"
+                    f"{platform.upper()} access keys, a valid {platform.upper()} "
+                    "endpoint and bucket name.\n"
+                    f"Please supply your {platform.upper()} access keys as environment variables "
+                    f"and make sure the {platform.upper()} endpoint and bucket name are valid.\n"
                     "More information can be found at : "
                     "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
                     fg="red",
@@ -309,13 +342,12 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
                     fg="red",
                 )
             )
-
     # pylint: disable=broad-exception-caught
     except Exception as exc:  # pragma: no cover
         if platform != "local":
             click.echo(
                 click.style(
-                    f"ERROR: Failed to deploy and host Kedro-Viz on {platform} : {exc} ",
+                    f"ERROR: Failed to deploy and host Kedro-Viz on {platform.upper()} : {exc} ",
                     fg="red",
                 )
             )
@@ -327,4 +359,4 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
                 )
             )
     finally:
-        viz_deploy_timer.terminate()
+        process_completed.value = 1

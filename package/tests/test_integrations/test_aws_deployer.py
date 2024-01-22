@@ -29,15 +29,3 @@ class TestAWSDeployer:
         deployer._upload_api_responses.assert_called_once()
         deployer._upload_static_files.assert_called_once()
         deployer._upload_deploy_viz_metadata_file.assert_called_once()
-
-    def test_deploy_and_get_url(self, endpoint, bucket_name, mocker):
-        mocker.patch("fsspec.filesystem")
-        deployer = AWSDeployer(endpoint, bucket_name)
-
-        mocker.patch.object(deployer, "deploy")
-        url = deployer.deploy_and_get_url()
-
-        deployer.deploy.assert_called_once()
-        expected_url = endpoint
-        assert url.startswith("http://")
-        assert url == expected_url
