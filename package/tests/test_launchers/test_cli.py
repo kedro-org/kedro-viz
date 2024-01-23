@@ -35,6 +35,13 @@ def mock_process_completed(mocker):
 
 
 @pytest.fixture
+def mock_exception_queue(mocker):
+    return mocker.patch(
+        "kedro_viz.launchers.cli.multiprocessing.Queue", return_value=Mock()
+    )
+
+
+@pytest.fixture
 def mock_viz_load_and_deploy(mocker):
     return mocker.patch("kedro_viz.launchers.cli.load_and_deploy_viz")
 
@@ -282,7 +289,7 @@ def test_viz_command_group(mocker, mock_click_echo):
             "Options:\n  --help  Show this message and exit.\n\n"
             "Commands:\n  build   Create build directory of local Kedro Viz "
             "instance with Kedro...\n  "
-            "deploy  Deploy and host Kedro Viz on AWS S3\n  "
+            "deploy  Deploy and host Kedro Viz on provided platform\n  "
             "run     Launch local Kedro Viz instance\x1b[0m"
         ),
     ]
@@ -396,45 +403,50 @@ def test_successful_build_with_existing_static_files(mocker):
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name, exit_code",
+    "platform, endpoint, bucket_name, process_completed_value",
     [
-        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 1),
+        (
+            "aws",
+            "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+            "example-bucket",
+            1,
+        ),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             0,
         ),
-        (
-            "aws",
-            "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
-            "example-bucket",
-            None,
-        ),
+        ("local", None, None, 1),
         ("local", None, None, 0),
-        ("local", None, None, None),
     ],
 )
 def test_platform_deployer(
     platform,
     endpoint,
     bucket_name,
-    exit_code,
+    process_completed_value,
     mock_viz_deploy_process,
     mock_process_completed,
+    mock_exception_queue,
     mock_viz_load_and_deploy,
     mock_viz_deploy_progress_timer,
     mock_click_echo,
-    mocker,
 ):
-    mock_viz_deploy_process.return_value.exitcode = exit_code
-
+    mock_process_completed.return_value.value = process_completed_value
     cli.platform_deployer(platform, endpoint, bucket_name)
 
     # Assert the mocks were called as expected
     mock_viz_deploy_process.assert_called_once_with(
         target=mock_viz_load_and_deploy,
-        args=(platform, endpoint, bucket_name, mock_process_completed.return_value),
+        args=(
+            platform,
+            endpoint,
+            bucket_name,
+            mock_process_completed.return_value,
+            mock_exception_queue.return_value,
+        ),
     )
     mock_viz_deploy_process.return_value.start.assert_called_once()
     mock_viz_deploy_progress_timer.assert_called_once_with(
@@ -442,11 +454,11 @@ def test_platform_deployer(
     )
     mock_viz_deploy_process.return_value.terminate.assert_called_once()
 
-    if exit_code is not None:
+    if process_completed_value:
         if platform != "local":
             msg = (
                 "\x1b[32m\u2728 Success! Kedro Viz has been deployed on "
-                f"{platform.upper()}. \n"
+                f"{platform.upper()}. "
                 "It can be accessed at :\n"
                 f"{endpoint}\x1b[0m"
             )
@@ -458,7 +470,7 @@ def test_platform_deployer(
     else:
         msg = (
             "\x1b[31mTIMEOUT ERROR: Failed to deploy and host Kedro-Viz "
-            "as the deployment process took more than 300 seconds. \n"
+            f"as the deployment process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
             "Please try again later.\x1b[0m"
         )
 
@@ -490,12 +502,16 @@ def test_load_and_deploy_viz_success(
     bucket_name,
     mock_DeployerFactory,
     mock_load_and_populate_data,
+    mock_process_completed,
+    mock_exception_queue,
     mock_click_echo,
     mock_project_path,
 ):
     deployer_mock = mock_DeployerFactory.create_deployer.return_value
 
-    cli.load_and_deploy_viz(platform, endpoint, bucket_name, mock_process_completed)
+    cli.load_and_deploy_viz(
+        platform, endpoint, bucket_name, mock_process_completed, mock_exception_queue
+    )
 
     mock_load_and_populate_data.assert_called_once_with(
         mock_project_path, ignore_plugins=True

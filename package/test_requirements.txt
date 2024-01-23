@@ -42,4 +42,3 @@ types-ujson==0.1.0
 #shareableviz
 s3fs>=2021.4, <2024.1
 adlfs>=2021.4, <2024.1
-azure-storage-blob>=12.19.0

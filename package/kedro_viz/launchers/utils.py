@@ -95,14 +95,11 @@ def _start_browser(host: str, port: int):
 def viz_deploy_progress_timer(process_completed, timeout):
     """Shows progress timer and message for kedro viz deploy"""
     elapsed_time = 0
-    try:
-        while elapsed_time <= timeout and not process_completed.value:
-            print(
-                f"...Creating your build/static-website ({elapsed_time}s)",
-                end="\r",
-                flush=True,
-            )
-            sleep(1)
-            elapsed_time += 1
-    except KeyboardInterrupt:  # pragma: no cover
-        print("\nCreating your build/static-website interrupted. Exiting...")
+    while elapsed_time <= timeout and not process_completed.value:
+        print(
+            f"...Creating your build/static-website ({elapsed_time}s)",
+            end="\r",
+            flush=True,
+        )
+        sleep(1)
+        elapsed_time += 1
