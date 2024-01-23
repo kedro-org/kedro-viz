@@ -135,7 +135,7 @@ describe('Shareable URLs', () => {
     cy.get('.shareable-url-modal .modal__wrapper').contains(
       'Something went wrong. Please try again later.'
     );
-    cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
+    cy.get('[data-test=btnGoBack]').contains(errorButtonNodeText);
   });
 
   it('verifies that AWS link is generated with correct inputs on publish button click #TC-60', () => {

@@ -230,6 +230,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <div className="shareable-url-modal__error">
           <p>Error message: {responseError}</p>
           <Button
+            dataTest="btnGoBack"
             mode="primary"
             onClick={() => {
               setDeploymentState('default');
