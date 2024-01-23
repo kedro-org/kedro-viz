@@ -1,20 +1,13 @@
 export const updateContent = {
-  date: '18 December 2023',
+  date: '22 January 2024',
   features: [
     {
-      title: 'Update CLI command `kedro viz run` which starts Kedro-viz',
+      title:
+        'Publish Kedro-viz on any hosting platform using cli `kedro viz build`',
       image: '',
-      copy: '`kedro viz run` is the new way to start Kedro Viz. The old command `kedro viz` is no longer supported',
+      copy: '`kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform.',
       buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html',
-      buttonText: 'View the docs',
-    },
-    {
-      title: 'Deploy Kedro-viz to AWS using cli `kedro viz deploy`',
-      image: '',
-      copy: 'Kedro-Viz can now be deployed directly to AWS by using the command `kedro viz deploy`',
-      buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html',
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#platform-agnostic-sharing-with-kedro-viz',
       buttonText: 'View the docs',
     },
   ],

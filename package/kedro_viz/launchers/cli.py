@@ -254,7 +254,7 @@ def deploy(platform, endpoint, bucket_name):
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
-    """Create build directory of local Kedro Viz instance with static data"""
+    """Create build directory of local Kedro Viz instance with Kedro project data"""
 
     platform_deployer("local")
 
