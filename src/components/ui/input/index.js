@@ -47,7 +47,7 @@ const Input = ({
 
   return (
     <>
-      <textarea
+      <input
         className={`input input--${size}`}
         onChange={handleChange}
         placeholder={placeholder}

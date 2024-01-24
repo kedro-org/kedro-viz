@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
-import { s3BucketRegions } from '../../config';
+import { hostingPlatform } from '../../config';
 
 import Button from '../ui/button';
 import CopyIcon from '../icons/copy';
@@ -18,8 +18,6 @@ import './shareable-url-modal.scss';
 
 const modalMessages = (status, info = '') => {
   const messages = {
-    default:
-      'Prerequisite: Deploying and sharing Kedro-Viz requires AWS access keys. To use this feature, please add your AWS access keys as environment variables in your project.',
     failure: 'Something went wrong. Please try again later.',
     loading: 'Shooting your files through space. Sit tight...',
     success:
@@ -36,7 +34,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [isFormDirty, setIsFormDirty] = useState({
     /* eslint-disable camelcase */
     bucket_name: false,
-    region: false,
+    platform: false,
+    endpoint: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
@@ -103,7 +102,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         setDeploymentState('success');
       } else {
         setResponseUrl(null);
-        setResponseError(response.message);
+        setResponseError(response.message || 'Error occurred!');
         setDeploymentState('failure');
       }
     } catch (error) {
@@ -125,7 +124,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
   const handleModalClose = () => {
     onToggleModal(false);
-    setDeploymentState('default');
+    if (deploymentState !== 'incompatible') {
+      setDeploymentState('default');
+    }
     setResponseError(null);
     setIsLoading(false);
     setResponseUrl(null);
@@ -133,75 +134,123 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setInputValues({});
     setIsFormDirty({
       bucket_name: false,
-      region: false,
+      platform: false,
+      endpoint: false,
     }); /* eslint-disable camelcase */
+  };
+
+  const getModalHeading = (type) => {
+    if (type === 'title' && deploymentState !== 'default') {
+      if (deploymentState === 'success') {
+        return 'Kedro-Viz Published and Hosted';
+      } else {
+        return 'Publish and Share Kedro-Viz';
+      }
+    } else {
+      if (deploymentState !== 'default') {
+        return modalMessages(
+          deploymentState,
+          compatibilityData.package_version
+        );
+      }
+
+      return null;
+    }
   };
 
   return (
     <Modal
-      className="shareable-url-modal"
+      className={classnames('shareable-url-modal', {
+        'shareable-url-modal__non-default-wrapper':
+          deploymentState !== 'default',
+      })}
       closeModal={handleModalClose}
-      message={modalMessages(
-        deploymentState,
-        compatibilityData.package_version
-      )}
-      title={
-        deploymentState === 'success'
-          ? 'Kedro-Viz Published and Hosted'
-          : 'Publish and Share Kedro-Viz'
-      }
+      message={getModalHeading('message')}
+      title={getModalHeading('title')}
       visible={visible.shareableUrlModal}
     >
       {!isLoading && !responseUrl && canUseShareableUrls && !responseError ? (
         <>
-          <div className="modal__description">
-            Enter your AWS information below and a hosted link will be
-            generated. View the{' '}
-            <a
-              className="link"
-              href="https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html"
-              rel="noreferrer"
-              target="_blank"
-            >
-              docs
-            </a>{' '}
-            for more information.
-          </div>
-          <div className="shareable-url-modal__input-wrapper">
-            <div className="shareable-url-modal__input-label">
-              AWS Bucket Region
+          <div className="shareable-url-modal__content-form-wrapper">
+            <div className="shareable-url-modal__content-wrapper">
+              <div className="shareable-url-modal__content-title">
+                Publish and Share Kedro-Viz
+              </div>
+              <p className="shareable-url-modal__content-description">
+                Prerequisite: Deploying and hosting Kedro-Viz requires access
+                keys or user credentials, depending on the chosen service
+                provider. To use this feature, please add your access keys or
+                credentials as environment variables in your project. More
+                information can be found in{' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html"
+                >
+                  docs
+                </a>
+                .<br />
+                <br />
+                <br />
+                Enter the required information and a hosted link will be
+                generated.
+              </p>
             </div>
-            <Dropdown
-              defaultText={inputValues?.region || 'Select a region'}
-              onChanged={(selectedRegion) => {
-                onChange('region', selectedRegion.value);
-              }}
-              width={null}
-            >
-              {s3BucketRegions.map((region) => {
-                return (
-                  <MenuOption
-                    className={classnames({
-                      'pipeline-list__option--active':
-                        inputValues.region === region,
-                    })}
-                    key={region}
-                    primaryText={region}
-                    value={region}
-                  />
-                );
-              })}
-            </Dropdown>
-          </div>
-          <div className="shareable-url-modal__input-wrapper">
-            <div className="shareable-url-modal__input-label">Bucket Name</div>
-            <Input
-              defaultValue={inputValues.bucket_name}
-              onChange={(value) => onChange('bucket_name', value)}
-              placeholder="my-bucket-name"
-              resetValueTrigger={visible}
-              size="large"
-            />
+            <div className="shareable-url-modal__form-wrapper">
+              <div className="shareable-url-modal__input-wrapper">
+                <div className="shareable-url-modal__input-label">
+                  Hosting platform
+                </div>
+                <Dropdown
+                  defaultText={inputValues?.platform}
+                  placeholderText={
+                    !inputValues?.platform ? 'Select a hosting platform' : null
+                  }
+                  onChanged={(selectedPlatform) => {
+                    onChange('platform', selectedPlatform.value);
+                  }}
+                  width={null}
+                >
+                  {hostingPlatform.map((platform) => {
+                    return (
+                      <MenuOption
+                        className={classnames({
+                          'pipeline-list__option--active':
+                            inputValues.platform === platform.value,
+                        })}
+                        key={platform.value}
+                        primaryText={platform.label}
+                        value={platform.label}
+                      />
+                    );
+                  })}
+                </Dropdown>
+              </div>
+              <div className="shareable-url-modal__input-wrapper">
+                <div className="shareable-url-modal__input-label">
+                  Bucket Name
+                </div>
+                <Input
+                  defaultValue={inputValues.bucket_name}
+                  onChange={(value) => onChange('bucket_name', value)}
+                  placeholder="Enter name"
+                  resetValueTrigger={visible}
+                  size="small"
+                />
+              </div>
+              <div className="shareable-url-modal__input-wrapper">
+                <div className="shareable-url-modal__input-label">
+                  Endpoint Link
+                </div>
+                <Input
+                  defaultValue={inputValues.endpoint}
+                  onChange={(value) => onChange('endpoint', value)}
+                  placeholder="Enter url"
+                  resetValueTrigger={visible}
+                  size="small"
+                />
+              </div>
+            </div>
           </div>
           <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
             <Button
