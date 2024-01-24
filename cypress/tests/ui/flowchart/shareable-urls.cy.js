@@ -115,7 +115,7 @@ describe('Shareable URLs', () => {
       .should('be.enabled');
   });
 
-  it('verifies that error message appears with wrong inputs on publish button click #TC-59', { defaultCommandTimeout: 12000 } , () => {
+  it('verifies that error message appears with wrong inputs on publish button click #TC-59', () => {
     const bucketName = 'myBucketName';
     const primaryButtonNodeText = 'Publish';
     const errorButtonNodeText = 'Go back';
@@ -135,7 +135,7 @@ describe('Shareable URLs', () => {
     cy.get('.shareable-url-modal .modal__wrapper').contains(
       'Something went wrong. Please try again later.'
     );
-    cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
+    cy.get('.shareable-url-modal button').contains(errorButtonNodeText);
   });
 
   it('verifies that AWS link is generated with correct inputs on publish button click #TC-60', () => {
