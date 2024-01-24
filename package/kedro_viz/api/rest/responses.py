@@ -8,7 +8,6 @@ import orjson
 import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
-from kedro.io.core import get_protocol_and_path
 from pydantic import BaseModel
 
 from kedro_viz.api.rest.utils import get_package_version
@@ -444,20 +443,19 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
             raise exc
 
 
-def save_api_responses_to_fs(api_dir: str, remote_fs: Any):
+def save_api_responses_to_fs(path: str, remote_fs: Any):
     """Saves all Kedro Viz API responses to a directory."""
     try:
-        protocol, path = get_protocol_and_path(api_dir)
         logger.debug(
             """Saving/Uploading api files to %s""",
-            api_dir,
+            path,
         )
 
         main_path = f"{path}/api/main"
         nodes_path = f"{path}/api/nodes"
         pipelines_path = f"{path}/api/pipelines"
 
-        if protocol == "file":
+        if "file" in remote_fs.protocol:
             remote_fs.makedirs(path, exist_ok=True)
             remote_fs.makedirs(nodes_path, exist_ok=True)
             remote_fs.makedirs(pipelines_path, exist_ok=True)
