@@ -5,8 +5,8 @@ import logging
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from kedro_viz.api.rest.requests import AWSDeployerConfiguration
-from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
+from kedro_viz.api.rest.requests import DeployerConfiguration
+from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
     APIErrorMessage,
@@ -50,11 +50,17 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 
 @router.post("/deploy")
-async def deploy_kedro_viz(input_values: AWSDeployerConfiguration):
+async def deploy_kedro_viz(input_values: DeployerConfiguration):
     try:
-        deployer = AWSDeployer(input_values.region, input_values.bucket_name)
-        url = deployer.deploy_and_get_url()
-        response = {"message": "Website deployed on S3", "url": url}
+        deployer = DeployerFactory.create_deployer(
+            input_values.platform, input_values.endpoint, input_values.bucket_name
+        )
+        deployer.deploy()
+        response = {
+            "message": "Website deployed on "
+            f"{input_values.platform and input_values.platform.upper()}",
+            "url": input_values.endpoint,
+        }
         return JSONResponse(status_code=200, content=response)
     except PermissionError as exc:  # pragma: no cover
         logger.exception("Permission error in deploying Kedro Viz : %s ", exc)

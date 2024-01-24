@@ -14,15 +14,16 @@ class DeployerFactory:
     @staticmethod
     def create_deployer(platform, endpoint=None, bucket_name=None):
         """Instantiate Kedro-viz deployer classes"""
-        if platform == "aws":
+        platform_name = platform.lower()
+        if platform_name == "aws":
             return AWSDeployer(endpoint, bucket_name)
-        if platform == "azure":
+        if platform_name == "azure":
             return AzureDeployer(endpoint, bucket_name)
-        if platform == "gcp":
+        if platform_name == "gcp":
             return GCPDeployer(endpoint, bucket_name)
-        if platform == "local":
+        if platform_name == "local":
             return LocalDeployer()
         raise ValueError(
-            "Invalid platform specified."
+            f"Invalid platform '{platform}' specified. \n"
             f"Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}"
         )

@@ -9,7 +9,7 @@ from kedro_viz.integrations.deployment.base_deployer import BaseDeployer
 
 try:
     from azure.storage.blob import ContentSettings
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 import fsspec
@@ -28,9 +28,6 @@ class AzureDeployer(BaseDeployer):
         _bucket_name (str): Name of the AzureBlobStorage account.
         _path (str): Container path for the AzureBlobStorage account.
         _fs (fsspec.filesystem): Filesystem for Azure protocol.
-
-    Methods:
-        deploy_and_get_url(): Deploy Kedro-viz to AzureBlobStorage and return its URL.
     """
 
     def __init__(self, endpoint, bucket_name):
@@ -63,7 +60,7 @@ class AzureDeployer(BaseDeployer):
                 content_type, _ = mimetypes.guess_type(local_file_path)
 
                 # ignore directories
-                if content_type is None:
+                if content_type is None:  # pragma: no cover
                     continue
 
                 relative_path = local_file_path[len(str(html_dir)) + 1 :]
@@ -85,8 +82,3 @@ class AzureDeployer(BaseDeployer):
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
-
-    def deploy_and_get_url(self):
-        """Deploy Kedro-viz to AzureBlobStorage and return its URL."""
-        self.deploy()
-        return self._endpoint

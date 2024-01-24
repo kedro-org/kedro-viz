@@ -6,8 +6,8 @@ from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
 
 # Test the AWSDeployer class
 @pytest.fixture
-def region():
-    return "us-east-2"
+def endpoint():
+    return "http://shareableviz.s3-website.us-east-2.amazonaws.com/"
 
 
 @pytest.fixture
@@ -16,9 +16,9 @@ def bucket_name():
 
 
 class TestAWSDeployer:
-    def test_deploy(self, region, bucket_name, mocker):
+    def test_deploy(self, endpoint, bucket_name, mocker):
         mocker.patch("fsspec.filesystem")
-        deployer = AWSDeployer(region, bucket_name)
+        deployer = AWSDeployer(endpoint, bucket_name)
 
         mocker.patch.object(deployer, "_upload_api_responses")
         mocker.patch.object(deployer, "_upload_static_files")
@@ -29,15 +29,3 @@ class TestAWSDeployer:
         deployer._upload_api_responses.assert_called_once()
         deployer._upload_static_files.assert_called_once()
         deployer._upload_deploy_viz_metadata_file.assert_called_once()
-
-    def test_deploy_and_get_url(self, region, bucket_name, mocker):
-        mocker.patch("fsspec.filesystem")
-        deployer = AWSDeployer(region, bucket_name)
-
-        mocker.patch.object(deployer, "deploy")
-        url = deployer.deploy_and_get_url()
-
-        deployer.deploy.assert_called_once()
-        expected_url = f"http://{deployer._bucket_name}.s3-website.{deployer._region}.amazonaws.com"
-        assert url.startswith("http://")
-        assert url == expected_url

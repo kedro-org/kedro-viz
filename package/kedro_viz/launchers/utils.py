@@ -7,8 +7,6 @@ from typing import Any, Callable
 
 import requests
 
-from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
-
 logger = logging.getLogger(__name__)
 
 
@@ -94,17 +92,14 @@ def _start_browser(host: str, port: int):
         webbrowser.open_new(f"http://{host}:{port}/")
 
 
-def viz_deploy_progress_timer():
+def viz_deploy_progress_timer(process_completed, timeout):
     """Shows progress timer and message for kedro viz deploy"""
-    seconds = 0
-    try:
-        while seconds <= VIZ_DEPLOY_TIME_LIMIT:
-            print(
-                f"...Creating your build/static-website ({seconds}s)",
-                end="\r",
-                flush=True,
-            )
-            sleep(1)
-            seconds += 1
-    except KeyboardInterrupt:  # pragma: no cover
-        print("\nCreating your build/static-website interrupted. Exiting...")
+    elapsed_time = 0
+    while elapsed_time <= timeout and not process_completed.value:
+        print(
+            f"...Creating your build/static-website ({elapsed_time}s)",
+            end="\r",
+            flush=True,
+        )
+        sleep(1)
+        elapsed_time += 1
