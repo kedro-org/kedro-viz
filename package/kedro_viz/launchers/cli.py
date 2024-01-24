@@ -230,16 +230,6 @@ def deploy(platform, endpoint, bucket_name):
         )
         return
 
-    if not endpoint:
-        click.echo(
-            click.style(
-                "ERROR: Invalid endpoint specified. If you are looking for platform \n"
-                "agnostic shareable viz solution, please use `kedro viz build` command",
-                fg="red",
-            ),
-        )
-        return
-
     platform_deployer(platform, endpoint, bucket_name)
 
 

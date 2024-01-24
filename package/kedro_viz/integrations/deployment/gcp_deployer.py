@@ -22,9 +22,6 @@ class GCPDeployer(BaseDeployer):
         _bucket_name (str): Name of the GCP storage bucket.
         _path (str): GCP protocol with bucket name.
         _fs (fsspec.filesystem): Filesystem for GCP protocol.
-
-    Methods:
-        deploy_and_get_url(): Deploy Kedro-viz to GCP storage bucket and return its URL.
     """
 
     def __init__(self, endpoint, bucket_name):
@@ -70,8 +67,3 @@ class GCPDeployer(BaseDeployer):
         except Exception as exc:  # pragma: no cover
             logger.exception("Upload failed: %s ", exc)
             raise exc
-
-    def deploy_and_get_url(self):
-        """Deploy Kedro-viz to S3 and return its URL."""
-        self.deploy()
-        return self._endpoint
