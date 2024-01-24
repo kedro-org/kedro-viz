@@ -1,4 +1,5 @@
 import re
+from kedro_viz.integrations.deployment.gcp_deployer import GCPDeployer
 
 import pytest
 
@@ -12,8 +13,9 @@ from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
 @pytest.mark.parametrize(
     "platform, endpoint, bucket_name, deployer_class",
     [
-        ("aws", "http://mocked-url.com", "s3://shareableviz", AWSDeployer),
-        ("azure", "http://mocked-url.com", "abfs://shareableviz", AzureDeployer),
+        ("aws", "http://mocked-url.com", "shareableviz", AWSDeployer),
+        ("azure", "http://mocked-url.com", "shareableviz", AzureDeployer),
+        ("gcp", "http://mocked-url.com", "shareableviz", GCPDeployer),
     ],
 )
 def test_create_deployer(platform, endpoint, bucket_name, deployer_class):

@@ -46,7 +46,7 @@ class GCPDeployer(BaseDeployer):
                 content_type, _ = mimetypes.guess_type(local_file_path)
 
                 # ignore directories
-                if content_type is None:
+                if content_type is None:  # pragma: no cover
                     continue
 
                 relative_path = local_file_path[len(str(html_dir)) + 1 :]
