@@ -67,5 +67,5 @@ def test_viz_deploy_progress_timer(capsys):
     captured = capsys.readouterr()
 
     for second in range(1, VIZ_DEPLOY_TIME_LIMIT + 1):
-        expected_output = f"...Creating your build/static-website ({second}s)"
+        expected_output = f"...Creating your build/deploy Kedro-Viz ({second}s)"
         assert expected_output in captured.out
