@@ -202,7 +202,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Hosting platform
                 </div>
                 <Dropdown
-                  defaultText={inputValues?.platform}
+                  defaultText={
+                    inputValues?.platform &&
+                    hostingPlatform[inputValues?.platform]
+                  }
                   placeholderText={
                     !inputValues?.platform ? 'Select a hosting platform' : null
                   }
@@ -211,19 +214,17 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   }}
                   width={null}
                 >
-                  {hostingPlatform.map((platform) => {
-                    return (
-                      <MenuOption
-                        className={classnames({
-                          'pipeline-list__option--active':
-                            inputValues.platform === platform.value,
-                        })}
-                        key={platform.value}
-                        primaryText={platform.label}
-                        value={platform.label}
-                      />
-                    );
-                  })}
+                  {Object.entries(hostingPlatform).map(([value, label]) => (
+                    <MenuOption
+                      className={classnames({
+                        'pipeline-list__option--active':
+                          inputValues.platform === value,
+                      })}
+                      key={value}
+                      primaryText={label}
+                      value={value}
+                    />
+                  ))}
                 </Dropdown>
               </div>
               <div className="shareable-url-modal__input-wrapper">

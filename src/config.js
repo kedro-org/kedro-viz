@@ -152,11 +152,11 @@ export const datasetStatLabels = ['rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
 
-export const hostingPlatform = [
-  { label: 'Amazon Web Services', value: 'aws' },
-  { label: 'Google Cloud', value: 'gs' },
-  { label: 'Microsoft Azure', value: 'az' },
-];
+export const hostingPlatform = {
+  aws: 'Amazon Web Services',
+  gcp: 'Google Cloud',
+  azure: 'Microsoft Azure',
+};
 
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';

@@ -20,7 +20,7 @@ describe('Input', () => {
 
   it('renders with a default text value', () => {
     const wrapper = mount(<Input defaultValue="Default!" />);
-    const defaultInputValue = wrapper.find('textarea').prop('value');
+    const defaultInputValue = wrapper.find('input').prop('value');
 
     expect(wrapper.props().defaultValue).toEqual(defaultInputValue);
   });
