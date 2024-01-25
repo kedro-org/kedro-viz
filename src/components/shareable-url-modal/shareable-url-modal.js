@@ -158,6 +158,15 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
+  const handleResponseUrl = () => {
+    // If the URL does not start with http:// or https://, append http:// to avoid relative path issue
+    if (!/^https?:\/\//.test(responseUrl)) {
+      const url = 'http://' + responseUrl;
+      return url;
+    }
+    return responseUrl;
+  };
+
   return (
     <Modal
       className={classnames('shareable-url-modal', {
@@ -300,7 +309,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             <div className="shareable-url-modal__url-wrapper">
               <a
                 className="shareable-url-modal__result-url"
-                href={responseUrl}
+                href={handleResponseUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
               >
