@@ -592,9 +592,11 @@ class DataNode(GraphNode):
     
     def disable_preview(self):
         """Checks if the dataset has a preview disabled"""
-        preview_args = self.get_preview_args()
-        if preview_args:
-            return not preview_args.get("show", True)
+        if self.viz_metadata: 
+            preview_args = self.get_preview_args()
+            if preview_args:
+                return not preview_args.get("show", True)
+            return False
         return False 
 
 
@@ -731,7 +733,9 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            preview_args = cls.data_node.get_preview_args()
+            preview_args = None 
+            if cls.data_node.viz_metadata:
+                preview_args = cls.data_node.get_preview_args()
             return cls.dataset.preview(**preview_args) if preview_args is not None else cls.dataset.preview()
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
