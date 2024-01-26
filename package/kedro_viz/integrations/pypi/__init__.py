@@ -18,7 +18,7 @@ def get_latest_version() -> Optional[Version]:
     logger.info("Checking for update...")
     try:
         pypi_response = requests.get(_PYPI_ENDPOINT, timeout=30).json()
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException: # pragma: no cover
         return None
     return parse(pypi_response["info"]["version"])
 
