@@ -246,6 +246,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   placeholder="Enter name"
                   resetValueTrigger={visible}
                   size="small"
+                  type="input"
+                  dataTest={'bucket_name'}
                 />
               </div>
               <div className="shareable-url-modal__input-wrapper">
@@ -258,6 +260,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   placeholder="Enter url"
                   resetValueTrigger={visible}
                   size="small"
+                  type="input"
+                  dataTest={'endpoint_name'}
                 />
               </div>
             </div>
