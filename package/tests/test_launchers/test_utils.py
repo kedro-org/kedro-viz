@@ -54,8 +54,11 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
 
 
 def test_viz_deploy_progress_timer(capsys):
+    mock_process_completed = Mock()
+    mock_process_completed.value = 0
+
     with patch("kedro_viz.launchers.utils.sleep") as mock_sleep:
-        viz_deploy_progress_timer()
+        viz_deploy_progress_timer(mock_process_completed, VIZ_DEPLOY_TIME_LIMIT)
 
     assert mock_sleep.call_count == VIZ_DEPLOY_TIME_LIMIT + 1
 
@@ -64,5 +67,5 @@ def test_viz_deploy_progress_timer(capsys):
     captured = capsys.readouterr()
 
     for second in range(1, VIZ_DEPLOY_TIME_LIMIT + 1):
-        expected_output = f"...Creating your webpage ({second}s)"
+        expected_output = f"...Creating your build/deploy Kedro-Viz ({second}s)"
         assert expected_output in captured.out
