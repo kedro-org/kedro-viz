@@ -125,4 +125,3 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
         url = f"http://{host}:{port}/"
         link_html = f'<a href="{url}" target="_blank">Open Kedro-Viz</a>'
         display(HTML(link_html))
-
