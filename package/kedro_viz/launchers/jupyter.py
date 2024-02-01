@@ -102,7 +102,7 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
         cli_args = ctx.params
 
     run_server_kwargs = {
-        "host": cli_args.get("host", DEFAULT_HOST),
+        "host": cli_args.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST),
         "port": cli_args.get("port", DEFAULT_PORT),
         "pipeline_name": cli_args.get("pipeline"),
         "env": cli_args.get("env"),
@@ -113,12 +113,12 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
 
     # Ensure that the port is available
     port = run_server_kwargs["port"]
+    host = run_server_kwargs["host"]
+
     port = _allocate_port(DEFAULT_HOST, start_at=int(port))
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
-
-    host = run_server_kwargs["host"]
 
     project_path = (
         local_ns["context"].project_path
