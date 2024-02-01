@@ -5,6 +5,7 @@ from a jupyter notebook.
 import logging
 import multiprocessing
 import os
+import shlex
 import socket
 from contextlib import closing
 from typing import Any, Dict
@@ -12,6 +13,7 @@ from typing import Any, Dict
 import IPython
 from IPython.display import HTML, display
 
+from kedro_viz.launchers.cli import viz_cli
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
@@ -78,13 +80,13 @@ def _display_databricks_html(port: int):  # pragma: no cover
         print(f"Kedro-Viz is available at {url}")
 
 
-def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
+def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
     the Jupyter notebook environment.
 
     Args:
-        port: TCP port that viz will listen to. Defaults to 4141.
+        args: String of arguments to pass to Kedro Viz.
         local_ns: Local namespace with local variables of the scope where the line magic
             is invoked. This argument must be in the signature, even though it is not
             used. This is because the Kedro IPython extension registers line magics with
@@ -92,14 +94,31 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    port = port or DEFAULT_PORT  # Default argument doesn't work in Jupyter line magic.
-    host = _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST
-    port = _allocate_port(
-        host, start_at=int(port)
-    )  # Line magic provides string arguments by default, so we need to convert to int.
+    # Parse the args string
+    parsed_args = shlex.split(args)
+
+    # Use Click's context to parse
+    with viz_cli.make_context("viz", parsed_args) as ctx:
+        cli_args = ctx.params
+
+    run_server_kwargs = {
+        "host": cli_args.get("host", DEFAULT_HOST),
+        "port": cli_args.get("port", DEFAULT_PORT),
+        "pipeline_name": cli_args.get("pipeline"),
+        "env": cli_args.get("env"),
+        "autoreload": cli_args.get("autoreload"),
+        "ignore_plugins": cli_args.get("ignore_plugins"),
+        "extra_params": cli_args.get("params"),
+    }
+
+    # Ensure that the port is available
+    port = run_server_kwargs["port"]
+    port = _allocate_port(DEFAULT_HOST, start_at=int(port))
 
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
+
+    host = run_server_kwargs["host"]
 
     project_path = (
         local_ns["context"].project_path
