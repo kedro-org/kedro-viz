@@ -1,7 +1,6 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
 # pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
-import inspect
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -112,10 +111,10 @@ class TrackingDatasetModel:
         try:
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
                 self.runs[run_id] = {
-                    self.dataset._filepath.name: self.dataset.preview()
+                    self.dataset._filepath.name: self.dataset.preview()  # type: ignore
                 }
             else:
-                self.runs[run_id] = self.dataset.preview()
+                self.runs[run_id] = self.dataset.preview()  # type: ignore
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s: %s",
