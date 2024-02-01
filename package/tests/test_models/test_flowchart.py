@@ -372,6 +372,7 @@ class TestGraphNodeMetadata:
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataset"
+        assert data_node_metadata.preview_type == "Dataframe"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats["rows"] == 10
@@ -385,24 +386,47 @@ class TestGraphNodeMetadata:
         )
         assert data_node.get_preview_args() == {"nrows": 3}
 
-    def test_preview_data_node_metadata(self, example_data_node, mocker):
-        mock_preview_data = {
+    def test_disable_preview(self):
+        metadata = {"kedro-viz": {"preview": False}}
+        dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+        data_node = GraphNode.create_data_node(
+            dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
+        )
+        assert data_node.disable_preview() is True
+
+    def test_preview_data_node_metadata(self, example_data_node):
+        expected_preview_data = {
             "columns": ["id", "company_rating", "company_location"],
             "index": [0, 1, 2],
             "data": [
-                [1, "90%", "London"],
-                [2, "80%", "Paris"],
-                [3, "40%", "Milan"],
+                [35029, "100%", "Niue"],
+                [30292, "67%", "Anguilla"],
+                [12345, "80%", "Barbados"],
             ],
         }
-
-        mocker.patch(
-            "kedro_datasets.pandas.CSVDataset.preview", return_value=mock_preview_data
-        )
-
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
-        assert preview_node_metadata.preview == mock_preview_data
+        assert preview_node_metadata.preview == expected_preview_data
+
+    def test_preview_default_data_node_metadata(
+        self, example_data_node_without_viz_metadata
+    ):
+        expected_preview_data = {
+            "columns": ["id", "company_rating", "company_location"],
+            "index": [0, 1, 2, 3, 4],
+            "data": [
+                [35029, "100%", "Niue"],
+                [30292, "67%", "Anguilla"],
+                [12345, "80%", "Barbados"],
+                [67890, "95%", "Fiji"],
+                [54321, "72%", "Grenada"],
+            ],
+        }
+        preview_node_metadata = DataNodeMetadata(
+            data_node=example_data_node_without_viz_metadata
+        )
+
+        assert preview_node_metadata.preview == expected_preview_data
 
     def test_preview_data_node_metadata_not_exist(self, example_data_node, mocker):
         mocker.patch("kedro_datasets.pandas.CSVDataset.preview", return_value=False)

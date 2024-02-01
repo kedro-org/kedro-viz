@@ -55,13 +55,13 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = metadata?.previewType === 'plot';
-  const hasImage = metadata?.previewType === 'image';
+  const hasPlot = metadata?.previewType === 'Plot';
+  const hasImage = metadata?.previewType === 'Image';
   const hasJson =
     metadata?.previewType === 'JSONData' ||
     metadata?.previewType === 'JSONTracking';
-  const hasDataFrame = metadata?.previewType === 'dataframe';
-  const isMetricsTrackingDataset = metadata?.previewType === 'metricsTracking';
+  const hasDataFrame = metadata?.previewType === 'Dataframe';
+  const isMetricsTrackingDataset = metadata?.previewType === 'MetricsTracking';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
