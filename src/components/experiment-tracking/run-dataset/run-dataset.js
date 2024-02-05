@@ -7,6 +7,7 @@ import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DatasetLoader } from './run-dataset-loader';
 import JSONObject from '../../json-object';
+import getShortType from '../../../utils/short-type';
 
 import './run-dataset.scss';
 import '../run-metadata/animation.scss';
@@ -245,10 +246,12 @@ function buildDatasetDataMarkup(
   showLoader,
   theme
 ) {
-  const isPlotlyDataset = datasetType === 'Plot';
-  const isImageDataset = datasetType === 'Image';
-  const isJSONTrackingDataset = datasetType === 'JSONTracking';
-  const isMetricsTrackingDataset = datasetType === 'metricsTracking';
+  console.log(datasetType);
+  const isPlotlyDataset = getShortType(datasetType) === 'Plot';
+  const isImageDataset = getShortType(datasetType) === 'Image';
+  const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
+  const isMetricsTrackingDataset =
+    getShortType(datasetType) === 'MetricsTracking';
   const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset;
 
   const onExpandVizClick = () => {

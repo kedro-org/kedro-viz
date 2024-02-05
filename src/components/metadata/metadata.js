@@ -57,8 +57,8 @@ const MetaData = ({
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPlot = metadata?.previewType === 'Plot';
   const hasImage = metadata?.previewType === 'Image';
-  const hasJson =
-    metadata?.previewType === 'JSONData' ||
+  const hasTrackingData =
+    metadata?.previewType === 'MetricsTracking' ||
     metadata?.previewType === 'JSONTracking';
   const hasDataFrame = metadata?.previewType === 'Dataframe';
   const isMetricsTrackingDataset = metadata?.previewType === 'MetricsTracking';
@@ -190,7 +190,7 @@ const MetaData = ({
                   kind="path"
                   value={removeInitialSlash(metadata.filepath)}
                 />
-                {hasJson && (
+                {hasTrackingData && (
                   <MetaDataRow
                     label="Tracking data from last run:"
                     theme={theme}
@@ -293,7 +293,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasJson && (
+              {hasTrackingData && (
                 <button
                   className="pipeline-metadata__link"
                   onClick={
