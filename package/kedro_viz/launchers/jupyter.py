@@ -83,10 +83,10 @@ def _display_databricks_html(port: int):  # pragma: no cover
 def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     """
     Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
-    the Jupyter notebook environment.
+    the Jupyter notebook environment. It can be used with or without additional arguments.
 
     Args:
-        args: String of arguments to pass to Kedro Viz.
+        args: String of arguments to pass to Kedro Viz. If empty, defaults will be used.
         local_ns: Local namespace with local variables of the scope where the line magic
             is invoked. This argument must be in the signature, even though it is not
             used. This is because the Kedro IPython extension registers line magics with
@@ -95,15 +95,27 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
 
     """
     # Parse the args string
-    parsed_args = shlex.split(args)
+    parsed_args = shlex.split(args) if args else []
 
     # Use Click's context to parse
     with viz_cli.make_context("viz", parsed_args) as ctx:
         cli_args = ctx.params
 
+    # Determine host and port, considering Databricks environment
+    host = cli_args.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST)
+    port = cli_args.get("port", DEFAULT_PORT)
+
+    # Allocate an available port if necessary
+    port = _allocate_port(host, start_at=int(port))
+
+    # Terminate existing process on the same port, if any
+    if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
+        _VIZ_PROCESSES[port].terminate()
+
+    # Set up other parameters
     run_server_kwargs = {
-        "host": cli_args.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST),
-        "port": cli_args.get("port", DEFAULT_PORT),
+        "host": host,
+        "port": port,
         "pipeline_name": cli_args.get("pipeline"),
         "env": cli_args.get("env"),
         "autoreload": cli_args.get("autoreload"),
@@ -111,26 +123,12 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
         "extra_params": cli_args.get("params"),
     }
 
-    # Ensure that the port is available
-    port = run_server_kwargs["port"]
-    host = run_server_kwargs["host"]
-
-    port = _allocate_port(DEFAULT_HOST, start_at=int(port))
-
-    if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
-        _VIZ_PROCESSES[port].terminate()
-
-    project_path = (
-        local_ns["context"].project_path
-        if local_ns is not None and "context" in local_ns
-        else None
-    )
-
+    # Start Kedro-Viz server in a new process
     process_context = multiprocessing.get_context("spawn")
     viz_process = process_context.Process(
         target=run_server,
         daemon=True,
-        kwargs={"project_path": project_path, "host": host, "port": port},
+        kwargs=run_server_kwargs,
     )
 
     viz_process.start()
