@@ -122,8 +122,6 @@ def run_viz(port: int = None, local_ns: Dict[str, Any] = None) -> None:
     if _is_databricks():
         _display_databricks_html(port)
     else:
-        wrapper = f"""
-                <html lang="en"><head></head><body style="width:100; height:100;">
-                <iframe src="http://{host}:{port}/" height=500 width="100%"></iframe>
-                </body></html>"""
-        display(HTML(wrapper))
+        url = f"http://{host}:{port}/"
+        link_html = f'<a href="{url}" target="_blank">Open Kedro-Viz</a>'
+        display(HTML(link_html))

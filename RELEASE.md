@@ -6,6 +6,13 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Upcoming release
+
+## Major features and improvements
+## Bug fixes and other changes
+- Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
+
+
 # Release 7.1.0
 
 ## Major features and improvements
