@@ -9,12 +9,10 @@ import shlex
 import socket
 from contextlib import closing
 from typing import Any, Dict
-from pathlib import Path
 
 import IPython
 from IPython.display import HTML, display
 
-from kedro_viz.launchers.cli import viz_cli
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
@@ -81,7 +79,19 @@ def _display_databricks_html(port: int):  # pragma: no cover
         print(f"Kedro-Viz is available at {url}")
 
 
-def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
+def parse_args(args):  # pragma: no cover
+    """Parse the argument string and return a dictionary of arguments."""
+    parsed_args = shlex.split(args)
+    arg_dict = {
+        arg.lstrip("-").split("=")[0]: arg.split("=")[1] if "=" in arg else True
+        for arg in parsed_args
+    }
+    return arg_dict
+
+
+def run_viz(  # pylint: disable=too-many-locals
+    args: str = "", local_ns: Dict[str, Any] = None
+) -> None:
     """
     Line magic function to start Kedro Viz with optional arguments.
 
@@ -94,10 +104,8 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    # Parse arguments
-    parsed_args = shlex.split(args)
-    arg_dict = {arg.lstrip('-').split('=')[0]: arg.split('=')[1] if '=' in arg else True
-                for arg in parsed_args}
+    # Parse arguments using the new function
+    arg_dict = parse_args(args)
 
     host = arg_dict.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST)
     port = int(arg_dict.get("port", DEFAULT_PORT))
@@ -115,6 +123,12 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
+    project_path = (
+        local_ns["context"].project_path
+        if local_ns is not None and "context" in local_ns
+        else None
+    )
+
     # Set up other parameters
     run_server_kwargs = {
         "host": host,
@@ -125,14 +139,13 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
         "env": env,
         "ignore_plugins": ignore_plugins,
         "extra_params": params,
+        "project_path": project_path,
     }
 
     # Start Kedro-Viz server in a new process
     process_context = multiprocessing.get_context("spawn")
     viz_process = process_context.Process(
-        target=run_server,
-        daemon=True,
-        kwargs=run_server_kwargs
+        target=run_server, daemon=True, kwargs=run_server_kwargs
     )
 
     viz_process.start()
