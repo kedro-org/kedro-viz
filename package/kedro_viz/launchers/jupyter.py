@@ -9,6 +9,7 @@ import shlex
 import socket
 from contextlib import closing
 from typing import Any, Dict
+from pathlib import Path
 
 import IPython
 from IPython.display import HTML, display
@@ -82,8 +83,7 @@ def _display_databricks_html(port: int):  # pragma: no cover
 
 def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     """
-    Line magic function to start kedro viz. It calls a kedro viz in a process and displays it in
-    the Jupyter notebook environment. It can be used with or without additional arguments.
+    Line magic function to start Kedro Viz with optional arguments.
 
     Args:
         args: String of arguments to pass to Kedro Viz. If empty, defaults will be used.
@@ -94,21 +94,24 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    # Parse the args string
-    parsed_args = shlex.split(args) if args else []
+    # Parse arguments
+    parsed_args = shlex.split(args)
+    arg_dict = {arg.lstrip('-').split('=')[0]: arg.split('=')[1] if '=' in arg else True
+                for arg in parsed_args}
 
-    # Use Click's context to parse
-    with viz_cli.make_context("viz", parsed_args) as ctx:
-        cli_args = ctx.params
+    host = arg_dict.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST)
+    port = int(arg_dict.get("port", DEFAULT_PORT))
+    load_file = arg_dict.get("load-file", None)
+    save_file = arg_dict.get("save-file", None)
+    pipeline = arg_dict.get("pipeline", None)
+    env = arg_dict.get("env", None)
+    ignore_plugins = arg_dict.get("ignore-plugins", False)
+    params = arg_dict.get("params", "")
 
-    # Determine host and port, considering Databricks environment
-    host = cli_args.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST)
-    port = cli_args.get("port", DEFAULT_PORT)
+    # Allocate port
+    port = _allocate_port(host, start_at=port)
 
-    # Allocate an available port if necessary
-    port = _allocate_port(host, start_at=int(port))
-
-    # Terminate existing process on the same port, if any
+    # Terminate existing process if necessary
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
@@ -116,11 +119,12 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     run_server_kwargs = {
         "host": host,
         "port": port,
-        "pipeline_name": cli_args.get("pipeline"),
-        "env": cli_args.get("env"),
-        "autoreload": cli_args.get("autoreload"),
-        "ignore_plugins": cli_args.get("ignore_plugins"),
-        "extra_params": cli_args.get("params"),
+        "load_file": load_file,
+        "save_file": save_file,
+        "pipeline_name": pipeline,
+        "env": env,
+        "ignore_plugins": ignore_plugins,
+        "extra_params": params,
     }
 
     # Start Kedro-Viz server in a new process
@@ -128,7 +132,7 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     viz_process = process_context.Process(
         target=run_server,
         daemon=True,
-        kwargs=run_server_kwargs,
+        kwargs=run_server_kwargs
     )
 
     viz_process.start()
