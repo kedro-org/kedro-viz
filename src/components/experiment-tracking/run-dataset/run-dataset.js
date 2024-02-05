@@ -246,7 +246,6 @@ function buildDatasetDataMarkup(
   showLoader,
   theme
 ) {
-  console.log(datasetType);
   const isPlotlyDataset = getShortType(datasetType) === 'Plot';
   const isImageDataset = getShortType(datasetType) === 'Image';
   const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
