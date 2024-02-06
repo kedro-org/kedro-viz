@@ -16,5 +16,4 @@ train_evaluation.linear_regression.experiment_params:
 train_evaluation.random_forest.experiment_params:
   type: tracking.JSONDataset
   filepath: ${_base_location}/09_tracking/rf_params.json
-
   versioned: True

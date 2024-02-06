@@ -7,8 +7,8 @@ import { sanitizeValue } from '../../../utils/experiment-tracking-utils';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { DatasetLoader } from './run-dataset-loader';
 import JSONObject from '../../json-object';
-import getShortType from '../../../utils/short-type';
 
+import getShortType from '../../../utils/short-type';
 import './run-dataset.scss';
 import '../run-metadata/animation.scss';
 
