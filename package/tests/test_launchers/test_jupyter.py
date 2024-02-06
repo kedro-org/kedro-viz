@@ -125,3 +125,29 @@ class TestRunVizLineMagic:
         displayed_html = mock_display_html.call_args[0][0].data
         assert 'target="_blank"' in displayed_html
         assert "Open Kedro-Viz" in displayed_html
+
+    def test_run_viz_with_autoreload(self, mocker, patched_check_viz_up):
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+
+        run_viz("--autoreload", None)
+
+        mock_process.assert_called_once_with(
+            target=mocker.ANY,
+            daemon=False,  # No daemon for autoreload
+            kwargs=mocker.ANY,
+        )
+
+    def test_run_viz_without_autoreload(self, mocker, patched_check_viz_up):
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+
+        run_viz("", None)
+
+        mock_process.assert_called_once_with(
+            target=run_server, daemon=True, kwargs=mocker.ANY
+        )
