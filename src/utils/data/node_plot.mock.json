@@ -1,6 +1,6 @@
 {
   "type": "plotly.plotly_dataset.PlotlyDataset",
-  "preview_type": "Plot",
+  "preview_type": "PlotlyPreview",
   "preview": {
     "data": [
       {

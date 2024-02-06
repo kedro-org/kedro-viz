@@ -84,7 +84,7 @@ class TestNodeMetadataEndpoint:
                 200,
                 {
                     "filepath": "raw_data.csv",
-                    "preview_type": "Dataframe",
+                    "preview_type": "TablePreview",
                     "type": "pandas.csv_dataset.CSVDataset",
                 },
             ),

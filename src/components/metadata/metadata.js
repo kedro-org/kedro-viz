@@ -55,17 +55,28 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = metadata?.previewType === 'Plot';
-  const hasImage = metadata?.previewType === 'Image';
+  const hasPlot = metadata?.previewType === 'PlotlyPreview';
+  const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
-    metadata?.previewType === 'MetricsTracking' ||
-    metadata?.previewType === 'JSONTracking';
-  const hasDataFrame = metadata?.previewType === 'Dataframe';
-  const isMetricsTrackingDataset = metadata?.previewType === 'MetricsTracking';
+    metadata?.previewType === 'MetricsTrackingPreview' ||
+    metadata?.previewType === 'JSONTrackingPreview';
+  const hasDataFrame = metadata?.previewType === 'TablePreview';
+  const isMetricsTrackingDataset =
+    metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
+
+  if (isMetricsTrackingDataset) {
+    // //rounding of tracking data
+    metadata?.preview &&
+      Object.entries(metadata?.preview).forEach(([key, value]) => {
+        if (typeof value === 'number') {
+          metadata.preview[key] = Math.round(value * 100) / 100;
+        }
+      });
+  }
 
   let runCommand = metadata?.runCommand;
   if (!runCommand) {

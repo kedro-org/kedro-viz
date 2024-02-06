@@ -69,13 +69,6 @@ export const getClickedNodeMetaData = createSelector(
     if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
     }
-    // //rounding of tracking data
-    // nodeTrackingData[nodeId] &&
-    //   Object.entries(nodeTrackingData[nodeId]).forEach(([key, value]) => {
-    //     if (typeof value === 'number') {
-    //       nodeTrackingData[nodeId][key] = Math.round(value * 100) / 100;
-    //     }
-    //   });
 
     const metadata = {
       id: nodeId,

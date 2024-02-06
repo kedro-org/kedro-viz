@@ -372,7 +372,7 @@ class TestGraphNodeMetadata:
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataset"
-        assert data_node_metadata.preview_type == "Dataframe"
+        assert data_node_metadata.preview_type == "TablePreview"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats["rows"] == 10

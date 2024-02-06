@@ -11,9 +11,9 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible }) => {
-  const hasPlot = metadata?.previewType === 'Plot';
-  const hasImage = metadata?.previewType === 'Image';
-  const hasTable = metadata?.previewType === 'Dataframe';
+  const hasPlot = metadata?.previewType === 'PlotlyPreview';
+  const hasImage = metadata?.previewType === 'ImagePreview';
+  const hasTable = metadata?.previewType === 'TablePreview';
 
   if (!visible.metadataModal || (!hasPlot && !hasImage && !hasTable)) {
     return null;

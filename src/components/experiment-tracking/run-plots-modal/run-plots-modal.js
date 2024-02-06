@@ -17,8 +17,8 @@ const RunPlotsModal = ({ runDatasetToShow, visible, setShowRunPlotsModal }) => {
       : numDatasets === 2
       ? 'twoCharts'
       : 'oneChart';
-  const isPlotly = getShortType(datasetType) === 'Plot';
-  const isImage = getShortType(datasetType) === 'Image';
+  const isPlotly = getShortType(datasetType) === 'plotly';
+  const isImage = getShortType(datasetType) === 'image';
   const nodeTypeIcon = getShortType(datasetType);
 
   const handleKeyDown = (event) => {

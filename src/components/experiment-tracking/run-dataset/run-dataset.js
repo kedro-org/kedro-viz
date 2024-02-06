@@ -246,11 +246,11 @@ function buildDatasetDataMarkup(
   showLoader,
   theme
 ) {
-  const isPlotlyDataset = getShortType(datasetType) === 'Plot';
-  const isImageDataset = getShortType(datasetType) === 'Image';
+  const isPlotlyDataset = getShortType(datasetType) === 'plotly';
+  const isImageDataset = getShortType(datasetType) === 'image';
   const isJSONTrackingDataset = getShortType(datasetType) === 'JSONTracking';
   const isMetricsTrackingDataset =
-    getShortType(datasetType) === 'MetricsTracking';
+    getShortType(datasetType) === 'metricsTracking';
   const isTrackingDataset = isJSONTrackingDataset || isMetricsTrackingDataset;
 
   const onExpandVizClick = () => {
