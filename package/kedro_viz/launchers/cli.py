@@ -1,5 +1,6 @@
 """`kedro_viz.launchers.cli` launches the viz server as a CLI app."""
 
+# pylint: skip-file
 import multiprocessing
 import traceback
 from pathlib import Path
