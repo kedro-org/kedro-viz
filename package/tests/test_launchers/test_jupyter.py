@@ -29,6 +29,13 @@ class TestRunVizLineMagic:
                 "project_path": None,
                 "host": "127.0.0.1",
                 "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": False,
+                "extra_params": "",
             },
         )
         mock_jupyter_display.assert_called_once()
@@ -46,13 +53,20 @@ class TestRunVizLineMagic:
                 "project_path": None,
                 "host": "127.0.0.1",
                 "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": False,
+                "extra_params": "",
             },
         )
         assert set(_VIZ_PROCESSES.keys()) == {4141}
 
     def test_run_viz_invalid_port(self, mocker, patched_check_viz_up):
         with pytest.raises(ValueError):
-            run_viz(port=999999)
+            run_viz("--port=999999")
 
     def test_exception_when_viz_cannot_be_launched(self, mocker):
         mocker.patch(
@@ -85,6 +99,13 @@ class TestRunVizLineMagic:
                 "project_path": None,
                 "host": "0.0.0.0",
                 "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": False,
+                "extra_params": "",
             },
         )
         databricks_display.assert_called_once()

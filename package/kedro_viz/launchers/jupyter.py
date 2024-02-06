@@ -12,6 +12,7 @@ from typing import Any, Dict
 
 import IPython
 from IPython.display import HTML, display
+from watchgod import RegExpWatcher, run_process
 
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
@@ -80,7 +81,7 @@ def _display_databricks_html(port: int):  # pragma: no cover
 
 
 def parse_args(args):  # pragma: no cover
-    """Parse the argument string and return a dictionary of arguments."""
+    """Parses the args string and returns a dictionary of arguments."""
     parsed_args = shlex.split(args)
     arg_dict = {
         arg.lstrip("-").split("=")[0]: arg.split("=")[1] if "=" in arg else True
@@ -104,7 +105,7 @@ def run_viz(  # pylint: disable=too-many-locals
             https://ipython.readthedocs.io/en/stable/config/custommagics.html
 
     """
-    # Parse arguments using the new function
+    # Parse arguments
     arg_dict = parse_args(args)
 
     host = arg_dict.get("host", _DATABRICKS_HOST if _is_databricks() else DEFAULT_HOST)
@@ -113,13 +114,14 @@ def run_viz(  # pylint: disable=too-many-locals
     save_file = arg_dict.get("save-file", None)
     pipeline = arg_dict.get("pipeline", None)
     env = arg_dict.get("env", None)
+    autoreload = arg_dict.get("autoreload", False)
     ignore_plugins = arg_dict.get("ignore-plugins", False)
     params = arg_dict.get("params", "")
 
     # Allocate port
     port = _allocate_port(host, start_at=port)
 
-    # Terminate existing process if necessary
+    # Terminate existing process if needed
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
         _VIZ_PROCESSES[port].terminate()
 
@@ -129,7 +131,6 @@ def run_viz(  # pylint: disable=too-many-locals
         else None
     )
 
-    # Set up other parameters
     run_server_kwargs = {
         "host": host,
         "port": port,
@@ -137,16 +138,27 @@ def run_viz(  # pylint: disable=too-many-locals
         "save_file": save_file,
         "pipeline_name": pipeline,
         "env": env,
+        "autoreload": autoreload,
         "ignore_plugins": ignore_plugins,
         "extra_params": params,
         "project_path": project_path,
     }
-
-    # Start Kedro-Viz server in a new process
     process_context = multiprocessing.get_context("spawn")
-    viz_process = process_context.Process(
-        target=run_server, daemon=True, kwargs=run_server_kwargs
-    )
+    if autoreload:
+        run_process_kwargs = {
+            "path": project_path,
+            "target": run_server,
+            "kwargs": run_server_kwargs,
+            "watcher_cls": RegExpWatcher,
+            "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+        }
+        viz_process = process_context.Process(
+            target=run_process, daemon=False, kwargs={**run_process_kwargs}
+        )
+    else:
+        viz_process = process_context.Process(
+            target=run_server, daemon=True, kwargs={**run_server_kwargs}
+        )
 
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
