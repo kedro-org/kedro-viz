@@ -58,6 +58,12 @@ def viz(ctx):
     help="TCP port that viz will listen to. Defaults to 4141.",
 )
 @click.option(
+    "--project_path",
+    default=None,
+    type=str,
+    help="Select the indicated directory. Get the current directory if not indicated.",
+)
+@click.option(
     "--browser/--no-browser",
     default=True,
     help="Whether to open viz interface in the default browser or not. "
@@ -113,6 +119,7 @@ def viz(ctx):
 def run(
     host,
     port,
+    project_path,
     browser,
     load_file,
     save_file,
@@ -147,6 +154,7 @@ def run(
         run_server_kwargs = {
             "host": host,
             "port": port,
+            "project_path": project_path,
             "load_file": load_file,
             "save_file": save_file,
             "pipeline_name": pipeline,
@@ -156,7 +164,7 @@ def run(
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path.cwd()
+            project_path = Path(project_path) if project_path else Path.cwd()
             run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
                 "path": project_path,
