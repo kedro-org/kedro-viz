@@ -1,17 +1,19 @@
 import pytest
 
+from kedro_viz.integrations.deployment.aws_deployer import AWSDeployer
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
-from kedro_viz.integrations.deployment.s3_deployer import S3Deployer
 
 
-def test_create_deployer_s3():
-    deployer = DeployerFactory.create_deployer(
-        "s3", region="us-east-1", bucket_name="my-bucket"
-    )
-    assert isinstance(deployer, S3Deployer)
-    assert deployer._region == "us-east-1"
-    assert deployer._bucket_name == "my-bucket"
+@pytest.mark.parametrize(
+    "platform, endpoint, bucket_name, deployer_class",
+    [("aws", "http://mocked-url.com", "s3://shareableviz", AWSDeployer)],
+)
+def test_create_deployer(platform, endpoint, bucket_name, deployer_class):
+    deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
+    assert isinstance(deployer, deployer_class)
+    assert deployer._endpoint == endpoint
+    assert deployer._bucket_name == bucket_name
 
 
 def test_create_deployer_local():
