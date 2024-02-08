@@ -88,3 +88,19 @@ class TestRunVizLineMagic:
             },
         )
         databricks_display.assert_called_once()
+
+    def test_run_viz_creates_correct_link(self, mocker, patched_check_viz_up):
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+        mock_display_html = mocker.patch("kedro_viz.launchers.jupyter.display")
+
+        run_viz()
+
+        mock_process.assert_called_once()
+        mock_display_html.assert_called_once()
+
+        displayed_html = mock_display_html.call_args[0][0].data
+        assert 'target="_blank"' in displayed_html
+        assert "Open Kedro-Viz" in displayed_html
