@@ -317,19 +317,55 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "bucket_name": "example-bucket",
             },
         ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "aws",
+                "--endpoint",
+                "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "aws",
+                "endpoint": "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "bucket_name": "example-bucket",
+            },
+        ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "gcp",
+                "--endpoint",
+                "http://34.120.87.227/",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "gcp",
+                "endpoint": "http://34.120.87.227/",
+                "bucket_name": "example-bucket",
+            },
+        ),
     ],
 )
 def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mocker):
     runner = CliRunner()
     mocker.patch("fsspec.filesystem")
-    platform_deployer_mock = mocker.patch("kedro_viz.launchers.cli.platform_deployer")
+    create_shareableviz_process_mock = mocker.patch(
+        "kedro_viz.launchers.cli.create_shareableviz_process"
+    )
 
     with runner.isolated_filesystem():
         result = runner.invoke(cli.viz_cli, command_options)
 
     assert result.exit_code == 0
 
-    platform_deployer_mock.assert_called_once_with(
+    create_shareableviz_process_mock.assert_called_once_with(
         deployer_args.get("platform"),
         deployer_args.get("endpoint"),
         deployer_args.get("bucket_name"),
@@ -385,7 +421,7 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
     mock_click_echo_calls = [
         call(
             "\x1b[31mERROR: Invalid endpoint specified. If you are looking for platform \n"
-            "agnostic shareable viz solution, please use `kedro viz build` command\x1b[0m"
+            "agnostic shareable viz solution, please use the `kedro viz build` command\x1b[0m"
         )
     ]
 
@@ -393,13 +429,15 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
 
 
 def test_successful_build_with_existing_static_files(mocker):
-    platform_deployer_mock = mocker.patch("kedro_viz.launchers.cli.platform_deployer")
+    create_shareableviz_process_mock = mocker.patch(
+        "kedro_viz.launchers.cli.create_shareableviz_process"
+    )
 
     runner = CliRunner()
     result = runner.invoke(cli.build)
 
     assert result.exit_code == 0
-    platform_deployer_mock.assert_called_once_with("local")
+    create_shareableviz_process_mock.assert_called_once_with("local")
 
 
 @pytest.mark.parametrize(
@@ -413,16 +451,29 @@ def test_successful_build_with_existing_static_files(mocker):
             1,
         ),
         (
+            "gcp",
+            "http://34.120.87.227/",
+            "example-bucket",
+            1,
+        ),
+        ("local", None, None, 1),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
+        (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             0,
         ),
-        ("local", None, None, 1),
+        (
+            "gcp",
+            "http://34.120.87.227/",
+            "example-bucket",
+            0,
+        ),
         ("local", None, None, 0),
     ],
 )
-def test_platform_deployer(
+def test_create_shareableviz_process(
     platform,
     endpoint,
     bucket_name,
@@ -435,7 +486,7 @@ def test_platform_deployer(
     mock_click_echo,
 ):
     mock_process_completed.return_value.value = process_completed_value
-    cli.platform_deployer(platform, endpoint, bucket_name)
+    cli.create_shareableviz_process(platform, endpoint, bucket_name)
 
     # Assert the mocks were called as expected
     mock_viz_deploy_process.assert_called_once_with(
@@ -465,12 +516,12 @@ def test_platform_deployer(
         else:
             msg = (
                 "\x1b[32m✨ Success! Kedro-Viz build files have been "
-                "successfully added to the `build` directory.\x1b[0m"
+                "added to the `build` directory.\x1b[0m"
             )
     else:
         msg = (
-            "\x1b[31mTIMEOUT ERROR: Failed to deploy and host Kedro-Viz "
-            f"as the deployment process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
+            "\x1b[31mTIMEOUT ERROR: Failed to build/deploy Kedro-Viz "
+            f"as the process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
             "Please try again later.\x1b[0m"
         )
 
@@ -488,11 +539,10 @@ def test_platform_deployer(
             "example-bucket",
         ),
         (
-            "aws",
-            "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+            "gcp",
+            "http://34.120.87.227/",
             "example-bucket",
         ),
-        ("local", None, None),
         ("local", None, None),
     ],
 )

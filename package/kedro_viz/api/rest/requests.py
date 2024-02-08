@@ -1,4 +1,5 @@
 """`kedro_viz.api.rest.requests` defines REST request types."""
+
 from pydantic import BaseModel
 
 

@@ -210,7 +210,7 @@ def run(
     "--bucket-name",
     type=str,
     required=True,
-    help="Bucket Name where Kedro Viz will be hosted",
+    help="Bucket name where Kedro Viz will be hosted",
 )
 def deploy(platform, endpoint, bucket_name):
     """Deploy and host Kedro Viz on provided platform"""
@@ -225,23 +225,23 @@ def deploy(platform, endpoint, bucket_name):
     if not endpoint:
         display_cli_message(
             "ERROR: Invalid endpoint specified. If you are looking for platform \n"
-            "agnostic shareable viz solution, please use `kedro viz build` command",
+            "agnostic shareable viz solution, please use the `kedro viz build` command",
             "red",
         )
         return
 
-    platform_deployer(platform, endpoint, bucket_name)
+    create_shareableviz_process(platform, endpoint, bucket_name)
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    platform_deployer("local")
+    create_shareableviz_process("local")
 
 
-def platform_deployer(platform, endpoint=None, bucket_name=None):
-    """Creates platform specific deployer process and deploys Kedro Viz"""
+def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
+    """Creates platform specific deployer process"""
     try:
         process_completed = multiprocessing.Value("i", 0)
         exception_queue = multiprocessing.Queue()
@@ -270,22 +270,22 @@ def platform_deployer(platform, endpoint=None, bucket_name=None):
         else:
             display_cli_message(
                 "\u2728 Success! Kedro-Viz build files have been "
-                "successfully added to the `build` directory.",
+                "added to the `build` directory.",
                 "green",
             )
 
     except TimeoutError:  # pragma: no cover
         display_cli_message(
-            "TIMEOUT ERROR: Failed to deploy and host Kedro-Viz as the "
-            f"deployment process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
+            "TIMEOUT ERROR: Failed to build/deploy Kedro-Viz as the "
+            f"process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
             "Please try again later.",
             "red",
         )
 
     except KeyboardInterrupt:  # pragma: no cover
         display_cli_message(
-            "\nCreating your build/static-website "
-            "process is interrupted. Exiting...",
+            "\nCreating your build/deploy Kedro-Viz process "
+            "is interrupted. Exiting...",
             "red",
         )
 

@@ -1,5 +1,6 @@
 """`kedro_viz.launchers.utils` contains utility functions
 used in the `kedro_viz.launchers` package."""
+
 import logging
 import webbrowser
 from time import sleep, time
@@ -97,7 +98,7 @@ def viz_deploy_progress_timer(process_completed, timeout):
     elapsed_time = 0
     while elapsed_time <= timeout and not process_completed.value:
         print(
-            f"...Creating your build/static-website ({elapsed_time}s)",
+            f"...Creating your build/deploy Kedro-Viz ({elapsed_time}s)",
             end="\r",
             flush=True,
         )
