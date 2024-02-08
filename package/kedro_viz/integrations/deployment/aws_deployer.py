@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 class AWSDeployer(BaseDeployer):
     """A class to handle the deployment of Kedro-viz to AWS S3.
-
     Attributes:
         _endpoint (str): AWS endpoint of the hosted site.
         _bucket_name (str): Name of the S3 bucket.
@@ -25,7 +24,6 @@ class AWSDeployer(BaseDeployer):
 
     def __init__(self, endpoint, bucket_name):
         """Initialize S3Deployer with endpoint and bucket name.
-
         Args:
             endpoint (str): AWS endpoint of the hosted site.
             bucket_name (str): Name of the S3 bucket.

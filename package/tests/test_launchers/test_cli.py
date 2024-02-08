@@ -317,6 +317,23 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "bucket_name": "example-bucket",
             },
         ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "aws",
+                "--endpoint",
+                "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "aws",
+                "endpoint": "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "bucket_name": "example-bucket",
+            },
+        ),
     ],
 )
 def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mocker):
@@ -387,7 +404,7 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
     mock_click_echo_calls = [
         call(
             "\x1b[31mERROR: Invalid endpoint specified. If you are looking for platform \n"
-            "agnostic shareable viz solution, please use `kedro viz build` command\x1b[0m"
+            "agnostic shareable viz solution, please use the `kedro viz build` command\x1b[0m"
         )
     ]
 
@@ -469,7 +486,7 @@ def test_create_shareableviz_process(
         else:
             msg = (
                 "\x1b[32m✨ Success! Kedro-Viz build files have been "
-                "successfully added to the `build` directory.\x1b[0m"
+                "added to the `build` directory.\x1b[0m"
             )
     else:
         msg = (
