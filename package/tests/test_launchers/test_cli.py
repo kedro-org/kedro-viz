@@ -387,7 +387,7 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
     mock_click_echo_calls = [
         call(
             "\x1b[31mERROR: Invalid endpoint specified. If you are looking for platform \n"
-            "agnostic shareable viz solution, please use `kedro viz build` command\x1b[0m"
+            "agnostic shareable viz solution, please use the `kedro viz build` command\x1b[0m"
         )
     ]
 
@@ -468,7 +468,7 @@ def test_create_shareableviz_process(
         else:
             msg = (
                 "\x1b[32m✨ Success! Kedro-Viz build files have been "
-                "successfully added to the `build` directory.\x1b[0m"
+                "added to the `build` directory.\x1b[0m"
             )
     else:
         msg = (

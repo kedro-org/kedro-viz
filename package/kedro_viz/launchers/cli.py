@@ -210,7 +210,7 @@ def run(
     "--bucket-name",
     type=str,
     required=True,
-    help="Bucket Name where Kedro Viz will be hosted",
+    help="Bucket name where Kedro Viz will be hosted",
 )
 def deploy(platform, endpoint, bucket_name):
     """Deploy and host Kedro Viz on provided platform"""
@@ -225,7 +225,7 @@ def deploy(platform, endpoint, bucket_name):
     if not endpoint:
         display_cli_message(
             "ERROR: Invalid endpoint specified. If you are looking for platform \n"
-            "agnostic shareable viz solution, please use `kedro viz build` command",
+            "agnostic shareable viz solution, please use the `kedro viz build` command",
             "red",
         )
         return
@@ -270,7 +270,7 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
         else:
             display_cli_message(
                 "\u2728 Success! Kedro-Viz build files have been "
-                "successfully added to the `build` directory.",
+                "added to the `build` directory.",
                 "green",
             )
 
