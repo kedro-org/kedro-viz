@@ -10,7 +10,7 @@ import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
 from kedro.io.core import get_protocol_and_path
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 
 from kedro_viz.api.rest.utils import get_package_version
 from kedro_viz.data_access import data_access_manager
@@ -35,8 +35,7 @@ class APIErrorMessage(BaseModel):
 
 
 class BaseAPIResponse(BaseModel, abc.ABC):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
@@ -47,58 +46,54 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     type: str
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
-    modular_pipelines: Optional[List[str]]
+    modular_pipelines: Optional[List[str]] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": "6ab908b8",
-                "name": "split_data_node",
-                "tags": [],
-                "pipelines": ["__default__", "ds"],
-                "modular_pipelines": [],
-                "type": "task",
-                "parameters": {
-                    "test_size": 0.2,
-                    "random_state": 3,
-                    "features": [
-                        "engines",
-                        "passenger_capacity",
-                        "crew",
-                        "d_check_complete",
-                        "moon_clearance_complete",
-                        "iata_approved",
-                        "company_rating",
-                        "review_scores_rating",
-                    ],
-                },
-            }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "id": "6ab908b8",
+            "name": "split_data_node",
+            "tags": [],
+            "pipelines": ["__default__", "ds"],
+            "modular_pipelines": [],
+            "type": "task",
+            "parameters": {
+                "test_size": 0.2,
+                "random_state": 3,
+                "features": [
+                    "engines",
+                    "passenger_capacity",
+                    "crew",
+                    "d_check_complete",
+                    "moon_clearance_complete",
+                    "iata_approved",
+                    "company_rating",
+                    "review_scores_rating",
+                ],
+            },
         }
+    })
 
 
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
-    layer: Optional[str]
-    dataset_type: Optional[str]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": "d7b83b05",
-                "name": "master_table",
-                "tags": [],
-                "pipelines": ["__default__", "dp", "ds"],
-                "modular_pipelines": [],
-                "type": "data",
-                "layer": "primary",
-                "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
-                "stats": {"rows": 10, "columns": 2, "file_size": 2300},
-            }
+    layer: Optional[str] = None
+    dataset_type: Optional[str] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "id": "d7b83b05",
+            "name": "master_table",
+            "tags": [],
+            "pipelines": ["__default__", "dp", "ds"],
+            "modular_pipelines": [],
+            "type": "data",
+            "layer": "primary",
+            "dataset_type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
+            "stats": {"rows": 10, "columns": 2, "file_size": 2300},
         }
+    })
 
 
 NodeAPIResponse = Union[
@@ -108,76 +103,70 @@ NodeAPIResponse = Union[
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
-    code: Optional[str]
-    filepath: Optional[str]
-    parameters: Optional[Dict]
+    code: Optional[str] = None
+    filepath: Optional[str] = None
+    parameters: Optional[Dict] = None
     inputs: List[str]
     outputs: List[str]
-    run_command: Optional[str]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
-                "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
-                "parameters": {"test_size": 0.2},
-                "inputs": ["params:input1", "input2"],
-                "outputs": ["output1"],
-                "run_command": "kedro run --to-nodes=split_data",
-            }
+    run_command: Optional[str] = None
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
+            "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
+            "parameters": {"test_size": 0.2},
+            "inputs": ["params:input1", "input2"],
+            "outputs": ["output1"],
+            "run_command": "kedro run --to-nodes=split_data",
         }
+    })
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
-    filepath: Optional[str]
+    filepath: Optional[str] = None
     type: str
-    plot: Optional[Dict]
-    image: Optional[str]
-    tracking_data: Optional[Dict]
-    run_command: Optional[str]
-    preview: Optional[Dict]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
-                "type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
-                "run_command": "kedro run --to-outputs=master_table",
-            }
+    plot: Optional[Dict] = None
+    image: Optional[str] = None
+    tracking_data: Optional[Dict] = None
+    run_command: Optional[str] = None
+    preview: Optional[Dict] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
+            "type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
+            "run_command": "kedro run --to-outputs=master_table",
         }
+    })
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     filepath: str
     original_type: str
     transcoded_types: List[str]
-    run_command: Optional[str]
-    stats: Optional[Dict]
+    run_command: Optional[str] = None
+    stats: Optional[Dict] = None
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "parameters": {
-                    "test_size": 0.2,
-                    "random_state": 3,
-                    "features": [
-                        "engines",
-                        "passenger_capacity",
-                        "crew",
-                        "d_check_complete",
-                        "moon_clearance_complete",
-                        "iata_approved",
-                        "company_rating",
-                        "review_scores_rating",
-                    ],
-                }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "parameters": {
+                "test_size": 0.2,
+                "random_state": 3,
+                "features": [
+                    "engines",
+                    "passenger_capacity",
+                    "crew",
+                    "d_check_complete",
+                    "moon_clearance_complete",
+                    "iata_approved",
+                    "company_rating",
+                    "review_scores_rating",
+                ],
             }
         }
+    })
 
 
 NodeMetadataAPIResponse = Union[
@@ -199,7 +188,7 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     """
 
     id: str
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class ModularPipelineChildAPIResponse(BaseAPIResponse):
@@ -268,15 +257,13 @@ class PackageCompatibilityAPIResponse(BaseAPIResponse):
     package_name: str
     package_version: str
     is_compatible: bool
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "package_name": "fsspec",
-                "package_version": "2023.9.1",
-                "is_compatible": True,
-            }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "package_name": "fsspec",
+            "package_version": "2023.9.1",
+            "is_compatible": True,
         }
+    })
 
 
 class EnhancedORJSONResponse(ORJSONResponse):

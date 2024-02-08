@@ -13,6 +13,7 @@ from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
 from .utils import get_dataset_type
+from pydantic import ConfigDict
 
 if TYPE_CHECKING:
     try:
@@ -35,9 +36,7 @@ class RunModel(Base):  # type: ignore
 
     id = Column(String, primary_key=True, index=True)
     blob = Column(JSON)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRunDetailsModel(Base):  # type: ignore
@@ -50,9 +49,7 @@ class UserRunDetailsModel(Base):  # type: ignore
     bookmark = Column(Boolean, default=False)
     title = Column(String)
     notes = Column(String)
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TrackingDatasetGroup(str, Enum):
