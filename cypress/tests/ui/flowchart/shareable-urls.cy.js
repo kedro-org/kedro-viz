@@ -118,6 +118,8 @@ describe('Shareable URLs', () => {
   it('verifies that error message appears with wrong inputs on publish button click #TC-59', () => {
     const bucketName = 'myBucketName';
     const primaryButtonNodeText = 'Publish';
+    const errorButtonNodeText = 'Go back';
+
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
@@ -133,6 +135,7 @@ describe('Shareable URLs', () => {
     cy.get('.shareable-url-modal .modal__wrapper').contains(
       'Something went wrong. Please try again later.'
     );
+    cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
   });
 
   it('verifies that AWS link is generated with correct inputs on publish button click #TC-60', () => {
