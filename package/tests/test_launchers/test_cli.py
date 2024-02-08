@@ -433,13 +433,14 @@ def test_successful_build_with_existing_static_files(mocker):
             "example-bucket",
             1,
         ),
+        ("local", None, None, 1),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             0,
         ),
-        ("local", None, None, 1),
         ("local", None, None, 0),
     ],
 )
@@ -508,12 +509,6 @@ def test_create_shareableviz_process(
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
         ),
-        (
-            "aws",
-            "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
-            "example-bucket",
-        ),
-        ("local", None, None),
         ("local", None, None),
     ],
 )
