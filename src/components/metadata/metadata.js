@@ -60,7 +60,7 @@ const MetaData = ({
   const hasTrackingData =
     metadata?.previewType === 'MetricsTrackingPreview' ||
     metadata?.previewType === 'JSONTrackingPreview';
-  const hasDataFrame = metadata?.previewType === 'TablePreview';
+  const hasTable = metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
     metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
@@ -319,7 +319,7 @@ const MetaData = ({
                   </span>
                 </button>
               )}
-              {hasDataFrame && (
+              {hasTable && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable
