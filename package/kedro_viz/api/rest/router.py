@@ -1,4 +1,5 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
+
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
 

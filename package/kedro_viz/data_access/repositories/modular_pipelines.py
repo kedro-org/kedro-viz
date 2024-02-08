@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
+
 from typing import Dict, Optional, Union
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID

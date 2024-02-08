@@ -1,4 +1,5 @@
 """`kedro_viz.api.rest.utils` contains utility functions used in the `kedro_viz.api.rest` package"""
+
 try:
     from importlib.metadata import version
 except ImportError:  # pragma: no cover

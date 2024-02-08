@@ -1,5 +1,6 @@
 """`kedro_viz.launchers.utils` contains utility functions
 used in the `kedro_viz.launchers` package."""
+
 import logging
 import webbrowser
 from time import sleep, time

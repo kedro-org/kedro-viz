@@ -1,4 +1,5 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
+
 # pylint: disable=protected-access, missing-function-docstring
 import abc
 import hashlib

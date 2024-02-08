@@ -1,5 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+
 # pylint: disable=no-member, broad-exception-caught
 
 import getpass

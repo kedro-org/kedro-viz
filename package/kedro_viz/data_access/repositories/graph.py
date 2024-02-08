@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.graph` defines interface to
 centralise access to graph objects."""
+
 # pylint: disable=missing-class-docstring,missing-function-docstring
 from typing import Dict, Generator, List, Optional, Set
 

@@ -1,4 +1,5 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
+
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
 import logging

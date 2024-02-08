@@ -48,11 +48,9 @@ def example_stats_dict():
 
 @pytest.fixture
 def example_pipelines():
-    def process_data(raw_data, train_test_split):
-        ...
+    def process_data(raw_data, train_test_split): ...
 
-    def train_model(model_inputs, parameters):
-        ...
+    def train_model(model_inputs, parameters): ...
 
     data_processing_pipeline = pipeline(
         [
@@ -115,11 +113,9 @@ def example_catalog():
 
 @pytest.fixture
 def example_transcoded_pipelines():
-    def process_data(raw_data, train_test_split):
-        ...
+    def process_data(raw_data, train_test_split): ...
 
-    def train_model(model_inputs, parameters):
-        ...
+    def train_model(model_inputs, parameters): ...
 
     data_processing_pipeline = pipeline(
         [

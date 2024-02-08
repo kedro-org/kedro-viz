@@ -1,4 +1,5 @@
 """`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries and mutations."""
+
 # pylint: disable=missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations

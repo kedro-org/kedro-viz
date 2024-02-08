@@ -1,4 +1,5 @@
 """`kedro_viz.services.layers` defines layers-related logic."""
+
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set

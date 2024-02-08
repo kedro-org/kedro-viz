@@ -1,6 +1,7 @@
 """`kedro_viz.launchers.jupyter` provides line_magic to launch the viz server
 from a jupyter notebook.
 """
+
 # pragma: no cover
 import logging
 import multiprocessing

@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.runs` defines repository to
 centralise access to runs data from the session store."""
+
 # pylint: disable=missing-class-docstring,missing-function-docstring
 import logging
 from functools import wraps

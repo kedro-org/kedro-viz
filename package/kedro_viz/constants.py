@@ -1,4 +1,5 @@
 """`kedro_viz.constants` defines constants to be used throughout the application."""
+
 import kedro
 from packaging.version import parse
 

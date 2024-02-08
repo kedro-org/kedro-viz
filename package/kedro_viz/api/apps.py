@@ -1,6 +1,7 @@
 """`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
 This data could either come from a real Kedro project or a file.
 """
+
 import json
 import os
 import time

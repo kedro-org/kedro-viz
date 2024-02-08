@@ -1,5 +1,6 @@
 """`kedro_viz.integrations.kedro.telemetry` helps integrate Kedro-Viz with Kedro-Telemetry
 """
+
 import hashlib
 import socket
 from pathlib import Path

@@ -1,5 +1,6 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
+
 # pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
 import logging
 from dataclasses import dataclass, field
