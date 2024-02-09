@@ -2,6 +2,7 @@
 load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
+
 # pylint: disable=import-outside-toplevel, protected-access
 # pylint: disable=missing-function-docstring
 
@@ -116,7 +117,7 @@ def load_data(
     ) as session:
         # check for --ignore-plugins option
         if ignore_plugins:
-            session._hook_manager = _VizNullPluginManager()  # type: ignore
+            session._hook_manager = _VizNullPluginManager()
 
         context = session.load_context()
         session_store = session._store

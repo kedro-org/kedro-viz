@@ -1,19 +1,19 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
-# pylint: disable=too-few-public-methods,protected-access,missing-class-docstring,missing-function-docstring
+# pylint: disable=too-few-public-methods,protected-access,missing-function-docstring
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict
 
 from kedro.io import Version
+from pydantic import ConfigDict
 from sqlalchemy import Column
 from sqlalchemy.orm import declarative_base  # type: ignore
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.types import JSON, Boolean, Integer, String
 
 from .utils import get_dataset_type
-from pydantic import ConfigDict
 
 if TYPE_CHECKING:
     try:

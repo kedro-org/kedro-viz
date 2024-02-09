@@ -288,7 +288,7 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.filepath == str(
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
-        assert task_node_metadata.parameters == {}
+        assert not task_node_metadata.parameters
         assert (
             task_node_metadata.run_command
             == "kedro run --to-nodes=namespace.identity_node"
@@ -313,7 +313,7 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.filepath == str(
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
-        assert task_node_metadata.parameters == {}
+        assert not task_node_metadata.parameters
         assert task_node_metadata.run_command == "kedro run --to-nodes=identity_node"
 
     def test_task_node_metadata_no_run_command(self):
@@ -349,7 +349,7 @@ class TestGraphNodeMetadata:
         assert task_node_metadata.filepath == str(
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
-        assert task_node_metadata.parameters == {}
+        assert not task_node_metadata.parameters
 
     def test_task_node_metadata_with_partial_func(self):
         kedro_node = node(
@@ -364,7 +364,7 @@ class TestGraphNodeMetadata:
         assert task_node.name == "<partial>"
         assert task_node_metadata.code is None
         assert task_node_metadata.filepath is None
-        assert task_node_metadata.parameters == {}
+        assert not task_node_metadata.parameters
         assert task_node_metadata.inputs == ["x"]
         assert task_node_metadata.outputs == ["y"]
 
@@ -381,8 +381,8 @@ class TestGraphNodeMetadata:
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataset"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
-        assert data_node_metadata.stats["rows"] == 10
-        assert data_node_metadata.stats["columns"] == 2
+        assert data_node_metadata.stats.get("rows") == 10
+        assert data_node_metadata.stats.get("columns") == 2
 
     def test_preview_args_not_exist(self):
         metadata = {"kedro-viz": {"something": 3}}
@@ -474,8 +474,8 @@ class TestGraphNodeMetadata:
         assert transcoded_data_node_metadata.transcoded_types == [
             "pandas.csv_dataset.CSVDataset"
         ]
-        assert transcoded_data_node_metadata.stats["rows"] == 10
-        assert transcoded_data_node_metadata.stats["columns"] == 2
+        assert transcoded_data_node_metadata.stats.get("rows") == 10
+        assert transcoded_data_node_metadata.stats.get("columns") == 2
 
     def test_partitioned_data_node_metadata(self):
         dataset = PartitionedDataset(path="partitioned/", dataset="pandas.CSVDataset")
