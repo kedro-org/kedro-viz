@@ -90,7 +90,7 @@ commands:
           command: |
             conda activate kedro-viz
             pip install git+https://github.com/kedro-org/kedro@main
-            pip install --default-timeout=1800 -r package/test_requirements.txt -U
+            pip install -r package/test_requirements.txt -U
       - run:
           name: Echo package versions
           command: |
