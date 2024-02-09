@@ -1,4 +1,5 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
+
 # pylint: disable=protected-access, missing-function-docstring
 import abc
 import hashlib
@@ -734,10 +735,9 @@ class DataNodeMetadata(GraphNodeMetadata):
             preview_args = (
                 cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
             )
-            if preview_args is not None:
-                return cls.dataset.preview(**preview_args)
-            else:
+            if preview_args is None:
                 return cls.dataset.preview()
+            return cls.dataset.preview(**preview_args)
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
