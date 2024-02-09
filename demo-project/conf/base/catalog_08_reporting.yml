@@ -37,7 +37,4 @@ reporting.cancellation_policy_grid:
 reporting.confusion_matrix:
   type: matplotlib.MatplotlibWriter
   filepath: ${_base_location}/08_reporting/confusion_matrix.png
-  metadata:
-    kedro-viz:
-      layer: reporting
   versioned: true
