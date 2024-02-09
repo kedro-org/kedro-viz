@@ -117,7 +117,7 @@ def load_data(
     ) as session:
         # check for --ignore-plugins option
         if ignore_plugins:
-            session._hook_manager = _VizNullPluginManager()
+            session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()
         session_store = session._store
