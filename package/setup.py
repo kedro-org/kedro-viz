@@ -58,7 +58,7 @@ setup(
             "sphinx_rtd_theme==1.3.0",
             "myst-parser>=1.0,<2.1",
         ],
-        "aws": ["s3fs>=2021.4,<2024.1"],
-        "azure": ["adlfs>=2021.4,<2024.1"],
+        "aws": ["s3fs>=2021.4"],
+        "azure": ["adlfs>=2021.4"],
     },
 )
