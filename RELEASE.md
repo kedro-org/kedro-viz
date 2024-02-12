@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Drop support for `python=3.8`. (#1744)
+- Drop support for `python=3.8`. (#1747)
 
 ## Bug fixes and other changes
 
