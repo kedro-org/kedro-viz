@@ -75,8 +75,8 @@ pip install -r src/requirements.txt
 ```
 
 ### Cloud Provider specific setup
-1. [AWS Setup](#configure-your-aws-s3-bucket-and-set-credentials) 
-2. [Azure Setup](#configure-your-azureblobstorage-and-set-credentials)
+* [AWS Setup](#configure-your-aws-s3-bucket-and-set-credentials) 
+* [Azure Setup](#configure-your-azureblobstorage-and-set-credentials)
 
 ### Publish and share the project
 
@@ -90,12 +90,10 @@ Click the **Publish and share** icon in the lower-left of the application. You w
 
 ```{note}
 From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
+
+* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
 ```
-
-**Note:** 
-
-AWS - The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-Azure - The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
@@ -110,8 +108,10 @@ kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
 ```
 
 ```{important}
-From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options. Use the following command from the root folder of your Kedro project
+From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
 ```
+
+From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
 
 ```bash
 kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
@@ -162,7 +162,7 @@ You can control who can view your visualisation using [bucket and user policies]
 
 You pay for storing objects in your S3 buckets. The amount you pay depends on your objects’ size, how long you stored the object during the month, and the storage class.
 
-See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information. 
+See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information.
 
 ### Configure your AzureBlobStorage and set credentials
 
@@ -213,6 +213,15 @@ export AZURE_STORAGE_CLIENT_SECRET="your-app-client-secret-value"
 
 For more information, see the official Azure documentation about [how to work with environmental credentials](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.environmentcredential?view=azure-dotnet).
 
+```{note}
+Kedro-Viz uses Gen2 filesystem protocol `abfs` to write files on AzureBlobStorage.
+```
+
+```{important}
+Having a `$web` container in your AzureBlobStorage is mandatory to use Kedro-Viz publish and share feature on Azure. For more information, see the official Azure documentation about 
+[Setting up a static website](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website#setting-up-a-static-website).
+```
+
 #### Permissions and access control
 
 All permissions and access control are controlled by Azure. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
@@ -238,3 +247,7 @@ Follow the steps [listed in the GitHub pages documentation](https://docs.github.
 After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
 
 For AWS, we also offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
+
+```{note}
+From Kedro-Viz version 7.2.0, we offer automated deployments on Azure and GCP.
+```
