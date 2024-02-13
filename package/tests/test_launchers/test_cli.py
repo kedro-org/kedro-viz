@@ -305,6 +305,23 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "viz",
                 "deploy",
                 "--platform",
+                "azure",
+                "--endpoint",
+                "https://example-bucket.web.core.windows.net",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "azure",
+                "endpoint": "https://example-bucket.web.core.windows.net",
+                "bucket_name": "example-bucket",
+            },
+        ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
                 "aws",
                 "--endpoint",
                 "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
@@ -409,19 +426,21 @@ def test_successful_build_with_existing_static_files(mocker):
 @pytest.mark.parametrize(
     "platform, endpoint, bucket_name, process_completed_value",
     [
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 1),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             1,
         ),
+        ("local", None, None, 1),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             0,
         ),
-        ("local", None, None, 1),
         ("local", None, None, 0),
     ],
 )
@@ -484,17 +503,12 @@ def test_create_shareableviz_process(
 @pytest.mark.parametrize(
     "platform, endpoint, bucket_name",
     [
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket"),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
         ),
-        (
-            "aws",
-            "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
-            "example-bucket",
-        ),
-        ("local", None, None),
         ("local", None, None),
     ],
 )
