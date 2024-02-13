@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Kedro Viz Static Website hosting on Azure. (#1708)
+- Extend support for 'Publishing and sharing Kedro-viz' to Azure and GCP. (#1708, #1711)
 
 # Upcoming release
 

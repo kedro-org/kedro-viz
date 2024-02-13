@@ -334,6 +334,23 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "bucket_name": "example-bucket",
             },
         ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "gcp",
+                "--endpoint",
+                "http://34.120.87.227/",
+                "--bucket-name",
+                "example-bucket",
+            ],
+            {
+                "platform": "gcp",
+                "endpoint": "http://34.120.87.227/",
+                "bucket_name": "example-bucket",
+            },
+        ),
     ],
 )
 def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mocker):
@@ -433,11 +450,23 @@ def test_successful_build_with_existing_static_files(mocker):
             "example-bucket",
             1,
         ),
+        (
+            "gcp",
+            "http://34.120.87.227/",
+            "example-bucket",
+            1,
+        ),
         ("local", None, None, 1),
         ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+            "example-bucket",
+            0,
+        ),
+        (
+            "gcp",
+            "http://34.120.87.227/",
             "example-bucket",
             0,
         ),
@@ -507,6 +536,11 @@ def test_create_shareableviz_process(
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+            "example-bucket",
+        ),
+        (
+            "gcp",
+            "http://34.120.87.227/",
             "example-bucket",
         ),
         ("local", None, None),
