@@ -29,10 +29,11 @@ When your project is ready, navigate to the root directory of the project.
 
 When your project is ready, navigate to the root directory of the project.
 
-There are two ways to publish and share your Kedro-Viz: 
-    1. You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon.
+There are two ways to publish and share your Kedro-Viz:
 
-    2. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+1. You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon.
+
+2. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
 
 ```{note}
 From Kedro-Viz version 7.2.0, you will be able to publish and share your Kedro-Viz on Azure and GCP
@@ -72,6 +73,50 @@ Install the dependencies from the project root directory by typing the following
 ```bash
 pip install -r src/requirements.txt
 ```
+
+## Cloud Provider specific setup
+1. [AWS Setup](#configure-your-aws-s3-bucket-and-set-credentials) 
+2. [Azure Setup](#configure-your-azureblobstorage-and-set-credentials)
+
+## Publish and share the project
+
+Once the Cloud Provider specific setup is completed, you're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
+
+```bash
+kedro viz run
+```
+
+Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
+
+```{note}
+From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
+```
+
+**Note:** 
+
+AWS - The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+Azure - The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+
+Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
+
+Here's an example of the flow: (TODO - v7.2.0 flow)
+
+![](./images/kedro-publish-share.gif)
+
+From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
+```
+
+```{important}
+From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options. Use the following command from the root folder of your Kedro project
+```
+
+```bash
+kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
+```
+
 
 ## Configure your AWS S3 bucket and set credentials
 
@@ -181,45 +226,6 @@ You can control who can view your visualisation using [attribute-based access co
 You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
 
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
-
-## Publish and share the project
-
-You're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
-
-```bash
-kedro viz run
-```
-
-Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
-
-```{note}
-From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
-```
-
-**Note:** 
-
-AWS - The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-Azure - The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
-
-Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
-
-Here's an example of the flow: (TODO - v7.2.0 flow)
-
-![](./images/kedro-publish-share.gif)
-
-From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
-```
-
-```{important}
-From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options. Use the following command from the root folder of your Kedro project
-```
-
-```bash
-kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
-```
 
 ## Platform-agnostic sharing with Kedro-Viz 
 
