@@ -40,6 +40,6 @@ types-toml==0.1.1
 types-ujson==0.1.0
 
 #shareableviz
-s3fs>=2021.4, <2024.1
-adlfs>=2021.4, <2024.1
-gcsfs>=2021.4, <2024.1
+s3fs>=2021.4
+adlfs>=2021.4
+gcsfs>=2021.4

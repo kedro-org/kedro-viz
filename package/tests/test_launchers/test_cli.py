@@ -450,6 +450,8 @@ def test_successful_build_with_existing_static_files(mocker):
             "example-bucket",
             1,
         ),
+        ("local", None, None, 1),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", 0),
         (
             "gcp",
             "http://34.120.87.227/",
