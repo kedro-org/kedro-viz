@@ -74,11 +74,11 @@ Install the dependencies from the project root directory by typing the following
 pip install -r src/requirements.txt
 ```
 
-## Cloud Provider specific setup
+### Cloud Provider specific setup
 1. [AWS Setup](#configure-your-aws-s3-bucket-and-set-credentials) 
 2. [Azure Setup](#configure-your-azureblobstorage-and-set-credentials)
 
-## Publish and share the project
+### Publish and share the project
 
 Once the Cloud Provider specific setup is completed, you're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
 
@@ -117,8 +117,7 @@ From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, end
 kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
 ```
 
-
-## Configure your AWS S3 bucket and set credentials
+### Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
 
@@ -153,20 +152,19 @@ export AWS_SECRET_ACCESS_KEY="your_secret_access_key"
 
 For more information, see the official AWS documentation about [how to work with credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html).
 
-## Permissions and access control
+#### Permissions and access control
 
 All permissions and access control are controlled by AWS. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
 
 You can control who can view your visualisation using [bucket and user policies](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html) or [access control lists](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acls.html). See the official AWS documentation for more information.
 
-## Billing
+#### Billing
 
 You pay for storing objects in your S3 buckets. The amount you pay depends on your objects’ size, how long you stored the object during the month, and the storage class.
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information. 
 
-
-## Configure your AzureBlobStorage and set credentials
+### Configure your AzureBlobStorage and set credentials
 
 You can host your Kedro-Viz project on AzureBlobStorage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
@@ -215,13 +213,13 @@ export AZURE_STORAGE_CLIENT_SECRET="your-app-client-secret-value"
 
 For more information, see the official Azure documentation about [how to work with environmental credentials](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.environmentcredential?view=azure-dotnet).
 
-## Permissions and access control
+#### Permissions and access control
 
 All permissions and access control are controlled by Azure. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
 
 You can control who can view your visualisation using [attribute-based access control](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-auth-abac). See the official Azure documentation for more information.
 
-## Billing
+#### Billing
 
 You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
 
