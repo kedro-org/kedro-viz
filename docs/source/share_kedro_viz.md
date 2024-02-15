@@ -262,15 +262,21 @@ Click the **Publish and share** icon in the lower-left of the application. You w
 ```{note}
 From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
 
-* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+* **aws -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+* **gcp -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
+If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
-Here's an example of the flow: (TODO - v7.2.0 flow)
+Here's an example of the flow:
 
 ![](./images/kedro-publish-share.gif)
+
+```{note}
+We will be updating the user flow doc for v7.2.0 soon...
+```
 
 From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
 
