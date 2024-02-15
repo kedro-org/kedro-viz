@@ -120,6 +120,9 @@ export const params = {
   run: 'run_ids',
   view: 'view',
   comparisonMode: 'comparison',
+  types: 'types',
+  tags: 'tags',
+  expandAll: 'expandAllPipelines',
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
@@ -187,3 +190,9 @@ export const s3BucketRegions = [
 
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';
+
+export const queryParamsToRetain = [
+  params.types,
+  params.tags,
+  params.expandAll,
+];

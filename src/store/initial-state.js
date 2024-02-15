@@ -57,9 +57,10 @@ export const createInitialState = () => ({
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
  * @param {Object} state Initial/extant state
+ * @param {Boolean} isNodeTypeInUrl flag to check if nodeType is in URL
  * @return {Object} Combined state from localStorage
  */
-export const mergeLocalStorage = (state) => {
+export const mergeLocalStorage = (state, isNodeTypeInUrl) => {
   const localStorageState = loadLocalStorage(localStorageName);
   const localStorageRunsMetadataState = loadLocalStorage(
     localStorageRunsMetadata
@@ -73,6 +74,12 @@ export const mergeLocalStorage = (state) => {
     ...localStorageState,
     ...{ runsMetadata: localStorageRunsMetadataState },
   };
+
+  // Remove disabled nodeType from localStorage if filter params are present in the URL
+  if (allLocalStorageState?.nodeType?.disabled && isNodeTypeInUrl) {
+    delete allLocalStorageState.nodeType.disabled;
+  }
+
   return deepmerge(state, allLocalStorageState);
 };
 
@@ -87,14 +94,18 @@ export const mergeLocalStorage = (state) => {
  * @param {Boolean} applyFixes Whether to override initialState
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
-  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-
   const search = new URLSearchParams(window.location.search);
   const pipelineIdFromURL = search.get(params.pipeline);
   const nodeIdFromUrl = search.get(params.selected);
   const nodeNameFromUrl = search.get(params.selectedName);
+  const isNodeTypeInUrl = search.has(params.types);
 
   const nodeTypes = ['parameters', 'task', 'data'];
+
+  const state = mergeLocalStorage(
+    normalizeData(data, expandAllPipelines),
+    isNodeTypeInUrl
+  );
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised

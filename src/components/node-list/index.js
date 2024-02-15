@@ -39,6 +39,7 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
+import { params } from '../../config';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -69,8 +70,12 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
-  const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
-    useGeneratePathname();
+  const {
+    toSelectedPipeline,
+    toSelectedNode,
+    toFocusedModularPipeline,
+    toSetQueryParam,
+  } = useGeneratePathname();
 
   const items = getFilteredItems({
     nodes,
@@ -105,9 +110,42 @@ const NodeListProvider = ({
     }
   };
 
+  // To determine the parameter name based on the item type
+  const getParamName = (item) => {
+    return isElementType(item.type) ? params.types : params.tags;
+  };
+
+  // To get existing values from search parameters
+  const getExistingValues = (paramName, searchParams) => {
+    const paramValues = searchParams.get(paramName);
+    return new Set(paramValues ? paramValues.split(',') : []);
+  };
+
+  // To update the URL parameters
+  const updateUrlParams = (item, paramName, existingValues) => {
+    if (item.checked) {
+      existingValues.delete(item.id);
+    } else {
+      existingValues.add(item.id);
+    }
+
+    toSetQueryParam(paramName, Array.from(existingValues));
+  };
+
+  const handleUrlParams = (item) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const paramName = getParamName(item);
+    const existingValues = getExistingValues(paramName, searchParams);
+
+    updateUrlParams(item, paramName, existingValues);
+  };
+
   const onItemChange = (item, checked, clickedIconType) => {
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
+      if (!clickedIconType) {
+        handleUrlParams(item);
+      }
 
       if (isModularPipelineType(item.type)) {
         if (clickedIconType === 'focus') {
@@ -168,6 +206,10 @@ const NodeListProvider = ({
     const groupItemsDisabled = groupItems.every(
       (groupItem) => !groupItem.checked
     );
+
+    groupItems.forEach((item) => {
+      handleUrlParams(item);
+    });
 
     if (isTagType(groupType)) {
       onToggleTagFilter(

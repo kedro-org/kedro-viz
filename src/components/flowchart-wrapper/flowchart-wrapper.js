@@ -199,17 +199,17 @@ export const FlowChartWrapper = ({
         resetErrorMessage();
       }
 
-      if (matchedSelectedPipeline) {
+      if (matchedSelectedPipeline()) {
         // Redirecting to a different pipeline is also handled at `preparePipelineState`
         // to ensure the data is ready before being passed to here
         redirectSelectedPipeline();
       }
 
-      if (matchedSelectedNodeName || matchedSelectedNodeId) {
+      if (matchedSelectedNodeName() || matchedSelectedNodeId()) {
         redirectToSelectedNode();
       }
 
-      if (matchedFocusedNode) {
+      if (matchedFocusedNode()) {
         redirectToFocusedNode();
       }
 
