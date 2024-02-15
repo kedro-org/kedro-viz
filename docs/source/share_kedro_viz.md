@@ -23,11 +23,7 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 
 When your project is ready, navigate to the root directory of the project.
 
-
 ## Publish and share Kedro-Viz automatically
-
-
-When your project is ready, navigate to the root directory of the project.
 
 There are two ways to publish and share your Kedro-Viz:
 
@@ -72,49 +68,6 @@ Install the dependencies from the project root directory by typing the following
 
 ```bash
 pip install -r src/requirements.txt
-```
-
-### Cloud Provider specific setup
-* [AWS Setup](#configure-your-aws-s3-bucket-and-set-credentials) 
-* [Azure Setup](#configure-your-azureblobstorage-and-set-credentials)
-
-### Publish and share the project
-
-Once the Cloud Provider specific setup is completed, you're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
-
-```bash
-kedro viz run
-```
-
-Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
-
-```{note}
-From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
-
-* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
-```
-
-Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
-
-Here's an example of the flow: (TODO - v7.2.0 flow)
-
-![](./images/kedro-publish-share.gif)
-
-From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
-```
-
-```{important}
-From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
-```
-
-From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
 ```
 
 ### Configure your AWS S3 bucket and set credentials
@@ -168,7 +121,11 @@ See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&lo
 
 You can host your Kedro-Viz project on AzureBlobStorage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
-Once the storage account is created and enabled for static website hosting, you'll need to register an app, get the app registration parameters namely Application (Client) ID, Directory (Tenant) ID, Client Secret Value. To do so:
+```{note}
+Uploading your site's files will be done through Kedro-Viz
+```
+
+Once the storage account is created and enabled for static website hosting, you'll need to register an app, get the app registration parameters namely `Application (Client) ID`, `Directory (Tenant) ID`, `Client Secret Value`. To do so:
 
 Sign in to the [AzurePortal](https://portal.azure.com/#home) and create an App registration.
 For more information, see the official Azure documentation about [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
@@ -233,6 +190,103 @@ You can control who can view your visualisation using [attribute-based access co
 You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
 
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
+
+### Configure your Google Cloud Storage and set credentials
+
+You can host your Kedro-Viz project on Google Cloud Storage bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on Google Cloud Storage.
+
+```{important}
+You need to enable the Compute Engine API for your project as mentioned in the tutorial
+```
+
+```{note}
+Uploading your site's files will be done through Kedro-Viz
+```
+
+Once the storage account is created and the bucket is made readable to anyone on the public internet, you'll need to set up a load balancer and configure SSL certificate if you want to serve your website through `HTTPS`. To do so, follow the [Setup Load Balancer tutorial](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl)
+
+Uploading files through Kedro-Viz would require you to set `GOOGLE_APPLICATION_CREDENTIALS` as an environment variable. You will need to create a Service Account to get the required token. 
+
+Sign in to the [GCP Portal](https://console.cloud.google.com/) and create a Service Account from IAM & Admin dashboard as shown below
+
+![](./images/gcp_sa.png)
+
+![](./images/gcp_sa_details.png)
+
+You must assign `Storage Object Creator` and `Storage Object User` roles
+
+![](./images/gcp_sa_roles.png)
+
+You can ignore granting users access to this service account unless required by your project and click on Done
+
+Once the Service Account is created, you need to generate a Service Account Key as shown below
+
+![](./images/gcp_sa_keys.png)
+
+![](./images/gcp_sa_key_download.png)
+
+![](./images/gcp_sa_key_confirm.png)
+
+
+Once that's completed, you'll need to set your generated Service Account Key file absolute path as environment variable in your terminal window, as shown below:
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="absolute-path-to-downloaded-service-account-key-file"
+```
+
+For more information, see the official Google documentation about [how to work with environmental credentials](https://cloud.google.com/composer/docs/how-to/managing/environment-variables).
+
+
+#### Permissions and access control
+
+All permissions and access control are controlled by Google. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
+
+You can control who can view your visualisation using [IAM permissions and ACLs](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls). See the official Google documentation for more information.
+
+#### Billing
+
+You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using Cloud Load Balancing.
+
+See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
+
+### Publish and share the project
+
+Once the Cloud Provider specific setup is completed, you're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
+
+```bash
+kedro viz run
+```
+
+Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
+
+```{note}
+From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
+
+* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+```
+
+Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
+
+Here's an example of the flow: (TODO - v7.2.0 flow)
+
+![](./images/kedro-publish-share.gif)
+
+From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
+```
+
+```{important}
+From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
+```
+
+From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
+```
 
 ## Platform-agnostic sharing with Kedro-Viz 
 
