@@ -22,7 +22,6 @@ pytest-cov~=4.1
 sqlalchemy-stubs~=0.4
 strawberry-graphql[cli]>=0.99.0, <1.0
 trufflehog~=2.2
-typing_extensions~=4.7.0; python_version < '3.9'
 httpx~=0.24.0
 
 # mypy
