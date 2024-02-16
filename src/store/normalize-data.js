@@ -216,7 +216,7 @@ const splitQueryParams = (queryParams) =>
 const getNodeTagsFiltersFromUrl = (state, tagsQueryParam, allNodeTags = []) => {
   const queryParamsTagsArray = splitQueryParams(tagsQueryParam);
 
-  if (queryParamsTagsArray.length !== 0 && !queryParamsTagsArray.includes('')) {
+  if (queryParamsTagsArray.length !== 0) {
     const queryParamsTagsSet = new Set(queryParamsTagsArray);
     const enabledTags = allNodeTags.reduce((result, tag) => {
       result[tag.id] = queryParamsTagsSet.has(tag.id);
@@ -230,32 +230,28 @@ const getNodeTagsFiltersFromUrl = (state, tagsQueryParam, allNodeTags = []) => {
 };
 
 /**
- * Returns an object with filters for nodeType as set in current URL
- * @param {Object} state - State object
- * @param {Array} typeQueryParams - List of node types from URL
+ * Updates the disabled state of node types based on the provided type query parameters.
+ * @param {Object} state - The current state object.
+ * @param {string} typeQueryParams - The type query parameters.
+ * @returns {Object} - The updated state object.
  */
 const getNodeTypesFromUrl = (state, typeQueryParams) => {
   const nodeTypes = splitQueryParams(typeQueryParams);
 
   if (nodeTypes.length !== 0) {
-    const disabledNodeTypes = nodeTypes.reduce((result, type) => {
-      result[type] = false;
-      return result;
-    }, {});
-
-    state.nodeType.disabled = {
-      ...state.nodeType.disabled,
-      ...disabledNodeTypes,
-    };
+    Object.keys(state.nodeType.disabled).forEach((key) => {
+      state.nodeType.disabled[key] = !nodeTypes.includes(key);
+    });
   }
 
   return state;
 };
 
 /**
- * Returns an object with filters for tags and nodeType as set in current URL
+ * Updates the enabled state of node tags based on the provided type query parameters.
  * @param {Object} state - State object
- * @param {Array} NodeTags - List of associated tags
+ * @param {Array} NodeTags - List of all associated tags
+ * @returns {Object} - The updated state object.
  */
 const getNodeFiltersFromUrl = (state, NodeTags) => {
   const search = new URLSearchParams(window.location.search);
