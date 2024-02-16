@@ -448,7 +448,7 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
 def save_api_responses_to_fs(api_dir: str):
     """Saves all Kedro Viz API responses to a directory."""
     try:
-        protocol, path = get_protocol_and_path(api_dir)
+        protocol, path = get_protocol_and_path(str(api_dir))
         remote_fs = fsspec.filesystem(protocol)
 
         logger.debug(

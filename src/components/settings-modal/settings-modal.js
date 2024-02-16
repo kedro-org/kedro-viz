@@ -21,6 +21,7 @@ import Button from '../ui/button';
 import Modal from '../ui/modal';
 
 import './settings-modal.scss';
+import { isRunningLocally } from '../../utils';
 
 /**
  * Modal to allow users to change the flag settings
@@ -168,25 +169,27 @@ const SettingsModal = ({
                 toggleValue={toggleFlags[value]}
               />
             ))}
-            {isOutdated ? (
-              <div className="pipeline-settings-modal__upgrade-reminder">
-                <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
-                <a
-                  href="https://github.com/kedro-org/kedro-viz/releases"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View release notes
-                </a>
-              </div>
-            ) : (
-              <div className="pipeline-settings-modal__already-latest">
-                <span>
-                  &#8226; You are on the latest version of Kedro-Viz (
-                  {latestVersion})
-                </span>
-              </div>
-            )}
+            {isRunningLocally() ? (
+              isOutdated ? (
+                <div className="pipeline-settings-modal__upgrade-reminder">
+                  <span>&#8226; Kedro-Viz {latestVersion} is here! </span>
+                  <a
+                    href="https://github.com/kedro-org/kedro-viz/releases"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View release notes
+                  </a>
+                </div>
+              ) : (
+                <div className="pipeline-settings-modal__already-latest">
+                  <span>
+                    &#8226; You are on the latest version of Kedro-Viz (
+                    {latestVersion})
+                  </span>
+                </div>
+              )
+            ) : null}
           </div>
           <div className="run-details-modal-button-wrapper">
             <Button

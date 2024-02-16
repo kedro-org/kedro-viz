@@ -29,8 +29,9 @@ class LocalDeployer(BaseDeployer):
     def __init__(self):
         super().__init__()
         self._path = Path(_BUILD_PATH)
-        self._path.mkdir(parents=True, exist_ok=True)
         self._fs = fsspec.filesystem(_FILE_PROTOCOL)
+        self._fs.makedirs(self._path, exist_ok=True)
+        self._fs.makedirs(self._path / "html", exist_ok=True)
 
     def deploy_and_get_url(self):
         """Copy Kedro-viz to local build folder and return its URL."""
