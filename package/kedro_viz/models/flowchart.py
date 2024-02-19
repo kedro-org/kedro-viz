@@ -593,10 +593,7 @@ class DataNode(GraphNode):
 
     def is_preview_disabled(self):
         """Checks if the dataset has a preview disabled"""
-        if self.viz_metadata:
-            preview_value = self.viz_metadata.get("preview")
-            return preview_value is not None and not preview_value
-        return False
+        return self.viz_metadata and self.viz_metadata.get("preview") is False
 
 
 class TranscodedDataNode(GraphNode):
@@ -739,7 +736,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 return cls.dataset.preview()
             return cls.dataset.preview(**preview_args)
 
-        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+        except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
                 cls.data_node.name,

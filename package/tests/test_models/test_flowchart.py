@@ -408,6 +408,21 @@ class TestGraphNodeMetadata:
 
         assert preview_node_metadata.preview == expected_preview_data
 
+    def test_preview_data_node_metadata_exception(self, caplog):
+        empty_dataset = CSVDataset(filepath="temp.csv")
+        dataset_name = "dataset"
+        empty_data_node = GraphNode.create_data_node(
+            dataset_name=dataset_name,
+            tags=set(),
+            layer=None,
+            dataset=empty_dataset,
+            stats=None,
+        )
+
+        DataNodeMetadata(data_node=empty_data_node)
+
+        assert f" '{dataset_name}' could not be previewed" in caplog.text
+
     def test_preview_default_data_node_metadata(
         self, example_data_node_without_viz_metadata
     ):
