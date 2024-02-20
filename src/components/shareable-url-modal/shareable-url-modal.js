@@ -203,6 +203,20 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 <br />
                 Enter the required information and a hosted link will be
                 generated.
+                <br />
+                <br />
+              </p>
+              <p className="shareable-url-modal__content-description shareable-url-modal__content-note">
+                Find out how to obtain the endpoint link for the selected
+                platform,{' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#publish-and-share-kedro-viz-automatically"
+                >
+                  here
+                </a>
+                .
               </p>
             </div>
             <div className="shareable-url-modal__form-wrapper">

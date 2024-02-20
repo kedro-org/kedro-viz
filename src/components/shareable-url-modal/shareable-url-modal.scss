@@ -91,6 +91,14 @@
     }
   }
 
+  &__content-note {
+    color: var(--color-form-label);
+
+    a {
+      color: var(--color-form-label);
+    }
+  }
+
   &__content-wrapper {
     padding: 48px;
     background: var(--color-modal-bg-2);
@@ -252,6 +260,7 @@
 
   .dropdown__label {
     background: var(--input-bg);
+    padding: 0 0 0 12px;
   }
 
   .dropdown__label span,
