@@ -593,7 +593,7 @@ class DataNode(GraphNode):
 
     def is_preview_disabled(self):
         """Checks if the dataset has a preview disabled"""
-        return self.viz_metadata and self.viz_metadata.get("preview") is False
+        return bool(self.viz_metadata and self.viz_metadata.get("preview") is False)
 
 
 class TranscodedDataNode(GraphNode):
