@@ -685,7 +685,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         None, description="Command to run the pipeline to this node"
     )
     preview: Optional[Union[Dict, str]] = Field(
-        None, description="Preview data for the underlying datanode"
+        None, description="Preview data for the underlying data node"
     )
 
     preview_type: Optional[str] = Field(
