@@ -1,6 +1,7 @@
 {
   "type": "plotly.plotly_dataset.PlotlyDataset",
-  "plot": {
+  "preview_type": "PlotlyPreview",
+  "preview": {
     "data": [
       {
         "uid": "babced",

@@ -6,7 +6,7 @@ jupyter~=1.0
 jupyter_client>=5.1, <7.0
 jupyterlab~=3.0
 kedro~=0.18.0
-kedro-datasets[pandas.CSVDataset,pandas.ExcelDataset, pandas.ParquetDataset, plotly.PlotlyDataset]<=2.0.0
+git+https://github.com/kedro-org/kedro-plugins.git@main#egg=kedro-datasets[pandas.ParquetDataset,pandas.CSVDataset,pandas.ExcelDataset,plotly.JSONDataset]&subdirectory=kedro-datasets  # temporary pin until the next release of kedro-datasets
 nbstripout~=0.4
 pytest-cov~=2.5
 pytest-mock>=1.7.1, <2.0

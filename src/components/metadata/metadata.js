@@ -55,15 +55,28 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = Boolean(metadata?.plot);
-  const hasImage = Boolean(metadata?.image);
-  const hasTrackingData = Boolean(metadata?.trackingData);
-  const hasPreviewData = Boolean(metadata?.preview);
-  const isMetricsTrackingDataset = nodeTypeIcon === 'metricsTracking';
+  const hasPlot = metadata?.previewType === 'PlotlyPreview';
+  const hasImage = metadata?.previewType === 'ImagePreview';
+  const hasTrackingData =
+    metadata?.previewType === 'MetricsTrackingPreview' ||
+    metadata?.previewType === 'JSONTrackingPreview';
+  const hasTable = metadata?.previewType === 'TablePreview';
+  const isMetricsTrackingDataset =
+    metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
+
+  if (isMetricsTrackingDataset) {
+    // //rounding of tracking data
+    metadata?.preview &&
+      Object.entries(metadata?.preview).forEach(([key, value]) => {
+        if (typeof value === 'number') {
+          metadata.preview[key] = Math.round(value * 100) / 100;
+        }
+      });
+  }
 
   let runCommand = metadata?.runCommand;
   if (!runCommand) {
@@ -196,7 +209,7 @@ const MetaData = ({
                     kind="trackingData"
                     commas={false}
                     inline={false}
-                    value={metadata.trackingData}
+                    value={metadata.preview}
                   />
                 )}
                 <MetaDataRow
@@ -252,8 +265,8 @@ const MetaData = ({
                     onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
-                      data={metadata.plot.data}
-                      layout={metadata.plot.layout}
+                      data={metadata.preview.data}
+                      layout={metadata.preview.layout}
                       view="preview"
                     />
                   </div>
@@ -277,7 +290,7 @@ const MetaData = ({
                     <img
                       alt="Matplotlib rendering"
                       className="pipeline-metadata__plot-image"
-                      src={`data:image/png;base64,${metadata.image}`}
+                      src={`data:image/png;base64,${metadata.preview}`}
                     />
                   </div>
                   <button
@@ -306,7 +319,7 @@ const MetaData = ({
                   </span>
                 </button>
               )}
-              {hasPreviewData && (
+              {hasTable && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable

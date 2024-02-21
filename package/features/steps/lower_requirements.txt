@@ -1,5 +1,5 @@
 ipython==7.0.0
-fastapi==0.73.0
+fastapi==0.100.0
 fsspec==2021.4
 aiofiles==22.1.0
 uvicorn[standard]==0.22.0
@@ -13,4 +13,3 @@ strawberry-graphql==0.192.0
 networkx==2.5
 orjson==3.9
 secure==0.3.0
-pydantic==1.10
