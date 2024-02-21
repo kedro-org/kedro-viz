@@ -158,6 +158,13 @@ export const hostingPlatform = {
   azure: 'Microsoft Azure',
 };
 
+export const inputKeyToStateKeyMap = {
+  // eslint-disable-next-line camelcase
+  bucket_name: 'hasBucketName',
+  platform: 'hasPlatform',
+  endpoint: 'hasEndpoint',
+};
+
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';
 

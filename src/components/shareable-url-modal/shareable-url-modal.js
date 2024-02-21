@@ -1,9 +1,11 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import {
   hostingPlatform,
+  inputKeyToStateKeyMap,
   KEDRO_VIZ_DOCS_URL,
   KEDRO_VIZ_PUBLISH_URL,
 } from '../../config';
@@ -78,7 +80,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   }, []);
 
   const onChange = (key, value) => {
-    setIsFormDirty((prevState) => ({ ...prevState, [key]: !!value }));
+    setIsFormDirty((prevState) => ({
+      ...prevState,
+      [inputKeyToStateKeyMap[key]]: !!value,
+    }));
     setInputValues(
       Object.assign({}, inputValues, {
         [key]: value,
@@ -89,12 +94,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const handleSubmit = async () => {
     setDeploymentState('loading');
     setIsLoading(true);
-    const payLoad = {
-      /* eslint-disable camelcase */
-      bucket_name: inputValues.hasBucketName,
-      platform: inputValues.hasPlatform,
-      endpoint: inputValues.hasEndpoint,
-    };
 
     try {
       const request = await fetch('/api/deploy', {
@@ -102,7 +101,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(payLoad),
+        body: JSON.stringify(inputValues),
       });
       const response = await request.json();
 
@@ -170,17 +169,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
   const handleResponseUrl = () => {
     // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
-    if (
-      !/^https?:\/\//.test(responseUrl) &&
-      inputValues.hasPlatform === 'gcp'
-    ) {
+    if (!/^https?:\/\//.test(responseUrl) && inputValues.platform === 'gcp') {
       const url = 'http://' + responseUrl;
       return url;
     }
     return responseUrl;
   };
 
-  const { hasPlatform, hasBucketName, hasEndpoint } = inputValues || {};
+  const { platform, bucket_name, endpoint } = inputValues || {};
 
   return (
     <Modal
@@ -238,19 +234,19 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Hosting platform
                 </div>
                 <Dropdown
-                  defaultText={hasPlatform && hostingPlatform[hasPlatform]}
+                  defaultText={platform && hostingPlatform[platform]}
                   placeholderText={
-                    !hasPlatform ? 'Select a hosting platform' : null
+                    !platform ? 'Select a hosting platform' : null
                   }
                   onChanged={(selectedPlatform) => {
-                    onChange('hasPlatform', selectedPlatform.value);
+                    onChange('platform', selectedPlatform.value);
                   }}
                   width={null}
                 >
                   {Object.entries(hostingPlatform).map(([value, label]) => (
                     <MenuOption
                       className={classnames({
-                        'pipeline-list__option--active': hasPlatform === value,
+                        'pipeline-list__option--active': platform === value,
                       })}
                       key={value}
                       primaryText={label}
@@ -264,8 +260,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Bucket Name
                 </div>
                 <Input
-                  defaultValue={hasBucketName}
-                  onChange={(value) => onChange('hasBucketName', value)}
+                  defaultValue={bucket_name}
+                  onChange={(value) => onChange('bucket_name', value)}
                   placeholder="Enter name"
                   resetValueTrigger={visible}
                   size="small"
@@ -278,8 +274,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Endpoint Link
                 </div>
                 <Input
-                  defaultValue={hasEndpoint}
-                  onChange={(value) => onChange('hasEndpoint', value)}
+                  defaultValue={endpoint}
+                  onChange={(value) => onChange('endpoint', value)}
                   placeholder="Enter url"
                   resetValueTrigger={visible}
                   size="small"
