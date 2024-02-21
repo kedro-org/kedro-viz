@@ -1,3 +1,12 @@
+```{toctree}
+:maxdepth: 1
+:hidden:
+preview_matplotlib_datasets
+preview_plotly_datasets
+preview_pandas_datasets
+preview_custom_datasets
+```
+
 # Preview datasets in Kedro-Viz
 
 To provide users with a glimpse of their datasets within a Kedro project, Kedro-Viz offers a preview feature. This feature was introduced in Kedro-Viz version 6.3.0 and expanded upon in version 8.0.0. Initially, it supported `CSVDatasets` and `ExcelDatasets`, and later extended to encompass additional dataset types such as `PlotlyDatasets` and image datasets like `MatplotlibWriter`.
@@ -44,11 +53,3 @@ companies:
       preview: false
 ```
 
-```{toctree}
-:maxdepth: 1
-:hidden:
-preview_matplotlib_datasets
-preview_plotly_datasets
-preview_pandas_datasets
-preview_custom_datasets
-```
