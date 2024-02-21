@@ -3,6 +3,7 @@
 .input {
   @extend %input;
 
+  cursor: text;
   min-height: auto;
   resize: none;
 
