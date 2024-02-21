@@ -1,8 +1,7 @@
 packaging~=23.0
 kedro>=0.18.0
 ipython>=7.0.0, <9.0
-fastapi>=0.73.0,<0.200.0
-pydantic<2
+fastapi>=0.100.0,<0.200.0
 fsspec>=2021.4, <2024.1
 s3fs>=2021.4, <2024.1
 aiofiles>=22.1.0

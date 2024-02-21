@@ -48,7 +48,6 @@ class TestGraphEdgesRepository:
         repo = GraphEdgesRepository()
         for edge in [ab, bc, cd, da]:
             repo.add_edge(edge)
-        # pylint: disable=unhashable-member
         assert set(repo.get_edges_by_node_ids({"a", "b", "d"})) == {
             ab,
             da,
