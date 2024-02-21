@@ -8,6 +8,10 @@ Kedro-Viz makes it easy to share the visualisation of your kedro project, and co
 
 2. ## [Publish and share Kedro-Viz automatically via cloud providers](share_kedro_viz.md#Publish-and-share-Kedro-Viz-automatically)
     Users can automate the process of  publishing and sharing Kedro-Viz through the cloud providers. Once the storage account and credentials are configured, users can generate a shareable URL from the Kedro-Viz URL.
-    ### [Publish and Share via AWS](share_kedro_viz.md#Publish-and-Share-via-AWS)
-    ### Publish and Share via Azure
-    ### Publish and Share via GCP
+    ### [Publish and Share via AWS](share_kedro_viz.md#Publish-and-share-via-AWS)
+    
+    ### [Publish and Share via Azure](share_kedro_viz.md#Publish-and-share-via-Azure)
+
+    ### [Publish and Share via GCP](share_kedro_viz.md#Publish-and-share-via-GCP)
+
+ 

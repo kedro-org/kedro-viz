@@ -135,7 +135,7 @@ kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --
 
 
 
-## Publish and share Kedro-Viz via AWS
+## Publish and share via AWS
 ### Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
@@ -183,7 +183,7 @@ You pay for storing objects in your S3 buckets. The amount you pay depends on yo
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information.
 
-## Publish and share Kedro-Viz via Azure
+## Publish and share via Azure
 
 ### Configure your Azure Blob Storage and set credentials
 
@@ -259,7 +259,7 @@ You pay for storing objects on your AzureBlobStorage. The amount you pay depends
 
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
 
-## Publish and share Kedro-Viz via GCP
+## Publish and share via GCP
 ### Configure your Google Cloud Storage and set credentials
 
 You can host your Kedro-Viz project on Google Cloud Storage bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on Google Cloud Storage.
