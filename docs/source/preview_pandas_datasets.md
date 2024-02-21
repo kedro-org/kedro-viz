@@ -1,4 +1,4 @@
-# Previewing Tabular Data in Kedro-viz
+# Preview Tabular Data in Kedro-viz
 
 We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
 
