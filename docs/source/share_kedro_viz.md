@@ -23,16 +23,27 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 
 When your project is ready, navigate to the root directory of the project.
 
-## Publish and share Kedro-Viz automatically
 
+## Publish and share Kedro-Viz
 There are two ways to publish and share your Kedro-Viz:
 
-1. You can automate the process of publishing and sharing your Kedro-Viz. This section describes the steps for AWS, which is the only cloud provider supported for automation at present. Integration with other cloud providers, namely Azure and GCP, will be added soon.
+1. Platform-agnostic sharing with Kedro-Viz: Using the kedro-viz build command, users can publish Kedro-Viz to any static website hosting platform such as GitHub pages, and share the URL generated. This is described below in ### [Publish and Share via GitHub Pages](#Static-website-hosting-platforms-such-as-GitHub-Pages)
 
-2. In the absence of automated publish and share for other platforms, there is a [manual, platform-agnostic publish and share process](#platform-agnostic-sharing-with-kedro-viz) described below. You can use the manual process for sharing on static website hosts like GitHub pages, and cloud providers like Azure and GCP.
+2. Publish and share Kedro-Viz automatically: You can automate the process of publishing and sharing your Kedro-Viz through the cloud providers: AWS, Azure, and GCP. Once the storage account and credentials are configured, users can then generate a shareable link from the Kedro-Viz UI using the 'Publish and share' button.
+
+
+## Platform-agnostic sharing with Kedro-Viz 
+
+In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project. The build folder contains a static Kedro-Viz app package, which can be used as a source to publish on any static website hosting platform.
+
+### Static website hosting platforms such as GitHub Pages
+
+Follow the steps [listed in the GitHub pages documentation](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages. On completion, push the contents of the `build` folder to this new repository. Your site will be available at the following URL: `http://<username>.github.io`
+
+## Publish and share Kedro-Viz automatically
 
 ```{note}
-From Kedro-Viz version 7.2.0, you will be able to publish and share your Kedro-Viz on Azure and GCP
+From Kedro-Viz version 7.2.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
 ```
 
 ### Update and install the dependencies
@@ -47,7 +58,7 @@ kedro>=0.18.2
 From Kedro-Viz version 7.2.0, you will also need to install cloud-provider specific dependencies like `s3fs`, `adlfs`, `gcsfs`. 
 ```
 
-You can run the below commands based on your cloud provider:
+You can run the commands below for the required cloud-specific dependencies:
 
 AWS -
 ```bash
@@ -69,7 +80,62 @@ Install the dependencies from the project root directory by typing the following
 ```bash
 pip install -r src/requirements.txt
 ```
+### Configure your Cloud storage and set credentials
+[Configure your AWS S3 bucket and set credentials](#Configure-your-AWS-S3-bucket-and-set-credentials)
 
+[Configure your Azure Blob Storage and set credentials](#Configure-your-Azure-Blob-Storage-and-set-credentials)
+
+[Configure your Google Cloud Storage and set credentials](#Configure-your-Google-Cloud-Storage-and-set-credentials)
+
+
+### Publish and share the project
+Once your Cloud storage is configured and the credentials are set,
+you are now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
+
+```bash
+kedro viz run
+```
+
+Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
+
+```{note}
+From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
+
+* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+* **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
+If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
+```
+
+Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
+
+Here is an example of the flow:
+
+![](./images/kedro-publish-share.gif)
+
+```{note}
+We will be updating the user flow doc for v7.2.0 soon...
+```
+
+From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
+```
+
+```{important}
+From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
+```
+
+From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
+```
+
+
+
+## Publish and share Kedro-Viz via AWS
 ### Configure your AWS S3 bucket and set credentials
 
 You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
@@ -117,7 +183,9 @@ You pay for storing objects in your S3 buckets. The amount you pay depends on yo
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information.
 
-### Configure your AzureBlobStorage and set credentials
+## Publish and share Kedro-Viz via Azure
+
+### Configure your Azure Blob Storage and set credentials
 
 You can host your Kedro-Viz project on AzureBlobStorage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
@@ -191,6 +259,7 @@ You pay for storing objects on your AzureBlobStorage. The amount you pay depends
 
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
 
+## Publish and share Kedro-Viz via GCP
 ### Configure your Google Cloud Storage and set credentials
 
 You can host your Kedro-Viz project on Google Cloud Storage bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on Google Cloud Storage.
@@ -249,65 +318,4 @@ You pay for storing objects on your Google Cloud Storage. The amount you pay dep
 
 See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
 
-### Publish and share the project
 
-Once the Cloud Provider specific setup is completed, you're now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
-
-```bash
-kedro viz run
-```
-
-Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
-
-```{note}
-From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link.
-
-* **aws -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-* **azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
-* **gcp -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
-If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
-```
-
-Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
-
-Here's an example of the flow:
-
-![](./images/kedro-publish-share.gif)
-
-```{note}
-We will be updating the user flow doc for v7.2.0 soon...
-```
-
-From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
-```
-
-```{important}
-From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
-```
-
-From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
-```
-
-## Platform-agnostic sharing with Kedro-Viz 
-
-In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project. The build folder contains a static Kedro-Viz app package, which can be used as a source to publish on any static website hosting platform.
-
-### Static website hosting platforms such as GitHub Pages
-
-Follow the steps [listed in the GitHub pages documentation](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages. On completion, push the contents of the `build` folder to this new repository. Your site will be available at the following URL: `http://<username>.github.io`
-
-### Cloud providers such as AWS, Azure, and GCP
-
-After creating a bucket and configuring it for static website hosting, copy the contents of the `build` folder to the bucket manually. You can then access the bucket via its endpoint.
-
-For AWS, we also offer [automated deployment as described above](#publish-and-share-kedro-viz-automatically).
-
-```{note}
-From Kedro-Viz version 7.2.0, we offer automated deployments on Azure and GCP.
-```
