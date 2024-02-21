@@ -11,21 +11,6 @@ Currently, Kedro-Viz supports four types of previews:
 
 Whilst we currently support the above datasets. We are soon going to extend this functionality to other datasets. Users with custom datasets can also extend the preview functionality and we will cover that in the following sections. 
 
-## Disabling Previews
-
-
-To disable dataset previews for specific datasets, you need to set preview: false under the kedro-viz key within the metadata section of your conf.yml file. Here's an example configuration:
-
-```yaml
-companies:
-  type: pandas.CSVDataSet
-  filepath: data/01_raw/companies.csv
-  metadata:
-    kedro-viz:
-      layer: raw
-      preview: false
-```
-
 
 **Preview Tabular Data**
 
@@ -43,3 +28,27 @@ The page titled [Preview Matplotlib charts in Kedro-viz](./preview_matplotlib_da
 
 The page titled [Extend Preview to Custom Datasets](./preview_custom_datasets.md) contains information on how you can set up preview for custom datasets and what types are supported by Kedro-viz.
 
+
+## Disabling Previews
+
+
+To disable dataset previews for specific datasets, you need to set preview: false under the kedro-viz key within the metadata section of your conf.yml file. Here's an example configuration:
+
+```yaml
+companies:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/companies.csv
+  metadata:
+    kedro-viz:
+      layer: raw
+      preview: false
+```
+
+```{toctree}
+:maxdepth: 1
+:hidden:
+preview_matplotlib_datasets
+preview_plotly_datasets
+preview_pandas_datasets
+preview_custom_datasets
+```
