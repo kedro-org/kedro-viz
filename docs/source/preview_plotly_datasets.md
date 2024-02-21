@@ -1,4 +1,4 @@
-# Visualise charts in Kedro-Viz with Plotly
+# Preview Plotly charts in Kedro-viz
 
 This page describes how to make interactive visualisations of a Kedro project with Kedro-Viz, which supports integration with [Plotly](https://plotly.com/python/).
 
