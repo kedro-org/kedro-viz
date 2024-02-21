@@ -36,10 +36,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
   const [isFormDirty, setIsFormDirty] = useState({
-    /* eslint-disable camelcase */
-    has_bucket_name: false,
-    has_platform: false,
-    has_endpoint: false,
+    hasBucketName: false,
+    hasPlatform: false,
+    hasEndpoint: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
@@ -90,6 +89,12 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const handleSubmit = async () => {
     setDeploymentState('loading');
     setIsLoading(true);
+    const payLoad = {
+      /* eslint-disable camelcase */
+      bucket_name: inputValues.hasBucketName,
+      platform: inputValues.hasPlatform,
+      endpoint: inputValues.hasEndpoint,
+    };
 
     try {
       const request = await fetch('/api/deploy', {
@@ -97,7 +102,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(inputValues),
+        body: JSON.stringify(payLoad),
       });
       const response = await request.json();
 
@@ -111,6 +116,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       }
     } catch (error) {
       console.error(error);
+      setResponseError(error.message || 'Error occurred!');
       setDeploymentState('failure');
     } finally {
       setIsLoading(false);
@@ -137,10 +143,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setIsLinkSettingsClick(false);
     setInputValues({});
     setIsFormDirty({
-      has_bucket_name: false,
-      has_platform: false,
-      has_endpoint: false,
-    }); /* eslint-disable camelcase */
+      hasBucketName: false,
+      hasPlatform: false,
+      hasEndpoint: false,
+    });
   };
 
   /**
@@ -171,7 +177,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     return responseUrl;
   };
 
-  const { has_platform, has_bucket_name, has_endpoint } = inputValues || {};
+  const { hasPlatform, hasBucketName, hasEndpoint } = inputValues || {};
 
   return (
     <Modal
@@ -229,19 +235,19 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Hosting platform
                 </div>
                 <Dropdown
-                  defaultText={has_platform && hostingPlatform[has_platform]}
+                  defaultText={hasPlatform && hostingPlatform[hasPlatform]}
                   placeholderText={
-                    !has_platform ? 'Select a hosting platform' : null
+                    !hasPlatform ? 'Select a hosting platform' : null
                   }
                   onChanged={(selectedPlatform) => {
-                    onChange('has_platform', selectedPlatform.value);
+                    onChange('hasPlatform', selectedPlatform.value);
                   }}
                   width={null}
                 >
                   {Object.entries(hostingPlatform).map(([value, label]) => (
                     <MenuOption
                       className={classnames({
-                        'pipeline-list__option--active': has_platform === value,
+                        'pipeline-list__option--active': hasPlatform === value,
                       })}
                       key={value}
                       primaryText={label}
@@ -255,8 +261,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Bucket Name
                 </div>
                 <Input
-                  defaultValue={has_bucket_name}
-                  onChange={(value) => onChange('has_bucket_name', value)}
+                  defaultValue={hasBucketName}
+                  onChange={(value) => onChange('hasBucketName', value)}
                   placeholder="Enter name"
                   resetValueTrigger={visible}
                   size="small"
@@ -269,8 +275,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Endpoint Link
                 </div>
                 <Input
-                  defaultValue={has_endpoint}
-                  onChange={(value) => onChange('has_endpoint', value)}
+                  defaultValue={hasEndpoint}
+                  onChange={(value) => onChange('hasEndpoint', value)}
                   placeholder="Enter url"
                   resetValueTrigger={visible}
                   size="small"
