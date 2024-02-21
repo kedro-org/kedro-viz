@@ -4,7 +4,7 @@ This page describes how to output static visualisations of a Kedro project with 
 
 
 ```{note}
-The MatplotlibWriter dataset converts Matplotlib objects to image files. This means that Matplotlib charts within Kedro-Viz are static and not interactive, unlike the [Plotly charts seen separately](./visualise_charts_with_plotly.md).
+The MatplotlibWriter dataset converts Matplotlib objects to image files. This means that Matplotlib charts within Kedro-Viz are static and not interactive, unlike the [Plotly charts seen separately](./preview_plotly_datasets.md).
 ```
 
 We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` and add a reporting pipeline. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
