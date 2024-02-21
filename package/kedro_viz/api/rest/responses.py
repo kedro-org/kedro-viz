@@ -1,4 +1,5 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
+
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
 import logging
@@ -130,11 +131,9 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
     filepath: Optional[str] = None
     type: str
-    plot: Optional[Dict] = None
-    image: Optional[str] = None
-    tracking_data: Optional[Dict] = None
     run_command: Optional[str] = None
-    preview: Optional[Dict] = None
+    preview: Optional[Union[Dict, str]] = None
+    preview_type: Optional[str] = None
     stats: Optional[Dict] = None
     model_config = ConfigDict(
         json_schema_extra={

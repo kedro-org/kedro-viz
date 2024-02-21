@@ -634,51 +634,15 @@ class DataNode(GraphNode):
 
         return None
 
-    # TODO: improve this scheme.
-    def is_plot_node(self):
-        """Check if the current node is a plot node.
-        Currently it only recognises one underlying dataset as a plot node.
-        In the future, we might want to make this generic.
-        """
-        return self.dataset_type in (
-            "plotly.plotly_dataset.PlotlyDataset",
-            "plotly.json_dataset.JSONDataset",
-            "plotly.plotly_dataset.PlotlyDataSet",
-            "plotly.json_dataset.JSONDataSet",
-        )
-
-    def is_image_node(self):
-        """Check if the current node is a matplotlib image node."""
-        return self.dataset_type == "matplotlib.matplotlib_writer.MatplotlibWriter"
-
-    def is_metric_node(self):
-        """Check if the current node is a metrics node."""
-        return self.dataset_type in (
-            "tracking.metrics_dataset.MetricsDataset",
-            "tracking.metrics_dataset.MetricsDataSet",
-        )
-
-    def is_json_node(self):
-        """Check if the current node is a JSONDataset node."""
-        return self.dataset_type in (
-            "tracking.json_dataset.JSONDataset",
-            "tracking.json_dataset.JSONDataSet",
-        )
-
-    def is_tracking_node(self):
-        """Checks if the current node is a tracking data node"""
-        return self.is_json_node() or self.is_metric_node()
-
-    def is_preview_node(self):
-        """Checks if the current node has a preview"""
-        if not (self.viz_metadata and self.viz_metadata.get("preview_args", None)):
-            return False
-
-        return True
-
     def get_preview_args(self):
         """Gets the preview arguments for a dataset"""
         return self.viz_metadata.get("preview_args", None)
+
+    def is_preview_disabled(self):
+        """Checks if the dataset has a preview disabled"""
+        return (
+            self.viz_metadata is not None and self.viz_metadata.get("preview") is False
+        )
 
 
 class TranscodedDataNode(GraphNode):
@@ -774,34 +738,24 @@ class DataNodeMetadata(GraphNodeMetadata):
         description="The path to the actual data file for the underlying dataset",
     )
 
-    plot: Optional[Dict] = Field(
-        default=None,
-        validate_default=True,
-        description="The optional plot data if the underlying dataset has a plot",
-    )
-
-    # The image data if the underlying dataset has a image
-    # currently only applicable for matplotlib.MatplotlibWriter
-    image: Optional[str] = Field(
-        default=None,
-        validate_default=True,
-        description="The image data if the underlying dataset has a image",
-    )
-    tracking_data: Optional[Dict] = Field(
-        default=None,
-        validate_default=True,
-        description="The tracking data if the underlying dataset has a tracking dataset",
-    )
     run_command: Optional[str] = Field(
         default=None,
         validate_default=True,
         description="Command to run the pipeline to this node",
     )
-    preview: Optional[Dict] = Field(
+
+    preview: Optional[Union[Dict, str]] = Field(
         default=None,
         validate_default=True,
         description="Preview data for the underlying datanode",
     )
+
+    preview_type: Optional[str] = Field(
+        default=None,
+        validate_default=True,
+        description="Type of preview for the dataset",
+    )
+
     stats: Optional[Dict] = Field(
         default=None,
         validate_default=True,
@@ -842,39 +796,41 @@ class DataNodeMetadata(GraphNodeMetadata):
             return f"kedro run --to-outputs={cls.data_node.name}"
         return None
 
-    @field_validator("plot")
-    @classmethod
-    def set_plot(cls, _):
-        if cls.data_node.is_plot_node():
-            return cls.data_node.kedro_obj.load()
-        return None
-
-    @field_validator("image")
-    @classmethod
-    def set_image(cls, _):
-        if cls.data_node.is_image_node():
-            return cls.data_node.kedro_obj.load()
-        return None
-
-    @field_validator("tracking_data")
-    @classmethod
-    def set_tracking_data(cls, _):
-        if cls.data_node.is_tracking_node():
-            return cls.data_node.kedro_obj.load()
-        return None
-
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
-        if not (cls.data_node.is_preview_node() and hasattr(cls.dataset, "_preview")):
+        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
             return None
 
         try:
-            return cls.dataset._preview(**cls.data_node.get_preview_args())
+            preview_args = (
+                cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
+            )
+            if preview_args is None:
+                return cls.dataset.preview()
+            return cls.dataset.preview(**preview_args)
+
+        except Exception as exc:  # pylint: disable=broad-except
+            logger.warning(
+                "'%s' could not be previewed. Full exception: %s: %s",
+                cls.data_node.name,
+                type(exc).__name__,
+                exc,
+            )
+            return None
+
+    @field_validator("preview_type")
+    @classmethod
+    def set_preview_type(cls, _):
+        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+            return None
+
+        try:
+            return inspect.signature(cls.dataset.preview).return_annotation.__name__
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
-                "'%s' could not be previewed. Full exception: %s: %s",
+                "'%s' did not have preview type. Full exception: %s: %s",
                 cls.data_node.name,
                 type(exc).__name__,
                 exc,
