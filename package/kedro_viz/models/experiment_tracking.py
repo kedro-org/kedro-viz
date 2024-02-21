@@ -63,7 +63,7 @@ class TrackingDatasetGroup(str, Enum):
     JSON = "json"
 
 
-# Map dataset types (as produced by get_dataset_type) to their group
+# Map dataset types to their group
 TRACKING_DATASET_GROUPS = {
     "plotly.plotly_dataset.PlotlyDataset": TrackingDatasetGroup.PLOT,
     "plotly.json_dataset.JSONDataset": TrackingDatasetGroup.PLOT,
@@ -110,9 +110,11 @@ class TrackingDatasetModel:
 
         try:
             if TRACKING_DATASET_GROUPS[self.dataset_type] is TrackingDatasetGroup.PLOT:
-                self.runs[run_id] = {self.dataset._filepath.name: self.dataset.load()}
+                self.runs[run_id] = {
+                    self.dataset._filepath.name: self.dataset.preview()  # type: ignore
+                }
             else:
-                self.runs[run_id] = self.dataset.load()
+                self.runs[run_id] = self.dataset.preview()  # type: ignore
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s: %s",

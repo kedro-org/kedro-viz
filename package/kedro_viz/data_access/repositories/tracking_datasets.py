@@ -8,8 +8,8 @@ from kedro_viz.models.experiment_tracking import (
     TRACKING_DATASET_GROUPS,
     TrackingDatasetGroup,
     TrackingDatasetModel,
-    get_dataset_type,
 )
+from kedro_viz.models.utils import get_dataset_type
 
 if TYPE_CHECKING:
     try:

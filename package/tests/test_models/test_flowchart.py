@@ -1,5 +1,3 @@
-# pylint: disable=too-many-public-methods
-import base64
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
@@ -125,11 +123,6 @@ class TestGraphNodeCreation:
         assert data_node.stats["rows"] == 10
         assert data_node.stats["columns"] == 5
         assert data_node.stats["file_size"] == 1024
-        assert not data_node.is_plot_node()
-        assert not data_node.is_metric_node()
-        assert not data_node.is_image_node()
-        assert not data_node.is_json_node()
-        assert not data_node.is_tracking_node()
 
     @pytest.mark.parametrize(
         "transcoded_dataset_name, original_name",
@@ -379,18 +372,11 @@ class TestGraphNodeMetadata:
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.type == "pandas.csv_dataset.CSVDataset"
+        assert data_node_metadata.preview_type == "TablePreview"
         assert data_node_metadata.filepath == "/tmp/dataset.csv"
         assert data_node_metadata.run_command == "kedro run --to-outputs=dataset"
         assert data_node_metadata.stats["rows"] == 10
         assert data_node_metadata.stats["columns"] == 2
-
-    def test_preview_args_not_exist(self):
-        metadata = {"kedro-viz": {"something": 3}}
-        dataset = CSVDataset(filepath="test.csv", metadata=metadata)
-        data_node = GraphNode.create_data_node(
-            dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
-        )
-        assert not data_node.is_preview_node()
 
     def test_get_preview_args(self):
         metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
@@ -398,57 +384,70 @@ class TestGraphNodeMetadata:
         data_node = GraphNode.create_data_node(
             dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
         )
-        assert data_node.is_preview_node()
         assert data_node.get_preview_args() == {"nrows": 3}
 
-    def test_preview_data_node_metadata(self, example_data_node, mocker):
-        mock_preview_data = {
+    def test_is_preview_disabled(self):
+        metadata = {"kedro-viz": {"preview": False}}
+        dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+        data_node = GraphNode.create_data_node(
+            dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
+        )
+        assert data_node.is_preview_disabled() is True
+
+    def test_preview_data_node_metadata(self, example_data_node):
+        expected_preview_data = {
             "columns": ["id", "company_rating", "company_location"],
             "index": [0, 1, 2],
             "data": [
-                [1, "90%", "London"],
-                [2, "80%", "Paris"],
-                [3, "40%", "Milan"],
+                [35029, "100%", "Niue"],
+                [30292, "67%", "Anguilla"],
+                [12345, "80%", "Barbados"],
             ],
         }
-
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_datasets.pandas.CSVDataset._preview", return_value=mock_preview_data
-        )
-
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
-        assert preview_node_metadata.preview == mock_preview_data
+        assert preview_node_metadata.preview == expected_preview_data
+
+    def test_preview_data_node_metadata_exception(self, caplog):
+        empty_dataset = CSVDataset(filepath="temp.csv")
+        dataset_name = "dataset"
+        empty_data_node = GraphNode.create_data_node(
+            dataset_name=dataset_name,
+            tags=set(),
+            layer=None,
+            dataset=empty_dataset,
+            stats=None,
+        )
+
+        DataNodeMetadata(data_node=empty_data_node)
+
+        assert f" '{dataset_name}' could not be previewed" in caplog.text
+
+    def test_preview_default_data_node_metadata(
+        self, example_data_node_without_viz_metadata
+    ):
+        expected_preview_data = {
+            "columns": ["id", "company_rating", "company_location"],
+            "index": [0, 1, 2, 3, 4],
+            "data": [
+                [35029, "100%", "Niue"],
+                [30292, "67%", "Anguilla"],
+                [12345, "80%", "Barbados"],
+                [67890, "95%", "Fiji"],
+                [54321, "72%", "Grenada"],
+            ],
+        }
+        preview_node_metadata = DataNodeMetadata(
+            data_node=example_data_node_without_viz_metadata
+        )
+
+        assert preview_node_metadata.preview == expected_preview_data
 
     def test_preview_data_node_metadata_not_exist(self, example_data_node, mocker):
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=True
-        )
-        mocker.patch("kedro_datasets.pandas.CSVDataset._preview", return_value=False)
+        mocker.patch("kedro_datasets.pandas.CSVDataset.preview", return_value=False)
 
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert preview_node_metadata.plot is None
+        assert preview_node_metadata.preview is False
 
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataset(filepath="/tmp/dataset.csv")
@@ -488,171 +487,6 @@ class TestGraphNodeMetadata:
         )
         data_node_metadata = DataNodeMetadata(data_node=data_node)
         assert data_node_metadata.filepath == "partitioned/"
-
-    # TODO: these test should ideally use a "real" catalog entry to create actual rather
-    # than mock DataNode. Or if the loading functionality is tested elsewhere,
-    # perhaps they are not needed at all. At the moment they don't actually test much.
-    def test_plotly_data_node_metadata(self, example_data_node, mocker):
-        mock_plot_data = {
-            "data": [
-                {
-                    "x": ["giraffes", "orangutans", "monkeys"],
-                    "y": [20, 14, 23],
-                    "type": "bar",
-                }
-            ]
-        }
-
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=mock_plot_data)
-
-        plotly_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert plotly_node_metadata.plot == mock_plot_data
-
-    def test_plotly_data_node_dataset_not_exist(self, example_data_node, mocker):
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=None)
-
-        plotly_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert plotly_node_metadata.plot is None
-
-    # @patch("base64.b64encode")
-    def test_image_data_node_metadata(self, example_data_node, mocker):
-        mock_image_data = base64.b64encode(
-            b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAA"
-            b"AAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        )
-
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=mock_image_data)
-
-        image_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert image_node_metadata.image == mock_image_data
-
-    def test_image_data_node_dataset_not_exist(self, example_data_node, mocker):
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=None)
-
-        image_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert image_node_metadata.image is None
-
-    def test_tracking_data_node_metadata_exist(self, example_data_node, mocker):
-        mock_tracking_data = {
-            "recommendations": "test string",
-            "recommended_controls": False,
-            "projected_optimization": 0.0013902,
-        }
-
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_metric_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch(
-            "kedro.io.core.AbstractDataset.load", return_value=mock_tracking_data
-        )
-
-        tracking_node_metadata = DataNodeMetadata(data_node=example_data_node)
-
-        assert tracking_node_metadata.tracking_data == mock_tracking_data
-        assert tracking_node_metadata.plot is None
-
-    def test_tracking_data_node_metadata_not_exist(self, example_data_node, mocker):
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_tracking_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_metric_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=None)
-
-        tracking_node_metadata = DataNodeMetadata(data_node=example_data_node)
-
-        assert tracking_node_metadata.tracking_data is None
-        assert tracking_node_metadata.plot is None
-
-    def test_metrics_data_node_metadata_dataset_not_exist(
-        self, example_data_node, mocker
-    ):
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_metric_node", return_value=True
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_image_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_plot_node", return_value=False
-        )
-        mocker.patch(
-            "kedro_viz.models.flowchart.DataNode.is_preview_node", return_value=False
-        )
-        mocker.patch("kedro.io.core.AbstractDataset.load", return_value=None)
-
-        metrics_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert metrics_node_metadata.plot is None
 
     def test_parameters_metadata_all_parameters(self):
         parameters = {"test_split_ratio": 0.3, "num_epochs": 1000}

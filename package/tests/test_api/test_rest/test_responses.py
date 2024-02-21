@@ -630,6 +630,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "model_inputs.csv",
             "type": "pandas.csv_dataset.CSVDataset",
+            "preview_type": "TablePreview",
             "run_command": "kedro run --to-outputs=model_inputs",
             "stats": {"columns": 12, "rows": 29768},
         }
@@ -638,6 +639,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
+            "preview_type": "TablePreview",
             "type": "pandas.csv_dataset.CSVDataset",
         }
 

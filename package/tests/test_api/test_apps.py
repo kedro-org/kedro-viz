@@ -82,7 +82,11 @@ class TestNodeMetadataEndpoint:
             (
                 "13399a82",
                 200,
-                {"filepath": "raw_data.csv", "type": "pandas.csv_dataset.CSVDataset"},
+                {
+                    "filepath": "raw_data.csv",
+                    "preview_type": "TablePreview",
+                    "type": "pandas.csv_dataset.CSVDataset",
+                },
             ),
         ],
     )

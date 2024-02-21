@@ -267,11 +267,17 @@ def mock_http_response():
 @pytest.fixture
 def example_data_frame():
     data = {
-        "id": ["35029", "30292"],
-        "company_rating": ["100%", "67%"],
-        "company_location": ["Niue", "Anguilla"],
-        "total_fleet_count": ["4.0", "6.0"],
-        "iata_approved": ["f", "f"],
+        "id": ["35029", "30292", "12345", "67890", "54321", "98765", "11111"],
+        "company_rating": ["100%", "67%", "80%", "95%", "72%", "88%", "75%"],
+        "company_location": [
+            "Niue",
+            "Anguilla",
+            "Barbados",
+            "Fiji",
+            "Grenada",
+            "Jamaica",
+            "Trinidad and Tobago",
+        ],
     }
     yield pd.DataFrame(data)
 
@@ -292,10 +298,32 @@ def example_csv_dataset(tmp_path, example_data_frame):
 
 
 @pytest.fixture
-def example_data_node():
+def example_csv_filepath(tmp_path, example_data_frame):
+    csv_file_path = tmp_path / "temporary_test_data.csv"
+    example_data_frame.to_csv(csv_file_path, index=False)
+    yield csv_file_path
+
+
+@pytest.fixture
+def example_data_node(example_csv_filepath):
     dataset_name = "uk.data_science.model_training.dataset"
     metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
-    kedro_dataset = CSVDataset(filepath="test.csv", metadata=metadata)
+    kedro_dataset = CSVDataset(filepath=example_csv_filepath, metadata=metadata)
+    data_node = GraphNode.create_data_node(
+        dataset_name=dataset_name,
+        layer="raw",
+        tags=set(),
+        dataset=kedro_dataset,
+        stats={"rows": 10, "columns": 5, "file_size": 1024},
+    )
+
+    yield data_node
+
+
+@pytest.fixture
+def example_data_node_without_viz_metadata(example_csv_filepath):
+    dataset_name = "uk.data_science.model_training.dataset"
+    kedro_dataset = CSVDataset(filepath=example_csv_filepath)
     data_node = GraphNode.create_data_node(
         dataset_name=dataset_name,
         layer="raw",
