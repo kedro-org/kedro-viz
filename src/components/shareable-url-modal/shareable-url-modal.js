@@ -169,8 +169,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const handleResponseUrl = () => {
-    // If the URL does not start with http:// or https://, append http:// to avoid relative path issue
-    if (!/^https?:\/\//.test(responseUrl)) {
+    // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
+    if (
+      !/^https?:\/\//.test(responseUrl) &&
+      inputValues.hasPlatform === 'gcp'
+    ) {
       const url = 'http://' + responseUrl;
       return url;
     }

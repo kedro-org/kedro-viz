@@ -131,6 +131,7 @@
       height: auto;
       white-space: nowrap;
       box-shadow: 0 1px 1px 0 var(--input-shadow);
+      cursor: text;
 
       &:focus-visible {
         outline: none;
