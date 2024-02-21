@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
-import { hostingPlatform } from '../../config';
+import {
+  hostingPlatform,
+  KEDRO_VIZ_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_URL,
+} from '../../config';
 
 import Button from '../ui/button';
 import CopyIcon from '../icons/copy';
@@ -28,18 +32,14 @@ const modalMessages = (status, info = '') => {
   return messages[status];
 };
 
-const KEDRO_VIZ_DOCS_URL =
-  'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html';
-const KEDRO_VIZ_PUBLISH_URL = `${KEDRO_VIZ_DOCS_URL}#publish-and-share-kedro-viz-automatically`;
-
 const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
   const [isFormDirty, setIsFormDirty] = useState({
     /* eslint-disable camelcase */
-    bucket_name: false,
-    platform: false,
-    endpoint: false,
+    has_bucket_name: false,
+    has_platform: false,
+    has_endpoint: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [responseUrl, setResponseUrl] = useState(null);
@@ -137,18 +137,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setIsLinkSettingsClick(false);
     setInputValues({});
     setIsFormDirty({
-      bucket_name: false,
-      platform: false,
-      endpoint: false,
+      has_bucket_name: false,
+      has_platform: false,
+      has_endpoint: false,
     }); /* eslint-disable camelcase */
   };
 
   /**
-   * Returns the modal heading based on the given type and deployment state.
+   * Returns the modal title/message based on the given type and deployment state.
    * @param {string} type - The type of the modal heading.
-   * @returns {string|null} The modal heading text or null if deployment state is 'default'.
+   * @returns {string|null} The modal title/message text or null if deployment state is 'default'.
    */
-  const getModalHeading = (type) => {
+  const getDeploymentStateByType = (type) => {
     if (deploymentState === 'default') {
       return null;
     }
@@ -171,7 +171,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     return responseUrl;
   };
 
-  const { platform, bucket_name, endpoint } = inputValues || {};
+  const { has_platform, has_bucket_name, has_endpoint } = inputValues || {};
 
   return (
     <Modal
@@ -180,8 +180,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           deploymentState !== 'default',
       })}
       closeModal={handleModalClose}
-      message={getModalHeading('message')}
-      title={getModalHeading('title')}
+      message={getDeploymentStateByType('message')}
+      title={getDeploymentStateByType('title')}
       visible={visible.shareableUrlModal}
     >
       {!isLoading && !responseUrl && canUseShareableUrls && !responseError ? (
@@ -193,9 +193,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               </div>
               <p className="shareable-url-modal__content-description shareable-url-modal__paregraph-divider">
                 Prerequisite: Deploying and hosting Kedro-Viz requires access
-                keys or user credentials, depending on the chosen service
+                keys or user credentials, depending on the chosen cloud
                 provider. To use this feature, please add your access keys or
-                credentials as environment variables in your project. More
+                credentials as environment variables in your Kedro project. More
                 information can be found in{' '}
                 <a
                   target="_blank"
@@ -229,19 +229,19 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Hosting platform
                 </div>
                 <Dropdown
-                  defaultText={platform && hostingPlatform[platform]}
+                  defaultText={has_platform && hostingPlatform[has_platform]}
                   placeholderText={
-                    !platform ? 'Select a hosting platform' : null
+                    !has_platform ? 'Select a hosting platform' : null
                   }
                   onChanged={(selectedPlatform) => {
-                    onChange('platform', selectedPlatform.value);
+                    onChange('has_platform', selectedPlatform.value);
                   }}
                   width={null}
                 >
                   {Object.entries(hostingPlatform).map(([value, label]) => (
                     <MenuOption
                       className={classnames({
-                        'pipeline-list__option--active': platform === value,
+                        'pipeline-list__option--active': has_platform === value,
                       })}
                       key={value}
                       primaryText={label}
@@ -255,8 +255,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Bucket Name
                 </div>
                 <Input
-                  defaultValue={bucket_name}
-                  onChange={(value) => onChange('bucket_name', value)}
+                  defaultValue={has_bucket_name}
+                  onChange={(value) => onChange('has_bucket_name', value)}
                   placeholder="Enter name"
                   resetValueTrigger={visible}
                   size="small"
@@ -269,8 +269,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   Endpoint Link
                 </div>
                 <Input
-                  defaultValue={endpoint}
-                  onChange={(value) => onChange('endpoint', value)}
+                  defaultValue={has_endpoint}
+                  onChange={(value) => onChange('has_endpoint', value)}
                   placeholder="Enter url"
                   resetValueTrigger={visible}
                   size="small"
