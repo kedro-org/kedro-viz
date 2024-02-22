@@ -147,7 +147,11 @@ export const renderDisclaimerContent = (
         >
           Cancel
         </Button>
-        <Button size="small" onClick={clearDisclaimerMessage}>
+        <Button
+          dataTest="disclaimerButton"
+          size="small"
+          onClick={clearDisclaimerMessage}
+        >
           Okay
         </Button>
       </div>
