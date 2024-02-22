@@ -1,26 +1,26 @@
-*                                       @tynandebold
+*                                       @rashidakanchwala
 
-src/                                    @tynandebold
-public/                                 @tynandebold
+src/                                    @rashidakanchwala
+public/                                 @rashidakanchwala
 tools/                                  @rashidakanchwala
 package/                                @rashidakanchwala
 
-Makefile                                @tynandebold
-.circleci/                              @tynandebold
+Makefile                                @rashidakanchwala
+.circleci/                              @rashidakanchwala
 
-*.js                                    @tynandebold
-*.json                                  @tynandebold
-*.scss                                  @tynandebold
-*.py                                    @rashidakanchwala
-*.md                                    @tynandebold @yetudada
+*.js                                    @rashidakanchwala @jitu5
+*.json                                  @rashidakanchwala @jitu5
+*.scss                                  @rashidakanchwala @jitu5
+*.py                                    @rashidakanchwala @ravi-kumar-pilla
+*.md                                    @rashidakanchwala @NeroOkwa
 
-.babelrc                                @tynandebold
-.eslintrc.json                          @tynandebold
-.prettierrc                             @tynandebold
-.gitignore                              @tynandebold
-CODEOWNERS                              @tynandebold @yetudada
-CONTRIBUTING.md                         @tynandebold @yetudada
-README.md                               @tynandebold @yetudada
-RELEASE.md                              @tynandebold @yetudada
-legal_header.txt                        @tynandebold @yetudada
-LICENSE.md                              @tynandebold @yetudada
+.babelrc                                @rashidakanchwala
+.eslintrc.json                          @rashidakanchwala
+.prettierrc                             @rashidakanchwala
+.gitignore                              @rashidakanchwala
+CODEOWNERS                              @rashidakanchwala @NeroOkwa
+CONTRIBUTING.md                         @rashidakanchwala @NeroOkwa
+README.md                               @rashidakanchwala @NeroOkwa
+RELEASE.md                              @rashidakanchwala @NeroOkwa
+legal_header.txt                        @rashidakanchwala @NeroOkwa
+LICENSE.md                              @rashidakanchwala @NeroOkwa
