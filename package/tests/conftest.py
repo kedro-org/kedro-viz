@@ -258,7 +258,7 @@ def mock_http_response():
     class MockHTTPResponse(BaseModel, frozen=True):
         data: dict
 
-        def json(self):
+        def model_dump_json(self, **kwargs):
             return self.data
 
     return MockHTTPResponse
