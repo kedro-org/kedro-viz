@@ -8,7 +8,7 @@ pip install 'kedro-viz[azure]'
 
 ## Step 2: Configure your Azure Blob Storage
 
-You can host your Kedro-Viz project on AzureBlobStorage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
+You can host your Kedro-Viz project on Azure Blob Storage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
 ```{note}
 Uploading your site's files will be done through Kedro-Viz
