@@ -296,7 +296,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             size="small"
             onClick={clearDisclaimerMessage}
           >
-            Okay
+            Continue
           </Button>
         </div>
       </div>
