@@ -1,24 +1,24 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
-import { hostingPlatform, inputKeyToStateKeyMap } from '../../config';
-
 import {
-  renderCompatibilityMessage,
-  renderSuccessContent,
-  renderErrorContent,
-  renderDisclaimerContent,
-  renderLoadingContent,
-  renderTextContent,
-} from './shareable-url-jsx';
+  hostingPlatform,
+  inputKeyToStateKeyMap,
+  KEDRO_VIZ_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_URL,
+} from '../../config';
 
 import Button from '../ui/button';
+import CopyIcon from '../icons/copy';
 import Dropdown from '../ui/dropdown';
+import IconButton from '../ui/icon-button';
 import Input from '../ui/input';
+import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
+import Tooltip from '../ui/tooltip';
 
 import './shareable-url-modal.scss';
 
@@ -123,16 +123,16 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const onCopyClick = useCallback(() => {
+  const onCopyClick = () => {
     window.navigator.clipboard.writeText(responseUrl);
     setShowCopied(true);
 
     setTimeout(() => {
       setShowCopied(false);
     }, 1500);
-  }, [responseUrl]);
+  };
 
-  const handleModalClose = useCallback(() => {
+  const handleModalClose = () => {
     onToggleModal(false);
     if (deploymentState !== 'incompatible') {
       setDeploymentState('default');
@@ -148,7 +148,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-  }, [onToggleModal, deploymentState]);
+  };
 
   const getDeploymentStateByType = (type) => {
     if (deploymentState === 'default') {
@@ -164,33 +164,190 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     return modalMessages(deploymentState, compatibilityData.package_version);
   };
 
-  const handleResponseUrl = useCallback(() => {
+  const handleResponseUrl = () => {
     // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
     if (!/^https?:\/\//.test(responseUrl) && inputValues.platform === 'gcp') {
       const url = 'http://' + responseUrl;
       return url;
     }
     return responseUrl;
-  }, [inputValues.platform, responseUrl]);
+  };
 
-  const handleLinkSettingsClick = useCallback(() => {
-    setDeploymentState('default');
-    setIsLoading(false);
-    setResponseUrl(null);
-    setIsLinkSettingsClick(true);
-  }, []);
+  const clearDisclaimerMessage = () => setIsDisclaimerViewed(true);
 
-  const handleGoBackClick = useCallback(() => {
-    setDeploymentState('default');
-    setIsLoading(false);
-    setResponseUrl(null);
-    setResponseError(null);
-  }, []);
+  const renderCompatibilityMessage = () => {
+    return !canUseShareableUrls ? (
+      <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
+        <Button
+          mode="secondary"
+          onClick={() => handleModalClose()}
+          size="small"
+        >
+          Cancel
+        </Button>
+        <a
+          href="https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html"
+          rel="noreferrer"
+          target="_blank"
+        >
+          <Button size="small">View documentation</Button>
+        </a>
+      </div>
+    ) : null;
+  };
 
-  const clearDisclaimerMessage = useCallback(
-    () => setIsDisclaimerViewed(true),
-    []
-  );
+  const renderSuccessContent = () => {
+    return responseUrl ? (
+      <>
+        <div className="shareable-url-modal__result">
+          <div className="shareable-url-modal__label">Hosted link</div>
+          <div className="shareable-url-modal__url-wrapper">
+            <a
+              className="shareable-url-modal__result-url"
+              href={handleResponseUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {responseUrl}
+            </a>
+            {window.navigator.clipboard && (
+              <div className="shareable-url-modal__result-action">
+                <IconButton
+                  ariaLabel="Copy run command to clipboard."
+                  className="copy-button"
+                  dataHeapEvent={`clicked.run_command`}
+                  icon={CopyIcon}
+                  onClick={onCopyClick}
+                />
+                <Tooltip
+                  text="Copied!"
+                  visible={showCopied}
+                  noDelay
+                  centerArrow
+                  arrowSize="small"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="shareable-url-modal__button-wrapper ">
+          <Button
+            mode="secondary"
+            onClick={() => {
+              setDeploymentState('default');
+              setIsLoading(false);
+              setResponseUrl(null);
+              setIsLinkSettingsClick(true);
+            }}
+            size="small"
+          >
+            Link Settings
+          </Button>
+          <Button
+            mode="secondary"
+            onClick={() => handleModalClose()}
+            size="small"
+          >
+            Close
+          </Button>
+        </div>
+      </>
+    ) : null;
+  };
+
+  const renderErrorContent = () => {
+    return responseError ? (
+      <div className="shareable-url-modal__error">
+        <p>Error message: {responseError}</p>
+        <Button
+          mode="primary"
+          onClick={() => {
+            setDeploymentState('default');
+            setIsLoading(false);
+            setResponseUrl(null);
+            setResponseError(null);
+          }}
+          size="small"
+        >
+          Go back
+        </Button>
+      </div>
+    ) : null;
+  };
+
+  const renderDisclaimerContent = () => {
+    return (
+      <div>
+        <div className="shareable-url-modal__content-wrapper shareable-url-modal__content-description">
+          Disclaimer: Please note that Kedro-Viz contains preview data for
+          multiple datasets. If you wish to disable the preview when publishing
+          Kedro-Viz, please refer to the documentation on how to do so.
+        </div>
+        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
+          <Button
+            mode="secondary"
+            onClick={() => handleModalClose()}
+            size="small"
+          >
+            Cancel
+          </Button>
+          <Button
+            dataTest="disclaimerButton"
+            size="small"
+            onClick={clearDisclaimerMessage}
+          >
+            Okay
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderTextContent = () => {
+    return (
+      <div className="shareable-url-modal__content-wrapper">
+        <div className="shareable-url-modal__content-title">
+          Publish and Share Kedro-Viz
+        </div>
+        <p className="shareable-url-modal__content-description shareable-url-modal__paregraph-divider">
+          Prerequisite: Deploying and hosting Kedro-Viz requires access keys or
+          user credentials, depending on the chosen cloud provider. To use this
+          feature, please add your access keys or credentials as environment
+          variables in your Kedro project. More information can be found in{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_DOCS_URL}
+          >
+            docs
+          </a>
+          .
+        </p>
+        <p className="shareable-url-modal__content-description">
+          Enter the required information and a hosted link will be generated.
+        </p>
+        <p className="shareable-url-modal__content-description shareable-url-modal__content-note">
+          For more information on obtaining the Endpoint URL, refer to{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_PUBLISH_URL}
+          >
+            the documentation
+          </a>
+          .
+        </p>
+      </div>
+    );
+  };
+
+  const renderLoadingContent = () => {
+    return isLoading ? (
+      <div className="shareable-url-modal__loading">
+        <LoadingIcon visible={isLoading} />
+      </div>
+    ) : null;
+  };
 
   const renderMainContent = () => {
     return !isLoading &&
@@ -289,21 +446,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       visible={visible.shareableUrlModal}
     >
       {!isDisclaimerViewed ? (
-        renderDisclaimerContent(clearDisclaimerMessage, handleModalClose)
+        renderDisclaimerContent()
       ) : (
         <>
           {renderMainContent()}
-          {renderLoadingContent(isLoading)}
-          {renderErrorContent(responseError, handleGoBackClick)}
-          {renderSuccessContent(
-            responseUrl,
-            showCopied,
-            onCopyClick,
-            handleResponseUrl,
-            handleModalClose,
-            handleLinkSettingsClick
-          )}
-          {renderCompatibilityMessage(canUseShareableUrls, handleModalClose)}
+          {renderLoadingContent()}
+          {renderErrorContent()}
+          {renderSuccessContent()}
+          {renderCompatibilityMessage()}
         </>
       )}
     </Modal>
