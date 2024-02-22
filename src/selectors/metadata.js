@@ -34,14 +34,12 @@ export const getClickedNodeMetaData = createSelector(
     (state) => state.node.outputs,
     (state) => state.node.code,
     (state) => state.node.parameters,
-    (state) => state.node.plot,
-    (state) => state.node.image,
-    (state) => state.node.trackingData,
     (state) => state.node.datasetType,
     (state) => state.node.originalType,
     (state) => state.node.transcodedTypes,
     (state) => state.node.runCommand,
     (state) => state.node.preview,
+    (state) => state.node.previewType,
     (state) => state.node.stats,
     (state) => state.isPrettyName,
   ],
@@ -59,27 +57,18 @@ export const getClickedNodeMetaData = createSelector(
     nodeOutputs,
     nodeCodes,
     nodeParameters,
-    nodePlot,
-    nodeImage,
-    nodeTrackingData,
     nodeDatasetTypes,
     nodeOriginalTypes,
     nodeTranscodedTypes,
     nodeRunCommand,
     preview,
+    previewType,
     stats,
     isPrettyName
   ) => {
     if (!nodeId || Object.keys(nodeType).length === 0) {
       return null;
     }
-    //rounding of tracking data
-    nodeTrackingData[nodeId] &&
-      Object.entries(nodeTrackingData[nodeId]).forEach(([key, value]) => {
-        if (typeof value === 'number') {
-          nodeTrackingData[nodeId][key] = Math.round(value * 100) / 100;
-        }
-      });
 
     const metadata = {
       id: nodeId,
@@ -95,9 +84,6 @@ export const getClickedNodeMetaData = createSelector(
       runCommand: nodeRunCommand[nodeId],
       code: nodeCodes[nodeId],
       filepath: nodeFilepaths[nodeId],
-      plot: nodePlot[nodeId],
-      image: nodeImage[nodeId],
-      trackingData: nodeTrackingData[nodeId],
       datasetType: nodeDatasetTypes[nodeId],
       originalType: nodeOriginalTypes[nodeId],
       transcodedTypes: nodeTranscodedTypes[nodeId],
@@ -116,6 +102,7 @@ export const getClickedNodeMetaData = createSelector(
         : nodeOutputs[nodeId] &&
           nodeOutputs[nodeId].map((nodeOutput) => stripNamespace(nodeOutput)),
       preview: preview && preview[nodeId],
+      previewType: previewType && previewType[nodeId],
       stats: stats && stats[nodeId],
     };
 

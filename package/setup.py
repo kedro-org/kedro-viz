@@ -36,7 +36,7 @@ setup(
     long_description_content_type="text/markdown",
     license="Apache Software License (Apache 2.0)",
     url="https://github.com/kedro-org/kedro-viz",
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=requires,
     keywords="pipelines, machine learning, data pipelines, data science, data engineering, visualisation",
     author="Kedro",

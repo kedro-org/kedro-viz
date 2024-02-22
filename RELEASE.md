@@ -14,7 +14,12 @@ Please follow the established format:
 # Upcoming release
 
 ## Major features and improvements
+
+- Drop support for `python=3.8`. (#1747)
+- Migrate Viz to use `pydantic>=2`. (#1743)
+
 ## Bug fixes and other changes
+
 - Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
 
 
