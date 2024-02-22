@@ -1,14 +1,16 @@
 # Publish and Share via AWS
 
-## Install dependencies
+## Step 1: Install dependencies
 
 ```bash
 pip install 'kedro-viz[aws]'
 ```
 
-## Configure your AWS S3 bucket and set credentials
+## Step 2: Configure your AWS S3 bucket
 
-You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
+You can host your Kedro-Viz project on Amazon S3. You must first create an S3 bucket and then enable static website hosting. 
+
+To do so, follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to configure a static website on Amazon S3.
 
 Once the S3 bucket is created, you'll need to create an Identity and Access Management (IAM) user account, user group, and generate the corresponding access keys. To do so:
 
@@ -32,6 +34,7 @@ Select the user, then select `Create access key`. Follow the steps and create yo
 ![](./images/kedro_viz_share_credentials4.png)
 
 
+## Step 3: Set credentials
 Once that's completed, you'll need to set your AWS credentials as environment variables in your terminal window, as shown below:
 
 ```bash
@@ -53,7 +56,7 @@ You pay for storing objects in your S3 buckets. The amount you pay depends on yo
 
 See the official [AWS documentation](https://aws.amazon.com/s3/pricing/?nc=sn&loc=4) for more information.
 
-## Publish and share the project
+## Step 4: Publish and share the project
 Once your Cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
 
 ```bash
@@ -74,4 +77,25 @@ Here is an example of the flow (TODO - Need to add flows specific to cloud provi
 
 ```{note}
 We will be updating the user flow doc for v7.2.0 soon...
+```
+
+## Publish and share via CLI
+
+From Kedro-Viz version 8.0.0, the `kedro viz deploy` command takes **platform**, **endpoint** and **bucket name** as its options. You can use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
+```
+
+```{note}
+* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+* **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
+If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
+```
+
+You can still publish and share Kedro-Viz project using the existing command from Kedro-Viz version 7.0.0.
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
 ```

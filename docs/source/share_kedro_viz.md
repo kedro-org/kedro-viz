@@ -38,20 +38,23 @@ There are two ways to publish and share Kedro-Viz:
 
 1. **Platform-agnostic sharing with Kedro-Viz:** Using the kedro-viz build command, users can publish Kedro-Viz to any static website hosting platform such as GitHub pages, and share the URL generated. This is described in [Platform-agnostic sharing with Kedro-Viz](./platform_agnostic_sharing_with_kedro_viz)
 
-2. **Publish and share Kedro-Viz automatically:** You can automate the process of publishing and sharing your Kedro-Viz through AWS. Once the storage account and credentials are configured, users can then generate a shareable link from the Kedro-Viz UI using the 'Publish and share' button.
+2. **Publish and share Kedro-Viz automatically:** You can automate the publishing and sharing of your Kedro-Viz through threee different cloud providers: AWS, Azure, and GCS. Detailed instructions for each provider are outlined in the sections below.
 
-```{note}
-From Kedro-Viz version 7.2.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
-```
+You can automate the publishing and sharing of your Kedro-Viz through three different cloud providers: AWS, Azure, and GCS. Detailed instructions for each provider are outlined in the sections below.
+
 
 * [Publish and share Kedro-Viz on AWS](./publish_and_share_kedro_viz_on_aws)
 * [Publish and share Kedro-Viz on Azure](./publish_and_share_kedro_viz_on_azure)
 * [Publish and share Kedro-Viz on GCP](./publish_and_share_kedro_viz_on_gcp)
 
-```{toctree}
-:caption: Learn about Publish and Share Kedro-Viz
-:maxdepth: 2
 
+```{note}
+From Kedro-Viz version 7.2.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
+```
+
+```{toctree}
+:maxdepth: 1
+:hidden:
 platform_agnostic_sharing_with_kedro_viz
 publish_and_share_kedro_viz_on_aws
 publish_and_share_kedro_viz_on_azure
@@ -60,17 +63,7 @@ publish_and_share_kedro_viz_on_gcp
 
 ## Publish and share via CLI
 
-From Kedro-Viz version 7.0.0, you can now publish and share your Kedro-Viz project from the command line. Use the following command from the root folder of your Kedro project
-
-```bash
-kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
-```
-
-```{important}
-From Kedro-Viz version 7.2.0, the `kedro viz deploy` command takes platform, endpoint and bucket name as its options.
-```
-
-From Kedro-Viz version 7.2.0, use the following command from the root folder of your Kedro project
+From Kedro-Viz version 8.0.0, the `kedro viz deploy` command takes **platform**, **endpoint** and **bucket name** as its options. You can use the following command from the root folder of your Kedro project
 
 ```bash
 kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
@@ -82,3 +75,4 @@ kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --
 * **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
+

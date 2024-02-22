@@ -1,12 +1,12 @@
 # Publish and Share via Azure
 
-## Install dependencies
+## Step 1: Install dependencies
 
 ```bash
 pip install 'kedro-viz[azure]'
 ```
 
-## Configure your Azure Blob Storage and set credentials
+## Step 2: Configure your Azure Blob Storage
 
 You can host your Kedro-Viz project on AzureBlobStorage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
@@ -49,6 +49,8 @@ On the Members tab, select User, group, or service principal to assign the selec
 
 ![](./images/azure_member_assign.png)
 
+## Step 3: Set credentials
+
 Once that's completed, you'll need to set your Azure credentials as environment variables in your terminal window, as shown below:
 
 ```bash
@@ -81,7 +83,7 @@ You pay for storing objects on your AzureBlobStorage. The amount you pay depends
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
 
 
-## Publish and share the project
+## Step 4: Publish and share the project
 Once your Cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. Start Kedro-Viz by running the following command in your terminal:
 
 ```bash
@@ -103,3 +105,20 @@ Here is an example of the flow (TODO - Need to add flows specific to cloud provi
 ```{note}
 We will be updating the user flow doc for v7.2.0 soon...
 ```
+
+## Publish and share via CLI
+
+
+From Kedro-Viz version 8.0.0, the `kedro viz deploy` command takes **platform**, **endpoint** and **bucket name** as its options. You can use the following command from the root folder of your Kedro project
+
+```bash
+kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
+```
+
+```{note}
+* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
+* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
+* **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
+If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
+```
+
