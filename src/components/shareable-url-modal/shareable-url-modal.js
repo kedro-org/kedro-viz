@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
@@ -123,16 +123,16 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const onCopyClick = () => {
+  const onCopyClick = useCallback(() => {
     window.navigator.clipboard.writeText(responseUrl);
     setShowCopied(true);
 
     setTimeout(() => {
       setShowCopied(false);
     }, 1500);
-  };
+  }, [responseUrl]);
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     onToggleModal(false);
     if (deploymentState !== 'incompatible') {
       setDeploymentState('default');
@@ -148,7 +148,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-  };
+  }, [onToggleModal, deploymentState]);
 
   const getDeploymentStateByType = (type) => {
     if (deploymentState === 'default') {
@@ -164,30 +164,33 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     return modalMessages(deploymentState, compatibilityData.package_version);
   };
 
-  const handleResponseUrl = () => {
+  const handleResponseUrl = useCallback(() => {
     // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
     if (!/^https?:\/\//.test(responseUrl) && inputValues.platform === 'gcp') {
       const url = 'http://' + responseUrl;
       return url;
     }
     return responseUrl;
-  };
+  }, [inputValues.platform, responseUrl]);
 
-  const handleLinkSettingsClick = () => {
+  const handleLinkSettingsClick = useCallback(() => {
     setDeploymentState('default');
     setIsLoading(false);
     setResponseUrl(null);
     setIsLinkSettingsClick(true);
-  };
+  }, []);
 
-  const handleGoBackClick = () => {
+  const handleGoBackClick = useCallback(() => {
     setDeploymentState('default');
     setIsLoading(false);
     setResponseUrl(null);
     setResponseError(null);
-  };
+  }, []);
 
-  const clearDisclaimerMessage = () => setIsDisclaimerViewed(true);
+  const clearDisclaimerMessage = useCallback(
+    () => setIsDisclaimerViewed(true),
+    []
+  );
 
   const renderMainContent = () => {
     return !isLoading &&
