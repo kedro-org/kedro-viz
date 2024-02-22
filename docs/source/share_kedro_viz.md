@@ -38,10 +38,7 @@ There are two ways to publish and share Kedro-Viz:
 
 1. **Platform-agnostic sharing with Kedro-Viz:** Using the kedro-viz build command, users can publish Kedro-Viz to any static website hosting platform such as GitHub pages, and share the URL generated. This is described in [Platform-agnostic sharing with Kedro-Viz](./platform_agnostic_sharing_with_kedro_viz)
 
-2. **Publish and share Kedro-Viz automatically:** You can automate the publishing and sharing of your Kedro-Viz through threee different cloud providers: AWS, Azure, and GCS. Detailed instructions for each provider are outlined in the sections below.
-
-You can automate the publishing and sharing of your Kedro-Viz through three different cloud providers: AWS, Azure, and GCS. Detailed instructions for each provider are outlined in the sections below.
-
+2. **Publish and share Kedro-Viz automatically:** You can automate the publishing and sharing of your Kedro-Viz through three different cloud providers: AWS, Azure, and GCS. Detailed instructions for each provider are outlined in the sections below.
 
 * [Publish and share Kedro-Viz on AWS](./publish_and_share_kedro_viz_on_aws)
 * [Publish and share Kedro-Viz on Azure](./publish_and_share_kedro_viz_on_azure)
@@ -49,7 +46,7 @@ You can automate the publishing and sharing of your Kedro-Viz through three diff
 
 
 ```{note}
-From Kedro-Viz version 7.2.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
+From Kedro-Viz version 8.0.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
 ```
 
 ```{toctree}

@@ -75,7 +75,7 @@ kedro viz run
 Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
 
 ```{note}
-From Kedro-Viz version 7.2.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port** if you are using `HTTP`. 
+From Kedro-Viz version 8.0.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port** if you are using `HTTP`. 
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
 
@@ -86,7 +86,7 @@ Here is an example of the flow (TODO - Need to add flows specific to cloud provi
 ![](./images/kedro-publish-share.gif)
 
 ```{note}
-We will be updating the user flow doc for v7.2.0 soon...
+We will be updating the user flow doc for v8.0.0 soon...
 ```
 
 ## Publish and share via CLI
@@ -98,8 +98,6 @@ kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --
 ```
 
 ```{note}
-* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
 * **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
