@@ -48,7 +48,7 @@ preview_custom_datasets
 ## Disabling Previews
 
 
-To disable dataset previews for specific datasets, you need to set preview: false under the kedro-viz key within the metadata section of your conf.yml file. Here's an example configuration:
+To disable dataset previews for specific datasets, you need to set `preview: false` under the kedro-viz key within the metadata section of your conf.yml file. Here's an example configuration:
 
 ```yaml
 companies:
