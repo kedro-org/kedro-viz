@@ -192,7 +192,7 @@ describe('Shareable URLs', () => {
     const bucketName = 'myBucketName';
     const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
-    const primaryButtonNodeTextVariant = 'Republish';
+    const primaryButtonNodeTextVariant = 'Publish';
     const secondaryButtonNodeText = 'Link Settings';
 
     // Intercept the network request to mock with a fixture

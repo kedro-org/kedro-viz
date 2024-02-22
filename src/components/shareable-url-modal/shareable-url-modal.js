@@ -46,7 +46,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [responseUrl, setResponseUrl] = useState(null);
   const [responseError, setResponseError] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
-  const [isLinkSettingsClick, setIsLinkSettingsClick] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
   const [isDisclaimerViewed, setIsDisclaimerViewed] = useState(false);
@@ -140,7 +139,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setResponseError(null);
     setIsLoading(false);
     setResponseUrl(null);
-    setIsLinkSettingsClick(false);
     setInputValues({});
     setIsDisclaimerViewed(false);
     setIsFormDirty({
@@ -237,7 +235,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               setDeploymentState('default');
               setIsLoading(false);
               setResponseUrl(null);
-              setIsLinkSettingsClick(true);
             }}
             size="small"
           >
@@ -425,7 +422,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             size="small"
             onClick={handleSubmit}
           >
-            {isLinkSettingsClick ? 'Republish' : 'Publish'}
+            Publish
           </Button>
         </div>
       </>
