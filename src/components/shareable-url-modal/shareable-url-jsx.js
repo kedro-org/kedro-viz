@@ -193,13 +193,13 @@ export const renderTextContent = () => {
         Enter the required information and a hosted link will be generated.
       </p>
       <p className="shareable-url-modal__content-description shareable-url-modal__content-note">
-        Find out how to obtain the endpoint link for the selected platform,{' '}
+        For more information on obtaining the Endpoint URL, refer to{' '}
         <a
           target="_blank"
           rel="noopener noreferrer"
           href={KEDRO_VIZ_PUBLISH_URL}
         >
-          here
+          the documentation
         </a>
         .
       </p>
