@@ -11,6 +11,8 @@ const Input = ({
   placeholder,
   resetValueTrigger,
   size = 'large',
+  dataTest,
+  type,
 }) => {
   const isLimitSet = characterLimit > 0;
   const ref = useRef(null);
@@ -45,8 +47,8 @@ const Input = ({
     }
   };
 
-  return (
-    <>
+  const inputElement =
+    type === 'textarea' ? (
       <textarea
         className={`input input--${size}`}
         onChange={handleChange}
@@ -54,7 +56,23 @@ const Input = ({
         ref={ref}
         rows={1}
         value={value}
+        data-test={dataTest}
       />
+    ) : (
+      <input
+        type={type}
+        className={`input input--${size}`}
+        onChange={handleChange}
+        placeholder={placeholder}
+        ref={ref}
+        value={value}
+        data-test={dataTest}
+      />
+    );
+
+  return (
+    <>
+      {inputElement}
       {isLimitSet ? (
         <div className="input-character-count">
           <span>

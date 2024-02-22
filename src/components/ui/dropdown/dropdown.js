@@ -21,6 +21,7 @@ const Dropdown = (props) => {
     onOpened,
     showCancelApplyBtns,
     width,
+    placeholderText,
   } = props;
 
   /**
@@ -310,6 +311,7 @@ const Dropdown = (props) => {
       focusedOption={focusedOption}
       handleRef={_handleRef}
       haveSelectedValues={haveSelectedValues}
+      placeholderText={placeholderText}
       onApplyAndClose={() => {
         setOpen(false);
         onApplyAndClose();
@@ -340,6 +342,7 @@ Dropdown.defaultProps = {
   onClosed: null,
   onOpened: null,
   width: 160,
+  placeholderText: null,
 };
 
 Dropdown.propTypes = {
@@ -383,6 +386,10 @@ Dropdown.propTypes = {
    * The width for the component. Both the label and options are the same width
    */
   width: PropTypes.number,
+  /**
+   * Placeholder text when value from dropdown is not selected
+   */
+  placeholderText: PropTypes.string,
 };
 
 export default Dropdown;
