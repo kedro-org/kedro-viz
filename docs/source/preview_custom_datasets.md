@@ -17,7 +17,7 @@ Below is an example demonstrating how to implement the `preview()` function for 
 
 ```yaml 
 companies:
-  type: CustomDataSet
+  type: CustomDataset
   filepath: ${_base_location}/01_raw/companies.csv
   metadata:
     kedro-viz:
@@ -35,5 +35,4 @@ from kedro_datasets._typing import TablePreview
 class CustomDataset:
     def preview(self, nrows, ncolumns, filters) -> TablePreview:
         # Add logic for generating preview
-        pass
 ```
