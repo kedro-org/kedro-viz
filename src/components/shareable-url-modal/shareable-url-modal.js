@@ -278,7 +278,15 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <div className="shareable-url-modal__content-wrapper shareable-url-modal__content-description">
           Disclaimer: Please note that Kedro-Viz contains preview data for
           multiple datasets. If you wish to disable the preview when publishing
-          Kedro-Viz, please refer to the documentation on how to do so.
+          Kedro-Viz, please refer to{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_DOCS_URL}
+          >
+            the documentation
+          </a>{' '}
+          on how to do so.
         </div>
         <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
           <Button
