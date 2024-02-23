@@ -1,4 +1,4 @@
-# Preview Matplotlib charts in Kedro-viz 
+# Preview Matplotlib charts in Kedro-Viz 
 
 This page describes how to output static visualisations of a Kedro project with Kedro-Viz, which supports integration with [Matplotlib](https://matplotlib.org/). You can view Matplotlib charts in Kedro-Viz when you use the MatplotLibWriter dataset.
 

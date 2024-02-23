@@ -1,4 +1,4 @@
-# Preview Tabular Data in Kedro-viz
+# Preview Tabular Data in Kedro-Viz
 
 We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
 
@@ -27,11 +27,11 @@ Example configuration in catalog.yml:
 
 ```yaml
 companies:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/companies.csv
 
 reviews:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/reviews.csv
   metadata:
     kedro-viz:
@@ -40,7 +40,7 @@ reviews:
           nrows: 10
 
 shuttles:
-  type: pandas.ExcelDataSet
+  type: pandas.ExcelDataset
   filepath: data/01_raw/shuttles.xlsx
   metadata:
     kedro-viz:
@@ -52,7 +52,7 @@ shuttles:
 If no preview_args are specified, the default preview will show the first 5 rows.
 
 
-## Previewing Data on Kedro-viz
+## Previewing Data on Kedro-Viz
 
 After you've configured the Data Catalog, you can preview the datasets on Kedro-Viz. Start Kedro-Viz by running the following command in your terminal:
 
