@@ -45,10 +45,6 @@ There are two ways to publish and share Kedro-Viz:
 * [Publish and share Kedro-Viz on GCP](./publish_and_share_kedro_viz_on_gcp)
 
 
-```{note}
-From Kedro-Viz version 8.0.0, in addition to AWS, you will be able to publish and share your Kedro-Viz on Azure and GCP.
-```
-
 ```{toctree}
 :maxdepth: 1
 :hidden:
@@ -71,5 +67,10 @@ kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --
 * **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
 * **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
+```
+For AWS only, you can still publish and share Kedro-Viz project using the existing command from Kedro-Viz version 7.0.0.
+
+```bash
+kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
 ```
 
