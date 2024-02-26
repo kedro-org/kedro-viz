@@ -81,10 +81,10 @@ commands:
     steps:
       - run:
           name: Install Miniconda
-          command: choco install miniconda3 -y
-      - run:
-          name: Check conda
-          command: conda --version
+          command: |
+            choco install miniconda3 -y
+            refreshenv
+            conda --version
       - run:
           name: Initialize conda
           command: conda init powershell
