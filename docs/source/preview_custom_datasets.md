@@ -1,4 +1,4 @@
-# Extend Preview to Custom Datasets
+# Extend preview to Custom Datasets
 
 When creating a custom dataset, if you wish to enable data preview for that dataset, you must implement a `preview()` function within the custom dataset class. Kedro-Viz currently supports previewing tables, Plotly charts, images, and JSON objects.
 
@@ -38,13 +38,17 @@ class CustomDataset:
 ```
 
 
-## Examples of Previews:
+## Examples of Previews
 
 1. TablePreview 
 ![](./images/preview_datasets_expanded.png)
 
+
+
 2. ImagePreview
 ![](./images/pipeline_visualisation_matplotlib_expand.png)
+
+
 
 3. PlotlyPreview
 ![](./images/pipeline_visualisation_plotly_expand_1.png)

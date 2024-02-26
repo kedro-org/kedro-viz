@@ -1,7 +1,6 @@
 # Preview datasets in Kedro-Viz
 
-To provide users with a glimpse of their datasets within a Kedro project, Kedro-Viz offers a preview feature. This feature was introduced in Kedro-Viz version 6.3.0 and expanded upon in version 8.0.0. Initially, it supported `CSVDataset` and `ExcelDataset`, and was later extended to encompass additional dataset types such as `PlotlyDataset` and image datasets like `MatplotlibWriter`.
-
+To provide users with a glimpse of their datasets within a Kedro project, Kedro-Viz offers a preview feature. 
 
 Currently, Kedro-Viz supports four types of previews:
 
@@ -10,29 +9,27 @@ Currently, Kedro-Viz supports four types of previews:
 3. **PlotlyPreview:** For datasets returning Plotly JSON objects.
 4. **ImagePreview:** For datasets returning base64-encoded image strings.
 
-While we currently support the aforementioned datasets, we are soon going to extend this functionality to include other datasets. Users with custom datasets can also expand the preview functionality, , which is covered in the section [Extend Preview to Custom Datasets](./preview_custom_datasets.md).
+While we currently support the above mentioned datasets, we are soon going to extend this functionality to include other datasets. Users with custom datasets can also expand the preview functionality, which is covered in the section [Extend Preview to Custom Datasets](./preview_custom_datasets.md).
 
 ```{note}
-Starting from Kedro-Viz version 8.0.0, the preview functionality on Kedro-Viz is now opt-out. For previous versions, this is an opt-in mechanism and users are required to specify `preview-args` for the preview to be enabled.
-
-By default, preview is now enabled for datasets. If you wish to disable preview for datasets, please refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
+Starting from Kedro-Viz 8.0.0, previews are now enabled by default. If you wish to disable it for a specific dataset, refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
 ```
 
-**Preview Tabular Data**
+**Preview tabular Data**
 
-The page titled [Preview Tabular Data in Kedro-Viz](./preview_pandas_datasets.md) contains a spaceflight tutorial that explains how you can enable preview on Tabular datasets such as `pandas.CSVDataset` and `pandas.ExcelDataset`.
+See [Preview tabular Data in Kedro-Viz](./preview_pandas_datasets.md) for a guide on how you can enable preview on tabular datasets such as `pandas.CSVDataset` and `pandas.ExcelDataset`.
 
 **Preview Plotly Charts**
 
-The page titled [Preview Plotly charts in Kedro-Viz](./preview_plotly_datasets.md) contains a spaceflight tutorial that explains how you can create interactive visualizations using `PlotlyDataset` on Kedro-Viz.
+See [Preview Plotly charts in Kedro-Viz](./preview_plotly_datasets.md) for a guide on how you can create interactive visualizations using `PlotlyDataset` on Kedro-Viz.
 
 **Preview Matplotlib Charts**
 
-The page titled [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) contains a spaceflight tutorial that explains how you can create static visualizations using `MatplotlibWriterDataset` on Kedro-Viz.
+See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) for a guide on how you can create static visualizations using `MatplotlibWriterDataset` on Kedro-Viz.
 
 **Extend Preview to Custom Datasets**
 
-The page titled [Extend Preview to Custom Datasets](./preview_custom_datasets.md) contains information on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
+See [Extend Preview to Custom Datasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
 
 ```{toctree}
 :maxdepth: 1
@@ -48,7 +45,7 @@ preview_custom_datasets
 ## Disabling Previews
 
 
-To disable dataset previews for specific datasets, you need to set `preview: false` under the `kedro-viz` key within the `metadata` section of your `conf.yml` file. Here's an example configuration:
+To disable dataset previews for specific datasets, you need to set `preview: false` under the `kedro-viz` key within the `metadata` section of your `catalog.yml` file. Here's an example configuration:
 
 ```yaml
 companies:
