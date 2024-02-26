@@ -35,17 +35,17 @@ companies:
 from kedro_datasets._typing import TablePreview
 
 class CustomDataset:
-    def preview(self, nrows, ncolumns, filters) -> TablePreview:
-      filtered_data = self.data
-      for column, value in filters.items():
-          filtered_data = filtered_data[filtered_data[column] == value]
-      subset = filtered_data.iloc[:nrows, :ncolumns]
-      df_dict = {}
-      for column in subset.columns:
-          df_dict[column] = subset[column]
-
-      return df_dict
-    ```
+  def preview(self, nrows, ncolumns, filters) -> TablePreview:
+    filtered_data = self.data
+    for column, value in filters.items():
+        filtered_data = filtered_data[filtered_data[column] == value]
+    subset = filtered_data.iloc[:nrows, :ncolumns]
+    df_dict = {}
+    for column in subset.columns:
+        df_dict[column] = subset[column]
+    return df_dict
+    
+```
 
 
 ## Examples of Previews
