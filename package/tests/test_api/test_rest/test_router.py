@@ -1,36 +1,36 @@
-from unittest.mock import patch
-
 import pytest
 
 
-# Mock the S3Deployer class
-class MockS3Deployer:
-    def __init__(self, region, bucket_name):
+# Mock the Deployer class
+class MockDeployer:
+    def __init__(self, platform, endpoint, bucket_name):
         pass
 
-    def deploy_and_get_url(self):
-        return "http://mocked-url.com"
-
-
-@pytest.fixture
-def mock_s3_deployer():
-    with patch("kedro_viz.api.rest.router.S3Deployer", MockS3Deployer):
-        yield
+    def deploy(self):
+        pass
 
 
 @pytest.mark.parametrize(
-    "region, bucket_name",
-    [("us-east-2", "s3://shareableviz"), ("us-east-1", "shareableviz")],
+    "platform, endpoint, bucket_name",
+    [
+        ("aws", "http://mocked-url.com", "s3://shareableviz"),
+        ("azure", "http://mocked-url.com", "abfs://shareableviz"),
+    ],
 )
-def test_deploy_kedro_viz(client, region, bucket_name, mock_s3_deployer):
+def test_deploy_kedro_viz(client, platform, endpoint, bucket_name, mocker):
+    mocker.patch(
+        "kedro_viz.api.rest.router.DeployerFactory.create_deployer",
+        return_value=MockDeployer(platform, endpoint, bucket_name),
+    )
     response = client.post(
-        "/api/deploy", json={"region": region, "bucket_name": bucket_name}
+        "/api/deploy",
+        json={"platform": platform, "endpoint": endpoint, "bucket_name": bucket_name},
     )
 
     assert response.status_code == 200
     assert response.json() == {
-        "message": "Website deployed on S3",
-        "url": "http://mocked-url.com",
+        "message": f"Website deployed on {platform.upper()}",
+        "url": endpoint,
     }
 
 

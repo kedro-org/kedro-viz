@@ -26,6 +26,7 @@ const DropdownRenderer = ({
   showCancelApplyBtns,
   title,
   width,
+  placeholderText,
 }) => {
   const wrapperClasses = classnames('kedro', 'dropdown', {
     'dropdown--open': open,
@@ -135,7 +136,11 @@ const DropdownRenderer = ({
         className="dropdown__label"
         onClick={onLabelClicked}
       >
-        <span>{selectedOption.label || defaultText}</span>
+        {placeholderText ? (
+          <span className="dropdown__placeholder">{placeholderText}</span>
+        ) : (
+          <span>{selectedOption.label || defaultText}</span>
+        )}
         <span className="dropdown__icon">
           <DropdownArrow />
         </span>
@@ -178,6 +183,7 @@ DropdownRenderer.defaultProps = {
   selectedOption: null,
   title: null,
   width: 160,
+  placeholderText: null,
 };
 
 DropdownRenderer.propTypes = {
@@ -247,6 +253,10 @@ DropdownRenderer.propTypes = {
    * The width for the component. Both the label and options are the same width
    */
   width: PropTypes.number,
+  /**
+   * Placeholder text when value from dropdown is not selected
+   */
+  placeholderText: PropTypes.string,
 };
 
 export default DropdownRenderer;

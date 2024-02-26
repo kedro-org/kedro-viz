@@ -10,14 +10,13 @@ from kedro_viz.integrations.deployment.base_deployer import _HTML_DIR, BaseDeplo
 # Test the BaseDeployer class
 class TestBaseDeployer:
     def test_upload_api_responses(self, mocker):
-        mocker.patch("fsspec.filesystem")
         save_api_responses_to_fs_mock = mocker.patch(
             "kedro_viz.integrations.deployment.base_deployer.save_api_responses_to_fs"
         )
         build = ConcreteBaseDeployer()
         build._upload_api_responses()
 
-        save_api_responses_to_fs_mock.assert_called_once_with(build._path)
+        save_api_responses_to_fs_mock.assert_called_once_with(build._path, build._fs)
 
     def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")
@@ -69,16 +68,6 @@ class TestBaseDeployer:
         build._upload_api_responses.assert_called_once()
         build._upload_deploy_viz_metadata_file.assert_called_once()
 
-    def test_deploy_and_get_url(self, mocker):
-        mocker.patch("fsspec.filesystem")
-        mocker.patch("kedro_viz.server.load_and_populate_data")
-        build = ConcreteBaseDeployer()
-
-        url = build.deploy_and_get_url()
-
-        expected_url = Path("build")
-        assert url == expected_url
-
 
 class ConcreteBaseDeployer(BaseDeployer):
     """a concrete subclass that inherits from BaseDeployer for test purpose."""
@@ -88,6 +77,3 @@ class ConcreteBaseDeployer(BaseDeployer):
         super().__init__()
         self._path = Path("build")
         self._fs = fsspec.filesystem("file")
-
-    def deploy_and_get_url(self):
-        return self._path
