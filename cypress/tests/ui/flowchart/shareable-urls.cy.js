@@ -10,6 +10,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click({ force: true });
+    cy.get('[data-test="disclaimerButton"]').click({ force: true });
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
@@ -28,6 +29,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click({ force: true });
+    cy.get('[data-test="disclaimerButton"]').click({ force: true });
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
@@ -38,6 +40,7 @@ describe('Shareable URLs', () => {
   it('verifies that shareable url modal closes on close button click #TC-54', () => {
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains('Cancel')
       .click();
@@ -49,65 +52,73 @@ describe('Shareable URLs', () => {
     );
   });
 
-  it('verifies that users can click on region dropdown and see all region options #TC-55', () => {
-    const regionCount = 30;
+  it('verifies that users can click on platform dropdown and see all platform options #TC-55', () => {
+    const platformCount = 3;
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
 
     // Assert after action
     cy.get('.shareable-url-modal .menu-option').should(
       'have.length',
-      regionCount
+      platformCount
     );
   });
 
-  it('verifies that publish button should be disabled when region is not selected and bucket name is empty #TC-56', () => {
-    const selectedRegion = 'Select a region';
+  it('verifies that publish button should be disabled when platform is not selected and bucket name & endpoint name are empty #TC-56', () => {
+    const selectedPlatform = 'Select a hosting platform';
     const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
 
     // Assert after action
     cy.get(
       '.shareable-url-modal [data-test=kedro-pipeline-selector] .dropdown__label span'
-    ).contains(selectedRegion);
-    cy.get('.shareable-url-modal textarea').should('have.value', '');
+    ).contains(selectedPlatform);
+    cy.get('.shareable-url-modal input').should('have.value', '');
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
       .should('be.disabled');
   });
 
-  it('verifies that publish button should be disabled when a bucket region is selected and bucket name is empty #TC-57', () => {
+  it('verifies that publish button should be disabled when a platform is selected and bucket name is empty #TC-57', () => {
     const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
 
     // Assert after action
-    cy.get('.shareable-url-modal textarea').should('have.value', '');
+    cy.get('.shareable-url-modal input').should('have.value', '');
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
       .should('be.disabled');
   });
 
-  it('verifies that publish button should be enabled when region is selected and bucket name is not empty #TC-58', () => {
+  it('verifies that publish button should be enabled when platform is selected and bucket name & endpoint name are not empty #TC-58', () => {
+    const endpointName = 'http://www.example.com';
     const bucketName = 'myBucketName';
     const primaryButtonNodeText = 'Publish';
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal textarea').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      endpointName
+    );
 
     // Assert after action
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -116,17 +127,20 @@ describe('Shareable URLs', () => {
   });
 
   it('verifies that error message appears with wrong inputs on publish button click #TC-59', () => {
+    const endpointName = 'http://www.example.com';
     const bucketName = 'myBucketName';
     const primaryButtonNodeText = 'Publish';
-    const errorButtonNodeText = 'Go back';
-
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal textarea').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      endpointName
+    );
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
       .click();
@@ -135,11 +149,11 @@ describe('Shareable URLs', () => {
     cy.get('.shareable-url-modal .modal__wrapper').contains(
       'Something went wrong. Please try again later.'
     );
-    cy.get('.shareable-url-modal__error button').contains(errorButtonNodeText);
   });
 
   it('verifies that AWS link is generated with correct inputs on publish button click #TC-60', () => {
     const bucketName = 'myBucketName';
+    const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
 
     // Intercept the network request to mock with a fixture
@@ -152,11 +166,15 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal textarea').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      endpointName
+    );
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
       .click();
@@ -172,8 +190,9 @@ describe('Shareable URLs', () => {
 
   it('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
     const bucketName = 'myBucketName';
+    const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
-    const primaryButtonNodeTextVariant = 'Republish';
+    const primaryButtonNodeTextVariant = 'Publish';
     const secondaryButtonNodeText = 'Link Settings';
 
     // Intercept the network request to mock with a fixture
@@ -186,11 +205,15 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal textarea').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      endpointName
+    );
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
       .click();

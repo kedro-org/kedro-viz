@@ -1,5 +1,5 @@
 """`kedro_viz.integrations.deployment.base_deployer` defines
-creation of Kedro-viz build"""
+an abstract class for all deployers"""
 
 import abc
 import json
@@ -27,9 +27,6 @@ class BaseDeployer(abc.ABC):
     Attributes:
         _path (str): build path name.
         _fs (fsspec.filesystem): Filesystem for local/remote protocol.
-
-    Methods:
-        deploy_and_get_url(): Deploy Kedro-viz to cloud storage provider/local and return its URL.
     """
 
     def __init__(self):
@@ -38,7 +35,7 @@ class BaseDeployer(abc.ABC):
 
     def _upload_api_responses(self):
         """Write API responses to the build."""
-        save_api_responses_to_fs(self._path)
+        save_api_responses_to_fs(self._path, self._fs)
 
     def _ingest_heap_analytics(self):
         """Ingest heap analytics to index file in the build."""
@@ -61,13 +58,16 @@ class BaseDeployer(abc.ABC):
         injected_head_content.append("</head>")
         html_content = html_content.replace("</head>", "\n".join(injected_head_content))
 
+        self._write_heap_injected_index(html_content)
+
+    def _write_heap_injected_index(self, html_content):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = f"{temp_dir}/index.html"
 
             with open(temp_file_path, "w", encoding="utf-8") as temp_index_file:
                 temp_index_file.write(html_content)
 
-            self._fs.put(temp_file_path, f"{self._path}/")
+            self._fs.put(temp_file_path, f"{self._path}/", content_type="text/html")
 
     def _upload_static_files(self, html_dir: Path):
         """Upload static HTML files to Build."""
@@ -104,7 +104,3 @@ class BaseDeployer(abc.ABC):
         self._upload_api_responses()
         self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()
-
-    @abc.abstractmethod
-    def deploy_and_get_url(self):
-        """Abstract method to deploy and return the URL."""

@@ -876,7 +876,7 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.EnhancedORJSONResponse.encode_to_human_readable",
             return_value=encoded_response,
         )
-        with patch("kedro_viz.api.rest.responses.fsspec.filesystem") as mock_filesystem:
+        with patch("fsspec.filesystem") as mock_filesystem:
             mockremote_fs = mock_filesystem.return_value
             mockremote_fs.open.return_value.__enter__.return_value = Mock()
             write_api_response_to_fs(file_path, response, mockremote_fs)
@@ -974,13 +974,14 @@ class TestEnhancedORJSONResponse:
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     @pytest.mark.parametrize(
-        "file_path, protocol, path",
+        "file_path, protocol",
         [
-            ("s3://shareableviz", "s3", "shareableviz"),
-            ("shareableviz", "file", "shareableviz"),
+            ("s3://shareableviz", "s3"),
+            ("abfs://shareableviz", "abfs"),
+            ("shareableviz", "file"),
         ],
     )
-    def test_save_api_responses_to_fs(self, file_path, protocol, path, mocker):
+    def test_save_api_responses_to_fs(self, file_path, protocol, mocker):
         mock_api_main_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_main_response_to_fs"
         )
@@ -990,24 +991,18 @@ class TestEnhancedORJSONResponse:
         mock_api_pipeline_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_pipeline_response_to_fs"
         )
-        mock_get_protocol_and_path = mocker.patch(
-            "kedro_viz.api.rest.responses.get_protocol_and_path",
-            return_value=(protocol, path),
-        )
-        mockremote_fs = mocker.patch(
-            "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
-        )
 
-        save_api_responses_to_fs(file_path)
+        mock_filesystem = mocker.patch("fsspec.filesystem")
+        mock_filesystem.return_value.protocol = protocol
 
-        mockremote_fs.assert_called_once_with(protocol)
-        mock_get_protocol_and_path.assert_called_once_with(file_path)
+        save_api_responses_to_fs(file_path, mock_filesystem.return_value)
+
         mock_api_main_response_to_fs.assert_called_once_with(
-            f"{path}/api/main", mockremote_fs.return_value
+            f"{file_path}/api/main", mock_filesystem.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{path}/api/nodes", mockremote_fs.return_value
+            f"{file_path}/api/nodes", mock_filesystem.return_value
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
-            f"{path}/api/pipelines", mockremote_fs.return_value
+            f"{file_path}/api/pipelines", mock_filesystem.return_value
         )

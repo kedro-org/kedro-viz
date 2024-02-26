@@ -87,6 +87,7 @@ const RunDetailsModal = ({
             defaultValue={valuesToUpdate.title}
             onChange={(value) => onChange('title', value)}
             resetValueTrigger={visible}
+            type="textarea"
             size="large"
           />
         </div>
@@ -100,6 +101,7 @@ const RunDetailsModal = ({
             onChange={(value) => onChange('notes', value)}
             placeholder="Add here"
             resetValueTrigger={visible}
+            type="textarea"
             size="small"
           />
         </div>
