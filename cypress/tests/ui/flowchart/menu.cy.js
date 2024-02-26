@@ -31,7 +31,7 @@ describe('Flowchart Menu', () => {
 
       cy.location('search').should((queryParams) => {
         expect(decodeURIComponent(queryParams).toLowerCase()).to.contain(
-          menuOptionValue.toLowerCase()
+          menuOptionValue.toLowerCase().replace(/ /g, '+')
         );
       });
 
