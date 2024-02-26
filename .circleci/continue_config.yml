@@ -81,7 +81,12 @@ commands:
     steps:
       - run:
           name: Install Miniconda
-          command: choco install miniconda3 -y
+          command: |
+            choco install miniconda3 -y
+            refreshenv
+            C:\tools\miniconda3\Scripts\conda init powershell
+            conda activate base
+            conda --version
       - run:
           name: Initialize conda
           command: conda init powershell
