@@ -78,8 +78,6 @@ commands:
     parameters:
       python_version:
         type: string
-    executor:
-      name: windows/default
     steps:
       - run:
           name: Install Miniconda
