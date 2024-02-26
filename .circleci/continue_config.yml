@@ -79,7 +79,7 @@ commands:
       python_version:
         type: string
     steps:
-     - run:
+      - run:
           name: Install Miniconda
           command: choco install miniconda3
       - run:
