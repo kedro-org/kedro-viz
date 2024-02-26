@@ -80,16 +80,19 @@ commands:
         type: string
     steps:
       - run:
-          name: Install Miniconda
-          command: choco install miniconda3 -y
-      - run:
-          name: Refresh Environment Variables
+          name: Install and initialize Miniconda
           command: |
+            choco install miniconda3 -y
             refreshenv
-      - run:
-          name: Initialize Conda
-          command: |
             C:\tools\miniconda3\Scripts\conda init powershell
+      # - run:
+      #     name: Refresh Environment Variables
+      #     command: |
+      #       refreshenv
+      # - run:
+      #     name: Initialize Conda
+      #     command: |
+      #       C:\tools\miniconda3\Scripts\conda init powershell
       - run:
           name: Create 'kedro-viz' Conda environment
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
