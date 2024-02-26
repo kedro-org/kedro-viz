@@ -6,11 +6,17 @@ import PipelineList, {
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockHistoryPush = jest.fn();
+const mockLocationSearch = '?query=mockQuery';
+const mockLocationPathname = '/';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: mockHistoryPush,
+    location: {
+      search: mockLocationSearch,
+      pathname: mockLocationPathname,
+    },
   }),
 }));
 
