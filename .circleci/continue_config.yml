@@ -14,7 +14,7 @@ parameters:
     default: false
 
 orbs:
-  win: circleci/windows@4.1.1
+  win: circleci/windows@5.0.0
   node: circleci/node@5.0.3
 
 # No windows executor is listed here since windows builds use win/default and modify
@@ -79,6 +79,9 @@ commands:
       python_version:
         type: string
     steps:
+      - run:
+          name: Check conda
+          command: conda --version
       - run:
           name: Initialize conda
           command: conda init powershell
