@@ -78,8 +78,8 @@ commands:
     parameters:
       python_version:
         type: string
-    docker:
-      - image: mcr.microsoft.com/windows/servercore:ltsc2019
+    executor:
+      name: windows/default
     steps:
       - run:
           name: Install Miniconda
