@@ -84,7 +84,7 @@ commands:
             refreshenv
             C:\tools\miniconda3\Scripts\conda init powershell
       - run:
-          name: Create 'kedro-viz' Conda environment
+          name: Create 'kedro-viz' conda environment
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
       - run:
           name: Install Kedro-Viz dependencies
@@ -93,7 +93,7 @@ commands:
             pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
-          name: Echo Package Versions
+          name: Echo package versions
           command: |
             conda activate kedro-viz
             python -V
@@ -352,7 +352,6 @@ workflows:
               only:
                 - main
                 - demo
-                - fix/win-lint
       - unit_tests:
           matrix:
             parameters:
@@ -366,7 +365,6 @@ workflows:
               only:
                 - main
                 - demo
-                - fix/win-lint
       - lint:
           matrix:
             parameters:
