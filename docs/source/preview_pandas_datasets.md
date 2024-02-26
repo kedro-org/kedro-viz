@@ -23,7 +23,7 @@ When your project is ready, navigate to the root directory of the project.
 
 Kedro-Viz version 8.0.0 supports previews for two types of tabular datasets: `pandas.CSVDataset` and `pandas.ExcelDataset`. Previews are enabled by default, showing the first 5 rows unless otherwise specified using `preview_args`.
 
-Example configuration in catalog.yml:
+Example configuration in `catalog.yml`:
 
 ```yaml
 companies:
