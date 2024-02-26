@@ -4,38 +4,6 @@ Kedro users want to share their pipeline visualisation with other non-technical 
 
 Kedro enables users to do this by publishing Kedro-Viz to a static website hosting platform to share it with others. This guide uses the spaceflights tutorial as an example.
 
-```{note}
-Kedro-Viz sharing was introduced in version 6.6.0.
-```
-
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
-
-```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
-```
-
-In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
-
-
-```bash
-kedro new --starter=spaceflights-pandas
-```
-
-When prompted for a project name, you can enter anything, but we will assume `Spaceflights` throughout.
-
-When your project is ready, navigate to the root directory of the project. Install the dependencies from the project root directory by typing the following in your terminal:
-
-```bash
-pip install -r src/requirements.txt
-```
-
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
-
-```text
-fsspec[s3]>=2023.9.0
-kedro>=0.18.2
-```
-
 There are two ways to publish and share Kedro-Viz:
 
 1. **Platform-agnostic sharing with Kedro-Viz:** Using the kedro-viz build command, users can publish Kedro-Viz to any static website hosting platform such as GitHub pages, and share the URL generated. This is described in [Platform-agnostic sharing with Kedro-Viz](./platform_agnostic_sharing_with_kedro_viz)
