@@ -11,7 +11,7 @@ PlotlyPreview = NewType("PlotlyPreview", dict)
 JSONPreview = NewType("JSONPreview", dict)
 ```
 
-Arbitrary arguments can be included in the `preview()` function, which can be later specified in the catalog.yml file.
+Arbitrary arguments can be included in the `preview()` function, which can be later specified in the `catalog.yml` file.
 
 Below is an example demonstrating how to implement the `preview()` function with user-specified arguments for a `CustomDataset` class that utilizes `TablePreview` to enable previewing tabular data on Kedro-Viz:
 
@@ -41,16 +41,19 @@ class CustomDataset:
 ## Examples of Previews
 
 1. TablePreview 
+
 ![](./images/preview_datasets_expanded.png)
 
 
-
 2. ImagePreview
+
 ![](./images/pipeline_visualisation_matplotlib_expand.png)
 
 
-
 3. PlotlyPreview
+
 ![](./images/pipeline_visualisation_plotly_expand_1.png)
+
+
 
 
