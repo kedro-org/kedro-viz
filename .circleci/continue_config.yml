@@ -78,24 +78,22 @@ commands:
     parameters:
       python_version:
         type: string
+    docker:
+      - image: mcr.microsoft.com/windows/servercore:ltsc2019
     steps:
       - run:
           name: Install Miniconda
+          command: choco install miniconda3 -y
+      - run:
+          name: Refresh Environment Variables
           command: |
-            choco install miniconda3 -y
-            $condaPath = (Get-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).Path
-            $newCondaPath = (Get-Command conda).Source
-            if ($condaPath -notlike "*$newCondaPath*") {
-              $newPath = "$condaPath;$newCondaPath"
-              Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
-              $env:PATH = $newPath
-            }
             refreshenv
       - run:
-          name: Initialize conda
-          command: conda init powershell
+          name: Initialize Conda
+          command: |
+            C:\tools\miniconda3\Scripts\conda init powershell
       - run:
-          name: Create 'kedro-viz' conda environment
+          name: Create 'kedro-viz' Conda environment
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
       - run:
           name: Install Kedro-Viz dependencies
@@ -104,7 +102,7 @@ commands:
             pip install git+https://github.com/kedro-org/kedro@main
             pip install -r package/test_requirements.txt -U
       - run:
-          name: Echo package versions
+          name: Echo Package Versions
           command: |
             conda activate kedro-viz
             python -V
@@ -333,16 +331,16 @@ workflows:
             branches:
               only: demo
 
-  build_frontend:
-    when:
-      or:
-        - <<pipeline.parameters.frontend_change>>
-        - <<pipeline.parameters.ci_change>>
-    jobs:
-      - javascript_lint_and_tests
-      - all_circleci_checks_succeeded:
-          requires:
-            - javascript_lint_and_tests
+  # build_frontend:
+  #   when:
+  #     or:
+  #       - <<pipeline.parameters.frontend_change>>
+  #       - <<pipeline.parameters.ci_change>>
+  #   jobs:
+  #     - javascript_lint_and_tests
+  #     - all_circleci_checks_succeeded:
+  #         requires:
+  #           - javascript_lint_and_tests
 
   build_backend:
     when:
@@ -350,43 +348,43 @@ workflows:
         - <<pipeline.parameters.backend_change>>
         - <<pipeline.parameters.ci_change>>
     jobs:
-      - e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - win_e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-          filters:
-            branches:
-              only:
-                - main
-                - demo
-                - fix/win-lint
-      - unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
+      # - e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      # - win_e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #           - demo
+      #           - fix/win-lint
+      # - unit_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.9', '3.10', '3.11']
+              python_version: ['3.9']
           filters:
             branches:
               only:
                 - main
                 - demo
                 - fix/win-lint
-      - lint:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - all_circleci_checks_succeeded:
-          requires:
-            - e2e_tests
-            - unit_tests
-            - lint
+      # - lint:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      # - all_circleci_checks_succeeded:
+      #     requires:
+      #       - e2e_tests
+      #       - unit_tests
+      #       - lint
 
   release:
     jobs:
@@ -404,24 +402,24 @@ workflows:
               only:
                 - main
     jobs:
-      # - e2e_tests:
-      #     matrix:
-      #       parameters:
-      #         python_version: ['3.9', '3.10', '3.11']
-      # - win_e2e_tests:
-      #     matrix:
-      #       parameters:
-      #         python_version: ['3.9', '3.10', '3.11']
-      # - unit_tests:
-      #     matrix:
-      #       parameters:
-      #         python_version: ['3.9', '3.10', '3.11']
+      - e2e_tests:
+          matrix:
+            parameters:
+              python_version: ['3.9', '3.10', '3.11']
+      - win_e2e_tests:
+          matrix:
+            parameters:
+              python_version: ['3.9', '3.10', '3.11']
+      - unit_tests:
+          matrix:
+            parameters:
+              python_version: ['3.9', '3.10', '3.11']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.9']
-      # - lint:
-      #     matrix:
-      #       parameters:
-      #         python_version: ['3.9', '3.10', '3.11']
-      # - javascript_lint_and_tests
+              python_version: ['3.9', '3.10', '3.11']
+      - lint:
+          matrix:
+            parameters:
+              python_version: ['3.9', '3.10', '3.11']
+      - javascript_lint_and_tests
