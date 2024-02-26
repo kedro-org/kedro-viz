@@ -1,10 +1,12 @@
 # Publish and share Kedro-Viz
 
+Kedro users want to share their pipeline visualisation with other non-technical  stakeholders on their team. 
+
+Kedro enables users to do this by publishing Kedro-Viz to a static website hosting platform to share it with others. This guide uses the spaceflights tutorial as an example.
+
 ```{note}
 Kedro-Viz sharing was introduced in version 6.6.0.
 ```
-
-This page describes how to publish Kedro-Viz to a static website hosting platform to share it with others. It uses the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` as an example.
 
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
