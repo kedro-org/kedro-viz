@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=65.5.1"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
 
 [project]
 name = "kedro-viz"
@@ -8,6 +8,7 @@ authors = [
     {name = "Kedro"}
 ]
 description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
+readme = {file = "../README.md", content-type = "text/markdown"}
 requires-python = ">=3.9"
 keywords = [
     "pipelines",
@@ -18,7 +19,7 @@ keywords = [
     "visualisation",
 ]
 license = {text = "Apache Software License (Apache 2.0)"}
-dynamic = ["dependencies", "readme", "version"]
+dynamic = ["dependencies", "version"]
 
 [project.urls]
 Homepage = "https://kedro.org"
@@ -47,15 +48,20 @@ line_magic = "kedro_viz.launchers.jupyter:run_viz"
 [project.entry-points."kedro.hooks"]
 kedro-dataset-stats = "kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
 
-[tool.setuptools]
-zip-safe = false
+[tool.hatch.version]
+path = "kedro_viz/__init__.py"
 
-[tools.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+[tool.hatch.build.targets.sdist]
+include = [
+    "requirements.txt",
+    "/kedro_viz",
+]
+exclude = [
+    "/kedro_viz/docs",
+]
 
-[tool.setuptools.packages.find]
-include = ["kedro_viz*"]
-exclude=["tests*", "features*"]
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
 
 [tool.pytest.ini_options]
 addopts ="""
