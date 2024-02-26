@@ -84,6 +84,7 @@ commands:
           command: |
             choco install miniconda3 -y
             refreshenv
+            C:\tools\miniconda3\Scripts\activate
             conda --version
       - run:
           name: Initialize conda
