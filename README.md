@@ -17,7 +17,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 [![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
 [![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
-[![Python Version](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-orange.svg)](https://pypi.org/project/kedro-viz/)
+[![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
 [![Downloads](https://static.pepy.tech/badge/kedro-viz/week)](https://pepy.tech/project/kedro-viz)
 [![npm version](https://img.shields.io/npm/v/@quantumblack/kedro-viz.svg?color=cc3534)](https://badge.fury.io/js/%40quantumblack%2Fkedro-viz)

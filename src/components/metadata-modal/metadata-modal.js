@@ -11,11 +11,11 @@ import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.scss';
 
 const MetadataModal = ({ metadata, onToggle, visible }) => {
-  const hasPlot = Boolean(metadata?.plot);
-  const hasImage = Boolean(metadata?.image);
-  const hasPreview = Boolean(metadata?.preview);
+  const hasPlot = metadata?.previewType === 'PlotlyPreview';
+  const hasImage = metadata?.previewType === 'ImagePreview';
+  const hasTable = metadata?.previewType === 'TablePreview';
 
-  if (!visible.metadataModal || (!hasPlot && !hasImage && !hasPreview)) {
+  if (!visible.metadataModal || (!hasPlot && !hasImage && !hasTable)) {
     return null;
   }
 
@@ -44,16 +44,16 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
             {metadata.name}
           </span>
         </div>
-        {hasPreview && (
+        {hasTable && (
           <div className="pipeline-metadata-modal__preview-text">
-            Previewing first {metadata.preview.data.length} rows
+            Previewing first {metadata.preview.length} rows
           </div>
         )}
       </div>
       {hasPlot && (
         <PlotlyChart
-          data={metadata.plot.data}
-          layout={metadata.plot.layout}
+          data={metadata.preview.data}
+          layout={metadata.preview.layout}
           view="modal"
         />
       )}
@@ -63,17 +63,17 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
             <img
               alt="Matplotlib rendering"
               className="pipeline-metadata__plot-image--expanded"
-              src={`data:image/png;base64,${metadata.image}`}
+              src={`data:image/png;base64,${metadata.preview}`}
             />
           </div>
         </div>
       )}
-      {hasPreview && (
+      {hasTable && (
         <div className="pipeline-metadata-modal__preview">
           <PreviewTable data={metadata.preview} size="large" />
         </div>
       )}
-      {!hasPreview && (
+      {!hasTable && (
         <div className="pipeline-metadata-modal__bottom">
           <button
             className="pipeline-metadata-modal__collapse-plot"
