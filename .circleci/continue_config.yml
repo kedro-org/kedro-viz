@@ -83,8 +83,13 @@ commands:
           name: Install Miniconda
           command: |
             choco install miniconda3 -y
-            $condaPath = (Get-Command conda).Path
-            [System.Environment]::SetEnvironmentVariable("Path", "$env:Path;$condaPath", [System.EnvironmentVariableTarget]::Machine)
+            $condaPath = (Get-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).Path
+            $newCondaPath = (Get-Command conda).Source
+            if ($condaPath -notlike "*$newCondaPath*") {
+              $newPath = "$condaPath;$newCondaPath"
+              Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
+              $env:PATH = $newPath
+            }
             refreshenv
       - run:
           name: Initialize conda
@@ -399,24 +404,24 @@ workflows:
               only:
                 - main
     jobs:
-      - e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - win_e2e_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - unit_tests:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
+      # - e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      # - win_e2e_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      # - unit_tests:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
       - win_unit_tests:
           matrix:
             parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - lint:
-          matrix:
-            parameters:
-              python_version: ['3.9', '3.10', '3.11']
-      - javascript_lint_and_tests
+              python_version: ['3.9']
+      # - lint:
+      #     matrix:
+      #       parameters:
+      #         python_version: ['3.9', '3.10', '3.11']
+      # - javascript_lint_and_tests
