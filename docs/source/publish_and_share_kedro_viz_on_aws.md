@@ -103,7 +103,7 @@ kedro viz run
 Step 10: Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
 
 ```{note}
-You will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under **S3 bucket -> properties -> Static website hosting -> Bucket website endpoint**.
+From Kedro-Viz version 8.0.0, you will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under **S3 bucket -> properties -> Static website hosting -> Bucket website endpoint**.
 ```
 
 Step 11: Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
