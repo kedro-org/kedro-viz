@@ -81,7 +81,7 @@ commands:
     steps:
       - run:
           name: Install Miniconda
-          command: choco install miniconda3
+          command: choco install miniconda3 -y
       - run:
           name: Check conda
           command: conda --version
