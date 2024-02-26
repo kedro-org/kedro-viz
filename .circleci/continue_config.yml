@@ -83,12 +83,9 @@ commands:
           name: Install Miniconda
           command: |
             choco install miniconda3 -y
-            $condaPath = 'C:\tools\miniconda3\Scripts'
+            $condaPath = (Get-Command conda).Path
+            [System.Environment]::SetEnvironmentVariable("Path", "$env:Path;$condaPath", [System.EnvironmentVariableTarget]::Machine)
             refreshenv
-            [Environment]::SetEnvironmentVariable("Path", "$env:Path;$condaPath", [System.EnvironmentVariableTarget]::Machine)
-            C:\tools\miniconda3\Scripts\conda init powershell
-            conda activate base
-            conda --version
       - run:
           name: Initialize conda
           command: conda init powershell
