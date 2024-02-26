@@ -1,4 +1,4 @@
-# Extend preview to Custom Datasets
+# Extend preview to custom datasets
 
 When creating a custom dataset, if you wish to enable data preview for that dataset, you must implement a `preview()` function within the custom dataset class. Kedro-Viz currently supports previewing tables, Plotly charts, images, and JSON objects.
 
@@ -25,7 +25,9 @@ companies:
       preview_args:
         nrows: 5
         ncolumns: 2 
-        filters: name 
+        filters: {
+          gender: male 
+        } 
 ```
 
 ```python 
@@ -34,8 +36,16 @@ from kedro_datasets._typing import TablePreview
 
 class CustomDataset:
     def preview(self, nrows, ncolumns, filters) -> TablePreview:
-        # Add logic for generating preview
-```
+      filtered_data = self.data
+      for column, value in filters.items():
+          filtered_data = filtered_data[filtered_data[column] == value]
+      subset = filtered_data.iloc[:nrows, :ncolumns]
+      df_dict = {}
+      for column in subset.columns:
+          df_dict[column] = subset[column]
+
+      return df_dict
+    ```
 
 
 ## Examples of Previews

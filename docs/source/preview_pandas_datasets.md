@@ -8,7 +8,7 @@ If you haven't installed Kedro {doc}`follow the documentation to get set up<kedr
 We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
 ```
 
-In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
+In your terminal window, navigate to the folder where you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
 
 ```bash
@@ -52,7 +52,7 @@ shuttles:
 If no `preview_args` are specified, the default preview will show the first 5 rows.
 
 
-## Previewing Data on Kedro-Viz
+## Previewing data on Kedro-Viz
 
 After you've configured the Data Catalog, you can preview the datasets on Kedro-Viz. Start Kedro-Viz by running the following command in your terminal:
 

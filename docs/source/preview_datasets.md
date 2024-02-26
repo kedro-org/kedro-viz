@@ -27,9 +27,9 @@ See [Preview Plotly charts in Kedro-Viz](./preview_plotly_datasets.md) for a gui
 
 See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) for a guide on how you can create static visualizations using `MatplotlibWriterDataset` on Kedro-Viz.
 
-**Extend Preview to Custom Datasets**
+**Extend Preview to custom catasets**
 
-See [Extend Preview to Custom Datasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
+See [Extend Preview to custom catasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
 
 ```{toctree}
 :maxdepth: 1
