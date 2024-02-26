@@ -15,9 +15,9 @@ While we currently support the above mentioned datasets, we are soon going to ex
 Starting from Kedro-Viz 8.0.0, previews are now enabled by default. If you wish to disable it for a specific dataset, refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
 ```
 
-**Preview tabular Data**
+**Preview tabular data**
 
-See [Preview tabular Data in Kedro-Viz](./preview_pandas_datasets.md) for a guide on how you can enable preview on tabular datasets such as `pandas.CSVDataset` and `pandas.ExcelDataset`.
+See [Preview tabular data in Kedro-Viz](./preview_pandas_datasets.md) for a guide on how you can enable preview on tabular datasets such as `pandas.CSVDataset` and `pandas.ExcelDataset`.
 
 **Preview Plotly Charts**
 
