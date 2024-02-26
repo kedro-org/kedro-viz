@@ -1,4 +1,4 @@
-# Platform-agnostic sharing with Kedro-Viz 
+# Platform-agnostic Sharing with Kedro-Viz 
 
 In Kedro-Viz version 7.1.0, we introduced the `kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform. Running this command from the command line interface (CLI) creates a `build` folder within the Kedro project. The build folder contains a static Kedro-Viz app package, which can be used as a source to publish on any static website hosting platform.
 

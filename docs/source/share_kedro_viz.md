@@ -1,4 +1,4 @@
-# Publish and share Kedro-Viz
+# Publish and Share Kedro-Viz
 
 Kedro users want to share their pipeline visualisation with other non-technical  stakeholders on their team. 
 
