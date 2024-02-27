@@ -44,7 +44,11 @@ pip install 'kedro-viz[azure]'
 
 You can host your Kedro-Viz project on Azure Blob Storage. 
 
-1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage.
+1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage. Please note that uploading your site's files will be done through Kedro-Viz
+
+```{note}
+The process of uploading your site's files will be done through Kedro-Viz.
+```
 
 2. Register an app: Sign in to the Azure Portal and create an [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
@@ -55,11 +59,6 @@ for the app registration.
 
 5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
 
-## Permissions and access control
-
-Kedro-Viz does not manage permissions or access control. Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
-
-You can control who can view your visualisation using [attribute-based access control](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-auth-abac). See the official Azure documentation for more information.
 
 ```{note}
 Kedro-Viz uses Gen2 filesystem protocol `abfs` to write files on AzureBlobStorage.
@@ -115,6 +114,12 @@ Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execut
 ```bash
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
 ```
+
+## Permissions and access control
+
+Kedro-Viz does not manage permissions or access control. Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
+
+You can control who can view your visualisation using [attribute-based access control](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-auth-abac). See the official Azure documentation for more information.
 
 ## Billing
 

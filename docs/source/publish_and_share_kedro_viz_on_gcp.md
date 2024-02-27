@@ -44,6 +44,10 @@ You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket.
 
 1. Enable static website hosting: Follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure static website hosting on GCS.
 
+```{note}
+The process of uploading your site's files will be done through Kedro-Viz.
+```
+
 2. Ensure the `Compute Engine API` is enabled for your project as mentioned in the tutorial.
 
 3. Set up load balancer and SSL certificate: If serving your website through HTTPS, [set up a load balancer](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl) and configure an SSL certificate. 
@@ -52,13 +56,6 @@ You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket.
     - Create a service account from the IAM & admin dashboard in the [GCP Portal](https://console.cloud.google.com/).
     - Assign `Storage Object Creator` and `Storage Object User` roles to the service account.
     - Generate a service account key and download it.
-
-
-## Permissions and access control
-
-Kedro-Viz does not manage permissions or access control. GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
-
-You can control who can view your visualisation using [IAM permissions and ACLs](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls). See the official Google documentation for more information.
 
 ## Set credentials
 
@@ -104,6 +101,12 @@ Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execut
 ```bash
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
 ```
+
+## Permissions and access control
+
+Kedro-Viz does not manage permissions or access control. GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
+
+You can control who can view your visualisation using [IAM permissions and ACLs](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls). See the official Google documentation for more information.
 
 ### Billing
 

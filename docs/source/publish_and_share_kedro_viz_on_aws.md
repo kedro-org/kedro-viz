@@ -42,16 +42,13 @@ pip install 'kedro-viz[aws]'
 
 1. Create S3 bucket: Follow the [AWS tutorial](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) to create an S3 bucket and enable static website hosting.
 
+```{note}
+The process of uploading your site's files will be done through Kedro-Viz.
+```
+
 2. Set IAM user: Sign in to the [AWS Management Console](https://console.aws.amazon.com/s3/) and create an IAM user account. Refer to the official AWS documentation about [IAM Identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/id.html).
 
 3. Generate access keys: Create an [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel) with full access to the AWS S3 policy. Add the IAM user to the group and generate access keys. Refer to AWS documentation for detailed instructions on [creating and managing access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
-
-## Permissions and access control
-
-Kedro-Viz does not manage permissions or access control. AWS manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
-
-Control who can access your visualization using [bucket and user policies](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html) or [access control lists](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acls.html). Refer to the official AWS documentation for further details.
-
 
 ## Set credentials
 
@@ -107,6 +104,12 @@ If you are on Kedro-viz 7.0.0 you can still publish and share Kedro-Viz project 
 ```bash
 kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
 ```
+
+## Permissions and access control
+
+Kedro-Viz does not manage permissions or access control. AWS manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
+
+Control who can access your visualization using [bucket and user policies](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-iam-policies.html) or [access control lists](https://docs.aws.amazon.com/AmazonS3/latest/userguide/acls.html). Refer to the official AWS documentation for further details.
 
 ## Billing
 
