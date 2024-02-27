@@ -79,6 +79,8 @@ kedro viz run
 
 Navigate to the **Publish and share** icon located in the lower-left corner of the application interface. A modal dialog will appear, prompting you to select your hosting platform and provide your bucket name and endpoint link.
 
+#### Set up endpoint
+
 The endpoint link can be found under **S3 bucket -> properties -> Static website hosting -> Bucket website endpoint**.
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.

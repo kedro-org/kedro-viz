@@ -19,19 +19,3 @@ publish_and_share_kedro_viz_on_azure
 publish_and_share_kedro_viz_on_gcp
 ```
 
-## Publish and share via CLI
-
-Starting from Kedro-Viz version 8.0.0, use the `kedro viz deploy` command with options for `platform`, `endpoint`, and `bucket-name` to publish Kedro-viz on supported platforms such as AWS, Azure and GCP. You can execute the following command from your project's root folder:
-
-```bash
-kedro viz deploy --platform=[cloud-provider] --endpoint=[static-website-link] --bucket-name=[bucket-name]
-```
-
-```{note}
-* **AWS -** The endpoint link can be found under S3 bucket -> properties -> Static website hosting -> Bucket website endpoint.
-* **Azure -** The endpoint link can be found under Storage account -> Capabilities -> Static website -> Primary endpoint.
-* **GCP -** The endpoint link can be found under your Application Load Balancer -> Frontend -> IP:Port if you are using `HTTP`. 
-If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
-```
-
-
