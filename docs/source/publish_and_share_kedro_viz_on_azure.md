@@ -7,7 +7,7 @@ This page describes how to publish Kedro-Viz to Azure to share it with others. I
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
 ```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
+We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.1). To check the version installed, type `kedro -V` in your terminal window.
 ```
 
 In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
@@ -22,7 +22,7 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 When your project is ready, navigate to the root directory of the project. Install the dependencies from the project root directory by typing the following in your terminal:
 
 ```bash
-pip install -r src/requirements.txt
+pip install -r requirements.txt
 ```
 
 Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
