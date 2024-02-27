@@ -18,7 +18,7 @@ from pathlib import Path
 
 from click import secho, style
 
-# from kedro_viz import __version__ as release
+from kedro_viz import __version__ as release
 
 # -- Project information -----------------------------------------------------
 
@@ -26,7 +26,7 @@ project = "kedro-viz"
 author = "kedro-viz"
 
 # The short X.Y version.
-version = re.match(r"^([0-9]+\.[0-9]+).*", "7.1.0").group(1)
+version = re.match(r"^([0-9]+\.[0-9]+).*", release).group(1)
 
 
 # -- General configuration ---------------------------------------------------
