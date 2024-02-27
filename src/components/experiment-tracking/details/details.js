@@ -17,6 +17,7 @@ const Details = ({
   activeTab,
   enableComparisonView,
   enableShowChanges,
+  isKedroDatasetsCompatible,
   isRunDataLoading,
   newRunAdded,
   onRunSelection,
@@ -83,6 +84,17 @@ const Details = ({
     }
   }, [activeTab, setIsDisplayingMetrics]);
 
+  const kedroDatasetsCompatibilityMessage = () => {
+    return !isKedroDatasetsCompatible ? (
+      <div className="kedroDatasetsCompatible">
+        <p>
+          Kedro-Viz Experiment Tracking is supported only on kedro-datasets{' '}
+          {'>'}= 2.1
+        </p>
+      </div>
+    ) : null;
+  };
+
   const isSingleRun = runMetadata?.length === 1 ? true : false;
 
   if (runDataError) {
@@ -147,12 +159,16 @@ const Details = ({
           })}
         </div>
         {activeTab === 'Metrics' ? (
-          <MetricsPlots
-            selectedRunIds={selectedRunIds}
-            sidebarVisible={sidebarVisible}
-          />
+          <>
+            {kedroDatasetsCompatibilityMessage()}
+            <MetricsPlots
+              selectedRunIds={selectedRunIds}
+              sidebarVisible={sidebarVisible}
+            />
+          </>
         ) : (
           <>
+            {kedroDatasetsCompatibilityMessage()}
             <RunMetadata
               activeTab={activeTab}
               enableComparisonView={enableComparisonView}
