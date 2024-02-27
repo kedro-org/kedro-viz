@@ -25,6 +25,7 @@ import {
 
 import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
+import { isRunningLocally } from '../../utils';
 
 /**
  * Shows node meta data
@@ -304,21 +305,23 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasTrackingData && (
-                <button
-                  className="pipeline-metadata__link"
-                  onClick={
-                    isMetricsTrackingDataset
-                      ? toMetricsViewPath
-                      : toExperimentTrackingPath
-                  }
-                >
-                  <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
-                  <span className="pipeline-metadata__link-text">
-                    Open in Experiment Tracking
-                  </span>
-                </button>
-              )}
+              {isRunningLocally()
+                ? hasTrackingData && (
+                    <button
+                      className="pipeline-metadata__link"
+                      onClick={
+                        isMetricsTrackingDataset
+                          ? toMetricsViewPath
+                          : toExperimentTrackingPath
+                      }
+                    >
+                      <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                      <span className="pipeline-metadata__link-text">
+                        Open in Experiment Tracking
+                      </span>
+                    </button>
+                  )
+                : null}
               {hasTable && (
                 <>
                   <div className="pipeline-metadata__preview">

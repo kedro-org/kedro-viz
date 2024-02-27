@@ -29,7 +29,5 @@ Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopen
 kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
-visualise_charts_with_plotly
-visualise_charts_with_matplotlib
 experiment_tracking
 ```

@@ -12,7 +12,12 @@ from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
-from kedro_viz.constants import AWS_REGIONS, DEFAULT_HOST, DEFAULT_PORT
+from kedro_viz.constants import (
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    SHAREABLEVIZ_SUPPORTED_PLATFORMS,
+    VIZ_DEPLOY_TIME_LIMIT,
+)
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
@@ -36,13 +41,8 @@ def viz_cli():  # pylint: disable=missing-function-docstring
 def viz(ctx):
     """Visualise a Kedro pipeline using Kedro viz."""
     if ctx.invoked_subcommand is None:
-        click.echo(
-            click.style(
-                "\nDid you mean this ? \n kedro viz run \n\n",
-                fg="yellow",
-            )
-        )
-        click.echo(click.style(f"{ctx.get_help()}"))
+        display_cli_message("\nDid you mean this ? \n kedro viz run \n\n", "yellow")
+        display_cli_message(f"{ctx.get_help()}")
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -128,18 +128,15 @@ def run(
     installed_version = parse(__version__)
     latest_version = get_latest_version()
     if is_running_outdated_version(installed_version, latest_version):
-        click.echo(
-            click.style(
-                "WARNING: You are using an old version of Kedro Viz. "
-                f"You are using version {installed_version}; "
-                f"however, version {latest_version} is now available.\n"
-                "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
-                "You can view the complete changelog at "
-                "https://github.com/kedro-org/kedro-viz/releases.",
-                fg="yellow",
-            ),
+        display_cli_message(
+            "WARNING: You are using an old version of Kedro Viz. "
+            f"You are using version {installed_version}; "
+            f"however, version {latest_version} is now available.\n"
+            "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+            "You can view the complete changelog at "
+            "https://github.com/kedro-org/kedro-viz/releases.",
+            "yellow",
         )
-
     try:
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
             _VIZ_PROCESSES[port].terminate()
@@ -173,12 +170,7 @@ def run(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        click.echo(
-            click.style(
-                "Starting Kedro Viz ...",
-                fg="green",
-            ),
-        )
+        display_cli_message("Starting Kedro Viz ...", "green")
 
         viz_process.start()
 
@@ -186,12 +178,10 @@ def run(
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
-        click.echo(
-            click.style(
-                "Kedro Viz started successfully. \n\n"
-                f"\u2728 Kedro Viz is running at \n http://{host}:{port}/",
-                fg="green",
-            )
+        display_cli_message(
+            "Kedro Viz started successfully. \n\n"
+            f"\u2728 Kedro Viz is running at \n http://{host}:{port}/",
+            "green",
         )
 
         if browser:
@@ -204,96 +194,150 @@ def run(
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
-    "--region",
+    "--platform",
     type=str,
     required=True,
-    help="AWS region where your S3 bucket is located",
+    help=f"Supported Cloud Platforms like {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,} to host Kedro Viz",
+)
+@click.option(
+    "--endpoint",
+    type=str,
+    required=True,
+    help="Static Website hosted endpoint."
+    "(eg., For AWS - http://<bucket_name>.s3-website.<region_name>.amazonaws.com/)",
 )
 @click.option(
     "--bucket-name",
     type=str,
     required=True,
-    help="AWS S3 bucket name where Kedro Viz will be hosted",
+    help="Bucket name where Kedro Viz will be hosted",
 )
-def deploy(region, bucket_name):
-    """Deploy and host Kedro Viz on AWS S3"""
-    if region not in AWS_REGIONS:
-        click.echo(
-            click.style(
-                "ERROR: Invalid AWS region. Please enter a valid AWS Region (eg., us-east-2).\n"
-                "Please find the complete list of available regions at :\n"
-                "https://docs.aws.amazon.com/AmazonRDS/latest"
-                "/UserGuide/Concepts.RegionsAndAvailabilityZones.html"
-                "#Concepts.RegionsAndAvailabilityZones.Regions",
-                fg="red",
-            ),
+def deploy(platform, endpoint, bucket_name):
+    """Deploy and host Kedro Viz on provided platform"""
+    if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
+        display_cli_message(
+            "ERROR: Invalid platform specified. Kedro-Viz supports \n"
+            f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
+            "red",
         )
         return
 
-    try:
-        viz_deploy_timer = multiprocessing.Process(target=viz_deploy_progress_timer)
-        viz_deploy_timer.start()
-
-        # Loads and populates data from underlying Kedro Project
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
-
-        # Start the deployment
-        deployer = DeployerFactory.create_deployer("s3", region, bucket_name)
-        url = deployer.deploy_and_get_url()
-
-        click.echo(
-            click.style(
-                "\u2728 Success! Kedro Viz has been deployed on AWS S3. It can be accessed at :\n"
-                f"{url}",
-                fg="green",
-            ),
+    if not endpoint:
+        display_cli_message(
+            "ERROR: Invalid endpoint specified. If you are looking for platform \n"
+            "agnostic shareable viz solution, please use the `kedro viz build` command",
+            "red",
         )
-    except PermissionError:  # pragma: no cover
-        click.echo(
-            click.style(
-                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
-                "AWS access keys, a valid AWS region and bucket name.\n"
-                "Please supply your AWS access keys as environment variables "
-                "and make sure the AWS region and bucket name are valid.\n"
-                "More information can be found at : "
-                "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
-                fg="red",
-            )
-        )
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
-        click.echo(
-            click.style(
-                f"ERROR: Failed to deploy and host Kedro-Viz on AWS S3 : {exc} ",
-                fg="red",
-            )
-        )
-    finally:
-        viz_deploy_timer.terminate()
+        return
+
+    create_shareableviz_process(platform, endpoint, bucket_name)
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 def build():
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
+    create_shareableviz_process("local")
+
+
+def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
+    """Creates platform specific deployer process"""
+    try:
+        process_completed = multiprocessing.Value("i", 0)
+        exception_queue = multiprocessing.Queue()
+
+        viz_deploy_process = multiprocessing.Process(
+            target=load_and_deploy_viz,
+            args=(platform, endpoint, bucket_name, process_completed, exception_queue),
+        )
+
+        viz_deploy_process.start()
+        viz_deploy_progress_timer(process_completed, VIZ_DEPLOY_TIME_LIMIT)
+
+        if not exception_queue.empty():  # pragma: no cover
+            raise exception_queue.get_nowait()
+
+        if not process_completed.value:
+            raise TimeoutError()
+
+        if platform != "local":
+            display_cli_message(
+                f"\u2728 Success! Kedro Viz has been deployed on {platform.upper()}. "
+                "It can be accessed at :\n"
+                f"{endpoint}",
+                "green",
+            )
+        else:
+            display_cli_message(
+                "\u2728 Success! Kedro-Viz build files have been "
+                "added to the `build` directory.",
+                "green",
+            )
+
+    except TimeoutError:  # pragma: no cover
+        display_cli_message(
+            "TIMEOUT ERROR: Failed to build/deploy Kedro-Viz as the "
+            f"process took more than {VIZ_DEPLOY_TIME_LIMIT} seconds. "
+            "Please try again later.",
+            "red",
+        )
+
+    except KeyboardInterrupt:  # pragma: no cover
+        display_cli_message(
+            "\nCreating your build/deploy Kedro-Viz process "
+            "is interrupted. Exiting...",
+            "red",
+        )
+
+    except PermissionError:  # pragma: no cover
+        if platform != "local":
+            display_cli_message(
+                "PERMISSION ERROR: Deploying and hosting Kedro-Viz requires "
+                f"{platform.upper()} access keys, a valid {platform.upper()} "
+                "endpoint and bucket name.\n"
+                f"Please supply your {platform.upper()} access keys as environment variables "
+                f"and make sure the {platform.upper()} endpoint and bucket name are valid.\n"
+                "More information can be found at : "
+                "https://docs.kedro.org/en/stable/visualisation/share_kedro_viz.html",
+                "red",
+            )
+        else:
+            display_cli_message(
+                "PERMISSION ERROR: Please make sure, "
+                "you have write access to the current directory",
+                "red",
+            )
+    # pylint: disable=broad-exception-caught
+    except Exception as exc:  # pragma: no cover
+        display_cli_message(f"ERROR: Failed to build/deploy Kedro-Viz : {exc} ", "red")
+
+    finally:
+        viz_deploy_process.terminate()
+
+
+def load_and_deploy_viz(
+    platform, endpoint, bucket_name, process_completed, exception_queue
+):
+    """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         load_and_populate_data(Path.cwd(), ignore_plugins=True)
-        deployer = DeployerFactory.create_deployer("local")
-        url = deployer.deploy_and_get_url()
 
-        click.echo(
-            click.style(
-                "\u2728 Success! Kedro-Viz build files have been successfully added to the "
-                f"{url} directory.",
-                fg="green",
-            )
-        )
+        # Start the deployment
+        deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
+        deployer.deploy()
 
     # pylint: disable=broad-exception-caught
     except Exception as exc:  # pragma: no cover
-        click.echo(
-            click.style(
-                f"ERROR: Failed to build Kedro-Viz : {exc} ",
-                fg="red",
-            )
+        exception_queue.put(exc)
+    finally:
+        process_completed.value = 1
+
+
+def display_cli_message(msg, msg_color=None):
+    """Displays message for Kedro Viz build and deploy commands"""
+    click.echo(
+        click.style(
+            msg,
+            fg=msg_color,
         )
+    )

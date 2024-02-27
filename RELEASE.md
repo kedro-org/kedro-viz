@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Major features and improvements
+
+- Extend support for 'Publishing and sharing Kedro-viz' to Azure and GCP. (#1708, #1711)
 
 # Upcoming release
 
