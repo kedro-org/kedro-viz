@@ -55,7 +55,7 @@ for the app registration.
 
 5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
 
-### Permissions and access control
+## Permissions and access control
 
 Kedro-Viz does not manage permissions or access control. Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
@@ -101,7 +101,7 @@ The endpoint link can be found under **Storage account -> Capabilities -> Static
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
-![](./images/kedro-publish-share.gif)
+![](./images/kedro-publish-azure.gif)
 
 ### Publish and share via CLI
 

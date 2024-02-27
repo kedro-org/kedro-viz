@@ -54,7 +54,7 @@ You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket.
     - Generate a service account key and download it.
 
 
-### Permissions and access control
+## Permissions and access control
 
 Kedro-Viz does not manage permissions or access control. GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
@@ -90,7 +90,7 @@ If you have set up SSL certificate and serve your site using `HTTPS` then provid
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
-![](./images/kedro-publish-share.gif)
+![](./images/kedro-publish-gcp.gif)
 
 ### Publish and share via CLI
 

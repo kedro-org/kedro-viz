@@ -46,7 +46,7 @@ pip install 'kedro-viz[aws]'
 
 3. Generate access keys: Create an [IAM user groups](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html?icmpid=docs_iam_help_panel) with full access to the AWS S3 policy. Add the IAM user to the group and generate access keys. Refer to AWS documentation for detailed instructions on [creating and managing access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
 
-### Permissions and access control
+## Permissions and access control
 
 Kedro-Viz does not manage permissions or access control. AWS manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
@@ -83,7 +83,7 @@ The endpoint link can be found under **S3 bucket -> properties -> Static website
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
-![](./images/kedro-publish-share.gif)
+![](./images/kedro-publish-aws.gif)
 
 ```{note}
 On Kedro-Viz version 7.0.0, you will see a modal dialog to select your region and bucket name.
