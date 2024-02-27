@@ -7,10 +7,12 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 from fastapi.testclient import TestClient
+from importlib_metadata import PackageNotFoundError
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
     EnhancedORJSONResponse,
+    PackageCompatibilityAPIResponse,
     get_package_compatibilities_response,
     save_api_main_response_to_fs,
     save_api_node_response_to_fs,
@@ -851,6 +853,21 @@ class TestPackageCompatibilities:
             assert package_response.package_name == package_name
             assert package_response.package_version == package_version
             assert package_response.is_compatible is expected_compatibility_response
+
+    def test_get_package_compatibilities_exception_response(
+        self,
+        mocker,
+    ):
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_compatibilities_response",
+            side_effect=PackageNotFoundError("random-package"),
+        )
+        package_name = "random-package"
+        response = get_package_compatibilities_response({package_name: "1.0.0"})
+        expected_response = PackageCompatibilityAPIResponse(
+            package_name="random-package", package_version="0.0.0", is_compatible=False
+        )
+        assert response == [expected_response]
 
 
 class TestEnhancedORJSONResponse:

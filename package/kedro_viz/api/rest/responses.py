@@ -3,6 +3,7 @@
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
 import logging
+from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
@@ -377,8 +378,13 @@ def get_package_compatibilities_response(
     package_requirements_response = []
 
     for package_name in package_requirements:
-        package_version = get_package_version(package_name)
-        compatible_version = package_requirements.get(package_name, "")
+        try:
+            package_version = get_package_version(package_name)
+        except PackageNotFoundError as exc:
+            logger.exception("Failed to get package version. Error: %s", str(exc))
+            package_version = "0.0.0"
+
+        compatible_version = package_requirements.get(package_name, "0.0.1")
         is_compatible = packaging.version.parse(
             package_version
         ) >= packaging.version.parse(compatible_version)
