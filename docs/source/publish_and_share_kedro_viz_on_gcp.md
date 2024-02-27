@@ -1,7 +1,9 @@
 # Publish and Share via GCP
-Kedro-Viz version 8.0.0 introduces publish and share via GCP.
 
-## Install Kedro
+This page describes how to publish Kedro-Viz to Azure to share it with others. It uses the spaceflights tutorial as an example.
+
+## Setup your kedro project 
+
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
 ```{important}
@@ -30,8 +32,7 @@ fsspec[s3]>=2023.9.0
 kedro>=0.18.2
 ```
 
-## Install dependencies
-Step 1: 
+## Install cloud dependencies
 
 ```bash
 pip install 'kedro-viz[gcp]'
@@ -39,21 +40,17 @@ pip install 'kedro-viz[gcp]'
 
 ## Configure your Google Cloud Storage
 
-Step 2: You can host your Kedro-Viz project on Google Cloud Storage bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on Google Cloud Storage.
+You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on GCS.
 
 ```{important}
 You need to enable the Compute Engine API for your project as mentioned in the tutorial
 ```
 
-```{note}
-Uploading your site's files will be done through Kedro-Viz
-```
-
 Once the storage account is created and the bucket is made readable to anyone on the public internet, you'll need to set up a load balancer and configure SSL certificate if you want to serve your website through `HTTPS`. To do so, follow the [Setup Load Balancer tutorial](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl)
 
-Uploading files through Kedro-Viz would require you to set `GOOGLE_APPLICATION_CREDENTIALS` as an environment variable. You will need to create a Service Account to get the required token. 
+Uploading files through Kedro-Viz requires setting GOOGLE_APPLICATION_CREDENTIALS as an environment variable. Create a service account to obtain the required token.
 
-Sign in to the [GCP Portal](https://console.cloud.google.com/) and create a Service Account from IAM & Admin dashboard as shown below
+Sign in to the [GCP Portal](https://console.cloud.google.com/) and create a service account from IAM & admin dashboard as shown below
 
 ![](./images/gcp_sa.png)
 
@@ -63,9 +60,9 @@ You must assign `Storage Object Creator` and `Storage Object User` roles
 
 ![](./images/gcp_sa_roles.png)
 
-You can ignore granting users access to this service account unless required by your project and click on Done
+Ignore granting users access to this service account unless required by your project, then click on Done.
 
-Once the Service Account is created, you need to generate a Service Account Key as shown below
+Once the service account is created, you need to generate a service account key as shown below
 
 ![](./images/gcp_sa_keys.png)
 
@@ -75,13 +72,13 @@ Once the Service Account is created, you need to generate a Service Account Key 
 
 ### Permissions and access control
 
-All permissions and access control are controlled by Google. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
+GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
 You can control who can view your visualisation using [IAM permissions and ACLs](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls). See the official Google documentation for more information.
 
 ## Set credentials
 
-Step 3: Once that's completed, you'll need to set your generated Service Account Key file absolute path as environment variable in your terminal window, as shown below:
+Step 3: Once that's completed, you'll need to set your generated service account key file absolute path as environment variable in your terminal window, as shown below:
 
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS="absolute-path-to-downloaded-service-account-key-file"
@@ -90,31 +87,38 @@ export GOOGLE_APPLICATION_CREDENTIALS="absolute-path-to-downloaded-service-accou
 For more information, see the official Google documentation about [how to work with environmental credentials](https://cloud.google.com/composer/docs/how-to/managing/environment-variables).
 
 
-### Billing
-
-You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using Cloud Load Balancing.
-
-See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
-
 ## Publish and share the project
 
-Once your Cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. 
+Once your cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. 
 
-Step 4: Start Kedro-Viz by running the following command in your terminal:
+### Publish and share via Kedro-Viz UI 
+
+Start Kedro-Viz by running the following command in your terminal:
 
 ```bash
 kedro viz run
 ```
 
-Step 5: Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
+Navigate to the **Publish and share** icon located in the lower-left corner of the application interface. A modal dialog will appear, prompting you to select your hosting platform and provide your bucket name and endpoint link.
 
-```{note}
-You will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port** if you are using `HTTP`. 
+The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port** if you are using `HTTP`. 
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
 
-Step 6: Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
-
-Here is an example of the flow (TODO - Need to add flows specific to cloud provider):
+Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
 ![](./images/kedro-publish-share.gif)
+
+### Publish and share via CLI
+
+Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execute the following command from your project's root folder:
+
+```bash
+kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
+```
+
+### Billing
+
+You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using Cloud Load Balancing.
+
+See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.

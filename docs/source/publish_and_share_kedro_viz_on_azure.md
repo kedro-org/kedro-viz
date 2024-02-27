@@ -1,8 +1,9 @@
 # Publish and Share via Azure
 
-Kedro-Viz version 8.0.0 introduces publish and share via Azure.
+This page describes how to publish Kedro-Viz to Azure to share it with others. It uses the spaceflights tutorial as an example.
 
-## Install Kedro
+## Setup your kedro project 
+
 If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
 
 ```{important}
@@ -31,7 +32,7 @@ fsspec[s3]>=2023.9.0
 kedro>=0.18.2
 ```
 
-## Install dependencies
+## Install cloud dependencies
  
  Step 1:
  
@@ -41,50 +42,46 @@ pip install 'kedro-viz[azure]'
 
 ## Configure your Azure Blob Storage
 
-Step 2: You can host your Kedro-Viz project on Azure Blob Storage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
+You can host your Kedro-Viz project on Azure Blob Storage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
 
-```{note}
-Uploading your site's files will be done through Kedro-Viz
-```
+Once the storage account is created and enabled for static website hosting, you'll need to register an app, get the app registration parameters namely `Application (Client) ID`, `Directory (Tenant) ID`, `Client Secret Value`. To do so:
 
-Step 3: Once the storage account is created and enabled for static website hosting, you'll need to register an app, get the app registration parameters namely `Application (Client) ID`, `Directory (Tenant) ID`, `Client Secret Value`. To do so:
-
-Step 4: Sign in to the [AzurePortal](https://portal.azure.com/#home) and create an App registration.
+Sign in to the [AzurePortal](https://portal.azure.com/#home) and create an App registration.
 For more information, see the official Azure documentation about [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
 ![](./images/azure_app_registration.png)
 
-When registration finishes, the app registration's Overview pane is displayed. You see the Application (Client) ID and Directory (Tenant) ID. We will use these values to set our environment variables.
+Upon completion of registration, navigate to the app registration's overview pane to obtain the Application (Client) ID and Directory (Tenant) ID, which will be used to set environment variables.
 
 ![](./images/azure_app_secrets.png)
 
-Step 5: Add a Client Secret for the app registration. For more information, see [Add a client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
+Add a client secret for the app registration. For more information, see [Add a client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
 
 ![](./images/azure_client_secret.png)
 
-Once the Client Secret is created, the Client secrets section is displayed and you can find the Client Secret Value as shown below
+Once the client secret is created, the client secrets section is displayed and you can find the client secret value as shown below
 
 ![](./images/azure_client_secret_value.png)
 
-Step 6: Assign Access Control (IAM) role to the storage account. For more information, see [Assign Azure roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition)
+Assign Access Control (IAM) role to the storage account. For more information, see [Assign Azure roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition)
 
 Go to the storage account that is created and click on Access control (IAM) as shown below
 
 ![](./images/azure_iam_tab.png)
 
-Step 7: Add role assignment and select the role `Storage Blob Data Contributor` as shown below
+Add role assignment and select the role `Storage Blob Data Contributor` as shown below
 
 ![](./images/azure_add_role_assign.png)
 
 ![](./images/azure_storage_role.png)
 
-On the Members tab, select User, group, or service principal to assign the selected role to the app registration. Click on Select members, and find your app registration name by typing in the Select box as shown below 
+On the members tab, select user, group, or service principal to assign the selected role to the app registration. Click on select members, and find your app registration name by typing in the select box. 
 
 ![](./images/azure_member_assign.png)
 
 ### Permissions and access control
 
-All permissions and access control are controlled by Azure. It's up to you, the user, if you want to allow anyone to see your project or limit access to certain IP addresses, users, or groups.
+Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
 You can control who can view your visualisation using [attribute-based access control](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-auth-abac). See the official Azure documentation for more information.
 
@@ -110,31 +107,36 @@ export AZURE_STORAGE_CLIENT_SECRET="your-app-client-secret-value"
 For more information, see the official Azure documentation about [how to work with environmental credentials](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.environmentcredential?view=azure-dotnet).
 
 
-### Billing
-
-You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
-
-See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
-
-
 ## Publish and share the project
 
-Once your Cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. 
+Once your cloud storage is configured and the credentials are set, you are now ready to publish and share your Kedro-Viz project. 
 
-Step 9: Start Kedro-Viz by running the following command in your terminal:
+### Publish and share via Kedro-Viz UI 
+
+Start Kedro-Viz by running the following command in your terminal:
 
 ```bash
 kedro viz run
 ```
 
-Step 10: Click the **Publish and share** icon in the lower-left of the application. You will see a modal dialog to select your relevant AWS Bucket Region and enter your Bucket Name.
+Navigate to the **Publish and share** icon located in the lower-left corner of the application interface. A modal dialog will appear, prompting you to select your hosting platform and provide your bucket name and endpoint link.
 
-```{note}
-You will see a modal dialog to select your hosting platform, input your bucket name and endpoint link. The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
-```
+The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
-Here is an example of the flow (TODO - Need to add flows specific to cloud provider):
-
 ![](./images/kedro-publish-share.gif)
+
+### Publish and share via CLI
+
+Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execute the following command from your project's root folder:
+
+```bash
+kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
+```
+
+## Billing
+
+You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
+
+See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.
