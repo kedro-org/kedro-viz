@@ -43,8 +43,7 @@ class GraphEdgesRepository:
         self.edges_list: Set[GraphEdge] = set()
 
     def __iter__(self) -> Generator:
-        for edge in self.edges_list:
-            yield edge
+        yield from self.edges_list
 
     def remove_edge(self, edge: GraphEdge):
         """Remove an edge from this edge repository.
