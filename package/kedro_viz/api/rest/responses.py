@@ -25,9 +25,6 @@ from kedro_viz.models.flowchart import (
 
 logger = logging.getLogger(__name__)
 
-_FSSPEC_PACKAGE_NAME = "fsspec"
-_FSSPEC_COMPATIBLE_VERSION = "2023.9.0"
-
 
 class APIErrorMessage(BaseModel):
     message: str
@@ -374,19 +371,27 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
 
 
 def get_package_compatibilities_response(
-    package_name: str = _FSSPEC_PACKAGE_NAME,
-    compatible_version: str = _FSSPEC_COMPATIBLE_VERSION,
-):
+    package_requirements: Dict[str, str],
+) -> List[PackageCompatibilityAPIResponse]:
     """API response for `/api/package_compatibility`."""
-    package_version = get_package_version(package_name)
-    is_compatible = packaging.version.parse(package_version) >= packaging.version.parse(
-        compatible_version
-    )
-    return PackageCompatibilityAPIResponse(
-        package_name=package_name,
-        package_version=package_version,
-        is_compatible=is_compatible,
-    )
+    package_requirements_response = []
+
+    for package_name in package_requirements:
+        package_version = get_package_version(package_name)
+        compatible_version = package_requirements.get(package_name, "")
+        is_compatible = packaging.version.parse(
+            package_version
+        ) >= packaging.version.parse(compatible_version)
+
+        package_requirements_response.append(
+            PackageCompatibilityAPIResponse(
+                package_name=package_name,
+                package_version=package_version,
+                is_compatible=is_compatible,
+            )
+        )
+
+    return package_requirements_response
 
 
 def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):

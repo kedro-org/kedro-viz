@@ -18,6 +18,7 @@ from kedro_viz.api.rest.responses import (
     save_api_responses_to_fs,
     write_api_response_to_fs,
 )
+from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.models.flowchart import TaskNode
 
 
@@ -838,7 +839,7 @@ class TestPackageCompatibilities:
             "kedro_viz.api.rest.responses.get_package_version",
             return_value=expected_version,
         )
-        response = get_package_compatibilities_response()
+        response = get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
         assert response.package_name == "fsspec"
         assert response.package_version == expected_version
         assert response.is_compatible is expected_compatibility

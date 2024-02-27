@@ -13,3 +13,5 @@ DEFAULT_PORT = 4141
 VIZ_DEPLOY_TIME_LIMIT = 300
 
 SHAREABLEVIZ_SUPPORTED_PLATFORMS = ["aws", "azure", "gcp"]
+
+PACKAGE_REQUIREMENTS = {"fsspec": "2023.9.0", "kedro-datasets": "2.1.0"}
