@@ -1,4 +1,4 @@
-# Publish and Share via AWS
+# Publish and share via AWS
 
 This page describes how to publish Kedro-Viz to AWS to share it with others. It uses the spaceflights tutorial as an example.
 

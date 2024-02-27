@@ -5,9 +5,9 @@ The publish and share feature on Kedro-Viz enables seamless sharing of pipeline 
 1. **Platform-agnostic sharing with Kedro-Viz:** Use the `kedro viz build` command to publish Kedro-Viz to platforms like GitHub pages, sharing the generated URL. This is described in [Platform-agnostic sharing with Kedro-Viz](./platform_agnostic_sharing_with_kedro_viz)
 
 2. **Publish and share Kedro-Viz automatically:** Use the `kedro viz deploy` command to automatically share Kedro-Viz on AWS, Azure, or GCP.  See detailed guides below:
-* [Publish and share Kedro-Viz on AWS](./publish_and_share_kedro_viz_on_aws)
-* [Publish and share Kedro-Viz on Azure](./publish_and_share_kedro_viz_on_azure)
-* [Publish and share Kedro-Viz on GCP](./publish_and_share_kedro_viz_on_gcp)
+* [Publish and share on AWS](./publish_and_share_kedro_viz_on_aws)
+* [Publish and share on Azure](./publish_and_share_kedro_viz_on_azure)
+* [Publish and share on GCP](./publish_and_share_kedro_viz_on_gcp)
 
 
 ```{toctree}

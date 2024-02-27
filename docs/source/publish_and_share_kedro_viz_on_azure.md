@@ -1,4 +1,4 @@
-# Publish and Share via Azure
+# Publish and share via Azure
 
 This page describes how to publish Kedro-Viz to Azure to share it with others. It uses the spaceflights tutorial as an example.
 
