@@ -14,7 +14,7 @@ parameters:
     default: false
 
 orbs:
-  win: circleci/windows@2.4.1
+  win: circleci/windows@4.1.1
   node: circleci/node@5.0.3
 
 # No windows executor is listed here since windows builds use win/default and modify
@@ -73,15 +73,16 @@ commands:
             make build
 
   win_setup_python_env:
-    # Miniconda3 is pre-installed on the machine:
-    # https://circleci.com/docs/2.0/hello-world-windows/
     parameters:
       python_version:
         type: string
     steps:
       - run:
-          name: Initialize conda
-          command: conda init powershell
+          name: Install and initialize Miniconda
+          command: |
+            choco install miniconda3 -y
+            refreshenv
+            C:\tools\miniconda3\Scripts\conda init powershell
       - run:
           name: Create 'kedro-viz' conda environment
           command: conda create --name kedro-viz python=<<parameters.python_version>> -y
