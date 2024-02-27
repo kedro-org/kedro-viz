@@ -46,14 +46,14 @@ You can host your Kedro-Viz project on Azure Blob Storage.
 
 1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage.
 
-2. Register an App: Sign in to the Azure Portal and create an [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
+2. Register an app: Sign in to the Azure Portal and create an [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
-3. Obtain Parameters: In the app registration's overview pane, note down the Application (Client) ID and Directory (Tenant) ID.
+3. Obtain parameters: In the app registration's overview pane, note down the Application (Client) ID and Directory (Tenant) ID.
 
-4. Add Client Secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
+4. Add client secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
 for the app registration.
 
-5. Assign IAM Role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
+5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
 
 ### Permissions and access control
 
