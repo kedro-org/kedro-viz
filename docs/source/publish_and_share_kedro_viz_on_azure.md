@@ -42,46 +42,22 @@ pip install 'kedro-viz[azure]'
 
 ## Configure your Azure Blob Storage
 
-You can host your Kedro-Viz project on Azure Blob Storage. You must first create an Azure Storage account and then enable static website hosting. To do so, follow the [Azure tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure a static website on AzureBlobStorage.
+You can host your Kedro-Viz project on Azure Blob Storage. 
 
-Once the storage account is created and enabled for static website hosting, you'll need to register an app, get the app registration parameters namely `Application (Client) ID`, `Directory (Tenant) ID`, `Client Secret Value`. To do so:
+1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage.
 
-Sign in to the [AzurePortal](https://portal.azure.com/#home) and create an App registration.
-For more information, see the official Azure documentation about [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
+2. Register an App: Sign in to the Azure Portal and create an [App Registration](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
-![](./images/azure_app_registration.png)
+3. Obtain Parameters: In the app registration's overview pane, note down the Application (Client) ID and Directory (Tenant) ID.
 
-Upon completion of registration, navigate to the app registration's overview pane to obtain the Application (Client) ID and Directory (Tenant) ID, which will be used to set environment variables.
+4. Add Client Secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
+for the app registration.
 
-![](./images/azure_app_secrets.png)
-
-Add a client secret for the app registration. For more information, see [Add a client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
-
-![](./images/azure_client_secret.png)
-
-Once the client secret is created, the client secrets section is displayed and you can find the client secret value as shown below
-
-![](./images/azure_client_secret_value.png)
-
-Assign Access Control (IAM) role to the storage account. For more information, see [Assign Azure roles](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition)
-
-Go to the storage account that is created and click on Access control (IAM) as shown below
-
-![](./images/azure_iam_tab.png)
-
-Add role assignment and select the role `Storage Blob Data Contributor` as shown below
-
-![](./images/azure_add_role_assign.png)
-
-![](./images/azure_storage_role.png)
-
-On the members tab, select user, group, or service principal to assign the selected role to the app registration. Click on select members, and find your app registration name by typing in the select box. 
-
-![](./images/azure_member_assign.png)
+5. Assign IAM Role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
 
 ### Permissions and access control
 
-Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
+Kedro-Viz does not manage permissions or access control. Azure manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
 You can control who can view your visualisation using [attribute-based access control](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-auth-abac). See the official Azure documentation for more information.
 
@@ -96,7 +72,7 @@ Having a `$web` container in your AzureBlobStorage is mandatory to use Kedro-Viz
 
 ## Set credentials
 
-Step 8: Once that's completed, you'll need to set your Azure credentials as environment variables in your terminal window, as shown below:
+Once that's completed, you'll need to set your Azure credentials as environment variables in your terminal window, as shown below:
 
 ```bash
 export AZURE_STORAGE_TENANT_ID="your-app-tenant-id"
@@ -137,6 +113,6 @@ kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azu
 
 ## Billing
 
-You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
+Kedro-Viz does not handle billing. You pay for storing objects on your AzureBlobStorage. The amount you pay depends on the volume of data stored per month, quantity and types of operations performed, along with any data transfer costs, data redundancy option selected.
 
 See the official [Azure documentation](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/) for more information.

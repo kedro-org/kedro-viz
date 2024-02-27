@@ -40,45 +40,29 @@ pip install 'kedro-viz[gcp]'
 
 ## Configure your Google Cloud Storage
 
-You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket. You must first create a Google Cloud Storage account and make your bucket readable to anyone on the public internet. To do so, follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure a static website on GCS.
+You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket.
 
-```{important}
-You need to enable the Compute Engine API for your project as mentioned in the tutorial
-```
+1. Enable static website hosting: Follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure static website hosting on GCS.
 
-Once the storage account is created and the bucket is made readable to anyone on the public internet, you'll need to set up a load balancer and configure SSL certificate if you want to serve your website through `HTTPS`. To do so, follow the [Setup Load Balancer tutorial](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl)
+2. Ensure the `Compute Engine API` is enabled for your project as mentioned in the tutorial.
 
-Uploading files through Kedro-Viz requires setting GOOGLE_APPLICATION_CREDENTIALS as an environment variable. Create a service account to obtain the required token.
+3. Set up load balancer and SSL certificate: If serving your website through HTTPS, [set up a load balancer](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl) and configure an SSL certificate. 
 
-Sign in to the [GCP Portal](https://console.cloud.google.com/) and create a service account from IAM & admin dashboard as shown below
+4. Set environment variable: For file uploads through Kedro-Viz, set `GOOGLE_APPLICATION_CREDENTIALS` as an environment variable. Follow these steps:
+    - Create a service account from the IAM & admin dashboard in the [GCP Portal](https://console.cloud.google.com/).
+    - Assign `Storage Object Creator` and `Storage Object User` roles to the service account.
+    - Generate a service account key and download it.
 
-![](./images/gcp_sa.png)
-
-![](./images/gcp_sa_details.png)
-
-You must assign `Storage Object Creator` and `Storage Object User` roles
-
-![](./images/gcp_sa_roles.png)
-
-Ignore granting users access to this service account unless required by your project, then click on Done.
-
-Once the service account is created, you need to generate a service account key as shown below
-
-![](./images/gcp_sa_keys.png)
-
-![](./images/gcp_sa_key_download.png)
-
-![](./images/gcp_sa_key_confirm.png)
 
 ### Permissions and access control
 
-GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
+Kedro-Viz does not manage permissions or access control. GCP manages all permissions and access control. As a user, you have the choice to allow anyone to view your project or restrict access to specific IP addresses, users, or groups.
 
 You can control who can view your visualisation using [IAM permissions and ACLs](https://cloud.google.com/storage/docs/access-control#using_permissions_with_acls). See the official Google documentation for more information.
 
 ## Set credentials
 
-Step 3: Once that's completed, you'll need to set your generated service account key file absolute path as environment variable in your terminal window, as shown below:
+Once that's completed, you'll need to set your generated service account key file absolute path as environment variable in your terminal window, as shown below:
 
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS="absolute-path-to-downloaded-service-account-key-file"
@@ -118,6 +102,6 @@ kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azu
 
 ### Billing
 
-You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using Cloud Load Balancing.
+Kedro-Viz does not handle billing. You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using cloud load balancing.
 
 See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
