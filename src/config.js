@@ -168,6 +168,9 @@ export const inputKeyToStateKeyMap = {
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';
 
+export const PACKAGE_FSSPEC = 'fsspec';
+export const PACKAGE_KEDRO_DATASETS = 'kedro-datasets';
+
 export const KEDRO_VIZ_DOCS_URL =
   'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html';
 export const KEDRO_VIZ_PUBLISH_URL = `${KEDRO_VIZ_DOCS_URL}#publish-and-share-kedro-viz-automatically`;

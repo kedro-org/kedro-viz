@@ -29,7 +29,6 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click({ force: true });
-    cy.get('[data-test="disclaimerButton"]').click({ force: true });
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(

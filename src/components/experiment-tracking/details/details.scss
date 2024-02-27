@@ -50,3 +50,15 @@
     background-color: var(--color-exp-tracking-bg);
   }
 }
+
+.kedroDatasetsCompatible {
+  padding: 1em 0 0 2em;
+  font-size: 16px;
+
+  p {
+    background: #{variables.$yellow-0};
+    color: #{variables.$black-900};
+    width: fit-content;
+    padding: 5px 15px;
+  }
+}
