@@ -1,6 +1,6 @@
 # Publish and share on GCP
 
-This page describes how to publish Kedro-Viz on Azure to share it with others. It uses the spaceflights tutorial as an example.
+This page describes how to publish Kedro-Viz on GCP to share it with others. It uses the spaceflights tutorial as an example.
 
 ## Setup your kedro project 
 
@@ -95,7 +95,7 @@ Once those details are complete, click **Publish**. A hosted, shareable URL will
 
 ### Publish and share via CLI
 
-Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execute the following command from your project's root folder:
+Use the `kedro viz deploy` command to publish Kedro-Viz on GCP. You can execute the following command from your project's root folder:
 
 ```bash
 kedro viz deploy --platform=gcp --endpoint=[gcp-endpoint] --bucket-name=[gcp-bucket-name]
