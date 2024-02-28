@@ -28,6 +28,11 @@ from kedro_viz.launchers.utils import (
 )
 from kedro_viz.server import load_and_populate_data
 
+try:
+    from azure.core.exceptions import ServiceRequestError
+except ImportError:  # pragma: no cover
+    ServiceRequestError = None  # type: ignore
+
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
@@ -326,6 +331,13 @@ def load_and_deploy_viz(
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
         deployer.deploy()
 
+    except (
+        # pylint: disable=catching-non-exception
+        (FileNotFoundError, ServiceRequestError)
+        if ServiceRequestError is not None
+        else FileNotFoundError
+    ):  # pragma: no cover
+        exception_queue.put(Exception("The specified bucket does not exist"))
     # pylint: disable=broad-exception-caught
     except Exception as exc:  # pragma: no cover
         exception_queue.put(exc)
