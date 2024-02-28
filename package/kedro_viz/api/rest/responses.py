@@ -377,14 +377,13 @@ def get_package_compatibilities_response(
     """API response for `/api/package_compatibility`."""
     package_requirements_response = []
 
-    for package_name in package_requirements:
+    for package_name, compatible_version in package_requirements.items():
         try:
             package_version = get_package_version(package_name)
         except PackageNotFoundError as exc:
             logger.exception("Failed to get package version. Error: %s", str(exc))
             package_version = "0.0.0"
 
-        compatible_version = package_requirements.get(package_name, "0.0.1")
         is_compatible = packaging.version.parse(
             package_version
         ) >= packaging.version.parse(compatible_version)
