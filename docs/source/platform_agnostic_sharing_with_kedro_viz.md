@@ -2,7 +2,7 @@
 
 Introduced in Kedro-Viz version 7.1.0, the `kedro viz build` command allows seamless publishing and sharing of Kedro-Viz on any static website hosting platform. Running this command from the CLI generates a `build` folder within your Kedro project, containing a static Kedro-Viz app package.
 
-This page describes how to publish Kedro-Viz to a static website hosting platform using `kedro viz build`. It uses the spaceflights tutorial as an example.
+This page describes how to publish Kedro-Viz on a static website hosting platform using `kedro viz build`. It uses the spaceflights tutorial as an example.
 
 ## Setup your kedro project 
 
@@ -27,10 +27,10 @@ When prompted for a project name, you can enter anything, but we will assume `Sp
 pip install -r requirements.txt
 ```
 
-3. Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+3. Kedro-Viz requires specific minimum versions of `fsspec`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
-fsspec[s3]>=2023.9.0
+fsspec>=2023.9.0
 kedro>=0.18.2
 ```
 

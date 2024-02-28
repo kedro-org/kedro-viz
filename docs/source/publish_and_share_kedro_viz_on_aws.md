@@ -1,6 +1,6 @@
-# Publish and share via AWS
+# Publish and share on AWS
 
-This page describes how to publish Kedro-Viz to AWS to share it with others. It uses the spaceflights tutorial as an example.
+This page describes how to publish Kedro-Viz on AWS to share it with others. It uses the spaceflights tutorial as an example.
 
 ## Setup your kedro project 
 
@@ -25,10 +25,10 @@ When your project is ready, navigate to the root directory of the project. Insta
 pip install -r requirements.txt
 ```
 
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+Kedro-Viz requires specific minimum versions of `fsspec`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
-fsspec[s3]>=2023.9.0
+fsspec>=2023.9.0
 kedro>=0.18.2
 ```
 
@@ -80,7 +80,7 @@ Set up endpoint
 ---------------
 
 ```{important}
-The endpoint link can be found under **S3 bucket -> properties -> Static website hosting -> Bucket website endpoint**.
+The endpoint link can be found under **S3 bucket -> Properties -> Static website hosting -> Bucket website endpoint**.
 ```
 
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
@@ -93,13 +93,13 @@ On Kedro-Viz version 7.0.0, you will see a modal dialog to select your region an
 
 ### Publish and share via CLI
 
-Use the `kedro viz deploy` command to publish Kedro-viz on AWS. You can execute the following command from your project's root folder:
+Use the `kedro viz deploy` command to publish Kedro-Viz on AWS. You can execute the following command from your project's root folder:
 
 ```bash
 kedro viz deploy --platform=aws --endpoint=[s3-endpoint] --bucket-name=[s3-bucket-name]
 ```
 
-If you are on Kedro-viz 7.0.0 you can still publish and share Kedro-Viz project using the existing command 
+If you are on Kedro-Viz 7.0.0 you can still publish and share Kedro-Viz project using the existing command 
 
 ```bash
 kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]

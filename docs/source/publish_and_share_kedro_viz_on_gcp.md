@@ -1,6 +1,6 @@
-# Publish and share via GCP
+# Publish and share on GCP
 
-This page describes how to publish Kedro-Viz to Azure to share it with others. It uses the spaceflights tutorial as an example.
+This page describes how to publish Kedro-Viz on Azure to share it with others. It uses the spaceflights tutorial as an example.
 
 ## Setup your kedro project 
 
@@ -25,10 +25,10 @@ When your project is ready, navigate to the root directory of the project. Insta
 pip install -r requirements.txt
 ```
 
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+Kedro-Viz requires specific minimum versions of `fsspec`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
-fsspec[s3]>=2023.9.0
+fsspec>=2023.9.0
 kedro>=0.18.2
 ```
 
@@ -50,11 +50,10 @@ The process of uploading your site's files will be done through Kedro-Viz.
 
 2. Ensure the `Compute Engine API` is enabled for your project as mentioned in the tutorial.
 
-3. Set up load balancer and SSL certificate: If serving your website through HTTPS, [set up a load balancer](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl) and configure an SSL certificate. 
+3.  [Set up a load balancer](https://cloud.google.com/storage/docs/hosting-static-website#lb-ssl) to serve your website. If you are serving it via HTTPS, also configure an SSL certificate.
 
-4. Set environment variable: For file uploads through Kedro-Viz, set `GOOGLE_APPLICATION_CREDENTIALS` as an environment variable. Follow these steps:
+4. Obtain application credentials: Follow these steps:
     - Create a service account from the IAM & admin dashboard in the [GCP Portal](https://console.cloud.google.com/).
-    - Assign `Storage Object Creator` and `Storage Object User` roles to the service account.
     - Generate a service account key and download it.
 
 ## Set credentials
@@ -96,10 +95,10 @@ Once those details are complete, click **Publish**. A hosted, shareable URL will
 
 ### Publish and share via CLI
 
-Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execute the following command from your project's root folder:
+Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execute the following command from your project's root folder:
 
 ```bash
-kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
+kedro viz deploy --platform=gcp --endpoint=[gcp-endpoint] --bucket-name=[gcp-bucket-name]
 ```
 
 ## Permissions and access control
@@ -112,4 +111,4 @@ You can control who can view your visualisation using [IAM permissions and ACLs]
 
 Kedro-Viz does not handle billing. You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using cloud load balancing.
 
-See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancing Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
+See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancer Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.

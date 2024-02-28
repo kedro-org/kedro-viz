@@ -1,6 +1,6 @@
-# Publish and share via Azure
+# Publish and share on Azure
 
-This page describes how to publish Kedro-Viz to Azure to share it with others. It uses the spaceflights tutorial as an example.
+This page describes how to publish Kedro-Viz on Azure to share it with others. It uses the spaceflights tutorial as an example.
 
 ## Setup your kedro project 
 
@@ -25,10 +25,10 @@ When your project is ready, navigate to the root directory of the project. Insta
 pip install -r requirements.txt
 ```
 
-Kedro-Viz requires specific minimum versions of `fsspec[s3]`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
+Kedro-Viz requires specific minimum versions of `fsspec`, and `kedro` to publish your project. Ensure you have these correct versions by updating the `requirements.txt` file of the Kedro project to add the following:
 
 ```text
-fsspec[s3]>=2023.9.0
+fsspec>=2023.9.0
 kedro>=0.18.2
 ```
 
@@ -44,7 +44,7 @@ pip install 'kedro-viz[azure]'
 
 You can host your Kedro-Viz project on Azure Blob Storage. 
 
-1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage. Please note that uploading your site's files will be done through Kedro-Viz
+1. Enable static website hosting - Follow the [tutorial](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal) to configure static website hosting on Azure Blob Storage. 
 
 ```{note}
 The process of uploading your site's files will be done through Kedro-Viz.
@@ -109,7 +109,7 @@ Once those details are complete, click **Publish**. A hosted, shareable URL will
 
 ### Publish and share via CLI
 
-Use the `kedro viz deploy` command to publish Kedro-viz on Azure. You can execute the following command from your project's root folder:
+Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execute the following command from your project's root folder:
 
 ```bash
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
