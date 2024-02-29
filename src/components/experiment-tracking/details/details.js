@@ -88,8 +88,9 @@ const Details = ({
     return !isKedroDatasetsCompatible ? (
       <div className="kedroDatasetsCompatible">
         <p>
-          Kedro-Viz Experiment Tracking is supported only on kedro-datasets{' '}
-          {'>'}= 2.1.0
+          Kedro-Viz Experiment Tracking is only supported with kedro-datasets
+          version 2.1.0 and above. Please update kedro-datasets in order to use
+          this feature.
         </p>
       </div>
     ) : null;
