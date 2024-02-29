@@ -9,7 +9,6 @@ import orjson
 import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
-from kedro.io.core import get_protocol_and_path
 from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.api.rest.utils import get_package_version
