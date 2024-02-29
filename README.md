@@ -64,17 +64,17 @@ There are two ways you can use Kedro-Viz:
 
 ## Usage
 
-#### Compatibility with Kedro
+#### Compatibility with Kedro and Kedro-datasets   
 
-Ensure your Kedro-Viz and Kedro versions are compatible by referencing the following table:
+Ensure your Kedro, Kedro-Viz and Kedro-datasets versions are supported by referencing the following table:
 
-| Kedro-Viz version | Kedro version     |
-| ----------------- | ----------------- |
-| >=4.7             | >=0.17.5          |
-| >=3.8.0, <4.7     | >=0.16.6, <0.17.5 |
-| <3.8.0            | <0.16.6           |
-
-For **Python 3.6** users, the last supported version of Kedro-Viz is **3.16.0**
+| Python Version |         |       Last Supported       ||
+| :---:          | :---:   | :---:     | :---:          |
+|                | Kedro   | Kedro-Viz | Kedro-datasets |
+|3.6             | 0.17.7  | 4.1.1     | -              |
+|3.7             | 0.18.14 | 6.7.0     | 1.8.0          |
+|3.8             | Active  | 7.1.0     | 1.8.0          |
+|>= 3.9          | Active  | Active    | Active         |
 
 ### CLI Usage
 
