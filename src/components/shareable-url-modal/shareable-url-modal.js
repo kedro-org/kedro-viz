@@ -6,8 +6,11 @@ import { toggleShareableUrlModal } from '../../actions';
 import {
   hostingPlatform,
   inputKeyToStateKeyMap,
-  KEDRO_VIZ_DOCS_URL,
-  KEDRO_VIZ_PUBLISH_URL,
+  KEDRO_VIZ_PUBLISH_DOCS_URL,
+  KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_GCP_DOCS_URL,
 } from '../../config';
 
 import Button from '../ui/button';
@@ -282,7 +285,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_DOCS_URL}
+            href={KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL}
           >
             the documentation
           </a>{' '}
@@ -322,7 +325,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_DOCS_URL}
+            href={KEDRO_VIZ_PUBLISH_DOCS_URL}
           >
             docs
           </a>
@@ -336,11 +339,27 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_URL}
+            href={KEDRO_VIZ_PUBLISH_AWS_DOCS_URL}
           >
-            the documentation
+            AWS
           </a>
-          .
+          ,{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL}
+          >
+            Azure
+          </a>{' '}
+          and{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_PUBLISH_GCP_DOCS_URL}
+          >
+            GCP
+          </a>{' '}
+          docs.
         </p>
       </div>
     );
