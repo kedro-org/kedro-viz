@@ -76,6 +76,44 @@ Ensure your Kedro, Kedro-Viz and Kedro-datasets versions are supported by refere
 |3.8             | Active  | 7.1.0     | 1.8.0          |
 |>= 3.9          | Active  | Active    | Active         |
 
+<table>
+    <tr style="align: center;">
+        <th>Python Version</th>
+        <th style="text-align: center" colspan="3">Last Supported</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Kedro</td>
+        <td>Kedro-Viz</td>
+        <td>Kedro-datasets</td>
+    </tr>
+    <tr>
+        <td>3.6</td>
+        <td>0.17.7</td>
+        <td>4.1.1</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>3.7</td>
+        <td>0.18.14</td>
+        <td>6.7.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>3.8</td>
+        <td>Active</td>
+        <td>7.1.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>>= 3.9</td>
+        <td>Active</td>
+        <td>Active</td>
+        <td>Active</td>
+    </tr>
+</table>​
+
+
 ### CLI Usage
 
 To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
