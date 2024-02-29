@@ -68,16 +68,8 @@ There are two ways you can use Kedro-Viz:
 
 Ensure your Kedro, Kedro-Viz and Kedro-datasets versions are supported by referencing the following table:
 
-| Python Version |         |       Last Supported       ||
-| :---:          | :---:   | :---:     | :---:          |
-|                | Kedro   | Kedro-Viz | Kedro-datasets |
-|3.6             | 0.17.7  | 4.1.1     | -              |
-|3.7             | 0.18.14 | 6.7.0     | 1.8.0          |
-|3.8             | Active  | 7.1.0     | 1.8.0          |
-|>= 3.9          | Active  | Active    | Active         |
-
 <table>
-    <tr style="align: center;">
+    <tr>
         <th>Python Version</th>
         <th style="text-align: center" colspan="3">Last Supported</th>
     </tr>
