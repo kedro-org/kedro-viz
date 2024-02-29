@@ -63,12 +63,12 @@
 
 .kedroDatasetsCompatible {
   padding: 1em 0 0 2em;
-  font-size: 14px;
 
   p {
     background-color: var(--color-compatibility-message--bg);
     color: var(--color-compatibility-message);
-    width: fit-content;
+    font-size: 14px;
     padding: 5px 15px;
+    width: fit-content;
   }
 }
