@@ -1,5 +1,5 @@
 kedro>=0.18.0
-git+https://github.com/kedro-org/kedro-plugins.git@main#egg=kedro-datasets[pandas.ParquetDataset,pandas.CSVDataset,pandas.ExcelDataset,plotly.JSONDataset]&subdirectory=kedro-datasets  # temporary pin until the next release of kedro-datasets
+kedro-datasets[pandas.CSVDataset,pandas.ExcelDataset, pandas.ParquetDataset, plotly.PlotlyDataset, matplotlib.MatplotlibWriter]>=2.1.0
 scikit-learn~=1.0
 pillow~=9.0
 seaborn~=0.11.2

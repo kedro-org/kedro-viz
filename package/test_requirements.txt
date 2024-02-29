@@ -1,7 +1,7 @@
 -r requirements.txt
 
 kedro >=0.18.0
-git+https://github.com/kedro-org/kedro-plugins.git@main#egg=kedro-datasets[pandas.ParquetDataset,pandas.CSVDataset,pandas.ExcelDataset,plotly.JSONDataset]&subdirectory=kedro-datasets  # temporary pin until the next release of kedro-datasets
+kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, plotly.JSONDataset]>=2.1.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.7
 behave~=1.2
