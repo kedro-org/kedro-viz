@@ -91,6 +91,19 @@
     }
   }
 
+  &__content-note {
+    margin-top: 18px;
+    color: var(--color-form-label);
+
+    a {
+      color: var(--color-form-label);
+    }
+  }
+
+  &__paregraph-divider {
+    margin-bottom: 30px;
+  }
+
   &__content-wrapper {
     padding: 48px;
     background: var(--color-modal-bg-2);
@@ -188,6 +201,7 @@
     font-size: 16px;
     font-weight: 400;
     line-height: 20px;
+    width: inherit;
 
     .button {
       align-self: end;
@@ -252,6 +266,7 @@
 
   .dropdown__label {
     background: var(--input-bg);
+    padding: 0 0 0 12px;
   }
 
   .dropdown__label span,

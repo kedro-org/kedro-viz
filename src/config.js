@@ -161,8 +161,23 @@ export const hostingPlatform = {
   azure: 'Microsoft Azure',
 };
 
+export const inputKeyToStateKeyMap = {
+  // eslint-disable-next-line camelcase
+  bucket_name: 'hasBucketName',
+  platform: 'hasPlatform',
+  endpoint: 'hasEndpoint',
+};
+
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';
+
+export const KEDRO_VIZ_DOCS_URL =
+  'https://docs.kedro.org/projects/kedro-viz/en/latest/';
+export const KEDRO_VIZ_PUBLISH_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}share_kedro_viz.html`;
+export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview_datasets.html#disabling-previews`;
+export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws.html#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure.html#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp.html#set-up-endpoint`;
 
 export const queryParamsToRetain = [
   params.types,

@@ -10,6 +10,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click({ force: true });
+    cy.get('[data-test="disclaimerButton"]').click({ force: true });
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
@@ -28,6 +29,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click({ force: true });
+    cy.get('[data-test="disclaimerButton"]').click({ force: true });
 
     // Assert after action
     cy.get('.shareable-url-modal .modal__wrapper').contains(
@@ -38,6 +40,7 @@ describe('Shareable URLs', () => {
   it('verifies that shareable url modal closes on close button click #TC-54', () => {
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains('Cancel')
       .click();
@@ -54,6 +57,7 @@ describe('Shareable URLs', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
 
     // Assert after action
@@ -69,6 +73,7 @@ describe('Shareable URLs', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
 
     // Assert after action
     cy.get(
@@ -85,6 +90,7 @@ describe('Shareable URLs', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
@@ -104,6 +110,7 @@ describe('Shareable URLs', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
@@ -125,6 +132,7 @@ describe('Shareable URLs', () => {
     const primaryButtonNodeText = 'Publish';
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
@@ -158,6 +166,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
@@ -183,7 +192,7 @@ describe('Shareable URLs', () => {
     const bucketName = 'myBucketName';
     const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
-    const primaryButtonNodeTextVariant = 'Republish';
+    const primaryButtonNodeTextVariant = 'Publish';
     const secondaryButtonNodeText = 'Link Settings';
 
     // Intercept the network request to mock with a fixture
@@ -196,6 +205,7 @@ describe('Shareable URLs', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
+    cy.get('[data-test="disclaimerButton"]').click();
     cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()

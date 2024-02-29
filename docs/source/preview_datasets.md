@@ -1,84 +1,59 @@
-# Preview data in Kedro-Viz
+# Preview datasets in Kedro-Viz
 
-This page describes how to preview data from different datasets in a Kedro project with Kedro-Viz. Dataset preview was introduced in Kedro-Viz version 6.3.0, which offers preview for `CSVDatasets` and `ExcelDatasets`.
+To provide users with a glimpse of their datasets within a Kedro project, Kedro-Viz offers a preview feature. 
 
-We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
+Currently, Kedro-Viz supports four types of previews:
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
+1. **TablePreview:** For datasets returning tables/dataframes.
+2. **JSONPreview:** For datasets returning JSON objects.
+3. **PlotlyPreview:** For datasets returning Plotly JSON objects.
+4. **ImagePreview:** For datasets returning base64-encoded image strings.
 
-```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
+While we currently support the above mentioned datasets, we are soon going to extend this functionality to include other datasets. Users with custom datasets can also expand the preview functionality, which is covered in the section [Extend Preview to Custom Datasets](./preview_custom_datasets.md).
+
+```{note}
+Starting from Kedro-Viz 8.0.0, previews are now enabled by default. If you wish to disable it for a specific dataset, refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
 ```
 
-In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
+**Preview tabular data**
 
+See [Preview tabular data in Kedro-Viz](./preview_pandas_datasets.md) for a guide on how you can enable preview on tabular datasets such as `pandas.CSVDataset` and `pandas.ExcelDataset`.
 
-```bash
-kedro new --starter=spaceflights-pandas
+**Preview Plotly Charts**
+
+See [Preview Plotly charts in Kedro-Viz](./preview_plotly_datasets.md) for a guide on how you can create interactive visualizations using `PlotlyDataset` on Kedro-Viz.
+
+**Preview Matplotlib Charts**
+
+See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) for a guide on how you can create static visualizations using `MatplotlibWriterDataset` on Kedro-Viz.
+
+**Extend Preview to custom catasets**
+
+See [Extend Preview to custom catasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
+
+```{toctree}
+:maxdepth: 1
+:hidden:
+preview_matplotlib_datasets
+preview_plotly_datasets
+preview_pandas_datasets
+preview_custom_datasets
 ```
 
-When prompted for a project name, you can enter anything, but we will assume `Spaceflights` throughout.
-
-When your project is ready, navigate to the root directory of the project.
-
-## Configure the Data Catalog
-
-Kedro-Viz version 6.3.0 currently supports preview of two types of datasets:
-
-* `pandas.CSVDataset`
-* `pandas.ExcelDataset`
 
 
-To enable dataset preview, add the `preview_args` attribute to the kedro-viz configuration under the `metadata` section in the Data Catalog. Within preview_args, specify `nrows` as the number of rows to preview for the dataset.
+## Disabling Previews
+
+
+To disable dataset previews for specific datasets, you need to set `preview: false` under the `kedro-viz` key within the `metadata` section of your `catalog.yml` file. Here's an example configuration:
 
 ```yaml
 companies:
-  type: pandas.CSVDataSet
+  type: pandas.CSVDataset
   filepath: data/01_raw/companies.csv
   metadata:
     kedro-viz:
       layer: raw
-      preview_args:
-          nrows: 5
-
-reviews:
-  type: pandas.CSVDataSet
-  filepath: data/01_raw/reviews.csv
-  metadata:
-    kedro-viz:
-      layer: raw
-      preview_args:
-          nrows: 10
-
-shuttles:
-  type: pandas.ExcelDataSet
-  filepath: data/01_raw/shuttles.xlsx
-  metadata:
-    kedro-viz:
-      layer: raw
-      preview_args:
-          nrows: 15
+      preview: false
 ```
 
-
-
-## Previewing Data on Kedro-viz
-
-After you've configured the Data Catalog, you can preview the datasets on Kedro-Viz. Start Kedro-Viz by running the following command in your terminal:
-
-```bash
-kedro viz run
-```
-
-The previews are shown as follows:
-
-Click on each dataset node to see a small preview in the metadata panel:
-
-
-![](./images/preview_datasets_metadata.png)
-
-
-View the larger preview of the dataset by clicking the `Expand Preview Table` button on the bottom of the metadata panel.
-
-
-![](./images/preview_datasets_expanded.png)

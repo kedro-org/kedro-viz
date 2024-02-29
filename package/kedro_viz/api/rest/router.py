@@ -20,6 +20,11 @@ from .responses import (
     get_selected_pipeline_response,
 )
 
+try:
+    from azure.core.exceptions import ServiceRequestError
+except ImportError:  # pragma: no cover
+    ServiceRequestError = None  # type: ignore
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
@@ -67,6 +72,16 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
         logger.exception("Permission error in deploying Kedro Viz : %s ", exc)
         return JSONResponse(
             status_code=401, content={"message": "Please provide valid credentials"}
+        )
+    except (
+        # pylint: disable=catching-non-exception
+        (FileNotFoundError, ServiceRequestError)
+        if ServiceRequestError is not None
+        else FileNotFoundError
+    ) as exc:  # pragma: no cover
+        logger.exception("FileNotFoundError while deploying Kedro Viz : %s ", exc)
+        return JSONResponse(
+            status_code=400, content={"message": "The specified bucket does not exist"}
         )
     except Exception as exc:  # pragma: no cover
         logger.exception("Deploying Kedro Viz failed: %s ", exc)
