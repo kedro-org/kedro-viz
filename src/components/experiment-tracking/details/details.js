@@ -89,7 +89,7 @@ const Details = ({
       <div className="kedroDatasetsCompatible">
         <p>
           Kedro-Viz Experiment Tracking is supported only on kedro-datasets{' '}
-          {'>'}= 2.1
+          {'>'}= 2.1.0
         </p>
       </div>
     ) : null;
