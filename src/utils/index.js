@@ -214,3 +214,17 @@ export const sanitizedPathname = () => {
 
   return pathnameWithTrailingSlash;
 };
+
+/**
+ * Fetches package compatibilities from the server.
+ * @returns {Promise<Object>} A promise that resolves to the fetched package compatibilities.
+ */
+export async function fetchPackageCompatibilities() {
+  const request = await fetch('/api/package-compatibilities', {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  });
+  return request;
+}

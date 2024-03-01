@@ -1,5 +1,15 @@
 @use '../../../styles/variables' as variables;
 
+.kui-theme--light {
+  --color-compatibility-message--bg: #{variables.$black-300};
+  --color-compatibility-message: #{variables.$white-0};
+}
+
+.kui-theme--dark {
+  --color-compatibility-message--bg: #{variables.$black-400};
+  --color-compatibility-message: #{variables.$white-500};
+}
+
 .details-mainframe {
   background-color: var(--color-exp-tracking-bg);
   bottom: 0;
@@ -48,5 +58,17 @@
 
   &--active {
     background-color: var(--color-exp-tracking-bg);
+  }
+}
+
+.kedroDatasetsCompatible {
+  padding: 1em 0 0 2em;
+
+  p {
+    background-color: var(--color-compatibility-message--bg);
+    color: var(--color-compatibility-message);
+    font-size: 14px;
+    padding: 5px 15px;
+    width: fit-content;
   }
 }
