@@ -5,23 +5,21 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
+# Release 8.0.0
 
 ## Major features and improvements
 
-- Extend support for 'Publishing and sharing Kedro-viz' to Azure and GCP. (#1708, #1711)
-
-# Upcoming release
-
-## Major features and improvements
-
-- Drop support for `python=3.8`. (#1747)
+- Extend support for 'Publishing and sharing Kedro-Viz' on Azure and GCP. (#1708, #1711)
+- Enable search-as-you-type on Kedro-Viz docs. (#1727)
 - Migrate Viz to use `pydantic>=2`. (#1743)
+- Drop support for `python=3.8`. (#1747)
 
 ## Bug fixes and other changes
 
+- Refactor Kedro-Viz and Kedro-datasets dependencies. (#1698)
 - Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
-
+- Enable `%run_viz` line magic to use the arguments that Kedro-Viz supports on the command line. (#1733)
+- Update docs for Preview Dataset. (#1757)
 
 # Release 7.1.0
 
