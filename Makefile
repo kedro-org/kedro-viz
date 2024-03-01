@@ -4,8 +4,8 @@ package:
 	find . -regex ".*/__pycache__" -exec rm -rf {} +
 	find . -regex ".*\.egg-info" -exec rm -rf {} +
 	test -f package/kedro_viz/html/index.html || (echo "Built npm package not found; packaging process cancelled."; exit 1)
-	cd package && python setup.py clean --all
-	cd package && python setup.py sdist bdist_wheel
+	cd package && rm -rf build/ dist/
+	cd package && python -m build
 
 build:
 	rm -rf build package/build package/dist package/kedro_viz/html pip-wheel-metadata package/kedro_viz.egg-info

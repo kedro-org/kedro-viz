@@ -352,6 +352,7 @@ workflows:
               only:
                 - main
                 - demo
+                - fix/win-lint
       - unit_tests:
           matrix:
             parameters:
@@ -365,6 +366,7 @@ workflows:
               only:
                 - main
                 - demo
+                - fix/win-lint
       - lint:
           matrix:
             parameters:
