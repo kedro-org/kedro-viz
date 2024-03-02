@@ -2,7 +2,7 @@ export const updateContent = {
   date: '04 March 2024',
   features: [
     {
-      title: 'Publish and share Kedro-Viz on Azure and GCP',
+      title: 'Publish and share Kedro-Viz on AWS, Azure and GCP',
       image: '',
       copy: '`kedro viz deploy` command enables you to publish and share Kedro-Viz to static website hosting platforms like AWS, Azure and GCP',
       buttonLink:
