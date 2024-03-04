@@ -141,10 +141,7 @@ if __name__ == "__main__":  # pragma: no cover
 
     args = parser.parse_args()
 
-    if args.project_path:
-        project_path = Path(args.project_path).resolve()
-    else:
-        project_path = Path.cwd()
+    project_path = Path(args.project_path).resolve() if args.project_path else Path.cwd()
 
     bootstrap_project(project_path)
 
