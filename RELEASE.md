@@ -20,6 +20,9 @@ Please follow the established format:
 - Enable search-as-you-type on Kedro-Viz docs. (#1727)
 - Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
 - Enable `%run_viz` line magic to use the arguments that Kedro-Viz supports on the command line. (#1733)
+- Make `kedro viz build` compatible with Kedro 18. (#1716)
+- Add `kedro-datasets` compatibility warning for Experiment Tracking. (#1767)
+- Fix bug on `preview` length in metadata modal. (#1767)
 
 # Release 7.1.0
 
