@@ -6,7 +6,7 @@
 $menu-max-height: 300px;
 
 /* the height of each item/row */
-$menu-item-height: 40px;
+$menu-item-height: 36px;
 
 /* padding at the top and bottom of each group of items */
 $menu-group-padding: 4px;
@@ -83,6 +83,10 @@ $menu-item-padding: 12px;
     }
   }
 
+  .dropdown__placeholder {
+    color: #{variables.$grey-700};
+  }
+
   .dropdown__icon {
     height: 24px;
     margin: 0 8px 0 12px;
@@ -112,7 +116,7 @@ $menu-item-padding: 12px;
   width: 100%;
   max-height: $menu-max-height;
   overflow: auto;
-  margin: 0;
+  margin-top: 1px;
   transition: opacity ease 0.2s, transform ease 0.2s, visibility ease 0.2s;
   transform: translateY(-10px);
   opacity: 0;

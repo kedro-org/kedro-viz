@@ -1,5 +1,8 @@
 # Experiment tracking in Kedro-Viz
 
+```{important}
+Starting from version 8.0.0 of Kedro-Viz, Experiment Tracking is exclusively supported for users with kedro-datasets version 2.1.0 or higher.
+```
 
 Experiment tracking is the process of saving all the metadata related to an experiment each time you run it. It enables you to compare different runs of a machine-learning model as part of the experimentation process.
 
@@ -23,7 +26,7 @@ Kedro has always supported parameter versioning (as part of your codebase with a
 
 Kedro-Viz version 4.1.1 introduced metadata capture, visualisation, discovery and comparison, enabling you to access, edit and [compare your experiments](#access-run-data-and-compare-runs) and additionally [track how your metrics change over time](#view-and-compare-metrics-data).
 
-Kedro-Viz version 5.0 also supports the [display and comparison of plots, such as Plotly and Matplotlib](./visualise_charts_with_plotly.md). Support for metric plots (timeseries and parellel coords) was added to Kedro-Viz version 5.2.1.
+Kedro-Viz version 5.0 also supports the [display and comparison of plots, such as Plotly and Matplotlib](./preview_plotly_datasets.md). Support for metric plots (timeseries and parallel coords) was added to Kedro-Viz version 5.2.1.
 
 Kedro-Viz version 6.2 includes support for collaborative experiment tracking using a cloud storage solution. This means that multiple users can store their experiment data in a centralized remote storage, such as AWS S3, and access it through Kedro-Viz.
 
@@ -141,11 +144,11 @@ Set up two datasets to log the columns used in the companies dataset (`companies
 
 ```yaml
 metrics:
-  type: tracking.MetricsDataSet
+  type: tracking.MetricsDataset
   filepath: data/09_tracking/metrics.json
 
 companies_columns:
-  type: tracking.JSONDataSet
+  type: tracking.JSONDataset
   filepath: data/09_tracking/companies_columns.json
 ```
 

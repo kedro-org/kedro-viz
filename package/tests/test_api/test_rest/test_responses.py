@@ -7,10 +7,12 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 from fastapi.testclient import TestClient
+from importlib_metadata import PackageNotFoundError
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
     EnhancedORJSONResponse,
+    PackageCompatibilityAPIResponse,
     get_package_compatibilities_response,
     save_api_main_response_to_fs,
     save_api_node_response_to_fs,
@@ -630,6 +632,7 @@ class TestNodeMetadataEndpoint:
         assert response.json() == {
             "filepath": "model_inputs.csv",
             "type": "pandas.csv_dataset.CSVDataset",
+            "preview_type": "TablePreview",
             "run_command": "kedro run --to-outputs=model_inputs",
             "stats": {"columns": 12, "rows": 29768},
         }
@@ -638,6 +641,7 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/13399a82")
         assert response.json() == {
             "filepath": "raw_data.csv",
+            "preview_type": "TablePreview",
             "type": "pandas.csv_dataset.CSVDataset",
         }
 
@@ -823,23 +827,47 @@ class TestAPIAppFromFile:
 
 class TestPackageCompatibilities:
     @pytest.mark.parametrize(
-        "expected_version, expected_compatibility",
+        "package_name, package_version, package_requirements, expected_compatibility_response",
         [
-            ("2023.9.1", True),
-            ("2023.8.1", False),
+            ("fsspec", "2023.9.1", {"fsspec": "2023.0.0"}, True),
+            ("fsspec", "2023.9.1", {"fsspec": "2024.0.0"}, False),
+            ("kedro-datasets", "2.1.0", {"kedro-datasets": "2.1.0"}, True),
+            ("kedro-datasets", "1.8.0", {"kedro-datasets": "2.1.0"}, False),
         ],
     )
     def test_get_package_compatibilities_response(
-        self, expected_version, expected_compatibility, mocker
+        self,
+        package_name,
+        package_version,
+        package_requirements,
+        expected_compatibility_response,
+        mocker,
     ):
         mocker.patch(
             "kedro_viz.api.rest.responses.get_package_version",
-            return_value=expected_version,
+            return_value=package_version,
         )
-        response = get_package_compatibilities_response()
-        assert response.package_name == "fsspec"
-        assert response.package_version == expected_version
-        assert response.is_compatible is expected_compatibility
+        response = get_package_compatibilities_response(package_requirements)
+
+        for package_response in response:
+            assert package_response.package_name == package_name
+            assert package_response.package_version == package_version
+            assert package_response.is_compatible is expected_compatibility_response
+
+    def test_get_package_compatibilities_exception_response(
+        self,
+        mocker,
+    ):
+        mocker.patch(
+            "kedro_viz.api.rest.responses.get_package_compatibilities_response",
+            side_effect=PackageNotFoundError("random-package"),
+        )
+        package_name = "random-package"
+        response = get_package_compatibilities_response({package_name: "1.0.0"})
+        expected_response = PackageCompatibilityAPIResponse(
+            package_name="random-package", package_version="0.0.0", is_compatible=False
+        )
+        assert response == [expected_response]
 
 
 class TestEnhancedORJSONResponse:
@@ -874,7 +902,7 @@ class TestEnhancedORJSONResponse:
             "kedro_viz.api.rest.responses.EnhancedORJSONResponse.encode_to_human_readable",
             return_value=encoded_response,
         )
-        with patch("kedro_viz.api.rest.responses.fsspec.filesystem") as mock_filesystem:
+        with patch("fsspec.filesystem") as mock_filesystem:
             mockremote_fs = mock_filesystem.return_value
             mockremote_fs.open.return_value.__enter__.return_value = Mock()
             write_api_response_to_fs(file_path, response, mockremote_fs)
@@ -972,13 +1000,14 @@ class TestEnhancedORJSONResponse:
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     @pytest.mark.parametrize(
-        "file_path, protocol, path",
+        "file_path, protocol",
         [
-            ("s3://shareableviz", "s3", "shareableviz"),
-            ("shareableviz", "file", "shareableviz"),
+            ("s3://shareableviz", "s3"),
+            ("abfs://shareableviz", "abfs"),
+            ("shareableviz", "file"),
         ],
     )
-    def test_save_api_responses_to_fs(self, file_path, protocol, path, mocker):
+    def test_save_api_responses_to_fs(self, file_path, protocol, mocker):
         mock_api_main_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_main_response_to_fs"
         )
@@ -988,24 +1017,18 @@ class TestEnhancedORJSONResponse:
         mock_api_pipeline_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_pipeline_response_to_fs"
         )
-        mock_get_protocol_and_path = mocker.patch(
-            "kedro_viz.api.rest.responses.get_protocol_and_path",
-            return_value=(protocol, path),
-        )
-        mockremote_fs = mocker.patch(
-            "kedro_viz.api.rest.responses.fsspec.filesystem", return_value=Mock()
-        )
 
-        save_api_responses_to_fs(file_path)
+        mock_filesystem = mocker.patch("fsspec.filesystem")
+        mock_filesystem.return_value.protocol = protocol
 
-        mockremote_fs.assert_called_once_with(protocol)
-        mock_get_protocol_and_path.assert_called_once_with(file_path)
+        save_api_responses_to_fs(file_path, mock_filesystem.return_value)
+
         mock_api_main_response_to_fs.assert_called_once_with(
-            f"{path}/api/main", mockremote_fs.return_value
+            f"{file_path}/api/main", mock_filesystem.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{path}/api/nodes", mockremote_fs.return_value
+            f"{file_path}/api/nodes", mock_filesystem.return_value
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
-            f"{path}/api/pipelines", mockremote_fs.return_value
+            f"{file_path}/api/pipelines", mock_filesystem.return_value
         )

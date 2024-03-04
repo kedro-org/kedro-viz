@@ -1,16 +1,16 @@
 """`kedro_viz.api.rest.responses` defines REST response types."""
+
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
 import logging
+from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
 
-import fsspec
 import orjson
 import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
-from kedro.io.core import get_protocol_and_path
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.api.rest.utils import get_package_version
 from kedro_viz.data_access import data_access_manager
@@ -26,17 +26,13 @@ from kedro_viz.models.flowchart import (
 
 logger = logging.getLogger(__name__)
 
-_FSSPEC_PACKAGE_NAME = "fsspec"
-_FSSPEC_COMPATIBLE_VERSION = "2023.9.0"
-
 
 class APIErrorMessage(BaseModel):
     message: str
 
 
 class BaseAPIResponse(BaseModel, abc.ABC):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
@@ -47,14 +43,13 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     type: str
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
-    modular_pipelines: Optional[List[str]]
+    modular_pipelines: Optional[List[str]] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "6ab908b8",
                 "name": "split_data_node",
@@ -78,15 +73,15 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
                 },
             }
         }
+    )
 
 
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
-    layer: Optional[str]
-    dataset_type: Optional[str]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
+    layer: Optional[str] = None
+    dataset_type: Optional[str] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "d7b83b05",
                 "name": "master_table",
@@ -99,6 +94,7 @@ class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
                 "stats": {"rows": 10, "columns": 2, "file_size": 2300},
             }
         }
+    )
 
 
 NodeAPIResponse = Union[
@@ -108,15 +104,14 @@ NodeAPIResponse = Union[
 
 
 class TaskNodeMetadataAPIResponse(BaseAPIResponse):
-    code: Optional[str]
-    filepath: Optional[str]
-    parameters: Optional[Dict]
+    code: Optional[str] = None
+    filepath: Optional[str] = None
+    parameters: Optional[Dict] = None
     inputs: List[str]
     outputs: List[str]
-    run_command: Optional[str]
-
-    class Config:
-        schema_extra = {
+    run_command: Optional[str] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "code": "def split_data(data: pd.DataFrame, parameters: Dict) -> Tuple:",
                 "filepath": "proj/src/new_kedro_project/pipelines/data_science/nodes.py",
@@ -126,41 +121,39 @@ class TaskNodeMetadataAPIResponse(BaseAPIResponse):
                 "run_command": "kedro run --to-nodes=split_data",
             }
         }
+    )
 
 
 class DataNodeMetadataAPIResponse(BaseAPIResponse):
-    filepath: Optional[str]
+    filepath: Optional[str] = None
     type: str
-    plot: Optional[Dict]
-    image: Optional[str]
-    tracking_data: Optional[Dict]
-    run_command: Optional[str]
-    preview: Optional[Dict]
-    stats: Optional[Dict]
-
-    class Config:
-        schema_extra = {
+    run_command: Optional[str] = None
+    preview: Optional[Union[Dict, str]] = None
+    preview_type: Optional[str] = None
+    stats: Optional[Dict] = None
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "filepath": "/my-kedro-project/data/03_primary/master_table.csv",
                 "type": "kedro_datasets.pandas.csv_dataset.CSVDataset",
                 "run_command": "kedro run --to-outputs=master_table",
             }
         }
+    )
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
     filepath: str
     original_type: str
     transcoded_types: List[str]
-    run_command: Optional[str]
-    stats: Optional[Dict]
+    run_command: Optional[str] = None
+    stats: Optional[Dict] = None
 
 
 class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
     parameters: Dict
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "parameters": {
                     "test_size": 0.2,
@@ -178,6 +171,7 @@ class ParametersNodeMetadataAPIResponse(BaseAPIResponse):
                 }
             }
         }
+    )
 
 
 NodeMetadataAPIResponse = Union[
@@ -199,7 +193,7 @@ class NamedEntityAPIResponse(BaseAPIResponse):
     """
 
     id: str
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class ModularPipelineChildAPIResponse(BaseAPIResponse):
@@ -268,15 +262,15 @@ class PackageCompatibilityAPIResponse(BaseAPIResponse):
     package_name: str
     package_version: str
     is_compatible: bool
-
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "package_name": "fsspec",
                 "package_version": "2023.9.1",
                 "is_compatible": True,
             }
         }
+    )
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
@@ -378,19 +372,31 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
 
 
 def get_package_compatibilities_response(
-    package_name: str = _FSSPEC_PACKAGE_NAME,
-    compatible_version: str = _FSSPEC_COMPATIBLE_VERSION,
-):
+    package_requirements: Dict[str, str],
+) -> List[PackageCompatibilityAPIResponse]:
     """API response for `/api/package_compatibility`."""
-    package_version = get_package_version(package_name)
-    is_compatible = packaging.version.parse(package_version) >= packaging.version.parse(
-        compatible_version
-    )
-    return PackageCompatibilityAPIResponse(
-        package_name=package_name,
-        package_version=package_version,
-        is_compatible=is_compatible,
-    )
+    package_requirements_response = []
+
+    for package_name, compatible_version in package_requirements.items():
+        try:
+            package_version = get_package_version(package_name)
+        except PackageNotFoundError as exc:
+            logger.exception("Failed to get package version. Error: %s", str(exc))
+            package_version = "0.0.0"
+
+        is_compatible = packaging.version.parse(
+            package_version
+        ) >= packaging.version.parse(compatible_version)
+
+        package_requirements_response.append(
+            PackageCompatibilityAPIResponse(
+                package_name=package_name,
+                package_version=package_version,
+                is_compatible=is_compatible,
+            )
+        )
+
+    return package_requirements_response
 
 
 def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
@@ -445,22 +451,19 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
             raise exc
 
 
-def save_api_responses_to_fs(api_dir: str):
+def save_api_responses_to_fs(path: str, remote_fs: Any):
     """Saves all Kedro Viz API responses to a directory."""
     try:
-        protocol, path = get_protocol_and_path(str(api_dir))
-        remote_fs = fsspec.filesystem(protocol)
-
         logger.debug(
             """Saving/Uploading api files to %s""",
-            api_dir,
+            path,
         )
 
         main_path = f"{path}/api/main"
         nodes_path = f"{path}/api/nodes"
         pipelines_path = f"{path}/api/pipelines"
 
-        if protocol == "file":
+        if "file" in remote_fs.protocol:
             remote_fs.makedirs(path, exist_ok=True)
             remote_fs.makedirs(nodes_path, exist_ok=True)
             remote_fs.makedirs(pipelines_path, exist_ok=True)

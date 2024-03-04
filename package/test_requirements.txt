@@ -1,7 +1,7 @@
 -r requirements.txt
 
 kedro >=0.18.0
-kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, plotly.JSONDataset]<=2.0.0
+kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, plotly.JSONDataset]>=2.1.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.7
 behave~=1.2
@@ -37,3 +37,8 @@ types-PyYAML==0.1.5
 types-requests==0.1.8
 types-toml==0.1.1
 types-ujson==0.1.0
+
+#shareableviz
+s3fs>=2021.4
+adlfs>=2021.4
+gcsfs>=2021.4

@@ -1,14 +1,43 @@
 export const updateContent = {
-  date: '22 January 2024',
+  date: '04 March 2024',
   features: [
     {
-      title:
-        'Publish Kedro-viz on any hosting platform using cli `kedro viz build`',
+      title: 'Publish and share Kedro-Viz on AWS, Azure and GCP',
       image: '',
-      copy: '`kedro viz build` command that enables you to publish and share Kedro-Viz to any static website hosting platform.',
+      copy: '`kedro viz deploy` command enables you to publish and share Kedro-Viz to static website hosting platforms like AWS, Azure and GCP',
       buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#platform-agnostic-sharing-with-kedro-viz',
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html',
       buttonText: 'View the docs',
+    },
+    {
+      title: 'New changes to the `preview` functionality on Kedro-Viz',
+      image: '',
+      copy: 'The `preview` functionality on Kedro-Viz is now opt-out for users. Additionally, we have introduced extending the `preview` to custom datasets.',
+      buttonLink:
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/preview_datasets.html',
+      buttonText: 'View the docs',
+    },
+    {
+      title: 'Improvements to `%run_viz` line magic',
+      image: '',
+      copy: '`%run_viz` line magic can be executed on jupyter notebooks with the options that Kedro-Viz supports on the command line',
+      buttonLink:
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#running-kedro-viz-in-a-notebook',
+      buttonText: 'View the docs',
+    },
+    {
+      title: 'Kedro-Viz supports pydantic v2',
+      image: '',
+      copy: 'Kedro-Viz has migrated from pydantic v1 to v2',
+      buttonLink: '',
+      buttonText: '',
+    },
+    {
+      title: 'Kedro-Viz drops support for python 3.8',
+      image: '',
+      copy: 'Kedro-Viz provides active support for python versions greater than 3.8',
+      buttonLink: '',
+      buttonText: '',
     },
   ],
 };
