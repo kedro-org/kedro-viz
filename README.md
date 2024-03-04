@@ -93,15 +93,15 @@ Ensure your `Kedro`, `Kedro-Viz` and `Kedro-datasets` versions are supported by 
     </tr>
     <tr>
         <td>3.8</td>
-        <td>Active</td>
+        <td>Latest</td>
         <td>7.1.0</td>
         <td>1.8.0</td>
     </tr>
     <tr>
         <td>>= 3.9</td>
-        <td>Active</td>
-        <td>Active</td>
-        <td>Active</td>
+        <td>Latest</td>
+        <td>Latest</td>
+        <td>Latest</td>
     </tr>
 </table>​
 
