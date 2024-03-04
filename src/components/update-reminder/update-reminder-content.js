@@ -10,6 +10,14 @@ export const updateContent = {
       buttonText: 'View the docs',
     },
     {
+      title: 'New changes to the `preview` functionality on Kedro-Viz',
+      image: '',
+      copy: 'The `preview` functionality on Kedro-Viz is now opt-out for users. Additionally, we have introduced extending the `preview` to custom datasets.',
+      buttonLink:
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/preview_datasets.html',
+      buttonText: 'View the docs',
+    },
+    {
       title: 'Improvements to `%run_viz` line magic',
       image: '',
       copy: '`%run_viz` line magic can be executed on jupyter notebooks with the options that Kedro-Viz supports on the command line',

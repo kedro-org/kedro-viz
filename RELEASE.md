@@ -10,16 +10,16 @@ Please follow the established format:
 ## Major features and improvements
 
 - Extend support for 'Publishing and sharing Kedro-Viz' on Azure and GCP. (#1708, #1711)
-- Enable search-as-you-type on Kedro-Viz docs. (#1727)
-- Migrate Viz to use `pydantic>=2`. (#1743)
+- Migrate Kedro-Viz to use `pydantic>=2`. (#1743)
 - Drop support for `python=3.8`. (#1747)
+- Introduce new changes to the `preview` functionality on Kedro-viz (#1757)
+- Refactor Kedro-Viz and Kedro-datasets dependencies. (#1698)
 
 ## Bug fixes and other changes
 
-- Refactor Kedro-Viz and Kedro-datasets dependencies. (#1698)
+- Enable search-as-you-type on Kedro-Viz docs. (#1727)
 - Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
 - Enable `%run_viz` line magic to use the arguments that Kedro-Viz supports on the command line. (#1733)
-- Update docs for Preview Dataset. (#1757)
 
 # Release 7.1.0
 
