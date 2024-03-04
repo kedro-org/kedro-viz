@@ -46,7 +46,8 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
         </div>
         {hasTable && (
           <div className="pipeline-metadata-modal__preview-text">
-            Previewing first {metadata.preview.length} rows
+            Previewing first{' '}
+            {metadata.preview.data && metadata.preview.data.length} rows
           </div>
         )}
       </div>

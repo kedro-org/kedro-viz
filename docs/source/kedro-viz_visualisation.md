@@ -174,3 +174,46 @@ kedro viz run --load-file=my_shareable_pipeline
 ```
 
 You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 
+
+## Running Kedro-viz in a notebook. 
+
+Follow the [Jupyter notebook for Kedro project](https://docs.kedro.org/en/latest/notebooks_and_ipython/kedro_and_notebooks.html) guide on how to use a Jupyter notebook to explore elements of a Kedro project. It shows how to use `kedro jupyter notebook` to set up a notebook that has access to the `catalog`, `context`, `pipelines` and `session` variables of the Kedro project, so you can query them.
+
+Once you have followed the steps to set up your notebook. You can use line magic to display a Kedro-Viz visualisation of your pipeline directly in your notebook.
+
+### `%run_viz` line magic
+
+``` {note}
+If you have not yet installed [Kedro-Viz](https://github.com/kedro-org/kedro-viz) for the project, run `pip install kedro-viz` in your terminal from within the project directory.
+```
+The `%run_viz` line magic allows you to display an interactive visualisation of your pipeline directly in a new tab within your Jupyter notebook. You can also pass optional arguments to customise the visualisation environment, similar to how you would use the Kedro Viz command-line interface.
+
+To use the `%run_viz` line magic without any arguments, simply run:
+
+```ipython
+%run_viz
+```
+
+![Open your project's Kedro Viz inside a new tab](./images/run_viz_in_new_tab.png)
+
+#### Optional Arguments
+The `%run_viz` command supports various optional arguments found in `kedro viz run`:
+
+* `--host=<host>`: Specify the server host.
+* `--port=<port>`: Set the server port.
+* `--load-file=<file>`: Load a specific pipeline visualisation file.
+* `--save-file=<file>`: Save the current pipeline visualisation to a file.
+* `--pipeline=<name>`: Visualise a specific pipeline.
+* `--env=<name>`: Set the environment for the visualisation.
+* `--autoreload`: Enable automatic reloading of the visualisation when source code changes.
+* `--ignore-plugins`: Ignore Kedro plugins when running the visualisation.
+* `--params=<params>`: Pass additional parameters to the visualisation.
+
+For example, to launch Kedro Viz on a specific host and port with autoreload enabled you can run:
+
+```ipython
+%run_viz --host=127.0.0.1 --port=4141 --autoreload
+```
+
+![Open your project's Kedro Viz inside a new tab](./images/run_viz_with_args.png)
+![Kedro Viz inside a new tab](./images/viz_running_in_new_tab.png)
