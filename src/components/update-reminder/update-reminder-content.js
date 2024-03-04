@@ -22,7 +22,7 @@ export const updateContent = {
       image: '',
       copy: '`%run_viz` line magic can be executed on jupyter notebooks with the options that Kedro-Viz supports on the command line',
       buttonLink:
-        'https://docs.kedro.org/en/stable/notebooks_and_ipython/kedro_and_notebooks.html#run-viz-line-magic',
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#running-kedro-viz-in-a-notebook',
       buttonText: 'View the docs',
     },
     {
