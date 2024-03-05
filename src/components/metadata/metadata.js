@@ -56,27 +56,28 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPlot = metadata?.previewType === 'PlotlyPreview';
-  const hasImage = metadata?.previewType === 'ImagePreview';
+  const hasPreview = metadata?.preview;
+  const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
+  const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
-    metadata?.previewType === 'MetricsTrackingPreview' ||
-    metadata?.previewType === 'JSONTrackingPreview';
-  const hasTable = metadata?.previewType === 'TablePreview';
+    hasPreview &&
+    (metadata?.previewType === 'MetricsTrackingPreview' ||
+      metadata?.previewType === 'JSONTrackingPreview');
+  const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
-    metadata?.previewType === 'MetricsTrackingPreview';
+    hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
 
   if (isMetricsTrackingDataset) {
-    // //rounding of tracking data
-    metadata?.preview &&
-      Object.entries(metadata?.preview).forEach(([key, value]) => {
-        if (typeof value === 'number') {
-          metadata.preview[key] = Math.round(value * 100) / 100;
-        }
-      });
+    //rounding of tracking data
+    Object.entries(metadata?.preview).forEach(([key, value]) => {
+      if (typeof value === 'number') {
+        metadata.preview[key] = Math.round(value * 100) / 100;
+      }
+    });
   }
 
   let runCommand = metadata?.runCommand;
@@ -210,7 +211,7 @@ const MetaData = ({
                     kind="trackingData"
                     commas={false}
                     inline={false}
-                    value={metadata.preview}
+                    value={metadata?.preview}
                   />
                 )}
                 <MetaDataRow
@@ -266,8 +267,8 @@ const MetaData = ({
                     onClick={onExpandMetaDataClick}
                   >
                     <PlotlyChart
-                      data={metadata.preview.data}
-                      layout={metadata.preview.layout}
+                      data={metadata?.preview.data}
+                      layout={metadata?.preview.layout}
                       view="preview"
                     />
                   </div>
@@ -291,7 +292,7 @@ const MetaData = ({
                     <img
                       alt="Matplotlib rendering"
                       className="pipeline-metadata__plot-image"
-                      src={`data:image/png;base64,${metadata.preview}`}
+                      src={`data:image/png;base64,${metadata?.preview}`}
                     />
                   </div>
                   <button
@@ -326,7 +327,7 @@ const MetaData = ({
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable
-                      data={metadata.preview}
+                      data={metadata?.preview}
                       size="small"
                       onClick={onExpandMetaDataClick}
                     />
