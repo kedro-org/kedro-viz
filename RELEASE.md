@@ -10,6 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix a bug on metadata panel when preview data is unavailable. (#1794)
+- Update Compatibility/Support Matrix in README. (#1774)
 
 # Release 8.0.0
 
