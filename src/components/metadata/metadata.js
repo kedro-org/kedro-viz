@@ -65,20 +65,19 @@ const MetaData = ({
       metadata?.previewType === 'JSONTrackingPreview');
   const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
-    metadata?.previewType === 'MetricsTrackingPreview';
+    hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
 
   if (isMetricsTrackingDataset) {
-    // //rounding of tracking data
-    metadata?.preview &&
-      Object.entries(metadata?.preview).forEach(([key, value]) => {
-        if (typeof value === 'number') {
-          metadata.preview[key] = Math.round(value * 100) / 100;
-        }
-      });
+    //rounding of tracking data
+    Object.entries(metadata?.preview).forEach(([key, value]) => {
+      if (typeof value === 'number') {
+        metadata.preview[key] = Math.round(value * 100) / 100;
+      }
+    });
   }
 
   let runCommand = metadata?.runCommand;
