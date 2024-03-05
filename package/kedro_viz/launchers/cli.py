@@ -57,12 +57,6 @@ def viz(ctx):
     help="Host that viz will listen to. Defaults to localhost.",
 )
 @click.option(
-    "--project_path",
-    default=None,
-    type=str,
-    help="Select the indicated directory. Get the current directory if not indicated.",
-)
-@click.option(
     "--port",
     default=DEFAULT_PORT,
     type=int,
@@ -124,7 +118,6 @@ def viz(ctx):
 def run(
     host,
     port,
-    project_path,
     browser,
     load_file,
     save_file,
@@ -139,7 +132,7 @@ def run(
 
     from kedro_viz.server import run_server
 
-    project_path = Path(project_path) if project_path else Path.cwd()
+    project_path = Path.cwd()
 
     bootstrap_project(project_path)
 
@@ -162,7 +155,6 @@ def run(
         run_server_kwargs = {
             "host": host,
             "port": port,
-            "project_path": project_path,
             "load_file": load_file,
             "save_file": save_file,
             "pipeline_name": pipeline,
