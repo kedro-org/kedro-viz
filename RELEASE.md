@@ -5,13 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
-
-## Major features and improvements
+# Release 8.0.1 
 
 ## Bug fixes and other changes
 
-- Update Compatibility/Support Matrix in README. (#1774)
+- Fixed a bug in Kedro-viz that caused it to break when preview data was unavailable. (#1794)
 
 # Release 8.0.0
 
