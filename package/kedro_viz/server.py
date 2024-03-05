@@ -142,6 +142,7 @@ if __name__ == "__main__":  # pragma: no cover
     project_path = (
         Path(args.project_path).resolve() if args.project_path else Path.cwd()
     )
+    bootstrap_project(project_path)
 
     run_process_kwargs = {
         "path": args.project_path,

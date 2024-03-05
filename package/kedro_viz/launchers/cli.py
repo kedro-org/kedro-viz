@@ -166,7 +166,7 @@ def run(
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path(project_path) 
+            project_path = Path(project_path)
             run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
                 "path": project_path,
