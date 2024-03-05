@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fixed a bug in Kedro-viz that caused it to break when preview data was unavailable. (#1794)
+- Fix a bug in Kedro-viz that caused it to break when preview data was unavailable. (#1794)
 
 # Release 8.0.0
 
