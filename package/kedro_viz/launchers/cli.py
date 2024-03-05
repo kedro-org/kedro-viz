@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict
 
 import click
+from click_default_group import DefaultGroup
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
 from packaging.version import parse
@@ -41,13 +42,10 @@ def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@viz_cli.group(invoke_without_command=True)
+@viz_cli.group(cls=DefaultGroup, default="run", default_if_no_args=True)
 @click.pass_context
-def viz(ctx):
+def viz(ctx):  # pylint: disable=unused-argument
     """Visualise a Kedro pipeline using Kedro viz."""
-    if ctx.invoked_subcommand is None:
-        display_cli_message("\nDid you mean this ? \n kedro viz run \n\n", "yellow")
-        display_cli_message(f"{ctx.get_help()}")
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
