@@ -2,13 +2,6 @@ export const updateContent = {
   date: '06 March 2024',
   features: [
     {
-      title: 'Critical bug fix on metadata panel',
-      image: '',
-      copy: 'Fix a bug on metadata panel when preview data is unavailable.',
-      buttonLink: '',
-      buttonText: '',
-    },
-    {
       title: 'Publish and share Kedro-Viz on AWS, Azure and GCP',
       image: '',
       copy: '`kedro viz deploy` command enables you to publish and share Kedro-Viz to static website hosting platforms like AWS, Azure and GCP',
