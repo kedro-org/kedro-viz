@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '05 March 2024',
+  date: '06 March 2024',
   features: [
     {
       title: 'Critical bug fix on metadata panel',
