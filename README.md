@@ -64,17 +64,47 @@ There are two ways you can use Kedro-Viz:
 
 ## Usage
 
-#### Compatibility with Kedro
+#### Compatibility with Kedro and Kedro-datasets   
 
-Ensure your Kedro-Viz and Kedro versions are compatible by referencing the following table:
+Ensure your `Kedro`, `Kedro-Viz` and `Kedro-datasets` versions are supported by referencing the following table:
 
-| Kedro-Viz version | Kedro version     |
-| ----------------- | ----------------- |
-| >=4.7             | >=0.17.5          |
-| >=3.8.0, <4.7     | >=0.16.6, <0.17.5 |
-| <3.8.0            | <0.16.6           |
+<table>
+    <tr>
+        <th>Python Version</th>
+        <th style="text-align: center" colspan="3">Last Supported</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Kedro</td>
+        <td>Kedro-Viz</td>
+        <td>Kedro-datasets</td>
+    </tr>
+    <tr>
+        <td>3.6</td>
+        <td>0.17.7</td>
+        <td>4.1.1</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>3.7</td>
+        <td>0.18.14</td>
+        <td>6.7.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>3.8</td>
+        <td>Latest</td>
+        <td>7.1.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>>= 3.9</td>
+        <td>Latest</td>
+        <td>Latest</td>
+        <td>Latest</td>
+    </tr>
+</table>​
 
-For **Python 3.6** users, the last supported version of Kedro-Viz is **3.16.0**
 
 ### CLI Usage
 
