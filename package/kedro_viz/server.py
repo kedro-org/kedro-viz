@@ -130,14 +130,13 @@ if __name__ == "__main__":  # pragma: no cover
     from kedro.framework.startup import bootstrap_project
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
+    parser.add_argument("project_path", help="Path to a Kedro project")
     parser.add_argument(
         "--host", help="The host of the development server", default=DEFAULT_HOST
     )
     parser.add_argument(
         "--port", help="The port of the development server", default=DEV_PORT
     )
-    parser.add_argument("--project_path", help="Path to a Kedro project")
-
     args = parser.parse_args()
 
     project_path = (Path.cwd() / args.project_path).absolute()
