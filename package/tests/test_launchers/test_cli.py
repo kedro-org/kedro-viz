@@ -159,6 +159,8 @@ def test_kedro_viz_command_run_server(
     command_options,
     run_server_args,
     mocker,
+    patched_check_viz_up,
+    patched_start_browser,
 ):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
@@ -187,7 +189,7 @@ def test_kedro_viz_command_should_log_outdated_version(
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-
+    
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -216,7 +218,7 @@ def test_kedro_viz_command_should_not_log_latest_version(
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-
+    
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -226,13 +228,15 @@ def test_kedro_viz_command_should_not_log_latest_version(
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
-def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_click_echo):
+def test_kedro_viz_command_should_not_log_if_pypi_is_down(
+    mocker, mock_http_response, mock_click_echo
+):
     requests_get = mocker.patch("requests.get")
     requests_get.side_effect = requests.exceptions.RequestException("PyPI is down")
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-
+    
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -242,11 +246,15 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(mocker, mock_click_ech
     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
-def test_kedro_viz_command_with_autoreload(mocker, mock_project_path):
+def test_kedro_viz_command_with_autoreload(
+    mocker, patched_check_viz_up, patched_start_browser, mock_project_path
+):
     process_init = mocker.patch("multiprocessing.Process")
 
     # Reduce the timeout argument from 60 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro.framework.startup.bootstrap_project")
+    
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run", "--autoreload"])
@@ -276,7 +284,7 @@ def test_kedro_viz_command_with_autoreload(mocker, mock_project_path):
     assert run_process_kwargs["kwargs"]["port"] in cli._VIZ_PROCESSES
 
 
-def test_viz_command_group(mock_click_echo):
+def test_viz_command_group(mocker, mock_click_echo):
     runner = CliRunner()
 
     with runner.isolated_filesystem():
