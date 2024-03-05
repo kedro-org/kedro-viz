@@ -57,12 +57,6 @@ def viz(ctx):
     help="Host that viz will listen to. Defaults to localhost.",
 )
 @click.option(
-    "--project_path",
-    default=None,
-    type=str,
-    help="Select the indicated directory. Get the current directory if not indicated.",
-)
-@click.option(
     "--port",
     default=DEFAULT_PORT,
     type=int,
@@ -124,7 +118,6 @@ def viz(ctx):
 def run(
     host,
     port,
-    project_path,
     browser,
     load_file,
     save_file,
@@ -156,7 +149,6 @@ def run(
         run_server_kwargs = {
             "host": host,
             "port": port,
-            "project_path": project_path,
             "load_file": load_file,
             "save_file": save_file,
             "pipeline_name": pipeline,
@@ -166,7 +158,7 @@ def run(
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path(project_path) if project_path else Path.cwd()
+            project_path = Path.cwd()
             run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
                 "path": project_path,

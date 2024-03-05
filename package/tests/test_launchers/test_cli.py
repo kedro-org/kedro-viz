@@ -81,7 +81,6 @@ def mock_project_path(mocker):
             {
                 "host": "127.0.0.1",
                 "port": 4141,
-                "project_path": None,
                 "load_file": None,
                 "save_file": None,
                 "pipeline_name": None,
@@ -101,7 +100,6 @@ def mock_project_path(mocker):
             {
                 "host": "localhost",
                 "port": 4141,
-                "project_path": None,
                 "load_file": None,
                 "save_file": None,
                 "pipeline_name": None,
@@ -132,7 +130,6 @@ def mock_project_path(mocker):
             {
                 "host": "8.8.8.8",
                 "port": 4142,
-                "project_path": None,
                 "load_file": None,
                 "save_file": "save_dir",
                 "pipeline_name": "data_science",
@@ -147,7 +144,6 @@ def mock_project_path(mocker):
             {
                 "host": "127.0.0.1",
                 "port": 4141,
-                "project_path": None,
                 "load_file": None,
                 "save_file": None,
                 "pipeline_name": None,

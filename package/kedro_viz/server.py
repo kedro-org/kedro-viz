@@ -137,15 +137,9 @@ if __name__ == "__main__":  # pragma: no cover
     parser.add_argument(
         "--port", help="The port of the development server", default=DEV_PORT
     )
-    parser.add_argument("--project_path", help="Path to a Kedro project")
-
     args = parser.parse_args()
 
-    if args.project_path:
-        project_path = Path(args.project_path).resolve()
-    else:
-        project_path = Path.cwd()
-
+    project_path = (Path.cwd() / args.project_path).absolute()
     bootstrap_project(project_path)
 
     run_process_kwargs = {
