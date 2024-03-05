@@ -106,20 +106,21 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
-    path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(path, env, ignore_plugins, extra_params, pipeline_name)
+        load_and_populate_data(
+            project_path, env, ignore_plugins, extra_params, pipeline_name
+        )
 
         if save_file:
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
 
-        app = apps.create_api_app_from_project(path, autoreload)
+        app = apps.create_api_app_from_project(project_path, autoreload)
     else:
         if not Path(load_file).exists():
             raise ValueError(f"The provided filepath '{load_file}' does not exist.")
 
-        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
+        app = apps.create_api_app_from_file(f"{project_path}/{load_file}/api")
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 
