@@ -135,7 +135,13 @@ def run(
     params,
 ):
     """Launch local Kedro Viz instance"""
+    from kedro.framework.startup import bootstrap_project
+
     from kedro_viz.server import run_server
+
+    project_path = Path(project_path) if project_path else Path.cwd()
+
+    bootstrap_project(project_path)
 
     installed_version = parse(__version__)
     latest_version = get_latest_version()
@@ -166,7 +172,6 @@ def run(
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path(project_path)
             run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
                 "path": project_path,
