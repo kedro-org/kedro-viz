@@ -63,7 +63,7 @@ def viz(ctx):
     help="TCP port that viz will listen to. Defaults to 4141.",
 )
 @click.option(
-    "--project_path",
+    "--project-path",
     default=None,
     type=str,
     help="Select the indicated directory. Get the current directory if not indicated.",
@@ -166,7 +166,7 @@ def run(
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path(project_path) if project_path else Path.cwd()
+            project_path = Path(project_path) 
             run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
                 "path": project_path,
