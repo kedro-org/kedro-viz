@@ -189,7 +189,7 @@ def test_kedro_viz_command_should_log_outdated_version(
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-    
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -218,7 +218,7 @@ def test_kedro_viz_command_should_not_log_latest_version(
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-    
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -236,7 +236,7 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(
 
     mocker.patch("kedro_viz.server.run_server")
     mocker.patch("kedro.framework.startup.bootstrap_project")
-    
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -254,7 +254,7 @@ def test_kedro_viz_command_with_autoreload(
     # Reduce the timeout argument from 60 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     mocker.patch("kedro.framework.startup.bootstrap_project")
-    
+
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run", "--autoreload"])
