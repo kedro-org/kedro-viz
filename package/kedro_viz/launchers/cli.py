@@ -27,7 +27,7 @@ from kedro_viz.launchers.utils import (
     viz_deploy_progress_timer,
 )
 from kedro_viz.server import load_and_populate_data
-
+from kedro.framework.project import PACKAGE_NAME
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
@@ -151,6 +151,7 @@ def run(
             "autoreload": autoreload,
             "ignore_plugins": ignore_plugins,
             "extra_params": params,
+            "package_name": PACKAGE_NAME,
         }
         if autoreload:
             project_path = Path.cwd()

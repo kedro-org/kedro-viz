@@ -84,6 +84,7 @@ def run_server(
     autoreload: bool = False,
     ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
+    package_name: Optional[str] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -106,7 +107,10 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
+    from kedro.framework.project import configure_project
+
     path = Path(project_path) if project_path else Path.cwd()
+    configure_project(package_name)
 
     if load_file is None:
         load_and_populate_data(path, env, ignore_plugins, extra_params, pipeline_name)
