@@ -11,6 +11,7 @@ Please follow the established format:
 
 - Fix a bug on metadata panel when preview data is unavailable. (#1794)
 - Update Compatibility/Support Matrix in README. (#1774)
+- Update CLI command to support both `kedro viz run` and `kedro viz`. (#1790)
 
 # Release 8.0.0
 
