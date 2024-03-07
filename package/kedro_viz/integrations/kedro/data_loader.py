@@ -86,9 +86,6 @@ def load_data(
         and the session store.
     """
     from kedro.framework.project import pipelines
-    from kedro.framework.startup import bootstrap_project
-
-    bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
