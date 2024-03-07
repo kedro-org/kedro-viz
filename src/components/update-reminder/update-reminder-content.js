@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '04 March 2024',
+  date: '06 March 2024',
   features: [
     {
       title: 'Publish and share Kedro-Viz on AWS, Azure and GCP',
