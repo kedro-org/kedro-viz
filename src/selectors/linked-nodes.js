@@ -72,3 +72,29 @@ export const getLinkedNodes = createSelector(
     return linkedNodes;
   }
 );
+
+export const getLinkedNodesinBetween = createSelector(
+  [getVisibleEdgesByNode, getSelectedStartNode, getSelectedEndNode],
+  ({ sourceEdges, targetEdges }, startID, endID) => {
+    if (!startID || !endID) {
+      return {};
+    }
+
+    const linkedNodesBeforeEnd = {};
+    findLinkedNodes(endID, sourceEdges, linkedNodes);
+
+    const linkedNodesAfterStart = {};
+    findLinkedNodes(startID, targetEdges, linkedNodes);
+
+    const linkedNodesBetween = {};
+    for (const nodeID in linkedNodesBeforeEnd) {
+      if (linkedNodesAfterStart[nodeID]) {
+        linkedNodesBetween[nodeID] = true;
+      }
+    }
+    return linkedNodesBetween;
+  }
+);
+
+
+
