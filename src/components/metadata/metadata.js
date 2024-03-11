@@ -57,16 +57,15 @@ const MetaData = ({
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
   const hasPreview = metadata?.preview;
-  const hasPlot = hasPreview && metadata?.previewType.includes('PlotlyPreview');
-  const hasImage = hasPreview && metadata?.previewType.includes('ImagePreview');
+  const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
+  const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
     hasPreview &&
-    (metadata?.previewType.includes('MetricsTrackingPreview') ||
-      metadata?.previewType.includes('JSONTrackingPreview'));
-  const hasTable = hasPreview && metadata?.previewType.includes('TablePreview');
+    (metadata?.previewType === 'MetricsTrackingPreview' ||
+      metadata?.previewType === 'JSONTrackingPreview');
+  const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
-    hasPreview && metadata?.previewType.includes('MetricsTrackingPreview');
-
+    hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;

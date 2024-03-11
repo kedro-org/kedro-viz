@@ -826,9 +826,14 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            preview_type_annotation = inspect.signature(cls.dataset.preview).return_annotation
-            # Attempt to get the name attribute, if it exists. Otherwise, use str to handle the annotation directly.
-            preview_type_name = getattr(preview_type_annotation, '__name__', str(preview_type_annotation))
+            preview_type_annotation = inspect.signature(
+                cls.dataset.preview
+            ).return_annotation
+            # Attempt to get the name attribute, if it exists.
+            # Otherwise, use str to handle the annotation directly.
+            preview_type_name = getattr(
+                preview_type_annotation, "__name__", str(preview_type_annotation)
+            )
             return preview_type_name
 
         except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
