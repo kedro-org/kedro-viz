@@ -12,6 +12,10 @@ const getCurrentActivePipeline = () => {
   return JSON.parse(localStorage)?.pipeline?.active;
 };
 
+/**
+ * Retains only the specified query parameters and removes all others from the given searchParams object.
+ * @param {URLSearchParams} searchParams - The searchParams object to modify.
+ */
 const retainOtherQueryParams = (searchParams) => {
   const searchParamsEntries = [...searchParams.keys()];
 
@@ -30,6 +34,10 @@ const retainOtherQueryParams = (searchParams) => {
 export const useGeneratePathname = () => {
   const history = useHistory();
 
+  /**
+   * Updates the URL with search parameters based on the provided update function.
+   * @param {Function} updateFunction - The function that updates the search parameters.
+   */
   const updateURLWithSearchParams = useCallback(
     (updateFunction) => {
       const searchParams = new URLSearchParams(history.location.search);
@@ -63,22 +71,22 @@ export const useGeneratePathname = () => {
   );
 
   const toSelectedNode = useCallback(
-    (node) => {
+    (item) => {
       updateURLWithSearchParams((searchParams) => {
         const activePipeline = getCurrentActivePipeline();
         searchParams.set(params.pipeline, activePipeline);
-        searchParams.set(params.selected, node.id);
+        searchParams.set(params.selected, item.id);
       });
     },
     [updateURLWithSearchParams]
   );
 
   const toFocusedModularPipeline = useCallback(
-    (pipeline) => {
+    (item) => {
       updateURLWithSearchParams((searchParams) => {
         const activePipeline = getCurrentActivePipeline();
         searchParams.set(params.pipeline, activePipeline);
-        searchParams.set(params.focused, pipeline.id);
+        searchParams.set(params.focused, item.id);
       });
     },
     [updateURLWithSearchParams]
