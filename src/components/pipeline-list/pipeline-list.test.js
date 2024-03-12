@@ -53,7 +53,7 @@ describe('PipelineList', () => {
       wrapper.find('MenuOption').at(i).simulate('click');
 
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
-      expect(mockHistoryPush).toHaveBeenCalledWith(`/?pipeline_id=${id}`);
+      expect(mockHistoryPush).toHaveBeenCalledWith(`/?pid=${id}`);
     }
   );
 

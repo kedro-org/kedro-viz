@@ -129,7 +129,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
   }
 
-  // If there is a "selected_name" in the URL we need to ensure
+  // If there is a "selected_name"/"sn" in the URL we need to ensure
   // data tags is on so the app can redirect back to the selected node
   if (nodeNameFromUrl) {
     state.nodeType.disabled.data = false;

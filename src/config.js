@@ -113,10 +113,10 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id',
-  selected: 'selected_id',
-  selectedName: 'selected_name',
-  pipeline: 'pipeline_id',
+  focused: 'fid',
+  selected: 'sid',
+  selectedName: 'sn',
+  pipeline: 'pid',
   run: 'run_ids',
   view: 'view',
   comparisonMode: 'comparison',
@@ -144,9 +144,9 @@ export const routes = {
 };
 
 export const errorMessages = {
-  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
-  modularPipeline: 'Please check the value of "focused_id" in the URL',
-  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  node: 'Please check the value of "selected_id"/"sid" or "selected_name"/"sn" in the URL',
+  modularPipeline: 'Please check the value of "focused_id"/"fid" in the URL',
+  pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
   runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
