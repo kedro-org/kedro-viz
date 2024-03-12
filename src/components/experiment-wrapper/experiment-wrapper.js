@@ -15,8 +15,10 @@ import {
   localStorageFlowchartLink,
   params,
   tabLabels,
+  PACKAGE_KEDRO_DATASETS,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
+import { fetchPackageCompatibilities } from '../../utils';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.scss';
@@ -53,6 +55,8 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
   const [errorMessage, setErrorMessage] = useState({});
   const [invalidUrl, setInvalidUrl] = useState(false);
   const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
+  const [isKedroDatasetsCompatible, setIsKedroDatasetsCompatible] =
+    useState(false);
 
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -186,6 +190,26 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
 
   const handlePopState = useCallback(() => {
     setUsedNavigationBtn((usedNavigationBtn) => !usedNavigationBtn);
+  }, []);
+
+  useEffect(() => {
+    async function fetchPackageCompatibility() {
+      try {
+        const request = await fetchPackageCompatibilities();
+        const response = await request.json();
+
+        if (request.ok) {
+          const kedroDatasetsPackage = response.find(
+            (pckg) => pckg.package_name === PACKAGE_KEDRO_DATASETS
+          );
+          setIsKedroDatasetsCompatible(kedroDatasetsPackage.is_compatible);
+        }
+      } catch (error) {
+        console.error('package-compatibilities fetch error: ', error);
+      }
+    }
+
+    fetchPackageCompatibility();
   }, []);
 
   useEffect(() => {
@@ -356,6 +380,7 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
                         enableShowChanges={
                           enableShowChanges && selectedRunIds.length > 1
                         }
+                        isKedroDatasetsCompatible={isKedroDatasetsCompatible}
                         isRunDataLoading={isRunDataLoading}
                         newRunAdded={newRunAdded}
                         onRunSelection={onRunSelection}
