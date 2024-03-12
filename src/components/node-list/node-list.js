@@ -28,6 +28,8 @@ const NodeList = ({
   onModularPipelineToggleExpanded,
   focusMode,
   disabledModularPipeline,
+  onClearFilter,
+  isClearFilterActive,
 }) => {
   return (
     <div
@@ -79,9 +81,18 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <h2 className="pipeline-nodelist-section__title">
-                  <span>Filters</span>
-                </h2>
+                <div className="pipeline-nodelist-section__filters">
+                  <h2 className="pipeline-nodelist-section__title">
+                    <span>Filters</span>
+                  </h2>
+                  <button
+                    disabled={!isClearFilterActive}
+                    onClick={onClearFilter}
+                    className="pipeline-nodelist-section__clear-filter"
+                  >
+                    Clear
+                  </button>
+                </div>
                 <NodeListGroups
                   items={items}
                   groups={groups}

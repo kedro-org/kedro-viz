@@ -39,7 +39,8 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
-import { params } from '../../config';
+import { params, NODE_TYPES } from '../../config';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -69,6 +70,9 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+  const [isClearFilterActive, setIsClearFilterActive] = useState(false);
+
+  const history = useHistory();
 
   const {
     toSelectedPipeline,
@@ -249,6 +253,52 @@ const NodeListProvider = ({
       onToggleNodeSelected(null);
     }
   };
+
+  // Updates the URL parameters when the filter is cleared.
+  const updateUrlParamsOnClearFilter = () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete(params.tags);
+    searchParams.set(params.types, `${NODE_TYPES.task},${NODE_TYPES.data}`);
+
+    history.push(
+      decodeURIComponent(
+        `${window.location.pathname}?${searchParams.toString()}`
+      )
+    );
+  };
+
+  // Clear applied filters and reset to default
+  const onClearFilter = () => {
+    onToggleTypeDisabled({ task: false, data: false, parameters: true });
+    onToggleTagFilter(
+      tags.map((item) => item.id),
+      false
+    );
+
+    updateUrlParamsOnClearFilter();
+  };
+
+  // Updates the clear filter button status based on the node types and tags.
+  useEffect(() => {
+    const nodeTypesAcc = nodeTypes.reduce((acc, item) => {
+      if (item.id === NODE_TYPES.task) {
+        acc.task = item;
+      } else if (item.id === NODE_TYPES.data) {
+        acc.dataItem = item;
+      } else if (item.id === NODE_TYPES.parameters) {
+        acc.parameters = item;
+      }
+      return acc;
+    }, {});
+
+    const { task, dataItem, parameters } = nodeTypesAcc;
+    const isNodeTypeModified =
+      task.disabled || dataItem.disabled || !parameters.disabled;
+
+    const isNodeTagModified = tags.some((item) => item.enabled);
+    setIsClearFilterActive(isNodeTypeModified || isNodeTagModified);
+  }, [tags, nodeTypes]);
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -272,6 +322,8 @@ const NodeListProvider = ({
       onItemChange={onItemChange}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
+      onClearFilter={onClearFilter}
+      isClearFilterActive={isClearFilterActive}
     />
   );
 };
