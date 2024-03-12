@@ -66,6 +66,7 @@ const MetaData = ({
   const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
     hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
+  const hasJSON = metadata?.previewType === 'JSONPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -344,6 +345,9 @@ const MetaData = ({
                     </span>
                   </button>
                 </>
+              )}
+              {hasJSON && (
+                <div className="pipeline-metadata-metadata__preview">TODO</div>
               )}
             </div>
           </>

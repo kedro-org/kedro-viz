@@ -9,11 +9,13 @@ import { togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.scss';
+import JSONPreview from '../json-preview/JSONPreview';
 
 const MetadataModal = ({ metadata, onToggle, visible }) => {
   const hasPlot = metadata?.previewType === 'PlotlyPreview';
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
+  const hasJSON = metadata?.previewType === 'JSONPreview';
 
   if (!visible.metadataModal || (!hasPlot && !hasImage && !hasTable)) {
     return null;
