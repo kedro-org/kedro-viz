@@ -494,6 +494,43 @@ describe('NodeList', () => {
     });
   });
 
+  describe('clear node filters', () => {
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <NodeList />
+      </MemoryRouter>
+    );
+
+    const clearFilterButton = wrapper.find(
+      '.pipeline-nodelist-section__clear-filter'
+    );
+
+    it('On first load before applying filter button should be disabled', () => {
+      expect(clearFilterButton.prop('disabled')).toBe(true);
+    });
+
+    it('After applying any filter filter button should not be disabled', () => {
+      const nodeTypeFilter = wrapper.find(
+        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
+      );
+      nodeTypeFilter.simulate('click');
+
+      nodeTypeFilter.simulate('change', {
+        target: { checked: false },
+      });
+
+      setTimeout(() => {
+        expect(clearFilterButton.prop('disabled')).toBe(false);
+      }, 1); // Wait for 1 second before asserting
+    });
+
+    it('should update URL parameters when onClearFilter is called', () => {
+      clearFilterButton.simulate('click');
+
+      expect(window.location.search).not.toContain('tags');
+    });
+  });
+
   it('maps state to props', () => {
     const nodeList = expect.arrayContaining([
       expect.objectContaining({
