@@ -349,10 +349,11 @@ const MetaData = ({
               )}
               {hasJSON && (
                 <>
-                  <div className="pipeline-metadata__preview">
+                  <div className="pipeline-metadata__preview-json">
                     <JSONObject
                       value={JSON.parse(metadata.preview)}
                       theme={theme}
+                      style={{ background: 'transparent', fontSize: '14px' }}
                     />
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

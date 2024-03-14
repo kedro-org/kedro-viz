@@ -79,7 +79,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
           <PreviewTable data={metadata.preview} size="large" />
         </div>
       )}
-      {!hasTable && (
+      {!hasTable && !hasJSON && (
         <div className="pipeline-metadata-modal__bottom">
           <button
             className="pipeline-metadata-modal__collapse-plot"
@@ -95,8 +95,12 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
         </div>
       )}
       {hasJSON && (
-        <div className="pipeline-metadata-modal__preview">
-          <JSONObject value={JSON.parse(metadata.preview)} theme={theme} />
+        <div className="pipeline-metadata-modal__preview-json">
+          <JSONObject
+            value={JSON.parse(metadata.preview)}
+            theme={theme}
+            style={{ background: 'transparent', fontSize: '15px' }}
+          />
         </div>
       )}
     </div>
