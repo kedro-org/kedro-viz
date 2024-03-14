@@ -354,6 +354,7 @@ const MetaData = ({
                       value={JSON.parse(metadata.preview)}
                       theme={theme}
                       style={{ background: 'transparent', fontSize: '14px' }}
+                      collapsed={3}
                     />
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />

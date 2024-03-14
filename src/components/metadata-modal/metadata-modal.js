@@ -100,6 +100,7 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             value={JSON.parse(metadata.preview)}
             theme={theme}
             style={{ background: 'transparent', fontSize: '15px' }}
+            collapsed={3}
           />
         </div>
       )}
