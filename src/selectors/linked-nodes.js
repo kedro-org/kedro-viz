@@ -2,6 +2,8 @@ import { createSelector } from 'reselect';
 import { getVisibleEdges } from './edges';
 
 const getClickedNode = (state) => state.node.clicked;
+const getFromNodes = (state) => state.filterNodes.from;
+const getToNodes = (state) => state.filterNodes.to; 
 /**
  * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
@@ -57,44 +59,39 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
  * @param {String} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getVisibleEdgesByNode, getClickedNode],
-  ({ sourceEdges, targetEdges }, nodeID) => {
+  [getVisibleEdgesByNode, getClickedNode, getFromNodes, getToNodes],
+  ({ sourceEdges, targetEdges }, nodeID, startID, endID) => {
     if (!nodeID) {
-      return {};
+      if (!startID && !endID) {
+        return {};
+      }
+  
+      const linkedNodesBeforeEnd = {};
+      findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+  
+      const linkedNodesAfterStart = {};
+      findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
+  
+      const linkedNodesBetween = {};
+      for (const nodeID in linkedNodesBeforeEnd) {
+        if (linkedNodesAfterStart[nodeID]) {
+          linkedNodesBetween[nodeID] = true;
+        }
+      }
+      return linkedNodesBetween;
     }
 
     const linkedNodes = {};
     findLinkedNodes(nodeID, sourceEdges, linkedNodes);
-
+    console.log(linkedNodes);
+  
     linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, linkedNodes);
-
+  
     return linkedNodes;
   }
 );
 
-export const getLinkedNodesinBetween = createSelector(
-  [getVisibleEdgesByNode, getSelectedStartNode, getSelectedEndNode],
-  ({ sourceEdges, targetEdges }, startID, endID) => {
-    if (!startID || !endID) {
-      return {};
-    }
-
-    const linkedNodesBeforeEnd = {};
-    findLinkedNodes(endID, sourceEdges, linkedNodes);
-
-    const linkedNodesAfterStart = {};
-    findLinkedNodes(startID, targetEdges, linkedNodes);
-
-    const linkedNodesBetween = {};
-    for (const nodeID in linkedNodesBeforeEnd) {
-      if (linkedNodesAfterStart[nodeID]) {
-        linkedNodesBetween[nodeID] = true;
-      }
-    }
-    return linkedNodesBetween;
-  }
-);
 
 
 

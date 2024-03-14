@@ -69,6 +69,11 @@ export const flags = {
     default: false,
     icon: '🔛',
   },
+  slicePipeline: {
+    name: 'Slice Kedro-pipelines',
+    description: 'Filter pipelines by slicing them',
+    default: true,
+  },
 };
 
 export const settings = {
@@ -81,7 +86,7 @@ export const settings = {
     name: 'New feature hints',
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
-  },
+  }
 };
 
 // Sidebar groups is an ordered map of { id: label }

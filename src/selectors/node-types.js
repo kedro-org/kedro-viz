@@ -2,12 +2,34 @@ import { createSelector } from 'reselect';
 import { getNodeDisabled } from './disabled';
 import { arrayToObject } from '../utils';
 
+
+
 const getNodeIDs = (state) => state.node.ids;
 const getNodeType = (state) => state.node.type;
+const getNodeName = (state) => state.node.name;
 export const getNodeTypeIDs = (state) => state.nodeType.ids;
 const getNodeTypeName = (state) => state.nodeType.name;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 export const isModularPipelineType = (type) => type === 'modularPipeline';
+
+
+
+export const getTaskNodes = createSelector(
+  [getNodeType, getNodeName],
+  (nodeType, nodeName) => {
+    const taskNodeIds = Object.keys(nodeName).filter(id => nodeType[id] === 'task');
+    return arrayToObject(taskNodeIds, id => nodeName[id]);
+  }
+);
+
+export const getDatasets = createSelector(
+  [getNodeType, getNodeName],
+  (nodeType, nodeName) => {
+    const dataNodeIds = Object.keys(nodeName).filter(id => nodeType[id] === 'data');
+    return arrayToObject(dataNodeIds, id => nodeName[id]);
+  }
+);
+
 
 /**
  * Calculate the total number of nodes (and the number of visible nodes)

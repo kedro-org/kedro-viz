@@ -55,6 +55,15 @@ export function toggleNodeDataLoading(loading) {
   };
 }
 
+export const ADD_NODE_FILTERS = 'ADD_NODE_FILTERS';
+
+export function filterNodes(filterNodes) {
+  return {
+    type: ADD_NODE_FILTERS,
+    filterNodes
+  };
+}
+
 export const ADD_NODE_METADATA = 'ADD_NODE_METADATA';
 
 /**
@@ -87,3 +96,6 @@ export function loadNodeData(nodeID) {
     }
   };
 }
+
+
+

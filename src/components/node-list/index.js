@@ -12,6 +12,8 @@ import {
 import {
   getNodeTypes,
   isModularPipelineType,
+  getTaskNodes,
+  getDatasets,
 } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
@@ -36,6 +38,8 @@ import {
   loadNodeData,
   toggleNodeHovered,
   toggleNodesDisabled,
+  filterNodes,
+  toggleNodeClicked
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
@@ -45,12 +49,15 @@ import './styles/node-list.scss';
  * Also handles user interaction and dispatches updates back to the store.
  */
 const NodeListProvider = ({
+  flags,
   faded,
   nodes,
   nodeSelected,
   tags,
   tagNodeCounts,
   nodeTypes,
+  taskNodes,
+  datasets,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
@@ -61,7 +68,9 @@ const NodeListProvider = ({
   onToggleModularPipelineDisabled,
   onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
+  onToggleNodeClicked,
   onToggleFocusMode,
+  onFilterNodes,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -69,8 +78,18 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
+  const [toNodes, selectedToNodes] = useState(null);
+  const [fromNodes, selectedFromNodes] = useState(null);
+
   const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
     useGeneratePathname();
+
+  
+  useEffect(() => {
+      onFilterNodes(fromNodes,toNodes)
+      onToggleNodeClicked(null)
+    }, [fromNodes,toNodes, onFilterNodes, onToggleNodeClicked]);
+
 
   const items = getFilteredItems({
     nodes,
@@ -214,13 +233,20 @@ const NodeListProvider = ({
 
   return (
     <NodeList
+      flags={flags}
       faded={faded}
       items={items}
       modularPipelinesTree={modularPipelinesTree}
       modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
+      taskNodes={taskNodes}
+      datasets={datasets}
       searchValue={searchValue}
+      toNodes={toNodes}
+      fromNodes={fromNodes}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
+      onSelectFromNodes = {selectedFromNodes}
+      onSelectToNodes = {selectedToNodes}
       onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onToggleFocusMode={onToggleFocusMode}
@@ -235,11 +261,14 @@ const NodeListProvider = ({
 };
 
 export const mapStateToProps = (state) => ({
+  flags: state.flags,
   tags: getTagData(state),
   tagNodeCounts: getTagNodeCounts(state),
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
+  taskNodes: getTaskNodes(state),
+  datasets: getDatasets(state),
   focusMode: getFocusedModularPipeline(state),
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
@@ -280,6 +309,12 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
+  onToggleNodeClicked: (nodeID) =>{
+    dispatch(toggleNodeClicked(nodeID))
+  },
+  onFilterNodes: (from,to) => {
+    dispatch(filterNodes({from,to}));
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NodeListProvider);

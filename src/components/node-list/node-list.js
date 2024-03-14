@@ -12,7 +12,10 @@ import './styles/node-list.scss';
  * Scrollable list of toggleable items, with search & filter functionality
  */
 const NodeList = ({
+  flags,
   faded,
+  datasets,
+  taskNodes,
   items,
   modularPipelinesTree,
   modularPipelinesSearchResult,
@@ -20,6 +23,10 @@ const NodeList = ({
   searchValue,
   getGroupState,
   onUpdateSearchValue,
+  toNodes,
+  fromNodes,
+  onSelectFromNodes,
+  onSelectToNodes, 
   onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
@@ -83,9 +90,16 @@ const NodeList = ({
                   <span>Filters</span>
                 </h2>
                 <NodeListGroups
+                  flags={flags}
+                  datasets={datasets}
+                  taskNodes={taskNodes}
                   items={items}
                   groups={groups}
                   searchValue={searchValue}
+                  toNodes={toNodes}
+                  fromNodes={fromNodes}
+                  selectedFromNodes={onSelectFromNodes}
+                  selectedToNodes={onSelectToNodes}
                   getGroupState={getGroupState}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
