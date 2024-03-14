@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
+import JSONObject from '../../components/json-object';
 import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
@@ -10,13 +11,16 @@ import getShortType from '../../utils/short-type';
 import { getClickedNodeMetaData } from '../../selectors/metadata';
 import './metadata-modal.scss';
 
-const MetadataModal = ({ metadata, onToggle, visible }) => {
+const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasPlot = metadata?.previewType === 'PlotlyPreview';
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
 
-  if (!visible.metadataModal || (!hasPlot && !hasImage && !hasTable)) {
+  if (
+    !visible.metadataModal ||
+    (!hasPlot && !hasImage && !hasTable && !hasJSON)
+  ) {
     return null;
   }
 
@@ -88,6 +92,11 @@ const MetadataModal = ({ metadata, onToggle, visible }) => {
                 : 'Collapse Matplotlib Image'}
             </span>
           </button>
+        </div>
+      )}
+      {hasJSON && (
+        <div className="pipeline-metadata-modal__preview">
+          <JSONObject value={JSON.parse(metadata.preview)} theme={theme} />
         </div>
       )}
     </div>

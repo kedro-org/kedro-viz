@@ -4,6 +4,7 @@ import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
 import PreviewTable from '../../components/preview-table';
+import JSONObject from '../../components/json-object';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -347,7 +348,25 @@ const MetaData = ({
                 </>
               )}
               {hasJSON && (
-                <div className="pipeline-metadata-metadata__preview">TODO</div>
+                <>
+                  <div className="pipeline-metadata__preview">
+                    <JSONObject
+                      value={JSON.parse(metadata.preview)}
+                      theme={theme}
+                    />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand JSON View
+                    </span>
+                  </button>
+                </>
               )}
             </div>
           </>
