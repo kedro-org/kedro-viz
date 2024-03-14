@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Remove demo data source. (#1804)
+- Remove demo data source and update feature hints. (#1804)
 
 # Release 8.0.1 
 
