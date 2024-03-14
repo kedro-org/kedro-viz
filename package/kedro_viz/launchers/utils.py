@@ -18,7 +18,7 @@ class WaitForException(Exception):
 def _wait_for(
     func: Callable,
     expected_result: Any = True,
-    timeout: int = 60,
+    timeout: int = 600,  # [TODO] This is a temporary fix for https://github.com/kedro-org/kedro-viz/issues/1768.
     print_error: bool = True,
     sleep_for: int = 1,
     **kwargs,
