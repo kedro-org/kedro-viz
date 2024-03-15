@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Release 8.1.0
+
+## Major features and improvements
+
+- Extending stateful URLs with node types and tags. (#1799) 
+
 # Release 8.0.1 
 
 ## Bug fixes and other changes
