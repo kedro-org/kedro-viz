@@ -200,6 +200,7 @@ def test_kedro_viz_command_should_log_outdated_version(
         data={"info": {"version": mock_version}}
     )
 
+    # test push
     mocker.patch("kedro_viz.server.run_server")
     runner = CliRunner()
     with runner.isolated_filesystem():
