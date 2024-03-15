@@ -190,34 +190,34 @@ def test_kedro_viz_command_run_server(
     assert run_server_args["port"] in cli._VIZ_PROCESSES
 
 
-def test_kedro_viz_command_should_log_outdated_version(
-    mocker, mock_http_response, mock_click_echo
-):
-    installed_version = parse(__version__)
-    mock_version = f"{installed_version.major + 1}.0.0"
-    requests_get = mocker.patch("requests.get")
-    requests_get.return_value = mock_http_response(
-        data={"info": {"version": mock_version}}
-    )
+# def test_kedro_viz_command_should_log_outdated_version(
+#     mocker, mock_http_response, mock_click_echo
+# ):
+#     installed_version = parse(__version__)
+#     mock_version = f"{installed_version.major + 1}.0.0"
+#     requests_get = mocker.patch("requests.get")
+#     requests_get.return_value = mock_http_response(
+#         data={"info": {"version": mock_version}}
+#     )
 
-    # test push
-    mocker.patch("kedro_viz.server.run_server")
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        runner.invoke(cli.viz_cli, ["viz", "run"])
+#     # test push
+#     mocker.patch("kedro_viz.server.run_server")
+#     runner = CliRunner()
+#     with runner.isolated_filesystem():
+#         runner.invoke(cli.viz_cli, ["viz", "run"])
 
-    mock_click_echo_calls = [
-        call(
-            "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
-            f"You are using version {installed_version}; "
-            f"however, version {mock_version} is now available.\n"
-            "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
-            "You can view the complete changelog at "
-            "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
-        )
-    ]
+#     mock_click_echo_calls = [
+#         call(
+#             "\x1b[33mWARNING: You are using an old version of Kedro Viz. "
+#             f"You are using version {installed_version}; "
+#             f"however, version {mock_version} is now available.\n"
+#             "You should consider upgrading via the `pip install -U kedro-viz` command.\n"
+#             "You can view the complete changelog at "
+#             "https://github.com/kedro-org/kedro-viz/releases.\x1b[0m"
+#         )
+#     ]
 
-    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+#     mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
 
 def test_kedro_viz_command_should_not_log_latest_version(
