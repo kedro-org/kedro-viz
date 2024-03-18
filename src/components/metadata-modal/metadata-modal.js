@@ -16,11 +16,9 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
   const hasImage = metadata?.previewType === 'ImagePreview';
   const hasTable = metadata?.previewType === 'TablePreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
+  const hasMetadataContent = hasPlot || hasImage || hasTable || hasJSON;
 
-  if (
-    !visible.metadataModal ||
-    (!hasPlot && !hasImage && !hasTable && !hasJSON)
-  ) {
+  if (!visible.metadataModal || !hasMetadataContent) {
     return null;
   }
 
