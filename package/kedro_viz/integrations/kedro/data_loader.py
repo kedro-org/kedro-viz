@@ -89,25 +89,27 @@ def load_data(
     from kedro.framework.startup import bootstrap_project
 
     bootstrap_project(project_path)
+    
+    pipelines_dict = dict(pipelines)
+    c
 
-    with KedroSession.create(
-        project_path=project_path,
-        env=env,
-        save_on_close=False,
-        extra_params=extra_params,
-    ) as session:
-        # check for --ignore-plugins option
-        if ignore_plugins:
-            session._hook_manager = _VizNullPluginManager()  # type: ignore
+    # with KedroSession.create(
+    #     project_path=project_path,
+    #     env=env,
+    #     save_on_close=False,
+    #     extra_params=extra_params,
+    # ) as session:
+    #     # check for --ignore-plugins option
+    #     if ignore_plugins:
+    #         session._hook_manager = _VizNullPluginManager()  # type: ignore
 
-        context = session.load_context()
-        session_store = session._store
-        catalog = context.catalog
+    #     context = session.load_context()
+    #     session_store = session._store
+    #     catalog = context.catalog
 
-        # Pipelines is a lazy dict-like object, so we force it to populate here
-        # in case user doesn't have an active session down the line when it's first accessed.
-        # Useful for users who have `get_current_session` in their `register_pipelines()`.
-        pipelines_dict = dict(pipelines)
-        stats_dict = _get_dataset_stats(project_path)
+    #     # Pipelines is a lazy dict-like object, so we force it to populate here
+    #     # in case user doesn't have an active session down the line when it's first accessed.
+    #     # Useful for users who have `get_current_session` in their `register_pipelines()`.
+    #     stats_dict = _get_dataset_stats(project_path)
 
-    return catalog, pipelines_dict, session_store, stats_dict
+    # return catalog, pipelines_dict, session_store, stats_dict

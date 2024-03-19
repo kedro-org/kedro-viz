@@ -235,7 +235,9 @@ export const drawNodes = function (changed) {
       'clickedNode',
       'linkedNodes',
       'focusMode',
-      'inputOutputDataNodes'
+      'inputOutputDataNodes',
+      'fromNodes',
+      'toNodes'
     )
   ) {
     allNodes
@@ -409,7 +411,9 @@ export const drawEdges = function (changed) {
       'clickedNode',
       'linkedNodes',
       'focusMode',
-      'inputOutputDataEdges'
+      'inputOutputDataEdges',
+      'fromNodes',
+      'toNodes'
     )
   ) {
     allEdges

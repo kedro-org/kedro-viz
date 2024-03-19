@@ -110,6 +110,8 @@ export class FlowChart extends Component {
         'edges',
         'clickedNode',
         'linkedNodes',
+        'fromNodes',
+        'toNodes',
         'focusMode',
         'inputOutputDataEdges'
       )
@@ -122,6 +124,8 @@ export class FlowChart extends Component {
         'nodes',
         'clickedNode',
         'linkedNodes',
+        'fromNodes',
+        'toNodes',
         'nodeTypeDisabled',
         'nodeActive',
         'nodeSelected',
@@ -132,10 +136,22 @@ export class FlowChart extends Component {
         'hoveredFocusMode'
       )
     ) {
+      console.log(this.props.linkedNodes);
       drawNodes.call(this, changed);
     }
 
-    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode','linkedNodes')) {
+    if (
+      changed(
+        'edges',
+        'nodes',
+        'layers',
+        'chartSize',
+        'clickedNode',
+        'linkedNodes',
+        'fromNodes',
+        'toNodes'
+      )
+    ) {
       // Don't zoom out when the metadata or code panels are opened or closed
       if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
         drawNodes.call(this, changed);
@@ -687,6 +703,8 @@ const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
+  fromNodes: state.filterNodes.from,
+  toNodes: state.filterNodes.to,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
   displayGlobalToolbar: state.display.globalToolbar,

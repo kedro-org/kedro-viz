@@ -3,7 +3,7 @@ import { getVisibleEdges } from './edges';
 
 const getClickedNode = (state) => state.node.clicked;
 const getFromNodes = (state) => state.filterNodes.from;
-const getToNodes = (state) => state.filterNodes.to; 
+const getToNodes = (state) => state.filterNodes.to;
 /**
  * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
@@ -65,13 +65,13 @@ export const getLinkedNodes = createSelector(
       if (!startID && !endID) {
         return {};
       }
-  
+
       const linkedNodesBeforeEnd = {};
       findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
-  
+
       const linkedNodesAfterStart = {};
       findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
-  
+
       const linkedNodesBetween = {};
       for (const nodeID in linkedNodesBeforeEnd) {
         if (linkedNodesAfterStart[nodeID]) {
@@ -83,15 +83,11 @@ export const getLinkedNodes = createSelector(
 
     const linkedNodes = {};
     findLinkedNodes(nodeID, sourceEdges, linkedNodes);
-    console.log(linkedNodes);
-  
+
     linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, linkedNodes);
-  
+
+    console.log(linkedNodes);
     return linkedNodes;
   }
 );
-
-
-
-
