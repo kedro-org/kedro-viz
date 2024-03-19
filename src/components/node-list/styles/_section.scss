@@ -1,11 +1,31 @@
 @use './variables';
+@use '../../../styles/extends';
 
-.pipeline-nodelist-section__title {
-  display: block;
-  margin: 6px variables.$section-title-padding-x 12px
-    (variables.$section-title-padding-x + 0.085);
-  font-weight: normal;
-  font-size: 1.6em;
-  opacity: 0.55;
-  user-select: none;
+.pipeline-nodelist-section__filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px (variables.$section-title-padding-x + 0.92) 12px
+    (variables.$section-title-padding-x + 1.06);
+
+  .pipeline-nodelist-section__title {
+    font-weight: normal;
+    font-size: 1.6em;
+    opacity: 0.55;
+    user-select: none;
+    margin: 0;
+  }
+
+  .pipeline-nodelist-section__clear-filter {
+    @extend %button;
+
+    text-decoration: underline;
+    font-size: 1.4em;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.3;
+    }
+  }
 }

@@ -1,10 +1,29 @@
 import { useCallback } from 'react';
 import { useHistory, generatePath } from 'react-router-dom';
-import { localStorageName, routes } from '../../config';
+import {
+  localStorageName,
+  params,
+  routes,
+  queryParamsToRetain,
+} from '../../config';
 
 const getCurrentActivePipeline = () => {
   const localStorage = window.localStorage.getItem(localStorageName);
   return JSON.parse(localStorage)?.pipeline?.active;
+};
+
+/**
+ * Retains only the specified query parameters and removes all others from the given searchParams object.
+ * @param {URLSearchParams} searchParams - The searchParams object to modify.
+ */
+const retainOtherQueryParams = (searchParams) => {
+  const searchParamsEntries = [...searchParams.keys()];
+
+  for (const key of searchParamsEntries) {
+    if (!queryParamsToRetain.includes(key)) {
+      searchParams.delete(key);
+    }
+  }
 };
 
 /**
@@ -15,52 +34,75 @@ const getCurrentActivePipeline = () => {
 export const useGeneratePathname = () => {
   const history = useHistory();
 
-  const toFlowchartPage = useCallback(() => {
-    const url = generatePath(routes.flowchart.main);
-    history.push(url);
-  }, [history]);
-
-  const toSelectedPipeline = useCallback(
-    (pipelineValue) => {
-      // Get the value from param if it exists first
-      // before checking from localStorage
-      const activePipeline = pipelineValue
-        ? pipelineValue
-        : getCurrentActivePipeline();
-
-      const url = generatePath(routes.flowchart.selectedPipeline, {
-        pipelineId: activePipeline,
-      });
-
+  /**
+   * Updates the URL with search parameters based on the provided update function.
+   * @param {Function} updateFunction - The function that updates the search parameters.
+   */
+  const updateURLWithSearchParams = useCallback(
+    (updateFunction) => {
+      const searchParams = new URLSearchParams(history.location.search);
+      updateFunction(searchParams);
+      const url = decodeURIComponent(
+        history.location.pathname + '?' + searchParams.toString()
+      );
       history.push(url);
     },
     [history]
+  );
+
+  const toFlowchartPage = useCallback(() => {
+    updateURLWithSearchParams(retainOtherQueryParams);
+  }, [updateURLWithSearchParams]);
+
+  const toSelectedPipeline = useCallback(
+    (pipelineValue) => {
+      updateURLWithSearchParams((searchParams) => {
+        retainOtherQueryParams(searchParams);
+
+        // Get the value from param if it exists first
+        // before checking from localStorage
+        const activePipeline = pipelineValue
+          ? pipelineValue
+          : getCurrentActivePipeline();
+        searchParams.set(params.pipeline, activePipeline);
+      });
+    },
+    [updateURLWithSearchParams]
   );
 
   const toSelectedNode = useCallback(
     (item) => {
-      const activePipeline = getCurrentActivePipeline();
-
-      const url = generatePath(routes.flowchart.selectedNode, {
-        pipelineId: activePipeline,
-        id: item.id,
+      updateURLWithSearchParams((searchParams) => {
+        const activePipeline = getCurrentActivePipeline();
+        searchParams.set(params.pipeline, activePipeline);
+        searchParams.set(params.selected, item.id);
       });
-      history.push(url);
     },
-    [history]
+    [updateURLWithSearchParams]
   );
 
   const toFocusedModularPipeline = useCallback(
     (item) => {
-      const activePipeline = getCurrentActivePipeline();
-
-      const url = generatePath(routes.flowchart.focusedNode, {
-        pipelineId: activePipeline,
-        id: item.id,
+      updateURLWithSearchParams((searchParams) => {
+        const activePipeline = getCurrentActivePipeline();
+        searchParams.set(params.pipeline, activePipeline);
+        searchParams.set(params.focused, item.id);
       });
-      history.push(url);
     },
-    [history]
+    [updateURLWithSearchParams]
+  );
+
+  const toSetQueryParam = useCallback(
+    (param, value) => {
+      updateURLWithSearchParams((searchParams) => {
+        if (Array.isArray(value) && value.length === 0) {
+          searchParams.delete(param);
+        } else {
+          searchParams.set(param, value);
+        }
+      });
+    },
+    [updateURLWithSearchParams]
   );
 
   return {
@@ -68,6 +110,7 @@ export const useGeneratePathname = () => {
     toFlowchartPage,
     toSelectedNode,
     toFocusedModularPipeline,
+    toSetQueryParam,
   };
 };
 

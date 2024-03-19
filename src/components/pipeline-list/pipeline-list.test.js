@@ -6,11 +6,17 @@ import PipelineList, {
 import { mockState, setup } from '../../utils/state.mock';
 
 const mockHistoryPush = jest.fn();
+const mockLocationSearch = '?query=mockQuery';
+const mockLocationPathname = '/';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: mockHistoryPush,
+    location: {
+      search: mockLocationSearch,
+      pathname: mockLocationPathname,
+    },
   }),
 }));
 
@@ -47,7 +53,7 @@ describe('PipelineList', () => {
       wrapper.find('MenuOption').at(i).simulate('click');
 
       expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
-      expect(mockHistoryPush).toHaveBeenCalledWith(`/?pipeline_id=${id}`);
+      expect(mockHistoryPush).toHaveBeenCalledWith(`/?pid=${id}`);
     }
   );
 

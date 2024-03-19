@@ -57,9 +57,11 @@ export const createInitialState = () => ({
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
  * @param {Object} state Initial/extant state
+ * @param {Boolean} isNodeTypeInUrl flag to check if nodeType is in URL
+ * @param {Boolean} isNodeTagInUrl flag to check if tag is in URL
  * @return {Object} Combined state from localStorage
  */
-export const mergeLocalStorage = (state) => {
+export const mergeLocalStorage = (state, isNodeTypeInUrl, isNodeTagInUrl) => {
   const localStorageState = loadLocalStorage(localStorageName);
   const localStorageRunsMetadataState = loadLocalStorage(
     localStorageRunsMetadata
@@ -73,6 +75,17 @@ export const mergeLocalStorage = (state) => {
     ...localStorageState,
     ...{ runsMetadata: localStorageRunsMetadataState },
   };
+
+  // Remove disabled nodeType from localStorage if nodeType filter params are present in the URL
+  if (allLocalStorageState?.nodeType?.disabled && isNodeTypeInUrl) {
+    delete allLocalStorageState.nodeType.disabled;
+  }
+
+  // Remove enabled tag from localStorage if tag filter params are present in the URL
+  if (allLocalStorageState?.tag?.enabled && isNodeTagInUrl) {
+    delete allLocalStorageState.tag.enabled;
+  }
+
   return deepmerge(state, allLocalStorageState);
 };
 
@@ -87,14 +100,20 @@ export const mergeLocalStorage = (state) => {
  * @param {Boolean} applyFixes Whether to override initialState
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
-  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-
   const search = new URLSearchParams(window.location.search);
   const pipelineIdFromURL = search.get(params.pipeline);
   const nodeIdFromUrl = search.get(params.selected);
   const nodeNameFromUrl = search.get(params.selectedName);
+  const isNodeTypeInUrl = search.has(params.types);
+  const isNodeTagInUrl = search.has(params.tags);
 
   const nodeTypes = ['parameters', 'task', 'data'];
+
+  const state = mergeLocalStorage(
+    normalizeData(data, expandAllPipelines),
+    isNodeTypeInUrl,
+    isNodeTagInUrl
+  );
 
   if (pipelineIdFromURL) {
     // Use main pipeline if pipeline from URL isn't recognised
@@ -110,7 +129,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
     state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
   }
 
-  // If there is a "selected_name" in the URL we need to ensure
+  // If there is a "selected_name"/"sn" in the URL we need to ensure
   // data tags is on so the app can redirect back to the selected node
   if (nodeNameFromUrl) {
     state.nodeType.disabled.data = false;
