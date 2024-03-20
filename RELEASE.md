@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Extending stateful URLs with node types and tags. (#1799) 
+- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799) 
 
 # Release 8.0.1 
 

@@ -186,6 +186,7 @@ export const queryParamsToRetain = [
   params.types,
   params.tags,
   params.expandAll,
+  params.pipeline,
 ];
 
 export const NODE_TYPES = {
