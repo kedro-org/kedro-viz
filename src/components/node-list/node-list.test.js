@@ -494,19 +494,19 @@ describe('NodeList', () => {
     });
   });
 
-  describe('clear node filters', () => {
+  describe('Reset node filters', () => {
     const wrapper = setup.mount(
       <MemoryRouter>
         <NodeList />
       </MemoryRouter>
     );
 
-    const clearFilterButton = wrapper.find(
-      '.pipeline-nodelist-section__clear-filter'
+    const resetFilterButton = wrapper.find(
+      '.pipeline-nodelist-section__reset-filter'
     );
 
     it('On first load before applying filter button should be disabled', () => {
-      expect(clearFilterButton.prop('disabled')).toBe(true);
+      expect(resetFilterButton.prop('disabled')).toBe(true);
     });
 
     it('After applying any filter filter button should not be disabled', () => {
@@ -520,12 +520,12 @@ describe('NodeList', () => {
       });
 
       setTimeout(() => {
-        expect(clearFilterButton.prop('disabled')).toBe(false);
+        expect(resetFilterButton.prop('disabled')).toBe(false);
       }, 1); // Wait for 1 second before asserting
     });
 
-    it('should update URL parameters when onClearFilter is called', () => {
-      clearFilterButton.simulate('click');
+    it('should update URL parameters when onResetFilter is called', () => {
+      resetFilterButton.simulate('click');
 
       expect(window.location.search).not.toContain('tags');
     });

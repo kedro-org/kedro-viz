@@ -28,8 +28,8 @@ const NodeList = ({
   onModularPipelineToggleExpanded,
   focusMode,
   disabledModularPipeline,
-  onClearFilter,
-  isClearFilterActive,
+  onResetFilter,
+  isResetFilterActive,
 }) => {
   return (
     <div
@@ -86,11 +86,11 @@ const NodeList = ({
                     <span>Filters</span>
                   </h2>
                   <button
-                    disabled={!isClearFilterActive}
-                    onClick={onClearFilter}
-                    className="pipeline-nodelist-section__clear-filter"
+                    disabled={!isResetFilterActive}
+                    onClick={onResetFilter}
+                    className="pipeline-nodelist-section__reset-filter"
                   >
-                    Clear
+                    Reset
                   </button>
                 </div>
                 <NodeListGroups

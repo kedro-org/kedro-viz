@@ -70,7 +70,7 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const [isClearFilterActive, setIsClearFilterActive] = useState(false);
+  const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
   const history = useHistory();
 
@@ -254,8 +254,8 @@ const NodeListProvider = ({
     }
   };
 
-  // Updates the URL parameters when the filter is cleared.
-  const updateUrlParamsOnClearFilter = () => {
+  // Updates the URL parameters when the filter is reset.
+  const updateUrlParamsOnResetFilter = () => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.delete(params.tags);
     searchParams.set(params.types, `${NODE_TYPES.task},${NODE_TYPES.data}`);
@@ -267,18 +267,18 @@ const NodeListProvider = ({
     );
   };
 
-  // Clear applied filters and reset to default
-  const onClearFilter = () => {
+  // Reset applied filters to default
+  const onResetFilter = () => {
     onToggleTypeDisabled({ task: false, data: false, parameters: true });
     onToggleTagFilter(
       tags.map((item) => item.id),
       false
     );
 
-    updateUrlParamsOnClearFilter();
+    updateUrlParamsOnResetFilter();
   };
 
-  // Updates the clear filter button status based on the node types and tags.
+  // Updates the reset filter button status based on the node types and tags.
   useEffect(() => {
     const nodeTypesAcc = nodeTypes.reduce((acc, item) => {
       if (item.id === NODE_TYPES.task) {
@@ -296,7 +296,7 @@ const NodeListProvider = ({
       task.disabled || dataItem.disabled || !parameters.disabled;
 
     const isNodeTagModified = tags.some((item) => item.enabled);
-    setIsClearFilterActive(isNodeTypeModified || isNodeTagModified);
+    setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
   }, [tags, nodeTypes]);
 
   useEffect(() => {
@@ -322,8 +322,8 @@ const NodeListProvider = ({
       onItemChange={onItemChange}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
-      onClearFilter={onClearFilter}
-      isClearFilterActive={isClearFilterActive}
+      onResetFilter={onResetFilter}
+      isResetFilterActive={isResetFilterActive}
     />
   );
 };
