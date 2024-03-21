@@ -68,7 +68,7 @@ const MetaData = ({
     hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
     hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
-  const hasJSON = metadata?.previewType === 'JSONPreview';
+  const hasJSON = hasPreview && metadata?.previewType === 'JSONPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
