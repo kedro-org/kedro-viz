@@ -17,16 +17,12 @@ export const getSourceID = () => {
   const urlParams = new URL(document.location.href).searchParams;
   const dataSource = urlParams.get('data');
   const { REACT_APP_DATA_SOURCE } = process.env;
-  const isDemo = document.location.host === 'kedro-org.github.io';
 
   if (dataSource) {
     return encodeURIComponent(dataSource);
   }
   if (REACT_APP_DATA_SOURCE) {
     return REACT_APP_DATA_SOURCE;
-  }
-  if (isDemo) {
-    return 'demo';
   }
   return 'json';
 };
