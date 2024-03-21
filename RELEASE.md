@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+
+- Increase Kedro-Viz timeout. (#1803)
+
 # Release 8.0.1 
 
 ## Bug fixes and other changes
