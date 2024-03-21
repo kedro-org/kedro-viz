@@ -64,7 +64,8 @@ const MetaData = ({
     hasPreview &&
     (metadata?.previewType === 'MetricsTrackingPreview' ||
       metadata?.previewType === 'JSONTrackingPreview');
-  const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
+  const hasTablePreview =
+    hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
     hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
   const hasJSON = metadata?.previewType === 'JSONPreview';
@@ -325,7 +326,7 @@ const MetaData = ({
                     </button>
                   )
                 : null}
-              {hasTable && (
+              {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable

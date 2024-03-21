@@ -55,11 +55,24 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
         )}
       </div>
       {hasPlot && (
-        <PlotlyChart
-          data={metadata.preview.data}
-          layout={metadata.preview.layout}
-          view="modal"
-        />
+        <>
+          <PlotlyChart
+            data={metadata.preview.data}
+            layout={metadata.preview.layout}
+            view="modal"
+          />
+          <div className="pipeline-metadata-modal__bottom">
+            <button
+              className="pipeline-metadata-modal__collapse-plot"
+              onClick={onCollapsePlotClick}
+            >
+              <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
+              <span className="pipeline-metadata-modal__collapse-plot-text">
+                Collapse Plotly Visualization
+              </span>
+            </button>
+          </div>
+        </>
       )}
       {hasImage && (
         <div className="pipeline-matplotlib-chart">
@@ -75,21 +88,6 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
       {hasTable && (
         <div className="pipeline-metadata-modal__preview">
           <PreviewTable data={metadata.preview} size="large" />
-        </div>
-      )}
-      {!hasTable && !hasJSON && (
-        <div className="pipeline-metadata-modal__bottom">
-          <button
-            className="pipeline-metadata-modal__collapse-plot"
-            onClick={onCollapsePlotClick}
-          >
-            <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
-            <span className="pipeline-metadata-modal__collapse-plot-text">
-              {hasPlot
-                ? 'Collapse Plotly Visualization'
-                : 'Collapse Matplotlib Image'}
-            </span>
-          </button>
         </div>
       )}
       {hasJSON && (
