@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { updateContent } from './update-reminder-content';
@@ -101,11 +102,11 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
                 className="update-reminder-expanded-content--feature"
                 key={feature.title}
               >
-                <h4>{feature.title}</h4>
+                <ReactMarkdown>{`#### ${feature.title}`}</ReactMarkdown>
                 {feature.image.length > 0 && (
                   <img alt={feature.title} src={feature.image} />
                 )}
-                <p>{feature.copy}</p>
+                  <ReactMarkdown>{feature.copy}</ReactMarkdown>
                 {feature.buttonLink.length > 0 && (
                   <a href={feature.buttonLink} rel="noreferrer" target="_blank">
                     <Button size="small">{feature.buttonText}</Button>
