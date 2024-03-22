@@ -162,7 +162,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
+      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates|react-markdown)"
     ]
   },
   "browserslist": [
