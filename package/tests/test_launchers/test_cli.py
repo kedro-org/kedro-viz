@@ -200,7 +200,6 @@ def test_kedro_viz_command_should_log_outdated_version(
         data={"info": {"version": mock_version}}
     )
 
-    # test push
     mocker.patch("kedro_viz.server.run_server")
 
     # Reduce the timeout argument from 600 to 1 to make test run faster.
