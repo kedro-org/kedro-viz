@@ -14,7 +14,10 @@ import {
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
-import { getLinkedNodes } from '../../selectors/linked-nodes';
+import {
+  getLinkedNodes,
+  getSlicedGraphNodes,
+} from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
@@ -110,8 +113,6 @@ export class FlowChart extends Component {
         'edges',
         'clickedNode',
         'linkedNodes',
-        'fromNodes',
-        'toNodes',
         'focusMode',
         'inputOutputDataEdges'
       )
@@ -124,8 +125,6 @@ export class FlowChart extends Component {
         'nodes',
         'clickedNode',
         'linkedNodes',
-        'fromNodes',
-        'toNodes',
         'nodeTypeDisabled',
         'nodeActive',
         'nodeSelected',
@@ -133,10 +132,10 @@ export class FlowChart extends Component {
         'nodesWithInputParams',
         'focusMode',
         'inputOutputDataNodes',
-        'hoveredFocusMode'
+        'hoveredFocusMode',
+        'slicedPipeline'
       )
     ) {
-      console.log(this.props.linkedNodes);
       drawNodes.call(this, changed);
     }
 
@@ -147,9 +146,7 @@ export class FlowChart extends Component {
         'layers',
         'chartSize',
         'clickedNode',
-        'linkedNodes',
-        'fromNodes',
-        'toNodes'
+        'linkedNodes'
       )
     ) {
       // Don't zoom out when the metadata or code panels are opened or closed
@@ -703,8 +700,6 @@ const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
-  fromNodes: state.filterNodes.from,
-  toNodes: state.filterNodes.to,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
   displayGlobalToolbar: state.display.globalToolbar,
@@ -722,6 +717,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodesWithInputParams: getNodesWithInputParams(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
+  slicedPipeline: getSlicedGraphNodes(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

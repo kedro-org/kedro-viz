@@ -1,9 +1,10 @@
 import { createSelector } from 'reselect';
 import { getVisibleEdges } from './edges';
+import { getGraphNodes } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
-const getFromNodes = (state) => state.filterNodes.from;
-const getToNodes = (state) => state.filterNodes.to;
+const getFromNodes = (state) => state.filters.from;
+const getToNodes = (state) => state.filters.to;
 /**
  * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
@@ -59,26 +60,10 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
  * @param {String} nodeID
  */
 export const getLinkedNodes = createSelector(
-  [getVisibleEdgesByNode, getClickedNode, getFromNodes, getToNodes],
-  ({ sourceEdges, targetEdges }, nodeID, startID, endID) => {
+  [getVisibleEdgesByNode, getClickedNode],
+  ({ sourceEdges, targetEdges }, nodeID) => {
     if (!nodeID) {
-      if (!startID && !endID) {
-        return {};
-      }
-
-      const linkedNodesBeforeEnd = {};
-      findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
-
-      const linkedNodesAfterStart = {};
-      findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
-
-      const linkedNodesBetween = {};
-      for (const nodeID in linkedNodesBeforeEnd) {
-        if (linkedNodesAfterStart[nodeID]) {
-          linkedNodesBetween[nodeID] = true;
-        }
-      }
-      return linkedNodesBetween;
+      return {};
     }
 
     const linkedNodes = {};
@@ -87,7 +72,39 @@ export const getLinkedNodes = createSelector(
     linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, linkedNodes);
 
-    console.log(linkedNodes);
     return linkedNodes;
+  }
+);
+
+export const getSlicedGraphNodes = createSelector(
+  [getVisibleEdgesByNode, getFromNodes, getToNodes, getGraphNodes],
+  ({ sourceEdges, targetEdges }, startID, endID, graphNodes) => {
+    if (!startID && !endID && !graphNodes) {
+      return {};
+    }
+
+    const linkedNodesBeforeEnd = {};
+    findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+
+    const linkedNodesAfterStart = {};
+    findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
+
+    const linkedNodesBetween = [];
+    for (const nodeID in linkedNodesBeforeEnd) {
+      if (linkedNodesAfterStart[nodeID]) {
+        linkedNodesBetween.push(nodeID);
+      }
+    }
+
+    // Traverse graphNodes and add those whose ID is in linkedNodesBetween
+    const filteredNodes = {};
+    for (const nodeID of linkedNodesBetween) {
+      // Changed this loop
+      if (graphNodes[nodeID]) {
+        // Check if the graphNode's ID is present
+        filteredNodes[nodeID] = graphNodes[nodeID];
+      }
+    }
+    return filteredNodes;
   }
 );

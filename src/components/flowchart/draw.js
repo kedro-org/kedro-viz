@@ -132,13 +132,18 @@ export const drawNodes = function (changed) {
     hoveredParameters,
     nodesWithInputParams,
     inputOutputDataNodes,
+    slicedPipeline,
     nodes,
     focusMode,
     hoveredFocusMode,
   } = this.props;
 
-  const isInputOutputNode = (nodeID) =>
-    focusMode !== null && inputOutputDataNodes[nodeID];
+  const isInputOutputNode = (nodeID) => {
+    const result =
+      (focusMode !== null && inputOutputDataNodes[nodeID]) ||
+      slicedPipeline[nodeID];
+    return result;
+  };
 
   if (changed('nodes')) {
     this.el.nodes = this.el.nodeGroup
@@ -236,8 +241,7 @@ export const drawNodes = function (changed) {
       'linkedNodes',
       'focusMode',
       'inputOutputDataNodes',
-      'fromNodes',
-      'toNodes'
+      'slicedPipeline'
     )
   ) {
     allNodes
@@ -358,7 +362,7 @@ export const drawEdges = function (changed) {
     .merge(exitEdges)
     .filter((edge) => edge);
 
-  if (changed('edges', 'focusMode', 'inputOutputDataNodes')) {
+  if (changed('edges', 'focusMode', 'inputOutputDataNodes', 'slicedPipeline')) {
     enterEdges.append('path');
     allEdges
       .select('path')
@@ -411,9 +415,7 @@ export const drawEdges = function (changed) {
       'clickedNode',
       'linkedNodes',
       'focusMode',
-      'inputOutputDataEdges',
-      'fromNodes',
-      'toNodes'
+      'inputOutputDataEdges'
     )
   ) {
     allEdges

@@ -4,6 +4,7 @@ import NodeListGroup from './node-list-group';
 import { localStorageName } from '../../config';
 import Dropdown from '../ui/dropdown';
 import MenuOption from '../ui/menu-option';
+import Button from '../ui/button';
 const storedState = loadLocalStorage(localStorageName);
 
 const NodeListGroups = ({
@@ -18,14 +19,12 @@ const NodeListGroups = ({
   onItemMouseEnter,
   onItemMouseLeave,
   searchValue,
-  toNodes,
-  fromNodes,
-  selectedFromNodes,
-  selectedToNodes,
+  onFilterNodes,
+  onResetNodesFilters,
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
-  const [toNodeName, selectedToNodeName] = useState('');
-  const [fromNodeName, selectedFromNodeName] = useState('');
+  const [toNode, selectedToNode] = useState({});
+  const [fromNode, selectedFromNode] = useState({});
   const isSlicingEnabled = flags.slicePipeline;
 
   // Collapse/expand node group
@@ -75,13 +74,11 @@ const NodeListGroups = ({
                 From node
               </div>
               <Dropdown
-                defaultText= {fromNodeName}
-                placeholderText={!fromNodeName? 'Select a node' : null}
-                onChanged={selectedNode => {
-                  selectedFromNodes(selectedNode.value);
-                  selectedFromNodeName(selectedNode.label);
-                }
-                }
+                defaultText={fromNode.label}
+                placeholderText={!fromNode.label ? 'Select a node' : null}
+                onChanged={(selectedNode) => {
+                  selectedFromNode(selectedNode);
+                }}
                 width={null}
               >
                 {Object.entries(taskNodes).map(([value, label]) => (
@@ -94,23 +91,36 @@ const NodeListGroups = ({
                 To node
               </div>
               <Dropdown
-                defaultText= {toNodeName}
-                placeholderText={!toNodeName ? 'Select a node' : null}
-                onChanged={selectedNode => {
-                  selectedToNodes(selectedNode.value);
-                  selectedToNodeName(selectedNode.label);
-                }
-                }
+                defaultText={toNode.label}
+                placeholderText={!toNode.label ? 'Select a node' : null}
+                onChanged={(selectedNode) => {
+                  selectedToNode(selectedNode);
+                }}
                 width={null}
               >
                 {Object.entries(taskNodes).map(([value, label]) => (
                   <MenuOption key={value} primaryText={label} value={value} />
                 ))}
               </Dropdown>
+              <div className="run-details-modal-button-wrapper">
+                <Button
+                  dataTest={'filter nodes'}
+                  mode="secondary"
+                  onClick={() => onFilterNodes(fromNode.value, toNode.value)}
+                  size="small"
+                >
+                  Filter
+                </Button>
+                <Button
+                  dataTest={'reset nodes filter'}
+                  onClick={onResetNodesFilters}
+                  size="small"
+                >
+                  Reset
+                </Button>
+              </div>
             </div>
-            
-
-            </div>
+          </div>
         </nav>
       )}
     </>

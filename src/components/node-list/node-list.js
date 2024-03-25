@@ -23,10 +23,8 @@ const NodeList = ({
   searchValue,
   getGroupState,
   onUpdateSearchValue,
-  toNodes,
-  fromNodes,
-  onSelectFromNodes,
-  onSelectToNodes, 
+  onFilterNodes,
+  onResetNodesFilter,
   onGroupToggleChanged,
   onItemClick,
   onItemMouseEnter,
@@ -96,10 +94,8 @@ const NodeList = ({
                   items={items}
                   groups={groups}
                   searchValue={searchValue}
-                  toNodes={toNodes}
-                  fromNodes={fromNodes}
-                  selectedFromNodes={onSelectFromNodes}
-                  selectedToNodes={onSelectToNodes}
+                  onFilterNodes={onFilterNodes}
+                  onResetNodesFilter={onResetNodesFilter}
                   getGroupState={getGroupState}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}

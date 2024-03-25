@@ -6,6 +6,7 @@ import {
   getModularPipelinesTree,
 } from './modular-pipelines';
 import { getTagCount } from './tags';
+import { getSlicedGraphNodes } from './linked-nodes';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;
@@ -78,6 +79,7 @@ export const getNodeDisabled = createSelector(
     getVisibleSidebarNodes,
     getVisibleModularPipelineInputsOutputs,
     getDisabledModularPipeline,
+    getSlicedGraphNodes,
   ],
   (
     nodeIDs,
@@ -91,7 +93,8 @@ export const getNodeDisabled = createSelector(
     focusedModularPipeline,
     visibleSidebarNodes,
     visibleModularPipelineInputsOutputs,
-    disabledModularPipeline
+    disabledModularPipeline,
+    slicedGraphNodes
   ) =>
     arrayToObject(nodeIDs, (id) => {
       let isDisabledViaModularPipeline =

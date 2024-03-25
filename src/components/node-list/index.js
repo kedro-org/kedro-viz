@@ -38,9 +38,8 @@ import {
   loadNodeData,
   toggleNodeHovered,
   toggleNodesDisabled,
-  filterNodes,
-  toggleNodeClicked
 } from '../../actions/nodes';
+import { filterNodes, resetNodesFilter } from '../../actions/filters';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
 
@@ -68,9 +67,9 @@ const NodeListProvider = ({
   onToggleModularPipelineDisabled,
   onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
-  onToggleNodeClicked,
   onToggleFocusMode,
   onFilterNodes,
+  onResetNodesFilter,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -78,18 +77,8 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
 
-  const [toNodes, selectedToNodes] = useState(null);
-  const [fromNodes, selectedFromNodes] = useState(null);
-
   const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
     useGeneratePathname();
-
-  
-  useEffect(() => {
-      onFilterNodes(fromNodes,toNodes)
-      onToggleNodeClicked(null)
-    }, [fromNodes,toNodes, onFilterNodes, onToggleNodeClicked]);
-
 
   const items = getFilteredItems({
     nodes,
@@ -242,11 +231,7 @@ const NodeListProvider = ({
       taskNodes={taskNodes}
       datasets={datasets}
       searchValue={searchValue}
-      toNodes={toNodes}
-      fromNodes={fromNodes}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
-      onSelectFromNodes = {selectedFromNodes}
-      onSelectToNodes = {selectedToNodes}
       onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
       onToggleFocusMode={onToggleFocusMode}
@@ -254,6 +239,8 @@ const NodeListProvider = ({
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
       onItemChange={onItemChange}
+      onFilterNodes={onFilterNodes}
+      onResetNodesFilter={onResetNodesFilter}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
     />
@@ -309,12 +296,12 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
-  onToggleNodeClicked: (nodeID) =>{
-    dispatch(toggleNodeClicked(nodeID))
+  onFilterNodes: (from, to) => {
+    dispatch(filterNodes(from, to));
   },
-  onFilterNodes: (from,to) => {
-    dispatch(filterNodes({from,to}));
-  }
+  onResetNodesFilter: () => {
+    dispatch(resetNodesFilter());
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NodeListProvider);

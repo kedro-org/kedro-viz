@@ -7,6 +7,7 @@ import loading from './loading';
 import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
+import filters from './filters';
 import tag from './tags';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
@@ -22,7 +23,6 @@ import {
   UPDATE_ZOOM,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
-import { ADD_NODE_FILTERS } from '../actions/nodes';
 
 /**
  * Create a generic reducer
@@ -62,6 +62,7 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   pipeline,
+  filters,
   tag,
   modularPipeline,
   visible,
@@ -76,7 +77,6 @@ const combinedReducer = combineReducers({
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
   isPrettyName: createReducer(true, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
-  filterNodes: createReducer({}, ADD_NODE_FILTERS,'filterNodes'),
   showFeatureHints: createReducer(
     true,
     TOGGLE_SHOW_FEATURE_HINTS,
