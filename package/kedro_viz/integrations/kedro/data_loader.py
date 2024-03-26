@@ -68,7 +68,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
-    ignore_plugins: bool = False,
+    include_hooks: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
@@ -76,7 +76,7 @@ def load_data(
         project_path: the path whether the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
-        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
+        include_hooks: A flag to include all registered hooks in your Kedro Project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -96,8 +96,8 @@ def load_data(
         save_on_close=False,
         extra_params=extra_params,
     ) as session:
-        # check for --ignore-plugins option
-        if ignore_plugins:
+        # check for --include-hooks option
+        if not include_hooks:
             session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()
