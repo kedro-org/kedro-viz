@@ -7,6 +7,10 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+
+- Add Dataset Factory Patterns to Experiment Tracking. (#1824)
+
 ## Bug fixes and other changes
 
 - Increase Kedro-Viz timeout. (#1803)
