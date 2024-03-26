@@ -126,36 +126,31 @@ Usage: kedro viz run [OPTIONS]
 Options:
   --host TEXT               Host that viz will listen to. Defaults to
                             localhost.
-
   --port INTEGER            TCP port that viz will listen to. Defaults to
                             4141.
-
   --browser / --no-browser  Whether to open viz interface in the default
                             browser or not. Browser will only be opened if
                             host is localhost. Defaults to True.
-
-  --load-file FILE          Path to load kedro-viz data from a directory
-  --save-file FILE          Path to save kedro-viz data to a directory 
-  --pipeline TEXT           Name of the registered pipeline to visualise. If not
-                            set, the default pipeline is visualised
-
+  --load-file TEXT          Load Kedro-Viz using JSON files from the specified
+                            directory.
+  --save-file FILE          Save all API responses from the backend as JSON
+                            files in the specified directory.
+  --pipeline TEXT           Name of the registered pipeline to visualise. If
+                            not set, the default pipeline is visualised
   -e, --env TEXT            Kedro configuration environment. If not specified,
                             catalog config in `local` will be used
-
-  --autoreload              Autoreload viz server when a Python or YAML file change in
-                            the Kedro project
-
-  --ignore-plugins          A flag to ignore all installed plugins in the Kedro Project
-  
+  -a, --autoreload          Autoreload viz server when a Python or YAML file
+                            change in the Kedro project
+  --include-hooks           A flag to include all registered hooks in your
+                            Kedro Project
   --params TEXT             Specify extra parameters that you want to pass to
-                            the context initializer. Items must be separated
-                            by comma, keys - by colon, example:
-                            param1:value1,param2:value2. Each parameter is
+                            the context initialiser. Items must be separated
+                            by comma, keys - by colon or equals sign, example:
+                            param1=value1,param2=value2. Each parameter is
                             split by the first comma, so parameter values are
                             allowed to contain colons, parameter keys are not.
                             To pass a nested dictionary as parameter, separate
                             keys by '.', example: param_group.param1:value1.
-
   -h, --help                Show this message and exit.
 ```
 
@@ -171,9 +166,14 @@ Usage: kedro viz deploy [OPTIONS]
   Deploy and host Kedro Viz on AWS S3.
 
 Options:
-  --region TEXT       AWS region where your S3 bucket is located  [required]
-  --bucket-name TEXT  AWS S3 bucket name where Kedro Viz will be hosted
+  --platform TEXT     Supported Cloud Platforms like ('aws', 'azure', 'gcp')
+                      to host Kedro Viz  [required]
+  --endpoint TEXT     Static Website hosted endpoint.(eg., For AWS - http://<b
+                      ucket_name>.s3-website.<region_name>.amazonaws.com/)
                       [required]
+  --bucket-name TEXT  Bucket name where Kedro Viz will be hosted  [required]
+  --include-hooks     A flag to include all registered hooks in your Kedro
+                      Project
   -h, --help          Show this message and exit.
 ```
 
@@ -181,6 +181,17 @@ To create a build directory of your local Kedro-Viz instance with static data fr
 
 ```bash
 kedro viz build
+```
+
+```bash
+Usage: kedro viz build [OPTIONS]
+
+  Create build directory of local Kedro Viz instance with Kedro project data
+
+Options:
+  --include-hooks  A flag to include all registered hooks in your Kedro
+                   Project
+  -h, --help       Show this message and exit.
 ```
 
 ### Experiment Tracking usage

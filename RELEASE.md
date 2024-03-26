@@ -7,6 +7,10 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+
+- Introduce `--include-hooks` option and deprecate `--ignore-plugins` from cli commands. (#1818)
+
 ## Bug fixes and other changes
 
 - Increase Kedro-Viz timeout. (#1803)
