@@ -165,10 +165,16 @@ export const mergeLocalStorage = (state) => {
  * @param {Object} data Data prop passed to App component
  * @param {Boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, expandAllPipelines) => {
-  let state = normalizeData(data, expandAllPipelines);
+export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
+  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
   const urlParams = parseUrlParameters();
-  state = mergeLocalStorage(state);
+
+  if (applyFixes) {
+    // Use main pipeline if active pipeline from localStorage isn't recognised
+    if (!state.pipeline.ids.includes(state.pipeline.active)) {
+      state.pipeline.active = state.pipeline.main;
+    }
+  }
   state = applyUrlParametersToState(state, urlParams);
   return state;
 };
@@ -182,12 +188,19 @@ export const preparePipelineState = (data, expandAllPipelines) => {
  */
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
-
+  let newVisibleProps = {};
+  if (props.display?.sidebar === false || state.display.sidebar === false) {
+    newVisibleProps['sidebar'] = false;
+  }
+  if (props.display?.minimap === false || state.display.miniMap === false) {
+    newVisibleProps['miniMap'] = false;
+  }
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible },
+    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
+    display: { ...state.display, ...props.display },
   };
 };
 
