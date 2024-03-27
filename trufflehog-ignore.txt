@@ -7,3 +7,4 @@ README.md
 LAYOUT_ENGINE.md
 src/utils/random-utils.js
 src/components/update-reminder/update-reminder-content.js
+src/components/feature-hints/feature-hints-content.js
