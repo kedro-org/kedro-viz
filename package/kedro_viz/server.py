@@ -52,7 +52,7 @@ def populate_data(
 def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
-    ignore_plugins: bool = False,
+    include_hooks: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
     pipeline_name: Optional[str] = None,
 ):
@@ -60,7 +60,7 @@ def load_and_populate_data(
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path, env, ignore_plugins, extra_params
+        path, env, include_hooks, extra_params
     )
 
     pipelines = (
@@ -82,7 +82,7 @@ def run_server(
     env: Optional[str] = None,
     project_path: Optional[str] = None,
     autoreload: bool = False,
-    ignore_plugins: bool = False,
+    include_hooks: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
@@ -100,7 +100,7 @@ def run_server(
         autoreload: Whether the API app should support autoreload.
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
-        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
+        include_hooks: A flag to include all registered hooks in your Kedro Project.
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -109,7 +109,7 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(path, env, ignore_plugins, extra_params, pipeline_name)
+        load_and_populate_data(path, env, include_hooks, extra_params, pipeline_name)
 
         if save_file:
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
