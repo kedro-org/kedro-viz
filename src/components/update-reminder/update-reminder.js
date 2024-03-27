@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import MarkdownIt from 'markdown-it';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { updateContent } from './update-reminder-content';
@@ -11,6 +11,9 @@ import IconButton from '../ui/icon-button';
 import CloseIcon from '../icons/close';
 
 import './update-reminder.scss';
+
+// Instantiate MarkdownIt
+const markdwn = new MarkdownIt();
 
 const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
   const [dismissed, setDismissed] = useState(false);
@@ -102,11 +105,19 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
                 className="update-reminder-expanded-content--feature"
                 key={feature.title}
               >
-                <ReactMarkdown>{`#### ${feature.title}`}</ReactMarkdown>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: markdwn.render(`#### ${feature.title}`),
+                  }}
+                ></div>
                 {feature.image.length > 0 && (
                   <img alt={feature.title} src={feature.image} />
                 )}
-                  <ReactMarkdown>{feature.copy}</ReactMarkdown>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: markdwn.render(feature.copy),
+                  }}
+                ></div>
                 {feature.buttonLink.length > 0 && (
                   <a href={feature.buttonLink} rel="noreferrer" target="_blank">
                     <Button size="small">{feature.buttonText}</Button>
