@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import MarkdownIt from 'markdown-it';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { updateContent } from './update-reminder-content';
@@ -12,8 +11,10 @@ import CloseIcon from '../icons/close';
 
 import './update-reminder.scss';
 
-// Instantiate MarkdownIt
-const markdwn = new MarkdownIt();
+function replaceBackticksWithCodeBlocks(text) {
+  const regex = /`([^`]+)`/g;
+  return text.replace(regex, '<code>$1</code>');
+}
 
 const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
   const [dismissed, setDismissed] = useState(false);
@@ -105,19 +106,19 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
                 className="update-reminder-expanded-content--feature"
                 key={feature.title}
               >
-                <div
+                <h4
                   dangerouslySetInnerHTML={{
-                    __html: markdwn.render(`#### ${feature.title}`),
+                    __html: replaceBackticksWithCodeBlocks(feature.title),
                   }}
-                ></div>
+                ></h4>
                 {feature.image.length > 0 && (
                   <img alt={feature.title} src={feature.image} />
                 )}
-                <div
+                <p
                   dangerouslySetInnerHTML={{
-                    __html: markdwn.render(feature.copy),
+                    __html: replaceBackticksWithCodeBlocks(feature.copy),
                   }}
-                ></div>
+                ></p>
                 {feature.buttonLink.length > 0 && (
                   <a href={feature.buttonLink} rel="noreferrer" target="_blank">
                     <Button size="small">{feature.buttonText}</Button>
