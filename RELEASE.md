@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Add support for `JSONDataset` preview. (#1800)
 - Increase Kedro-Viz timeout. (#1803)
 - Remove demo data source and update feature hints. (#1804)
 
