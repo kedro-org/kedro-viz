@@ -10,7 +10,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Increase Kedro-Viz timeout. (#1803)
-- Add markdown support to the pop-up reminder. (#1826)
+- Add markdown support for backticks in the pop-up reminder. (#1826)
 
 # Release 8.0.1 
 
