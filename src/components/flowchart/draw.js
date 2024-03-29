@@ -132,16 +132,13 @@ export const drawNodes = function (changed) {
     hoveredParameters,
     nodesWithInputParams,
     inputOutputDataNodes,
-    slicedPipeline,
     nodes,
     focusMode,
     hoveredFocusMode,
   } = this.props;
 
   const isInputOutputNode = (nodeID) => {
-    const result =
-      (focusMode !== null && inputOutputDataNodes[nodeID]) ||
-      slicedPipeline[nodeID];
+    const result = focusMode !== null && inputOutputDataNodes[nodeID];
     return result;
   };
 

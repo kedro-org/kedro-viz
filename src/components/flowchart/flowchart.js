@@ -14,10 +14,7 @@ import {
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
-import {
-  getLinkedNodes,
-  getSlicedGraphNodes,
-} from '../../selectors/linked-nodes';
+import { getLinkedNodes, getFilteredNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
@@ -132,8 +129,7 @@ export class FlowChart extends Component {
         'nodesWithInputParams',
         'focusMode',
         'inputOutputDataNodes',
-        'hoveredFocusMode',
-        'slicedPipeline'
+        'hoveredFocusMode'
       )
     ) {
       drawNodes.call(this, changed);
@@ -710,14 +706,14 @@ export const mapStateToProps = (state, ownProps) => ({
   hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
-  nodes: state.graph.nodes || emptyNodes,
+  nodes: getFilteredNodes(state) || emptyNodes,
+  // nodes: state.graph.nodes || emptyNodes,
   nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
-  slicedPipeline: getSlicedGraphNodes(state),
   visibleGraph: state.visible.graph,
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,

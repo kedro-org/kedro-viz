@@ -72,39 +72,41 @@ export const getLinkedNodes = createSelector(
     linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, linkedNodes);
 
+    console.log(linkedNodes);
+
     return linkedNodes;
   }
 );
 
-export const getSlicedGraphNodes = createSelector(
+export const getFilteredNodes = createSelector(
   [getVisibleEdgesByNode, getFromNodes, getToNodes, getGraphNodes],
   ({ sourceEdges, targetEdges }, startID, endID, graphNodes) => {
-    if (!startID && !endID && !graphNodes) {
-      return {};
-    }
+    // Initialize as an array this time
+    let filteredNodes = [];
 
-    const linkedNodesBeforeEnd = {};
-    findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+    if ((!startID || !startID.length) && (!endID || !endID.length)) {
+      // If no startID or endID, return all graphNodes as an array
+      filteredNodes = Object.values(graphNodes); // Convert all graphNodes values to an array
+    } else {
+      const linkedNodesBeforeEnd = {};
+      findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
 
-    const linkedNodesAfterStart = {};
-    findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
+      const linkedNodesAfterStart = {};
+      findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
 
-    const linkedNodesBetween = [];
-    for (const nodeID in linkedNodesBeforeEnd) {
-      if (linkedNodesAfterStart[nodeID]) {
-        linkedNodesBetween.push(nodeID);
+      const linkedNodesBetween = [];
+      for (const nodeID in linkedNodesBeforeEnd) {
+        if (linkedNodesAfterStart[nodeID]) {
+          linkedNodesBetween.push(nodeID);
+        }
       }
+
+      // Populate filteredNodes array with nodes that are linked between start and end
+      filteredNodes = linkedNodesBetween
+        .map((nodeID) => graphNodes[nodeID])
+        .filter((node) => node !== undefined);
     }
 
-    // Traverse graphNodes and add those whose ID is in linkedNodesBetween
-    const filteredNodes = {};
-    for (const nodeID of linkedNodesBetween) {
-      // Changed this loop
-      if (graphNodes[nodeID]) {
-        // Check if the graphNode's ID is present
-        filteredNodes[nodeID] = graphNodes[nodeID];
-      }
-    }
-    return filteredNodes;
+    return filteredNodes; // This is now an array
   }
 );
