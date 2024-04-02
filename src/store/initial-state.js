@@ -84,10 +84,10 @@ const applyUrlParametersToState = (state, urlParams) => {
     nodeNameFromUrl,
     nodeTypeInUrl,
     nodeTagInUrl,
-    nodeTypes,
   } = urlParams;
 
   let newState = { ...state };
+  const nodeTypes = ['parameters', 'task', 'data'];
 
   // Use main pipeline if pipeline from URL isn't recognised
   if (pipelineIdFromURL) {
@@ -97,11 +97,7 @@ const applyUrlParametersToState = (state, urlParams) => {
   }
 
   // Enable node types based on presence in URL and current node type settings
-  if (
-    nodeTypes &&
-    nodeIdFromUrl &&
-    nodeTypes.includes(state.node.type[nodeIdFromUrl])
-  ) {
+  if (nodeIdFromUrl && nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
     newState.nodeType.disabled[newState.node.type[nodeIdFromUrl]] = false;
   }
 
