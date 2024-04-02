@@ -246,12 +246,12 @@ const getNodeTypesFromUrl = (state, typeQueryParams) => {
 };
 
 /**
- * Updates the enabled state of node tags based on the provided type query parameters.
+ * Updates the state with filters from the URL.
  * @param {Object} state - State object
  * @param {Array} NodeTags - List of all associated tags
- * @returns {Object} - The updated state object.
+ * * @returns {Object} - The updated state object.
  */
-const getNodeFiltersFromUrl = (state, NodeTags) => {
+const updateStateWithFilters = (state, NodeTags) => {
   const search = new URLSearchParams(window.location.search);
   const typeQueryParams = search.get(params.types);
   const tagQueryParams = search.get(params.tags);
@@ -326,8 +326,8 @@ const normalizeData = (data, expandAllPipelines) => {
     data.layers.forEach(addLayer(state));
   }
 
-  const updatedState = getNodeFiltersFromUrl(state, data.tags);
-  return { ...state, ...updatedState };
+  const updatedState = updateStateWithFilters(state, data.tags);
+  return updatedState;
 };
 
 export default normalizeData;
