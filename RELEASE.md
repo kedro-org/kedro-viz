@@ -5,11 +5,17 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 8.1.0
+# Upcoming Release
 
 ## Major features and improvements
 
-- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799) 
+- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799)
+
+## Bug fixes and other changes
+
+- Add support for `JSONDataset` preview. (#1800)
+- Increase Kedro-Viz timeout. (#1803)
+- Remove demo data source and update feature hints. (#1804)
 
 # Release 8.0.1 
 

@@ -34,8 +34,7 @@
   width: 100%;
   max-width: variables.$metadata-sidebar-width-open;
   padding: 6px 0 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   background: var(--color-metadata-bg);
   border-left: 1px solid var(--color-border-line);
   transform: translateX(100%);
@@ -284,6 +283,14 @@ $list-inline-spacing: 0.2em;
   height: 300px;
   overflow: hidden;
   position: relative;
+}
+
+.pipeline-metadata__preview-json {
+  background: var(--color-metadata-preview-bg);
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+  padding: 10px 20px 0;
 }
 
 .pipeline-metadata__preview-shadow-box-right {

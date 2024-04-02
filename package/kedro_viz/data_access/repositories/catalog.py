@@ -67,7 +67,7 @@ class CatalogRepository:
             filepath: /filepath/to/dataset
             metadata:
                 kedro-viz:
-                    layers: raw
+                    layer: raw
 
         Currently, Kedro up to 18.x supports both formats. However,
         support for the old format will be discontinued from Kedro 19.x.

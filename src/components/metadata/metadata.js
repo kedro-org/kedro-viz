@@ -4,6 +4,7 @@ import modifiers from '../../utils/modifiers';
 import NodeIcon from '../../components/icons/node-icon';
 import IconButton from '../../components/ui/icon-button';
 import PreviewTable from '../../components/preview-table';
+import JSONObject from '../../components/json-object';
 import CommandCopier from '../ui/command-copier/command-copier';
 import PlotlyChart from '../plotly-chart';
 import CloseIcon from '../icons/close';
@@ -63,9 +64,11 @@ const MetaData = ({
     hasPreview &&
     (metadata?.previewType === 'MetricsTrackingPreview' ||
       metadata?.previewType === 'JSONTrackingPreview');
-  const hasTable = hasPreview && metadata?.previewType === 'TablePreview';
+  const hasTablePreview =
+    hasPreview && metadata?.previewType === 'TablePreview';
   const isMetricsTrackingDataset =
     hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
+  const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
@@ -323,7 +326,7 @@ const MetaData = ({
                     </button>
                   )
                 : null}
-              {hasTable && (
+              {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <PreviewTable
@@ -341,6 +344,29 @@ const MetaData = ({
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
                       Expand Preview Table
+                    </span>
+                  </button>
+                </>
+              )}
+              {hasJSONPreview && (
+                <>
+                  <div className="pipeline-metadata__preview-json">
+                    <JSONObject
+                      value={JSON.parse(metadata.preview)}
+                      theme={theme}
+                      style={{ background: 'transparent', fontSize: '14px' }}
+                      collapsed={3}
+                    />
+                    <div className="pipeline-metadata__preview-shadow-box-right" />
+                    <div className="pipeline-metadata__preview-shadow-box-bottom" />
+                  </div>
+                  <button
+                    className="pipeline-metadata__link"
+                    onClick={onExpandMetaDataClick}
+                  >
+                    <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
+                    <span className="pipeline-metadata__link-text">
+                      Expand JSON View
                     </span>
                   </button>
                 </>
