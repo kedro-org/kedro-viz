@@ -3,11 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
+import { fetchPackageCompatibilities } from '../../utils';
 import {
   hostingPlatform,
   inputKeyToStateKeyMap,
-  KEDRO_VIZ_DOCS_URL,
-  KEDRO_VIZ_PUBLISH_URL,
+  KEDRO_VIZ_PUBLISH_DOCS_URL,
+  KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL,
+  KEDRO_VIZ_PUBLISH_GCP_DOCS_URL,
+  PACKAGE_FSSPEC,
 } from '../../config';
 
 import Button from '../ui/button';
@@ -53,22 +58,20 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   useEffect(() => {
     async function fetchPackageCompatibility() {
       try {
-        const request = await fetch('/api/package-compatibilities', {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        });
+        const request = await fetchPackageCompatibilities();
         const response = await request.json();
 
         if (request.ok) {
-          setCompatibilityData(response);
-          setCanUseShareableUrls(response?.is_compatible || false);
+          const fsspecPackage = response.find(
+            (pckg) => pckg.package_name === PACKAGE_FSSPEC
+          );
+          setCompatibilityData(fsspecPackage);
+          setCanUseShareableUrls(fsspecPackage?.is_compatible || false);
 
           // User's fsspec package version isn't compatible, so set
           // the necessary state to reflect that in the UI.
-          if (!response.is_compatible) {
-            setDeploymentState(!response.is_compatible && 'incompatible');
+          if (!fsspecPackage.is_compatible) {
+            setDeploymentState(!fsspecPackage.is_compatible && 'incompatible');
           }
         }
       } catch (error) {
@@ -282,7 +285,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_DOCS_URL}
+            href={KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL}
           >
             the documentation
           </a>{' '}
@@ -322,7 +325,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_DOCS_URL}
+            href={KEDRO_VIZ_PUBLISH_DOCS_URL}
           >
             docs
           </a>
@@ -336,11 +339,27 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_URL}
+            href={KEDRO_VIZ_PUBLISH_AWS_DOCS_URL}
           >
-            the documentation
+            AWS
           </a>
-          .
+          ,{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL}
+          >
+            Azure
+          </a>{' '}
+          and{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={KEDRO_VIZ_PUBLISH_GCP_DOCS_URL}
+          >
+            GCP
+          </a>{' '}
+          docs.
         </p>
       </div>
     );
@@ -450,7 +469,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       title={getDeploymentStateByType('title')}
       visible={visible.shareableUrlModal}
     >
-      {!isDisclaimerViewed ? (
+      {renderCompatibilityMessage()}
+      {!isDisclaimerViewed && canUseShareableUrls ? (
         renderDisclaimerContent()
       ) : (
         <>
@@ -458,7 +478,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           {renderLoadingContent()}
           {renderErrorContent()}
           {renderSuccessContent()}
-          {renderCompatibilityMessage()}
         </>
       )}
     </Modal>

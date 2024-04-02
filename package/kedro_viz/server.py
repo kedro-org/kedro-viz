@@ -106,9 +106,10 @@ def run_server(
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
+        package_name: The name of the current package 
     """
     from kedro.framework.project import configure_project
-
+    print(package_name)
     path = Path(project_path) if project_path else Path.cwd()
     configure_project(package_name)
 

@@ -1,5 +1,12 @@
-{
-  "package_name": "fsspec",
-  "package_version": "2023.8.1",
-  "is_compatible": false
-}
+[
+  {
+      "package_name": "fsspec",
+      "package_version": "2023.8.1",
+      "is_compatible": false
+  },
+  {
+      "package_name": "kedro-datasets",
+      "package_version": "1.8.0",
+      "is_compatible": false
+  }
+]

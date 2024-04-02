@@ -40,11 +40,18 @@ def test_deploy_kedro_viz(client, platform, endpoint, bucket_name, mocker):
         (
             None,
             200,
-            {
-                "package_name": "fsspec",
-                "package_version": "2023.9.1",
-                "is_compatible": True,
-            },
+            [
+                {
+                    "package_name": "fsspec",
+                    "package_version": "2023.9.1",
+                    "is_compatible": True,
+                },
+                {
+                    "package_name": "kedro-datasets",
+                    "package_version": "1.8.0",
+                    "is_compatible": False,
+                },
+            ],
         ),
         (
             Exception,

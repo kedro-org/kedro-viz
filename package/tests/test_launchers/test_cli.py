@@ -77,6 +77,20 @@ def mock_project_path(mocker):
     "command_options,run_server_args",
     [
         (
+            ["viz"],
+            {
+                "host": "127.0.0.1",
+                "port": 4141,
+                "load_file": None,
+                "save_file": None,
+                "pipeline_name": None,
+                "env": None,
+                "autoreload": False,
+                "ignore_plugins": False,
+                "extra_params": {},
+            },
+        ),
+        (
             ["viz", "run"],
             {
                 "host": "127.0.0.1",
@@ -164,7 +178,7 @@ def test_kedro_viz_command_run_server(
 ):
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
-
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
 
     with runner.isolated_filesystem():
@@ -187,6 +201,9 @@ def test_kedro_viz_command_should_log_outdated_version(
     )
 
     mocker.patch("kedro_viz.server.run_server")
+
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -214,6 +231,8 @@ def test_kedro_viz_command_should_not_log_latest_version(
     )
 
     mocker.patch("kedro_viz.server.run_server")
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -230,6 +249,8 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(
     requests_get.side_effect = requests.exceptions.RequestException("PyPI is down")
 
     mocker.patch("kedro_viz.server.run_server")
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -244,7 +265,7 @@ def test_kedro_viz_command_with_autoreload(
 ):
     process_init = mocker.patch("multiprocessing.Process")
 
-    # Reduce the timeout argument from 60 to 1 to make test run faster.
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -279,22 +300,21 @@ def test_viz_command_group(mocker, mock_click_echo):
     runner = CliRunner()
 
     with runner.isolated_filesystem():
-        runner.invoke(cli.viz_cli, ["viz"])
+        result = runner.invoke(cli.viz_cli, ["viz", "--help"])
 
-    mock_click_echo_calls = [
-        call("\x1b[33m\nDid you mean this ? \n kedro viz run \n\n\x1b[0m"),
-        call(
-            "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n\n  "
-            "Visualise a Kedro pipeline using Kedro viz.\n\n"
-            "Options:\n  --help  Show this message and exit.\n\n"
-            "Commands:\n  build   Create build directory of local Kedro Viz "
-            "instance with Kedro...\n  "
-            "deploy  Deploy and host Kedro Viz on provided platform\n  "
-            "run     Launch local Kedro Viz instance\x1b[0m"
-        ),
-    ]
-
-    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+    assert result.output == (
+        "Usage: Kedro-Viz viz [OPTIONS] COMMAND [ARGS]...\n"
+        "\n"
+        "  Visualise a Kedro pipeline using Kedro viz.\n"
+        "\n"
+        "Options:\n"
+        "  --help  Show this message and exit.\n"
+        "\n"
+        "Commands:\n"
+        "  run*    Launch local Kedro Viz instance\n"
+        "  build   Create build directory of local Kedro Viz instance with Kedro...\n"
+        "  deploy  Deploy and host Kedro Viz on provided platform\n"
+    )
 
 
 @pytest.mark.parametrize(
