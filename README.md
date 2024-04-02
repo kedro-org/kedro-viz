@@ -133,8 +133,8 @@ Options:
                             host is localhost. Defaults to True.
   --load-file TEXT          Load Kedro-Viz using JSON files from the specified
                             directory.
-  --save-file FILE          Save all API responses from the backend as JSON
-                            files in the specified directory.
+  --save-file FILE          Save Kedro-Viz data as JSON files in the specified 
+                            directory.
   --pipeline TEXT           Name of the registered pipeline to visualise. If
                             not set, the default pipeline is visualised
   -e, --env TEXT            Kedro configuration environment. If not specified,

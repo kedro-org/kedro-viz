@@ -75,7 +75,7 @@ def viz(ctx):  # pylint: disable=unused-argument
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Save all API responses from the backend as JSON files in the specified directory.",
+    help="Save Kedro-Viz data as JSON files in the specified directory.",
 )
 @click.option(
     "--pipeline",
