@@ -69,13 +69,13 @@ def viz(ctx):  # pylint: disable=unused-argument
 @click.option(
     "--load-file",
     default=None,
-    help="Load Kedro-Viz using JSON files from the specified directory.",
+    help="Path to load Kedro-Viz data from a directory",
 )
 @click.option(
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Save Kedro-Viz data as JSON files in the specified directory.",
+    help="Path to save Kedro-Viz data to a directory",
 )
 @click.option(
     "--pipeline",

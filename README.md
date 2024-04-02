@@ -126,31 +126,37 @@ Usage: kedro viz run [OPTIONS]
 Options:
   --host TEXT               Host that viz will listen to. Defaults to
                             localhost.
+
   --port INTEGER            TCP port that viz will listen to. Defaults to
                             4141.
+
   --browser / --no-browser  Whether to open viz interface in the default
                             browser or not. Browser will only be opened if
                             host is localhost. Defaults to True.
-  --load-file TEXT          Load Kedro-Viz using JSON files from the specified
-                            directory.
-  --save-file FILE          Save Kedro-Viz data as JSON files in the specified 
-                            directory.
-  --pipeline TEXT           Name of the registered pipeline to visualise. If
-                            not set, the default pipeline is visualised
+
+  --load-file FILE          Path to load Kedro-Viz data from a directory
+  --save-file FILE          Path to save Kedro-Viz data to a directory 
+  --pipeline TEXT           Name of the registered pipeline to visualise. If not
+                            set, the default pipeline is visualised
+
   -e, --env TEXT            Kedro configuration environment. If not specified,
                             catalog config in `local` will be used
-  -a, --autoreload          Autoreload viz server when a Python or YAML file
-                            change in the Kedro project
+
+  --autoreload              Autoreload viz server when a Python or YAML file change in
+                            the Kedro project
+
   --include-hooks           A flag to include all registered hooks in your
                             Kedro Project
+
   --params TEXT             Specify extra parameters that you want to pass to
-                            the context initialiser. Items must be separated
-                            by comma, keys - by colon or equals sign, example:
-                            param1=value1,param2=value2. Each parameter is
+                            the context initializer. Items must be separated
+                            by comma, keys - by colon, example:
+                            param1:value1,param2:value2. Each parameter is
                             split by the first comma, so parameter values are
                             allowed to contain colons, parameter keys are not.
                             To pass a nested dictionary as parameter, separate
                             keys by '.', example: param_group.param1:value1.
+
   -h, --help                Show this message and exit.
 ```
 
