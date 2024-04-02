@@ -4,7 +4,7 @@ import {
   localStorageName,
   params,
   routes,
-  queryParamsToRetain,
+  defaultQueryParams,
   NODE_TYPES,
 } from '../../config';
 
@@ -14,14 +14,14 @@ const getCurrentActivePipeline = () => {
 };
 
 /**
- * Retains only the specified query parameters and removes all others from the given searchParams object.
+ * Retains default query parameters and removes all others from the given searchParams object.
  * @param {URLSearchParams} searchParams - The searchParams object to modify.
  */
-const retainOtherQueryParams = (searchParams) => {
+const retainDefaultQueryParams = (searchParams) => {
   const searchParamsEntries = [...searchParams.keys()];
 
   for (const key of searchParamsEntries) {
-    if (!queryParamsToRetain.includes(key)) {
+    if (!defaultQueryParams.includes(key)) {
       searchParams.delete(key);
     }
   }
@@ -52,13 +52,13 @@ export const useGeneratePathname = () => {
   );
 
   const toFlowchartPage = useCallback(() => {
-    updateURLWithSearchParams(retainOtherQueryParams);
+    updateURLWithSearchParams(retainDefaultQueryParams);
   }, [updateURLWithSearchParams]);
 
   const toSelectedPipeline = useCallback(
     (pipelineValue) => {
       updateURLWithSearchParams((searchParams) => {
-        retainOtherQueryParams(searchParams);
+        retainDefaultQueryParams(searchParams);
 
         // Get the value from param if it exists first
         // before checking from localStorage
@@ -74,8 +74,6 @@ export const useGeneratePathname = () => {
   const toSelectedNode = useCallback(
     (item) => {
       updateURLWithSearchParams((searchParams) => {
-        const activePipeline = getCurrentActivePipeline();
-        searchParams.set(params.pipeline, activePipeline);
         searchParams.set(params.selected, item.id);
       });
     },
@@ -85,8 +83,6 @@ export const useGeneratePathname = () => {
   const toFocusedModularPipeline = useCallback(
     (item) => {
       updateURLWithSearchParams((searchParams) => {
-        const activePipeline = getCurrentActivePipeline();
-        searchParams.set(params.pipeline, activePipeline);
         searchParams.set(params.focused, item.id);
       });
     },

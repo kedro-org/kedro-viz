@@ -84,7 +84,8 @@ export const FlowChartWrapper = ({
   } = findMatchedPath(pathname, search);
 
   /**
-   * Sets the query params from local storage based on NodeType, tag, expandAllPipelines and active pipeline.
+   * On initial load & when user switch active pipeline,
+   * sets the query params from local storage based on NodeType, tag, expandAllPipelines and active pipeline.
    * @param {string} activePipeline - The active pipeline.
    */
   const setParamsFromLocalStorage = (activePipeline) => {

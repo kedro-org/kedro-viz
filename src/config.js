@@ -182,7 +182,7 @@ export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_
 export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure.html#set-up-endpoint`;
 export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp.html#set-up-endpoint`;
 
-export const queryParamsToRetain = [
+export const defaultQueryParams = [
   params.types,
   params.tags,
   params.expandAll,
