@@ -34,8 +34,7 @@ import {
   params,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
-import { getKeyByValue } from '../../utils/get-key-by-value';
-import { getKeysByValue } from '../../utils/get-keys-by-value';
+import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
 import { isRunningLocally } from '../../utils';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
