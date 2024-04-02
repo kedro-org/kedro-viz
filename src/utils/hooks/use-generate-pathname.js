@@ -5,6 +5,7 @@ import {
   params,
   routes,
   queryParamsToRetain,
+  NODE_TYPES,
 } from '../../config';
 
 const getCurrentActivePipeline = () => {
@@ -105,12 +106,31 @@ export const useGeneratePathname = () => {
     [updateURLWithSearchParams]
   );
 
+  const toUpdateUrlParamsOnResetFilter = useCallback(() => {
+    updateURLWithSearchParams((searchParams) => {
+      searchParams.delete(params.tags);
+      searchParams.set(params.types, `${NODE_TYPES.task},${NODE_TYPES.data}`);
+    });
+  }, [updateURLWithSearchParams]);
+
+  const toUpdateUrlParamsOnFilter = (item, paramName, existingValues) => {
+    if (item.checked) {
+      existingValues.delete(item.id);
+    } else {
+      existingValues.add(item.id);
+    }
+
+    toSetQueryParam(paramName, Array.from(existingValues));
+  };
+
   return {
     toSelectedPipeline,
     toFlowchartPage,
     toSelectedNode,
     toFocusedModularPipeline,
     toSetQueryParam,
+    toUpdateUrlParamsOnResetFilter,
+    toUpdateUrlParamsOnFilter,
   };
 };
 

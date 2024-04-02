@@ -40,7 +40,6 @@ import {
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
 import { params, NODE_TYPES } from '../../config';
-import { useHistory } from 'react-router-dom';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -72,13 +71,12 @@ const NodeListProvider = ({
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
-  const history = useHistory();
-
   const {
     toSelectedPipeline,
     toSelectedNode,
     toFocusedModularPipeline,
-    toSetQueryParam,
+    toUpdateUrlParamsOnResetFilter,
+    toUpdateUrlParamsOnFilter,
   } = useGeneratePathname();
 
   const items = getFilteredItems({
@@ -125,23 +123,12 @@ const NodeListProvider = ({
     return new Set(paramValues ? paramValues.split(',') : []);
   };
 
-  // To update the URL parameters
-  const updateUrlParams = (item, paramName, existingValues) => {
-    if (item.checked) {
-      existingValues.delete(item.id);
-    } else {
-      existingValues.add(item.id);
-    }
-
-    toSetQueryParam(paramName, Array.from(existingValues));
-  };
-
   const handleUrlParams = (item) => {
     const searchParams = new URLSearchParams(window.location.search);
     const paramName = getParamName(item);
     const existingValues = getExistingValues(paramName, searchParams);
 
-    updateUrlParams(item, paramName, existingValues);
+    toUpdateUrlParamsOnFilter(item, paramName, existingValues);
   };
 
   const onItemChange = (item, checked, clickedIconType) => {
@@ -254,19 +241,6 @@ const NodeListProvider = ({
     }
   };
 
-  // Updates the URL parameters when the filter is reset.
-  const updateUrlParamsOnResetFilter = () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.delete(params.tags);
-    searchParams.set(params.types, `${NODE_TYPES.task},${NODE_TYPES.data}`);
-
-    history.push(
-      decodeURIComponent(
-        `${window.location.pathname}?${searchParams.toString()}`
-      )
-    );
-  };
-
   // Reset applied filters to default
   const onResetFilter = () => {
     onToggleTypeDisabled({ task: false, data: false, parameters: true });
@@ -275,7 +249,7 @@ const NodeListProvider = ({
       false
     );
 
-    updateUrlParamsOnResetFilter();
+    toUpdateUrlParamsOnResetFilter();
   };
 
   // Updates the reset filter button status based on the node types and tags.
