@@ -1,5 +1,14 @@
 @use './variables';
 @use '../../../styles/extends';
+@use '../../../styles/variables' as colors;
+
+.kui-theme--light {
+  --color-text-reset: #{colors.$black-800};
+}
+
+.kui-theme--dark {
+  --color-text-reset: #{colors.$white-600};
+}
 
 .pipeline-nodelist-section__filters {
   display: flex;
@@ -19,13 +28,18 @@
   .pipeline-nodelist-section__reset-filter {
     @extend %button;
 
-    text-decoration: underline;
-    font-size: 1.4em;
+    font-size: 1.3em;
     cursor: pointer;
+    color: var(--color-text-reset);
+    opacity: 0.55;
+
+    &:hover {
+      opacity: 0.85;
+    }
 
     &:disabled {
       cursor: default;
-      opacity: 0.3;
+      opacity: 0;
     }
   }
 }
