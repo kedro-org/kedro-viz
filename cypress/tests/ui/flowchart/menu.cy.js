@@ -204,7 +204,7 @@ describe('Flowchart Menu', () => {
 
   it('Verify that if the URL contains the nodeType query parameter, the same parameter should be reflected on the UI.', () => {
     const visibleRowLabel = 'Datasets';
-    cy.visit('/?types=datasets');
+    cy.visit('/?types=data');
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(
