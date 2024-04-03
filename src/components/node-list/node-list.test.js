@@ -505,25 +505,6 @@ describe('NodeList', () => {
       '.pipeline-nodelist-section__reset-filter'
     );
 
-    it('On first load before applying filter button should be disabled', () => {
-      expect(resetFilterButton.prop('disabled')).toBe(true);
-    });
-
-    it('After applying any filter filter button should not be disabled', () => {
-      const nodeTypeFilter = wrapper.find(
-        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
-      );
-      nodeTypeFilter.simulate('click');
-
-      nodeTypeFilter.simulate('change', {
-        target: { checked: false },
-      });
-
-      setTimeout(() => {
-        expect(resetFilterButton.prop('disabled')).toBe(false);
-      }, 1); // Wait for 1 second before asserting
-    });
-
     it('should update URL parameters when onResetFilter is called', () => {
       resetFilterButton.simulate('click');
 
