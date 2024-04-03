@@ -10,11 +10,14 @@ Please follow the established format:
 ## Major features and improvements
 
 - Introduce `--include-hooks` option and deprecate `--ignore-plugins` from cli commands. (#1818)
+- Add Dataset Factory Patterns to Experiment Tracking. (#1824)
 
 ## Bug fixes and other changes
 
+- Add support for `JSONDataset` preview. (#1800)
 - Increase Kedro-Viz timeout. (#1803)
 - Remove demo data source and update feature hints. (#1804)
+- Add markdown support for backticks in the pop-up reminder. (#1826)
 
 # Release 8.0.1 
 
