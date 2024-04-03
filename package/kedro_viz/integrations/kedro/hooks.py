@@ -6,13 +6,12 @@ import json
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-from kedro.runner.parallel_runner import ParallelRunner
 
 logger = logging.getLogger(__name__)
 
@@ -38,26 +37,6 @@ class DatasetStatsHook:
         except Exception:  # pragma: no cover
             # Support for Kedro 0.18.x
             self.datasets = catalog._data_sets  # type: ignore[attr-defined]
-
-    @hook_impl
-    def before_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline, catalog, **kwargs
-    ) -> None:
-        """Hook implementation to start an MLflow run
-        with the session_id of the Kedro pipeline run.
-        """
-        import pdb
-
-        pdb.set_trace()
-
-        pipeline_runner_obj = run_params["runner"]
-        print(run_params)
-        if isinstance(pipeline_runner_obj, ParallelRunner):
-            print(pipeline_runner_obj._manager)
-            runnerManager = pipeline_runner_obj._manager
-            self._stats = runnerManager.dict()
-        else:
-            print("Sq Runner")
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):
