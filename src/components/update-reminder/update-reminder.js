@@ -11,6 +11,11 @@ import CloseIcon from '../icons/close';
 
 import './update-reminder.scss';
 
+function replaceBackticksWithCodeBlocks(text) {
+  const regex = /`([^`]+)`/g;
+  return text.replace(regex, '<code>$1</code>');
+}
+
 const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
   const [dismissed, setDismissed] = useState(false);
   const [expand, setExpand] = useState(false);
@@ -101,11 +106,19 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
                 className="update-reminder-expanded-content--feature"
                 key={feature.title}
               >
-                <h4>{feature.title}</h4>
+                <h4
+                  dangerouslySetInnerHTML={{
+                    __html: replaceBackticksWithCodeBlocks(feature.title),
+                  }}
+                ></h4>
                 {feature.image.length > 0 && (
                   <img alt={feature.title} src={feature.image} />
                 )}
-                <p>{feature.copy}</p>
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: replaceBackticksWithCodeBlocks(feature.copy),
+                  }}
+                ></p>
                 {feature.buttonLink.length > 0 && (
                   <a href={feature.buttonLink} rel="noreferrer" target="_blank">
                     <Button size="small">{feature.buttonText}</Button>
