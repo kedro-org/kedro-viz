@@ -69,6 +69,7 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+  const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
   const {
     toSelectedPipeline,
@@ -251,6 +252,27 @@ const NodeListProvider = ({
     toUpdateUrlParamsOnResetFilter();
   };
 
+  // Updates the reset filter button status based on the node types and tags.
+  useEffect(() => {
+    const nodeTypesAcc = nodeTypes.reduce((acc, item) => {
+      if (item.id === NODE_TYPES.task) {
+        acc.task = item;
+      } else if (item.id === NODE_TYPES.data) {
+        acc.dataItem = item;
+      } else if (item.id === NODE_TYPES.parameters) {
+        acc.parameters = item;
+      }
+      return acc;
+    }, {});
+
+    const { task, dataItem, parameters } = nodeTypesAcc;
+    const isNodeTypeModified =
+      task.disabled || dataItem.disabled || !parameters.disabled;
+
+    const isNodeTagModified = tags.some((item) => item.enabled);
+    setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
+  }, [tags, nodeTypes]);
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -275,6 +297,7 @@ const NodeListProvider = ({
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
       onResetFilter={onResetFilter}
+      isResetFilterActive={isResetFilterActive}
     />
   );
 };

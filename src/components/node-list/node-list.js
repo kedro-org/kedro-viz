@@ -29,6 +29,7 @@ const NodeList = ({
   focusMode,
   disabledModularPipeline,
   onResetFilter,
+  isResetFilterActive,
 }) => {
   return (
     <div
@@ -85,6 +86,7 @@ const NodeList = ({
                     <span>Filters</span>
                   </h2>
                   <button
+                    disabled={!isResetFilterActive}
                     onClick={onResetFilter}
                     className="pipeline-nodelist-section__reset-filter"
                   >
