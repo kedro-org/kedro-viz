@@ -55,12 +55,13 @@ def load_and_populate_data(
     ignore_plugins: bool = False,
     extra_params: Optional[Dict[str, Any]] = None,
     pipeline_name: Optional[str] = None,
+    package_name: Optional[str] = None,
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path, env, ignore_plugins, extra_params
+        path, env, ignore_plugins, extra_params, package_name
     )
 
     pipelines = (
@@ -106,15 +107,15 @@ def run_server(
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
-        package_name: The name of the current package 
+        package_name: The name of the current package
     """
-    from kedro.framework.project import configure_project
-    print(package_name)
+
     path = Path(project_path) if project_path else Path.cwd()
-    configure_project(package_name)
 
     if load_file is None:
-        load_and_populate_data(path, env, ignore_plugins, extra_params, pipeline_name)
+        load_and_populate_data(
+            path, env, ignore_plugins, extra_params, pipeline_name, package_name
+        )
 
         if save_file:
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
