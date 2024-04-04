@@ -115,7 +115,7 @@ def run_viz(  # pylint: disable=too-many-locals
     pipeline = arg_dict.get("pipeline", None)
     env = arg_dict.get("env", None)
     autoreload = arg_dict.get("autoreload", False)
-    ignore_plugins = arg_dict.get("ignore-plugins", False)
+    include_hooks = arg_dict.get("include-hooks", False)
     params = arg_dict.get("params", "")
 
     # Allocate port
@@ -139,7 +139,7 @@ def run_viz(  # pylint: disable=too-many-locals
         "pipeline_name": pipeline,
         "env": env,
         "autoreload": autoreload,
-        "ignore_plugins": ignore_plugins,
+        "include_hooks": include_hooks,
         "extra_params": params,
         "project_path": project_path,
     }
