@@ -53,15 +53,19 @@ def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
-    extra_params: Optional[Dict[str, Any]] = None,
-    pipeline_name: Optional[str] = None,
     package_name: Optional[str] = None,
+    pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path, env, include_hooks, extra_params, package_name
+        path,
+        env,
+        include_hooks,
+        package_name,
+        extra_params,
     )
 
     pipelines = (
@@ -84,8 +88,8 @@ def run_server(
     project_path: Optional[str] = None,
     autoreload: bool = False,
     include_hooks: bool = False,
-    extra_params: Optional[Dict[str, Any]] = None,
     package_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -103,18 +107,23 @@ def run_server(
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
         include_hooks: A flag to include all registered hooks in your Kedro Project.
+        package_name: The name of the current package
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
-        package_name: The name of the current package
     """
 
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
         load_and_populate_data(
-            path, env, include_hooks, extra_params, pipeline_name, package_name
+            path,
+            env,
+            include_hooks,
+            package_name,
+            pipeline_name,
+            extra_params,
         )
 
         if save_file:

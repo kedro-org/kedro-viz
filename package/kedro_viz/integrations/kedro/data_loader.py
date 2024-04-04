@@ -69,8 +69,8 @@ def load_data(
     project_path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
-    extra_params: Optional[Dict[str, Any]] = None,
     package_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
@@ -78,11 +78,11 @@ def load_data(
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
         include_hooks: A flag to include all registered hooks in your Kedro Project.
+        package_name: The name of the current package
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
-        package_name: The name of the current package
     Returns:
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.

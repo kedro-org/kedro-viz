@@ -87,6 +87,7 @@ def mock_project_path(mocker):
                 "env": None,
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": {},
             },
         ),
@@ -101,6 +102,7 @@ def mock_project_path(mocker):
                 "env": None,
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": {},
             },
         ),
@@ -120,6 +122,7 @@ def mock_project_path(mocker):
                 "env": None,
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": {},
             },
         ),
@@ -150,6 +153,7 @@ def mock_project_path(mocker):
                 "env": "local",
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": {"extra_param": "param"},
             },
         ),
@@ -164,6 +168,7 @@ def mock_project_path(mocker):
                 "env": None,
                 "autoreload": False,
                 "include_hooks": True,
+                "package_name": None,
                 "extra_params": {},
             },
         ),
@@ -284,6 +289,7 @@ def test_kedro_viz_command_with_autoreload(
             "autoreload": True,
             "project_path": mock_project_path,
             "include_hooks": False,
+            "package_name": None,
             "extra_params": {},
         },
         "watcher_cls": RegExpWatcher,
@@ -579,6 +585,7 @@ def test_create_shareableviz_process(
             endpoint,
             bucket_name,
             include_hooks,
+            None,
             mock_process_completed.return_value,
             mock_exception_queue.return_value,
         ),
@@ -627,6 +634,7 @@ def test_create_shareableviz_process(
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
+            True,
             "demo_project",
         ),
         ("gcp", "http://34.120.87.227/", "example-bucket", False, "demo_project"),
@@ -659,7 +667,7 @@ def test_load_and_deploy_viz_success(
     )
 
     mock_load_and_populate_data.assert_called_once_with(
-        mock_project_path, include_hooks=include_hooks
+        mock_project_path, include_hooks=include_hooks, package_name=package_name
     )
     mock_DeployerFactory.create_deployer.assert_called_once_with(
         platform, endpoint, bucket_name

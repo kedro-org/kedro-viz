@@ -154,8 +154,8 @@ def run(
             "env": env,
             "autoreload": autoreload,
             "include_hooks": include_hooks,
-            "extra_params": params,
             "package_name": PACKAGE_NAME,
+            "extra_params": params,
         }
         if autoreload:
             project_path = Path.cwd()
@@ -269,8 +269,8 @@ def create_shareableviz_process(
                 platform,
                 endpoint,
                 bucket_name,
-                PACKAGE_NAME,
                 include_hooks,
+                PACKAGE_NAME,
                 process_completed,
                 exception_queue,
             ),

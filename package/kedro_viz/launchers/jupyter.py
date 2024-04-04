@@ -142,9 +142,9 @@ def run_viz(  # pylint: disable=too-many-locals
         "env": env,
         "autoreload": autoreload,
         "include_hooks": include_hooks,
+        "package_name": PACKAGE_NAME,
         "extra_params": params,
         "project_path": project_path,
-        "package_name": PACKAGE_NAME,
     }
     process_context = multiprocessing.get_context("spawn")
     if autoreload:
