@@ -70,13 +70,13 @@ def viz(ctx):  # pylint: disable=unused-argument
 @click.option(
     "--load-file",
     default=None,
-    help="Load Kedro-Viz using JSON files from the specified directory.",
+    help="Path to load Kedro-Viz data from a directory",
 )
 @click.option(
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Save all API responses from the backend as JSON files in the specified directory.",
+    help="Path to save Kedro-Viz data to a directory",
 )
 @click.option(
     "--pipeline",
@@ -102,9 +102,9 @@ def viz(ctx):  # pylint: disable=unused-argument
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 @click.option(
-    "--ignore-plugins",
+    "--include-hooks",
     is_flag=True,
-    help="A flag to ignore all installed plugins in the Kedro Project",
+    help="A flag to include all registered hooks in your Kedro Project",
 )
 @click.option(
     "--params",
@@ -123,7 +123,7 @@ def run(
     pipeline,
     env,
     autoreload,
-    ignore_plugins,
+    include_hooks,
     params,
 ):
     """Launch local Kedro Viz instance"""
@@ -153,7 +153,7 @@ def run(
             "pipeline_name": pipeline,
             "env": env,
             "autoreload": autoreload,
-            "ignore_plugins": ignore_plugins,
+            "include_hooks": include_hooks,
             "extra_params": params,
             "package_name": PACKAGE_NAME,
         }
@@ -217,7 +217,12 @@ def run(
     required=True,
     help="Bucket name where Kedro Viz will be hosted",
 )
-def deploy(platform, endpoint, bucket_name):
+@click.option(
+    "--include-hooks",
+    is_flag=True,
+    help="A flag to include all registered hooks in your Kedro Project",
+)
+def deploy(platform, endpoint, bucket_name, include_hooks):
     """Deploy and host Kedro Viz on provided platform"""
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
@@ -235,17 +240,24 @@ def deploy(platform, endpoint, bucket_name):
         )
         return
 
-    create_shareableviz_process(platform, endpoint, bucket_name)
+    create_shareableviz_process(platform, endpoint, bucket_name, include_hooks)
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
-def build():
+@click.option(
+    "--include-hooks",
+    is_flag=True,
+    help="A flag to include all registered hooks in your Kedro Project",
+)
+def build(include_hooks):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    create_shareableviz_process("local")
+    create_shareableviz_process("local", include_hooks=include_hooks)
 
 
-def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
+def create_shareableviz_process(
+    platform, endpoint=None, bucket_name=None, include_hooks=False
+):
     """Creates platform specific deployer process"""
     try:
         process_completed = multiprocessing.Value("i", 0)
@@ -258,6 +270,7 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
                 endpoint,
                 bucket_name,
                 PACKAGE_NAME,
+                include_hooks,
                 process_completed,
                 exception_queue,
             ),
@@ -328,12 +341,18 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
 
 
 def load_and_deploy_viz(
-    platform, endpoint, bucket_name, package_name, process_completed, exception_queue
+    platform,
+    endpoint,
+    bucket_name,
+    include_hooks,
+    package_name,
+    process_completed,
+    exception_queue,
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         load_and_populate_data(
-            Path.cwd(), ignore_plugins=True, package_name=package_name
+            Path.cwd(), include_hooks=include_hooks, package_name=package_name
         )
 
         # Start the deployment

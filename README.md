@@ -134,8 +134,8 @@ Options:
                             browser or not. Browser will only be opened if
                             host is localhost. Defaults to True.
 
-  --load-file FILE          Path to load kedro-viz data from a directory
-  --save-file FILE          Path to save kedro-viz data to a directory 
+  --load-file FILE          Path to load Kedro-Viz data from a directory
+  --save-file FILE          Path to save Kedro-Viz data to a directory 
   --pipeline TEXT           Name of the registered pipeline to visualise. If not
                             set, the default pipeline is visualised
 
@@ -145,8 +145,9 @@ Options:
   --autoreload              Autoreload viz server when a Python or YAML file change in
                             the Kedro project
 
-  --ignore-plugins          A flag to ignore all installed plugins in the Kedro Project
-  
+  --include-hooks           A flag to include all registered hooks in your
+                            Kedro Project
+
   --params TEXT             Specify extra parameters that you want to pass to
                             the context initializer. Items must be separated
                             by comma, keys - by colon, example:
@@ -171,9 +172,14 @@ Usage: kedro viz deploy [OPTIONS]
   Deploy and host Kedro Viz on AWS S3.
 
 Options:
-  --region TEXT       AWS region where your S3 bucket is located  [required]
-  --bucket-name TEXT  AWS S3 bucket name where Kedro Viz will be hosted
+  --platform TEXT     Supported Cloud Platforms like ('aws', 'azure', 'gcp')
+                      to host Kedro Viz  [required]
+  --endpoint TEXT     Static Website hosted endpoint.(eg., For AWS - http://<b
+                      ucket_name>.s3-website.<region_name>.amazonaws.com/)
                       [required]
+  --bucket-name TEXT  Bucket name where Kedro Viz will be hosted  [required]
+  --include-hooks     A flag to include all registered hooks in your Kedro
+                      Project
   -h, --help          Show this message and exit.
 ```
 
@@ -181,6 +187,17 @@ To create a build directory of your local Kedro-Viz instance with static data fr
 
 ```bash
 kedro viz build
+```
+
+```bash
+Usage: kedro viz build [OPTIONS]
+
+  Create build directory of local Kedro Viz instance with Kedro project data
+
+Options:
+  --include-hooks  A flag to include all registered hooks in your Kedro
+                   Project
+  -h, --help       Show this message and exit.
 ```
 
 ### Experiment Tracking usage
