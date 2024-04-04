@@ -9,6 +9,7 @@ import click
 from click_default_group import DefaultGroup
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
+from kedro.framework.project import PACKAGE_NAME
 from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
@@ -28,7 +29,6 @@ from kedro_viz.launchers.utils import (
     viz_deploy_progress_timer,
 )
 from kedro_viz.server import load_and_populate_data
-from kedro.framework.project import PACKAGE_NAME
 
 try:
     from azure.core.exceptions import ServiceRequestError
@@ -253,7 +253,14 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
 
         viz_deploy_process = multiprocessing.Process(
             target=load_and_deploy_viz,
-            args=(platform, endpoint, bucket_name, process_completed, exception_queue),
+            args=(
+                platform,
+                endpoint,
+                bucket_name,
+                PACKAGE_NAME,
+                process_completed,
+                exception_queue,
+            ),
         )
 
         viz_deploy_process.start()
@@ -321,11 +328,13 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
 
 
 def load_and_deploy_viz(
-    platform, endpoint, bucket_name, process_completed, exception_queue
+    platform, endpoint, bucket_name, package_name, process_completed, exception_queue
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+        load_and_populate_data(
+            Path.cwd(), ignore_plugins=True, package_name=package_name
+        )
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)

@@ -550,26 +550,29 @@ def test_create_shareableviz_process(
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name",
+    "platform, endpoint, bucket_name, package_name",
     [
-        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket"),
+        ("azure", "https://example-bucket.web.core.windows.net", "example-bucket", "demo_project"),
         (
             "aws",
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
+            "demo_project"
         ),
         (
             "gcp",
             "http://34.120.87.227/",
             "example-bucket",
+            "demo_project"
         ),
-        ("local", None, None),
+        ("local", None, None, "demo_project"),
     ],
 )
 def test_load_and_deploy_viz_success(
     platform,
     endpoint,
     bucket_name,
+    package_name,
     mock_DeployerFactory,
     mock_load_and_populate_data,
     mock_process_completed,
@@ -580,7 +583,7 @@ def test_load_and_deploy_viz_success(
     deployer_mock = mock_DeployerFactory.create_deployer.return_value
 
     cli.load_and_deploy_viz(
-        platform, endpoint, bucket_name, mock_process_completed, mock_exception_queue
+        platform, endpoint, bucket_name, package_name, mock_process_completed, mock_exception_queue
     )
 
     mock_load_and_populate_data.assert_called_once_with(

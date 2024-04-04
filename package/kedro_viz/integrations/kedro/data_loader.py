@@ -87,9 +87,15 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    from kedro.framework.project import pipelines, configure_project
+    from kedro.framework.project import configure_project, pipelines
 
-    configure_project(package_name)
+    if package_name:
+        configure_project(package_name)
+    else:
+        from kedro.framework.startup import bootstrap_project
+
+        # bootstrap project when viz is run in dev mode
+        bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
