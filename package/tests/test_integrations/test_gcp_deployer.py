@@ -48,7 +48,10 @@ class TestGCPDeployer:
         with open(temp_file_path, "w", encoding="utf-8") as temp_file:
             temp_file.write(mock_html_content)
 
-        with mocker.patch("mimetypes.guess_type", return_value=("text/html", None)):
+        mime_patch = mocker.patch(
+            "mimetypes.guess_type", return_value=("text/html", None)
+        )
+        with mime_patch:
             deployer._upload_static_files(tmp_path)
             deployer._fs.write_bytes.assert_called_once_with(
                 path=f"gcs://{bucket_name}/test_file.html",
