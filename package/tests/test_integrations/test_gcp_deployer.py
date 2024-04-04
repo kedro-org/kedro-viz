@@ -47,7 +47,6 @@ class TestGCPDeployer:
         temp_file_path = tmp_path / "test_file.html"
         with open(temp_file_path, "w", encoding="utf-8") as temp_file:
             temp_file.write(mock_html_content)
-
         mime_patch = mocker.patch(
             "mimetypes.guess_type", return_value=("text/html", None)
         )
