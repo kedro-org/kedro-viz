@@ -1,0 +1,52 @@
+name: Run unit-tests on Kedro-Viz
+# Runs unit tests on Kedro-Viz across different 
+# OS and Python versions after environment setup.
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+      python-version:
+        type: string
+jobs:
+    unit_tests:
+        runs-on: ${{ inputs.os }}
+        # Only run on main and demo branches for Windows
+        if: inputs.os == 'ubuntu-latest' || ((github.ref == 'refs/heads/main' || github.ref == 'refs/heads/demo') && inputs.os == 'windows-latest')
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up Python ${{inputs.python-version}}
+          uses: actions/setup-python@v5
+          with:
+            python-version: ${{inputs.python-version}}          
+
+        - name: Cache python packages for Linux
+          if: inputs.os == 'ubuntu-latest'
+          uses: actions/cache@v4
+          with:
+            path: ~/.cache/pip
+            key: ${{inputs.os}}-python-${{inputs.python-version}}
+
+        - name: Cache python packages for Windows
+          if: inputs.os == 'windows-latest'
+          uses: actions/cache@v4
+          with:
+            path: ~\AppData\Local\pip\Cache
+            key: ${{inputs.os}}-python-${{inputs.python-version}}
+
+        - name: Install Kedro and other Python Dependencies
+          uses: "./.github/actions/install_python_dependencies"
+  
+        - name: Setup Node.js and Install Dependencies
+          uses: "./.github/actions/install_node_dependencies"
+
+        - name: Build React application
+          run: |-
+            node -v
+            make build
+            
+        - name: Run Python tests
+          run: make pytest      

@@ -1,0 +1,44 @@
+name: Build backend
+# Runs end-to-end tests, unit tests, and linting on the backend code
+# for different operating systems and Python versions.
+
+on:
+  push:
+    paths:
+      - 'package/**'
+      - '.github/**'
+  pull_request:
+    paths:
+      - 'package/**'
+      - '.github/**'
+  workflow_dispatch:
+jobs:
+  e2e_tests:
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/e2e-tests.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}    
+
+  unit_tests:
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/unit-tests.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}      
+
+  lint:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/lint.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}

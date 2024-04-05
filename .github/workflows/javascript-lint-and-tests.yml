@@ -1,0 +1,59 @@
+name: Run javascript linters and tests on Kedro-Viz
+# Runs JavaScript linting, unit tests, and end-to-end tests on 
+# Kedro-Viz for different operating systems and Python versions.
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+      python-version:
+        type: string
+jobs:
+    javascript_lint_and_tests:
+        runs-on: ${{ inputs.os }}
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Python ${{inputs.python-version}}
+            uses: actions/setup-python@v5
+            with:
+              python-version: ${{inputs.python-version}}          
+
+          - name: Cache python packages for Linux
+            if: inputs.os == 'ubuntu-latest'
+            uses: actions/cache@v4
+            with:
+              path: ~/.cache/pip
+              key: ${{inputs.os}}-python-${{inputs.python-version}}            
+
+          - name: Install Kedro and other Python Dependencies
+            uses: "./.github/actions/install_python_dependencies"
+
+          - name: Setup Node.js and Install Dependencies
+            uses: "./.github/actions/install_node_dependencies"
+
+          - name: Setup Cypress requirements
+            run: |-
+              sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
+              sudo apt-get update
+              sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb          
+
+          - name: Test lib transpilation
+            run: npm run lib
+
+          - name: Test JS library imports
+            run: |-
+              npm run lib-test:setup
+              cd tools/test-lib/react-app
+              npm run test:ci
+
+          - name: Run Eslint
+            run: npm run lint
+
+          - name: Run JavaScript tests
+            run: npm run test:ci
+            
+          - name: Run Javascript end to end tests
+            run: npm run cy:ci      
