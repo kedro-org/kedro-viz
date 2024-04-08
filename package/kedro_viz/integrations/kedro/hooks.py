@@ -135,17 +135,7 @@ class DatasetStatsHook:
             return None
 
         try:
-            print(dataset._filepath)
-            print(type(dataset._filepath))
-            
-            print(Path(dataset._filepath))
-            print(type(Path(dataset._filepath)))
-
-            file_path = get_filepath_str(Path(dataset._filepath), dataset._protocol)
-            
-            print(file_path)
-            print(get_filepath_str(dataset._filepath, dataset._protocol))
-            
+            file_path = get_filepath_str(dataset._filepath, dataset._protocol)
             return dataset._fs.size(file_path)
 
         except Exception as exc:
