@@ -7,6 +7,9 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+- Upgrade to Node 18. (#1811)
+
 ## Bug fixes and other changes
 
 - Add support for `JSONDataset` preview. (#1800)
