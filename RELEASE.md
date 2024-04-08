@@ -18,6 +18,7 @@ Please follow the established format:
 - Increase Kedro-Viz timeout. (#1803)
 - Remove demo data source and update feature hints. (#1804)
 - Add markdown support for backticks in the pop-up reminder. (#1826)
+- Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
 
 # Release 8.0.1 
 
