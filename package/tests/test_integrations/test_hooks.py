@@ -1,5 +1,4 @@
 from collections import defaultdict
-from pathlib import Path
 from unittest.mock import mock_open, patch
 
 import pytest
@@ -119,7 +118,7 @@ def test_after_pipeline_run(
 def test_get_file_size(dataset, example_dataset_stats_hook_obj, example_csv_dataset):
     assert example_dataset_stats_hook_obj.get_file_size(dataset) is None
     file_path = get_filepath_str(
-        Path(example_csv_dataset._filepath), example_csv_dataset._protocol
+        example_csv_dataset._filepath, example_csv_dataset._protocol
     )
     assert example_dataset_stats_hook_obj.get_file_size(
         example_csv_dataset
