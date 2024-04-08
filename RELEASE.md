@@ -8,6 +8,9 @@ Please follow the established format:
 # Upcoming Release
 
 ## Major features and improvements
+
+- Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands. (#1818)
+- Add Dataset Factory Patterns to Experiment Tracking. (#1824)
 - Upgrade to Node 18. (#1811)
 
 ## Bug fixes and other changes

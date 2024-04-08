@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,protected-access
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
@@ -69,16 +69,36 @@ class DataAccessManager:
         """Set db session on repositories that need it."""
         self.runs.set_db_session(db_session_class)
 
-    def add_catalog(self, catalog: DataCatalog):
+    def resolve_dataset_factory_patterns(
+        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
+    ):
+        """Resolve dataset factory patterns in data catalog by matching
+        them against the datasets in the pipelines.
+        """
+        for pipeline in pipelines.values():
+            if hasattr(pipeline, "data_sets"):
+                # Support for Kedro 0.18.x
+                datasets = pipeline.data_sets()
+            else:
+                datasets = pipeline.datasets()
+
+            for dataset_name in datasets:
+                try:
+                    catalog._get_dataset(dataset_name, suggest=False)
+                # pylint: disable=broad-except
+                except Exception:  # pragma: no cover
+                    continue
+
+    def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
         """Resolve dataset factory patterns, add the catalog to the CatalogRepository
         and relevant tracking datasets to TrackingDatasetRepository.
 
         Args:
             catalog: The DataCatalog instance to add.
+            pipelines: A dictionary which holds project pipelines
         """
 
-        # TODO: Implement dataset factory pattern discovery for
-        # experiment tracking datasets.
+        self.resolve_dataset_factory_patterns(catalog, pipelines)
 
         self.catalog.set_catalog(catalog)
 
