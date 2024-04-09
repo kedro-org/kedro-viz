@@ -56,21 +56,6 @@ export const chartMinWidthScale = 0.25;
 export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
-export const flags = {
-  sizewarning: {
-    name: 'Size warning',
-    description: 'Show a warning before rendering very large graphs',
-    default: true,
-    icon: '🐳',
-  },
-  expandAllPipelines: {
-    name: 'Expand all modular pipelines',
-    description: 'Expand all modular pipelines on first load',
-    default: false,
-    icon: '🔛',
-  },
-};
-
 export const settings = {
   isPrettyName: {
     name: 'Pretty name',
@@ -81,6 +66,11 @@ export const settings = {
     name: 'New feature hints',
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
+  },
+  sizewarning: {
+    name: 'Size warning',
+    description: 'Show a warning before rendering very large graphs',
+    default: false,
   },
 };
 
