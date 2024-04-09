@@ -1,32 +1,27 @@
 name: Run javascript linters and tests on Kedro-Viz
 # Runs JavaScript linting, unit tests, and end-to-end tests on 
-# Kedro-Viz for different operating systems and Python versions.
+# Kedro-Viz for ubuntu-latest operating systems and Python 3.9.
 
 on:
   workflow_call:
-    inputs:
-      os:
-        type: string
-      python-version:
-        type: string
+
 jobs:
     javascript_lint_and_tests:
-        runs-on: ${{ inputs.os }}
+        runs-on: ubuntu-latest
         steps:
           - name: Checkout code
             uses: actions/checkout@v4
 
-          - name: Set up Python ${{inputs.python-version}}
+          - name: Set up Python "3.9"
             uses: actions/setup-python@v5
             with:
-              python-version: ${{inputs.python-version}}          
+              python-version: "3.9"          
 
           - name: Cache python packages for Linux
-            if: inputs.os == 'ubuntu-latest'
             uses: actions/cache@v4
             with:
               path: ~/.cache/pip
-              key: ${{inputs.os}}-python-${{inputs.python-version}}            
+              key: ubuntu-latest-python-3.9            
 
           - name: Install Kedro and other Python Dependencies
             uses: "./.github/actions/install_python_dependencies"
