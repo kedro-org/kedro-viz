@@ -74,17 +74,9 @@ export const settings = {
   },
 };
 
-// Sidebar groups is an ordered map of { id: label }
-export const sidebarGroups = {
-  elementType: 'Element types',
-  tag: 'Tags',
-};
-
-// Sidebar element types is an ordered map of { id: label }
-export const sidebarElementTypes = {
-  task: 'Nodes',
-  data: 'Datasets',
-  parameters: 'Parameters',
+// Flags that are not directly user-configurable via the settings menu
+export const internalFlags = {
+  // Here, you could place any flags that are used internally and should not be directly manipulated by users
 };
 
 export const shortTypeMapping = {
