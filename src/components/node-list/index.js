@@ -77,6 +77,7 @@ const NodeListProvider = ({
     toFocusedModularPipeline,
     toUpdateUrlParamsOnResetFilter,
     toUpdateUrlParamsOnFilter,
+    toSetQueryParam,
   } = useGeneratePathname();
 
   const items = getFilteredItems({
@@ -127,6 +128,24 @@ const NodeListProvider = ({
     );
 
     toUpdateUrlParamsOnFilter(item, paramName, existingValues);
+  };
+
+  // To update URL query parameters when a filter group is clicked
+  const handleUrlParamsUpdateOnGroupFilter = (
+    groupType,
+    groupItems,
+    groupItemsDisabled
+  ) => {
+    if (groupItemsDisabled) {
+      // If all items in group are disabled
+      groupItems.forEach((item) => {
+        handleUrlParamsUpdateOnFilter(item);
+      });
+    } else {
+      // If some items in group are enabled
+      const paramName = isElementType(groupType) ? params.types : params.tags;
+      toSetQueryParam(paramName, []);
+    }
   };
 
   const onItemChange = (item, checked, clickedIconType) => {
@@ -199,9 +218,11 @@ const NodeListProvider = ({
     );
 
     // Update URL query parameters when a filter group is clicked
-    groupItems.forEach((item) => {
-      handleUrlParamsUpdateOnFilter(item);
-    });
+    handleUrlParamsUpdateOnGroupFilter(
+      groupType,
+      groupItems,
+      groupItemsDisabled
+    );
 
     if (isTagType(groupType)) {
       onToggleTagFilter(
