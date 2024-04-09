@@ -105,7 +105,10 @@ export const useGeneratePathname = () => {
   const toUpdateUrlParamsOnResetFilter = useCallback(() => {
     updateURLWithSearchParams((searchParams) => {
       searchParams.delete(params.tags);
-      searchParams.set(params.types, `${NODE_TYPES.task},${NODE_TYPES.data}`);
+      searchParams.set(
+        params.types,
+        `${NODE_TYPES.task.name},${NODE_TYPES.data.name}`
+      );
     });
   }, [updateURLWithSearchParams]);
 

@@ -255,13 +255,9 @@ const NodeListProvider = ({
 
   // Helper function to check if NodeTypes is modified
   const hasModifiedNodeTypes = (nodeTypes) => {
-    return nodeTypes.some((item) => {
-      if (item.id === NODE_TYPES.parameters) {
-        return !item.disabled; // State is modified if parameters are not disabled
-      }
-      // For other node types, state is modified if they are disabled
-      return item.disabled;
-    });
+    return nodeTypes.some(
+      (item) => NODE_TYPES[item.id]?.defaultState !== item.disabled
+    );
   };
 
   // Updates the reset filter button status based on the node types and tags.
