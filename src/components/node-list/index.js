@@ -112,21 +112,19 @@ const NodeListProvider = ({
     }
   };
 
-  // To determine the parameter name based on the item type
-  const getParamName = (item) => {
-    return isElementType(item.type) ? params.types : params.tags;
-  };
-
-  // To get existing values from search parameters
-  const getExistingValues = (paramName, searchParams) => {
+  // To get existing values from URL query parameters
+  const getExistingValuesFromUrlQueryParams = (paramName, searchParams) => {
     const paramValues = searchParams.get(paramName);
     return new Set(paramValues ? paramValues.split(',') : []);
   };
 
-  const handleUrlParams = (item) => {
+  const handleUrlParamsUpdateOnFilter = (item) => {
     const searchParams = new URLSearchParams(window.location.search);
-    const paramName = getParamName(item);
-    const existingValues = getExistingValues(paramName, searchParams);
+    const paramName = isElementType(item.type) ? params.types : params.tags;
+    const existingValues = getExistingValuesFromUrlQueryParams(
+      paramName,
+      searchParams
+    );
 
     toUpdateUrlParamsOnFilter(item, paramName, existingValues);
   };
@@ -134,8 +132,10 @@ const NodeListProvider = ({
   const onItemChange = (item, checked, clickedIconType) => {
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
+
+      // Update URL query parameters when a filter item is clicked
       if (!clickedIconType) {
-        handleUrlParams(item);
+        handleUrlParamsUpdateOnFilter(item);
       }
 
       if (isModularPipelineType(item.type)) {
@@ -198,8 +198,9 @@ const NodeListProvider = ({
       (groupItem) => !groupItem.checked
     );
 
+    // Update URL query parameters when a filter group is clicked
     groupItems.forEach((item) => {
-      handleUrlParams(item);
+      handleUrlParamsUpdateOnFilter(item);
     });
 
     if (isTagType(groupType)) {
@@ -252,24 +253,21 @@ const NodeListProvider = ({
     toUpdateUrlParamsOnResetFilter();
   };
 
+  // Helper function to check if NodeTypes is modified
+  const hasModifiedNodeTypes = (nodeTypes) => {
+    return nodeTypes.some((item) => {
+      if (item.id === NODE_TYPES.parameters) {
+        return !item.disabled; // State is modified if parameters are not disabled
+      }
+      // For other node types, state is modified if they are disabled
+      return item.disabled;
+    });
+  };
+
   // Updates the reset filter button status based on the node types and tags.
   useEffect(() => {
-    const nodeTypesAcc = nodeTypes.reduce((acc, item) => {
-      if (item.id === NODE_TYPES.task) {
-        acc.task = item;
-      } else if (item.id === NODE_TYPES.data) {
-        acc.dataItem = item;
-      } else if (item.id === NODE_TYPES.parameters) {
-        acc.parameters = item;
-      }
-      return acc;
-    }, {});
-
-    const { task, dataItem, parameters } = nodeTypesAcc;
-    const isNodeTypeModified =
-      task.disabled || dataItem.disabled || !parameters.disabled;
-
-    const isNodeTagModified = tags.some((item) => item.enabled);
+    const isNodeTypeModified = hasModifiedNodeTypes(nodeTypes);
+    const isNodeTagModified = tags.some((tag) => tag.enabled);
     setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
   }, [tags, nodeTypes]);
 
