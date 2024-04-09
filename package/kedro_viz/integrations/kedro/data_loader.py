@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
@@ -87,8 +88,6 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    from kedro.framework.project import configure_project, pipelines
-
     if package_name:
         configure_project(package_name)
     else:
