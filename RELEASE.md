@@ -19,6 +19,7 @@ Please follow the established format:
 - Remove demo data source and update feature hints. (#1804)
 - Add markdown support for backticks in the pop-up reminder. (#1826)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
+- Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
 
 # Release 8.0.1 
 
