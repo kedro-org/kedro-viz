@@ -11,11 +11,4 @@ on:
   workflow_dispatch:
 jobs:
   javascript_lint_and_tests:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ "3.9" ]
     uses: ./.github/workflows/javascript-lint-and-tests.yml
-    with:
-      os: ${{ matrix.os }}
-      python-version: ${{ matrix.python-version }}   
