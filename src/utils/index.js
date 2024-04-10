@@ -241,6 +241,5 @@ const nodeTypeMapObj = {
 export const mapNodeType = (nodeType) => nodeTypeMapObj[nodeType] || nodeType;
 
 export const mapNodeTypes = (nodeTypes) => {
-  console.log('nodeTypes', nodeTypes);
   return nodeTypes.replace(/task|data/g, (matched) => mapNodeType(matched));
 };
