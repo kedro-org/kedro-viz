@@ -105,7 +105,9 @@ export const FlowChartWrapper = ({
         nodeType: (value) => {
           if (!searchParams.has(params.types)) {
             const disabledKeys = getKeysByValue(value.disabled, false);
-            disabledKeys && toSetQueryParam(params.types, disabledKeys);
+            // Replace task with node to keep UI label & the URL consistent
+            const mappedDisabledNodes = disabledKeys.replace(/task/g, 'node');
+            disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
           }
         },
         flags: (value) => {

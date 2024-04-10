@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
+import { mapNodeType } from '../utils';
 import {
   settings,
   sidebarWidth,
@@ -96,11 +97,6 @@ const applyUrlParametersToState = (state, urlParams) => {
       : newState.pipeline.main;
   }
 
-  // Enable node types based on presence in URL and current node type settings
-  if (nodeIdFromUrl && nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
-    newState.nodeType.disabled[newState.node.type[nodeIdFromUrl]] = false;
-  }
-
   // Ensure data tags are on to allow redirection back to the selected node
   if (nodeNameFromUrl) {
     newState.nodeType.disabled.data = false;
@@ -111,8 +107,13 @@ const applyUrlParametersToState = (state, urlParams) => {
       newState.nodeType.disabled[key] = true;
     });
     nodeTypeInUrl.forEach((key) => {
-      newState.nodeType.disabled[key] = false;
+      newState.nodeType.disabled[mapNodeType(key)] = false;
     });
+  }
+
+  // Enable node types based on presence in URL and current node type settings
+  if (nodeIdFromUrl && nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    newState.nodeType.disabled[newState.node.type[nodeIdFromUrl]] = false;
   }
 
   if (nodeTagInUrl.length) {

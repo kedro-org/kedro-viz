@@ -228,3 +228,12 @@ export async function fetchPackageCompatibilities() {
   });
   return request;
 }
+
+const nodeTypeMapObj = {
+  node: 'task',
+  task: 'node',
+};
+/**
+ * Mapping task to node and vice versa to keep UI label & the URL consistent
+ */
+export const mapNodeType = (nodeType) => nodeTypeMapObj[nodeType] || nodeType;

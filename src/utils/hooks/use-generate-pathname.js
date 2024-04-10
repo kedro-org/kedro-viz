@@ -7,6 +7,7 @@ import {
   defaultQueryParams,
   NODE_TYPES,
 } from '../../config';
+import { mapNodeType } from '../../utils';
 
 const getCurrentActivePipeline = () => {
   const localStorage = window.localStorage.getItem(localStorageName);
@@ -113,10 +114,11 @@ export const useGeneratePathname = () => {
   }, [updateURLWithSearchParams]);
 
   const toUpdateUrlParamsOnFilter = (item, paramName, existingValues) => {
+    const mapItemId = mapNodeType(item.id);
     if (item.checked) {
-      existingValues.delete(item.id);
+      existingValues.delete(mapItemId);
     } else {
-      existingValues.add(item.id);
+      existingValues.add(mapItemId);
     }
 
     toSetQueryParam(paramName, Array.from(existingValues));
