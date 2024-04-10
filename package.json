@@ -15,7 +15,7 @@
   "scripts": {
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "rm -rf build/api",
-    "start": "REACT_APP_DATA_SOURCE=$DATA npm-run-all -p start:app start:lib",
+    "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p start:app start:lib",
     "start:app": "PORT=4141 react-scripts start",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
     "lib": "npm-run-all -s lib:clean lib:copy lib:webpack lib:babel lib:prune",
@@ -116,7 +116,7 @@
     "canvas": "^2.7.0",
     "cross-env": "7.0.3",
     "css-loader": "^6.4.0",
-    "cypress": "^13.3.0",
+    "cypress": "^13.7.2",
     "enzyme": "^3.11.0",
     "eslint-plugin-cypress": "^2.13.3",
     "graphqlviz": "^4.0.1",

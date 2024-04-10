@@ -78,7 +78,7 @@ describe('Flowchart Primary Toolbar', () => {
     cy.get('[data-test=btnDownloadPNG]').click({ force: true });
 
     // Assertion
-    // cy.__validateImage__('kedro-pipeline.png');
+    cy.__validateImage__('kedro-pipeline.png');
   });
 
   it('verifies that users can download an SVG of their visualisation. #TC-13', () => {
