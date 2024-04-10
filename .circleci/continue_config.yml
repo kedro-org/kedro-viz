@@ -46,6 +46,14 @@ commands:
     steps:
       - node/install:
           node-version: '18.20.0'
+      - restore_cache:
+          keys:
+            - v2-node-cache-{{ checksum "package-lock.json" }}
+            - v2-node-cache-
+      - save_cache:
+          paths:
+            - node_modules
+          key: v2-node-cache-{{ checksum "package-lock.json" }}          
       # using install-packages command from node orb
       - node/install-packages
 
