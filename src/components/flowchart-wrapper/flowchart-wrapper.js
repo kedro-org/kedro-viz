@@ -35,7 +35,7 @@ import {
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
-import { isRunningLocally } from '../../utils';
+import { isRunningLocally, mapNodeTypes } from '../../utils';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
 
@@ -106,7 +106,7 @@ export const FlowChartWrapper = ({
           if (!searchParams.has(params.types)) {
             const disabledKeys = getKeysByValue(value.disabled, false);
             // Replace task with node to keep UI label & the URL consistent
-            const mappedDisabledNodes = disabledKeys.replace(/task/g, 'node');
+            const mappedDisabledNodes = mapNodeTypes(disabledKeys);
             disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
           }
         },

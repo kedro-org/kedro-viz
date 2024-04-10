@@ -230,10 +230,17 @@ export async function fetchPackageCompatibilities() {
 }
 
 const nodeTypeMapObj = {
-  node: 'task',
-  task: 'node',
+  nodes: 'task',
+  task: 'nodes',
+  datasets: 'data',
+  data: 'datasets',
 };
 /**
  * Mapping task to node and vice versa to keep UI label & the URL consistent
  */
 export const mapNodeType = (nodeType) => nodeTypeMapObj[nodeType] || nodeType;
+
+export const mapNodeTypes = (nodeTypes) => {
+  console.log('nodeTypes', nodeTypes);
+  return nodeTypes.replace(/task|data/g, (matched) => mapNodeType(matched));
+};

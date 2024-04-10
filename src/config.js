@@ -190,7 +190,7 @@ export const defaultQueryParams = [
 ];
 
 export const NODE_TYPES = {
-  task: { name: 'node', defaultState: false },
-  data: { name: 'data', defaultState: false },
+  task: { name: 'nodes', defaultState: false },
+  data: { name: 'datasets', defaultState: false },
   parameters: { name: 'parameters', defaultState: true },
 };
