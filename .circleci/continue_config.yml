@@ -15,7 +15,7 @@ parameters:
 
 orbs:
   win: circleci/windows@4.1.1
-  node: circleci/node@5.0.3
+  node: circleci/node@5.2.0
 
 # No windows executor is listed here since windows builds use win/default and modify
 # the Python version through the conda environment.
@@ -45,17 +45,10 @@ commands:
   install_node_dependencies:
     steps:
       - node/install:
-          node-version: '18.20.0'
-      - restore_cache:
-          keys:
-            - v2-node-cache-{{ checksum "package-lock.json" }}
-            - v2-node-cache-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v2-node-cache-{{ checksum "package-lock.json" }}          
+          node-version: '18.20.0'        
       # using install-packages command from node orb
-      - node/install-packages
+      - node/install-packages:
+          override-ci-command: npm install
 
   nvm_use_npm_install:
     steps:
