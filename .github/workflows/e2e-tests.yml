@@ -16,7 +16,7 @@ jobs:
         if: inputs.os == 'ubuntu-latest' || ((github.ref == 'refs/heads/main' || github.ref == 'refs/heads/demo') && inputs.os == 'windows-latest')
         steps:
         - name: Setup Tests
-          uses: ./.github/actions/setup-tests.yml
+          uses: ./.github/actions/setup-tests/action.yml
           with:
             os: ${{ inputs.os }}
             python-version: ${{ inputs.python-version }}
