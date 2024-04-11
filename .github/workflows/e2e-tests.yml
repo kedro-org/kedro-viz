@@ -12,8 +12,25 @@ on:
 jobs:
     e2e_tests:
         runs-on: ${{ inputs.os }}
-        # Only run on main and demo branches for Windows
-        if: inputs.os == 'ubuntu-latest' || ((github.ref == 'refs/heads/main' || github.ref == 'refs/heads/demo') && inputs.os == 'windows-latest')
+
+        # below condition checks if the operating system is Ubuntu, or 
+        # Run on Windows and
+        # main/demo branch or 
+        # pull request to main with Python 3.10
+        if: >
+          inputs.os == 'ubuntu-latest' || 
+          (
+            (
+              github.ref == 'refs/heads/main' || 
+              github.ref == 'refs/heads/demo' || 
+              (
+                github.event.pull_request.base.ref == 'main' && 
+                inputs.python-version == '3.10'
+              )
+            ) && 
+            inputs.os == 'windows-latest'
+          )
+          
         steps:
         - name: Checkout code
           uses: actions/checkout@v4
