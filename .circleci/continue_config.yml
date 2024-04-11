@@ -365,7 +365,6 @@ workflows:
               only:
                 - main
                 - demo
-                - fix/win_build
       - lint:
           matrix:
             parameters:
