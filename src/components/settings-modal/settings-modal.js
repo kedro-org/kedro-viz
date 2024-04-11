@@ -138,9 +138,6 @@ const SettingsModal = ({
                 }
               }}
             />
-          </div>
-          <div className="pipeline-settings-modal__group">
-            <div className="pipeline-settings-modal__subtitle">Experiments</div>
             {flagData.map(({ name, value, description }) => (
               <SettingsModalRow
                 description={description}

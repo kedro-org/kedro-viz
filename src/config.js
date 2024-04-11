@@ -56,6 +56,15 @@ export const chartMinWidthScale = 0.25;
 export const largeGraphThreshold = 1000;
 
 // Remember to update the 'Flags' section in the README when updating these:
+export const flags = {
+  sizewarning: {
+    name: 'Size warning',
+    description: 'Show a warning before rendering very large graphs',
+    default: true,
+    icon: '🐳',
+  },
+};
+
 export const settings = {
   isPrettyName: {
     name: 'Pretty name',
@@ -67,16 +76,19 @@ export const settings = {
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
   },
-  sizewarning: {
-    name: 'Size warning',
-    description: 'Show a warning before rendering very large graphs',
-    default: false,
-  },
 };
 
-// Flags that are not directly user-configurable via the settings menu
-export const internalFlags = {
-  // Here, you could place any flags that are used internally and should not be directly manipulated by users
+// Sidebar groups is an ordered map of { id: label }
+export const sidebarGroups = {
+  elementType: 'Element types',
+  tag: 'Tags',
+};
+
+// Sidebar element types is an ordered map of { id: label }
+export const sidebarElementTypes = {
+  task: 'Nodes',
+  data: 'Datasets',
+  parameters: 'Parameters',
 };
 
 export const shortTypeMapping = {
