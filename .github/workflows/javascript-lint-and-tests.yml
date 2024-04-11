@@ -35,6 +35,8 @@ jobs:
 
           - name: Setup Node.js and Install Dependencies
             uses: "./.github/actions/install_node_dependencies"
+            with:
+              node-version: '16.13.2'
 
           - name: Setup Cypress requirements
             run: |-
