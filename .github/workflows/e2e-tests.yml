@@ -15,6 +15,9 @@ jobs:
         # Only run on main and demo branches for Windows
         if: inputs.os == 'ubuntu-latest' || ((github.ref == 'refs/heads/main' || github.ref == 'refs/heads/demo') && inputs.os == 'windows-latest')
         steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
         - name: Setup Tests
           uses: "./.github/actions/setup_tests"
           with:
