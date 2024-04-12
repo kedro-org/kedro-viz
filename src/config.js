@@ -113,13 +113,16 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id',
-  selected: 'selected_id',
-  selectedName: 'selected_name',
-  pipeline: 'pipeline_id',
+  focused: 'fid',
+  selected: 'sid',
+  selectedName: 'sn',
+  pipeline: 'pid',
   run: 'run_ids',
   view: 'view',
   comparisonMode: 'comparison',
+  types: 'types',
+  tags: 'tags',
+  expandAll: 'expandAllPipelines',
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
@@ -141,9 +144,9 @@ export const routes = {
 };
 
 export const errorMessages = {
-  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
-  modularPipeline: 'Please check the value of "focused_id" in the URL',
-  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  node: 'Please check the value of "selected_id"/"sid" or "selected_name"/"sn" in the URL',
+  modularPipeline: 'Please check the value of "focused_id"/"fid" in the URL',
+  pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
   runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
@@ -178,3 +181,16 @@ export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview
 export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws.html#set-up-endpoint`;
 export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure.html#set-up-endpoint`;
 export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp.html#set-up-endpoint`;
+
+export const defaultQueryParams = [
+  params.types,
+  params.tags,
+  params.expandAll,
+  params.pipeline,
+];
+
+export const NODE_TYPES = {
+  task: { name: 'nodes', defaultState: false },
+  data: { name: 'datasets', defaultState: false },
+  parameters: { name: 'parameters', defaultState: true },
+};
