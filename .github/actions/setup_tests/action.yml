@@ -4,11 +4,11 @@ description: Sets up the testing environment by setting up Python and Node.js, c
 inputs:
   os:
     description: 'Operating system'
-    required: true
+    required: false
     default: 'ubuntu-latest'
   python-version:
     description: 'Python version'
-    required: true
+    required: false
     default: '3.9'
 
 runs:
@@ -38,8 +38,6 @@ runs:
 
     - name: Setup Node.js and Install Dependencies
       uses: "./.github/actions/install_node_dependencies"
-      with:
-        node-version: '16.13.2'
 
     - name: Build React application
       run: |-

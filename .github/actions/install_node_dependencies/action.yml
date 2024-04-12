@@ -4,7 +4,7 @@ description: Sets up a specific Node.js version, caches Node modules, and instal
 inputs:
   node-version:
     description: 'Node.js version'
-    required: true
+    required: false
     default: '16.13.2'
 
   package-path:
