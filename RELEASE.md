@@ -12,6 +12,7 @@ Please follow the established format:
 - Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799)
 - Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands. (#1818)
 - Add Dataset Factory Patterns to Experiment Tracking. (#1824)
+- Upgrade to Node 18. (#1811)
 
 ## Bug fixes and other changes
 
