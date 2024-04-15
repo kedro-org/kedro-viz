@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799)
 - Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands. (#1818)
 - Add Dataset Factory Patterns to Experiment Tracking. (#1824)
 
