@@ -9,6 +9,7 @@ The publish and share feature on Kedro-Viz enables seamless sharing of pipeline 
 * [Publish and share on Azure](./publish_and_share_kedro_viz_on_azure)
 * [Publish and share on GCP](./publish_and_share_kedro_viz_on_gcp)
 
+3. **Publish and Share Kedro-Viz with Github Actions**: Use the `publish-kedro-viz` action available on the Github Marketplace to deploy Kedro-Viz for your Kedro project repository on GitHub Pages. For further information and usage instructions, please refer to [publish-kedro-viz](https://github.com/marketplace/actions/publish-kedro-viz)
 
 ```{toctree}
 :maxdepth: 1
