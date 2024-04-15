@@ -1,3 +1,4 @@
+import { params } from '../config';
 import {
   arrayToObject,
   prettifyName,
@@ -197,6 +198,75 @@ const addLayer = (state) => (layer) => {
 };
 
 /**
+ * Split query params from URL into an array and remove any empty strings
+ * @param {String} queryParams - Query params from URL
+ */
+const splitQueryParams = (queryParams) =>
+  queryParams ? queryParams.split(',').filter((item) => item !== '') : [];
+
+/**
+ * Returns an object with filters for tags as set in current URL
+ * @param {Object} state - State object
+ * @param {Array} tagsQueryParam - List of node tags from URL
+ * @param {Array} allNodeTags - List of all associated tags
+ */
+
+const getNodeTagsFiltersFromUrl = (state, tagsQueryParam, allNodeTags = []) => {
+  const queryParamsTagsArray = splitQueryParams(tagsQueryParam);
+
+  if (queryParamsTagsArray.length !== 0) {
+    const queryParamsTagsSet = new Set(queryParamsTagsArray);
+    const enabledTags = allNodeTags.reduce((result, tag) => {
+      result[tag.id] = queryParamsTagsSet.has(tag.id);
+      return result;
+    }, {});
+
+    state.tag.enabled = enabledTags;
+  }
+
+  return state;
+};
+
+/**
+ * Updates the disabled state of node types based on the provided type query parameters.
+ * @param {Object} state - The current state object.
+ * @param {string} typeQueryParams - The type query parameters.
+ * @returns {Object} - The updated state object.
+ */
+const getNodeTypesFromUrl = (state, typeQueryParams) => {
+  const nodeTypes = splitQueryParams(typeQueryParams);
+
+  if (nodeTypes.length !== 0) {
+    Object.keys(state.nodeType.disabled).forEach((key) => {
+      state.nodeType.disabled[key] = !nodeTypes.includes(key);
+    });
+  }
+
+  return state;
+};
+
+/**
+ * Updates the state with filters from the URL.
+ * @param {Object} state - State object
+ * @param {Array} NodeTags - List of all associated tags
+ * * @returns {Object} - The updated state object.
+ */
+const updateStateWithFilters = (state, NodeTags) => {
+  const search = new URLSearchParams(window.location.search);
+  const typeQueryParams = search.get(params.types);
+  const tagQueryParams = search.get(params.tags);
+
+  const updatedStateWithTags = getNodeTagsFiltersFromUrl(
+    state,
+    tagQueryParams,
+    NodeTags
+  );
+  const updatedStateWithTypes = getNodeTypesFromUrl(state, typeQueryParams);
+
+  return { ...state, ...updatedStateWithTags, ...updatedStateWithTypes };
+};
+
+/**
  * Convert the pipeline data into a normalized state object
  * @param {Object} data Raw unformatted data input
  * @return {Object} Formatted, normalized state
@@ -256,7 +326,8 @@ const normalizeData = (data, expandAllPipelines) => {
     data.layers.forEach(addLayer(state));
   }
 
-  return state;
+  const updatedState = updateStateWithFilters(state, data.tags);
+  return updatedState;
 };
 
 export default normalizeData;
