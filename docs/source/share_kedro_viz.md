@@ -13,6 +13,7 @@ The publish and share feature on Kedro-Viz enables seamless sharing of pipeline 
 
 ```{toctree}
 :maxdepth: 1
+:hidden:
 platform_agnostic_sharing_with_kedro_viz
 publish_and_share_kedro_viz_on_aws
 publish_and_share_kedro_viz_on_azure
