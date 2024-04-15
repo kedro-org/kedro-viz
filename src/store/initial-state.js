@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
+import { mapNodeType } from '../utils';
 import {
   settings,
   sidebarWidth,
@@ -53,6 +54,81 @@ export const createInitialState = () => ({
   runsMetadata: {},
 });
 
+const parseUrlParameters = () => {
+  const search = new URLSearchParams(window.location.search);
+  return {
+    pipelineIdFromURL: search.get(params.pipeline),
+    nodeIdFromUrl: search.get(params.selected),
+    nodeNameFromUrl: search.get(params.selectedName),
+    nodeTypeInUrl: search.get(params.types)
+      ? search.get(params.types).split(',')
+      : [],
+    nodeTagInUrl: search.get(params.tags)
+      ? search.get(params.tags).split(',')
+      : [],
+  };
+};
+
+/**
+ * Applies URL parameters to the application state.
+ * This function modifies the state based on URL parameters such as
+ * pipeline ID, node ID, node name, node type presence, and tag presence.
+ *
+ * @param {Object} state The current application state.
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new state with modifications applied based on URL parameters.
+ */
+const applyUrlParametersToState = (state, urlParams) => {
+  const {
+    pipelineIdFromURL,
+    nodeIdFromUrl,
+    nodeNameFromUrl,
+    nodeTypeInUrl,
+    nodeTagInUrl,
+  } = urlParams;
+
+  let newState = { ...state };
+  const nodeTypes = ['parameters', 'task', 'data'];
+
+  // Use main pipeline if pipeline from URL isn't recognised
+  if (pipelineIdFromURL) {
+    newState.pipeline.active = newState.pipeline.ids.includes(pipelineIdFromURL)
+      ? pipelineIdFromURL
+      : newState.pipeline.main;
+  }
+
+  // Ensure data tags are on to allow redirection back to the selected node
+  if (nodeNameFromUrl) {
+    newState.nodeType.disabled.data = false;
+  }
+
+  if (nodeTypeInUrl.length) {
+    Object.keys(newState.nodeType.disabled).forEach((key) => {
+      newState.nodeType.disabled[key] = true;
+    });
+    nodeTypeInUrl.forEach((key) => {
+      newState.nodeType.disabled[mapNodeType(key)] = false;
+    });
+  }
+
+  // Enable node types based on presence in URL and current node type settings
+  if (nodeIdFromUrl && nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    newState.nodeType.disabled[newState.node.type[nodeIdFromUrl]] = false;
+  }
+
+  if (nodeTagInUrl.length) {
+    // Set all tags to false initially
+    Object.keys(newState.tag.enabled).forEach((key) => {
+      newState.tag.enabled[key] = false;
+    });
+    nodeTagInUrl.forEach((tag) => {
+      newState.tag.enabled[tag] = true;
+    });
+  }
+
+  return newState;
+};
+
 /**
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
@@ -87,34 +163,8 @@ export const mergeLocalStorage = (state) => {
  * @param {Boolean} applyFixes Whether to override initialState
  */
 export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
-  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-
-  const search = new URLSearchParams(window.location.search);
-  const pipelineIdFromURL = search.get(params.pipeline);
-  const nodeIdFromUrl = search.get(params.selected);
-  const nodeNameFromUrl = search.get(params.selectedName);
-
-  const nodeTypes = ['parameters', 'task', 'data'];
-
-  if (pipelineIdFromURL) {
-    // Use main pipeline if pipeline from URL isn't recognised
-    if (!state.pipeline.ids.includes(pipelineIdFromURL)) {
-      state.pipeline.active = state.pipeline.main;
-    } else {
-      state.pipeline.active = pipelineIdFromURL;
-    }
-  }
-
-  // Set the nodeType.disable to false depending on what type of data it is, e.g. parameters, data, etc.
-  if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
-    state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
-  }
-
-  // If there is a "selected_name" in the URL we need to ensure
-  // data tags is on so the app can redirect back to the selected node
-  if (nodeNameFromUrl) {
-    state.nodeType.disabled.data = false;
-  }
+  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
+  const urlParams = parseUrlParameters();
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
@@ -122,7 +172,7 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
-
+  state = applyUrlParametersToState(state, urlParams);
   return state;
 };
 
@@ -130,21 +180,18 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
- * @param {Object} props Props passed to App component
- * @return {Object} Updated initial state
+ * @param {object} props Props passed to App component
+ * @return {object} Updated initial state
  */
 export const prepareNonPipelineState = (props) => {
   const state = mergeLocalStorage(createInitialState());
-
   let newVisibleProps = {};
   if (props.display?.sidebar === false || state.display.sidebar === false) {
     newVisibleProps['sidebar'] = false;
   }
-
   if (props.display?.minimap === false || state.display.miniMap === false) {
     newVisibleProps['miniMap'] = false;
   }
-
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
