@@ -13,9 +13,10 @@ The publish and share feature on Kedro-Viz enables seamless sharing of pipeline 
 
 ## Filtering and sharing Kedro-Viz pipelines 
 
-Kedro-Viz allows you to focus on specific aspects of your data pipeline by filtering the visualization. Once filtered, you can easily share the view with others by sharing the URL.
+Kedro-Viz allows user to focus on specific aspects of their data pipeline by filtering the visualization. Once filters are applied, the resulting visualization canbe shared with others by sharing the URL
 
-As you apply filters, the URL in your browser automatically updates to reflect the current state of your filtered pipeline. When you select the desired filters or options from the user interface, such as filtering by type, tags, or focus mode, the resulting URL can be shared with others. This provides them with access to the same filtered view of your pipeline.
+As filters are applied, the URL in the browser automatically updates to reflect the current state of your filtered pipeline. By selecting filters like type, tags, or focus mode through the user interface, users generate a URL that can be shared, granting others access to the same filtered view of the pipeline.
+
 
 
 ![](./images/kedro-viz-filter-share.gif)
