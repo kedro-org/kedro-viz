@@ -1,5 +1,5 @@
 image: gitpod/workspace-full:2023-01-16-03-31-28
-  
+
 tasks:
   - name: frontend
     init: |
@@ -10,6 +10,15 @@ tasks:
     command: |
       gp sync-done build_complete
       DANGEROUSLY_DISABLE_HOST_CHECK=true npm run start
+  
+  - name: Install Python 3.9
+    command: |
+      sudo apt update
+      sudo apt install -y software-properties-common
+      sudo add-apt-repository ppa:deadsnakes/ppa
+      sudo apt update
+      sudo apt install -y python3.9
+      sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
