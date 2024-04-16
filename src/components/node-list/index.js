@@ -39,6 +39,7 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
+import { params, NODE_TYPES } from '../../config';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -68,9 +69,16 @@ const NodeListProvider = ({
   inputOutputDataNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
+  const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
-  const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
-    useGeneratePathname();
+  const {
+    toSelectedPipeline,
+    toSelectedNode,
+    toFocusedModularPipeline,
+    toUpdateUrlParamsOnResetFilter,
+    toUpdateUrlParamsOnFilter,
+    toSetQueryParam,
+  } = useGeneratePathname();
 
   const items = getFilteredItems({
     nodes,
@@ -105,9 +113,49 @@ const NodeListProvider = ({
     }
   };
 
+  // To get existing values from URL query parameters
+  const getExistingValuesFromUrlQueryParams = (paramName, searchParams) => {
+    const paramValues = searchParams.get(paramName);
+    return new Set(paramValues ? paramValues.split(',') : []);
+  };
+
+  const handleUrlParamsUpdateOnFilter = (item) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const paramName = isElementType(item.type) ? params.types : params.tags;
+    const existingValues = getExistingValuesFromUrlQueryParams(
+      paramName,
+      searchParams
+    );
+
+    toUpdateUrlParamsOnFilter(item, paramName, existingValues);
+  };
+
+  // To update URL query parameters when a filter group is clicked
+  const handleUrlParamsUpdateOnGroupFilter = (
+    groupType,
+    groupItems,
+    groupItemsDisabled
+  ) => {
+    if (groupItemsDisabled) {
+      // If all items in group are disabled
+      groupItems.forEach((item) => {
+        handleUrlParamsUpdateOnFilter(item);
+      });
+    } else {
+      // If some items in group are enabled
+      const paramName = isElementType(groupType) ? params.types : params.tags;
+      toSetQueryParam(paramName, []);
+    }
+  };
+
   const onItemChange = (item, checked, clickedIconType) => {
     if (isGroupType(item.type) || isModularPipelineType(item.type)) {
       onGroupItemChange(item, checked);
+
+      // Update URL query parameters when a filter item is clicked
+      if (!clickedIconType) {
+        handleUrlParamsUpdateOnFilter(item);
+      }
 
       if (isModularPipelineType(item.type)) {
         if (clickedIconType === 'focus') {
@@ -169,6 +217,13 @@ const NodeListProvider = ({
       (groupItem) => !groupItem.checked
     );
 
+    // Update URL query parameters when a filter group is clicked
+    handleUrlParamsUpdateOnGroupFilter(
+      groupType,
+      groupItems,
+      groupItemsDisabled
+    );
+
     if (isTagType(groupType)) {
       onToggleTagFilter(
         groupItems.map((item) => item.id),
@@ -207,6 +262,32 @@ const NodeListProvider = ({
       onToggleNodeSelected(null);
     }
   };
+
+  // Reset applied filters to default
+  const onResetFilter = () => {
+    onToggleTypeDisabled({ task: false, data: false, parameters: true });
+    onToggleTagFilter(
+      tags.map((item) => item.id),
+      false
+    );
+
+    toUpdateUrlParamsOnResetFilter();
+  };
+
+  // Helper function to check if NodeTypes is modified
+  const hasModifiedNodeTypes = (nodeTypes) => {
+    return nodeTypes.some(
+      (item) => NODE_TYPES[item.id]?.defaultState !== item.disabled
+    );
+  };
+
+  // Updates the reset filter button status based on the node types and tags.
+  useEffect(() => {
+    const isNodeTypeModified = hasModifiedNodeTypes(nodeTypes);
+    const isNodeTagModified = tags.some((tag) => tag.enabled);
+    setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
+  }, [tags, nodeTypes]);
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -230,6 +311,8 @@ const NodeListProvider = ({
       onItemChange={onItemChange}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
+      onResetFilter={onResetFilter}
+      isResetFilterActive={isResetFilterActive}
     />
   );
 };

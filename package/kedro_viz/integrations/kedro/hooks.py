@@ -5,6 +5,7 @@ functionalities for a kedro run."""
 import json
 import logging
 from collections import defaultdict
+from pathlib import PurePosixPath
 from typing import Any, Union
 
 from kedro.framework.hooks import hook_impl
@@ -134,7 +135,9 @@ class DatasetStatsHook:
             return None
 
         try:
-            file_path = get_filepath_str(dataset._filepath, dataset._protocol)
+            file_path = get_filepath_str(
+                PurePosixPath(dataset._filepath), dataset._protocol
+            )
             return dataset._fs.size(file_path)
 
         except Exception as exc:
