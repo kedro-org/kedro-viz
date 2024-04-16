@@ -13,7 +13,7 @@ tasks:
   
   - name: Install Python 3.9
     command: |
-      pyenv install --force 3.9.*
+      pyenv install 3.9
       /home/gitpod/.pyenv/versions/3.9.*/bin/python3 --version
 
 
