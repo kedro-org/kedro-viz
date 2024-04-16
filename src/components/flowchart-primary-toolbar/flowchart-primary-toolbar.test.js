@@ -9,7 +9,7 @@ import { mockState, setup } from '../../utils/state.mock';
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
   it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
@@ -31,7 +31,7 @@ describe('PrimaryToolbar', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       visible,
     });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(3);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });
 
   const functionCalls = [
