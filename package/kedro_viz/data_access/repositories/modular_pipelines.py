@@ -13,7 +13,20 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 
-
+def _get_namespace(modular_pipeline_id: str) -> Optional[str]:
+        """Extract the namespace from a nested modular pipeline .
+        Args:
+            modular_pipeline_id: The id of the modular_pipeline.
+        Returns:
+            The namespace of this dataset, if available.
+        Example:
+            >>> GraphNode._get_namespace("pipeline.dataset")
+            'pipeline'
+        """
+        if "." not in modular_pipeline_id:
+            return None
+        return modular_pipeline_id.rsplit(".", 1)[0]
+    
 class ModularPipelinesRepository:
     """Repository for the set of modular pipelines in a registered pipeline.
     Internally, the repository models the set of modular pipelines as a tree using child-references.
@@ -121,8 +134,10 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
+            
+        namespace = _get_namespace(modular_pipeline_id)
+        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (namespace is not None and namespace in input_node.modular_pipelines)
 
-        is_internal_input = modular_pipeline_id in input_node.modular_pipelines
         if is_internal_input:
             self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
         else:
@@ -154,8 +169,9 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
-
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines
+            
+        namespace = _get_namespace(modular_pipeline_id) 
+        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (namespace is not None and namespace in output_node.modular_pipelines)
         if is_internal_output:
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
