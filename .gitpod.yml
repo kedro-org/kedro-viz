@@ -14,7 +14,7 @@ tasks:
   - name: Install Python 3.9
     command: |
       pyenv install 3.9
-      /home/gitpod/.pyenv/versions/3.9.*/bin/python3 --version
+      pyenv global 3.9.0
 
 
   - name: backend
