@@ -5,13 +5,17 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
+  changeFlag,
 } from '../../actions';
+import { loadInitialPipelineData } from '../../actions/pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
 import PrimaryToolbar from '../primary-toolbar';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
+import ExpandPipelinesIcon from '../icons/expand-pipelines';
+import CollapsePipelinesIcon from '../icons/collapse-pipelines';
 
 /**
  * Main controls for filtering the chart data
@@ -28,6 +32,8 @@ export const FlowchartPrimaryToolbar = ({
   textLabels,
   visible,
   visibleLayers,
+  expandedPipelines,
+  onToggleExpandAllPipelines,
 }) => (
   <>
     <PrimaryToolbar
@@ -58,6 +64,21 @@ export const FlowchartPrimaryToolbar = ({
         visible={visible.layerBtn}
       />
       <IconButton
+        active={expandedPipelines}
+        ariaLabel={
+          expandedPipelines
+            ? 'Collapse all modular pipelines'
+            : 'Expand all modular pipelines'
+        }
+        className={'pipeline-menu-button--pipeline'}
+        icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
+        labelText={
+          expandedPipelines ? 'Collapse Pipelines' : 'Expand Pipelines'
+        }
+        onClick={() => onToggleExpandAllPipelines(!expandedPipelines)}
+        visible={visible.layerBtn}
+      />
+      <IconButton
         ariaLabel="Export graph as SVG or PNG"
         className={'pipeline-menu-button--export'}
         dataTest={'btnExportGraph'}
@@ -76,6 +97,7 @@ export const mapStateToProps = (state) => ({
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
+  expandedPipelines: state.flags.expandAllPipelines,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -90,6 +112,10 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));
+  },
+  onToggleExpandAllPipelines: (isExpanded) => {
+    dispatch(changeFlag('expandAllPipelines', isExpanded));
+    dispatch(loadInitialPipelineData());
   },
 });
 
