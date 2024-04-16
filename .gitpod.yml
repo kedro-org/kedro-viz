@@ -14,12 +14,6 @@ tasks:
   - name: backend
     before:echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
-      curl https://pyenv.run | bash
-      export PATH="$HOME/.pyenv/bin:$PATH"
-      eval "$(pyenv init --path)"
-      eval "$(pyenv virtualenv-init -)"
-      pyenv install 3.9.7
-      pyenv global 3.9.7
       pip install "pip==23.0.1" --user
       pip install -r package/test_requiremenåts.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
