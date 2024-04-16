@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
@@ -14,7 +14,9 @@ from kedro_viz.models.flowchart import (
 )
 
 
-def _get_parent_modular_pipeline_id(modular_pipeline_id: str) -> Optional[str]:
+def _check_is_internal_input_output(
+    modular_pipeline_id: str, input_node_modular_pipeline: List
+) -> Optional[str]:
     """Extracts the ID of the outer modular pipeline containing a nested modular pipeline.
 
     Args:
@@ -27,9 +29,11 @@ def _get_parent_modular_pipeline_id(modular_pipeline_id: str) -> Optional[str]:
         >>> _get_outer_modular_pipeline_id("namespace_modular_pipeline.modular_pipeline")
         'namespace_modular_pipeline'
     """
-    if "." not in modular_pipeline_id:
-        return None
-    return modular_pipeline_id.rsplit(".", 1)[0]
+    all_modular_pipeline_ids = modular_pipeline_id.split(".")
+    for pipeline_id in all_modular_pipeline_ids:
+        if pipeline_id is not None and pipeline_id in input_node_modular_pipeline:
+            return True
+    return False
 
 
 class ModularPipelinesRepository:
@@ -140,12 +144,8 @@ class ModularPipelinesRepository:
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
 
-        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(
-            modular_pipeline_id
-        )
-        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (
-            parent_modular_pipeline_id is not None
-            and parent_modular_pipeline_id in input_node.modular_pipelines
+        is_internal_input = _check_is_internal_input_output(
+            modular_pipeline_id, input_node.modular_pipelines
         )
 
         if is_internal_input:
@@ -179,14 +179,10 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
+        is_internal_output = _check_is_internal_input_output(
+            modular_pipeline_id, output_node.modular_pipelines
+        )
 
-        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(
-            modular_pipeline_id
-        )
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (
-            parent_modular_pipeline_id is not None
-            and parent_modular_pipeline_id in output_node.modular_pipelines
-        )
         if is_internal_output:
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
