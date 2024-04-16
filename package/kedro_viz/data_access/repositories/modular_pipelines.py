@@ -13,23 +13,25 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 
+
 def _get_parent_modular_pipeline_id(modular_pipeline_id: str) -> Optional[str]:
-        """Extracts the ID of the outer modular pipeline containing a nested modular pipeline.
-    
-        Args:
-            modular_pipeline_id: The ID of the nested modular pipeline.
-            
-        Returns:
-            The ID of the outer modular pipeline containing the nested modular pipeline, if available.
-            
-        Example:
-            >>> _get_outer_modular_pipeline_id("namespace_modular_pipeline.modular_pipeline")
-            'namespace_modular_pipeline'
-        """
-        if "." not in modular_pipeline_id:
-            return None
-        return modular_pipeline_id.rsplit(".", 1)[0]
-    
+    """Extracts the ID of the outer modular pipeline containing a nested modular pipeline.
+
+    Args:
+        modular_pipeline_id: The ID of the nested modular pipeline.
+
+    Returns:
+        The ID of the outer modular pipeline containing the nested modular pipeline, if available.
+
+    Example:
+        >>> _get_outer_modular_pipeline_id("namespace_modular_pipeline.modular_pipeline")
+        'namespace_modular_pipeline'
+    """
+    if "." not in modular_pipeline_id:
+        return None
+    return modular_pipeline_id.rsplit(".", 1)[0]
+
+
 class ModularPipelinesRepository:
     """Repository for the set of modular pipelines in a registered pipeline.
     Internally, the repository models the set of modular pipelines as a tree using child-references.
@@ -137,9 +139,14 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
-            
-        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(modular_pipeline_id)
-        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (parent_modular_pipeline_id is not None and parent_modular_pipeline_id in input_node.modular_pipelines)
+
+        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(
+            modular_pipeline_id
+        )
+        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (
+            parent_modular_pipeline_id is not None
+            and parent_modular_pipeline_id in input_node.modular_pipelines
+        )
 
         if is_internal_input:
             self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
@@ -172,9 +179,14 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
-            
-        parent_modular_pipeline_id = parent_modular_pipeline_id(modular_pipeline_id) 
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (parent_modular_pipeline_id is not None and parent_modular_pipeline_id in output_node.modular_pipelines)
+
+        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(
+            modular_pipeline_id
+        )
+        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (
+            parent_modular_pipeline_id is not None
+            and parent_modular_pipeline_id in output_node.modular_pipelines
+        )
         if is_internal_output:
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
