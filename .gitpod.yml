@@ -12,18 +12,23 @@ tasks:
       DANGEROUSLY_DISABLE_HOST_CHECK=true npm run start
 
   - name: backend
-    before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
+    before:echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
-      pyenv install 3.9
-      pyenv global 3.9.0
+      curl https://pyenv.run | bash
+      export PATH="$HOME/.pyenv/bin:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv virtualenv-init -)"
+      pyenv install 3.9.7
+      pyenv global 3.9.7
       pip install "pip==23.0.1" --user
-      pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
+      pip install -r package/test_requiremenåts.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user
       # force-reinstall kedro to ensure that the latest version from main is installed even when 
       # its version number is the same as that specified in docker_requirements.txt.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
     command: | 
+      python --version
       gp sync-await build_complete
       pip install -e package --no-deps
       gp sync-done kedro_installed
