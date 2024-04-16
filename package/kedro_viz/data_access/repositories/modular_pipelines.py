@@ -13,15 +13,18 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 
-def _get_namespace(modular_pipeline_id: str) -> Optional[str]:
-        """Extract the namespace from a nested modular pipeline .
+def _get_parent_modular_pipeline_id(modular_pipeline_id: str) -> Optional[str]:
+        """Extracts the ID of the outer modular pipeline containing a nested modular pipeline.
+    
         Args:
-            modular_pipeline_id: The id of the modular_pipeline.
+            modular_pipeline_id: The ID of the nested modular pipeline.
+            
         Returns:
-            The namespace of this dataset, if available.
+            The ID of the outer modular pipeline containing the nested modular pipeline, if available.
+            
         Example:
-            >>> GraphNode._get_namespace("pipeline.dataset")
-            'pipeline'
+            >>> _get_outer_modular_pipeline_id("namespace_modular_pipeline.modular_pipeline")
+            'namespace_modular_pipeline'
         """
         if "." not in modular_pipeline_id:
             return None
@@ -135,8 +138,8 @@ class ModularPipelinesRepository:
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
             
-        namespace = _get_namespace(modular_pipeline_id)
-        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (namespace is not None and namespace in input_node.modular_pipelines)
+        parent_modular_pipeline_id = _get_parent_modular_pipeline_id(modular_pipeline_id)
+        is_internal_input = (modular_pipeline_id in input_node.modular_pipelines) or (parent_modular_pipeline_id is not None and parent_modular_pipeline_id in input_node.modular_pipelines)
 
         if is_internal_input:
             self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
@@ -170,8 +173,8 @@ class ModularPipelinesRepository:
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
             
-        namespace = _get_namespace(modular_pipeline_id) 
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (namespace is not None and namespace in output_node.modular_pipelines)
+        parent_modular_pipeline_id = parent_modular_pipeline_id(modular_pipeline_id) 
+        is_internal_output = modular_pipeline_id in output_node.modular_pipelines or (parent_modular_pipeline_id is not None and parent_modular_pipeline_id in output_node.modular_pipelines)
         if is_internal_output:
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
