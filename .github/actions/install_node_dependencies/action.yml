@@ -33,5 +33,5 @@ runs:
         restore-keys: "${{ runner.os }}-node-"
 
     - name: Install Node Dependencies
-      run: npm ci
+      run: npm install
       shell: bash

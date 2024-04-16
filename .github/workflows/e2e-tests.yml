@@ -14,19 +14,13 @@ jobs:
         runs-on: ${{ inputs.os }}
 
         # below condition checks if the operating system is Ubuntu, or 
-        # Run on Windows and
-        # main/demo branch or 
-        # pull request to main with Python 3.10
+        # if the operating system is Windows and the branch is main/demo
         if: >
           inputs.os == 'ubuntu-latest' || 
           (
             (
               github.ref == 'refs/heads/main' || 
-              github.ref == 'refs/heads/demo' || 
-              (
-                github.event.pull_request.base.ref == 'main' && 
-                inputs.python-version == '3.10'
-              )
+              github.ref == 'refs/heads/demo'
             ) && 
             inputs.os == 'windows-latest'
           )
