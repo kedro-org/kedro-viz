@@ -10,16 +10,12 @@ tasks:
     command: |
       gp sync-done build_complete
       DANGEROUSLY_DISABLE_HOST_CHECK=true npm run start
-  
-  - name: Install Python 3.9
-    command: |
-      pyenv install 3.9
-      pyenv global 3.9.0
-
 
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
+      pyenv install 3.9
+      pyenv global 3.9.0
       pip install "pip==23.0.1" --user
       pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
