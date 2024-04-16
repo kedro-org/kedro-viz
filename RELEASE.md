@@ -23,6 +23,11 @@ Please follow the established format:
 - Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
 - Add `pydantic` pin to requirements. (#1861)
 
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Pascal Bro](https://github.com/pascalwhoop)
+
 # Release 8.0.1 
 
 ## Bug fixes and other changes
