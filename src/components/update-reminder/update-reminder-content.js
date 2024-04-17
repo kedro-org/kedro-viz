@@ -5,7 +5,7 @@ export const updateContent = {
       title:
         'Enable stateful URLs with node filters and expand/collapse modular pipelines',
       image: '',
-      copy: 'Kedro-Viz now supports stateful URLs with node filters and expand/collapse modular pipelines. This feature allows you to share a specific view of the data pipeline with others.',
+      copy: 'Kedro-Viz now supports stateful URLs that update to reflect user interactions, specifically when filtering nodes or expanding/collapsing modular pipelines. This allows users to share URLs that capture and share specific views of the data pipeline.',
       buttonLink:
         'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#filtering-and-sharing-kedro-viz-pipelines',
       buttonText: 'View the docs',
