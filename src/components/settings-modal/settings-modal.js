@@ -15,7 +15,6 @@ import {
 } from '../../config';
 import { saveLocalStorage } from '../../store/helpers';
 import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
-import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -47,8 +46,6 @@ const SettingsModal = ({
     useState(showFeatureHints);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
-  const { toSetQueryParam } = useGeneratePathname();
-
   useEffect(() => {
     setShowFeatureHintsValue(showFeatureHints);
   }, [showFeatureHints]);
@@ -66,9 +63,6 @@ const SettingsModal = ({
         const updatedFlags = Object.entries(toggleFlags);
         updatedFlags.map((each) => {
           const [name, value] = each;
-          if (name === params.expandAll) {
-            toSetQueryParam(params.expandAll, value);
-          }
 
           return onToggleFlag(name, value);
         });
@@ -95,7 +89,6 @@ const SettingsModal = ({
     onToggleIsPrettyName,
     showSettingsModal,
     toggleFlags,
-    toSetQueryParam,
   ]);
 
   const resetStateCloseModal = () => {
