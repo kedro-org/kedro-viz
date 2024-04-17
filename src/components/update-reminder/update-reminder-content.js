@@ -14,7 +14,7 @@ export const updateContent = {
       title:
         'Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands',
       image: '',
-      copy: 'Now you can include `--include-hooks` options to all the viz cli commands and `%run_viz` Jupyter line magic',
+      copy: To run hooks while running `kedro viz`, you must now include the `--include-hooks` option in the Viz CLI commands and the `%run_viz` Jupyter line magic. This change ensures hooks are executed only when explicitly requested, as they are no longer run by default in Kedro-Viz.
       buttonLink: '',
       buttonText: '',
     },
