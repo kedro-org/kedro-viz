@@ -1,5 +1,5 @@
 image:
-  file: .gitpod.Dockerfile
+    file: .gitpod.Dockerfile
 
 tasks:
   - name: frontend
@@ -15,7 +15,7 @@ tasks:
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
-      pip install "pip==23.0.1" --user
+      pip install "pip==23.3.1" --user
       pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user
@@ -24,7 +24,7 @@ tasks:
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
     command: | 
       gp sync-await build_complete
-      pip install -e package --no-deps
+      pip install -e package --user --no-deps
       gp sync-done kedro_installed
       make run
       
