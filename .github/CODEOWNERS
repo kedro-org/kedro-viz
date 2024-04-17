@@ -12,15 +12,15 @@ Makefile                                @rashidakanchwala
 *.json                                  @rashidakanchwala @jitu5
 *.scss                                  @rashidakanchwala @jitu5
 *.py                                    @rashidakanchwala @ravi-kumar-pilla
-*.md                                    @rashidakanchwala @NeroOkwa
+*.md                                    @rashidakanchwala @astrojuanlu
 
 .babelrc                                @rashidakanchwala
 .eslintrc.json                          @rashidakanchwala
 .prettierrc                             @rashidakanchwala
 .gitignore                              @rashidakanchwala
-CODEOWNERS                              @rashidakanchwala @NeroOkwa
-CONTRIBUTING.md                         @rashidakanchwala @NeroOkwa
-README.md                               @rashidakanchwala @NeroOkwa
-RELEASE.md                              @rashidakanchwala @NeroOkwa
-legal_header.txt                        @rashidakanchwala @NeroOkwa
-LICENSE.md                              @rashidakanchwala @NeroOkwa
+CODEOWNERS                              @rashidakanchwala @astrojuanlu
+CONTRIBUTING.md                         @rashidakanchwala @astrojuanlu
+README.md                               @rashidakanchwala @astrojuanlu
+RELEASE.md                              @rashidakanchwala @astrojuanlu
+legal_header.txt                        @rashidakanchwala @astrojuanlu
+LICENSE.md                              @rashidakanchwala @astrojuanlu

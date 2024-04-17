@@ -30,11 +30,13 @@ import {
   errorMessages,
   linkToFlowchartInitialVal,
   localStorageFlowchartLink,
+  localStorageName,
   params,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
-import { getKeyByValue } from '../../utils/get-key-by-value';
-import { isRunningLocally } from '../../utils';
+import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
+import { isRunningLocally, mapNodeTypes } from '../../utils';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
 
 /**
@@ -55,10 +57,12 @@ export const FlowChartWrapper = ({
   onUpdateActivePipeline,
   pipelines,
   sidebarVisible,
+  activePipeline,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
+  const { toSetQueryParam } = useGeneratePathname();
 
   const [errorMessage, setErrorMessage] = useState({});
   const [isInvalidUrl, setIsInvalidUrl] = useState(false);
@@ -77,6 +81,54 @@ export const FlowChartWrapper = ({
     matchedSelectedNodeName,
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
+
+  /**
+   * On initial load & when user switch active pipeline,
+   * sets the query params from local storage based on NodeType, tag, expandAllPipelines and active pipeline.
+   * @param {string} activePipeline - The active pipeline.
+   */
+  const setParamsFromLocalStorage = (activePipeline) => {
+    const localStorageParams = loadLocalStorage(localStorageName);
+    if (localStorageParams) {
+      const paramActions = {
+        pipeline: (value) => {
+          if (!searchParams.has(params.pipeline) && activePipeline) {
+            toSetQueryParam(params.pipeline, value.active || activePipeline);
+          }
+        },
+        tag: (value) => {
+          if (!searchParams.has(params.tags)) {
+            const enabledKeys = getKeysByValue(value.enabled, true);
+            enabledKeys && toSetQueryParam(params.tags, enabledKeys);
+          }
+        },
+        nodeType: (value) => {
+          if (!searchParams.has(params.types)) {
+            const disabledKeys = getKeysByValue(value.disabled, false);
+            // Replace task with node to keep UI label & the URL consistent
+            const mappedDisabledNodes = mapNodeTypes(disabledKeys);
+            disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
+          }
+        },
+        flags: (value) => {
+          if (!searchParams.has(params.expandAll)) {
+            toSetQueryParam(params.expandAll, value.expandAllPipelines);
+          }
+        },
+      };
+
+      for (const [key, value] of Object.entries(localStorageParams)) {
+        if (paramActions[key]) {
+          paramActions[key](value);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    setParamsFromLocalStorage(activePipeline);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePipeline]);
 
   const resetErrorMessage = () => {
     setErrorMessage({});
@@ -199,17 +251,17 @@ export const FlowChartWrapper = ({
         resetErrorMessage();
       }
 
-      if (matchedSelectedPipeline) {
+      if (matchedSelectedPipeline()) {
         // Redirecting to a different pipeline is also handled at `preparePipelineState`
         // to ensure the data is ready before being passed to here
         redirectSelectedPipeline();
       }
 
-      if (matchedSelectedNodeName || matchedSelectedNodeId) {
+      if (matchedSelectedNodeName() || matchedSelectedNodeId()) {
         redirectToSelectedNode();
       }
 
-      if (matchedFocusedNode) {
+      if (matchedFocusedNode()) {
         redirectToFocusedNode();
       }
 
@@ -312,6 +364,7 @@ export const mapStateToProps = (state) => ({
   modularPipelinesTree: getModularPipelinesTree(state),
   nodes: state.node.modularPipelines,
   pipelines: state.pipeline.ids,
+  activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
 });
 

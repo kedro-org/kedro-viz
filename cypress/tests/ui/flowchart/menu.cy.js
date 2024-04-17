@@ -31,7 +31,7 @@ describe('Flowchart Menu', () => {
 
       cy.location('search').should((queryParams) => {
         expect(decodeURIComponent(queryParams).toLowerCase()).to.contain(
-          menuOptionValue.toLowerCase()
+          menuOptionValue.toLowerCase().replace(/ /g, '+')
         );
       });
 
@@ -169,5 +169,49 @@ describe('Flowchart Menu', () => {
     )
       .should('have.class', 'pipeline-nodelist__row__label--faded')
       .should('have.class', 'pipeline-nodelist__row__label--disabled');
+  });
+
+  it('verifies that after checking node type URL should be updated with correct query params', () => {
+    const nodeToToggleText = 'Parameters';
+
+    // Alias
+    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
+      'nodeToToggle'
+    );
+
+    // Assert before action
+    cy.get('@nodeToToggle').should('not.be.checked');
+
+    // Action
+    cy.get('@nodeToToggle').check({ force: true });
+
+    // Assert after action
+    cy.url().should('include', 'parameters');
+  });
+
+  it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
+    const visibleRowLabel = 'Companies';
+    cy.visit(`/?tags=${visibleRowLabel}`);
+
+    // Alias
+    cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(
+      'nodeToToggle'
+    );
+
+    // Assert
+    cy.get('@nodeToToggle').should('be.checked');
+  });
+
+  it('Verify that if the URL contains the nodeType query parameter, the same parameter should be reflected on the UI.', () => {
+    const visibleRowLabel = 'Datasets';
+    cy.visit('/?types=datasets');
+
+    // Alias
+    cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(
+      'nodeToToggle'
+    );
+
+    // Assert
+    cy.get('@nodeToToggle').should('be.checked');
   });
 });

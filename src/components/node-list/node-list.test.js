@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { toggleIsPrettyName } from '../../actions';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { localStorageName, sidebarElementTypes } from '../../config';
@@ -24,7 +25,11 @@ describe('NodeList', () => {
   });
 
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<NodeList />);
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <NodeList />
+      </MemoryRouter>
+    );
     const search = wrapper.find('.pipeline-search-list');
     const nodeList = wrapper.find('.pipeline-nodelist__list');
     expect(search.length).toBe(1);
@@ -33,7 +38,11 @@ describe('NodeList', () => {
 
   describe('tree-search-ui', () => {
     describe('displays nodes matching search value', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
 
       const searches = [
         // search text that matches an external node only
@@ -83,7 +92,11 @@ describe('NodeList', () => {
       );
     });
     it('clears the search input and resets the list when hitting the Escape key', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.search-input__field');
@@ -128,7 +141,9 @@ describe('NodeList', () => {
     });
     it('displays search results when in focus mode', () => {
       const wrapper = setup.mount(
-        <NodeList focusMode={{ id: 'data_science' }} />
+        <MemoryRouter>
+          <NodeList focusMode={{ id: 'data_science' }} />
+        </MemoryRouter>
       );
       const searchWrapper = wrapper.find('.pipeline-search-list');
       // Re-find elements from root each time to see updates
@@ -182,9 +197,14 @@ describe('NodeList', () => {
         .map((row) => [row.prop('title')]);
 
     it('shows full node names when pretty name is turned off', () => {
-      const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => toggleIsPrettyName(false)],
-      });
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>,
+        {
+          beforeLayoutActions: [() => toggleIsPrettyName(false)],
+        }
+      );
       expect(elements(wrapper)).toEqual([
         ['data_processing'],
         ['data_science'],
@@ -194,9 +214,14 @@ describe('NodeList', () => {
       ]);
     });
     it('shows formatted node names when pretty name is turned on', () => {
-      const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => toggleIsPrettyName(true)],
-      });
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>,
+        {
+          beforeLayoutActions: [() => toggleIsPrettyName(true)],
+        }
+      );
       expect(elements(wrapper)).toEqual([
         ['Data Processing'],
         ['Data Science'],
@@ -242,9 +267,14 @@ describe('NodeList', () => {
 
     it('selecting tags enables only elements with given tags and modular pipelines', () => {
       //Parameters are enabled here to override the default behavior
-      const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-      });
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>,
+        {
+          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+        }
+      );
 
       changeRows(wrapper, ['Preprocessing'], true);
       expect(elementsEnabled(wrapper)).toEqual([
@@ -262,9 +292,14 @@ describe('NodeList', () => {
 
     it('selecting a tag sorts elements by modular pipelines first then by task, data and parameter nodes ', () => {
       //Parameters are enabled here to override the default behavior
-      const wrapper = setup.mount(<NodeList />, {
-        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-      });
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>,
+        {
+          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+        }
+      );
 
       // with the modular pipeline tree structure the elements displayed here are for the top level pipeline
       expect(elements(wrapper)).toEqual([
@@ -280,7 +315,11 @@ describe('NodeList', () => {
     });
 
     it('adds a class to tag group item when all tags unchecked', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const uncheckedClass = 'pipeline-nodelist__group--all-unchecked';
 
       expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
@@ -291,7 +330,11 @@ describe('NodeList', () => {
     });
 
     it('adds a class to the row when a tag row unchecked', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const uncheckedClass = 'pipeline-nodelist__row--unchecked';
 
       expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
@@ -308,7 +351,11 @@ describe('NodeList', () => {
     });
 
     it('shows as partially selected when at least one but not all tags selected', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
 
       // No tags selected
       expect(partialIcon(wrapper)).toHaveLength(0);
@@ -327,7 +374,11 @@ describe('NodeList', () => {
     });
 
     it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       changeRows(wrapper, ['Preprocessing'], true);
       const localStoredValues = JSON.parse(
         window.localStorage.getItem(localStorageName)
@@ -338,7 +389,11 @@ describe('NodeList', () => {
 
   describe('node list', () => {
     it('renders the correct number of tags in the filter panel', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const nodeList = wrapper.find(
         '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
       );
@@ -348,7 +403,11 @@ describe('NodeList', () => {
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
     });
     it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
       const modularPipelinesTree = getModularPipelinesTree(
         mockState.spaceflights
@@ -359,7 +418,11 @@ describe('NodeList', () => {
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
-      const wrapper = setup.mount(<NodeList />);
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
       const split = wrapper.find(SplitPanel);
 
       expect(split.find('.pipeline-nodelist__split').exists()).toBe(true);
@@ -379,7 +442,11 @@ describe('NodeList', () => {
   });
 
   describe('node list element item', () => {
-    const wrapper = setup.mount(<NodeList />);
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <NodeList />
+      </MemoryRouter>
+    );
     // this needs to be the 3rd element as the first 2 elements are modular pipelines rows which does not apply the '--active' class
     const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(3);
 
@@ -395,7 +462,11 @@ describe('NodeList', () => {
   });
 
   describe('node list element item checkbox', () => {
-    const wrapper = setup.mount(<NodeList />);
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <NodeList />
+      </MemoryRouter>
+    );
     const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
 
     it('handles toggle off event', () => {
@@ -420,6 +491,43 @@ describe('NodeList', () => {
         },
       });
       expect(checkbox().props().checked).toBe(true);
+    });
+  });
+
+  describe('Reset node filters', () => {
+    const wrapper = setup.mount(
+      <MemoryRouter>
+        <NodeList />
+      </MemoryRouter>
+    );
+
+    const resetFilterButton = wrapper.find(
+      '.pipeline-nodelist-section__reset-filter'
+    );
+
+    it('On first load before applying filter button should be disabled', () => {
+      expect(resetFilterButton.prop('disabled')).toBe(true);
+    });
+
+    it('After applying any filter filter button should not be disabled', () => {
+      const nodeTypeFilter = wrapper.find(
+        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
+      );
+      nodeTypeFilter.simulate('click');
+
+      nodeTypeFilter.simulate('change', {
+        target: { checked: false },
+      });
+
+      setTimeout(() => {
+        expect(resetFilterButton.prop('disabled')).toBe(false);
+      }, 1); // Wait for 1 second before asserting
+    });
+
+    it('should update URL parameters when onResetFilter is called', () => {
+      resetFilterButton.simulate('click');
+
+      expect(window.location.search).not.toContain('tags');
     });
   });
 

@@ -68,8 +68,11 @@ class TestQueryWithRuns:
         client,
         example_tracking_catalog,
         data_access_manager_with_runs,
+        example_pipelines,
     ):
-        data_access_manager_with_runs.add_catalog(example_tracking_catalog)
+        data_access_manager_with_runs.add_catalog(
+            example_tracking_catalog, example_pipelines
+        )
         example_run_id = example_run_ids[0]
 
         response = client.post(
@@ -170,9 +173,15 @@ class TestQueryWithRuns:
         assert response.json() == expected_response
 
     def test_metrics_data(
-        self, client, example_tracking_catalog, data_access_manager_with_runs
+        self,
+        client,
+        example_tracking_catalog,
+        data_access_manager_with_runs,
+        example_pipelines,
     ):
-        data_access_manager_with_runs.add_catalog(example_tracking_catalog)
+        data_access_manager_with_runs.add_catalog(
+            example_tracking_catalog, example_pipelines
+        )
 
         response = client.post(
             "/graphql",
@@ -286,8 +295,11 @@ class TestQueryWithRuns:
         data_access_manager_with_runs,
         show_diff,
         expected_response,
+        example_pipelines,
     ):
-        data_access_manager_with_runs.add_catalog(example_multiple_run_tracking_catalog)
+        data_access_manager_with_runs.add_catalog(
+            example_multiple_run_tracking_catalog, example_pipelines
+        )
 
         response = client.post(
             "/graphql",
@@ -343,9 +355,11 @@ class TestQueryWithRuns:
         data_access_manager_with_runs,
         show_diff,
         expected_response,
+        example_pipelines,
     ):
         data_access_manager_with_runs.add_catalog(
-            example_multiple_run_tracking_catalog_at_least_one_empty_run
+            example_multiple_run_tracking_catalog_at_least_one_empty_run,
+            example_pipelines,
         )
 
         response = client.post(
@@ -379,9 +393,10 @@ class TestQueryWithRuns:
         data_access_manager_with_runs,
         show_diff,
         expected_response,
+        example_pipelines,
     ):
         data_access_manager_with_runs.add_catalog(
-            example_multiple_run_tracking_catalog_all_empty_runs
+            example_multiple_run_tracking_catalog_all_empty_runs, example_pipelines
         )
 
         response = client.post(

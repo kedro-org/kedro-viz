@@ -96,9 +96,8 @@
   flex-direction: row;
   flex-grow: 0;
   flex-shrink: 0;
-  align-content: center;
+  place-content: center flex-end;
   align-items: center;
-  justify-content: flex-end;
   min-width: 100%;
 }
 
@@ -119,6 +118,13 @@
 
 .pipeline-metadata-modal__preview {
   max-width: calc(100vw - #{variables.$global-toolbar-width});
+  overflow-y: auto;
+  padding: 0 1.5em;
+  margin: 1.5em 0;
+}
+
+.pipeline-metadata-modal__preview-json {
+  width: 60%;
   overflow-y: auto;
   padding: 0 1.5em;
   margin: 1.5em 0;

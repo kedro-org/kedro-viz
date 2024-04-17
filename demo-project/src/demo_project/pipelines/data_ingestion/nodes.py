@@ -86,9 +86,9 @@ def aggregate_company_data(typed_companies: pd.DataFrame) -> pd.DataFrame:
 
     working_companies = typed_companies.groupby(["id"]).agg(
         {
-            "company_rating": np.mean,
+            "company_rating": "mean",
             "company_location": lambda x: list(set(x))[0],  # Take first item
-            "total_fleet_count": max,
+            "total_fleet_count": "max",
             "iata_approved": any,
         }
     )
