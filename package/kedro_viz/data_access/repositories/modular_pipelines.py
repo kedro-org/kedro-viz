@@ -14,21 +14,23 @@ from kedro_viz.models.flowchart import (
 )
 
 
-def _check_is_internal_input_output(
-    modular_pipeline_id: str, input_node_modular_pipeline: List
+def _is_internal_to_modular_pipeline(
+    input_node_modular_pipeline: List,
+    modular_pipeline_id: str,
 ) -> Optional[str]:
-    """Extracts the ID of the outer modular pipeline containing a nested modular pipeline.
+    """Checks if an input node's modular pipeline is part of
+    the given modular pipelines or it's parents.
 
     Args:
-        modular_pipeline_id: The ID of the nested modular pipeline.
+        modular_pipeline_id: The ID of the modular pipeline.
+        The modular pipeline can be a nested modular pipeline.
 
     Returns:
-        The ID of the outer modular pipeline containing the nested modular pipeline, if available.
+        True if the input node's modular pipeline ID
+        matches the given modular pipeline or it's parents, otherwise False.
 
-    Example:
-        >>> _get_outer_modular_pipeline_id("namespace_modular_pipeline.modular_pipeline")
-        'namespace_modular_pipeline'
     """
+
     all_modular_pipeline_ids = modular_pipeline_id.split(".")
     for pipeline_id in all_modular_pipeline_ids:
         if pipeline_id is not None and pipeline_id in input_node_modular_pipeline:
@@ -144,8 +146,8 @@ class ModularPipelinesRepository:
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
 
-        is_internal_input = _check_is_internal_input_output(
-            modular_pipeline_id, input_node.modular_pipelines
+        is_internal_input = _is_internal_to_modular_pipeline(
+            input_node.modular_pipelines, modular_pipeline_id
         )
 
         if is_internal_input:
@@ -179,8 +181,8 @@ class ModularPipelinesRepository:
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
-        is_internal_output = _check_is_internal_input_output(
-            modular_pipeline_id, output_node.modular_pipelines
+        is_internal_output = _is_internal_to_modular_pipeline(
+            output_node.modular_pipelines, modular_pipeline_id
         )
 
         if is_internal_output:
