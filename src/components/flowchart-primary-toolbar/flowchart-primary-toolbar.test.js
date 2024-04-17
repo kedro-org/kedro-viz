@@ -6,6 +6,12 @@ import ConnectedFlowchartPrimaryToolbar, {
 } from './flowchart-primary-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
+jest.mock('../../utils/hooks/use-generate-pathname', () => ({
+  useGeneratePathname: () => ({
+    toSetQueryParam: jest.fn(),
+  }),
+}));
+
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />);

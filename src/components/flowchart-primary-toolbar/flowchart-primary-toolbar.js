@@ -16,6 +16,7 @@ import PrimaryToolbar from '../primary-toolbar';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
 import CollapsePipelinesIcon from '../icons/collapse-pipelines';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 
 /**
  * Main controls for filtering the chart data
@@ -34,64 +35,74 @@ export const FlowchartPrimaryToolbar = ({
   visibleLayers,
   expandedPipelines,
   onToggleExpandAllPipelines,
-}) => (
-  <>
-    <PrimaryToolbar
-      displaySidebar={displaySidebar}
-      onToggleSidebar={onToggleSidebar}
-      visible={visible}
-    >
-      <IconButton
-        active={textLabels}
-        ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
-        className={'pipeline-menu-button--labels'}
-        dataTest={'btnToggleLabels'}
-        icon={LabelIcon}
-        labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
-        onClick={() => onToggleTextLabels(!textLabels)}
-        visible={visible.labelBtn}
-      />
-      <IconButton
-        active={visibleLayers}
-        ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
-        className={'pipeline-menu-button--layers'}
-        dataHeapEvent={`visible.layers.${visibleLayers}`}
-        dataTest={'btnToggleLayers'}
-        disabled={disableLayerBtn}
-        icon={LayersIcon}
-        labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
-        onClick={() => onToggleLayers(!visibleLayers)}
-        visible={visible.layerBtn}
-      />
-      <IconButton
-        active={expandedPipelines}
-        ariaLabel={
-          expandedPipelines
-            ? 'Collapse all modular pipelines'
-            : 'Expand all modular pipelines'
-        }
-        className={'pipeline-menu-button--pipeline'}
-        dataTest={'btnTogglePipeline'}
-        icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
-        labelText={
-          expandedPipelines ? 'Collapse Pipelines' : 'Expand Pipelines'
-        }
-        data-test={'expand-all-pipelines-toggle'}
-        onClick={() => onToggleExpandAllPipelines(!expandedPipelines)}
-        visible={visible.pipelineBtn}
-      />
-      <IconButton
-        ariaLabel="Export graph as SVG or PNG"
-        className={'pipeline-menu-button--export'}
-        dataTest={'btnExportGraph'}
-        icon={ExportIcon}
-        labelText="Export visualisation"
-        onClick={() => onToggleExportModal(true)}
-        visible={visible.exportBtn}
-      />
-    </PrimaryToolbar>
-  </>
-);
+}) => {
+  const { toSetQueryParam } = useGeneratePathname();
+
+  const handleToggleExpandAllPipelines = () => {
+    const isExpanded = !expandedPipelines;
+    onToggleExpandAllPipelines(isExpanded);
+    toSetQueryParam('expandAllPipelines', isExpanded.toString());
+  };
+
+  return (
+    <>
+      <PrimaryToolbar
+        displaySidebar={displaySidebar}
+        onToggleSidebar={onToggleSidebar}
+        visible={visible}
+      >
+        <IconButton
+          active={textLabels}
+          ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
+          className={'pipeline-menu-button--labels'}
+          dataTest={'btnToggleLabels'}
+          icon={LabelIcon}
+          labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+          onClick={() => onToggleTextLabels(!textLabels)}
+          visible={visible.labelBtn}
+        />
+        <IconButton
+          active={visibleLayers}
+          ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
+          className={'pipeline-menu-button--layers'}
+          dataHeapEvent={`visible.layers.${visibleLayers}`}
+          dataTest={'btnToggleLayers'}
+          disabled={disableLayerBtn}
+          icon={LayersIcon}
+          labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
+          onClick={() => onToggleLayers(!visibleLayers)}
+          visible={visible.layerBtn}
+        />
+        <IconButton
+          active={expandedPipelines}
+          ariaLabel={
+            expandedPipelines
+              ? 'Collapse all modular pipelines'
+              : 'Expand all modular pipelines'
+          }
+          className={'pipeline-menu-button--pipeline'}
+          dataTest={'btnTogglePipeline'}
+          icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
+          labelText={
+            expandedPipelines ? 'Collapse Pipelines' : 'Expand Pipelines'
+          }
+          data-test={'expand-all-pipelines-toggle'}
+          onClick={handleToggleExpandAllPipelines}
+          visible={visible.pipelineBtn}
+        />
+        <IconButton
+          ariaLabel="Export graph as SVG or PNG"
+          className={'pipeline-menu-button--export'}
+          dataTest={'btnExportGraph'}
+          icon={ExportIcon}
+          labelText="Export visualisation"
+          onClick={() => onToggleExportModal(true)}
+          visible={visible.exportBtn}
+        />
+      </PrimaryToolbar>
+    </>
+  );
+};
 
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,

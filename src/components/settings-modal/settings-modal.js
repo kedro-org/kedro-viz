@@ -115,7 +115,6 @@ const SettingsModal = ({
       >
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__group">
-            <div className="pipeline-settings-modal__subtitle">General</div>
             <div className="pipeline-settings-modal__header">
               <div className="pipeline-settings-modal__name">Name</div>
               <div className="pipeline-settings-modal__state">State</div>
