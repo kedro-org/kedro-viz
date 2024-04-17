@@ -17,6 +17,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false,
       layerBtn: false,
       exportBtn: false,
+      pipelineBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       visible,
@@ -39,6 +40,7 @@ describe('PrimaryToolbar', () => {
     ['.pipeline-menu-button--labels', 'onToggleTextLabels'],
     ['.pipeline-menu-button--export', 'onToggleExportModal'],
     ['.pipeline-menu-button--layers', 'onToggleLayers'],
+    ['.pipeline-menu-button--pipeline', 'onToggleExpandAllPipelines'],
   ];
 
   test.each(functionCalls)(
@@ -70,6 +72,7 @@ describe('PrimaryToolbar', () => {
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
+        pipelineBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),
@@ -111,6 +114,16 @@ describe('PrimaryToolbar', () => {
       expect(dispatch.mock.calls[0][0]).toEqual({
         textLabels: true,
         type: 'TOGGLE_TEXT_LABELS',
+      });
+    });
+
+    it('onToggleExpandAllPipelines', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onToggleExpandAllPipelines(true);
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        name: 'expandAllPipelines',
+        type: 'CHANGE_FLAG',
+        value: true,
       });
     });
   });

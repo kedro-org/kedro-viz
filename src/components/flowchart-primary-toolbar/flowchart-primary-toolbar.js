@@ -71,12 +71,14 @@ export const FlowchartPrimaryToolbar = ({
             : 'Expand all modular pipelines'
         }
         className={'pipeline-menu-button--pipeline'}
+        dataTest={'btnTogglePipeline'}
         icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
         labelText={
           expandedPipelines ? 'Collapse Pipelines' : 'Expand Pipelines'
         }
+        data-test={'expand-all-pipelines-toggle'}
         onClick={() => onToggleExpandAllPipelines(!expandedPipelines)}
-        visible={visible.layerBtn}
+        visible={visible.pipelineBtn}
       />
       <IconButton
         ariaLabel="Export graph as SVG or PNG"
