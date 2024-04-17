@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '16 April 2024',
+  date: '17 April 2024',
   features: [
     {
       title:
