@@ -26,7 +26,7 @@ Please follow the established format:
 ## Community contributions
 
 Many thanks to the following Kedroids for contributing PR to this release:
-* [Pascal Bro](https://github.com/pascalwhoop)
+* [Pascal Brokmeier](https://github.com/pascalwhoop)
 
 # Release 8.0.1 
 
