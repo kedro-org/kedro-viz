@@ -21,6 +21,8 @@ Please follow the established format:
 - Remove demo data source and update feature hints. (#1804)
 - Add markdown support for backticks in the pop-up reminder. (#1826)
 - Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
+- Add `pydantic` pin to requirements. (#1861)
+- Fix TRANSCODING_SEPARATOR import error. (#1866)
 
 # Release 8.0.1 
 

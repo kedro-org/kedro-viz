@@ -11,7 +11,13 @@ from typing import Any, Union
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+
+try:
+    # kedro 0.19.4 onwards
+    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
 
