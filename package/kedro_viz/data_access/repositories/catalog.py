@@ -1,11 +1,19 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
+
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+
+try:
+    # kedro 0.19.4 onwards
+    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
