@@ -1,5 +1,4 @@
-image:
-    file: .gitpod.Dockerfile
+image: gitpod/workspace-full:2023-10-13-16-25-39
 
 tasks:
   - name: frontend
@@ -24,7 +23,7 @@ tasks:
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
     command: | 
       gp sync-await build_complete
-      pip install -e package --user --no-deps
+      pip install -e package --no-deps
       gp sync-done kedro_installed
       make run
       
