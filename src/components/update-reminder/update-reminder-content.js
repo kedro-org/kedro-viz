@@ -1,41 +1,27 @@
 export const updateContent = {
-  date: '06 March 2024',
+  date: '17 April 2024',
   features: [
     {
-      title: 'Publish and share Kedro-Viz on AWS, Azure and GCP',
+      title:
+        'Enable stateful URLs with node filters and expand/collapse modular pipelines',
       image: '',
-      copy: '`kedro viz deploy` command enables you to publish and share Kedro-Viz to static website hosting platforms like AWS, Azure and GCP',
+      copy: 'Kedro-Viz now supports stateful URLs that update to reflect user interactions, specifically when filtering nodes or expanding/collapsing modular pipelines. This allows users to share URLs that capture and share specific views of the data pipeline.',
       buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html',
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#filtering-and-sharing-kedro-viz-pipelines',
       buttonText: 'View the docs',
     },
     {
-      title: 'New changes to the `preview` functionality on Kedro-Viz',
+      title:
+        'Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands',
       image: '',
-      copy: 'The `preview` functionality on Kedro-Viz is now opt-out for users. Additionally, we have introduced extending the `preview` to custom datasets.',
-      buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/preview_datasets.html',
-      buttonText: 'View the docs',
-    },
-    {
-      title: 'Improvements to `%run_viz` line magic',
-      image: '',
-      copy: '`%run_viz` line magic can be executed on jupyter notebooks with the options that Kedro-Viz supports on the command line',
-      buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#running-kedro-viz-in-a-notebook',
-      buttonText: 'View the docs',
-    },
-    {
-      title: 'Kedro-Viz supports pydantic v2',
-      image: '',
-      copy: 'Kedro-Viz has migrated from pydantic v1 to v2',
+      copy: 'To run hooks while running `kedro viz`, you must now include the `--include-hooks` option in the Viz CLI commands and the `%run_viz` Jupyter line magic. This change ensures hooks are executed only when explicitly requested, as they are no longer run by default in Kedro-Viz.',
       buttonLink: '',
       buttonText: '',
     },
     {
-      title: 'Kedro-Viz drops support for python 3.8',
+      title: 'Upgrade Kedro-Viz to Node 18',
       image: '',
-      copy: 'Kedro-Viz provides active support for python versions greater than 3.8',
+      copy: 'Kedro-Viz has upgraded from Node v16 to v18',
       buttonLink: '',
       buttonText: '',
     },
