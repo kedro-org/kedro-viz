@@ -10,7 +10,7 @@ Please follow the established format:
 ## Major features and improvements
 
 ## Bug fixes and other changes
-- Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.12. (#1862)
+- Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
 
 # Release 9.0.0
 
