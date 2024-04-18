@@ -135,8 +135,9 @@ def run(
 
     if kedro_project_path is None:
         display_cli_message(
-            "ERROR: Could not find the project configuration "
-            f"file '{_PYPROJECT}' at '{Path.cwd()}'. "
+            "ERROR: Failed to start Kedro-Viz : "
+            "Could not find the project configuration "
+            f"file '{_PYPROJECT}' in '{Path.cwd()}'. "
             f"If you have created your project with Kedro "
             f"version <0.17.0, make sure to update your project template. "
             f"See https://github.com/kedro-org/kedro/blob/main/RELEASE.md"
