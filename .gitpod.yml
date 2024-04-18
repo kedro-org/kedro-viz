@@ -1,5 +1,5 @@
-image: gitpod/workspace-full:2023-01-16-03-31-28
-  
+image: gitpod/workspace-full:2023-09-29-11-03-42 # image with Python 3.11 and Node 18
+
 tasks:
   - name: frontend
     init: |
@@ -14,7 +14,7 @@ tasks:
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
-      pip install "pip==23.0.1" --user
+      pip install "pip==23.3.1" --user
       pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
       # Install latest kedro and all its dependencies.
       pip install https://github.com/kedro-org/kedro/archive/main.zip --user
