@@ -1,4 +1,4 @@
-image: gitpod/workspace-full:2023-09-29-11-03-42
+image: gitpod/workspace-full:2023-09-29-11-03-42 # image with Python 3.11 and Node 18
 
 tasks:
   - name: frontend
