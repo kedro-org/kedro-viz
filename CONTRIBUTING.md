@@ -319,6 +319,8 @@ Python dependencies in Kedro-Viz are usually updated automatically through tools
 If the lower-bound e2e test fails, it indicates that some dependencies may not work correctly with Kedro-Viz. To resolve this, update the problematic dependency in both `requirements.txt` and `lower-requirements.txt`.
 
 ### Testing UI using Gitpod
+**Please ensure you have installed Gitpod to your Browser extension [Browser Extension with Gitpod](https://www.gitpod.io/docs/configure/user-settings/browser-extension)**
+
 **1. Once you open a Pull request, click on the Open icon on the right**
 <img width="1510" alt="Screenshot 2024-04-17 at 15 54 36" src="https://github.com/kedro-org/kedro-viz/assets/32060364/4295e00f-f80d-46e5-bb19-336e393f00a5">
 
