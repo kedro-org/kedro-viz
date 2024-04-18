@@ -28,6 +28,8 @@ const NodeList = ({
   onModularPipelineToggleExpanded,
   focusMode,
   disabledModularPipeline,
+  onResetFilter,
+  isResetFilterActive,
 }) => {
   return (
     <div
@@ -79,9 +81,18 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <h2 className="pipeline-nodelist-section__title">
-                  <span>Filters</span>
-                </h2>
+                <div className="pipeline-nodelist-section__filters">
+                  <h2 className="pipeline-nodelist-section__title">
+                    <span>Filters</span>
+                  </h2>
+                  <button
+                    disabled={!isResetFilterActive}
+                    onClick={onResetFilter}
+                    className="pipeline-nodelist-section__reset-filter"
+                  >
+                    Reset
+                  </button>
+                </div>
                 <NodeListGroups
                   items={items}
                   groups={groups}
