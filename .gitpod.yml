@@ -1,4 +1,4 @@
-image: gitpod/workspace-full:2023-10-13-16-25-39
+image: gitpod/workspace-full:2023-09-29-11-03-42
 
 tasks:
   - name: frontend
