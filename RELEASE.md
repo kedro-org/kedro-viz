@@ -5,6 +5,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Next release
+
+## Major features and improvements
+
+## Bug fixes and other changes
+- Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
+
 # Release 9.0.0
 
 ## Major features and improvements
