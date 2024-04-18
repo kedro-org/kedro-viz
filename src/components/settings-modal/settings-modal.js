@@ -8,11 +8,7 @@ import {
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
-import {
-  settings as settingsConfig,
-  localStorageName,
-  params,
-} from '../../config';
+import { settings as settingsConfig, localStorageName } from '../../config';
 import { saveLocalStorage } from '../../store/helpers';
 import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
 
