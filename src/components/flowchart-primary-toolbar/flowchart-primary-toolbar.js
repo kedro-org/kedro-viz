@@ -84,7 +84,7 @@ export const FlowchartPrimaryToolbar = ({
           dataTest={'btnTogglePipeline'}
           icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
           labelText={
-            expandedPipelines ? 'Collapse Pipelines' : 'Expand Pipelines'
+            expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
           }
           data-test={'expand-all-pipelines-toggle'}
           onClick={handleToggleExpandAllPipelines}
