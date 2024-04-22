@@ -123,6 +123,7 @@ describe('getInitialState', () => {
         exportBtn: true,
         labelBtn: true,
         layerBtn: true,
+        pipelineBtn: true,
       },
     });
   });
