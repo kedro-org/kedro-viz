@@ -318,6 +318,23 @@ Python dependencies in Kedro-Viz are usually updated automatically through tools
 
 If the lower-bound e2e test fails, it indicates that some dependencies may not work correctly with Kedro-Viz. To resolve this, update the problematic dependency in both `requirements.txt` and `lower-requirements.txt`.
 
+### Testing UI using Gitpod
+**Please ensure you have installed Gitpod on your browser extensions - [Gitpod browser extension](https://www.gitpod.io/docs/configure/user-settings/browser-extension)**
+
+**1. Once you open a pull request, click on the `Open` icon on the right**
+<img width="1510" alt="Screenshot 2024-04-17 at 15 54 36" src="https://github.com/kedro-org/kedro-viz/assets/32060364/4295e00f-f80d-46e5-bb19-336e393f00a5">
+
+
+**2. It will open the gitpod workspace automatically**
+<img width="1792" alt="Screenshot 2024-04-17 at 15 57 41" src="https://github.com/kedro-org/kedro-viz/assets/32060364/9aea0174-858a-4ebc-9c62-ee90b28c921f">
+
+**3. Please wait until the frontend and backend builds are successful. You can check it by clicking on `frontend` and `backend` tabs in the terminal. (Estimated build time : 5 minutes)**
+<img width="1455" alt="Screenshot 2024-04-17 at 15 59 46" src="https://github.com/kedro-org/kedro-viz/assets/32060364/ae080672-4a48-4178-b83e-70274071497f">
+<img width="1456" alt="Screenshot 2024-04-17 at 16 04 38" src="https://github.com/kedro-org/kedro-viz/assets/32060364/af60ea0a-6148-4354-938e-3a0ef7b9e711">
+
+**4. Unblock pop-up ads and refresh your browser. Kedro-Viz should be running on your gitpod workspace**
+<img width="1432" alt="Screenshot 2024-04-17 at 16 06 05" src="https://github.com/kedro-org/kedro-viz/assets/32060364/53dd56c2-df5e-49a6-ba06-9846af7bab52">
+
 # Release guidelines
 
 - Practice frequent, staggered releases.
