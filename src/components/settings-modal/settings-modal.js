@@ -154,6 +154,8 @@ const SettingsModal = ({
                 toggleValue={toggleFlags[value]}
               />
             ))}
+          </div>
+          <div className="version-reminder-and-run-details-button-wrapper">
             {isRunningLocally() ? (
               isOutdated ? (
                 <div className="pipeline-settings-modal__upgrade-reminder">
@@ -175,33 +177,34 @@ const SettingsModal = ({
                 </div>
               )
             ) : null}
-          </div>
-          <div className="run-details-modal-button-wrapper">
-            <Button
-              dataTest={'Cancel Button in Settings Modal'}
-              mode="secondary"
-              onClick={resetStateCloseModal}
-              size="small"
-            >
-              Cancel
-            </Button>
-            <Button
-              dataTest={'Apply changes and close in Settings Modal'}
-              disabled={hasNotInteracted}
-              onClick={() => {
-                setHasClickApplyAndClose(true);
-              }}
-              mode={hasClickedApplyAndClose ? 'success' : 'primary'}
-              size="small"
-            >
-              {hasClickedApplyAndClose ? (
-                <>
-                  Changes applied <span className="success-check-mark">✅</span>
-                </>
-              ) : (
-                'Apply changes and close'
-              )}
-            </Button>
+            <div className="pipeline-settings-modal-buttons">
+              <Button
+                dataTest={'Cancel Button in Settings Modal'}
+                mode="secondary"
+                onClick={resetStateCloseModal}
+                size="small"
+              >
+                Cancel
+              </Button>
+              <Button
+                dataTest={'Apply changes and close in Settings Modal'}
+                disabled={hasNotInteracted}
+                onClick={() => {
+                  setHasClickApplyAndClose(true);
+                }}
+                mode={hasClickedApplyAndClose ? 'success' : 'primary'}
+                size="small"
+              >
+                {hasClickedApplyAndClose ? (
+                  <>
+                    Changes applied{' '}
+                    <span className="success-check-mark">✅</span>
+                  </>
+                ) : (
+                  'Save and apply'
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
