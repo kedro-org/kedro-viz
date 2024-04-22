@@ -3,7 +3,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 
-# pylint: disable=protected-access
+# pylint: disable=import-outside-toplevel, protected-access
 
 import json
 import logging
@@ -14,7 +14,6 @@ from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
-from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
@@ -92,6 +91,8 @@ def load_data(
     if package_name:
         configure_project(package_name)
     else:
+        from kedro.framework.startup import bootstrap_project
+
         # bootstrap project when viz is run in dev mode
         bootstrap_project(project_path)
 

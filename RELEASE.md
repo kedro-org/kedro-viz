@@ -10,9 +10,7 @@ Please follow the established format:
 ## Major features and improvements
 
 ## Bug fixes and other changes
-
 - Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
-- Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 
 # Release 9.0.0
 
@@ -29,6 +27,7 @@ Please follow the established format:
 - Increase Kedro-Viz timeout. (#1803)
 - Remove demo data source and update feature hints. (#1804)
 - Add markdown support for backticks in the pop-up reminder. (#1826)
+- Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
 - Add `pydantic` pin to requirements. (#1861)
 - Fix TRANSCODING_SEPARATOR import error. (#1866)
