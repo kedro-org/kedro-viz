@@ -146,38 +146,24 @@ describe('Global Toolbar', () => {
       });
     });
 
-    it('verifies that users can expand all modular pipelines on first load. #TC-7', () => {
+    it('verifies that users can expand all modular pipelines directly from the toolbar. #TC-7', () => {
       const modularPipelineChildNodeText = 'Create Derived Features';
 
-      // Alias
-      cy.get('[data-test="pipeline-toggle-input-expandAllPipelines"]').as(
-        'isExpandAllPipelinesCheckBox'
-      );
+      // Alias for better readability
+      cy.get('[data-test="expand-all-pipelines-toggle"]').as('expandAllPipelinesToggle');
 
       // Assert before action
-      cy.get('@isExpandAllPipelinesCheckBox').should('not.be.checked');
-      cy.get('.pipeline-node__text').should(
-        'not.contain',
-        modularPipelineChildNodeText
-      );
-      cy.get('[role="treeitem"]')
-        .should('have.attr', 'aria-expanded')
-        .should('eq', 'false');
+      cy.get('@expandAllPipelinesToggle').should('not.be.checked');
+      cy.get('.pipeline-node__text').should('not.contain', modularPipelineChildNodeText);
+      cy.get('[role="treeitem"]').should('have.attr', 'aria-expanded', 'false');
 
-      // Action
-      cy.get('@isExpandAllPipelinesCheckBox').check({ force: true });
-      cy.get('[data-test="Apply changes and close in Settings Modal"]').click({
-        force: true,
-      });
+      // Action - toggling the expand all pipelines directly from the toolbar
+      cy.get('@expandAllPipelinesToggle').click();
 
       // Assert after action
-      cy.get('[role="treeitem"]', { timeout: 5000 })
-        .should('have.attr', 'aria-expanded')
-        .should('eq', 'true');
-      cy.get('.pipeline-node__text').should(
-        'contain',
-        modularPipelineChildNodeText
-      );
+      cy.get('[role="treeitem"]')
+        .should('have.attr', 'aria-expanded', 'true');
+      cy.get('.pipeline-node__text').should('contain', modularPipelineChildNodeText);
     });
   });
 });

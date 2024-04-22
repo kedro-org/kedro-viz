@@ -8,8 +8,8 @@
 }
 
 .kui-theme--dark {
-  --color-toggle-on: #{colors.$blue-300};
-  --color-toggle-on-bar: #{colors.$ocean-400};
+  --color-toggle-on: #{colors.$blue-0};
+  --color-toggle-on-bar: #{colors.$blue-0};
   --color-toggle-off: #{colors.$white-0};
   --color-toggle-off-bar: #{colors.$black-400};
 }
@@ -75,6 +75,7 @@
 
 .pipeline-toggle-label--checked::before {
   background-color: var(--color-toggle-on-bar);
+  opacity: 0.3;
 }
 
 .pipeline-toggle-label--checked::after {
