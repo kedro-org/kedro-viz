@@ -5,12 +5,46 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Next release
+
+## Major features and improvements
+
+## Bug fixes and other changes
+- Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
+
+# Release 9.0.0
+
+## Major features and improvements
+
+- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799)
+- Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands. (#1818)
+- Add Dataset Factory Patterns to Experiment Tracking. (#1824)
+- Add support for `JSONDataset` preview. (#1800)
+- Upgrade to Node 18. (#1848)
+
+## Bug fixes and other changes
+
+- Increase Kedro-Viz timeout. (#1803)
+- Remove demo data source and update feature hints. (#1804)
+- Add markdown support for backticks in the pop-up reminder. (#1826)
+- Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
+- Add `pydantic` pin to requirements. (#1861)
+- Fix TRANSCODING_SEPARATOR import error. (#1866)
+- Fix CircleCI build failure due to secret scan and missing toposort dependency. (#1819)
+- Support Deferred Type Annotations in Dataset Previews. (#1798)  
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Pascal Brokmeier](https://github.com/pascalwhoop)
+
 # Release 8.0.1 
 
 ## Bug fixes and other changes
 
 - Fix a bug on metadata panel when preview data is unavailable. (#1794)
 - Update Compatibility/Support Matrix in README. (#1774)
+- Update CLI command to support both `kedro viz run` and `kedro viz`. (#1790)
 
 # Release 8.0.0
 

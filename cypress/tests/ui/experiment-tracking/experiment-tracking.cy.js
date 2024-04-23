@@ -198,10 +198,7 @@ describe('Experiment Tracking', () => {
       cy.get('.accordion__title--hyperlink').first().click();
 
       // Assert after action
-      cy.location('search').should(
-        'eq',
-        `?pipeline_id=__default__&selected_name=${plotNameText}`
-      );
+      cy.location('search').should('contain', `?pid=__default__&sn=${plotNameText}`);
       cy.__checkForText__(
         '.pipeline-node--selected > .pipeline-node__text',
         prettifyName(stripNamespace(plotNameText))

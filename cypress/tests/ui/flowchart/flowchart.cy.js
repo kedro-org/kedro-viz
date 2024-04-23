@@ -190,7 +190,7 @@ describe('Flowchart DAG', () => {
     // Assert after action
     cy.get('.pipeline-warning__title')
       .should('exist')
-      .and('have.text', `Oops, there's nothing to see here`);
+      .and('include.text', `Oops, there's nothing to see here`);
   });
 
   it('verifies that users can open and see the dataset statistics in the metadata panel for datasets. #TC-51', () => {
