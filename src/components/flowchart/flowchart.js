@@ -14,7 +14,7 @@ import {
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
-import { getLinkedNodes, getFilteredNodes } from '../../selectors/linked-nodes';
+import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
@@ -706,8 +706,7 @@ export const mapStateToProps = (state, ownProps) => ({
   hoveredFocusMode: state.hoveredFocusMode,
   layers: getLayers(state),
   linkedNodes: getLinkedNodes(state),
-  nodes: getFilteredNodes(state) || emptyNodes,
-  // nodes: state.graph.nodes || emptyNodes,
+  nodes: state.graph.nodes || emptyNodes,
   nodeTypeDisabled: state.nodeType.disabled,
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),

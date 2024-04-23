@@ -1,10 +1,7 @@
 import { createSelector } from 'reselect';
 import { getVisibleEdges } from './edges';
-import { getGraphNodes } from './nodes';
 
 const getClickedNode = (state) => state.node.clicked;
-const getFromNodes = (state) => state.filters.from;
-const getToNodes = (state) => state.filters.to;
 /**
  * Gets a map of visible nodeIDs to successors nodeIDs in both directions
  * @param {Array} edges
@@ -72,41 +69,6 @@ export const getLinkedNodes = createSelector(
     linkedNodes[nodeID] = false;
     findLinkedNodes(nodeID, targetEdges, linkedNodes);
 
-    console.log(linkedNodes);
-
     return linkedNodes;
-  }
-);
-
-export const getFilteredNodes = createSelector(
-  [getVisibleEdgesByNode, getFromNodes, getToNodes, getGraphNodes],
-  ({ sourceEdges, targetEdges }, startID, endID, graphNodes) => {
-    // Initialize as an array this time
-    let filteredNodes = [];
-
-    if ((!startID || !startID.length) && (!endID || !endID.length)) {
-      // If no startID or endID, return all graphNodes as an array
-      filteredNodes = Object.values(graphNodes); // Convert all graphNodes values to an array
-    } else {
-      const linkedNodesBeforeEnd = {};
-      findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
-
-      const linkedNodesAfterStart = {};
-      findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
-
-      const linkedNodesBetween = [];
-      for (const nodeID in linkedNodesBeforeEnd) {
-        if (linkedNodesAfterStart[nodeID]) {
-          linkedNodesBetween.push(nodeID);
-        }
-      }
-
-      // Populate filteredNodes array with nodes that are linked between start and end
-      filteredNodes = linkedNodesBetween
-        .map((nodeID) => graphNodes[nodeID])
-        .filter((node) => node !== undefined);
-    }
-
-    return filteredNodes; // This is now an array
   }
 );
