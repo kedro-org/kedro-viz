@@ -135,16 +135,7 @@ export class FlowChart extends Component {
       drawNodes.call(this, changed);
     }
 
-    if (
-      changed(
-        'edges',
-        'nodes',
-        'layers',
-        'chartSize',
-        'clickedNode',
-        'linkedNodes'
-      )
-    ) {
+    if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
       if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
         drawNodes.call(this, changed);

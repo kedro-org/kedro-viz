@@ -107,7 +107,7 @@ def load_data(
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
-        stats_dict = _get_dataset_stats(project_path)
         pipelines_dict = dict(pipelines)
+        stats_dict = _get_dataset_stats(project_path)
 
     return catalog, pipelines_dict, session_store, stats_dict
