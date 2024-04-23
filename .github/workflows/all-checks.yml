@@ -1,0 +1,44 @@
+name: Run all checks on Kedro-Viz
+# Runs end-to-end tests, unit tests, linting and JavaScript 
+# linting & tests on Kedro-Viz for different 
+# operating systems and Python versions.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  schedule:
+    # Run every day at 1:00 AM(UTC time)
+    - cron: 0 1 * * *  
+jobs:
+  e2e_tests:
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/e2e-tests.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }} 
+
+  unit_tests:
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/unit-tests.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}  
+
+  lint:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11" ]
+    uses: ./.github/workflows/lint.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}  
+      
+  javascript_lint_and_tests:
+    uses: ./.github/workflows/javascript-lint-and-tests.yml

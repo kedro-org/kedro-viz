@@ -1,0 +1,39 @@
+name: Run unit-tests on Kedro-Viz
+# Runs unit tests on Kedro-Viz across different 
+# OS and Python versions after environment setup.
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+      python-version:
+        type: string
+jobs:
+    unit_tests:
+        runs-on: ${{ inputs.os }}
+
+        # below condition checks if the operating system is Ubuntu, or 
+        # if the operating system is Windows and the branch is main/demo
+        if: >
+          inputs.os == 'ubuntu-latest' || 
+          (
+            (
+              github.ref == 'refs/heads/main' || 
+              github.ref == 'refs/heads/demo'
+            ) && 
+            inputs.os == 'windows-latest'
+          )
+          
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup Tests
+          uses: "./.github/actions/setup_tests"
+          with:
+            os: ${{ inputs.os }}
+            python-version: ${{ inputs.python-version }}
+            
+        - name: Run Python tests
+          run: make pytest      

@@ -97,6 +97,7 @@ App.propTypes = {
     labelBtn: PropTypes.bool,
     layerBtn: PropTypes.bool,
     exportBtn: PropTypes.bool,
+    pipelineBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
   }),
   /**

@@ -1,31 +1,27 @@
 import { matchPath } from 'react-router-dom';
-import { routes } from '../config';
+import { params, routes } from '../config';
 
 export const findMatchedPath = (pathname, search) => {
   const matchedFlowchartMainPage = matchPath(pathname + search, {
-    exact: true,
+    exact: false,
     path: [routes.flowchart.main],
   });
 
-  const matchedSelectedPipeline = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.selectedPipeline],
-  });
+  const isQueryParamExist = (queryParam, queryString) => {
+    const searchParams = new URLSearchParams(queryString);
+    return searchParams.has(queryParam);
+  };
 
-  const matchedSelectedNodeId = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.selectedNode],
-  });
+  const hasQueryParam = (param) => {
+    const hasPipelineId = isQueryParamExist(params.pipeline, search);
+    const hasParam = isQueryParamExist(param, search);
+    return param ? hasPipelineId && hasParam : hasPipelineId;
+  };
 
-  const matchedSelectedNodeName = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.selectedName],
-  });
-
-  const matchedFocusedNode = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.flowchart.focusedNode],
-  });
+  const matchedSelectedPipeline = () => hasQueryParam();
+  const matchedSelectedNodeId = () => hasQueryParam(params.selected);
+  const matchedSelectedNodeName = () => hasQueryParam(params.selectedName);
+  const matchedFocusedNode = () => hasQueryParam(params.focused);
 
   const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
     exact: true,
