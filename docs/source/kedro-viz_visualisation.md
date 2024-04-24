@@ -190,6 +190,8 @@ The `%run_viz` line magic allows you to display an interactive visualisation of 
 
 To use the `%run_viz` line magic without any arguments, simply run:
 
+testing ljsfljskfjisdfhk
+
 ```ipython
 %run_viz
 ```
