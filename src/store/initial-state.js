@@ -40,6 +40,7 @@ export const createInitialState = () => ({
     miniMap: true,
     miniMapBtn: true,
     modularPipelineFocusMode: null,
+    pipelineBtn: true,
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
