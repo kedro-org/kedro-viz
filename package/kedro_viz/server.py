@@ -53,14 +53,19 @@ def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
-    extra_params: Optional[Dict[str, Any]] = None,
+    package_name: Optional[str] = None,
     pipeline_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path, env, include_hooks, extra_params
+        path,
+        env,
+        include_hooks,
+        package_name,
+        extra_params,
     )
 
     pipelines = (
@@ -83,6 +88,7 @@ def run_server(
     project_path: Optional[str] = None,
     autoreload: bool = False,
     include_hooks: bool = False,
+    package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
@@ -101,15 +107,24 @@ def run_server(
         project_path: the optional path of the Kedro project that contains the pipelines
             to visualise. If not supplied, the current working directory will be used.
         include_hooks: A flag to include all registered hooks in your Kedro Project.
+        package_name: The name of the current package
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
     """
+
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(path, env, include_hooks, extra_params, pipeline_name)
+        load_and_populate_data(
+            path,
+            env,
+            include_hooks,
+            package_name,
+            pipeline_name,
+            extra_params,
+        )
 
         if save_file:
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
@@ -127,8 +142,6 @@ def run_server(
 if __name__ == "__main__":  # pragma: no cover
     import argparse
 
-    from kedro.framework.startup import bootstrap_project
-
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
     parser.add_argument(
@@ -140,7 +153,6 @@ if __name__ == "__main__":  # pragma: no cover
     args = parser.parse_args()
 
     project_path = (Path.cwd() / args.project_path).absolute()
-    bootstrap_project(project_path)
 
     run_process_kwargs = {
         "path": project_path,

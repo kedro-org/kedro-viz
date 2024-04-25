@@ -9,6 +9,7 @@ import click
 from click_default_group import DefaultGroup
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
+from kedro.framework.project import PACKAGE_NAME
 from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
@@ -153,6 +154,7 @@ def run(
             "env": env,
             "autoreload": autoreload,
             "include_hooks": include_hooks,
+            "package_name": PACKAGE_NAME,
             "extra_params": params,
         }
         if autoreload:
@@ -268,6 +270,7 @@ def create_shareableviz_process(
                 endpoint,
                 bucket_name,
                 include_hooks,
+                PACKAGE_NAME,
                 process_completed,
                 exception_queue,
             ),
@@ -338,11 +341,19 @@ def create_shareableviz_process(
 
 
 def load_and_deploy_viz(
-    platform, endpoint, bucket_name, include_hooks, process_completed, exception_queue
+    platform,
+    endpoint,
+    bucket_name,
+    include_hooks,
+    package_name,
+    process_completed,
+    exception_queue,
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
-        load_and_populate_data(Path.cwd(), include_hooks=include_hooks)
+        load_and_populate_data(
+            Path.cwd(), include_hooks=include_hooks, package_name=package_name
+        )
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
