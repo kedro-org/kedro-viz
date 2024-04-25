@@ -3,7 +3,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 
-# pylint: disable=import-outside-toplevel, protected-access
+# pylint: disable=protected-access
 
 import json
 import logging
@@ -11,8 +11,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
+from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
@@ -69,14 +71,16 @@ def load_data(
     project_path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
+    package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
-        project_path: the path whether the Kedro project is located.
+        project_path: the path where the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
         include_hooks: A flag to include all registered hooks in your Kedro Project.
+        package_name: The name of the current package
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -85,10 +89,11 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    from kedro.framework.project import pipelines
-    from kedro.framework.startup import bootstrap_project
-
-    bootstrap_project(project_path)
+    if package_name:
+        configure_project(package_name)
+    else:
+        # bootstrap project when viz is run in dev mode
+        bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
