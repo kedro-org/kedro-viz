@@ -4,7 +4,7 @@ from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
-from kedro_viz.models.flowchart import GraphNode
+from kedro_viz.models.flowchart import GraphNode, GraphNodeType, ModularPipelineChild
 
 
 class TestModularPipelinesRepository:
@@ -42,15 +42,22 @@ class TestModularPipelinesRepository:
                 identity,
                 inputs="x",
                 outputs=None,
-                namespace="data_science",
+                namespace="parent",
                 tags={"tag1", "tag2"},
             )
         )
+
         modular_pipelines = ModularPipelinesRepository()
+        modular_pipelines.add_child(
+            "parent",
+            ModularPipelineChild(
+                id="parent.child", type=GraphNodeType.MODULAR_PIPELINE
+            ),
+        )
 
         modular_pipelines.extract_from_node(task_node)
         modular_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            "data_science"
+            "parent"
         )
 
         assert "tag1" in modular_pipeline.tags
