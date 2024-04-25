@@ -10,14 +10,14 @@ $duration-visibility: 0.4s;
 .kui-theme--light {
   --color-modal-bg: #{colors.$black-700};
   --color-modal-content: #{colors.$white-0};
-  --color-modal-title: #{colors.$black-800};
+  --color-modal-title: #{colors.$black-900};
   --color-modal-description: #{colors.$black-700};
 }
 
 .kui-theme--dark {
   --color-modal-bg: #{colors.$slate-900};
   --color-modal-content: #{colors.$slate-0};
-  --color-modal-title: #{colors.$white-600};
+  --color-modal-title: #{colors.$white-0};
   --color-modal-description: #{colors.$black-0};
 }
 
@@ -85,6 +85,7 @@ $duration-visibility: 0.4s;
   width: 100%;
   color: var(--color-modal-title);
   margin-bottom: $size-spacing;
+  font-weight: 500;
 }
 
 .modal__description {
