@@ -96,4 +96,7 @@ def expand_tree(
             expanded_tree[parent_id].external_outputs.update(
                 modular_pipeline_node.external_outputs
             )
+            expanded_tree[parent_id].tags.update(
+                modular_pipeline_node.tags
+            )
     return expanded_tree

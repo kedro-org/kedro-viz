@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Set, Union
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
@@ -209,6 +209,8 @@ class ModularPipelinesRepository:
             return None
 
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
+        # Inherit tags from the nodes of the modular pipeline.
+        self.inherit_tags_recursive(modular_pipeline_id, node.tags)
 
         # Add the node's registered pipelines to the modular pipeline's registered pipelines.
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
@@ -222,6 +224,21 @@ class ModularPipelinesRepository:
             ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
         )
         return modular_pipeline_id
+    
+    def inherit_tags_recursive(self, modular_pipeline_id: str, tags: Set[str]):
+        """Recursively collects a set of tags from a modular pipeline to all of its
+        child modular pipelines.
+        Args:
+            modular_pipeline_id: ID of the modular pipeline to check existence in the repository.
+            tags: A set of tags to be added to the modular pipeline and its children.
+        """
+
+        modular_pipeline = self.tree.get(modular_pipeline_id)
+        if modular_pipeline:
+            modular_pipeline.tags.update(tags)
+            for child in modular_pipeline.children:
+                if child.type == GraphNodeType.MODULAR_PIPELINE:
+                    self.inherit_tags_recursive(child.id, modular_pipeline.tags)       
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         """Return whether this modular pipeline repository has a given modular pipeline ID.
