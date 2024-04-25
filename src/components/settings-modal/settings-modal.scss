@@ -4,15 +4,15 @@
 .kui-theme--light {
   --color-modal-header-text: #{colors.$black-0};
   --color-upgrade-reminder-text: #{colors.$blue-300};
-  --color-modal-table-text: rgb(0 0 0 / 85%);
-  --color-modal-table-description: rgb(0 0 0 / 70%);
+  --color-modal-table-text: #{colors.$black-600};
+  --color-modal-table-description: #{colors.$black-900-70};
 }
 
 .kui-theme--dark {
   --color-modal-header-text: #{colors.$black-300};
   --color-upgrade-reminder-text: #{colors.$yellow-300};
-  --color-modal-table-text: rgb(255 255 255 / 85%);
-  --color-modal-table-description: rgb(255 255 255 / 70%);
+  --color-modal-table-text: #{colors.$white-900-85};
+  --color-modal-table-description: #{colors.$white-900-70};
 }
 
 .pipeline-settings-modal {

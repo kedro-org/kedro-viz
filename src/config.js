@@ -69,7 +69,7 @@ export const settings = {
   isPrettyName: {
     name: 'Pretty name',
     description: 'Display a formatted name for the kedro nodes',
-    default: false,
+    default: true,
   },
   showFeatureHints: {
     name: 'New feature hints',

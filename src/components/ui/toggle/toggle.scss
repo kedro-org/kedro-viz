@@ -4,7 +4,7 @@
   --color-toggle-on: #{colors.$blue-600};
   --color-toggle-on-bar: #{colors.$blue-600};
   --color-toggle-off: #{colors.$black-900};
-  --color-toggle-off-bar: #{colors.$black-900};
+  --color-toggle-off-bar: #{colors.$black-900-30};
   --color-toggle-on-label: #{colors.$blue-600};
   --color-toggle-off-label: #{colors.$black-800};
 }
@@ -13,7 +13,7 @@
   --color-toggle-on: #{colors.$blue-0};
   --color-toggle-on-bar: #{colors.$blue-0};
   --color-toggle-off: #{colors.$white-0};
-  --color-toggle-off-bar: #{colors.$white-0};
+  --color-toggle-off-bar: #{colors.$white-900-30};
   --color-toggle-on-label: #{colors.$blue-0};
   --color-toggle-off-label: #{colors.$white-600};
 }
@@ -66,7 +66,6 @@
   width: 1.7em;
   height: 0.8em;
   background-color: var(--color-toggle-off-bar);
-  opacity: 0.3;
   border-radius: 0.5em;
   transition: opacity 0.15s ease;
 }
