@@ -206,7 +206,7 @@ def assert_example_data(response_data):
         {
             "id": "uk",
             "name": "uk",
-            "tags": ["train"],
+            "tags": ["split","train"],
             "pipelines": ["__default__"],
             "type": "modularPipeline",
             "modular_pipelines": None,
