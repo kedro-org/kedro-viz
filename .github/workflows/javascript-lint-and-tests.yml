@@ -1,0 +1,61 @@
+name: Run javascript linters and tests on Kedro-Viz
+# Runs JavaScript linting, unit tests, and end-to-end tests on 
+# Kedro-Viz for ubuntu-latest operating systems and Python 3.9.
+
+on:
+  push:
+    paths-ignore:
+      - 'package/**'
+  pull_request:
+    paths-ignore:
+      - 'package/**'
+  workflow_dispatch:  
+  workflow_call:
+
+jobs:
+    javascript_lint_and_tests:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Python "3.9"
+            uses: actions/setup-python@v5
+            with:
+              python-version: "3.9"          
+
+          - name: Cache python packages for Linux
+            uses: actions/cache@v4
+            with:
+              path: ~/.cache/pip
+              key: ubuntu-latest-python-3.9            
+
+          - name: Install Kedro and other Python Dependencies
+            uses: "./.github/actions/install_kedro_and_python_dependencies"
+
+          - name: Setup Node.js and Install Dependencies
+            uses: "./.github/actions/install_node_dependencies"
+
+          - name: Setup Cypress requirements
+            run: |-
+              sudo sed -i 's/archive.ubuntu.com/us-east-1.ec2.archive.ubuntu.com/g' /etc/apt/sources.list
+              sudo apt-get update
+              sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb          
+
+          - name: Test lib transpilation
+            run: npm run lib
+
+          - name: Test JS library imports
+            run: |-
+              npm run lib-test:setup
+              cd tools/test-lib/react-app
+              npm run test:ci
+
+          - name: Run Eslint
+            run: npm run lint
+
+          - name: Run JavaScript tests
+            run: npm run test:ci
+            
+          - name: Run Javascript end to end tests
+            run: npm run cy:ci      

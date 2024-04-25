@@ -56,6 +56,7 @@ describe('GlobalToolbar', () => {
         miniMapBtn: true,
         modularPipelineFocusMode: null,
         metadataModal: false,
+        pipelineBtn: true,
         settingsModal: false,
         shareableUrlModal: false,
         sidebar: true,
