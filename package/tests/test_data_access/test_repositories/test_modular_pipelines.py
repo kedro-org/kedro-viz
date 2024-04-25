@@ -56,9 +56,7 @@ class TestModularPipelinesRepository:
         )
 
         modular_pipelines.extract_from_node(task_node)
-        modular_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            "parent"
-        )
+        modular_pipeline = modular_pipelines.get_or_create_modular_pipeline("parent")
 
         assert "tag1" in modular_pipeline.tags
         assert "tag2" in modular_pipeline.tags
