@@ -221,12 +221,7 @@ def test_kedro_viz_command_should_log_project_not_found(
         call(
             "\x1b[31mERROR: Failed to start Kedro-Viz : "
             "Could not find the project configuration "
-            f"file '{_PYPROJECT}' in '{mock_project_path}'. "
-            f"If you have created your project with Kedro "
-            f"version <0.17.0, make sure to update your project template. "
-            f"See https://github.com/kedro-org/kedro/blob/main/RELEASE.md"
-            f"#migration-guide-from-kedro-016-to-kedro-0170 "
-            f"for how to migrate your Kedro project.\x1b[0m"
+            f"file '{_PYPROJECT}' at '{mock_project_path}'. \x1b[0m"
         )
     ]
 
