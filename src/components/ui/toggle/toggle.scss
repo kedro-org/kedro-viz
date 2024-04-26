@@ -2,16 +2,20 @@
 
 .kui-theme--light {
   --color-toggle-on: #{colors.$blue-600};
-  --color-toggle-on-bar: #{colors.$ocean-0};
-  --color-toggle-off: #{colors.$slate-0};
-  --color-toggle-off-bar: #{colors.$grey-400};
+  --color-toggle-on-bar: #{colors.$blue-600};
+  --color-toggle-off: #{colors.$black-900};
+  --color-toggle-off-bar: #{colors.$black-900-30};
+  --color-toggle-on-label: #{colors.$blue-600};
+  --color-toggle-off-label: #{colors.$black-800};
 }
 
 .kui-theme--dark {
   --color-toggle-on: #{colors.$blue-0};
   --color-toggle-on-bar: #{colors.$blue-0};
   --color-toggle-off: #{colors.$white-0};
-  --color-toggle-off-bar: #{colors.$black-400};
+  --color-toggle-off-bar: #{colors.$white-900-30};
+  --color-toggle-on-label: #{colors.$blue-0};
+  --color-toggle-off-label: #{colors.$white-600};
 }
 
 .pipeline-toggle {
@@ -40,6 +44,11 @@
   padding: 0 0 0 2.8em;
   cursor: pointer;
   user-select: none;
+  color: var(--color-toggle-off-label);
+}
+
+.pipeline-toggle-input:checked + .pipeline-toggle-label {
+  color: var(--color-toggle-on-label);
 }
 
 .pipeline-toggle-label::before,
@@ -67,6 +76,7 @@
   background-color: var(--color-toggle-off);
   border-radius: 50%;
   transition: opacity 0.15s ease, transform 0.15s ease;
+  color: var(--color-toggle-on-label);
 }
 
 [data-whatinput='keyboard'] input:focus + .pipeline-toggle-label::before {
