@@ -424,8 +424,6 @@ class ModularPipelineNode(GraphNode):
     # The type for Modular Pipeline Node
     type: str = GraphNodeType.MODULAR_PIPELINE.value
 
-    tags: Set[str] = Field(default_factory=set)
-
     @property
     def inputs(self) -> Set[str]:
         """Return a set of inputs for this modular pipeline.
