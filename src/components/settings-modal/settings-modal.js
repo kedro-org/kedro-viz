@@ -104,13 +104,6 @@ const SettingsModal = ({
       >
         <div className="pipeline-settings-modal__content">
           <div className="pipeline-settings-modal__group">
-            <div className="pipeline-settings-modal__header">
-              <div className="pipeline-settings-modal__name">Name</div>
-              <div className="pipeline-settings-modal__state">State</div>
-              <div className="pipeline-settings-modal__description">
-                Description
-              </div>
-            </div>
             <SettingsModalRow
               id="isPrettyName"
               name={settingsConfig['isPrettyName'].name}
