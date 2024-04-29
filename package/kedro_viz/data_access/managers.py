@@ -152,7 +152,8 @@ class DataAccessManager:
         modular_pipelines = self.modular_pipelines[registered_pipeline_id]
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
         free_inputs = pipeline.inputs()
-
+        # import pdb
+        # pdb.set_trace()
         for node in pipeline.nodes:
             task_node = self.add_node(registered_pipeline_id, node)
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
@@ -178,12 +179,16 @@ class DataAccessManager:
                 # The method `add_input` will take care of figuring out whether
                 # it is an internal or external input of the modular pipeline.
                 modular_pipelines.extract_from_node(input_node)
+                # import pdb
+                # pdb.set_trace()
                 if current_modular_pipeline_id is not None:
                     modular_pipelines.add_input(current_modular_pipeline_id, input_node)
 
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
+                # import pdb
+                # pdb.set_trace()
                 output_node = self.add_node_output(
                     registered_pipeline_id, output, task_node
                 )

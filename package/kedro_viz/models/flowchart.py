@@ -176,6 +176,8 @@ class GraphNode(BaseModel, abc.ABC):
         if "." not in dataset_name:
             return None
 
+        # import pdb
+        # pdb.set_trace()
         return dataset_name.rsplit(".", 1)[0]
 
     @staticmethod
@@ -247,7 +249,7 @@ class GraphNode(BaseModel, abc.ABC):
         if is_transcoded_dataset:
             name = _strip_transcoding(dataset_name)
             return TranscodedDataNode(
-                id=cls._hash(name),
+                id=name,
                 name=name,
                 tags=tags,
                 layer=layer,
@@ -256,7 +258,7 @@ class GraphNode(BaseModel, abc.ABC):
             )
 
         return DataNode(
-            id=cls._hash(dataset_name),
+            id=dataset_name,
             name=dataset_name,
             tags=tags,
             layer=layer,
@@ -432,14 +434,43 @@ class ModularPipelineNode(GraphNode):
         Intuitively, the set of inputs for this modular pipeline is the set of all
         external and internal inputs, excluding the ones also serving as outputs.
         """
-        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+        # return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+
+        print("Modular Pipeline Node name:: ", self.name)
+        
+        print("Internal Inputs::", self.internal_inputs)
+        print("Internal Outputs::", self.internal_outputs)
+        
+        print("External Inputs::", self.external_inputs)
+        print("External Outputs::", self.external_outputs)
+        
+        # return (self.external_inputs | self.internal_inputs) - self.internal_outputs
+
+        modified_inputs = set()
+        for external_input in self.external_inputs:
+            if "." in external_input and self.name in external_input.rsplit(".", 1)[0]:
+                continue
+
+            modified_inputs.add(external_input)
+
+
+        return modified_inputs
 
     @property
     def outputs(self) -> Set[str]:
-        """Return a set of inputs for this modular pipeline.
+        """Return a set of outputs for this modular pipeline.
         Follow the same logic as the inputs calculation.
         """
-        return self.external_outputs | (self.internal_outputs - self.internal_inputs)
+        # return self.external_outputs | (self.internal_outputs - self.internal_inputs)
+        modified_outputs = set()
+        for external_output in self.external_outputs:
+            if "." in external_output and self.name in external_output.rsplit(".", 1)[0]:
+                continue
+
+            modified_outputs.add(external_output)
+
+
+        return modified_outputs
 
 
 class TaskNodeMetadata(GraphNodeMetadata):

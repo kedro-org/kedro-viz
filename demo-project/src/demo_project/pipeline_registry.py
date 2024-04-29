@@ -7,6 +7,7 @@ from demo_project.pipelines import data_ingestion as di
 from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
+from demo_project.pipelines import generic as gn
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
@@ -26,16 +27,21 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     reporting_pipeline = rep.create_pipeline()
 
+    generic_pipeline = gn.create_pipeline()
+
     return {
-        "__default__": (
-            ingestion_pipeline
-            + feature_pipeline
-            + modelling_pipeline
-            + reporting_pipeline
-        ),
-        "Data ingestion": ingestion_pipeline,
-        "Modelling stage": modelling_pipeline,
-        "Feature engineering": feature_pipeline,
-        "Reporting stage": reporting_pipeline,
-        "Pre-modelling": ingestion_pipeline + feature_pipeline,
+        "Generic": generic_pipeline
     }
+    # return {
+    #     "__default__": (
+    #         ingestion_pipeline
+    #         + feature_pipeline
+    #         + modelling_pipeline
+    #         + reporting_pipeline
+    #     ),
+    #     "Data ingestion": ingestion_pipeline,
+    #     "Modelling stage": modelling_pipeline,
+    #     "Feature engineering": feature_pipeline,
+    #     "Reporting stage": reporting_pipeline,
+    #     "Pre-modelling": ingestion_pipeline + feature_pipeline,
+    # }

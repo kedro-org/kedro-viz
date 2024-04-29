@@ -91,8 +91,8 @@ class ModularPipelinesRepository:
 
     def add_input(
         self,
-        modular_pipeline_id: str,
-        input_node: Union[DataNode, TranscodedDataNode, ParametersNode],
+        modular_pipeline_id: str, #namespace
+        input_node: Union[DataNode, TranscodedDataNode, ParametersNode], #datanode
     ) -> None:
         """Add an input to a modular pipeline based on whether it's an internal or external input.
         The input to a modular pipeline can only be a data node or parameter node.
@@ -117,11 +117,17 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_input("data_science", model_input_node)
             >>> assert data_science_pipeline.inputs == {model_input_node.id}
         """
+        # import pdb
+        # pdb.set_trace()
         if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
 
+        print("Data Node:", input_node)
+        # is_internal_input = input_node.id in self.tree[modular_pipeline_id].internal_outputs or input_node.id in self.tree[modular_pipeline_id].external_outputs
+        # is_internal_input = not input_node.is_free_input
+        # can external input be an external output ?
         is_internal_input = modular_pipeline_id in input_node.modular_pipelines
         if is_internal_input:
             self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
@@ -150,15 +156,22 @@ class ModularPipelinesRepository:
             >>> modular_pipelines.add_output("data_science", model_output_node)
             >>> assert data_science_pipeline.outputs == {model_output_node.id}
         """
+        # import pdb
+        # pdb.set_trace()
         if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
             raise ValueError(
                 f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
             )
 
+        
+
         is_internal_output = modular_pipeline_id in output_node.modular_pipelines
         if is_internal_output:
             self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
         else:
+            # if output_node.id == "main_pipeline.dataset_2":
+                # import pdb
+                # pdb.set_trace()
             self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
 
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
@@ -204,6 +217,8 @@ class ModularPipelinesRepository:
         if isinstance(node, ParametersNode):
             return None
 
+        # import pdb
+        # pdb.set_trace()
         modular_pipeline_id = node.namespace
         if not modular_pipeline_id:
             return None
