@@ -161,6 +161,11 @@ class ModularPipelinesRepository:
         else:
             self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
 
+    def add_tags(self, modular_pipeline_id: str, node_tags: set):
+            if modular_pipeline_id in self.tree:
+                    self.tree[modular_pipeline_id].tags |= node_tags  
+        
+
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
         Args:
