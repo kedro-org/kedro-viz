@@ -199,7 +199,6 @@ class DataAccessManager:
                     modular_pipelines.add_output(
                         current_modular_pipeline_id, output_node
                     )
-                 
             #add tags 
             modular_pipelines.add_tags(current_modular_pipeline_id, task_node.tags)
 
