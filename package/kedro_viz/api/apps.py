@@ -2,6 +2,7 @@
 This data could either come from a real Kedro project or a file.
 """
 import json
+import logging
 import os
 import time
 from pathlib import Path
@@ -12,6 +13,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
+from pydantic_core import PydanticSerializationError
 
 from kedro_viz import __version__
 from kedro_viz.api.rest.responses import EnhancedORJSONResponse
@@ -21,6 +23,7 @@ from .graphql.router import router as graphql_router
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
+logger = logging.getLogger(__name__)
 
 
 def _create_etag() -> str:
@@ -117,6 +120,14 @@ def create_api_app_from_project(
             return Response(status_code=304)
 
         return Response()
+
+    @app.exception_handler(PydanticSerializationError)
+    async def pydantic_error_handler(request, exc):
+        # TODO: modify error message based on request.scope['route'].name == 'get_single_node_metadata'
+        logger.exception("Error occurred during serialization: %s", str(exc))
+        return JSONResponse(
+            status_code=400, content={"message": "Error occurred during serialization."}
+        )
 
     return app
 
