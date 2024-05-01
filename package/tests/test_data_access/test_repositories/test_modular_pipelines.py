@@ -36,31 +36,6 @@ class TestModularPipelinesRepository:
         modular_pipelines.extract_from_node(task_node)
         assert modular_pipelines.has_modular_pipeline("data_science")
 
-    def test_tags_inheritance(self, identity):
-        task_node = GraphNode.create_task_node(
-            node(
-                identity,
-                inputs="x",
-                outputs=None,
-                namespace="parent",
-                tags={"tag1", "tag2"},
-            )
-        )
-
-        modular_pipelines = ModularPipelinesRepository()
-        modular_pipelines.add_child(
-            "parent",
-            ModularPipelineChild(
-                id="parent.child", type=GraphNodeType.MODULAR_PIPELINE
-            ),
-        )
-
-        modular_pipelines.extract_from_node(task_node)
-        modular_pipeline = modular_pipelines.get_or_create_modular_pipeline("parent")
-
-        assert "tag1" in modular_pipeline.tags
-        assert "tag2" in modular_pipeline.tags
-
     def test_add_input(self):
         kedro_dataset = CSVDataset(filepath="foo.csv")
         modular_pipelines = ModularPipelinesRepository()
@@ -108,3 +83,14 @@ class TestModularPipelinesRepository:
         modular_pipelines = ModularPipelinesRepository()
         with pytest.raises(ValueError):
             modular_pipelines.add_output("data_science", task_node)
+
+    def test_add_tags(self):
+        modular_pipelines = ModularPipelinesRepository()
+        node_tags = {"tag1", "tag2"}
+        modular_pipelines.get_or_create_modular_pipeline("data_science")
+        modular_pipelines.add_tags("data_science", node_tags)
+        data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
+            "data_science"
+        )
+        assert "tag1" in data_science_pipeline.tags
+        assert "tag2" in data_science_pipeline.tags
