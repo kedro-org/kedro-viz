@@ -3,4 +3,3 @@ message: "Did you really mean '%s'?"
 level: warning
 ignore:
   - Kedro-viz/ignore.txt
-  - Kedro/ignore-names.txt
