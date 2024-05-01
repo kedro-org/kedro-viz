@@ -2,5 +2,5 @@ extends: spelling
 message: "Did you really mean '%s'?"
 level: warning
 ignore:
-  - Kedro/ignore.txt
+  - Kedro-viz/ignore.txt
   - Kedro/ignore-names.txt
