@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.9'
 
 jobs:
   check-version:
@@ -14,7 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: ${{ env.PYTHON_VERSION }}
     
     - name: Install dependencies
       run: |
@@ -49,12 +53,12 @@ jobs:
       needs.check-version.outputs.new_release == 'true'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Extract release notes from ${{needs.check-version.outputs.package_name}}/RELEASE.md
       id: extract
