@@ -9,6 +9,7 @@ from watchgod import RegExpWatcher, run_process
 from kedro_viz import __version__
 from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS, VIZ_DEPLOY_TIME_LIMIT
 from kedro_viz.launchers import cli
+from kedro_viz.launchers.utils import _PYPROJECT
 from kedro_viz.server import run_server
 
 
@@ -85,6 +86,7 @@ def mock_project_path(mocker):
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": "testPath",
                 "autoreload": False,
                 "include_hooks": False,
                 "package_name": None,
@@ -100,6 +102,7 @@ def mock_project_path(mocker):
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": "testPath",
                 "autoreload": False,
                 "include_hooks": False,
                 "package_name": None,
@@ -120,6 +123,7 @@ def mock_project_path(mocker):
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": "testPath",
                 "autoreload": False,
                 "include_hooks": False,
                 "package_name": None,
@@ -151,6 +155,7 @@ def mock_project_path(mocker):
                 "save_file": "save_dir",
                 "pipeline_name": "data_science",
                 "env": "local",
+                "project_path": "testPath",
                 "autoreload": False,
                 "include_hooks": False,
                 "package_name": None,
@@ -166,6 +171,7 @@ def mock_project_path(mocker):
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": "testPath",
                 "autoreload": False,
                 "include_hooks": True,
                 "package_name": None,
@@ -185,6 +191,11 @@ def test_kedro_viz_command_run_server(
     runner = CliRunner()
     # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch(
+        "kedro_viz.launchers.cli._find_kedro_project",
+        return_value=run_server_args["project_path"],
+    )
 
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, command_options)
@@ -195,8 +206,30 @@ def test_kedro_viz_command_run_server(
     assert run_server_args["port"] in cli._VIZ_PROCESSES
 
 
+def test_kedro_viz_command_should_log_project_not_found(
+    mocker, mock_project_path, mock_click_echo
+):
+    # Reduce the timeout argument from 600 to 1 to make test run faster.
+    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch("kedro_viz.launchers.cli._find_kedro_project", return_value=None)
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        runner.invoke(cli.viz_cli, ["viz", "run"])
+
+    mock_click_echo_calls = [
+        call(
+            "\x1b[31mERROR: Failed to start Kedro-Viz : "
+            "Could not find the project configuration "
+            f"file '{_PYPROJECT}' at '{mock_project_path}'. \x1b[0m"
+        )
+    ]
+
+    mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+
 def test_kedro_viz_command_should_log_outdated_version(
-    mocker, mock_http_response, mock_click_echo
+    mocker, mock_http_response, mock_click_echo, mock_project_path
 ):
     installed_version = parse(__version__)
     mock_version = f"{installed_version.major + 1}.0.0"
@@ -209,6 +242,10 @@ def test_kedro_viz_command_should_log_outdated_version(
 
     # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch(
+        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+    )
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -228,7 +265,7 @@ def test_kedro_viz_command_should_log_outdated_version(
 
 
 def test_kedro_viz_command_should_not_log_latest_version(
-    mocker, mock_http_response, mock_click_echo
+    mocker, mock_http_response, mock_click_echo, mock_project_path
 ):
     requests_get = mocker.patch("requests.get")
     requests_get.return_value = mock_http_response(
@@ -238,6 +275,10 @@ def test_kedro_viz_command_should_not_log_latest_version(
     mocker.patch("kedro_viz.server.run_server")
     # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch(
+        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+    )
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -248,7 +289,7 @@ def test_kedro_viz_command_should_not_log_latest_version(
 
 
 def test_kedro_viz_command_should_not_log_if_pypi_is_down(
-    mocker, mock_http_response, mock_click_echo
+    mocker, mock_http_response, mock_click_echo, mock_project_path
 ):
     requests_get = mocker.patch("requests.get")
     requests_get.side_effect = requests.exceptions.RequestException("PyPI is down")
@@ -256,6 +297,10 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(
     mocker.patch("kedro_viz.server.run_server")
     # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch(
+        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+    )
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -272,6 +317,10 @@ def test_kedro_viz_command_with_autoreload(
 
     # Reduce the timeout argument from 600 to 1 to make test run faster.
     mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    # Mock finding kedro project
+    mocker.patch(
+        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+    )
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run", "--autoreload"])
