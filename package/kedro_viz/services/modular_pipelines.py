@@ -79,6 +79,7 @@ def expand_tree(
                 )
 
             expanded_tree[parent_id].pipelines.update(modular_pipeline_node.pipelines)
+            expanded_tree[parent_id].tags.update(modular_pipeline_node.tags)
             expanded_tree[parent_id].children.add(
                 ModularPipelineChild(
                     id=f"{parent_id}.{chunks[i]}",

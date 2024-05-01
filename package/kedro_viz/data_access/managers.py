@@ -199,6 +199,8 @@ class DataAccessManager:
                     modular_pipelines.add_output(
                         current_modular_pipeline_id, output_node
                     )
+            #add tags 
+            modular_pipelines.add_tags(current_modular_pipeline_id, task_node.tags)
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
