@@ -199,7 +199,7 @@ class DataAccessManager:
                     modular_pipelines.add_output(
                         current_modular_pipeline_id, output_node
                     )
-            #add tags 
+            # add tags
             modular_pipelines.add_tags(current_modular_pipeline_id, task_node.tags)
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
@@ -324,9 +324,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[
-                parameters_node.parameter_name
-            ] = parameters_node.parameter_value
+            task_node.parameters[parameters_node.parameter_name] = (
+                parameters_node.parameter_value
+            )
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
