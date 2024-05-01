@@ -4,7 +4,7 @@ from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
-from kedro_viz.models.flowchart import GraphNode, GraphNodeType, ModularPipelineChild
+from kedro_viz.models.flowchart import GraphNode
 
 
 class TestModularPipelinesRepository:
