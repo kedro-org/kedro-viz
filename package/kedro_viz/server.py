@@ -1,6 +1,7 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
+import asyncio
 import multiprocessing
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -48,8 +49,7 @@ def populate_data(
 
     data_access_manager.add_pipelines(pipelines)
 
-
-def load_and_populate_data(
+async def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
@@ -59,14 +59,18 @@ def load_and_populate_data(
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
+    import time
+    start_time = time.time()
     # Loads data from underlying Kedro Project
-    catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
+    catalog, pipelines, session_store, stats_dict = await kedro_data_loader.load_data(
         path,
         env,
         include_hooks,
         package_name,
         extra_params,
     )
+    end_time = time.time()
+    print("Time taken in async loading of kedro data::", end_time - start_time)
 
     pipelines = (
         pipelines
@@ -117,14 +121,14 @@ def run_server(
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
-        load_and_populate_data(
+        asyncio.run(load_and_populate_data(
             path,
             env,
             include_hooks,
             package_name,
             pipeline_name,
             extra_params,
-        )
+        ))
 
         if save_file:
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"))

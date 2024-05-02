@@ -4,13 +4,16 @@ load data from projects created in a range of Kedro versions.
 """
 
 # pylint: disable=protected-access
-
+import asyncio
 import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
+import line_profiler
+
 from kedro import __version__
+from kedro.framework.context.context import KedroContext
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
@@ -66,8 +69,8 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         )
         return {}
 
-
-def load_data(
+# @line_profiler.profile
+async def load_data(
     project_path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
@@ -107,12 +110,33 @@ def load_data(
 
         context = session.load_context()
         session_store = session._store
-        catalog = context.catalog
+        # catalog = context.catalog
+        
+        catalog_task = asyncio.create_task(async_load_catalog(context))
+        pipelines_task = asyncio.create_task(async_load_pipelines())
+
+        catalog, pipelines_dict = await asyncio.gather(catalog_task, pipelines_task)
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
-        pipelines_dict = dict(pipelines)
+        # pipelines_dict = dict(pipelines)
+        
         stats_dict = _get_dataset_stats(project_path)
 
     return catalog, pipelines_dict, session_store, stats_dict
+
+@line_profiler.profile
+async def async_load_catalog(context: KedroContext):
+    """Load catalog asynchronously."""
+    return await asyncio.to_thread(context._get_catalog)
+
+@line_profiler.profile
+async def async_load_pipelines():
+    """Load pipelines asynchronously."""
+    return await asyncio.to_thread(dict, pipelines)
+
+# if __name__ == "__main__":
+#     # load_data(Path("/Users/Ravi_Kumar_Pilla/Library/CloudStorage/OneDrive-McKinsey&Company/Documents/Kedro/KedroOrg/kedro-viz/demo-project"))
+#     asyncio.run(load_data(Path("/Users/Ravi_Kumar_Pilla/Downloads/promotion-release-0.5.4")))
+#     print("DONE")

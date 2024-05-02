@@ -1,0 +1,60 @@
+Timer unit: 1e-09 s
+
+Total time: 11.831 s
+File: /Users/Ravi_Kumar_Pilla/Library/CloudStorage/OneDrive-McKinsey&Company/Documents/Kedro/KedroOrg/kedro-viz/package/kedro_viz/integrations/kedro/data_loader.py
+Function: load_data at line 72
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    72                                           @line_profiler.profile
+    73                                           def load_data(
+    74                                               project_path: Path,
+    75                                               env: Optional[str] = None,
+    76                                               include_hooks: bool = False,
+    77                                               package_name: Optional[str] = None,
+    78                                               extra_params: Optional[Dict[str, Any]] = None,
+    79                                           ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+    80                                               """Load data from a Kedro project.
+    81                                               Args:
+    82                                                   project_path: the path where the Kedro project is located.
+    83                                                   env: the Kedro environment to load the data. If not provided.
+    84                                                       it will use Kedro default, which is local.
+    85                                                   include_hooks: A flag to include all registered hooks in your Kedro Project.
+    86                                                   package_name: The name of the current package
+    87                                                   extra_params: Optional dictionary containing extra project parameters
+    88                                                       for underlying KedroContext. If specified, will update (and therefore
+    89                                                       take precedence over) the parameters retrieved from the project
+    90                                                       configuration.
+    91                                               Returns:
+    92                                                   A tuple containing the data catalog and the pipeline dictionary
+    93                                                   and the session store.
+    94                                               """
+    95         1       1000.0   1000.0      0.0      if package_name:
+    96                                                   configure_project(package_name)
+    97                                               else:
+    98                                                   # bootstrap project when viz is run in dev mode
+    99         1  415719000.0    4e+08      3.5          bootstrap_project(project_path)
+   100                                           
+   101         2  731391000.0    4e+08      6.2      with KedroSession.create(
+   102         1       1000.0   1000.0      0.0          project_path=project_path,
+   103         1       1000.0   1000.0      0.0          env=env,
+   104         1       1000.0   1000.0      0.0          save_on_close=False,
+   105         1          0.0      0.0      0.0          extra_params=extra_params,
+   106         1       2000.0   2000.0      0.0      ) as session:
+   107                                                   # check for --include-hooks option
+   108         1          0.0      0.0      0.0          if not include_hooks:
+   109         1      12000.0  12000.0      0.0              session._hook_manager = _VizNullPluginManager()  # type: ignore
+   110                                           
+   111         1   25310000.0    3e+07      0.2          context = session.load_context()
+   112         1       1000.0   1000.0      0.0          session_store = session._store
+   113         1 5670467000.0    6e+09     47.9          catalog = context.catalog
+   114                                           
+   115                                                   # Pipelines is a lazy dict-like object, so we force it to populate here
+   116                                                   # in case user doesn't have an active session down the line when it's first accessed.
+   117                                                   # Useful for users who have `get_current_session` in their `register_pipelines()`.
+   118         1 4984154000.0    5e+09     42.1          pipelines_dict = dict(pipelines)
+   119         1    3932000.0    4e+06      0.0          stats_dict = _get_dataset_stats(project_path)
+   120                                           
+   121         1       1000.0   1000.0      0.0      return catalog, pipelines_dict, session_store, stats_dict
+
+ 11.83 seconds - /Users/Ravi_Kumar_Pilla/Library/CloudStorage/OneDrive-McKinsey&Company/Documents/Kedro/KedroOrg/kedro-viz/package/kedro_viz/integrations/kedro/data_loader.py:72 - load_data
