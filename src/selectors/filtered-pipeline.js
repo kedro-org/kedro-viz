@@ -86,20 +86,24 @@ export const getFilteredPipeline = createSelector(
     if ((!startID || !startID.length) && (!endID || !endID.length)) {
       return filteredNodeIDs;
     } else {
+      const linkedNodesBetween = [];
       const linkedNodesBeforeEnd = {};
       findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+      const linkedNodeBeforeStart = {};
+      findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
 
-      const linkedNodesAfterStart = {};
-      findLinkedNodes(startID, targetEdges, linkedNodesAfterStart);
+      // keep any nodes before the endID
+      filteredNodeIDs = linkedNodesBetween.concat(
+        Object.keys(linkedNodesBeforeEnd)
+      );
 
-      const linkedNodesBetween = [];
-      for (const nodeID in linkedNodesBeforeEnd) {
-        if (linkedNodesAfterStart[nodeID]) {
-          linkedNodesBetween.push(nodeID);
+      // remove any nodes before startID
+      Object.keys(linkedNodeBeforeStart).map((node) => {
+        if (node !== startID) {
+          const index = filteredNodeIDs.indexOf(node);
+          filteredNodeIDs.splice(index, 1);
         }
-      }
-
-      filteredNodeIDs = linkedNodesBetween;
+      });
 
       return filteredNodeIDs;
     }
