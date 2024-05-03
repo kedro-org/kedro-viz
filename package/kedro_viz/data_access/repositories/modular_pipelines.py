@@ -162,27 +162,6 @@ class ModularPipelinesRepository:
         else:
             self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
 
-    def add_tags(self, modular_pipeline_id: str, node_tags: set):
-        """
-        Add tags to a modular pipeline.
-
-        Args:
-            modular_pipeline_id: ID of the modular pipeline to add the tags to.
-            node_tags: The tags to add to the modular pipeline.
-
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> node_tags = {"tag1", "tag2"}
-            >>> modular_pipelines.add_tags("data_science", node_tags)
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> assert "tag1" in data_science_pipeline.tags
-            >>> assert "tag2" in data_science_pipeline.tags
-        """
-        if modular_pipeline_id in self.tree:
-            self.tree[modular_pipeline_id].tags |= node_tags
-
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
         Args:
@@ -236,6 +215,8 @@ class ModularPipelinesRepository:
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.
         modular_pipeline.pipelines.update(node.pipelines)
+
+        modular_pipeline.tags.update(node.tags)
 
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.

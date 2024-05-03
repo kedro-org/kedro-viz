@@ -83,14 +83,3 @@ class TestModularPipelinesRepository:
         modular_pipelines = ModularPipelinesRepository()
         with pytest.raises(ValueError):
             modular_pipelines.add_output("data_science", task_node)
-
-    def test_add_tags(self):
-        modular_pipelines = ModularPipelinesRepository()
-        node_tags = {"tag1", "tag2"}
-        modular_pipelines.get_or_create_modular_pipeline("data_science")
-        modular_pipelines.add_tags("data_science", node_tags)
-        data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            "data_science"
-        )
-        assert "tag1" in data_science_pipeline.tags
-        assert "tag2" in data_science_pipeline.tags
