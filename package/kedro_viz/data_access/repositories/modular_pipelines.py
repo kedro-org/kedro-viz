@@ -57,7 +57,7 @@ class ModularPipelinesRepository:
         #       children=["data_science", "data_engineering"]
         #   ),
         #   "data_science": ModularPipelineNode(id="data_science", children=[]),
-        #   "data_engineering": ModularPipelineNode(id="data_science", children=[]),
+        #   "data_engineering": ModularPipelineNode(id="data_engineering", children=[]),
         # }
         self.tree: Dict[str, ModularPipelineNode] = {
             ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(

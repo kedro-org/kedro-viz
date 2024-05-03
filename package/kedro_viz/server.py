@@ -166,17 +166,19 @@ if __name__ == "__main__":  # pragma: no cover
         "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
     }
 
-    viz_process = multiprocessing.Process(
-        target=run_process, daemon=False, kwargs={**run_process_kwargs}
-    )
+    run_server(host=args.host, port=args.port, project_path=str(project_path))
 
-    print("Starting Kedro Viz ...")
+    # viz_process = multiprocessing.Process(
+    #     target=run_process, daemon=False, kwargs={**run_process_kwargs}
+    # )
 
-    viz_process.start()
+    # print("Starting Kedro Viz ...")
 
-    _wait_for(func=_check_viz_up, host=args.host, port=args.port)
+    # viz_process.start()
 
-    print(
-        "Kedro Viz started successfully. \n\n"
-        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/"
-    )
+    # _wait_for(func=_check_viz_up, host=args.host, port=args.port)
+
+    # print(
+    #     "Kedro Viz started successfully. \n\n"
+    #     f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/"
+    # )
