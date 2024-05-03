@@ -90,6 +90,7 @@ def run_server(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
+    preview: bool = True,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -127,7 +128,7 @@ def run_server(
         )
 
         if save_file:
-            save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
+            save_api_responses_to_fs(save_file, fsspec.filesystem("file"), preview)
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:

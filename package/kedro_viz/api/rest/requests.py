@@ -7,5 +7,6 @@ class DeployerConfiguration(BaseModel):
     """Credentials for Deployers."""
 
     platform: str
+    preview: bool
     endpoint: str
     bucket_name: str

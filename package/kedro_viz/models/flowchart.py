@@ -728,12 +728,14 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     Args:
         data_node (DataNode): Data node to which this metadata belongs to.
+        is_preview_enabled_for_all_nodes (bool): Determines whether preview is enabled for all nodes
 
     Raises:
         AssertionError: If data_node is not supplied during instantiation
     """
 
     data_node: DataNode = Field(..., exclude=True)
+    is_preview_enabled_for_all_nodes: bool = Field(..., exclude=True)
 
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
@@ -768,6 +770,17 @@ class DataNodeMetadata(GraphNodeMetadata):
         validate_default=True,
         description="The statistics for the data node.",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_is_preview_enabled_for_all_nodes_exists(cls, values):
+        assert "is_preview_enabled_for_all_nodes" in values
+        cls.set_is_preview_enabled_for_all_nodes(values["is_preview_enabled_for_all_nodes"])
+        return values
+
+    @classmethod
+    def set_is_preview_enabled_for_all_nodes(cls, is_preview_enabled_for_all_nodes):
+        cls.is_preview_enabled_for_all_nodes = is_preview_enabled_for_all_nodes
 
     @model_validator(mode="before")
     @classmethod
@@ -806,6 +819,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
+        if not cls.is_preview_enabled_for_all_nodes:
+            return None
+        
         if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
             return None
 
@@ -829,6 +845,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview_type")
     @classmethod
     def set_preview_type(cls, _):
+        if not cls.is_preview_enabled_for_all_nodes:
+            return None
+
         if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
             return None
 

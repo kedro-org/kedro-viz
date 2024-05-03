@@ -61,7 +61,7 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
     try:
         deployer = DeployerFactory.create_deployer(
-            input_values.platform, input_values.endpoint, input_values.bucket_name
+            input_values.platform, input_values.preview, input_values.endpoint, input_values.bucket_name
         )
         deployer.deploy()
         response = {

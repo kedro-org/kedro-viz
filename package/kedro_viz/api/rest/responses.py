@@ -320,7 +320,7 @@ def get_default_response() -> GraphAPIResponse:
     )
 
 
-def get_node_metadata_response(node_id: str):
+def get_node_metadata_response(node_id: str, preview: bool = True):
     """API response for `/api/nodes/node_id`."""
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
@@ -333,7 +333,7 @@ def get_node_metadata_response(node_id: str):
         return TaskNodeMetadata(task_node=node)
 
     if isinstance(node, DataNode):
-        return DataNodeMetadata(data_node=node)
+        return DataNodeMetadata(data_node=node, is_preview_enabled_for_all_nodes=preview)
 
     if isinstance(node, TranscodedDataNode):
         return TranscodedDataNodeMetadata(transcoded_data_node=node)
@@ -419,12 +419,12 @@ def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
         raise exc
 
 
-def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
+def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any, preview: bool):
     """Saves API /nodes/{node} response to a directory."""
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
-                f"{nodes_path}/{nodeId}", get_node_metadata_response(nodeId), remote_fs
+                f"{nodes_path}/{nodeId}", get_node_metadata_response(nodeId, preview), remote_fs
             )
         except Exception as exc:  # pragma: no cover
             logger.exception(
@@ -451,7 +451,7 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
             raise exc
 
 
-def save_api_responses_to_fs(path: str, remote_fs: Any):
+def save_api_responses_to_fs(path: str, remote_fs: Any, preview: bool):
     """Saves all Kedro Viz API responses to a directory."""
     try:
         logger.debug(
@@ -469,7 +469,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any):
             remote_fs.makedirs(pipelines_path, exist_ok=True)
 
         save_api_main_response_to_fs(main_path, remote_fs)
-        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs, preview)
         save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover

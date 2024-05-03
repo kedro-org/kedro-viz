@@ -18,13 +18,14 @@ class GCPDeployer(BaseDeployer):
     """A class to handle the deployment of Kedro-viz to Google Cloud Storage Bucket.
 
     Attributes:
+        _preview (bool): Flag to indicate if dataset preview is enabled.
         _endpoint (str): GCP endpoint of the hosted site.
         _bucket_name (str): Name of the GCP storage bucket.
         _path (str): GCP protocol with bucket name.
         _fs (fsspec.filesystem): Filesystem for GCP protocol.
     """
 
-    def __init__(self, endpoint, bucket_name):
+    def __init__(self, preview, endpoint, bucket_name):
         """Initialize GCPDeployer with endpoint and bucket name.
 
         Args:
@@ -32,6 +33,7 @@ class GCPDeployer(BaseDeployer):
             bucket_name (str): Name of the GCP storage bucket.
         """
         super().__init__()
+        self._preview = preview
         self._endpoint = endpoint
         self._bucket_name = bucket_name
         self._path = f"{_GCP_PROTOCOL}://{bucket_name}"
