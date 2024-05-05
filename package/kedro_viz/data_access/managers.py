@@ -64,7 +64,6 @@ class DataAccessManager:
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
-        self.modular_pipelines_with_externals = dict()
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -114,8 +113,6 @@ class DataAccessManager:
         Args:
             pipelines: All registered pipelines in a Kedro project.
         """
-        import pdb
-        pdb.set_trace()
         for registered_pipeline_id, pipeline in pipelines.items():
             # Add the registered pipeline and its components to their repositories
             self.add_pipeline(registered_pipeline_id, pipeline)
@@ -139,14 +136,11 @@ class DataAccessManager:
 
         return self.dataset_stats.get(data_node_name, None)
     
-    def resolve_inputs_outputs_for_modular_pipelines(self, pipeline: KedroPipeline):
-        import pdb
-        pdb.set_trace()
-        namespaces = set(node.namespace for node in pipeline.nodes if node.namespace)
+    def resolve_inputs_outputs_for_modular_pipelines(self, pipeline: KedroPipeline, modular_pipelines_repo_obj: ModularPipelinesRepository):
         
+        namespaces = set(node.namespace for node in pipeline.nodes if node.namespace)
+
         def explode(ns: str) -> list[str]:
-            import pdb
-            pdb.set_trace()
             if not ns or "." not in ns:
                 result = [ns] if ns else []
             else:
@@ -160,18 +154,26 @@ class DataAccessManager:
 
         
         for ns in mod_pipelines:
+            # create the modular pipeline if not available
+            modular_pipelines_repo_obj.get_or_create_modular_pipeline(ns)
+            
             # get the subpipeline and the rest of it
             subpipeline = pipeline.only_nodes_with_namespace(ns)
             rest = pipeline - subpipeline
+            
             # get free inputs and free outputs of the subpipeline
             inputs = set(subpipeline.inputs())
             outputs = set(subpipeline.outputs())
+            
             # get all subpipeline outputs that are used by external nodes
             inner = set(rest.inputs()) & subpipeline.all_outputs()
+            
             # add the used ones and add them to the free outputs
             outputs |= inner
-            # this is the final bug-free result
-            self.modular_pipelines_with_externals[ns] = dict(inputs=inputs, outputs=outputs)
+            
+            # add inputs and outputs for the created modular pipeline
+            modular_pipelines_repo_obj.add_inputs(ns, inputs)
+            modular_pipelines_repo_obj.add_outputs(ns, outputs)
         
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
@@ -187,24 +189,25 @@ class DataAccessManager:
             pipeline: The Kedro pipeline instance to convert to graph models
                 and add to relevant repositories representing the graph.
         """
-        import pdb
-        pdb.set_trace()
-        
-        modular_pipelines_repo_obj = self.modular_pipelines[registered_pipeline_id]
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
-
-        # testing
-        self.resolve_inputs_outputs_for_modular_pipelines(pipeline)
-
-
-
+        modular_pipelines_repo_obj = self.modular_pipelines[registered_pipeline_id]
+        self.resolve_inputs_outputs_for_modular_pipelines(pipeline, modular_pipelines_repo_obj)
+        
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
             task_node = self.add_node(registered_pipeline_id, node)
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
+            current_modular_pipeline = None
 
-            current_modular_pipeline_id = modular_pipelines_repo_obj.extract_from_node(task_node)
+            # current_modular_pipeline_id = modular_pipelines_repo_obj.extract_from_node(task_node)
+            if task_node.namespace:
+                current_modular_pipeline = modular_pipelines_repo_obj.get_or_create_modular_pipeline(task_node.namespace)
+                current_modular_pipeline.pipelines.update(task_node.pipelines)
+                modular_pipelines_repo_obj.add_child(
+                    current_modular_pipeline.id,
+                    ModularPipelineChild(id=task_node.id, type=GraphNodeType(task_node.type)),
+                )
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -220,14 +223,11 @@ class DataAccessManager:
                 )
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
-
-                # Add the input as an input of the task_node's modular_pipeline, if any.
-                # The method `add_input` will take care of figuring out whether
-                # it is an internal or external input of the modular pipeline.
-                modular_pipelines_repo_obj.extract_from_node(input_node)
-                if current_modular_pipeline_id is not None:
-                    modular_pipelines_repo_obj.add_input(current_modular_pipeline_id, input_node)
-
+                
+                if current_modular_pipeline:
+                    modular_pipelines_repo_obj.add_child(current_modular_pipeline.id, ModularPipelineChild(id=input_node.id, type=GraphNodeType(input_node.type)))
+           
+             
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
@@ -240,12 +240,14 @@ class DataAccessManager:
                 if isinstance(output_node, TranscodedDataNode):
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
+                
+                if current_modular_pipeline:
+                    modular_pipelines_repo_obj.add_child(current_modular_pipeline.id, ModularPipelineChild(id=output_node.id, type=GraphNodeType(output_node.type)))
 
-                modular_pipelines_repo_obj.extract_from_node(output_node)
-                if current_modular_pipeline_id is not None:
-                    modular_pipelines_repo_obj.add_output(
-                        current_modular_pipeline_id, output_node
-                    )
+             
+        
+        
+                
         
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:

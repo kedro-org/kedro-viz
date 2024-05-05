@@ -84,16 +84,10 @@ def expand_tree(
                     type=GraphNodeType.MODULAR_PIPELINE,
                 )
             )
-            expanded_tree[parent_id].internal_inputs.update(
-                modular_pipeline_node.internal_inputs
+            expanded_tree[parent_id].inputs.update(
+                modular_pipeline_node.inputs
             )
-            expanded_tree[parent_id].external_inputs.update(
-                modular_pipeline_node.external_inputs
-            )
-            expanded_tree[parent_id].internal_outputs.update(
-                modular_pipeline_node.internal_outputs
-            )
-            expanded_tree[parent_id].external_outputs.update(
-                modular_pipeline_node.external_outputs
+            expanded_tree[parent_id].outputs.update(
+                modular_pipeline_node.outputs
             )
     return expanded_tree

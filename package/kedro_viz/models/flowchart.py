@@ -404,18 +404,11 @@ class ModularPipelineNode(GraphNode):
     # when using the pipeline() factory function.
     # More information can be found here:
     # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
-    internal_inputs: Set[str] = Field(
-        set(), description="The dataset inputs within the modular pipeline node"
+    inputs: Set[str] = Field(
+        set(), description="The dataset inputs for the modular pipeline node"
     )
-    internal_outputs: Set[str] = Field(
-        set(), description="The dataset outputs within the modular pipeline node"
-    )
-    external_inputs: Set[str] = Field(
-        set(),
-        description="""The dataset inputs connecting the modular
-        pipeline node with other modular pipelines""",
-    )
-    external_outputs: Set[str] = Field(
+    
+    outputs: Set[str] = Field(
         set(),
         description="""The dataset outputs connecting the modular
         pipeline node with other modular pipelines""",
@@ -423,24 +416,6 @@ class ModularPipelineNode(GraphNode):
 
     # The type for Modular Pipeline Node
     type: str = GraphNodeType.MODULAR_PIPELINE.value
-
-    @property
-    def inputs(self) -> Set[str]:
-        """Return a set of inputs for this modular pipeline.
-        Visually, these are inputs displayed as the inputs of the modular pipeline,
-        both when collapsed and focused.
-        Intuitively, the set of inputs for this modular pipeline is the set of all
-        external and internal inputs, excluding the ones also serving as outputs.
-        """
-        return (self.external_inputs | self.internal_inputs) - self.internal_outputs
-
-    @property
-    def outputs(self) -> Set[str]:
-        """Return a set of inputs for this modular pipeline.
-        Follow the same logic as the inputs calculation.
-        """
-        return self.external_outputs | (self.internal_outputs - self.internal_inputs)
-
 
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode

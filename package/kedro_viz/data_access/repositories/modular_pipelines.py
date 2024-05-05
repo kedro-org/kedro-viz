@@ -1,16 +1,14 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Set
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
-    DataNode,
     GraphNode,
     GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
-    TranscodedDataNode,
 )
 
 
@@ -89,78 +87,22 @@ class ModularPipelinesRepository:
             self.tree[modular_pipeline_id] = modular_pipeline_node
         return self.tree[modular_pipeline_id]
 
-    def add_input(
+    def add_inputs(
         self,
         modular_pipeline_id: str,
-        input_node: Union[DataNode, TranscodedDataNode, ParametersNode],
+        inputs: Set[str],
     ) -> None:
-        """Add an input to a modular pipeline based on whether it's an internal or external input.
-        The input to a modular pipeline can only be a data node or parameter node.
-        The input also has knowledge of which modular pipelines it belongs to
-        based on its namespace. This information can be accessed with through
-        `input_node.modular_pipelines`.
-
-        Args:
-            modular_pipeline_id: ID of the modular pipeline to add the input to.
-            input_node: The input node to add.
-        Raises:
-            ValueError: when attempt to add a non-data,non-parameter node as input
-                to the modular pipeline.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> model_input_node = GraphNode.create_data_node(
-            ...     "data_science.model_input", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.add_input("data_science", model_input_node)
-            >>> assert data_science_pipeline.inputs == {model_input_node.id}
-        """
-        if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
-            raise ValueError(
-                f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
-            )
-
-        is_internal_input = modular_pipeline_id in input_node.modular_pipelines
-        if is_internal_input:
-            self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
-        else:
-            self.tree[modular_pipeline_id].external_inputs.add(input_node.id)
-
-    def add_output(self, modular_pipeline_id: str, output_node: GraphNode):
-        """Add an output to a modular pipeline based on whether it's an internal or external output.
-        The output has knowledge of which modular pipelines it belongs to based on its namespace.
-        The information can be accessed with through `output_node.modular_pipelines`.
-
-        Args:
-            modular_pipeline_id: ID of the modular pipeline to add the output to.
-            output_node: The output node to add.
-        Raises:
-            ValueError: when attempt to add a non-data, non-parameter node as output
-                to the modular pipeline.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> model_output_node = GraphNode.create_data_node(
-            ...     "data_science.model_output", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.add_output("data_science", model_output_node)
-            >>> assert data_science_pipeline.outputs == {model_output_node.id}
-        """
-        if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
-            raise ValueError(
-                f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
-            )
-
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines
-        if is_internal_output:
-            self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
-        else:
-            self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
-
+        
+        self.tree[modular_pipeline_id].inputs = set([GraphNode._hash(input) for input in inputs])
+    
+    def add_outputs(
+        self,
+        modular_pipeline_id: str,
+        outputs: Set[str],
+    ) -> None:
+        
+        self.tree[modular_pipeline_id].outputs = set([GraphNode._hash(output) for output in outputs])
+        
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
         Args:
