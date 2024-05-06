@@ -396,22 +396,12 @@ class ModularPipelineNode(GraphNode):
         set(), description="The children for the modular pipeline node"
     )
 
-    # Keep track of a modular pipeline's inputs and outputs, both internal and external.
-    # Internal inputs/outputs are IDs of the datasets not connected to any nodes external
-    # to the pipeline.External inputs/outputs are IDs of the datasets used to connect
-    # this modular pipeline to other modular pipelines in the whole registered pipeline.
-    # In practical term, external inputs/outputs are the ones explicitly specified
-    # when using the pipeline() factory function.
-    # More information can be found here:
-    # https://kedro.readthedocs.io/en/latest/06_nodes_and_pipelines/03_modular_pipelines.html#how-to-connect-existing-pipelines
     inputs: Set[str] = Field(
-        set(), description="The dataset inputs for the modular pipeline node"
+        set(), description="The input datasets to the modular pipeline node"
     )
 
     outputs: Set[str] = Field(
-        set(),
-        description="""The dataset outputs connecting the modular
-        pipeline node with other modular pipelines""",
+        set(), description="The output datasets from the modular pipeline node"
     )
 
     # The type for Modular Pipeline Node
