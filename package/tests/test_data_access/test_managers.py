@@ -360,6 +360,7 @@ class TestAddPipelines:
         ) == sorted(
             [
                 ROOT_MODULAR_PIPELINE_ID,
+                "uk",
                 "uk.data_processing",
                 "uk.data_science",
             ]

@@ -144,31 +144,32 @@ class DataAccessManager:
         """The purpose of this method is to resolve the inputs and outputs for a modular pipeline
         Args:
             pipeline: An instance of Kedro pipeline
-            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository created using the pipeline's id
+            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository
+                created using the pipeline's id
         """
         namespaces = set(node.namespace for node in pipeline.nodes if node.namespace)
 
-        def explode(ns: str) -> list[str]:
-            """The purpose of this method is to expand the nested namespaces
+        def explode(nested_namespace: str) -> list[str]:
+            """The purpose of this method is to expand the nested namespace if any
             Args:
-                ns: The nested namespace to be expanded
+                nested_namespace: The nested namespace to be expanded
             Example:
-            >>> ns = 'train_evaluation.random_forest'
-            >>> explode(ns)
+            >>> nested_namespace = 'train_evaluation.random_forest'
+            >>> explode(nested_namespace)
             ['train_evaluation', 'train_evaluation.random_forest']
             """
-            if not ns or "." not in ns:
-                exploded_ns = [ns] if ns else []
+            if not nested_namespace or "." not in nested_namespace:
+                exploded_ns = [nested_namespace] if nested_namespace else []
             else:
-                ns_parts = ns.split(".")
+                ns_parts = nested_namespace.split(".")
                 exploded_ns = [
                     ".".join(ns_parts[: i + 1]) for i in range(len(ns_parts))
                 ]
             return exploded_ns
 
         modular_pipeline_ids = set()
-        for ns in namespaces:
-            modular_pipeline_ids |= set(explode(ns))
+        for namespace in namespaces:
+            modular_pipeline_ids |= set(explode(namespace))
 
         for modular_pipeline_id in modular_pipeline_ids:
             # create the modular pipeline if not available
@@ -185,12 +186,12 @@ class DataAccessManager:
             free_outputs_from_sub_pipeline = sub_pipeline.outputs()
 
             # get all sub_pipeline outputs that are used by external nodes
-            additional_free_outputs_from_sub_pipeline = (
+            other_outputs_from_sub_pipeline = (
                 rest_of_the_pipeline.inputs() & sub_pipeline.all_outputs()
             )
 
-            # add the additional_free_outputs_from_sub_pipeline to the free outputs
-            free_outputs_from_sub_pipeline |= additional_free_outputs_from_sub_pipeline
+            # add the other_outputs_from_sub_pipeline to the free outputs
+            free_outputs_from_sub_pipeline |= other_outputs_from_sub_pipeline
 
             # add inputs and outputs for the created modular pipeline
             modular_pipelines_repo_obj.add_inputs(

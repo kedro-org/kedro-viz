@@ -1,6 +1,8 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
 
+# pylint: disable=protected-access
+
 from typing import Dict, Optional, Set
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
@@ -98,9 +100,9 @@ class ModularPipelinesRepository:
             modular_pipeline_id: ID of the modular pipeline to add inputs
             inputs: A set of input dataset ids
         """
-        self.tree[modular_pipeline_id].inputs = set(
-            [GraphNode._hash(input) for input in inputs]
-        )
+        self.tree[modular_pipeline_id].inputs = {
+            GraphNode._hash(input) for input in inputs
+        }
 
     def add_outputs(
         self,
@@ -112,9 +114,9 @@ class ModularPipelinesRepository:
             modular_pipeline_id: ID of the modular pipeline to add outputs
             outputs: A set of output dataset ids
         """
-        self.tree[modular_pipeline_id].outputs = set(
-            [GraphNode._hash(output) for output in outputs]
-        )
+        self.tree[modular_pipeline_id].outputs = {
+            GraphNode._hash(output) for output in outputs
+        }
 
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
