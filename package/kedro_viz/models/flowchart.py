@@ -407,7 +407,7 @@ class ModularPipelineNode(GraphNode):
     inputs: Set[str] = Field(
         set(), description="The dataset inputs for the modular pipeline node"
     )
-    
+
     outputs: Set[str] = Field(
         set(),
         description="""The dataset outputs connecting the modular
@@ -416,6 +416,7 @@ class ModularPipelineNode(GraphNode):
 
     # The type for Modular Pipeline Node
     type: str = GraphNodeType.MODULAR_PIPELINE.value
+
 
 class TaskNodeMetadata(GraphNodeMetadata):
     """Represent the metadata of a TaskNode

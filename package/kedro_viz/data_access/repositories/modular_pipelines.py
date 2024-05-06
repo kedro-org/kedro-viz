@@ -92,17 +92,19 @@ class ModularPipelinesRepository:
         modular_pipeline_id: str,
         inputs: Set[str],
     ) -> None:
-        
-        self.tree[modular_pipeline_id].inputs = set([GraphNode._hash(input) for input in inputs])
-    
+        self.tree[modular_pipeline_id].inputs = set(
+            [GraphNode._hash(input) for input in inputs]
+        )
+
     def add_outputs(
         self,
         modular_pipeline_id: str,
         outputs: Set[str],
     ) -> None:
-        
-        self.tree[modular_pipeline_id].outputs = set([GraphNode._hash(output) for output in outputs])
-        
+        self.tree[modular_pipeline_id].outputs = set(
+            [GraphNode._hash(output) for output in outputs]
+        )
+
     def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
         Args:
