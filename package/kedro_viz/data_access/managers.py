@@ -143,9 +143,8 @@ class DataAccessManager:
     ):
         """The purpose of this method is to resolve the inputs and outputs for a modular pipeline
         Args:
-            pipeline: The Kedro pipeline instance to convert to graph models
-                and add to relevant repositories representing the graph.
-            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository created using the pipeline id
+            pipeline: An instance of Kedro pipeline
+            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository created using the pipeline's id
         """
         namespaces = set(node.namespace for node in pipeline.nodes if node.namespace)
 
