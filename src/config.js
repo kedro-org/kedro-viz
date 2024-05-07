@@ -4,6 +4,7 @@ export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
+export const localStorageSharableUrl = 'KedroViz-sharable-url';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -149,7 +150,7 @@ export const datasetStatLabels = ['rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
 
-export const hostingPlatform = {
+export const hostingPlatforms = {
   aws: 'Amazon Web Services',
   gcp: 'Google Cloud',
   azure: 'Microsoft Azure',

@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import { fetchPackageCompatibilities } from '../../utils';
+import { saveLocalStorage } from '../../store/helpers';
 import {
-  hostingPlatform,
+  hostingPlatforms,
   inputKeyToStateKeyMap,
+  localStorageSharableUrl,
   KEDRO_VIZ_PUBLISH_DOCS_URL,
   KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL,
   KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
@@ -111,15 +113,27 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
+
+        const localStorageValue = {};
+        for (const platform in hostingPlatforms) {
+          if (inputValues.platform === platform) {
+            // to set the platform property based on the current playform value from inputValues
+            // expected output: { aws: { ...inputValues }}
+            localStorageValue[inputValues.platform] = { ...inputValues };
+          }
+        }
+        saveLocalStorage(localStorageSharableUrl, localStorageValue);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
         setDeploymentState('failure');
+        // saveLocalStorage(localStorageSharableUrl, null);
       }
     } catch (error) {
       console.error(error);
       setResponseError(error.message || 'Error occurred!');
       setDeploymentState('failure');
+      // saveLocalStorage(localStorageSharableUrl, null);
     } finally {
       setIsLoading(false);
     }
@@ -387,14 +401,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Hosting platform
               </div>
               <Dropdown
-                defaultText={platform && hostingPlatform[platform]}
+                defaultText={platform && hostingPlatforms[platform]}
                 placeholderText={!platform ? 'Select a hosting platform' : null}
                 onChanged={(selectedPlatform) => {
                   onChange('platform', selectedPlatform.value);
                 }}
                 width={null}
               >
-                {Object.entries(hostingPlatform).map(([value, label]) => (
+                {Object.entries(hostingPlatforms).map(([value, label]) => (
                   <MenuOption
                     className={classnames({
                       'pipeline-list__option--active': platform === value,
