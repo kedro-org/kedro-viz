@@ -128,7 +128,9 @@ class DataAccessManager:
 
         self.dataset_stats = stats_dict
 
-    def add_is_preview_enabled_for_all_nodes(self, is_preview_enabled_for_all_nodes: bool):
+    def add_is_preview_enabled_for_all_nodes(
+        self, is_preview_enabled_for_all_nodes: bool
+    ):
         """Add the preview flag to the data access manager.
         Args:
             preview: A boolean flag to indicate whether the preview mode is enabled.

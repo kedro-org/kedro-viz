@@ -654,7 +654,7 @@ class DataNode(GraphNode):
     def is_preview_disabled(self):
         """Checks if the dataset has a preview disabled"""
         return (
-            self.is_preview_enabled_for_all_nodes
+            self.is_preview_enabled_for_all_nodes is False
             or self.viz_metadata is not None
             and self.viz_metadata.get("preview") is False
         )

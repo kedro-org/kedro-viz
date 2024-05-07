@@ -41,6 +41,10 @@ def populate_data(
         session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
 
+    data_access_manager.add_is_preview_enabled_for_all_nodes(
+        is_preview_enabled_for_all_nodes
+    )
+
     data_access_manager.add_catalog(catalog, pipelines)
 
     # add dataset stats before adding pipelines as the data nodes
@@ -48,8 +52,6 @@ def populate_data(
     data_access_manager.add_dataset_stats(stats_dict)
 
     data_access_manager.add_pipelines(pipelines)
-
-    data_access_manager.add_is_preview_enabled_for_all_nodes(is_preview_enabled_for_all_nodes)
 
 
 def load_and_populate_data(
@@ -79,12 +81,20 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict, is_preview_enabled_for_all_nodes)
+    populate_data(
+        data_access_manager,
+        catalog,
+        pipelines,
+        session_store,
+        stats_dict,
+        is_preview_enabled_for_all_nodes,
+    )
 
 
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
+    preview: bool = True,
     load_file: Optional[str] = None,
     save_file: Optional[str] = None,
     pipeline_name: Optional[str] = None,
@@ -123,6 +133,7 @@ def run_server(
     if load_file is None:
         load_and_populate_data(
             path,
+            preview,
             env,
             include_hooks,
             package_name,

@@ -109,17 +109,13 @@ def viz(ctx):  # pylint: disable=unused-argument
     help="A flag to include all registered hooks in your Kedro Project",
 )
 @click.option(
-    "--preview",
-    default=True,
-    help="A flag to preview your node dataset"
-)
-@click.option(
     "--params",
     type=click.UNPROCESSED,
     default="",
     help=PARAMS_ARG_HELP,
     callback=_split_params,
 )
+@click.option("--preview", default=True, help="A flag to preview your node dataset")
 # pylint: disable=import-outside-toplevel, too-many-locals
 def run(
     host,
@@ -383,11 +379,14 @@ def load_and_deploy_viz(
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         load_and_populate_data(
-            Path.cwd(), is_preview_enabled_for_all_nodes=preview, include_hooks=include_hooks, package_name=package_name
+            Path.cwd(),
+            is_preview_enabled_for_all_nodes=preview,
+            include_hooks=include_hooks,
+            package_name=package_name,
         )
 
         # Start the deployment
-        deployer = DeployerFactory.create_deployer(platform, preview, endpoint, bucket_name)
+        deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
         deployer.deploy()
 
     except (
