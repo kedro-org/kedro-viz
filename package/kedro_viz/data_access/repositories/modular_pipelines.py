@@ -117,8 +117,17 @@ class ModularPipelinesRepository:
         self.tree[modular_pipeline_id].outputs = {
             GraphNode._hash(output) for output in outputs
         }
+        
+    def add_child_data(self, modular_pipeline_id: str, inputs: Set[str], outputs: Set[str]):
+        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
+        for input in inputs:
+            modular_pipeline.children.add(ModularPipelineChild(id= GraphNode._hash(input), type=GraphNodeType.DATA))
+        for output in outputs:
+            modular_pipeline.children.add(ModularPipelineChild(id= GraphNode._hash(output), type=GraphNodeType.DATA))
+            
+        
 
-    def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
+    def add_child_task(self, modular_pipeline_id: str, child: ModularPipelineChild):
         """Add a child to a modular pipeline.
         Args:
             modular_pipeline_id: ID of the modular pipeline to add the child to.
@@ -137,6 +146,7 @@ class ModularPipelinesRepository:
         """
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
         modular_pipeline.children.add(child)
+
 
     def extract_from_node(self, node: GraphNode) -> Optional[str]:
         """Extract the namespace from a graph node and add it as a modular pipeline node
@@ -158,6 +168,7 @@ class ModularPipelinesRepository:
 
         # There is no need to extract modular pipeline from parameters
         # because all valid modular pipelines are encoded in either a TaskNode or DataNode.
+        
         if isinstance(node, ParametersNode):
             return None
 
@@ -174,7 +185,7 @@ class ModularPipelinesRepository:
 
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.
-        self.add_child(
+        self.add_child_task(
             modular_pipeline_id,
             ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
         )

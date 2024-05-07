@@ -200,6 +200,14 @@ class DataAccessManager:
             modular_pipelines_repo_obj.add_outputs(
                 modular_pipeline_id, free_outputs_from_sub_pipeline
             )
+            
+            internal_inputs = sub_pipeline.all_inputs() - free_inputs_to_sub_pipeline
+            internal_outputs = sub_pipeline.all_outputs() - free_outputs_from_sub_pipeline
+            
+            modular_pipelines_repo_obj.add_child_data(modular_pipeline_id, internal_inputs, internal_outputs
+        )
+            
+            
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
@@ -242,7 +250,7 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
-                modular_pipelines_repo_obj.extract_from_node(input_node)
+                # modular_pipelines_repo_obj.extract_from_node(input_node)
 
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
@@ -257,7 +265,7 @@ class DataAccessManager:
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
 
-                modular_pipelines_repo_obj.extract_from_node(output_node)
+                # modular_pipelines_repo_obj.extract_from_node(output_node)
 
     def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
