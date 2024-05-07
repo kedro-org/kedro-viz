@@ -24,14 +24,13 @@ class AzureDeployer(BaseDeployer):
     """A class to handle the deployment of Kedro-viz to AzureBlobStorage.
 
     Attributes:
-        _preview (bool): Flag to indicate if dataset preview is enabled.
         _endpoint (str): Azure endpoint of the hosted site.
         _bucket_name (str): Name of the AzureBlobStorage account.
         _path (str): Container path for the AzureBlobStorage account.
         _fs (fsspec.filesystem): Filesystem for Azure protocol.
     """
 
-    def __init__(self, preview, endpoint, bucket_name):
+    def __init__(self, endpoint, bucket_name):
         """Initialize AzureBlobStorage with endpoint and bucket name.
 
         Args:
@@ -39,7 +38,6 @@ class AzureDeployer(BaseDeployer):
             bucket_name (str): Name of the AzureBlobStorage account.
         """
         super().__init__()
-        self._preview = preview
         self._endpoint = endpoint
         self._bucket_name = bucket_name
         self._path = f"{_AZ_PROTOCOL}://$web"

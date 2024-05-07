@@ -16,21 +16,19 @@ logger = logging.getLogger(__name__)
 class AWSDeployer(BaseDeployer):
     """A class to handle the deployment of Kedro-viz to AWS S3.
     Attributes:
-        _preview (bool): Flag to indicate if dataset preview is enabled.
         _endpoint (str): AWS endpoint of the hosted site.
         _bucket_name (str): Name of the S3 bucket.
         _path (str): S3 protocol with bucket name.
         _fs (fsspec.filesystem): Filesystem for S3 protocol.
     """
 
-    def __init__(self, preview, endpoint, bucket_name):
+    def __init__(self, endpoint, bucket_name):
         """Initialize S3Deployer with endpoint and bucket name.
         Args:
             endpoint (str): AWS endpoint of the hosted site.
             bucket_name (str): Name of the S3 bucket.
         """
         super().__init__()
-        self._preview = preview
         self._endpoint = endpoint
         self._bucket_name = bucket_name
         self._path = f"{_S3_PROTOCOL}://{bucket_name}"

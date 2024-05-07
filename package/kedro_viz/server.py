@@ -30,6 +30,7 @@ def populate_data(
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
     stats_dict: Dict,
+    is_preview_enabled_for_all_nodes: bool,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
@@ -48,9 +49,12 @@ def populate_data(
 
     data_access_manager.add_pipelines(pipelines)
 
+    data_access_manager.add_is_preview_enabled_for_all_nodes(is_preview_enabled_for_all_nodes)
+
 
 def load_and_populate_data(
     path: Path,
+    is_preview_enabled_for_all_nodes: bool,
     env: Optional[str] = None,
     include_hooks: bool = False,
     package_name: Optional[str] = None,
@@ -75,7 +79,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
+    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict, is_preview_enabled_for_all_nodes)
 
 
 def run_server(
@@ -90,7 +94,6 @@ def run_server(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-    preview: bool = True,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -128,7 +131,7 @@ def run_server(
         )
 
         if save_file:
-            save_api_responses_to_fs(save_file, fsspec.filesystem("file"), preview)
+            save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:

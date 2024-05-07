@@ -383,7 +383,7 @@ def load_and_deploy_viz(
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         load_and_populate_data(
-            Path.cwd(), include_hooks=include_hooks, package_name=package_name
+            Path.cwd(), is_preview_enabled_for_all_nodes=preview, include_hooks=include_hooks, package_name=package_name
         )
 
         # Start the deployment

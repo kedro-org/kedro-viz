@@ -25,19 +25,17 @@ class BaseDeployer(abc.ABC):
     """A class to handle the creation of Kedro-viz build.
 
     Attributes:
-        _preview (bool): Flag to indicate if dataset preview is enabled.
         _path (str): build path name.
         _fs (fsspec.filesystem): Filesystem for local/remote protocol.
     """
 
     def __init__(self):
-        self._preview = False
         self._path = None
         self._fs = None
 
     def _upload_api_responses(self):
         """Write API responses to the build."""
-        save_api_responses_to_fs(self._path, self._fs, self._preview)
+        save_api_responses_to_fs(self._path, self._fs)
 
     def _ingest_heap_analytics(self):
         """Ingest heap analytics to index file in the build."""
