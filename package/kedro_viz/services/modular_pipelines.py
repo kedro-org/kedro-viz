@@ -1,6 +1,7 @@
 """`kedro_viz.services.modular_pipelines` defines modular pipelines-related business logic.
 The service layer consist of pure functions operating on domain models.
 """
+
 from typing import Dict
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
@@ -84,6 +85,4 @@ def expand_tree(
                     type=GraphNodeType.MODULAR_PIPELINE,
                 )
             )
-            expanded_tree[parent_id].inputs.update(modular_pipeline_node.inputs)
-            expanded_tree[parent_id].outputs.update(modular_pipeline_node.outputs)
     return expanded_tree
