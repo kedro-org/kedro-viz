@@ -2,7 +2,6 @@
 
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
-from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter
@@ -11,8 +10,6 @@ from fastapi.responses import JSONResponse
 from kedro_viz.api.rest.requests import DeployerConfiguration
 from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
-
-# from kedro_viz.server import load_and_populate_data
 
 from .responses import (
     APIErrorMessage,
@@ -62,12 +59,7 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
-    # Importing here to avoid circular imports
-    from kedro_viz.server import load_and_populate_data # pylint: disable=import-outside-toplevel
-
     try:
-        load_and_populate_data(Path.cwd(), input_values.preview)
-
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name
         )

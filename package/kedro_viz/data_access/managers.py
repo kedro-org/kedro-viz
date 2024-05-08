@@ -133,7 +133,7 @@ class DataAccessManager:
     ):
         """Add the preview flag to the data access manager.
         Args:
-            preview: A boolean flag to indicate whether the preview mode is enabled.
+            is_preview_enabled_for_all_nodes: A boolean flag to indicate whether the preview is enabled for all the nodes.
         """
 
         self.is_preview_enabled_for_all_nodes = is_preview_enabled_for_all_nodes

@@ -115,7 +115,11 @@ def viz(ctx):  # pylint: disable=unused-argument
     help=PARAMS_ARG_HELP,
     callback=_split_params,
 )
-@click.option("--preview", default=True, help="A flag to preview your node dataset")
+@click.option(
+    "--preview",
+    default=True,
+    help="A flag to enable/disable a quick preview of node datasets.",
+)
 # pylint: disable=import-outside-toplevel, too-many-locals
 def run(
     host,
@@ -240,7 +244,7 @@ def run(
 @click.option(
     "--preview",
     default=False,
-    help="A flag to preview your node dataset",
+    help="A flag to enable/disable a quick preview of node datasets.",
 )
 def deploy(platform, endpoint, bucket_name, include_hooks, preview):
     """Deploy and host Kedro Viz on provided platform"""
@@ -272,7 +276,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, preview):
 @click.option(
     "--preview",
     default=False,
-    help="A flag to preview your node dataset",
+    help="A flag to enable/disable a quick preview of node datasets.",
 )
 def build(include_hooks, preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""

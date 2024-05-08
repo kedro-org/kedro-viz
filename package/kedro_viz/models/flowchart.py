@@ -227,8 +227,8 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         dataset: AbstractDataset,
         stats: Optional[Dict],
+        is_preview_enabled_for_all_nodes: bool,
         is_free_input: bool = False,
-        is_preview_enabled_for_all_nodes: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
@@ -240,6 +240,7 @@ class GraphNode(BaseModel, abc.ABC):
             dataset: A dataset in a Kedro pipeline.
             stats: The dictionary of dataset statistics, e.g.
                 {"rows":2, "columns":3, "file_size":100}
+            is_preview_enabled_for_all_nodes: A flag to enable/disable a quick preview of node datasets.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
@@ -565,6 +566,7 @@ class DataNode(GraphNode):
         layer (Optional[str]): The layer that this data node belongs to. Defaults to `None`.
         is_free_input (bool): Determines whether the data node is a free input. Defaults to `False`.
         stats (Optional[Dict]): Statistics for the data node. Defaults to `None`.
+        is_preview_enabled_for_all_nodes (bool): A flag to enable/disable a quick preview of node datasets. Defaults to `False`.
 
     Raises:
         AssertionError: If kedro_obj, name are not supplied during instantiation
@@ -579,7 +581,7 @@ class DataNode(GraphNode):
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
 
     is_preview_enabled_for_all_nodes: bool = Field(
-        None, description="The preview flag for all nodes"
+        False, description="A flag to enable/disable a quick preview of node datasets."
     )
 
     dataset_type: Optional[str] = Field(
