@@ -204,7 +204,7 @@ class GraphNode(BaseModel, abc.ABC):
         return namespace_list
 
     @classmethod
-    def create_task_node(cls, node: KedroNode) -> "TaskNode":
+    def create_task_node(cls, node: KedroNode, node_mod_pipeline) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
@@ -217,6 +217,7 @@ class GraphNode(BaseModel, abc.ABC):
             name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
+            modular_pipelines=node_mod_pipeline,
         )
 
     @classmethod
@@ -228,6 +229,7 @@ class GraphNode(BaseModel, abc.ABC):
         dataset: AbstractDataset,
         stats: Optional[Dict],
         is_free_input: bool = False,
+        node_mod_pipeline=None,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
@@ -253,6 +255,7 @@ class GraphNode(BaseModel, abc.ABC):
                 layer=layer,
                 is_free_input=is_free_input,
                 stats=stats,
+                modular_pipelines=node_mod_pipeline,
             )
 
         return DataNode(
@@ -263,6 +266,7 @@ class GraphNode(BaseModel, abc.ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
+            modular_pipelines=node_mod_pipeline,
         )
 
     @classmethod
@@ -337,11 +341,7 @@ class TaskNode(GraphNode):
         AssertionError: If kedro_obj is not supplied during instantiation
     """
 
-    modular_pipelines: List[str] = Field(
-        default=[],
-        validate_default=True,
-        description="The modular pipelines this node belongs to",
-    )
+   
     parameters: Dict = Field(
         {}, description="A dictionary of parameter values for the task node"
     )
@@ -360,10 +360,10 @@ class TaskNode(GraphNode):
     def set_namespace(cls, _, info: ValidationInfo):
         return info.data["kedro_obj"].namespace
 
-    @field_validator("modular_pipelines")
-    @classmethod
-    def set_modular_pipelines(cls, _, info: ValidationInfo):
-        return cls._expand_namespaces(info.data["kedro_obj"].namespace)
+    # @field_validator("modular_pipelines")
+    # @classmethod
+    # def set_modular_pipelines(cls, _, info: ValidationInfo):
+    #     return cls._expand_namespaces(info.data["kedro_obj"].namespace)
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -588,14 +588,14 @@ class DataNode(GraphNode):
         name = info.data.get("name")
         return cls._get_namespace(str(name))
 
-    @field_validator("modular_pipelines")
-    @classmethod
-    def set_modular_pipelines(cls, _, info: ValidationInfo):
-        assert "name" in info.data
+    # @field_validator("modular_pipelines")
+    # @classmethod
+    # def set_modular_pipelines(cls, _, info: ValidationInfo):
+    #     assert "name" in info.data
 
-        name = info.data.get("name")
-        namespace = cls._get_namespace(str(name))
-        return cls._expand_namespaces(namespace)
+    #     name = info.data.get("name")
+    #     namespace = cls._get_namespace(str(name))
+    #     return cls._expand_namespaces(namespace)
 
     @field_validator("viz_metadata")
     @classmethod

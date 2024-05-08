@@ -147,7 +147,8 @@ class DataAccessManager:
             modular_pipelines_repo_obj: An instance of ModularPipelinesRepository
                 created using the pipeline's id
         """
-        namespaces = set(node.namespace for node in pipeline.nodes if node.namespace)
+        namespaces = sorted(set(node.namespace for node in pipeline.nodes if node.namespace))
+        print("Namespaces",namespaces)
 
         def explode(nested_namespace: str) -> list[str]:
             """The purpose of this method is to expand the nested namespace if any
@@ -204,8 +205,7 @@ class DataAccessManager:
             internal_inputs = sub_pipeline.all_inputs() - free_inputs_to_sub_pipeline
             internal_outputs = sub_pipeline.all_outputs() - free_outputs_from_sub_pipeline
             
-            modular_pipelines_repo_obj.add_child_data(modular_pipeline_id, internal_inputs, internal_outputs
-        )
+            modular_pipelines_repo_obj.add_child_data(modular_pipeline_id, internal_inputs, internal_outputs)
             
             
 
@@ -231,9 +231,12 @@ class DataAccessManager:
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
-            task_node = self.add_node(registered_pipeline_id, node)
+            modular_pipelines_repo_obj.extract_from_node(node)
+            node_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(node)
+            task_node = self.add_node(registered_pipeline_id, node, node_modular_pipeline_id)
+            
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
-            modular_pipelines_repo_obj.extract_from_node(task_node)
+           
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -241,8 +244,9 @@ class DataAccessManager:
                 # Mark it as a transcoded dataset unless it's a free input
                 # because free inputs to the pipeline can't be transcoded.
                 is_free_input = input_ in free_inputs
+                input_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(input_)
                 input_node = self.add_node_input(
-                    registered_pipeline_id, input_, task_node, is_free_input
+                    registered_pipeline_id, input_, task_node, is_free_input, input_modular_pipeline_id
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, input_node.id
@@ -255,8 +259,9 @@ class DataAccessManager:
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
+                output_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(output)
                 output_node = self.add_node_output(
-                    registered_pipeline_id, output, task_node
+                    registered_pipeline_id, output, task_node, output_modular_pipeline_id
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, output_node.id
@@ -267,7 +272,7 @@ class DataAccessManager:
 
                 # modular_pipelines_repo_obj.extract_from_node(output_node)
 
-    def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
+    def add_node(self, registered_pipeline_id: str, node: KedroNode, node_mod_pipeline) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
         for a given registered pipeline ID.
 
@@ -277,7 +282,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
-        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
+        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node, node_mod_pipeline))
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
         return task_node
@@ -288,6 +293,7 @@ class DataAccessManager:
         input_dataset: str,
         task_node: TaskNode,
         is_free_input: bool = False,
+        node_mod_pipeline = None
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -302,7 +308,7 @@ class DataAccessManager:
         """
 
         graph_node = self.add_dataset(
-            registered_pipeline_id, input_dataset, is_free_input=is_free_input
+            registered_pipeline_id, input_dataset, is_free_input=is_free_input, node_mod_pipeline=node_mod_pipeline
         )
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
@@ -317,7 +323,7 @@ class DataAccessManager:
         return graph_node
 
     def add_node_output(
-        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode
+        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode, node_mod_pipeline = None
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's output as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -329,7 +335,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the node's output that was added to the graph.
         """
-        graph_node = self.add_dataset(registered_pipeline_id, output_dataset)
+        graph_node = self.add_dataset(registered_pipeline_id, output_dataset, node_mod_pipeline=node_mod_pipeline)
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=task_node.id, target=graph_node.id)
@@ -342,6 +348,7 @@ class DataAccessManager:
         registered_pipeline_id: str,
         dataset_name: str,
         is_free_input: bool = False,
+        node_mod_pipeline = None
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro dataset as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -371,6 +378,7 @@ class DataAccessManager:
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 is_free_input=is_free_input,
+                node_mod_pipeline=node_mod_pipeline
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)

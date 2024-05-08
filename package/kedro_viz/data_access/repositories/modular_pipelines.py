@@ -3,7 +3,7 @@ defines repository to centralise access to modular pipelines data."""
 
 # pylint: disable=protected-access
 
-from typing import Dict, Optional, Set
+from typing import Dict, Optional, Set, List
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
@@ -148,7 +148,7 @@ class ModularPipelinesRepository:
         modular_pipeline.children.add(child)
 
 
-    def extract_from_node(self, node: GraphNode) -> Optional[str]:
+    def extract_from_node(self, node) -> Optional[str]:
         """Extract the namespace from a graph node and add it as a modular pipeline node
         to the modular pipeline repository.
 
@@ -181,13 +181,13 @@ class ModularPipelinesRepository:
         # Add the node's registered pipelines to the modular pipeline's registered pipelines.
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.
-        modular_pipeline.pipelines.update(node.pipelines)
+        # modular_pipeline.pipelines.update(node.pipelines)
 
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.
         self.add_child_task(
             modular_pipeline_id,
-            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
+            ModularPipelineChild(id=GraphNode._hash(str(node)), type=GraphNodeType.TASK),
         )
         return modular_pipeline_id
 
@@ -205,7 +205,29 @@ class ModularPipelinesRepository:
             False
         """
         return modular_pipeline_id in self.tree
+    
+    def get_modular_pipeline_from_node(self, node) -> Optional[str]:
+        """Get the name of the modular pipeline to which the given node_id belongs.
 
+        Args:
+            node: The node to check for its parent modular pipeline.
+
+        Returns:
+            The name of the modular pipeline if the node belongs to any modular pipeline,
+            otherwise returns None.
+        """
+        node_id = GraphNode._hash(str(node))
+        
+        mod_id = ''
+
+        for modular_pipeline_id, modular_pipeline_node in self.tree.items():
+            if any(child.id == node_id for child in modular_pipeline_node.children):
+                mod_id= modular_pipeline_id
+                
+        print("NODE DETAILS: ", node, [mod_id])
+
+        return [mod_id]
+    
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""
         return self.tree
