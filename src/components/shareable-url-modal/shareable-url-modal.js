@@ -104,7 +104,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           'Content-Type': 'application/json',
         },
         method: 'POST',
-        body: JSON.stringify(inputValues),
+        body: JSON.stringify({ ...inputValues, preview: false }), // preview appended to the body to disable the preview data
       });
       const response = await request.json();
 
