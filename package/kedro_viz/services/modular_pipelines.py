@@ -34,6 +34,8 @@ def expand_tree(
         >>> expanded_tree = expand_tree(tree)
         >>> assert list(sorted(expanded_tree.keys())) == ["__root__", "one", "one.two"]
     """
+    # import pdb
+    # pdb.set_trace()
     expanded_tree = {
         ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
             ROOT_MODULAR_PIPELINE_ID
