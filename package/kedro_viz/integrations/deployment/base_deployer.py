@@ -30,12 +30,13 @@ class BaseDeployer(abc.ABC):
     """
 
     def __init__(self):
+        self.preview = False
         self._path = None
         self._fs = None
 
     def _upload_api_responses(self):
         """Write API responses to the build."""
-        save_api_responses_to_fs(self._path, self._fs)
+        save_api_responses_to_fs(self._path, self._fs, self.preview)
 
     def _ingest_heap_analytics(self):
         """Ingest heap analytics to index file in the build."""

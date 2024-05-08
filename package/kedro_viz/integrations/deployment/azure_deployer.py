@@ -30,7 +30,7 @@ class AzureDeployer(BaseDeployer):
         _fs (fsspec.filesystem): Filesystem for Azure protocol.
     """
 
-    def __init__(self, endpoint, bucket_name):
+    def __init__(self, preview, endpoint, bucket_name):
         """Initialize AzureBlobStorage with endpoint and bucket name.
 
         Args:
@@ -38,6 +38,7 @@ class AzureDeployer(BaseDeployer):
             bucket_name (str): Name of the AzureBlobStorage account.
         """
         super().__init__()
+        self.preview = preview
         self._endpoint = endpoint
         self._bucket_name = bucket_name
         self._path = f"{_AZ_PROTOCOL}://$web"

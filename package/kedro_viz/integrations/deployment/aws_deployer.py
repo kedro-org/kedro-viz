@@ -22,13 +22,14 @@ class AWSDeployer(BaseDeployer):
         _fs (fsspec.filesystem): Filesystem for S3 protocol.
     """
 
-    def __init__(self, endpoint, bucket_name):
+    def __init__(self, preview, endpoint, bucket_name):
         """Initialize S3Deployer with endpoint and bucket name.
         Args:
             endpoint (str): AWS endpoint of the hosted site.
             bucket_name (str): Name of the S3 bucket.
         """
         super().__init__()
+        self.preview = preview
         self._endpoint = endpoint
         self._bucket_name = bucket_name
         self._path = f"{_S3_PROTOCOL}://{bucket_name}"
