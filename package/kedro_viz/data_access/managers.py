@@ -136,78 +136,7 @@ class DataAccessManager:
 
         return self.dataset_stats.get(data_node_name, None)
 
-    def resolve_inputs_outputs_for_modular_pipelines(
-        self,
-        pipeline: KedroPipeline,
-        modular_pipelines_repo_obj: ModularPipelinesRepository,
-    ):
-        """The purpose of this method is to resolve the inputs and outputs for a modular pipeline
-        Args:
-            pipeline: An instance of Kedro pipeline
-            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository
-                created using the pipeline's id
-        """
-        namespaces = sorted(set(node.namespace for node in pipeline.nodes if node.namespace))
-        print("Namespaces",namespaces)
-
-        def explode(nested_namespace: str) -> list[str]:
-            """The purpose of this method is to expand the nested namespace if any
-            Args:
-                nested_namespace: The nested namespace to be expanded
-            Example:
-            >>> nested_namespace = 'train_evaluation.random_forest'
-            >>> explode(nested_namespace)
-            ['train_evaluation', 'train_evaluation.random_forest']
-            """
-            if not nested_namespace or "." not in nested_namespace:
-                exploded_ns = [nested_namespace] if nested_namespace else []
-            else:
-                ns_parts = nested_namespace.split(".")
-                exploded_ns = [
-                    ".".join(ns_parts[: i + 1]) for i in range(len(ns_parts))
-                ]
-            return exploded_ns
-
-        modular_pipeline_ids = set()
-        for namespace in namespaces:
-            modular_pipeline_ids |= set(explode(namespace))
-
-        for modular_pipeline_id in modular_pipeline_ids:
-            # create the modular pipeline if not available
-            modular_pipelines_repo_obj.get_or_create_modular_pipeline(
-                modular_pipeline_id
-            )
-
-            # get the sub_pipeline and the rest of the pipeline
-            sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
-            rest_of_the_pipeline = pipeline - sub_pipeline
-
-            # get free inputs and free outputs of the sub_pipeline
-            free_inputs_to_sub_pipeline = sub_pipeline.inputs()
-            free_outputs_from_sub_pipeline = sub_pipeline.outputs()
-
-            # get all sub_pipeline outputs that are used by external nodes
-            other_outputs_from_sub_pipeline = (
-                rest_of_the_pipeline.inputs() & sub_pipeline.all_outputs()
-            )
-
-            # add the other_outputs_from_sub_pipeline to the free outputs
-            free_outputs_from_sub_pipeline |= other_outputs_from_sub_pipeline
-
-            # add inputs and outputs for the created modular pipeline
-            modular_pipelines_repo_obj.add_inputs(
-                modular_pipeline_id, free_inputs_to_sub_pipeline
-            )
-            modular_pipelines_repo_obj.add_outputs(
-                modular_pipeline_id, free_outputs_from_sub_pipeline
-            )
-            
-            internal_inputs = sub_pipeline.all_inputs() - free_inputs_to_sub_pipeline
-            internal_outputs = sub_pipeline.all_outputs() - free_outputs_from_sub_pipeline
-            
-            modular_pipelines_repo_obj.add_child_data(modular_pipeline_id, internal_inputs, internal_outputs)
-            
-            
+                        
 
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
@@ -223,16 +152,14 @@ class DataAccessManager:
                 and add to relevant repositories representing the graph.
         """
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
-        modular_pipelines_repo_obj = self.modular_pipelines[registered_pipeline_id]
-        self.resolve_inputs_outputs_for_modular_pipelines(
-            pipeline, modular_pipelines_repo_obj
-        )
+        modular_pipelines_tree = self.modular_pipelines[registered_pipeline_id]
+        modular_pipelines_tree.set_tree(pipeline)
 
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
-            modular_pipelines_repo_obj.extract_from_node(node)
-            node_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(node)
+            modular_pipelines_tree.extract_from_node(node)
+            node_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(node)
             task_node = self.add_node(registered_pipeline_id, node, node_modular_pipeline_id)
             
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
@@ -244,7 +171,7 @@ class DataAccessManager:
                 # Mark it as a transcoded dataset unless it's a free input
                 # because free inputs to the pipeline can't be transcoded.
                 is_free_input = input_ in free_inputs
-                input_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(input_)
+                input_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(input_)
                 input_node = self.add_node_input(
                     registered_pipeline_id, input_, task_node, is_free_input, input_modular_pipeline_id
                 )
@@ -259,7 +186,7 @@ class DataAccessManager:
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
-                output_modular_pipeline_id = modular_pipelines_repo_obj.get_modular_pipeline_from_node(output)
+                output_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(output)
                 output_node = self.add_node_output(
                     registered_pipeline_id, output, task_node, output_modular_pipeline_id
                 )

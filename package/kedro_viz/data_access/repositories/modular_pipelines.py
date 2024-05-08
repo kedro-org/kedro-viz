@@ -6,6 +6,7 @@ defines repository to centralise access to modular pipelines data."""
 from typing import Dict, Optional, Set, List
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
+from kedro.pipeline import Pipeline as KedroPipeline
 from kedro_viz.models.flowchart import (
     GraphNode,
     GraphNodeType,
@@ -65,7 +66,69 @@ class ModularPipelinesRepository:
                 ROOT_MODULAR_PIPELINE_ID
             )
         }
+        
+    def set_tree(self, pipeline: KedroPipeline):
+        """The purpose of this method is to resolve the inputs and outputs for a modular pipeline
+        Args:
+            pipeline: An instance of Kedro pipeline
+            modular_pipelines_repo_obj: An instance of ModularPipelinesRepository
+                created using the pipeline's id
+        """
+        namespaces = sorted(set(node.namespace for node in pipeline.nodes if node.namespace))
 
+
+        def explode(nested_namespace: str) -> list[str]:
+            """The purpose of this method is to expand the nested namespace if any
+            Args:
+                nested_namespace: The nested namespace to be expanded
+            Example:
+            >>> nested_namespace = 'train_evaluation.random_forest'
+            >>> explode(nested_namespace)
+            ['train_evaluation', 'train_evaluation.random_forest']
+            """
+            if not nested_namespace or "." not in nested_namespace:
+                exploded_ns = [nested_namespace] if nested_namespace else []
+            else:
+                ns_parts = nested_namespace.split(".")
+                exploded_ns = [
+                    ".".join(ns_parts[: i + 1]) for i in range(len(ns_parts))
+                ]
+            return exploded_ns
+
+        modular_pipeline_ids = set()
+        
+        for namespace in namespaces:
+            modular_pipeline_ids |= set(explode(namespace))
+
+        for modular_pipeline_id in sorted(modular_pipeline_ids):
+            self.get_or_create_modular_pipeline(modular_pipeline_id)
+
+            # get the sub_pipeline and the rest of the pipeline
+            sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
+            rest_of_the_pipeline = pipeline - sub_pipeline
+
+            # get free inputs and free outputs of the sub_pipeline
+            free_inputs_to_sub_pipeline = sub_pipeline.inputs()
+            free_outputs_from_sub_pipeline = sub_pipeline.outputs()
+
+            # get all sub_pipeline outputs that are used by external nodes
+            other_outputs_from_sub_pipeline = (rest_of_the_pipeline.inputs() & sub_pipeline.all_outputs())
+
+            # add the other_outputs_from_sub_pipeline to the free outputs
+            free_outputs_from_sub_pipeline |= other_outputs_from_sub_pipeline
+
+            # add inputs and outputs for the created modular pipeline
+            self.add_inputs(modular_pipeline_id, free_inputs_to_sub_pipeline)
+            self.add_outputs(modular_pipeline_id, free_outputs_from_sub_pipeline)
+            
+            internal_inputs = sub_pipeline.all_inputs() - free_inputs_to_sub_pipeline
+            internal_outputs = sub_pipeline.all_outputs() - free_outputs_from_sub_pipeline
+            
+            self.add_child_datasets(modular_pipeline_id, internal_inputs, internal_outputs)
+            
+            task_nodes = sub_pipeline.nodes
+            # self.add_child_tasks(modular_pipeline_id, task_nodes)
+        
     def get_or_create_modular_pipeline(
         self, modular_pipeline_id: str
     ) -> ModularPipelineNode:
@@ -118,12 +181,25 @@ class ModularPipelinesRepository:
             GraphNode._hash(output) for output in outputs
         }
         
-    def add_child_data(self, modular_pipeline_id: str, inputs: Set[str], outputs: Set[str]):
+    def add_child_datasets(self, modular_pipeline_id: str, inputs: Set[str], outputs: Set[str]):
+        print(modular_pipeline_id)
+        parent_modular_pipeline_id, _ = modular_pipeline_id.partition('.')
+        if parent_modular_pipeline_id:
+            parent_modular_pipeline = self.get_or_create_modular_pipeline(parent_modular_pipeline_id)
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
         for input in inputs:
-            modular_pipeline.children.add(ModularPipelineChild(id= GraphNode._hash(input), type=GraphNodeType.DATA))
+            input_id = GraphNode._hash(input)
+            print("input_id", input_id)
+            if parent_modular_pipeline_id and input_id in parent_modular_pipeline.children:
+                print("parent_modular_pipeline_id", parent_modular_pipeline_id)
+                print("parent_modular_pipeline.children", parent_modular_pipeline.children)
+                parent_modular_pipeline.inputs.remove(input_id)
+            modular_pipeline.children.add(ModularPipelineChild(id= input_id , type=GraphNodeType.DATA))
         for output in outputs:
-            modular_pipeline.children.add(ModularPipelineChild(id= GraphNode._hash(output), type=GraphNodeType.DATA))
+            output_id = GraphNode._hash(output)
+            if parent_modular_pipeline_id and output_id in parent_modular_pipeline.children:
+                parent_modular_pipeline.inputs.remove(output_id)
+            modular_pipeline.children.add(ModularPipelineChild(id= output_id, type=GraphNodeType.DATA))
             
         
 
@@ -176,8 +252,6 @@ class ModularPipelinesRepository:
         if not modular_pipeline_id:
             return None
 
-        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-
         # Add the node's registered pipelines to the modular pipeline's registered pipelines.
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.
@@ -218,16 +292,41 @@ class ModularPipelinesRepository:
         """
         node_id = GraphNode._hash(str(node))
         
-        mod_id = ''
-
+  
+        mod_id = None
         for modular_pipeline_id, modular_pipeline_node in self.tree.items():
             if any(child.id == node_id for child in modular_pipeline_node.children):
                 mod_id= modular_pipeline_id
-                
-        print("NODE DETAILS: ", node, [mod_id])
+        if mod_id:
+            return [mod_id]
+        else:
+            return []
 
-        return [mod_id]
     
+    # def resolve_children(self):
+    # # Iterate over each pipeline in the tree
+    #     print(self.tree)
+    #     for pipeline_name, pipeline_node in self.tree.items():
+    #         # Check if the pipeline has a parent
+    #         if '.' in pipeline_name:
+    #             # Extract parent pipeline name and child pipeline name
+    #             parent_name, child_name = pipeline_name.split('.')
+
+    #             # Get the children of parent pipeline and child pipeline
+    #             parent_children = self.tree[parent_name].children
+    #             child_children = pipeline_node.children
+
+    #             # Get the set of child IDs from the child pipeline
+    #             child_ids = {child.id for child in child_children}
+
+    #             # Remove duplicate children from the parent pipeline
+    #             parent_children = {child for child in parent_children if child.id not in child_ids}
+
+    #             # Update the children attribute of the parent pipeline
+    #             self.tree[parent_name].children = parent_children
+                
+    #     print(self.tree)
+                
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""
         return self.tree
