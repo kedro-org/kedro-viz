@@ -43,7 +43,7 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
     type: str
 
     # If a node is a ModularPipeline node, this value will be None, hence Optional.
-    modular_pipelines: Optional[List[str]] = None
+    modular_pipeline: Optional[str] = None
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):

@@ -121,13 +121,8 @@ class ModularPipelinesRepository:
             self.add_inputs(modular_pipeline_id, free_inputs_to_sub_pipeline)
             self.add_outputs(modular_pipeline_id, free_outputs_from_sub_pipeline)
             
-            internal_inputs = sub_pipeline.all_inputs() - free_inputs_to_sub_pipeline
-            internal_outputs = sub_pipeline.all_outputs() - free_outputs_from_sub_pipeline
-            
-            self.add_child_datasets(modular_pipeline_id, internal_inputs, internal_outputs)
-            
             task_nodes = sub_pipeline.nodes
-            # self.add_child_tasks(modular_pipeline_id, task_nodes)
+            self.add_children(modular_pipeline_id, task_nodes)
         
     def get_or_create_modular_pipeline(
         self, modular_pipeline_id: str
@@ -181,29 +176,8 @@ class ModularPipelinesRepository:
             GraphNode._hash(output) for output in outputs
         }
         
-    def add_child_datasets(self, modular_pipeline_id: str, inputs: Set[str], outputs: Set[str]):
-        print(modular_pipeline_id)
-        parent_modular_pipeline_id, _ = modular_pipeline_id.partition('.')
-        if parent_modular_pipeline_id:
-            parent_modular_pipeline = self.get_or_create_modular_pipeline(parent_modular_pipeline_id)
-        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-        for input in inputs:
-            input_id = GraphNode._hash(input)
-            print("input_id", input_id)
-            if parent_modular_pipeline_id and input_id in parent_modular_pipeline.children:
-                print("parent_modular_pipeline_id", parent_modular_pipeline_id)
-                print("parent_modular_pipeline.children", parent_modular_pipeline.children)
-                parent_modular_pipeline.inputs.remove(input_id)
-            modular_pipeline.children.add(ModularPipelineChild(id= input_id , type=GraphNodeType.DATA))
-        for output in outputs:
-            output_id = GraphNode._hash(output)
-            if parent_modular_pipeline_id and output_id in parent_modular_pipeline.children:
-                parent_modular_pipeline.inputs.remove(output_id)
-            modular_pipeline.children.add(ModularPipelineChild(id= output_id, type=GraphNodeType.DATA))
-            
         
-
-    def add_child_task(self, modular_pipeline_id: str, child: ModularPipelineChild):
+    def add_children(self, modular_pipeline_id: str, task_nodes: List[GraphNode]):
         """Add a child to a modular pipeline.
         Args:
             modular_pipeline_id: ID of the modular pipeline to add the child to.
@@ -220,50 +194,20 @@ class ModularPipelinesRepository:
             ... )
             >>> assert data_science_pipeline.children == {modular_pipeline_child}
         """
-        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-        modular_pipeline.children.add(child)
-
-
-    def extract_from_node(self, node) -> Optional[str]:
-        """Extract the namespace from a graph node and add it as a modular pipeline node
-        to the modular pipeline repository.
-
-        Args:
-            node: The GraphNode from which to extract modular pipeline.
-        Returns:
-            ID of the modular pipeline node added to the modular pipeline repository if found.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> model_output_node = GraphNode.create_data_node(
-            ...     "data_science.model_output", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.extract_from_node(model_output_node)
-            'data_science'
-            >>> assert modular_pipelines.has_modular_pipeline("data_science")
-        """
-
-        # There is no need to extract modular pipeline from parameters
-        # because all valid modular pipelines are encoded in either a TaskNode or DataNode.
         
-        if isinstance(node, ParametersNode):
-            return None
-
-        modular_pipeline_id = node.namespace
-        if not modular_pipeline_id:
-            return None
-
-        # Add the node's registered pipelines to the modular pipeline's registered pipelines.
-        # Basically this means if the node belongs to the "__default__" pipeline, for example,
-        # so does the modular pipeline.
-        # modular_pipeline.pipelines.update(node.pipelines)
-
-        # Since we extract the modular pipeline from the node's namespace,
-        # the node is by definition a child of the modular pipeline.
-        self.add_child_task(
-            modular_pipeline_id,
-            ModularPipelineChild(id=GraphNode._hash(str(node)), type=GraphNodeType.TASK),
-        )
-        return modular_pipeline_id
+        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
+        for task_node in task_nodes:
+            if task_node.namespace == modular_pipeline_id:
+                modular_pipeline.children.add(ModularPipelineChild(id=GraphNode._hash(str(task_node)), type=GraphNodeType.TASK))
+                for input in task_node.inputs:
+                    input_id = GraphNode._hash(input)
+                    if input_id not in modular_pipeline.inputs:
+                        modular_pipeline.children.add(ModularPipelineChild(id=input_id, type=GraphNodeType.DATA))
+                for output in task_node.outputs:
+                    output_id = GraphNode._hash(output)
+                    if output_id not in modular_pipeline.outputs:
+                        modular_pipeline.children.add(ModularPipelineChild(id=output_id, type=GraphNodeType.DATA))
+                    
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         """Return whether this modular pipeline repository has a given modular pipeline ID.
@@ -280,8 +224,8 @@ class ModularPipelinesRepository:
         """
         return modular_pipeline_id in self.tree
     
-    def get_modular_pipeline_from_node(self, node) -> Optional[str]:
-        """Get the name of the modular pipeline to which the given node_id belongs.
+    def get_modular_pipeline_for_node(self, node) -> Optional[str]:
+        """Get the name of the modular pipeline to which the given node belongs.
 
         Args:
             node: The node to check for its parent modular pipeline.
@@ -290,42 +234,14 @@ class ModularPipelinesRepository:
             The name of the modular pipeline if the node belongs to any modular pipeline,
             otherwise returns None.
         """
+        print(self.tree.items())
         node_id = GraphNode._hash(str(node))
-        
-  
-        mod_id = None
-        for modular_pipeline_id, modular_pipeline_node in self.tree.items():
-            if any(child.id == node_id for child in modular_pipeline_node.children):
-                mod_id= modular_pipeline_id
-        if mod_id:
-            return [mod_id]
-        else:
-            return []
+        modular_pipeline_id = None
+        for id, node in self.tree.items():
+            if any(child.id == node_id for child in node.children):
+                modular_pipeline_id = id
+        return modular_pipeline_id
 
-    
-    # def resolve_children(self):
-    # # Iterate over each pipeline in the tree
-    #     print(self.tree)
-    #     for pipeline_name, pipeline_node in self.tree.items():
-    #         # Check if the pipeline has a parent
-    #         if '.' in pipeline_name:
-    #             # Extract parent pipeline name and child pipeline name
-    #             parent_name, child_name = pipeline_name.split('.')
-
-    #             # Get the children of parent pipeline and child pipeline
-    #             parent_children = self.tree[parent_name].children
-    #             child_children = pipeline_node.children
-
-    #             # Get the set of child IDs from the child pipeline
-    #             child_ids = {child.id for child in child_children}
-
-    #             # Remove duplicate children from the parent pipeline
-    #             parent_children = {child for child in parent_children if child.id not in child_ids}
-
-    #             # Update the children attribute of the parent pipeline
-    #             self.tree[parent_name].children = parent_children
-                
-    #     print(self.tree)
                 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""

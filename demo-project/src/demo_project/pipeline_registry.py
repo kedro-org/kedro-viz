@@ -47,19 +47,19 @@ def create_pipeline(**kwargs) -> Pipeline:
         outputs={"dataset_3","dataset_4"}
     )
 
-    # other = pipeline([
-    #     node(lambda x: x,
-    #              inputs="dataset_3",
-    #              outputs="dataset_5",
-    #              name="step5"
-    #         )
-    # ],
-    # namespace="other_pipeline",
-    # inputs={"dataset_3"},
-    # outputs={"dataset_5"}
-    # )
+    other = pipeline([
+        node(lambda x: x,
+                 inputs="dataset_3",
+                 outputs="dataset_5",
+                 name="step5"
+            )
+    ],
+    namespace="other_pipeline",
+    inputs={"dataset_3"},
+    outputs={"dataset_5"}
+    )
     
-    return new_pipeline 
+    return new_pipeline + other
 
 
 def register_pipelines() -> Dict[str, Pipeline]:

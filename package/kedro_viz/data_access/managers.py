@@ -136,8 +136,6 @@ class DataAccessManager:
 
         return self.dataset_stats.get(data_node_name, None)
 
-                        
-
     def add_pipeline(self, registered_pipeline_id: str, pipeline: KedroPipeline):
         """Iterate through all the nodes and datasets in a "registered" pipeline
         and add them to relevant repositories. Take care of extracting other relevant information
@@ -158,12 +156,10 @@ class DataAccessManager:
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
-            modular_pipelines_tree.extract_from_node(node)
-            node_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(node)
-            task_node = self.add_node(registered_pipeline_id, node, node_modular_pipeline_id)
+
+            task_node = self.add_node(registered_pipeline_id, node, modular_pipelines_tree)
             
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
-           
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -171,9 +167,8 @@ class DataAccessManager:
                 # Mark it as a transcoded dataset unless it's a free input
                 # because free inputs to the pipeline can't be transcoded.
                 is_free_input = input_ in free_inputs
-                input_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(input_)
                 input_node = self.add_node_input(
-                    registered_pipeline_id, input_, task_node, is_free_input, input_modular_pipeline_id
+                    registered_pipeline_id, input_, task_node, modular_pipelines_tree, is_free_input
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, input_node.id
@@ -186,9 +181,8 @@ class DataAccessManager:
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
-                output_modular_pipeline_id = modular_pipelines_tree.get_modular_pipeline_from_node(output)
                 output_node = self.add_node_output(
-                    registered_pipeline_id, output, task_node, output_modular_pipeline_id
+                    registered_pipeline_id, output, task_node, modular_pipelines_tree
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, output_node.id
@@ -199,7 +193,7 @@ class DataAccessManager:
 
                 # modular_pipelines_repo_obj.extract_from_node(output_node)
 
-    def add_node(self, registered_pipeline_id: str, node: KedroNode, node_mod_pipeline) -> TaskNode:
+    def add_node(self, registered_pipeline_id: str, node: KedroNode, modular_pipeline_tree: ModularPipelinesRepository) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
         for a given registered pipeline ID.
 
@@ -209,7 +203,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
-        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node, node_mod_pipeline))
+        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node, modular_pipeline_tree.get_modular_pipeline_for_node(node)))
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
         return task_node
@@ -219,8 +213,8 @@ class DataAccessManager:
         registered_pipeline_id: str,
         input_dataset: str,
         task_node: TaskNode,
+        modular_pipeline_tree: ModularPipelinesRepository,
         is_free_input: bool = False,
-        node_mod_pipeline = None
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -235,7 +229,7 @@ class DataAccessManager:
         """
 
         graph_node = self.add_dataset(
-            registered_pipeline_id, input_dataset, is_free_input=is_free_input, node_mod_pipeline=node_mod_pipeline
+            registered_pipeline_id, input_dataset, modular_pipeline_tree, is_free_input=is_free_input,
         )
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
@@ -250,7 +244,7 @@ class DataAccessManager:
         return graph_node
 
     def add_node_output(
-        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode, node_mod_pipeline = None
+        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode, modular_pipeline_tree: ModularPipelinesRepository,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's output as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -262,7 +256,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the node's output that was added to the graph.
         """
-        graph_node = self.add_dataset(registered_pipeline_id, output_dataset, node_mod_pipeline=node_mod_pipeline)
+        graph_node = self.add_dataset(registered_pipeline_id, output_dataset, modular_pipeline_tree)
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=task_node.id, target=graph_node.id)
@@ -274,8 +268,8 @@ class DataAccessManager:
         self,
         registered_pipeline_id: str,
         dataset_name: str,
+        modular_pipeline_tree: ModularPipelinesRepository,
         is_free_input: bool = False,
-        node_mod_pipeline = None
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro dataset as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -304,8 +298,9 @@ class DataAccessManager:
                 tags=set(),
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
-                is_free_input=is_free_input,
-                node_mod_pipeline=node_mod_pipeline
+                modular_pipeline_id=modular_pipeline_tree.get_modular_pipeline_for_node(dataset_name),
+                is_free_input=is_free_input
+                
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)
@@ -493,18 +488,5 @@ class DataAccessManager:
                     GraphEdge(source=bad_input, target=modular_pipeline_id)
                 )
                 node_dependencies[bad_input].remove(modular_pipeline_id)
-
-        for node_id, node in self.nodes.as_dict().items():
-            if (
-                node.type == GraphNodeType.MODULAR_PIPELINE
-                or not node.belongs_to_pipeline(registered_pipeline_id)
-            ):
-                continue
-            if not node.modular_pipelines or node_id in root_parameters:
-                modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
-                    ModularPipelineChild(
-                        id=node_id, type=self.nodes.get_node_by_id(node_id).type
-                    )
-                )
 
         return modular_pipelines_tree
