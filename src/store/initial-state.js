@@ -18,7 +18,7 @@ import {
  */
 export const createInitialState = () => ({
   chartSize: {},
-  flags: Flags.defaults(),
+  flags: { ...Flags.defaults(), expandAllPipelines: false },
   textLabels: true,
   theme: 'dark',
   isPrettyName: settings.isPrettyName.default,
