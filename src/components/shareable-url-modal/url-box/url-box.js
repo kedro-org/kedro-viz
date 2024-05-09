@@ -1,0 +1,38 @@
+import Tooltip from '../../ui/tooltip';
+import Button from '../../ui/button';
+
+import './url-box.scss';
+
+const UrlBox = ({ url, onClick, href, showCopiedText }) => (
+  <div className="url-box__wrapper">
+    <a
+      className="url-box__result-url"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {url}
+    </a>
+    {window.navigator.clipboard && (
+      <div className="url-box___button">
+        <Button
+          mode="secondary"
+          onClick={onClick}
+          size="small"
+          dataHeapEvent={`clicked.run_command`}
+        >
+          Copy link
+        </Button>
+        <Tooltip
+          text="Copied!"
+          visible={showCopiedText}
+          noDelay
+          centerArrow
+          arrowSize="small"
+        />
+      </div>
+    )}
+  </div>
+);
+
+export default UrlBox;

@@ -211,6 +211,37 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
+  const renderPublishedContent = () => {
+    const storageURL = localStorageValue['aws']['endpoint'];
+    return Object.keys(localStorageValue).length > 0 ? (
+      <>
+        <div className="shareable-url-modal__published-url">
+          <div className="shareable-url-modal__content-title">
+            Publish and Share Kedro-Viz
+          </div>
+          <UrlBox
+            url={storageURL}
+            onClick={() => onCopyClick(storageURL)}
+            href={() => handleResponseUrl()}
+            showCopiedText={showCopied}
+          />
+        </div>
+        <div className="shareable-url-modal__republished-action">
+          <text className="shareable-url-modal__republished-action-text">
+            Republish Kedro-Viz to push new updates
+          </text>
+          <Button
+            mode="secondary"
+            onClick={() => handleModalClose()}
+            size="small"
+          >
+            Republish
+          </Button>
+        </div>
+      </>
+    ) : null;
+  };
+
   const renderSuccessContent = () => {
     return responseUrl ? (
       <>

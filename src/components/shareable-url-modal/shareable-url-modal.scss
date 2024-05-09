@@ -210,7 +210,7 @@
   }
 
   &__url-wrapper {
-    background: rgb(255 255 255 / 4%);
+    background-color: #{variables.$slate-700};
     display: flex;
     height: 50px;
     justify-content: space-between;
@@ -272,6 +272,33 @@
   .dropdown__label span,
   .menu-option__content {
     font-size: 14px;
+  }
+}
+
+.shareable-url-modal__published-url {
+  width: 100%;
+  padding: 48px;
+  background-color: #{variables.$slate-300};
+}
+
+.shareable-url-modal__republished-action {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 48px 48px 56px;
+  background: var(--color-modal-bg-1);
+  border-top: 1px solid var(--color-footer-border);
+
+  .button__btn--secondary {
+    // double check the hex colour with Step
+    background-color: #{variables.$black-600};
+  }
+
+  .shareable-url-modal__republished-action-text {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
   }
 }
 
