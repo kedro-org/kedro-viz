@@ -12,15 +12,15 @@ class DeployerFactory:
     """A class to handle creation of deployer class instances."""
 
     @staticmethod
-    def create_deployer(platform, preview, endpoint=None, bucket_name=None):
+    def create_deployer(platform, endpoint=None, bucket_name=None):
         """Instantiate Kedro-viz deployer classes"""
         platform_name = platform.lower()
         if platform_name == "aws":
-            return AWSDeployer(preview, endpoint, bucket_name)
+            return AWSDeployer(endpoint, bucket_name)
         if platform_name == "azure":
-            return AzureDeployer(preview, endpoint, bucket_name)
+            return AzureDeployer(endpoint, bucket_name)
         if platform_name == "gcp":
-            return GCPDeployer(preview, endpoint, bucket_name)
+            return GCPDeployer(endpoint, bucket_name)
         if platform_name == "local":
             return LocalDeployer()
         raise ValueError(

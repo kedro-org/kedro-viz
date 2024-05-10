@@ -61,9 +61,9 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
     try:
         deployer = DeployerFactory.create_deployer(
-            input_values.platform, input_values.preview,input_values.endpoint, input_values.bucket_name
+            input_values.platform, input_values.endpoint, input_values.bucket_name
         )
-        deployer.deploy()
+        deployer.deploy(input_values.is_preview_enabled)
         response = {
             "message": "Website deployed on "
             f"{input_values.platform and input_values.platform.upper()}",

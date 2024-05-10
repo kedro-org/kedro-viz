@@ -8,7 +8,7 @@ import logging
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 
@@ -735,6 +735,8 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     data_node: DataNode = Field(..., exclude=True)
 
+    _is_preview_enabled: ClassVar[bool] = False
+
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
     )
@@ -771,21 +773,14 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @model_validator(mode="before")
     @classmethod
-    def check_is_preview_enabled_for_all_nodes_exists(cls, values):
-        assert "is_preview_enabled_for_all_nodes" in values
-        cls.set_is_preview_enabled_for_all_nodes(values["is_preview_enabled_for_all_nodes"])
-        return values
-
-    @classmethod
-    def set_is_preview_enabled_for_all_nodes(cls, is_preview_enabled_for_all_nodes):
-        cls.is_preview_enabled_for_all_nodes = is_preview_enabled_for_all_nodes    
-
-    @model_validator(mode="before")
-    @classmethod
     def check_data_node_exists(cls, values):
         assert "data_node" in values
         cls.set_data_node_and_dataset(values["data_node"])
         return values
+
+    @classmethod
+    def set_preview_enabled(cls, value: bool):
+        cls._is_preview_enabled = value
 
     @classmethod
     def set_data_node_and_dataset(cls, data_node):
@@ -817,7 +812,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
-        if not cls.is_preview_enabled_for_all_nodes:
+        if not cls._is_preview_enabled:
             return None
 
         if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
@@ -843,9 +838,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview_type")
     @classmethod
     def set_preview_type(cls, _):
-        if not cls.is_preview_enabled_for_all_nodes:
+        if not cls._is_preview_enabled:
             return None
-                
+
         if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
             return None
 
