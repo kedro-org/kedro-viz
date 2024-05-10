@@ -41,48 +41,49 @@ def expand_tree(
     }
     # sort modular_pipelines_tree.items() so that e.g. sub_pipeline is guaranteed
     # to be before sub_pipeline.sub_sub_pipeline (see issue #1036 / PR )
-    sorted_modular_pipelines_tree = sorted(
-        modular_pipelines_tree.items(), key=lambda x: x[0]
-    )
-    for modular_pipeline_id, modular_pipeline_node in sorted_modular_pipelines_tree:
-        if modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
-            continue
+    # sorted_modular_pipelines_tree = sorted(
+    #     modular_pipelines_tree.items(), key=lambda x: x[0]
+    # )
+    # for modular_pipeline_id, modular_pipeline_node in sorted_modular_pipelines_tree:
+    #     if modular_pipeline_id == ROOT_MODULAR_PIPELINE_ID:
+    #         continue
 
-        if modular_pipeline_id not in expanded_tree:
-            expanded_tree[modular_pipeline_id] = modular_pipeline_node
+    #     if modular_pipeline_id not in expanded_tree:
+    #         expanded_tree[modular_pipeline_id] = modular_pipeline_node
 
-        # Split the materialized path ID of a modular pipeline into the list of parents.
-        # Then iterate through this list to construct the tree of child references,
-        # with the left-most child being a child of the __root__ node.
-        # For example, if the modular pipeline ID is "one.two.three",
-        # In each iteration, the tree node ID will be:
-        # - one
-        # - one.two
-        # - one.two.three
-        # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
-        chunks = modular_pipeline_id.split(".")
-        num_chunks = len(chunks)
-        expanded_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
-            ModularPipelineChild(
-                id=chunks[0],
-                type=GraphNodeType.MODULAR_PIPELINE,
-            )
-        )
-        if num_chunks == 1:
-            continue
+    #     # Split the materialized path ID of a modular pipeline into the list of parents.
+    #     # Then iterate through this list to construct the tree of child references,
+    #     # with the left-most child being a child of the __root__ node.
+    #     # For example, if the modular pipeline ID is "one.two.three",
+    #     # In each iteration, the tree node ID will be:
+    #     # - one
+    #     # - one.two
+    #     # - one.two.three
+    #     # `one` is a child of the `__root__` node, `one.two` is a child of `one`, and so on.
+    #     chunks = modular_pipeline_id.split(".")
+    #     num_chunks = len(chunks)
+    #     expanded_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
+    #         ModularPipelineChild(
+    #             id=chunks[0],
+    #             type=GraphNodeType.MODULAR_PIPELINE,
+    #         )
+    #     )
+    #     if num_chunks == 1:
+    #         continue
 
-        for i in range(1, num_chunks):
-            parent_id = ".".join(chunks[:i])
-            if parent_id not in expanded_tree:
-                expanded_tree[parent_id] = GraphNode.create_modular_pipeline_node(
-                    parent_id,
-                )
+    #     for i in range(1, num_chunks):
+    #         parent_id = ".".join(chunks[:i])
+    #         if parent_id not in expanded_tree:
+    #             expanded_tree[parent_id] = GraphNode.create_modular_pipeline_node(
+    #                 parent_id,
+    #             )
 
-            expanded_tree[parent_id].pipelines.update(modular_pipeline_node.pipelines)
-            expanded_tree[parent_id].children.add(
-                ModularPipelineChild(
-                    id=f"{parent_id}.{chunks[i]}",
-                    type=GraphNodeType.MODULAR_PIPELINE,
-                )
-            )
-    return expanded_tree
+    #         expanded_tree[parent_id].pipelines.update(modular_pipeline_node.pipelines)
+    #         expanded_tree[parent_id].children.add(
+    #             ModularPipelineChild(
+    #                 id=f"{parent_id}.{chunks[i]}",
+    #                 type=GraphNodeType.MODULAR_PIPELINE,
+    #             )
+    #         )
+
+    return modular_pipelines_tree

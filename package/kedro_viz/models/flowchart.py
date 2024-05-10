@@ -217,7 +217,7 @@ class GraphNode(BaseModel, abc.ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
-            modular_pipelines=modular_pipeline_id,
+            modular_pipeline=modular_pipeline_id,
         )
 
     @classmethod
@@ -227,6 +227,7 @@ class GraphNode(BaseModel, abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         parameters: AbstractDataset,
+        modular_pipeline_id: Optional[str],
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
@@ -245,6 +246,7 @@ class GraphNode(BaseModel, abc.ABC):
             tags=tags,
             layer=layer,
             kedro_obj=parameters,
+            modular_pipeline=modular_pipeline_id,
         )
 
     @classmethod
@@ -292,7 +294,6 @@ class TaskNode(GraphNode):
         AssertionError: If kedro_obj is not supplied during instantiation
     """
 
-   
     parameters: Dict = Field(
         {}, description="A dictionary of parameter values for the task node"
     )
@@ -564,8 +565,8 @@ class TranscodedDataNode(GraphNode):
         None, description="The original name for the generated run command"
     )
 
-    modular_pipelines: List[str] = Field(
-        default=[],
+    modular_pipeline: Optional[str] = Field(
+        default=None,
         validate_default=True,
         description="The modular pipelines this node belongs to",
     )
@@ -814,8 +815,8 @@ class ParametersNode(GraphNode):
         None, description="The layer that this parameters node belongs to"
     )
 
-    modular_pipelines: List[str] = Field(
-        [], description="The modular pipelines this node belongs to"
+    modular_pipeline: Optional[str] = Field(
+        None, description="The modular pipelines this node belongs to"
     )
 
     # The type for Parameters Node
@@ -832,13 +833,9 @@ class ParametersNode(GraphNode):
         super().__init__(*args, **kwargs)
 
         if self.is_all_parameters():
-            self.namespace = None
-            self.modular_pipelines = []
+            self.modular_pipeline = None
         else:
-            self.namespace = self._get_namespace(self.parameter_name)
-            self.modular_pipelines = self._expand_namespaces(
-                self._get_namespace(self.parameter_name)
-            )
+            self.modular_pipeline = None
 
     def is_all_parameters(self) -> bool:
         """Check whether the graph node represent all parameters in the pipeline"""

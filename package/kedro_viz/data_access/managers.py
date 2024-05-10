@@ -290,6 +290,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=obj,
+                modular_pipeline_id=modular_pipeline_tree.get_modular_pipeline_for_node(dataset_name),
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -488,5 +489,18 @@ class DataAccessManager:
                     GraphEdge(source=bad_input, target=modular_pipeline_id)
                 )
                 node_dependencies[bad_input].remove(modular_pipeline_id)
+    
+        for node_id, node in self.nodes.as_dict().items():
+            if (
+                node.type == GraphNodeType.MODULAR_PIPELINE
+                or not node.belongs_to_pipeline(registered_pipeline_id)
+            ):
+                continue
+            if node.modular_pipeline is None or node_id in root_parameters:
+                modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
+                    ModularPipelineChild(
+                        id=node_id, type=self.nodes.get_node_by_id(node_id).type
+                    )
+                )
 
         return modular_pipelines_tree

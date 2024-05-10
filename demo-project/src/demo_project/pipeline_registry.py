@@ -8,58 +8,37 @@ from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
 
+def _get_generic_pipe() -> Pipeline:
+    return Pipeline([
+        node(
+            func=lambda x: x,
+            inputs="input_df",
+            outputs="output_df",
+        ),
+    ])
+
+
 def create_pipeline(**kwargs) -> Pipeline:
-
-    sub_pipeline = pipeline(
-        [
-            node(lambda x: x,
-                 inputs="dataset_1",
-                 outputs="dataset_2",
-                 name="step2"),
-            node(lambda x: x,
-                 inputs="dataset_2",
-                 outputs="dataset_3",
-                 name="step3"),
-        ],
-        inputs={"dataset_1"},
-        outputs={"dataset_3"},
-        namespace="sub_pipeline"
+    pipe = Pipeline([
+        pipeline(
+            pipe=_get_generic_pipe(),
+            inputs={"input_df": "input_to_processing"},
+            outputs={"output_df": "post_first_pipe"},
+            namespace="first_processing_step",
+        ),
+        pipeline(
+            pipe=_get_generic_pipe(),
+            inputs={"input_df": "post_first_pipe"},
+            outputs={"output_df": "output_from_processing"},
+            namespace="second_processing_step",
+        ),
+    ])
+    return pipeline(
+        pipe=pipe,
+        inputs="input_to_processing",
+        outputs="output_from_processing",
+        namespace="processing",
     )
-    new_pipeline = pipeline(
-        [
-            node(lambda x: x,
-                 inputs="dataset_in",
-                 outputs="dataset_1",
-                 name="step1"),
-            sub_pipeline,
-            node(lambda x: x,
-                 inputs="dataset_1",
-                 outputs="dataset_1_2",
-                 name="step1_2"),
-            node(lambda x: x,
-                 inputs="dataset_3",
-                 outputs="dataset_4",
-                 name="step4"
-            )
-        ],
-            namespace="main_pipeline",
-        inputs=None,
-        outputs={"dataset_3","dataset_4"}
-    )
-
-    other = pipeline([
-        node(lambda x: x,
-                 inputs="dataset_3",
-                 outputs="dataset_5",
-                 name="step5"
-            )
-    ],
-    namespace="other_pipeline",
-    inputs={"dataset_3"},
-    outputs={"dataset_5"}
-    )
-    
-    return new_pipeline + other
 
 
 def register_pipelines() -> Dict[str, Pipeline]:

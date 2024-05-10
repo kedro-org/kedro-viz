@@ -194,7 +194,6 @@ class ModularPipelinesRepository:
             ... )
             >>> assert data_science_pipeline.children == {modular_pipeline_child}
         """
-        
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
         for task_node in task_nodes:
             if task_node.namespace == modular_pipeline_id:
@@ -207,7 +206,15 @@ class ModularPipelinesRepository:
                     output_id = GraphNode._hash(output)
                     if output_id not in modular_pipeline.outputs:
                         modular_pipeline.children.add(ModularPipelineChild(id=output_id, type=GraphNodeType.DATA))
+                parent_modular_pipeline_id = modular_pipeline_id.split('.')[0] if '.' in modular_pipeline_id else None
+                if parent_modular_pipeline_id:
+                    parent_modular_pipeline = self.get_or_create_modular_pipeline(parent_modular_pipeline_id)
+                    parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
+                    parent_modular_pipeline.children.add(ModularPipelineChild(id=modular_pipeline_id, type=GraphNodeType.MODULAR_PIPELINE))
                     
+                    
+
+
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
         """Return whether this modular pipeline repository has a given modular pipeline ID.
@@ -234,13 +241,13 @@ class ModularPipelinesRepository:
             The name of the modular pipeline if the node belongs to any modular pipeline,
             otherwise returns None.
         """
-        print(self.tree.items())
+
         node_id = GraphNode._hash(str(node))
-        modular_pipeline_id = None
-        for id, node in self.tree.items():
-            if any(child.id == node_id for child in node.children):
-                modular_pipeline_id = id
-        return modular_pipeline_id
+        for modular_pipeline_id, modular_pipeline_node in self.tree.items():
+            for child in modular_pipeline_node.children:
+                if node_id==child.id:
+                    return modular_pipeline_id
+        return None
 
                 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
