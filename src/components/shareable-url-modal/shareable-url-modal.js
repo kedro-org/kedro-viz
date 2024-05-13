@@ -145,6 +145,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           }
         }
         saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+        toShowPublishedContent();
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
@@ -182,6 +183,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
+
+    // TO FIX: bugging when close modal when showing published content
+    const delayShowingContent = setTimeout(() => {
+      toShowPublishedContent();
+    }, 500);
+
+    return () => clearTimeout(delayShowingContent);
   };
 
   const getDeploymentStateByType = (type) => {
@@ -235,7 +243,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         : '';
 
     return showPublishedUrl ? (
-      <div className="shareable-url-modal__published-wrapper">
+      <>
         <div className="shareable-url-modal__published-url">
           <div className="shareable-url-modal__content-title">
             Publish and Share Kedro-Viz
@@ -259,7 +267,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             Republish
           </Button>
         </div>
-      </div>
+      </>
     ) : null;
   };
 
@@ -482,14 +490,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           </div>
         </div>
         <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
-          <Button
-            mode="secondary"
-            onClick={() => {
-              handleModalClose();
-              toShowPublishedContent();
-            }}
-            size="small"
-          >
+          <Button mode="secondary" onClick={handleModalClose} size="small">
             Cancel
           </Button>
           <Button
