@@ -25,7 +25,7 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.services import layers_services, modular_pipelines_services
+from kedro_viz.services import layers_services
 
 from .repositories import (
     CatalogRepository,
@@ -413,10 +413,9 @@ class DataAccessManager:
 
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
-        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
-        modular_pipelines_tree = modular_pipelines_services.expand_tree(
-            modular_pipelines.as_dict()
-        )
+        modular_pipelines= self.modular_pipelines[registered_pipeline_id]
+        modular_pipelines_tree = modular_pipelines.as_dict()
+        
         root_parameters = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,

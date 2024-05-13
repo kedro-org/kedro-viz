@@ -195,6 +195,19 @@ class ModularPipelinesRepository:
             >>> assert data_science_pipeline.children == {modular_pipeline_child}
         """
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
+        parent_modular_pipeline_id = modular_pipeline_id.split('.')[0] if '.' in modular_pipeline_id else None
+        parent_modular_pipeline = None 
+        if parent_modular_pipeline_id:
+            parent_modular_pipeline = self.get_or_create_modular_pipeline(parent_modular_pipeline_id)
+            parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
+            parent_modular_pipeline.children.add(ModularPipelineChild(id=modular_pipeline_id, type=GraphNodeType.MODULAR_PIPELINE))
+        else:
+            self.tree[ROOT_MODULAR_PIPELINE_ID].children.add(
+            ModularPipelineChild(
+                id=modular_pipeline_id,
+                type=GraphNodeType.MODULAR_PIPELINE,
+            )
+        )
         for task_node in task_nodes:
             if task_node.namespace == modular_pipeline_id:
                 modular_pipeline.children.add(ModularPipelineChild(id=GraphNode._hash(str(task_node)), type=GraphNodeType.TASK))
@@ -202,15 +215,19 @@ class ModularPipelinesRepository:
                     input_id = GraphNode._hash(input)
                     if input_id not in modular_pipeline.inputs:
                         modular_pipeline.children.add(ModularPipelineChild(id=input_id, type=GraphNodeType.DATA))
+                    else:
+                        if parent_modular_pipeline:
+                            modular_pipeline.children.add(ModularPipelineChild(id=input_id, type=GraphNodeType.DATA))
                 for output in task_node.outputs:
                     output_id = GraphNode._hash(output)
                     if output_id not in modular_pipeline.outputs:
                         modular_pipeline.children.add(ModularPipelineChild(id=output_id, type=GraphNodeType.DATA))
-                parent_modular_pipeline_id = modular_pipeline_id.split('.')[0] if '.' in modular_pipeline_id else None
-                if parent_modular_pipeline_id:
-                    parent_modular_pipeline = self.get_or_create_modular_pipeline(parent_modular_pipeline_id)
-                    parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
-                    parent_modular_pipeline.children.add(ModularPipelineChild(id=modular_pipeline_id, type=GraphNodeType.MODULAR_PIPELINE))
+                    else:
+                        if parent_modular_pipeline:
+                            modular_pipeline.children.add(ModularPipelineChild(id=output_id, type=GraphNodeType.DATA))
+
+                
+                
                     
                     
 
