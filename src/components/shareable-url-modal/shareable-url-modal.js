@@ -177,7 +177,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setIsLoading(false);
     setResponseUrl(null);
     setInputValues({});
-    // setIsDisclaimerViewed(false);
     setIsFormDirty({
       hasBucketName: false,
       hasPlatform: false,
@@ -340,42 +339,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         </Button>
       </div>
     ) : null;
-  };
-
-  const renderDisclaimerContent = () => {
-    return (
-      <div>
-        <div className="shareable-url-modal__content-wrapper shareable-url-modal__content-description">
-          Disclaimer: Please note that Kedro-Viz contains preview data for
-          multiple datasets. If you wish to disable the preview when publishing
-          Kedro-Viz, please refer to{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL}
-          >
-            the documentation
-          </a>{' '}
-          on how to do so.
-        </div>
-        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
-          <Button
-            mode="secondary"
-            onClick={() => handleModalClose()}
-            size="small"
-          >
-            Cancel
-          </Button>
-          <Button
-            dataTest="disclaimerButton"
-            size="small"
-            // onClick={clearDisclaimerMessage}
-          >
-            Continue
-          </Button>
-        </div>
-      </div>
-    );
   };
 
   const renderTextContent = () => {
