@@ -256,9 +256,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           />
         </div>
         <div className="shareable-url-modal__republished-action">
-          <text className="shareable-url-modal__republished-action-text">
+          <p className="shareable-url-modal__republished-action-text">
             Republish Kedro-Viz to push new updates
-          </text>
+          </p>
           <Button
             mode="secondary"
             onClick={toShowMainContentWithPopulatedContent}
@@ -454,7 +454,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Bucket Name
               </div>
               <Input
-                defaultValue={bucket_name}
                 onChange={(value) => onChange('bucket_name', value)}
                 defaultValue={
                   showPopulatedContent
@@ -473,7 +472,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Endpoint Link
               </div>
               <Input
-                defaultValue={endpoint}
                 onChange={(value) => onChange('endpoint', value)}
                 defaultValue={
                   showPopulatedContent
