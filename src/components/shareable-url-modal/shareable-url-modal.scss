@@ -276,7 +276,10 @@
 }
 
 .shareable-url-modal__published-wrapper {
-  width: 707px;
+  .modal__wrapper {
+    padding: 0;
+    width: 707px;
+  }
 }
 
 .shareable-url-modal__published-url {

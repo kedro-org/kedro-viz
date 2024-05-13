@@ -511,6 +511,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       className={classnames('shareable-url-modal', {
         'shareable-url-modal__non-default-wrapper':
           deploymentState !== 'default',
+        'shareable-url-modal__published-wrapper':
+          deploymentState === 'published',
       })}
       closeModal={handleModalClose}
       message={getDeploymentStateByType('message')}
