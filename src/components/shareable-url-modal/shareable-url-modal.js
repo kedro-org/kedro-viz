@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import { fetchPackageCompatibilities } from '../../utils';
-import { saveLocalStorage } from '../../store/helpers';
+import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 import {
   hostingPlatforms,
   inputKeyToStateKeyMap,
@@ -28,6 +28,7 @@ import MenuOption from '../ui/menu-option';
 import Tooltip from '../ui/tooltip';
 
 import './shareable-url-modal.scss';
+import UrlBox from './url-box/url-box';
 
 const modalMessages = (status, info = '') => {
   const messages = {
@@ -55,7 +56,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
-  const [isDisclaimerViewed, setIsDisclaimerViewed] = useState(false);
+  const [showPublishedUrl, setShowPublishedUrl] = useState(false);
+  const [hostingPlatformLocalStorageVal, _] = useState(
+    loadLocalStorage(localStorageSharableUrl) || {}
+  );
+  const [showPopulatedContent, setShowPopulatedContent] = useState(false);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -82,6 +87,23 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
 
     fetchPackageCompatibility();
+  }, []);
+
+  const toShowPublishedContent = () => {
+    if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
+      setDeploymentState('published');
+      setShowPublishedUrl(true);
+    }
+  };
+
+  const toShowMainContentWithPopulatedContent = () => {
+    setShowPopulatedContent(true);
+    setShowPublishedUrl(false);
+    setDeploymentState('default');
+  };
+
+  useEffect(() => {
+    toShowPublishedContent();
   }, []);
 
   const onChange = (key, value) => {
@@ -114,33 +136,31 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         setResponseUrl(response.url);
         setDeploymentState('success');
 
-        const localStorageValue = {};
+        const hostingPlatformVal = {};
         for (const platform in hostingPlatforms) {
           if (inputValues.platform === platform) {
             // to set the platform property based on the current playform value from inputValues
             // expected output: { aws: { ...inputValues }}
-            localStorageValue[inputValues.platform] = { ...inputValues };
+            hostingPlatformVal[inputValues.platform] = { ...inputValues };
           }
         }
-        saveLocalStorage(localStorageSharableUrl, localStorageValue);
+        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
         setDeploymentState('failure');
-        // saveLocalStorage(localStorageSharableUrl, null);
       }
     } catch (error) {
       console.error(error);
       setResponseError(error.message || 'Error occurred!');
       setDeploymentState('failure');
-      // saveLocalStorage(localStorageSharableUrl, null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const onCopyClick = () => {
-    window.navigator.clipboard.writeText(responseUrl);
+  const onCopyClick = (url) => {
+    window.navigator.clipboard.writeText(url);
     setShowCopied(true);
 
     setTimeout(() => {
@@ -157,7 +177,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setIsLoading(false);
     setResponseUrl(null);
     setInputValues({});
-    setIsDisclaimerViewed(false);
+    // setIsDisclaimerViewed(false);
     setIsFormDirty({
       hasBucketName: false,
       hasPlatform: false,
@@ -166,7 +186,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const getDeploymentStateByType = (type) => {
-    if (deploymentState === 'default') {
+    if (deploymentState === 'default' || deploymentState === 'published') {
       return null;
     }
 
@@ -187,8 +207,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
     return responseUrl;
   };
-
-  const clearDisclaimerMessage = () => setIsDisclaimerViewed(true);
 
   const renderCompatibilityMessage = () => {
     return !canUseShareableUrls ? (
@@ -212,9 +230,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderPublishedContent = () => {
-    const storageURL = localStorageValue['aws']['endpoint'];
-    return Object.keys(localStorageValue).length > 0 ? (
-      <>
+    const storageURL =
+      Object.keys(hostingPlatformLocalStorageVal).length > 0
+        ? hostingPlatformLocalStorageVal['aws']['endpoint']
+        : '';
+
+    return showPublishedUrl ? (
+      <div className="shareable-url-modal__published-wrapper">
         <div className="shareable-url-modal__published-url">
           <div className="shareable-url-modal__content-title">
             Publish and Share Kedro-Viz
@@ -232,13 +254,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           </text>
           <Button
             mode="secondary"
-            onClick={() => handleModalClose()}
+            onClick={toShowMainContentWithPopulatedContent}
             size="small"
           >
             Republish
           </Button>
         </div>
-      </>
+      </div>
     ) : null;
   };
 
@@ -347,7 +369,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           <Button
             dataTest="disclaimerButton"
             size="small"
-            onClick={clearDisclaimerMessage}
+            // onClick={clearDisclaimerMessage}
           >
             Continue
           </Button>
@@ -419,10 +441,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderMainContent = () => {
-    return !isLoading &&
-      !responseUrl &&
-      canUseShareableUrls &&
-      !responseError ? (
+    return !isLoading && !responseUrl && !showPublishedUrl && !responseError ? (
       <>
         <div className="shareable-url-modal__content-form-wrapper">
           {renderTextContent()}
@@ -432,10 +451,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Hosting platform
               </div>
               <Dropdown
-                defaultText={platform && hostingPlatforms[platform]}
-                placeholderText={!platform ? 'Select a hosting platform' : null}
+                defaultText={
+                  showPopulatedContent
+                    ? hostingPlatformLocalStorageVal['aws']['platform']
+                    : platform && hostingPlatforms[platform]
+                }
+                placeholderText={
+                  !showPopulatedContent &&
+                  (!platform ? 'Select a hosting platform' : null)
+                }
                 onChanged={(selectedPlatform) => {
                   onChange('platform', selectedPlatform.value);
+                  setShowPopulatedContent(false);
                 }}
                 width={null}
               >
@@ -458,6 +485,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               <Input
                 defaultValue={bucket_name}
                 onChange={(value) => onChange('bucket_name', value)}
+                defaultValue={
+                  showPopulatedContent
+                    ? hostingPlatformLocalStorageVal['aws']['bucket_name']
+                    : undefined
+                }
                 placeholder="Enter name"
                 resetValueTrigger={visible}
                 size="small"
@@ -472,6 +504,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               <Input
                 defaultValue={endpoint}
                 onChange={(value) => onChange('endpoint', value)}
+                defaultValue={
+                  showPopulatedContent
+                    ? hostingPlatformLocalStorageVal['aws']['endpoint']
+                    : undefined
+                }
                 placeholder="Enter url"
                 resetValueTrigger={visible}
                 size="small"
@@ -484,7 +521,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
           <Button
             mode="secondary"
-            onClick={() => handleModalClose()}
+            onClick={() => {
+              handleModalClose();
+              toShowPublishedContent();
+            }}
             size="small"
           >
             Cancel
@@ -515,16 +555,15 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       visible={visible.shareableUrlModal}
     >
       {renderCompatibilityMessage()}
-      {!isDisclaimerViewed && canUseShareableUrls ? (
-        renderDisclaimerContent()
-      ) : (
+      {canUseShareableUrls ? (
         <>
+          {renderPublishedContent()}
           {renderMainContent()}
           {renderLoadingContent()}
           {renderErrorContent()}
           {renderSuccessContent()}
         </>
-      )}
+      ) : null}
     </Modal>
   );
 };
