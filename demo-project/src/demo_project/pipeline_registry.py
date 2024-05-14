@@ -59,16 +59,16 @@ def register_pipelines() -> Dict[str, Pipeline]:
     reporting_pipeline = rep.create_pipeline()
 
     return {
-        "__default__": create_pipeline()
-        # "__default__": (
-        #     ingestion_pipeline
-        #     + feature_pipeline
-        #     + modelling_pipeline
-        #     + reporting_pipeline
-        # ),
-        # "Data ingestion": ingestion_pipeline,
-        # "Modelling stage": modelling_pipeline,
-        # "Feature engineering": feature_pipeline,
-        # "Reporting stage": reporting_pipeline,
-        # "Pre-modelling": ingestion_pipeline + feature_pipeline,
+        # "__default__": create_pipeline()
+        "__default__": (
+            ingestion_pipeline
+            + feature_pipeline
+            + modelling_pipeline
+            + reporting_pipeline
+        ),
+        "Data ingestion": ingestion_pipeline,
+        "Modelling stage": modelling_pipeline,
+        "Feature engineering": feature_pipeline,
+        "Reporting stage": reporting_pipeline,
+        "Pre-modelling": ingestion_pipeline + feature_pipeline,
     }

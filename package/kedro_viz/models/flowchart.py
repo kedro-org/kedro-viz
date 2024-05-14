@@ -143,7 +143,7 @@ class GraphNode(BaseModel, abc.ABC):
         set(), description="The set of registered pipeline IDs this node belongs to"
     )
 
-    modular_pipeline: Optional[str] = Field(
+    modular_pipelines: Optional[List[str]] = Field(
         default=None,
         validate_default=True,
         description="The modular_pipelines this node belongs to",
@@ -155,7 +155,9 @@ class GraphNode(BaseModel, abc.ABC):
         return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
     @classmethod
-    def create_task_node(cls, node: KedroNode, modular_pipeline_id: Optional[str]) -> "TaskNode":
+    def create_task_node(
+        cls, node: KedroNode, modular_pipeline_id: Optional[str]
+    ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
@@ -168,7 +170,7 @@ class GraphNode(BaseModel, abc.ABC):
             name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
-            modular_pipeline=modular_pipeline_id,
+            modular_pipelines=modular_pipeline_id,
         )
 
     @classmethod
@@ -206,7 +208,7 @@ class GraphNode(BaseModel, abc.ABC):
                 layer=layer,
                 is_free_input=is_free_input,
                 stats=stats,
-                modular_pipeline=modular_pipeline_id,
+                modular_pipelines=modular_pipeline_id,
             )
 
         return DataNode(
@@ -217,7 +219,7 @@ class GraphNode(BaseModel, abc.ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
-            modular_pipeline=modular_pipeline_id,
+            modular_pipelines=modular_pipeline_id,
         )
 
     @classmethod
@@ -246,7 +248,7 @@ class GraphNode(BaseModel, abc.ABC):
             tags=tags,
             layer=layer,
             kedro_obj=parameters,
-            modular_pipeline=modular_pipeline_id,
+            modular_pipelines=modular_pipeline_id,
         )
 
     @classmethod
@@ -489,7 +491,7 @@ class DataNode(GraphNode):
         validate_default=True,
         description="The concrete type of the underlying kedro_obj",
     )
-    
+
     viz_metadata: Optional[Dict] = Field(
         default=None, validate_default=True, description="The metadata for data node"
     )
@@ -512,7 +514,6 @@ class DataNode(GraphNode):
     def set_dataset_type(cls, _, info: ValidationInfo):
         kedro_obj = cast(AbstractDataset, info.data.get("kedro_obj"))
         return get_dataset_type(kedro_obj)
-
 
     @field_validator("viz_metadata")
     @classmethod
@@ -815,10 +816,6 @@ class ParametersNode(GraphNode):
         None, description="The layer that this parameters node belongs to"
     )
 
-    modular_pipeline: Optional[str] = Field(
-        None, description="The modular pipelines this node belongs to"
-    )
-
     # The type for Parameters Node
     type: str = GraphNodeType.PARAMETERS.value
 
@@ -831,11 +828,6 @@ class ParametersNode(GraphNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        if self.is_all_parameters():
-            self.modular_pipeline = None
-        else:
-            self.modular_pipeline = None
 
     def is_all_parameters(self) -> bool:
         """Check whether the graph node represent all parameters in the pipeline"""
