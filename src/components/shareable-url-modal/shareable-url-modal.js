@@ -42,6 +42,24 @@ const modalMessages = (status, info = '') => {
   return messages[status];
 };
 
+const mockLocalStorage = {
+  aws: {
+    bucket_name: 'bucket-name-aws',
+    endpoint: 'http://test-aws.s3-website-us-east-1.amazonaws.com',
+    platform: 'aws',
+  },
+  gcp: {
+    bucket_name: 'bucket-name-google-cloud',
+    endpoint: 'http://test-google.s3-website-us-east-1.amazonaws.com',
+    platform: 'gcp',
+  },
+  azure: {
+    bucket_name: 'bucket-name-azure',
+    endpoint: 'http://test-azure.s3-website-us-east-1.amazonaws.com',
+    platform: 'azure',
+  },
+};
+
 const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
@@ -57,7 +75,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
   const [showPublishedContent, setShowPublishedContent] = useState(false);
+  const [hostingPlatformLocalStorageVal, _] = useState(mockLocalStorage);
   const [showPopulatedContent, setShowPopulatedContent] = useState(false);
+  const [populatedContentKey, setPopulatedContentKey] = useState(undefined);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -90,6 +110,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
       setShowPublishedContent(true);
+      // set the populatedContentKey as the first one from localStorage by default
+      setPopulatedContentKey(Object.keys(hostingPlatformLocalStorageVal)[0]);
     }
   };
 
@@ -234,23 +256,65 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderPublishedContent = () => {
-    const storageURL =
-      Object.keys(hostingPlatformLocalStorageVal).length > 0
-        ? hostingPlatformLocalStorageVal['aws']['endpoint']
-        : '';
+    const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
+    const platformsVal = Object.values(hostingPlatformLocalStorageVal);
+
+    const url = platform
+      ? hostingPlatformLocalStorageVal[platform]['endpoint']
+      : platformsVal[0]['endpoint'];
+
+    const filteredPlatforms = {};
+    platformsKeys.forEach((key) => {
+      if (hostingPlatforms.hasOwnProperty(key)) {
+        filteredPlatforms[key] = hostingPlatforms[key];
+      }
+    });
 
     return showPublishedContent ? (
       <>
-        <div className="shareable-url-modal__published-url">
+        <div className="shareable-url-modal__published">
           <div className="shareable-url-modal__content-title">
             Publish and Share Kedro-Viz
           </div>
-          <UrlBox
-            url={storageURL}
-            onClick={() => onCopyClick(storageURL)}
-            href={() => handleResponseUrl()}
-            showCopiedText={showCopied}
-          />
+          {platformsKeys.length === 1 ? (
+            <UrlBox
+              url={url}
+              onClick={() => onCopyClick(url)}
+              href={() => handleResponseUrl()}
+              showCopiedText={showCopied}
+            />
+          ) : (
+            <div className="shareable-url-modal__published-dropdown-wrapper">
+              <Dropdown
+                defaultText={
+                  (platform && filteredPlatforms[platform]) ||
+                  Object.values(filteredPlatforms)[0]
+                }
+                onChanged={(selectedPlatform) => {
+                  onChange('platform', selectedPlatform.value);
+                  setPopulatedContentKey(selectedPlatform.value);
+                }}
+                width={null}
+              >
+                {Object.entries(filteredPlatforms).map(([value, label]) => (
+                  <MenuOption
+                    className={classnames({
+                      'pipeline-list__option--active': platform === value,
+                    })}
+                    key={value}
+                    primaryText={label}
+                    value={value}
+                  />
+                ))}
+              </Dropdown>
+              <UrlBox
+                url={url}
+                onClick={() => onCopyClick(url)}
+                href={() => handleResponseUrl()}
+                showCopiedText={showCopied}
+              />
+            </div>
+          )}
         </div>
         <div className="shareable-url-modal__republished-action">
           <p className="shareable-url-modal__republished-action-text">
@@ -408,16 +472,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
-  const findHostingPlatform = (storage) => {
-    for (const key in storage) {
-      if (Object.hasOwnProperty.call(storage, key)) {
-        const platform = storage[key].platform; // Get the platform from the current object
-        const hostingPlatform = hostingPlatforms[platform]; // Access the corresponding platform from hostingPlatforms
-        return hostingPlatform;
-      }
-    }
-  };
-
   const renderMainContent = () => {
     return !isLoading &&
       !responseUrl &&
@@ -434,7 +488,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               <Dropdown
                 defaultText={
                   showPopulatedContent
-                    ? findHostingPlatform(hostingPlatformLocalStorageVal)
+                    ? hostingPlatforms[populatedContentKey]
                     : platform && hostingPlatforms[platform]
                 }
                 placeholderText={
@@ -467,7 +521,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 onChange={(value) => onChange('bucket_name', value)}
                 defaultValue={
                   showPopulatedContent
-                    ? hostingPlatformLocalStorageVal['aws']['bucket_name']
+                    ? hostingPlatformLocalStorageVal[populatedContentKey][
+                        'bucket_name'
+                      ]
                     : undefined
                 }
                 placeholder="Enter name"
@@ -485,7 +541,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 onChange={(value) => onChange('endpoint', value)}
                 defaultValue={
                   showPopulatedContent
-                    ? hostingPlatformLocalStorageVal['aws']['endpoint']
+                    ? hostingPlatformLocalStorageVal[populatedContentKey][
+                        'endpoint'
+                      ]
                     : undefined
                 }
                 placeholder="Enter url"

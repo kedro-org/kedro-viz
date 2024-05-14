@@ -282,10 +282,20 @@
   }
 }
 
-.shareable-url-modal__published-url {
+.shareable-url-modal__published {
   width: 100%;
   padding: 48px;
   background-color: #{variables.$slate-300};
+}
+
+.shareable-url-modal__published-dropdown-wrapper {
+  display: flex;
+  flex-direction: row;
+
+  .dropdown__label {
+    height: 100%;
+    width: 209px;
+  }
 }
 
 .shareable-url-modal__republished-action {
