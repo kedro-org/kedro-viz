@@ -24,6 +24,11 @@ except ImportError:  # pragma: no cover
 def _hash(value: str):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
+def is_dataset_param(dataset_name: str) -> bool:
+        """Return whether a dataset is a parameter"""
+        return (
+            dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+        )
 
 class ModularPipelinesRepository:
     """Repository for the set of modular pipelines in a registered pipeline."""
@@ -42,6 +47,8 @@ class ModularPipelinesRepository:
         self.node_mod_pipeline_map: Dict[
             str, Set[str]
         ] = {}  # Updated to map node_id to a list of modular_pipeline_ids
+        
+        self.parameters = set()
 
     def populate_tree(self, pipeline: KedroPipeline):
         """
@@ -115,7 +122,14 @@ class ModularPipelinesRepository:
             modular_pipeline_id (str): The ID of the modular pipeline to add inputs to.
             inputs (Set[str]): The input datasets to add.
         """
-        hashed_inputs = {self._hash_input_output(input) for input in inputs}
+        hashed_inputs = set()
+
+        for input in inputs:
+            hashed_input = self._hash_input_output(input)
+            hashed_inputs.add(hashed_input)
+            if is_dataset_param(input):
+                self.parameters.add(hashed_input)
+
         self.tree[modular_pipeline_id].inputs = hashed_inputs
 
     def add_outputs(self, modular_pipeline_id: str, outputs: Set[str]) -> None:
@@ -207,7 +221,7 @@ class ModularPipelinesRepository:
             )
         )
         for dataset in all_inputs_outputs:
-            if dataset not in parent_node.inputs and dataset not in parent_node.outputs:
+            if dataset not in parent_node.inputs and dataset not in parent_node.outputs and dataset not in self.parameters:
                 parent_node.children.add(
                     ModularPipelineChild(id=dataset, type=GraphNodeType.DATA)
                 )
@@ -218,7 +232,7 @@ class ModularPipelinesRepository:
     def _add_datasets_as_children(
         self, modular_pipeline, task_node, all_inputs_outputs
     ):
-        """Helper to add datasets and parameters related to task nodes as children.
+        """Helper to add datasets (not parameters) related to task nodes as children.
 
         Here we follow the below rule:
         - Inputs/Outputs of a task node are added as children to the modular pipeline if they are not inputs/outputs of that modular pipeline
@@ -228,10 +242,10 @@ class ModularPipelinesRepository:
             for io in set(task_node.inputs) | set(task_node.outputs)
         }
         for io_id in hashed_io_ids:
-            if io_id not in all_inputs_outputs:
+            if io_id not in all_inputs_outputs and io_id not in self.parameters:
                 modular_pipeline.children.add(
-                    ModularPipelineChild(id=io_id, type=GraphNodeType.DATA)
-                )
+                        ModularPipelineChild(id=io_id, type=GraphNodeType.DATA)
+                    )
                 if io_id not in self.node_mod_pipeline_map:
                     self.node_mod_pipeline_map[io_id] = set()
                 self.node_mod_pipeline_map[io_id].add(modular_pipeline.id)

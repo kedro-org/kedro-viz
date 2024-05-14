@@ -8,6 +8,33 @@ from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
 
+def create_pipeline(**kwargs) -> Pipeline:
+    new_pipeline = pipeline(
+        [
+            node(lambda x: x,
+                 inputs="dataset_in",
+                 outputs="dataset_1",
+                 name="step1"),
+            node(lambda x: x,
+                 inputs="dataset_1",
+                 outputs="dataset_2",
+                 name="step2"),
+            node(lambda x: x,
+                 inputs="dataset_2",
+                 outputs="dataset_3",
+                 name="step3"),
+            node(lambda x: x,
+                 inputs="dataset_3",
+                 outputs="dataset_out",
+                 name="step4"
+            )
+        ],
+            namespace="main_pipeline",
+        inputs=None,
+        outputs={"dataset_out", "dataset_3"}
+    )
+    return new_pipeline
+
 
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
@@ -25,17 +52,20 @@ def register_pipelines() -> Dict[str, Pipeline]:
     )
 
     reporting_pipeline = rep.create_pipeline()
+    
+    
 
     return {
-        "__default__": (
-            ingestion_pipeline
-            + feature_pipeline
-            + modelling_pipeline
-            + reporting_pipeline
-        ),
-        "Data ingestion": ingestion_pipeline,
-        "Modelling stage": modelling_pipeline,
-        "Feature engineering": feature_pipeline,
-        "Reporting stage": reporting_pipeline,
-        "Pre-modelling": ingestion_pipeline + feature_pipeline,
+        "__default__": create_pipeline(),
+        # "__default__": (
+        #     ingestion_pipeline
+        #     + feature_pipeline
+        #     + modelling_pipeline
+        #     + reporting_pipeline
+        # ),
+        # "Data ingestion": ingestion_pipeline,
+        # "Modelling stage": modelling_pipeline,
+        # "Feature engineering": feature_pipeline,
+        # "Reporting stage": reporting_pipeline,
+        # "Pre-modelling": ingestion_pipeline + feature_pipeline,
     }
