@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { mapNodeType } from '../utils';
+import { mapNodeType, isValidBoolean } from '../utils';
 import {
   settings,
   sidebarWidth,
@@ -144,7 +144,7 @@ const applyUrlParametersToPipelineState = (state, urlParams) => {
 const applyUrlParametersToNonPipelineState = (state, urlParams) => {
   const { expandAllPipelinesInUrl } = urlParams;
   let newState = { ...state };
-  if (expandAllPipelinesInUrl) {
+  if (expandAllPipelinesInUrl && isValidBoolean(expandAllPipelinesInUrl)) {
     newState.expandAllPipelines = JSON.parse(expandAllPipelinesInUrl);
   }
   return newState;
