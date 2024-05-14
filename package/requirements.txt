@@ -12,7 +12,7 @@ plotly>=4.0
 pydantic>=2.0.0
 secure>=0.3.0
 sqlalchemy>=1.4, <3
-strawberry-graphql>=0.192.0, <0.228.0
+strawberry-graphql>=0.192.0, <1.0
 uvicorn[standard]~=0.29.0
 watchgod~=0.8.2
 # [TODO: Need to drop toposort dependency in favor of in-built graphlib]
