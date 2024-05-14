@@ -56,10 +56,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
-  const [showPublishedUrl, setShowPublishedUrl] = useState(false);
-  const [hostingPlatformLocalStorageVal, _] = useState(
-    loadLocalStorage(localStorageSharableUrl) || {}
-  );
+  const [showPublishedContent, setShowPublishedContent] = useState(false);
   const [showPopulatedContent, setShowPopulatedContent] = useState(false);
 
   useEffect(() => {
@@ -92,13 +89,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const toShowPublishedContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
-      setShowPublishedUrl(true);
+      setShowPublishedContent(true);
     }
   };
 
   const toShowMainContentWithPopulatedContent = () => {
     setShowPopulatedContent(true);
-    setShowPublishedUrl(false);
+    setShowPublishedContent(false);
     setDeploymentState('default');
   };
 
@@ -242,7 +239,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         ? hostingPlatformLocalStorageVal['aws']['endpoint']
         : '';
 
-    return showPublishedUrl ? (
+    return showPublishedContent ? (
       <>
         <div className="shareable-url-modal__published-url">
           <div className="shareable-url-modal__content-title">
@@ -411,8 +408,21 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
+  const findHostingPlatform = (storage) => {
+    for (const key in storage) {
+      if (Object.hasOwnProperty.call(storage, key)) {
+        const platform = storage[key].platform; // Get the platform from the current object
+        const hostingPlatform = hostingPlatforms[platform]; // Access the corresponding platform from hostingPlatforms
+        return hostingPlatform;
+      }
+    }
+  };
+
   const renderMainContent = () => {
-    return !isLoading && !responseUrl && !showPublishedUrl && !responseError ? (
+    return !isLoading &&
+      !responseUrl &&
+      !showPublishedContent &&
+      !responseError ? (
       <>
         <div className="shareable-url-modal__content-form-wrapper">
           {renderTextContent()}
@@ -424,7 +434,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               <Dropdown
                 defaultText={
                   showPopulatedContent
-                    ? hostingPlatformLocalStorageVal['aws']['platform']
+                    ? findHostingPlatform(hostingPlatformLocalStorageVal)
                     : platform && hostingPlatforms[platform]
                 }
                 placeholderText={
