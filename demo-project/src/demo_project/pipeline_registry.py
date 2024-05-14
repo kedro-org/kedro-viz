@@ -8,38 +8,6 @@ from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
 
-def _get_generic_pipe() -> Pipeline:
-    return Pipeline([
-        node(
-            func=lambda x: x,
-            inputs="input_df",
-            outputs="output_df",
-        ),
-    ])
-
-
-def create_pipeline(**kwargs) -> Pipeline:
-    pipe = Pipeline([
-        pipeline(
-            pipe=_get_generic_pipe(),
-            inputs={"input_df": "input_to_processing"},
-            outputs={"output_df": "post_first_pipe"},
-            namespace="first_processing_step",
-        ),
-        pipeline(
-            pipe=_get_generic_pipe(),
-            inputs={"input_df": "post_first_pipe"},
-            outputs={"output_df": "output_from_processing"},
-            namespace="second_processing_step",
-        ),
-    ])
-    return pipeline(
-        pipe=pipe,
-        inputs="input_to_processing",
-        outputs="output_from_processing",
-        namespace="processing",
-    )
-
 
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
@@ -59,7 +27,6 @@ def register_pipelines() -> Dict[str, Pipeline]:
     reporting_pipeline = rep.create_pipeline()
 
     return {
-        # "__default__": create_pipeline()
         "__default__": (
             ingestion_pipeline
             + feature_pipeline
