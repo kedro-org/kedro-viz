@@ -18,9 +18,10 @@ import {
  */
 export const createInitialState = () => ({
   chartSize: {},
-  flags: { ...Flags.defaults(), expandAllPipelines: false },
+  flags: { ...Flags.defaults() },
   textLabels: true,
   theme: 'dark',
+  expandAllPipelines: false,
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   ignoreLargeWarning: false,
@@ -67,6 +68,7 @@ const parseUrlParameters = () => {
     nodeTagInUrl: search.get(params.tags)
       ? search.get(params.tags).split(',')
       : [],
+    expandAllPipelinesInUrl: search.get(params.expandAll),
   };
 };
 
@@ -86,6 +88,7 @@ const applyUrlParametersToState = (state, urlParams) => {
     nodeNameFromUrl,
     nodeTypeInUrl,
     nodeTagInUrl,
+    expandAllPipelinesInUrl,
   } = urlParams;
 
   let newState = { ...state };
@@ -127,6 +130,10 @@ const applyUrlParametersToState = (state, urlParams) => {
     });
   }
 
+  if (expandAllPipelinesInUrl) {
+    newState.expandAllPipelines = JSON.parse(expandAllPipelinesInUrl);
+  }
+
   return newState;
 };
 
@@ -142,7 +149,7 @@ export const mergeLocalStorage = (state) => {
     localStorageRunsMetadata
   );
   Object.keys(localStorageState).forEach((key) => {
-    if (!state[key]) {
+    if (!(key in state)) {
       delete localStorageState[key];
     }
   });
@@ -214,7 +221,7 @@ const getInitialState = (props = {}) => {
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.flags.expandAllPipelines;
+    nonPipelineState.expandAllPipelines;
 
   const pipelineState = preparePipelineState(
     props.data,

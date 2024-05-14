@@ -99,7 +99,7 @@ export function loadInitialPipelineData() {
     // obtain the status of expandAllPipelines to decide whether it needs to overwrite the
     // list of visible nodes
     const expandAllPipelines =
-      state.display.expandAllPipelines || state.flags.expandAllPipelines;
+      state.display.expandAllPipelines || state.expandAllPipelines;
     let newState = await loadJsonData(url).then((data) =>
       preparePipelineState(data, true, expandAllPipelines)
     );
@@ -122,7 +122,7 @@ export function loadInitialPipelineData() {
  */
 export function loadPipelineData(pipelineID) {
   return async function (dispatch, getState) {
-    const { dataSource, pipeline, display, flags } = getState();
+    const { dataSource, pipeline, display, expandAllPipelines } = getState();
 
     if (pipelineID && pipelineID === pipeline.active) {
       return;
@@ -136,10 +136,10 @@ export function loadPipelineData(pipelineID) {
         active: pipelineID,
       });
 
-      const expandAllPipelines =
-        display.expandAllPipelines || flags.expandAllPipelines;
+      const shouldExpandAllPipelines =
+        display.expandAllPipelines || expandAllPipelines;
       const newState = await loadJsonData(url).then((data) =>
-        preparePipelineState(data, false, expandAllPipelines)
+        preparePipelineState(data, false, shouldExpandAllPipelines)
       );
 
       // Set active pipeline here rather than dispatching two separate actions,
