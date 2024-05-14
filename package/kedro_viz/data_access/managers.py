@@ -181,8 +181,6 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
-                # modular_pipelines_repo_obj.extract_from_node(input_node)
-
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
@@ -195,8 +193,6 @@ class DataAccessManager:
                 if isinstance(output_node, TranscodedDataNode):
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
-
-                # modular_pipelines_repo_obj.extract_from_node(output_node)
 
     def add_node(
         self,
@@ -213,10 +209,12 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
+        (
+            node_id,
+            modular_pipeline_id,
+        ) = modular_pipeline_tree.get_modular_pipeline_for_node(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(
-                node, modular_pipeline_tree.get_modular_pipeline_for_node(node)
-            )
+            GraphNode.create_task_node(node, node_id, modular_pipeline_id)
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -307,26 +305,27 @@ class DataAccessManager:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
+        id, modular_pipeline_id = modular_pipeline_tree.get_modular_pipeline_for_node(
+            dataset_name
+        )
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
+                dataset_id=id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 parameters=obj,
-                modular_pipeline_id=modular_pipeline_tree.get_modular_pipeline_for_node(
-                    dataset_name
-                ),
+                modular_pipeline_id=modular_pipeline_id,
             )
         else:
             graph_node = GraphNode.create_data_node(
+                dataset_id=id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
-                modular_pipeline_id=modular_pipeline_tree.get_modular_pipeline_for_node(
-                    dataset_name
-                ),
+                modular_pipeline_id=modular_pipeline_id,
                 is_free_input=is_free_input,
             )
         graph_node = self.nodes.add_node(graph_node)
@@ -439,8 +438,9 @@ class DataAccessManager:
 
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
-        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
-        modular_pipelines_tree = modular_pipelines.as_dict()
+        modular_pipelines_tree = self.modular_pipelines[
+            registered_pipeline_id
+        ].as_dict()
 
         root_parameters = set()
 

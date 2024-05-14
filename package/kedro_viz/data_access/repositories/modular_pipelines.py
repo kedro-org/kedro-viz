@@ -1,5 +1,6 @@
 # pylint: disable=protected-access
 
+import hashlib
 from typing import Dict, List, Optional, Set
 
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -18,6 +19,10 @@ try:
 except ImportError:  # pragma: no cover
     # older versions
     from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+
+
+def _hash(value: str):
+    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 
 
 class ModularPipelinesRepository:
@@ -127,9 +132,9 @@ class ModularPipelinesRepository:
     def _hash_input_output(self, item: str) -> str:
         """Hash the input/output dataset."""
         return (
-            GraphNode._hash(_strip_transcoding(item))
+            _hash(_strip_transcoding(item))
             if TRANSCODING_SEPARATOR in item
-            else GraphNode._hash(item)
+            else _hash(item)
         )
 
     def add_children(self, modular_pipeline_id: str, task_nodes: List[GraphNode]):
@@ -169,7 +174,7 @@ class ModularPipelinesRepository:
 
         for task_node in task_nodes:
             if task_node.namespace == modular_pipeline_id:
-                task_node_id = GraphNode._hash(str(task_node))
+                task_node_id = _hash(str(task_node))
                 modular_pipeline.children.add(
                     ModularPipelineChild(id=task_node_id, type=GraphNodeType.TASK)
                 )
@@ -238,11 +243,9 @@ class ModularPipelinesRepository:
     def get_modular_pipeline_for_node(self, node) -> Optional[List[str]]:
         """Get the modular pipeline(s) to which the given node belongs."""
         node_id = (
-            self._hash_input_output(node)
-            if isinstance(node, str)
-            else GraphNode._hash(str(node))
+            self._hash_input_output(node) if isinstance(node, str) else _hash(str(node))
         )
-        return self.node_mod_pipeline_map.get(node_id)
+        return node_id, self.node_mod_pipeline_map.get(node_id)
 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""

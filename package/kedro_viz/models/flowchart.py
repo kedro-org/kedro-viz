@@ -2,7 +2,6 @@
 
 # pylint: disable=protected-access, missing-function-docstring, too-many-lines
 import abc
-import hashlib
 import inspect
 import logging
 from enum import Enum
@@ -150,13 +149,9 @@ class GraphNode(BaseModel, abc.ABC):
     )
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @staticmethod
-    def _hash(value: str):
-        return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
-
     @classmethod
     def create_task_node(
-        cls, node: KedroNode, modular_pipeline_id: Optional[str]
+        cls, node: KedroNode, node_id: str, modular_pipeline_id: Optional[str]
     ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
@@ -166,7 +161,7 @@ class GraphNode(BaseModel, abc.ABC):
         """
         node_name = node._name or node._func_name
         return TaskNode(
-            id=cls._hash(str(node)),
+            id=node_id,
             name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
@@ -176,6 +171,7 @@ class GraphNode(BaseModel, abc.ABC):
     @classmethod
     def create_data_node(
         cls,
+        dataset_id: str,
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
@@ -202,7 +198,7 @@ class GraphNode(BaseModel, abc.ABC):
         if is_transcoded_dataset:
             name = _strip_transcoding(dataset_name)
             return TranscodedDataNode(
-                id=cls._hash(name),
+                id=dataset_id,
                 name=name,
                 tags=tags,
                 layer=layer,
@@ -212,7 +208,7 @@ class GraphNode(BaseModel, abc.ABC):
             )
 
         return DataNode(
-            id=cls._hash(dataset_name),
+            id=dataset_id,
             name=dataset_name,
             tags=tags,
             layer=layer,
@@ -225,6 +221,7 @@ class GraphNode(BaseModel, abc.ABC):
     @classmethod
     def create_parameters_node(
         cls,
+        dataset_id: str,
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
@@ -243,7 +240,7 @@ class GraphNode(BaseModel, abc.ABC):
             An instance of ParametersNode.
         """
         return ParametersNode(
-            id=cls._hash(dataset_name),
+            id=dataset_id,
             name=dataset_name,
             tags=tags,
             layer=layer,
