@@ -73,22 +73,21 @@ const parseUrlParameters = () => {
 };
 
 /**
- * Applies URL parameters to the application state.
+ * Applies URL parameters to the application pipeline state.
  * This function modifies the state based on URL parameters such as
  * pipeline ID, node ID, node name, node type presence, and tag presence.
  *
- * @param {Object} state The current application state.
+ * @param {Object} state The current application pipeline state.
  * @param {Object} urlParams An object containing parsed URL parameters.
  * @returns {Object} The new state with modifications applied based on URL parameters.
  */
-const applyUrlParametersToState = (state, urlParams) => {
+const applyUrlParametersToPipelineState = (state, urlParams) => {
   const {
     pipelineIdFromURL,
     nodeIdFromUrl,
     nodeNameFromUrl,
     nodeTypeInUrl,
     nodeTagInUrl,
-    expandAllPipelinesInUrl,
   } = urlParams;
 
   let newState = { ...state };
@@ -130,10 +129,24 @@ const applyUrlParametersToState = (state, urlParams) => {
     });
   }
 
+  return newState;
+};
+
+/**
+ * Applies URL parameters to the application non pipeline state.
+ * This function modifies the state based on URL parameters such as
+ * expandAllPipelines presence.
+ *
+ * @param {Object} state The current application non pipeline state.
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new state with modifications applied based on URL parameters.
+ */
+const applyUrlParametersToNonPipelineState = (state, urlParams) => {
+  const { expandAllPipelinesInUrl } = urlParams;
+  let newState = { ...state };
   if (expandAllPipelinesInUrl) {
     newState.expandAllPipelines = JSON.parse(expandAllPipelinesInUrl);
   }
-
   return newState;
 };
 
@@ -170,9 +183,13 @@ export const mergeLocalStorage = (state) => {
  * @param {Object} data Data prop passed to App component
  * @param {Boolean} applyFixes Whether to override initialState
  */
-export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
+export const preparePipelineState = (
+  data,
+  applyFixes,
+  expandAllPipelines,
+  urlParams
+) => {
   let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-  const urlParams = parseUrlParameters();
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
@@ -180,7 +197,10 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
-  state = applyUrlParametersToState(state, urlParams);
+  if (urlParams) {
+    state = applyUrlParametersToPipelineState(state, urlParams);
+  }
+
   return state;
 };
 
@@ -191,15 +211,22 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
  * @param {object} props Props passed to App component
  * @return {object} Updated initial state
  */
-export const prepareNonPipelineState = (props) => {
-  const state = mergeLocalStorage(createInitialState());
+export const prepareNonPipelineState = (props, urlParams) => {
+  let state = mergeLocalStorage(createInitialState());
   let newVisibleProps = {};
+
   if (props.display?.sidebar === false || state.display.sidebar === false) {
     newVisibleProps['sidebar'] = false;
   }
+
   if (props.display?.minimap === false || state.display.miniMap === false) {
     newVisibleProps['miniMap'] = false;
   }
+
+  if (urlParams) {
+    state = applyUrlParametersToNonPipelineState(state, urlParams);
+  }
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
@@ -217,7 +244,8 @@ export const prepareNonPipelineState = (props) => {
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  const nonPipelineState = prepareNonPipelineState(props);
+  const urlParams = parseUrlParameters();
+  const nonPipelineState = prepareNonPipelineState(props, urlParams);
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
@@ -226,7 +254,8 @@ const getInitialState = (props = {}) => {
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines
+    expandAllPipelines,
+    urlParams
   );
 
   return {
