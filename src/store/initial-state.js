@@ -74,12 +74,12 @@ const parseUrlParameters = () => {
 
 /**
  * Applies URL parameters to the application pipeline state.
- * This function modifies the state based on URL parameters such as
+ * This function modifies the state based on the URL parameters such as
  * pipeline ID, node ID, node name, node type presence, and tag presence.
  *
  * @param {Object} state The current application pipeline state.
  * @param {Object} urlParams An object containing parsed URL parameters.
- * @returns {Object} The new state with modifications applied based on URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
  */
 const applyUrlParametersToPipelineState = (state, urlParams) => {
   const {
@@ -133,13 +133,13 @@ const applyUrlParametersToPipelineState = (state, urlParams) => {
 };
 
 /**
- * Applies URL parameters to the application non pipeline state.
- * This function modifies the state based on URL parameters such as
+ * Applies URL parameters to the application non-pipeline state.
+ * This function modifies the state based on the URL parameters such as
  * expandAllPipelines presence.
  *
- * @param {Object} state The current application non pipeline state.
+ * @param {Object} state The current application non-pipeline state.
  * @param {Object} urlParams An object containing parsed URL parameters.
- * @returns {Object} The new state with modifications applied based on URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
  */
 const applyUrlParametersToNonPipelineState = (state, urlParams) => {
   const { expandAllPipelinesInUrl } = urlParams;
@@ -182,6 +182,9 @@ export const mergeLocalStorage = (state) => {
  * Exactly when it runs depends on whether the data is loaded asynchronously or not.
  * @param {Object} data Data prop passed to App component
  * @param {Boolean} applyFixes Whether to override initialState
+ * @param {Boolean} expandAllPipelines Whether to expand all the modular pipelines
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new pipeline state with modifications applied.
  */
 export const preparePipelineState = (
   data,
@@ -209,7 +212,8 @@ export const preparePipelineState = (
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
  * @param {object} props Props passed to App component
- * @return {object} Updated initial state
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new non-pipeline state with modifications applied.
  */
 export const prepareNonPipelineState = (props, urlParams) => {
   let state = mergeLocalStorage(createInitialState());

@@ -128,9 +128,8 @@ describe('PrimaryToolbar', () => {
       const dispatch = jest.fn();
       mapDispatchToProps(dispatch).onToggleExpandAllPipelines(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
-        name: 'expandAllPipelines',
-        type: 'CHANGE_FLAG',
-        value: true,
+        type: 'TOGGLE_EXPAND_ALL_PIPELINES',
+        shouldExpandAllPipelines: true,
       });
     });
   });
