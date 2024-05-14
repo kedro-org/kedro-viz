@@ -86,10 +86,7 @@ describe('App', () => {
     it('it announces flags', () => {
       const announceFlags = jest.spyOn(App.prototype, 'announceFlags');
       shallow(<App data={spaceflights} />);
-      expect(announceFlags).toHaveBeenCalledWith({
-        ...Flags.defaults(),
-        expandAllPipelines: false,
-      });
+      expect(announceFlags).toHaveBeenCalledWith(Flags.defaults());
     });
   });
 
