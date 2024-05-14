@@ -16,6 +16,7 @@ Please follow the established format:
 - Enhance kedro-viz doc integration. (#1874)
 - Fix Kedro-Viz waiting for valid Kedro project. (#1871)
 - Include expandAllPipelines flag in initial state. (#1896)
+- Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 
 # Release 9.0.0
 
