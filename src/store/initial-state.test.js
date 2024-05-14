@@ -20,6 +20,7 @@ describe('mergeLocalStorage', () => {
       textLabels: false,
       theme: 'light',
       tag: { enabled: 'medium' },
+      expandAllPipelines: true,
     };
     saveLocalStorage(localStorageName, localStorageValues);
     expect(
@@ -27,6 +28,7 @@ describe('mergeLocalStorage', () => {
         textLabels: true,
         theme: 'dark',
         tag: { enabled: 'large' },
+        expandAllPipelines: false,
       })
     ).toMatchObject(localStorageValues);
     window.localStorage.clear();
@@ -70,10 +72,13 @@ describe('preparePipelineState', () => {
 
 describe('prepareNonPipelineState', () => {
   it('applies localStorage values on top of initial state', () => {
-    const localStorageState = { theme: 'foo' };
+    const localStorageState = { theme: 'foo', expandAllPipelines: true };
     saveLocalStorage(localStorageName, localStorageState);
     const state = prepareNonPipelineState({});
     expect(state.theme).toEqual(localStorageState.theme);
+    expect(state.expandAllPipelines).toEqual(
+      localStorageState.expandAllPipelines
+    );
     window.localStorage.clear();
   });
 
@@ -101,6 +106,13 @@ describe('prepareNonPipelineState', () => {
       prepareNonPipelineState({ data: spaceflights, ...props })
     ).toMatchObject(props);
   });
+
+  it('overrides expandAllPipelines with values from URL', () => {
+    // In this case, location.href is not provided
+    expect(prepareNonPipelineState({ data: spaceflights })).toMatchObject({
+      expandAllPipelines: expect.any(Boolean),
+    });
+  });
 });
 
 describe('getInitialState', () => {
@@ -119,6 +131,7 @@ describe('getInitialState', () => {
       chartSize: {},
       textLabels: true,
       theme: 'dark',
+      expandAllPipelines: false,
       visible: {
         exportBtn: true,
         labelBtn: true,
