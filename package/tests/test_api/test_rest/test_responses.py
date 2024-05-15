@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+import logging
 import operator
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
@@ -7,7 +8,6 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 from fastapi.testclient import TestClient
-from importlib_metadata import PackageNotFoundError
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
@@ -829,10 +829,30 @@ class TestPackageCompatibilities:
     @pytest.mark.parametrize(
         "package_name, package_version, package_requirements, expected_compatibility_response",
         [
-            ("fsspec", "2023.9.1", {"fsspec": "2023.0.0"}, True),
-            ("fsspec", "2023.9.1", {"fsspec": "2024.0.0"}, False),
-            ("kedro-datasets", "2.1.0", {"kedro-datasets": "2.1.0"}, True),
-            ("kedro-datasets", "1.8.0", {"kedro-datasets": "2.1.0"}, False),
+            (
+                "fsspec",
+                "2023.9.1",
+                {"fsspec": {"min_compatible_version": "2023.0.0"}},
+                True,
+            ),
+            (
+                "fsspec",
+                "2023.9.1",
+                {"fsspec": {"min_compatible_version": "2024.0.0"}},
+                False,
+            ),
+            (
+                "kedro-datasets",
+                "2.1.0",
+                {"kedro-datasets": {"min_compatible_version": "2.1.0"}},
+                True,
+            ),
+            (
+                "kedro-datasets",
+                "1.8.0",
+                {"kedro-datasets": {"min_compatible_version": "2.1.0"}},
+                False,
+            ),
         ],
     )
     def test_get_package_compatibilities_response(
@@ -854,16 +874,27 @@ class TestPackageCompatibilities:
             assert package_response.package_version == package_version
             assert package_response.is_compatible is expected_compatibility_response
 
-    def test_get_package_compatibilities_exception_response(
-        self,
-        mocker,
-    ):
-        mocker.patch(
-            "kedro_viz.api.rest.responses.get_package_compatibilities_response",
-            side_effect=PackageNotFoundError("random-package"),
-        )
-        package_name = "random-package"
-        response = get_package_compatibilities_response({package_name: "1.0.0"})
+    def test_get_package_compatibilities_exception_response(self, caplog):
+        mock_package_requirement = {
+            "random-package": {
+                "min_compatible_version": "1.0.0",
+                "warning_message": "random-package is not available",
+            }
+        }
+
+        with caplog.at_level(logging.WARNING):
+            response = get_package_compatibilities_response(mock_package_requirement)
+
+            assert len(caplog.records) == 1
+
+            record = caplog.records[0]
+
+            assert record.levelname == "WARNING"
+            assert (
+                mock_package_requirement["random-package"]["warning_message"]
+                in record.message
+            )
+
         expected_response = PackageCompatibilityAPIResponse(
             package_name="random-package", package_version="0.0.0", is_compatible=False
         )
