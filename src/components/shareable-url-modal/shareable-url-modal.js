@@ -75,7 +75,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
   const [showPublishedContent, setShowPublishedContent] = useState(false);
-  const [hostingPlatformLocalStorageVal, _] = useState(mockLocalStorage);
+  const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
+    useState(loadLocalStorage(localStorageSharableUrl) || {});
   const [showPopulatedContent, setShowPopulatedContent] = useState(false);
   const [populatedContentKey, setPopulatedContentKey] = useState(undefined);
 
@@ -141,6 +142,19 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setDeploymentState('loading');
     setIsLoading(true);
 
+    const hostingPlatformVal = {};
+    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+      hostingPlatformVal[inputValues.platform] = { ...inputValues };
+    }
+
+    saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+
+    const newState = {
+      ...hostingPlatformLocalStorageVal,
+      ...hostingPlatformVal,
+    };
+    setHostingPlatformLocalStorageVal(newState);
+
     try {
       const request = await fetch('/api/deploy', {
         headers: {
@@ -154,17 +168,17 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
-
-        const hostingPlatformVal = {};
-        for (const platform in hostingPlatforms) {
-          if (inputValues.platform === platform) {
-            // to set the platform property based on the current playform value from inputValues
-            // expected output: { aws: { ...inputValues }}
-            hostingPlatformVal[inputValues.platform] = { ...inputValues };
-          }
-        }
-        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
         toShowPublishedContent();
+
+        // const hostingPlatformVal = {};
+        // for (const platform in hostingPlatforms) {
+        //   if (inputValues.platform === platform) {
+        //     // to set the platform property based on the current playform value from inputValues
+        //     // expected output: { aws: { ...inputValues }}
+        //     hostingPlatformVal[inputValues.platform] = { ...inputValues };
+        //   }
+        // }
+        // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
@@ -212,6 +226,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const getDeploymentStateByType = (type) => {
+    // This is because the default and published view has its own style
     if (deploymentState === 'default' || deploymentState === 'published') {
       return null;
     }
