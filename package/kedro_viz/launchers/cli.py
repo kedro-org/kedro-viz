@@ -115,11 +115,6 @@ def viz(ctx):  # pylint: disable=unused-argument
     help=PARAMS_ARG_HELP,
     callback=_split_params,
 )
-@click.option(
-    "--preview",
-    default=True,
-    help="A flag to enable/disable a quick preview of node datasets.",
-)
 # pylint: disable=import-outside-toplevel, too-many-locals
 def run(
     host,
@@ -132,7 +127,6 @@ def run(
     autoreload,
     include_hooks,
     params,
-    preview,
 ):
     """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
@@ -176,7 +170,6 @@ def run(
             "include_hooks": include_hooks,
             "package_name": PACKAGE_NAME,
             "extra_params": params,
-            "preview": preview,
         }
         if autoreload:
             run_process_kwargs = {
@@ -384,14 +377,13 @@ def load_and_deploy_viz(
     try:
         load_and_populate_data(
             Path.cwd(),
-            is_preview_enabled_for_all_nodes=preview,
             include_hooks=include_hooks,
             package_name=package_name,
         )
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
-        deployer.deploy()
+        deployer.deploy(preview)
 
     except (
         # pylint: disable=catching-non-exception

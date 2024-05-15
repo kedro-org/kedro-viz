@@ -8,7 +8,7 @@ import logging
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 
@@ -227,7 +227,6 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         dataset: AbstractDataset,
         stats: Optional[Dict],
-        is_preview_enabled_for_all_nodes: bool,
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
@@ -240,7 +239,6 @@ class GraphNode(BaseModel, abc.ABC):
             dataset: A dataset in a Kedro pipeline.
             stats: The dictionary of dataset statistics, e.g.
                 {"rows":2, "columns":3, "file_size":100}
-            is_preview_enabled_for_all_nodes: A flag to enable/disable a quick preview of node datasets.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
@@ -265,7 +263,6 @@ class GraphNode(BaseModel, abc.ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
-            is_preview_enabled_for_all_nodes=is_preview_enabled_for_all_nodes,
         )
 
     @classmethod
@@ -566,7 +563,6 @@ class DataNode(GraphNode):
         layer (Optional[str]): The layer that this data node belongs to. Defaults to `None`.
         is_free_input (bool): Determines whether the data node is a free input. Defaults to `False`.
         stats (Optional[Dict]): Statistics for the data node. Defaults to `None`.
-        is_preview_enabled_for_all_nodes (bool): A flag to enable/disable a quick preview of node datasets. Defaults to `False`.
 
     Raises:
         AssertionError: If kedro_obj, name are not supplied during instantiation
@@ -579,10 +575,6 @@ class DataNode(GraphNode):
         False, description="Determines whether the data node is a free input"
     )
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
-
-    is_preview_enabled_for_all_nodes: bool = Field(
-        False, description="A flag to enable/disable a quick preview of node datasets."
-    )
 
     dataset_type: Optional[str] = Field(
         default=None,
@@ -656,9 +648,7 @@ class DataNode(GraphNode):
     def is_preview_disabled(self):
         """Checks if the dataset has a preview disabled"""
         return (
-            self.is_preview_enabled_for_all_nodes is False
-            or self.viz_metadata is not None
-            and self.viz_metadata.get("preview") is False
+            self.viz_metadata is not None and self.viz_metadata.get("preview") is False
         )
 
 
@@ -745,6 +735,8 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     data_node: DataNode = Field(..., exclude=True)
 
+    is_preview_enabled_for_all_datasets: ClassVar[bool] = False
+
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
     )
@@ -787,6 +779,10 @@ class DataNodeMetadata(GraphNodeMetadata):
         return values
 
     @classmethod
+    def set_is_preview_enabled_for_all_datasets(cls, value: bool):
+        cls.is_preview_enabled_for_all_datasets = value
+
+    @classmethod
     def set_data_node_and_dataset(cls, data_node):
         cls.data_node = data_node
         cls.dataset = cast(AbstractDataset, data_node.kedro_obj)
@@ -816,7 +812,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if (
+            cls.data_node.is_preview_disabled()
+            or not hasattr(cls.dataset, "preview")
+            or not cls.is_preview_enabled_for_all_datasets
+        ):
             return None
 
         try:

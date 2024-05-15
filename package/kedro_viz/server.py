@@ -30,7 +30,6 @@ def populate_data(
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
     stats_dict: Dict,
-    is_preview_enabled_for_all_nodes: bool,
 ):  # pylint: disable=redefined-outer-name
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
@@ -40,10 +39,6 @@ def populate_data(
         session_store.sync()
         session_class = make_db_session_factory(session_store.location)
         data_access_manager.set_db_session(session_class)
-
-    data_access_manager.add_is_preview_enabled_for_all_nodes(
-        is_preview_enabled_for_all_nodes
-    )
 
     data_access_manager.add_catalog(catalog, pipelines)
 
@@ -56,7 +51,6 @@ def populate_data(
 
 def load_and_populate_data(
     path: Path,
-    is_preview_enabled_for_all_nodes: bool,
     env: Optional[str] = None,
     include_hooks: bool = False,
     package_name: Optional[str] = None,
@@ -87,14 +81,12 @@ def load_and_populate_data(
         pipelines,
         session_store,
         stats_dict,
-        is_preview_enabled_for_all_nodes,
     )
 
 
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
-    preview: bool = True,
     load_file: Optional[str] = None,
     save_file: Optional[str] = None,
     pipeline_name: Optional[str] = None,
@@ -133,7 +125,6 @@ def run_server(
     if load_file is None:
         load_and_populate_data(
             path,
-            preview,
             env,
             include_hooks,
             package_name,

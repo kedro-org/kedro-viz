@@ -64,7 +64,6 @@ class DataAccessManager:
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
-        self.is_preview_enabled_for_all_nodes = False
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -127,16 +126,6 @@ class DataAccessManager:
         """
 
         self.dataset_stats = stats_dict
-
-    def add_is_preview_enabled_for_all_nodes(
-        self, is_preview_enabled_for_all_nodes: bool
-    ):
-        """Add the preview flag to the data access manager.
-        Args:
-            is_preview_enabled_for_all_nodes: A boolean flag to indicate whether the preview is enabled for all the nodes.
-        """
-
-        self.is_preview_enabled_for_all_nodes = is_preview_enabled_for_all_nodes
 
     def get_stats_for_data_node(self, data_node_name: str) -> Union[Dict, None]:
         """Returns the dataset statistics for the data node if found
@@ -315,7 +304,6 @@ class DataAccessManager:
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 is_free_input=is_free_input,
-                is_preview_enabled_for_all_nodes=self.is_preview_enabled_for_all_nodes,
             )
         graph_node = self.nodes.add_node(graph_node)
         graph_node.add_pipeline(registered_pipeline_id)
