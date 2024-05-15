@@ -24,13 +24,13 @@ export const insertZeroWidthSpace = (text) =>
  * @param {Boolean} visible Whether to show the tooltip
  */
 const Tooltip = ({
-  arrowSize,
+  arrowSize = 'regular',
   centerArrow,
-  chartSize,
+  chartSize = {},
   noDelay,
-  style,
-  targetRect,
-  text,
+  style = {},
+  targetRect = {},
+  text = '',
   visible,
 }) => {
   let isTop = false,
@@ -71,17 +71,6 @@ const Tooltip = ({
       <div className="pipeline-tooltip__text">{insertZeroWidthSpace(text)}</div>
     </div>
   );
-};
-
-Tooltip.defaultProps = {
-  arrowSize: 'regular',
-  centerArrow: false,
-  chartSize: {},
-  noDelay: false,
-  style: {},
-  targetRect: {},
-  text: '',
-  visible: false,
 };
 
 export default Tooltip;

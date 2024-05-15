@@ -11,7 +11,7 @@ import Button from '../button';
  */
 const DropdownRenderer = ({
   children,
-  defaultText,
+  defaultText = 'Please select...',
   disabled,
   focusedOption,
   handleRef,
@@ -25,7 +25,7 @@ const DropdownRenderer = ({
   selectedOption,
   showCancelApplyBtns,
   title,
-  width,
+  width = 160,
   placeholderText,
 }) => {
   const wrapperClasses = classnames('kedro', 'dropdown', {
@@ -167,23 +167,6 @@ const DropdownRenderer = ({
       </div>
     </div>
   );
-};
-
-DropdownRenderer.defaultProps = {
-  children: null,
-  defaultText: 'Please select...',
-  disabled: false,
-  focusedOption: null,
-  handleRef: null,
-  haveSelectedValues: false,
-  onLabelClicked: null,
-  onOptionSelected: null,
-  onSelectChanged: null,
-  open: false,
-  selectedOption: null,
-  title: null,
-  width: 160,
-  placeholderText: null,
 };
 
 DropdownRenderer.propTypes = {

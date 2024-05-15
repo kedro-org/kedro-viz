@@ -11,7 +11,7 @@ import './dropdown.scss';
 const Dropdown = (props) => {
   const {
     children,
-    defaultText,
+    defaultText = 'Please select...',
     disabled,
     haveSelectedValues,
     onApplyAndClose,
@@ -20,7 +20,7 @@ const Dropdown = (props) => {
     onClosed,
     onOpened,
     showCancelApplyBtns,
-    width,
+    width = 160,
     placeholderText,
   } = props;
 
@@ -331,18 +331,6 @@ const Dropdown = (props) => {
       {children}
     </DropdownRenderer>
   );
-};
-
-Dropdown.defaultProps = {
-  children: null,
-  defaultText: 'Please select...',
-  disabled: false,
-  haveSelectedValues: false,
-  onChanged: null,
-  onClosed: null,
-  onOpened: null,
-  width: 160,
-  placeholderText: null,
 };
 
 Dropdown.propTypes = {
