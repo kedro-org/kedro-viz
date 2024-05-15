@@ -670,10 +670,11 @@ def test_create_shareableviz_process(
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name, include_hooks, package_name",
+    "platform, is_datasets_previewed, endpoint, bucket_name, include_hooks, package_name",
     [
         (
             "azure",
+            False,
             "https://example-bucket.web.core.windows.net",
             "example-bucket",
             False,
@@ -681,17 +682,19 @@ def test_create_shareableviz_process(
         ),
         (
             "aws",
+            True,
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             True,
             "demo_project",
         ),
-        ("gcp", "http://34.120.87.227/", "example-bucket", False, "demo_project"),
-        ("local", None, None, True, "demo_project"),
+        ("gcp", True, "http://34.120.87.227/", "example-bucket", False, "demo_project"),
+        ("local", False, None, None, True, "demo_project"),
     ],
 )
 def test_load_and_deploy_viz_success(
     platform,
+    is_datasets_previewed,
     endpoint,
     bucket_name,
     include_hooks,
@@ -707,6 +710,7 @@ def test_load_and_deploy_viz_success(
 
     cli.load_and_deploy_viz(
         platform,
+        is_datasets_previewed,
         endpoint,
         bucket_name,
         include_hooks,
@@ -721,5 +725,5 @@ def test_load_and_deploy_viz_success(
     mock_DeployerFactory.create_deployer.assert_called_once_with(
         platform, endpoint, bucket_name
     )
-    deployer_mock.deploy.assert_called_once()
+    deployer_mock.deploy.assert_called_once_with(is_datasets_previewed)
     mock_click_echo.echo.assert_not_called()

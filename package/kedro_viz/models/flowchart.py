@@ -735,7 +735,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     data_node: DataNode = Field(..., exclude=True)
 
-    is_preview_enabled_for_all_datasets: ClassVar[bool] = False
+    is_datasets_previewed: ClassVar[bool] = False
 
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
@@ -779,8 +779,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         return values
 
     @classmethod
-    def set_is_preview_enabled_for_all_datasets(cls, value: bool):
-        cls.is_preview_enabled_for_all_datasets = value
+    def set_is_datasets_previewed(cls, value: bool):
+        cls.is_datasets_previewed = value
 
     @classmethod
     def set_data_node_and_dataset(cls, data_node):
@@ -815,7 +815,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         if (
             cls.data_node.is_preview_disabled()
             or not hasattr(cls.dataset, "preview")
-            or not cls.is_preview_enabled_for_all_datasets
+            or not cls.is_datasets_previewed
         ):
             return None
 
