@@ -6,7 +6,7 @@ import 'what-input';
 import './search-input.scss';
 
 const SearchInput = ({
-  disabled,
+  disabled = false,
   label,
   onBlur,
   onChange,

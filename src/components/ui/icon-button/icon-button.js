@@ -9,7 +9,7 @@ const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
  * Icon button component
  */
 const IconButton = ({
-  active,
+  active = false,
   ariaLabel,
   ariaLive,
   children,
@@ -17,7 +17,7 @@ const IconButton = ({
   container = 'li',
   dataTest = 'TestDefaultDataValue',
   dataHeapEvent,
-  disabled,
+  disabled = false,
   icon,
   labelText,
   labelTextPosition = 'right',

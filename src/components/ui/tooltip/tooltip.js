@@ -25,13 +25,13 @@ export const insertZeroWidthSpace = (text) =>
  */
 const Tooltip = ({
   arrowSize = 'regular',
-  centerArrow,
+  centerArrow = false,
   chartSize = {},
-  noDelay,
+  noDelay = false,
   style = {},
   targetRect = {},
   text = '',
-  visible,
+  visible = false,
 }) => {
   let isTop = false,
     isRight = false;
