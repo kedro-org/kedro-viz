@@ -77,7 +77,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [showPublishedContent, setShowPublishedContent] = useState(false);
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
     useState(loadLocalStorage(localStorageSharableUrl) || {});
-  const [showPopulatedContent, setShowPopulatedContent] = useState(false);
   const [populatedContentKey, setPopulatedContentKey] = useState(undefined);
 
   useEffect(() => {
@@ -117,9 +116,27 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const toShowMainContentWithPopulatedContent = () => {
-    setShowPopulatedContent(true);
-    setShowPublishedContent(false);
-    setDeploymentState('default');
+    if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
+      setShowPublishedContent(false);
+      setDeploymentState('default');
+
+      const populatedContent =
+        hostingPlatformLocalStorageVal[populatedContentKey];
+
+      setInputValues(populatedContent);
+
+      const updatedFormDirtyState = Object.fromEntries(
+        Object.entries(populatedContent).map(([key, value]) => [
+          inputKeyToStateKeyMap[key],
+          !!value,
+        ])
+      );
+
+      setIsFormDirty((prevState) => ({
+        ...prevState,
+        ...updatedFormDirtyState,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -296,7 +313,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               <UrlBox
                 url={url}
                 onClick={() => onCopyClick(url)}
-                href={() => handleResponseUrl()}
+                href={handleResponseUrl()}
                 showCopiedText={showCopied}
               />
             ) : (
@@ -326,7 +343,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 <UrlBox
                   url={url}
                   onClick={() => onCopyClick(url)}
-                  href={() => handleResponseUrl()}
+                  href={handleResponseUrl()}
                   showCopiedText={showCopied}
                 />
               </div>
@@ -493,6 +510,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderMainContent = () => {
+    console.log('platform:', platform);
+    console.log('name:', bucket_name);
+    console.log('url:', endpoint);
+
     return !isLoading &&
       !responseUrl &&
       !showPublishedContent &&
@@ -506,18 +527,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Hosting platform
               </div>
               <Dropdown
-                defaultText={
-                  showPopulatedContent
-                    ? hostingPlatforms[populatedContentKey]
-                    : platform && hostingPlatforms[platform]
-                }
-                placeholderText={
-                  !showPopulatedContent &&
-                  (!platform ? 'Select a hosting platform' : null)
-                }
+                defaultText={platform && hostingPlatforms[platform]}
+                placeholderText={!platform ? 'Select a hosting platform' : null}
                 onChanged={(selectedPlatform) => {
                   onChange('platform', selectedPlatform.value);
-                  setShowPopulatedContent(false);
                 }}
                 width={null}
               >
@@ -539,13 +552,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               </div>
               <Input
                 onChange={(value) => onChange('bucket_name', value)}
-                defaultValue={
-                  showPopulatedContent
-                    ? hostingPlatformLocalStorageVal[populatedContentKey][
-                        'bucket_name'
-                      ]
-                    : bucket_name
-                }
+                defaultValue={bucket_name}
                 placeholder="Enter name"
                 resetValueTrigger={visible}
                 size="small"
@@ -559,13 +566,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               </div>
               <Input
                 onChange={(value) => onChange('endpoint', value)}
-                defaultValue={
-                  showPopulatedContent
-                    ? hostingPlatformLocalStorageVal[populatedContentKey][
-                        'endpoint'
-                      ]
-                    : endpoint
-                }
+                defaultValue={endpoint}
                 placeholder="Enter url"
                 resetValueTrigger={visible}
                 size="small"
@@ -580,10 +581,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             Cancel
           </Button>
           <Button
-            disabled={
-              !Object.values(isFormDirty).every((value) => value) &&
-              !showPopulatedContent
-            }
+            disabled={!Object.values(isFormDirty).every((value) => value)}
             size="small"
             onClick={handleSubmit}
           >
