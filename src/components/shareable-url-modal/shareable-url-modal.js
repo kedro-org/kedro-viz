@@ -256,80 +256,85 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderPublishedContent = () => {
-    const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
-    const platformsVal = Object.values(hostingPlatformLocalStorageVal);
+    if (showPublishedContent) {
+      const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
+      const platformsVal = Object.values(hostingPlatformLocalStorageVal);
 
-    const url = platform
-      ? hostingPlatformLocalStorageVal[platform]['endpoint']
-      : platformsVal[0]['endpoint'];
+      const url = platform
+        ? hostingPlatformLocalStorageVal[platform]['endpoint']
+        : platformsVal[0]['endpoint'];
 
-    const filteredPlatforms = {};
-    platformsKeys.forEach((key) => {
-      if (hostingPlatforms.hasOwnProperty(key)) {
-        filteredPlatforms[key] = hostingPlatforms[key];
-      }
-    });
+      const filteredPlatforms = {};
+      platformsKeys.forEach((key) => {
+        if (hostingPlatforms.hasOwnProperty(key)) {
+          filteredPlatforms[key] = hostingPlatforms[key];
+        }
+      });
 
-    return showPublishedContent ? (
-      <>
-        <div className="shareable-url-modal__published">
-          <div className="shareable-url-modal__content-title">
-            Publish and Share Kedro-Viz
-          </div>
-          {platformsKeys.length === 1 ? (
-            <UrlBox
-              url={url}
-              onClick={() => onCopyClick(url)}
-              href={() => handleResponseUrl()}
-              showCopiedText={showCopied}
-            />
-          ) : (
-            <div className="shareable-url-modal__published-dropdown-wrapper">
-              <Dropdown
-                defaultText={
-                  (platform && filteredPlatforms[platform]) ||
-                  Object.values(filteredPlatforms)[0]
-                }
-                onChanged={(selectedPlatform) => {
-                  onChange('platform', selectedPlatform.value);
-                  setPopulatedContentKey(selectedPlatform.value);
-                }}
-                width={null}
-              >
-                {Object.entries(filteredPlatforms).map(([value, label]) => (
-                  <MenuOption
-                    className={classnames({
-                      'pipeline-list__option--active': platform === value,
-                    })}
-                    key={value}
-                    primaryText={label}
-                    value={value}
-                  />
-                ))}
-              </Dropdown>
+      return (
+        <>
+          <div className="shareable-url-modal__published">
+            <div className="shareable-url-modal__content-title">
+              Publish and Share Kedro-Viz
+            </div>
+            {platformsKeys.length === 1 ? (
               <UrlBox
                 url={url}
                 onClick={() => onCopyClick(url)}
                 href={() => handleResponseUrl()}
                 showCopiedText={showCopied}
               />
-            </div>
-          )}
-        </div>
-        <div className="shareable-url-modal__republished-action">
-          <p className="shareable-url-modal__republished-action-text">
-            Republish Kedro-Viz to push new updates
-          </p>
-          <Button
-            mode="secondary"
-            onClick={toShowMainContentWithPopulatedContent}
-            size="small"
-          >
-            Republish
-          </Button>
-        </div>
-      </>
-    ) : null;
+            ) : (
+              <div className="shareable-url-modal__published-dropdown-wrapper">
+                <Dropdown
+                  defaultText={
+                    (platform && filteredPlatforms[platform]) ||
+                    Object.values(filteredPlatforms)[0]
+                  }
+                  onChanged={(selectedPlatform) => {
+                    onChange('platform', selectedPlatform.value);
+                    setPopulatedContentKey(selectedPlatform.value);
+                  }}
+                  width={null}
+                >
+                  {Object.entries(filteredPlatforms).map(([value, label]) => (
+                    <MenuOption
+                      className={classnames({
+                        'pipeline-list__option--active': platform === value,
+                      })}
+                      key={value}
+                      primaryText={label}
+                      value={value}
+                    />
+                  ))}
+                </Dropdown>
+                <UrlBox
+                  url={url}
+                  onClick={() => onCopyClick(url)}
+                  href={() => handleResponseUrl()}
+                  showCopiedText={showCopied}
+                />
+              </div>
+            )}
+          </div>
+          <div className="shareable-url-modal__republished-action">
+            <p className="shareable-url-modal__republished-action-text">
+              Republish Kedro-Viz to push new updates to the published link
+              above, or publish a new link to share.
+            </p>
+            <Button
+              mode="secondary"
+              onClick={toShowMainContentWithPopulatedContent}
+              size="small"
+            >
+              Republish
+            </Button>
+          </div>
+        </>
+      );
+    } else {
+      return null;
+    }
   };
 
   const renderSuccessContent = () => {
@@ -524,7 +529,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                     ? hostingPlatformLocalStorageVal[populatedContentKey][
                         'bucket_name'
                       ]
-                    : undefined
+                    : bucket_name
                 }
                 placeholder="Enter name"
                 resetValueTrigger={visible}
@@ -544,7 +549,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                     ? hostingPlatformLocalStorageVal[populatedContentKey][
                         'endpoint'
                       ]
-                    : undefined
+                    : endpoint
                 }
                 placeholder="Enter url"
                 resetValueTrigger={visible}
