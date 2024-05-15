@@ -15,6 +15,8 @@ Please follow the established format:
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
 - Fix Kedro-Viz waiting for valid Kedro project. (#1871)
+- Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
+- Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 
 # Release 9.0.0
 
