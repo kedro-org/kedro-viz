@@ -12,8 +12,8 @@ const Dropdown = (props) => {
   const {
     children,
     defaultText = 'Please select...',
-    disabled,
-    haveSelectedValues,
+    disabled = false,
+    haveSelectedValues = false,
     onApplyAndClose,
     onCancel,
     onChanged,
