@@ -560,7 +560,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             Cancel
           </Button>
           <Button
-            disabled={!Object.values(isFormDirty).every((value) => value)}
+            disabled={
+              !Object.values(isFormDirty).every((value) => value) &&
+              !showPopulatedContent
+            }
             size="small"
             onClick={handleSubmit}
           >
