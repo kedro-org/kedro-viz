@@ -491,10 +491,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderMainContent = () => {
-    console.log('platform:', platform);
-    console.log('name:', bucket_name);
-    console.log('url:', endpoint);
-
     return !isLoading &&
       !responseUrl &&
       !showPublishedContent &&
@@ -532,8 +528,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Bucket Name
               </div>
               <Input
-                onChange={(value) => onChange('bucket_name', value)}
                 defaultValue={bucket_name}
+                onChange={(value) => onChange('bucket_name', value)}
                 placeholder="Enter name"
                 resetValueTrigger={visible}
                 size="small"
@@ -546,8 +542,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 Endpoint Link
               </div>
               <Input
-                onChange={(value) => onChange('endpoint', value)}
                 defaultValue={endpoint}
+                onChange={(value) => onChange('endpoint', value)}
                 placeholder="Enter url"
                 resetValueTrigger={visible}
                 size="small"
