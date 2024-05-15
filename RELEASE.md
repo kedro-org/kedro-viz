@@ -17,6 +17,7 @@ Please follow the established format:
 - Fix Kedro-Viz waiting for valid Kedro project. (#1871)
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 - Remove default props from functional components. (#1906)
+- Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 
 # Release 9.0.0
 
