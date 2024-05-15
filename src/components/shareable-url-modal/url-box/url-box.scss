@@ -22,6 +22,14 @@
   }
 }
 
+.url-box__result-url-wrapper {
+  width: 27em;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  text-overflow: ellipsis;
+}
+
 .url-box___button {
   position: relative;
   display: flex;

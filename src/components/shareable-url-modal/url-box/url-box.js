@@ -5,14 +5,16 @@ import './url-box.scss';
 
 const UrlBox = ({ url, onClick, href, showCopiedText }) => (
   <div className="url-box__wrapper">
-    <a
-      className="url-box__result-url"
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      {url}
-    </a>
+    <div className="url-box__result-url-wrapper">
+      <a
+        className="url-box__result-url"
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {url}
+      </a>
+    </div>
     {window.navigator.clipboard && (
       <div className="url-box___button">
         <Button
