@@ -10,7 +10,6 @@ import {
   inputKeyToStateKeyMap,
   localStorageSharableUrl,
   KEDRO_VIZ_PUBLISH_DOCS_URL,
-  KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL,
   KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
   KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL,
   KEDRO_VIZ_PUBLISH_GCP_DOCS_URL,
@@ -40,24 +39,6 @@ const modalMessages = (status, info = '') => {
   };
 
   return messages[status];
-};
-
-const mockLocalStorage = {
-  aws: {
-    bucket_name: 'bucket-name-aws',
-    endpoint: 'http://test-aws.s3-website-us-east-1.amazonaws.com',
-    platform: 'aws',
-  },
-  gcp: {
-    bucket_name: 'bucket-name-google-cloud',
-    endpoint: 'http://test-google.s3-website-us-east-1.amazonaws.com',
-    platform: 'gcp',
-  },
-  azure: {
-    bucket_name: 'bucket-name-azure',
-    endpoint: 'http://test-azure.s3-website-us-east-1.amazonaws.com',
-    platform: 'azure',
-  },
 };
 
 const ShareableUrlModal = ({ onToggleModal, visible }) => {
