@@ -9,7 +9,7 @@ import './button.scss';
 const Button = ({
   children,
   dataTest = 'TestDefaultDataValue',
-  disabled,
+  disabled = false,
   onClick,
   size = 'regular',
   mode = 'primary',

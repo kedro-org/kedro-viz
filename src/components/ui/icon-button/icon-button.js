@@ -22,7 +22,7 @@ const IconButton = ({
   labelText,
   labelTextPosition = 'right',
   onClick,
-  visible,
+  visible = true,
   ...rest
 }) => {
   const Icon = icon;
