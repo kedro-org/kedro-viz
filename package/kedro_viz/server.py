@@ -75,13 +75,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(
-        data_access_manager,
-        catalog,
-        pipelines,
-        session_store,
-        stats_dict,
-    )
+    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
 def run_server(
