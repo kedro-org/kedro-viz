@@ -1062,7 +1062,9 @@ class TestEnhancedORJSONResponse:
             f"{file_path}/api/main", mock_filesystem.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/nodes", mock_filesystem.return_value
+            f"{file_path}/api/nodes",
+            mock_filesystem.return_value,
+            is_datasets_previewed,
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
             f"{file_path}/api/pipelines", mock_filesystem.return_value
