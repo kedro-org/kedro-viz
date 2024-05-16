@@ -18,6 +18,7 @@ import {
 
 import Button from '../ui/button';
 import CopyIcon from '../icons/copy';
+import InfoIcon from '../icons/info';
 import Dropdown from '../ui/dropdown';
 import IconButton from '../ui/icon-button';
 import Input from '../ui/input';
@@ -357,7 +358,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       <>
         <div className="shareable-url-modal__result">
           <div className="shareable-url-modal__label">Hosted link</div>
-          <div className="shareable-url-modal__url-wrapper">
+          <UrlBox
+            url={responseUrl}
+            onClick={onCopyClick}
+            href={handleResponseUrl()}
+            showCopiedText={showCopied}
+          />
+          {/* <div className="shareable-url-modal__url-wrapper">
             <a
               className="shareable-url-modal__result-url"
               href={handleResponseUrl()}
@@ -384,7 +391,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 />
               </div>
             )}
-          </div>
+          </div> */}
         </div>
         <div className="shareable-url-modal__button-wrapper ">
           <Button
@@ -481,6 +488,22 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
+  const renderTooltipText = () => {
+    const url = 'https://example.com';
+
+    const tooltipWithLink = `<a href="${url}"">AWS</a>`;
+    return (
+      <p>
+        {`The endpoint URL is the link
+                    to where your Kedro-Viz will be hosted.
+                    For information on obtaining
+                    the endpoint URL, please
+                    refer to the documentation
+                    for ${tooltipWithLink}, Azure, and GCP.`}
+      </p>
+    );
+  };
+
   const renderMainContent = () => {
     return !isLoading &&
       !responseUrl &&
@@ -519,7 +542,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             </div>
             <div className="shareable-url-modal__input-wrapper">
               <div className="shareable-url-modal__input-label">
-                Bucket Name
+                Bucket name
               </div>
               <Input
                 defaultValue={bucket_name}
@@ -532,8 +555,21 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               />
             </div>
             <div className="shareable-url-modal__input-wrapper">
-              <div className="shareable-url-modal__input-label">
-                Endpoint Link
+              <div className="shareable-url-modal__endpoint-url-wrapper">
+                <div className="shareable-url-modal__input-label">
+                  Endpoint URL
+                </div>
+                <IconButton
+                  ariaLabel="The endpoint URL information"
+                  className="shareable-url-modal__information-icon"
+                  labelText={`The endpoint URL is the link
+                    to where your Kedro-Viz will be hosted.
+                    For information on obtaining
+                    the endpoint URL, please
+                    refer to the documentation
+                    for AWS, Azure, and GCP.`}
+                  icon={InfoIcon}
+                />
               </div>
               <Input
                 defaultValue={endpoint}

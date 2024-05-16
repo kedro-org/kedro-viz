@@ -181,6 +181,40 @@
     color: var(--color-form-label);
   }
 
+  &__endpoint-url-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .pipeline-icon--container {
+      list-style-type: none;
+    }
+
+    .shareable-url-modal__input-label {
+      margin-bottom: 0;
+    }
+
+    .shareable-url-modal__information-icon {
+      height: 40px;
+
+      .pipeline-icon {
+        right: 0;
+        fill: #{variables.$black-0};
+      }
+
+      .pipeline-toolbar__label__visible {
+        width: 180px;
+        max-width: 180px;
+        white-space: inherit;
+        text-align: left;
+
+        &::after {
+          top: 5%;
+        }
+      }
+    }
+  }
+
   &__button-wrapper {
     align-items: baseline;
     display: flex;
