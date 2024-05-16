@@ -168,12 +168,12 @@ class ModularPipelinesRepository:
             modular_pipeline.outputs
         )
 
+  # The line `parent_modular_pipeline_id = ('.'.join(modular_pipeline_id.split('.')[:-1]) if '.' in
+  # modular_pipeline_id else None)` is extracting the parent modular pipeline ID from the given
+  # modular pipeline ID.
         parent_modular_pipeline_id = (
         '.'.join(modular_pipeline_id.split('.')[:-1]) if '.' in modular_pipeline_id else None
 )
-
-        print("Modular Pipeline ID", modular_pipeline_id)
-        print("Parent Modular Pipeline ID", parent_modular_pipeline_id)
         if parent_modular_pipeline_id:
             parent_modular_pipeline = self.get_or_create_modular_pipeline(
                 parent_modular_pipeline_id
