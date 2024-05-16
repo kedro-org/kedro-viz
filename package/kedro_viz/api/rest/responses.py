@@ -372,16 +372,17 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
 
 
 def get_package_compatibilities_response(
-    package_requirements: Dict[str, str],
+    package_requirements: Dict[str, Dict[str, str]],
 ) -> List[PackageCompatibilityAPIResponse]:
     """API response for `/api/package_compatibility`."""
     package_requirements_response = []
 
-    for package_name, compatible_version in package_requirements.items():
+    for package_name, package_info in package_requirements.items():
+        compatible_version = package_info["min_compatible_version"]
         try:
             package_version = get_package_version(package_name)
-        except PackageNotFoundError as exc:
-            logger.exception("Failed to get package version. Error: %s", str(exc))
+        except PackageNotFoundError:
+            logger.warning(package_info["warning_message"])
             package_version = "0.0.0"
 
         is_compatible = packaging.version.parse(
