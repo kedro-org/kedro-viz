@@ -18,6 +18,7 @@ Please follow the established format:
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 - Fix messaging level when package compatibility is not satisfied. (#1904)
+- Fix build failure due to incompatible seaborn and matplotlib versions. (#1910)
 
 # Release 9.0.0
 
