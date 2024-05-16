@@ -9,31 +9,33 @@ from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
 
 def create_pipeline(**kwargs) -> Pipeline:
-    new_pipeline = pipeline(
+    data_processing_pipeline = pipeline(
         [
-            node(lambda x: x,
-                 inputs="dataset_in",
-                 outputs="dataset_1",
-                 name="step1"),
-            node(lambda x: x,
-                 inputs="dataset_1",
-                 outputs="dataset_2",
-                 name="step2"),
-            node(lambda x: x,
-                 inputs="dataset_2",
-                 outputs="dataset_3",
-                 name="step3"),
-            node(lambda x: x,
-                 inputs="dataset_3",
-                 outputs="dataset_out",
-                 name="step4"
+            node(
+                lambda x: x,
+                inputs=["raw_data"],
+                outputs="model_inputs",
+                name="process_data",
+                tags=["split"],
             )
         ],
-            namespace="main_pipeline",
-        inputs=None,
-        outputs={"dataset_out", "dataset_3"}
+        namespace="uk.something1.data_processing",
+        outputs="model_inputs",
     )
-    return new_pipeline
+    data_science_pipeline = pipeline(
+        [
+            node(
+                lambda x: x,
+                inputs=["model_inputs"],
+                outputs="model",
+                name="train_model",
+                tags=["train"],
+            )
+        ],
+        namespace="uk.something2.data_science",
+        inputs="model_inputs",
+    )
+    return data_processing_pipeline + data_science_pipeline
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
