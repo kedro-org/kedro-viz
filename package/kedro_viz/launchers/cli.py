@@ -237,7 +237,7 @@ def run(
 @click.option(
     "--preview",
     default=False,
-    help="Enable/disable a quick preview of node datasets.",
+    help="Enable/disable preview of node datasets.",
 )
 def deploy(platform, endpoint, bucket_name, include_hooks, preview):
     """Deploy and host Kedro Viz on provided platform"""
@@ -275,7 +275,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, preview):
 @click.option(
     "--preview",
     default=False,
-    help="Enable/disable a quick preview of node datasets.",
+    help="Enable/disable preview of node datasets.",
 )
 def build(include_hooks, preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
