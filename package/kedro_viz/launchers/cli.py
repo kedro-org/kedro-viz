@@ -237,9 +237,9 @@ def run(
 @click.option(
     "--preview",
     default=False,
-    help="A flag to enable/disable a quick preview of node datasets.",
+    help="Enable/disable a quick preview of node datasets.",
 )
-def deploy(platform, endpoint, bucket_name, include_hooks, is_datasets_previewed):
+def deploy(platform, endpoint, bucket_name, include_hooks, preview):
     """Deploy and host Kedro Viz on provided platform"""
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
@@ -259,7 +259,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, is_datasets_previewed
 
     create_shareableviz_process(
         platform,
-        is_datasets_previewed,
+        preview,
         endpoint,
         bucket_name,
         include_hooks,
@@ -275,14 +275,12 @@ def deploy(platform, endpoint, bucket_name, include_hooks, is_datasets_previewed
 @click.option(
     "--preview",
     default=False,
-    help="A flag to enable/disable a quick preview of node datasets.",
+    help="Enable/disable a quick preview of node datasets.",
 )
-def build(include_hooks, is_datasets_previewed):
+def build(include_hooks, preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    create_shareableviz_process(
-        "local", is_datasets_previewed, include_hooks=include_hooks
-    )
+    create_shareableviz_process("local", preview, include_hooks=include_hooks)
 
 
 def create_shareableviz_process(
