@@ -25,6 +25,7 @@ import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
 import Tooltip from '../ui/tooltip';
+import Toggle from '../ui/toggle';
 
 import './shareable-url-modal.scss';
 import UrlBox from './url-box/url-box';
@@ -59,6 +60,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
     useState(loadLocalStorage(localStorageSharableUrl) || {});
   const [populatedContentKey, setPopulatedContentKey] = useState(undefined);
+  const [toggleValue, setTogleValue] = useState(false);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -434,50 +436,39 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <div className="shareable-url-modal__content-title">
           Publish and Share Kedro-Viz
         </div>
-        <p className="shareable-url-modal__content-description shareable-url-modal__paregraph-divider">
-          Prerequisite: Deploying and hosting Kedro-Viz requires access keys or
-          user credentials, depending on the chosen cloud provider. To use this
+        <h2 className="shareable-url-modal__content-description-title">
+          Prerequisite:{' '}
+        </h2>
+        <p className="shareable-url-modal__content-description">
+          Deploying and hosting Kedro-Viz requires access keys or user
+          credentials, depending on the chosen service provider. To use this
           feature, please add your access keys or credentials as environment
-          variables in your Kedro project. More information can be found in{' '}
+          variables in your project. More information can be found in the{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
             href={KEDRO_VIZ_PUBLISH_DOCS_URL}
           >
-            docs
+            documentation
           </a>
           .
         </p>
+        <h2 className="shareable-url-modal__content-description-title">
+          Disclaimer:{' '}
+        </h2>
         <p className="shareable-url-modal__content-description">
-          Enter the required information and a hosted link will be generated.
+          Disclaimer Kedro-Viz contains preview data for multiple datasets. You
+          can enable or disable all previews when publishing Kedro-Viz.
         </p>
-        <p className="shareable-url-modal__content-description shareable-url-modal__content-note">
-          For more information on obtaining the Endpoint URL, refer to{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_AWS_DOCS_URL}
-          >
-            AWS
-          </a>
-          ,{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL}
-          >
-            Azure
-          </a>{' '}
-          and{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_GCP_DOCS_URL}
-          >
-            GCP
-          </a>{' '}
-          docs.
-        </p>
+        <div className="shareable-url-modal__content-preview-dataset">
+          All dataset previews
+          <Toggle
+            className="shareable-url-modal__content-toggle"
+            title={toggleValue ? 'On' : 'Off'}
+            checked={toggleValue}
+            onChange={() => setTogleValue((prev) => !prev)}
+          />
+        </div>
       </div>
     );
   };
@@ -499,6 +490,9 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <div className="shareable-url-modal__content-form-wrapper">
           {renderTextContent()}
           <div className="shareable-url-modal__form-wrapper">
+            <p className="shareable-url-modal__form-wrapper-title">
+              Enter the required information.
+            </p>
             <div className="shareable-url-modal__input-wrapper">
               <div className="shareable-url-modal__input-label">
                 Hosting platform
@@ -553,7 +547,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             </div>
           </div>
         </div>
-        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
+        <div className="shareable-url-modal__button-wrapper">
           <Button mode="secondary" onClick={handleModalClose} size="small">
             Cancel
           </Button>

@@ -3,11 +3,14 @@
 .kui-theme--light {
   --color-description-text: #{variables.$black-300};
   --color-deployed-link: #{variables.$black-900};
+  --color-preview-data-text: #{variables.$black-900};
   --color-modal-bg-1: #{variables.$grey-100};
   --color-modal-bg-2: #{variables.$grey-0};
   --color-footer-border: #{variables.$grey-300};
   --color-text-doc-link: #{variables.$black-800};
   --color-form-label: #{variables.$grey-700};
+
+  // --color-divider: #{variables.$black-500};
   --input-bg: #{variables.$white-100};
   --input-shadow: #{variables.$white-800};
 }
@@ -15,11 +18,13 @@
 .kui-theme--dark {
   --color-description-text: #{variables.$white-900};
   --color-deployed-link: #{variables.$white-0};
+  --color-preview-data-text: #{variables.$white-0};
   --color-modal-bg-1: #{variables.$slate-300};
   --color-modal-bg-2: #{variables.$slate-100};
   --color-footer-border: #{variables.$black-600};
   --color-text-doc-link: #{variables.$white-600};
   --color-form-label: #{variables.$grey-500};
+  --color-divider: #{variables.$black-500};
   --input-bg: #{variables.$slate-700};
   --input-shadow: #{variables.$slate-900};
 }
@@ -71,6 +76,14 @@
     display: flex;
   }
 
+  &__form-wrapper-title {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    margin-bottom: 32px;
+  }
+
   &__content-title {
     font-size: 20px;
     font-style: normal;
@@ -91,6 +104,30 @@
     }
   }
 
+  &__content-description-title:nth-of-type(2)::before {
+    display: block;
+    content: '';
+    background: var(--color-divider);
+    height: 1px;
+    margin: 24px 0;
+  }
+
+  &__content-preview-dataset {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    margin-top: 12px;
+    color: var(--color-preview-data-text);
+  }
+
+  &__content-toggle {
+    margin: 0;
+  }
+
   &__content-note {
     margin-top: 18px;
     color: var(--color-form-label);
@@ -98,10 +135,6 @@
     a {
       color: var(--color-form-label);
     }
-  }
-
-  &__paregraph-divider {
-    margin-bottom: 30px;
   }
 
   &__content-wrapper {
@@ -156,18 +189,6 @@
     padding: 20px 48px;
     background: var(--color-modal-bg-1);
     border-top: 1px solid var(--color-footer-border);
-
-    &--right {
-      justify-content: flex-end;
-
-      .button:first-of-type {
-        margin-right: 32px;
-      }
-
-      a .button:first-of-type {
-        margin-right: 0;
-      }
-    }
 
     .button__btn--secondary {
       padding-left: 0;
