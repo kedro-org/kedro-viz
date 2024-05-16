@@ -9,6 +9,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Enable/disable preview for all the datasets when publishing Kedro-Viz via CLI. (#1894)
+
 ## Bug fixes and other changes
 
 - Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
