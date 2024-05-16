@@ -735,7 +735,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     data_node: DataNode = Field(..., exclude=True)
 
-    is_datasets_previewed: ClassVar[bool] = False
+    is_datasets_previewed: ClassVar[bool] = True
 
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
