@@ -237,7 +237,7 @@ def run(
 @click.option(
     "--preview",
     default=False,
-    help="Enable/disable the preview of all datasets.",
+    help="Enable/disable preview for all the datasets.",
 )
 def deploy(platform, endpoint, bucket_name, include_hooks, preview):
     """Deploy and host Kedro Viz on provided platform"""
@@ -275,7 +275,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, preview):
 @click.option(
     "--preview",
     default=False,
-    help="Enable/disable the preview of all datasets.",
+    help="Enable/disable preview for all the datasets.",
 )
 def build(include_hooks, preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
@@ -386,9 +386,7 @@ def load_and_deploy_viz(
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         load_and_populate_data(
-            Path.cwd(),
-            include_hooks=include_hooks,
-            package_name=package_name,
+            Path.cwd(), include_hooks=include_hooks, package_name=package_name
         )
 
         # Start the deployment
