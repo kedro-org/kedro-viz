@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Enable/disable preview for all the datasets when publishing Kedro-Viz via CLI. (#1894)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz with CLI. (#1894)
 
 ## Bug fixes and other changes
 
