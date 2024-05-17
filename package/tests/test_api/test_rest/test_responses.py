@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+import logging
 import operator
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
@@ -7,7 +8,6 @@ from unittest.mock import Mock, call, patch
 
 import pytest
 from fastapi.testclient import TestClient
-from importlib_metadata import PackageNotFoundError
 
 from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
@@ -829,10 +829,30 @@ class TestPackageCompatibilities:
     @pytest.mark.parametrize(
         "package_name, package_version, package_requirements, expected_compatibility_response",
         [
-            ("fsspec", "2023.9.1", {"fsspec": "2023.0.0"}, True),
-            ("fsspec", "2023.9.1", {"fsspec": "2024.0.0"}, False),
-            ("kedro-datasets", "2.1.0", {"kedro-datasets": "2.1.0"}, True),
-            ("kedro-datasets", "1.8.0", {"kedro-datasets": "2.1.0"}, False),
+            (
+                "fsspec",
+                "2023.9.1",
+                {"fsspec": {"min_compatible_version": "2023.0.0"}},
+                True,
+            ),
+            (
+                "fsspec",
+                "2023.9.1",
+                {"fsspec": {"min_compatible_version": "2024.0.0"}},
+                False,
+            ),
+            (
+                "kedro-datasets",
+                "2.1.0",
+                {"kedro-datasets": {"min_compatible_version": "2.1.0"}},
+                True,
+            ),
+            (
+                "kedro-datasets",
+                "1.8.0",
+                {"kedro-datasets": {"min_compatible_version": "2.1.0"}},
+                False,
+            ),
         ],
     )
     def test_get_package_compatibilities_response(
@@ -854,16 +874,27 @@ class TestPackageCompatibilities:
             assert package_response.package_version == package_version
             assert package_response.is_compatible is expected_compatibility_response
 
-    def test_get_package_compatibilities_exception_response(
-        self,
-        mocker,
-    ):
-        mocker.patch(
-            "kedro_viz.api.rest.responses.get_package_compatibilities_response",
-            side_effect=PackageNotFoundError("random-package"),
-        )
-        package_name = "random-package"
-        response = get_package_compatibilities_response({package_name: "1.0.0"})
+    def test_get_package_compatibilities_exception_response(self, caplog):
+        mock_package_requirement = {
+            "random-package": {
+                "min_compatible_version": "1.0.0",
+                "warning_message": "random-package is not available",
+            }
+        }
+
+        with caplog.at_level(logging.WARNING):
+            response = get_package_compatibilities_response(mock_package_requirement)
+
+            assert len(caplog.records) == 1
+
+            record = caplog.records[0]
+
+            assert record.levelname == "WARNING"
+            assert (
+                mock_package_requirement["random-package"]["warning_message"]
+                in record.message
+            )
+
         expected_response = PackageCompatibilityAPIResponse(
             package_name="random-package", package_version="0.0.0", is_compatible=False
         )
@@ -948,7 +979,7 @@ class TestEnhancedORJSONResponse:
         )
         remote_fs = Mock()
 
-        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs, False)
 
         assert mock_write_api_response_to_fs.call_count == len(nodeIds)
         assert mock_get_node_metadata_response.call_count == len(nodeIds)
@@ -1000,14 +1031,16 @@ class TestEnhancedORJSONResponse:
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     @pytest.mark.parametrize(
-        "file_path, protocol",
+        "file_path, protocol, is_datasets_previewed",
         [
-            ("s3://shareableviz", "s3"),
-            ("abfs://shareableviz", "abfs"),
-            ("shareableviz", "file"),
+            ("s3://shareableviz", "s3", True),
+            ("abfs://shareableviz", "abfs", False),
+            ("shareableviz", "file", True),
         ],
     )
-    def test_save_api_responses_to_fs(self, file_path, protocol, mocker):
+    def test_save_api_responses_to_fs(
+        self, file_path, protocol, is_datasets_previewed, mocker
+    ):
         mock_api_main_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_main_response_to_fs"
         )
@@ -1021,13 +1054,17 @@ class TestEnhancedORJSONResponse:
         mock_filesystem = mocker.patch("fsspec.filesystem")
         mock_filesystem.return_value.protocol = protocol
 
-        save_api_responses_to_fs(file_path, mock_filesystem.return_value)
+        save_api_responses_to_fs(
+            file_path, mock_filesystem.return_value, is_datasets_previewed
+        )
 
         mock_api_main_response_to_fs.assert_called_once_with(
             f"{file_path}/api/main", mock_filesystem.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/nodes", mock_filesystem.return_value
+            f"{file_path}/api/nodes",
+            mock_filesystem.return_value,
+            is_datasets_previewed,
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
             f"{file_path}/api/pipelines", mock_filesystem.return_value
