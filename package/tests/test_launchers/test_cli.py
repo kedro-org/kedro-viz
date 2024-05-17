@@ -588,7 +588,7 @@ def test_successful_build_with_existing_static_files(
 
 
 @pytest.mark.parametrize(
-    "platform, is_datasets_previewed, endpoint, bucket_name,"
+    "platform, are_datasets_previewable, endpoint, bucket_name,"
     "include_hooks, process_completed_value",
     [
         (
@@ -645,7 +645,7 @@ def test_successful_build_with_existing_static_files(
 )
 def test_create_shareableviz_process(
     platform,
-    is_datasets_previewed,
+    are_datasets_previewable,
     endpoint,
     bucket_name,
     include_hooks,
@@ -659,7 +659,7 @@ def test_create_shareableviz_process(
 ):
     mock_process_completed.return_value.value = process_completed_value
     cli.create_shareableviz_process(
-        platform, is_datasets_previewed, endpoint, bucket_name, include_hooks
+        platform, are_datasets_previewable, endpoint, bucket_name, include_hooks
     )
 
     # Assert the mocks were called as expected
@@ -667,7 +667,7 @@ def test_create_shareableviz_process(
         target=mock_viz_load_and_deploy,
         args=(
             platform,
-            is_datasets_previewed,
+            are_datasets_previewable,
             endpoint,
             bucket_name,
             include_hooks,
@@ -707,7 +707,7 @@ def test_create_shareableviz_process(
 
 
 @pytest.mark.parametrize(
-    "platform, is_datasets_previewed, endpoint, bucket_name, include_hooks, package_name",
+    "platform, are_datasets_previewable, endpoint, bucket_name, include_hooks, package_name",
     [
         (
             "azure",
@@ -731,7 +731,7 @@ def test_create_shareableviz_process(
 )
 def test_load_and_deploy_viz_success(
     platform,
-    is_datasets_previewed,
+    are_datasets_previewable,
     endpoint,
     bucket_name,
     include_hooks,
@@ -747,7 +747,7 @@ def test_load_and_deploy_viz_success(
 
     cli.load_and_deploy_viz(
         platform,
-        is_datasets_previewed,
+        are_datasets_previewable,
         endpoint,
         bucket_name,
         include_hooks,
@@ -762,5 +762,5 @@ def test_load_and_deploy_viz_success(
     mock_DeployerFactory.create_deployer.assert_called_once_with(
         platform, endpoint, bucket_name
     )
-    deployer_mock.deploy.assert_called_once_with(is_datasets_previewed)
+    deployer_mock.deploy.assert_called_once_with(are_datasets_previewable)
     mock_click_echo.echo.assert_not_called()

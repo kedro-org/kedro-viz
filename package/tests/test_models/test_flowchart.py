@@ -394,6 +394,13 @@ class TestGraphNodeMetadata:
         )
         assert data_node.is_preview_disabled() is True
 
+    def test_are_datasets_previewable(self, example_data_node):
+        DataNodeMetadata.set_are_datasets_previewable(False)
+        preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
+
+        assert preview_node_metadata.preview is None
+        assert preview_node_metadata.preview_type is None
+
     def test_preview_data_node_metadata(self, example_data_node):
         expected_preview_data = {
             "columns": ["id", "company_rating", "company_location"],
@@ -405,10 +412,10 @@ class TestGraphNodeMetadata:
             ],
         }
 
-        DataNodeMetadata.set_is_datasets_previewed(True)
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
         assert preview_node_metadata.preview == expected_preview_data
+        assert preview_node_metadata.preview_type == "TablePreview"
 
     def test_preview_data_node_metadata_exception(self, caplog):
         empty_dataset = CSVDataset(filepath="temp.csv")
