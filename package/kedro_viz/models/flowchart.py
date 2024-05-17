@@ -839,10 +839,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview_type")
     @classmethod
     def set_preview_type(cls, _):
-        if not cls._is_preview_enabled:
-            return None
-
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if (
+            cls.data_node.is_preview_disabled()
+            or not hasattr(cls.dataset, "preview")
+            or not cls.is_datasets_previewed
+        ):
             return None
 
         try:
