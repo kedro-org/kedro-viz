@@ -63,7 +63,7 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name
         )
-        deployer.deploy(input_values.is_datasets_previewed)
+        deployer.deploy(input_values.are_datasets_previewable)
         response = {
             "message": "Website deployed on "
             f"{input_values.platform and input_values.platform.upper()}",

@@ -7,6 +7,6 @@ class DeployerConfiguration(BaseModel):
     """Credentials for Deployers."""
 
     platform: str
-    is_datasets_previewed: bool
+    are_datasets_previewable: bool = False
     endpoint: str
     bucket_name: str

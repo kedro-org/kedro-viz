@@ -6,25 +6,32 @@ class MockDeployer:
     def __init__(self, platform, endpoint, bucket_name):
         pass
 
-    def deploy(self):
+    def deploy(self, are_datasets_previewable):
         pass
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name",
+    "platform, endpoint, bucket_name, are_datasets_previewable",
     [
-        ("aws", "http://mocked-url.com", "s3://shareableviz"),
-        ("azure", "http://mocked-url.com", "abfs://shareableviz"),
+        ("aws", "http://mocked-url.com", "s3://shareableviz", True),
+        ("azure", "http://mocked-url.com", "abfs://shareableviz", False),
     ],
 )
-def test_deploy_kedro_viz(client, platform, endpoint, bucket_name, mocker):
+def test_deploy_kedro_viz(
+    client, platform, endpoint, bucket_name, are_datasets_previewable, mocker
+):
     mocker.patch(
         "kedro_viz.api.rest.router.DeployerFactory.create_deployer",
         return_value=MockDeployer(platform, endpoint, bucket_name),
     )
     response = client.post(
         "/api/deploy",
-        json={"platform": platform, "endpoint": endpoint, "bucket_name": bucket_name},
+        json={
+            "platform": platform,
+            "endpoint": endpoint,
+            "bucket_name": bucket_name,
+            "are_datasets_previewable": are_datasets_previewable,
+        },
     )
 
     assert response.status_code == 200
