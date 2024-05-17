@@ -54,7 +54,7 @@ myst_heading_anchors = 2
 
 intersphinx_mapping = {
     "kedro": ("https://docs.kedro.org/en/stable/", None),
-    "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-1.7.1/", None),
+    "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-3.0.0/", None),
 }
 
 # -- Options for HTML output -------------------------------------------------
