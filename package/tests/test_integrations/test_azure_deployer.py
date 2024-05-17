@@ -26,7 +26,7 @@ def mock_file_system(mocker):
 
 
 class TestAzureDeployer:
-    def test_deploy(self, endpoint, bucket_name, mocker):
+    def test_deploy(self, endpoint, bucket_name, mocker, mock_file_system):
         deployer = AzureDeployer(endpoint, bucket_name)
 
         mocker.patch.object(deployer, "_upload_api_responses")
