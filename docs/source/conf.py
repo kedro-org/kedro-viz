@@ -53,7 +53,7 @@ source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 myst_heading_anchors = 2
 
 intersphinx_mapping = {
-    "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-1.7.1/", None),
+    "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-3.0.0/", None),
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -61,7 +61,7 @@ intersphinx_mapping = {
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "kedro-sphinx-theme"
 
 
 # Theme options are theme-specific and customise the look and feel of a theme
