@@ -235,11 +235,11 @@ def run(
     help="A flag to include all registered hooks in your Kedro Project",
 )
 @click.option(
-    "--preview",
-    default=False,
+    "--include-preview",
+    is_flag=True,
     help="Enable/disable preview for all the datasets.",
 )
-def deploy(platform, endpoint, bucket_name, include_hooks, preview):
+def deploy(platform, endpoint, bucket_name, include_hooks, include_preview):
     """Deploy and host Kedro Viz on provided platform"""
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
@@ -259,7 +259,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, preview):
 
     create_shareableviz_process(
         platform,
-        preview,
+        include_preview,
         endpoint,
         bucket_name,
         include_hooks,
@@ -273,14 +273,14 @@ def deploy(platform, endpoint, bucket_name, include_hooks, preview):
     help="A flag to include all registered hooks in your Kedro Project",
 )
 @click.option(
-    "--preview",
-    default=False,
+    "--include-preview",
+    is_flag=True,
     help="Enable/disable preview for all the datasets.",
 )
-def build(include_hooks, preview):
+def build(include_hooks, include_preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    create_shareableviz_process("local", preview, include_hooks=include_hooks)
+    create_shareableviz_process("local", include_preview, include_hooks=include_hooks)
 
 
 def create_shareableviz_process(
