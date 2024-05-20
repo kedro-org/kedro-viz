@@ -141,18 +141,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setDeploymentState('loading');
     setIsLoading(true);
 
-    const hostingPlatformVal = {};
-    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-      hostingPlatformVal[inputValues.platform] = { ...inputValues };
-    }
+    // const hostingPlatformVal = {};
+    // if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+    //   hostingPlatformVal[inputValues.platform] = { ...inputValues };
+    // }
 
-    saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+    // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
 
-    const newState = {
-      ...hostingPlatformLocalStorageVal,
-      ...hostingPlatformVal,
-    };
-    setHostingPlatformLocalStorageVal(newState);
+    // const newState = {
+    //   ...hostingPlatformLocalStorageVal,
+    //   ...hostingPlatformVal,
+    // };
+    // setHostingPlatformLocalStorageVal(newState);
 
     try {
       const request = await fetch('/api/deploy', {
@@ -169,15 +169,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         setDeploymentState('success');
         toShowPublishedContent();
 
-        // const hostingPlatformVal = {};
-        // for (const platform in hostingPlatforms) {
-        //   if (inputValues.platform === platform) {
-        //     // to set the platform property based on the current playform value from inputValues
-        //     // expected output: { aws: { ...inputValues }}
-        //     hostingPlatformVal[inputValues.platform] = { ...inputValues };
-        //   }
-        // }
-        // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+        const hostingPlatformVal = {};
+        if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+          hostingPlatformVal[inputValues.platform] = { ...inputValues };
+        }
+
+        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+
+        const newState = {
+          ...hostingPlatformLocalStorageVal,
+          ...hostingPlatformVal,
+        };
+        setHostingPlatformLocalStorageVal(newState);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
