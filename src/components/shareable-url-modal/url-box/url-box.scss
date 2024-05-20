@@ -1,46 +1,61 @@
 @use '../../../styles/variables' as variables;
 
+.kui-theme--light {
+  --color-link: #{variables.$black-900};
+  --color-divider: #{variables.$white-900};
+  --color-bg: #{variables.$white-100};
+  --color-border: #{variables.$black-900};
+}
+
+.kui-theme--dark {
+  --color-link: #{variables.$white-0};
+  --color-divider: #{variables.$black-500};
+  --color-bg: #{variables.$slate-700};
+  --color-border: #{variables.$white-0};
+}
+
 .url-box__wrapper {
-  background-color: #{variables.$slate-700};
+  background-color: var(--color-bg);
   display: flex;
   height: 50px;
-  width: 100%;
   justify-content: space-between;
   text-overflow: ellipsis;
+  width: 100%;
 }
 
 .url-box__wrapper--half-width {
+  border-left: 1px solid var(--color-divider);
   width: 50%;
 }
 
 .url-box__result-url-wrapper {
-  display: flex;
   align-items: center;
-  width: 100%;
+  display: flex;
   max-width: 510px;
+  width: 100%;
 }
 
 .url-box__result-url {
-  color: var(--color-deployed-link);
+  align-items: center;
+  color: var(--color-link);
+  cursor: pointer;
+  display: block;
+  font-family: inherit;
   font-size: 16px;
   line-height: 32px;
-  cursor: pointer;
-  align-items: center;
-  padding-left: 16px;
-  font-family: inherit;
-  text-decoration: underline;
-  width: 90%;
-  display: block;
-  white-space: nowrap;
   overflow: hidden;
+  padding-left: 16px;
+  text-decoration: underline;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 90%;
 }
 
 .url-box___button {
-  position: relative;
-  display: flex;
   align-items: center;
-  border: 1px solid white;
+  border: 1px solid var(--color-border);
+  display: flex;
+  position: relative;
 
   .button__btn--secondary {
     width: 100px;

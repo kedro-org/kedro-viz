@@ -342,7 +342,7 @@
 
   // check with Step since there's no timestamp atm, can we decrease the padding bottom from 84 to 48px
   padding: 48px;
-  background-color: #{variables.$slate-300};
+  background-color: var(--color-modal-bg-1);
 
   .shareable-url-modal__content-title {
     padding-bottom: 32px;
