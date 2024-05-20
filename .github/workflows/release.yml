@@ -52,5 +52,5 @@ jobs:
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: package/dist/*
+          packages-dir: package/dist
           password: ${{ secrets.KEDRO_VIZ_PYPI_TOKEN }}        
