@@ -1,7 +1,7 @@
 """Project pipelines."""
 from typing import Dict
 
-from kedro.pipeline import Pipeline, pipeline, node
+from kedro.pipeline import Pipeline
 
 from demo_project.pipelines import data_ingestion as di
 from demo_project.pipelines import feature_engineering as fe
@@ -25,8 +25,6 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     reporting_pipeline = rep.create_pipeline()
     
-    
-
     return {
         "__default__": (
             ingestion_pipeline
