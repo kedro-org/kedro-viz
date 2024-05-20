@@ -230,6 +230,18 @@
     background: var(--color-modal-bg-1);
     border-top: 1px solid var(--color-footer-border);
 
+    &--right {
+      justify-content: flex-end;
+
+      .button:first-of-type {
+        margin-right: 32px;
+      }
+
+      a .button:first-of-type {
+        margin-right: 0;
+      }
+    }
+
     .button__btn--secondary {
       padding-left: 0;
     }
@@ -365,21 +377,21 @@
   }
 }
 
-.shareable-url-modal__republished-action {
+.shareable-url-modal__published-action {
   align-items: baseline;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 48px 48px 56px;
   background: var(--color-modal-bg-1);
   border-top: 1px solid var(--color-footer-border);
+  display: flex;
+  justify-content: space-between;
+  padding: 48px 48px 56px;
+  width: 100%;
 
   .button__btn--secondary {
     // double check the hex colour with Step
     background-color: var(--color-btn-bg);
   }
 
-  .shareable-url-modal__republished-action-text {
+  .shareable-url-modal__published-action-text {
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;

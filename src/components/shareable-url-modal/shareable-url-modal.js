@@ -215,13 +215,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-
-    // TO FIX: bugging when close modal when showing published content
-    const delayShowingContent = setTimeout(() => {
-      toShowPublishedContent();
-    }, 500);
-
-    return () => clearTimeout(delayShowingContent);
+    toShowPublishedContent();
   };
 
   const getDeploymentStateByType = (type) => {
@@ -270,7 +264,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderPublishedContent = () => {
-    if (showPublishedContent) {
+    if (showPublishedContent && !responseUrl && !responseError) {
       const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
       const platformsVal = Object.values(hostingPlatformLocalStorageVal);
 
@@ -332,8 +326,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               </div>
             )}
           </div>
-          <div className="shareable-url-modal__republished-action">
-            <p className="shareable-url-modal__republished-action-text">
+          <div className="shareable-url-modal__published-action">
+            <p className="shareable-url-modal__published-action-text">
               Republish Kedro-Viz to push new updates to the published link
               above, or publish a new link to share.
             </p>
@@ -363,34 +357,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             href={handleResponseUrl()}
             showCopiedText={showCopied}
           />
-          {/* <div className="shareable-url-modal__url-wrapper">
-            <a
-              className="shareable-url-modal__result-url"
-              href={handleResponseUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {responseUrl}
-            </a>
-            {window.navigator.clipboard && (
-              <div className="shareable-url-modal__result-action">
-                <IconButton
-                  ariaLabel="Copy run command to clipboard."
-                  className="copy-button"
-                  dataHeapEvent={`clicked.run_command`}
-                  icon={CopyIcon}
-                  onClick={onCopyClick}
-                />
-                <Tooltip
-                  text="Copied!"
-                  visible={showCopied}
-                  noDelay
-                  centerArrow
-                  arrowSize="small"
-                />
-              </div>
-            )}
-          </div> */}
         </div>
         <div className="shareable-url-modal__button-wrapper ">
           <Button
@@ -485,22 +451,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <LoadingIcon visible={isLoading} />
       </div>
     ) : null;
-  };
-
-  const renderTooltipText = () => {
-    const url = 'https://example.com';
-
-    const tooltipWithLink = `<a href="${url}"">AWS</a>`;
-    return (
-      <p>
-        {`The endpoint URL is the link
-                    to where your Kedro-Viz will be hosted.
-                    For information on obtaining
-                    the endpoint URL, please
-                    refer to the documentation
-                    for ${tooltipWithLink}, Azure, and GCP.`}
-      </p>
-    );
   };
 
   const renderMainContent = () => {
