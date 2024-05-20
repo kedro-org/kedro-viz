@@ -17,7 +17,6 @@ import {
 } from '../../config';
 
 import Button from '../ui/button';
-import CopyIcon from '../icons/copy';
 import InfoIcon from '../icons/info';
 import Dropdown from '../ui/dropdown';
 import IconButton from '../ui/icon-button';
@@ -25,7 +24,6 @@ import Input from '../ui/input';
 import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
 import MenuOption from '../ui/menu-option';
-import Tooltip from '../ui/tooltip';
 import Toggle from '../ui/toggle';
 
 import './shareable-url-modal.scss';
@@ -563,12 +561,39 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                 <IconButton
                   ariaLabel="The endpoint URL information"
                   className="shareable-url-modal__information-icon"
-                  labelText={`The endpoint URL is the link
-                    to where your Kedro-Viz will be hosted.
-                    For information on obtaining
-                    the endpoint URL, please
-                    refer to the documentation
-                    for AWS, Azure, and GCP.`}
+                  labelText={
+                    <p>
+                      The endpoint URL is the link to where your Kedro-Viz will
+                      be hosted. For information on obtaining the endpoint URL,
+                      please refer to the documentation for{' '}
+                      <a
+                        className="shareable-url-modal__input-label-text"
+                        href={KEDRO_VIZ_PUBLISH_AWS_DOCS_URL}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        AWS
+                      </a>
+                      ,{' '}
+                      <a
+                        className="shareable-url-modal__input-label-text"
+                        href={KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Azure
+                      </a>
+                      ,{' '}
+                      <a
+                        className="shareable-url-modal__input-label-text"
+                        href={KEDRO_VIZ_PUBLISH_GCP_DOCS_URL}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        GCP
+                      </a>
+                    </p>
+                  }
                   icon={InfoIcon}
                 />
               </div>

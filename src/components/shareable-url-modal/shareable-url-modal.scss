@@ -13,6 +13,7 @@
   // --color-divider: #{variables.$black-500};
   --input-bg: #{variables.$white-100};
   --input-shadow: #{variables.$white-800};
+  --color-btn-bg: #{variables.$white-500};
 }
 
 .kui-theme--dark {
@@ -27,6 +28,7 @@
   --color-divider: #{variables.$black-500};
   --input-bg: #{variables.$slate-700};
   --input-shadow: #{variables.$slate-900};
+  --color-btn-bg: #{variables.$black-600};
 }
 
 .shareable-url-modal {
@@ -192,6 +194,10 @@
 
     .shareable-url-modal__input-label {
       margin-bottom: 0;
+    }
+
+    .shareable-url-modal__input-label-text {
+      color: inherit;
     }
 
     .shareable-url-modal__information-icon {
@@ -370,7 +376,7 @@
 
   .button__btn--secondary {
     // double check the hex colour with Step
-    background-color: #{variables.$black-600};
+    background-color: var(--color-btn-bg);
   }
 
   .shareable-url-modal__republished-action-text {
