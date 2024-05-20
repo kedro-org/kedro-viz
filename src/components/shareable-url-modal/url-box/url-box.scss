@@ -7,26 +7,32 @@
   width: 100%;
   justify-content: space-between;
   text-overflow: ellipsis;
+}
 
-  a {
-    color: var(--color-deployed-link);
-    font-size: 16px;
-    line-height: 32px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding-left: 16px;
-    font-family: inherit;
-    text-decoration: underline;
-    width: 90%;
-  }
+.url-box__wrapper--half-width {
+  width: 50%;
 }
 
 .url-box__result-url-wrapper {
-  width: 27em;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 510px;
+}
+
+.url-box__result-url {
+  color: var(--color-deployed-link);
+  font-size: 16px;
+  line-height: 32px;
+  cursor: pointer;
+  align-items: center;
+  padding-left: 16px;
+  font-family: inherit;
+  text-decoration: underline;
+  width: 90%;
+  display: block;
   white-space: nowrap;
   overflow: hidden;
-  display: flex;
   text-overflow: ellipsis;
 }
 

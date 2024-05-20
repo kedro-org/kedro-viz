@@ -1,10 +1,15 @@
+import classnames from 'classnames';
 import Tooltip from '../../ui/tooltip';
 import Button from '../../ui/button';
 
 import './url-box.scss';
 
-const UrlBox = ({ url, onClick, href, showCopiedText }) => (
-  <div className="url-box__wrapper">
+const UrlBox = ({ className, url, onClick, href, showCopiedText }) => (
+  <div
+    className={classnames('url-box__wrapper', {
+      [`${className}`]: className,
+    })}
+  >
     <div className="url-box__result-url-wrapper">
       <a
         className="url-box__result-url"

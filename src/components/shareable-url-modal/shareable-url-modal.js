@@ -325,6 +325,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
                   ))}
                 </Dropdown>
                 <UrlBox
+                  className="url-box__wrapper--half-width"
                   url={url}
                   onClick={() => onCopyClick(url)}
                   href={handleResponseUrl()}
