@@ -25,7 +25,10 @@
 
 .url-box__wrapper--half-width {
   border-left: 1px solid var(--color-divider);
-  width: 50%;
+
+  .url-box__result-url-wrapper {
+    width: 300px;
+  }
 }
 
 .url-box__result-url-wrapper {
