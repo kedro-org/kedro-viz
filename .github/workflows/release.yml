@@ -8,12 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  # SNYK_TOKEN: xxxxa727
-  TWINE_NON_INTERACTIVE: true
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-  TWINE_REPOSITORY_URL: ${{ secrets.TWINE_REPOSITORY_URL }}
-  TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
   NODE_VERSION: 18.20.0
   REGISTRY_URL: 'https://registry.npmjs.org'
 
@@ -54,8 +49,8 @@ jobs:
       - name: Make Python package
         run: make package
 
-      - name: Install twine
-        run: python -m pip install -U twine
-
-      - name: Publish to PyPI
-        run: python -m twine upload package/dist/*
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: package/dist/*
+          password: ${{ secrets.KEDRO_VIZ_PYPI_TOKEN }}        
