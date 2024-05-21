@@ -1,27 +1,34 @@
+import { copy } from '@testing-library/user-event/dist/cjs/clipboard/copy.js';
+
 export const updateContent = {
-  date: '17 April 2024',
+  date: '22 May 2024',
   features: [
     {
-      title:
-        'Enable stateful URLs with node filters and expand/collapse modular pipelines',
+      title: 'Add "Expand All Pipelines" toggle to the utility bar',
       image: '',
-      copy: 'Kedro-Viz now supports stateful URLs that update to reflect user interactions, specifically when filtering nodes or expanding/collapsing modular pipelines. This allows users to share URLs that capture and share specific views of the data pipeline.',
-      buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html#filtering-and-sharing-kedro-viz-pipelines',
-      buttonText: 'View the docs',
-    },
-    {
-      title:
-        'Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands',
-      image: '',
-      copy: 'To run hooks while running `kedro viz`, you must now include the `--include-hooks` option in the Viz CLI commands and the `%run_viz` Jupyter line magic. This change ensures hooks are executed only when explicitly requested, as they are no longer run by default in Kedro-Viz.',
+      copy: 'This is to quickly expand or collapse all pipeline sections from the utility bar with a single click, enhancing navigation and visibility across complex pipeline structures',
       buttonLink: '',
       buttonText: '',
     },
     {
-      title: 'Upgrade Kedro-Viz to Node 18',
+      title:
+        'Allow Kedro-Viz commands to run from any sub directory within Kedro project',
       image: '',
-      copy: 'Kedro-Viz has upgraded from Node v16 to v18',
+      copy: '',
+      buttonLink: '',
+      buttonText: '',
+    },
+    {
+      title: 'Add support for JSONDataset preview',
+      image: '',
+      copy: '',
+      buttonLink: '',
+      buttonText: '',
+    },
+    {
+      title: 'Fix bug related to tag filtering and sharing via stateful URL',
+      image: '',
+      copy: '',
       buttonLink: '',
       buttonText: '',
     },
