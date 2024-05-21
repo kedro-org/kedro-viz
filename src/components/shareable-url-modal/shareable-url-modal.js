@@ -97,7 +97,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const setToDisplayMainViewWithPopulatedContent = () => {
+  const displayMainViewWithStoredContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setShowPublishedView(false);
       setDeploymentState('default');
