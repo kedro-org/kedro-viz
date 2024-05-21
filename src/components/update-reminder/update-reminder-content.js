@@ -1,5 +1,3 @@
-import { copy } from '@testing-library/user-event/dist/cjs/clipboard/copy.js';
-
 export const updateContent = {
   date: '22 May 2024',
   features: [
