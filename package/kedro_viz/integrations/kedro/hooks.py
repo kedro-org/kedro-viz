@@ -17,7 +17,10 @@ try:
     from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
 except ImportError:  # pragma: no cover
     # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+    from kedro.pipeline.pipeline import (  # type: ignore
+        TRANSCODING_SEPARATOR,
+        _strip_transcoding,
+    )
 
 logger = logging.getLogger(__name__)
 
