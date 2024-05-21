@@ -6,19 +6,19 @@ class MockDeployer:
     def __init__(self, platform, endpoint, bucket_name):
         pass
 
-    def deploy(self, are_datasets_previewable):
+    def deploy(self, is_all_previews_enabled):
         pass
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name, are_datasets_previewable",
+    "platform, endpoint, bucket_name, is_all_previews_enabled",
     [
         ("aws", "http://mocked-url.com", "s3://shareableviz", True),
         ("azure", "http://mocked-url.com", "abfs://shareableviz", False),
     ],
 )
 def test_deploy_kedro_viz(
-    client, platform, endpoint, bucket_name, are_datasets_previewable, mocker
+    client, platform, endpoint, bucket_name, is_all_previews_enabled, mocker
 ):
     mocker.patch(
         "kedro_viz.api.rest.router.DeployerFactory.create_deployer",
@@ -30,7 +30,7 @@ def test_deploy_kedro_viz(
             "platform": platform,
             "endpoint": endpoint,
             "bucket_name": bucket_name,
-            "are_datasets_previewable": are_datasets_previewable,
+            "is_all_previews_enabled": is_all_previews_enabled,
         },
     )
 
