@@ -186,7 +186,7 @@ describe('Shareable URLs with empty localStorage', () => {
     });
   });
 
-  it.only('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
+  it('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
     const bucketName = 'myBucketName';
     const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
