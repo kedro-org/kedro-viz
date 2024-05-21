@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  TIMEOUT: 3600
+  INTERVAL: 30
+
 jobs:
   merge-gatekeeper:
     runs-on: ubuntu-latest
@@ -21,6 +25,6 @@ jobs:
         uses: upsidr/merge-gatekeeper@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          timeout: 3600
-          interval: 30
-          ignored: 'ci/circleci: win_unit_tests-3.9,ci/circleci: win_unit_tests-3.10,ci/circleci: win_unit_tests-3.8,ci/circleci: unit_tests-3.10,ci/circleci: unit_tests-3.8,ci/circleci: unit_tests-3.9,ci/circleci: win_e2e_tests-3.10,ci/circleci: win_e2e_tests-3.9,ci/circleci: win_e2e_tests-3.8,ci/circleci: e2e_tests-3.8,ci/circleci: e2e_tests-3.9,ci/circleci: e2e_tests-3.10,ci/circleci: lint-3.8,ci/circleci: lint-3.9,ci/circleci: lint-3.10,ci/circleci: javascript_lint_and_tests,ci/circleci: check-updated-files,ci/circleci: all_circleci_checks_succeeded'
+          timeout: ${{ env.TIMEOUT }}
+          interval: ${{ env.INTERVAL }}
+          ignored: 'ci/circleci: win_unit_tests-3.9,ci/circleci: win_unit_tests-3.10,ci/circleci: win_unit_tests-3.8,ci/circleci: unit_tests-3.10,ci/circleci: unit_tests-3.8,ci/circleci: unit_tests-3.9,ci/circleci: win_e2e_tests-3.10,ci/circleci: win_e2e_tests-3.9,ci/circleci: win_e2e_tests-3.8,ci/circleci: e2e_tests-3.8,ci/circleci: e2e_tests-3.9,ci/circleci: e2e_tests-3.10,ci/circleci: lint-3.8,ci/circleci: lint-3.9,ci/circleci: lint-3.10,ci/circleci: javascript_lint_and_tests,ci/circleci: check-updated-files,ci/circleci: all_circleci_checks_succeeded,CircleCI Pipeline'
