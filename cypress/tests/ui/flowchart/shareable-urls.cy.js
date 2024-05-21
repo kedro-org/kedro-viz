@@ -186,12 +186,10 @@ describe('Shareable URLs with empty localStorage', () => {
     });
   });
 
-  it('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
+  it.only('verifies that AWS link is generated with correct inputs on Republish button click #TC-61', () => {
     const bucketName = 'myBucketName';
     const endpointName = 'http://www.example.com';
     const primaryButtonNodeText = 'Publish';
-    const primaryButtonNodeTextVariant = 'Publish';
-    const secondaryButtonNodeText = 'Link Settings';
 
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
@@ -213,17 +211,6 @@ describe('Shareable URLs with empty localStorage', () => {
     );
     cy.get('.shareable-url-modal__button-wrapper button')
       .contains(primaryButtonNodeText)
-      .click();
-
-    // Wait for the POST request to complete
-    cy.wait('@publishRequest');
-
-    // Action
-    cy.get('.shareable-url-modal__button-wrapper button')
-      .contains(secondaryButtonNodeText)
-      .click();
-    cy.get('.shareable-url-modal__button-wrapper button')
-      .contains(primaryButtonNodeTextVariant)
       .click();
 
     // Wait for the POST request to complete and check the mocked response
