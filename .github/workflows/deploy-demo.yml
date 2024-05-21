@@ -1,0 +1,41 @@
+name: Deploy demo
+# Builds a Docker image of the demo project, pushes it to 
+# AWS ECR, and deploys it to AWS Lightsail.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - demo  
+jobs:
+  deploy_demo:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup environment
+      run: |-
+        cd demo-project
+        echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $GITHUB_ENV
+        echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $GITHUB_ENV
+
+    - name: Install AWS CLI
+      run: pip3 install awscli
+
+    - name: Build demo container image
+      run: |-
+        cd demo-project
+        echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
+        docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
+        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+        docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
+
+    - name: Create a new lightsail deployment
+      run: |-
+        cd demo-project
+        # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
+        aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
