@@ -11,7 +11,6 @@ from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
 from kedro.framework.project import PACKAGE_NAME
 from packaging.version import parse
-from watchgod import RegExpWatcher, run_process
 
 from kedro_viz import __version__
 from kedro_viz.constants import (
@@ -20,7 +19,7 @@ from kedro_viz.constants import (
     SHAREABLEVIZ_SUPPORTED_PLATFORMS,
     VIZ_DEPLOY_TIME_LIMIT,
 )
-from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
+
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
     _PYPROJECT,
@@ -30,7 +29,8 @@ from kedro_viz.launchers.utils import (
     _wait_for,
     viz_deploy_progress_timer,
 )
-from kedro_viz.server import load_and_populate_data
+
+from kedro_viz.launchers.lazy_group import LazyGroup
 
 try:
     from azure.core.exceptions import ServiceRequestError
@@ -40,12 +40,22 @@ except ImportError:  # pragma: no cover
 _VIZ_PROCESSES: Dict[str, int] = {}
 
 
-@click.group(name="Kedro-Viz")
+@click.group(
+        name="Kedro-Viz", 
+        cls=LazyGroup,
+        lazy_subcommands={"viz": "kedro_viz.launchers.cli.viz",
+                          },
+)
 def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@viz_cli.group(cls=DefaultGroup, default="run", default_if_no_args=True)
+@viz_cli.group(cls=LazyGroup, lazy_subcommands={
+            "run": "kedro_viz.launchers.cli.run",
+            "deploy": "kedro_viz.launchers.cli.deploy",
+            "build": "kedro_viz.launchers.cli.build",
+        },
+)
 @click.pass_context
 def viz(ctx):  # pylint: disable=unused-argument
     """Visualise a Kedro pipeline using Kedro viz."""
@@ -172,6 +182,7 @@ def run(
             "extra_params": params,
         }
         if autoreload:
+            from watchgod import RegExpWatcher, run_process
             run_process_kwargs = {
                 "path": kedro_project_path,
                 "target": run_server,
@@ -363,11 +374,13 @@ def load_and_deploy_viz(
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
+        from kedro_viz.server import load_and_populate_data
         load_and_populate_data(
             Path.cwd(), include_hooks=include_hooks, package_name=package_name
         )
 
         # Start the deployment
+        from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
         deployer.deploy()
 
