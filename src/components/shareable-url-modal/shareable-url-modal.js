@@ -55,7 +55,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [showCopied, setShowCopied] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
   const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
-  const [showPublishedContent, setShowPublishedContent] = useState(false);
+  const [showPublishedView, setShowPublishedView] = useState(false);
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
     useState(loadLocalStorage(localStorageSharableUrl) || {});
   const [populatedContentKey, setPopulatedContentKey] = useState(undefined);
@@ -91,7 +91,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const setToDisplayPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
-      setShowPublishedContent(true);
+      setShowPublishedView(true);
       // set the populatedContentKey as the first one from localStorage by default
       setPopulatedContentKey(Object.keys(hostingPlatformLocalStorageVal)[0]);
     }
@@ -99,7 +99,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
   const setToDisplayMainViewWithPopulatedContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
-      setShowPublishedContent(false);
+      setShowPublishedView(false);
       setDeploymentState('default');
 
       const populatedContent =
@@ -141,18 +141,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setDeploymentState('loading');
     setIsLoading(true);
 
-    // const hostingPlatformVal = {};
-    // if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-    //   hostingPlatformVal[inputValues.platform] = { ...inputValues };
-    // }
+    // this logic is here to test locally without publishing anything
 
-    // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
-
-    // const newState = {
-    //   ...hostingPlatformLocalStorageVal,
-    //   ...hostingPlatformVal,
-    // };
-    // setHostingPlatformLocalStorageVal(newState);
+    const hostingPlatformVal = {};
+    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+      hostingPlatformVal[inputValues.platform] = { ...inputValues };
+    }
+    saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+    const newState = {
+      ...hostingPlatformLocalStorageVal,
+      ...hostingPlatformVal,
+    };
+    setHostingPlatformLocalStorageVal(newState);
 
     try {
       const request = await fetch('/api/deploy', {
@@ -169,18 +169,16 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         setDeploymentState('success');
         setToDisplayPublishedView();
 
-        const hostingPlatformVal = {};
-        if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-          hostingPlatformVal[inputValues.platform] = { ...inputValues };
-        }
-
-        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
-
-        const newState = {
-          ...hostingPlatformLocalStorageVal,
-          ...hostingPlatformVal,
-        };
-        setHostingPlatformLocalStorageVal(newState);
+        // const hostingPlatformVal = {};
+        // if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+        //   hostingPlatformVal[inputValues.platform] = { ...inputValues };
+        // }
+        // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+        // const newState = {
+        //   ...hostingPlatformLocalStorageVal,
+        //   ...hostingPlatformVal,
+        // };
+        // setHostingPlatformLocalStorageVal(newState);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
@@ -267,86 +265,82 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderPublishedView = () => {
-    if (showPublishedContent && !responseUrl && !responseError) {
-      const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
-      const platformsVal = Object.values(hostingPlatformLocalStorageVal);
+    const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
+    const platformsVal = Object.values(hostingPlatformLocalStorageVal);
 
-      const url = platform
-        ? hostingPlatformLocalStorageVal[platform]['endpoint']
-        : platformsVal[0]['endpoint'];
+    const url = platform
+      ? hostingPlatformLocalStorageVal[platform]['endpoint']
+      : platformsVal[0]['endpoint'];
 
-      const filteredPlatforms = {};
-      platformsKeys.forEach((key) => {
-        if (hostingPlatforms.hasOwnProperty(key)) {
-          filteredPlatforms[key] = hostingPlatforms[key];
-        }
-      });
+    const filteredPlatforms = {};
+    platformsKeys.forEach((key) => {
+      if (hostingPlatforms.hasOwnProperty(key)) {
+        filteredPlatforms[key] = hostingPlatforms[key];
+      }
+    });
 
-      return (
-        <>
-          <div className="shareable-url-modal__published">
-            <div className="shareable-url-modal__content-title">
-              Publish and Share Kedro-Viz
-            </div>
-            {platformsKeys.length === 1 ? (
+    return (
+      <>
+        <div className="shareable-url-modal__published">
+          <div className="shareable-url-modal__content-title">
+            Publish and Share Kedro-Viz
+          </div>
+          {platformsKeys.length === 1 ? (
+            <UrlBox
+              url={url}
+              onClick={() => onCopyClick(url)}
+              href={handleResponseUrl()}
+              showCopiedText={showCopied}
+            />
+          ) : (
+            <div className="shareable-url-modal__published-dropdown-wrapper">
+              <Dropdown
+                defaultText={
+                  (platform && filteredPlatforms[platform]) ||
+                  Object.values(filteredPlatforms)[0]
+                }
+                onChanged={(selectedPlatform) => {
+                  onChange('platform', selectedPlatform.value);
+                  setPopulatedContentKey(selectedPlatform.value);
+                }}
+                width={null}
+              >
+                {Object.entries(filteredPlatforms).map(([value, label]) => (
+                  <MenuOption
+                    className={classnames({
+                      'pipeline-list__option--active': platform === value,
+                    })}
+                    key={value}
+                    primaryText={label}
+                    value={value}
+                  />
+                ))}
+              </Dropdown>
               <UrlBox
+                className="url-box__wrapper--half-width"
                 url={url}
                 onClick={() => onCopyClick(url)}
                 href={handleResponseUrl()}
                 showCopiedText={showCopied}
               />
-            ) : (
-              <div className="shareable-url-modal__published-dropdown-wrapper">
-                <Dropdown
-                  defaultText={
-                    (platform && filteredPlatforms[platform]) ||
-                    Object.values(filteredPlatforms)[0]
-                  }
-                  onChanged={(selectedPlatform) => {
-                    onChange('platform', selectedPlatform.value);
-                    setPopulatedContentKey(selectedPlatform.value);
-                  }}
-                  width={null}
-                >
-                  {Object.entries(filteredPlatforms).map(([value, label]) => (
-                    <MenuOption
-                      className={classnames({
-                        'pipeline-list__option--active': platform === value,
-                      })}
-                      key={value}
-                      primaryText={label}
-                      value={value}
-                    />
-                  ))}
-                </Dropdown>
-                <UrlBox
-                  className="url-box__wrapper--half-width"
-                  url={url}
-                  onClick={() => onCopyClick(url)}
-                  href={handleResponseUrl()}
-                  showCopiedText={showCopied}
-                />
-              </div>
-            )}
-          </div>
-          <div className="shareable-url-modal__published-action">
-            <p className="shareable-url-modal__published-action-text">
-              Republish Kedro-Viz to push new updates to the published link
-              above, or publish a new link to share.
-            </p>
-            <Button
-              mode="secondary"
-              onClick={setToDisplayMainViewWithPopulatedContent}
-              size="small"
-            >
-              Republish
-            </Button>
-          </div>
-        </>
-      );
-    } else {
-      return null;
-    }
+            </div>
+          )}
+        </div>
+        <div className="shareable-url-modal__published-action">
+          <p className="shareable-url-modal__published-action-text">
+            Republish Kedro-Viz to push new updates to the published link above,
+            or publish a new link to share.
+          </p>
+          <Button
+            mode="secondary"
+            onClick={setToDisplayMainViewWithPopulatedContent}
+            size="small"
+          >
+            Republish
+          </Button>
+        </div>
+      </>
+    );
   };
 
   const renderSuccessView = () => {
@@ -434,10 +428,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   const renderMainView = () => {
-    return !isLoading &&
-      !responseUrl &&
-      !showPublishedContent &&
-      !responseError ? (
+    return !isLoading && !responseUrl && !responseError ? (
       <>
         <div className="shareable-url-modal__content-form-wrapper">
           {renderTextContent()}
@@ -573,13 +564,16 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     >
       {renderCompatibilityMessage()}
       {canUseShareableUrls ? (
-        <>
-          {renderPublishedView()}
-          {renderMainView()}
-          {renderLoadingView()}
-          {renderErrorView()}
-          {renderSuccessView()}
-        </>
+        showPublishedView ? (
+          renderPublishedView()
+        ) : (
+          <>
+            {renderMainView()}
+            {renderLoadingView()}
+            {renderErrorView()}
+            {renderSuccessView()}
+          </>
+        )
       ) : null}
     </Modal>
   );
