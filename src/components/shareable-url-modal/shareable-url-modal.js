@@ -88,7 +88,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     fetchPackageCompatibility();
   }, []);
 
-  const toShowPublishedContent = () => {
+  const setToDisplayPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
       setShowPublishedContent(true);
@@ -97,7 +97,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const toShowMainContentWithPopulatedContent = () => {
+  const setToDisplayMainViewWithPopulatedContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setShowPublishedContent(false);
       setDeploymentState('default');
@@ -122,7 +122,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   useEffect(() => {
-    toShowPublishedContent();
+    setToDisplayPublishedView();
   }, []);
 
   const onChange = (key, value) => {
@@ -167,7 +167,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
-        toShowPublishedContent();
+        setToDisplayPublishedView();
 
         const hostingPlatformVal = {};
         if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
@@ -218,7 +218,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-    toShowPublishedContent();
+    setToDisplayPublishedView();
   };
 
   const getDeploymentStateByType = (type) => {
@@ -266,7 +266,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
-  const renderPublishedContent = () => {
+  const renderPublishedView = () => {
     if (showPublishedContent && !responseUrl && !responseError) {
       const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
       const platformsVal = Object.values(hostingPlatformLocalStorageVal);
@@ -336,7 +336,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             </p>
             <Button
               mode="secondary"
-              onClick={toShowMainContentWithPopulatedContent}
+              onClick={setToDisplayMainViewWithPopulatedContent}
               size="small"
             >
               Republish
@@ -349,7 +349,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const renderSuccessContent = () => {
+  const renderSuccessView = () => {
     return responseUrl ? (
       <div className="shareable-url-modal__result">
         <UrlBox
@@ -362,7 +362,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
-  const renderErrorContent = () => {
+  const renderErrorView = () => {
     return responseError ? (
       <div className="shareable-url-modal__error">
         <p>Error message: {responseError}</p>
@@ -425,7 +425,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     );
   };
 
-  const renderLoadingContent = () => {
+  const renderLoadingView = () => {
     return isLoading ? (
       <div className="shareable-url-modal__loading">
         <LoadingIcon visible={isLoading} />
@@ -433,7 +433,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     ) : null;
   };
 
-  const renderMainContent = () => {
+  const renderMainView = () => {
     return !isLoading &&
       !responseUrl &&
       !showPublishedContent &&
@@ -574,11 +574,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       {renderCompatibilityMessage()}
       {canUseShareableUrls ? (
         <>
-          {renderPublishedContent()}
-          {renderMainContent()}
-          {renderLoadingContent()}
-          {renderErrorContent()}
-          {renderSuccessContent()}
+          {renderPublishedView()}
+          {renderMainView()}
+          {renderLoadingView()}
+          {renderErrorView()}
+          {renderSuccessView()}
         </>
       ) : null}
     </Modal>
