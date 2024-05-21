@@ -646,7 +646,10 @@ class DataNode(GraphNode):
         return self.viz_metadata.get("preview_args", None)
 
     def is_preview_disabled(self):
-        """Checks if the dataset has a preview disabled"""
+        """Checks if the dataset has a preview disabled at the node level.
+        This happens when the user specifies 'preview=false' in the DataCatalog.
+        """
+
         return (
             self.viz_metadata is not None and self.viz_metadata.get("preview") is False
         )
@@ -729,13 +732,18 @@ class DataNodeMetadata(GraphNodeMetadata):
     Args:
         data_node (DataNode): Data node to which this metadata belongs to.
 
+    Attributes:
+        is_all_previews_enabled (bool): Class-level attribute to determine if
+            previews are enabled for all nodes. This can be configured via CLI
+            or UI to manage the preview settings.
+
     Raises:
         AssertionError: If data_node is not supplied during instantiation
     """
 
     data_node: DataNode = Field(..., exclude=True)
 
-    are_datasets_previewable: ClassVar[bool] = True
+    is_all_previews_enabled: ClassVar[bool] = True
 
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
@@ -779,8 +787,8 @@ class DataNodeMetadata(GraphNodeMetadata):
         return values
 
     @classmethod
-    def set_are_datasets_previewable(cls, value: bool):
-        cls.are_datasets_previewable = value
+    def set_is_all_previews_enabled(cls, value: bool):
+        cls.is_all_previews_enabled = value
 
     @classmethod
     def set_data_node_and_dataset(cls, data_node):
@@ -815,7 +823,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         if (
             cls.data_node.is_preview_disabled()
             or not hasattr(cls.dataset, "preview")
-            or not cls.are_datasets_previewable
+            or not cls.is_all_previews_enabled
         ):
             return None
 
@@ -842,7 +850,7 @@ class DataNodeMetadata(GraphNodeMetadata):
         if (
             cls.data_node.is_preview_disabled()
             or not hasattr(cls.dataset, "preview")
-            or not cls.are_datasets_previewable
+            or not cls.is_all_previews_enabled
         ):
             return None
 

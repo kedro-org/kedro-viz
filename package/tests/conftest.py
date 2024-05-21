@@ -353,5 +353,5 @@ def pipeline_with_data_sets_mock():
 
 
 @pytest.fixture(autouse=True)
-def reset_are_datasets_previewable():
-    DataNodeMetadata.are_datasets_previewable = True
+def reset_is_all_previews_enabled():
+    DataNodeMetadata.is_all_previews_enabled = True

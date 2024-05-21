@@ -455,8 +455,7 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
                 "--bucket-name",
                 "example-bucket",
-                "--preview",
-                "true",
+                "--include-preview",
             ],
             {
                 "platform": "aws",
@@ -561,7 +560,7 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
             {"platform": "local", "include_hooks": True},
         ),
         (
-            ["viz", "build", "--preview", "true"],
+            ["viz", "build", "--include-preview"],
             {"platform": "local", "preview": True},
         ),
     ],
@@ -588,7 +587,7 @@ def test_successful_build_with_existing_static_files(
 
 
 @pytest.mark.parametrize(
-    "platform, are_datasets_previewable, endpoint, bucket_name,"
+    "platform, is_all_previews_enabled, endpoint, bucket_name,"
     "include_hooks, process_completed_value",
     [
         (
@@ -645,7 +644,7 @@ def test_successful_build_with_existing_static_files(
 )
 def test_create_shareableviz_process(
     platform,
-    are_datasets_previewable,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -659,7 +658,7 @@ def test_create_shareableviz_process(
 ):
     mock_process_completed.return_value.value = process_completed_value
     cli.create_shareableviz_process(
-        platform, are_datasets_previewable, endpoint, bucket_name, include_hooks
+        platform, is_all_previews_enabled, endpoint, bucket_name, include_hooks
     )
 
     # Assert the mocks were called as expected
@@ -667,7 +666,7 @@ def test_create_shareableviz_process(
         target=mock_viz_load_and_deploy,
         args=(
             platform,
-            are_datasets_previewable,
+            is_all_previews_enabled,
             endpoint,
             bucket_name,
             include_hooks,
@@ -707,7 +706,7 @@ def test_create_shareableviz_process(
 
 
 @pytest.mark.parametrize(
-    "platform, are_datasets_previewable, endpoint, bucket_name, include_hooks, package_name",
+    "platform, is_all_previews_enabled, endpoint, bucket_name, include_hooks, package_name",
     [
         (
             "azure",
@@ -731,7 +730,7 @@ def test_create_shareableviz_process(
 )
 def test_load_and_deploy_viz_success(
     platform,
-    are_datasets_previewable,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -747,7 +746,7 @@ def test_load_and_deploy_viz_success(
 
     cli.load_and_deploy_viz(
         platform,
-        are_datasets_previewable,
+        is_all_previews_enabled,
         endpoint,
         bucket_name,
         include_hooks,
@@ -762,5 +761,5 @@ def test_load_and_deploy_viz_success(
     mock_DeployerFactory.create_deployer.assert_called_once_with(
         platform, endpoint, bucket_name
     )
-    deployer_mock.deploy.assert_called_once_with(are_datasets_previewable)
+    deployer_mock.deploy.assert_called_once_with(is_all_previews_enabled)
     mock_click_echo.echo.assert_not_called()
