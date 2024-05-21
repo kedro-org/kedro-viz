@@ -17,6 +17,7 @@ from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
+from kedro_viz.constants import VIZ_METADATA_LOCATION
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         project_path: the path where the Kedro project is located.
     """
     try:
-        stats_file_path = project_path / "stats.json"
+        stats_file_path = project_path / f"{VIZ_METADATA_LOCATION}/stats.json"
 
         if not stats_file_path.exists():
             return {}

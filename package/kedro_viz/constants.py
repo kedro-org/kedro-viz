@@ -25,3 +25,5 @@ PACKAGE_REQUIREMENTS = {
         "for users with kedro-datasets >= 2.1.0",
     },
 }
+
+VIZ_METADATA_LOCATION = ".viz"

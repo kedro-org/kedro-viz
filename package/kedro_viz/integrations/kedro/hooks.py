@@ -5,12 +5,13 @@ functionalities for a kedro run."""
 import json
 import logging
 from collections import defaultdict
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Any, Union
 
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
+from kedro_viz.constants import VIZ_METADATA_LOCATION
 
 try:
     # kedro 0.19.4 onwards
@@ -78,7 +79,10 @@ class DatasetStatsHook:
 
         """
         try:
-            with open("stats.json", "w", encoding="utf8") as file:
+            stats_file_path = Path(f"{VIZ_METADATA_LOCATION}/stats.json")
+            stats_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with stats_file_path.open("w", encoding="utf8") as file:
                 sorted_stats_data = {
                     dataset_name: self.format_stats(stats)
                     for dataset_name, stats in self._stats.items()
