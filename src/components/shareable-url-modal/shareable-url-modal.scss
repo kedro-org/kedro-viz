@@ -253,21 +253,6 @@
     width: 100%;
   }
 
-  &__result {
-    margin-bottom: 48px;
-    width: 100%;
-
-    .toolbox {
-      margin: 0 4px 0 20px;
-    }
-
-    .pipeline-icon {
-      position: relative;
-      top: unset;
-      right: unset;
-    }
-  }
-
   &__error {
     display: flex;
     flex-direction: column;
@@ -396,6 +381,25 @@
     font-weight: 400;
     line-height: 24px;
     width: 424px;
+  }
+}
+
+.shareable-url-modal__success-wrapper {
+  .modal__content {
+    background-color: var(--color-modal-bg-1);
+  }
+
+  .modal__wrapper {
+    width: 642px;
+    padding: 48px;
+  }
+
+  .modal__description {
+    margin-top: 0;
+  }
+
+  .shareable-url-modal__result {
+    width: 100%;
   }
 }
 

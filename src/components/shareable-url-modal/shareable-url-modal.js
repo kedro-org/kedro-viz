@@ -34,7 +34,7 @@ const modalMessages = (status, info = '') => {
     failure: 'Something went wrong. Please try again later.',
     loading: 'Shooting your files through space. Sit tight...',
     success:
-      'The current version of Kedro-Viz has been published and hosted via the link below.',
+      'The deployment has been successful and Kedro-Viz is hosted via the link below..',
     incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
   };
 
@@ -229,7 +229,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
     if (type === 'title') {
       return deploymentState === 'success'
-        ? 'Kedro-Viz Published and Hosted'
+        ? 'Kedro-Viz successfully hosted and published'
         : 'Publish and Share Kedro-Viz';
     }
 
@@ -351,37 +351,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
   const renderSuccessContent = () => {
     return responseUrl ? (
-      <>
-        <div className="shareable-url-modal__result">
-          <div className="shareable-url-modal__label">Hosted link</div>
-          <UrlBox
-            url={responseUrl}
-            onClick={onCopyClick}
-            href={handleResponseUrl()}
-            showCopiedText={showCopied}
-          />
-        </div>
-        <div className="shareable-url-modal__button-wrapper ">
-          <Button
-            mode="secondary"
-            onClick={() => {
-              setDeploymentState('default');
-              setIsLoading(false);
-              setResponseUrl(null);
-            }}
-            size="small"
-          >
-            Link Settings
-          </Button>
-          <Button
-            mode="secondary"
-            onClick={() => handleModalClose()}
-            size="small"
-          >
-            Close
-          </Button>
-        </div>
-      </>
+      <div className="shareable-url-modal__result">
+        <UrlBox
+          url={responseUrl}
+          onClick={onCopyClick}
+          href={handleResponseUrl()}
+          showCopiedText={showCopied}
+        />
+      </div>
     ) : null;
   };
 
@@ -587,6 +564,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           deploymentState !== 'default',
         'shareable-url-modal__published-wrapper':
           deploymentState === 'published',
+        'shareable-url-modal__success-wrapper': deploymentState === 'success',
       })}
       closeModal={handleModalClose}
       message={getDeploymentStateByType('message')}
