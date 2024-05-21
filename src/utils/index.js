@@ -243,3 +243,12 @@ export const mapNodeType = (nodeType) => nodeTypeMapObj[nodeType] || nodeType;
 export const mapNodeTypes = (nodeTypes) => {
   return nodeTypes.replace(/task|data/g, (matched) => mapNodeType(matched));
 };
+
+/**
+ * Test if the passed string value is valid boolean
+ * @param {String} inputString
+ * @returns {Boolean} true if the inputString is a valid boolean
+ */
+export const isValidBoolean = (inputString) => {
+  return /^(true|false)$/i.test(inputString);
+};

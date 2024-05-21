@@ -4,6 +4,7 @@ import {
   unique,
   replaceMatches,
   replaceAngleBracketMatches,
+  isValidBoolean,
 } from './index';
 
 describe('utils', () => {
@@ -75,6 +76,23 @@ describe('utils', () => {
         '<b>&lt;lambda&gt;</b>'
       );
       expect(replaceAngleBracketMatches('<lambda>')).toEqual('&lt;lambda&gt;');
+    });
+  });
+
+  describe('isValidBoolean', () => {
+    it('validates if the inputString is valid boolean', () => {
+      // Valid booleans
+      expect(isValidBoolean('true')).toEqual(true);
+      expect(isValidBoolean('false')).toEqual(true);
+      expect(isValidBoolean(true)).toEqual(true);
+      expect(isValidBoolean(false)).toEqual(true);
+
+      // Invalid booleans
+      expect(isValidBoolean('0')).toEqual(false);
+      expect(isValidBoolean('undefined')).toEqual(false);
+      expect(isValidBoolean(undefined)).toEqual(false);
+      expect(isValidBoolean('trueTesting')).toEqual(false);
+      expect(isValidBoolean('Testingfalse')).toEqual(false);
     });
   });
 });

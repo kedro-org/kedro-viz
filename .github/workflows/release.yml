@@ -1,0 +1,56 @@
+name: Release to NPM and PyPI
+# Builds and releases the application to NPM and PyPI 
+# when a new release is published or the workflow is manually triggered.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  NODE_VERSION: 18.20.0
+  REGISTRY_URL: 'https://registry.npmjs.org'
+
+jobs:
+  release_to_npm:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4  
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        registry-url: ${{ env.REGISTRY_URL }}
+    
+    - name: Install Node dependencies    
+      run: npm install
+
+    - name: Build React application
+      run: |-
+        node -v
+        make build
+    
+    - name: Publish to npm
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release_to_pypi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Tests
+        uses: "./.github/actions/setup_tests"
+
+      - name: Make Python package
+        run: make package
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: package/dist
+          password: ${{ secrets.KEDRO_VIZ_PYPI_TOKEN }}        
