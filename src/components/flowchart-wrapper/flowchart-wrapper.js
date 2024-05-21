@@ -110,9 +110,9 @@ export const FlowChartWrapper = ({
             disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
           }
         },
-        flags: (value) => {
+        expandAllPipelines: (value) => {
           if (!searchParams.has(params.expandAll)) {
-            toSetQueryParam(params.expandAll, value.expandAllPipelines);
+            toSetQueryParam(params.expandAll, value);
           }
         },
       };

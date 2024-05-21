@@ -9,11 +9,11 @@ import './menu-option.scss';
  */
 const MenuOption = ({
   className,
-  focused,
+  focused = false,
   id,
   onSelected,
   primaryText,
-  selected,
+  selected = false,
   value,
 }) => {
   const wrapperClasses = classnames('kedro', 'menu-option', className, {
@@ -59,15 +59,6 @@ const MenuOption = ({
       </div>
     </div>
   );
-};
-
-MenuOption.defaultProps = {
-  className: null,
-  focused: false,
-  id: null,
-  onSelected: null,
-  selected: false,
-  value: null,
 };
 
 MenuOption.propTypes = {
