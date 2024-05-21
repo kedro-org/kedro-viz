@@ -70,6 +70,7 @@ describe('PrimaryToolbar', () => {
     const expectedResult = {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
+      expandedPipelines: expect.any(Boolean),
       displaySidebar: true,
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
@@ -127,9 +128,8 @@ describe('PrimaryToolbar', () => {
       const dispatch = jest.fn();
       mapDispatchToProps(dispatch).onToggleExpandAllPipelines(true);
       expect(dispatch.mock.calls[0][0]).toEqual({
-        name: 'expandAllPipelines',
-        type: 'CHANGE_FLAG',
-        value: true,
+        type: 'TOGGLE_EXPAND_ALL_PIPELINES',
+        shouldExpandAllPipelines: true,
       });
     });
   });
