@@ -97,7 +97,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const displayMainViewWithStoredContent = () => {
+  const displayMainViewWithPublishedContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setShowPublishedView(false);
       setDeploymentState('default');
@@ -122,7 +122,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   useEffect(() => {
-    setToDisplayPublishedView();
+    displayPublishedView();
   }, []);
 
   const onChange = (key, value) => {
@@ -167,7 +167,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
-        setToDisplayPublishedView();
+        displayPublishedView();
 
         // const hostingPlatformVal = {};
         // if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
@@ -216,7 +216,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-    setToDisplayPublishedView();
+    displayPublishedView();
   };
 
   const getDeploymentStateByType = (type) => {
@@ -333,7 +333,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           </p>
           <Button
             mode="secondary"
-            onClick={setToDisplayMainViewWithPopulatedContent}
+            onClick={displayMainViewWithPublishedContent}
             size="small"
           >
             Republish
