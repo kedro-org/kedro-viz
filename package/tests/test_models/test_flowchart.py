@@ -394,8 +394,8 @@ class TestGraphNodeMetadata:
         )
         assert data_node.is_preview_disabled() is True
 
-    def test_are_datasets_previewable(self, example_data_node):
-        DataNodeMetadata.set_are_datasets_previewable(False)
+    def test_is_all_previews_enabled(self, example_data_node):
+        DataNodeMetadata.set_is_all_previews_enabled(False)
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
         assert preview_node_metadata.preview is None

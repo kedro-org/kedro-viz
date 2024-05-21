@@ -285,7 +285,7 @@ def build(include_hooks, include_preview):
 
 def create_shareableviz_process(
     platform,
-    are_datasets_previewable,
+    is_all_previews_enabled,
     endpoint=None,
     bucket_name=None,
     include_hooks=False,
@@ -299,7 +299,7 @@ def create_shareableviz_process(
             target=load_and_deploy_viz,
             args=(
                 platform,
-                are_datasets_previewable,
+                is_all_previews_enabled,
                 endpoint,
                 bucket_name,
                 include_hooks,
@@ -375,7 +375,7 @@ def create_shareableviz_process(
 
 def load_and_deploy_viz(
     platform,
-    are_datasets_previewable,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -391,7 +391,7 @@ def load_and_deploy_viz(
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
-        deployer.deploy(are_datasets_previewable)
+        deployer.deploy(is_all_previews_enabled)
 
     except (
         # pylint: disable=catching-non-exception
