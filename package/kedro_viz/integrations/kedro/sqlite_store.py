@@ -1,5 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+
 # pylint: disable=no-member, broad-exception-caught
 
 import getpass
@@ -50,7 +51,7 @@ class SQLiteStore(BaseSessionStore):
     def location(self) -> str:
         session_path = Path(f"{self._path}/session_store.db")
         session_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         """Returns location of the sqlite_store database"""
         return str(session_path)
 
