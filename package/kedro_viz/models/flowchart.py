@@ -733,8 +733,9 @@ class DataNodeMetadata(GraphNodeMetadata):
         data_node (DataNode): Data node to which this metadata belongs to.
 
     Attributes:
-        is_all_previews_enabled (bool): Class-level attribute to determine if previews are enabled for all nodes.
-        This can be configured via CLI or UI to manage the preview settings.
+        is_all_previews_enabled (bool): Class-level attribute to determine if
+            previews are enabled for all nodes. This can be configured via CLI
+            or UI to manage the preview settings.
 
     Raises:
         AssertionError: If data_node is not supplied during instantiation
