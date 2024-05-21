@@ -15,6 +15,7 @@ Please follow the established format:
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
 - Fix Kedro-Viz waiting for valid Kedro project. (#1871)
+- Include expandAllPipelines in initial state. (#1896)
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 - Remove default props from functional components. (#1906)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)

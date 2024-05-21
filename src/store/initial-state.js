@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
-import { mapNodeType } from '../utils';
+import { mapNodeType, isValidBoolean } from '../utils';
 import {
   settings,
   sidebarWidth,
@@ -21,6 +21,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  expandAllPipelines: false,
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   ignoreLargeWarning: false,
@@ -67,19 +68,20 @@ const parseUrlParameters = () => {
     nodeTagInUrl: search.get(params.tags)
       ? search.get(params.tags).split(',')
       : [],
+    expandAllPipelinesInUrl: search.get(params.expandAll),
   };
 };
 
 /**
- * Applies URL parameters to the application state.
- * This function modifies the state based on URL parameters such as
+ * Applies URL parameters to the application pipeline state.
+ * This function modifies the state based on the URL parameters such as
  * pipeline ID, node ID, node name, node type presence, and tag presence.
  *
- * @param {Object} state The current application state.
+ * @param {Object} state The current application pipeline state.
  * @param {Object} urlParams An object containing parsed URL parameters.
- * @returns {Object} The new state with modifications applied based on URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
  */
-const applyUrlParametersToState = (state, urlParams) => {
+const applyUrlParametersToPipelineState = (state, urlParams) => {
   const {
     pipelineIdFromURL,
     nodeIdFromUrl,
@@ -131,6 +133,24 @@ const applyUrlParametersToState = (state, urlParams) => {
 };
 
 /**
+ * Applies URL parameters to the application non-pipeline state.
+ * This function modifies the state based on the URL parameters such as
+ * expandAllPipelines presence.
+ *
+ * @param {Object} state The current application non-pipeline state.
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
+ */
+const applyUrlParametersToNonPipelineState = (state, urlParams) => {
+  const { expandAllPipelinesInUrl } = urlParams;
+  let newState = { ...state };
+  if (expandAllPipelinesInUrl && isValidBoolean(expandAllPipelinesInUrl)) {
+    newState.expandAllPipelines = JSON.parse(expandAllPipelinesInUrl);
+  }
+  return newState;
+};
+
+/**
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
  * @param {Object} state Initial/extant state
@@ -142,7 +162,7 @@ export const mergeLocalStorage = (state) => {
     localStorageRunsMetadata
   );
   Object.keys(localStorageState).forEach((key) => {
-    if (!state[key]) {
+    if (!(key in state)) {
       delete localStorageState[key];
     }
   });
@@ -162,10 +182,17 @@ export const mergeLocalStorage = (state) => {
  * Exactly when it runs depends on whether the data is loaded asynchronously or not.
  * @param {Object} data Data prop passed to App component
  * @param {Boolean} applyFixes Whether to override initialState
+ * @param {Boolean} expandAllPipelines Whether to expand all the modular pipelines
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new pipeline state with modifications applied.
  */
-export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
+export const preparePipelineState = (
+  data,
+  applyFixes,
+  expandAllPipelines,
+  urlParams
+) => {
   let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-  const urlParams = parseUrlParameters();
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
@@ -173,7 +200,10 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
       state.pipeline.active = state.pipeline.main;
     }
   }
-  state = applyUrlParametersToState(state, urlParams);
+  if (urlParams) {
+    state = applyUrlParametersToPipelineState(state, urlParams);
+  }
+
   return state;
 };
 
@@ -182,17 +212,25 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
  * @param {object} props Props passed to App component
- * @return {object} Updated initial state
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new non-pipeline state with modifications applied.
  */
-export const prepareNonPipelineState = (props) => {
-  const state = mergeLocalStorage(createInitialState());
+export const prepareNonPipelineState = (props, urlParams) => {
+  let state = mergeLocalStorage(createInitialState());
   let newVisibleProps = {};
+
   if (props.display?.sidebar === false || state.display.sidebar === false) {
     newVisibleProps['sidebar'] = false;
   }
+
   if (props.display?.minimap === false || state.display.miniMap === false) {
     newVisibleProps['miniMap'] = false;
   }
+
+  if (urlParams) {
+    state = applyUrlParametersToNonPipelineState(state, urlParams);
+  }
+
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
@@ -210,16 +248,18 @@ export const prepareNonPipelineState = (props) => {
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  const nonPipelineState = prepareNonPipelineState(props);
+  const urlParams = parseUrlParameters();
+  const nonPipelineState = prepareNonPipelineState(props, urlParams);
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.flags.expandAllPipelines;
+    nonPipelineState.expandAllPipelines;
 
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines
+    expandAllPipelines,
+    urlParams
   );
 
   return {
