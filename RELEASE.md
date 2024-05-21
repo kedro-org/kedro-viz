@@ -11,6 +11,10 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+# Release 9.0.1
+
+## Bug fixes and other changes
+
 - Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
