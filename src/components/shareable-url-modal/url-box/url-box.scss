@@ -4,6 +4,8 @@
   --color-link: #{variables.$black-900};
   --color-divider: #{variables.$white-900};
   --color-bg: #{variables.$white-100};
+  --color-bg-copied: #{variables.$black-900};
+  --color-text-copied: #{variables.$white-0};
   --color-border: #{variables.$black-900};
 }
 
@@ -11,6 +13,8 @@
   --color-link: #{variables.$white-0};
   --color-divider: #{variables.$black-500};
   --color-bg: #{variables.$slate-700};
+  --color-bg-copied: #{variables.$white-0};
+  --color-text-copied: #{variables.$black-900};
   --color-border: #{variables.$white-0};
 }
 
@@ -60,7 +64,20 @@
   display: flex;
   position: relative;
 
-  .button__btn--secondary {
+  .button__btn {
     width: 100px;
+  }
+
+  .button__btn--secondary::after {
+    display: none;
+  }
+}
+
+.url-box__button-copied {
+  border: none;
+
+  .button__btn {
+    background-color: var(--color-bg-copied);
+    color: var(--color-text-copied);
   }
 }

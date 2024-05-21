@@ -21,7 +21,11 @@ const UrlBox = ({ className, url, onClick, href, showCopiedText }) => (
       </a>
     </div>
     {window.navigator.clipboard && (
-      <div className="url-box___button">
+      <div
+        className={classnames('url-box___button', {
+          'url-box__button-copied': showCopiedText,
+        })}
+      >
         <Button
           mode="secondary"
           onClick={onClick}
