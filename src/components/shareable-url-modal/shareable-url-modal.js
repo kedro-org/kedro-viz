@@ -88,7 +88,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     fetchPackageCompatibility();
   }, []);
 
-  const setToDisplayPublishedView = () => {
+  const displayPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
       setShowPublishedView(true);
