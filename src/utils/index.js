@@ -189,7 +189,7 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
-  const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org'];
+  const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org', 'gitpod.io'];
   const itemFoundIndex = hosts.indexOf(window.location.hostname);
 
   if (itemFoundIndex === -1) {
