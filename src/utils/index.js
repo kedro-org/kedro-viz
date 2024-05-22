@@ -190,13 +190,11 @@ export const formatNumberWithCommas = (number) => {
  */
 export const isRunningLocally = () => {
   const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org'];
-  const itemFoundIndex = hosts.indexOf(window.location.hostname);
+  const itemFound = hosts.some((host) =>
+    window.location.hostname.includes(host)
+  );
 
-  if (itemFoundIndex === -1) {
-    return false; // The hostname isn't in our list of local hosts
-  } else {
-    return true;
-  }
+  return itemFound;
 };
 
 /**

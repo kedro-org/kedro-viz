@@ -52,8 +52,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
-            {/* {isRunningLocally() ? <ShareableUrlModal /> : null} */}
-            <ShareableUrlModal />
+            {isRunningLocally() ? <ShareableUrlModal /> : null}
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}
