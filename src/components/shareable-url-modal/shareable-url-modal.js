@@ -10,6 +10,7 @@ import {
   inputKeyToStateKeyMap,
   localStorageSharableUrl,
   PACKAGE_FSSPEC,
+  shareableUrlMessages,
 } from '../../config';
 import Modal from '../ui/modal';
 
@@ -22,18 +23,6 @@ import SuccessView from './success-view/success-view';
 import { getDeploymentStateByType } from './utils';
 
 import './shareable-url-modal.scss';
-
-const modalMessages = (status, info = '') => {
-  const messages = {
-    failure: 'Something went wrong. Please try again later.',
-    loading: 'Shooting your files through space. Sit tight...',
-    success:
-      'The deployment has been successful and Kedro-Viz is hosted via the link below..',
-    incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
-  };
-
-  return messages[status];
-};
 
 const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
@@ -237,13 +226,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         'message',
         deploymentState,
         compatibilityData,
-        modalMessages
+        shareableUrlMessages
       )}
       title={getDeploymentStateByType(
         'title',
         deploymentState,
         compatibilityData,
-        modalMessages
+        shareableUrlMessages
       )}
       visible={visible.shareableUrlModal}
     >
