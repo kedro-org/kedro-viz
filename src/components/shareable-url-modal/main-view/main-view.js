@@ -63,7 +63,9 @@ const MainView = ({
   handleSubmit,
   inputValues,
   isFormDirty,
-  onChange,
+  onPlatformChange,
+  onBuckNameChange,
+  onEndpointChange,
   setTogleValue,
   toggleValue,
   visible,
@@ -85,7 +87,7 @@ const MainView = ({
             <Dropdown
               defaultText={platform && hostingPlatforms[platform]}
               placeholderText={!platform ? 'Select a hosting platform' : null}
-              onChanged={onChange}
+              onChanged={onPlatformChange}
               width={null}
             >
               {Object.entries(hostingPlatforms).map(([value, label]) => (
@@ -104,7 +106,7 @@ const MainView = ({
             <div className="shareable-url-modal__input-label">Bucket name</div>
             <Input
               defaultValue={bucket_name}
-              onChange={(value) => onChange('bucket_name', value)}
+              onChange={onBuckNameChange}
               placeholder="Enter name"
               resetValueTrigger={visible}
               size="small"
@@ -158,7 +160,7 @@ const MainView = ({
             </div>
             <Input
               defaultValue={endpoint}
-              onChange={(value) => onChange('endpoint', value)}
+              onChange={onEndpointChange}
               placeholder="Enter url"
               resetValueTrigger={visible}
               size="small"

@@ -260,7 +260,11 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               handleSubmit={handleSubmit}
               inputValues={inputValues}
               isFormDirty={isFormDirty}
-              onChange={onChange}
+              onPlatformChange={(selectedPlatform) => {
+                onChange('platform', selectedPlatform.value);
+              }}
+              onBuckNameChange={(value) => onChange('bucket_name', value)}
+              onEndpointChange={(value) => onChange('endpoint', value)}
               setTogleValue={setTogleValue}
               toggleValue={toggleValue}
               visible={visible}
