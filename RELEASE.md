@@ -7,15 +7,17 @@ Please follow the established format:
 -->
 # Next release
 
+# Release 9.1.0
+
 ## Major features and improvements
+- Include expandAllPipelines in initial state. (#1896)
+- Allow Kedro-Viz commands to run from any sub directory within Kedro project, and implement _is_project and _find_kedro_project to tackle kedro project not found issue. (#1871)
 
 ## Bug fixes and other changes
 
 - Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
-- Fix Kedro-Viz waiting for valid Kedro project. (#1871)
-- Include expandAllPipelines in initial state. (#1896)
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 - Remove default props from functional components. (#1906)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
