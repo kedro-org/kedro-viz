@@ -27,7 +27,6 @@ const UrlBox = ({ className, url, onClick, href, showCopiedText }) => (
         })}
       >
         <Button
-          mode="secondary"
           onClick={() => onClick(url)}
           size="small"
           dataHeapEvent={`clicked.run_command`}

@@ -6,7 +6,6 @@
   --color-bg: #{variables.$white-100};
   --color-bg-copied: #{variables.$black-900};
   --color-text-copied: #{variables.$white-0};
-  --color-border: #{variables.$black-900};
 }
 
 .kui-theme--dark {
@@ -15,7 +14,6 @@
   --color-bg: #{variables.$slate-700};
   --color-bg-copied: #{variables.$white-0};
   --color-text-copied: #{variables.$black-900};
-  --color-border: #{variables.$white-0};
 }
 
 .url-box__wrapper {
@@ -60,12 +58,12 @@
 
 .url-box___button {
   align-items: center;
-  border: 1px solid var(--color-border);
   display: flex;
   position: relative;
 
   .button__btn {
     width: 100px;
+    padding: 13px 0;
   }
 
   .button__btn--secondary::after {
