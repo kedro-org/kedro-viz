@@ -199,3 +199,39 @@ Cypress.Commands.add('__comparisonMode__', () => {
   cy.get(':nth-child(3) > .runs-list-card__checked').click();
   cy.wait('@compareThreeRuns').its('response.statusCode').should('eq', 200);
 });
+
+/**
+ * Custom command to fillout and submit the hosting shareable URL form
+ */
+Cypress.Commands.add(
+  '__setupAndSubmitShareableUrlForm__',
+  (bucketName, endpointName, primaryButtonNodeText) => {
+    // Intercept the network request to mock with a fixture
+    cy.__interceptRest__(
+      '/api/deploy',
+      'POST',
+      '/mock/deploySuccessResponse.json'
+    ).as('publishRequest');
+
+    // Reload the page to ensure a fresh state
+    cy.reload();
+
+    // Open the deploy modal
+    cy.get('.pipeline-menu-button--deploy').click();
+
+    // Select the first hosting platform from the dropdown
+    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal .dropdown__options section div').eq(1).click();
+
+    // Fill in the form
+    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      endpointName
+    );
+
+    // Submit the form
+    cy.get('.shareable-url-modal__button-wrapper button')
+      .contains(primaryButtonNodeText)
+      .click();
+  }
+);

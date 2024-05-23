@@ -220,3 +220,78 @@ describe('Shareable URLs with empty localStorage', () => {
     });
   });
 });
+
+describe('Shareable URLs with valid localStorage', () => {
+  const bucketName = 'myBucketName';
+  const endpointName = 'http://www.example.com';
+  const secondBucketName = 'mySecondBucketName';
+  const secondEndpointName = 'http://www.exampleNumber2.com';
+
+  it('verifies that users can open the Published Content Kedro-Viz modal with valid URL after published it succesfully. #TC-XX', () => {
+    cy.__setupAndSubmitShareableUrlForm__(bucketName, endpointName, 'Publish');
+
+    // Wait for the POST request to complete
+    cy.wait('@publishRequest').then(() => {
+      // Close the modal once it publishes succesfully
+      cy.get('body').click(0, 0);
+
+      // Open the deploy modal again
+      cy.get('.pipeline-menu-button--deploy').click();
+      cy.get('.shareable-url-modal .modal__wrapper').contains(
+        `Publish and Share Kedro-Viz`
+      );
+      cy.get('.url-box__result-url').contains(endpointName);
+    });
+  });
+
+  it('verifies that after published to more than one platform, users can open the Published Content Kedro-Viz modal to select on different option. #TC-XX1', () => {
+    const fillFormAndSubmit = (bucketName, endpointName) => {
+      cy.get('.shareable-url-modal [data-test="bucket_name"]').clear();
+      cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
+      cy.get('.shareable-url-modal [data-test="endpoint_name"]').clear();
+      cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+        endpointName
+      );
+      cy.get('.shareable-url-modal__button-wrapper button')
+        .contains('Publish')
+        .click();
+    };
+
+    const selectHostingPlatform = (index) => {
+      cy.get(
+        '.shareable-url-modal [data-test=kedro-pipeline-selector]'
+      ).click();
+      cy.get('.shareable-url-modal .dropdown__options section div')
+        .eq(index)
+        .click();
+    };
+
+    cy.__setupAndSubmitShareableUrlForm__(bucketName, endpointName, 'Publish');
+
+    // Wait for the POST request to complete
+    cy.wait('@publishRequest').then(() => {
+      // Close the modal once it publishes successfully
+      cy.get('body').click(0, 0);
+      // Open the deploy modal again
+      cy.get('.pipeline-menu-button--deploy').click();
+      cy.get('.shareable-url-modal__published-action button').click();
+
+      // Select the second hosting platform from the dropdown
+      selectHostingPlatform(2);
+
+      // Fill in the form with second option
+      fillFormAndSubmit(secondBucketName, secondEndpointName);
+
+      cy.get(
+        '.shareable-url-modal__published-dropdown-wrapper [data-test=kedro-pipeline-selector]'
+      ).click();
+      cy.get(
+        '.shareable-url-modal__published-dropdown-wrapper .dropdown__options section div'
+      )
+        .eq(2)
+        .click();
+
+      cy.get('.url-box__result-url').contains(secondEndpointName);
+    });
+  });
+});
