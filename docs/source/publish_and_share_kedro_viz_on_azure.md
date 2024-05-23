@@ -103,6 +103,7 @@ Set up endpoint
 The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
 ```
 
+Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
 ![](./images/kedro-publish-azure.gif)
@@ -113,6 +114,10 @@ Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execut
 
 ```bash
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
+```
+
+```{note}
+Starting from Kedro-Viz 9.1.0, previews are disabled by default for `kedro viz deploy`. To enable previews for all nodes of the datasets, use the `--include-preview` flag.
 ```
 
 ## Permissions and access control
