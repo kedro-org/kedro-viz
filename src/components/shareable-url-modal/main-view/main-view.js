@@ -22,7 +22,7 @@ const renderTextContent = (toggleValue, setTogleValue) => {
         Publish and Share Kedro-Viz
       </div>
       <h2 className="shareable-url-modal__content-description-title">
-        Prerequisite:{' '}
+        Prerequisites{' '}
       </h2>
       <p className="shareable-url-modal__content-description">
         Deploying and hosting Kedro-Viz requires access keys or user
@@ -38,8 +38,9 @@ const renderTextContent = (toggleValue, setTogleValue) => {
         </a>
         .
       </p>
-      <h2 className="shareable-url-modal__content-description-title">
-        Disclaimer:{' '}
+      {/* To be commented out until the preview disable is ready */}
+      {/* <h2 className="shareable-url-modal__content-description-title shareable-url-modal__content-description-title-disclaimer">
+        Disclaimer{' '}
       </h2>
       <p className="shareable-url-modal__content-description">
         Disclaimer Kedro-Viz contains preview data for multiple datasets. You
@@ -53,7 +54,7 @@ const renderTextContent = (toggleValue, setTogleValue) => {
           checked={toggleValue}
           onChange={() => setTogleValue((prev) => !prev)}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -78,7 +79,7 @@ const MainView = ({
         {renderTextContent(toggleValue, setTogleValue)}
         <div className="shareable-url-modal__form-wrapper">
           <p className="shareable-url-modal__form-wrapper-title">
-            Enter the required information.
+            Please enter the required information below.
           </p>
           <div className="shareable-url-modal__input-wrapper">
             <div className="shareable-url-modal__input-label">
