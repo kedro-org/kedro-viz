@@ -9,7 +9,7 @@ from kedro.io import DataCatalog
 
 try:
     # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
+    from kedro.pipeline.transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
 except ImportError:  # pragma: no cover
     # older versions
     from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding  # type: ignore
