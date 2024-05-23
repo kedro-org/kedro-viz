@@ -11,7 +11,7 @@ Please follow the established format:
 
 ## Major features and improvements
 - Include expandAllPipelines in initial state. (#1896)
-- Allow Kedro-Viz commands to run from any sub directory within Kedro project (#1871)
+- Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
 
 ## Bug fixes and other changes
 
