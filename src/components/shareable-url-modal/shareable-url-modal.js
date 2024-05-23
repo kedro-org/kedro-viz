@@ -20,7 +20,7 @@ import MainView from './main-view/main-view';
 import LoadingView from './loading-view/loading-view';
 import ErrorView from './error-view/error-view';
 import SuccessView from './success-view/success-view';
-import { getDeploymentStateByType } from './utils';
+import { getDeploymentStateByType, handleResponseUrl } from './utils';
 
 import './shareable-url-modal.scss';
 
@@ -201,15 +201,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     displayPublishedView();
   };
 
-  const handleResponseUrl = () => {
-    // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
-    if (!/^https?:\/\//.test(responseUrl) && inputValues.platform === 'gcp') {
-      const url = 'http://' + responseUrl;
-      return url;
-    }
-    return responseUrl;
-  };
-
   const { platform } = inputValues || {};
 
   return (
@@ -240,7 +231,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         <CompatibilityView onClick={handleModalClose} />
       ) : showPublishedView ? (
         <PublishedView
-          handleResponseUrl={handleResponseUrl()}
           hostingPlatformLocalStorageVal={hostingPlatformLocalStorageVal}
           hostingPlatforms={hostingPlatforms}
           onChange={(selectedPlatform) => {
@@ -284,7 +274,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           )}
           {responseUrl && (
             <SuccessView
-              handleResponseUrl={handleResponseUrl()}
+              handleResponseUrl={handleResponseUrl(responseUrl, platform)}
               onClick={onCopyClick}
               responseUrl={responseUrl}
               showCopied={showCopied}

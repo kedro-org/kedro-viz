@@ -11,7 +11,7 @@ const SuccessView = ({
       <UrlBox
         url={responseUrl}
         onClick={onClick}
-        href={handleResponseUrl()}
+        href={handleResponseUrl}
         showCopiedText={showCopied}
       />
     </div>

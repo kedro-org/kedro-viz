@@ -39,3 +39,12 @@ export const getDeploymentStateByType = (
     return modalMessages(deploymentState, compatibilityData.package_version);
   }
 };
+
+export const handleResponseUrl = (responseUrl, platform) => {
+  // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
+  if (!/^https?:\/\//.test(responseUrl) && platform === 'gcp') {
+    const url = 'http://' + responseUrl;
+    return url;
+  }
+  return responseUrl;
+};

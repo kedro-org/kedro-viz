@@ -4,10 +4,9 @@ import Button from '../../ui/button';
 import Dropdown from '../../ui/dropdown';
 import MenuOption from '../../ui/menu-option';
 
-import { getFilteredPlatforms } from '../utils';
+import { getFilteredPlatforms, handleResponseUrl } from '../utils';
 
 const PublishedView = ({
-  handleResponseUrl,
   hostingPlatformLocalStorageVal,
   hostingPlatforms,
   onChange,
@@ -27,6 +26,9 @@ const PublishedView = ({
     hostingPlatforms,
     platformsKeys
   );
+
+  const href = handleResponseUrl(url, platform || platformsVal[0]['platform']);
+
   return (
     <>
       <div className="shareable-url-modal__published">
@@ -36,8 +38,8 @@ const PublishedView = ({
         {platformsKeys.length === 1 ? (
           <UrlBox
             url={url}
-            onClick={() => onCopyClick(url)}
-            href={handleResponseUrl}
+            onCopyClick={onCopyClick}
+            href={href}
             showCopiedText={showCopied}
           />
         ) : (
@@ -73,8 +75,8 @@ const PublishedView = ({
       </div>
       <div className="shareable-url-modal__published-action">
         <p className="shareable-url-modal__published-action-text">
-          Republish Kedro-Viz to push new updates to the published link above,
-          or publish a new link to share.
+          Republish Kedro-Viz to push new updates, or publish and host Kedro-Viz
+          with a new link.
         </p>
         <Button mode="secondary" onClick={onRepublishClick} size="small">
           Republish
