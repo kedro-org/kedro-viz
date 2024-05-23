@@ -40,7 +40,7 @@
   }
 
   .modal__title {
-    margin-bottom: 24px;
+    margin: 0 0 24px;
   }
 
   .modal__description {
@@ -92,6 +92,7 @@
   }
 
   &__content-description {
+    color: var(--color-description-text);
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -105,7 +106,7 @@
 
   &__content-description-title {
     color: var(--color-deployed-link);
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: 20px;
@@ -177,6 +178,11 @@
         text-decoration: none;
         border: 1px solid variables.$blue-300;
       }
+
+      &::placeholder {
+        color: #{variables.$black-500};
+        opacity: 1;
+      }
     }
   }
 
@@ -221,6 +227,18 @@
 
         &::after {
           top: 5%;
+        }
+      }
+
+      .pipeline-toolbar__label-right {
+        margin-left: 2em;
+
+        .shareable-url-modal__information-text {
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 16px;
+          margin: 0;
         }
       }
     }
@@ -335,6 +353,10 @@
   .dropdown__label span,
   .menu-option__content {
     font-size: 14px;
+  }
+
+  .dropdown__placeholder {
+    color: #{variables.$black-500};
   }
 }
 

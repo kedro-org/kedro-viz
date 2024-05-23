@@ -6,7 +6,7 @@ import IconButton from '../../ui/icon-button';
 import InfoIcon from '../../icons/info';
 import Input from '../../ui/input';
 import MenuOption from '../../ui/menu-option';
-import Toggle from '../../ui/toggle';
+// import Toggle from '../../ui/toggle';
 import {
   hostingPlatforms,
   KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
@@ -124,7 +124,7 @@ const MainView = ({
                 ariaLabel="The endpoint URL information"
                 className="shareable-url-modal__information-icon"
                 labelText={
-                  <p>
+                  <p className="shareable-url-modal__information-text">
                     The endpoint URL is the link to where your Kedro-Viz will be
                     hosted. For information on obtaining the endpoint URL,
                     please refer to the documentation for{' '}
