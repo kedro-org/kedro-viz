@@ -5,7 +5,7 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  changeFlag,
+  toggleExpandAllPipelines,
 } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import IconButton from '../ui/icon-button';
@@ -110,7 +110,7 @@ export const mapStateToProps = (state) => ({
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
-  expandedPipelines: state.flags.expandAllPipelines,
+  expandedPipelines: state.expandAllPipelines,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -127,7 +127,7 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleTextLabels(Boolean(value)));
   },
   onToggleExpandAllPipelines: (isExpanded) => {
-    dispatch(changeFlag('expandAllPipelines', isExpanded));
+    dispatch(toggleExpandAllPipelines(isExpanded));
     dispatch(loadInitialPipelineData());
   },
 });

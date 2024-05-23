@@ -299,7 +299,7 @@ const normalizeData = (data, expandAllPipelines) => {
       data.modular_pipelines
     );
 
-    // Case for expandAllPipelines in component props or within flag
+    // Case for expandAllPipelines in component props or within state
     if (expandAllPipelines) {
       // assign all modular pipelines into expanded state
       state.modularPipeline.expanded = state.modularPipeline.ids;
