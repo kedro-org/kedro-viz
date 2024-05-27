@@ -4,7 +4,7 @@ import Button from '../../ui/button';
 
 import './url-box.scss';
 
-const UrlBox = ({ className, url, onClick, href, showCopiedText }) => (
+const UrlBox = ({ className, url, onCopyClick, href, showCopiedText }) => (
   <div
     className={classnames('url-box__wrapper', {
       [`${className}`]: className,
@@ -27,7 +27,7 @@ const UrlBox = ({ className, url, onClick, href, showCopiedText }) => (
         })}
       >
         <Button
-          onClick={() => onClick(url)}
+          onClick={() => onCopyClick(url)}
           size="small"
           dataHeapEvent={`clicked.run_command`}
         >

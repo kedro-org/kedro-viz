@@ -66,8 +66,8 @@ const PublishedView = ({
             <UrlBox
               className="url-box__wrapper--half-width"
               url={url}
-              onClick={onCopyClick}
-              href={handleResponseUrl}
+              onCopyClick={onCopyClick}
+              href={href}
               showCopiedText={showCopied}
             />
           </div>
