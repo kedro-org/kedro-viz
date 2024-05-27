@@ -12,6 +12,8 @@
   --input-bg: #{variables.$white-100};
   --input-shadow: #{variables.$white-800};
   --color-btn-bg: #{variables.$white-500};
+  --dropdown-bg: #{variables.$white-0};
+  --dropdown-bg-hovered: #{variables.$white-200};
 }
 
 .kui-theme--dark {
@@ -26,6 +28,8 @@
   --input-bg: #{variables.$slate-700};
   --input-shadow: #{variables.$slate-900};
   --color-btn-bg: #{variables.$black-600};
+  --dropdown-bg: #{variables.$slate-600};
+  --dropdown-bg-hovered: #{variables.$slate-400};
 }
 
 .shareable-url-modal {
@@ -385,6 +389,18 @@
   .dropdown__label {
     height: 100%;
     width: 209px;
+  }
+}
+
+// override the dropdown styles for both mainView and publishedView
+.shareable-url-modal__input-wrapper,
+.shareable-url-modal__published-dropdown-wrapper {
+  .menu-option {
+    background-color: var(--dropdown-bg);
+
+    &:hover {
+      background-color: var(--dropdown-bg-hovered);
+    }
   }
 }
 
