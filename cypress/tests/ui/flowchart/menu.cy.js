@@ -100,7 +100,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('verifies that users can hide/show a node/dataset/parameters in the flowchart, by clicking on the eye icon. #TC-20', () => {
-    const nodeToToggleText = 'Reviews';
+    const nodeToToggleText = 'Shuttles';
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
