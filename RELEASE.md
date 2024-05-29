@@ -25,6 +25,7 @@ Please follow the established format:
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 - Fix messaging level when package compatibility is not satisfied. (#1904)
 - Upgrade Gitpod to include Node 18 and Python 3.11. (#1862)
+- Add utility functions related to transcoding to Kedro viz. (#1928)
 
 # Release 9.0.0
 
