@@ -7,6 +7,7 @@ from .nodes import (
     apply_types_to_reviews,
     apply_types_to_shuttles,
     combine_shuttle_level_information,
+    convert_companies_csv,
 )
 
 
@@ -23,6 +24,12 @@ def create_pipeline(**kwargs) -> Pipeline:
 
     return pipeline(
         [
+            node(
+                func=convert_companies_csv,
+                inputs="companies_json",
+                outputs="companies",
+                name="convert_companies_node",
+            ),
             node(
                 func=apply_types_to_companies,
                 inputs="companies",

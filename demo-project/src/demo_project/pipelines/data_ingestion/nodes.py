@@ -8,6 +8,19 @@ def _is_true(column: pd.Series) -> pd.Series:
     return column == "t"
 
 
+def convert_companies_csv(companies_json) -> pd.DataFrame:
+    """Convert JSON data to DataFrame and save as CSV.
+
+    Args:
+        companies_json: Raw data in JSON format.
+
+    Returns:
+        DataFrame created from JSON data.
+    """
+    companies_df = pd.json_normalize(companies_json)
+
+    return companies_df
+
 def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:
     """Preprocesses the data for companies.
 
