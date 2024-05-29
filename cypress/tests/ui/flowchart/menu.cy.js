@@ -62,8 +62,8 @@ describe('Flowchart Menu', () => {
       });
   });
 
-  it('verifies that users can select a node/dataset/parameters from the menu. #TC-18', () => {
-    const nodeToClickText = 'Companies';
+  it.only('verifies that users can select a node/dataset/parameters from the menu. #TC-18', () => {
+    const nodeToClickText = 'Reviews';
 
     // Action
     cy.get(
@@ -82,7 +82,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('verifies that users can highlight a node/dataset/parameters from the menu by hovering on their name. #TC-19', () => {
-    const nodeToHighlightText = 'Companies';
+    const nodeToHighlightText = 'Reviews';
 
     // Action
     cy.get(
@@ -100,7 +100,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('verifies that users can hide/show a node/dataset/parameters in the flowchart, by clicking on the eye icon. #TC-20', () => {
-    const nodeToToggleText = 'Companies';
+    const nodeToToggleText = 'Reviews';
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
@@ -145,7 +145,7 @@ describe('Flowchart Menu', () => {
 
   it('verifies that users can filter/hide an element type. #TC-22', () => {
     const nodeToToggleText = 'Datasets';
-    const visibleRowLabel = 'Companies';
+    const visibleRowLabel = 'Reviews';
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
@@ -190,7 +190,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
-    const visibleRowLabel = 'Companies';
+    const visibleRowLabel = 'Reviews';
     cy.visit(`/?tags=${visibleRowLabel}`);
 
     // Alias

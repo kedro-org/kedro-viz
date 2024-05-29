@@ -194,7 +194,7 @@ describe('Flowchart DAG', () => {
   });
 
   it('verifies that users can open and see the dataset statistics in the metadata panel for datasets. #TC-51', () => {
-    const dataNodeText = 'Companies';
+    const dataNodeText = 'Reviews';
 
     // Assert before action
     cy.get('[data-label="Dataset statistics:]').should('not.exist');
