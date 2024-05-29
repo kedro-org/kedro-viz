@@ -211,9 +211,9 @@ describe('Flowchart DAG', () => {
       .should((rowsValue) => expect(rowsValue).to.be.eq('77,096'));
     cy.get('[data-test=stats-value-columns]')
       .invoke('text')
-      .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
+      .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(10));
     cy.get('[data-test=stats-value-file_size]')
       .invoke('text')
-      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
+      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('2.9MB'));
   });
 });
