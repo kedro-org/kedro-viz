@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '22 May 2024',
+  date: '30 May 2024',
   features: [
     {
       title: 'Toggle to expand and collapse all pipelines in the utility bar.',
