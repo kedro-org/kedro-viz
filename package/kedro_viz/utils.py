@@ -17,7 +17,7 @@ def _transcode_split(element: str) -> Tuple[str, str]:
     split_name = element.split(TRANSCODING_SEPARATOR)
 
     if len(split_name) > 2:  # noqa: PLR2004
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             f"Expected maximum 1 transcoding separator, found {len(split_name) - 1} "
             f"instead: '{element}'."
         )
