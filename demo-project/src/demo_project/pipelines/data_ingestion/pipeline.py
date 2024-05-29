@@ -74,7 +74,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
         ],
         namespace="ingestion",  # provide inputs
-        inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace
+        inputs={"reviews", "shuttles", "companies_json"},  # map inputs outside of namespace
         outputs={
             "prm_spine_table",
             "prm_shuttle_company_reviews",

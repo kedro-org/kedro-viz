@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -8,7 +8,7 @@ def _is_true(column: pd.Series) -> pd.Series:
     return column == "t"
 
 
-def convert_companies_csv(companies_json: Dict) -> pd.DataFrame:
+def convert_companies_csv(companies_json) -> pd.DataFrame:
     """Convert JSON data to DataFrame and save as CSV.
 
     Args:
