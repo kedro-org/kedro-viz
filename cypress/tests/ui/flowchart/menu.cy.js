@@ -62,7 +62,7 @@ describe('Flowchart Menu', () => {
       });
   });
 
-  it.only('verifies that users can select a node/dataset/parameters from the menu. #TC-18', () => {
+  it('verifies that users can select a node/dataset/parameters from the menu. #TC-18', () => {
     const nodeToClickText = 'Reviews';
 
     // Action
