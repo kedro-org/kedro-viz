@@ -92,7 +92,7 @@ export const FlowChartWrapper = ({
     if (localStorageParams) {
       const paramActions = {
         pipeline: (value) => {
-          if (!searchParams.has(params.pipeline) && activePipeline) {
+          if (activePipeline) {
             toSetQueryParam(params.pipeline, value.active || activePipeline);
           }
         },

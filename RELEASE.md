@@ -20,6 +20,7 @@ Please follow the established format:
 - Remove default props from functional components. (#1906)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 - Fix messaging level when package compatibility is not satisfied. (#1904)
+- Fix broken URL when active pipeline name changes on initial load. (#1914)
 
 # Release 9.0.0
 
