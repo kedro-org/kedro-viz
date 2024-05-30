@@ -6,17 +6,10 @@ import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
-
-try:
-    # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding  # type: ignore
-
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
