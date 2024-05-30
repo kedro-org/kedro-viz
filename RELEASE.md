@@ -28,6 +28,8 @@ Please follow the established format:
 - Upgrade GitPod to include Node 18 and Python 3.11. (#1862)
 - Add utility functions related to Transcoding to Kedro viz. (#1928)
 - Include JSON dataset in the demo-project. (#1930)
+- Update intersphinx_mapping of kedro-datasets. (#1911)
+- Add GitPod to the local hosts list. (#1923)
 
 # Release 9.0.0
 
