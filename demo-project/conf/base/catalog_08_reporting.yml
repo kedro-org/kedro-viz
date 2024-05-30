@@ -38,3 +38,10 @@ reporting.confusion_matrix:
   type: matplotlib.MatplotlibWriter
   filepath: ${_base_location}/08_reporting/confusion_matrix.png
   versioned: true
+
+reporting.top_shuttle_data:
+  type: json.JSONDataset
+  filepath: ${_base_location}/08_reporting/top_shuttle_data.json
+  metadata:
+    kedro-viz:
+      layer: reporting

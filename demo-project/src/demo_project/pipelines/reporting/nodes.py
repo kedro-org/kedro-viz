@@ -9,7 +9,7 @@ import PIL
 import plotly.express as px
 import seaborn as sn
 from plotly import graph_objects as go
-
+from typing import Dict
 from .image_utils import DrawTable
 
 
@@ -119,3 +119,21 @@ def create_matplotlib_chart(companies: pd.DataFrame) -> plt:
     )
     sn.heatmap(confusion_matrix, annot=True)
     return plt
+
+
+def get_top_shuttles_data(model_input_table: pd.DataFrame) -> Dict:
+    """This function retrieves the head from the input table
+    and converts them into a JSON dataset.
+
+    Args:
+        model_input_table (pd.DataFrame): The data to retrieve the top N rows from
+        top_n (int, optional): The number of top rows to retrieve. Defaults to 5.
+
+    Returns:
+        str: A JSON string representing the top N rows of the dataset.
+    """
+
+    # Get the top N rows of the model input table
+    top_shuttle_df = model_input_table.head(5)
+    top_shuttle_json = top_shuttle_df.to_dict(orient="records")
+    return top_shuttle_json
