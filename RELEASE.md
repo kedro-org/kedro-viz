@@ -26,6 +26,7 @@ Please follow the established format:
 - Fix messaging level when package compatibility is not satisfied. (#1904)
 - Upgrade Gitpod to include Node 18 and Python 3.11. (#1862)
 - Add utility functions related to transcoding to Kedro viz. (#1928)
+- Include JSON dataset in the demo-project. (#1930)
 
 # Release 9.0.0
 
