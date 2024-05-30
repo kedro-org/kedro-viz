@@ -10,14 +10,14 @@ Please follow the established format:
 # Release 9.1.0
 
 ## Major features and improvements
-- Implement toggle to expand and collapse all pipelines in the utility bar. (#1858)
+- Introduce the toggle to expand and collapse all pipelines button in the utility bar. (#1858)
 - Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
 
 ## Bug fixes and other changes
 - Fix broken URL when active pipeline name changes on initial load. (#1914)
 - Fix bug related to tag filtering and sharing with stateful URL. (#1878)
 - Update settings panel design (#1875)
-- Migrate from CircleCi to Github Actions. (#1876)
+- Migrate from CircleCi to GitHub Actions. (#1876)
 - Include expandAllPipelines in initial state. (#1896)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
@@ -25,8 +25,8 @@ Please follow the established format:
 - Remove default props from functional components. (#1906)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 - Fix messaging level when package compatibility is not satisfied. (#1904)
-- Upgrade Gitpod to include Node 18 and Python 3.11. (#1862)
-- Add utility functions related to transcoding to Kedro viz. (#1928)
+- Upgrade GitPod to include Node 18 and Python 3.11. (#1862)
+- Add utility functions related to Transcoding to Kedro viz. (#1928)
 - Include JSON dataset in the demo-project. (#1930)
 
 # Release 9.0.0
