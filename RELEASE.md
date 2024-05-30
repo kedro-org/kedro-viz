@@ -10,7 +10,7 @@ Please follow the established format:
 # Release 9.1.0
 
 ## Major features and improvements
-- Include expandAllPipelines in initial state. (#1896)
+- Move the Expand all modular pipelines toggle from the settings panel to the utility bar. (#1858)
 - Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
 
 ## Bug fixes and other changes
@@ -18,6 +18,7 @@ Please follow the established format:
 - Fix bug related to tag filtering and sharing via stateful URL. (#1878)
 - Update settings panel design (#1875)
 - Migrate from CircleCi to Github Actions. (#1876)
+- Include expandAllPipelines in initial state. (#1896)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
