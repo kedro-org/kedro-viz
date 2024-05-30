@@ -103,7 +103,7 @@ kedro viz deploy --platform=gcp --endpoint=[gcp-endpoint] --bucket-name=[gcp-buc
 ```
 
 ```{note}
-Starting from Kedro-Viz 9.1.0, previews are disabled by default for `kedro viz deploy`. To enable previews for all nodes of the datasets, use the `--include-preview` flag.
+Starting from Kedro-Viz 9.2.0, previews are disabled by default for `kedro viz deploy`. To enable previews for all nodes of the datasets, use the `--include-preview` flag.
 ```
 
 ## Permissions and access control

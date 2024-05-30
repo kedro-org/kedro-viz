@@ -41,7 +41,7 @@ kedro viz build
 ```
 
 ```{note}
-Starting from Kedro-Viz 9.1.0, previews are disabled by default for `kedro viz build`. To enable previews for all nodes of the datasets, use the `--include-preview` flag.
+Starting from Kedro-Viz 9.2.0, previews are disabled by default for `kedro viz build`. To enable previews for all nodes of the datasets, use the `--include-preview` flag.
 ```
 
 This creates a `build` folder containing your Kedro-Viz app package in your project directory. 
