@@ -194,7 +194,7 @@ describe('Flowchart DAG', () => {
   });
 
   it('verifies that users can open and see the dataset statistics in the metadata panel for datasets. #TC-51', () => {
-    const dataNodeText = 'Reviews';
+    const dataNodeText = 'Companies';
 
     // Assert before action
     cy.get('[data-label="Dataset statistics:]').should('not.exist');
@@ -211,9 +211,9 @@ describe('Flowchart DAG', () => {
       .should((rowsValue) => expect(rowsValue).to.be.eq('77,096'));
     cy.get('[data-test=stats-value-columns]')
       .invoke('text')
-      .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(10));
+      .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
     cy.get('[data-test=stats-value-file_size]')
       .invoke('text')
-      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('2.9MB'));
+      .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
   });
 });

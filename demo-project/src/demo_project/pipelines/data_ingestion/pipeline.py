@@ -7,7 +7,6 @@ from .nodes import (
     apply_types_to_reviews,
     apply_types_to_shuttles,
     combine_shuttle_level_information,
-    convert_companies_csv,
 )
 
 
@@ -24,12 +23,6 @@ def create_pipeline(**kwargs) -> Pipeline:
 
     return pipeline(
         [
-            node(
-                func=convert_companies_csv,
-                inputs="companies_json",
-                outputs="companies",
-                name="convert_companies_node",
-            ),
             node(
                 func=apply_types_to_companies,
                 inputs="companies",
@@ -49,7 +42,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs=["reviews", "params:typing.reviews.columns_as_floats"],
                 outputs="int_typed_reviews",
                 name='apply_types_to_reviews'
-                
+
             ),
             node(
                 func=aggregate_company_data,
@@ -74,7 +67,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             ),
         ],
         namespace="ingestion",  # provide inputs
-        inputs={"reviews", "shuttles", "companies_json"},  # map inputs outside of namespace
+        inputs={"reviews", "shuttles", "companies"},  # map inputs outside of namespace
         outputs={
             "prm_spine_table",
             "prm_shuttle_company_reviews",
