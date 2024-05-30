@@ -10,7 +10,7 @@ Please follow the established format:
 # Release 9.1.0
 
 ## Major features and improvements
-- Move the Expand all modular pipelines toggle from the settings panel to the utility bar. (#1858)
+- Implement toggle to expand and collapse all pipelines in the utility bar. (#1858)
 - Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
 
 ## Bug fixes and other changes
