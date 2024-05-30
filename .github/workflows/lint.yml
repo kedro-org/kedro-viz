@@ -1,0 +1,45 @@
+name: Run linters on Kedro-Viz
+# Runs secret scan, security scan, GraphQL schema check, 
+# and Python formatters and linters on Kedro-Viz for 
+# different operating systems and Python versions.
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+      python-version:
+        type: string
+jobs:
+    lint:
+        runs-on: ${{ inputs.os }}
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Python ${{inputs.python-version}}
+            uses: actions/setup-python@v5
+            with:
+              python-version: ${{inputs.python-version}}          
+
+          - name: Cache python packages for Linux
+            if: inputs.os == 'ubuntu-latest'
+            uses: actions/cache@v4
+            with:
+              path: ~/.cache/pip
+              key: ${{inputs.os}}-python-${{inputs.python-version}}            
+
+          - name: Install Kedro and other Python Dependencies
+            uses: "./.github/actions/install_kedro_and_python_dependencies"
+          
+          - name: Run secret scan
+            run: make secret-scan
+
+          - name: Run security scan
+            run: make security-scan
+
+          - name: Verify GraphQL schema is up to date
+            run: make schema-check
+
+          - name: Run Python formatters and linters
+            run: make format-check lint-check          

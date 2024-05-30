@@ -6,10 +6,16 @@ import ConnectedFlowchartPrimaryToolbar, {
 } from './flowchart-primary-toolbar';
 import { mockState, setup } from '../../utils/state.mock';
 
+jest.mock('../../utils/hooks/use-generate-pathname', () => ({
+  useGeneratePathname: () => ({
+    toSetQueryParam: jest.fn(),
+  }),
+}));
+
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
   it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
@@ -17,6 +23,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false,
       layerBtn: false,
       exportBtn: false,
+      pipelineBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       visible,
@@ -31,7 +38,7 @@ describe('PrimaryToolbar', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       visible,
     });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(3);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });
 
   const functionCalls = [
@@ -39,6 +46,7 @@ describe('PrimaryToolbar', () => {
     ['.pipeline-menu-button--labels', 'onToggleTextLabels'],
     ['.pipeline-menu-button--export', 'onToggleExportModal'],
     ['.pipeline-menu-button--layers', 'onToggleLayers'],
+    ['.pipeline-menu-button--pipeline', 'onToggleExpandAllPipelines'],
   ];
 
   test.each(functionCalls)(
@@ -62,6 +70,7 @@ describe('PrimaryToolbar', () => {
     const expectedResult = {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
+      expandedPipelines: expect.any(Boolean),
       displaySidebar: true,
       visible: expect.objectContaining({
         exportBtn: expect.any(Boolean),
@@ -70,6 +79,7 @@ describe('PrimaryToolbar', () => {
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
+        pipelineBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),
@@ -111,6 +121,15 @@ describe('PrimaryToolbar', () => {
       expect(dispatch.mock.calls[0][0]).toEqual({
         textLabels: true,
         type: 'TOGGLE_TEXT_LABELS',
+      });
+    });
+
+    it('onToggleExpandAllPipelines', () => {
+      const dispatch = jest.fn();
+      mapDispatchToProps(dispatch).onToggleExpandAllPipelines(true);
+      expect(dispatch.mock.calls[0][0]).toEqual({
+        type: 'TOGGLE_EXPAND_ALL_PIPELINES',
+        shouldExpandAllPipelines: true,
       });
     });
   });

@@ -9,6 +9,7 @@ import click
 from click_default_group import DefaultGroup
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
+from kedro.framework.project import PACKAGE_NAME
 from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
@@ -22,7 +23,9 @@ from kedro_viz.constants import (
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
+    _PYPROJECT,
     _check_viz_up,
+    _find_kedro_project,
     _start_browser,
     _wait_for,
     viz_deploy_progress_timer,
@@ -128,6 +131,17 @@ def run(
     """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
 
+    kedro_project_path = _find_kedro_project(Path.cwd())
+
+    if kedro_project_path is None:
+        display_cli_message(
+            "ERROR: Failed to start Kedro-Viz : "
+            "Could not find the project configuration "
+            f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
+            "red",
+        )
+        return
+
     installed_version = parse(__version__)
     latest_version = get_latest_version()
     if is_running_outdated_version(installed_version, latest_version):
@@ -151,15 +165,15 @@ def run(
             "save_file": save_file,
             "pipeline_name": pipeline,
             "env": env,
+            "project_path": kedro_project_path,
             "autoreload": autoreload,
             "include_hooks": include_hooks,
+            "package_name": PACKAGE_NAME,
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path.cwd()
-            run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
-                "path": project_path,
+                "path": kedro_project_path,
                 "target": run_server,
                 "kwargs": run_server_kwargs,
                 "watcher_cls": RegExpWatcher,
@@ -268,6 +282,7 @@ def create_shareableviz_process(
                 endpoint,
                 bucket_name,
                 include_hooks,
+                PACKAGE_NAME,
                 process_completed,
                 exception_queue,
             ),
@@ -338,11 +353,19 @@ def create_shareableviz_process(
 
 
 def load_and_deploy_viz(
-    platform, endpoint, bucket_name, include_hooks, process_completed, exception_queue
+    platform,
+    endpoint,
+    bucket_name,
+    include_hooks,
+    package_name,
+    process_completed,
+    exception_queue,
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
-        load_and_populate_data(Path.cwd(), include_hooks=include_hooks)
+        load_and_populate_data(
+            Path.cwd(), include_hooks=include_hooks, package_name=package_name
+        )
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)

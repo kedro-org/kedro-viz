@@ -11,8 +11,8 @@ const SearchBar = ({
   onClear,
   onFocus,
   onSubmit,
-  placeholder,
-  theme,
+  placeholder = 'Search Here...',
+  theme = 'dark',
   value: inputValue,
 }) => {
   const [value, setValue] = useState(inputValue);
@@ -113,18 +113,6 @@ const SearchBar = ({
       {children}
     </SearchBarRenderer>
   );
-};
-
-SearchBar.defaultProps = {
-  children: null,
-  placeholder: 'Search Here...',
-  onBlur: null,
-  onChange: null,
-  onClear: null,
-  onFocus: null,
-  onSubmit: null,
-  theme: 'dark',
-  value: '',
 };
 
 SearchBar.propTypes = {

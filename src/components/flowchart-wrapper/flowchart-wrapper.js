@@ -92,7 +92,7 @@ export const FlowChartWrapper = ({
     if (localStorageParams) {
       const paramActions = {
         pipeline: (value) => {
-          if (!searchParams.has(params.pipeline) && activePipeline) {
+          if (activePipeline) {
             toSetQueryParam(params.pipeline, value.active || activePipeline);
           }
         },
@@ -110,9 +110,9 @@ export const FlowChartWrapper = ({
             disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
           }
         },
-        flags: (value) => {
+        expandAllPipelines: (value) => {
           if (!searchParams.has(params.expandAll)) {
-            toSetQueryParam(params.expandAll, value.expandAllPipelines);
+            toSetQueryParam(params.expandAll, value);
           }
         },
       };

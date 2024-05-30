@@ -1,0 +1,46 @@
+name: Setup Tests
+description: Sets up the testing environment by setting up Python and Node.js, caching Python packages, installing Kedro and other Python dependencies, and building the React application.
+
+inputs:
+  os:
+    description: 'Operating system'
+    required: false
+    default: 'ubuntu-latest'
+  python-version:
+    description: 'Python version'
+    required: false
+    default: '3.9'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python ${{inputs.python-version}}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{inputs.python-version}}      
+
+    - name: Cache python packages for Linux
+      if: inputs.os == 'ubuntu-latest'
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{inputs.os}}-python-${{inputs.python-version}}
+
+    - name: Cache python packages for Windows
+      if: inputs.os == 'windows-latest'
+      uses: actions/cache@v4
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{inputs.os}}-python-${{inputs.python-version}}
+
+    - name: Install Kedro and other Python Dependencies
+      uses: "./.github/actions/install_kedro_and_python_dependencies"
+
+    - name: Setup Node.js and Install Dependencies
+      uses: "./.github/actions/install_node_dependencies"
+
+    - name: Build React application
+      run: |-
+        node -v
+        make build
+      shell: bash  

@@ -19,6 +19,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   TOGGLE_HOVERED_FOCUS_MODE,
+  TOGGLE_EXPAND_ALL_PIPELINES,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -238,6 +239,16 @@ describe('Reducer', () => {
         visible: false,
       });
       expect(newState.layer.visible).toEqual(false);
+    });
+  });
+
+  describe('TOGGLE_EXPAND_ALL_PIPELINES', () => {
+    it('should toggle whether to expand all modular pipelines or collapse', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: TOGGLE_EXPAND_ALL_PIPELINES,
+        shouldExpandAllPipelines: true,
+      });
+      expect(newState.expandAllPipelines).toEqual(true);
     });
   });
 

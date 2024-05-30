@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.modular_pipelines`
 defines repository to centralise access to modular pipelines data."""
+
 from typing import Dict, Optional, Union
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
@@ -214,6 +215,8 @@ class ModularPipelinesRepository:
         # Basically this means if the node belongs to the "__default__" pipeline, for example,
         # so does the modular pipeline.
         modular_pipeline.pipelines.update(node.pipelines)
+
+        modular_pipeline.tags.update(node.tags)
 
         # Since we extract the modular pipeline from the node's namespace,
         # the node is by definition a child of the modular pipeline.

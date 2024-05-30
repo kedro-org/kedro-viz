@@ -6,13 +6,13 @@ import 'what-input';
 import './search-input.scss';
 
 const SearchInput = ({
-  disabled,
+  disabled = false,
   label,
   onBlur,
   onChange,
   onFocus,
   placeholder,
-  theme,
+  theme = 'light',
   value: inputValue,
 }) => {
   const [focused, setFocused] = useState(false);
@@ -90,17 +90,6 @@ const SearchInput = ({
       </div>
     </div>
   );
-};
-
-SearchInput.defaultProps = {
-  disabled: false,
-  label: null,
-  onBlur: null,
-  onChange: null,
-  onFocus: null,
-  placeholder: null,
-  theme: 'light',
-  value: null,
 };
 
 SearchInput.propTypes = {

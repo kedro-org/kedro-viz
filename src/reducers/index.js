@@ -20,6 +20,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
+  TOGGLE_EXPAND_ALL_PIPELINES,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -94,6 +95,11 @@ const combinedReducer = combineReducers({
     false,
     TOGGLE_HOVERED_FOCUS_MODE,
     'hoveredFocusMode'
+  ),
+  expandAllPipelines: createReducer(
+    false,
+    TOGGLE_EXPAND_ALL_PIPELINES,
+    'shouldExpandAllPipelines'
   ),
 });
 

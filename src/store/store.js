@@ -58,6 +58,7 @@ const saveStateToLocalStorage = (state) => {
     isPrettyName: state.isPrettyName,
     showFeatureHints: state.showFeatureHints,
     flags: state.flags,
+    expandAllPipelines: state.expandAllPipelines,
   });
 
   // Store Run's metadata to localstorage

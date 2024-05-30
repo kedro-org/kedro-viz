@@ -67,11 +67,6 @@ const SearchBarRenderer = (props) => {
   );
 };
 
-SearchBarRenderer.defaultProps = {
-  children: null,
-  onSubmit: null,
-};
-
 SearchBarRenderer.propTypes = {
   /**
    * Child component, usually search-bar-results

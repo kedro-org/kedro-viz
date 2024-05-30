@@ -9,7 +9,6 @@ import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from kedro.pipeline.pipeline import _strip_transcoding
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
@@ -26,6 +25,7 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 from kedro_viz.services import layers_services, modular_pipelines_services
+from kedro_viz.utils import _strip_transcoding
 
 from .repositories import (
     CatalogRepository,

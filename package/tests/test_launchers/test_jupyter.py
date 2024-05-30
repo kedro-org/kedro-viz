@@ -35,6 +35,7 @@ class TestRunVizLineMagic:
                 "env": None,
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": "",
             },
         )
@@ -59,6 +60,7 @@ class TestRunVizLineMagic:
                 "env": None,
                 "autoreload": False,
                 "include_hooks": True,
+                "package_name": None,
                 "extra_params": "",
             },
         )
@@ -105,6 +107,7 @@ class TestRunVizLineMagic:
                 "env": None,
                 "autoreload": False,
                 "include_hooks": False,
+                "package_name": None,
                 "extra_params": "",
             },
         )

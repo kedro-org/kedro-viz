@@ -46,6 +46,10 @@
   }
 }
 
+.pipeline-menu-button--pipeline svg {
+  opacity: 0.7;
+}
+
 .pipeline-global-routes-toolbar a.active .pipeline-menu-button--link {
   background-color: var(--color-global-toolbar-active-btn);
   border-right: 1px solid var(--color-border-line);

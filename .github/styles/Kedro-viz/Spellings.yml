@@ -1,0 +1,5 @@
+extends: spelling
+message: "Did you really mean '%s'?"
+level: warning
+ignore:
+  - Kedro-viz/ignore.txt

@@ -10,7 +10,7 @@ $secondary-underline-offset-hover: 4px;
 
 .kui-theme--light {
   --color-button--border: #{colors.$black-900};
-  --color-button--border--disabled: #{colors.$grey-400};
+  --color-button--border--disabled: #{colors.$black-900};
   --color-button__text--hover: #{colors.$white-600};
   --color-button__text: #{colors.$black-800};
   --color-secondary-active: #{colors.$white-100};
@@ -18,7 +18,7 @@ $secondary-underline-offset-hover: 4px;
 
 .kui-theme--dark {
   --color-button--border: #{colors.$white-0};
-  --color-button--border--disabled: #{colors.$grey-900};
+  --color-button--border--disabled: #{colors.$white-900-30};
   --color-button__text--hover: #{colors.$black-800};
   --color-button__text: #{colors.$white-600};
   --color-secondary-active: #{colors.$slate-0};

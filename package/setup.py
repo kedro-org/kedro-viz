@@ -52,11 +52,7 @@ setup(
     },
     extras_require={
         "docs": [
-            "sphinx>=5.3,<7.3",
-            "sphinx_copybutton==0.5.2",
-            "sphinx-notfound-page",
-            "sphinx_rtd_theme==1.3.0",
-            "myst-parser>=1.0,<2.1",
+            "kedro-sphinx-theme==2024.4.0",
         ],
         "aws": ["s3fs>=2021.4"],
         "azure": ["adlfs>=2021.4"],

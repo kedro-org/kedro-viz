@@ -18,3 +18,15 @@
   text-align: right;
   width: 100%;
 }
+
+.version-reminder-and-run-details-button-wrapper {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 50px;
+
+  .button:first-of-type {
+    margin-right: 20px;
+  }
+}
