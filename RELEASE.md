@@ -15,7 +15,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 - Fix broken URL when active pipeline name changes on initial load. (#1914)
-- Fix bug related to tag filtering and sharing via stateful URL. (#1878)
+- Fix bug related to tag filtering and sharing with stateful URL. (#1878)
 - Update settings panel design (#1875)
 - Migrate from CircleCi to Github Actions. (#1876)
 - Include expandAllPipelines in initial state. (#1896)
