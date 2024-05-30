@@ -46,6 +46,9 @@ jobs:
       - name: Setup Tests
         uses: "./.github/actions/setup_tests"
 
+      - name: Install wheel
+        run: pip install wheel
+
       - name: Make Python package
         run: make package
 
