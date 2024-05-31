@@ -8,7 +8,7 @@ import logging
 from enum import Enum
 from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import (
@@ -638,10 +638,10 @@ class DataNode(GraphNode):
         """Gets the preview arguments for a dataset"""
         return self.viz_metadata.get("preview_args", None)
 
-    def is_preview_disabled(self):
-        """Checks if the dataset has a preview disabled"""
+    def is_preview_enabled(self):
+        """Checks if the dataset has a preview enabled at the node level."""
         return (
-            self.viz_metadata is not None and self.viz_metadata.get("preview") is False
+            self.viz_metadata is None or self.viz_metadata.get("preview") is not False
         )
 
 
@@ -722,11 +722,18 @@ class DataNodeMetadata(GraphNodeMetadata):
     Args:
         data_node (DataNode): Data node to which this metadata belongs to.
 
+    Attributes:
+        is_all_previews_enabled (bool): Class-level attribute to determine if
+            previews are enabled for all nodes. This can be configured via CLI
+            or UI to manage the preview settings.
+
     Raises:
         AssertionError: If data_node is not supplied during instantiation
     """
 
     data_node: DataNode = Field(..., exclude=True)
+
+    is_all_previews_enabled: ClassVar[bool] = True
 
     type: Optional[str] = Field(
         default=None, validate_default=True, description="The type of the data node"
@@ -770,6 +777,10 @@ class DataNodeMetadata(GraphNodeMetadata):
         return values
 
     @classmethod
+    def set_is_all_previews_enabled(cls, value: bool):
+        cls.is_all_previews_enabled = value
+
+    @classmethod
     def set_data_node_and_dataset(cls, data_node):
         cls.data_node = data_node
         cls.dataset = cast(AbstractDataset, data_node.kedro_obj)
@@ -799,7 +810,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if (
+            not cls.data_node.is_preview_enabled()
+            or not hasattr(cls.dataset, "preview")
+            or not cls.is_all_previews_enabled
+        ):
             return None
 
         try:
@@ -822,7 +837,11 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview_type")
     @classmethod
     def set_preview_type(cls, _):
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if (
+            not cls.data_node.is_preview_enabled()
+            or not hasattr(cls.dataset, "preview")
+            or not cls.is_all_previews_enabled
+        ):
             return None
 
         try:
