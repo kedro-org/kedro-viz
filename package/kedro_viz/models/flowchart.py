@@ -11,14 +11,6 @@ from types import FunctionType
 from typing import Any, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
-
-try:
-    # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding  # type: ignore
-
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -29,6 +21,7 @@ from pydantic import (
 )
 
 from kedro_viz.models.utils import get_dataset_type
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
