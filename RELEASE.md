@@ -5,7 +5,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Next release
+# Release 9.2.0
+
+## Major features and improvements
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
+
+## Bug fixes and other changes
 
 # Release 9.1.0
 
