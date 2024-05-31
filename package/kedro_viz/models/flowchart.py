@@ -638,10 +638,10 @@ class DataNode(GraphNode):
         """Gets the preview arguments for a dataset"""
         return self.viz_metadata.get("preview_args", None)
 
-    def is_preview_disabled(self):
-        """Checks if the dataset has a preview disabled"""
+    def is_preview_enabled(self):
+        """Checks if the dataset has a preview enabled at the node level."""
         return (
-            self.viz_metadata is not None and self.viz_metadata.get("preview") is False
+            self.viz_metadata is None or self.viz_metadata.get("preview") is not False
         )
 
 
@@ -799,7 +799,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview")
     @classmethod
     def set_preview(cls, _):
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if not cls.data_node.is_preview_enabled() or not hasattr(
+            cls.dataset, "preview"
+        ):
             return None
 
         try:
@@ -822,7 +824,9 @@ class DataNodeMetadata(GraphNodeMetadata):
     @field_validator("preview_type")
     @classmethod
     def set_preview_type(cls, _):
-        if cls.data_node.is_preview_disabled() or not hasattr(cls.dataset, "preview"):
+        if not cls.data_node.is_preview_enabled() or not hasattr(
+            cls.dataset, "preview"
+        ):
             return None
 
         try:

@@ -386,13 +386,13 @@ class TestGraphNodeMetadata:
         )
         assert data_node.get_preview_args() == {"nrows": 3}
 
-    def test_is_preview_disabled(self):
+    def test_is_preview_enabled(self):
         metadata = {"kedro-viz": {"preview": False}}
         dataset = CSVDataset(filepath="test.csv", metadata=metadata)
         data_node = GraphNode.create_data_node(
             dataset_name="dataset", tags=set(), layer=None, dataset=dataset, stats=None
         )
-        assert data_node.is_preview_disabled() is True
+        assert data_node.is_preview_enabled() is False
 
     def test_preview_data_node_metadata(self, example_data_node):
         expected_preview_data = {
