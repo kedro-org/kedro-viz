@@ -394,6 +394,13 @@ class TestGraphNodeMetadata:
         )
         assert data_node.is_preview_enabled() is False
 
+    def test_is_all_previews_enabled(self, example_data_node):
+        DataNodeMetadata.set_is_all_previews_enabled(False)
+        preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
+
+        assert preview_node_metadata.preview is None
+        assert preview_node_metadata.preview_type is None
+
     def test_preview_data_node_metadata(self, example_data_node):
         expected_preview_data = {
             "columns": ["id", "company_rating", "company_location"],
@@ -404,9 +411,11 @@ class TestGraphNodeMetadata:
                 [12345, "80%", "Barbados"],
             ],
         }
+
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
 
         assert preview_node_metadata.preview == expected_preview_data
+        assert preview_node_metadata.preview_type == "TablePreview"
 
     def test_preview_data_node_metadata_exception(self, caplog):
         empty_dataset = CSVDataset(filepath="temp.csv")
@@ -444,10 +453,10 @@ class TestGraphNodeMetadata:
         assert preview_node_metadata.preview == expected_preview_data
 
     def test_preview_data_node_metadata_not_exist(self, example_data_node, mocker):
-        mocker.patch("kedro_datasets.pandas.CSVDataset.preview", return_value=False)
+        mocker.patch("kedro_datasets.pandas.CSVDataset.preview", return_value=None)
 
         preview_node_metadata = DataNodeMetadata(data_node=example_data_node)
-        assert preview_node_metadata.preview is False
+        assert preview_node_metadata.preview is None
 
     def test_transcoded_data_node_metadata(self):
         dataset = CSVDataset(filepath="/tmp/dataset.csv")
