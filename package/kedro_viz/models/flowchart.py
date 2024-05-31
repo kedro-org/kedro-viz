@@ -11,14 +11,6 @@ from types import FunctionType
 from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
-
-try:
-    # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding  # type: ignore
-
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -29,6 +21,7 @@ from pydantic import (
 )
 
 from kedro_viz.models.utils import get_dataset_type
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
@@ -645,13 +638,10 @@ class DataNode(GraphNode):
         """Gets the preview arguments for a dataset"""
         return self.viz_metadata.get("preview_args", None)
 
-    def is_preview_disabled(self):
-        """Checks if the dataset has a preview disabled at the node level.
-        This happens when the user specifies 'preview=false' in the DataCatalog.
-        """
-
+    def is_preview_enabled(self):
+        """Checks if the dataset has a preview enabled at the node level."""
         return (
-            self.viz_metadata is not None and self.viz_metadata.get("preview") is False
+            self.viz_metadata is None or self.viz_metadata.get("preview") is not False
         )
 
 
@@ -821,7 +811,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_preview(cls, _):
         if (
-            cls.data_node.is_preview_disabled()
+            not cls.data_node.is_preview_enabled()
             or not hasattr(cls.dataset, "preview")
             or not cls.is_all_previews_enabled
         ):
@@ -848,7 +838,7 @@ class DataNodeMetadata(GraphNodeMetadata):
     @classmethod
     def set_preview_type(cls, _):
         if (
-            cls.data_node.is_preview_disabled()
+            not cls.data_node.is_preview_enabled()
             or not hasattr(cls.dataset, "preview")
             or not cls.is_all_previews_enabled
         ):
