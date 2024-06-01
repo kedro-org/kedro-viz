@@ -305,12 +305,32 @@ class DataAccessManager:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
-        id, modular_pipeline_id = modular_pipeline_tree.get_modular_pipeline_for_node(
-            dataset_name
+        dataset_id, modular_pipeline_id = (
+            modular_pipeline_tree.get_modular_pipeline_for_node(dataset_name)
         )
+
+        # add datasets that are not part of a modular pipeline
+        # as a child to the root modular pipeline
+        if modular_pipeline_id is None:
+            root_modular_pipeline_node = (
+                modular_pipeline_tree.get_or_create_modular_pipeline(
+                    ROOT_MODULAR_PIPELINE_ID
+                )
+            )
+            root_modular_pipeline_node.children.add(
+                ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
+            )
+
+            # update the node_mod_pipeline_map
+            if dataset_id not in modular_pipeline_tree.node_mod_pipeline_map:
+                modular_pipeline_tree.node_mod_pipeline_map[dataset_id] = set()
+                modular_pipeline_tree.node_mod_pipeline_map[dataset_id].add(
+                    ROOT_MODULAR_PIPELINE_ID
+                )
+
         if self.catalog.is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
-                dataset_id=id,
+                dataset_id=dataset_id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
@@ -319,7 +339,7 @@ class DataAccessManager:
             )
         else:
             graph_node = GraphNode.create_data_node(
-                dataset_id=id,
+                dataset_id=dataset_id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
@@ -345,9 +365,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[
-                parameters_node.parameter_name
-            ] = parameters_node.parameter_value
+            task_node.parameters[parameters_node.parameter_name] = (
+                parameters_node.parameter_value
+            )
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
