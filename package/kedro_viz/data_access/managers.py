@@ -210,11 +210,10 @@ class DataAccessManager:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
         (
-            node_id,
-            modular_pipeline_id,
-        ) = modular_pipeline_tree.get_modular_pipeline_for_node(node)
+            node_id, modular_pipelines
+        ) = modular_pipeline_tree.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
-            GraphNode.create_task_node(node, node_id, modular_pipeline_id)
+            GraphNode.create_task_node(node, node_id, modular_pipelines)
         )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
@@ -305,13 +304,13 @@ class DataAccessManager:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
-        dataset_id, modular_pipeline_id = (
-            modular_pipeline_tree.get_modular_pipeline_for_node(dataset_name)
+        dataset_id, modular_pipelines = (
+            modular_pipeline_tree.get_node_and_modular_pipeline_mapping(dataset_name)
         )
 
         # add datasets that are not part of a modular pipeline
         # as a child to the root modular pipeline
-        if modular_pipeline_id is None:
+        if modular_pipelines is None:
             root_modular_pipeline_node = (
                 modular_pipeline_tree.get_or_create_modular_pipeline(
                     ROOT_MODULAR_PIPELINE_ID
@@ -335,7 +334,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=obj,
-                modular_pipeline_id=modular_pipeline_id,
+                modular_pipelines=modular_pipelines,
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -345,7 +344,7 @@ class DataAccessManager:
                 tags=set(),
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
-                modular_pipeline_id=modular_pipeline_id,
+                modular_pipelines=modular_pipelines,
                 is_free_input=is_free_input,
             )
         graph_node = self.nodes.add_node(graph_node)

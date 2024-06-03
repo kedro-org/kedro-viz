@@ -125,7 +125,7 @@ class GraphNode(BaseModel, abc.ABC):
         pipelines (Set[str]): The set of registered pipeline IDs this
                 node belongs to. Defaults to `set()`.
         namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
-        modular_pipelines (str): Modular pipeline this node belongs to.
+        modular_pipelines (Optional[Set(str)]): A set of modular pipeline names this node belongs to.
 
     """
 
@@ -142,7 +142,7 @@ class GraphNode(BaseModel, abc.ABC):
         set(), description="The set of registered pipeline IDs this node belongs to"
     )
 
-    modular_pipelines: Optional[List[str]] = Field(
+    modular_pipelines: Optional[Set[str]] = Field(
         default=None,
         validate_default=True,
         description="The modular_pipelines this node belongs to",
@@ -151,7 +151,7 @@ class GraphNode(BaseModel, abc.ABC):
 
     @classmethod
     def create_task_node(
-        cls, node: KedroNode, node_id: str, modular_pipeline_id: Optional[str]
+        cls, node: KedroNode, node_id: str, modular_pipelines: Optional[Set[str]]
     ) -> "TaskNode":
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
@@ -165,7 +165,7 @@ class GraphNode(BaseModel, abc.ABC):
             name=node_name,
             tags=set(node.tags),
             kedro_obj=node,
-            modular_pipelines=modular_pipeline_id,
+            modular_pipelines=modular_pipelines,
         )
 
     @classmethod
@@ -177,7 +177,7 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         dataset: AbstractDataset,
         stats: Optional[Dict],
-        modular_pipeline_id: Optional[str],
+        modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
@@ -204,7 +204,7 @@ class GraphNode(BaseModel, abc.ABC):
                 layer=layer,
                 is_free_input=is_free_input,
                 stats=stats,
-                modular_pipelines=modular_pipeline_id,
+                modular_pipelines=modular_pipelines,
             )
 
         return DataNode(
@@ -215,7 +215,7 @@ class GraphNode(BaseModel, abc.ABC):
             kedro_obj=dataset,
             is_free_input=is_free_input,
             stats=stats,
-            modular_pipelines=modular_pipeline_id,
+            modular_pipelines=modular_pipelines,
         )
 
     @classmethod
@@ -226,7 +226,7 @@ class GraphNode(BaseModel, abc.ABC):
         layer: Optional[str],
         tags: Set[str],
         parameters: AbstractDataset,
-        modular_pipeline_id: Optional[str],
+        modular_pipelines: Optional[Set[str]],
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
@@ -245,7 +245,7 @@ class GraphNode(BaseModel, abc.ABC):
             tags=tags,
             layer=layer,
             kedro_obj=parameters,
-            modular_pipelines=modular_pipeline_id,
+            modular_pipelines=modular_pipelines,
         )
 
     @classmethod
@@ -326,7 +326,7 @@ class ModularPipelineNode(GraphNode):
     # in the same sense as other types of GraphNode do.
     # Therefore it's default to None.
     # The parent-child relationship between modular pipeline themselves is modelled explicitly.
-    modular_pipelines: Optional[List[str]] = None
+    modular_pipelines: Optional[Set[str]] = None
 
     # Model the modular pipelines tree using a child-references representation of a tree.
     # See: https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
