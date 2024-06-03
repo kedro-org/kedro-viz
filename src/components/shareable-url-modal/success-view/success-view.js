@@ -1,3 +1,4 @@
+import React from 'react';
 import UrlBox from '../url-box/url-box';
 
 const SuccessView = ({

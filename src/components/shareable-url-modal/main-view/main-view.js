@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import React from 'react';
 import classnames from 'classnames';
 import Dropdown from '../../ui/dropdown';
 import Button from '../../ui/button';
