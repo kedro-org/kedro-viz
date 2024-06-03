@@ -234,7 +234,12 @@ def run(
     is_flag=True,
     help="A flag to include all registered hooks in your Kedro Project",
 )
-def deploy(platform, endpoint, bucket_name, include_hooks):
+@click.option(
+    "--include-preview",
+    is_flag=True,
+    help="Enable/disable preview for all the datasets.",
+)
+def deploy(platform, endpoint, bucket_name, include_hooks, include_preview):
     """Deploy and host Kedro Viz on provided platform"""
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
@@ -252,7 +257,13 @@ def deploy(platform, endpoint, bucket_name, include_hooks):
         )
         return
 
-    create_shareableviz_process(platform, endpoint, bucket_name, include_hooks)
+    create_shareableviz_process(
+        platform,
+        include_preview,
+        endpoint,
+        bucket_name,
+        include_hooks,
+    )
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -261,14 +272,23 @@ def deploy(platform, endpoint, bucket_name, include_hooks):
     is_flag=True,
     help="A flag to include all registered hooks in your Kedro Project",
 )
-def build(include_hooks):
+@click.option(
+    "--include-preview",
+    is_flag=True,
+    help="Enable/disable preview for all the datasets.",
+)
+def build(include_hooks, include_preview):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    create_shareableviz_process("local", include_hooks=include_hooks)
+    create_shareableviz_process("local", include_preview, include_hooks=include_hooks)
 
 
 def create_shareableviz_process(
-    platform, endpoint=None, bucket_name=None, include_hooks=False
+    platform,
+    is_all_previews_enabled,
+    endpoint=None,
+    bucket_name=None,
+    include_hooks=False,
 ):
     """Creates platform specific deployer process"""
     try:
@@ -279,6 +299,7 @@ def create_shareableviz_process(
             target=load_and_deploy_viz,
             args=(
                 platform,
+                is_all_previews_enabled,
                 endpoint,
                 bucket_name,
                 include_hooks,
@@ -354,6 +375,7 @@ def create_shareableviz_process(
 
 def load_and_deploy_viz(
     platform,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -369,7 +391,7 @@ def load_and_deploy_viz(
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
-        deployer.deploy()
+        deployer.deploy(is_all_previews_enabled)
 
     except (
         # pylint: disable=catching-non-exception
