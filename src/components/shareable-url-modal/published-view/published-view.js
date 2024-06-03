@@ -75,8 +75,9 @@ const PublishedView = ({
       </div>
       <div className="shareable-url-modal__published-action">
         <p className="shareable-url-modal__published-action-text">
-          Republish Kedro-Viz to push new updates, or publish and host Kedro-Viz
-          with a new link.
+          Republish Kedro-Viz to push new updates,
+          <br />
+          or publish and host Kedro-Viz with a new link.
         </p>
         <Button mode="secondary" onClick={onRepublishClick} size="small">
           Republish

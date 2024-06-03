@@ -85,9 +85,11 @@
     font-weight: 400;
     line-height: 20px;
     margin-bottom: 32px;
+    margin-top: 0;
   }
 
   &__content-title {
+    color: var(--color-deployed-link);
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
@@ -390,6 +392,7 @@
   .dropdown__label {
     height: 100%;
     width: 209px;
+    padding-left: 20px;
   }
 }
 
@@ -398,10 +401,15 @@
 .shareable-url-modal__published-dropdown-wrapper {
   .menu-option {
     background-color: var(--dropdown-bg);
+    padding-left: 20px;
 
     &:hover {
       background-color: var(--dropdown-bg-hovered);
     }
+  }
+
+  .dropdown__options {
+    box-shadow: none;
   }
 }
 
