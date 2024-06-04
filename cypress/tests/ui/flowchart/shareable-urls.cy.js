@@ -282,9 +282,15 @@ describe('Shareable URLs with valid localStorage', () => {
       // Fill in the form with second option
       fillFormAndSubmit(secondBucketName, secondEndpointName);
 
+      // Close the modal once it publishes successfully
+      cy.get('body').click(0, 0);
+
+      cy.get('.pipeline-menu-button--deploy').click();
+
       cy.get(
         '.shareable-url-modal__published-dropdown-wrapper [data-test=kedro-pipeline-selector]'
       ).click();
+
       cy.get(
         '.shareable-url-modal__published-dropdown-wrapper .dropdown__options section div'
       )
