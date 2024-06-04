@@ -126,18 +126,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setIsLoading(true);
     setShowPublishedView(false);
 
-    // this logic is here to test locally without publishing anything
-    const hostingPlatformVal = {};
-    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-      hostingPlatformVal[inputValues.platform] = { ...inputValues };
-    }
-    saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
-    const newState = {
-      ...hostingPlatformLocalStorageVal,
-      ...hostingPlatformVal,
-    };
-    setHostingPlatformLocalStorageVal(newState);
-
     try {
       const request = await retrieveHostingPlatformData(inputValues);
       const response = await request.json();
