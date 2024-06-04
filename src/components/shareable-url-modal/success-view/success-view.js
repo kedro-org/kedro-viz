@@ -11,7 +11,7 @@ const SuccessView = ({
     <div className="shareable-url-modal__result">
       <UrlBox
         url={responseUrl}
-        onClick={onClick}
+        onCopyClick={onClick}
         href={handleResponseUrl}
         showCopiedText={showCopied}
       />

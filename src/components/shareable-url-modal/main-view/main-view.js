@@ -7,7 +7,7 @@ import IconButton from '../../ui/icon-button';
 import InfoIcon from '../../icons/info';
 import Input from '../../ui/input';
 import MenuOption from '../../ui/menu-option';
-// import Toggle from '../../ui/toggle';
+import Toggle from '../../ui/toggle';
 import {
   hostingPlatforms,
   KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
@@ -39,8 +39,7 @@ const renderTextContent = (toggleValue, setTogleValue) => {
         </a>
         .
       </p>
-      {/* To be commented out until the preview disable is ready */}
-      {/* <h2 className="shareable-url-modal__content-description-title shareable-url-modal__content-description-title-disclaimer">
+      <h2 className="shareable-url-modal__content-description-title shareable-url-modal__content-description-title--disclaimer">
         Disclaimer{' '}
       </h2>
       <p className="shareable-url-modal__content-description">
@@ -55,7 +54,7 @@ const renderTextContent = (toggleValue, setTogleValue) => {
           checked={toggleValue}
           onChange={() => setTogleValue((prev) => !prev)}
         />
-      </div> */}
+      </div>
     </div>
   );
 };

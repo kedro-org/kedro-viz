@@ -124,6 +124,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const handleSubmit = async () => {
     setDeploymentState('loading');
     setIsLoading(true);
+    setShowPublishedView(false);
 
     // this logic is here to test locally without publishing anything
     const hostingPlatformVal = {};

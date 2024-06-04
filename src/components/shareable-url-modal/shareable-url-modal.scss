@@ -451,6 +451,10 @@
 
   .shareable-url-modal__result {
     width: 100%;
+
+    .url-box__result-url-wrapper {
+      width: 440px;
+    }
   }
 }
 
