@@ -43,7 +43,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
     useState(loadLocalStorage(localStorageSharableUrl) || {});
   const [publishedPlatformKey, setPublishedPlatformKey] = useState(undefined);
-  const [toggleValue, setTogleValue] = useState(false);
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(true);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -238,8 +238,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               }}
               onBuckNameChange={(value) => onChange('bucket_name', value)}
               onEndpointChange={(value) => onChange('endpoint', value)}
-              setTogleValue={setTogleValue}
-              toggleValue={toggleValue}
+              setTogleValue={setIsPreviewEnabled}
+              toggleValue={isPreviewEnabled}
               visible={visible}
             />
           )}
