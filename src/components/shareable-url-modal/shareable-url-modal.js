@@ -21,6 +21,7 @@ import LoadingView from './loading-view/loading-view';
 import ErrorView from './error-view/error-view';
 import SuccessView from './success-view/success-view';
 import { getDeploymentStateByType, handleResponseUrl } from './utils';
+import { retrieveHostingPlatformData } from '../../utils';
 
 import './shareable-url-modal.scss';
 
@@ -137,30 +138,23 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setHostingPlatformLocalStorageVal(newState);
 
     try {
-      const request = await fetch('/api/deploy', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(inputValues),
-      });
+      const request = await retrieveHostingPlatformData(inputValues);
       const response = await request.json();
 
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
-        displayPublishedView();
 
-        // const hostingPlatformVal = {};
-        // if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-        //   hostingPlatformVal[inputValues.platform] = { ...inputValues };
-        // }
-        // saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
-        // const newState = {
-        //   ...hostingPlatformLocalStorageVal,
-        //   ...hostingPlatformVal,
-        // };
-        // setHostingPlatformLocalStorageVal(newState);
+        const hostingPlatformVal = {};
+        if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+          hostingPlatformVal[inputValues.platform] = { ...inputValues };
+        }
+        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+        const newState = {
+          ...hostingPlatformLocalStorageVal,
+          ...hostingPlatformVal,
+        };
+        setHostingPlatformLocalStorageVal(newState);
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
