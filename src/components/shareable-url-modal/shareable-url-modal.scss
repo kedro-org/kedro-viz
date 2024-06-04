@@ -375,7 +375,6 @@
 }
 
 .shareable-url-modal__published {
-  // check with Step since there's no timestamp atm, can we decrease the padding bottom from 84 to 48px
   background-color: var(--color-modal-bg-1);
   padding: 48px;
   width: 100%;
@@ -423,7 +422,6 @@
   width: 100%;
 
   .button__btn--secondary {
-    // double check the hex colour with Step
     background-color: var(--color-btn-bg);
   }
 
