@@ -4,7 +4,7 @@ export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
-export const localStorageSharableUrl = 'KedroViz-sharable-url';
+export const localStorageShareableUrl = 'KedroViz-shareable-url';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
