@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../../ui/button';
 
-const CompatibilityView = ({ onClick }) => (
+const CompatibilityErrorView = ({ onClick }) => (
   <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
     <Button mode="secondary" onClick={onClick} size="small">
       Cancel
@@ -16,4 +16,4 @@ const CompatibilityView = ({ onClick }) => (
   </div>
 );
 
-export default CompatibilityView;
+export default CompatibilityErrorView;

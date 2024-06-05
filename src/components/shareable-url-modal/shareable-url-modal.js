@@ -15,7 +15,7 @@ import {
 import Modal from '../ui/modal';
 
 import PublishedView from './published-view/published-view';
-import CompatibilityView from './compatibility-view/compatibility-view';
+import CompatibilityErrorView from './compatibility-error-view/compatibility-error-view';
 import MainView from './main-view/main-view';
 import LoadingView from './loading-view/loading-view';
 import ErrorView from './error-view/error-view';
@@ -170,8 +170,16 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const handleModalClose = () => {
     onToggleModal(false);
     if (deploymentState !== 'incompatible') {
-      setDeploymentState('default');
+      // reset the state to default as long as the user's fsspec package version is compatible
+      //  and there are nothing stored in localStorage
+      if (Object.keys(hostingPlatformLocalStorageVal).length === 0) {
+        setDeploymentState('default');
+      }
+
+      // if there are items stored in localStorage, display the published view
+      displayPublishedView();
     }
+
     setResponseError(null);
     setIsLoading(false);
     setResponseUrl(null);
@@ -181,7 +189,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
-    displayPublishedView();
   };
 
   const { platform } = inputValues || {};
@@ -211,7 +218,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       visible={visible.shareableUrlModal}
     >
       {!isCompatible ? (
-        <CompatibilityView onClick={handleModalClose} />
+        <CompatibilityErrorView onClick={handleModalClose} />
       ) : showPublishedView ? (
         <PublishedView
           hostingPlatformLocalStorageVal={hostingPlatformLocalStorageVal}
