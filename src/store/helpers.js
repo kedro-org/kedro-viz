@@ -33,7 +33,7 @@ export const saveLocalStorage = (itemKey = localStorageName, state) => {
     return;
   }
   try {
-    const newState = Object.assign(loadLocalStorage(itemKey), state);
+    const newState = Object.assign(state, loadLocalStorage(itemKey));
     // Remove deprecated key from localStorage to suppress error.
     // This can be removed in future versions of KedroViz:
     if (newState.hasOwnProperty('nodeTypeDisabled')) {

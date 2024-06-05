@@ -140,8 +140,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         }
         saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
         const newState = {
-          ...hostingPlatformLocalStorageVal,
           ...hostingPlatformVal,
+          ...hostingPlatformLocalStorageVal,
         };
         setHostingPlatformLocalStorageVal(newState);
       } else {
