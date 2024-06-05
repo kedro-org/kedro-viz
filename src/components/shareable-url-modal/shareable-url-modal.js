@@ -245,8 +245,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
               }}
               onBuckNameChange={(value) => onChange('bucket_name', value)}
               onEndpointChange={(value) => onChange('endpoint', value)}
-              setTogleValue={setIsPreviewEnabled}
-              toggleValue={isPreviewEnabled}
+              setIsPreviewEnabled={setIsPreviewEnabled}
+              isPreviewEnabled={isPreviewEnabled}
               visible={visible}
             />
           )}

@@ -16,7 +16,7 @@ import {
   KEDRO_VIZ_PUBLISH_DOCS_URL,
 } from '../../../config';
 
-const renderTextContent = (toggleValue, setTogleValue) => {
+const renderTextContent = (isPreviewEnabled, setIsPreviewEnabled) => {
   return (
     <div className="shareable-url-modal__content-wrapper">
       <div className="shareable-url-modal__content-title">
@@ -50,9 +50,9 @@ const renderTextContent = (toggleValue, setTogleValue) => {
         All dataset previews
         <Toggle
           className="shareable-url-modal__content-toggle"
-          title={toggleValue ? 'On' : 'Off'}
-          checked={toggleValue}
-          onChange={() => setTogleValue((prev) => !prev)}
+          title={isPreviewEnabled ? 'On' : 'Off'}
+          checked={isPreviewEnabled}
+          onChange={() => setIsPreviewEnabled((prev) => !prev)}
         />
       </div>
     </div>
@@ -67,8 +67,8 @@ const MainView = ({
   onPlatformChange,
   onBuckNameChange,
   onEndpointChange,
-  setTogleValue,
-  toggleValue,
+  setIsPreviewEnabled,
+  isPreviewEnabled,
   visible,
 }) => {
   const { platform, bucket_name, endpoint } = inputValues || {};
@@ -76,7 +76,7 @@ const MainView = ({
   return (
     <>
       <div className="shareable-url-modal__content-form-wrapper">
-        {renderTextContent(toggleValue, setTogleValue)}
+        {renderTextContent(isPreviewEnabled, setIsPreviewEnabled)}
         <div className="shareable-url-modal__form-wrapper">
           <p className="shareable-url-modal__form-wrapper-title">
             Please enter the required information below.
