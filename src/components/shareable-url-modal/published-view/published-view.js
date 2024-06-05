@@ -16,19 +16,26 @@ const PublishedView = ({
   platform,
   showCopied,
 }) => {
-  const platformsKeys = Object.keys(hostingPlatformLocalStorageVal);
-  const platformsVal = Object.values(hostingPlatformLocalStorageVal);
+  const platformsKeysFromLocalStorage = Object.keys(
+    hostingPlatformLocalStorageVal
+  );
+  const platformsValFromLocalStorage = Object.values(
+    hostingPlatformLocalStorageVal
+  );
 
   const url = platform
     ? hostingPlatformLocalStorageVal[platform]['endpoint']
-    : platformsVal[0]['endpoint'];
+    : platformsValFromLocalStorage[0]['endpoint'];
 
   const filteredPlatforms = getFilteredPlatforms(
     hostingPlatforms,
-    platformsKeys
+    platformsKeysFromLocalStorage
   );
 
-  const href = handleResponseUrl(url, platform || platformsVal[0]['platform']);
+  const href = handleResponseUrl(
+    url,
+    platform || platformsValFromLocalStorage[0]['platform']
+  );
 
   return (
     <>
@@ -36,7 +43,7 @@ const PublishedView = ({
         <div className="shareable-url-modal__content-title">
           Publish and Share Kedro-Viz
         </div>
-        {platformsKeys.length === 1 ? (
+        {platformsKeysFromLocalStorage.length === 1 ? (
           <UrlBox
             url={url}
             onCopyClick={onCopyClick}
