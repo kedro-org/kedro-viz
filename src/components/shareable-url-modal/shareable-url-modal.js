@@ -21,7 +21,7 @@ import LoadingView from './loading-view/loading-view';
 import ErrorView from './error-view/error-view';
 import SuccessView from './success-view/success-view';
 import { getDeploymentStateByType, handleResponseUrl } from './utils';
-import { retrieveHostingPlatformData } from '../../utils';
+import { deployViz } from '../../utils';
 
 import './shareable-url-modal.scss';
 
@@ -127,7 +127,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setShowPublishedView(false);
 
     try {
-      const request = await retrieveHostingPlatformData(inputValues);
+      const request = await deployViz(inputValues);
       const response = await request.json();
 
       if (request.ok) {

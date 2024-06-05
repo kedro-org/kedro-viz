@@ -227,7 +227,7 @@ export async function fetchPackageCompatibilities() {
   return request;
 }
 
-export async function retrieveHostingPlatformData(inputValues) {
+export async function deployViz(inputValues) {
   const request = await fetch('/api/deploy', {
     headers: {
       'Content-Type': 'application/json',
