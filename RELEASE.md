@@ -8,7 +8,7 @@ Please follow the established format:
 # Next release
 
 ## Major features and improvements
-- Display previously published URLs. (#1907)
+- Display published URLs. (#1907)
 
 ## Bug fixes and other changes
 
