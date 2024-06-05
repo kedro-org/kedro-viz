@@ -198,7 +198,7 @@ Usage: kedro viz build [OPTIONS]
 Options:
   --include-hooks    A flag to include all registered hooks in your Kedro
                      Project
-  --include-preview  Enable/disable preview for all the datasets.
+  --include-preview  A flag to include preview for all the datasets
   -h, --help         Show this message and exit.
 ```
 
