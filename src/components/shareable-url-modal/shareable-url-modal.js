@@ -143,6 +143,28 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
+  const updateLocalStorageState = () => {
+    const selectedHostingPlatformVal = {};
+    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+      selectedHostingPlatformVal[inputValues.platform] = { ...inputValues };
+    }
+    saveLocalStorage(localStorageShareableUrl, selectedHostingPlatformVal);
+
+    //  filtering out the pairs where the key is in selectedHostingPlatformVal
+    const localStorageExcludingSelectedPlatform = Object.fromEntries(
+      Object.entries(hostingPlatformLocalStorageVal).filter(
+        ([key]) => !(key in selectedHostingPlatformVal)
+      )
+    );
+
+    // set the new state with selectedHostingPlatformVal as the first value and localStorageExcludingSelectedPlatform
+    const newState = {
+      ...selectedHostingPlatformVal,
+      ...localStorageExcludingSelectedPlatform,
+    };
+    setHostingPlatformLocalStorageVal(newState);
+  };
+
   const handleSubmit = async () => {
     setDeploymentState('loading');
     setIsLoading(true);
@@ -155,17 +177,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
-
-        const hostingPlatformVal = {};
-        if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
-          hostingPlatformVal[inputValues.platform] = { ...inputValues };
-        }
-        saveLocalStorage(localStorageShareableUrl, hostingPlatformVal);
-        const newState = {
-          ...hostingPlatformVal,
-          ...hostingPlatformLocalStorageVal,
-        };
-        setHostingPlatformLocalStorageVal(newState);
+        updateLocalStorageState();
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
