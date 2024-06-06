@@ -72,15 +72,6 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     fetchPackageCompatibility();
   }, []);
 
-  const createUpdatedFormDirtyState = (populatedContent) => {
-    return Object.fromEntries(
-      Object.entries(populatedContent).map(([key, value]) => [
-        inputKeyToStateKeyMap[key],
-        !!value,
-      ])
-    );
-  };
-
   const setStateForPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
@@ -97,15 +88,14 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
 
       const populatedContent =
         hostingPlatformLocalStorageVal[publishedPlatformKey];
-      const updatedFormDirtyState =
-        createUpdatedFormDirtyState(populatedContent);
 
       setInputValues(populatedContent);
 
-      setIsFormDirty((prevState) => ({
-        ...prevState,
-        ...updatedFormDirtyState,
-      }));
+      setIsFormDirty({
+        hasBucketName: true,
+        hasPlatform: true,
+        hasEndpoint: true,
+      });
     }
   };
 
@@ -130,14 +120,13 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     // if the selected platform is stored in localStorage, populate the form with the stored data
     if (hostingPlatformLocalStorageVal[platformKey]) {
       const populatedContent = hostingPlatformLocalStorageVal[platformKey];
-      const updatedFormDirtyState =
-        createUpdatedFormDirtyState(populatedContent);
 
       setInputValues(populatedContent);
-      setIsFormDirty((prevState) => ({
-        ...prevState,
-        ...updatedFormDirtyState,
-      }));
+      setIsFormDirty({
+        hasBucketName: true,
+        hasPlatform: true,
+        hasEndpoint: true,
+      });
     } else {
       // if not, only set the platform and reset the rest
       const emptyContent = {
