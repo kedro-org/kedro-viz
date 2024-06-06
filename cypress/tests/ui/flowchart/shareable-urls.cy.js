@@ -294,7 +294,7 @@ describe('Shareable URLs with valid localStorage', () => {
       cy.get(
         '.shareable-url-modal__published-dropdown-wrapper .dropdown__options section div'
       )
-        .eq(2)
+        .eq(1)
         .click();
 
       cy.get('.url-box__result-url').contains(secondEndpointName);
