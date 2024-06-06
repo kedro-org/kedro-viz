@@ -26,15 +26,6 @@ class TestModularPipelinesRepository:
             [ROOT_MODULAR_PIPELINE_ID, "data_science"]
         )
 
-    def test_extract_from_node(self, identity):
-        task_node = GraphNode.create_task_node(
-            node(identity, inputs="x", outputs=None, namespace="data_science")
-        )
-        modular_pipelines = ModularPipelinesRepository()
-        assert not modular_pipelines.has_modular_pipeline("data_science")
-        modular_pipelines.extract_from_node(task_node)
-        assert modular_pipelines.has_modular_pipeline("data_science")
-
     def test_add_inputs(self):
         kedro_dataset = CSVDataset(filepath="foo.csv")
         modular_pipelines = ModularPipelinesRepository()
@@ -42,14 +33,19 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
+            dataset_id="data_science.model",
             dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
             stats=None,
+            modular_pipelines={"data_science"},
         )
         modular_pipelines.add_inputs("data_science", set(["data_science.model"]))
-        assert data_node.id in data_science_pipeline.inputs
+        assert (
+            modular_pipelines._hash_input_output(data_node.id)
+            in data_science_pipeline.inputs
+        )
 
     def test_add_outputs(self):
         kedro_dataset = CSVDataset(filepath="foo.csv")
@@ -58,11 +54,16 @@ class TestModularPipelinesRepository:
             "data_science"
         )
         data_node = GraphNode.create_data_node(
+            dataset_id="data_science.model",
             dataset_name="data_science.model",
             layer="model",
             tags=set(),
             dataset=kedro_dataset,
             stats=None,
+            modular_pipelines={"data_science"},
         )
         modular_pipelines.add_outputs("data_science", set(["data_science.model"]))
-        assert data_node.id in data_science_pipeline.outputs
+        assert (
+            modular_pipelines._hash_input_output(data_node.id)
+            in data_science_pipeline.outputs
+        )

@@ -310,11 +310,13 @@ def example_data_node(example_csv_filepath):
     metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
     kedro_dataset = CSVDataset(filepath=example_csv_filepath, metadata=metadata)
     data_node = GraphNode.create_data_node(
+        dataset_id=dataset_name,
         dataset_name=dataset_name,
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
         stats={"rows": 10, "columns": 5, "file_size": 1024},
+        modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
 
     yield data_node
@@ -325,11 +327,13 @@ def example_data_node_without_viz_metadata(example_csv_filepath):
     dataset_name = "uk.data_science.model_training.dataset"
     kedro_dataset = CSVDataset(filepath=example_csv_filepath)
     data_node = GraphNode.create_data_node(
+        dataset_id=dataset_name,
         dataset_name=dataset_name,
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
         stats={"rows": 10, "columns": 5, "file_size": 1024},
+        modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
 
     yield data_node
@@ -355,3 +359,15 @@ def pipeline_with_data_sets_mock():
 @pytest.fixture(autouse=True)
 def reset_is_all_previews_enabled():
     DataNodeMetadata.is_all_previews_enabled = True
+
+
+@pytest.fixture
+def example_modular_pipelines_tree():
+    def _create_tree(registered_pipeline_id):
+        return (
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                registered_pipeline_id
+            )
+        )
+
+    yield _create_tree

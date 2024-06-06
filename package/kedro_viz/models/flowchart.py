@@ -117,7 +117,6 @@ class GraphNode(BaseModel, abc.ABC):
                 for each graph node, if any. Defaults to `None`.
         pipelines (Set[str]): The set of registered pipeline IDs this
                 node belongs to. Defaults to `set()`.
-        namespace (Optional[str]): The original namespace on this node. Defaults to `None`.
         modular_pipelines (Optional[Set(str)]): A set of modular pipeline names this node belongs to.
 
     """
@@ -438,8 +437,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if cls.kedro_node._name is not None:
-            if cls.task_node.namespace is not None:
-                return f"kedro run --to-nodes={cls.task_node.namespace}.{cls.kedro_node._name}"
+            if cls.kedro_node.namespace is not None:
+                return f"kedro run --to-nodes={cls.kedro_node.namespace}.{cls.kedro_node._name}"
             return f"kedro run --to-nodes={cls.kedro_node._name}"
 
         return None

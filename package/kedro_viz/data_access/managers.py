@@ -160,6 +160,10 @@ class DataAccessManager:
                 registered_pipeline_id, node, modular_pipelines_tree
             )
 
+            # [TODO: update task nodes with pipeline tags.
+            # Users can declare an optional tag on pipeline level.
+            # There is no public api to access tags]
+
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
             # Add node's inputs as DataNode to the graph
@@ -210,7 +214,8 @@ class DataAccessManager:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
         (
-            node_id, modular_pipelines
+            node_id,
+            modular_pipelines,
         ) = modular_pipeline_tree.get_node_and_modular_pipeline_mapping(node)
         task_node: TaskNode = self.nodes.add_node(
             GraphNode.create_task_node(node, node_id, modular_pipelines)
@@ -304,9 +309,10 @@ class DataAccessManager:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
-        dataset_id, modular_pipelines = (
-            modular_pipeline_tree.get_node_and_modular_pipeline_mapping(dataset_name)
-        )
+        (
+            dataset_id,
+            modular_pipelines,
+        ) = modular_pipeline_tree.get_node_and_modular_pipeline_mapping(dataset_name)
 
         # add datasets that are not part of a modular pipeline
         # as a child to the root modular pipeline
@@ -334,7 +340,7 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=obj,
-                modular_pipelines=modular_pipelines,
+                modular_pipelines=None,  # [TODO: Confirm if parameters are not part of any modular_pipeline]
             )
         else:
             graph_node = GraphNode.create_data_node(
@@ -364,9 +370,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[parameters_node.parameter_name] = (
-                parameters_node.parameter_value
-            )
+            task_node.parameters[
+                parameters_node.parameter_name
+            ] = parameters_node.parameter_value
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.

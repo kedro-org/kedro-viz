@@ -37,7 +37,9 @@ class TestAddCatalog:
 
 
 class TestAddNode:
-    def test_add_node(self, data_access_manager: DataAccessManager):
+    def test_add_node(
+        self, data_access_manager: DataAccessManager, example_modular_pipelines_tree
+    ):
         kedro_node = node(
             identity,
             inputs="x",
@@ -45,7 +47,9 @@ class TestAddNode:
             name="identity_node",
             tags=["tag1", "tag2"],
         )
-        graph_node = data_access_manager.add_node("my_pipeline", kedro_node)
+        graph_node = data_access_manager.add_node(
+            "my_pipeline", kedro_node, example_modular_pipelines_tree("my_pipeline")
+        )
         nodes_list = data_access_manager.nodes.as_list()
         assert len(nodes_list) == 1
         assert isinstance(graph_node, TaskNode)
@@ -55,7 +59,7 @@ class TestAddNode:
         assert data_access_manager.tags.as_list() == [Tag(id="tag1"), Tag(id="tag2")]
 
     def test_add_node_with_modular_pipeline(
-        self, data_access_manager: DataAccessManager
+        self, data_access_manager: DataAccessManager, example_modular_pipelines_tree
     ):
         kedro_node = node(
             identity,
@@ -63,7 +67,9 @@ class TestAddNode:
             outputs="y",
             namespace="uk.data_science.modular_pipeline",
         )
-        graph_node = data_access_manager.add_node("my_pipeline", kedro_node)
+        graph_node = data_access_manager.add_node(
+            "my_pipeline", kedro_node, example_modular_pipelines_tree("my_pipeline")
+        )
         assert graph_node.modular_pipelines == [
             "uk",
             "uk.data_science",
@@ -74,6 +80,7 @@ class TestAddNode:
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_tree,
     ):
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
@@ -83,7 +90,11 @@ class TestAddNode:
         kedro_node = node(
             identity, inputs=dataset_name, outputs="output", tags=["tag1", "tag2"]
         )
-        task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
+        task_node = data_access_manager.add_node(
+            registered_pipeline_id,
+            kedro_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
+        )
 
         # add its input to the graph
         catalog = DataCatalog(
@@ -117,6 +128,7 @@ class TestAddNode:
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_tree,
     ):
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
@@ -124,9 +136,16 @@ class TestAddNode:
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
-        task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
+        task_node = data_access_manager.add_node(
+            registered_pipeline_id,
+            kedro_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
+        )
         parameters_node = data_access_manager.add_node_input(
-            registered_pipeline_id, "parameters", task_node
+            registered_pipeline_id,
+            "parameters",
+            task_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
         )
         assert isinstance(parameters_node, ParametersNode)
         assert task_node.parameters == parameters
@@ -135,15 +154,23 @@ class TestAddNode:
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_tree,
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params:train_test_split": 0.1})
         data_access_manager.add_catalog(catalog, example_pipelines)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
-        task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
+        task_node = data_access_manager.add_node(
+            registered_pipeline_id,
+            kedro_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
+        )
         parameter_node = data_access_manager.add_node_input(
-            registered_pipeline_id, "params:train_test_split", task_node
+            registered_pipeline_id,
+            "params:train_test_split",
+            task_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
         )
         assert isinstance(parameter_node, ParametersNode)
         assert task_node.parameters == {"train_test_split": 0.1}
@@ -152,6 +179,7 @@ class TestAddNode:
         self,
         data_access_manager: DataAccessManager,
         example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_tree,
     ):
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
@@ -164,17 +192,20 @@ class TestAddNode:
             outputs="output",
             namespace="uk.data_science",
         )
-        task_node = data_access_manager.add_node(registered_pipeline_id, kedro_node)
+        task_node = data_access_manager.add_node(
+            registered_pipeline_id,
+            kedro_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
+        )
         data_access_manager.add_node_input(
-            registered_pipeline_id, parameter_name, task_node
+            registered_pipeline_id,
+            parameter_name,
+            task_node,
+            example_modular_pipelines_tree(registered_pipeline_id),
         )
-        modular_pipelines_tree = (
-            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
-                registered_pipeline_id
-            )
-        )
+
         # make sure parameters YAML namespace not accidentally added to the modular pipeline tree
-        assert "uk.data_science.train_test_split" not in modular_pipelines_tree
+        assert "uk.data_science.train_test_split" not in task_node.modular_pipelines
 
     def test_add_node_output(
         self,
