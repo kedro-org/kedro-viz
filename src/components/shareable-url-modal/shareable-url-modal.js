@@ -8,7 +8,7 @@ import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 import {
   hostingPlatforms,
   inputKeyToStateKeyMap,
-  localStorageSharableUrl,
+  localStorageShareableUrl,
   PACKAGE_FSSPEC,
   shareableUrlMessages,
 } from '../../config';
@@ -41,7 +41,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [isCompatible, setIsCompatible] = useState(true);
   const [showPublishedView, setShowPublishedView] = useState(false);
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
-    useState(loadLocalStorage(localStorageSharableUrl) || {});
+    useState(loadLocalStorage(localStorageShareableUrl) || {});
   const [publishedPlatformKey, setPublishedPlatformKey] = useState(undefined);
   const [isPreviewEnabled, setIsPreviewEnabled] = useState(true);
 
@@ -72,7 +72,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     fetchPackageCompatibility();
   }, []);
 
-  const displayPublishedView = () => {
+  const setStateForPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setDeploymentState('published');
       setShowPublishedView(true);
@@ -81,7 +81,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const displayMainViewWithPublishedContent = () => {
+  const setStateForMainViewWithPublishedContent = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
       setShowPublishedView(false);
       setDeploymentState('default');
@@ -106,7 +106,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   };
 
   useEffect(() => {
-    displayPublishedView();
+    setStateForPublishedView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChange = (key, value) => {
@@ -138,7 +139,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
         if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
           hostingPlatformVal[inputValues.platform] = { ...inputValues };
         }
-        saveLocalStorage(localStorageSharableUrl, hostingPlatformVal);
+        saveLocalStorage(localStorageShareableUrl, hostingPlatformVal);
         const newState = {
           ...hostingPlatformVal,
           ...hostingPlatformLocalStorageVal,
@@ -177,7 +178,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       }
 
       // if there are items stored in localStorage, display the published view
-      displayPublishedView();
+      setStateForPublishedView();
     }
 
     setResponseError(null);
@@ -228,7 +229,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             setPublishedPlatformKey(selectedPlatform.value);
           }}
           onCopyClick={onCopyClick}
-          onRepublishClick={displayMainViewWithPublishedContent}
+          onRepublishClick={setStateForMainViewWithPublishedContent}
           platform={platform}
           showCopied={showCopied}
         />
