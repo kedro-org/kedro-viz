@@ -43,7 +43,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
     useState(loadLocalStorage(localStorageShareableUrl) || {});
   const [publishedPlatformKey, setPublishedPlatformKey] = useState(undefined);
-  const [isPreviewEnabled, setIsPreviewEnabled] = useState(true);
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(false);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -171,7 +171,10 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     setShowPublishedView(false);
 
     try {
-      const request = await deployViz(inputValues);
+      const request = await deployViz({
+        ...inputValues,
+        is_all_previews_enabled: isPreviewEnabled,
+      });
       const response = await request.json();
 
       if (request.ok) {
@@ -223,6 +226,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
       hasPlatform: false,
       hasEndpoint: false,
     });
+    setIsPreviewEnabled(false);
   };
 
   const { platform } = inputValues || {};
