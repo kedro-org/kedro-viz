@@ -1,6 +1,6 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 
-# pylint: disable=protected-access, missing-function-docstring, too-many-lines
+# pylint: disable=protected-access, missing-function-docstring
 import abc
 import inspect
 import logging
@@ -117,7 +117,8 @@ class GraphNode(BaseModel, abc.ABC):
                 for each graph node, if any. Defaults to `None`.
         pipelines (Set[str]): The set of registered pipeline IDs this
                 node belongs to. Defaults to `set()`.
-        modular_pipelines (Optional[Set(str)]): A set of modular pipeline names this node belongs to.
+        modular_pipelines (Optional[Set(str)]): A set of modular pipeline names
+                this node belongs to.
 
     """
 
@@ -148,6 +149,8 @@ class GraphNode(BaseModel, abc.ABC):
         """Create a graph node of type task for a given Kedro Node instance.
         Args:
             node: A node in a Kedro pipeline.
+            node_id: Id of the task node.
+            modular_pipelines: A set of modular_pipeline_ids the node belongs to.
         Returns:
             An instance of TaskNode.
         """
@@ -158,6 +161,7 @@ class GraphNode(BaseModel, abc.ABC):
             tags=set(node.tags),
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
+            namespace=node.namespace,
         )
 
     @classmethod
@@ -174,6 +178,7 @@ class GraphNode(BaseModel, abc.ABC):
     ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
+            dataset_id: A hashed id for the dataset node
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.master_table.
             layer: The optional layer that the dataset belongs to.
@@ -182,6 +187,7 @@ class GraphNode(BaseModel, abc.ABC):
             dataset: A dataset in a Kedro pipeline.
             stats: The dictionary of dataset statistics, e.g.
                 {"rows":2, "columns":3, "file_size":100}
+            modular_pipelines: A set of modular_pipeline_ids the node belongs to.
             is_free_input: Whether the dataset is a free input in the pipeline
         Returns:
             An instance of DataNode.
@@ -222,12 +228,14 @@ class GraphNode(BaseModel, abc.ABC):
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
+            dataset_id: A hashed id for the parameters node
             dataset_name: The name of the dataset, including namespace, e.g.
                 data_science.test_split_ratio
             layer: The optional layer that the parameters belong to.
             tags: The set of tags assigned to assign to the graph representation
                 of this dataset. N.B. currently it's derived from the node's tags.
             parameters: A parameters dataset in a Kedro pipeline.
+            modular_pipelines: A set of modular_pipeline_ids the node belongs to.
         Returns:
             An instance of ParametersNode.
         """
@@ -292,11 +300,25 @@ class TaskNode(GraphNode):
     # The type for Task node
     type: str = GraphNodeType.TASK.value
 
+    # In Kedro, modular pipeline is implemented by declaring namespace on a node.
+    # For example, node(func, namespace="uk.de") means this node belongs
+    # to the modular pipeline "uk" and "uk.de"
+    namespace: Optional[str] = Field(
+        default=None,
+        validate_default=True,
+        description="The original namespace on this node",
+    )
+
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_exists(cls, values):
         assert "kedro_obj" in values
         return values
+
+    @field_validator("namespace")
+    @classmethod
+    def set_namespace(cls, _, info: ValidationInfo):
+        return info.data["kedro_obj"].namespace
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
@@ -833,9 +855,6 @@ class ParametersNode(GraphNode):
         assert "kedro_obj" in values
         assert "name" in values
         return values
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def is_all_parameters(self) -> bool:
         """Check whether the graph node represent all parameters in the pipeline"""

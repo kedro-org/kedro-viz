@@ -1,4 +1,3 @@
-from kedro.pipeline import node
 from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID

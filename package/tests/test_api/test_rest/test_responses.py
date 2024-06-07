@@ -62,8 +62,10 @@ def assert_nodes_equal(response_nodes, expected_nodes):
         assert sorted(response_node_pipelines) == sorted(expected_node_pipelines)
 
         # sort modular pipelines
-        response_node["modular_pipelines"] and response_node["modular_pipelines"].sort()
-        expected_node["modular_pipelines"] and expected_node["modular_pipelines"].sort()
+        if response_node["modular_pipelines"]:
+            response_node["modular_pipelines"].sort()
+        if expected_node["modular_pipelines"]:
+            expected_node["modular_pipelines"].sort()
 
         assert response_node == expected_node
 
