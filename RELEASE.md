@@ -13,6 +13,11 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+## Major features and improvements
+- Display published URLs. (#1907)
+
+## Bug fixes and other changes
+
 # Release 9.1.0
 
 ## Major features and improvements
