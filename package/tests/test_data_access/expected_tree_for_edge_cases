@@ -1,0 +1,287 @@
+{
+    "UseCase1": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "main_pipeline.dataset_in",
+          "dataset_out",
+          "main_pipeline"
+        ],
+        "expected_tags": []
+      },
+      "main_pipeline": {
+        "expected_inputs": [
+          "main_pipeline.dataset_in"
+        ],
+        "expected_outputs": [
+          "dataset_out"
+        ],
+        "expected_children": [
+          "step1",
+          "main_pipeline.dataset_1",
+          "step2",
+          "main_pipeline.dataset_2",
+          "step3",
+          "dataset_3",
+          "step4"
+        ],
+        "expected_tags": []
+      }
+    },
+    "UseCase2": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "dataset_4",
+          "main_pipeline",
+          "main_pipeline.dataset_1_2",
+          "main_pipeline.dataset_in"
+        ],
+        "expected_tags": []
+      },
+      "main_pipeline": {
+        "expected_inputs": [
+          "main_pipeline.dataset_in"
+        ],
+        "expected_outputs": [
+          "dataset_4",
+          "main_pipeline.dataset_1_2"
+        ],
+        "expected_children": [
+          "dataset_3",
+          "main_pipeline.dataset_1",
+          "main_pipeline.sub_pipeline",
+          "step1",
+          "step1_2",
+          "step4"
+        ],
+        "expected_tags": []
+      },
+      "main_pipeline.sub_pipeline": {
+        "expected_inputs": [
+          "main_pipeline.dataset_1"
+        ],
+        "expected_outputs": [
+          "dataset_3"
+        ],
+        "expected_children": [
+          "main_pipeline.sub_pipeline.dataset_2",
+          "step2",
+          "step3"
+        ],
+        "expected_tags": []
+      }
+    },
+    "UseCase3": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "dataset_3",
+          "dataset_4",
+          "dataset_5",
+          "main_pipeline",
+          "main_pipeline.dataset_1_2",
+          "main_pipeline.dataset_in",
+          "other_pipeline"
+        ],
+        "expected_tags": []
+      },
+      "main_pipeline": {
+        "expected_inputs": [
+          "main_pipeline.dataset_in"
+        ],
+        "expected_outputs": [
+          "dataset_3",
+          "dataset_4",
+          "main_pipeline.dataset_1_2"
+        ],
+        "expected_children": [
+          "main_pipeline.dataset_1",
+          "main_pipeline.sub_pipeline",
+          "step1",
+          "step1_2",
+          "step4"
+        ],
+        "expected_tags": []
+      },
+      "main_pipeline.sub_pipeline": {
+        "expected_inputs": [
+          "main_pipeline.dataset_1"
+        ],
+        "expected_outputs": [
+          "dataset_3"
+        ],
+        "expected_children": [
+          "main_pipeline.sub_pipeline.dataset_2",
+          "step2",
+          "step3"
+        ],
+        "expected_tags": []
+      },
+      "other_pipeline": {
+        "expected_inputs": [
+          "dataset_3"
+        ],
+        "expected_outputs": [
+          "dataset_5"
+        ],
+        "expected_children": [
+          "step5"
+        ],
+        "expected_tags": []
+      }
+    },
+    "UseCase4": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "dataset_1",
+          "dataset_10",
+          "dataset_11",
+          "dataset_2",
+          "dataset_3",
+          "dataset_4",
+          "dataset_5",
+          "dataset_6",
+          "dataset_8",
+          "first_node",
+          "second_node",
+          "namespace_prefix_1"
+        ],
+        "expected_tags": []
+      },
+      "namespace_prefix_1": {
+        "expected_inputs": [
+          "dataset_10",
+          "dataset_5",
+          "dataset_6",
+          "dataset_8"
+        ],
+        "expected_outputs": [
+          "dataset_11"
+        ],
+        "expected_children": [
+          "dataset_7",
+          "dataset_9",
+          "fifth_node",
+          "fourth_node",
+          "third_node"
+        ],
+        "expected_tags": []
+      }
+    },
+    "UseCase5": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "uk",
+          "uk.data_processing.raw_data",
+          "uk.data_science.model"
+        ],
+        "expected_tags": [
+          "split",
+          "train"
+        ]
+      },
+      "uk": {
+        "expected_inputs": [
+          "uk.data_processing.raw_data"
+        ],
+        "expected_outputs": [
+          "uk.data_science.model"
+        ],
+        "expected_children": [
+          "model_inputs",
+          "uk.data_processing",
+          "uk.data_science"
+        ],
+        "expected_tags": [
+          "split",
+          "train"
+        ]
+      },
+      "uk.data_processing": {
+        "expected_inputs": [
+          "uk.data_processing.raw_data"
+        ],
+        "expected_outputs": [
+          "model_inputs"
+        ],
+        "expected_children": [
+          "process_data"
+        ],
+        "expected_tags": [
+          "split"
+        ]
+      },
+      "uk.data_science": {
+        "expected_inputs": [
+          "model_inputs"
+        ],
+        "expected_outputs": [
+          "uk.data_science.model"
+        ],
+        "expected_children": [
+          "train_model"
+        ],
+        "expected_tags": [
+          "train"
+        ]
+      }
+    },
+    "UseCase6": {
+      "__root__": {
+        "expected_inputs": [],
+        "expected_outputs": [],
+        "expected_children": [
+          "input_to_processing",
+          "output_from_processing",
+          "processing"
+        ],
+        "expected_tags": []
+      },
+      "processing": {
+        "expected_inputs": [
+          "input_to_processing"
+        ],
+        "expected_outputs": [
+          "output_from_processing"
+        ],
+        "expected_children": [
+          "processing.first_processing_step",
+          "processing.post_first_pipe",
+          "processing.second_processing_step"
+        ],
+        "expected_tags": []
+      },
+      "processing.first_processing_step": {
+        "expected_inputs": [
+          "input_to_processing"
+        ],
+        "expected_outputs": [
+          "processing.post_first_pipe"
+        ],
+        "expected_children": [
+          "generic_node"
+        ],
+        "expected_tags": []
+      },
+      "processing.second_processing_step": {
+        "expected_inputs": [
+          "processing.post_first_pipe"
+        ],
+        "expected_outputs": [
+          "output_from_processing"
+        ],
+        "expected_children": [
+          "generic_node"
+        ],
+        "expected_tags": []
+      }
+    }
+  }

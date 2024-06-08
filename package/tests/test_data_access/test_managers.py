@@ -471,18 +471,50 @@ class TestAddPipelines:
             ]
         )
 
-    def test_add_pipelines_edge_cases(
+    def assert_expected_modular_pipeline_values_for_edge_cases(
+        self,
+        expected_modular_pipeline_tree_obj,
+        modular_pipeline_node_id,
+        data_access_manager,
+        modular_pipeline_tree_values,
+        expected_key,
+    ):
+        assert sorted(
+            list(
+                expected_modular_pipeline_tree_obj[modular_pipeline_node_id][
+                    expected_key
+                ]
+            )
+        ) == sorted(
+            list(
+                data_access_manager.nodes.get_node_by_id(node_id).name
+                for node_id in modular_pipeline_tree_values
+            )
+        )
+
+    def test_add_pipelines_for_edge_cases(
         self,
         data_access_manager: DataAccessManager,
         edge_case_example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
     ):
+        """
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
         # testing task nodes in GraphNodesRepository
         all_node_names = set()
-        for _pipeline in edge_case_example_pipelines.values():
+        for registered_pipeline_id, _pipeline in edge_case_example_pipelines.items():
+            # This is needed to add modular pipeline nodes to the GraphNodesRepository
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                registered_pipeline_id
+            )
             all_node_names |= {node.name for node in _pipeline.nodes}
 
         assert sorted(
@@ -505,6 +537,70 @@ class TestAddPipelines:
         assert sorted(list(data_access_manager.modular_pipelines.keys())) == sorted(
             list(edge_case_example_pipelines.keys())
         )
+
+        for (
+            registered_pipeline_id,
+            modular_pipelines_repo_obj,
+        ) in data_access_manager.modular_pipelines.items():
+            expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
+                registered_pipeline_id
+            ]
+            # expected modular_pipelines
+            assert sorted(list(expected_modular_pipeline_tree_obj.keys())) == sorted(
+                list(modular_pipelines_repo_obj.tree.keys())
+            )
+
+            # in each modular pipeline expected inputs, outputs, children and tags
+            for (
+                modular_pipeline_id,
+                modular_pipeline_node,
+            ) in modular_pipelines_repo_obj.tree.items():
+                # expected inputs
+                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                    expected_modular_pipeline_tree_obj,
+                    modular_pipeline_id,
+                    data_access_manager,
+                    modular_pipeline_node.inputs,
+                    "expected_inputs",
+                )
+
+                # expected outputs
+                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                    expected_modular_pipeline_tree_obj,
+                    modular_pipeline_id,
+                    data_access_manager,
+                    modular_pipeline_node.outputs,
+                    "expected_outputs",
+                )
+
+                # [NOTE: only for modular pipeline node, we are not hashing id]
+                # expected children
+                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                    expected_modular_pipeline_tree_obj,
+                    modular_pipeline_id,
+                    data_access_manager,
+                    [
+                        modular_pipeline_child.id
+                        for modular_pipeline_child in modular_pipeline_node.children
+                    ],
+                    "expected_children",
+                )
+
+                # expected tags
+                modular_pipeline_children_tags = set()
+                for modular_pipeline_child in modular_pipeline_node.children:
+                    modular_pipeline_children_tags |= (
+                        data_access_manager.nodes.get_node_by_id(
+                            modular_pipeline_child.id
+                        ).tags
+                    )
+                assert sorted(
+                    list(
+                        expected_modular_pipeline_tree_obj[modular_pipeline_id][
+                            "expected_tags"
+                        ]
+                    )
+                ) == sorted(list(modular_pipeline_children_tags))
 
     def test_add_pipelines_with_transcoded_data(
         self,

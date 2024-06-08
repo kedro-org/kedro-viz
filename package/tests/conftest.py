@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Dict
 from unittest import mock
@@ -107,6 +108,11 @@ def get_generic_pipe():
 # [TODO: Need to better manage this fixture]
 @pytest.fixture
 def edge_case_example_pipelines(get_generic_pipe):
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    https://github.com/kedro-org/kedro-viz/issues/1814
+    """
     use_case_1_pipeline = pipeline(
         [
             node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
@@ -273,6 +279,17 @@ def edge_case_example_pipelines(get_generic_pipe):
         + use_case_5_data_science_pipeline,
         "UseCase6": use_case_6_pipeline,
     }
+
+
+@pytest.fixture
+def expected_modular_pipeline_tree():
+    expected_tree_for_edge_cases_file_path = (
+        Path(__file__).parent / "test_data_access" / "expected_tree_for_edge_cases"
+    )
+    with open(
+        expected_tree_for_edge_cases_file_path, encoding="utf-8"
+    ) as expected_tree_for_edge_cases:
+        return json.load(expected_tree_for_edge_cases)
 
 
 @pytest.fixture
