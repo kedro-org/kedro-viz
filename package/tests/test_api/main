@@ -6,7 +6,7 @@
       "tags": ["split"],
       "pipelines": ["data_processing", "__default__"],
       "type": "task",
-      "modular_pipelines": ["uk", "uk.data_processing"],
+      "modular_pipelines": ["uk.data_processing"],
       "parameters": { "uk.data_processing.train_test_split": 0.1 }
     },
     {
@@ -15,7 +15,7 @@
       "tags": ["split"],
       "pipelines": ["data_processing", "__default__"],
       "type": "parameters",
-      "modular_pipelines": ["uk", "uk.data_processing"],
+      "modular_pipelines": null,
       "layer": null,
       "dataset_type": null
     },
@@ -35,7 +35,7 @@
       "tags": ["split", "train"],
       "pipelines": ["data_processing", "__default__", "data_science"],
       "type": "data",
-      "modular_pipelines": [],
+      "modular_pipelines": null,
       "layer": "model_inputs",
       "dataset_type": "pandas.csv_dataset.CSVDataset"
     },
@@ -45,7 +45,7 @@
       "tags": ["train"],
       "pipelines": ["__default__", "data_science"],
       "type": "task",
-      "modular_pipelines": ["uk", "uk.data_science"],
+      "modular_pipelines": ["uk.data_science"],
       "parameters": { "train_test_split": 0.1, "num_epochs": 1000 }
     },
     {
@@ -54,7 +54,7 @@
       "tags": ["train"],
       "pipelines": ["__default__", "data_science"],
       "type": "parameters",
-      "modular_pipelines": [],
+      "modular_pipelines": null,
       "layer": null,
       "dataset_type": null
     },
@@ -135,8 +135,7 @@
       "outputs": [],
       "children": [
         { "id": "f1f1425b", "type": "parameters" },
-        { "id": "uk", "type": "modularPipeline" },
-        { "id": "0ecea0de", "type": "data" }
+        { "id": "uk", "type": "modularPipeline" }
       ]
     },
     "uk.data_processing": {

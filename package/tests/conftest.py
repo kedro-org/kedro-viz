@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Dict
 from unittest import mock
@@ -15,6 +16,9 @@ from pydantic import BaseModel
 
 from kedro_viz.api import apps
 from kedro_viz.data_access import DataAccessManager
+from kedro_viz.data_access.repositories.modular_pipelines import (
+    ModularPipelinesRepository,
+)
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.flowchart import DataNodeMetadata, GraphNode
@@ -85,6 +89,207 @@ def example_pipelines():
         "data_science": data_science_pipeline,
         "data_processing": data_processing_pipeline,
     }
+
+
+@pytest.fixture
+def get_generic_pipe():
+    yield Pipeline(
+        [
+            node(
+                func=lambda x: x,
+                inputs="input_df",
+                outputs="output_df",
+                name="generic_node",
+            ),
+        ]
+    )
+
+
+# [TODO: Need to better manage this fixture]
+@pytest.fixture
+def edge_case_example_pipelines(get_generic_pipe):
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    https://github.com/kedro-org/kedro-viz/issues/1814
+    """
+    use_case_1_pipeline = pipeline(
+        [
+            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
+            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
+            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
+            node(lambda x: x, inputs="dataset_3", outputs="dataset_out", name="step4"),
+        ],
+        namespace="main_pipeline",
+        inputs=None,
+        outputs={"dataset_out", "dataset_3"},
+    )
+
+    sub_pipeline_use_case_2 = pipeline(
+        [
+            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
+            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
+        ],
+        inputs={"dataset_1"},
+        outputs={"dataset_3"},
+        namespace="sub_pipeline",
+    )
+
+    use_case_2_pipeline = pipeline(
+        [
+            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
+            sub_pipeline_use_case_2,
+            node(
+                lambda x: x, inputs="dataset_1", outputs="dataset_1_2", name="step1_2"
+            ),
+            node(lambda x: x, inputs="dataset_3", outputs="dataset_4", name="step4"),
+        ],
+        namespace="main_pipeline",
+        inputs=None,
+        outputs={"dataset_3", "dataset_4"},
+    )
+
+    sub_pipeline_use_case_3 = pipeline(
+        [
+            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
+            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
+        ],
+        inputs={"dataset_1"},
+        outputs={"dataset_3"},
+        namespace="sub_pipeline",
+    )
+
+    use_case_3_pipeline = pipeline(
+        [
+            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
+            sub_pipeline_use_case_3,
+            node(
+                lambda x: x, inputs="dataset_1", outputs="dataset_1_2", name="step1_2"
+            ),
+            node(lambda x: x, inputs="dataset_3", outputs="dataset_4", name="step4"),
+        ],
+        namespace="main_pipeline",
+        inputs=None,
+        outputs={"dataset_3", "dataset_4"},
+    )
+
+    other_pipeline_use_case_3 = pipeline(
+        [node(lambda x: x, inputs="dataset_3", outputs="dataset_5", name="step5")],
+        namespace="other_pipeline",
+        inputs={"dataset_3"},
+        outputs={"dataset_5"},
+    )
+
+    use_case_4_pipeline = pipeline(
+        [
+            node(
+                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
+                inputs=["dataset_1", "dataset_2"],
+                outputs="dataset_3",
+                name="first_node",
+            ),
+            node(
+                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
+                inputs=["dataset_3", "dataset_4"],
+                outputs="dataset_5",
+                name="second_node",
+            ),
+            node(
+                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
+                inputs=["dataset_5", "dataset_6"],
+                outputs="dataset_7",
+                name="third_node",
+                namespace="namespace_prefix_1",
+            ),
+            node(
+                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
+                inputs=["dataset_7", "dataset_8"],
+                outputs="dataset_9",
+                name="fourth_node",
+                namespace="namespace_prefix_1",
+            ),
+            node(
+                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
+                inputs=["dataset_9", "dataset_10"],
+                outputs="dataset_11",
+                name="fifth_node",
+                namespace="namespace_prefix_1",
+            ),
+        ]
+    )
+
+    use_case_5_data_processing_pipeline = pipeline(
+        [
+            node(
+                lambda x: x,
+                inputs=["raw_data"],
+                outputs="model_inputs",
+                name="process_data",
+                tags=["split"],
+            )
+        ],
+        namespace="uk.data_processing",
+        outputs="model_inputs",
+    )
+
+    use_case_5_data_science_pipeline = pipeline(
+        [
+            node(
+                lambda x: x,
+                inputs=["model_inputs"],
+                outputs="model",
+                name="train_model",
+                tags=["train"],
+            )
+        ],
+        namespace="uk.data_science",
+        inputs="model_inputs",
+    )
+
+    use_case_6_pipe = Pipeline(
+        [
+            pipeline(
+                pipe=get_generic_pipe,
+                inputs={"input_df": "input_to_processing"},
+                outputs={"output_df": "post_first_pipe"},
+                namespace="first_processing_step",
+            ),
+            pipeline(
+                pipe=get_generic_pipe,
+                inputs={"input_df": "post_first_pipe"},
+                outputs={"output_df": "output_from_processing"},
+                namespace="second_processing_step",
+            ),
+        ]
+    )
+
+    use_case_6_pipeline = pipeline(
+        pipe=use_case_6_pipe,
+        inputs="input_to_processing",
+        outputs="output_from_processing",
+        namespace="processing",
+    )
+
+    yield {
+        "UseCase1": use_case_1_pipeline,
+        "UseCase2": use_case_2_pipeline,
+        "UseCase3": use_case_3_pipeline + other_pipeline_use_case_3,
+        "UseCase4": use_case_4_pipeline,
+        "UseCase5": use_case_5_data_processing_pipeline
+        + use_case_5_data_science_pipeline,
+        "UseCase6": use_case_6_pipeline,
+    }
+
+
+@pytest.fixture
+def expected_modular_pipeline_tree():
+    expected_tree_for_edge_cases_file_path = (
+        Path(__file__).parent / "test_data_access" / "expected_tree_for_edge_cases"
+    )
+    with open(
+        expected_tree_for_edge_cases_file_path, encoding="utf-8"
+    ) as expected_tree_for_edge_cases:
+        return json.load(expected_tree_for_edge_cases)
 
 
 @pytest.fixture
@@ -310,11 +515,13 @@ def example_data_node(example_csv_filepath):
     metadata = {"kedro-viz": {"preview_args": {"nrows": 3}}}
     kedro_dataset = CSVDataset(filepath=example_csv_filepath, metadata=metadata)
     data_node = GraphNode.create_data_node(
+        dataset_id=dataset_name,
         dataset_name=dataset_name,
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
         stats={"rows": 10, "columns": 5, "file_size": 1024},
+        modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
 
     yield data_node
@@ -325,11 +532,13 @@ def example_data_node_without_viz_metadata(example_csv_filepath):
     dataset_name = "uk.data_science.model_training.dataset"
     kedro_dataset = CSVDataset(filepath=example_csv_filepath)
     data_node = GraphNode.create_data_node(
+        dataset_id=dataset_name,
         dataset_name=dataset_name,
         layer="raw",
         tags=set(),
         dataset=kedro_dataset,
         stats={"rows": 10, "columns": 5, "file_size": 1024},
+        modular_pipelines={"uk", "uk.data_science", "uk.data_science.model_training"},
     )
 
     yield data_node
@@ -355,3 +564,9 @@ def pipeline_with_data_sets_mock():
 @pytest.fixture(autouse=True)
 def reset_is_all_previews_enabled():
     DataNodeMetadata.is_all_previews_enabled = True
+
+
+@pytest.fixture
+def example_modular_pipelines_repo_obj():
+    modular_pipelines_repo_obj = ModularPipelinesRepository()
+    yield modular_pipelines_repo_obj
