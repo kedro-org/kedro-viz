@@ -1,245 +1,301 @@
-"""`kedro_viz.data_access.repositories.modular_pipelines`
-defines repository to centralise access to modular pipelines data."""
+"""`kedro_viz.data_access.repositories.modular_pipelines` defines
+repository to centralise access for modular pipelines data."""
 
-from typing import Dict, Optional, Union
+import hashlib
+from typing import Dict, List, Set, Tuple, Union
+
+from kedro.pipeline import Pipeline as KedroPipeline
+from kedro.pipeline.node import Node
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
-    DataNode,
     GraphNode,
     GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
-    ParametersNode,
-    TranscodedDataNode,
 )
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
+
+
+def _hash(value: str):
+    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
+
+
+def is_dataset_param(dataset_name: str) -> bool:
+    """Return whether a dataset is a parameter"""
+    return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
 
 
 class ModularPipelinesRepository:
-    """Repository for the set of modular pipelines in a registered pipeline.
-    Internally, the repository models the set of modular pipelines as a tree using child-references.
-    For more detail about this representation, see:
-    https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-child-references/
-
-
-    The reason is because under the hood, Kedro uses a materialized path approach
-    to namespace representation, which forms a tree. See:
-    https://docs.mongodb.com/manual/tutorial/model-tree-structures-with-materialized-paths/
-    For examples:
-    - A node could have a materialized path as a namespace property,
-    i.e. namespace="uk.data_science"
-    - A dataset could have a materialized path baked into its name,
-    i.e. "uk.data_science.model"
-    This allows for compaction in data representation during execution,
-    i.e. no need to keep an ephemeral nested structure when the execution tree is flattened out.
-    It also provides a clean algebraic query syntax,
-    i.e. `pipeline.only_nodes_with_namespace("data_science")`.
-    Both are well-known properties of the materialized path representation of a tree.
-
-    However, when the tree needs to be displayed visually, it's much more convenient to work with
-    the child-references representation. Specifically:
-    - Each tree node has an ID, a name derived from the ID and a set of children.
-    - Each child of a node could be a data node, a task node, a parameters node or
-    another modular pipeline node.
-    - There is a designated root node with a __root__ ID.
-
-    With this representation, a folder-like render of the tree is simply a recursive in-order
-    tree traversal. To improve the performance on the client, we perform the conversion between
-    these two representations on the backend by extracting the modular pipeline from a Kedro project
-    and adding it to this repository.
-    """
+    """Repository for the set of modular pipelines in a registered pipeline."""
 
     def __init__(self):
-        # The tree representation of the tree.
-        # Example:
-        # {
-        #   "__root__": ModularPipelineNode(
-        #       id="__root__",
-        #       children=["data_science", "data_engineering"]
-        #   ),
-        #   "data_science": ModularPipelineNode(id="data_science", children=[]),
-        #   "data_engineering": ModularPipelineNode(id="data_science", children=[]),
-        # }
+        """
+        Initialize the ModularPipelinesRepository with an
+        empty tree and have a node to modular pipeline mapping.
+
+        The tree contains a root modular pipeline node.
+        """
         self.tree: Dict[str, ModularPipelineNode] = {
             ROOT_MODULAR_PIPELINE_ID: GraphNode.create_modular_pipeline_node(
                 ROOT_MODULAR_PIPELINE_ID
             )
         }
+        self.node_mod_pipeline_map: Dict[str, Set[str]] = (
+            {}
+        )  # Updated to map node_id to a list of modular_pipeline_ids
+
+        self.parameters = set()
+
+    def populate_tree(self, pipeline: KedroPipeline):
+        """
+        Add inputs, outputs, and children to each modular
+        pipeline node based on the given Kedro pipeline.
+
+        Args:
+            pipeline (KedroPipeline): The Kedro pipeline to populate the tree from.
+        """
+        namespaces = sorted(
+            {node.namespace for node in pipeline.nodes if node.namespace}
+        )
+
+        modular_pipeline_ids = {
+            id for ns in namespaces for id in self._explode_namespace(ns)
+        }
+
+        for modular_pipeline_id in sorted(modular_pipeline_ids):
+            self.get_or_create_modular_pipeline(modular_pipeline_id)
+
+            sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
+            rest_of_the_pipeline = pipeline - sub_pipeline
+
+            free_inputs = sub_pipeline.inputs()
+            free_outputs = sub_pipeline.outputs() | (
+                rest_of_the_pipeline.inputs() & sub_pipeline.all_outputs()
+            )
+
+            self.add_inputs(modular_pipeline_id, free_inputs)
+            self.add_outputs(modular_pipeline_id, free_outputs)
+            self.add_children(modular_pipeline_id, sub_pipeline.nodes)
+
+    def _explode_namespace(self, nested_namespace: str) -> List[str]:
+        """
+        Expand the nested namespace into its constituent parts.
+
+        Args:
+            nested_namespace (str): The nested namespace to expand.
+
+        Returns:
+            List[str]: A list of expanded namespaces.
+        """
+        if not nested_namespace or "." not in nested_namespace:
+            return [nested_namespace] if nested_namespace else []
+        ns_parts = nested_namespace.split(".")
+        return [".".join(ns_parts[: i + 1]) for i in range(len(ns_parts))]
 
     def get_or_create_modular_pipeline(
         self, modular_pipeline_id: str
     ) -> ModularPipelineNode:
-        """Get the modular pipeline node with the given ID from the repository.
-        If it doesn't exist, create the node, add to the repository and return the instance.
+        """
+        Retrieve or create a modular pipeline node.
 
         Args:
-            modular_pipeline_id: The ID of the modular pipeline to retrieve from the repository.
+            modular_pipeline_id (str): The ID of the modular pipeline to retrieve or create.
+
         Returns:
-            A ModularPipelineNode instance with the given ID.
-        Example:
-            >>> modular_pipeline_repository = ModularPipelinesRepository()
-            >>> modular_pipeline_node = modular_pipeline_repository.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> assert modular_pipeline_node.id == "data_science"
+            ModularPipelineNode: The retrieved or newly created modular pipeline node.
         """
+
         if not self.has_modular_pipeline(modular_pipeline_id):
-            modular_pipeline_node = GraphNode.create_modular_pipeline_node(
+            self.tree[modular_pipeline_id] = GraphNode.create_modular_pipeline_node(
                 modular_pipeline_id
             )
-            self.tree[modular_pipeline_id] = modular_pipeline_node
         return self.tree[modular_pipeline_id]
 
-    def add_input(
-        self,
-        modular_pipeline_id: str,
-        input_node: Union[DataNode, TranscodedDataNode, ParametersNode],
-    ) -> None:
-        """Add an input to a modular pipeline based on whether it's an internal or external input.
-        The input to a modular pipeline can only be a data node or parameter node.
-        The input also has knowledge of which modular pipelines it belongs to
-        based on its namespace. This information can be accessed with through
-        `input_node.modular_pipelines`.
+    def add_inputs(self, modular_pipeline_id: str, inputs: Set[str]) -> None:
+        """
+        Add input datasets to the modular pipeline.
 
         Args:
-            modular_pipeline_id: ID of the modular pipeline to add the input to.
-            input_node: The input node to add.
-        Raises:
-            ValueError: when attempt to add a non-data,non-parameter node as input
-                to the modular pipeline.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> model_input_node = GraphNode.create_data_node(
-            ...     "data_science.model_input", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.add_input("data_science", model_input_node)
-            >>> assert data_science_pipeline.inputs == {model_input_node.id}
+            modular_pipeline_id (str): The ID of the modular pipeline to add inputs to.
+            inputs (Set[str]): The input datasets to add.
         """
-        if not isinstance(input_node, (DataNode, TranscodedDataNode, ParametersNode)):
-            raise ValueError(
-                f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
-            )
+        hashed_inputs = set()
 
-        is_internal_input = modular_pipeline_id in input_node.modular_pipelines
-        if is_internal_input:
-            self.tree[modular_pipeline_id].internal_inputs.add(input_node.id)
-        else:
-            self.tree[modular_pipeline_id].external_inputs.add(input_node.id)
+        for _input in inputs:
+            hashed_input = self._hash_input_output(_input)
+            hashed_inputs.add(hashed_input)
+            if is_dataset_param(_input):
+                self.parameters.add(hashed_input)
 
-    def add_output(self, modular_pipeline_id: str, output_node: GraphNode):
-        """Add an output to a modular pipeline based on whether it's an internal or external output.
-        The output has knowledge of which modular pipelines it belongs to based on its namespace.
-        The information can be accessed with through `output_node.modular_pipelines`.
+        self.tree[modular_pipeline_id].inputs = hashed_inputs
+
+    def add_outputs(self, modular_pipeline_id: str, outputs: Set[str]) -> None:
+        """
+        Add output datasets from the modular pipeline.
 
         Args:
-            modular_pipeline_id: ID of the modular pipeline to add the output to.
-            output_node: The output node to add.
-        Raises:
-            ValueError: when attempt to add a non-data, non-parameter node as output
-                to the modular pipeline.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> model_output_node = GraphNode.create_data_node(
-            ...     "data_science.model_output", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.add_output("data_science", model_output_node)
-            >>> assert data_science_pipeline.outputs == {model_output_node.id}
+            modular_pipeline_id (str): The ID of the modular pipeline to add outputs to.
+            outputs (Set[str]): The output datasets to add.
         """
-        if not isinstance(output_node, (DataNode, TranscodedDataNode, ParametersNode)):
-            raise ValueError(
-                f"Attempt to add a non-data node as input to modular pipeline {modular_pipeline_id}"
-            )
+        hashed_outputs = {self._hash_input_output(output) for output in outputs}
+        self.tree[modular_pipeline_id].outputs = hashed_outputs
 
-        is_internal_output = modular_pipeline_id in output_node.modular_pipelines
-        if is_internal_output:
-            self.tree[modular_pipeline_id].internal_outputs.add(output_node.id)
-        else:
-            self.tree[modular_pipeline_id].external_outputs.add(output_node.id)
-
-    def add_child(self, modular_pipeline_id: str, child: ModularPipelineChild):
-        """Add a child to a modular pipeline.
-        Args:
-            modular_pipeline_id: ID of the modular pipeline to add the child to.
-            child: The child to add to the modular pipeline.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> modular_pipeline_child = ModularPipelineChild(
-            ...     id="dataset",
-            ...     type=GraphNodeType.DATA
-            ... )
-            >>> modular_pipelines.add_child("data_science", modular_pipeline_child)
-            >>> data_science_pipeline = modular_pipelines.get_or_create_modular_pipeline(
-            ...     "data_science"
-            ... )
-            >>> assert data_science_pipeline.children == {modular_pipeline_child}
-        """
-        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-        modular_pipeline.children.add(child)
-
-    def extract_from_node(self, node: GraphNode) -> Optional[str]:
-        """Extract the namespace from a graph node and add it as a modular pipeline node
-        to the modular pipeline repository.
-
-        Args:
-            node: The GraphNode from which to extract modular pipeline.
-        Returns:
-            ID of the modular pipeline node added to the modular pipeline repository if found.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> model_output_node = GraphNode.create_data_node(
-            ...     "data_science.model_output", layer=None, tags=set(), dataset=None
-            ... )
-            >>> modular_pipelines.extract_from_node(model_output_node)
-            'data_science'
-            >>> assert modular_pipelines.has_modular_pipeline("data_science")
-        """
-
-        # There is no need to extract modular pipeline from parameters
-        # because all valid modular pipelines are encoded in either a TaskNode or DataNode.
-        if isinstance(node, ParametersNode):
-            return None
-
-        modular_pipeline_id = node.namespace
-        if not modular_pipeline_id:
-            return None
-
-        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-
-        # Add the node's registered pipelines to the modular pipeline's registered pipelines.
-        # Basically this means if the node belongs to the "__default__" pipeline, for example,
-        # so does the modular pipeline.
-        modular_pipeline.pipelines.update(node.pipelines)
-
-        modular_pipeline.tags.update(node.tags)
-
-        # Since we extract the modular pipeline from the node's namespace,
-        # the node is by definition a child of the modular pipeline.
-        self.add_child(
-            modular_pipeline_id,
-            ModularPipelineChild(id=node.id, type=GraphNodeType(node.type)),
+    def _hash_input_output(self, item: str) -> str:
+        """Hash the input/output dataset."""
+        return (
+            _hash(_strip_transcoding(item))
+            if TRANSCODING_SEPARATOR in item
+            else _hash(item)
         )
-        return modular_pipeline_id
+
+    def add_children(self, modular_pipeline_id: str, kedro_nodes: List[Node]):
+        """
+        Add children to a modular pipeline. Here we follow the below rules
+        - A kedro node is added as a child to a modular pipeline if
+          it has the namespace of that modular pipeline
+        - Inputs/Outputs of a kedro node are added as children
+          to the modular pipeline if they are not inputs/outputs
+          of that modular pipeline
+        - Any input/output of a modular pipeline is a child
+          of the parent pipeline unless it is an input/output
+          of that parent pipeline
+        - Any input/output of a top-level modular pipeline is added
+          as a child to the root modular pipeline
+
+        Args:
+            modular_pipeline_id (str): The ID of the modular pipeline to add children to.
+            kedro_nodes (List[Node]): The kedro nodes (and it's related datasets/parameters)
+                    to add as children.
+        """
+        modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
+        modular_pipeline_inputs_outputs = set(modular_pipeline.inputs) | set(
+            modular_pipeline.outputs
+        )
+
+        for kedro_node in kedro_nodes:
+            if kedro_node.namespace == modular_pipeline_id:
+                kedro_node_id = _hash(str(kedro_node))
+                modular_pipeline.children.add(
+                    ModularPipelineChild(id=kedro_node_id, type=GraphNodeType.TASK)
+                )
+                modular_pipeline.tags.update(kedro_node.tags)
+                self._add_datasets_as_children(
+                    modular_pipeline, kedro_node, modular_pipeline_inputs_outputs
+                )
+                if kedro_node_id not in self.node_mod_pipeline_map:
+                    self.node_mod_pipeline_map[kedro_node_id] = set()
+                self.node_mod_pipeline_map[kedro_node_id].add(modular_pipeline_id)
+
+        # The line `parent_modular_pipeline_id = ('.'.join(modular_pipeline_id.split('.')[:-1])
+        # if '.' in modular_pipeline_id else None)` is extracting the parent modular pipeline ID
+        # from the given modular pipeline ID.
+        parent_modular_pipeline_id = (
+            ".".join(modular_pipeline_id.split(".")[:-1])
+            if "." in modular_pipeline_id
+            else None
+        )
+        if parent_modular_pipeline_id:
+            parent_modular_pipeline = self.get_or_create_modular_pipeline(
+                parent_modular_pipeline_id
+            )
+            parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
+            parent_modular_pipeline.tags.update(modular_pipeline.tags)
+            self._add_children_to_parent_pipeline(
+                parent_modular_pipeline,
+                modular_pipeline_id,
+                modular_pipeline_inputs_outputs,
+            )
+        else:
+            self._add_children_to_parent_pipeline(
+                self.tree[ROOT_MODULAR_PIPELINE_ID],
+                modular_pipeline_id,
+                modular_pipeline_inputs_outputs,
+            )
+
+    def _add_children_to_parent_pipeline(
+        self,
+        parent_node: ModularPipelineNode,
+        modular_pipeline_id: str,
+        modular_pipeline_inputs_outputs: Set[str],
+    ):
+        """
+        Helper to add modular_pipeline children correctly to
+        parent modular pipelines in case of nesting.
+
+        Here we follow the below rules:
+        - A modular pipeline is a child of it's parent modular pipeline
+        - Any input/output of a modular pipeline is a child of the parent pipeline
+          unless it is an input/output of that parent pipeline
+        - Any input/output of a top-level modular pipeline is added as a child
+          to the root modular pipeline
+
+        Args:
+            parent_node (ModularPipelineNode): The parent modular pipeline node.
+            modular_pipeline_id (str): The ID of the modular pipeline to add as a child.
+            modular_pipeline_inputs_outputs (Set[str]): A set of inputs/outputs
+                    to/from the modular pipeline
+        """
+
+        parent_node.children.add(
+            ModularPipelineChild(
+                id=modular_pipeline_id, type=GraphNodeType.MODULAR_PIPELINE
+            )
+        )
+        for dataset in modular_pipeline_inputs_outputs:
+            if (
+                dataset not in parent_node.inputs
+                and dataset not in parent_node.outputs
+                and dataset not in self.parameters
+            ):
+                parent_node.children.add(
+                    ModularPipelineChild(id=dataset, type=GraphNodeType.DATA)
+                )
+            if dataset not in self.node_mod_pipeline_map:
+                self.node_mod_pipeline_map[dataset] = set()
+            self.node_mod_pipeline_map[dataset].add(modular_pipeline_id)
+
+    def _add_datasets_as_children(
+        self,
+        modular_pipeline: ModularPipelineNode,
+        kedro_node: Node,
+        modular_pipeline_inputs_outputs: Set[str],
+    ):
+        """Helper to add datasets (not parameters) related to task nodes as children.
+
+        Here we follow the below rule:
+        - Inputs/Outputs of a task node are added as children
+          to the modular pipeline if they are not inputs/outputs
+          of that modular pipeline
+        """
+        hashed_io_ids = {
+            self._hash_input_output(io)
+            for io in set(kedro_node.inputs) | set(kedro_node.outputs)
+        }
+        for io_id in hashed_io_ids:
+            if (
+                io_id not in modular_pipeline_inputs_outputs
+                and io_id not in self.parameters
+            ):
+                modular_pipeline.children.add(
+                    ModularPipelineChild(id=io_id, type=GraphNodeType.DATA)
+                )
+                if io_id not in self.node_mod_pipeline_map:
+                    self.node_mod_pipeline_map[io_id] = set()
+                self.node_mod_pipeline_map[io_id].add(modular_pipeline.id)
 
     def has_modular_pipeline(self, modular_pipeline_id: str) -> bool:
-        """Return whether this modular pipeline repository has a given modular pipeline ID.
-        Args:
-            modular_pipeline_id: ID of the modular pipeline to check existence in the repository.
-        Returns:
-            Whether the given modular pipeline ID is in the repository.
-        Example:
-            >>> modular_pipelines = ModularPipelinesRepository()
-            >>> modular_pipelines.has_modular_pipeline("__root__")
-            True
-            >>> modular_pipelines.has_modular_pipeline("doesnt exist")
-            False
-        """
+        """Check if the repository has a given modular pipeline ID."""
         return modular_pipeline_id in self.tree
+
+    def get_node_and_modular_pipeline_mapping(
+        self, node
+    ) -> Tuple[str, Union[Set[str], None]]:
+        """Get the modular pipeline(s) to which the given node belongs."""
+        node_id = (
+            self._hash_input_output(node) if isinstance(node, str) else _hash(str(node))
+        )
+        return node_id, self.node_mod_pipeline_map.get(node_id)
 
     def as_dict(self) -> Dict[str, ModularPipelineNode]:
         """Return the repository as a dictionary."""
