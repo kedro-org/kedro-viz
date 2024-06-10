@@ -8,6 +8,9 @@ Please follow the established format:
 # Next release
 
 ## Major features and improvements
+- Refactor modular Pipelines. (#1941)
+
+## Major features and improvements
 - Display published URLs. (#1907)
 
 ## Bug fixes and other changes
