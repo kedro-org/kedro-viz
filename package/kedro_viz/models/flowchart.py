@@ -577,12 +577,6 @@ class TranscodedDataNode(GraphNode):
         None, description="The original name for the generated run command"
     )
 
-    modular_pipeline: Optional[str] = Field(
-        default=None,
-        validate_default=True,
-        description="The modular pipelines this node belongs to",
-    )
-
     run_command: Optional[str] = Field(
         None, description="The command to run the pipeline to this node"
     )
