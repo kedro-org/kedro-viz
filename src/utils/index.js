@@ -227,6 +227,18 @@ export async function fetchPackageCompatibilities() {
   return request;
 }
 
+export async function deployViz(inputValues) {
+  const request = await fetch('/api/deploy', {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(inputValues),
+  });
+
+  return request;
+}
+
 const nodeTypeMapObj = {
   nodes: 'task',
   task: 'nodes',
