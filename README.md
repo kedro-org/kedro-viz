@@ -180,7 +180,7 @@ Options:
   --bucket-name TEXT  Bucket name where Kedro Viz will be hosted  [required]
   --include-hooks     A flag to include all registered hooks in your Kedro
                       Project
-  --include-preview   Enable/disable preview for all the datasets.
+  --include-previews  A flag to include preview for all the datasets
   -h, --help          Show this message and exit.
 ```
 
@@ -196,10 +196,10 @@ Usage: kedro viz build [OPTIONS]
   Create build directory of local Kedro Viz instance with Kedro project data
 
 Options:
-  --include-hooks    A flag to include all registered hooks in your Kedro
-                     Project
-  --include-preview  A flag to include preview for all the datasets
-  -h, --help         Show this message and exit.
+  --include-hooks     A flag to include all registered hooks in your Kedro
+                      Project
+  --include-previews  A flag to include preview for all the datasets
+  -h, --help          Show this message and exit.
 ```
 
 ### Experiment Tracking usage
