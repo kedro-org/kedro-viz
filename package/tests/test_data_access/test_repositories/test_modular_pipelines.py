@@ -1,3 +1,4 @@
+import pytest
 from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
@@ -65,4 +66,32 @@ class TestModularPipelinesRepository:
         assert (
             modular_pipelines._hash_input_output(data_node.id)
             in data_science_pipeline.outputs
+        )
+
+    @pytest.mark.parametrize(
+        "nested_namespace, expected_expanded_namespace",
+        [
+            (
+                "uk.data_science.internal",
+                ["uk", "uk.data_science", "uk.data_science.internal"],
+            ),
+            (
+                "uk.data_processing.internal.process",
+                [
+                    "uk",
+                    "uk.data_processing",
+                    "uk.data_processing.internal",
+                    "uk.data_processing.internal.process",
+                ],
+            ),
+            ("main_pipeline", ["main_pipeline"]),
+            ("", []),
+            (None, []),
+        ],
+    )
+    def test_explode_namespace(self, nested_namespace, expected_expanded_namespace):
+        modular_pipeline_repo_obj = ModularPipelinesRepository()
+        assert (
+            modular_pipeline_repo_obj._explode_namespace(nested_namespace)
+            == expected_expanded_namespace
         )
