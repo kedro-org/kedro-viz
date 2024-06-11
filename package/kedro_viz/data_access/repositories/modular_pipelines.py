@@ -217,16 +217,18 @@ class ModularPipelinesRepository:
             parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
             parent_modular_pipeline.tags.update(modular_pipeline.tags)
 
-            # add input/output datasets of a modular pipeline
-            # as a child to the parent modular pipeline
+            # add current modular pipeline and input/output datasets
+            # of a modular pipeline as a child to the parent modular
+            # pipeline based on the rules
             self._add_children_to_parent_pipeline(
                 parent_modular_pipeline,
                 modular_pipeline_id,
                 modular_pipeline_inputs_outputs,
             )
         else:
-            # add input/output datasets of a top-level modular
-            # pipeline as a child to ROOT modular pipeline
+            # add current modular pipeline and input/output datasets
+            # of a top-level modular pipeline as a child to ROOT modular
+            # pipeline
             self._add_children_to_parent_pipeline(
                 self.tree[ROOT_MODULAR_PIPELINE_ID],
                 modular_pipeline_id,
