@@ -459,8 +459,8 @@ class TaskNodeMetadata(GraphNodeMetadata):
         # if a node doesn't have a user-supplied `_name` attribute,
         # a human-readable run command `kedro run --to-nodes/nodes` is not available
         if cls.kedro_node._name is not None:
-            if cls.kedro_node.namespace is not None:
-                return f"kedro run --to-nodes={cls.kedro_node.namespace}.{cls.kedro_node._name}"
+            if cls.task_node.namespace is not None:
+                return f"kedro run --to-nodes={cls.task_node.namespace}.{cls.kedro_node._name}"
             return f"kedro run --to-nodes={cls.kedro_node._name}"
 
         return None
