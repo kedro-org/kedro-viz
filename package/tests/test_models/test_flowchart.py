@@ -91,6 +91,7 @@ class TestGraphNodeCreation:
         assert task_node.tags == {"tag"}
         assert task_node.pipelines == set()
         assert task_node.modular_pipelines == expected_modular_pipelines
+        assert task_node.namespace == namespace
 
     @pytest.mark.parametrize(
         "dataset_name, expected_modular_pipelines",

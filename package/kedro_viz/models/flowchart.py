@@ -161,7 +161,6 @@ class GraphNode(BaseModel, abc.ABC):
             tags=set(node.tags),
             kedro_obj=node,
             modular_pipelines=modular_pipelines,
-            namespace=node.namespace,
         )
 
     @classmethod
@@ -300,9 +299,6 @@ class TaskNode(GraphNode):
     # The type for Task node
     type: str = GraphNodeType.TASK.value
 
-    # In Kedro, modular pipeline is implemented by declaring namespace on a node.
-    # For example, node(func, namespace="uk.de") means this node belongs
-    # to the modular pipeline "uk" and "uk.de"
     namespace: Optional[str] = Field(
         default=None,
         validate_default=True,
