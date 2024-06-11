@@ -4,40 +4,26 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { toggleShareableUrlModal } from '../../actions';
 import { fetchPackageCompatibilities } from '../../utils';
+import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 import {
-  hostingPlatform,
+  hostingPlatforms,
   inputKeyToStateKeyMap,
-  KEDRO_VIZ_PUBLISH_DOCS_URL,
-  KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL,
-  KEDRO_VIZ_PUBLISH_AWS_DOCS_URL,
-  KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL,
-  KEDRO_VIZ_PUBLISH_GCP_DOCS_URL,
+  localStorageShareableUrl,
   PACKAGE_FSSPEC,
+  shareableUrlMessages,
 } from '../../config';
-
-import Button from '../ui/button';
-import CopyIcon from '../icons/copy';
-import Dropdown from '../ui/dropdown';
-import IconButton from '../ui/icon-button';
-import Input from '../ui/input';
-import LoadingIcon from '../icons/loading';
 import Modal from '../ui/modal';
-import MenuOption from '../ui/menu-option';
-import Tooltip from '../ui/tooltip';
+
+import PublishedView from './published-view/published-view';
+import CompatibilityErrorView from './compatibility-error-view/compatibility-error-view';
+import MainView from './main-view/main-view';
+import LoadingView from './loading-view/loading-view';
+import ErrorView from './error-view/error-view';
+import SuccessView from './success-view/success-view';
+import { getDeploymentStateByType, handleResponseUrl } from './utils';
+import { deployViz } from '../../utils';
 
 import './shareable-url-modal.scss';
-
-const modalMessages = (status, info = '') => {
-  const messages = {
-    failure: 'Something went wrong. Please try again later.',
-    loading: 'Shooting your files through space. Sit tight...',
-    success:
-      'The current version of Kedro-Viz has been published and hosted via the link below.',
-    incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
-  };
-
-  return messages[status];
-};
 
 const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
@@ -52,8 +38,12 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [responseError, setResponseError] = useState(null);
   const [showCopied, setShowCopied] = useState(false);
   const [compatibilityData, setCompatibilityData] = useState({});
-  const [canUseShareableUrls, setCanUseShareableUrls] = useState(true);
-  const [isDisclaimerViewed, setIsDisclaimerViewed] = useState(false);
+  const [isCompatible, setIsCompatible] = useState(true);
+  const [showPublishedView, setShowPublishedView] = useState(false);
+  const [hostingPlatformLocalStorageVal, setHostingPlatformLocalStorageVal] =
+    useState(loadLocalStorage(localStorageShareableUrl) || {});
+  const [publishedPlatformKey, setPublishedPlatformKey] = useState(undefined);
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(true);
 
   useEffect(() => {
     async function fetchPackageCompatibility() {
@@ -66,7 +56,7 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
             (pckg) => pckg.package_name === PACKAGE_FSSPEC
           );
           setCompatibilityData(fsspecPackage);
-          setCanUseShareableUrls(fsspecPackage?.is_compatible || false);
+          setIsCompatible(fsspecPackage?.is_compatible || false);
 
           // User's fsspec package version isn't compatible, so set
           // the necessary state to reflect that in the UI.
@@ -82,6 +72,38 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     fetchPackageCompatibility();
   }, []);
 
+  const setStateForPublishedView = () => {
+    if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
+      setDeploymentState('published');
+      setShowPublishedView(true);
+      // set the publishedPlatformKey as the first one from localStorage by default
+      setPublishedPlatformKey(Object.keys(hostingPlatformLocalStorageVal)[0]);
+    }
+  };
+
+  const setStateForMainViewWithPublishedContent = () => {
+    if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
+      setShowPublishedView(false);
+      setDeploymentState('default');
+
+      const populatedContent =
+        hostingPlatformLocalStorageVal[publishedPlatformKey];
+
+      setInputValues(populatedContent);
+
+      setIsFormDirty({
+        hasBucketName: true,
+        hasPlatform: true,
+        hasEndpoint: true,
+      });
+    }
+  };
+
+  useEffect(() => {
+    setStateForPublishedView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onChange = (key, value) => {
     setIsFormDirty((prevState) => ({
       ...prevState,
@@ -94,23 +116,68 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     );
   };
 
+  const updateFormWithLocalStorageData = (platformKey) => {
+    // if the selected platform is stored in localStorage, populate the form with the stored data
+    if (hostingPlatformLocalStorageVal[platformKey]) {
+      const populatedContent = hostingPlatformLocalStorageVal[platformKey];
+
+      setInputValues(populatedContent);
+      setIsFormDirty({
+        hasBucketName: true,
+        hasPlatform: true,
+        hasEndpoint: true,
+      });
+    } else {
+      // if not, only set the platform and reset the rest
+      const emptyContent = {
+        platform: platformKey,
+        bucket_name: '',
+        endpoint: '',
+      };
+      setInputValues(emptyContent);
+      setIsFormDirty({
+        hasBucketName: false,
+        hasPlatform: true,
+        hasEndpoint: false,
+      });
+    }
+  };
+
+  const updateLocalStorageState = () => {
+    const selectedHostingPlatformVal = {};
+    if (hostingPlatforms.hasOwnProperty(inputValues.platform)) {
+      selectedHostingPlatformVal[inputValues.platform] = { ...inputValues };
+    }
+    saveLocalStorage(localStorageShareableUrl, selectedHostingPlatformVal);
+
+    //  filtering out the pairs where the key is in selectedHostingPlatformVal
+    const localStorageExcludingSelectedPlatform = Object.fromEntries(
+      Object.entries(hostingPlatformLocalStorageVal).filter(
+        ([key]) => !(key in selectedHostingPlatformVal)
+      )
+    );
+
+    // set the new state with selectedHostingPlatformVal as the first value and localStorageExcludingSelectedPlatform
+    const newState = {
+      ...selectedHostingPlatformVal,
+      ...localStorageExcludingSelectedPlatform,
+    };
+    setHostingPlatformLocalStorageVal(newState);
+  };
+
   const handleSubmit = async () => {
     setDeploymentState('loading');
     setIsLoading(true);
+    setShowPublishedView(false);
 
     try {
-      const request = await fetch('/api/deploy', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify(inputValues),
-      });
+      const request = await deployViz(inputValues);
       const response = await request.json();
 
       if (request.ok) {
         setResponseUrl(response.url);
         setDeploymentState('success');
+        updateLocalStorageState();
       } else {
         setResponseUrl(null);
         setResponseError(response.message || 'Error occurred!');
@@ -125,8 +192,8 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     }
   };
 
-  const onCopyClick = () => {
-    window.navigator.clipboard.writeText(responseUrl);
+  const onCopyClick = (url) => {
+    window.navigator.clipboard.writeText(url);
     setShowCopied(true);
 
     setTimeout(() => {
@@ -137,13 +204,20 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const handleModalClose = () => {
     onToggleModal(false);
     if (deploymentState !== 'incompatible') {
-      setDeploymentState('default');
+      // reset the state to default as long as the user's fsspec package version is compatible
+      //  and there are nothing stored in localStorage
+      if (Object.keys(hostingPlatformLocalStorageVal).length === 0) {
+        setDeploymentState('default');
+      }
+
+      // if there are items stored in localStorage, display the published view
+      setStateForPublishedView();
     }
+
     setResponseError(null);
     setIsLoading(false);
     setResponseUrl(null);
     setInputValues({});
-    setIsDisclaimerViewed(false);
     setIsFormDirty({
       hasBucketName: false,
       hasPlatform: false,
@@ -151,333 +225,85 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
     });
   };
 
-  const getDeploymentStateByType = (type) => {
-    if (deploymentState === 'default') {
-      return null;
-    }
-
-    if (type === 'title') {
-      return deploymentState === 'success'
-        ? 'Kedro-Viz Published and Hosted'
-        : 'Publish and Share Kedro-Viz';
-    }
-
-    return modalMessages(deploymentState, compatibilityData.package_version);
-  };
-
-  const handleResponseUrl = () => {
-    // If the URL does not start with http:// or https://, append http:// to avoid relative path issue for GCP platform.
-    if (!/^https?:\/\//.test(responseUrl) && inputValues.platform === 'gcp') {
-      const url = 'http://' + responseUrl;
-      return url;
-    }
-    return responseUrl;
-  };
-
-  const clearDisclaimerMessage = () => setIsDisclaimerViewed(true);
-
-  const renderCompatibilityMessage = () => {
-    return !canUseShareableUrls ? (
-      <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
-        <Button
-          mode="secondary"
-          onClick={() => handleModalClose()}
-          size="small"
-        >
-          Cancel
-        </Button>
-        <a
-          href="https://docs.kedro.org/en/latest/visualisation/share_kedro_viz.html"
-          rel="noreferrer"
-          target="_blank"
-        >
-          <Button size="small">View documentation</Button>
-        </a>
-      </div>
-    ) : null;
-  };
-
-  const renderSuccessContent = () => {
-    return responseUrl ? (
-      <>
-        <div className="shareable-url-modal__result">
-          <div className="shareable-url-modal__label">Hosted link</div>
-          <div className="shareable-url-modal__url-wrapper">
-            <a
-              className="shareable-url-modal__result-url"
-              href={handleResponseUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {responseUrl}
-            </a>
-            {window.navigator.clipboard && (
-              <div className="shareable-url-modal__result-action">
-                <IconButton
-                  ariaLabel="Copy run command to clipboard."
-                  className="copy-button"
-                  dataHeapEvent={`clicked.run_command`}
-                  icon={CopyIcon}
-                  onClick={onCopyClick}
-                />
-                <Tooltip
-                  text="Copied!"
-                  visible={showCopied}
-                  noDelay
-                  centerArrow
-                  arrowSize="small"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="shareable-url-modal__button-wrapper ">
-          <Button
-            mode="secondary"
-            onClick={() => {
-              setDeploymentState('default');
-              setIsLoading(false);
-              setResponseUrl(null);
-            }}
-            size="small"
-          >
-            Link Settings
-          </Button>
-          <Button
-            mode="secondary"
-            onClick={() => handleModalClose()}
-            size="small"
-          >
-            Close
-          </Button>
-        </div>
-      </>
-    ) : null;
-  };
-
-  const renderErrorContent = () => {
-    return responseError ? (
-      <div className="shareable-url-modal__error">
-        <p>Error message: {responseError}</p>
-        <Button
-          mode="primary"
-          onClick={() => {
-            setDeploymentState('default');
-            setIsLoading(false);
-            setResponseUrl(null);
-            setResponseError(null);
-          }}
-          size="small"
-        >
-          Go back
-        </Button>
-      </div>
-    ) : null;
-  };
-
-  const renderDisclaimerContent = () => {
-    return (
-      <div>
-        <div className="shareable-url-modal__content-wrapper shareable-url-modal__content-description">
-          Disclaimer: Please note that Kedro-Viz contains preview data for
-          multiple datasets. If you wish to disable the preview when publishing
-          Kedro-Viz, please refer to{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL}
-          >
-            the documentation
-          </a>{' '}
-          on how to do so.
-        </div>
-        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
-          <Button
-            mode="secondary"
-            onClick={() => handleModalClose()}
-            size="small"
-          >
-            Cancel
-          </Button>
-          <Button
-            dataTest="disclaimerButton"
-            size="small"
-            onClick={clearDisclaimerMessage}
-          >
-            Continue
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
-  const renderTextContent = () => {
-    return (
-      <div className="shareable-url-modal__content-wrapper">
-        <div className="shareable-url-modal__content-title">
-          Publish and Share Kedro-Viz
-        </div>
-        <p className="shareable-url-modal__content-description shareable-url-modal__paregraph-divider">
-          Prerequisite: Deploying and hosting Kedro-Viz requires access keys or
-          user credentials, depending on the chosen cloud provider. To use this
-          feature, please add your access keys or credentials as environment
-          variables in your Kedro project. More information can be found in{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_DOCS_URL}
-          >
-            docs
-          </a>
-          .
-        </p>
-        <p className="shareable-url-modal__content-description">
-          Enter the required information and a hosted link will be generated.
-        </p>
-        <p className="shareable-url-modal__content-description shareable-url-modal__content-note">
-          For more information on obtaining the Endpoint URL, refer to{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_AWS_DOCS_URL}
-          >
-            AWS
-          </a>
-          ,{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL}
-          >
-            Azure
-          </a>{' '}
-          and{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={KEDRO_VIZ_PUBLISH_GCP_DOCS_URL}
-          >
-            GCP
-          </a>{' '}
-          docs.
-        </p>
-      </div>
-    );
-  };
-
-  const renderLoadingContent = () => {
-    return isLoading ? (
-      <div className="shareable-url-modal__loading">
-        <LoadingIcon visible={isLoading} />
-      </div>
-    ) : null;
-  };
-
-  const renderMainContent = () => {
-    return !isLoading &&
-      !responseUrl &&
-      canUseShareableUrls &&
-      !responseError ? (
-      <>
-        <div className="shareable-url-modal__content-form-wrapper">
-          {renderTextContent()}
-          <div className="shareable-url-modal__form-wrapper">
-            <div className="shareable-url-modal__input-wrapper">
-              <div className="shareable-url-modal__input-label">
-                Hosting platform
-              </div>
-              <Dropdown
-                defaultText={platform && hostingPlatform[platform]}
-                placeholderText={!platform ? 'Select a hosting platform' : null}
-                onChanged={(selectedPlatform) => {
-                  onChange('platform', selectedPlatform.value);
-                }}
-                width={null}
-              >
-                {Object.entries(hostingPlatform).map(([value, label]) => (
-                  <MenuOption
-                    className={classnames({
-                      'pipeline-list__option--active': platform === value,
-                    })}
-                    key={value}
-                    primaryText={label}
-                    value={value}
-                  />
-                ))}
-              </Dropdown>
-            </div>
-            <div className="shareable-url-modal__input-wrapper">
-              <div className="shareable-url-modal__input-label">
-                Bucket Name
-              </div>
-              <Input
-                defaultValue={bucket_name}
-                onChange={(value) => onChange('bucket_name', value)}
-                placeholder="Enter name"
-                resetValueTrigger={visible}
-                size="small"
-                type="input"
-                dataTest={'bucket_name'}
-              />
-            </div>
-            <div className="shareable-url-modal__input-wrapper">
-              <div className="shareable-url-modal__input-label">
-                Endpoint Link
-              </div>
-              <Input
-                defaultValue={endpoint}
-                onChange={(value) => onChange('endpoint', value)}
-                placeholder="Enter url"
-                resetValueTrigger={visible}
-                size="small"
-                type="input"
-                dataTest={'endpoint_name'}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="shareable-url-modal__button-wrapper shareable-url-modal__button-wrapper--right">
-          <Button
-            mode="secondary"
-            onClick={() => handleModalClose()}
-            size="small"
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={!Object.values(isFormDirty).every((value) => value)}
-            size="small"
-            onClick={handleSubmit}
-          >
-            Publish
-          </Button>
-        </div>
-      </>
-    ) : null;
-  };
-
-  const { platform, bucket_name, endpoint } = inputValues || {};
+  const { platform } = inputValues || {};
 
   return (
     <Modal
       className={classnames('shareable-url-modal', {
         'shareable-url-modal__non-default-wrapper':
           deploymentState !== 'default',
+        'shareable-url-modal__published-wrapper':
+          deploymentState === 'published',
+        'shareable-url-modal__success-wrapper': deploymentState === 'success',
       })}
       closeModal={handleModalClose}
-      message={getDeploymentStateByType('message')}
-      title={getDeploymentStateByType('title')}
+      message={getDeploymentStateByType(
+        'message',
+        deploymentState,
+        compatibilityData,
+        shareableUrlMessages
+      )}
+      title={getDeploymentStateByType(
+        'title',
+        deploymentState,
+        compatibilityData,
+        shareableUrlMessages
+      )}
       visible={visible.shareableUrlModal}
     >
-      {renderCompatibilityMessage()}
-      {!isDisclaimerViewed && canUseShareableUrls ? (
-        renderDisclaimerContent()
+      {!isCompatible ? (
+        <CompatibilityErrorView onClick={handleModalClose} />
+      ) : showPublishedView ? (
+        <PublishedView
+          hostingPlatformLocalStorageVal={hostingPlatformLocalStorageVal}
+          hostingPlatforms={hostingPlatforms}
+          onChange={(selectedPlatform) => {
+            onChange('platform', selectedPlatform.value);
+            setPublishedPlatformKey(selectedPlatform.value);
+          }}
+          onCopyClick={onCopyClick}
+          onRepublishClick={setStateForMainViewWithPublishedContent}
+          platform={platform}
+          showCopied={showCopied}
+        />
       ) : (
         <>
-          {renderMainContent()}
-          {renderLoadingContent()}
-          {renderErrorContent()}
-          {renderSuccessContent()}
+          {!isLoading && !responseUrl && !responseError && (
+            <MainView
+              handleModalClose={handleModalClose}
+              handleSubmit={handleSubmit}
+              inputValues={inputValues}
+              isFormDirty={isFormDirty}
+              onPlatformChange={(selectedPlatform) => {
+                updateFormWithLocalStorageData(selectedPlatform.value);
+              }}
+              onBuckNameChange={(value) => onChange('bucket_name', value)}
+              onEndpointChange={(value) => onChange('endpoint', value)}
+              setIsPreviewEnabled={setIsPreviewEnabled}
+              isPreviewEnabled={isPreviewEnabled}
+              visible={visible}
+            />
+          )}
+          {isLoading && <LoadingView isLoading={isLoading} />}
+          {responseError && (
+            <ErrorView
+              onClick={() => {
+                setDeploymentState('default');
+                setIsLoading(false);
+                setResponseUrl(null);
+                setResponseError(null);
+              }}
+              responseError={responseError}
+            />
+          )}
+          {responseUrl && (
+            <SuccessView
+              handleResponseUrl={handleResponseUrl(responseUrl, platform)}
+              onClick={onCopyClick}
+              responseUrl={responseUrl}
+              showCopied={showCopied}
+            />
+          )}
         </>
       )}
     </Modal>
