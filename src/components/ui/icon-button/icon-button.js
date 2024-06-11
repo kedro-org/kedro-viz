@@ -104,7 +104,7 @@ IconButton.propTypes = {
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.func,
-  labelText: PropTypes.string,
+  labelText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // it takes a string or a JSX element
   onClick: PropTypes.func,
   visible: PropTypes.bool,
 };
