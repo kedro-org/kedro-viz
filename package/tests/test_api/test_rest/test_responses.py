@@ -979,7 +979,7 @@ class TestEnhancedORJSONResponse:
         )
         remote_fs = Mock()
 
-        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs, False)
 
         assert mock_write_api_response_to_fs.call_count == len(nodeIds)
         assert mock_get_node_metadata_response.call_count == len(nodeIds)
@@ -1031,14 +1031,16 @@ class TestEnhancedORJSONResponse:
         mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)
 
     @pytest.mark.parametrize(
-        "file_path, protocol",
+        "file_path, protocol, is_all_previews_enabled",
         [
-            ("s3://shareableviz", "s3"),
-            ("abfs://shareableviz", "abfs"),
-            ("shareableviz", "file"),
+            ("s3://shareableviz", "s3", True),
+            ("abfs://shareableviz", "abfs", False),
+            ("shareableviz", "file", True),
         ],
     )
-    def test_save_api_responses_to_fs(self, file_path, protocol, mocker):
+    def test_save_api_responses_to_fs(
+        self, file_path, protocol, is_all_previews_enabled, mocker
+    ):
         mock_api_main_response_to_fs = mocker.patch(
             "kedro_viz.api.rest.responses.save_api_main_response_to_fs"
         )
@@ -1052,13 +1054,17 @@ class TestEnhancedORJSONResponse:
         mock_filesystem = mocker.patch("fsspec.filesystem")
         mock_filesystem.return_value.protocol = protocol
 
-        save_api_responses_to_fs(file_path, mock_filesystem.return_value)
+        save_api_responses_to_fs(
+            file_path, mock_filesystem.return_value, is_all_previews_enabled
+        )
 
         mock_api_main_response_to_fs.assert_called_once_with(
             f"{file_path}/api/main", mock_filesystem.return_value
         )
         mock_api_node_response_to_fs.assert_called_once_with(
-            f"{file_path}/api/nodes", mock_filesystem.return_value
+            f"{file_path}/api/nodes",
+            mock_filesystem.return_value,
+            is_all_previews_enabled,
         )
         mock_api_pipeline_response_to_fs.assert_called_once_with(
             f"{file_path}/api/pipelines", mock_filesystem.return_value
