@@ -49,11 +49,12 @@ class SQLiteStore(BaseSessionStore):
 
     @property
     def location(self) -> str:
-        session_path = Path(f"{self._path}/session_store.db")
-        session_path.parent.mkdir(parents=True, exist_ok=True)
+        # session_path = Path(f"{self._path}/session_store.db")
+        # session_path.parent.mkdir(parents=True, exist_ok=True)
 
-        """Returns location of the sqlite_store database"""
-        return str(session_path)
+        # """Returns location of the sqlite_store database"""
+        # return str(session_path)
+        return str(Path(self._path) / "session_store.db")
 
     @property
     def remote_location(self) -> Optional[str]:
@@ -186,12 +187,3 @@ class SQLiteStore(BaseSessionStore):
             except Exception as exc:
                 logger.exception("Merge failed on sync: %s", exc)
             self._upload()
-
-    # [TODO] Testing
-    # def _migrate_db(self, old_session_path: Path, new_session_path: Path):
-    #     new_session_path.parent.mkdir(parents=True, exist_ok=True)
-    #     shutil.copy2(old_session_path, new_session_path)
-    #     if new_session_path.exists():
-    #         print(f"Database successfully copied to {new_session_path}")
-    #     else:
-    #         raise FileNotFoundError("Failed to copy the database.")
