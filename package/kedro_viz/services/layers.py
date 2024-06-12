@@ -2,8 +2,7 @@
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set
-
-from toposort import CircularDependencyError, toposort_flatten
+from graphlib import TopologicalSorter, CycleError
 
 from kedro_viz.models.flowchart import GraphNode
 
@@ -34,8 +33,8 @@ def sort_layers(
         * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
         dependencies. Note: the key is a layer and the values are the parents of that layer,
         just because that's the format toposort requires.
-        * Feed this layers dictionary to ``toposort`` and return the sorted values.
-        * Raise CircularDependencyError if the layers cannot be sorted topologically,
+        * Feed this layers dictionary to ``graphlib.TopologicalSorter`` and return the sorted values.
+        * Raise CycleError if the layers cannot be sorted topologically,
         i.e. there are cycles among the layers.
 
     Args:
@@ -47,7 +46,7 @@ def sort_layers(
         The list of layers sorted based on topological order.
 
     Raises:
-        CircularDependencyError: When the layers have cyclic dependencies.
+        CycleError: When the layers have cyclic dependencies.
     """
     node_layers: Dict[str, Set[str]] = {}  # map node_id to the layers that depend on it
 
@@ -95,16 +94,16 @@ def sort_layers(
 
         # add the node's layer as a parent layer for all child layers.
         # Even if a child layer is the same as the node's layer, i.e. a layer is marked
-        # as its own parent, toposort still works so we don't need to check for that explicitly.
+        # as its own parent, TopologicalSorter still works so we don't need to check for that explicitly.
         if node_layer is not None:
             for layer in child_layers:
                 layer_dependencies[layer].add(node_layer)
 
-    # toposort the layer_dependencies to find the layer order.
-    # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
+    # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
-        return toposort_flatten(layer_dependencies)
-    except CircularDependencyError:
+        sorter = TopologicalSorter(layer_dependencies)
+        return list(sorter.static_order())
+    except CycleError:
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected among layers."
         )
