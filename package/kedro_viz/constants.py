@@ -26,5 +26,5 @@ PACKAGE_REQUIREMENTS = {
     },
 }
 
-SESSION_STORE_ARGS = {"path": ".viz"}
+VIZ_SESSION_STORE_ARGS = {"path": ".viz"}
 VIZ_METADATA_ARGS = {"path": ".viz"}
