@@ -12,6 +12,7 @@ Please follow the established format:
 - Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
 
 ## Bug fixes and other changes
+- Relax `Packaging` pin in requirements. (#1947)
 
 ## Major features and improvements
 - Display published URLs. (#1907)
