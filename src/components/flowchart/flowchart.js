@@ -5,6 +5,7 @@ import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
+import { filterNodes, resetFilterNodes } from '../../actions/filters';
 import {
   getNodeActive,
   getNodeSelected,
@@ -28,6 +29,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
+import Button from '../ui/button';
 import './styles/flowchart.scss';
 
 /**
@@ -40,6 +42,7 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
       activeLayer: undefined,
+      selectedNodes: [],
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -446,6 +449,20 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
+    let updatedSelectedNodes = [];
+
+    if (event.shiftKey) {
+      this.setState((prevState) => {
+        updatedSelectedNodes =
+          prevState.selectedNodes.length < 2
+            ? [...prevState.selectedNodes, node.id]
+            : []; // set empty
+
+        // update the state
+        return { selectedNodes: updatedSelectedNodes };
+      });
+    }
+
     if (node.type === 'modularPipeline') {
       this.props.onClickToExpandModularPipeline(node.id);
     } else {
@@ -599,6 +616,7 @@ export class FlowChart extends Component {
     const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
       this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
+    const [fromNode, toNode] = this.state.selectedNodes;
 
     return (
       <div
@@ -606,6 +624,27 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
+        {fromNode && toNode && (
+          <div
+            style={{
+              background: 'red',
+              position: 'absolute',
+              width: '200px',
+              height: '50px',
+              left: '490px',
+            }}
+          >
+            <Button
+              className="pipeline-flowchart__filter-button"
+              dataTest={'filter nodes'}
+              mode="secondary"
+              onClick={() => this.props.onFilterNodes(fromNode, toNode)}
+              size="small"
+            >
+              Run slicing pipeline
+            </Button>
+          </div>
+        )}
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
@@ -726,6 +765,12 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
+  },
+  onFilterNodes: (from, to) => {
+    dispatch(filterNodes(from, to));
+  },
+  onResetFilterNodes: () => {
+    dispatch(resetFilterNodes());
   },
   ...ownProps,
 });

@@ -82,10 +82,6 @@ export const getFilteredPipeline = createSelector(
   [getEdgesByNode, getFromNodes, getToNodes],
   ({ sourceEdges, targetEdges }, startID, endID) => {
     let filteredNodeIDs = [];
-
-    debugger;
-    console.log(startID, endID);
-
     if ((!startID || !startID.length) && (!endID || !endID.length)) {
       return filteredNodeIDs;
     } else {
