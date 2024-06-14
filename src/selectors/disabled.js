@@ -102,7 +102,6 @@ export const getNodeDisabled = createSelector(
 
       let isDisabledViaFilters = false;
       if (filteredPipeline.length > 0) {
-        debugger;
         isDisabledViaFilters = !filteredPipeline.includes(id);
       }
 
@@ -135,6 +134,7 @@ export const getNodeDisabled = createSelector(
         isDisabledViaSidebar,
         isDisabledViaModularPipeline,
         isDisabledViaFocusedModularPipeline,
+        isDisabledViaFilters,
       ].some(Boolean);
     })
 );
