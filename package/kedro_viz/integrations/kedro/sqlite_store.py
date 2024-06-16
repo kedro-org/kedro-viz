@@ -54,7 +54,7 @@ class SQLiteStore(BaseSessionStore):
     def location(self) -> str:
         """Returns location of the sqlite_store database"""
         if "path" not in settings.SESSION_STORE_ARGS:
-            kedro_project_path = _find_kedro_project(Path.cwd())
+            kedro_project_path = _find_kedro_project(Path.cwd()) or self._path
             session_file_path = Path(
                 f"{kedro_project_path}/{VIZ_SESSION_STORE_ARGS['path']}/session_store.db"
             )

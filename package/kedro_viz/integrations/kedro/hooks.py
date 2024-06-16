@@ -76,6 +76,11 @@ class DatasetStatsHook:
         """
         try:
             kedro_project_path = _find_kedro_project(Path.cwd())
+
+            if not kedro_project_path:
+                logger.warning("Could not find a Kedro project to create stats file")
+                return
+
             stats_file_path = Path(
                 f"{kedro_project_path}/{VIZ_METADATA_ARGS['path']}/stats.json"
             )
