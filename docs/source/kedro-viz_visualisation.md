@@ -30,6 +30,10 @@ The next step is optional, but useful to check that all is working. Run the full
 kedro run
 ```
 
+```{note}
+Starting from Kedro-Viz 9.2.0, the dataset stats file `stats.json` will be moved to `.viz` directory at the root of your Kedro project in-case you have `kedro-viz` installed and had not disabled hooks for `kedro-viz` plugin.
+```
+
 To start Kedro-Viz, type the following into your terminal from the project directory:
 
 ```bash
