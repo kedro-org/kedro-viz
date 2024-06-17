@@ -40,6 +40,10 @@ kedro>=0.18.2
 kedro viz build
 ```
 
+```{note}
+Starting from Kedro-Viz 9.2.0, `kedro viz build` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
+```
+
 This creates a `build` folder containing your Kedro-Viz app package in your project directory. 
 
 ## Static website hosting platforms such as GitHub Pages

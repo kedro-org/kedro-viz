@@ -455,7 +455,7 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
                 "--bucket-name",
                 "example-bucket",
-                "--include-preview",
+                "--include-previews",
             ],
             {
                 "platform": "aws",
@@ -560,7 +560,7 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
             {"platform": "local", "include_hooks": True},
         ),
         (
-            ["viz", "build", "--include-preview"],
+            ["viz", "build", "--include-previews"],
             {"platform": "local", "preview": True},
         ),
     ],
