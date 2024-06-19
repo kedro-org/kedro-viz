@@ -79,6 +79,12 @@ export const createInitialPipelineState = () => ({
     active: {},
     enabled: {},
   },
+  filters: {
+    from: [],
+    to: [],
+    active: {},
+    disabled: {},
+  },
   hoveredParameters: false,
   hoveredFocusMode: false,
 });

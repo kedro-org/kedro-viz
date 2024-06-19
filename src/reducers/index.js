@@ -7,6 +7,7 @@ import loading from './loading';
 import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
+import filters from './filters';
 import tag from './tags';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
@@ -62,6 +63,7 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   pipeline,
+  filters,
   tag,
   modularPipeline,
   visible,

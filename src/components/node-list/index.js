@@ -12,6 +12,8 @@ import {
 import {
   getNodeTypes,
   isModularPipelineType,
+  getTaskNodes,
+  getDatasets,
 } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
 import {
@@ -37,6 +39,7 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
+import { filterNodes, resetNodesFilter } from '../../actions/filters';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
 import { params, NODE_TYPES } from '../../config';
@@ -46,12 +49,15 @@ import { params, NODE_TYPES } from '../../config';
  * Also handles user interaction and dispatches updates back to the store.
  */
 const NodeListProvider = ({
+  flags,
   faded,
   nodes,
   nodeSelected,
   tags,
   tagNodeCounts,
   nodeTypes,
+  taskNodes,
+  datasets,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
@@ -63,6 +69,8 @@ const NodeListProvider = ({
   onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
   onToggleFocusMode,
+  onFilterNodes,
+  onResetNodesFilter,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -295,11 +303,14 @@ const NodeListProvider = ({
 
   return (
     <NodeList
+      flags={flags}
       faded={faded}
       items={items}
       modularPipelinesTree={modularPipelinesTree}
       modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
+      taskNodes={taskNodes}
+      datasets={datasets}
       searchValue={searchValue}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
       onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
@@ -309,6 +320,8 @@ const NodeListProvider = ({
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
       onItemChange={onItemChange}
+      onFilterNodes={onFilterNodes}
+      onResetNodesFilter={onResetNodesFilter}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
       onResetFilter={onResetFilter}
@@ -318,11 +331,14 @@ const NodeListProvider = ({
 };
 
 export const mapStateToProps = (state) => ({
+  flags: state.flags,
   tags: getTagData(state),
   tagNodeCounts: getTagNodeCounts(state),
   nodes: getGroupedNodes(state),
   nodeSelected: getNodeSelected(state),
   nodeTypes: getNodeTypes(state),
+  taskNodes: getTaskNodes(state),
+  datasets: getDatasets(state),
   focusMode: getFocusedModularPipeline(state),
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
@@ -362,6 +378,12 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
+  },
+  onFilterNodes: (from, to) => {
+    dispatch(filterNodes(from, to));
+  },
+  onResetNodesFilter: () => {
+    dispatch(resetNodesFilter());
   },
 });
 
