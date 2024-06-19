@@ -17,7 +17,6 @@ import {
 const duration = 300;
 
 export const ExperimentPrimaryToolbar = ({
-  displaySidebar,
   enableComparisonView,
   enableShowChanges,
   selectedRunData,
@@ -38,7 +37,6 @@ export const ExperimentPrimaryToolbar = ({
 
   return (
     <PrimaryToolbar
-      displaySidebar={displaySidebar}
       onToggleSidebar={setSidebarVisible}
       visible={{ sidebar: sidebarVisible }}
     >

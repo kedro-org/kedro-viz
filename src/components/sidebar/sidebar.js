@@ -18,7 +18,7 @@ import './sidebar.scss';
 export const Sidebar = ({
   disableRunSelection,
   displayGlobalToolbar,
-  displaySidebar,
+  displayPrimaryToolbar,
   enableComparisonView,
   enableShowChanges,
   isDisplayingMetrics = false,
@@ -60,7 +60,6 @@ export const Sidebar = ({
           </div>
           <nav className="pipeline-toolbar">
             <ExperimentPrimaryToolbar
-              displaySidebar={displaySidebar}
               enableComparisonView={enableComparisonView}
               enableShowChanges={enableShowChanges}
               runMetadata={runMetadata}
@@ -80,22 +79,24 @@ export const Sidebar = ({
   } else {
     return (
       <>
-        <div
-          className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': visible,
-            'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
-          })}
-        >
-          <div className="pipeline-ui">
-            <PipelineList onToggleOpen={togglePipeline} />
-            <NodeList faded={pipelineIsOpen} />
+        {displayPrimaryToolbar && (
+          <div
+            className={classnames('pipeline-sidebar', {
+              'pipeline-sidebar--visible': visible,
+              'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
+            })}
+          >
+            <div className="pipeline-ui">
+              <PipelineList onToggleOpen={togglePipeline} />
+              <NodeList faded={pipelineIsOpen} />
+            </div>
+            <nav className="pipeline-toolbar">
+              <FlowchartPrimaryToolbar />
+              <MiniMapToolbar />
+            </nav>
+            <MiniMap />
           </div>
-          <nav className="pipeline-toolbar">
-            <FlowchartPrimaryToolbar />
-            <MiniMapToolbar />
-          </nav>
-          <MiniMap />
-        </div>
+        )}
       </>
     );
   }
@@ -103,7 +104,7 @@ export const Sidebar = ({
 
 const mapStateToProps = (state) => ({
   displayGlobalToolbar: state.display.globalToolbar,
-  displaySidebar: state.display.sidebar,
+  displayPrimaryToolbar: state.display.primaryToolbar,
   visible: state.visible.sidebar,
 });
 
