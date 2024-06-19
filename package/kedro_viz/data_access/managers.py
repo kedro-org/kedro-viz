@@ -25,7 +25,7 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
 )
 from kedro_viz.services import layers_services
-from kedro_viz.utils import _strip_transcoding
+from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 from .repositories import (
     CatalogRepository,
@@ -342,7 +342,7 @@ class DataAccessManager:
                     ROOT_MODULAR_PIPELINE_ID
                 )
 
-        if self.catalog.is_dataset_param(dataset_name):
+        if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
                 dataset_id=dataset_id,
                 dataset_name=dataset_name,
