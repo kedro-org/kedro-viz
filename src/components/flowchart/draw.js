@@ -138,6 +138,11 @@ export const drawNodes = function (changed) {
     hoveredFocusMode,
   } = this.props;
 
+  const multiSelectedNodes = nodes.reduce((acc, { id }) => {
+    acc[id] = this.state.selectedNodes.includes(id);
+    return acc;
+  }, {});
+
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
 
@@ -244,7 +249,7 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--multiple-selected',
-        (node) => nodesSelected && nodesSelected[node.id]
+        (node) => multiSelectedNodes[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',
