@@ -117,6 +117,19 @@
   }
 }
 
+.pipeline-node--multiple-selected {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: red;
+    stroke: red;
+  }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: #{colors.$white-600};
+  }
+}
+
 .pipeline-node--collapsed-hint {
   .pipeline-node__bg {
     stroke: var(--parameter-accent);

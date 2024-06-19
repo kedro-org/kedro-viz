@@ -129,6 +129,7 @@ export const drawNodes = function (changed) {
     nodeTypeDisabled,
     nodeActive,
     nodeSelected,
+    nodesSelected,
     hoveredParameters,
     nodesWithInputParams,
     inputOutputDataNodes,
@@ -241,6 +242,10 @@ export const drawNodes = function (changed) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
+      .classed(
+        'pipeline-node--multiple-selected',
+        (node) => nodesSelected && nodesSelected[node.id]
+      )
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>

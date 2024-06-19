@@ -4,11 +4,16 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
-import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
+import {
+  loadNodeData,
+  loadNodesData,
+  toggleNodeHovered,
+} from '../../actions/nodes';
 import { filterNodes, resetFilterNodes } from '../../actions/filters';
 import {
   getNodeActive,
   getNodeSelected,
+  getNodesSelected,
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
@@ -459,15 +464,19 @@ export class FlowChart extends Component {
             : []; // set empty
 
         // update the state
+        this.props.onLoadNodesData(
+          updatedSelectedNodes[0],
+          updatedSelectedNodes[1]
+        );
         return { selectedNodes: updatedSelectedNodes };
       });
-    }
-
-    if (node.type === 'modularPipeline') {
-      this.props.onClickToExpandModularPipeline(node.id);
     } else {
-      this.props.onLoadNodeData(node.id);
-      this.props.toSelectedNode(node);
+      if (node.type === 'modularPipeline') {
+        this.props.onClickToExpandModularPipeline(node.id);
+      } else {
+        this.props.onLoadNodeData(node.id);
+        this.props.toSelectedNode(node);
+      }
     }
     event.stopPropagation();
   };
@@ -617,7 +626,6 @@ export class FlowChart extends Component {
       this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const [fromNode, toNode] = this.state.selectedNodes;
-
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -747,6 +755,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
+  nodesSelected: getNodesSelected(state),
   ...ownProps,
 });
 
@@ -757,6 +766,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
   },
+  onLoadNodesData: (fromID, toID) => {
+    dispatch(loadNodesData(fromID, toID));
+  },
   onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));
   },
@@ -766,8 +778,8 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
-  onFilterNodes: (from, to) => {
-    dispatch(filterNodes(from, to));
+  onFilterNodes: (fromID, toID) => {
+    dispatch(filterNodes(fromID, toID));
   },
   onResetFilterNodes: () => {
     dispatch(resetFilterNodes());
