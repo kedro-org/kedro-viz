@@ -113,7 +113,8 @@ def sort_layers(
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
         sorter = TopologicalSorter(layer_dependencies)
-        return list(sorter.static_order())
+        sorted_layers = list(sorter.static_order())
+        return sorted_layers
     except CycleError:
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected among layers."
