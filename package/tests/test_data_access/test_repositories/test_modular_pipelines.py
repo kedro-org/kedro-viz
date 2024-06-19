@@ -3,19 +3,20 @@ from kedro_datasets.pandas import CSVDataset
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
+from kedro_viz.data_access.repositories.modular_pipelines import _hash_input_output
 from kedro_viz.models.flowchart import GraphNode
 
 
 class TestModularPipelinesRepository:
     def test_init_should_create_a_tree_with_default_root(self):
         modular_pipelines = ModularPipelinesRepository()
-        assert modular_pipelines.has_modular_pipeline(ROOT_MODULAR_PIPELINE_ID)
+        assert ROOT_MODULAR_PIPELINE_ID in modular_pipelines.tree
 
     def test_get_or_create_modular_pipeline(self):
         modular_pipelines = ModularPipelinesRepository()
         modular_pipelines.get_or_create_modular_pipeline("data_science")
 
-        assert modular_pipelines.has_modular_pipeline("data_science")
+        assert "data_science" in modular_pipelines.tree
         assert sorted(modular_pipelines.as_dict().keys()) == sorted(
             [ROOT_MODULAR_PIPELINE_ID, "data_science"]
         )
@@ -41,11 +42,8 @@ class TestModularPipelinesRepository:
             stats=None,
             modular_pipelines={"data_science"},
         )
-        modular_pipelines.add_inputs("data_science", set(["data_science.model"]))
-        assert (
-            modular_pipelines._hash_input_output(data_node.id)
-            in data_science_pipeline.inputs
-        )
+        modular_pipelines._add_inputs("data_science", set(["data_science.model"]))
+        assert _hash_input_output(data_node.id) in data_science_pipeline.inputs
 
     def test_add_outputs(self):
         kedro_dataset = CSVDataset(filepath="foo.csv")
@@ -62,11 +60,8 @@ class TestModularPipelinesRepository:
             stats=None,
             modular_pipelines={"data_science"},
         )
-        modular_pipelines.add_outputs("data_science", set(["data_science.model"]))
-        assert (
-            modular_pipelines._hash_input_output(data_node.id)
-            in data_science_pipeline.outputs
-        )
+        modular_pipelines._add_outputs("data_science", set(["data_science.model"]))
+        assert _hash_input_output(data_node.id) in data_science_pipeline.outputs
 
     @pytest.mark.parametrize(
         "nested_namespace, expected_expanded_namespace",
