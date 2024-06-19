@@ -97,7 +97,18 @@ def sort_layers(
         # as its own parent, TopologicalSorter still works so we don't need to check for that explicitly.
         if node_layer is not None:
             for layer in child_layers:
-                layer_dependencies[layer].add(node_layer)
+                if layer != node_layer:
+                    layer_dependencies[layer].add(node_layer)
+
+    all_layers = set()
+    for node in nodes.values():
+        layer = getattr(node, "layer", None)
+        if layer:
+            all_layers.add(layer)
+
+    for layer in all_layers:
+        if layer not in layer_dependencies:
+            layer_dependencies[layer] = set()
 
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
