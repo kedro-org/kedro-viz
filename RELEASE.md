@@ -15,8 +15,6 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Fix numpy 2.0 e2e test fail with lower requirements. (#1949)
-
 # Release 9.1.0
 
 ## Major features and improvements
