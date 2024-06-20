@@ -80,6 +80,15 @@ def install_project_requirements(context):
     """Run ``pip install -r requirements.txt``."""
     if context.kedro_version != "latest":
         requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+
+        with open(requirements_path, "r") as req_file:
+            requirements = req_file.readlines()
+
+        # adding numpy pin for older pandas version
+        requirements.append("numpy==1.26.4")
+
+        with open(requirements_path, "w") as req_file:
+            req_file.writelines(requirements)
     else:
         requirements_path = str(context.root_project_dir) + "/requirements.txt"
 

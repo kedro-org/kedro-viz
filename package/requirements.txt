@@ -17,4 +17,3 @@ uvicorn[standard]~=0.29.0
 watchgod~=0.8.2
 # [TODO: Need to drop toposort dependency in favor of in-built graphlib]
 toposort>=1.5 # Needs to be at least 1.5 to be able to raise CircularDependencyError
-numpy==1.26.4
