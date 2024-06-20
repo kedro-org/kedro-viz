@@ -17,6 +17,7 @@ Please follow the established format:
 - Display published URLs. (#1907)
 
 ## Bug fixes and other changes
+- Relax `packaging` pin in requirements. (#1947)
 
 # Release 9.1.0
 
