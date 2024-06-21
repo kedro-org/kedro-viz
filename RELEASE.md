@@ -5,9 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Next release
+# Release 9.2.0
 
 ## Major features and improvements
+
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
 - Display published URLs. (#1907)
 
 ## Bug fixes and other changes
@@ -17,8 +20,6 @@ Please follow the established format:
 ## Major features and improvements
 - Introduce the toggle to expand and collapse all pipelines button in the utility bar. (#1858)
 - Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
-
-- Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
 
 ## Bug fixes and other changes
 - Fix broken URL when active pipeline name changes on initial load. (#1914)
