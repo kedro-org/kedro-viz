@@ -7,7 +7,7 @@ from pathlib import Path
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import sessionmaker
 
@@ -42,7 +42,7 @@ def aws_credentials():
 @pytest.fixture(scope="class")
 def mocked_s3_bucket(aws_credentials):
     """S3 Mock Client"""
-    with mock_s3():
+    with mock_aws():
         conn = boto3.client("s3", region_name="us-east-1")
         conn.create_bucket(Bucket=BUCKET_NAME)
         yield conn
