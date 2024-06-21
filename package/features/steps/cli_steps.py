@@ -29,6 +29,17 @@ def _create_config_file(context, include_example):
         yaml.dump(config, config_file, default_flow_style=False)
 
 
+def _add_package_pin(requirements_path: str, package_name: str, version: str) -> None:
+    """Adds a package pin to the requirements file"""
+    with open(requirements_path, "r") as req_file:
+        requirements = req_file.readlines()
+
+    requirements.append(f"{package_name}=={version}")
+
+    with open(requirements_path, "w") as req_file:
+        req_file.writelines(requirements)
+
+
 @given("I have prepared a config file with example code")
 def create_config_file_with_example(context):
     """Behave step to create a temporary config file
@@ -80,6 +91,9 @@ def install_project_requirements(context):
     """Run ``pip install -r requirements.txt``."""
     if context.kedro_version != "latest":
         requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+        # numpy 2.0 breaks with old versions of pandas and this
+        # could be removed when the lowest version supported is updated
+        _add_package_pin(requirements_path, "numpy", "1.26.4")
     else:
         requirements_path = str(context.root_project_dir) + "/requirements.txt"
 
