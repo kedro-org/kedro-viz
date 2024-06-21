@@ -54,7 +54,7 @@ The process of uploading your site's files will be done through Kedro-Viz.
 
 3. Obtain parameters: In the app registration's overview pane, note down the Application (Client) ID and Directory (Tenant) ID.
 
-4. Add client secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
+4. Add client secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app?tabs=client-secret#add-credentials)
 for the app registration.
 
 5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
