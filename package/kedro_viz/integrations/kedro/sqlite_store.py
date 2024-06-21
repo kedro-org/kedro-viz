@@ -37,6 +37,15 @@ def _is_json_serializable(obj: Any):
         return False
 
 
+def _get_session_path(session_path: str) -> str:
+    """Returns the session path by creating its parent directory
+    if unavailable.
+    """
+    session_file_path = Path(session_path)
+    session_file_path.parent.mkdir(parents=True, exist_ok=True)
+    return str(session_file_path)
+
+
 class SQLiteStore(BaseSessionStore):
     """Stores the session data on the sqlite db."""
 
@@ -55,12 +64,11 @@ class SQLiteStore(BaseSessionStore):
         """Returns location of the sqlite_store database"""
         if "path" not in settings.SESSION_STORE_ARGS:
             kedro_project_path = _find_kedro_project(Path.cwd()) or self._path
-            session_file_path = Path(
+            return _get_session_path(
                 f"{kedro_project_path}/{VIZ_SESSION_STORE_ARGS['path']}/session_store.db"
             )
-            session_file_path.parent.mkdir(parents=True, exist_ok=True)
-            return str(session_file_path)
-        return str(Path(self._path) / "session_store.db")
+
+        return _get_session_path(f"{self._path}/session_store.db")
 
     @property
     def remote_location(self) -> Optional[str]:
