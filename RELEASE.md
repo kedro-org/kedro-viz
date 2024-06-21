@@ -8,14 +8,11 @@ Please follow the established format:
 # Release 9.2.0
 
 ## Major features and improvements
+
 - Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
 - Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
-- Conditionally move session store and stats file to .viz directory. (#1915)
-
-## Bug fixes and other changes
-
-## Major features and improvements
 - Display published URLs. (#1907)
+- Conditionally move session store and stats file to .viz directory. (#1915)
 
 ## Bug fixes and other changes
 
