@@ -92,133 +92,182 @@ def example_pipelines():
 
 
 @pytest.fixture
-def get_generic_pipe():
-    yield Pipeline(
-        [
-            node(
-                func=lambda x: x,
-                inputs="input_df",
-                outputs="output_df",
-                name="generic_node",
-            ),
-        ]
-    )
-
-
-# [TODO: Need to better manage this fixture]
-@pytest.fixture
-def edge_case_example_pipelines(get_generic_pipe):
+def example_pipeline_with_dataset_as_input_and_output():
     """
     Fixture to mock the use cases mentioned in
     https://github.com/kedro-org/kedro-viz/pull/1651
-    https://github.com/kedro-org/kedro-viz/issues/1814
     """
-    use_case_1_pipeline = pipeline(
+    # This pipeline contains one namespace and uses
+    # analyzed_car_data (dataset) as an output and also as
+    # an input to a function of the same namespace
+    pipeline_with_dataset_as_input_and_output = pipeline(
         [
-            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
-            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
-            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
-            node(lambda x: x, inputs="dataset_3", outputs="dataset_out", name="step4"),
+            node(
+                lambda x: x,
+                inputs="raw_car_data",
+                outputs="cleaned_car_data",
+                name="cleaning_step",
+            ),
+            node(
+                lambda x: x,
+                inputs="cleaned_car_data",
+                outputs="transformed_car_data",
+                name="transformation_step",
+            ),
+            node(
+                lambda x: x,
+                inputs="transformed_car_data",
+                outputs="analyzed_car_data",
+                name="analysis_step",
+            ),
+            node(
+                lambda x: x,
+                inputs="analyzed_car_data",
+                outputs="final_car_report",
+                name="reporting_step",
+            ),
         ],
         namespace="main_pipeline",
         inputs=None,
-        outputs={"dataset_out", "dataset_3"},
+        outputs={"final_car_report", "analyzed_car_data"},
     )
 
-    sub_pipeline_use_case_2 = pipeline(
+    yield pipeline_with_dataset_as_input_and_output
+
+
+@pytest.fixture
+def example_pipeline_with_dataset_as_input_to_outer_namespace():
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    """
+    # This is a sub pipeline which contains the namespace
+    # sub_pipeline and uses validated_customer_data (dataset)
+    # from outer namespace
+    sub_pipeline = pipeline(
         [
-            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
-            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
+            node(
+                lambda x: x,
+                inputs="validated_customer_data",
+                outputs="enriched_customer_data",
+                name="data_enrichment",
+            ),
+            node(
+                lambda x: x,
+                inputs="enriched_customer_data",
+                outputs="final_customer_data",
+                name="data_finalization",
+            ),
         ],
-        inputs={"dataset_1"},
-        outputs={"dataset_3"},
+        inputs={"validated_customer_data"},
+        outputs={"final_customer_data"},
         namespace="sub_pipeline",
     )
 
-    use_case_2_pipeline = pipeline(
+    # This is the main pipeline which contains the namespace
+    # main_pipeline and uses the ouput of a nested namespace
+    # final_customer_data (dataset) as an input
+    pipeline_with_dataset_as_input_to_outer_namespace = pipeline(
         [
-            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
-            sub_pipeline_use_case_2,
             node(
-                lambda x: x, inputs="dataset_1", outputs="dataset_1_2", name="step1_2"
+                lambda x: x,
+                inputs="raw_customer_data",
+                outputs="validated_customer_data",
+                name="data_validation",
             ),
-            node(lambda x: x, inputs="dataset_3", outputs="dataset_4", name="step4"),
+            sub_pipeline,
+            node(
+                lambda x: x,
+                inputs="validated_customer_data",
+                outputs="validated_additional_data",
+                name="additional_validation",
+            ),
+            node(
+                lambda x: x,
+                inputs="final_customer_data",
+                outputs="final_report",
+                name="report_generation",
+            ),
         ],
         namespace="main_pipeline",
         inputs=None,
-        outputs={"dataset_3", "dataset_4"},
+        outputs={"final_customer_data", "final_report"},
     )
 
-    sub_pipeline_use_case_3 = pipeline(
-        [
-            node(lambda x: x, inputs="dataset_1", outputs="dataset_2", name="step2"),
-            node(lambda x: x, inputs="dataset_2", outputs="dataset_3", name="step3"),
-        ],
-        inputs={"dataset_1"},
-        outputs={"dataset_3"},
-        namespace="sub_pipeline",
-    )
+    yield pipeline_with_dataset_as_input_to_outer_namespace
 
-    use_case_3_pipeline = pipeline(
-        [
-            node(lambda x: x, inputs="dataset_in", outputs="dataset_1", name="step1"),
-            sub_pipeline_use_case_3,
-            node(
-                lambda x: x, inputs="dataset_1", outputs="dataset_1_2", name="step1_2"
-            ),
-            node(lambda x: x, inputs="dataset_3", outputs="dataset_4", name="step4"),
-        ],
-        namespace="main_pipeline",
-        inputs=None,
-        outputs={"dataset_3", "dataset_4"},
-    )
 
-    other_pipeline_use_case_3 = pipeline(
-        [node(lambda x: x, inputs="dataset_3", outputs="dataset_5", name="step5")],
-        namespace="other_pipeline",
-        inputs={"dataset_3"},
-        outputs={"dataset_5"},
-    )
-
-    use_case_4_pipeline = pipeline(
+@pytest.fixture
+def example_pipeline_with_node_namespaces():
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    """
+    # This is a pipeline which contains node namespaces
+    # and uses prepared_transaction_data (dataset) and
+    # analyzed_transaction_data (dataset) as both input
+    # and output within the same namespace
+    pipeline_with_node_namespaces = pipeline(
         [
             node(
-                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
-                inputs=["dataset_1", "dataset_2"],
-                outputs="dataset_3",
-                name="first_node",
+                func=lambda raw_data, cleaned_data: (raw_data, cleaned_data),
+                inputs=["raw_transaction_data", "cleaned_transaction_data"],
+                outputs="validated_transaction_data",
+                name="validation_node",
             ),
             node(
-                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
-                inputs=["dataset_3", "dataset_4"],
-                outputs="dataset_5",
-                name="second_node",
+                func=lambda validated_data, enrichment_data: (
+                    validated_data,
+                    enrichment_data,
+                ),
+                inputs=["validated_transaction_data", "enrichment_data"],
+                outputs="enhanced_transaction_data",
+                name="enhancement_node",
             ),
             node(
-                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
-                inputs=["dataset_5", "dataset_6"],
-                outputs="dataset_7",
-                name="third_node",
+                func=lambda enhanced_data, aggregated_data: (
+                    enhanced_data,
+                    aggregated_data,
+                ),
+                inputs=["enhanced_transaction_data", "aggregated_data"],
+                outputs="prepared_transaction_data",
+                name="preparation_node",
                 namespace="namespace_prefix_1",
             ),
             node(
-                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
-                inputs=["dataset_7", "dataset_8"],
-                outputs="dataset_9",
-                name="fourth_node",
+                func=lambda prepared_data, analysis_data: (
+                    prepared_data,
+                    analysis_data,
+                ),
+                inputs=["prepared_transaction_data", "analysis_data"],
+                outputs="analyzed_transaction_data",
+                name="analysis_node",
                 namespace="namespace_prefix_1",
             ),
             node(
-                func=lambda dataset_1, dataset_2: (dataset_1, dataset_2),
-                inputs=["dataset_9", "dataset_10"],
-                outputs="dataset_11",
-                name="fifth_node",
+                func=lambda analyzed_data, report_data: (analyzed_data, report_data),
+                inputs=["analyzed_transaction_data", "report_data"],
+                outputs="final_transaction_report",
+                name="reporting_node",
                 namespace="namespace_prefix_1",
             ),
         ]
     )
 
-    use_case_5_data_processing_pipeline = pipeline(
+    yield pipeline_with_node_namespaces
+
+
+@pytest.fixture
+def example_pipeline_with_dataset_as_input_to_nested_namespace():
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    """
+    # This is a pipeline which contains nested namespaces
+    # and uses model_inputs (dataset) which is an output of
+    # a nested namespace (uk.data_processing) as an input to
+    # another nested namespace (uk.data_science)
+    data_processing_pipeline = pipeline(
         [
             node(
                 lambda x: x,
@@ -232,7 +281,7 @@ def edge_case_example_pipelines(get_generic_pipe):
         outputs="model_inputs",
     )
 
-    use_case_5_data_science_pipeline = pipeline(
+    data_science_pipeline = pipeline(
         [
             node(
                 lambda x: x,
@@ -246,38 +295,76 @@ def edge_case_example_pipelines(get_generic_pipe):
         inputs="model_inputs",
     )
 
-    use_case_6_pipe = Pipeline(
+    yield data_processing_pipeline + data_science_pipeline
+
+
+@pytest.fixture
+def example_nested_namespace_pipeline_with_internal_datasets():
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/issues/1814
+    """
+    generic_pipe = Pipeline(
+        [
+            node(
+                func=lambda x: x,
+                inputs="input_dataset",
+                outputs="output_dataset",
+                name="generic_processing_node",
+            ),
+        ]
+    )
+
+    internal_pipe = Pipeline(
         [
             pipeline(
-                pipe=get_generic_pipe,
-                inputs={"input_df": "input_to_processing"},
-                outputs={"output_df": "post_first_pipe"},
+                pipe=generic_pipe,
+                inputs={"input_dataset": "initial_customer_data"},
+                outputs={"output_dataset": "processed_customer_data"},
                 namespace="first_processing_step",
             ),
             pipeline(
-                pipe=get_generic_pipe,
-                inputs={"input_df": "post_first_pipe"},
-                outputs={"output_df": "output_from_processing"},
+                pipe=generic_pipe,
+                inputs={"input_dataset": "processed_customer_data"},
+                outputs={"output_dataset": "final_customer_data"},
                 namespace="second_processing_step",
             ),
         ]
     )
 
-    use_case_6_pipeline = pipeline(
-        pipe=use_case_6_pipe,
-        inputs="input_to_processing",
-        outputs="output_from_processing",
-        namespace="processing",
+    # This is a pipeline which contains nested namespaces
+    # with internal datasets (processed_customer_data) that
+    # should not be exposed outside of the namespace
+    main_pipeline = pipeline(
+        pipe=internal_pipe,
+        inputs="initial_customer_data",
+        outputs="final_customer_data",
+        namespace="customer_lifecycle_processing",
     )
 
+    yield main_pipeline
+
+
+@pytest.fixture
+def edge_case_example_pipelines(
+    example_pipeline_with_dataset_as_input_and_output,
+    example_pipeline_with_dataset_as_input_to_outer_namespace,
+    example_pipeline_with_node_namespaces,
+    example_pipeline_with_dataset_as_input_to_nested_namespace,
+    example_nested_namespace_pipeline_with_internal_datasets,
+):
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/pull/1651
+    https://github.com/kedro-org/kedro-viz/issues/1814
+    """
+
     yield {
-        "UseCase1": use_case_1_pipeline,
-        "UseCase2": use_case_2_pipeline,
-        "UseCase3": use_case_3_pipeline + other_pipeline_use_case_3,
-        "UseCase4": use_case_4_pipeline,
-        "UseCase5": use_case_5_data_processing_pipeline
-        + use_case_5_data_science_pipeline,
-        "UseCase6": use_case_6_pipeline,
+        "CarPipeline": example_pipeline_with_dataset_as_input_and_output,
+        "CustomerPipeline": example_pipeline_with_dataset_as_input_to_outer_namespace,
+        "TransactionPipeline": example_pipeline_with_node_namespaces,
+        "UkModelPipeline": example_pipeline_with_dataset_as_input_to_nested_namespace,
+        "CustomerLifeCyclePipeline": example_nested_namespace_pipeline_with_internal_datasets,
     }
 
 
