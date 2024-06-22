@@ -54,7 +54,7 @@ The process of uploading your site's files will be done through Kedro-Viz.
 
 3. Obtain parameters: In the app registration's overview pane, note down the Application (Client) ID and Directory (Tenant) ID.
 
-4. Add client secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app#add-a-client-secret)
+4. Add client secret: Create a [client secret](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app?tabs=client-secret#add-credentials)
 for the app registration.
 
 5. Assign IAM role: Assign an [Access Control (IAM) role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) to the storage account.
@@ -103,6 +103,7 @@ Set up endpoint
 The endpoint link can be found under **Storage account -> Capabilities -> Static website -> Primary endpoint**.
 ```
 
+Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
 ![](./images/kedro-publish-azure.gif)
@@ -113,6 +114,10 @@ Use the `kedro viz deploy` command to publish Kedro-Viz on Azure. You can execut
 
 ```bash
 kedro viz deploy --platform=azure --endpoint=[azure-endpoint] --bucket-name=[azure-bucket-name]
+```
+
+```{note}
+Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
 ```
 
 ## Permissions and access control
