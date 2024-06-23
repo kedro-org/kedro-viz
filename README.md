@@ -147,6 +147,21 @@ To enable or disable a flag, click on the settings icon in the toolbar and toggl
 
 Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
 
+## Standalone Example Repository
+
+We have created a [kedro-viz-standalone](https://github.com/kedro-org/kedro-viz-standalone.git) repository to demonstrate how to use Kedro-Viz in standalone mode or embedded in a React application.
+
+This repository provides a fully functional example of Kedro-Viz, showcasing how to integrate it into your projects. The example includes setup instructions and demonstrates various features of Kedro-Viz.
+
+To get started, clone the repository, install the dependencies and run the example React application:
+
+```
+git clone https://github.com/kedro-org/kedro-viz-standalone.git
+cd kedro-viz-standalone
+npm install
+npm start
+```
+
 ## Maintainers
 
 Kedro-Viz is maintained by the [Kedro team](https://docs.kedro.org/en/stable/contribution/technical_steering_committee.html#kedro-maintainers) and a number of [contributors from across the world](https://github.com/kedro-org/Kedro-Viz/contributors).
