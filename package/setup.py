@@ -52,7 +52,7 @@ setup(
     },
     extras_require={
         "docs": [
-            "kedro-sphinx-theme==2024.4.0",
+            "kedro-sphinx-theme @ git+https://github.com/kedro-org/kedro-sphinx-theme/tree/fix/favicon-and-active-tab",
         ],
         "aws": ["s3fs>=2021.4"],
         "azure": ["adlfs>=2021.4"],
