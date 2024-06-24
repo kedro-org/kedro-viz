@@ -82,6 +82,27 @@ The JSON can be obtained by running:
 kedro viz run --save-file=filename
 ```
 
+The command will generate a folder with the specified <filename>, containing the following structure: 
+
+```
+<filename>/api/
+├── main
+├── nodes
+│   ├── 23c94afb
+│   ├── 28754fab
+│   ├── 2ab3579f
+│   ├── 329e963c
+│   ├── 369acf98
+│   └── ...
+└── pipelines
+    ├── __default__
+    ├── data_processing
+    ├── data_science
+    └── ...
+```
+
+Please use the `main` file as the input JSON for the `data` prop in your Kedro-Viz component.
+
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
