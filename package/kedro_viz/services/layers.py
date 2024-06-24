@@ -89,16 +89,21 @@ def sort_layers(
     # compute the layer dependencies dictionary based on the node_layers dependencies,
     # represented as {layer -> set(parent_layers)}
     layer_dependencies = defaultdict(set)
+    all_layers = set()  # keep track of all layers encountered
     for node_id, child_layers in node_layers.items():
         node_layer = getattr(nodes[node_id], "layer", None)
-
-        # add the node's layer as a parent layer for all child layers.
-        # Even if a child layer is the same as the node's layer, i.e. a layer is marked
-        # as its own parent, TopologicalSorter still works so we don't need to check for that explicitly.
         if node_layer is not None:
+            all_layers.add(node_layer)
             for layer in child_layers:
+                all_layers.add(layer)
+                # Avoid adding the node's layer as a parent of itself
                 if layer != node_layer:
                     layer_dependencies[layer].add(node_layer)
+
+    # Add empty dependencies for all layers to ensure they appear in the sorting
+    for layer in all_layers:
+        if layer not in layer_dependencies:
+            layer_dependencies[layer] = set()
 
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
