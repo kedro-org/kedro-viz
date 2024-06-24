@@ -32,7 +32,7 @@ def sort_layers(
         that have already been visited.
         * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
         dependencies. Note: the key is a layer and the values are the parents of that layer,
-        just because that's the format toposort requires.
+        just because that's the format TopologicalSorter requires.
         * Feed this layers dictionary to ``graphlib.TopologicalSorter`` and return the sorted values.
         * Raise CycleError if the layers cannot be sorted topologically,
         i.e. there are cycles among the layers.
@@ -97,18 +97,7 @@ def sort_layers(
         # as its own parent, TopologicalSorter still works so we don't need to check for that explicitly.
         if node_layer is not None:
             for layer in child_layers:
-                if layer != node_layer:
-                    layer_dependencies[layer].add(node_layer)
-
-    all_layers = set()
-    for node in nodes.values():
-        layer = getattr(node, "layer", None)
-        if layer:
-            all_layers.add(layer)
-
-    for layer in all_layers:
-        if layer not in layer_dependencies:
-            layer_dependencies[layer] = set()
+                layer_dependencies[layer].add(node_layer)
 
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
