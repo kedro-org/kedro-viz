@@ -155,19 +155,6 @@ All components are annotated to understand their positions in the Kedro-Viz UI.
 ![Kedro-Viz component annotation](https://raw.githubusercontent.com/jitu5/kedro-viz/main/.github/img/kedro-viz-annotation.png)
 
 
-## Feature Flags
-
-Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
-
-| Flag               | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
-| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
-
-To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
-
-Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
-
 ## Standalone Example Repository
 
 We have created a [kedro-viz-standalone](https://github.com/kedro-org/kedro-viz-standalone.git) repository to demonstrate how to use Kedro-Viz in standalone mode or embedded in a React application.
@@ -182,6 +169,19 @@ cd kedro-viz-standalone
 npm install
 npm start
 ```
+
+## Feature Flags
+
+Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
+
+| Flag               | Description                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------- |
+| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
+| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
+
+To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
+
+Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
 
 ## Maintainers
 
