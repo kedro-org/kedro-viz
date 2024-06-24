@@ -24,7 +24,8 @@ with open(path.join(here, path.pardir, "package.json")) as data:
 with open("requirements.txt", "r", encoding="utf-8") as f:
     requires = [x.strip() for x in f if x.strip()]
 
-with open(path.join(here, "../README.md"), encoding="utf-8") as f:
+# The README.md file is being read from .github/README.md instead of from the root directory.
+with open(path.join(here, "../.github/README.md"), encoding="utf-8") as f:
     readme = f.read()
 
 
