@@ -479,6 +479,8 @@ class TestAddPipelines:
         modular_pipeline_tree_values,
         expected_key,
     ):
+        """This asserts an `expected_key` value present in modular_pipeline_tree
+        that is constructed in the edge cases with the expected_modular_pipeline_tree"""
         assert sorted(
             list(
                 expected_modular_pipeline_tree_obj[modular_pipeline_node_id][
@@ -492,14 +494,16 @@ class TestAddPipelines:
             )
         )
 
-    def test_add_pipelines_for_edge_cases(
+    def test_task_nodes_for_modular_pipeline_edge_cases(
         self,
         data_access_manager: DataAccessManager,
         edge_case_example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
-        expected_modular_pipeline_tree,
     ):
         """
+        This tests the task nodes that are created when
+        edge_case_example_pipelines are added to data access manager
+
         Testing the use cases mentioned in
         https://github.com/kedro-org/kedro-viz/pull/1651
         https://github.com/kedro-org/kedro-viz/issues/1814
@@ -525,18 +529,91 @@ class TestAddPipelines:
             }
         ) == sorted(list(all_node_names))
 
+    def test_registered_pipelines_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+    ):
+        """
+        This tests the registered pipelines that are created when
+        edge_case_example_pipelines are added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
         # testing RegisteredPipelinesRepository
         assert [
             p.id for p in data_access_manager.registered_pipelines.as_list()
         ] == list(edge_case_example_pipelines.keys())
 
+    def test_tags_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+    ):
+        """
+        This tests the tags that are created when
+        edge_case_example_pipelines are added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
         # testing TagsRepository
         assert data_access_manager.tags.as_list() == [Tag(id="split"), Tag(id="train")]
+
+    def test_modular_pipeline_repo_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+    ):
+        """
+        This tests the modular pipeline repository that is created when
+        edge_case_example_pipelines are added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
 
         # testing ModularPipelinesRepository
         assert sorted(list(data_access_manager.modular_pipelines.keys())) == sorted(
             list(edge_case_example_pipelines.keys())
         )
+
+    def test_tree_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
+    ):
+        """
+        This tests the modular pipeline repo tree that is created when
+        edge_case_example_pipelines are added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
 
         for (
             registered_pipeline_id,
@@ -550,12 +627,38 @@ class TestAddPipelines:
                 list(modular_pipelines_repo_obj.tree.keys())
             )
 
-            # in each modular pipeline expected inputs, outputs, children and tags
+    def test_tree_item_inputs_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
+    ):
+        """
+        This tests the modular pipeline repo tree item inputs
+        that are created when edge_case_example_pipelines are
+        added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
+        for (
+            registered_pipeline_id,
+            modular_pipelines_repo_obj,
+        ) in data_access_manager.modular_pipelines.items():
+            expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
+                registered_pipeline_id
+            ]
+            # in each modular pipeline expected inputs
             for (
                 modular_pipeline_id,
                 modular_pipeline_node,
             ) in modular_pipelines_repo_obj.tree.items():
-                # expected inputs
                 self.assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
@@ -564,7 +667,39 @@ class TestAddPipelines:
                     "expected_inputs",
                 )
 
-                # expected outputs
+    def test_tree_item_outputs_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
+    ):
+        """
+        This tests the modular pipeline repo tree item outputs
+        that are created when edge_case_example_pipelines are
+        added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
+        for (
+            registered_pipeline_id,
+            modular_pipelines_repo_obj,
+        ) in data_access_manager.modular_pipelines.items():
+            expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
+                registered_pipeline_id
+            ]
+
+            # in each modular pipeline expected outputs
+            for (
+                modular_pipeline_id,
+                modular_pipeline_node,
+            ) in modular_pipelines_repo_obj.tree.items():
                 self.assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
@@ -573,8 +708,46 @@ class TestAddPipelines:
                     "expected_outputs",
                 )
 
+    def test_tree_item_children_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
+    ):
+        """
+        This tests the modular pipeline repo tree item children
+        that are created when edge_case_example_pipelines are
+        added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
+        for registered_pipeline_id in edge_case_example_pipelines:
+            # This is needed to add modular pipeline nodes to the GraphNodesRepository
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                registered_pipeline_id
+            )
+
+        for (
+            registered_pipeline_id,
+            modular_pipelines_repo_obj,
+        ) in data_access_manager.modular_pipelines.items():
+            expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
+                registered_pipeline_id
+            ]
+
+            # in each modular pipeline expected children
+            for (
+                modular_pipeline_id,
+                modular_pipeline_node,
+            ) in modular_pipelines_repo_obj.tree.items():
                 # [NOTE: only for modular pipeline node, we are not hashing id]
-                # expected children
                 self.assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
@@ -586,7 +759,45 @@ class TestAddPipelines:
                     "expected_children",
                 )
 
-                # expected tags
+    def test_tree_item_tags_for_modular_pipeline_edge_cases(
+        self,
+        data_access_manager: DataAccessManager,
+        edge_case_example_pipelines: Dict[str, Pipeline],
+        example_catalog: DataCatalog,
+        expected_modular_pipeline_tree,
+    ):
+        """
+        This tests the modular pipeline repo tree item tags
+        that are created when edge_case_example_pipelines are
+        added to data access manager
+
+        Testing the use cases mentioned in
+        https://github.com/kedro-org/kedro-viz/pull/1651
+        https://github.com/kedro-org/kedro-viz/issues/1814
+
+        """
+        data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
+        data_access_manager.add_pipelines(edge_case_example_pipelines)
+
+        for registered_pipeline_id in edge_case_example_pipelines:
+            # This is needed to add modular pipeline nodes to the GraphNodesRepository
+            data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
+                registered_pipeline_id
+            )
+
+        for (
+            registered_pipeline_id,
+            modular_pipelines_repo_obj,
+        ) in data_access_manager.modular_pipelines.items():
+            expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
+                registered_pipeline_id
+            ]
+
+            # in each modular pipeline expected tags
+            for (
+                modular_pipeline_id,
+                modular_pipeline_node,
+            ) in modular_pipelines_repo_obj.tree.items():
                 modular_pipeline_children_tags = set()
                 for modular_pipeline_child in modular_pipeline_node.children:
                     modular_pipeline_children_tags |= (
