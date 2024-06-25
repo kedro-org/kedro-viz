@@ -185,15 +185,17 @@ export const mergeLocalStorage = (state) => {
  * @param {Boolean} applyFixes Whether to override initialState
  * @param {Boolean} expandAllPipelines Whether to expand all the modular pipelines
  * @param {Object} urlParams An object containing parsed URL parameters.
+ * @param {Object} props An object containing tags and other options.
  * @returns {Object} The new pipeline state with modifications applied.
  */
 export const preparePipelineState = (
   data,
   applyFixes,
   expandAllPipelines,
-  urlParams
+  urlParams,
+  props
 ) => {
-  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
+  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines, props));
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
@@ -272,7 +274,8 @@ const getInitialState = (props = {}) => {
     props.data,
     props.data !== 'json',
     expandAllPipelines,
-    urlParams
+    urlParams,
+    props
   );
 
   return {

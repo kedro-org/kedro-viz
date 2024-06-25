@@ -5,11 +5,14 @@ import 'what-input';
 import configureStore from '../../store';
 import { resetData } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
+import { toggleTagFilter, resetAllTagFilters } from '../../actions/tags';
+import { toggleTypeDisabled } from '../../actions/node-type';
 import Wrapper from '../wrapper';
 import getInitialState, {
   preparePipelineState,
 } from '../../store/initial-state';
 import { getFlagsMessage } from '../../utils/flags';
+import { arrayToObject } from '../../utils';
 import './app.scss';
 
 /**
@@ -38,6 +41,12 @@ class App extends React.Component {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
     }
+    if (prevProps.tags !== this.props.tags) {
+      this.updateTagState(this.props);
+    }
+    if (prevProps.nodeTypes !== this.props.nodeTypes) {
+      this.updateNodeTypeState(this.props);
+    }
   }
 
   /**
@@ -57,6 +66,29 @@ class App extends React.Component {
   updatePipelineData() {
     const newState = preparePipelineState(this.props.data, true);
     this.store.dispatch(resetData(newState));
+  }
+
+  /**
+   * Dispatch an action to update the store with new state based on tags
+   */
+  updateTagState(props) {
+    this.store.dispatch(resetAllTagFilters());
+    this.store.dispatch(toggleTagFilter(props.tags, true));
+  }
+
+  /**
+   * Dispatch an action to update the store with new state based on node types
+   */
+  updateNodeTypeState(props) {
+    const updatedNodeTypes = arrayToObject(props.nodeTypes, () => false);
+    this.store.dispatch(
+      toggleTypeDisabled({
+        parameters: true,
+        task: true,
+        data: true,
+      })
+    );
+    this.store.dispatch(toggleTypeDisabled(updatedNodeTypes));
   }
 
   render() {

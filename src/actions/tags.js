@@ -27,3 +27,12 @@ export function toggleTagFilter(tagIDs, enabled) {
     enabled,
   };
 }
+
+export const RESET_ALL_TAG_FILTERS = 'RESET_ALL_TAG_FILTERS';
+
+/**
+ * Reset all tag filters
+ */
+export const resetAllTagFilters = () => ({
+  type: RESET_ALL_TAG_FILTERS,
+});

@@ -8,9 +8,11 @@ import {
 
 /**
  * Create new default pipeline state instance
+ * @param {Array} tags - List of tags passed in as props
+ * @param {Array} nodeTypes - List of node types passed in as props
  * @return {Object} state
  */
-export const createInitialPipelineState = () => ({
+export const createInitialPipelineState = (tags, nodeTypes) => ({
   pipeline: {
     ids: [],
     name: {},
@@ -57,11 +59,13 @@ export const createInitialPipelineState = () => ({
       parameters: 'Parameters',
       modularPipeline: 'Modular Pipelines',
     },
-    disabled: {
-      parameters: true,
-      task: false,
-      data: false,
-    },
+    disabled: nodeTypes
+      ? arrayToObject(nodeTypes, () => false)
+      : {
+          parameters: true,
+          task: false,
+          data: false,
+        },
   },
   edge: {
     ids: [],
@@ -77,7 +81,7 @@ export const createInitialPipelineState = () => ({
     ids: [],
     name: {},
     active: {},
-    enabled: {},
+    enabled: tags ? arrayToObject(tags, (tag) => !!tag) : {},
   },
   hoveredParameters: false,
   hoveredFocusMode: false,
@@ -268,11 +272,12 @@ const updateStateWithFilters = (state, NodeTags) => {
 
 /**
  * Convert the pipeline data into a normalized state object
- * @param {Object} data Raw unformatted data input
+ * @param {Object} props Props containing the pipeline data and other options
  * @return {Object} Formatted, normalized state
  */
-const normalizeData = (data, expandAllPipelines) => {
-  const state = createInitialPipelineState();
+const normalizeData = (data, expandAllPipelines, props) => {
+  const { tags, nodeTypes } = props ?? {};
+  const state = createInitialPipelineState(tags, nodeTypes);
 
   if (data === 'json') {
     state.dataSource = 'json';

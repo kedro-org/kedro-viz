@@ -1,4 +1,8 @@
-import { TOGGLE_TAG_ACTIVE, TOGGLE_TAG_FILTER } from '../actions/tags';
+import {
+  TOGGLE_TAG_ACTIVE,
+  TOGGLE_TAG_FILTER,
+  RESET_ALL_TAG_FILTERS,
+} from '../actions/tags';
 
 function tagReducer(tagState = {}, action) {
   const updateState = (newState) => Object.assign({}, tagState, newState);
@@ -23,6 +27,12 @@ function tagReducer(tagState = {}, action) {
     case TOGGLE_TAG_FILTER: {
       return updateState({
         enabled: Object.assign({}, tagState.enabled, batchChanges('enabled')),
+      });
+    }
+
+    case RESET_ALL_TAG_FILTERS: {
+      return updateState({
+        enabled: {},
       });
     }
 
