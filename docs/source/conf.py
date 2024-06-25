@@ -41,6 +41,7 @@ extensions = [
     "myst_parser",
     "notfound.extension",
     "sphinxcontrib.jquery",
+    'sphinx_favicon',
 ]
 
 
@@ -56,6 +57,10 @@ intersphinx_mapping = {
     "kedro": ("https://docs.kedro.org/en/stable/", None),
     "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-3.0.0/", None),
 }
+
+favicons = [
+    "https://kedro.org/images/favicon.ico",
+]
 
 # -- Options for HTML output -------------------------------------------------
 
