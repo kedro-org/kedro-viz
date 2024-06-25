@@ -1,11 +1,12 @@
 """`kedro_viz.data_access.repositories.modular_pipelines` defines
 repository to centralise access for modular pipelines data."""
 
-import hashlib
+
+from collections import defaultdict
 from typing import Dict, List, Set, Tuple, Union
 
 from kedro.pipeline import Pipeline as KedroPipeline
-from kedro.pipeline.node import Node
+from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart import (
@@ -14,20 +15,7 @@ from kedro_viz.models.flowchart import (
     ModularPipelineChild,
     ModularPipelineNode,
 )
-from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding, is_dataset_param
-
-
-def _hash(value: str):
-    return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
-
-
-def _hash_input_output(item: str) -> str:
-    """Hash the input/output dataset."""
-    return (
-        _hash(_strip_transcoding(item))
-        if TRANSCODING_SEPARATOR in item
-        else _hash(item)
-    )
+from kedro_viz.utils import _hash, _hash_input_output, is_dataset_param
 
 
 class ModularPipelinesRepository:
@@ -45,10 +33,7 @@ class ModularPipelinesRepository:
                 ROOT_MODULAR_PIPELINE_ID
             )
         }
-        self.node_mod_pipeline_map: Dict[
-            str, Set[str]
-        ] = {}  # Updated to map node_id to a set of modular_pipeline_ids
-
+        self.node_mod_pipeline_map = defaultdict(set)
         self.parameters = set()
 
     def populate_tree(self, pipeline: KedroPipeline) -> None:
@@ -165,7 +150,7 @@ class ModularPipelinesRepository:
         hashed_outputs = {_hash_input_output(output) for output in outputs}
         self.tree[modular_pipeline_id].outputs = hashed_outputs
 
-    def _add_children(self, modular_pipeline_id: str, kedro_nodes: List[Node]):
+    def _add_children(self, modular_pipeline_id: str, kedro_nodes: List[KedroNode]):
         """
         Add children to a modular pipeline. Here we follow the below rules
         - A kedro node is added as a child to a modular pipeline if
@@ -181,146 +166,130 @@ class ModularPipelinesRepository:
 
         Args:
             modular_pipeline_id (str): The ID of the modular pipeline to add children to.
-            kedro_nodes (List[Node]): The kedro nodes (and it's related datasets/parameters)
+            kedro_nodes (List[KedroNode]): The kedro nodes (and it's related datasets/parameters)
                     to add as children.
         """
         modular_pipeline = self.get_or_create_modular_pipeline(modular_pipeline_id)
-        modular_pipeline_inputs_outputs = set(modular_pipeline.inputs) | set(
+        modular_pipeline_inputs_outputs = set(modular_pipeline.inputs).union(
             modular_pipeline.outputs
         )
 
-        for kedro_node in kedro_nodes:
-            # add kedro node as a child to the modular pipeline
-            if kedro_node.namespace == modular_pipeline_id:
-                kedro_node_id = _hash(str(kedro_node))
-                modular_pipeline.children.add(
-                    ModularPipelineChild(id=kedro_node_id, type=GraphNodeType.TASK)
-                )
+        # Filter nodes that belong to the current modular pipeline
+        filtered_kedro_nodes = [
+            node for node in kedro_nodes if node.namespace == modular_pipeline_id
+        ]
 
-                modular_pipeline.tags.update(kedro_node.tags)
-
-                # add input/output datasets of a kedro node as a child
-                # to the modular pipeline
-                self._add_datasets_as_children(
-                    modular_pipeline, kedro_node, modular_pipeline_inputs_outputs
-                )
-
-                # update node_modular_pipeline lookup
-                if kedro_node_id not in self.node_mod_pipeline_map:
-                    self.node_mod_pipeline_map[kedro_node_id] = set()
-                self.node_mod_pipeline_map[kedro_node_id].add(modular_pipeline_id)
-
-        # The line `parent_modular_pipeline_id = ('.'.join(modular_pipeline_id.split('.')[:-1])
-        # if '.' in modular_pipeline_id else None)` is extracting the parent modular pipeline ID
-        # from the given modular pipeline ID.
-        parent_modular_pipeline_id = (
-            ".".join(modular_pipeline_id.split(".")[:-1])
-            if "." in modular_pipeline_id
-            else None
+        # Add filtered kedro nodes and their related datasets as children to the modular pipeline
+        self._add_nodes_and_datasets_as_children(
+            modular_pipeline, filtered_kedro_nodes, modular_pipeline_inputs_outputs
+        )
+        self._add_children_to_parent_pipeline(
+            modular_pipeline, modular_pipeline_id, modular_pipeline_inputs_outputs
         )
 
-        if parent_modular_pipeline_id:
-            parent_modular_pipeline = self.get_or_create_modular_pipeline(
-                parent_modular_pipeline_id
-            )
-            parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
-            parent_modular_pipeline.tags.update(modular_pipeline.tags)
+    def _add_nodes_and_datasets_as_children(
+        self,
+        modular_pipeline: ModularPipelineNode,
+        kedro_nodes: List[KedroNode],
+        modular_pipeline_inputs_outputs: Set[str],
+    ):
+        """
+        Add Kedro nodes and their related datasets as children to the modular pipeline.
 
-            # add current modular pipeline and input/output datasets
-            # of a modular pipeline as a child to the parent modular
-            # pipeline based on the rules
-            self._add_children_to_parent_pipeline(
-                parent_modular_pipeline,
-                modular_pipeline_id,
-                modular_pipeline_inputs_outputs,
+        Datasets (inputs/outputs) are added if they are not already inputs/outputs of
+        the modular pipeline and are not parameter datasets.
+        """
+
+        for node in kedro_nodes:
+            node_id = _hash(str(node))
+            modular_pipeline.children.add(
+                ModularPipelineChild(id=node_id, type=GraphNodeType.TASK)
             )
-        else:
-            # add current modular pipeline and input/output datasets
-            # of a top-level modular pipeline as a child to ROOT modular
-            # pipeline
-            self._add_children_to_parent_pipeline(
-                self.tree[ROOT_MODULAR_PIPELINE_ID],
-                modular_pipeline_id,
-                modular_pipeline_inputs_outputs,
+            modular_pipeline.tags.update(node.tags)
+
+            hashed_io_ids = {
+                _hash_input_output(io) for io in set(node.inputs).union(node.outputs)
+            }
+
+            # Compute valid input/output IDs that are not part of the modular pipeline
+            # inputs/outputs or parameters
+            valid_io_ids = hashed_io_ids.difference(
+                modular_pipeline_inputs_outputs, self.parameters
             )
+
+            # Add each valid input/output as a child to the modular pipeline
+            for io_id in valid_io_ids:
+                modular_pipeline.children.add(
+                    ModularPipelineChild(id=io_id, type=GraphNodeType.DATA)
+                )
+                self.node_mod_pipeline_map[io_id].add(modular_pipeline.id)
+
+            self.node_mod_pipeline_map[node_id].add(modular_pipeline.id)
 
     def _add_children_to_parent_pipeline(
         self,
-        parent_node: ModularPipelineNode,
+        modular_pipeline: ModularPipelineNode,
         modular_pipeline_id: str,
         modular_pipeline_inputs_outputs: Set[str],
     ):
         """
-        Helper to add modular_pipeline children correctly to
-        parent modular pipelines in case of nesting.
+        Helper to add modular_pipeline children correctly to parent modular pipelines
+        in case of nesting.
 
         Here we follow the below rules:
-        - A modular pipeline is a child of it's parent modular pipeline
+        - A modular pipeline is a child of its parent modular pipeline
         - Any input/output of a modular pipeline is a child of the parent pipeline
-          unless it is an input/output of that parent pipeline or a parameter dataset
-        - Any input/output of a top-level modular pipeline is added as a child
-          to the root modular pipeline
+        unless it is an input/output of that parent pipeline or a parameter dataset
+        - Any input/output of a top-level modular pipeline is added as a child to
+        the root modular pipeline
 
         Args:
-            parent_node (ModularPipelineNode): The parent modular pipeline node.
+            modular_pipeline (ModularPipelineNode): The modular pipeline node.
             modular_pipeline_id (str): The ID of the modular pipeline to add as a child.
-            modular_pipeline_inputs_outputs (Set[str]): A set of inputs/outputs
-                    to/from the modular pipeline
+            modular_pipeline_inputs_outputs (Set[str]): A set of inputs/outputs to/from
+            the modular pipeline.
         """
+        # Determine the parent modular pipeline ID
+        parent_modular_pipeline_id = (
+            ".".join(modular_pipeline_id.split(".")[:-1])
+            if "." in modular_pipeline_id
+            else ROOT_MODULAR_PIPELINE_ID
+        )
 
-        parent_node.children.add(
+        # Get or create the parent modular pipeline
+        parent_modular_pipeline = self.get_or_create_modular_pipeline(
+            parent_modular_pipeline_id
+        )
+
+        # Add the modular pipeline as a child to the parent modular pipeline
+        parent_modular_pipeline.children.add(
             ModularPipelineChild(
                 id=modular_pipeline_id, type=GraphNodeType.MODULAR_PIPELINE
             )
         )
+        parent_modular_pipeline.pipelines.update(modular_pipeline.pipelines)
+        parent_modular_pipeline.tags.update(modular_pipeline.tags)
+
+        # Add input/output datasets as children to the parent modular pipeline
         for dataset in modular_pipeline_inputs_outputs:
             if (
-                dataset not in parent_node.inputs
-                and dataset not in parent_node.outputs
+                dataset not in parent_modular_pipeline.inputs
+                and dataset not in parent_modular_pipeline.outputs
                 and dataset not in self.parameters
             ):
-                parent_node.children.add(
+                parent_modular_pipeline.children.add(
                     ModularPipelineChild(id=dataset, type=GraphNodeType.DATA)
                 )
-            if dataset not in self.node_mod_pipeline_map:
-                self.node_mod_pipeline_map[dataset] = set()
             self.node_mod_pipeline_map[dataset].add(modular_pipeline_id)
-
-    def _add_datasets_as_children(
-        self,
-        modular_pipeline: ModularPipelineNode,
-        kedro_node: Node,
-        modular_pipeline_inputs_outputs: Set[str],
-    ):
-        """Helper to add datasets (not parameters) related to task nodes as children.
-
-        Here we follow the below rule:
-        - Inputs/Outputs of a task node are added as children
-          to the modular pipeline if they are not inputs/outputs
-          of that modular pipeline and are not parameter datasets
-        """
-        hashed_io_ids = {
-            _hash_input_output(io)
-            for io in set(kedro_node.inputs) | set(kedro_node.outputs)
-        }
-        for io_id in hashed_io_ids:
-            if (
-                io_id not in modular_pipeline_inputs_outputs
-                and io_id not in self.parameters
-            ):
-                modular_pipeline.children.add(
-                    ModularPipelineChild(id=io_id, type=GraphNodeType.DATA)
-                )
-                if io_id not in self.node_mod_pipeline_map:
-                    self.node_mod_pipeline_map[io_id] = set()
-                self.node_mod_pipeline_map[io_id].add(modular_pipeline.id)
 
     def get_node_and_modular_pipeline_mapping(
         self, node
     ) -> Tuple[str, Union[Set[str], None]]:
-        """Get the modular pipeline(s) to which the given node belongs."""
+        """Get the modular pipeline(s) to which the given task node/or dataset belongs."""
         node_id = (
-            _hash_input_output(node) if isinstance(node, str) else _hash(str(node))
+            _hash(str(node))
+            if isinstance(node, KedroNode)
+            else _hash_input_output(node)
         )
         return node_id, self.node_mod_pipeline_map.get(node_id)
 
