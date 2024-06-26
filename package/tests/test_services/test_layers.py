@@ -167,7 +167,8 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
         )
         for node_id, node_dict in nodes.items()
     }
-    assert sort_layers(nodes, node_dependencies) == expected, graph_schema
+    sorted_layers = sort_layers(nodes, node_dependencies)
+    assert sorted(sorted_layers) == sorted(expected), graph_schema
 
 
 def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):

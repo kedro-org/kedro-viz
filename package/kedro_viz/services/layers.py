@@ -33,7 +33,7 @@ def sort_layers(
         * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
         dependencies. Note: the key is a layer and the values are the parents of that layer,
         just because that's the format TopologicalSorter requires.
-        * Feed this layers dictionary to ``graphlib.TopologicalSorter`` and return the sorted values.
+        * Takes layers dictionary to ``graphlib.TopologicalSorter`` and return the sorted values.
         * Raise CycleError if the layers cannot be sorted topologically,
         i.e. there are cycles among the layers.
 
