@@ -15,8 +15,3 @@ known_third_party = "kedro"
 addopts = """
 --cov-report term-missing \
 --cov src/demo_project -ra"""
-
-docs = [
-    "kedro-sphinx-theme",
-    "sphinx-favicon",
-]

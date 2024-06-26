@@ -41,7 +41,6 @@ extensions = [
     "myst_parser",
     "notfound.extension",
     "sphinxcontrib.jquery",
-    'sphinx_favicon',
 ]
 
 
@@ -58,9 +57,6 @@ intersphinx_mapping = {
     "kedro-datasets": ("https://docs.kedro.org/projects/kedro-datasets/en/kedro-datasets-3.0.0/", None),
 }
 
-favicons = [
-    "https://kedro.org/images/favicon.ico",
-]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -68,14 +64,6 @@ favicons = [
 # a list of builtin themes.
 #
 html_theme = "kedro-sphinx-theme"
-
-extensions = [
-    'sphinx_favicon',
-]
-
-favicons = [
-    "https://kedro.org/images/favicon.ico",
-]
 
 # Theme options are theme-specific and customise the look and feel of a theme
 # further.  For a list of options available for each theme, see the
