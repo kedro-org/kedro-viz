@@ -19,8 +19,40 @@ BUCKET_NAME = "test-bucket"
 
 
 @pytest.fixture
-def store_path(tmp_path):
-    return Path(tmp_path)
+def parametrize_session_store_args(request):
+    """Fixture to parameterize has_session_store_args."""
+
+    # This fixture sets a class attribute has_session_store_args
+    # based on the parameter passed
+    request.cls.has_session_store_args = request.param
+
+
+@pytest.fixture
+def mock_session_store_args(request, mocker, setup_kedro_project):
+    """Fixture to mock SESSION_STORE_ARGS and _find_kedro_project."""
+
+    # This fixture uses the class attribute has_session_store_args
+    # to apply the appropriate mocks.
+    if request.cls.has_session_store_args:
+        mocker.patch.dict(
+            "kedro_viz.integrations.kedro.sqlite_store.settings.SESSION_STORE_ARGS",
+            {"path": "some_path"},
+            clear=True,
+        )
+    else:
+        mocker.patch(
+            "kedro_viz.integrations.kedro.sqlite_store._find_kedro_project",
+            return_value=setup_kedro_project,
+        )
+
+
+@pytest.fixture
+def store_path(request, tmp_path, setup_kedro_project):
+    if request.cls.has_session_store_args:
+        return Path(tmp_path)
+    session_store_path = Path(tmp_path / setup_kedro_project / ".viz")
+    session_store_path.mkdir(parents=True, exist_ok=True)
+    return session_store_path
 
 
 @pytest.fixture
@@ -54,24 +86,24 @@ def remote_path():
 
 
 @pytest.fixture
-def mock_db1(tmp_path):
-    database_loc = str(tmp_path / "db1.db")
+def mock_db1(store_path):
+    database_loc = str(store_path / "db1.db")
     with make_db_session_factory(database_loc).begin() as session:
         session.add(RunModel(id="1", blob="blob1"))
     yield Path(database_loc)
 
 
 @pytest.fixture
-def mock_db2(tmp_path):
-    database_loc = str(tmp_path / "db2.db")
+def mock_db2(store_path):
+    database_loc = str(store_path / "db2.db")
     with make_db_session_factory(database_loc).begin() as session:
         session.add(RunModel(id="2", blob="blob2"))
     yield Path(database_loc)
 
 
 @pytest.fixture
-def mock_db3_with_db2_data(tmp_path):
-    database_loc = str(tmp_path / "db3.db")
+def mock_db3_with_db2_data(store_path):
+    database_loc = str(store_path / "db3.db")
     with make_db_session_factory(database_loc).begin() as session:
         session.add(RunModel(id="2", blob="blob2"))
     yield Path(database_loc)
@@ -147,6 +179,8 @@ def test_get_dbname_without_env_var(mocker):
     assert dbname == "computer_user_name.db"
 
 
+@pytest.mark.usefixtures("parametrize_session_store_args", "mock_session_store_args")
+@pytest.mark.parametrize("parametrize_session_store_args", [True, False], indirect=True)
 class TestSQLiteStore:
     def test_empty(self, store_path):
         sqlite_store = SQLiteStore(store_path, next(session_id()))
@@ -230,7 +264,11 @@ class TestSQLiteStore:
         assert "Upload failed: Connection error" in caplog.text
 
     def test_download_from_s3_success(
-        self, mocker, store_path, remote_path, mocked_db_in_s3, tmp_path
+        self,
+        mocker,
+        store_path,
+        remote_path,
+        mocked_db_in_s3,
     ):
         mocker.patch("fsspec.filesystem")
         sqlite_store = SQLiteStore(
