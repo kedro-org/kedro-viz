@@ -83,7 +83,7 @@ def sort_layers(
         return node_layers[node_id]
 
     # populate node_layers dependencies
-    for node_id in nodes:
+    for node_id in sorted(nodes):  # Sort nodes
         find_child_layers(node_id)
 
     # compute the layer dependencies dictionary based on the node_layers dependencies,
