@@ -15,4 +15,3 @@ sqlalchemy>=1.4, <3
 strawberry-graphql>=0.192.0, <1.0
 uvicorn[standard]~=0.30.0
 watchgod~=0.8.2
-graphlib_backport>=1.0.0; python_version < '3.9'
