@@ -52,7 +52,7 @@ setup(
     },
     extras_require={
         "docs": [
-            "kedro-sphinx-theme @ git+https://github.com/kedro-org/kedro-sphinx-theme.git@fix-favicon",
+            "kedro-sphinx-theme==2024.4.0",
         ],
         "aws": ["s3fs>=2021.4"],
         "azure": ["adlfs>=2021.4"],
