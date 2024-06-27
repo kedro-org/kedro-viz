@@ -9,16 +9,15 @@ import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
-
-from kedro import __version__
-from kedro.framework.project import configure_project, pipelines
-from kedro.framework.session import KedroSession
+from kedro.config.omegaconf_config import OmegaConfigLoader
+from kedro.framework.context.context import KedroContext
 from kedro.framework.session.store import BaseSessionStore
-from kedro.framework.startup import bootstrap_project
+from kedro import __version__
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.integrations.kedro.parser import parse_project
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +74,7 @@ def load_data(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
@@ -91,30 +91,54 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    if package_name:
-        configure_project(package_name)
-    else:
-        # bootstrap project when viz is run in dev mode
-        bootstrap_project(project_path)
-
-    with KedroSession.create(
+    if is_lite:
+        # [TODO: Confirm on the context creation]
+        context = KedroContext(
+        package_name="{{ cookiecutter.python_package }}",
         project_path=project_path,
-        env=env,
-        save_on_close=False,
-        extra_params=extra_params,
-    ) as session:
-        # check for --include-hooks option
-        if not include_hooks:
-            session._hook_manager = _VizNullPluginManager()  # type: ignore
+        config_loader=OmegaConfigLoader(conf_source=str(project_path)),
+        hook_manager = _VizNullPluginManager(),
+        env=env)
+        
+        # [TODO: Confirm on the session store creation]
+        session_store = None
 
-        context = session.load_context()
-        session_store = session._store
-        catalog = context.catalog
-
-        # Pipelines is a lazy dict-like object, so we force it to populate here
-        # in case user doesn't have an active session down the line when it's first accessed.
-        # Useful for users who have `get_current_session` in their `register_pipelines()`.
-        pipelines_dict = dict(pipelines)
+        # [TODO: Confirm on the DataCatalog creation]
+        catalog = DataCatalog()
+        
         stats_dict = _get_dataset_stats(project_path)
+        pipelines_dict = parse_project(project_path)
+        
+        return catalog, pipelines_dict, session_store, stats_dict
+    else:
+        from kedro.framework.project import configure_project, pipelines
+        from kedro.framework.session import KedroSession
+        from kedro.framework.startup import bootstrap_project
 
-    return catalog, pipelines_dict, session_store, stats_dict
+        if package_name:
+            configure_project(package_name)
+        else:
+            # bootstrap project when viz is run in dev mode
+            bootstrap_project(project_path)
+
+        with KedroSession.create(
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
+        ) as session:
+            # check for --include-hooks option
+            if not include_hooks:
+                session._hook_manager = _VizNullPluginManager()  # type: ignore
+
+            context = session.load_context()
+            session_store = session._store
+            catalog = context.catalog
+
+            # Pipelines is a lazy dict-like object, so we force it to populate here
+            # in case user doesn't have an active session down the line when it's first accessed.
+            # Useful for users who have `get_current_session` in their `register_pipelines()`.
+            pipelines_dict = dict(pipelines)
+            stats_dict = _get_dataset_stats(project_path)
+
+        return catalog, pipelines_dict, session_store, stats_dict

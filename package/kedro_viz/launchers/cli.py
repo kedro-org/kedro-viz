@@ -115,6 +115,11 @@ def viz(ctx):  # pylint: disable=unused-argument
     help=PARAMS_ARG_HELP,
     callback=_split_params,
 )
+@click.option(
+    "--lite",
+    is_flag=True,
+    help="A flag to load an experimental light-weight Kedro Viz",
+)
 # pylint: disable=import-outside-toplevel, too-many-locals
 def run(
     host,
@@ -127,6 +132,7 @@ def run(
     autoreload,
     include_hooks,
     params,
+    lite
 ):
     """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
@@ -170,6 +176,7 @@ def run(
             "include_hooks": include_hooks,
             "package_name": PACKAGE_NAME,
             "extra_params": params,
+            "is_lite": lite
         }
         if autoreload:
             run_process_kwargs = {
