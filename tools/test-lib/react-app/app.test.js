@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import App, { dataSources } from './app';
 
 const keys = Object.keys(dataSources).filter((key) => key !== 'random');
@@ -20,18 +20,17 @@ describe('lib-test', () => {
       .querySelector('.pipeline-nodelist__row')
       .querySelector('.pipeline-nodelist__row__text--tree')
       .querySelector('.pipeline-nodelist__row__label')
-      .textContent.trim().toLowerCase();
-
-    console.log('firstNodeName:', firstNodeName);
+      .textContent.trim();
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
-      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name.trim().toLowerCase()
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name.trim()
     );
 
-    console.log('modularPipelineNames:', modularPipelineNames);
+    const expectedNodeName = modularPipelineNames.includes(firstNodeName.toLowerCase()) ? firstNodeName.toLowerCase() : firstNodeName;
+    const expectedNodeNames = modularPipelineNames.map(name => name.toLowerCase());
 
-    expect(modularPipelineNames).toContain(firstNodeName);
+    expect(expectedNodeNames).toContain(expectedNodeName.toLowerCase());
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {
