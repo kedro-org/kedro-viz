@@ -16,6 +16,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 - Add favicon to kedro-viz documentation. (#1959)
+- Add "-p" flag to kedro-viz to match kedro run. (#1960)
 
 # Release 9.1.0
 
