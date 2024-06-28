@@ -44,6 +44,16 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 
 ## Installation
 
+There are two ways you can use Kedro-Viz:
+
+- As a [Kedro plugin](https://docs.kedro.org/en/stable/extend_kedro/plugins.html) (the most common way).
+
+  To install Kedro-Viz as a Kedro plugin:
+
+  ```bash
+  pip install kedro-viz
+  ```
+
 - As a standalone React component (for embedding Kedro-Viz in your web application).
 
   To install the standalone React component:
@@ -53,6 +63,173 @@ Kedro-Viz is an interactive development tool for building data science pipelines
   ```
 
 ## Usage
+
+#### Compatibility with Kedro and Kedro-datasets   
+
+Ensure your `Kedro`, `Kedro-Viz` and `Kedro-datasets` versions are supported by referencing the following table:
+
+<table>
+    <tr>
+        <th>Python Version</th>
+        <th style="text-align: center" colspan="3">Last Supported</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Kedro</td>
+        <td>Kedro-Viz</td>
+        <td>Kedro-datasets</td>
+    </tr>
+    <tr>
+        <td>3.6</td>
+        <td>0.17.7</td>
+        <td>4.1.1</td>
+        <td>-</td>
+    </tr>
+    <tr>
+        <td>3.7</td>
+        <td>0.18.14</td>
+        <td>6.7.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>3.8</td>
+        <td>Latest</td>
+        <td>7.1.0</td>
+        <td>1.8.0</td>
+    </tr>
+    <tr>
+        <td>>= 3.9</td>
+        <td>Latest</td>
+        <td>Latest</td>
+        <td>Latest</td>
+    </tr>
+</table>​
+
+
+### CLI Usage
+
+To launch Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
+
+```bash
+kedro viz run
+```
+
+A browser tab opens automatically to serve the visualisation at `http://127.0.0.1:4141/`.
+
+Kedro-Viz also supports the following additional arguments on the command line:
+
+```bash
+Usage: kedro viz run [OPTIONS]
+
+  Visualise a Kedro pipeline using Kedro-Viz.
+
+Options:
+  --host TEXT               Host that viz will listen to. Defaults to
+                            localhost.
+
+  --port INTEGER            TCP port that viz will listen to. Defaults to
+                            4141.
+
+  --browser / --no-browser  Whether to open viz interface in the default
+                            browser or not. Browser will only be opened if
+                            host is localhost. Defaults to True.
+
+  --load-file FILE          Path to load Kedro-Viz data from a directory
+  --save-file FILE          Path to save Kedro-Viz data to a directory 
+  --pipeline TEXT           Name of the registered pipeline to visualise. If not
+                            set, the default pipeline is visualised
+
+  -e, --env TEXT            Kedro configuration environment. If not specified,
+                            catalog config in `local` will be used
+
+  --autoreload              Autoreload viz server when a Python or YAML file change in
+                            the Kedro project
+
+  --include-hooks           A flag to include all registered hooks in your
+                            Kedro Project
+
+  --params TEXT             Specify extra parameters that you want to pass to
+                            the context initializer. Items must be separated
+                            by comma, keys - by colon, example:
+                            param1:value1,param2:value2. Each parameter is
+                            split by the first comma, so parameter values are
+                            allowed to contain colons, parameter keys are not.
+                            To pass a nested dictionary as parameter, separate
+                            keys by '.', example: param_group.param1:value1.
+
+  -h, --help                Show this message and exit.
+```
+
+To deploy Kedro-Viz from the command line as a Kedro plugin, use the following command from the root folder of your Kedro project:
+
+```bash
+kedro viz deploy
+```
+
+```bash
+Usage: kedro viz deploy [OPTIONS]
+
+  Deploy and host Kedro Viz on AWS S3.
+
+Options:
+  --platform TEXT     Supported Cloud Platforms like ('aws', 'azure', 'gcp')
+                      to host Kedro Viz  [required]
+  --endpoint TEXT     Static Website hosted endpoint.(eg., For AWS - http://<b
+                      ucket_name>.s3-website.<region_name>.amazonaws.com/)
+                      [required]
+  --bucket-name TEXT  Bucket name where Kedro Viz will be hosted  [required]
+  --include-hooks     A flag to include all registered hooks in your Kedro
+                      Project
+  --include-previews  A flag to include preview for all the datasets
+  -h, --help          Show this message and exit.
+```
+
+To create a build directory of your local Kedro-Viz instance with static data from the command line, use the following command from the root folder of your Kedro project:
+
+```bash
+kedro viz build
+```
+
+```bash
+Usage: kedro viz build [OPTIONS]
+
+  Create build directory of local Kedro Viz instance with Kedro project data
+
+Options:
+  --include-hooks     A flag to include all registered hooks in your Kedro
+                      Project
+  --include-previews  A flag to include preview for all the datasets
+  -h, --help          Show this message and exit.
+```
+
+### Experiment Tracking usage
+
+To enable [experiment tracking](https://docs.kedro.org/en/stable/experiment_tracking/index.html) in Kedro-Viz, you need to add the Kedro-Viz `SQLiteStore` to your Kedro project.
+
+This can be done by adding the below code to `settings.py` in the `src` folder of your Kedro project.
+
+```python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from pathlib import Path
+SESSION_STORE_CLASS = SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+```
+
+Once the above set-up is complete, tracking datasets can be used to track relevant data for Kedro runs. More information on how to use tracking datasets can be found in the [experiment tracking documentation](https://docs.kedro.org/en/stable/experiment_tracking/index.html)
+
+**Notes:**
+
+- Experiment Tracking is only available for Kedro-Viz >= 4.0.2 and Kedro >= 0.17.5
+- Prior to Kedro 0.17.6, when using tracking datasets, you will have to explicitly mark the datasets as `versioned` for it to show up properly in Kedro-Viz experiment tracking tab. From Kedro >= 0.17.6, this is done automatically:
+
+```yaml
+train_evaluation.r2_score_linear_regression:
+  type: tracking.MetricsDataset
+  filepath: ${base_location}/09_tracking/linear_score.json
+  versioned: true
+```
+
+### Standalone React component usage
 
 To use Kedro-Viz as a standalone React component, you can follow the example below. However, please note that Kedro-Viz does not support server-side rendering (SSR). If you're using Next.js or another SSR framework, you should be aware of this limitation.
 
@@ -82,93 +259,11 @@ The JSON can be obtained by running:
 kedro viz run --save-file=filename
 ```
 
-The command will generate a folder with the specified <filename>, containing the following structure: 
-
-```
-<filename>/api/
-├── main
-├── nodes
-│   ├── 23c94afb
-│   ├── 28754fab
-│   ├── 2ab3579f
-│   ├── 329e963c
-│   ├── 369acf98
-│   └── ...
-└── pipelines
-    ├── __default__
-    ├── data_processing
-    ├── data_science
-    └── ...
-```
-
-Please use the `main` file as the input JSON for the `data` prop in your Kedro-Viz component.
-
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
+For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)
+
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
-
-## Props
-
-Below is the example with all possible props. 
-
-```
-  <KedroViz
-    data={json}
-    preview
-    display={{
-      globalToolbar: false,
-      miniMap: false,
-      expandAllPipelines: false,
-    }}
-    visible={{
-      labelBtn: false,
-      layerBtn: false,
-      exportBtn: false,
-      pipelineBtn: false,
-      sidebar: false,
-    }}
-    theme="dark"
-  /> 
-```
-
-| Name         | Type    | Default | Description |
-| ------------ | ------- | ------- | ----------- |
-| `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data will be displayed on the chart |
-| `theme` | string | dark | select Kedro-Viz theme dark/light |
-| `preview` | boolean | false | Use Kedro-Viz in preview mode with flowchart and hiding all other components except metadata panel which will be visible when you click on the node |
-| display |  |  |  |
-| `globalToolbar` | boolean | true | If `false` Global sidebar on extreme left will be hidden |
-| `miniMap` | boolean | true | If `false` miniMap button at the bottom of the primaryToolbar will be hidden |
-| `expandAllPipelines` | boolean | false | If `true` all modular pipelines on first load will be expanded |
-| visible |  |  |  |
-| `labelBtn` | boolean | true | If `false` labelBtn button at the top of the primaryToolbar will be hidden |
-| `layerBtn` | boolean | true | If `false` layerBtn button at the top of the primaryToolbar will be hidden |
-| `exportBtn` | boolean | true | If `false` exportBtn button at the top of the primaryToolbar will be hidden |
-| `pipelineBtn` | boolean | true | If `false` pipelineBtn button at the top of the primaryToolbar will be hidden |
-| `sidebar` | boolean | true | If `false` sidebar on left will be minimized |
-
-### Note
-When `preview` is `true`, `display` and `visible` props are ignored as all major components are hidden.
-
-All components are annotated to understand their positions in the Kedro-Viz UI.
-
-![Kedro-Viz component annotation](https://raw.githubusercontent.com/jitu5/kedro-viz/main/.github/img/kedro-viz-annotation.png)
-
-
-## Standalone Example Repository
-
-We have created a [kedro-viz-standalone](https://github.com/kedro-org/kedro-viz-standalone.git) repository to demonstrate how to use Kedro-Viz in standalone mode or embedded in a React application.
-
-This repository provides a fully functional example of Kedro-Viz, showcasing how to integrate it into your projects. The example includes setup instructions and demonstrates various features of Kedro-Viz.
-
-To get started, clone the repository, install the dependencies and run the example React application:
-
-```
-git clone https://github.com/kedro-org/kedro-viz-standalone.git
-cd kedro-viz-standalone
-npm install
-npm start
-```
 
 ## Feature Flags
 
