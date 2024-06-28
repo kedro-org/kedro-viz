@@ -22,6 +22,13 @@ from kedro_viz.server import populate_data
 
 
 @pytest.fixture
+def setup_kedro_project(tmp_path):
+    """Fixture to setup a temporary Kedro project directory structure."""
+    kedro_project_path = tmp_path / "kedro_project"
+    return kedro_project_path
+
+
+@pytest.fixture
 def data_access_manager():
     yield DataAccessManager()
 
