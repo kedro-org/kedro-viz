@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 from typing import Dict
 
 import networkx as nx
@@ -26,6 +27,25 @@ from kedro_viz.models.flowchart import (
 
 def identity(x):
     return x
+
+
+def assert_expected_modular_pipeline_values_for_edge_cases(
+    expected_modular_pipeline_tree_obj,
+    modular_pipeline_node_id,
+    data_access_manager,
+    modular_pipeline_tree_values,
+    expected_key,
+):
+    """This asserts an `expected_key` value present in modular_pipeline_tree
+    that is constructed in the edge cases with the expected_modular_pipeline_tree"""
+    assert sorted(
+        list(expected_modular_pipeline_tree_obj[modular_pipeline_node_id][expected_key])
+    ) == sorted(
+        list(
+            data_access_manager.nodes.get_node_by_id(node_id).name
+            for node_id in modular_pipeline_tree_values
+        )
+    )
 
 
 class TestAddCatalog:
@@ -471,29 +491,6 @@ class TestAddPipelines:
             ]
         )
 
-    def assert_expected_modular_pipeline_values_for_edge_cases(
-        self,
-        expected_modular_pipeline_tree_obj,
-        modular_pipeline_node_id,
-        data_access_manager,
-        modular_pipeline_tree_values,
-        expected_key,
-    ):
-        """This asserts an `expected_key` value present in modular_pipeline_tree
-        that is constructed in the edge cases with the expected_modular_pipeline_tree"""
-        assert sorted(
-            list(
-                expected_modular_pipeline_tree_obj[modular_pipeline_node_id][
-                    expected_key
-                ]
-            )
-        ) == sorted(
-            list(
-                data_access_manager.nodes.get_node_by_id(node_id).name
-                for node_id in modular_pipeline_tree_values
-            )
-        )
-
     def test_task_nodes_for_modular_pipeline_edge_cases(
         self,
         data_access_manager: DataAccessManager,
@@ -509,25 +506,37 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
-        # testing task nodes in GraphNodesRepository
-        all_node_names = set()
+        # Testing for task node names in NodesRepository
+
+        # Extract the task node names that are present in edge_case_example_pipelines
+        all_task_node_names_from_edge_case_example_pipelines = set()
         for registered_pipeline_id, _pipeline in edge_case_example_pipelines.items():
             # This is needed to add modular pipeline nodes to the GraphNodesRepository
             data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
                 registered_pipeline_id
             )
-            all_node_names |= {node.name for node in _pipeline.nodes}
-
-        assert sorted(
-            {
-                f"{n.namespace}.{n.name}" if n.namespace else n.name
-                for n in data_access_manager.nodes.as_list()
-                if n.type == GraphNodeType.TASK
+            all_task_node_names_from_edge_case_example_pipelines |= {
+                node.name for node in _pipeline.nodes
             }
-        ) == sorted(list(all_node_names))
+
+        # Extract the task node names that are created
+        # in the NodesRepository from edge_case_example_pipelines
+        all_task_node_names_from_nodes_repository = set()
+        for _node in data_access_manager.nodes.as_list():
+            if _node.type == GraphNodeType.TASK:
+                all_task_node_names_from_nodes_repository.add(
+                    f"{_node.namespace}.{_node.name}" if _node.namespace else _node.name
+                )
+
+        # compare the task node names present in
+        # edge_case_example_pipelines and NodesRepository
+        assert sorted(
+            list(all_task_node_names_from_edge_case_example_pipelines)
+        ) == sorted(list(all_task_node_names_from_nodes_repository))
 
     def test_registered_pipelines_for_modular_pipeline_edge_cases(
         self,
@@ -544,13 +553,32 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
-        # testing RegisteredPipelinesRepository
-        assert [
-            p.id for p in data_access_manager.registered_pipelines.as_list()
-        ] == list(edge_case_example_pipelines.keys())
+        # Testing for registered pipeline ids in RegisteredPipelinesRepository
+
+        # Extract the registered pipeline ids present in edge_case_example_pipelines
+        all_registered_pipeline_ids_from_edge_case_example_pipelines = (
+            edge_case_example_pipelines.keys()
+        )
+
+        # Extract the registered pipeline ids that are created
+        # in the RegisteredPipelinesRepository from edge_case_example_pipelines
+        all_registered_pipeline_ids_from_registered_pipelines_repository = set()
+        for registered_pipeline in data_access_manager.registered_pipelines.as_list():
+            all_registered_pipeline_ids_from_registered_pipelines_repository.add(
+                registered_pipeline.id
+            )
+
+        # compare the registered pipeline ids present in
+        # edge_case_example_pipelines and RegisteredPipelinesRepository
+        assert sorted(
+            list(all_registered_pipeline_ids_from_edge_case_example_pipelines)
+        ) == sorted(
+            list(all_registered_pipeline_ids_from_registered_pipelines_repository)
+        )
 
     def test_tags_for_modular_pipeline_edge_cases(
         self,
@@ -567,6 +595,7 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
@@ -588,13 +617,28 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
-        # testing ModularPipelinesRepository
-        assert sorted(list(data_access_manager.modular_pipelines.keys())) == sorted(
-            list(edge_case_example_pipelines.keys())
+        # Testing for modular pipeline ids in ModularPipelinesRepository
+
+        # Extract the modular pipeline ids present in edge_case_example_pipelines
+        all_modular_pipeline_ids_from_edge_case_example_pipelines = (
+            edge_case_example_pipelines.keys()
         )
+
+        # Extract the modular pipeline ids that are created
+        # in the ModularPipelinesRepository from edge_case_example_pipelines
+        all_modular_pipeline_ids_from_modular_pipelines_repository = (
+            data_access_manager.modular_pipelines.keys()
+        )
+
+        # compare the modular pipeline ids present in
+        # edge_case_example_pipelines and ModularPipelinesRepository
+        assert sorted(
+            list(all_modular_pipeline_ids_from_edge_case_example_pipelines)
+        ) == sorted(list(all_modular_pipeline_ids_from_modular_pipelines_repository))
 
     def test_tree_for_modular_pipeline_edge_cases(
         self,
@@ -612,19 +656,33 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
+        # Testing for tree that is created in ModularPipelinesRepository
+
+        # Looping for each modular pipeline that is created
+        # from edge_case_example_pipelines
         for (
             registered_pipeline_id,
             modular_pipelines_repo_obj,
         ) in data_access_manager.modular_pipelines.items():
+            # Extracting the expected modular pipeline tree for the
+            # registered pipeline
             expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
                 registered_pipeline_id
             ]
-            # expected modular_pipelines
-            assert sorted(list(expected_modular_pipeline_tree_obj.keys())) == sorted(
-                list(modular_pipelines_repo_obj.tree.keys())
+
+            expected_modular_pipeline_tree_keys = (
+                expected_modular_pipeline_tree_obj.keys()
+            )
+            actual_modular_pipeline_tree_keys = modular_pipelines_repo_obj.tree.keys()
+
+            # compare the modular pipeline tree keys present in
+            # the created modular pipeline tree and expected_modular_pipeline_tree
+            assert sorted(list(actual_modular_pipeline_tree_keys)) == sorted(
+                list(expected_modular_pipeline_tree_keys)
             )
 
     def test_tree_item_inputs_for_modular_pipeline_edge_cases(
@@ -644,22 +702,34 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
+        # Testing for each tree item inputs that are created in ModularPipelinesRepository
+
+        # Looping for each modular pipeline that is created
+        # from edge_case_example_pipelines
         for (
             registered_pipeline_id,
             modular_pipelines_repo_obj,
         ) in data_access_manager.modular_pipelines.items():
+            # Extracting the expected modular pipeline tree for the
+            # registered pipeline
             expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
                 registered_pipeline_id
             ]
-            # in each modular pipeline expected inputs
+
+            # Looping for each modular pipeline node that is
+            # present in the tree of a created modular pipelines repo
             for (
                 modular_pipeline_id,
                 modular_pipeline_node,
             ) in modular_pipelines_repo_obj.tree.items():
-                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                # compare the inputs property of the created
+                # modular pipeline node with the expected inputs
+                # from expected_modular_pipeline_tree_obj
+                assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
                     data_access_manager,
@@ -684,23 +754,34 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
+        # Testing for each tree item outputs that are created in ModularPipelinesRepository
+
+        # Looping for each modular pipeline that is created
+        # from edge_case_example_pipelines
         for (
             registered_pipeline_id,
             modular_pipelines_repo_obj,
         ) in data_access_manager.modular_pipelines.items():
+            # Extracting the expected modular pipeline tree for the
+            # registered pipeline
             expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
                 registered_pipeline_id
             ]
 
-            # in each modular pipeline expected outputs
+            # Looping for each modular pipeline node that is
+            # present in the tree of a created modular pipelines repo
             for (
                 modular_pipeline_id,
                 modular_pipeline_node,
             ) in modular_pipelines_repo_obj.tree.items():
-                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                # compare the outputs property of the created
+                # modular pipeline node with the expected outputs
+                # from expected_modular_pipeline_tree_obj
+                assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
                     data_access_manager,
@@ -725,6 +806,7 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
@@ -734,21 +816,29 @@ class TestAddPipelines:
                 registered_pipeline_id
             )
 
+        # Looping for each modular pipeline that is created
+        # from edge_case_example_pipelines
         for (
             registered_pipeline_id,
             modular_pipelines_repo_obj,
         ) in data_access_manager.modular_pipelines.items():
+            # Extracting the expected modular pipeline tree for the
+            # registered pipeline
             expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
                 registered_pipeline_id
             ]
 
-            # in each modular pipeline expected children
+            # Looping for each modular pipeline node that is
+            # present in the tree of a created modular pipelines repo
             for (
                 modular_pipeline_id,
                 modular_pipeline_node,
             ) in modular_pipelines_repo_obj.tree.items():
+                # compare the children property of the created
+                # modular pipeline node with the expected children
+                # from expected_modular_pipeline_tree_obj
                 # [NOTE: only for modular pipeline node, we are not hashing id]
-                self.assert_expected_modular_pipeline_values_for_edge_cases(
+                assert_expected_modular_pipeline_values_for_edge_cases(
                     expected_modular_pipeline_tree_obj,
                     modular_pipeline_id,
                     data_access_manager,
@@ -776,6 +866,7 @@ class TestAddPipelines:
         https://github.com/kedro-org/kedro-viz/issues/1814
 
         """
+        # setup
         data_access_manager.add_catalog(example_catalog, edge_case_example_pipelines)
         data_access_manager.add_pipelines(edge_case_example_pipelines)
 
@@ -785,33 +876,45 @@ class TestAddPipelines:
                 registered_pipeline_id
             )
 
+        # Looping for each modular pipeline that is created
+        # from edge_case_example_pipelines
         for (
             registered_pipeline_id,
             modular_pipelines_repo_obj,
         ) in data_access_manager.modular_pipelines.items():
+            # Extracting the expected modular pipeline tree for the
+            # registered pipeline
             expected_modular_pipeline_tree_obj = expected_modular_pipeline_tree[
                 registered_pipeline_id
             ]
 
-            # in each modular pipeline expected tags
+            # Looping for each modular pipeline node that is
+            # present in the tree of a created modular pipelines repo
             for (
                 modular_pipeline_id,
                 modular_pipeline_node,
             ) in modular_pipelines_repo_obj.tree.items():
-                modular_pipeline_children_tags = set()
+                # Extract the actual modular pipeline children tags
+                actual_modular_pipeline_children_tags = set()
                 for modular_pipeline_child in modular_pipeline_node.children:
-                    modular_pipeline_children_tags |= (
+                    actual_modular_pipeline_children_tags |= (
                         data_access_manager.nodes.get_node_by_id(
                             modular_pipeline_child.id
                         ).tags
                     )
-                assert sorted(
-                    list(
-                        expected_modular_pipeline_tree_obj[modular_pipeline_id][
-                            "expected_tags"
-                        ]
-                    )
-                ) == sorted(list(modular_pipeline_children_tags))
+
+                # Extract the expected modular pipeline children tags
+                expected_modular_pipeline_children_tags = (
+                    expected_modular_pipeline_tree_obj[modular_pipeline_id][
+                        "expected_tags"
+                    ]
+                )
+
+                # compare the tags created with the expected tags
+                # from expected_modular_pipeline_tree_obj
+                assert sorted(list(actual_modular_pipeline_children_tags)) == sorted(
+                    list(expected_modular_pipeline_children_tags)
+                )
 
     def test_add_pipelines_with_transcoded_data(
         self,

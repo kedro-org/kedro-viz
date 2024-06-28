@@ -156,10 +156,13 @@ class DataAccessManager:
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
+            # Add a Kedro node as a TaskNode to the NodesRepository
+            # for a given registered pipeline ID
             task_node = self.add_node(
                 registered_pipeline_id, node, modular_pipelines_repo_obj
             )
 
+            # Add the task node created above to RegisteredPipelinesRepository
             self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
             # Add node's inputs as DataNode to the graph
@@ -337,10 +340,9 @@ class DataAccessManager:
 
             # update the node_mod_pipeline_map
             if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
-                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = set()
-                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id].add(
+                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
                     ROOT_MODULAR_PIPELINE_ID
-                )
+                }
 
         if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
@@ -349,7 +351,6 @@ class DataAccessManager:
                 layer=layer,
                 tags=set(),
                 parameters=obj,
-                # [TODO: Confirm if parameters are not part of any modular_pipeline]
                 modular_pipelines=None,
             )
         else:
