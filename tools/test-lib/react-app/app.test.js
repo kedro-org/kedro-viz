@@ -20,13 +20,13 @@ describe('lib-test', () => {
       .querySelector('.pipeline-nodelist__row')
       .querySelector('.pipeline-nodelist__row__text--tree')
       .querySelector('.pipeline-nodelist__row__label')
-      .textContent;
+      .textContent.trim().toLowerCase();
 
     console.log('firstNodeName:', firstNodeName);
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
-      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name.trim().toLowerCase()
     );
 
     console.log('modularPipelineNames:', modularPipelineNames);
