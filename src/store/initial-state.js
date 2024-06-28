@@ -188,6 +188,7 @@ export const mergeLocalStorage = (state) => {
  */
 export const preparePipelineState = (
   data,
+  props,
   applyFixes,
   expandAllPipelines,
   urlParams
@@ -204,7 +205,9 @@ export const preparePipelineState = (
     state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
-  return state;
+  console.log(state);
+  console.log(props);
+  return deepmerge(state, props);
 };
 
 /**
@@ -233,10 +236,8 @@ export const prepareNonPipelineState = (props, urlParams) => {
 
   return {
     ...state,
+    ...props.props,
     flags: { ...state.flags, ...getFlagsFromUrl() },
-    theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
-    display: { ...state.display, ...props.display },
   };
 };
 
@@ -257,6 +258,7 @@ const getInitialState = (props = {}) => {
 
   const pipelineState = preparePipelineState(
     props.data,
+    props.props,
     props.data !== 'json',
     expandAllPipelines,
     urlParams

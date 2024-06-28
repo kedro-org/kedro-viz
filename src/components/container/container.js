@@ -9,7 +9,29 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} />
+    <App
+      data={getPipelineData()}
+      props={{
+        display: {
+          globalToolbar: false,
+          miniMap: false,
+          expandAllPipelines: false,
+          sidebar: false,
+        },
+        // tag: {
+        //   enabled:{'companies':true}
+        // },
+        // nodeType:{
+        //   disabled:{
+        //     parameters: false,
+        //     task: false,
+        //     data: false,
+        //   },
+        // },
+
+        theme: 'dark',
+      }}
+    />
   </>
 );
 

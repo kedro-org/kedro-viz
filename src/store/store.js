@@ -88,6 +88,7 @@ export default function configureStore(initialState, dataType) {
 
   updateGraphOnChange(store);
   store.subscribe(() => {
+    console.log(store.getState());
     saveStateToLocalStorage(store.getState());
   });
 
