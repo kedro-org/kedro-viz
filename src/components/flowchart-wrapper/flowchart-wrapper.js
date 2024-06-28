@@ -12,7 +12,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode } from '../../actions';
+import { toggleFocusMode, toggleSidebar } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -45,11 +45,13 @@ import './flowchart-wrapper.scss';
  */
 export const FlowChartWrapper = ({
   fullNodeNames,
+  displaySidebar,
   graph,
   loading,
   metadataVisible,
   modularPipelinesTree,
   nodes,
+  onToggleSidebar,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
@@ -124,6 +126,10 @@ export const FlowChartWrapper = ({
       }
     }
   };
+
+  useEffect(() => {
+    onToggleSidebar(displaySidebar);
+  }, [displaySidebar, onToggleSidebar]);
 
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
@@ -308,7 +314,7 @@ export const FlowChartWrapper = ({
   if (isInvalidUrl) {
     return (
       <div className="kedro-pipeline">
-        <Sidebar />
+        {displaySidebar && <Sidebar />}
         <MetaData />
         <PipelineWarning
           errorMessage={errorMessage}
@@ -320,7 +326,7 @@ export const FlowChartWrapper = ({
   } else {
     return (
       <div className="kedro-pipeline">
-        <Sidebar />
+        {displaySidebar && <Sidebar />}
         <MetaData />
         <div className="pipeline-wrapper">
           <PipelineWarning />
@@ -330,7 +336,7 @@ export const FlowChartWrapper = ({
               'pipeline-wrapper__go-back-btn--show':
                 goBackToExperimentTracking?.showGoBackBtn,
               'pipeline-wrapper__go-back-btn--show-sidebar-visible':
-                sidebarVisible,
+                sidebarVisible || displaySidebar,
               'pipeline-wrapper__go-back-btn--show-metadata-visible':
                 metadataVisible,
             })}
@@ -342,7 +348,8 @@ export const FlowChartWrapper = ({
           </div>
           <div
             className={classnames('pipeline-wrapper__loading', {
-              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
+              'pipeline-wrapper__loading--sidebar-visible':
+                sidebarVisible || displaySidebar,
             })}
           >
             <LoadingIcon visible={loading} />
@@ -358,6 +365,7 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   fullNodeNames: getNodeFullName(state),
+  displaySidebar: state.display.sidebar,
   graph: state.graph,
   loading: isLoading(state),
   metadataVisible: getVisibleMetaSidebar(state),
@@ -380,6 +388,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineExpanded: (expanded) => {
     dispatch(toggleModularPipelinesExpanded(expanded));
+  },
+  onToggleSidebar: (visible) => {
+    dispatch(toggleSidebar(visible));
   },
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
