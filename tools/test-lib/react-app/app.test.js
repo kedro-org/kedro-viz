@@ -22,10 +22,15 @@ describe('lib-test', () => {
       .querySelector('.pipeline-nodelist__row__label')
       .textContent;
 
+    console.log('firstNodeName:', firstNodeName);
+
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
       (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
     );
+
+    console.log('modularPipelineNames:', modularPipelineNames);
+
     expect(modularPipelineNames).toContain(firstNodeName);
   };
 
