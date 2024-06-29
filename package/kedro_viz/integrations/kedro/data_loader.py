@@ -74,7 +74,7 @@ def load_data(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-    is_lite: bool = False
+    is_lite: bool = False,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
@@ -94,21 +94,22 @@ def load_data(
     if is_lite:
         # [TODO: Confirm on the context creation]
         context = KedroContext(
-        package_name="{{ cookiecutter.python_package }}",
-        project_path=project_path,
-        config_loader=OmegaConfigLoader(conf_source=str(project_path)),
-        hook_manager = _VizNullPluginManager(),
-        env=env)
-        
+            package_name="{{ cookiecutter.python_package }}",
+            project_path=project_path,
+            config_loader=OmegaConfigLoader(conf_source=str(project_path)),
+            hook_manager=_VizNullPluginManager(),
+            env=env,
+        )
+
         # [TODO: Confirm on the session store creation]
         session_store = None
 
         # [TODO: Confirm on the DataCatalog creation]
         catalog = DataCatalog()
-        
+
         stats_dict = _get_dataset_stats(project_path)
-        pipelines_dict = parse_project(project_path)
-        
+        pipelines_dict = dict(parse_project(project_path))
+        # print(pipelines_dict)
         return catalog, pipelines_dict, session_store, stats_dict
     else:
         from kedro.framework.project import configure_project, pipelines
@@ -139,6 +140,7 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
+            # print(pipelines_dict)
             stats_dict = _get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict

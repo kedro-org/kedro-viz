@@ -1,103 +1,87 @@
 from collections import defaultdict
 from pathlib import Path
 import ast
-from typing import Dict, List
+from typing import Dict, Iterable, List
 from kedro.pipeline.modular_pipeline import pipeline as ModularPipeline
 from kedro.pipeline.pipeline import Pipeline, Node
 
-
-# WIP
 class KedroPipelineLocator(ast.NodeVisitor):
     def __init__(self):
         self.pipeline = None
 
     def visit_FunctionDef(self, node):
-        if node.name == "create_pipeline":
-            kedro_node_extractor = KedroNodeExtractor()
-            kedro_node_extractor.visit(node)
-            self.pipeline = Pipeline(nodes=kedro_node_extractor.nodes)
-
-            try:
-                # modular pipeline
-                if kedro_node_extractor.namespace:
-                    print("Namespace is here", kedro_node_extractor.namespace)
-                    self.pipeline = ModularPipeline(
-                        self.pipeline,
-                        inputs=kedro_node_extractor.inputs,
-                        outputs=kedro_node_extractor.outputs,
-                        parameters=set(),
-                        tags=kedro_node_extractor.tags,
-                        namespace=kedro_node_extractor.namespace,
+        try:
+            if node.name == "create_pipeline":
+                kedro_pipeline_explorer = KedroPipelineExplorer()
+                kedro_pipeline_explorer.visit(node)
+                try:
+                    # modular pipeline
+                    if kedro_pipeline_explorer.namespace:
+                        self.pipeline = ModularPipeline(
+                            pipe=kedro_pipeline_explorer.nodes,
+                            inputs=kedro_pipeline_explorer.inputs,
+                            outputs=kedro_pipeline_explorer.outputs,
+                            parameters=kedro_pipeline_explorer.parameters,
+                            tags=kedro_pipeline_explorer.tags,
+                            namespace=kedro_pipeline_explorer.namespace,
+                        )
+                    else:
+                        # kedro pipeline
+                        self.pipeline = Pipeline(
+                            nodes=kedro_pipeline_explorer.nodes,
+                            tags=kedro_pipeline_explorer.tags,
+                        )
+                except Exception as exc:
+                    # [TODO: Error with modular pipeline, try creating regular pipeline]
+                    print(exc)
+                    self.pipeline = Pipeline(
+                        nodes=kedro_pipeline_explorer.nodes,
+                        tags=kedro_pipeline_explorer.tags,
                     )
-            except Exception as exc:
-                # [TODO: Error with modular pipeline]
-                print("error")
-                print(exc)
-                self.pipeline = Pipeline(nodes=kedro_node_extractor.nodes)
 
-        self.generic_visit(node)
+            self.generic_visit(node)
+            
+        except Exception as exc:
+            # [TODO: Error with parsing the file, dump the visiting node]
+            print(exc)
+            print(ast.dump(node, indent=2))
 
-
-class KedroNodeExtractor(ast.NodeVisitor):
+class KedroPipelineExplorer(ast.NodeVisitor):
+    # [TODO: Current explorer only serves for 1 pipeline() function within a create_pipeline def]
     def __init__(self):
+        # keeping these here for future use-case 
+        # when dealing with multiple pipeline() functions
+        # within a create_pipeline def
         self.nodes: List[Node] = []
-        self.inputs = set()
-        self.outputs = set()
+        self.inputs = None
+        self.outputs = None
         self.namespace = None
-        self.parameters = set()
-        self.tags = set()
+        self.parameters = None
+        self.tags = None
 
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name) and node.func.id == "pipeline":
-            nodes = []
-            inputs = set()
-            outputs = set()
-            namespace = None
-            parameters = set()
-            tags = set()
+            # for a modular pipeline
+            # [TODO: pipe to be explored later]
+            # pipe: Iterable[Node | Pipeline] | Pipeline
+            
+            pipeline_inputs: str | set[str] | dict[str, str] | None = None
+            pipeline_outputs: str | set[str] | dict[str, str] | None = None
+            pipeline_namespace: str | None = None
+            pipeline_parameters: str | set[str] | dict[str, str] | None = None
+            pipeline_tags: str | Iterable[str] | None = None
+
             for keyword in node.keywords:
-                # print(keyword.arg)
                 if keyword.arg == "namespace":
-                    if isinstance(keyword.value, ast.Constant):
-                        if not keyword.value.value:
-                            continue
-                        namespace = keyword.value.value
+                    pipeline_namespace = parse_value(keyword.value)
                 elif keyword.arg == "inputs":
-                    if isinstance(keyword.value, ast.Constant):
-                        if not keyword.value.value:
-                            continue
-                        inputs = {keyword.value.value}
-                    elif isinstance(keyword.value, ast.Set):
-                        inputs = {elt.value for elt in keyword.value.elts}
-                    elif isinstance(keyword.value, ast.Dict):
-                        inputs = {elt.value for elt in keyword.value.keys}
+                    pipeline_inputs = parse_value(keyword.value)
                 elif keyword.arg == "outputs":
-                    if isinstance(keyword.value, ast.Constant):
-                        if not keyword.value.value:
-                            continue
-                        outputs = {keyword.value.value}
-                    if isinstance(keyword.value, ast.Set):
-                        outputs = {elt.value for elt in keyword.value.elts}
-                    elif isinstance(keyword.value, ast.Dict):
-                        outputs = {elt.value for elt in keyword.value.keys}
+                    pipeline_outputs = parse_value(keyword.value)
                 elif keyword.arg == "parameters":
-                    if isinstance(keyword.value, ast.Constant):
-                        if not keyword.value.value:
-                            continue
-                        parameters = {keyword.value.value}
-                    if isinstance(keyword.value, ast.Set):
-                        parameters = {elt.value for elt in keyword.value.elts}
-                    elif isinstance(keyword.value, ast.Dict):
-                        parameters = {elt.value for elt in keyword.value.keys}
+                    pipeline_parameters = parse_value(keyword.value)
                 elif keyword.arg == "tags":
-                    if isinstance(keyword.value, ast.Constant):
-                        if not keyword.value.value:
-                            continue
-                        tags = {keyword.value.value}
-                    if isinstance(keyword.value, ast.Set):
-                        tags = {elt.value for elt in keyword.value.elts}
-                    elif isinstance(keyword.value, ast.Dict):
-                        tags = {elt.value for elt in keyword.value.keys}
+                    pipeline_tags = parse_value(keyword.value)
 
             # exploring nodes
             for arg in node.args:
@@ -108,107 +92,120 @@ class KedroNodeExtractor(ast.NodeVisitor):
                             and isinstance(elt.func, ast.Name)
                             and elt.func.id == "node"
                         ):
-                            func = None
-                            inputs = set()
-                            outputs = set()
-                            name = None
-                            tags = set()
-                            namespace = None
-                            for keyword in elt.keywords:
-                                if keyword.arg == "func":
-                                    func = (
-                                        keyword.value.id
-                                        if isinstance(keyword.value, ast.Name)
-                                        else "<lambda>"
-                                    )
-                                elif keyword.arg == "inputs":
-                                    if isinstance(keyword.value, ast.Constant):
-                                        if not keyword.value.value:
-                                            continue
-                                        inputs = {keyword.value.value}
-                                    elif isinstance(keyword.value, ast.List):
-                                        inputs = {
-                                            elt.value for elt in keyword.value.elts
-                                        }
-                                    elif isinstance(keyword.value, ast.Dict):
-                                        inputs = {
-                                            elt.value for elt in keyword.value.keys
-                                        }
-                                elif keyword.arg == "outputs":
-                                    if isinstance(keyword.value, ast.Constant):
-                                        if not keyword.value.value:
-                                            continue
-                                        outputs = {keyword.value.value}
-                                    elif isinstance(keyword.value, ast.List):
-                                        outputs = {
-                                            elt.value for elt in keyword.value.elts
-                                        }
-                                    elif isinstance(keyword.value, ast.Dict):
-                                        outputs = {
-                                            elt.value for elt in keyword.value.keys
-                                        }
-                                elif keyword.arg == "name":
-                                    name = keyword.value.value
-                                elif keyword.arg == "tags":
-                                    if isinstance(keyword.value, ast.Constant):
-                                        if not keyword.value.value:
-                                            continue
-                                        tags = {keyword.value.value}
-                                    elif isinstance(keyword.value, ast.List):
-                                        tags = {elt.value for elt in keyword.value.elts}
-                                    elif isinstance(keyword.value, ast.Dict):
-                                        tags = {elt.value for elt in keyword.value.keys}
-                                elif keyword.arg == "namespace":
-                                    if isinstance(keyword.value, ast.Constant):
-                                        if not keyword.value.value:
-                                            continue
-                                        namespace = keyword.value.value
+                            node_func = None
+                            node_inputs: str | list[str] | dict[str, str] | None = None
+                            node_outputs: str | list[str] | dict[str, str] | None = None
+                            node_name: str | None = None
+                            node_tags: str | Iterable[str] | None = None
+                            node_confirms: str | list[str] | None = None
+                            node_namespace: str | None = None
 
+                            for keyword in elt.keywords:
+                                # [TODO: func is WIP. Need to create a Callable]
+                                if keyword.arg == "func":
+                                    node_func = lambda *args, **kwargs: None
+                                elif keyword.arg == "inputs":
+                                    node_inputs = parse_value(keyword.value)
+                                elif keyword.arg == "outputs":
+                                    node_outputs = parse_value(keyword.value)
+                                elif keyword.arg == "name":
+                                    node_name = parse_value(keyword.value)
+                                elif keyword.arg == "tags":
+                                    node_tags = parse_value(keyword.value)
+                                elif keyword.arg == "confirms":
+                                    node_confirms = parse_value(keyword.value)
+                                elif keyword.arg == "namespace":
+                                    node_namespace = parse_value(keyword.value)
+                                
                             # Create Node
-                            # [TODO: think of func=lambda *args: sum(args)]
                             kedro_node = Node(
-                                func=lambda *args: sum(args),
-                                inputs=list(inputs),
-                                outputs=list(outputs),
-                                name=name,
-                                tags=tags,
-                                namespace=namespace,
+                                func=node_func,
+                                inputs=node_inputs,
+                                outputs=node_outputs,
+                                name=node_name,
+                                tags=node_tags,
+                                confirms=node_confirms,
+                                namespace=node_namespace,
                             )
 
-                            nodes.append(kedro_node)
+                            self.nodes.append(kedro_node)
 
-            self.nodes.extend(nodes)
-            self.inputs |= inputs
-            self.outputs |= outputs
-            self.namespace = namespace
-            self.parameters |= parameters
-            self.tags |= tags
+            # These will be used for modular pipeline creation
+            self.inputs = pipeline_inputs
+            self.outputs = pipeline_outputs
+            self.namespace = pipeline_namespace
+            self.parameters = pipeline_parameters
+            self.tags = pipeline_tags
 
         self.generic_visit(node)
 
 
+# Helper functions
+def parse_value(keyword_value):
+    if isinstance(keyword_value, ast.Constant):
+        if not keyword_value.value:
+            return None
+        return str(keyword_value.value)
+    elif isinstance(keyword_value, (ast.List, ast.Set)):
+        return [parse_value(elt) for elt in keyword_value.elts]
+    elif isinstance(keyword_value, ast.Dict):
+        return {
+            parse_value(k): parse_value(v) for k, v in zip(keyword_value.keys, keyword_value.values)
+        }
+    elif isinstance(keyword_value, ast.ListComp):
+        # [TODO: For list comprehensions, complex case handling]
+        # [Example can be found under demo_project/pipelines/modelling]
+        return f"ListComp({ast.dump(keyword_value)})"
+    elif isinstance(keyword_value, ast.DictComp):
+        # [TODO: For dict comprehensions, complex case handling]
+        # [Example can be found under demo_project/pipelines/modelling]
+        return f"DictComp({ast.dump(keyword_value)})"
+    elif isinstance(keyword_value, ast.FormattedValue):
+        # [TODO: For formatted strings, complex case handling]
+        # [Example can be found under demo_project/pipelines/modelling]
+        return f"FormattedValue({ast.dump(keyword_value)})"
+    elif isinstance(keyword_value, ast.JoinedStr):
+        # [TODO: For joined strings, complex case handling]
+        # [Example can be found under demo_project/pipelines/modelling]
+        return f"JoinedStr({ast.dump(keyword_value)})"
+    else:
+        # [TODO: For any other complex case handling]
+        return f"Unsupported({ast.dump(keyword_value)})"
+
+
+# [WIP: Naive parsing and exploring pipelines. Not sure of any better way for now]
 def parse_project(project_path: Path) -> Dict[str, Pipeline]:
+    # Result
     pipelines: Dict[str, Pipeline] = defaultdict(dict)
+    
+    # Loop through all the .py files in the kedro project 
+    # and start locating create_pipeline
     for filepath in project_path.rglob("*.py"):
         with open(filepath, "r") as file:
             file_content = file.read()
 
+        # parse file content using ast
         parsed_content_ast_node = ast.parse(file_content)
+        
+        # extract pipeline name from file path
         pipeline_name = filepath.relative_to(project_path).parent.name
 
-        # Locate pipelines (assumes only 1 create_pipeline per pipeline file)
+        # Locate pipelines (tested for only 1 create_pipeline per pipeline file)
+        # [TODO: confirm with Kedro team if more than 1 create_pipeline existence]
         kedro_pipeline_locator = KedroPipelineLocator()
         kedro_pipeline_locator.visit(parsed_content_ast_node)
         located_pipeline = kedro_pipeline_locator.pipeline
-        # print(located_pipeline)
+        
+        # add to the result if a pipeline is located
         if located_pipeline:
             pipelines[pipeline_name] = located_pipeline
 
-    # creating a default pipeline
-    pipelines["__default__"] = sum(pipelines.values())
-    # dealing with pipeline level namespace
-    # pipelines["data_processing"] = pipeline(
-    #     pipelines["data_engineering"], namespace="data_processing"
-    # )
-    print(pipelines)
+    # foolproof to have atleast 1 pipeline
+    # so the UI won't break
+    if len(pipelines.values()):
+        # creating a default pipeline
+        pipelines["__default__"] = sum(pipelines.values())
+    else:
+        pipelines["__default__"] = Pipeline(nodes=[])
+
     return pipelines

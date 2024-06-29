@@ -56,18 +56,13 @@ def load_and_populate_data(
     package_name: Optional[str] = None,
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-    is_lite: bool = False
+    is_lite: bool = False,
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path,
-        env,
-        include_hooks,
-        package_name,
-        extra_params,
-        is_lite
+        path, env, include_hooks, package_name, extra_params, is_lite
     )
 
     pipelines = (
@@ -92,7 +87,7 @@ def run_server(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
-    is_lite: bool = False
+    is_lite: bool = False,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -121,13 +116,7 @@ def run_server(
 
     if load_file is None:
         load_and_populate_data(
-            path,
-            env,
-            include_hooks,
-            package_name,
-            pipeline_name,
-            extra_params,
-            is_lite
+            path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]

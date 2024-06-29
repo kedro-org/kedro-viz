@@ -132,7 +132,7 @@ def run(
     autoreload,
     include_hooks,
     params,
-    lite
+    lite,
 ):
     """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
@@ -176,7 +176,7 @@ def run(
             "include_hooks": include_hooks,
             "package_name": PACKAGE_NAME,
             "extra_params": params,
-            "is_lite": lite
+            "is_lite": lite,
         }
         if autoreload:
             run_process_kwargs = {
