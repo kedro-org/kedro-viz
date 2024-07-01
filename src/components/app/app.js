@@ -108,6 +108,7 @@ App.propTypes = {
     sidebar: PropTypes.bool,
     miniMap: PropTypes.bool,
     expandAllPipelines: PropTypes.bool,
+    metadataPanel: PropTypes.bool,
   }),
 };
 
