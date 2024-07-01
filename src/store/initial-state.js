@@ -51,6 +51,7 @@ export const createInitialState = () => ({
     sidebar: true,
     miniMap: true,
     expandAllPipelines: false,
+    metadataPanel: true,
   },
   zoom: {},
   runsMetadata: {},

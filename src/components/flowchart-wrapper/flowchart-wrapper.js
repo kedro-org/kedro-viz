@@ -58,6 +58,7 @@ export const FlowChartWrapper = ({
   pipelines,
   sidebarVisible,
   activePipeline,
+  displayMetadataPanel,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -309,7 +310,7 @@ export const FlowChartWrapper = ({
     return (
       <div className="kedro-pipeline">
         <Sidebar />
-        <MetaData />
+        {displayMetadataPanel && <MetaData />}
         <PipelineWarning
           errorMessage={errorMessage}
           invalidUrl={isInvalidUrl}
@@ -321,7 +322,7 @@ export const FlowChartWrapper = ({
     return (
       <div className="kedro-pipeline">
         <Sidebar />
-        <MetaData />
+        {displayMetadataPanel && <MetaData />}
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
@@ -366,6 +367,7 @@ export const mapStateToProps = (state) => ({
   pipelines: state.pipeline.ids,
   activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
+  displayMetadataPanel: state.display.metadataPanel,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

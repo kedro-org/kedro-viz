@@ -446,11 +446,19 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    if (node.type === 'modularPipeline') {
-      this.props.onClickToExpandModularPipeline(node.id);
-    } else {
-      this.props.onLoadNodeData(node.id);
-      this.props.toSelectedNode(node);
+    const { type, id } = node;
+    const {
+      onClickToExpandModularPipeline,
+      displayMetadataPanel,
+      onLoadNodeData,
+      toSelectedNode,
+    } = this.props;
+
+    if (type === 'modularPipeline') {
+      onClickToExpandModularPipeline(id);
+    } else if (displayMetadataPanel) {
+      onLoadNodeData(id);
+      toSelectedNode(node);
     }
     event.stopPropagation();
   };
@@ -690,6 +698,7 @@ export const mapStateToProps = (state, ownProps) => ({
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
   displayGlobalToolbar: state.display.globalToolbar,
+  displayMetadataPanel: state.display.metadataPanel,
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
