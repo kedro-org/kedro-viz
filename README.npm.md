@@ -54,7 +54,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 
 ## Usage
 
-To use Kedro-Viz as a standalone React component, you can follow the example below. However, please note that Kedro-Viz does not support server-side rendering (SSR). If you're using Next.js or another SSR framework, you should be aware of this limitation.
+To use Kedro-Viz as a standalone React component, you can follow the example below. Please note that Kedro-Viz does not support server-side rendering (SSR). If you are using Next.js or another SSR framework, you should be aware of this limitation.
 
 ```javascript
 import KedroViz from '@quantumblack/kedro-viz';
@@ -79,10 +79,10 @@ const MyApp = () => <NoSSRKedro data={json} />;
 The JSON can be obtained by running:
 
 ```bash
-kedro viz run --save-file=filename
+kedro viz run --save-file=<path-to-save-kedro-viz-data-to-a-directory>
 ```
 
-The command will generate a folder with the specified <filename>, containing the following structure: 
+On successful execution of the command above, it will generate a folder at the specified directory, containing the following structure: 
 
 ```
 <filename>/api/
@@ -172,7 +172,7 @@ npm start
 
 ## Feature Flags
 
-Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
+Kedro-Viz uses feature flags to roll out some experimental features. We have the following flags -
 
 | Flag               | Description                                                                             |
 | ------------------ | --------------------------------------------------------------------------------------- |
