@@ -15,6 +15,8 @@ Please follow the established format:
 - Conditionally move session store and stats file to .viz directory. (#1915)
 
 ## Bug fixes and other changes
+
+- Relax `packaging` pin in requirements. (#1947)
 - Add favicon to kedro-viz documentation. (#1959)
 - Add "-p" flag to kedro-viz to match kedro run. (#1960)
 
