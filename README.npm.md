@@ -114,7 +114,6 @@ Below is the example with all possible props.
 ```
   <KedroViz
     data={json}
-    preview
     display={{
       globalToolbar: false,
       miniMap: false,
@@ -135,7 +134,6 @@ Below is the example with all possible props.
 | ------------ | ------- | ------- | ----------- |
 | `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data will be displayed on the chart |
 | `theme` | string | dark | select Kedro-Viz theme dark/light |
-| `preview` | boolean | false | Use Kedro-Viz in preview mode with flowchart and hiding all other components except metadata panel which will be visible when you click on the node |
 | display |  |  |  |
 | `globalToolbar` | boolean | true | If `false` Global sidebar on extreme left will be hidden |
 | `miniMap` | boolean | true | If `false` miniMap button at the bottom of the primaryToolbar will be hidden |
@@ -146,9 +144,6 @@ Below is the example with all possible props.
 | `exportBtn` | boolean | true | If `false` exportBtn button at the top of the primaryToolbar will be hidden |
 | `pipelineBtn` | boolean | true | If `false` pipelineBtn button at the top of the primaryToolbar will be hidden |
 | `sidebar` | boolean | true | If `false` sidebar on left will be minimized |
-
-### Note
-When `preview` is `true`, `display` and `visible` props are ignored as all major components are hidden.
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
