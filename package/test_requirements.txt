@@ -12,7 +12,7 @@ isort~=5.11
 matplotlib~=3.5
 mypy~=1.0
 moto~=5.0.9
-psutil==5.9.6  # same as Kedro for now
+psutil==6.0.0  # same as Kedro for now
 pylint~=3.0
 pylint-pydantic>=0.3.0
 pytest~=8.1
