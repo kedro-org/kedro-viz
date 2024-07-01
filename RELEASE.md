@@ -13,6 +13,7 @@ Please follow the established format:
 - Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
 - Display published URLs. (#1907)
 - Conditionally move session store and stats file to .viz directory. (#1915)
+- Introduce `metadataPanel` prop in Kedro-Viz react component. (#1965)
 
 ## Bug fixes and other changes
 
