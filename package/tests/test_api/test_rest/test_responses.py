@@ -582,6 +582,18 @@ class TestMainEndpoint:
             {"id": "data_processing", "name": "data_processing"},
         ]
 
+    def test_endpoint_main_for_edge_case_pipelines(
+        self,
+        example_api_for_edge_case_pipelines,
+        expected_modular_pipeline_tree_for_edge_cases,
+    ):
+        client = TestClient(example_api_for_edge_case_pipelines)
+        response = client.get("/api/main")
+        actual_modular_pipelines_tree = response.json()["modular_pipelines"]
+        assert_modular_pipelines_tree_equal(
+            actual_modular_pipelines_tree, expected_modular_pipeline_tree_for_edge_cases
+        )
+
 
 class TestTranscodedDataset:
     """Test a viz API created from a Kedro project."""
