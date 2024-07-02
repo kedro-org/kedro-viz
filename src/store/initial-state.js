@@ -48,6 +48,7 @@ export const createInitialState = () => ({
   },
   display: {
     globalToolbar: true,
+    primaryToolbar: true,
     sidebar: true,
     miniMap: true,
     expandAllPipelines: false,
@@ -218,9 +219,21 @@ export const preparePipelineState = (
 export const prepareNonPipelineState = (props, urlParams) => {
   let state = mergeLocalStorage(createInitialState());
   let newVisibleProps = {};
+  let newDisplayProps = {};
 
-  if (props.display?.sidebar === false || state.display.sidebar === false) {
-    newVisibleProps['sidebar'] = false;
+  if (props.preview) {
+    const visiblePropsKeys = [
+      'labelBtn',
+      'layerBtn',
+      'exportBtn',
+      'pipelineBtn',
+      'sidebar',
+      'miniMap',
+    ];
+    const displayPropsKeys = ['globalToolbar', 'primaryToolbar'];
+
+    visiblePropsKeys.forEach((key) => (newVisibleProps[key] = false));
+    displayPropsKeys.forEach((key) => (newDisplayProps[key] = false));
   }
 
   if (props.display?.minimap === false || state.display.miniMap === false) {
@@ -236,7 +249,7 @@ export const prepareNonPipelineState = (props, urlParams) => {
     flags: { ...state.flags, ...getFlagsFromUrl() },
     theme: props.theme || state.theme,
     visible: { ...state.visible, ...props.visible, ...newVisibleProps },
-    display: { ...state.display, ...props.display },
+    display: { ...state.display, ...props.display, ...newDisplayProps },
   };
 };
 

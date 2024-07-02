@@ -7,6 +7,7 @@ const mockProps = {
   theme: mockState.spaceflights.theme,
   onToggle: () => {},
   visible: true,
+  displayPrimaryToolbar: true,
 };
 
 describe('Sidebar', () => {

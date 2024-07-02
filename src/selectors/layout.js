@@ -17,6 +17,8 @@ const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
+const getDisplayPrimaryToolbar = (state) => state.display.primaryToolbar;
+const getDisplayGlobalToolbar = (state) => state.display.globalToolbar;
 
 /**
  * Show the large graph warning only if there are sufficient nodes + edges,
@@ -70,15 +72,32 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, getVisibleCode, getChartSizeState],
-  (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
+  [
+    getVisibleSidebar,
+    getVisibleMetaSidebar,
+    getVisibleCode,
+    getChartSizeState,
+    getDisplayPrimaryToolbar,
+    getDisplayGlobalToolbar,
+  ],
+  (
+    visibleSidebar,
+    visibleMetaSidebar,
+    visibleCodeSidebar,
+    chartSize,
+    displayPrimaryToolbar,
+    displayGlobalToolbar
+  ) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
     }
 
     // Get the actual sidebar width
-    const sidebarWidthActual = getSidebarWidth(visibleSidebar, sidebarWidth);
+    const sidebarWidthActual =
+      displayPrimaryToolbar || displayGlobalToolbar
+        ? getSidebarWidth(visibleSidebar, sidebarWidth)
+        : 0;
     const metaSidebarWidthActual = getSidebarWidth(
       visibleMetaSidebar,
       metaSidebarWidth

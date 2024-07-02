@@ -105,10 +105,15 @@ App.propTypes = {
    */
   display: PropTypes.shape({
     globalToolbar: PropTypes.bool,
-    sidebar: PropTypes.bool,
     miniMap: PropTypes.bool,
     expandAllPipelines: PropTypes.bool,
   }),
+  /**
+   * Determines if the app is being run as a standalone preview mode,
+   * this is the flowchart only mode with no other elements displayed
+   * except metadata panel when user clicks on a node
+   */
+  preview: PropTypes.bool,
 };
 
 export default App;
