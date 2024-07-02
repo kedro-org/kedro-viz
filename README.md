@@ -261,7 +261,7 @@ kedro viz run --save-file=filename
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
-For more information on how to use Kedro-Viz as a React component, please follow this [guide](https://www.npmjs.com/package/@quantumblack/kedro-viz)
+For more information on how to use Kedro-Viz as a React component, follow this [guide](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
 
