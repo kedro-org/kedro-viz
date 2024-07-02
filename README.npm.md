@@ -101,7 +101,7 @@ On successful execution of the command above, it will generate a folder at the s
     └── ...
 ```
 
-Please use the `main` file as the input JSON for the `data` prop in your Kedro-Viz component.
+Use the `main` file as the input JSON for the `data` prop in your Kedro-Viz component.
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
 
