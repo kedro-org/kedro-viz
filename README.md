@@ -136,7 +136,7 @@ Options:
 
   --load-file FILE          Path to load Kedro-Viz data from a directory
   --save-file FILE          Path to save Kedro-Viz data to a directory 
-  --pipeline TEXT           Name of the registered pipeline to visualise. If not
+  -p, --pipeline TEXT       Name of the registered pipeline to visualise. If not
                             set, the default pipeline is visualised
 
   -e, --env TEXT            Kedro configuration environment. If not specified,
