@@ -1,0 +1,344 @@
+{
+  "__root__": {
+    "id": "__root__",
+    "name": "__root__",
+    "inputs": [],
+    "outputs": [],
+    "children": [
+      {
+        "id": "main_pipeline",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "cleaned_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "main_pipeline.raw_car_data",
+        "type": "data"
+      },
+      {
+        "id": "uk.data_science.model",
+        "type": "data"
+      },
+      {
+        "id": "uk",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "uk.data_processing.raw_data",
+        "type": "data"
+      },
+      {
+        "id": "validation_node: <lambda>([raw_transaction_data;cleaned_transaction_data]) -> [validated_transaction_data]",
+        "type": "task"
+      },
+      {
+        "id": "validated_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "enrichment_data",
+        "type": "data"
+      },
+      {
+        "id": "aggregated_data",
+        "type": "data"
+      },
+      {
+        "id": "main_pipeline.raw_customer_data",
+        "type": "data"
+      },
+      {
+        "id": "initial_customer_data",
+        "type": "data"
+      },
+      {
+        "id": "report_data",
+        "type": "data"
+      },
+      {
+        "id": "main_pipeline.validated_additional_data",
+        "type": "data"
+      },
+      {
+        "id": "final_report",
+        "type": "data"
+      },
+      {
+        "id": "enhanced_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "enhancement_node: <lambda>([validated_transaction_data;enrichment_data]) -> [enhanced_transaction_data]",
+        "type": "task"
+      },
+      {
+        "id": "final_customer_data_insights",
+        "type": "data"
+      },
+      {
+        "id": "customer_lifecycle_processing",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "raw_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "namespace_prefix_1",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "analysis_data",
+        "type": "data"
+      },
+      {
+        "id": "final_car_report",
+        "type": "data"
+      },
+      {
+        "id": "final_transaction_report",
+        "type": "data"
+      }
+    ]
+  },
+  "customer_lifecycle_processing": {
+    "id": "customer_lifecycle_processing",
+    "name": "customer_lifecycle_processing",
+    "inputs": [
+      "initial_customer_data"
+    ],
+    "outputs": [
+      "final_customer_data_insights"
+    ],
+    "children": [
+      {
+        "id": "customer_lifecycle_processing.first_processing_step",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "customer_lifecycle_processing.processed_customer_data",
+        "type": "data"
+      },
+      {
+        "id": "customer_lifecycle_processing.second_processing_step",
+        "type": "modularPipeline"
+      }
+    ]
+  },
+  "customer_lifecycle_processing.first_processing_step": {
+    "id": "customer_lifecycle_processing.first_processing_step",
+    "name": "customer_lifecycle_processing.first_processing_step",
+    "inputs": [
+      "initial_customer_data"
+    ],
+    "outputs": [
+      "customer_lifecycle_processing.processed_customer_data"
+    ],
+    "children": [
+      {
+        "id": "generic_processing_node: <lambda>([initial_customer_data]) -> [customer_lifecycle_processing.processed_customer_data]",
+        "type": "task"
+      }
+    ]
+  },
+  "customer_lifecycle_processing.second_processing_step": {
+    "id": "customer_lifecycle_processing.second_processing_step",
+    "name": "customer_lifecycle_processing.second_processing_step",
+    "inputs": [
+      "customer_lifecycle_processing.processed_customer_data"
+    ],
+    "outputs": [
+      "final_customer_data_insights"
+    ],
+    "children": [
+      {
+        "id": "generic_processing_node: <lambda>([customer_lifecycle_processing.processed_customer_data]) -> [final_customer_data_insights]",
+        "type": "task"
+      }
+    ]
+  },
+  "main_pipeline": {
+    "id": "main_pipeline",
+    "name": "main_pipeline",
+    "inputs": [
+      "main_pipeline.raw_car_data",
+      "main_pipeline.raw_customer_data"
+    ],
+    "outputs": [
+      "final_report",
+      "main_pipeline.validated_additional_data",
+      "final_car_report"
+    ],
+    "children": [
+      {
+        "id": "main_pipeline.cleaned_car_data",
+        "type": "data"
+      },
+      {
+        "id": "data_validation: <lambda>([main_pipeline.raw_customer_data]) -> [main_pipeline.validated_customer_data]",
+        "type": "task"
+      },
+      {
+        "id": "main_pipeline.validated_customer_data",
+        "type": "data"
+      },
+      {
+        "id": "reporting_step: <lambda>([analyzed_car_data]) -> [final_car_report]",
+        "type": "task"
+      },
+      {
+        "id": "additional_validation: <lambda>([main_pipeline.validated_customer_data]) -> [main_pipeline.validated_additional_data]",
+        "type": "task"
+      },
+      {
+        "id": "main_pipeline.transformed_car_data",
+        "type": "data"
+      },
+      {
+        "id": "analyzed_car_data",
+        "type": "data"
+      },
+      {
+        "id": "analysis_step: <lambda>([main_pipeline.transformed_car_data]) -> [analyzed_car_data]",
+        "type": "task"
+      },
+      {
+        "id": "final_customer_data",
+        "type": "data"
+      },
+      {
+        "id": "report_generation: <lambda>([final_customer_data]) -> [final_report]",
+        "type": "task"
+      },
+      {
+        "id": "transformation_step: <lambda>([main_pipeline.cleaned_car_data]) -> [main_pipeline.transformed_car_data]",
+        "type": "task"
+      },
+      {
+        "id": "main_pipeline.sub_pipeline",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "cleaning_step: <lambda>([main_pipeline.raw_car_data]) -> [main_pipeline.cleaned_car_data]",
+        "type": "task"
+      }
+    ]
+  },
+  "main_pipeline.sub_pipeline": {
+    "id": "main_pipeline.sub_pipeline",
+    "name": "main_pipeline.sub_pipeline",
+    "inputs": [
+      "main_pipeline.validated_customer_data"
+    ],
+    "outputs": [
+      "final_customer_data"
+    ],
+    "children": [
+      {
+        "id": "data_finalization: <lambda>([main_pipeline.sub_pipeline.enriched_customer_data]) -> [final_customer_data]",
+        "type": "task"
+      },
+      {
+        "id": "data_enrichment: <lambda>([main_pipeline.validated_customer_data]) -> [main_pipeline.sub_pipeline.enriched_customer_data]",
+        "type": "task"
+      },
+      {
+        "id": "main_pipeline.sub_pipeline.enriched_customer_data",
+        "type": "data"
+      }
+    ]
+  },
+  "namespace_prefix_1": {
+    "id": "namespace_prefix_1",
+    "name": "namespace_prefix_1",
+    "inputs": [
+      "report_data",
+      "enhanced_transaction_data",
+      "aggregated_data",
+      "analysis_data"
+    ],
+    "outputs": [
+      "final_transaction_report"
+    ],
+    "children": [
+      {
+        "id": "analyzed_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "prepared_transaction_data",
+        "type": "data"
+      },
+      {
+        "id": "analysis_node: <lambda>([prepared_transaction_data;analysis_data]) -> [analyzed_transaction_data]",
+        "type": "task"
+      },
+      {
+        "id": "preparation_node: <lambda>([enhanced_transaction_data;aggregated_data]) -> [prepared_transaction_data]",
+        "type": "task"
+      },
+      {
+        "id": "reporting_node: <lambda>([analyzed_transaction_data;report_data]) -> [final_transaction_report]",
+        "type": "task"
+      }
+    ]
+  },
+  "uk": {
+    "id": "uk",
+    "name": "uk",
+    "inputs": [
+      "uk.data_processing.raw_data"
+    ],
+    "outputs": [
+      "uk.data_science.model"
+    ],
+    "children": [
+      {
+        "id": "uk.data_science",
+        "type": "modularPipeline"
+      },
+      {
+        "id": "model_inputs",
+        "type": "data"
+      },
+      {
+        "id": "uk.data_processing",
+        "type": "modularPipeline"
+      }
+    ]
+  },
+  "uk.data_processing": {
+    "id": "uk.data_processing",
+    "name": "uk.data_processing",
+    "inputs": [
+      "uk.data_processing.raw_data"
+    ],
+    "outputs": [
+      "model_inputs"
+    ],
+    "children": [
+      {
+        "id": "process_data: <lambda>([uk.data_processing.raw_data]) -> [model_inputs]",
+        "type": "task"
+      }
+    ]
+  },
+  "uk.data_science": {
+    "id": "uk.data_science",
+    "name": "uk.data_science",
+    "inputs": [
+      "model_inputs"
+    ],
+    "outputs": [
+      "uk.data_science.model"
+    ],
+    "children": [
+      {
+        "id": "train_model: <lambda>([model_inputs]) -> [uk.data_science.model]",
+        "type": "task"
+      }
+    ]
+  }
+}

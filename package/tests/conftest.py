@@ -326,7 +326,7 @@ def example_nested_namespace_pipeline_with_internal_datasets():
             pipeline(
                 pipe=generic_pipe,
                 inputs={"input_dataset": "processed_customer_data"},
-                outputs={"output_dataset": "final_customer_data"},
+                outputs={"output_dataset": "final_customer_data_insights"},
                 namespace="second_processing_step",
             ),
         ]
@@ -338,7 +338,7 @@ def example_nested_namespace_pipeline_with_internal_datasets():
     main_pipeline = pipeline(
         pipe=internal_pipe,
         inputs="initial_customer_data",
-        outputs="final_customer_data",
+        outputs="final_customer_data_insights",
         namespace="customer_lifecycle_processing",
     )
 
@@ -360,18 +360,23 @@ def edge_case_example_pipelines(
     """
 
     yield {
-        "CarPipeline": example_pipeline_with_dataset_as_input_and_output,
-        "CustomerPipeline": example_pipeline_with_dataset_as_input_to_outer_namespace,
-        "TransactionPipeline": example_pipeline_with_node_namespaces,
-        "UkModelPipeline": example_pipeline_with_dataset_as_input_to_nested_namespace,
-        "CustomerLifeCyclePipeline": example_nested_namespace_pipeline_with_internal_datasets,
+        "__default__": example_pipeline_with_dataset_as_input_and_output
+        + example_pipeline_with_dataset_as_input_to_outer_namespace
+        + example_pipeline_with_node_namespaces
+        + example_pipeline_with_dataset_as_input_to_nested_namespace
+        + example_nested_namespace_pipeline_with_internal_datasets,
+        "car_pipeline": example_pipeline_with_dataset_as_input_and_output,
+        "customer_pipeline": example_pipeline_with_dataset_as_input_to_outer_namespace,
+        "transaction_pipeline": example_pipeline_with_node_namespaces,
+        "uk_model_pipeline": example_pipeline_with_dataset_as_input_to_nested_namespace,
+        "customer_life_cycle_pipeline": example_nested_namespace_pipeline_with_internal_datasets,
     }
 
 
 @pytest.fixture
-def expected_modular_pipeline_tree():
+def expected_modular_pipeline_tree_for_edge_cases():
     expected_tree_for_edge_cases_file_path = (
-        Path(__file__).parent / "test_data_access" / "expected_tree_for_edge_cases"
+        Path(__file__).parent / "test_api/expected_modular_pipeline_tree_for_edge_cases"
     )
     with open(
         expected_tree_for_edge_cases_file_path, encoding="utf-8"
@@ -489,6 +494,36 @@ def example_api_no_default_pipeline(
     api = apps.create_api_app_from_project(mock.MagicMock())
     populate_data(
         data_access_manager, example_catalog, example_pipelines, session_store, {}
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+    )
+    yield api
+
+
+@pytest.fixture
+def example_api_for_edge_case_pipelines(
+    data_access_manager: DataAccessManager,
+    edge_case_example_pipelines: Dict[str, Pipeline],
+    example_catalog: DataCatalog,
+    session_store: BaseSessionStore,
+    mocker,
+):
+    api = apps.create_api_app_from_project(mock.MagicMock())
+
+    # For readability we are not hashing the node id
+    mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
+    mocker.patch(
+        "kedro_viz.data_access.repositories.modular_pipelines._hash",
+        side_effect=lambda value: value,
+    )
+
+    populate_data(
+        data_access_manager,
+        example_catalog,
+        edge_case_example_pipelines,
+        session_store,
+        {},
     )
     mocker.patch(
         "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
