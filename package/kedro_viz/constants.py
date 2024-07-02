@@ -25,3 +25,6 @@ PACKAGE_REQUIREMENTS = {
         "for users with kedro-datasets >= 2.1.0",
     },
 }
+
+VIZ_SESSION_STORE_ARGS = {"path": ".viz"}
+VIZ_METADATA_ARGS = {"path": ".viz"}
