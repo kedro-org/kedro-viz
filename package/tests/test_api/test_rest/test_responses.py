@@ -58,7 +58,15 @@ def assert_nodes_equal(response_nodes, expected_nodes):
 
         response_node_pipelines = response_node.pop("pipelines")
         expected_node_pipelines = expected_node.pop("pipelines")
+
         assert sorted(response_node_pipelines) == sorted(expected_node_pipelines)
+
+        # sort modular pipelines
+        if response_node["modular_pipelines"]:
+            response_node["modular_pipelines"].sort()
+        if expected_node["modular_pipelines"]:
+            expected_node["modular_pipelines"].sort()
+
         assert response_node == expected_node
 
 
@@ -98,7 +106,6 @@ def assert_example_data(response_data):
         {"source": "uk.data_science", "target": "d5a8b994"},
         {"source": "0ecea0de", "target": "uk.data_science"},
         {"source": "uk", "target": "d5a8b994"},
-        {"source": "uk", "target": "0ecea0de"},
     ]
     assert_dict_list_equal(
         response_data.pop("edges"), expected_edges, sort_keys=("source", "target")
@@ -110,7 +117,7 @@ def assert_example_data(response_data):
             "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "modular_pipelines": ["uk.data_processing"],
             "type": "task",
             "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
@@ -130,7 +137,7 @@ def assert_example_data(response_data):
             "name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "modular_pipelines": None,
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -141,7 +148,7 @@ def assert_example_data(response_data):
             "name": "model_inputs",
             "tags": ["train", "split"],
             "pipelines": ["__default__", "data_science", "data_processing"],
-            "modular_pipelines": [],
+            "modular_pipelines": ["uk.data_science", "uk.data_processing"],
             "type": "data",
             "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
@@ -152,7 +159,7 @@ def assert_example_data(response_data):
             "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": ["uk", "uk.data_science"],
+            "modular_pipelines": ["uk.data_science"],
             "type": "task",
             "parameters": {
                 "train_test_split": 0.1,
@@ -164,7 +171,7 @@ def assert_example_data(response_data):
             "name": "parameters",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -220,46 +227,42 @@ def assert_example_data(response_data):
     # compare modular pipelines
     expected_modular_pipelines = {
         "__root__": {
+            "id": "__root__",
+            "name": "__root__",
+            "inputs": [],
+            "outputs": [],
             "children": [
-                {"id": "0ecea0de", "type": "data"},
+                {"id": "d5a8b994", "type": "data"},
+                {"id": "13399a82", "type": "data"},
                 {"id": "f1f1425b", "type": "parameters"},
                 {"id": "f0ebef01", "type": "parameters"},
                 {"id": "uk", "type": "modularPipeline"},
             ],
-            "id": "__root__",
-            "inputs": [],
-            "name": "__root__",
-            "outputs": [],
         },
         "uk": {
-            "children": [
-                {"id": "uk.data_science", "type": "modularPipeline"},
-                {"id": "uk.data_processing", "type": "modularPipeline"},
-            ],
             "id": "uk",
-            "inputs": ["f0ebef01", "13399a82", "f1f1425b", "0ecea0de"],
             "name": "uk",
-            "outputs": ["d5a8b994", "0ecea0de"],
+            "inputs": ["f1f1425b", "f0ebef01", "13399a82"],
+            "outputs": ["d5a8b994"],
+            "children": [
+                {"id": "uk.data_processing", "type": "modularPipeline"},
+                {"id": "uk.data_science", "type": "modularPipeline"},
+                {"id": "0ecea0de", "type": "data"},
+            ],
         },
         "uk.data_processing": {
-            "children": [
-                {"id": "13399a82", "type": "data"},
-                {"id": "782e4a43", "type": "task"},
-            ],
             "id": "uk.data_processing",
-            "inputs": ["f0ebef01", "13399a82"],
             "name": "uk.data_processing",
+            "inputs": ["f0ebef01", "13399a82"],
             "outputs": ["0ecea0de"],
+            "children": [{"id": "782e4a43", "type": "task"}],
         },
         "uk.data_science": {
-            "children": [
-                {"id": "f2b25286", "type": "task"},
-                {"id": "d5a8b994", "type": "data"},
-            ],
             "id": "uk.data_science",
-            "inputs": ["0ecea0de", "f1f1425b"],
             "name": "uk.data_science",
+            "inputs": ["0ecea0de", "f1f1425b"],
             "outputs": ["d5a8b994"],
+            "children": [{"id": "f2b25286", "type": "task"}],
         },
     }
     assert_modular_pipelines_tree_equal(
@@ -309,7 +312,7 @@ def assert_example_data_from_file(response_data):
             "name": "process_data",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "modular_pipelines": ["uk.data_processing"],
             "type": "task",
             "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
@@ -328,7 +331,7 @@ def assert_example_data_from_file(response_data):
             "name": "params:uk.data_processing.train_test_split",
             "tags": ["split"],
             "pipelines": ["__default__", "data_processing"],
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "modular_pipelines": None,
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -338,7 +341,7 @@ def assert_example_data_from_file(response_data):
             "name": "model_inputs",
             "tags": ["train", "split"],
             "pipelines": ["__default__", "data_science", "data_processing"],
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "type": "data",
             "layer": "model_inputs",
             "dataset_type": "pandas.csv_dataset.CSVDataset",
@@ -348,7 +351,7 @@ def assert_example_data_from_file(response_data):
             "name": "train_model",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": ["uk", "uk.data_science"],
+            "modular_pipelines": ["uk.data_science"],
             "type": "task",
             "parameters": {
                 "train_test_split": 0.1,
@@ -360,7 +363,7 @@ def assert_example_data_from_file(response_data):
             "name": "parameters",
             "tags": ["train"],
             "pipelines": ["__default__", "data_science"],
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "type": "parameters",
             "layer": None,
             "dataset_type": None,
@@ -412,7 +415,6 @@ def assert_example_data_from_file(response_data):
     expected_modular_pipelines = {
         "__root__": {
             "children": [
-                {"id": "0ecea0de", "type": "data"},
                 {"id": "f1f1425b", "type": "parameters"},
                 {"id": "uk", "type": "modularPipeline"},
             ],
@@ -491,7 +493,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "task",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "parameters": {"uk.data_processing.train_test_split": 0.1},
         },
         {
@@ -500,7 +502,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
             "stats": None,
@@ -511,7 +513,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
-            "modular_pipelines": ["uk", "uk.data_processing"],
+            "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
             "stats": None,
@@ -522,7 +524,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["train", "split"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
             "stats": None,
@@ -533,7 +535,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "task",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "parameters": {"train_test_split": 0.1, "num_epochs": 1000},
         },
         {
@@ -542,7 +544,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "parameters",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "layer": None,
             "dataset_type": None,
             "stats": None,
@@ -553,7 +555,7 @@ def assert_example_transcoded_data(response_data):
             "tags": ["train"],
             "pipelines": ["data_processing", "__default__"],
             "type": "data",
-            "modular_pipelines": [],
+            "modular_pipelines": None,
             "layer": None,
             "dataset_type": "io.memory_dataset.MemoryDataset",
             "stats": None,
@@ -579,6 +581,18 @@ class TestMainEndpoint:
             {"id": "data_science", "name": "data_science"},
             {"id": "data_processing", "name": "data_processing"},
         ]
+
+    def test_endpoint_main_for_edge_case_pipelines(
+        self,
+        example_api_for_edge_case_pipelines,
+        expected_modular_pipeline_tree_for_edge_cases,
+    ):
+        client = TestClient(example_api_for_edge_case_pipelines)
+        response = client.get("/api/main")
+        actual_modular_pipelines_tree = response.json()["modular_pipelines"]
+        assert_modular_pipelines_tree_equal(
+            actual_modular_pipelines_tree, expected_modular_pipeline_tree_for_edge_cases
+        )
 
 
 class TestTranscodedDataset:
@@ -612,8 +626,8 @@ class TestNodeMetadataEndpoint:
         response = client.get("/api/nodes/782e4a43")
         metadata = response.json()
         assert (
-            metadata["code"].lstrip()
-            == "def process_data(raw_data, train_test_split):\n        ...\n"
+            metadata["code"].replace(" ", "")
+            == "defprocess_data(raw_data,train_test_split):\n...\n"
         )
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
         assert metadata["inputs"] == [
@@ -688,7 +702,7 @@ class TestSinglePipelineEndpoint:
                 "name": "model_inputs",
                 "tags": ["train", "split"],
                 "pipelines": ["__default__", "data_science", "data_processing"],
-                "modular_pipelines": [],
+                "modular_pipelines": ["uk.data_science", "uk.data_processing"],
                 "type": "data",
                 "layer": "model_inputs",
                 "dataset_type": "pandas.csv_dataset.CSVDataset",
@@ -699,7 +713,7 @@ class TestSinglePipelineEndpoint:
                 "name": "train_model",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
-                "modular_pipelines": ["uk", "uk.data_science"],
+                "modular_pipelines": ["uk.data_science"],
                 "type": "task",
                 "parameters": {
                     "train_test_split": 0.1,
@@ -711,7 +725,7 @@ class TestSinglePipelineEndpoint:
                 "name": "parameters",
                 "tags": ["train"],
                 "pipelines": ["__default__", "data_science"],
-                "modular_pipelines": [],
+                "modular_pipelines": None,
                 "type": "parameters",
                 "layer": None,
                 "dataset_type": None,
@@ -759,6 +773,7 @@ class TestSinglePipelineEndpoint:
                     {"id": "f1f1425b", "type": "parameters"},
                     {"id": "0ecea0de", "type": "data"},
                     {"id": "uk", "type": "modularPipeline"},
+                    {"id": "d5a8b994", "type": "data"},
                 ],
                 "id": "__root__",
                 "inputs": [],
@@ -776,7 +791,6 @@ class TestSinglePipelineEndpoint:
             },
             "uk.data_science": {
                 "children": [
-                    {"id": "d5a8b994", "type": "data"},
                     {"id": "f2b25286", "type": "task"},
                 ],
                 "id": "uk.data_science",
