@@ -333,15 +333,15 @@ describe('NodeList', () => {
       );
       const uncheckedClass = 'pipeline-nodelist__row--unchecked';
 
-      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
+      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
         true
       );
-      changeRows(wrapper, ['Preprocessing'], true);
-      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
+      changeRows(wrapper, ['preprocessing'], true);
+      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
         false
       );
-      changeRows(wrapper, ['Preprocessing'], false);
-      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
+      changeRows(wrapper, ['preprocessing'], false);
+      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
         true
       );
     });
@@ -507,7 +507,7 @@ describe('NodeList', () => {
 
     it('After applying any filter filter button should not be disabled', () => {
       const nodeTypeFilter = wrapper.find(
-        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
+        `.pipeline-nodelist__row__checkbox[name="datasets"]`
       );
       nodeTypeFilter.simulate('click');
 
