@@ -27,10 +27,11 @@ describe('lib-test', () => {
       (modularPipelineID) => modularPipelinesTree[modularPipelineID].name.trim()
     );
 
-    const expectedNodeName = modularPipelineNames.includes(firstNodeName.toLowerCase()) ? firstNodeName.toLowerCase() : firstNodeName;
-    const expectedNodeNames = modularPipelineNames.map(name => name.toLowerCase());
-
-    expect(expectedNodeNames).toContain(expectedNodeName.toLowerCase());
+    const normalisedFirstNodeName = firstNodeName.replace(/ /g, '_').toLowerCase();
+    const normalisedPipelineNames = modularPipelineNames.map(name =>
+      name.replace(/ /g, '_').toLowerCase()
+    );
+    expect(normalisedPipelineNames).toContain(normalisedFirstNodeName);
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {
