@@ -32,6 +32,7 @@ import { getVisibleNodeIDs } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeName = (state) => state.node.name;
+const getNodeFullName = (state) => state.node.fullName;
 const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 
@@ -149,8 +150,8 @@ describe('Selectors', () => {
 
     it('returns node labels with pretty name when pretty name is turned on', () => {
       const nodes = getVisibleNodes(mockState.spaceflights);
-      const nodeId = nodes[0].id;
-      const nodePrettyName = nodes[0].name;
+      const nodeId = nodes.find(node => node.fullName === 'data_processing').id;
+      const nodePrettyName = 'Data Processing';
       const newMockState = reducer(
         mockState.spaceflights,
         toggleIsPrettyName(true)
@@ -163,8 +164,8 @@ describe('Selectors', () => {
   describe('getOppositeForPrettyName', () => {
     it('returns opposite node labels with full name when pretty name is turned off', () => {
       const nodes = getVisibleNodes(mockState.spaceflights);
-      const nodeId = nodes[0].id;
-      const nodePrettyName = nodes[0].name;
+      const nodeId = nodes.find(node => node.fullName === 'data_processing').id;
+      const nodePrettyName = 'Data Processing';
       const newMockState = reducer(
         mockState.spaceflights,
         toggleIsPrettyName(false)
@@ -208,10 +209,12 @@ describe('getNodeData', () => {
     const nodeName = getNodeName(mockState.spaceflights);
     const nodeIDs = getNodeData(mockState.spaceflights).map((d) => d.id);
     const visibleNodeIDs = getNodeIDs(mockState.spaceflights).sort((a, b) => {
-      if (nodeName[a] < nodeName[b]) {
+      const nameA = nodeName[a].toLowerCase();
+      const nameB = nodeName[b].toLowerCase();
+      if (nameA < nameB) {
         return -1;
       }
-      if (nodeName[a] > nodeName[b]) {
+      if (nameA > nameB) {
         return 1;
       }
       return 0;
@@ -255,6 +258,7 @@ describe('getNodeData', () => {
     );
   });
 });
+
 
 describe('getGroupedNodes', () => {
   const groupedNodes = getGroupedNodes(mockState.spaceflights);
