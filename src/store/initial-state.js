@@ -188,10 +188,10 @@ export const mergeLocalStorage = (state) => {
  */
 export const preparePipelineState = (
   data,
-  props,
   applyFixes,
   expandAllPipelines,
-  urlParams
+  urlParams,
+  props
 ) => {
   let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
 
@@ -205,9 +205,7 @@ export const preparePipelineState = (
     state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
-  console.log(state);
-  console.log(props);
-  return deepmerge(state, props);
+  return props ? deepmerge(state, props) : state;
 };
 
 /**
@@ -258,10 +256,10 @@ const getInitialState = (props = {}) => {
 
   const pipelineState = preparePipelineState(
     props.data,
-    props.props,
     props.data !== 'json',
     expandAllPipelines,
-    urlParams
+    urlParams,
+    props.props
   );
 
   return {

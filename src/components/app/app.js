@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import 'what-input';
 import configureStore from '../../store';
-import { resetData } from '../../actions';
+import { resetData, updateStateWithLatestProps } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
@@ -37,6 +37,9 @@ class App extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
+    }
+    if (prevProps.props !== this.props.props) {
+      this.store.dispatch(updateStateWithLatestProps(this.props.props));
     }
   }
 

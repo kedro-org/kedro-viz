@@ -331,3 +331,16 @@ export function updateRunNotes(notes, runId) {
     runId,
   };
 }
+
+export const UPDATE_STATE_FROM_LATEST_PROPS = 'UPDATE_STATE_FROM_LATEST_PROPS';
+
+/**
+ * Update state with latest props coming from the react component
+ * @param {Object} updatedProps
+ */
+export const updateStateWithLatestProps = (updatedProps) => {
+  return {
+    type: UPDATE_STATE_FROM_LATEST_PROPS,
+    payload: updatedProps,
+  };
+};
