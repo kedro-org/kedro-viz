@@ -1,14 +1,58 @@
 .command-wrapper {
   display: flex;
   background-color: #212324;
-  width: 1170px;
+  width: 92%;
   position: absolute;
-  left: 480px;
+  left: 135px;
   padding: 28px;
   flex-direction: column;
   align-items: flex-start;
+  z-index: 4;
+}
+
+.command-wrapper--with-sidebar {
+  width: 72%; // update the hard coded value here
+  left: 480px;
 }
 
 .command-wrapper--visible {
   opacity: 0;
+}
+
+.command-title {
+  color: rgb(255 255 255 / 55%);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.command-copier-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+
+  .button__btn {
+    border: 1px solid #525252;
+    font-size: 12px;
+    color: #525252;
+    margin-left: 12px;
+  }
+}
+
+.command-line {
+  display: flex;
+  height: 36px;
+  padding: 4px 12px;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+  background: #2b2d2f;
+  color: #636363;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 }
