@@ -75,7 +75,7 @@ const combinedReducer = combineReducers({
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
-  isPrettyName: createReducer(true, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
+  isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,
     TOGGLE_SHOW_FEATURE_HINTS,
