@@ -301,7 +301,7 @@ describe('FlowChart', () => {
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
       />
     );
@@ -328,14 +328,14 @@ describe('FlowChart', () => {
     );
   });
 
-  it('applies pipeline-node-input--active class to input/outout nodes when hovering over them under focus mode', () => {
+  it('applies pipeline-node-input--active class to input/output nodes when hovering over them under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
         displayGlobalToolbar={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeActive={{
           '23c94afb': true,
@@ -347,14 +347,14 @@ describe('FlowChart', () => {
     );
   });
 
-  it('applies pipeline-node-input--selected class to input/outout nodes when selecting one of them under focus mode', () => {
+  it('applies pipeline-node-input--selected class to input/output nodes when selecting one of them under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
         displayGlobalToolbar={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeSelected={{
           '23c94afb': true,
