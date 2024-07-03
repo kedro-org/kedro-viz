@@ -109,7 +109,7 @@ def sort_layers(
     try:
         sorter = TopologicalSorter(layer_dependencies)
         sorted_layers = list(sorter.static_order())
-        return sorted_layers
+        return sorted(sorted_layers, key=lambda layer: (sorted_layers.index(layer), layer))
     except CycleError:
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected among layers."
