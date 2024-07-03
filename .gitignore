@@ -65,6 +65,3 @@ coverage.xml
 
 # Kedro
 *.log
-
-# testing
-spaceflights/*
