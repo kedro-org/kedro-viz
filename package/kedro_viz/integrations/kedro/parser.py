@@ -103,7 +103,12 @@ class KedroPipelineExplorer(ast.NodeVisitor):
                             for keyword in elt.keywords:
                                 # [TODO: func is WIP. Need to create a Callable]
                                 if keyword.arg == "func":
-                                    node_func = lambda *args, **kwargs: None
+                                    func_name = keyword.value.id
+                                    exec(
+                                        f"def {func_name}(*args, **kwargs): pass",
+                                        globals(),
+                                    )
+                                    node_func = globals()[func_name]
                                 elif keyword.arg == "inputs":
                                     node_inputs = parse_value(keyword.value)
                                 elif keyword.arg == "outputs":
