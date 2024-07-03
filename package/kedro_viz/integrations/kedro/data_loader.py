@@ -9,10 +9,11 @@ import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
+
+from kedro import __version__
 from kedro.config.omegaconf_config import OmegaConfigLoader
 from kedro.framework.context.context import KedroContext
 from kedro.framework.session.store import BaseSessionStore
-from kedro import __version__
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
