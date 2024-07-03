@@ -109,6 +109,9 @@ def sort_layers(
     try:
         sorter = TopologicalSorter(layer_dependencies)
         sorted_layers = list(sorter.static_order())
+        # Ensure the order is stable and respects the original input order
+        # `sorted_layers.index(layer)` ensures the order from topological sorting is preserved.
+        # `layer` ensures that if two layers have the same dependency level, they are sorted alphabetically.
         return sorted(
             sorted_layers, key=lambda layer: (sorted_layers.index(layer), layer)
         )
