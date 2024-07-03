@@ -17,7 +17,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro.parser import parse_project
+from kedro_viz.integrations.kedro.lite_parser import parse_project
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,6 @@ def load_data(
 
         stats_dict = _get_dataset_stats(project_path)
         pipelines_dict = dict(parse_project(project_path))
-        # print(pipelines_dict)
         return catalog, pipelines_dict, session_store, stats_dict
     else:
         from kedro.framework.project import configure_project, pipelines
@@ -140,7 +139,6 @@ def load_data(
             # in case user doesn't have an active session down the line when it's first accessed.
             # Useful for users who have `get_current_session` in their `register_pipelines()`.
             pipelines_dict = dict(pipelines)
-            # print(pipelines_dict)
             stats_dict = _get_dataset_stats(project_path)
 
         return catalog, pipelines_dict, session_store, stats_dict

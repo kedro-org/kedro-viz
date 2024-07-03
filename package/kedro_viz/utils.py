@@ -62,7 +62,7 @@ def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
 
-
+# [NOTE: Experimentation]
 # Helper to get the source code of a function
 def get_function_source_code(func_name: str):
     project_dir = _find_kedro_project(Path.cwd())
