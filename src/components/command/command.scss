@@ -1,0 +1,14 @@
+.command-wrapper {
+  display: flex;
+  background-color: #212324;
+  width: 1170px;
+  position: absolute;
+  left: 480px;
+  padding: 28px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.command-wrapper--visible {
+  opacity: 0;
+}

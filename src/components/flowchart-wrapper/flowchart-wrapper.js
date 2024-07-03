@@ -21,6 +21,7 @@ import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
+import Command from '../command';
 import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 import Sidebar from '../sidebar';
 import Button from '../ui/button';
@@ -321,6 +322,7 @@ export const FlowChartWrapper = ({
     return (
       <div className="kedro-pipeline">
         <Sidebar />
+        <Command />
         <MetaData />
         <div className="pipeline-wrapper">
           <PipelineWarning />
