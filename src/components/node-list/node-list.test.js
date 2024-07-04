@@ -67,14 +67,14 @@ describe('NodeList', () => {
             mockState.spaceflights
           );
           const expectedResult = nodes.filter((node) =>
-            node.name.includes(searchText)
+            node.name.toLowerCase().includes(searchText)
           );
           const expectedTagResult = tags.filter((tag) =>
-            tag.name.includes(searchText)
+            tag.name.toLowerCase().includes(searchText)
           );
           const expectedElementTypeResult = Object.keys(
             sidebarElementTypes
-          ).filter((type) => type.includes(searchText));
+          ).filter((type) => type.toLowerCase().includes(searchText));
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
           )
@@ -333,15 +333,15 @@ describe('NodeList', () => {
       );
       const uncheckedClass = 'pipeline-nodelist__row--unchecked';
 
-      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
+      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
         true
       );
-      changeRows(wrapper, ['preprocessing'], true);
-      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
+      changeRows(wrapper, ['Preprocessing'], true);
+      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
         false
       );
-      changeRows(wrapper, ['preprocessing'], false);
-      expect(rowByName(wrapper, 'preprocessing').hasClass(uncheckedClass)).toBe(
+      changeRows(wrapper, ['Preprocessing'], false);
+      expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
         true
       );
     });
@@ -507,7 +507,7 @@ describe('NodeList', () => {
 
     it('After applying any filter filter button should not be disabled', () => {
       const nodeTypeFilter = wrapper.find(
-        `.pipeline-nodelist__row__checkbox[name="datasets"]`
+        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
       );
       nodeTypeFilter.simulate('click');
 

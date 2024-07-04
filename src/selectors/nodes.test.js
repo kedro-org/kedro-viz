@@ -150,7 +150,9 @@ describe('Selectors', () => {
 
     it('returns node labels with pretty name when pretty name is turned on', () => {
       const nodes = getVisibleNodes(mockState.spaceflights);
-      const nodeId = nodes.find(node => node.fullName === 'data_processing').id;
+      const nodeId = nodes.find(
+        (node) => node.fullName === 'data_processing'
+      ).id;
       const nodePrettyName = 'Data Processing';
       const newMockState = reducer(
         mockState.spaceflights,
@@ -164,7 +166,9 @@ describe('Selectors', () => {
   describe('getOppositeForPrettyName', () => {
     it('returns opposite node labels with full name when pretty name is turned off', () => {
       const nodes = getVisibleNodes(mockState.spaceflights);
-      const nodeId = nodes.find(node => node.fullName === 'data_processing').id;
+      const nodeId = nodes.find(
+        (node) => node.fullName === 'data_processing'
+      ).id;
       const nodePrettyName = 'Data Processing';
       const newMockState = reducer(
         mockState.spaceflights,
@@ -206,11 +210,11 @@ describe('getNodeData', () => {
   });
 
   it('returns nodes sorted by name', () => {
-    const nodeName = getNodeName(mockState.spaceflights);
+    const nodeName = getNodeLabel(mockState.spaceflights);
     const nodeIDs = getNodeData(mockState.spaceflights).map((d) => d.id);
     const visibleNodeIDs = getNodeIDs(mockState.spaceflights).sort((a, b) => {
-      const nameA = nodeName[a].toLowerCase();
-      const nameB = nodeName[b].toLowerCase();
+      const nameA = nodeName[a];
+      const nameB = nodeName[b];
       if (nameA < nameB) {
         return -1;
       }
@@ -258,7 +262,6 @@ describe('getNodeData', () => {
     );
   });
 });
-
 
 describe('getGroupedNodes', () => {
   const groupedNodes = getGroupedNodes(mockState.spaceflights);
