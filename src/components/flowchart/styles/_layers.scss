@@ -47,7 +47,7 @@
   }
 
   &--no-sidebar {
-    left: -#{variables.$global-toolbar-width + variables.$sidebar-width-closed};
+    left: 0;
   }
 
   @media print {

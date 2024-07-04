@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import App from '../app';
 import getPipelineData from '../../utils/data-source';
 import './container.scss';
@@ -7,59 +7,10 @@ import './container.scss';
  * Top-level component for the use-case where Kedro-Viz is run as a standalone
  * app rather than imported as a library/package into a larger application.
  */
-const Container = () => {
-  const [tags, setTags] = React.useState({
-    enabled: { companies: true, shuttles: true },
-  });
-  const [nodeTypes, setNodeTypes] = React.useState({
-    disabled: {
-      parameters: false,
-      task: false,
-      data: false,
-    },
-  });
-  const [theme, setTheme] = React.useState('dark');
-
-  useEffect(() => {
-    setTimeout(() => {
-      setTags({
-        enabled: { evaluate: true, companies: false },
-      });
-      setNodeTypes({
-        disabled: {
-          parameters: true,
-          task: true,
-          data: false,
-        },
-      });
-      setTheme('light');
-    }, 11000);
-  }, [tags]);
-
-  return (
-    <>
-      <App
-        data={getPipelineData()}
-        props={{
-          display: {
-            globalToolbar: false,
-            miniMap: false,
-            expandAllPipelines: true,
-            sidebar: false,
-          },
-          visible: {
-            exportBtn: false,
-            labelBtn: false,
-            layerBtn: true,
-            sidebar: false,
-          },
-          tag: tags,
-          nodeType: nodeTypes,
-          theme: theme,
-        }}
-      />
-    </>
-  );
-};
+const Container = () => (
+  <>
+    <App data={getPipelineData()} />
+  </>
+);
 
 export default Container;
