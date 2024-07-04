@@ -128,10 +128,6 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
-    onToggleSidebar(displaySidebar);
-  }, [displaySidebar, onToggleSidebar]);
-
-  useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePipeline]);

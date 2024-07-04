@@ -88,29 +88,47 @@ App.propTypes = {
       tags: PropTypes.array,
     }),
   ]),
-  /**
-   * Specify the theme: Either 'light' or 'dark'.
-   * If set, this will override the localStorage value.
-   */
-  theme: PropTypes.oneOf(['dark', 'light']),
-  /**
-   * Override visibility of various features, e.g. icon buttons
-   */
-  visible: PropTypes.shape({
-    labelBtn: PropTypes.bool,
-    layerBtn: PropTypes.bool,
-    exportBtn: PropTypes.bool,
-    pipelineBtn: PropTypes.bool,
-    sidebar: PropTypes.bool,
-  }),
-  /**
-   * Determines if certain elements are displayed, e.g global tool bar, sidebar
-   */
-  display: PropTypes.shape({
-    globalToolbar: PropTypes.bool,
-    sidebar: PropTypes.bool,
-    miniMap: PropTypes.bool,
-    expandAllPipelines: PropTypes.bool,
+  props: PropTypes.shape({
+    /**
+     * Specify the theme: Either 'light' or 'dark'.
+     * If set, this will override the localStorage value.
+     */
+    theme: PropTypes.oneOf(['dark', 'light']),
+    /**
+     * Override visibility of various features, e.g. icon buttons
+     */
+    visible: PropTypes.shape({
+      labelBtn: PropTypes.bool,
+      layerBtn: PropTypes.bool,
+      exportBtn: PropTypes.bool,
+      pipelineBtn: PropTypes.bool,
+      sidebar: PropTypes.bool,
+    }),
+    /**
+     * Determines if certain elements are displayed, e.g global tool bar, sidebar
+     */
+    display: PropTypes.shape({
+      globalToolbar: PropTypes.bool,
+      sidebar: PropTypes.bool,
+      miniMap: PropTypes.bool,
+      expandAllPipelines: PropTypes.bool,
+    }),
+    /**
+     * Override the default enabled/disabled tags
+     */
+    tag: PropTypes.shape({
+      enabled: PropTypes.objectOf(PropTypes.bool),
+    }),
+    /**
+     * Override the default enabled/disabled node types
+     */
+    nodeType: PropTypes.shape({
+      disabled: PropTypes.shape({
+        parameters: PropTypes.bool,
+        task: PropTypes.bool,
+        data: PropTypes.bool,
+      }),
+    }),
   }),
 };
 

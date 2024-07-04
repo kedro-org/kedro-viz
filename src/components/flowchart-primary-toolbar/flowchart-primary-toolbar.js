@@ -24,7 +24,6 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
  */
 export const FlowchartPrimaryToolbar = ({
   disableLayerBtn,
-  displaySidebar,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
@@ -45,11 +44,7 @@ export const FlowchartPrimaryToolbar = ({
 
   return (
     <>
-      <PrimaryToolbar
-        displaySidebar={displaySidebar}
-        onToggleSidebar={onToggleSidebar}
-        visible={visible}
-      >
+      <PrimaryToolbar onToggleSidebar={onToggleSidebar} visible={visible}>
         <IconButton
           active={textLabels}
           ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
@@ -105,7 +100,6 @@ export const FlowchartPrimaryToolbar = ({
 
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
-  displaySidebar: state.display.sidebar,
   textLabels: state.textLabels,
   visible: state.visible,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),

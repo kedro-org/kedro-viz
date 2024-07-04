@@ -9,7 +9,7 @@ import './container.scss';
  */
 const Container = () => {
   const [tags, setTags] = React.useState({
-    enabled: { companies: true },
+    enabled: { companies: true, shuttles: true },
   });
   const [nodeTypes, setNodeTypes] = React.useState({
     disabled: {
@@ -44,8 +44,14 @@ const Container = () => {
           display: {
             globalToolbar: false,
             miniMap: false,
-            expandAllPipelines: false,
-            sidebar: true,
+            expandAllPipelines: true,
+            sidebar: false,
+          },
+          visible: {
+            exportBtn: false,
+            labelBtn: false,
+            layerBtn: true,
+            sidebar: false,
           },
           tag: tags,
           nodeType: nodeTypes,

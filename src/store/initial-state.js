@@ -190,8 +190,7 @@ export const preparePipelineState = (
   data,
   applyFixes,
   expandAllPipelines,
-  urlParams,
-  props
+  urlParams
 ) => {
   let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
 
@@ -205,7 +204,7 @@ export const preparePipelineState = (
     state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
-  return props ? deepmerge(state, props) : state;
+  return state;
 };
 
 /**
@@ -216,17 +215,8 @@ export const preparePipelineState = (
  * @param {Object} urlParams An object containing parsed URL parameters.
  * @returns {Object} The new non-pipeline state with modifications applied.
  */
-export const prepareNonPipelineState = (props, urlParams) => {
+export const prepareNonPipelineState = (urlParams) => {
   let state = mergeLocalStorage(createInitialState());
-  let newVisibleProps = {};
-
-  if (props.display?.sidebar === false || state.display.sidebar === false) {
-    newVisibleProps['sidebar'] = false;
-  }
-
-  if (props.display?.minimap === false || state.display.miniMap === false) {
-    newVisibleProps['miniMap'] = false;
-  }
 
   if (urlParams) {
     state = applyUrlParametersToNonPipelineState(state, urlParams);
@@ -234,7 +224,6 @@ export const prepareNonPipelineState = (props, urlParams) => {
 
   return {
     ...state,
-    ...props.props,
     flags: { ...state.flags, ...getFlagsFromUrl() },
   };
 };
@@ -258,14 +247,17 @@ const getInitialState = (props = {}) => {
     props.data,
     props.data !== 'json',
     expandAllPipelines,
-    urlParams,
-    props.props
+    urlParams
   );
 
-  return {
+  const mergedInitialState = {
     ...nonPipelineState,
     ...pipelineState,
   };
+
+  return props.props
+    ? deepmerge(mergedInitialState, props.props)
+    : mergedInitialState;
 };
 
 export default getInitialState;

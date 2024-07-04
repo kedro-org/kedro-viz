@@ -46,6 +46,10 @@
     left: -#{variables.$global-toolbar-width};
   }
 
+  &--no-sidebar {
+    left: -#{variables.$global-toolbar-width + variables.$sidebar-width-closed};
+  }
+
   @media print {
     display: none;
   }
