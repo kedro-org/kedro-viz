@@ -18,7 +18,7 @@ describe('getLinkedNodes function', () => {
 
   const { nodes } = mockState.graph;
   const nodeID = nodes.find((d) =>
-    d.name.includes('Preprocess Companies Node')
+    d.name.includes('preprocess_companies_node')
   ).id;
   const newMockState = reducer(mockState, toggleNodeClicked(nodeID));
   const linkedNodes = getLinkedNodes(newMockState);
@@ -61,7 +61,7 @@ describe('getLinkedNodes function of a single modular pipeline', () => {
 
   const { nodes } = mockState.graph;
   const nodeID = nodes.find((d) =>
-    d.name.includes('Preprocess Shuttles Node')
+    d.name.includes('preprocess_shuttles_node')
   ).id;
   const newMockState = reducer(mockState, toggleNodeClicked(nodeID));
   const linkedNodes = getLinkedNodes(newMockState);
