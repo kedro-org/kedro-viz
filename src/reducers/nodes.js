@@ -1,6 +1,5 @@
 import {
   TOGGLE_NODE_CLICKED,
-  TOGGLE_NODES_CLICKED,
   TOGGLE_NODES_DISABLED,
   TOGGLE_NODE_HOVERED,
   ADD_NODE_METADATA,
@@ -14,12 +13,6 @@ function nodeReducer(nodeState = {}, action) {
     case TOGGLE_NODE_CLICKED: {
       return updateState({
         clicked: action.nodeClicked,
-      });
-    }
-
-    case TOGGLE_NODES_CLICKED: {
-      return updateState({
-        multipleClicked: action.nodesClicked,
       });
     }
 

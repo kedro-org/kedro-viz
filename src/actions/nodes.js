@@ -14,19 +14,6 @@ export function toggleNodeClicked(nodeClicked) {
   };
 }
 
-export const TOGGLE_NODES_CLICKED = 'TOGGLE_NODES_CLICKED';
-
-/**
- * Update the value of the currently-active of multiple clicked nodes
- * @param {String|null} nodesClicked The array of nodes' unique identifiers
- */
-export function toggleNodesClicked(fromID, toID) {
-  return {
-    type: TOGGLE_NODES_CLICKED,
-    nodesClicked: [fromID, toID],
-  };
-}
-
 export const TOGGLE_NODES_DISABLED = 'TOGGLE_NODES_DISABLED';
 
 /**
@@ -98,12 +85,5 @@ export function loadNodeData(nodeID) {
       dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
       dispatch(toggleNodeDataLoading(false));
     }
-  };
-}
-
-export function loadNodesData(fromID, toID) {
-  return async function (dispatch, getState) {
-    // const { dataSource, node } = getState();
-    dispatch(toggleNodesClicked(fromID, toID));
   };
 }

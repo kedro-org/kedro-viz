@@ -4,11 +4,7 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
-import {
-  loadNodeData,
-  loadNodesData,
-  toggleNodeHovered,
-} from '../../actions/nodes';
+import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import { filterNodes, resetFilterNodes } from '../../actions/filters';
 import {
   getNodeActive,
@@ -463,11 +459,6 @@ export class FlowChart extends Component {
             ? [...prevState.selectedNodes, node.id]
             : []; // set empty
 
-        // update the state
-        this.props.onLoadNodesData(
-          updatedSelectedNodes[0],
-          updatedSelectedNodes[1]
-        );
         return { selectedNodes: updatedSelectedNodes };
       });
     } else {
@@ -765,9 +756,6 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
-  },
-  onLoadNodesData: (fromID, toID) => {
-    dispatch(loadNodesData(fromID, toID));
   },
   onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));
