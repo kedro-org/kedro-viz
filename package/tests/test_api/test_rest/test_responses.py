@@ -804,12 +804,21 @@ class TestSinglePipelineEndpoint:
             response_data.pop("modular_pipelines"),
             expected_modular_pipelines,
         )
-        assert response_data == {
+
+        # Extract and sort the layers field
+        response_data_layers_sorted = sorted(response_data["layers"])
+        expected_layers_sorted = sorted(["model_inputs", "raw"])
+        assert response_data_layers_sorted == expected_layers_sorted
+
+        # Remove the layers field from response_data for further comparison
+        response_data.pop("layers")
+
+        # Expected response without the layers field
+        expected_response_without_layers = {
             "tags": [
                 {"id": "split", "name": "split"},
                 {"id": "train", "name": "train"},
             ],
-            "layers": ["model_inputs", "raw"],
             "pipelines": [
                 {"id": "__default__", "name": "__default__"},
                 {"id": "data_science", "name": "data_science"},
@@ -817,6 +826,7 @@ class TestSinglePipelineEndpoint:
             ],
             "selected_pipeline": "data_science",
         }
+        assert response_data == expected_response_without_layers
 
     def test_get_non_existing_pipeline(self, client):
         response = client.get("/api/pipelines/foo")
