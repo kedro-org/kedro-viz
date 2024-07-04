@@ -3,6 +3,11 @@
 import { prettifyName } from '../../../../src/utils';
 
 describe('Flowchart Menu', () => {
+  before(() => {
+    cy.visit('/'); // Visit the application
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');

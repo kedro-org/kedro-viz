@@ -3,6 +3,11 @@
 import { prettifyName, stripNamespace } from '../../../../src/utils';
 
 describe('Global Toolbar', () => {
+  before(() => {
+    cy.visit('/'); // Visit the application
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can access the flowchart page through the flowchart icon, when in the experiment tracking view. #TC-1', () => {
     cy.visit('/experiment-tracking');
     cy.get('[data-test="View your pipeline"]').click();

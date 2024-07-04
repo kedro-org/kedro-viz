@@ -235,3 +235,17 @@ Cypress.Commands.add(
       .click();
   }
 );
+
+/**
+ * Custom command to enable pretty name
+ */
+Cypress.Commands.add('enablePrettyNames', () => {
+  // Visit the settings panel
+  cy.get('[data-test="settings-button"]').click();
+
+  // Enable the pretty names setting
+  cy.get('[data-test="pretty-name-toggle"]').check({ force: true });
+
+  // Close the settings panel
+  cy.get('[data-test="settings-close-button"]').click();
+});

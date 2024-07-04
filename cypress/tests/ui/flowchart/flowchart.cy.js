@@ -1,5 +1,10 @@
 // All E2E Tests Related to flowchart DAG goes here.
 describe('Flowchart DAG', () => {
+  before(() => {
+    cy.visit('/'); // Visit the application
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
     const modularPipelineText = 'feature_engineering';
     const taskNodeText = 'Create Derived Features';
