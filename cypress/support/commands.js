@@ -241,11 +241,11 @@ Cypress.Commands.add(
  */
 Cypress.Commands.add('enablePrettyNames', () => {
   // Visit the settings panel
-  cy.get('[data-test="settings-button"]').click();
+  cy.get('[data-test="Change the settings flags"]').click();
 
   // Enable the pretty names setting
-  cy.get('[data-test="pretty-name-toggle"]').check({ force: true });
+  cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').check({ force: true });
 
-  // Close the settings panel
-  cy.get('[data-test="settings-close-button"]').click();
+  // Apply changes and close the settings panel
+  cy.get('[data-test="Apply changes and close in Settings Modal"]').click();
 });
