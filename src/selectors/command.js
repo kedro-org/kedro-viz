@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { prettifyName } from '../utils';
 
 const getClickedNode = (state) => state.node.clicked;
 const getActivePipeline = (state) => state.pipeline.active;
@@ -20,6 +21,6 @@ export const getRunCommand = createSelector(
       return null;
     }
 
-    return nodeRunCommand[nodeId] || `run run pipeline ${activePipeline}`;
+    return nodeRunCommand[nodeId] || `kedro run --runner="${activePipeline}"`;
   }
 );
