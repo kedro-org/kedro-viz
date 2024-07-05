@@ -332,7 +332,7 @@ export function updateRunNotes(notes, runId) {
   };
 }
 
-export const UPDATE_STATE_FROM_LATEST_PROPS = 'UPDATE_STATE_FROM_LATEST_PROPS';
+export const UPDATE_STATE_FROM_PROPS = 'UPDATE_STATE_FROM_PROPS';
 
 /**
  * Update state with latest props coming from the react component
