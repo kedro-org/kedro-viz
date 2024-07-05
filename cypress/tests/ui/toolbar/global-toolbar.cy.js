@@ -4,7 +4,6 @@ import { prettifyName, stripNamespace } from '../../../../src/utils';
 
 describe('Global Toolbar', () => {
   before(() => {
-    cy.visit('/'); // Visit the application
     cy.enablePrettyNames(); // Enable pretty names using the custom command
   });
 
