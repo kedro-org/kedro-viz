@@ -338,9 +338,9 @@ export const UPDATE_STATE_FROM_PROPS = 'UPDATE_STATE_FROM_PROPS';
  * Update state with latest props coming from the react component
  * @param {Object} updatedProps
  */
-export const updateStateWithLatestProps = (updatedProps) => {
+export const updateStateFromProps = (updatedProps) => {
   return {
-    type: UPDATE_STATE_FROM_LATEST_PROPS,
+    type: UPDATE_STATE_FROM_PROPS,
     payload: updatedProps,
   };
 };

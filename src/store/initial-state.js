@@ -250,14 +250,12 @@ const getInitialState = (props = {}) => {
     urlParams
   );
 
-  const mergedInitialState = {
+  const initialState = {
     ...nonPipelineState,
     ...pipelineState,
   };
 
-  return props.props
-    ? deepmerge(mergedInitialState, props.props)
-    : mergedInitialState;
+  return props.props ? deepmerge(initialState, props.props) : initialState;
 };
 
 export default getInitialState;
