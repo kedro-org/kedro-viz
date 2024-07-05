@@ -136,10 +136,18 @@ describe('Flowchart Menu', () => {
     ).click();
 
     // Assert after action
-    cy.__checkForText__(
-      '.pipeline-node--active > .pipeline-node__text',
-      prettifyName(nodeToFocusText)
+    cy.get('.pipeline-node--active > .pipeline-node__text')
+      .invoke('text')
+      .then((focusedNodesText) =>
+        expect(focusedNodesText.toLowerCase()).to.contains(
+          prettifyName(nodeToFocusText).toLowerCase()
+        )
+      );
+    cy.get('.pipeline-node--active > .pipeline-node__text').should(
+      'have.length',
+      5
     );
+
     cy.get('.pipeline-node').should('have.length', 5);
   });
 

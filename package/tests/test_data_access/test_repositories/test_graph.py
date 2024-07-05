@@ -10,7 +10,9 @@ from kedro_viz.models.flowchart import GraphEdge, GraphNode
 class TestGraphNodeRepository:
     def test_get_node_by_id(self, identity):
         repo = GraphNodesRepository()
-        task_node = GraphNode.create_task_node(node(identity, inputs="x", outputs=None))
+        task_node = GraphNode.create_task_node(
+            node(identity, inputs="x", outputs=None), "identity_node", None
+        )
         assert repo.get_node_by_id(task_node.id) is None
         repo.add_node(task_node)
         assert repo.get_node_by_id(task_node.id) is task_node
@@ -21,7 +23,9 @@ class TestGraphNodeRepository:
         task_nodes = []
         for i in range(5):
             task_node = GraphNode.create_task_node(
-                node(identity, inputs="x", outputs=None, name=f"identity_{i}")
+                node(identity, inputs="x", outputs=None, name=f"identity_{i}"),
+                f"identity_{i}",
+                None,
             )
             task_node_ids.append(task_node.id)
             task_nodes.append(task_node)
@@ -34,9 +38,11 @@ class TestGraphNodeRepository:
 
     def test_get_node_ids(self, identity):
         repo = GraphNodesRepository()
-        task_node = GraphNode.create_task_node(node(identity, inputs="x", outputs=None))
+        task_node = GraphNode.create_task_node(
+            node(identity, inputs="x", outputs=None), "identity_node", None
+        )
         repo.add_node(task_node)
-        assert repo.get_node_ids() == ["0b1b5ea2"]
+        assert repo.get_node_ids() == ["identity_node"]
 
 
 class TestGraphEdgesRepository:
