@@ -15,6 +15,7 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
+import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -44,6 +45,10 @@ export class FlowChart extends Component {
       tooltip: { visible: false },
       activeLayer: undefined,
       selectedNodes: [],
+      multiSelected: {
+        first: null,
+        second: null,
+      },
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -90,6 +95,12 @@ export class FlowChart extends Component {
 
   componentDidUpdate(prevProps) {
     this.update(prevProps);
+
+    // Check if the nodes returned by the onFilterNodes selector have changed
+    if (this.props.filteredNodes !== prevProps.filteredNodes) {
+      // If they have, update the selectedNodes state with the new nodes
+      this.setState({ selectedNodes: this.props.filteredNodes });
+    }
   }
 
   /**
@@ -450,25 +461,28 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    let updatedSelectedNodes = [];
-
-    if (event.shiftKey) {
-      this.setState((prevState) => {
-        updatedSelectedNodes =
-          prevState.selectedNodes.length < 2
-            ? [...prevState.selectedNodes, node.id]
-            : []; // set empty
-
-        return { selectedNodes: updatedSelectedNodes };
-      });
+    if (node.type === 'modularPipeline') {
+      this.props.onClickToExpandModularPipeline(node.id);
     } else {
-      if (node.type === 'modularPipeline') {
-        this.props.onClickToExpandModularPipeline(node.id);
-      } else {
-        this.props.onLoadNodeData(node.id);
-        this.props.toSelectedNode(node);
+      this.props.onLoadNodeData(node.id);
+      this.props.toSelectedNode(node);
+
+      this.setState({
+        multiSelected: { ...this.state.multiSelected, first: node.id },
+      });
+
+      // the hold shift only happens on clicking a node first
+      if (event.shiftKey) {
+        const firstNodeId = this.state.multiSelected.first;
+        const secondNodeId = node.id;
+        this.setState({
+          multiSelected: { ...this.state.multiSelected, second: secondNodeId },
+        });
+
+        this.props.onFilterNodes(firstNodeId, secondNodeId);
       }
     }
+
     event.stopPropagation();
   };
 
@@ -747,6 +761,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodesSelected: getNodesSelected(state),
+  filteredNodes: getFilteredPipeline(state),
   ...ownProps,
 });
 

@@ -129,7 +129,6 @@ export const drawNodes = function (changed) {
     nodeTypeDisabled,
     nodeActive,
     nodeSelected,
-    nodesSelected,
     hoveredParameters,
     nodesWithInputParams,
     inputOutputDataNodes,
