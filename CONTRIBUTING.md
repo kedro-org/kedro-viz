@@ -39,7 +39,7 @@ Working on your first pull request? You can learn how from these resources:
 
 - Fork the project
 - Develop your contribution in a new branch and open a PR against the `main` branch
-- Make sure the CI builds are green (have a look at the section [Running checks locally](#running-checks-locally) below)
+- Make sure the CI builds are green (have a look at the section [Running checks locally](#testing-guidelines) below)
 - Update the PR according to the reviewer's comments
 
 # Contribution guidelines
