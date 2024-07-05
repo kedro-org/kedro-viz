@@ -1,9 +1,8 @@
 """`kedro_viz.services.layers` defines layers-related logic."""
 import logging
 from collections import defaultdict
+from graphlib import CycleError, TopologicalSorter
 from typing import Dict, List, Set
-
-from toposort import CircularDependencyError, toposort_flatten
 
 from kedro_viz.models.flowchart import GraphNode
 
@@ -33,9 +32,9 @@ def sort_layers(
         that have already been visited.
         * Turn the final {node_id -> layers} into a {layer -> layers} to represent the layers'
         dependencies. Note: the key is a layer and the values are the parents of that layer,
-        just because that's the format toposort requires.
-        * Feed this layers dictionary to ``toposort`` and return the sorted values.
-        * Raise CircularDependencyError if the layers cannot be sorted topologically,
+        just because that's the format TopologicalSorter requires.
+        * Takes layers dictionary to ``graphlib.TopologicalSorter`` and return the sorted values.
+        * Raise CycleError if the layers cannot be sorted topologically,
         i.e. there are cycles among the layers.
 
     Args:
@@ -47,7 +46,7 @@ def sort_layers(
         The list of layers sorted based on topological order.
 
     Raises:
-        CircularDependencyError: When the layers have cyclic dependencies.
+        CycleError: When the layers have cyclic dependencies.
     """
     node_layers: Dict[str, Set[str]] = {}  # map node_id to the layers that depend on it
 
@@ -84,27 +83,40 @@ def sort_layers(
         return node_layers[node_id]
 
     # populate node_layers dependencies
-    for node_id in nodes:
+    for node_id in sorted(nodes):  # Sort nodes
         find_child_layers(node_id)
 
     # compute the layer dependencies dictionary based on the node_layers dependencies,
     # represented as {layer -> set(parent_layers)}
     layer_dependencies = defaultdict(set)
+    all_layers = set()  # keep track of all layers encountered
     for node_id, child_layers in node_layers.items():
         node_layer = getattr(nodes[node_id], "layer", None)
-
-        # add the node's layer as a parent layer for all child layers.
-        # Even if a child layer is the same as the node's layer, i.e. a layer is marked
-        # as its own parent, toposort still works so we don't need to check for that explicitly.
         if node_layer is not None:
+            all_layers.add(node_layer)
             for layer in child_layers:
-                layer_dependencies[layer].add(node_layer)
+                all_layers.add(layer)
+                # Avoid adding the node's layer as a parent of itself
+                if layer != node_layer:
+                    layer_dependencies[layer].add(node_layer)
 
-    # toposort the layer_dependencies to find the layer order.
-    # Note that for string, toposort_flatten will default to alphabetical order for tie-break.
+    # Add empty dependencies for all layers to ensure they appear in the sorting
+    for layer in all_layers:
+        if layer not in layer_dependencies:
+            layer_dependencies[layer] = set()
+
+    # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
-        return toposort_flatten(layer_dependencies)
-    except CircularDependencyError:
+        sorter = TopologicalSorter(layer_dependencies)
+        sorted_layers = list(sorter.static_order())
+        # Ensure the order is stable and respects the original input order
+        # `sorted_layers.index(layer)` ensures the order from topological sorting is preserved.
+        # `layer` ensures that if two layers have the same dependency level,
+        # they are sorted alphabetically.
+        return sorted(
+            sorted_layers, key=lambda layer: (sorted_layers.index(layer), layer)
+        )
+    except CycleError:
         logger.warning(
             "Layers visualisation is disabled as circular dependency detected among layers."
         )
