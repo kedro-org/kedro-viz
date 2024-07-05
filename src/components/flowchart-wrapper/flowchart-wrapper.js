@@ -12,7 +12,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode, toggleSidebar } from '../../actions';
+import { toggleFocusMode } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -51,7 +51,6 @@ export const FlowChartWrapper = ({
   metadataVisible,
   modularPipelinesTree,
   nodes,
-  onToggleSidebar,
   onToggleFocusMode,
   onToggleModularPipelineActive,
   onToggleModularPipelineExpanded,
@@ -384,9 +383,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleModularPipelineExpanded: (expanded) => {
     dispatch(toggleModularPipelinesExpanded(expanded));
-  },
-  onToggleSidebar: (visible) => {
-    dispatch(toggleSidebar(visible));
   },
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
