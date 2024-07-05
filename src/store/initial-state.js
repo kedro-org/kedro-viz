@@ -237,7 +237,7 @@ export const prepareNonPipelineState = (urlParams) => {
  */
 const getInitialState = (props = {}) => {
   const urlParams = parseUrlParameters();
-  const nonPipelineState = prepareNonPipelineState(props, urlParams);
+  const nonPipelineState = prepareNonPipelineState(urlParams);
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||

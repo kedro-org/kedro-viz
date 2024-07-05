@@ -91,22 +91,6 @@ describe('prepareNonPipelineState', () => {
     });
   });
 
-  it('overrides theme with value from prop', () => {
-    const props = { theme: 'light' };
-    expect(
-      prepareNonPipelineState({ data: spaceflights, ...props })
-    ).toMatchObject(props);
-  });
-
-  it('overrides visible with values from prop', () => {
-    const props = {
-      visible: { miniMap: true, sidebar: false },
-    };
-    expect(
-      prepareNonPipelineState({ data: spaceflights, ...props })
-    ).toMatchObject(props);
-  });
-
   it('overrides expandAllPipelines with values from URL', () => {
     // In this case, location.href is not provided
     expect(prepareNonPipelineState({ data: spaceflights })).toMatchObject({
@@ -145,7 +129,7 @@ describe('getInitialState', () => {
     expect(
       getInitialState({
         ...props,
-        theme: 'light',
+        props: { visible: { labelBtn: true }, theme: 'light' },
       })
     ).toMatchObject({
       theme: 'light',
@@ -165,7 +149,9 @@ describe('getInitialState', () => {
 
   it('uses prop values instead of localstorage if provided', () => {
     saveLocalStorage(localStorageName, { theme: 'light' });
-    expect(getInitialState({ ...props, theme: 'dark' })).toMatchObject({
+    expect(
+      getInitialState({ ...props, props: { theme: 'dark' } })
+    ).toMatchObject({
       theme: 'dark',
     });
     window.localStorage.clear();
