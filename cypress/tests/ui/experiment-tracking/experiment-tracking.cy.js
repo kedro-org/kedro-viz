@@ -198,6 +198,8 @@ describe('Experiment Tracking', () => {
     it('verifies that users can select the metrics name, and it takes them to the metrics in the DAG. #TC-49', () => {
       const plotNameText = 'reporting.feature_importance';
 
+      cy.enablePrettyNames();
+
       // Action
       cy.get('.accordion__title--hyperlink').first().click();
 
