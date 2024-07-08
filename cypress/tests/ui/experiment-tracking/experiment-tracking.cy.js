@@ -193,6 +193,8 @@ describe('Experiment Tracking', () => {
 
       // Assert after action
       cy.get('@plotsTab').should('have.class', 'tabs__item--active');
+
+      cy.enablePrettyNames(); // Enable pretty names using the custom command
     });
 
     it('verifies that users can select the metrics name, and it takes them to the metrics in the DAG. #TC-49', () => {

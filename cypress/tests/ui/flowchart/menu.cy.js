@@ -5,6 +5,9 @@ import { prettifyName } from '../../../../src/utils';
 describe('Flowchart Menu', () => {
   before(() => {
     cy.visit('/'); // Visit the application
+  });
+
+  beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
   });
 
