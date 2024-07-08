@@ -202,7 +202,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
-    const visibleRowLabel = 'Companies';
+    const visibleRowLabel = 'companies';
     cy.visit(`/?tags=${visibleRowLabel}`);
     cy.enablePrettyNames();
 
