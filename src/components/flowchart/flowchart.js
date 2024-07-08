@@ -462,12 +462,8 @@ export class FlowChart extends Component {
     if (type === 'modularPipeline') {
       onClickToExpandModularPipeline(id);
     } else {
-      if (displayMetadataPanel) {
-        onLoadNodeData(id);
-        toSelectedNode(node);
-      } else {
-        onToggleNodeClicked(id);
-      }
+      displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+      toSelectedNode(node);
     }
     event.stopPropagation();
   };
