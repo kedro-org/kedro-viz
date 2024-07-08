@@ -13,34 +13,23 @@ describe('Experiment Tracking', () => {
         'applyChanges'
       );
 
-      cy.enablePrettyNames();
-
       // Assert before action
       cy.get('.modal--visible').should('not.exist');
-
-      cy.enablePrettyNames();
 
       // Action
       cy.get('@metadataTitle').click();
 
-      cy.enablePrettyNames();
-
       // Assert after action
-      cy.get('.modal--visible').then(($dialog) => {
-        cy.enablePrettyNames();
-        cy.wrap($dialog).within(() => {
-          cy.get(':nth-child(2) > .input').clear();
-          cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
-          cy.get('@applyChanges').click();
-        });
-      });
-
-      cy.enablePrettyNames();
+      cy.get('.modal--visible').should('exist');
+    
+      cy.get('.modal--visible').within(() => {
+        cy.get(':nth-child(2) > .input').as('inputField');
+        cy.get('@inputField').clear();
+        cy.get('@inputField').type(modifiedRunTitleText);
+        cy.get('@applyChanges').click();
+      });  
 
       cy.get('.modal--visible').should('not.exist');
-
-      cy.enablePrettyNames();
-      
       cy.get('.runs-list-card__title')
         .first()
         .should('have.text', modifiedRunTitleText);
@@ -214,7 +203,10 @@ describe('Experiment Tracking', () => {
       cy.get('.accordion__title--hyperlink').first().click();
 
       // Assert after action
-      cy.location('search').should('contain', `?pid=__default__&sn=${plotNameText}`);
+      cy.location('search').should(
+        'contain',
+        `?pid=__default__&sn=${plotNameText}`
+      );
       cy.__checkForText__(
         '.pipeline-node--selected > .pipeline-node__text',
         prettifyName(stripNamespace(plotNameText))
