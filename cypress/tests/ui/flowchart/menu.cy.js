@@ -204,7 +204,6 @@ describe('Flowchart Menu', () => {
   it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
     const visibleRowLabel = 'companies';
     cy.visit(`/?tags=${visibleRowLabel}`);
-    cy.enablePrettyNames();
 
     // Alias
     cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(

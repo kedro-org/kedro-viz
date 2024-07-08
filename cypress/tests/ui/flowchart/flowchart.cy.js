@@ -12,8 +12,6 @@ describe('Flowchart DAG', () => {
     const modularPipelineText = 'feature_engineering';
     const taskNodeText = 'Create Derived Features';
 
-    cy.enablePrettyNames();
-
     // Assert before action
     cy.get('.pipeline-node > .pipeline-node__text').should(
       'not.contain',
