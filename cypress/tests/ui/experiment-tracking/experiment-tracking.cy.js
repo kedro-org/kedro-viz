@@ -22,8 +22,11 @@ describe('Experiment Tracking', () => {
       cy.get('@metadataTitle').click();
 
       // Assert after action
+      cy.enablePrettyNames();
       cy.get('.modal--visible').then(($dialog) => {
+        cy.enablePrettyNames();
         cy.wrap($dialog).within(() => {
+          cy.enablePrettyNames();
           cy.get(':nth-child(2) > .input').clear();
           cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
           cy.get('@applyChanges').click();
