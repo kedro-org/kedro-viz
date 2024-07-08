@@ -3,13 +3,11 @@
 import { prettifyName, stripNamespace } from '../../../../src/utils';
 
 describe('Experiment Tracking', () => {
-  before(() => {
-    cy.visit('/'); // Visit the application
-    cy.enablePrettyNames(); // Enable pretty names using the custom command
-  });
   describe('Overview', () => {
     it('verifies that users can edit the run name, apply changes, and see the changes reflected from the overview page. #TC-43', () => {
       const modifiedRunTitleText = '2022-12-25T21.05.59.296Z';
+
+      cy.enablePrettyNames();
 
       // Alias
       cy.get('.details-metadata__title').first().as('metadataTitle');
