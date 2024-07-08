@@ -5,6 +5,8 @@ const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 const getFromNodes = (state) => state.filters.from;
 const getToNodes = (state) => state.filters.to;
+const getHighlightFromNodes = (state) => state.highlightFilters.from;
+const getHightlightToNodes = (state) => state.highlightFilters.to;
 
 /**
  * Selector to get all edges formatted as an array of objects with id, source, and target properties.
@@ -70,6 +72,34 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
   return visited;
 };
 
+const findNodesInBetween = (sourceEdges, startID, endID) => {
+  let filteredNodeIDs = [];
+  if ((!startID || !startID.length) && (!endID || !endID.length)) {
+    return filteredNodeIDs;
+  } else {
+    const linkedNodesBetween = [];
+    const linkedNodesBeforeEnd = {};
+    findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+    const linkedNodeBeforeStart = {};
+    findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
+
+    // keep any nodes before the endID
+    filteredNodeIDs = linkedNodesBetween.concat(
+      Object.keys(linkedNodesBeforeEnd)
+    );
+
+    // remove any nodes before startID
+    Object.keys(linkedNodeBeforeStart).map((node) => {
+      if (node !== startID) {
+        const index = filteredNodeIDs.indexOf(node);
+        filteredNodeIDs.splice(index, 1);
+      }
+    });
+
+    return filteredNodeIDs;
+  }
+};
+
 /**
  * Selector to filter nodes that are connected between two specified node IDs.
  * @param {Object} edgesByNode - Edges organized by node IDs.
@@ -81,30 +111,13 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
 export const getFilteredPipeline = createSelector(
   [getEdgesByNode, getFromNodes, getToNodes],
   ({ sourceEdges, targetEdges }, startID, endID) => {
-    let filteredNodeIDs = [];
-    if ((!startID || !startID.length) && (!endID || !endID.length)) {
-      return filteredNodeIDs;
-    } else {
-      const linkedNodesBetween = [];
-      const linkedNodesBeforeEnd = {};
-      findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
-      const linkedNodeBeforeStart = {};
-      findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
+    return findNodesInBetween(sourceEdges, startID, endID);
+  }
+);
 
-      // keep any nodes before the endID
-      filteredNodeIDs = linkedNodesBetween.concat(
-        Object.keys(linkedNodesBeforeEnd)
-      );
-
-      // remove any nodes before startID
-      Object.keys(linkedNodeBeforeStart).map((node) => {
-        if (node !== startID) {
-          const index = filteredNodeIDs.indexOf(node);
-          filteredNodeIDs.splice(index, 1);
-        }
-      });
-
-      return filteredNodeIDs;
-    }
+export const getHighlightFilteredPipeline = createSelector(
+  [getEdgesByNode, getHighlightFromNodes, getHightlightToNodes],
+  ({ sourceEdges, targetEdges }, startID, endID) => {
+    return findNodesInBetween(sourceEdges, startID, endID);
   }
 );

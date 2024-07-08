@@ -11,6 +11,7 @@ import tag from './tags';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import filters from './filters';
+import highlightFilters from './hightlight-filters';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -64,6 +65,7 @@ const combinedReducer = combineReducers({
   nodeType,
   pipeline,
   filters,
+  highlightFilters,
   tag,
   modularPipeline,
   visible,

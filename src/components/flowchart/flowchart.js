@@ -5,7 +5,12 @@ import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
-import { filterNodes, resetFilterNodes } from '../../actions/filters';
+import {
+  filterNodes,
+  resetFilterNodes,
+  hightlightFilterNode,
+  resetHightlightFilterNode,
+} from '../../actions/filters';
 import {
   getNodeActive,
   getNodeSelected,
@@ -15,7 +20,7 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
-import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
+import { getHighlightFilteredPipeline } from '../../selectors/filtered-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -46,8 +51,8 @@ export class FlowChart extends Component {
       activeLayer: undefined,
       selectedNodes: [],
       multiSelected: {
-        first: null,
-        second: null,
+        from: null,
+        to: null,
       },
     };
     this.onViewChange = this.onViewChange.bind(this);
@@ -97,9 +102,9 @@ export class FlowChart extends Component {
     this.update(prevProps);
 
     // Check if the nodes returned by the onFilterNodes selector have changed
-    if (this.props.filteredNodes !== prevProps.filteredNodes) {
+    if (this.props.highlightFilterNodes !== prevProps.highlightFilterNodes) {
       // If they have, update the selectedNodes state with the new nodes
-      this.setState({ selectedNodes: this.props.filteredNodes });
+      this.setState({ selectedNodes: this.props.highlightFilterNodes });
     }
   }
 
@@ -468,18 +473,21 @@ export class FlowChart extends Component {
       this.props.toSelectedNode(node);
 
       this.setState({
-        multiSelected: { ...this.state.multiSelected, first: node.id },
+        multiSelected: { ...this.state.multiSelected, from: node.id },
       });
 
       // the hold shift only happens on clicking a node first
       if (event.shiftKey) {
-        const firstNodeId = this.state.multiSelected.first;
-        const secondNodeId = node.id;
+        // to close meta data panel
+        this.props.onLoadNodeData(null);
+
+        const fromNodeId = this.state.multiSelected.from;
+        const toNodeId = node.id;
         this.setState({
-          multiSelected: { ...this.state.multiSelected, second: secondNodeId },
+          multiSelected: { from: fromNodeId, to: toNodeId },
         });
 
-        this.props.onFilterNodes(firstNodeId, secondNodeId);
+        this.props.onHighlightNodes(fromNodeId, toNodeId);
       }
     }
 
@@ -630,14 +638,14 @@ export class FlowChart extends Component {
     const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
       this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const [fromNode, toNode] = this.state.selectedNodes;
+    const { from, to } = this.state.multiSelected;
     return (
       <div
         className="pipeline-flowchart kedro"
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        {fromNode && toNode && (
+        {from && to && (
           <div
             style={{
               background: 'red',
@@ -651,7 +659,7 @@ export class FlowChart extends Component {
               className="pipeline-flowchart__filter-button"
               dataTest={'filter nodes'}
               mode="secondary"
-              onClick={() => this.props.onFilterNodes(fromNode, toNode)}
+              onClick={() => this.props.onFilterNodes(from, to)}
               size="small"
             >
               Run slicing pipeline
@@ -761,7 +769,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodesSelected: getNodesSelected(state),
-  filteredNodes: getFilteredPipeline(state),
+  highlightFilterNodes: getHighlightFilteredPipeline(state),
   ...ownProps,
 });
 
@@ -786,6 +794,12 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onResetFilterNodes: () => {
     dispatch(resetFilterNodes());
+  },
+  onHighlightNodes: (fromID, toID) => {
+    dispatch(hightlightFilterNode(fromID, toID));
+  },
+  onResetHighlightNodes: () => {
+    dispatch(resetHightlightFilterNode());
   },
   ...ownProps,
 });
