@@ -20,23 +20,19 @@ describe('Experiment Tracking', () => {
 
       // Action
       cy.get('@metadataTitle').click();
-
-      // Assert after action
-      cy.enablePrettyNames();
-      cy.get('.modal--visible').then(($dialog) => {
-        cy.enablePrettyNames();
+      // Assert the modal is visible
+      cy.get('.modal--visible').should('exist').then(($dialog) => {
         cy.wrap($dialog).within(() => {
-          cy.enablePrettyNames();
-          cy.get(':nth-child(2) > .input').clear();
-          cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
-          cy.get('@applyChanges').click();
+          // Ensure the input field is visible before interacting
+          cy.get(':nth-child(2) > .input').should('be.visible').clear().type(modifiedRunTitleText);
+          cy.get('@applyChanges').should('be.visible').click();
         });
       });
 
       cy.get('.modal--visible').should('not.exist');
-      cy.get('.runs-list-card__title')
-        .first()
-        .should('have.text', modifiedRunTitleText);
+
+      // Assert the changes are reflected
+      cy.get('.runs-list-card__title').first().should('have.text', modifiedRunTitleText);
       cy.get('@metadataTitle').should('have.text', modifiedRunTitleText);
     });
 
