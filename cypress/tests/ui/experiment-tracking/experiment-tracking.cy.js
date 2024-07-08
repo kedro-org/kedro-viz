@@ -15,14 +15,21 @@ describe('Experiment Tracking', () => {
         'applyChanges'
       );
 
+      cy.enablePrettyNames();
+
       // Assert before action
       cy.get('.modal--visible').should('not.exist');
+
+      cy.enablePrettyNames();
 
       // Action
       cy.get('@metadataTitle').click();
 
+      cy.enablePrettyNames();
+
       // Assert after action
       cy.get('.modal--visible').then(($dialog) => {
+        cy.enablePrettyNames();
         cy.wrap($dialog).within(() => {
           cy.get(':nth-child(2) > .input').clear();
           cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
@@ -30,7 +37,12 @@ describe('Experiment Tracking', () => {
         });
       });
 
+      cy.enablePrettyNames();
+
       cy.get('.modal--visible').should('not.exist');
+
+      cy.enablePrettyNames();
+      
       cy.get('.runs-list-card__title')
         .first()
         .should('have.text', modifiedRunTitleText);
