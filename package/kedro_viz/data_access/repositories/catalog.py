@@ -144,10 +144,3 @@ class CatalogRepository:
             for dataset_name in self._catalog.list()
             if self.get_dataset(dataset_name) is not None
         }
-
-    @staticmethod
-    def is_dataset_param(dataset_name: str) -> bool:
-        """Return whether a dataset is a parameter"""
-        return (
-            dataset_name.lower().startswith("params:") or dataset_name == "parameters"
-        )

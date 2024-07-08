@@ -14,11 +14,16 @@ Please follow the established format:
 - Display published URLs. (#1907)
 - Conditionally move session store and stats file to .viz directory. (#1915)
 - Introduce `metadataPanel` in `display` prop in Kedro-Viz react component. (#1965)
+- Refactor namespace pipelines. (#1897)
+
 
 ## Bug fixes and other changes
 
 - Relax `packaging` pin in requirements. (#1947)
 - Add favicon to kedro-viz documentation. (#1959)
+- Add "-p" flag to kedro-viz to match kedro run. (#1960)
+- Fix bug related to nested namespace pipelines. (#1897)
+- Migrate from `toposort` to `graphlib`. (#1942)
 
 # Release 9.1.0
 
