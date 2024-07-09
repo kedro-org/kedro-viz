@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import 'what-input';
 import configureStore from '../../store';
-import { resetData, updateStateFromProps } from '../../actions';
+import { resetData, updateStateFromOptionsProps } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
@@ -38,8 +38,8 @@ class App extends React.Component {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
     }
-    if (prevProps.props !== this.props.props) {
-      this.store.dispatch(updateStateFromProps(this.props.props));
+    if (prevProps.options !== this.props.options) {
+      this.store.dispatch(updateStateFromOptionsProps(this.props.options));
     }
   }
 
@@ -88,7 +88,7 @@ App.propTypes = {
       tags: PropTypes.array,
     }),
   ]),
-  props: PropTypes.shape({
+  options: PropTypes.shape({
     /**
      * Specify the theme: Either 'light' or 'dark'.
      * If set, this will override the localStorage value.

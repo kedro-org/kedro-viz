@@ -255,7 +255,7 @@ const getInitialState = (props = {}) => {
     ...pipelineState,
   };
 
-  return props.props ? deepmerge(initialState, props.props) : initialState;
+  return props.options ? deepmerge(initialState, props.options) : initialState;
 };
 
 export default getInitialState;

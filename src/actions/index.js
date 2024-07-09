@@ -332,15 +332,16 @@ export function updateRunNotes(notes, runId) {
   };
 }
 
-export const UPDATE_STATE_FROM_PROPS = 'UPDATE_STATE_FROM_PROPS';
+export const UPDATE_STATE_FROM_OPTIONS_PROPS =
+  'UPDATE_STATE_FROM_OPTIONS_PROPS';
 
 /**
- * Update state with latest props coming from the react component
+ * Update state with latest options props coming from the react component
  * @param {Object} updatedProps
  */
-export const updateStateFromProps = (updatedProps) => {
+export const updateStateFromOptionsProps = (updatedProps) => {
   return {
-    type: UPDATE_STATE_FROM_PROPS,
+    type: UPDATE_STATE_FROM_OPTIONS_PROPS,
     payload: updatedProps,
   };
 };

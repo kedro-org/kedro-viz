@@ -26,7 +26,7 @@ describe('PrimaryToolbar', () => {
       pipelineBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
-      props: { visible },
+      options: { visible },
     });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
@@ -36,7 +36,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
-      props: { visible },
+      options: { visible },
     });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });

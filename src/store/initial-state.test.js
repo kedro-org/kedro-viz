@@ -129,7 +129,7 @@ describe('getInitialState', () => {
     expect(
       getInitialState({
         ...props,
-        props: { visible: { labelBtn: true }, theme: 'light' },
+        options: { visible: { labelBtn: true }, theme: 'light' },
       })
     ).toMatchObject({
       theme: 'light',
@@ -150,7 +150,7 @@ describe('getInitialState', () => {
   it('uses prop values instead of localstorage if provided', () => {
     saveLocalStorage(localStorageName, { theme: 'light' });
     expect(
-      getInitialState({ ...props, props: { theme: 'dark' } })
+      getInitialState({ ...props, options: { theme: 'dark' } })
     ).toMatchObject({
       theme: 'dark',
     });

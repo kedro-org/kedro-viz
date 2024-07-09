@@ -22,7 +22,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
-  UPDATE_STATE_FROM_PROPS,
+  UPDATE_STATE_FROM_OPTIONS_PROPS,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -56,13 +56,13 @@ function resetDataReducer(state = {}, action) {
 }
 
 /**
- * Update state from props coming form react component
+ * Update state from options props coming form react component
  * @param {Object} state Complete app state
  * @param {Object} action Redux action
  * @return {Object} Updated state
  */
 function updateStateFromPropsReducer(state = {}, action) {
-  if (action.type === UPDATE_STATE_FROM_PROPS) {
+  if (action.type === UPDATE_STATE_FROM_OPTIONS_PROPS) {
     return merge({}, state, action.payload);
   }
   return state;
