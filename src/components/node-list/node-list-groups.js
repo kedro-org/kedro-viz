@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import NodeListGroup from './node-list-group';
 import { localStorageName } from '../../config';
@@ -21,11 +21,18 @@ const NodeListGroups = ({
   searchValue,
   onFilterNodes,
   onResetNodesFilters,
+  onApplyFilters,
 }) => {
   const [collapsed, setCollapsed] = useState(storedState.groupsCollapsed || {});
   const [toNode, selectedToNode] = useState({});
   const [fromNode, selectedFromNode] = useState({});
   const isSlicingEnabled = flags.slicePipeline;
+
+  useEffect(() => {
+    if (fromNode.value && toNode.value) {
+      onFilterNodes(fromNode.value, toNode.value);
+    }
+  }, [fromNode, toNode, onFilterNodes]);
 
   // Collapse/expand node group
   const onToggleGroupCollapsed = (groupID) => {
@@ -106,7 +113,7 @@ const NodeListGroups = ({
                 <Button
                   dataTest={'filter nodes'}
                   mode="secondary"
-                  onClick={() => onFilterNodes(fromNode.value, toNode.value)}
+                  onClick={() => onApplyFilters(true)}
                   size="small"
                 >
                   Filter

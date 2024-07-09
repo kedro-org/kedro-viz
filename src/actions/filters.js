@@ -5,6 +5,13 @@ export const filterNodes = (from, to) => ({
   filters: { from, to },
 });
 
+export const APPLY_FILTERS = 'APPLY_FILTERS';
+
+export const applyFilters = (apply) => ({
+  type: APPLY_FILTERS,
+  apply,
+});
+
 export const RESET_NODES_FILTER = 'RESET_NODES_FILTER';
 
 export const resetNodesFilter = () => ({

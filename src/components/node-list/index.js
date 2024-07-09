@@ -39,10 +39,16 @@ import {
   toggleNodeHovered,
   toggleNodesDisabled,
 } from '../../actions/nodes';
-import { filterNodes, resetNodesFilter } from '../../actions/filters';
+import {
+  filterNodes,
+  resetNodesFilter,
+  applyFilters,
+} from '../../actions/filters';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
 import { params, NODE_TYPES } from '../../config';
+import { get } from 'lodash';
+import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -58,6 +64,7 @@ const NodeListProvider = ({
   nodeTypes,
   taskNodes,
   datasets,
+  filteredPipeline,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
@@ -71,6 +78,7 @@ const NodeListProvider = ({
   onToggleFocusMode,
   onFilterNodes,
   onResetNodesFilter,
+  onApplyFilters,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -78,6 +86,8 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
+
+  console.log(filteredPipeline);
 
   const {
     toSelectedPipeline,
@@ -322,6 +332,7 @@ const NodeListProvider = ({
       onItemChange={onItemChange}
       onFilterNodes={onFilterNodes}
       onResetNodesFilter={onResetNodesFilter}
+      onApplyFilters={onApplyFilters}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
       onResetFilter={onResetFilter}
@@ -343,6 +354,7 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
+  filteredPipeline: getFilteredPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -381,6 +393,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onFilterNodes: (from, to) => {
     dispatch(filterNodes(from, to));
+  },
+  onApplyFilters: (apply) => {
+    dispatch(applyFilters(apply));
   },
   onResetNodesFilter: () => {
     dispatch(resetNodesFilter());

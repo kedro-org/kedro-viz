@@ -1,4 +1,8 @@
-import { FILTER_NODES, RESET_NODES_FILTER } from '../actions/filters';
+import {
+  APPLY_FILTERS,
+  FILTER_NODES,
+  RESET_NODES_FILTER,
+} from '../actions/filters';
 
 // Reducer for filtering nodes
 const filterNodesReducer = (filterState = {}, action) => {
@@ -10,6 +14,12 @@ const filterNodesReducer = (filterState = {}, action) => {
         from: action.filters.from,
         to: action.filters.to,
       });
+
+    case APPLY_FILTERS:
+      return updateState({
+        apply: action.apply,
+      });
+
     case RESET_NODES_FILTER:
       return {};
     default:
