@@ -3,6 +3,7 @@
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
 import logging
+from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
@@ -24,9 +25,6 @@ from kedro_viz.models.flowchart import (
 )
 
 logger = logging.getLogger(__name__)
-
-_FSSPEC_PACKAGE_NAME = "fsspec"
-_FSSPEC_COMPATIBLE_VERSION = "2023.9.0"
 
 
 class APIErrorMessage(BaseModel):
@@ -374,19 +372,32 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
 
 
 def get_package_compatibilities_response(
-    package_name: str = _FSSPEC_PACKAGE_NAME,
-    compatible_version: str = _FSSPEC_COMPATIBLE_VERSION,
-):
+    package_requirements: Dict[str, Dict[str, str]],
+) -> List[PackageCompatibilityAPIResponse]:
     """API response for `/api/package_compatibility`."""
-    package_version = get_package_version(package_name)
-    is_compatible = packaging.version.parse(package_version) >= packaging.version.parse(
-        compatible_version
-    )
-    return PackageCompatibilityAPIResponse(
-        package_name=package_name,
-        package_version=package_version,
-        is_compatible=is_compatible,
-    )
+    package_requirements_response = []
+
+    for package_name, package_info in package_requirements.items():
+        compatible_version = package_info["min_compatible_version"]
+        try:
+            package_version = get_package_version(package_name)
+        except PackageNotFoundError:
+            logger.warning(package_info["warning_message"])
+            package_version = "0.0.0"
+
+        is_compatible = packaging.version.parse(
+            package_version
+        ) >= packaging.version.parse(compatible_version)
+
+        package_requirements_response.append(
+            PackageCompatibilityAPIResponse(
+                package_name=package_name,
+                package_version=package_version,
+                is_compatible=is_compatible,
+            )
+        )
+
+    return package_requirements_response
 
 
 def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
@@ -409,8 +420,13 @@ def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
         raise exc
 
 
-def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
+def save_api_node_response_to_fs(
+    nodes_path: str, remote_fs: Any, is_all_previews_enabled: bool
+):
     """Saves API /nodes/{node} response to a directory."""
+    # Set if preview is enabled/disabled for all data nodes
+    DataNodeMetadata.set_is_all_previews_enabled(is_all_previews_enabled)
+
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
@@ -441,7 +457,7 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
             raise exc
 
 
-def save_api_responses_to_fs(path: str, remote_fs: Any):
+def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled: bool):
     """Saves all Kedro Viz API responses to a directory."""
     try:
         logger.debug(
@@ -459,7 +475,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any):
             remote_fs.makedirs(pipelines_path, exist_ok=True)
 
         save_api_main_response_to_fs(main_path, remote_fs)
-        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs, is_all_previews_enabled)
         save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover

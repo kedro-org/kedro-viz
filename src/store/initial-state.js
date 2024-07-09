@@ -2,6 +2,7 @@ import deepmerge from 'deepmerge';
 import { loadLocalStorage } from './helpers';
 import normalizeData from './normalize-data';
 import { getFlagsFromUrl, Flags } from '../utils/flags';
+import { mapNodeType, isValidBoolean } from '../utils';
 import {
   settings,
   sidebarWidth,
@@ -20,6 +21,7 @@ export const createInitialState = () => ({
   flags: Flags.defaults(),
   textLabels: true,
   theme: 'dark',
+  expandAllPipelines: false,
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   ignoreLargeWarning: false,
@@ -39,6 +41,7 @@ export const createInitialState = () => ({
     miniMap: true,
     miniMapBtn: true,
     modularPipelineFocusMode: null,
+    pipelineBtn: true,
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
@@ -53,6 +56,100 @@ export const createInitialState = () => ({
   runsMetadata: {},
 });
 
+const parseUrlParameters = () => {
+  const search = new URLSearchParams(window.location.search);
+  return {
+    pipelineIdFromURL: search.get(params.pipeline),
+    nodeIdFromUrl: search.get(params.selected),
+    nodeNameFromUrl: search.get(params.selectedName),
+    nodeTypeInUrl: search.get(params.types)
+      ? search.get(params.types).split(',')
+      : [],
+    nodeTagInUrl: search.get(params.tags)
+      ? search.get(params.tags).split(',')
+      : [],
+    expandAllPipelinesInUrl: search.get(params.expandAll),
+  };
+};
+
+/**
+ * Applies URL parameters to the application pipeline state.
+ * This function modifies the state based on the URL parameters such as
+ * pipeline ID, node ID, node name, node type presence, and tag presence.
+ *
+ * @param {Object} state The current application pipeline state.
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
+ */
+const applyUrlParametersToPipelineState = (state, urlParams) => {
+  const {
+    pipelineIdFromURL,
+    nodeIdFromUrl,
+    nodeNameFromUrl,
+    nodeTypeInUrl,
+    nodeTagInUrl,
+  } = urlParams;
+
+  let newState = { ...state };
+  const nodeTypes = ['parameters', 'task', 'data'];
+
+  // Use main pipeline if pipeline from URL isn't recognised
+  if (pipelineIdFromURL) {
+    newState.pipeline.active = newState.pipeline.ids.includes(pipelineIdFromURL)
+      ? pipelineIdFromURL
+      : newState.pipeline.main;
+  }
+
+  // Ensure data tags are on to allow redirection back to the selected node
+  if (nodeNameFromUrl) {
+    newState.nodeType.disabled.data = false;
+  }
+
+  if (nodeTypeInUrl.length) {
+    Object.keys(newState.nodeType.disabled).forEach((key) => {
+      newState.nodeType.disabled[key] = true;
+    });
+    nodeTypeInUrl.forEach((key) => {
+      newState.nodeType.disabled[mapNodeType(key)] = false;
+    });
+  }
+
+  // Enable node types based on presence in URL and current node type settings
+  if (nodeIdFromUrl && nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
+    newState.nodeType.disabled[newState.node.type[nodeIdFromUrl]] = false;
+  }
+
+  if (nodeTagInUrl.length) {
+    // Set all tags to false initially
+    Object.keys(newState.tag.enabled).forEach((key) => {
+      newState.tag.enabled[key] = false;
+    });
+    nodeTagInUrl.forEach((tag) => {
+      newState.tag.enabled[tag] = true;
+    });
+  }
+
+  return newState;
+};
+
+/**
+ * Applies URL parameters to the application non-pipeline state.
+ * This function modifies the state based on the URL parameters such as
+ * expandAllPipelines presence.
+ *
+ * @param {Object} state The current application non-pipeline state.
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new state with modifications applied based on the URL parameters.
+ */
+const applyUrlParametersToNonPipelineState = (state, urlParams) => {
+  const { expandAllPipelinesInUrl } = urlParams;
+  let newState = { ...state };
+  if (expandAllPipelinesInUrl && isValidBoolean(expandAllPipelinesInUrl)) {
+    newState.expandAllPipelines = JSON.parse(expandAllPipelinesInUrl);
+  }
+  return newState;
+};
+
 /**
  * Load values from localStorage and combine with existing state,
  * but filter out any unused values from localStorage
@@ -65,7 +162,7 @@ export const mergeLocalStorage = (state) => {
     localStorageRunsMetadata
   );
   Object.keys(localStorageState).forEach((key) => {
-    if (!state[key]) {
+    if (!(key in state)) {
       delete localStorageState[key];
     }
   });
@@ -85,42 +182,26 @@ export const mergeLocalStorage = (state) => {
  * Exactly when it runs depends on whether the data is loaded asynchronously or not.
  * @param {Object} data Data prop passed to App component
  * @param {Boolean} applyFixes Whether to override initialState
+ * @param {Boolean} expandAllPipelines Whether to expand all the modular pipelines
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new pipeline state with modifications applied.
  */
-export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
-  const state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
-
-  const search = new URLSearchParams(window.location.search);
-  const pipelineIdFromURL = search.get(params.pipeline);
-  const nodeIdFromUrl = search.get(params.selected);
-  const nodeNameFromUrl = search.get(params.selectedName);
-
-  const nodeTypes = ['parameters', 'task', 'data'];
-
-  if (pipelineIdFromURL) {
-    // Use main pipeline if pipeline from URL isn't recognised
-    if (!state.pipeline.ids.includes(pipelineIdFromURL)) {
-      state.pipeline.active = state.pipeline.main;
-    } else {
-      state.pipeline.active = pipelineIdFromURL;
-    }
-  }
-
-  // Set the nodeType.disable to false depending on what type of data it is, e.g. parameters, data, etc.
-  if (nodeTypes.includes(state.node.type[nodeIdFromUrl])) {
-    state.nodeType.disabled[state.node.type[nodeIdFromUrl]] = false;
-  }
-
-  // If there is a "selected_name" in the URL we need to ensure
-  // data tags is on so the app can redirect back to the selected node
-  if (nodeNameFromUrl) {
-    state.nodeType.disabled.data = false;
-  }
+export const preparePipelineState = (
+  data,
+  applyFixes,
+  expandAllPipelines,
+  urlParams
+) => {
+  let state = mergeLocalStorage(normalizeData(data, expandAllPipelines));
 
   if (applyFixes) {
     // Use main pipeline if active pipeline from localStorage isn't recognised
     if (!state.pipeline.ids.includes(state.pipeline.active)) {
       state.pipeline.active = state.pipeline.main;
     }
+  }
+  if (urlParams) {
+    state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
   return state;
@@ -130,19 +211,24 @@ export const preparePipelineState = (data, applyFixes, expandAllPipelines) => {
  * Prepare the non-pipeline data part of the state. This part is separated so that it
  * will persist if the pipeline data is reset.
  * Merge local storage and add custom state overrides from props etc
- * @param {Object} props Props passed to App component
- * @return {Object} Updated initial state
+ * @param {object} props Props passed to App component
+ * @param {Object} urlParams An object containing parsed URL parameters.
+ * @returns {Object} The new non-pipeline state with modifications applied.
  */
-export const prepareNonPipelineState = (props) => {
-  const state = mergeLocalStorage(createInitialState());
-
+export const prepareNonPipelineState = (props, urlParams) => {
+  let state = mergeLocalStorage(createInitialState());
   let newVisibleProps = {};
+
   if (props.display?.sidebar === false || state.display.sidebar === false) {
     newVisibleProps['sidebar'] = false;
   }
 
   if (props.display?.minimap === false || state.display.miniMap === false) {
     newVisibleProps['miniMap'] = false;
+  }
+
+  if (urlParams) {
+    state = applyUrlParametersToNonPipelineState(state, urlParams);
   }
 
   return {
@@ -162,16 +248,18 @@ export const prepareNonPipelineState = (props) => {
  * @return {Object} Initial state
  */
 const getInitialState = (props = {}) => {
-  const nonPipelineState = prepareNonPipelineState(props);
+  const urlParams = parseUrlParameters();
+  const nonPipelineState = prepareNonPipelineState(props, urlParams);
 
   const expandAllPipelines =
     nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.flags.expandAllPipelines;
+    nonPipelineState.expandAllPipelines;
 
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines
+    expandAllPipelines,
+    urlParams
   );
 
   return {

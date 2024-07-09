@@ -6,8 +6,10 @@ from pathlib import Path
 from typing import Dict
 
 import click
+from click_default_group import DefaultGroup
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import KedroCliError, _split_params
+from kedro.framework.project import PACKAGE_NAME
 from packaging.version import parse
 from watchgod import RegExpWatcher, run_process
 
@@ -21,12 +23,19 @@ from kedro_viz.constants import (
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
 from kedro_viz.launchers.utils import (
+    _PYPROJECT,
     _check_viz_up,
+    _find_kedro_project,
     _start_browser,
     _wait_for,
     viz_deploy_progress_timer,
 )
 from kedro_viz.server import load_and_populate_data
+
+try:
+    from azure.core.exceptions import ServiceRequestError
+except ImportError:  # pragma: no cover
+    ServiceRequestError = None  # type: ignore
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -36,13 +45,10 @@ def viz_cli():  # pylint: disable=missing-function-docstring
     pass
 
 
-@viz_cli.group(invoke_without_command=True)
+@viz_cli.group(cls=DefaultGroup, default="run", default_if_no_args=True)
 @click.pass_context
-def viz(ctx):
+def viz(ctx):  # pylint: disable=unused-argument
     """Visualise a Kedro pipeline using Kedro viz."""
-    if ctx.invoked_subcommand is None:
-        display_cli_message("\nDid you mean this ? \n kedro viz run \n\n", "yellow")
-        display_cli_message(f"{ctx.get_help()}")
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -66,16 +72,17 @@ def viz(ctx):
 @click.option(
     "--load-file",
     default=None,
-    help="Load Kedro-Viz using JSON files from the specified directory.",
+    help="Path to load Kedro-Viz data from a directory",
 )
 @click.option(
     "--save-file",
     default=None,
     type=click.Path(dir_okay=False, writable=True),
-    help="Save all API responses from the backend as JSON files in the specified directory.",
+    help="Path to save Kedro-Viz data to a directory",
 )
 @click.option(
     "--pipeline",
+    "-p",
     type=str,
     default=None,
     help="Name of the registered pipeline to visualise. "
@@ -98,9 +105,9 @@ def viz(ctx):
     help="Autoreload viz server when a Python or YAML file change in the Kedro project",
 )
 @click.option(
-    "--ignore-plugins",
+    "--include-hooks",
     is_flag=True,
-    help="A flag to ignore all installed plugins in the Kedro Project",
+    help="A flag to include all registered hooks in your Kedro Project",
 )
 @click.option(
     "--params",
@@ -119,11 +126,22 @@ def run(
     pipeline,
     env,
     autoreload,
-    ignore_plugins,
+    include_hooks,
     params,
 ):
     """Launch local Kedro Viz instance"""
     from kedro_viz.server import run_server
+
+    kedro_project_path = _find_kedro_project(Path.cwd())
+
+    if kedro_project_path is None:
+        display_cli_message(
+            "ERROR: Failed to start Kedro-Viz : "
+            "Could not find the project configuration "
+            f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
+            "red",
+        )
+        return
 
     installed_version = parse(__version__)
     latest_version = get_latest_version()
@@ -148,15 +166,15 @@ def run(
             "save_file": save_file,
             "pipeline_name": pipeline,
             "env": env,
+            "project_path": kedro_project_path,
             "autoreload": autoreload,
-            "ignore_plugins": ignore_plugins,
+            "include_hooks": include_hooks,
+            "package_name": PACKAGE_NAME,
             "extra_params": params,
         }
         if autoreload:
-            project_path = Path.cwd()
-            run_server_kwargs["project_path"] = project_path
             run_process_kwargs = {
-                "path": project_path,
+                "path": kedro_project_path,
                 "target": run_server,
                 "kwargs": run_server_kwargs,
                 "watcher_cls": RegExpWatcher,
@@ -212,7 +230,17 @@ def run(
     required=True,
     help="Bucket name where Kedro Viz will be hosted",
 )
-def deploy(platform, endpoint, bucket_name):
+@click.option(
+    "--include-hooks",
+    is_flag=True,
+    help="A flag to include all registered hooks in your Kedro Project",
+)
+@click.option(
+    "--include-previews",
+    is_flag=True,
+    help="A flag to include preview for all the datasets",
+)
+def deploy(platform, endpoint, bucket_name, include_hooks, include_previews):
     """Deploy and host Kedro Viz on provided platform"""
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
@@ -230,17 +258,39 @@ def deploy(platform, endpoint, bucket_name):
         )
         return
 
-    create_shareableviz_process(platform, endpoint, bucket_name)
+    create_shareableviz_process(
+        platform,
+        include_previews,
+        endpoint,
+        bucket_name,
+        include_hooks,
+    )
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
-def build():
+@click.option(
+    "--include-hooks",
+    is_flag=True,
+    help="A flag to include all registered hooks in your Kedro Project",
+)
+@click.option(
+    "--include-previews",
+    is_flag=True,
+    help="A flag to include preview for all the datasets",
+)
+def build(include_hooks, include_previews):
     """Create build directory of local Kedro Viz instance with Kedro project data"""
 
-    create_shareableviz_process("local")
+    create_shareableviz_process("local", include_previews, include_hooks=include_hooks)
 
 
-def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
+def create_shareableviz_process(
+    platform,
+    is_all_previews_enabled,
+    endpoint=None,
+    bucket_name=None,
+    include_hooks=False,
+):
     """Creates platform specific deployer process"""
     try:
         process_completed = multiprocessing.Value("i", 0)
@@ -248,7 +298,16 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
 
         viz_deploy_process = multiprocessing.Process(
             target=load_and_deploy_viz,
-            args=(platform, endpoint, bucket_name, process_completed, exception_queue),
+            args=(
+                platform,
+                is_all_previews_enabled,
+                endpoint,
+                bucket_name,
+                include_hooks,
+                PACKAGE_NAME,
+                process_completed,
+                exception_queue,
+            ),
         )
 
         viz_deploy_process.start()
@@ -316,16 +375,32 @@ def create_shareableviz_process(platform, endpoint=None, bucket_name=None):
 
 
 def load_and_deploy_viz(
-    platform, endpoint, bucket_name, process_completed, exception_queue
+    platform,
+    is_all_previews_enabled,
+    endpoint,
+    bucket_name,
+    include_hooks,
+    package_name,
+    process_completed,
+    exception_queue,
 ):
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
-        load_and_populate_data(Path.cwd(), ignore_plugins=True)
+        load_and_populate_data(
+            Path.cwd(), include_hooks=include_hooks, package_name=package_name
+        )
 
         # Start the deployment
         deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
-        deployer.deploy()
+        deployer.deploy(is_all_previews_enabled)
 
+    except (
+        # pylint: disable=catching-non-exception
+        (FileNotFoundError, ServiceRequestError)
+        if ServiceRequestError is not None
+        else FileNotFoundError
+    ):  # pragma: no cover
+        exception_queue.put(Exception("The specified bucket does not exist"))
     # pylint: disable=broad-exception-caught
     except Exception as exc:  # pragma: no cover
         exception_queue.put(exc)

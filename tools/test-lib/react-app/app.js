@@ -25,7 +25,7 @@ const Radio = ({ current, value, onChange }) => (
   </label>
 );
 
-const App = ({ initialData }) => {
+const App = ({ initialData = 'random' }) => {
   const [dataKey, updateDataKey] = useState(initialData);
   const onChange = (e) => updateDataKey(e.target.value);
 
@@ -75,10 +75,6 @@ const App = ({ initialData }) => {
       </div>
     </Router>
   );
-};
-
-App.defaultProps = {
-  initialData: 'random',
 };
 
 export default App;

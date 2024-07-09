@@ -9,20 +9,20 @@ const labelPositionTypes = ['right', 'left', 'bottom', 'top'];
  * Icon button component
  */
 const IconButton = ({
-  active,
+  active = false,
   ariaLabel,
   ariaLive,
   children,
   className,
   container = 'li',
-  dataTest,
+  dataTest = 'TestDefaultDataValue',
   dataHeapEvent,
-  disabled,
+  disabled = false,
   icon,
   labelText,
   labelTextPosition = 'right',
   onClick,
-  visible,
+  visible = true,
   ...rest
 }) => {
   const Icon = icon;
@@ -104,23 +104,9 @@ IconButton.propTypes = {
   dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.func,
-  labelText: PropTypes.string,
+  labelText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // it takes a string or a JSX element
   onClick: PropTypes.func,
   visible: PropTypes.bool,
-};
-
-IconButton.defaultProps = {
-  active: false,
-  ariaLabel: null,
-  ariaLive: null,
-  children: null,
-  dataTest: 'TestDefaultDataValue',
-  dataHeapEvent: null,
-  disabled: false,
-  icon: null,
-  labelText: null,
-  onClick: null,
-  visible: true,
 };
 
 export default IconButton;

@@ -1,6 +1,7 @@
 """`kedro_viz.launchers.jupyter` provides line_magic to launch the viz server
 from a jupyter notebook.
 """
+
 # pragma: no cover
 import logging
 import multiprocessing
@@ -12,6 +13,7 @@ from typing import Any, Dict
 
 import IPython
 from IPython.display import HTML, display
+from kedro.framework.project import PACKAGE_NAME
 from watchgod import RegExpWatcher, run_process
 
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
@@ -115,7 +117,7 @@ def run_viz(  # pylint: disable=too-many-locals
     pipeline = arg_dict.get("pipeline", None)
     env = arg_dict.get("env", None)
     autoreload = arg_dict.get("autoreload", False)
-    ignore_plugins = arg_dict.get("ignore-plugins", False)
+    include_hooks = arg_dict.get("include-hooks", False)
     params = arg_dict.get("params", "")
 
     # Allocate port
@@ -139,7 +141,8 @@ def run_viz(  # pylint: disable=too-many-locals
         "pipeline_name": pipeline,
         "env": env,
         "autoreload": autoreload,
-        "ignore_plugins": ignore_plugins,
+        "include_hooks": include_hooks,
+        "package_name": PACKAGE_NAME,
         "extra_params": params,
         "project_path": project_path,
     }

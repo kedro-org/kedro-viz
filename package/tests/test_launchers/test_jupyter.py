@@ -34,7 +34,8 @@ class TestRunVizLineMagic:
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
-                "ignore_plugins": False,
+                "include_hooks": False,
+                "package_name": None,
                 "extra_params": "",
             },
         )
@@ -44,7 +45,7 @@ class TestRunVizLineMagic:
         # call run_viz another time should reuse the same port
         mock_process.reset_mock()
 
-        run_viz()
+        run_viz("--include-hooks")
 
         mock_process.assert_called_once_with(
             target=run_server,
@@ -58,7 +59,8 @@ class TestRunVizLineMagic:
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
-                "ignore_plugins": False,
+                "include_hooks": True,
+                "package_name": None,
                 "extra_params": "",
             },
         )
@@ -104,7 +106,8 @@ class TestRunVizLineMagic:
                 "pipeline_name": None,
                 "env": None,
                 "autoreload": False,
-                "ignore_plugins": False,
+                "include_hooks": False,
+                "package_name": None,
                 "extra_params": "",
             },
         )

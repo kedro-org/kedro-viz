@@ -5,23 +5,100 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
+# Release 9.2.0
 
 ## Major features and improvements
 
-- Extend support for 'Publishing and sharing Kedro-viz' to Azure and GCP. (#1708, #1711)
-
-# Upcoming release
-
-## Major features and improvements
-
-- Drop support for `python=3.8`. (#1747)
-- Migrate Viz to use `pydantic>=2`. (#1743)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
+- Display published URLs. (#1907)
+- Conditionally move session store and stats file to .viz directory. (#1915)
+- Refactor namespace pipelines. (#1897)
 
 ## Bug fixes and other changes
 
-- Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
+- Relax `packaging` pin in requirements. (#1947)
+- Add favicon to kedro-viz documentation. (#1959)
+- Add "-p" flag to kedro-viz to match kedro run. (#1960)
+- Fix bug related to nested namespace pipelines. (#1897)
+- Migrate from `toposort` to `graphlib`. (#1942)
 
+# Release 9.1.0
+
+## Major features and improvements
+- Introduce the toggle to expand and collapse all pipelines button in the utility bar. (#1858)
+- Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
+
+## Bug fixes and other changes
+- Fix broken URL when active pipeline name changes on initial load. (#1914)
+- Fix bug related to tag filtering and sharing with stateful URL. (#1878)
+- Update settings panel design (#1875)
+- Migrate from CircleCi to GitHub Actions. (#1876)
+- Include expandAllPipelines in initial state. (#1896)
+- Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
+- Enhance kedro-viz doc integration. (#1874)
+- Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
+- Remove default props from functional components. (#1906)
+- Fix for schema change in strawberry-graphql JSON scalar. (#1903)
+- Fix messaging level when package compatibility is not satisfied. (#1904)
+- Upgrade GitPod to include Node 18 and Python 3.11. (#1862)
+- Add utility functions related to Transcoding to Kedro viz. (#1928)
+- Include JSON dataset in the demo-project. (#1930)
+- Update intersphinx_mapping of kedro-datasets. (#1911)
+- Add GitPod to the local hosts list. (#1923)
+
+# Release 9.0.0
+
+## Major features and improvements
+
+- Extending stateful URLs with node filters and expand/collapse modular pipelines. (#1799)
+- Introduce `--include-hooks` option and remove `--ignore-plugins` from cli commands. (#1818)
+- Add Dataset Factory Patterns to Experiment Tracking. (#1824)
+- Add support for `JSONDataset` preview. (#1800)
+- Upgrade to Node 18. (#1848)
+
+## Bug fixes and other changes
+
+- Increase Kedro-Viz timeout. (#1803)
+- Remove demo data source and update feature hints. (#1804)
+- Add markdown support for backticks in the pop-up reminder. (#1826)
+- Fix posix path conversion on Windows in DatasetStatsHook. (#1843)
+- Add `pydantic` pin to requirements. (#1861)
+- Fix TRANSCODING_SEPARATOR import error. (#1866)
+- Fix CircleCI build failure due to secret scan and missing toposort dependency. (#1819)
+- Support Deferred Type Annotations in Dataset Previews. (#1798)  
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Pascal Brokmeier](https://github.com/pascalwhoop)
+
+# Release 8.0.1 
+
+## Bug fixes and other changes
+
+- Fix a bug on metadata panel when preview data is unavailable. (#1794)
+- Update Compatibility/Support Matrix in README. (#1774)
+- Update CLI command to support both `kedro viz run` and `kedro viz`. (#1790)
+
+# Release 8.0.0
+
+## Major features and improvements
+
+- Extend support for 'Publishing and sharing Kedro-Viz' on Azure and GCP. (#1708, #1711)
+- Migrate Kedro-Viz to use `pydantic>=2`. (#1743)
+- Drop support for `python=3.8`. (#1747)
+- Introduce new changes to the `preview` functionality on Kedro-viz (#1757)
+- Refactor Kedro-Viz and Kedro-datasets dependencies. (#1698)
+
+## Bug fixes and other changes
+
+- Enable search-as-you-type on Kedro-Viz docs. (#1727)
+- Change the `%run_viz` line magic to open Kedro-viz in a new browser tab. (#1722)
+- Enable `%run_viz` line magic to use the arguments that Kedro-Viz supports on the command line. (#1733)
+- Make `kedro viz build` compatible with Kedro 18. (#1716)
+- Add `kedro-datasets` compatibility warning for Experiment Tracking. (#1767)
+- Fix bug on `preview` length in metadata modal. (#1767)
 
 # Release 7.1.0
 

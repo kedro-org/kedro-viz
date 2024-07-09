@@ -189,14 +189,12 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
-  const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org'];
-  const itemFoundIndex = hosts.indexOf(window.location.hostname);
+  const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org', 'gitpod'];
+  const itemFound = hosts.some((host) =>
+    window.location.hostname.includes(host)
+  );
 
-  if (itemFoundIndex === -1) {
-    return false; // The hostname isn't in our list of local hosts
-  } else {
-    return true;
-  }
+  return itemFound;
 };
 
 /**
@@ -213,4 +211,54 @@ export const sanitizedPathname = () => {
     : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
 
   return pathnameWithTrailingSlash;
+};
+
+/**
+ * Fetches package compatibilities from the server.
+ * @returns {Promise<Object>} A promise that resolves to the fetched package compatibilities.
+ */
+export async function fetchPackageCompatibilities() {
+  const request = await fetch('/api/package-compatibilities', {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  });
+  return request;
+}
+
+export async function deployViz(inputValues) {
+  const request = await fetch('/api/deploy', {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(inputValues),
+  });
+
+  return request;
+}
+
+const nodeTypeMapObj = {
+  nodes: 'task',
+  task: 'nodes',
+  datasets: 'data',
+  data: 'datasets',
+};
+/**
+ * Mapping task to node and vice versa to keep UI label & the URL consistent
+ */
+export const mapNodeType = (nodeType) => nodeTypeMapObj[nodeType] || nodeType;
+
+export const mapNodeTypes = (nodeTypes) => {
+  return nodeTypes.replace(/task|data/g, (matched) => mapNodeType(matched));
+};
+
+/**
+ * Test if the passed string value is valid boolean
+ * @param {String} inputString
+ * @returns {Boolean} true if the inputString is a valid boolean
+ */
+export const isValidBoolean = (inputString) => {
+  return /^(true|false)$/i.test(inputString);
 };

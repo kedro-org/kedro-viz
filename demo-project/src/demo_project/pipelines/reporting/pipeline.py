@@ -11,6 +11,7 @@ from demo_project.pipelines.reporting.nodes import (
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
+    get_top_shuttles_data,
 )
 
 
@@ -42,6 +43,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=create_matplotlib_chart,
                 inputs="prm_shuttle_company_reviews",
                 outputs="confusion_matrix",
+            ),
+            node(
+                func=get_top_shuttles_data,
+                inputs="prm_shuttle_company_reviews",
+                outputs="top_shuttle_data",
             ),
         ],
         inputs=["prm_shuttle_company_reviews", "feature_importance_output"],

@@ -6,25 +6,32 @@ class MockDeployer:
     def __init__(self, platform, endpoint, bucket_name):
         pass
 
-    def deploy(self):
+    def deploy(self, is_all_previews_enabled):
         pass
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name",
+    "platform, endpoint, bucket_name, is_all_previews_enabled",
     [
-        ("aws", "http://mocked-url.com", "s3://shareableviz"),
-        ("azure", "http://mocked-url.com", "abfs://shareableviz"),
+        ("aws", "http://mocked-url.com", "s3://shareableviz", True),
+        ("azure", "http://mocked-url.com", "abfs://shareableviz", False),
     ],
 )
-def test_deploy_kedro_viz(client, platform, endpoint, bucket_name, mocker):
+def test_deploy_kedro_viz(
+    client, platform, endpoint, bucket_name, is_all_previews_enabled, mocker
+):
     mocker.patch(
         "kedro_viz.api.rest.router.DeployerFactory.create_deployer",
         return_value=MockDeployer(platform, endpoint, bucket_name),
     )
     response = client.post(
         "/api/deploy",
-        json={"platform": platform, "endpoint": endpoint, "bucket_name": bucket_name},
+        json={
+            "platform": platform,
+            "endpoint": endpoint,
+            "bucket_name": bucket_name,
+            "is_all_previews_enabled": is_all_previews_enabled,
+        },
     )
 
     assert response.status_code == 200
@@ -40,11 +47,18 @@ def test_deploy_kedro_viz(client, platform, endpoint, bucket_name, mocker):
         (
             None,
             200,
-            {
-                "package_name": "fsspec",
-                "package_version": "2023.9.1",
-                "is_compatible": True,
-            },
+            [
+                {
+                    "package_name": "fsspec",
+                    "package_version": "2023.9.1",
+                    "is_compatible": True,
+                },
+                {
+                    "package_name": "kedro-datasets",
+                    "package_version": "1.8.0",
+                    "is_compatible": False,
+                },
+            ],
         ),
         (
             Exception,

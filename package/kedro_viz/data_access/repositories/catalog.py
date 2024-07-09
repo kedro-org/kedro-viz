@@ -1,14 +1,15 @@
 """`kedro_viz.data_access.repositories.catalog` defines interface to
 centralise access to Kedro data catalog."""
+
 # pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
 import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
-from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
@@ -67,7 +68,7 @@ class CatalogRepository:
             filepath: /filepath/to/dataset
             metadata:
                 kedro-viz:
-                    layers: raw
+                    layer: raw
 
         Currently, Kedro up to 18.x supports both formats. However,
         support for the old format will be discontinued from Kedro 19.x.
@@ -143,10 +144,3 @@ class CatalogRepository:
             for dataset_name in self._catalog.list()
             if self.get_dataset(dataset_name) is not None
         }
-
-    @staticmethod
-    def is_dataset_param(dataset_name: str) -> bool:
-        """Return whether a dataset is a parameter"""
-        return (
-            dataset_name.lower().startswith("params:") or dataset_name == "parameters"
-        )

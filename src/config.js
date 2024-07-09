@@ -4,6 +4,7 @@ export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
+export const localStorageShareableUrl = 'KedroViz-shareable-url';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -63,12 +64,6 @@ export const flags = {
     default: true,
     icon: '🐳',
   },
-  expandAllPipelines: {
-    name: 'Expand all modular pipelines',
-    description: 'Expand all modular pipelines on first load',
-    default: false,
-    icon: '🔛',
-  },
 };
 
 export const settings = {
@@ -113,13 +108,16 @@ export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
-  focused: 'focused_id',
-  selected: 'selected_id',
-  selectedName: 'selected_name',
-  pipeline: 'pipeline_id',
+  focused: 'fid',
+  selected: 'sid',
+  selectedName: 'sn',
+  pipeline: 'pid',
   run: 'run_ids',
   view: 'view',
   comparisonMode: 'comparison',
+  types: 'types',
+  tags: 'tags',
+  expandAll: 'expandAllPipelines',
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
@@ -141,9 +139,9 @@ export const routes = {
 };
 
 export const errorMessages = {
-  node: 'Please check the value of "selected_id" or "selected_name" in the URL',
-  modularPipeline: 'Please check the value of "focused_id" in the URL',
-  pipeline: 'Please check the value of "pipeline_id" in the URL',
+  node: 'Please check the value of "selected_id"/"sid" or "selected_name"/"sn" in the URL',
+  modularPipeline: 'Please check the value of "focused_id"/"fid" in the URL',
+  pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
   experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
   runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
@@ -152,10 +150,22 @@ export const datasetStatLabels = ['rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
 
-export const hostingPlatform = {
+export const hostingPlatforms = {
   aws: 'Amazon Web Services',
   gcp: 'Google Cloud',
   azure: 'Microsoft Azure',
+};
+
+export const shareableUrlMessages = (status, info = '') => {
+  const messages = {
+    failure: 'Something went wrong. Please try again later.',
+    loading: 'Shooting your files through space. Sit tight...',
+    success:
+      'The deployment has been successful and Kedro-Viz is hosted via the link below..',
+    incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
+  };
+
+  return messages[status];
 };
 
 export const inputKeyToStateKeyMap = {
@@ -168,6 +178,26 @@ export const inputKeyToStateKeyMap = {
 export const RUN_TITLE = 'title';
 export const RUN_NOTES = 'notes';
 
+export const PACKAGE_FSSPEC = 'fsspec';
+export const PACKAGE_KEDRO_DATASETS = 'kedro-datasets';
+
 export const KEDRO_VIZ_DOCS_URL =
-  'https://docs.kedro.org/projects/kedro-viz/en/latest/share_kedro_viz.html';
-export const KEDRO_VIZ_PUBLISH_URL = `${KEDRO_VIZ_DOCS_URL}#publish-and-share-kedro-viz-automatically`;
+  'https://docs.kedro.org/projects/kedro-viz/en/latest/';
+export const KEDRO_VIZ_PUBLISH_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}share_kedro_viz.html`;
+export const KEDRO_VIZ_PREVIEW_DATASETS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}preview_datasets.html#disabling-previews`;
+export const KEDRO_VIZ_PUBLISH_AWS_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_aws.html#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_AZURE_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_azure.html#set-up-endpoint`;
+export const KEDRO_VIZ_PUBLISH_GCP_DOCS_URL = `${KEDRO_VIZ_DOCS_URL}publish_and_share_kedro_viz_on_gcp.html#set-up-endpoint`;
+
+export const defaultQueryParams = [
+  params.types,
+  params.tags,
+  params.expandAll,
+  params.pipeline,
+];
+
+export const NODE_TYPES = {
+  task: { name: 'nodes', defaultState: false },
+  data: { name: 'datasets', defaultState: false },
+  parameters: { name: 'parameters', defaultState: true },
+};

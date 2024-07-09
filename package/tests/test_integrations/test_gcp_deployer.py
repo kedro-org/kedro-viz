@@ -21,7 +21,7 @@ def mock_file_system(mocker):
 
 
 class TestGCPDeployer:
-    def test_deploy(self, endpoint, bucket_name, mocker):
+    def test_deploy(self, endpoint, bucket_name, mocker, mock_file_system):
         deployer = GCPDeployer(endpoint, bucket_name)
 
         mocker.patch.object(deployer, "_upload_api_responses")
@@ -47,8 +47,10 @@ class TestGCPDeployer:
         temp_file_path = tmp_path / "test_file.html"
         with open(temp_file_path, "w", encoding="utf-8") as temp_file:
             temp_file.write(mock_html_content)
-
-        with mocker.patch("mimetypes.guess_type", return_value=("text/html", None)):
+        mime_patch = mocker.patch(
+            "mimetypes.guess_type", return_value=("text/html", None)
+        )
+        with mime_patch:
             deployer._upload_static_files(tmp_path)
             deployer._fs.write_bytes.assert_called_once_with(
                 path=f"gcs://{bucket_name}/test_file.html",

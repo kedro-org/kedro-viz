@@ -1,0 +1,15 @@
+name: Install Kedro and other Python Dependencies
+description: Installs Kedro from the main branch and other Python dependencies, then prints the Python version and installed packages.
+runs:
+  using: composite
+  steps:
+  - name: Install Python dependencies
+    run: |-
+      pip install git+https://github.com/kedro-org/kedro@main
+      pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
+    shell: bash
+  - name: Echo package versions
+    run: |-
+      python -V
+      pip freeze
+    shell: bash

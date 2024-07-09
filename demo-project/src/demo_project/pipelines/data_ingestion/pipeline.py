@@ -42,7 +42,6 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs=["reviews", "params:typing.reviews.columns_as_floats"],
                 outputs="int_typed_reviews",
                 name='apply_types_to_reviews'
-                
             ),
             node(
                 func=aggregate_company_data,

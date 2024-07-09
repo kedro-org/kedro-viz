@@ -3,7 +3,7 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 
-# pylint: disable=import-outside-toplevel, protected-access
+# pylint: disable=protected-access
 
 import json
 import logging
@@ -11,10 +11,14 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from kedro import __version__
+from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
+from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
+
+from kedro_viz.constants import VIZ_METADATA_ARGS
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +51,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         project_path: the path where the Kedro project is located.
     """
     try:
-        stats_file_path = project_path / "stats.json"
+        stats_file_path = project_path / f"{VIZ_METADATA_ARGS['path']}/stats.json"
 
         if not stats_file_path.exists():
             return {}
@@ -68,15 +72,17 @@ def _get_dataset_stats(project_path: Path) -> Dict:
 def load_data(
     project_path: Path,
     env: Optional[str] = None,
-    ignore_plugins: bool = False,
+    include_hooks: bool = False,
+    package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a Kedro project.
     Args:
-        project_path: the path whether the Kedro project is located.
+        project_path: the path where the Kedro project is located.
         env: the Kedro environment to load the data. If not provided.
             it will use Kedro default, which is local.
-        ignore_plugins: the flag to unregister all installed plugins in a kedro project.
+        include_hooks: A flag to include all registered hooks in your Kedro Project.
+        package_name: The name of the current package
         extra_params: Optional dictionary containing extra project parameters
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
@@ -85,10 +91,11 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-    from kedro.framework.project import pipelines
-    from kedro.framework.startup import bootstrap_project
-
-    bootstrap_project(project_path)
+    if package_name:
+        configure_project(package_name)
+    else:
+        # bootstrap project when viz is run in dev mode
+        bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
@@ -96,8 +103,8 @@ def load_data(
         save_on_close=False,
         extra_params=extra_params,
     ) as session:
-        # check for --ignore-plugins option
-        if ignore_plugins:
+        # check for --include-hooks option
+        if not include_hooks:
             session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()

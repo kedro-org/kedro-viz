@@ -1,5 +1,8 @@
 # Experiment tracking in Kedro-Viz
 
+```{important}
+Starting from version 8.0.0 of Kedro-Viz, Experiment Tracking is exclusively supported for users with kedro-datasets version 2.1.0 or higher.
+```
 
 Experiment tracking is the process of saving all the metadata related to an experiment each time you run it. It enables you to compare different runs of a machine-learning model as part of the experimentation process.
 
@@ -94,6 +97,9 @@ This specifies the creation of the `SQLiteStore` under the `data` subfolder, usi
 
 This step is crucial to enable experiment tracking features on Kedro-Viz, as it is the database used to serve all run data to the Kedro-Viz front-end. Once this step is complete, you can either proceed to [set up the tracking datasets](#set-up-experiment-tracking-datasets) or [set up your nodes and pipelines to log metrics](#modify-your-nodes-and-pipelines-to-log-metrics); these two activities are interchangeable, but both should be completed to get a working experiment tracking setup.
 
+```{note}
+Starting from Kedro-Viz 9.2.0, if the user does not provide `SESSION_STORE_ARGS` in the project settings, a default directory `.viz` will be created at the root of your Kedro project and used for `SQLiteStore`.
+```
 
 ## Collaborative experiment tracking
 

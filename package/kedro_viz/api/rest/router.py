@@ -2,11 +2,13 @@
 
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
+from typing import List
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
+from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
@@ -61,7 +63,7 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name
         )
-        deployer.deploy()
+        deployer.deploy(input_values.is_all_previews_enabled)
         response = {
             "message": "Website deployed on "
             f"{input_values.platform and input_values.platform.upper()}",
@@ -90,11 +92,11 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
 
 @router.get(
     "/package-compatibilities",
-    response_model=PackageCompatibilityAPIResponse,
+    response_model=List[PackageCompatibilityAPIResponse],
 )
 async def get_package_compatibilities():
     try:
-        return get_package_compatibilities_response()
+        return get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
     except Exception as exc:
         logger.exception(
             "An exception occured while getting package compatibility info : %s", exc
