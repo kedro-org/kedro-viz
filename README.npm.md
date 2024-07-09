@@ -114,7 +114,7 @@ Below is the example with all possible props.
 ```
 <KedroViz
     data={json}
-    props={
+    options={
       display: {
         globalToolbar: true,
         sidebar: true,
@@ -143,16 +143,16 @@ Below is the example with all possible props.
 | Name         | Type    | Default | Description |
 | ------------ | ------- | ------- | ----------- |
 | `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data will be displayed on the chart |
-| props.theme | string | dark | select Kedro-Viz theme dark/light |
-| props.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
-| props.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
-| props.display |  |  |  |
+| options.theme | string | dark | select Kedro-Viz theme dark/light |
+| options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
+| options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
+| options.display |  |  |  |
 | `globalToolbar` | boolean | true | If `false` Global sidebar on extreme left will be hidden |
 | `miniMap` | boolean | true | If `false` miniMap button at the bottom of the primaryToolbar will be hidden |
 | `expandAllPipelines` | boolean | false | If `true` all modular pipelines on first load will be expanded |
 | `metadataPanel` | boolean | true | If `false` when user clicks on node, metadataPanel will not be visible |
 | `sidebar` | boolean | true | If `false` this remove sidebar as well as primary toolbar |
-| props.visible |  |  |  |
+| options.visible |  |  |  |
 | `labelBtn` | boolean | true | If `false` labelBtn button at the top of the primaryToolbar will be hidden |
 | `layerBtn` | boolean | true | If `false` layerBtn button at the top of the primaryToolbar will be hidden |
 | `exportBtn` | boolean | true | If `false` exportBtn button at the top of the primaryToolbar will be hidden |
