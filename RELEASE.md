@@ -14,6 +14,7 @@ Please follow the established format:
 - Display published URLs. (#1907)
 - Conditionally move session store and stats file to .viz directory. (#1915)
 - Refactor namespace pipelines. (#1897)
+- Enhance documentation for the Kedro-Viz standalone React component. (#1954)
 
 ## Bug fixes and other changes
 
