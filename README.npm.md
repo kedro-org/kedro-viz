@@ -112,33 +112,47 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 Below is the example with all possible props. 
 
 ```
-  <KedroViz
+<KedroViz
     data={json}
-    display={{
-      globalToolbar: false,
-      miniMap: false,
-      expandAllPipelines: false,
-    }}
-    visible={{
-      labelBtn: false,
-      layerBtn: false,
-      exportBtn: false,
-      pipelineBtn: false,
-      sidebar: false,
-    }}
-    theme="dark"
-  /> 
+    props={
+      display: {
+        globalToolbar: true,
+        sidebar: true,
+        metadataPanel: true,
+        miniMap: true,
+        expandAllPipelines: false,
+      }
+      visible: {
+        exportBtn: true,
+        labelBtn: true,
+        layerBtn: true,
+        pipelineBtn: true,
+        sidebar: true,        
+      }
+      theme: "dark",
+      tag: {
+        enabled: {companies: true}
+      },
+      nodeType: {
+        disabled: {parameters: true}
+      }
+    }
+ /> 
 ```
 
 | Name         | Type    | Default | Description |
 | ------------ | ------- | ------- | ----------- |
 | `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data will be displayed on the chart |
-| `theme` | string | dark | select Kedro-Viz theme dark/light |
-| display |  |  |  |
+| props.theme | string | dark | select Kedro-Viz theme dark/light |
+| props.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
+| props.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
+| props.display |  |  |  |
 | `globalToolbar` | boolean | true | If `false` Global sidebar on extreme left will be hidden |
 | `miniMap` | boolean | true | If `false` miniMap button at the bottom of the primaryToolbar will be hidden |
 | `expandAllPipelines` | boolean | false | If `true` all modular pipelines on first load will be expanded |
-| visible |  |  |  |
+| `metadataPanel` | boolean | true | If `false` when user clicks on node, metadataPanel will not be visible |
+| `sidebar` | boolean | true | If `false` this remove sidebar as well as primary toolbar |
+| props.visible |  |  |  |
 | `labelBtn` | boolean | true | If `false` labelBtn button at the top of the primaryToolbar will be hidden |
 | `layerBtn` | boolean | true | If `false` layerBtn button at the top of the primaryToolbar will be hidden |
 | `exportBtn` | boolean | true | If `false` exportBtn button at the top of the primaryToolbar will be hidden |
