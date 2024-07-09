@@ -8,7 +8,7 @@ authors = [
     {name = "Kedro"}
 ]
 description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
-readme = {file = "../README.md", content-type = "text/markdown"}
+readme = {file = "README.md", content-type = "text/markdown"}
 requires-python = ">=3.9"
 keywords = [
     "pipelines",
@@ -24,7 +24,7 @@ dynamic = ["dependencies", "version"]
 [project.urls]
 Homepage = "https://kedro.org"
 Source = "https://github.com/kedro-org/kedro-viz"
-Documentation = "https://docs.kedro.org"
+Documentation = "https://docs.kedro.org/projects/kedro-viz"
 Tracker = "https://github.com/kedro-org/kedro-viz/issues"
 
 [project.optional-dependencies]
