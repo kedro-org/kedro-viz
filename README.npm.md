@@ -161,7 +161,7 @@ Below is the example with all possible props.
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
-![Kedro-Viz component annotation](https://raw.githubusercontent.com/jitu5/kedro-viz/main/.github/img/kedro-viz-annotation.png)
+![Kedro-Viz component annotation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/kedro-viz-annotation.png)
 
 
 ## Standalone Example Repository
