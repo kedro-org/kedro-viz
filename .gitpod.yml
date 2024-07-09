@@ -14,16 +14,17 @@ tasks:
   - name: backend
     before: echo PIP_USER=no >> ~/.bashrc && export PIP_USER=no
     init: |
-      pip install "pip==23.3.1" --user
-      pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --user
+      pip install uv
+      uv pip install "pip==23.3.1" --system
+      uv pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt --system
       # Install latest kedro and all its dependencies.
-      pip install https://github.com/kedro-org/kedro/archive/main.zip --user
+      uv pip install https://github.com/kedro-org/kedro/archive/main.zip --system
       # force-reinstall kedro to ensure that the latest version from main is installed even when 
       # its version number is the same as that specified in docker_requirements.txt.
-      pip install https://github.com/kedro-org/kedro/archive/main.zip --user --force-reinstall --no-deps
+      uv pip install https://github.com/kedro-org/kedro/archive/main.zip --force-reinstall --no-deps --system
     command: | 
       gp sync-await build_complete
-      pip install -e package --no-deps
+      uv pip install -e package --no-deps --system
       gp sync-done kedro_installed
       make run
       
