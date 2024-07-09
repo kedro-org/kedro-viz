@@ -14,6 +14,7 @@ import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
+import { getHighlightFilteredPipeline } from '../../selectors/filtered-pipeline';
 
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
@@ -90,7 +91,7 @@ const getModularPipelineRowData = ({
  * @param {Boolean} selected Whether the node is currently disabled
  * @param {Boolean} selected Whether the node is currently selected
  */
-const getNodeRowData = (node, disabled, selected) => {
+const getNodeRowData = (node, disabled, selected, highlight) => {
   const checked = !node.disabledNode;
   return {
     ...node,
@@ -98,6 +99,7 @@ const getNodeRowData = (node, disabled, selected) => {
     invisibleIcon: InvisibleIcon,
     active: node.active,
     selected,
+    highlight,
     faded: disabled || node.disabledNode,
     visible: !disabled && checked,
     checked,
@@ -118,6 +120,7 @@ const TreeListProvider = ({
   disabledModularPipeline,
   expanded,
   onToggleNodeSelected,
+  highlightFilterNodes,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
@@ -138,9 +141,13 @@ const TreeListProvider = ({
           .some(Boolean));
 
     const selected = nodeSelected[node.id];
+
+    const highlight = highlightFilterNodes.includes(node.id);
+    const data = getNodeRowData(node, disabled, selected, highlight);
+
     return (
       <NodeListTreeItem
-        data={getNodeRowData(node, disabled, selected)}
+        data={data}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
@@ -184,14 +191,16 @@ const TreeListProvider = ({
       focusModeIcon = isFocusedModularPipeline ? FocusModeIcon : null;
     }
 
+    const data = getModularPipelineRowData({
+      ...node,
+      focusModeIcon,
+      disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
+      focused: isFocusedModularPipeline,
+    });
+
     return (
       <NodeListTreeItem
-        data={getModularPipelineRowData({
-          ...node,
-          focusModeIcon,
-          disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
-          focused: isFocusedModularPipeline,
-        })}
+        data={data}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
@@ -236,6 +245,7 @@ const TreeListProvider = ({
 export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
+  highlightFilterNodes: getHighlightFilteredPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

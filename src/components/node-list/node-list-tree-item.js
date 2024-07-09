@@ -37,6 +37,7 @@ const NodeListTreeItem = ({
         faded={data.faded}
         visible={data.visible}
         selected={data.selected}
+        highlight={data.highlight}
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}

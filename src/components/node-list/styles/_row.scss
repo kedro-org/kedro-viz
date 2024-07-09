@@ -48,6 +48,10 @@
     background-color: var(--color-nodelist-row-selected);
   }
 
+  &--visible#{&}--highlight {
+    background-color: red;
+  }
+
   &--disabled {
     pointer-events: none;
   }
