@@ -114,10 +114,3 @@ export const getFilteredPipeline = createSelector(
     return findNodesInBetween(sourceEdges, startID, endID);
   }
 );
-
-export const getHighlightFilteredPipeline = createSelector(
-  [getEdgesByNode, getHighlightFromNodes, getHightlightToNodes],
-  ({ sourceEdges, targetEdges }, startID, endID) => {
-    return findNodesInBetween(sourceEdges, startID, endID);
-  }
-);

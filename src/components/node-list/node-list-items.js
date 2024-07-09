@@ -204,14 +204,14 @@ export const getFilteredNodeItems = createSelector(
     (state) => state.nodeSelected,
     (state) => state.focusMode,
     (state) => state.inputOutputDataNodes,
-    (state) => state.highlightFilterNodes,
+    (state) => state.filteredPipeline,
   ],
   (
     { filteredNodes },
     nodeSelected,
     focusMode,
     inputOutputDataNodes,
-    highlightFilterNodes
+    filteredPipeline
   ) => {
     const filteredNodeItems = {};
 
@@ -224,7 +224,7 @@ export const getFilteredNodeItems = createSelector(
             node.disabledType ||
             (focusMode !== null && !!inputOutputDataNodes[node.id]);
           // Determine if the node is highlighted
-          const highlight = highlightFilterNodes.includes(node.id);
+          const highlight = filteredPipeline.includes(node.id);
 
           return {
             ...node,

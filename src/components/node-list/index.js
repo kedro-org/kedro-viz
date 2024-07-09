@@ -24,7 +24,7 @@ import {
   getInputOutputNodesForFocusedModularPipeline,
   getModularPipelinesTree,
 } from '../../selectors/nodes';
-import { getHighlightFilteredPipeline } from '../../selectors/filtered-pipeline';
+import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import { toggleParametersHovered, toggleFocusMode } from '../../actions';
@@ -68,7 +68,7 @@ const NodeListProvider = ({
   focusMode,
   disabledModularPipeline,
   inputOutputDataNodes,
-  highlightFilterNodes,
+  filteredPipeline,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -91,7 +91,7 @@ const NodeListProvider = ({
     searchValue,
     focusMode,
     inputOutputDataNodes,
-    highlightFilterNodes,
+    filteredPipeline,
   });
 
   const modularPipelinesSearchResult = searchValue
@@ -330,7 +330,7 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
-  highlightFilterNodes: getHighlightFilteredPipeline(state),
+  filteredPipeline: getFilteredPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

@@ -6,10 +6,9 @@ import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
 import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
 import {
+  applyFilters,
   filterNodes,
   resetFilterNodes,
-  hightlightFilterNode,
-  resetHightlightFilterNode,
 } from '../../actions/filters';
 import {
   getNodeActive,
@@ -20,7 +19,7 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
-import { getHighlightFilteredPipeline } from '../../selectors/filtered-pipeline';
+import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -102,9 +101,9 @@ export class FlowChart extends Component {
     this.update(prevProps);
 
     // Check if the nodes returned by the onFilterNodes selector have changed
-    if (this.props.highlightFilterNodes !== prevProps.highlightFilterNodes) {
+    if (this.props.filteredPipeline !== prevProps.filteredPipeline) {
       // If they have, update the selectedNodes state with the new nodes
-      this.setState({ selectedNodes: this.props.highlightFilterNodes });
+      this.setState({ selectedNodes: this.props.filteredPipeline });
     }
   }
 
@@ -487,7 +486,8 @@ export class FlowChart extends Component {
           multiSelected: { from: fromNodeId, to: toNodeId },
         });
 
-        this.props.onHighlightNodes(fromNodeId, toNodeId);
+        this.props.onFilterNodes(fromNodeId, toNodeId);
+        this.props.onApplyFilters(false);
       }
     }
 
@@ -659,7 +659,7 @@ export class FlowChart extends Component {
               className="pipeline-flowchart__filter-button"
               dataTest={'filter nodes'}
               mode="secondary"
-              onClick={() => this.props.onFilterNodes(from, to)}
+              onClick={() => this.props.onApplyFilters(true)}
               size="small"
             >
               Run slicing pipeline
@@ -769,7 +769,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodesSelected: getNodesSelected(state),
-  highlightFilterNodes: getHighlightFilteredPipeline(state),
+  filteredPipeline: getFilteredPipeline(state),
   ...ownProps,
 });
 
@@ -789,17 +789,14 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
+  onApplyFilters: (apply) => {
+    dispatch(applyFilters(apply));
+  },
   onFilterNodes: (fromID, toID) => {
     dispatch(filterNodes(fromID, toID));
   },
   onResetFilterNodes: () => {
     dispatch(resetFilterNodes());
-  },
-  onHighlightNodes: (fromID, toID) => {
-    dispatch(hightlightFilterNode(fromID, toID));
-  },
-  onResetHighlightNodes: () => {
-    dispatch(resetHightlightFilterNode());
   },
   ...ownProps,
 });
