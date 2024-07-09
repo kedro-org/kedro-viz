@@ -645,7 +645,7 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        {from && to && (
+        {/* {from && to && (
           <div
             style={{
               background: 'red',
@@ -665,7 +665,7 @@ export class FlowChart extends Component {
               Run slicing pipeline
             </Button>
           </div>
-        )}
+        )} */}
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
