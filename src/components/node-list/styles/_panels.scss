@@ -1,4 +1,14 @@
 @use '../../../styles/variables' as colors;
+@use './variables';
+
+// to move this to variables
+.kui-theme--light {
+  --color-nodelist-row-selected: #{variables.$row-selected-light};
+}
+
+.kui-theme--dark {
+  --color-nodelist-row-selected: #{variables.$row-selected-dark};
+}
 
 .pipeline-nodelist__filter-panel {
   z-index: 1;
@@ -13,6 +23,20 @@
 
 .pipeline-nodelist-section > ul.MuiTreeView-root {
   padding: 0 0 0 20px;
+
+  .pipeline-treeItem__root--highlight {
+    position: relative;
+  }
+
+  .pipeline-treeItem__root--highlight::before {
+    content: '';
+    background-color: var(--color-nodelist-row-selected);
+    position: absolute;
+    height: 100%;
+    width: 343px;
+    left: -36px;
+    border: 2px solid colors.$blue-600;
+  }
 }
 
 .pipeline-nodelist__elements-panel {
