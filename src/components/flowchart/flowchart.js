@@ -503,6 +503,13 @@ export class FlowChart extends Component {
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
+
+    if (this.props.filteredPipeline) {
+      this.props.onResetFilterNodes();
+      this.setState({
+        multiSelected: { from: null, to: null },
+      });
+    }
   };
 
   /**
