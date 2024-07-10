@@ -235,7 +235,14 @@ To use Kedro-Viz as a standalone React component (for embedding Kedro-Viz in you
 import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => <KedroViz data={json} />;
+const MyApp = () => (
+  <div style={{height: `100vh`}}>
+    <KedroViz
+      data={json}
+      options={/* Options to configure Kedro Viz */}
+    />
+  </div>
+);
 ```
 
 For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)

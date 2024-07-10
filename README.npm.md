@@ -36,7 +36,7 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 🚀 Scales to big pipelines with hundreds of nodes
 - 🔎 Highly interactive, filterable and searchable
 - 🔬 Focus mode for modular pipeline visualisation
-- 📊 Rich metadata side panel to display parameters, plots, etc.
+- 📊 Rich metadata side panel to display parameters, plots, and more.
 - 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
 - 🧪 Supports tracking and comparing runs in a Kedro project
@@ -60,7 +60,14 @@ To use Kedro-Viz as a standalone React component, you can follow the example bel
 import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} /></div>; 
+const MyApp = () => (
+  <div style={{height: `100vh`}}>
+    <KedroViz
+      data={json}
+      options={/* Options to configure Kedro Viz */}
+    />
+  </div>
+); 
 ```
 
 To use with NextJS:
@@ -107,9 +114,9 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
 
-## Props
+## Configure Kedro-viz with `options`
 
-Below is the example with all possible props. 
+The example below demonstrates how to configure your kedro-viz using different `options`. 
 
 ```
 <KedroViz
@@ -142,22 +149,22 @@ Below is the example with all possible props.
 
 | Name         | Type    | Default | Description |
 | ------------ | ------- | ------- | ----------- |
-| `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data will be displayed on the chart |
-| options.theme | string | dark | select Kedro-Viz theme dark/light |
+| `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data to be displayed on the chart |
+| options.theme | string | dark | select `Kedro-Viz` theme : dark/light |
 | options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
 | options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
 | options.display |  |  |  |
-| `globalToolbar` | boolean | true | If `false` Global sidebar on extreme left will be hidden |
-| `miniMap` | boolean | true | If `false` miniMap button at the bottom of the primaryToolbar will be hidden |
-| `expandAllPipelines` | boolean | false | If `true` all modular pipelines on first load will be expanded |
-| `metadataPanel` | boolean | true | If `false` when user clicks on node, metadataPanel will not be visible |
-| `sidebar` | boolean | true | If `false` this remove sidebar as well as primary toolbar |
+| `globalToolbar` | boolean | true | Show/Hide Global Toolbar |
+| `miniMap` | boolean | true | Show/Hide Mini Map button |
+| `expandAllPipelines` | boolean | false | Expand/Collapse modular pipelines on first load |
+| `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
+| `sidebar` | boolean | true | Show/Hide sidebar and primary toolbar |
 | options.visible |  |  |  |
-| `labelBtn` | boolean | true | If `false` labelBtn button at the top of the primaryToolbar will be hidden |
-| `layerBtn` | boolean | true | If `false` layerBtn button at the top of the primaryToolbar will be hidden |
-| `exportBtn` | boolean | true | If `false` exportBtn button at the top of the primaryToolbar will be hidden |
-| `pipelineBtn` | boolean | true | If `false` pipelineBtn button at the top of the primaryToolbar will be hidden |
-| `sidebar` | boolean | true | If `false` sidebar on left will be minimized |
+| `labelBtn` | boolean | true | Show/Hide label button |
+| `layerBtn` | boolean | true | Show/Hide layer button |
+| `exportBtn` | boolean | true | Show/Hide export button |
+| `pipelineBtn` | boolean | true | Show/Hide pipeline button |
+| `sidebar` | boolean | true | Expand/Collapse Sidebar |
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
