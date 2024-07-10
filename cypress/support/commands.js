@@ -235,3 +235,30 @@ Cypress.Commands.add(
       .click();
   }
 );
+
+/**
+ * Custom command to wait for page load before enabling pretty names
+ */
+Cypress.Commands.add('__waitForSettingsButton__', () => {
+  cy.get('[data-test="Change the settings flags"]', { timeout: 20000 }).should('be.visible');
+});
+
+/**
+ * Custom command to enable pretty name
+ */
+Cypress.Commands.add('enablePrettyNames', () => {
+
+  // Wait for the settings button to be visible
+  cy.__waitForSettingsButton__();
+
+  // Visit the settings panel
+  cy.get('[data-test="Change the settings flags"]').click();
+
+  // Enable the pretty names setting
+  cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').check({ force: true });
+
+  // Apply changes and close the settings panel
+  cy.get('[data-test="Apply changes and close in Settings Modal"]').click({
+        force: true,
+      });
+});
