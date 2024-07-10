@@ -33,6 +33,7 @@ import {
   toggleModularPipelineDisabled,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
+import { resetFilterNodes } from '../../actions/filters';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -69,6 +70,7 @@ const NodeListProvider = ({
   disabledModularPipeline,
   inputOutputDataNodes,
   filteredPipeline,
+  onResetFilterNodes,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -112,6 +114,7 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
+        onResetFilterNodes();
       }
     }
   };
@@ -366,6 +369,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
+  },
+  onResetFilterNodes: () => {
+    dispatch(resetFilterNodes());
   },
 });
 
