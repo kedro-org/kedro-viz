@@ -3,6 +3,11 @@
 import { prettifyName, stripNamespace } from '../../../../src/utils';
 
 describe('Global Toolbar', () => {
+  before(() => {
+    cy.visit('/'); // Visit the application
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can access the flowchart page through the flowchart icon, when in the experiment tracking view. #TC-1', () => {
     cy.visit('/experiment-tracking');
     cy.get('[data-test="View your pipeline"]').click();
@@ -59,6 +64,7 @@ describe('Global Toolbar', () => {
 
   describe('Settings Panel', () => {
     it('verifies that users can change the display of the names of their kedro nodes. #TC-5', () => {
+      cy.enablePrettyNames();
       const originalNodeNameText = 'reporting.cancellation_policy_breakdown';
       const prettyNodeNameText = prettifyName(
         stripNamespace(originalNodeNameText)
@@ -147,6 +153,7 @@ describe('Global Toolbar', () => {
     });
 
     it('verifies that users can expand all modular pipelines directly from the toolbar. #TC-7', () => {
+      cy.enablePrettyNames();
       const modularPipelineChildNodeText = 'Create Derived Features';
 
       // Alias for better readability
