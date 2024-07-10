@@ -14,7 +14,7 @@ Please follow the established format:
 - Display published URLs. (#1907)
 - Conditionally move session store and stats file to .viz directory. (#1915)
 - Refactor namespace pipelines. (#1897)
-- Expose internal Redux state via Kedro-Viz React component props `options`. (#1969)
+- Expose the internal Redux state via `options` in the Kedro-Viz React component. (#1969)
 
 ## Bug fixes and other changes
 
