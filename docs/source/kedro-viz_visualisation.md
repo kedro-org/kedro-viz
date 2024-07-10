@@ -239,7 +239,7 @@ const MyApp = () => (
   <div style={{height: `100vh`}}>
     <KedroViz
       data={json}
-      options={/* Options to configure Kedro Viz */}
+      options={options} //Options to configure Kedro Viz
     />
   </div>
 );
