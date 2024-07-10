@@ -20,13 +20,14 @@ describe('Experiment Tracking', () => {
       cy.get('@metadataTitle').click();
 
       // Assert after action
-      cy.get('.modal--visible').then(($dialog) => {
-        cy.wrap($dialog).within(() => {
-          cy.get(':nth-child(2) > .input').clear();
-          cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
-          cy.get('@applyChanges').click();
-        });
-      });
+      cy.get('.modal--visible').should('exist');
+    
+      cy.get('.modal--visible').within(() => {
+        cy.get(':nth-child(2) > .input').as('inputField');
+        cy.get('@inputField').clear();
+        cy.get('@inputField').type(modifiedRunTitleText);
+        cy.get('@applyChanges').click();
+      });  
 
       cy.get('.modal--visible').should('not.exist');
       cy.get('.runs-list-card__title')
@@ -189,16 +190,23 @@ describe('Experiment Tracking', () => {
 
       // Assert after action
       cy.get('@plotsTab').should('have.class', 'tabs__item--active');
+
+      cy.enablePrettyNames(); // Enable pretty names using the custom command
     });
 
     it('verifies that users can select the metrics name, and it takes them to the metrics in the DAG. #TC-49', () => {
       const plotNameText = 'reporting.feature_importance';
 
+      cy.enablePrettyNames();
+
       // Action
       cy.get('.accordion__title--hyperlink').first().click();
 
       // Assert after action
-      cy.location('search').should('contain', `?pid=__default__&sn=${plotNameText}`);
+      cy.location('search').should(
+        'contain',
+        `?pid=__default__&sn=${plotNameText}`
+      );
       cy.__checkForText__(
         '.pipeline-node--selected > .pipeline-node__text',
         prettifyName(stripNamespace(plotNameText))
