@@ -24,4 +24,5 @@ export const RESET_FILTER_NODES = 'RESET_FILTER_NODES';
 
 export const resetFilterNodes = () => ({
   type: RESET_FILTER_NODES,
+  filters: { from: null, to: null },
 });

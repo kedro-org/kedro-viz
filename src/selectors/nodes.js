@@ -26,7 +26,6 @@ const getModularPipelineActive = (state) => state.modularPipeline.active;
 const getTextLabels = (state) => state.textLabels;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
-const getMultipleClickedNodes = (state) => state.node.multipleClicked;
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
@@ -134,19 +133,6 @@ export const getNodeSelected = createSelector(
       nodeIDs,
       (nodeID) => nodeID === clickedNode && !nodeDisabled[nodeID]
     )
-);
-
-export const getNodesSelected = createSelector(
-  [getPipelineNodeIDs, getMultipleClickedNodes, getNodeDisabled],
-  (nodeIDs, multipleClickedNodes, nodeDisabled) => {
-    if (multipleClickedNodes) {
-      return arrayToObject(
-        nodeIDs,
-        (nodeID) =>
-          multipleClickedNodes.includes(nodeID) && !nodeDisabled[nodeID]
-      );
-    }
-  }
 );
 
 /**
