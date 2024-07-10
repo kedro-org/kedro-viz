@@ -141,16 +141,16 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
-export const TOGGLE_DISABLE_PREVIEW = 'TOGGLE_DISABLE_PREVIEW';
+export const TOGGLE_SHOW_DATASET_PREVIEWS = 'TOGGLE_SHOW_DATASET_PREVIEWS';
 
 /**
- * Toggle whether to disable node previews
- * @param {Boolean} disablePreview True if node previews should be disabled
+ * Toggle whether to show dataset previews on/off
+ * @param {Boolean} showDatasetPreviews True if dataset previews are to be shown
  */
-export function toggleDisablePreview(disablePreview) {
+export function toggleShowDatasetPreviews(showDatasetPreviews) {
   return {
-    type: TOGGLE_DISABLE_PREVIEW,
-    disablePreview,
+    type: TOGGLE_SHOW_DATASET_PREVIEWS,
+    showDatasetPreviews,
   };
 }
 

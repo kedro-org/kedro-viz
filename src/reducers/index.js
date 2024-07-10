@@ -13,6 +13,7 @@ import visible from './visible';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
+  TOGGLE_SHOW_DATASET_PREVIEWS,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_IS_PRETTY_NAME,
@@ -21,7 +22,6 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
-  TOGGLE_DISABLE_PREVIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -102,10 +102,10 @@ const combinedReducer = combineReducers({
     TOGGLE_EXPAND_ALL_PIPELINES,
     'shouldExpandAllPipelines'
   ),
-  disablePreview: createReducer(
-    false,
-    TOGGLE_DISABLE_PREVIEW,
-    'disablePreview'
+  showDatasetPreviews: createReducer(
+    true,
+    TOGGLE_SHOW_DATASET_PREVIEWS,
+    'showDatasetPreviews'
   ),
 });
 

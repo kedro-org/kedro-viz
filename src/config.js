@@ -77,10 +77,10 @@ export const settings = {
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
   },
-  disablePreview: {
-    name: 'Disable Node Previews',
-    description: 'Disable preview for all nodes in the pipeline',
-    default: false,
+  showDatasetPreviews: {
+    name: 'Dataset Previews',
+    description: 'Enable or disable dataset previews for all nodes.',
+    default: true,
   },
 };
 

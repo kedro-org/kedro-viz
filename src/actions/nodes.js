@@ -68,28 +68,20 @@ export function addNodeMetadata(data) {
   };
 }
 
-export const TOGGLE_DISABLE_PREVIEW = 'TOGGLE_DISABLE_PREVIEW';
-
 /**
- * Toggle whether to disable preview
- * @param {Boolean} disablePreview The node's data
+ * update node metadata on selection, loading new data if it has not been previously called
+ * @param {String} nodeID node id of clicked node
+ * @return {Function} A promise that resolves when the data is loaded
  */
-export function toggleDisablePreview(disablePreview) {
-  return {
-    type: TOGGLE_DISABLE_PREVIEW,
-    disablePreview,
-  };
-}
-
 export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {
-    const { dataSource, node, disablePreview } = getState();
+    const { dataSource, node, showDatasetPreviews } = getState();
     dispatch(toggleNodeClicked(nodeID));
 
     if (dataSource === 'json' && nodeID && !node.fetched[nodeID]) {
       dispatch(toggleNodeDataLoading(true));
-      const url = getUrl('nodes', nodeID);
-      const nodeData = await loadJsonData(url, {}, { disablePreview });
+      const url = getUrl('nodes', nodeID, { showDatasetPreviews });
+      const nodeData = await loadJsonData(url);
       dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
       dispatch(toggleNodeDataLoading(false));
     }

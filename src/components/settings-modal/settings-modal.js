@@ -5,7 +5,7 @@ import {
   toggleShowFeatureHints,
   toggleIsPrettyName,
   toggleSettingsModal,
-  toggleDisablePreview,
+  toggleShowDatasetPreviews,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -28,12 +28,12 @@ const SettingsModal = ({
   showFeatureHints,
   isOutdated,
   isPrettyName,
-  disablePreview,
+  showDatasetPreviews,
   latestVersion,
   onToggleFlag,
   onToggleShowFeatureHints,
   onToggleIsPrettyName,
-  onToggleDisablePreview,
+  onToggleShowDatasetPreviews,
   showSettingsModal,
   visible,
 }) => {
@@ -43,13 +43,17 @@ const SettingsModal = ({
   const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
   const [showFeatureHintsValue, setShowFeatureHintsValue] =
     useState(showFeatureHints);
-  const [disablePreviewValue, setDisablePreviewValue] =
-    useState(disablePreview);
+  const [showDatasetPreviewsValue, setShowDatasetPreviewsValue] =
+    useState(showDatasetPreviews);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
     setShowFeatureHintsValue(showFeatureHints);
   }, [showFeatureHints]);
+
+  useEffect(() => {
+    setShowDatasetPreviewsValue(showDatasetPreviews);
+  }, [showDatasetPreviews]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -70,7 +74,7 @@ const SettingsModal = ({
 
         onToggleIsPrettyName(isPrettyNameValue);
         onToggleShowFeatureHints(showFeatureHintsValue);
-        onToggleDisablePreview(disablePreviewValue);
+        onToggleShowDatasetPreviews(showDatasetPreviewsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -86,11 +90,11 @@ const SettingsModal = ({
     hasClickedApplyAndClose,
     showFeatureHintsValue,
     isPrettyNameValue,
-    disablePreviewValue,
+    showDatasetPreviewsValue,
     onToggleFlag,
     onToggleShowFeatureHints,
     onToggleIsPrettyName,
-    onToggleDisablePreview,
+    onToggleShowDatasetPreviews,
     showSettingsModal,
     toggleFlags,
   ]);
@@ -100,8 +104,8 @@ const SettingsModal = ({
     setHasNotInteracted(true);
     setToggleFlags(flags);
     setIsPrettyName(isPrettyName);
-    setShowFeatureHintsValue(showFeatureHintsValue);
-    setDisablePreviewValue(disablePreview);
+    setShowFeatureHintsValue(showFeatureHints);
+    setShowDatasetPreviewsValue(showDatasetPreviews);
   };
 
   return (
@@ -140,12 +144,12 @@ const SettingsModal = ({
               }}
             />
             <SettingsModalRow
-              id="disablePreview"
-              name={settingsConfig['disablePreview'].name}
-              toggleValue={disablePreviewValue}
-              description={settingsConfig['disablePreview'].description}
+              id="showDatasetPreviews"
+              name={settingsConfig['showDatasetPreviews'].name}
+              toggleValue={showDatasetPreviewsValue}
+              description={settingsConfig['showDatasetPreviews'].description}
               onToggleChange={(event) => {
-                setDisablePreviewValue(event.target.checked);
+                setShowDatasetPreviewsValue(event.target.checked);
                 setHasNotInteracted(false);
               }}
             />
@@ -228,7 +232,7 @@ export const mapStateToProps = (state) => ({
   flags: state.flags,
   showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
-  disablePreview: state.disablePreview,
+  showDatasetPreviews: state.showDatasetPreviews,
   visible: state.visible,
 });
 
@@ -245,8 +249,8 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleShowFeatureHints: (value) => {
     dispatch(toggleShowFeatureHints(value));
   },
-  onToggleDisablePreview: (value) => {
-    dispatch(toggleDisablePreview(value));
+  onToggleShowDatasetPreviews: (value) => {
+    dispatch(toggleShowDatasetPreviews(value));
   },
 });
 
