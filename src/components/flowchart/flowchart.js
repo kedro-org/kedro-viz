@@ -464,33 +464,51 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
+    // on a single node click
     if (node.type === 'modularPipeline') {
       this.props.onClickToExpandModularPipeline(node.id);
     } else {
-      this.props.onLoadNodeData(node.id);
-      this.props.toSelectedNode(node);
-
-      this.setState({
-        multiSelected: { ...this.state.multiSelected, from: node.id },
-      });
+      this.handleSingleNodeClick(node);
 
       // the hold shift only happens on clicking a node first
       if (event.shiftKey) {
-        // to close meta data panel
-        this.props.onLoadNodeData(null);
-
-        const fromNodeId = this.state.multiSelected.from;
-        const toNodeId = node.id;
-        this.setState({
-          multiSelected: { from: fromNodeId, to: toNodeId },
-        });
-
-        this.props.onFilterNodes(fromNodeId, toNodeId);
-        this.props.onApplyFilters(false);
+        this.handleShiftClick(node);
       }
     }
 
     event.stopPropagation();
+  };
+
+  handleSingleNodeClick = (node) => {
+    this.props.onLoadNodeData(node.id);
+    this.props.toSelectedNode(node);
+
+    // Reset or set the first node as the 'from' node based on current state
+    const newState =
+      this.state.multiSelected.from !== null &&
+      this.state.multiSelected.to !== null
+        ? { from: null, to: null }
+        : { ...this.state.multiSelected, from: node.id };
+
+    this.setState({ multiSelected: newState });
+
+    // Reset the filterNodes on single node click
+    this.props.onFilterNodes(null, null);
+  };
+
+  handleShiftClick = (node) => {
+    // Close meta data panel
+    this.props.onLoadNodeData(null);
+
+    const fromNodeId = this.state.multiSelected.from || node.id;
+    const toNodeId = node.id;
+
+    this.setState({
+      multiSelected: { from: fromNodeId, to: toNodeId },
+    });
+
+    this.props.onFilterNodes(fromNodeId, toNodeId);
+    this.props.onApplyFilters(false);
   };
 
   /**
@@ -508,6 +526,8 @@ export class FlowChart extends Component {
       this.setState({
         multiSelected: { from: null, to: null },
       });
+      // To reset URL to current active pipeline when click outside of a node on flowchart
+      this.props.toSelectedPipeline();
     }
   };
 
