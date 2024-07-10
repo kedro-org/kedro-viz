@@ -1,0 +1,39 @@
+@use '../../../../styles/variables' as colors;
+@use '../../styles/variables';
+
+$padding-top-bottom: 8px;
+$padding-right-left: 16px;
+
+.pipeline-flowchart_slice-action {
+  background-color: var(--slice-pipeline-action-background);
+  border-radius: 4px;
+  bottom: 30px;
+  display: flex;
+  left: 60%;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+
+.pipeline-flowchart_slice-action--info {
+  align-items: center;
+  border-right: 1px solid #d9dcde;
+  color: var(--slice-pipeline-action-color);
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: $padding-top-bottom $padding-right-left;
+}
+
+.pipeline-flowchart_slice-action--cta {
+  padding: $padding-top-bottom $padding-right-left;
+
+  .button__btn {
+    border: none;
+    color: var(--slice-pipeline-action-color);
+    font-size: 14px;
+    padding: 0;
+    width: 65px;
+  }
+}

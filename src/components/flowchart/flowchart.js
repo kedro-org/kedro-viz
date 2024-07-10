@@ -13,7 +13,6 @@ import {
 import {
   getNodeActive,
   getNodeSelected,
-  getNodesSelected,
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
@@ -35,7 +34,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
-import Button from '../ui/button';
+import { SlicePipelineAction } from './components/slice-pipeline-action/slice-pipeline-action';
 import './styles/flowchart.scss';
 
 /**
@@ -652,27 +651,6 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        {/* {from && to && (
-          <div
-            style={{
-              background: 'red',
-              position: 'absolute',
-              width: '200px',
-              height: '50px',
-              left: '490px',
-            }}
-          >
-            <Button
-              className="pipeline-flowchart__filter-button"
-              dataTest={'filter nodes'}
-              mode="secondary"
-              onClick={() => this.props.onApplyFilters(true)}
-              size="small"
-            >
-              Run slicing pipeline
-            </Button>
-          </div>
-        )} */}
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
@@ -727,6 +705,7 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
+        <SlicePipelineAction selectedNodes={this.state.selectedNodes} />
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
@@ -775,7 +754,6 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
-  nodesSelected: getNodesSelected(state),
   filteredPipeline: getFilteredPipeline(state),
   ...ownProps,
 });
