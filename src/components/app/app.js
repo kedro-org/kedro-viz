@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import 'what-input';
 import configureStore from '../../store';
-import { resetData, updateStateFromOptionsProps } from '../../actions';
+import { isEqual } from 'lodash/fp';
+import { resetData, updateStateFromOptions } from '../../actions';
 import { loadInitialPipelineData } from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
@@ -38,8 +39,8 @@ class App extends React.Component {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
     }
-    if (prevProps.options !== this.props.options) {
-      this.store.dispatch(updateStateFromOptionsProps(this.props.options));
+    if (!isEqual(prevProps.options, this.props.options)) {
+      this.store.dispatch(updateStateFromOptions(this.props.options));
     }
   }
 

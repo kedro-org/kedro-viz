@@ -331,7 +331,7 @@ export const FlowChartWrapper = ({
               'pipeline-wrapper__go-back-btn--show':
                 goBackToExperimentTracking?.showGoBackBtn,
               'pipeline-wrapper__go-back-btn--show-sidebar-visible':
-                sidebarVisible || displaySidebar,
+                sidebarVisible,
               'pipeline-wrapper__go-back-btn--show-metadata-visible':
                 metadataVisible,
             })}
@@ -343,8 +343,7 @@ export const FlowChartWrapper = ({
           </div>
           <div
             className={classnames('pipeline-wrapper__loading', {
-              'pipeline-wrapper__loading--sidebar-visible':
-                sidebarVisible || displaySidebar,
+              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
             })}
           >
             <LoadingIcon visible={loading} />

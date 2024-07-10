@@ -22,7 +22,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
-  UPDATE_STATE_FROM_OPTIONS_PROPS,
+  UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -62,7 +62,7 @@ function resetDataReducer(state = {}, action) {
  * @return {Object} Updated state
  */
 function updateStateFromPropsReducer(state = {}, action) {
-  if (action.type === UPDATE_STATE_FROM_OPTIONS_PROPS) {
+  if (action.type === UPDATE_STATE_FROM_OPTIONS) {
     return merge({}, state, action.payload);
   }
   return state;

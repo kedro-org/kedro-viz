@@ -94,12 +94,12 @@ export const getChartSize = createSelector(
     }
 
     // Determine if the sidebar is visible and open
-    const shouldDisplaySidebar = displaySidebar && visibleSidebar;
+    const isSidebarVisible = displaySidebar && visibleSidebar;
 
     // Get the actual sidebar width
     const sidebarWidthActual =
       displaySidebar || displayGlobalToolbar
-        ? getSidebarWidth(shouldDisplaySidebar, sidebarWidth)
+        ? getSidebarWidth(isSidebarVisible, sidebarWidth)
         : 0;
 
     const metaSidebarWidthActual = getSidebarWidth(
