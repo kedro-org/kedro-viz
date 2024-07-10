@@ -5,6 +5,7 @@ import {
   toggleShowFeatureHints,
   toggleIsPrettyName,
   toggleSettingsModal,
+  toggleDisablePreview,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -27,10 +28,12 @@ const SettingsModal = ({
   showFeatureHints,
   isOutdated,
   isPrettyName,
+  disablePreview,
   latestVersion,
   onToggleFlag,
   onToggleShowFeatureHints,
   onToggleIsPrettyName,
+  onToggleDisablePreview,
   showSettingsModal,
   visible,
 }) => {
@@ -40,6 +43,8 @@ const SettingsModal = ({
   const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
   const [showFeatureHintsValue, setShowFeatureHintsValue] =
     useState(showFeatureHints);
+  const [disablePreviewValue, setDisablePreviewValue] =
+    useState(disablePreview);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
@@ -65,6 +70,7 @@ const SettingsModal = ({
 
         onToggleIsPrettyName(isPrettyNameValue);
         onToggleShowFeatureHints(showFeatureHintsValue);
+        onToggleDisablePreview(disablePreviewValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -80,9 +86,11 @@ const SettingsModal = ({
     hasClickedApplyAndClose,
     showFeatureHintsValue,
     isPrettyNameValue,
+    disablePreviewValue,
     onToggleFlag,
     onToggleShowFeatureHints,
     onToggleIsPrettyName,
+    onToggleDisablePreview,
     showSettingsModal,
     toggleFlags,
   ]);
@@ -93,6 +101,7 @@ const SettingsModal = ({
     setToggleFlags(flags);
     setIsPrettyName(isPrettyName);
     setShowFeatureHintsValue(showFeatureHintsValue);
+    setDisablePreviewValue(disablePreview);
   };
 
   return (
@@ -128,6 +137,16 @@ const SettingsModal = ({
                     [localStorageKeyFeatureHintsStep]: 0,
                   });
                 }
+              }}
+            />
+            <SettingsModalRow
+              id="disablePreview"
+              name={settingsConfig['disablePreview'].name}
+              toggleValue={disablePreviewValue}
+              description={settingsConfig['disablePreview'].description}
+              onToggleChange={(event) => {
+                setDisablePreviewValue(event.target.checked);
+                setHasNotInteracted(false);
               }}
             />
             {flagData.map(({ name, value, description }) => (
@@ -209,6 +228,7 @@ export const mapStateToProps = (state) => ({
   flags: state.flags,
   showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
+  disablePreview: state.disablePreview,
   visible: state.visible,
 });
 
@@ -224,6 +244,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleShowFeatureHints: (value) => {
     dispatch(toggleShowFeatureHints(value));
+  },
+  onToggleDisablePreview: (value) => {
+    dispatch(toggleDisablePreview(value));
   },
 });
 

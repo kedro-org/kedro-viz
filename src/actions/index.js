@@ -141,6 +141,19 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
+export const TOGGLE_DISABLE_PREVIEW = 'TOGGLE_DISABLE_PREVIEW';
+
+/**
+ * Toggle whether to disable node previews
+ * @param {Boolean} disablePreview True if node previews should be disabled
+ */
+export function toggleDisablePreview(disablePreview) {
+  return {
+    type: TOGGLE_DISABLE_PREVIEW,
+    disablePreview,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

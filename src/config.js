@@ -77,6 +77,11 @@ export const settings = {
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
   },
+  disablePreview: {
+    name: 'Disable Node Previews',
+    description: 'Disable preview for all nodes in the pipeline',
+    default: false,
+  },
 };
 
 // Sidebar groups is an ordered map of { id: label }

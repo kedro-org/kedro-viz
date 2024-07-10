@@ -46,6 +46,7 @@ describe('SettingsModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
+      disablePreview: expect.any(Boolean),
       flags: expect.any(Object),
       isPrettyName: expect.any(Boolean),
       showFeatureHints: expect.any(Boolean),
