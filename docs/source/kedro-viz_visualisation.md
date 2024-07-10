@@ -243,6 +243,6 @@ const MyApp = () => (
     />
   </div>
 );
-```
+``` 
 
 For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)
