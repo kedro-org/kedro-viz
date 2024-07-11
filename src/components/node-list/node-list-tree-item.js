@@ -1,7 +1,6 @@
 import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-// framework here
 import { TreeItem } from '@mui/x-tree-view';
 import NodeListRow from './node-list-row';
 import classNames from 'classnames';

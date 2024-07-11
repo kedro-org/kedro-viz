@@ -114,7 +114,6 @@ export const getFilteredTagItems = createSelector(
       invisibleIcon: IndicatorOffIcon,
       active: false,
       selected: false,
-      highlight: false,
       faded: false,
       visible: true,
       disabled: false,
@@ -167,7 +166,6 @@ export const getFilteredElementTypeItems = createSelector(
         invisibleIcon: IndicatorOffIcon,
         active: false,
         selected: false,
-        highlight: false,
         faded: false,
         visible: true,
         disabled: false,
@@ -204,15 +202,8 @@ export const getFilteredNodeItems = createSelector(
     (state) => state.nodeSelected,
     (state) => state.focusMode,
     (state) => state.inputOutputDataNodes,
-    (state) => state.filteredPipeline,
   ],
-  (
-    { filteredNodes },
-    nodeSelected,
-    focusMode,
-    inputOutputDataNodes,
-    filteredPipeline
-  ) => {
+  ({ filteredNodes }, nodeSelected, focusMode, inputOutputDataNodes) => {
     const filteredNodeItems = {};
 
     for (const type of Object.keys(filteredNodes)) {
@@ -223,8 +214,6 @@ export const getFilteredNodeItems = createSelector(
             node.disabledTag ||
             node.disabledType ||
             (focusMode !== null && !!inputOutputDataNodes[node.id]);
-          // Determine if the node is highlighted
-          const highlight = filteredPipeline.includes(node.id);
 
           return {
             ...node,
@@ -232,7 +221,6 @@ export const getFilteredNodeItems = createSelector(
             invisibleIcon: InvisibleIcon,
             active: undefined,
             selected: nodeSelected[node.id],
-            highlight,
             faded: disabled || node.disabledNode,
             visible: !disabled && checked,
             checked,
