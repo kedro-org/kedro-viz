@@ -99,10 +99,23 @@ export class FlowChart extends Component {
   componentDidUpdate(prevProps) {
     this.update(prevProps);
 
-    // Check if the nodes returned by the onFilterNodes selector have changed
-    if (this.props.filteredPipeline !== prevProps.filteredPipeline) {
-      // If they have, update the selectedNodes state with the new nodes
+    const isFilteredPipelineChanged =
+      this.props.filteredPipeline !== prevProps.filteredPipeline;
+    const isFilteredPipelineEmpty = this.props.filteredPipeline.length === 0;
+    const isMultiSelectedDefined =
+      this.state.multiSelected.from !== null &&
+      this.state.multiSelected.to !== null;
+
+    if (isFilteredPipelineChanged) {
       this.setState({ selectedNodes: this.props.filteredPipeline });
+
+      // when the redux state's filteredPipeline is empty but local multiSelected state has values
+      // then reset the local state to be null to match the redux state
+      if (isFilteredPipelineEmpty && isMultiSelectedDefined) {
+        this.setState({
+          multiSelected: { from: null, to: null },
+        });
+      }
     }
   }
 
