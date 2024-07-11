@@ -82,6 +82,11 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_FEATURE_HINTS,
     'showFeatureHints'
   ),
+  showDatasetPreviews: createReducer(
+    true,
+    TOGGLE_SHOW_DATASET_PREVIEWS,
+    'showDatasetPreviews'
+  ),
   hoveredParameters: createReducer(
     false,
     TOGGLE_PARAMETERS_HOVERED,
@@ -101,11 +106,6 @@ const combinedReducer = combineReducers({
     false,
     TOGGLE_EXPAND_ALL_PIPELINES,
     'shouldExpandAllPipelines'
-  ),
-  showDatasetPreviews: createReducer(
-    true,
-    TOGGLE_SHOW_DATASET_PREVIEWS,
-    'showDatasetPreviews'
   ),
 });
 
