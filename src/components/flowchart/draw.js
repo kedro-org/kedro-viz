@@ -25,6 +25,20 @@ const toSinglePoint = (value) => parseFloat(value).toFixed(1);
 const limitPrecision = (path) => path.replace(matchFloats, toSinglePoint);
 
 /**
+ * Creates a mapping of node IDs to a boolean indicating if the node ID is included in the given values.
+ * @param {Array} nodes - Array of nodes to process.
+ * @param {Array} values - Array of values to check against node IDs.
+ * @returns {Object} An object mapping node IDs to booleans.
+ */
+function createNodeStateMap(nodes, values) {
+  const valueSet = new Set(values); // Convert to Set for efficient lookup
+  return nodes.reduce((acc, { id }) => {
+    acc[id] = valueSet.has(id);
+    return acc;
+  }, {});
+}
+
+/**
  * Render layer bands
  */
 export const drawLayers = function () {
@@ -136,11 +150,13 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
   } = this.props;
+  const { multiSelected, selectedNodes } = this.state;
 
-  const multiSelectedNodes = nodes.reduce((acc, { id }) => {
-    acc[id] = this.state.selectedNodes.includes(id);
-    return acc;
-  }, {});
+  const fromAndToNodes = createNodeStateMap(
+    nodes,
+    Object.values(multiSelected)
+  );
+  const multiSelectedNodes = createNodeStateMap(nodes, selectedNodes);
 
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
@@ -249,6 +265,10 @@ export const drawNodes = function (changed) {
       .classed(
         'pipeline-node--multiple-selected',
         (node) => multiSelectedNodes[node.id]
+      )
+      .classed(
+        'pipeline-node--from-to-selected',
+        (node) => fromAndToNodes[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',
