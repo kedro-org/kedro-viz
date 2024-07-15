@@ -18,24 +18,33 @@ export const arrayToObject = (array, callback) => {
  * Determine the endpoint URL for loading different data types
  * @param {String} type Data type
  * @param {String=} id Endpoint identifier e.g. pipeline ID
+ * @param {Boolean=} showDatasetPreviews Whether to show dataset previews
  */
-export const getUrl = (type, id) => {
+export const getUrl = (type, id, showDatasetPreviews = true) => {
+  let url = '';
   switch (type) {
     case 'main':
-      return [pathRoot, 'main'].join('/');
+      url = [pathRoot, 'main'].join('/');
+      break;
     case 'pipeline':
       if (!id) {
         throw new Error('No pipeline ID provided');
       }
-      return [pathRoot, 'pipelines', id].join('/');
+      url = [pathRoot, 'pipelines', id].join('/');
+      break;
     case 'nodes':
       if (!id) {
         throw new Error('No node ID provided');
       }
-      return [pathRoot, 'nodes', id].join('/');
+      url = [pathRoot, 'nodes', id].join('/');
+      break;
     default:
       throw new Error('Unknown URL type');
   }
+  if (!showDatasetPreviews) {
+    url += '?showDatasetPreviews=false';
+  }
+  return url;
 };
 
 /**

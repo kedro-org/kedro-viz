@@ -320,7 +320,7 @@ def get_default_response() -> GraphAPIResponse:
     )
 
 
-def get_node_metadata_response(node_id: str):
+def get_node_metadata_response(node_id: str, showDatasetPreviews: bool = True):
     """API response for `/api/nodes/node_id`."""
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
@@ -328,6 +328,8 @@ def get_node_metadata_response(node_id: str):
 
     if not node.has_metadata():
         return JSONResponse(content={})
+
+    DataNodeMetadata.set_is_all_previews_enabled(showDatasetPreviews)
 
     if isinstance(node, TaskNode):
         return TaskNodeMetadata(task_node=node)

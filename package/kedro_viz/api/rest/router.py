@@ -4,7 +4,7 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
@@ -45,8 +45,8 @@ async def main():
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-async def get_single_node_metadata(node_id: str):
-    return get_node_metadata_response(node_id)
+async def get_single_node_metadata(node_id: str, showDatasetPreviews: bool = Query(True)):
+    return get_node_metadata_response(node_id, showDatasetPreviews)
 
 
 @router.get(
