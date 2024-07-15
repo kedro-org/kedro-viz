@@ -117,7 +117,7 @@
   }
 }
 
-.pipeline-node--multiple-selected {
+.pipeline-node--filtered-pipeline {
   .pipeline-node__bg {
     stroke-width: 2px;
     fill: #{colors.$ocean-600};
@@ -130,7 +130,7 @@
   }
 }
 
-.pipeline-node--from-to-selected {
+.pipeline-node--from-to-filtered-pipeline {
   .pipeline-node__bg {
     stroke-width: 2px;
     fill: #{colors.$blue-600};

@@ -47,10 +47,10 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
       activeLayer: undefined,
-      selectedNodes: [],
-      multiSelected: {
+      filteredPipelineState: {
         from: null,
         to: null,
+        range: [],
       },
     };
     this.onViewChange = this.onViewChange.bind(this);
@@ -102,18 +102,27 @@ export class FlowChart extends Component {
     const isFilteredPipelineChanged =
       this.props.filteredPipeline !== prevProps.filteredPipeline;
     const isFilteredPipelineEmpty = this.props.filteredPipeline.length === 0;
-    const isMultiSelectedDefined =
-      this.state.multiSelected.from !== null &&
-      this.state.multiSelected.to !== null;
+    const isFilterdPipelineStateDefined =
+      this.state.filteredPipelineState.from !== null &&
+      this.state.filteredPipelineState.to !== null;
 
     if (isFilteredPipelineChanged) {
-      this.setState({ selectedNodes: this.props.filteredPipeline });
+      this.setState({
+        filteredPipelineState: {
+          ...this.state.filteredPipelineState,
+          range: this.props.filteredPipeline,
+        },
+      });
 
-      // when the redux state's filteredPipeline is empty but local multiSelected state has values
+      // when the redux state's filteredPipeline is empty but local filteredPipeline state has values
       // then reset the local state to be null to match the redux state
-      if (isFilteredPipelineEmpty && isMultiSelectedDefined) {
+      if (isFilteredPipelineEmpty && isFilterdPipelineStateDefined) {
         this.setState({
-          multiSelected: { from: null, to: null },
+          filteredPipelineState: {
+            ...this.state.filteredPipelineState,
+            from: null,
+            to: null,
+          },
         });
       }
     }
@@ -495,14 +504,14 @@ export class FlowChart extends Component {
     this.props.onLoadNodeData(node.id);
     this.props.toSelectedNode(node);
 
+    const { from, to } = this.state.filteredPipelineState;
     // Reset or set the first node as the 'from' node based on current state
     const newState =
-      this.state.multiSelected.from !== null &&
-      this.state.multiSelected.to !== null
-        ? { from: null, to: null }
-        : { ...this.state.multiSelected, from: node.id };
+      from !== null && to !== null
+        ? { ...this.state.filteredPipelineState, from: null, to: null }
+        : { ...this.state.filteredPipelineState, from: node.id };
 
-    this.setState({ multiSelected: newState });
+    this.setState({ filteredPipelineState: newState });
 
     // Reset the filterNodes on single node click
     this.props.onFilterNodes(null, null);
@@ -512,12 +521,16 @@ export class FlowChart extends Component {
     // Close meta data panel
     this.props.onLoadNodeData(null);
 
-    const fromNodeId = this.state.multiSelected.from || node.id;
+    const fromNodeId = this.state.filteredPipelineState.from || node.id;
     const toNodeId = node.id;
 
-    this.setState({
-      multiSelected: { from: fromNodeId, to: toNodeId },
-    });
+    const newState = {
+      ...this.state.filteredPipelineState,
+      from: fromNodeId,
+      to: toNodeId,
+    };
+
+    this.setState({ filteredPipelineState: newState });
 
     this.props.onFilterNodes(fromNodeId, toNodeId);
     this.props.onApplyFilters(false);
@@ -536,7 +549,11 @@ export class FlowChart extends Component {
     if (this.props.filteredPipeline) {
       this.props.onResetFilterNodes();
       this.setState({
-        multiSelected: { from: null, to: null },
+        filteredPipelineState: {
+          ...this.state.filteredPipelineState,
+          from: null,
+          to: null,
+        },
       });
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
@@ -676,7 +693,7 @@ export class FlowChart extends Component {
     const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
       this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { from, to } = this.state.multiSelected;
+    const { filteredPipelineState } = this.state;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -737,7 +754,7 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <SlicePipelineAction selectedNodes={this.state.selectedNodes} />
+        <SlicePipelineAction filteredPipeline={filteredPipelineState.range} />
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}

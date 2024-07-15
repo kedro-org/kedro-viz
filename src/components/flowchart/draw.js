@@ -150,13 +150,16 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
   } = this.props;
-  const { multiSelected, selectedNodes } = this.state;
+  const { filteredPipelineState } = this.state;
 
-  const fromAndToNodes = createNodeStateMap(
+  const fromToFilteredPipeline = createNodeStateMap(nodes, [
+    filteredPipelineState.from,
+    filteredPipelineState.to,
+  ]);
+  const nodesFromFilteredPipeline = createNodeStateMap(
     nodes,
-    Object.values(multiSelected)
+    filteredPipelineState.range
   );
-  const multiSelectedNodes = createNodeStateMap(nodes, selectedNodes);
 
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
@@ -263,12 +266,12 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
-        'pipeline-node--multiple-selected',
-        (node) => multiSelectedNodes[node.id]
+        'pipeline-node--filtered-pipeline',
+        (node) => nodesFromFilteredPipeline[node.id]
       )
       .classed(
-        'pipeline-node--from-to-selected',
-        (node) => fromAndToNodes[node.id]
+        'pipeline-node--from-to-filtered-pipeline',
+        (node) => fromToFilteredPipeline[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',
