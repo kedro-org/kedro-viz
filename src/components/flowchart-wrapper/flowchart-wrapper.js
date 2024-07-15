@@ -59,6 +59,8 @@ export const FlowChartWrapper = ({
   pipelines,
   sidebarVisible,
   activePipeline,
+  tag,
+  nodeType,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -98,18 +100,14 @@ export const FlowChartWrapper = ({
           }
         },
         tag: (value) => {
-          if (!searchParams.has(params.tags)) {
-            const enabledKeys = getKeysByValue(value.enabled, true);
-            enabledKeys && toSetQueryParam(params.tags, enabledKeys);
-          }
+          const enabledKeys = getKeysByValue(value.enabled, true);
+          enabledKeys && toSetQueryParam(params.tags, enabledKeys);
         },
         nodeType: (value) => {
-          if (!searchParams.has(params.types)) {
-            const disabledKeys = getKeysByValue(value.disabled, false);
-            // Replace task with node to keep UI label & the URL consistent
-            const mappedDisabledNodes = mapNodeTypes(disabledKeys);
-            disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
-          }
+          const disabledKeys = getKeysByValue(value.disabled, false);
+          // Replace task with node to keep UI label & the URL consistent
+          const mappedDisabledNodes = mapNodeTypes(disabledKeys);
+          disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
         },
         expandAllPipelines: (value) => {
           if (!searchParams.has(params.expandAll)) {
@@ -129,7 +127,7 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePipeline]);
+  }, [activePipeline, tag, nodeType]);
 
   const resetErrorMessage = () => {
     setErrorMessage({});
@@ -368,6 +366,8 @@ export const mapStateToProps = (state) => ({
   pipelines: state.pipeline.ids,
   activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
+  tag: state.tag.enabled,
+  nodeType: state.nodeType.disabled,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
