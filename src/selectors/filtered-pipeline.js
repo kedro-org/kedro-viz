@@ -5,8 +5,6 @@ const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 const getFromNodes = (state) => state.filters.from;
 const getToNodes = (state) => state.filters.to;
-const getHighlightFromNodes = (state) => state.highlightFilters.from;
-const getHightlightToNodes = (state) => state.highlightFilters.to;
 
 /**
  * Selector to get all edges formatted as an array of objects with id, source, and target properties.
@@ -61,7 +59,6 @@ export const getEdgesByNode = createSelector([getEdges], (edges) => {
 const findLinkedNodes = (nodeID, edgesByNode, visited) => {
   if (!visited[nodeID]) {
     visited[nodeID] = true;
-
     if (edgesByNode[nodeID]) {
       edgesByNode[nodeID].forEach((nodeID) =>
         findLinkedNodes(nodeID, edgesByNode, visited)
@@ -73,31 +70,34 @@ const findLinkedNodes = (nodeID, edgesByNode, visited) => {
 };
 
 const findNodesInBetween = (sourceEdges, startID, endID) => {
-  let filteredNodeIDs = [];
-  if ((!startID || !startID.length) && (!endID || !endID.length)) {
-    return filteredNodeIDs;
-  } else {
-    const linkedNodesBetween = [];
-    const linkedNodesBeforeEnd = {};
-    findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
-    const linkedNodeBeforeStart = {};
-    findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
+  if (!startID || !endID) {
+    return [startID, endID].filter(Boolean);
+  }
 
-    // keep any nodes before the endID
-    filteredNodeIDs = linkedNodesBetween.concat(
-      Object.keys(linkedNodesBeforeEnd)
-    );
+  const linkedNodesBeforeEnd = {};
+  findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
 
-    // remove any nodes before startID
-    Object.keys(linkedNodeBeforeStart).map((node) => {
+  const linkedNodeBeforeStart = {};
+  findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
+
+  let filteredNodeIDs = Object.keys(linkedNodesBeforeEnd);
+
+  if (filteredNodeIDs.includes(startID) && filteredNodeIDs.includes(endID)) {
+    // Remove any nodes before startID not including startID itself
+    Object.keys(linkedNodeBeforeStart).forEach((node) => {
       if (node !== startID) {
         const index = filteredNodeIDs.indexOf(node);
-        filteredNodeIDs.splice(index, 1);
+        if (index > -1) {
+          filteredNodeIDs.splice(index, 1);
+        }
       }
     });
-
-    return filteredNodeIDs;
+  } else {
+    // If startID and endID are not connected, return only them
+    filteredNodeIDs = [startID, endID];
   }
+
+  return filteredNodeIDs;
 };
 
 /**
