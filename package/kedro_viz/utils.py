@@ -1,11 +1,7 @@
 """Transcoding related utility functions."""
 
-import ast
 import hashlib
-from pathlib import Path
 from typing import Tuple
-
-from kedro_viz.launchers.utils import _find_kedro_project
 
 TRANSCODING_SEPARATOR = "@"
 
@@ -61,18 +57,3 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
-
-
-# [NOTE: Experimentation]
-# Helper to get the source code of a function
-def get_function_source_code(func_name: str):
-    project_dir = _find_kedro_project(Path.cwd())
-    if project_dir:
-        for filepath in project_dir.rglob("*.py"):
-            with open(filepath, "r") as file:
-                file_content = file.read()
-            parsed_content = ast.parse(file_content)
-            for node in ast.walk(parsed_content):
-                if isinstance(node, ast.FunctionDef) and node.name == func_name:
-                    return ast.unparse(node)
-    return None

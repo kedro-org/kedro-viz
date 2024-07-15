@@ -20,11 +20,7 @@ from pydantic import (
 )
 
 from kedro_viz.models.utils import get_dataset_type
-from kedro_viz.utils import (
-    TRANSCODING_SEPARATOR,
-    _strip_transcoding,
-    get_function_source_code,
-)
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
@@ -420,15 +416,12 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @field_validator("code")
     @classmethod
     def set_code(cls, code):
-        try:
-            # this is required to handle partial, curry functions
-            if inspect.isfunction(cls.kedro_node.func):
-                code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
-                return code
-            return None
-        except OSError as exc:
-            logger.error(exc)
-            return get_function_source_code(cls.kedro_node.func.__name__)
+        # this is required to handle partial, curry functions
+        if inspect.isfunction(cls.kedro_node.func):
+            code = inspect.getsource(_extract_wrapped_func(cls.kedro_node.func))
+            return code
+
+        return None
 
     @field_validator("filepath")
     @classmethod

@@ -7,20 +7,20 @@ load data from projects created in a range of Kedro versions.
 
 import json
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
-from kedro.framework.project import configure_project, pipelines
-from kedro.framework.startup import bootstrap_project
+
 from kedro import __version__
-from kedro.config.omegaconf_config import OmegaConfigLoader
-from kedro.framework.context.context import KedroContext
+from kedro.framework.project import configure_project, pipelines
+from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
+from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro.lite_parser_mocking import get_mocked_modules
+from kedro_viz.integrations.kedro.lite_parser import get_mocked_modules
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +70,46 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         )
         return {}
 
+
 def _update_sys_modules(mock_modules):
     for module_name, mock in mock_modules.items():
         sys.modules[module_name] = mock
+
+
+def _load_data_helper(
+    project_path: Path,
+    env: Optional[str] = None,
+    include_hooks: bool = False,
+    package_name: Optional[str] = None,
+    extra_params: Optional[Dict[str, Any]] = None,
+):
+    if package_name:
+        configure_project(package_name)
+    else:
+        # bootstrap project when viz is run in dev mode
+        bootstrap_project(project_path)
+
+    with KedroSession.create(
+        project_path=project_path,
+        env=env,
+        save_on_close=False,
+        extra_params=extra_params,
+    ) as session:
+        # check for --include-hooks option
+        if not include_hooks:
+            session._hook_manager = _VizNullPluginManager()  # type: ignore
+
+        context = session.load_context()
+        session_store = session._store
+        catalog = context.catalog
+
+        # Pipelines is a lazy dict-like object, so we force it to populate here
+        # in case user doesn't have an active session down the line when it's first accessed.
+        # Useful for users who have `get_current_session` in their `register_pipelines()`.
+        pipelines_dict = dict(pipelines)
+        stats_dict = _get_dataset_stats(project_path)
+    return catalog, pipelines_dict, session_store, stats_dict
+
 
 def load_data(
     project_path: Path,
@@ -97,64 +134,19 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
-
-    if package_name:
-        configure_project(package_name)
-    else:
-        # bootstrap project when viz is run in dev mode
-        bootstrap_project(project_path)
-
     if is_lite:
-        # [TODO: Confirm on the context creation]
-        context = KedroContext(
-            package_name="{{ cookiecutter.python_package }}",
-            project_path=project_path,
-            config_loader=OmegaConfigLoader(conf_source="conf", base_env="base", default_run_env="local"),
-            hook_manager=_VizNullPluginManager(),
-            env=env,
-        )
-
-        # Lite version will not support experiment tracking for now
-        session_store = None
-
-        # [TODO: Confirm on the DataCatalog creation]
-        catalog = DataCatalog()
-
-        stats_dict = _get_dataset_stats(project_path)
         mocked_modules = get_mocked_modules(project_path)
-
         # Temporarily clear and reload sys.modules to force use of mock_modules
         original_sys_modules = sys.modules.copy()
         try:
             _update_sys_modules(mocked_modules)
-            pipelines_dict = dict(pipelines)
+            return _load_data_helper(
+                project_path, env, include_hooks, package_name, extra_params
+            )
         finally:
             sys.modules.clear()
             sys.modules.update(original_sys_modules)
-
-            print(pipelines_dict)
-
-        return catalog, pipelines_dict, session_store, stats_dict
     else:
-        from kedro.framework.session import KedroSession
-        with KedroSession.create(
-            project_path=project_path,
-            env=env,
-            save_on_close=False,
-            extra_params=extra_params,
-        ) as session:
-            # check for --include-hooks option
-            if not include_hooks:
-                session._hook_manager = _VizNullPluginManager()  # type: ignore
-
-            context = session.load_context()
-            session_store = session._store
-            catalog = context.catalog
-
-            # Pipelines is a lazy dict-like object, so we force it to populate here
-            # in case user doesn't have an active session down the line when it's first accessed.
-            # Useful for users who have `get_current_session` in their `register_pipelines()`.
-            pipelines_dict = dict(pipelines)
-            stats_dict = _get_dataset_stats(project_path)
-
-        return catalog, pipelines_dict, session_store, stats_dict
+        return _load_data_helper(
+            project_path, env, include_hooks, package_name, extra_params
+        )
