@@ -1,12 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
+import classnames from 'classnames';
 import Button from '../../../ui/button';
 
 import './slice-pipeline-action.scss';
 
-export const SlicePipelineAction = ({ filteredPipeline }) => {
+export const SlicePipelineAction = ({ chartSize, filteredPipeline }) => {
+  const { outerWidth, sidebarWidth } = chartSize;
+  const sidebarVisible = sidebarWidth > 140;
+
+  const transformX = sidebarVisible ? outerWidth / 2 + 100 : outerWidth / 2;
   if (filteredPipeline.length > 0) {
     return (
-      <div className="pipeline-flowchart_slice-action">
+      <div
+        className="pipeline-flowchart_slice-action"
+        style={{ transform: `translateX(${transformX}px)` }}
+      >
         <div className="pipeline-flowchart_slice-action--info">
           {`${filteredPipeline.length} selected`}
         </div>

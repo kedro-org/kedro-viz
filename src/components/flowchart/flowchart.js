@@ -754,7 +754,11 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <SlicePipelineAction filteredPipeline={filteredPipelineState.range} />
+        <SlicePipelineAction
+          chartSize={chartSize}
+          filteredPipeline={filteredPipelineState.range}
+          ref={this.layerNamesRef}
+        />
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}

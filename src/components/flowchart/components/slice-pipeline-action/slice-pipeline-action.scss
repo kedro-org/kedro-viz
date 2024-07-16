@@ -1,4 +1,4 @@
-@use '../../../../styles/variables' as colors;
+@use '../../../../styles/variables' as styles;
 @use '../../styles/variables';
 
 $padding-top-bottom: 8px;
@@ -9,10 +9,10 @@ $padding-right-left: 16px;
   border-radius: 4px;
   bottom: 30px;
   display: flex;
-  left: 60%;
   margin: 0;
   padding: 0;
   position: absolute;
+  transition: transform ease 0.7s;
 }
 
 .pipeline-flowchart_slice-action--info {
