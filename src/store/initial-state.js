@@ -45,6 +45,7 @@ export const createInitialState = () => ({
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
+    zoomToolbar: true,
   },
   display: {
     globalToolbar: true,
