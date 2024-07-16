@@ -82,6 +82,7 @@ def viz(ctx):  # pylint: disable=unused-argument
 )
 @click.option(
     "--pipeline",
+    "-p",
     type=str,
     default=None,
     help="Name of the registered pipeline to visualise. "

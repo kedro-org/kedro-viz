@@ -3,6 +3,10 @@
 import { prettifyName } from '../../../../src/utils';
 
 describe('Flowchart Menu', () => {
+  beforeEach(() => {
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
@@ -136,10 +140,18 @@ describe('Flowchart Menu', () => {
     ).click();
 
     // Assert after action
-    cy.__checkForText__(
-      '.pipeline-node--active > .pipeline-node__text',
-      prettifyName(nodeToFocusText)
+    cy.get('.pipeline-node--active > .pipeline-node__text')
+      .invoke('text')
+      .then((focusedNodesText) =>
+        expect(focusedNodesText.toLowerCase()).to.contains(
+          prettifyName(nodeToFocusText).toLowerCase()
+        )
+      );
+    cy.get('.pipeline-node--active > .pipeline-node__text').should(
+      'have.length',
+      5
     );
+
     cy.get('.pipeline-node').should('have.length', 5);
   });
 
@@ -190,7 +202,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
-    const visibleRowLabel = 'Companies';
+    const visibleRowLabel = 'companies';
     cy.visit(`/?tags=${visibleRowLabel}`);
 
     // Alias
