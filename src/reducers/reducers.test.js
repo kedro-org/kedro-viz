@@ -20,6 +20,7 @@ import {
   UPDATE_CHART_SIZE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
+  FILTER_NODES,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -87,6 +88,19 @@ describe('Reducer', () => {
         nodeHovered,
       });
       expect(newState.node.hovered).toEqual(nodeHovered);
+    });
+  });
+
+  describe('FILTER_NODES', () => {
+    it('should add nodes to filters list, with from and to', () => {
+      const fromNode = 'abc123';
+      const toNode = 'def456';
+      const newState = reducer(mockState.spaceflights, {
+        type: FILTER_NODES,
+        filters: { from: fromNode, to: toNode },
+      });
+      expect(newState.filters.from).toEqual(fromNode);
+      expect(newState.filters.to).toEqual(toNode);
     });
   });
 
