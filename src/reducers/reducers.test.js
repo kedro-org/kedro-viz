@@ -20,8 +20,8 @@ import {
   UPDATE_CHART_SIZE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
-  FILTER_NODES,
 } from '../actions';
+import { FILTER_NODES, RESET_FILTER_NODES } from '../actions/filters';
 import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
@@ -101,6 +101,16 @@ describe('Reducer', () => {
       });
       expect(newState.filters.from).toEqual(fromNode);
       expect(newState.filters.to).toEqual(toNode);
+    });
+  });
+
+  describe('RESET_FILTER_NODES', () => {
+    it('should reset the filters', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: RESET_FILTER_NODES,
+      });
+      expect(newState.filters.from).toEqual(undefined);
+      expect(newState.filters.to).toEqual(undefined);
     });
   });
 
