@@ -4,10 +4,10 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 
-from kedro_viz.api.rest.requests import DeployerConfiguration
+from kedro_viz.api.rest.requests import DeployerConfiguration, UserPreference
 from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
@@ -16,6 +16,7 @@ from .responses import (
     GraphAPIResponse,
     NodeMetadataAPIResponse,
     PackageCompatibilityAPIResponse,
+    DataNodeMetadata,
     get_default_response,
     get_node_metadata_response,
     get_package_compatibilities_response,
@@ -45,8 +46,18 @@ async def main():
     response_model=NodeMetadataAPIResponse,
     response_model_exclude_none=True,
 )
-async def get_single_node_metadata(node_id: str, showDatasetPreviews: bool = Query(True)):
-    return get_node_metadata_response(node_id, showDatasetPreviews)
+async def get_single_node_metadata(node_id: str):
+    return get_node_metadata_response(node_id)
+
+
+@router.post("/preferences")
+async def update_preferences(preferences: UserPreference):
+    try:
+        DataNodeMetadata.set_is_all_previews_enabled(preferences.showDatasetPreviews)
+        return {"message": "Preferences updated successfully"}
+    except Exception as e:
+        logger.error(f"Failed to update preferences: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update preferences")
 
 
 @router.get(

@@ -75,12 +75,12 @@ export function addNodeMetadata(data) {
  */
 export function loadNodeData(nodeID) {
   return async function (dispatch, getState) {
-    const { dataSource, node, showDatasetPreviews } = getState();
+    const { dataSource, node } = getState();
     dispatch(toggleNodeClicked(nodeID));
 
     if (dataSource === 'json' && nodeID && !node.fetched[nodeID]) {
       dispatch(toggleNodeDataLoading(true));
-      const url = getUrl('nodes', nodeID, showDatasetPreviews);
+      const url = getUrl('nodes', nodeID);
       const nodeData = await loadJsonData(url);
       dispatch(addNodeMetadata({ id: nodeID, data: nodeData }));
       dispatch(toggleNodeDataLoading(false));

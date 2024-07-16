@@ -6,6 +6,7 @@ import {
   toggleIsPrettyName,
   toggleSettingsModal,
   toggleShowDatasetPreviews,
+  updatePreferences,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -34,6 +35,7 @@ const SettingsModal = ({
   onToggleShowFeatureHints,
   onToggleIsPrettyName,
   onToggleShowDatasetPreviews,
+  updatePreferences,
   showSettingsModal,
   visible,
 }) => {
@@ -75,6 +77,7 @@ const SettingsModal = ({
         onToggleIsPrettyName(isPrettyNameValue);
         onToggleShowFeatureHints(showFeatureHintsValue);
         onToggleShowDatasetPreviews(showDatasetPreviewsValue);
+        updatePreferences({ showDatasetPreviews: showDatasetPreviewsValue });
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -95,6 +98,7 @@ const SettingsModal = ({
     onToggleShowFeatureHints,
     onToggleIsPrettyName,
     onToggleShowDatasetPreviews,
+    updatePreferences,
     showSettingsModal,
     toggleFlags,
   ]);
@@ -251,6 +255,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleShowDatasetPreviews: (value) => {
     dispatch(toggleShowDatasetPreviews(value));
+  },
+  updatePreferences: (preferences) => {
+    dispatch(updatePreferences(preferences));
   },
 });
 

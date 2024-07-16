@@ -10,6 +10,7 @@ import pipeline from './pipeline';
 import tag from './tags';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
+import preferencesReducer from './preferences';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -67,6 +68,7 @@ const combinedReducer = combineReducers({
   modularPipeline,
   visible,
   runsMetadata,
+  preferences: preferencesReducer,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
