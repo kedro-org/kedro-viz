@@ -485,6 +485,7 @@ describe('FlowChart', () => {
       inputOutputDataEdges: expect.any(Object),
       focusMode: expect.any(Object),
       displayGlobalToolbar: expect.any(Boolean),
+      filteredPipeline: expect.any(Object),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
