@@ -80,8 +80,8 @@ export const createInitialPipelineState = () => ({
     enabled: {},
   },
   filters: {
-    from: [],
-    to: [],
+    from: null,
+    to: null,
     apply: false,
   },
   hoveredParameters: false,
