@@ -23,6 +23,7 @@ Please follow the established format:
 - Fix bug related to nested namespace pipelines. (#1897)
 - Migrate from `toposort` to `graphlib`. (#1942)
 - Fix packaging. (#1766)
+- Adjust requirements file and dependabot versioning strategy. (#1978)
 
 # Release 9.1.0
 
