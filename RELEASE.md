@@ -22,6 +22,7 @@ Please follow the established format:
 - Add "-p" flag to kedro-viz to match kedro run. (#1960)
 - Fix bug related to nested namespace pipelines. (#1897)
 - Migrate from `toposort` to `graphlib`. (#1942)
+- Adjust requirements file and dependabot versioning strategy. (#1978)
 
 # Release 9.1.0
 
