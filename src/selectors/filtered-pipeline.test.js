@@ -1,4 +1,3 @@
-import spaceflights from '../utils/data/spaceflights.mock.json';
 import { mockState } from '../utils/state.mock';
 import reducer from '../reducers';
 
