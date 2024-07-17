@@ -89,11 +89,10 @@ def test_get_package_compatibilities(
 
 
 def test_update_preferences_success(client, mocker):
-    mocker.patch("kedro_viz.api.rest.responses.DataNodeMetadata.set_is_all_previews_enabled")
-    response = client.post(
-        "api/preferences",
-        json={"showDatasetPreviews": True}
+    mocker.patch(
+        "kedro_viz.api.rest.responses.DataNodeMetadata.set_is_all_previews_enabled"
     )
+    response = client.post("api/preferences", json={"showDatasetPreviews": True})
 
     assert response.status_code == 200
     assert response.json() == {"message": "Preferences updated successfully"}
@@ -102,12 +101,9 @@ def test_update_preferences_success(client, mocker):
 def test_update_preferences_failure(client, mocker):
     mocker.patch(
         "kedro_viz.api.rest.responses.DataNodeMetadata.set_is_all_previews_enabled",
-        side_effect=Exception("Test Exception")
+        side_effect=Exception("Test Exception"),
     )
-    response = client.post(
-        "api/preferences",
-        json={"showDatasetPreviews": True}
-    )
+    response = client.post("api/preferences", json={"showDatasetPreviews": True})
 
     assert response.status_code == 500
     assert response.json() == {"detail": "Failed to update preferences"}

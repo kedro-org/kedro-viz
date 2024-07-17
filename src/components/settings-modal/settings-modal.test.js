@@ -75,5 +75,11 @@ describe('SettingsModal', () => {
       type: 'TOGGLE_IS_PRETTY_NAME',
       isPrettyName: false,
     });
+
+    mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(false);
+    expect(dispatch.mock.calls[3][0]).toEqual({
+      type: 'TOGGLE_SHOW_DATASET_PREVIEWS',
+      showDatasetPreviews: false,
+    });
   });
 });
