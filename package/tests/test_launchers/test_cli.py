@@ -362,7 +362,7 @@ def test_kedro_viz_command_with_autoreload(
             "include_hooks": False,
             "package_name": None,
             "extra_params": {},
-            "is_lite": False
+            "is_lite": False,
         },
         "watcher_cls": RegExpWatcher,
         "watcher_kwargs": {"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
