@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 
 import { styled } from '@mui/system';
 import { TreeView } from '@mui/x-tree-view';
@@ -152,7 +153,7 @@ const TreeListProvider = ({
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={node.id}
+        key={uniqueId(node.id)}
       />
     );
   };
@@ -205,7 +206,7 @@ const TreeListProvider = ({
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={node.id}
+        key={uniqueId(node.id)}
       >
         {children}
       </NodeListTreeItem>
