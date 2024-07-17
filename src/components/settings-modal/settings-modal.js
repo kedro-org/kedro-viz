@@ -6,7 +6,6 @@ import {
   toggleIsPrettyName,
   toggleSettingsModal,
   toggleShowDatasetPreviews,
-  updatePreferences,
 } from '../../actions';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -35,7 +34,6 @@ const SettingsModal = ({
   onToggleShowFeatureHints,
   onToggleIsPrettyName,
   onToggleShowDatasetPreviews,
-  updatePreferences,
   showSettingsModal,
   visible,
 }) => {
@@ -77,7 +75,6 @@ const SettingsModal = ({
         onToggleIsPrettyName(isPrettyNameValue);
         onToggleShowFeatureHints(showFeatureHintsValue);
         onToggleShowDatasetPreviews(showDatasetPreviewsValue);
-        updatePreferences({ showDatasetPreviews: showDatasetPreviewsValue });
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -98,10 +95,36 @@ const SettingsModal = ({
     onToggleShowFeatureHints,
     onToggleIsPrettyName,
     onToggleShowDatasetPreviews,
-    updatePreferences,
     showSettingsModal,
     toggleFlags,
   ]);
+
+  useEffect(() => {
+    const updatePreferences = async () => {
+      try {
+        const response = await fetch('/api/preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            showDatasetPreviews: showDatasetPreviewsValue,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update preferences');
+        }
+
+        const result = await response.json();
+        console.log('Preferences updated successfully:', result);
+      } catch (error) {
+        console.error('Error updating preferences:', error);
+      }
+    };
+
+    updatePreferences();
+  }, [showDatasetPreviewsValue]);
 
   const resetStateCloseModal = () => {
     showSettingsModal(false);
@@ -255,9 +278,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleShowDatasetPreviews: (value) => {
     dispatch(toggleShowDatasetPreviews(value));
-  },
-  updatePreferences: (preferences) => {
-    dispatch(updatePreferences(preferences));
   },
 });
 

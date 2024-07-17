@@ -141,38 +141,6 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
-export const UPDATE_PREFERENCES = 'UPDATE_PREFERENCES';
-
-/**
- * Update user preferences
- * @param {Object} preferences New preferences data
- */
-export function updatePreferences(preferences) {
-  return async (dispatch) => {
-    try {
-      const response = await fetch('/api/preferences', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(preferences),
-      });
-
-      if (response.ok) {
-        const updatedPreferences = await response.json();
-        dispatch({
-          type: UPDATE_PREFERENCES,
-          preferences: updatedPreferences,
-        });
-      } else {
-        throw new Error('Failed to update preferences');
-      }
-    } catch (error) {
-      console.error('Error updating preferences:', error);
-    }
-  };
-}
-
 export const TOGGLE_SHOW_DATASET_PREVIEWS = 'TOGGLE_SHOW_DATASET_PREVIEWS';
 
 /**

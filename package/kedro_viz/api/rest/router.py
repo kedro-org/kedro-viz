@@ -13,10 +13,10 @@ from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
     APIErrorMessage,
+    DataNodeMetadata,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
     PackageCompatibilityAPIResponse,
-    DataNodeMetadata,
     get_default_response,
     get_node_metadata_response,
     get_package_compatibilities_response,

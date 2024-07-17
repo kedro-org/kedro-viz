@@ -14,4 +14,5 @@ class DeployerConfiguration(BaseModel):
 
 class UserPreference(BaseModel):
     """User preferences for Kedro Viz."""
+
     showDatasetPreviews: bool
