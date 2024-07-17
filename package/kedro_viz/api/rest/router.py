@@ -55,9 +55,11 @@ async def update_preferences(preferences: UserPreference):
     try:
         DataNodeMetadata.set_is_all_previews_enabled(preferences.showDatasetPreviews)
         return {"message": "Preferences updated successfully"}
-    except Exception as e:
-        logger.error(f"Failed to update preferences: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to update preferences")
+    except Exception as exception:
+        logger.error("Failed to update preferences: %s", str(exception))
+        raise HTTPException(
+            status_code=500, detail="Failed to update preferences"
+        ) from exception
 
 
 @router.get(
