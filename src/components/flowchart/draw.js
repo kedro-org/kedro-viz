@@ -149,6 +149,7 @@ export const drawNodes = function (changed) {
     nodes,
     focusMode,
     hoveredFocusMode,
+    isFiltersApplied,
   } = this.props;
   const { filteredPipelineState } = this.state;
 
@@ -267,11 +268,11 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--filtered-pipeline',
-        (node) => nodesFromFilteredPipeline[node.id]
+        (node) => !isFiltersApplied && nodesFromFilteredPipeline[node.id]
       )
       .classed(
         'pipeline-node--from-to-filtered-pipeline',
-        (node) => fromToFilteredPipeline[node.id]
+        (node) => !isFiltersApplied && fromToFilteredPipeline[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',

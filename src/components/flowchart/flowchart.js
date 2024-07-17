@@ -821,6 +821,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   filteredPipeline: getFilteredPipeline(state),
+  isFiltersApplied: state.filters.apply,
   ...ownProps,
 });
 

@@ -122,9 +122,14 @@ const TreeListProvider = ({
   expanded,
   onToggleNodeSelected,
   filteredPipeline,
+  isFiltersApplied,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
+    if (Object.keys(node).length === 0) {
+      return null;
+    }
+
     const disabled =
       node.disabledTag ||
       node.disabledType ||
@@ -143,7 +148,7 @@ const TreeListProvider = ({
 
     const selected = nodeSelected[node.id];
 
-    const highlight = filteredPipeline.includes(node.id);
+    const highlight = !isFiltersApplied && filteredPipeline.includes(node.id);
     const data = getNodeRowData(node, disabled, selected, highlight);
 
     return (
@@ -247,6 +252,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
   filteredPipeline: getFilteredPipeline(state),
+  isFiltersApplied: state.filters.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

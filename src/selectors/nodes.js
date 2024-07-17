@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
+import { getFilteredPipeline } from './filtered-pipeline';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -259,19 +260,46 @@ export const getNodeDataObject = createSelector(
  * Return the modular pipelines tree with full data for each tree node for display.
  */
 export const getModularPipelinesTree = createSelector(
-  [(state) => state.modularPipeline.tree, getNodeDataObject],
-  (modularPipelinesTree, nodes) => {
+  [
+    (state) => state.modularPipeline.tree,
+    (state) => state.filters.apply,
+    getNodeDataObject,
+    getFilteredPipeline,
+  ],
+  (modularPipelinesTree, isFiltersApplied, nodes, filteredPipeline) => {
     if (!modularPipelinesTree) {
       return {};
     }
-    for (const modularPipelineID in modularPipelinesTree) {
-      modularPipelinesTree[modularPipelineID].data = {
-        ...nodes[modularPipelineID],
-      };
-      for (const child of modularPipelinesTree[modularPipelineID].children) {
-        child.data = { ...nodes[child.id] };
-      }
+    // Create a function to update children data
+    const updateChildrenData = (children, sourceNodes) => {
+      children.forEach((child) => {
+        child.data = { ...sourceNodes[child.id] };
+      });
+    };
+
+    if (isFiltersApplied) {
+      // Filter nodes based on filteredPipeline
+      const filteredNodes = Object.keys(nodes).reduce((acc, nodeId) => {
+        if (filteredPipeline.includes(nodeId)) {
+          acc[nodeId] = nodes[nodeId];
+        }
+        return acc;
+      }, {});
+
+      // Update modularPipelinesTree children data with filteredNodes
+      Object.values(modularPipelinesTree).forEach((modularPipeline) => {
+        updateChildrenData(modularPipeline.children, filteredNodes);
+      });
+    } else {
+      // Update modularPipelinesTree data and children data with nodes
+      Object.entries(modularPipelinesTree).forEach(
+        ([modularPipelineID, modularPipeline]) => {
+          modularPipeline.data = { ...nodes[modularPipelineID] };
+          updateChildrenData(modularPipeline.children, nodes);
+        }
+      );
     }
+
     return modularPipelinesTree;
   }
 );
