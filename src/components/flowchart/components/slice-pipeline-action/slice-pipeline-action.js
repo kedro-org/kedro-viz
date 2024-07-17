@@ -3,7 +3,11 @@ import Button from '../../../ui/button';
 
 import './slice-pipeline-action.scss';
 
-export const SlicePipelineAction = ({ chartSize, filteredPipeline }) => {
+export const SlicePipelineAction = ({
+  chartSize,
+  filteredPipeline,
+  onApplyFilters,
+}) => {
   const { outerWidth, sidebarWidth } = chartSize;
   const sidebarVisible = sidebarWidth > 140;
 
@@ -18,7 +22,7 @@ export const SlicePipelineAction = ({ chartSize, filteredPipeline }) => {
           {`${filteredPipeline.length} selected`}
         </div>
         <div className="pipeline-flowchart_slice-action--cta">
-          <Button>Slice</Button>
+          <Button onClick={onApplyFilters}>Slice</Button>
         </div>
       </div>
     );

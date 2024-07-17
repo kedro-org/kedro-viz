@@ -1,7 +1,7 @@
 export const APPLY_FILTERS = 'APPLY_FILTERS';
 
 export const applyFilters = (apply) => {
-  return async function (dispatch, getState) {
+  return async function (dispatch) {
     dispatch({
       type: APPLY_FILTERS,
       apply,
@@ -12,7 +12,7 @@ export const applyFilters = (apply) => {
 export const FILTER_NODES = 'FILTER_NODES';
 
 export const filterNodes = (from, to) => {
-  return async function (dispatch, getState) {
+  return async function (dispatch) {
     dispatch({
       type: FILTER_NODES,
       filters: { from, to },
