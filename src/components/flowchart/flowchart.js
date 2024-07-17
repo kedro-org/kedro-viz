@@ -63,6 +63,7 @@ export class FlowChart extends Component {
     this.nodesRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+    this.sliceButtonRef = React.createRef();
 
     this.DURATION = 700;
     this.MARGIN = 500;
@@ -539,14 +540,18 @@ export class FlowChart extends Component {
   /**
    * Remove a node's focus state and dim linked nodes
    */
-  handleChartClick = () => {
+  handleChartClick = (event) => {
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
 
-    if (this.props.filteredPipeline) {
+    const isSliceButtonClicked =
+      this.sliceButtonRef.current &&
+      this.sliceButtonRef.current.contains(event.target);
+
+    if (this.props.filteredPipeline && !isSliceButtonClicked) {
       this.props.onResetFilterNodes();
       this.setState({
         filteredPipelineState: {
@@ -690,8 +695,13 @@ export class FlowChart extends Component {
    * Render React elements
    */
   render() {
-    const { chartSize, layers, visibleGraph, displayGlobalToolbar } =
-      this.props;
+    const {
+      chartSize,
+      layers,
+      visibleGraph,
+      displayGlobalToolbar,
+      onApplyFilters,
+    } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { filteredPipelineState } = this.state;
     return (
@@ -754,11 +764,14 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <SlicePipelineAction
-          chartSize={chartSize}
-          filteredPipeline={filteredPipelineState.range}
-          onApplyFilters={() => this.props.onApplyFilters(true)}
-        />
+        <div ref={this.sliceButtonRef}>
+          <SlicePipelineAction
+            chartSize={chartSize}
+            filteredPipeline={filteredPipelineState.range}
+            onApplyFilters={() => onApplyFilters(true)}
+          />
+        </div>
+
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
