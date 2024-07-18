@@ -61,6 +61,7 @@ export const FlowChartWrapper = ({
   activePipeline,
   tag,
   nodeType,
+  expandAllPipelines,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -109,11 +110,7 @@ export const FlowChartWrapper = ({
           const mappedDisabledNodes = mapNodeTypes(disabledKeys);
           disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
         },
-        expandAllPipelines: (value) => {
-          if (!searchParams.has(params.expandAll)) {
-            toSetQueryParam(params.expandAll, value);
-          }
-        },
+        expandAllPipelines: (value) => toSetQueryParam(params.expandAll, value),
       };
 
       for (const [key, value] of Object.entries(localStorageParams)) {
@@ -127,7 +124,7 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePipeline, tag, nodeType]);
+  }, [activePipeline, tag, nodeType, expandAllPipelines]);
 
   const resetErrorMessage = () => {
     setErrorMessage({});
@@ -368,6 +365,7 @@ export const mapStateToProps = (state) => ({
   sidebarVisible: state.visible.sidebar,
   tag: state.tag.enabled,
   nodeType: state.nodeType.disabled,
+  expandAllPipelines: state.expandAllPipelines,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

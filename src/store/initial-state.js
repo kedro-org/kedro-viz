@@ -238,10 +238,12 @@ export const prepareNonPipelineState = (urlParams) => {
 const getInitialState = (props = {}) => {
   const urlParams = parseUrlParameters();
   const nonPipelineState = prepareNonPipelineState(urlParams);
+  let expandAllPipelines = nonPipelineState.expandAllPipelines;
 
-  const expandAllPipelines =
-    nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.expandAllPipelines;
+  if (props.options) {
+    expandAllPipelines =
+      props.options.expandAllPipelines || nonPipelineState.expandAllPipelines;
+  }
 
   const pipelineState = preparePipelineState(
     props.data,
