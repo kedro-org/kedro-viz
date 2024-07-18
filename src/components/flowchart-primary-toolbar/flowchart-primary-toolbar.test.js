@@ -23,7 +23,7 @@ describe('PrimaryToolbar', () => {
       labelBtn: false,
       layerBtn: false,
       exportBtn: false,
-      pipelineBtn: false,
+      expandPipelinesBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       visible,
@@ -79,7 +79,7 @@ describe('PrimaryToolbar', () => {
         settingsModal: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
-        pipelineBtn: expect.any(Boolean),
+        expandPipelinesBtn: expect.any(Boolean),
         sidebar: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),

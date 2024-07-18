@@ -88,7 +88,7 @@ export const FlowchartPrimaryToolbar = ({
           }
           data-test={'expand-all-pipelines-toggle'}
           onClick={handleToggleExpandAllPipelines}
-          visible={visible.pipelineBtn}
+          visible={visible.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
