@@ -60,7 +60,6 @@ describe('GlobalToolbar', () => {
         settingsModal: false,
         shareableUrlModal: false,
         sidebar: true,
-        zoomToolbar: true,
       },
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);

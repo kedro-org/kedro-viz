@@ -18,6 +18,7 @@ export const MiniMapToolbar = ({
   onToggleMiniMap,
   onUpdateChartZoom,
   visible,
+  displayZoomToolbar,
 }) => {
   const { scale, minScale, maxScale } = chartZoom;
 
@@ -45,7 +46,7 @@ export const MiniMapToolbar = ({
           icon={PlusIcon}
           labelText={'Zoom in'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 1.3))}
-          visible={visible.zoomToolbar}
+          visible={displayZoomToolbar}
         />
         <IconButton
           ariaLabel={'Zoom out'}
@@ -57,7 +58,7 @@ export const MiniMapToolbar = ({
           icon={MinusIcon}
           labelText={'Zoom out'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0.7))}
-          visible={visible.zoomToolbar}
+          visible={displayZoomToolbar}
         />
         <IconButton
           ariaLabel={'Reset zoom'}
@@ -66,7 +67,7 @@ export const MiniMapToolbar = ({
           icon={ResetIcon}
           labelText={'Reset zoom'}
           onClick={() => onUpdateChartZoom(scaleZoom(chartZoom, 0))}
-          visible={visible.zoomToolbar}
+          visible={displayZoomToolbar}
         />
         <li>
           <span className="pipeline-minimap-toolbar__scale" title="Zoom level">
@@ -88,6 +89,7 @@ const scaleZoom = ({ scale }, factor) => ({
 export const mapStateToProps = (state) => ({
   visible: state.visible,
   displayMiniMap: state.display.miniMap,
+  displayZoomToolbar: state.display.zoomToolbar,
   chartZoom: getChartZoom(state),
 });
 

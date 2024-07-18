@@ -99,7 +99,6 @@ App.propTypes = {
     exportBtn: PropTypes.bool,
     pipelineBtn: PropTypes.bool,
     sidebar: PropTypes.bool,
-    zoomToolBar: PropTypes.bool,
     miniMapBtn: PropTypes.bool,
   }),
   /**
@@ -110,6 +109,7 @@ App.propTypes = {
     sidebar: PropTypes.bool,
     miniMap: PropTypes.bool,
     expandAllPipelines: PropTypes.bool,
+    zoomToolBar: PropTypes.bool,
   }),
 };
 
