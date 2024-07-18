@@ -78,7 +78,7 @@ export const Wrapper = ({ displayGlobalToolbar, theme }) => {
 };
 
 export const mapStateToProps = (state) => ({
-  displayGlobalToolbar: state.display.globalToolbar,
+  displayGlobalNavigation: state.display.globalNavigation,
   theme: state.theme,
 });
 
