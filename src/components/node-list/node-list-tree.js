@@ -167,7 +167,7 @@ const TreeListProvider = ({
   const renderTree = (tree, modularPipelineID) => {
     // current tree node to render
     const node = tree[modularPipelineID];
-    if (!node) {
+    if (!node || node.children.length === 0) {
       return;
     }
 

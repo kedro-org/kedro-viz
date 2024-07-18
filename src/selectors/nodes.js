@@ -270,36 +270,34 @@ export const getModularPipelinesTree = createSelector(
     if (!modularPipelinesTree) {
       return {};
     }
-    // Create a function to update children data
-    const updateChildrenData = (children, sourceNodes) => {
-      children.forEach((child) => {
-        child.data = { ...sourceNodes[child.id] };
-      });
-    };
 
     if (isFiltersApplied) {
       // Filter nodes based on filteredPipeline
-      const filteredNodes = Object.keys(nodes).reduce((acc, nodeId) => {
-        if (filteredPipeline.includes(nodeId)) {
-          acc[nodeId] = nodes[nodeId];
-        }
-        return acc;
-      }, {});
-
+      const filteredNodes = Object.fromEntries(
+        Object.entries(nodes).filter(([nodeId]) =>
+          filteredPipeline.includes(nodeId)
+        )
+      );
       // Update modularPipelinesTree children data with filteredNodes
       Object.values(modularPipelinesTree).forEach((modularPipeline) => {
-        updateChildrenData(modularPipeline.children, filteredNodes);
+        modularPipeline.children = modularPipeline.children.filter(
+          (child) =>
+            // Filter out children whose IDs are not present in sourceNodes but if the child type is 'modularPipeline' then keep it
+            filteredNodes[child.id] !== undefined ||
+            child.type === 'modularPipeline'
+        );
       });
     } else {
       // Update modularPipelinesTree data and children data with nodes
       Object.entries(modularPipelinesTree).forEach(
         ([modularPipelineID, modularPipeline]) => {
           modularPipeline.data = { ...nodes[modularPipelineID] };
-          updateChildrenData(modularPipeline.children, nodes);
+          for (const child of modularPipeline.children) {
+            child.data = { ...nodes[child.id] };
+          }
         }
       );
     }
-
     return modularPipelinesTree;
   }
 );
