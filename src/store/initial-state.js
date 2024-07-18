@@ -42,7 +42,7 @@ export const createInitialState = () => ({
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
   },
   display: {
-    globalToolbar: true,
+    globalNavigation: true,
     sidebar: true,
     miniMap: true,
     expandPipelinesBtn: true,

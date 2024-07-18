@@ -8,7 +8,7 @@ function VizComponent({ data }) {
         data={data}
         expandAllPipelines={false}
         display={{
-          globalToolbar: true,
+          globalNavigation: true,
           miniMap: false,
           sidebar: true,
         }}

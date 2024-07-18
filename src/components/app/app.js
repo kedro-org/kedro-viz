@@ -94,7 +94,7 @@ App.propTypes = {
    * Determines if certain elements are displayed, e.g global tool bar, sidebar
    */
   display: PropTypes.shape({
-    globalToolbar: PropTypes.bool,
+    globalNavigation: PropTypes.bool,
     sidebar: PropTypes.bool,
     miniMap: PropTypes.bool,
     expandPipelinesBtn: PropTypes.bool,
