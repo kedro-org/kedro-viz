@@ -122,21 +122,17 @@ The example below demonstrates how to configure your kedro-viz using different `
 <KedroViz
     data={json}
     options={
+      expandAllPipelines: false,
       display: {
-        globalToolbar: true,
+        globalNavigation: true,
         sidebar: true,
         metadataPanel: true,
         miniMap: true,
-        expandAllPipelines: false,
-      }
-      visible: {
         exportBtn: true,
         labelBtn: true,
         layerBtn: true,
         expandPipelinesBtn: true,
-        miniMapBtn: true,
         zoomToolbar: true,    
-        sidebar: true,
       }
       theme: "dark",
       tag: {
@@ -155,20 +151,17 @@ The example below demonstrates how to configure your kedro-viz using different `
 | options.theme | string | dark | select `Kedro-Viz` theme : dark/light |
 | options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
 | options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
+| options.expandAllPipelines | boolean | false | Expand/Collapse Modular pipelines on first load |
 | options.display |  |  |  |
-| `globalToolbar` | boolean | true | Show/Hide Global Toolbar |
+| `globalNavigation` | boolean | true | Show/Hide global navigation |
 | `miniMap` | boolean | true | Show/Hide Mini map |
-| `expandAllPipelines` | boolean | false | Expand/Collapse Modular pipelines on first load |
 | `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
 | `sidebar` | boolean | true | Show/Hide Sidebar, Primary toolbar and Mini map |
-| options.visible |  |  |  |
 | `labelBtn` | boolean | true | Show/Hide label button |
 | `layerBtn` | boolean | true | Show/Hide layer button |
 | `exportBtn` | boolean | true | Show/Hide export button |
 | `expandPipelinesBtn` | boolean | true | Show/Hide expand pipelines button |
-| `miniMapBtn` | boolean | true | Show/Hide Mini map button |
 | `zoomToolbar` | boolean | true | Show/Hide zoom-in, zoom-out and zoom reset buttons together |
-| `sidebar` | boolean | true | Expand/Collapse Sidebar |
 
 
 ### Note
