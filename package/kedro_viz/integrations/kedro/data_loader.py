@@ -10,9 +10,10 @@ import logging
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
+from unittest.mock import patch
 
 from kedro import __version__
-from kedro.framework.project import configure_project, pipelines
+from kedro.framework.project import configure_project, pipelines, settings
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
@@ -20,8 +21,8 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-# from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
-from kedro_viz.integrations.kedro.lite_parser import get_mocked_modules
+from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
+from kedro_viz.integrations.kedro.lite_parser import LiteParser
 
 logger = logging.getLogger(__name__)
 
@@ -72,11 +73,6 @@ def _get_dataset_stats(project_path: Path) -> Dict:
         return {}
 
 
-def _update_sys_modules(mock_modules):
-    for module_name, mock in mock_modules.items():
-        sys.modules[module_name] = mock
-
-
 def _load_data_helper(
     project_path: Path,
     env: Optional[str] = None,
@@ -85,6 +81,8 @@ def _load_data_helper(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ):
+    """Helper to load data from a Kedro project."""
+
     if package_name:
         configure_project(package_name)
     else:
@@ -103,11 +101,13 @@ def _load_data_helper(
 
         context = session.load_context()
         session_store = session._store
-        
-        # if is_lite:
-        #     project_settings = _ProjectSettings()
-        #     project_settings._DATA_CATALOG_CLASS = DataCatalogLite
-        
+
+        # Update the DataCatalog class for a custom implementation
+        # to handle kedro.io.core.DatasetError from
+        # `settings.DATA_CATALOG_CLASS.from_config`
+        if is_lite:
+            settings.DATA_CATALOG_CLASS = DataCatalogLite
+
         catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
@@ -142,17 +142,17 @@ def load_data(
         and the session store.
     """
     if is_lite:
-        mocked_modules = get_mocked_modules(project_path)
-        # Temporarily clear and reload sys.modules to force use of mock_modules
-        original_sys_modules = sys.modules.copy()
-        try:
-            _update_sys_modules(mocked_modules)
+        lite_parser = LiteParser(project_path)
+        mocked_modules = lite_parser.get_mocked_modules()
+
+        sys_modules_patch = sys.modules.copy()
+        sys_modules_patch.update(mocked_modules)
+
+        # Patch actual sys modules
+        with patch.dict("sys.modules", sys_modules_patch):
             return _load_data_helper(
                 project_path, env, include_hooks, package_name, extra_params, is_lite
             )
-        finally:
-            sys.modules.clear()
-            sys.modules.update(original_sys_modules)
     else:
         return _load_data_helper(
             project_path, env, include_hooks, package_name, extra_params, is_lite

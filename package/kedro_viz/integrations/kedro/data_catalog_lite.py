@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import copy
-from typing import Any
+from typing import Any, Dict
 
 from kedro.io.core import (
     AbstractDataset,
@@ -9,11 +7,29 @@ from kedro.io.core import (
     DatasetNotFoundError,
     generate_timestamp,
 )
-from kedro.io.data_catalog import DataCatalog, _resolve_credentials
+from kedro.io.data_catalog import DataCatalog, Patterns, _resolve_credentials
 from kedro.io.memory_dataset import MemoryDataset
 
 
 class DataCatalogLite(DataCatalog):
+    def __init__(
+        self,
+        datasets: dict[str, AbstractDataset] | None = None,
+        feed_dict: dict[str, Any] | None = None,
+        dataset_patterns: Dict[str, Dict[str, Any]] | None = None,
+        load_versions: dict[str, str] | None = None,
+        save_version: str | None = None,
+        default_pattern: Dict[str, Dict[str, Any]] | None = None,
+    ) -> None:
+        super().__init__(
+            datasets,
+            feed_dict,
+            dataset_patterns,
+            load_versions,
+            save_version,
+            default_pattern,
+        )
+
     @classmethod
     def from_config(
         cls,
@@ -22,7 +38,6 @@ class DataCatalogLite(DataCatalog):
         load_versions: dict[str, str] | None = None,
         save_version: str | None = None,
     ) -> DataCatalog:
-        
         datasets = {}
         dataset_patterns = {}
         catalog = copy.deepcopy(catalog) or {}
@@ -39,9 +54,7 @@ class DataCatalogLite(DataCatalog):
                     "make sure that the key is preceded by an underscore."
                 )
 
-            ds_config = _resolve_credentials(  # noqa: PLW2901
-                ds_config, credentials
-            )
+            ds_config = _resolve_credentials(ds_config, credentials)  # noqa: PLW2901
             if cls._is_pattern(ds_name):
                 # Add each factory to the dataset_patterns dict.
                 dataset_patterns[ds_name] = ds_config
@@ -72,7 +85,7 @@ class DataCatalogLite(DataCatalog):
                 f"are not found in the catalog."
             )
 
-        return DataCatalog(
+        return cls(
             datasets=datasets,
             dataset_patterns=sorted_patterns,
             load_versions=load_versions,
