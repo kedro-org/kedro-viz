@@ -78,8 +78,8 @@ export const settings = {
     default: true,
   },
   showDatasetPreviews: {
-    name: 'Dataset Previews',
-    description: 'Enable or disable dataset previews for all nodes.',
+    name: 'Dataset previews',
+    description: 'Display preview data for all datasets.',
     default: true,
   },
 };
