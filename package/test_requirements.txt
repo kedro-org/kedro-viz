@@ -9,7 +9,7 @@ black~=23.3
 boto3~=1.34
 flake8~=7.1
 isort~=5.11
-matplotlib~=3.5
+matplotlib~=3.9
 mypy~=1.10
 moto~=5.0.9
 psutil==5.9.6  # same as Kedro for now
