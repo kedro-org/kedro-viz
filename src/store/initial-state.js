@@ -32,16 +32,11 @@ export const createInitialState = () => ({
   },
   visible: {
     code: false,
-    exportBtn: true,
     exportModal: false,
     graph: true,
-    labelBtn: true,
-    layerBtn: true,
     metadataModal: false,
     miniMap: true,
-    miniMapBtn: true,
     modularPipelineFocusMode: null,
-    expandPipelinesBtn: true,
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
@@ -50,7 +45,10 @@ export const createInitialState = () => ({
     globalToolbar: true,
     sidebar: true,
     miniMap: true,
-    expandAllPipelines: false,
+    expandPipelinesBtn: true,
+    exportBtn: true,
+    labelBtn: true,
+    layerBtn: true,
   },
   zoom: {},
   runsMetadata: {},
@@ -251,9 +249,7 @@ const getInitialState = (props = {}) => {
   const urlParams = parseUrlParameters();
   const nonPipelineState = prepareNonPipelineState(props, urlParams);
 
-  const expandAllPipelines =
-    nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.expandAllPipelines;
+  const expandAllPipelines = nonPipelineState.expandAllPipelines;
 
   const pipelineState = preparePipelineState(
     props.data,

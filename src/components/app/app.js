@@ -91,24 +91,18 @@ App.propTypes = {
    */
   theme: PropTypes.oneOf(['dark', 'light']),
   /**
-   * Override visibility of various features, e.g. icon buttons
-   */
-  visible: PropTypes.shape({
-    labelBtn: PropTypes.bool,
-    layerBtn: PropTypes.bool,
-    exportBtn: PropTypes.bool,
-    expandPipelinesBtn: PropTypes.bool,
-    sidebar: PropTypes.bool,
-  }),
-  /**
    * Determines if certain elements are displayed, e.g global tool bar, sidebar
    */
   display: PropTypes.shape({
     globalToolbar: PropTypes.bool,
     sidebar: PropTypes.bool,
     miniMap: PropTypes.bool,
-    expandAllPipelines: PropTypes.bool,
+    expandPipelinesBtn: PropTypes.bool,
+    exportBtn: PropTypes.bool,
+    labelBtn: PropTypes.bool,
+    layerBtn: PropTypes.bool,
   }),
+  expandAllPipelines: PropTypes.bool,
 };
 
 export default App;

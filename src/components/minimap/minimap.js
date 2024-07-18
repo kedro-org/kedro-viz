@@ -329,7 +329,9 @@ export class MiniMap extends Component {
     return (
       <div
         className="pipeline-minimap-container"
-        style={this.props.visible ? transformStyle : {}}
+        style={
+          this.props.visible && this.props.displayMiniMap ? transformStyle : {}
+        }
       >
         <div
           className="pipeline-minimap kedro"
@@ -402,6 +404,7 @@ const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
   visible: state.visible.miniMap,
+  displayMiniMap: state.display.miniMap,
   mapSize: getMapSize(state),
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
