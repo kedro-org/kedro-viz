@@ -20,6 +20,7 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+# from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
 from kedro_viz.integrations.kedro.lite_parser import get_mocked_modules
 
 logger = logging.getLogger(__name__)
@@ -82,6 +83,7 @@ def _load_data_helper(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False,
 ):
     if package_name:
         configure_project(package_name)
@@ -101,6 +103,11 @@ def _load_data_helper(
 
         context = session.load_context()
         session_store = session._store
+        
+        # if is_lite:
+        #     project_settings = _ProjectSettings()
+        #     project_settings._DATA_CATALOG_CLASS = DataCatalogLite
+        
         catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
@@ -141,12 +148,12 @@ def load_data(
         try:
             _update_sys_modules(mocked_modules)
             return _load_data_helper(
-                project_path, env, include_hooks, package_name, extra_params
+                project_path, env, include_hooks, package_name, extra_params, is_lite
             )
         finally:
             sys.modules.clear()
             sys.modules.update(original_sys_modules)
     else:
         return _load_data_helper(
-            project_path, env, include_hooks, package_name, extra_params
+            project_path, env, include_hooks, package_name, extra_params, is_lite
         )
