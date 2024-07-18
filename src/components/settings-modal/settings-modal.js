@@ -56,6 +56,32 @@ const SettingsModal = ({
   }, [showDatasetPreviews]);
 
   useEffect(() => {
+    setToggleFlags(flags);
+  }, [flags]);
+
+  const handleSavePreferences = async () => {
+    try {
+      const response = await fetch('/api/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          showDatasetPreviews: showDatasetPreviewsValue,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save preferences');
+      }
+      onToggleIsPrettyName(isPrettyNameValue);
+      onToggleShowFeatureHints(showFeatureHintsValue);
+      onToggleShowDatasetPreviews(showDatasetPreviewsValue);
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+    }
+  };
+
+  useEffect(() => {
     let modalTimeout, resetTimeout;
 
     if (hasClickedApplyAndClose) {
@@ -72,9 +98,7 @@ const SettingsModal = ({
           return onToggleFlag(name, value);
         });
 
-        onToggleIsPrettyName(isPrettyNameValue);
-        onToggleShowFeatureHints(showFeatureHintsValue);
-        onToggleShowDatasetPreviews(showDatasetPreviewsValue);
+        handleSavePreferences();
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -98,33 +122,6 @@ const SettingsModal = ({
     showSettingsModal,
     toggleFlags,
   ]);
-
-  useEffect(() => {
-    const updatePreferences = async () => {
-      try {
-        const response = await fetch('/api/preferences', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            showDatasetPreviews: showDatasetPreviewsValue,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update preferences');
-        }
-
-        const result = await response.json();
-        console.log('Preferences updated successfully:', result);
-      } catch (error) {
-        console.error('Error updating preferences:', error);
-      }
-    };
-
-    updatePreferences();
-  }, [showDatasetPreviewsValue]);
 
   const resetStateCloseModal = () => {
     showSettingsModal(false);
