@@ -110,6 +110,7 @@ def run_server(
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
+        is_lite: A flag to run Kedro-Viz in lite mode.
     """
 
     path = Path(project_path) if project_path else Path.cwd()

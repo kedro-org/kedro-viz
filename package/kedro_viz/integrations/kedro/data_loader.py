@@ -137,6 +137,7 @@ def load_data(
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
+        is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.

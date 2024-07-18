@@ -1,5 +1,9 @@
+"""``DataCatalogLite`` is a custom implementation of Kedro's ``DataCatalog``
+to provide a MemoryDataset instance when running Kedro-Viz in lite mode.
+"""
+
 import copy
-from typing import Any, Dict
+from typing import Any, Optional
 
 from kedro.io.core import (
     AbstractDataset,
@@ -7,36 +11,23 @@ from kedro.io.core import (
     DatasetNotFoundError,
     generate_timestamp,
 )
-from kedro.io.data_catalog import DataCatalog, Patterns, _resolve_credentials
+from kedro.io.data_catalog import DataCatalog, _resolve_credentials
 from kedro.io.memory_dataset import MemoryDataset
 
 
 class DataCatalogLite(DataCatalog):
-    def __init__(
-        self,
-        datasets: dict[str, AbstractDataset] | None = None,
-        feed_dict: dict[str, Any] | None = None,
-        dataset_patterns: Dict[str, Dict[str, Any]] | None = None,
-        load_versions: dict[str, str] | None = None,
-        save_version: str | None = None,
-        default_pattern: Dict[str, Dict[str, Any]] | None = None,
-    ) -> None:
-        super().__init__(
-            datasets,
-            feed_dict,
-            dataset_patterns,
-            load_versions,
-            save_version,
-            default_pattern,
-        )
+    """``DataCatalogLite`` is a custom implementation of Kedro's ``DataCatalog``
+    to provide a MemoryDataset instance by overriding ``from_config`` of ``DataCatalog``
+    when running Kedro-Viz in lite mode.
+    """
 
     @classmethod
     def from_config(
         cls,
-        catalog: dict[str, dict[str, Any]] | None,
-        credentials: dict[str, dict[str, Any]] | None = None,
-        load_versions: dict[str, str] | None = None,
-        save_version: str | None = None,
+        catalog: Optional[dict[str, dict[str, Any]]],
+        credentials: Optional[dict[str, dict[str, Any]]] = None,
+        load_versions: Optional[dict[str, str]] = None,
+        save_version: Optional[str] = None,
     ) -> DataCatalog:
         datasets = {}
         dataset_patterns = {}
@@ -54,18 +45,23 @@ class DataCatalogLite(DataCatalog):
                     "make sure that the key is preceded by an underscore."
                 )
 
-            ds_config = _resolve_credentials(ds_config, credentials)  # noqa: PLW2901
-            if cls._is_pattern(ds_name):
-                # Add each factory to the dataset_patterns dict.
-                dataset_patterns[ds_name] = ds_config
+            try:
+                ds_config = _resolve_credentials(
+                    ds_config, credentials
+                )  # noqa: PLW2901
+                if cls._is_pattern(ds_name):
+                    # Add each factory to the dataset_patterns dict.
+                    dataset_patterns[ds_name] = ds_config
 
-            else:
-                try:
-                    datasets[ds_name] = AbstractDataset.from_config(
-                        ds_name, ds_config, load_versions.get(ds_name), save_version
-                    )
-                except DatasetError:
-                    datasets[ds_name] = MemoryDataset()
+                else:
+                    try:
+                        datasets[ds_name] = AbstractDataset.from_config(
+                            ds_name, ds_config, load_versions.get(ds_name), save_version
+                        )
+                    except DatasetError:
+                        datasets[ds_name] = MemoryDataset()
+            except KeyError:
+                datasets[ds_name] = MemoryDataset()
 
         sorted_patterns = cls._sort_patterns(dataset_patterns)
         if sorted_patterns:
@@ -73,17 +69,6 @@ class DataCatalogLite(DataCatalog):
             if cls._specificity(list(sorted_patterns.keys())[-1]) == 0:
                 last_pattern = sorted_patterns.popitem()
                 user_default = {last_pattern[0]: last_pattern[1]}
-
-        missing_keys = [
-            key
-            for key in load_versions.keys()
-            if not (key in catalog or cls._match_pattern(sorted_patterns, key))
-        ]
-        if missing_keys:
-            raise DatasetNotFoundError(
-                f"'load_versions' keys [{', '.join(sorted(missing_keys))}] "
-                f"are not found in the catalog."
-            )
 
         return cls(
             datasets=datasets,

@@ -11,11 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 class LiteParser:
-    def __init__(self, project_path: Path) -> None:
-        self.project_path = project_path
+    """Represents a Kedro Parser which uses AST
 
+    Args:
+        project_path (Path): the path where the Kedro project is located.
+    """
+
+    def __init__(self, project_path: Path) -> None:
+        self._project_path = project_path
+
+    @staticmethod
     def _get_import_statements_from_ast(
-        self, parsed_content_ast_node: ast.Module
+        parsed_content_ast_node: ast.Module,
     ) -> List[str]:
         import_statements: List[str] = []
 
@@ -30,19 +37,22 @@ class LiteParser:
 
         return import_statements
 
-    def _is_module_importable(self, module_name: str) -> bool:
+    @staticmethod
+    def _is_module_importable(module_name: str) -> bool:
         try:
             importlib.import_module(module_name)
             return True
         except ImportError:
             return False
 
-    def _is_relative_import_resolvable(self, file_path: Path, module_name: str) -> bool:
+    @staticmethod
+    def _is_relative_import_resolvable(file_path: Path, module_name: str) -> bool:
         base_dir = file_path.parent
         relative_path = (base_dir / module_name.replace(".", "/")).with_suffix(".py")
         return relative_path.exists()
 
-    def _is_valid_import_stmt(self, statement: Any) -> bool:
+    @staticmethod
+    def _is_valid_import_stmt(statement: Any) -> bool:
         if not isinstance(statement, str) or not statement.strip():
             return False
 
@@ -54,6 +64,23 @@ class LiteParser:
             return False
 
         return True
+
+    @staticmethod
+    def _create_mock_imports(
+        unresolvable_imports: List[str], mock_modules: Dict[str, MagicMock]
+    ) -> None:
+        for statement in unresolvable_imports:
+            module_name = statement.split(" ")[1]
+            module_parts = module_name.split(".")
+            full_module_name = ""
+            for idx, sub_module_name in enumerate(module_parts):
+                full_module_name = (
+                    sub_module_name
+                    if idx == 0
+                    else f"{full_module_name}.{sub_module_name}"
+                )
+                if full_module_name not in mock_modules:
+                    mock_modules[full_module_name] = MagicMock()
 
     def _get_unresolvable_imports(
         self, file_path: Path, import_statements: List[str]
@@ -83,11 +110,11 @@ class LiteParser:
 
         return unresolvable_imports
 
-    def _parse_project_for_imports(self, project_path: Path) -> Dict[Path, List[str]]:
+    def _parse_project_for_imports(self) -> Dict[Path, List[str]]:
         all_imports: Dict[Path, List[str]] = {}
 
-        for filepath in project_path.rglob("*.py"):
-            with open(filepath, "r") as file:
+        for filepath in self._project_path.rglob("*.py"):
+            with open(filepath, "r", encoding="utf-8") as file:
                 file_content = file.read()
 
             # parse file content using ast
@@ -98,27 +125,11 @@ class LiteParser:
             all_imports[filepath] = import_statements
         return all_imports
 
-    def _create_mock_imports(
-        self, unresolvable_imports: List[str], mock_modules: Dict[str, MagicMock]
-    ) -> None:
-        for statement in unresolvable_imports:
-            # needs error handling
-            module_name = statement.split(" ")[1]
-            module_parts = module_name.split(".")
-            full_module_name = ""
-            for idx, sub_module_name in enumerate(module_parts):
-                full_module_name = (
-                    sub_module_name
-                    if idx == 0
-                    else f"{full_module_name}.{sub_module_name}"
-                )
-                if full_module_name not in mock_modules:
-                    mock_modules[full_module_name] = MagicMock()
-
     def get_mocked_modules(self) -> Dict[str, MagicMock]:
-        all_imports: Dict[Path, List[str]] = self._parse_project_for_imports(
-            self.project_path
-        )
+        """Returns mocked modules for all the dependency errors
+        as a dictionary for each file in your Kedro project
+        """
+        all_imports: Dict[Path, List[str]] = self._parse_project_for_imports()
         mocked_modules: Dict[str, MagicMock] = {}
 
         for file_path, imports in all_imports.items():
