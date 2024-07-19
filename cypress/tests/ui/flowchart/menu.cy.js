@@ -53,7 +53,7 @@ describe('Flowchart Menu', () => {
 
   it('verifies that users can search/filter for a flowchart component using the search box. #TC-17', () => {
     const searchInput = 'Ingestion';
-    cy.get('.search-input__field').type(searchInput);
+    cy.get('.search-input__field').type(searchInput, { force: true });
 
     // Pipeline Label in the Menu
     cy.get('.pipeline-nodelist__row__label')
