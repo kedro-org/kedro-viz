@@ -154,9 +154,9 @@ The example below demonstrates how to configure your kedro-viz using different `
 | options.expandAllPipelines | boolean | false | Expand/Collapse Modular pipelines on first load |
 | options.display |  |  |  |
 | `globalNavigation` | boolean | true | Show/Hide global navigation |
-| `miniMap` | boolean | true | Show/Hide Mini map |
+| `miniMap` | boolean | true | Show/Hide Mini map and mini map button |
 | `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
-| `sidebar` | boolean | true | Show/Hide Sidebar, Primary toolbar and Mini map |
+| `sidebar` | boolean | true | Show/Hide Sidebar and action toolbar |
 | `labelBtn` | boolean | true | Show/Hide label button |
 | `layerBtn` | boolean | true | Show/Hide layer button |
 | `exportBtn` | boolean | true | Show/Hide export button |
