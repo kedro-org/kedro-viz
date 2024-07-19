@@ -9,8 +9,8 @@ import './export-modal.scss';
 /**
  * Modal to allow users to choose between SVG/PNG export formats
  */
-const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
-  if (!visible.exportBtn) {
+const ExportModal = ({ graphSize, theme, onToggle, visible, display }) => {
+  if (!display.exportBtn) {
     return null;
   }
   return (
@@ -46,6 +46,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
 export const mapStateToProps = (state) => ({
   graphSize: state.graph.size || {},
   visible: state.visible,
+  display: state.display,
   theme: state.theme,
 });
 

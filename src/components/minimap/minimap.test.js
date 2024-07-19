@@ -145,6 +145,7 @@ describe('MiniMap', () => {
   it('maps state to props', () => {
     const expectedResult = {
       visible: expect.any(Boolean),
+      displayMiniMap: expect.any(Boolean),
       mapSize: expect.any(Object),
       clickedNode: null,
       chartSize: expect.any(Object),

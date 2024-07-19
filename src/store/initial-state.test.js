@@ -116,11 +116,11 @@ describe('getInitialState', () => {
       textLabels: true,
       theme: 'dark',
       expandAllPipelines: false,
-      visible: {
+      display: {
         exportBtn: true,
         labelBtn: true,
         layerBtn: true,
-        pipelineBtn: true,
+        expandPipelinesBtn: true,
       },
     });
   });
@@ -133,7 +133,7 @@ describe('getInitialState', () => {
       })
     ).toMatchObject({
       theme: 'light',
-      visible: { labelBtn: true },
+      display: { labelBtn: true },
     });
   });
 

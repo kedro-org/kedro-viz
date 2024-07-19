@@ -31,6 +31,7 @@ export const FlowchartPrimaryToolbar = ({
   onToggleTextLabels,
   textLabels,
   visible,
+  display,
   visibleLayers,
   expandedPipelines,
   onToggleExpandAllPipelines,
@@ -54,7 +55,7 @@ export const FlowchartPrimaryToolbar = ({
           icon={LabelIcon}
           labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
           onClick={() => onToggleTextLabels(!textLabels)}
-          visible={visible.labelBtn}
+          visible={display.labelBtn}
         />
         <IconButton
           active={visibleLayers}
@@ -66,7 +67,7 @@ export const FlowchartPrimaryToolbar = ({
           icon={LayersIcon}
           labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
           onClick={() => onToggleLayers(!visibleLayers)}
-          visible={visible.layerBtn}
+          visible={display.layerBtn}
         />
         <IconButton
           active={expandedPipelines}
@@ -83,7 +84,7 @@ export const FlowchartPrimaryToolbar = ({
           }
           data-test={'expand-all-pipelines-toggle'}
           onClick={handleToggleExpandAllPipelines}
-          visible={visible.pipelineBtn}
+          visible={display.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
@@ -92,7 +93,7 @@ export const FlowchartPrimaryToolbar = ({
           icon={ExportIcon}
           labelText="Export visualisation"
           onClick={() => onToggleExportModal(true)}
-          visible={visible.exportBtn}
+          visible={display.exportBtn}
         />
       </PrimaryToolbar>
     </>
@@ -103,6 +104,7 @@ export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   visible: state.visible,
+  display: state.display,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   expandedPipelines: state.expandAllPipelines,
 });

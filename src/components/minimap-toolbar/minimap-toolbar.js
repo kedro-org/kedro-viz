@@ -34,7 +34,7 @@ export const MiniMapToolbar = ({
             id="minimap-toggle-icon"
             labelText={`${visible.miniMap ? 'Hide' : 'Show'} minimap`}
             onClick={() => onToggleMiniMap(!visible.miniMap)}
-            visible={visible.miniMapBtn}
+            visible={displayMiniMap}
           />
         )}
         <IconButton
