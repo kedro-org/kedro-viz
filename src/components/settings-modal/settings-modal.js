@@ -12,6 +12,7 @@ import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig, localStorageName } from '../../config';
 import { saveLocalStorage } from '../../store/helpers';
 import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
+import { updatePreferences } from '../../utils/preferences-api';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -61,23 +62,13 @@ const SettingsModal = ({
 
   const handleSavePreferences = async () => {
     try {
-      const response = await fetch('/api/preferences', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          showDatasetPreviews: showDatasetPreviewsValue,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to save preferences');
-      }
+      const result = await updatePreferences(showDatasetPreviewsValue);
+      console.log('Preferences updated successfully:', result);
       onToggleIsPrettyName(isPrettyNameValue);
       onToggleShowFeatureHints(showFeatureHintsValue);
       onToggleShowDatasetPreviews(showDatasetPreviewsValue);
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      console.error('Error updating preferences:', error);
     }
   };
 
