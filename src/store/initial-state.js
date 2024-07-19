@@ -49,6 +49,7 @@ export const createInitialState = () => ({
     exportBtn: true,
     labelBtn: true,
     layerBtn: true,
+    zoomToolbar: true,
   },
   zoom: {},
   runsMetadata: {},

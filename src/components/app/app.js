@@ -106,6 +106,7 @@ App.propTypes = {
       exportBtn: PropTypes.bool,
       labelBtn: PropTypes.bool,
       layerBtn: PropTypes.bool,
+      zoomToolBar: PropTypes.bool,
     }),
     /**
      * Override the default enabled/disabled tags
