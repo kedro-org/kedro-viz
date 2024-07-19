@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {
   changeFlag,
@@ -60,17 +60,14 @@ const SettingsModal = ({
     setToggleFlags(flags);
   }, [flags]);
 
-  const handleSavePreferences = async () => {
+  const handleSavePreferences = useCallback(async () => {
     try {
       const result = await updatePreferences(showDatasetPreviewsValue);
       console.log('Preferences updated successfully:', result);
-      onToggleIsPrettyName(isPrettyNameValue);
-      onToggleShowFeatureHints(showFeatureHintsValue);
-      onToggleShowDatasetPreviews(showDatasetPreviewsValue);
     } catch (error) {
       console.error('Error updating preferences:', error);
     }
-  };
+  }, [showDatasetPreviewsValue]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -90,6 +87,9 @@ const SettingsModal = ({
         });
 
         handleSavePreferences();
+        onToggleIsPrettyName(isPrettyNameValue);
+        onToggleShowFeatureHints(showFeatureHintsValue);
+        onToggleShowDatasetPreviews(showDatasetPreviewsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
