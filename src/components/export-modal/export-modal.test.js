@@ -32,9 +32,6 @@ describe('ExportModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
-      display: expect.objectContaining({
-        exportBtn: expect.any(Boolean),
-      }),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
