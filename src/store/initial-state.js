@@ -50,6 +50,7 @@ export const createInitialState = () => ({
     labelBtn: true,
     layerBtn: true,
     zoomToolbar: true,
+    metadataPanel: true,
   },
   zoom: {},
   runsMetadata: {},

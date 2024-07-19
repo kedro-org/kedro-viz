@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
-import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
+import {
+  loadNodeData,
+  toggleNodeHovered,
+  toggleNodeClicked,
+} from '../../actions/nodes';
 import {
   getNodeActive,
   getNodeSelected,
@@ -446,11 +450,20 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    if (node.type === 'modularPipeline') {
-      this.props.onClickToExpandModularPipeline(node.id);
+    const { type, id } = node;
+    const {
+      onClickToExpandModularPipeline,
+      displayMetadataPanel,
+      onLoadNodeData,
+      toSelectedNode,
+      onToggleNodeClicked,
+    } = this.props;
+
+    if (type === 'modularPipeline') {
+      onClickToExpandModularPipeline(id);
     } else {
-      this.props.onLoadNodeData(node.id);
-      this.props.toSelectedNode(node);
+      displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+      toSelectedNode(node);
     }
     event.stopPropagation();
   };
@@ -697,6 +710,7 @@ export const mapStateToProps = (state, ownProps) => ({
   chartZoom: getChartZoom(state),
   displayGlobalNavigation: state.display.globalNavigation,
   displaySidebar: state.display.sidebar,
+  displayMetadataPanel: state.display.metadataPanel,
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
@@ -724,6 +738,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
+  },
+  onToggleNodeClicked: (id) => {
+    dispatch(toggleNodeClicked(id));
   },
   onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));
