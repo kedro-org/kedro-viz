@@ -10,9 +10,8 @@ import FlowChart, {
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
+import { getNodeLabel } from '../../selectors/nodes';
 import { toggleTypeDisabled } from '../../actions/node-type';
-
-const getNodeName = (state) => state.node.name;
 
 const chartWidth = chartSizeTestFallback.width;
 const chartHeight = chartSizeTestFallback.height;
@@ -53,7 +52,7 @@ describe('FlowChart', () => {
     const nodeNames = nodes.map((i, el) => select(el).text()).get();
     const mockNodes = getVisibleNodeIDs(mockState.spaceflights);
     const mockNodeNames = mockNodes.map(
-      (d) => getNodeName(mockState.spaceflights)[d]
+      (d) => getNodeLabel(mockState.spaceflights)[d]
     );
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
@@ -301,7 +300,7 @@ describe('FlowChart', () => {
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
       />
     );
@@ -335,7 +334,7 @@ describe('FlowChart', () => {
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeActive={{
           '23c94afb': true,
@@ -354,7 +353,7 @@ describe('FlowChart', () => {
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeSelected={{
           '23c94afb': true,

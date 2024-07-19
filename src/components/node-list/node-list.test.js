@@ -46,9 +46,9 @@ describe('NodeList', () => {
 
       const searches = [
         // search text that matches an external node only
-        'Metrics',
+        'metrics',
         // search text that matches a few nodes nested inside modular pipelines
-        'Preprocess',
+        'preprocess',
         // bogus search text that should yield 0 result
         'aaaaaaaaaaaaa',
       ];
@@ -67,14 +67,14 @@ describe('NodeList', () => {
             mockState.spaceflights
           );
           const expectedResult = nodes.filter((node) =>
-            node.name.includes(searchText)
+            node.name.toLowerCase().includes(searchText)
           );
           const expectedTagResult = tags.filter((tag) =>
-            tag.name.includes(searchText)
+            tag.name.toLowerCase().includes(searchText)
           );
           const expectedElementTypeResult = Object.keys(
             sidebarElementTypes
-          ).filter((type) => type.includes(searchText));
+          ).filter((type) => type.toLowerCase().includes(searchText));
           const expectedModularPipelines = nodesModularPipelines.hasOwnProperty(
             searchText
           )
@@ -108,8 +108,7 @@ describe('NodeList', () => {
       const nodes = getNodeData(mockState.spaceflights);
       const tags = getTagData(mockState.spaceflights);
       const elementTypes = Object.keys(sidebarElementTypes);
-      const searchText = 'Metrics';
-      // Enter search text
+      const searchText = 'metrics';
       search().simulate('change', { target: { value: searchText } });
       // Check that search input value and node list have been updated
       expect(search().props().value).toBe(searchText);
@@ -156,7 +155,7 @@ describe('NodeList', () => {
       const nodes = getNodeData(mockState.spaceflights);
       const tags = getTagData(mockState.spaceflights);
       const elementTypes = Object.keys(sidebarElementTypes);
-      const searchText = 'Metrics';
+      const searchText = 'metrics';
       // Enter search text
       search().simulate('change', { target: { value: searchText } });
       // Check that search input value and node list have been updated
@@ -278,15 +277,15 @@ describe('NodeList', () => {
 
       changeRows(wrapper, ['Preprocessing'], true);
       expect(elementsEnabled(wrapper)).toEqual([
-        ['Data Processing', true],
-        ['Data Science', true],
+        ['data_processing', true],
+        ['data_science', true],
       ]);
 
       changeRows(wrapper, ['Preprocessing', 'Features'], true);
       expect(elementsEnabled(wrapper)).toEqual([
-        ['Data Processing', true],
-        ['Data Science', true],
-        ['Model Input Table', true],
+        ['data_processing', true],
+        ['data_science', true],
+        ['model_input_table', true],
       ]);
     });
 
@@ -303,14 +302,11 @@ describe('NodeList', () => {
 
       // with the modular pipeline tree structure the elements displayed here are for the top level pipeline
       expect(elements(wrapper)).toEqual([
-        // modular pipelines (enabled)
-        ['Data Processing', true],
-        ['Data Science', true],
-        // Datasets (enabled)
-        ['Metrics', true],
-        ['Model Input Table', true],
-        // Parameters(enabled)
-        ['Parameters', true],
+        ['data_processing', true],
+        ['data_science', true],
+        ['metrics', true],
+        ['model_input_table', true],
+        ['parameters', true],
       ]);
     });
 
