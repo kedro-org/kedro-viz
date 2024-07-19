@@ -13,7 +13,7 @@ import {
 
 const getSizeWarningFlag = (state) => state.flags.sizewarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
-const getDisplayGlobalToolbar = (state) => state.display.globalToolbar;
+const getDisplayGlobalNavigation = (state) => state.display.globalNavigation;
 const getDisplaySidebar = (state) => state.display.sidebar;
 const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
@@ -78,7 +78,7 @@ export const getChartSize = createSelector(
     getVisibleCode,
     getChartSizeState,
     getDisplaySidebar,
-    getDisplayGlobalToolbar,
+    getDisplayGlobalNavigation,
   ],
   (
     visibleSidebar,
@@ -86,7 +86,7 @@ export const getChartSize = createSelector(
     visibleCodeSidebar,
     chartSize,
     displaySidebar,
-    displayGlobalToolbar
+    displayGlobalNavigation
   ) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
@@ -98,7 +98,7 @@ export const getChartSize = createSelector(
 
     // Get the actual sidebar width
     const sidebarWidthActual =
-      displaySidebar || displayGlobalToolbar
+      displaySidebar || displayGlobalNavigation
         ? getSidebarWidth(isSidebarVisible, sidebarWidth)
         : 0;
 
