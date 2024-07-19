@@ -112,6 +112,7 @@ const SettingsModal = ({
     onToggleShowDatasetPreviews,
     showSettingsModal,
     toggleFlags,
+    handleSavePreferences,
   ]);
 
   const resetStateCloseModal = () => {
