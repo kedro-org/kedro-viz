@@ -61,7 +61,7 @@ function resetDataReducer(state = {}, action) {
  * @param {Object} action Redux action
  * @return {Object} Updated state
  */
-function updateStateFromPropsReducer(state = {}, action) {
+function updateStateFromOptionsReducer(state = {}, action) {
   if (action.type === UPDATE_STATE_FROM_OPTIONS) {
     return merge({}, state, action.payload);
   }
@@ -120,7 +120,7 @@ const combinedReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   let newState = resetDataReducer(state, action);
-  newState = updateStateFromPropsReducer(newState, action);
+  newState = updateStateFromOptionsReducer(newState, action);
   return combinedReducer(newState, action);
 };
 
