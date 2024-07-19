@@ -16,7 +16,7 @@ Please follow the established format:
 - Introduce `metadataPanel` in `display` prop in Kedro-Viz react component. (#1965)
 - Refactor namespace pipelines. (#1897)
 - Expose the internal Redux state through `options` prop while using Kedro-Viz as a React component. (#1969)
-
+- Enhance documentation for the Kedro-Viz standalone React component. (#1954)
 
 ## Bug fixes and other changes
 

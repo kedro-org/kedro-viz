@@ -226,3 +226,16 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ![Open your project's Kedro Viz inside a new tab](./images/run_viz_with_args.png)
 ![Kedro Viz inside a new tab](./images/viz_running_in_new_tab.png)
+
+## As a standalone React component
+
+To use Kedro-Viz as a standalone React component (for embedding Kedro-Viz in your web application), you can follow the example below:
+
+```jsx
+import KedroViz from '@quantumblack/kedro-viz';
+import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
+
+const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} options={options} /></div>;
+``` 
+
+For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)
