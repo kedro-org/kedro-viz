@@ -96,7 +96,7 @@ App.propTypes = {
      */
     theme: PropTypes.oneOf(['dark', 'light']),
     /**
-     * Determines if certain elements are displayed, e.g global tool bar, sidebar
+     * Determines if certain elements are displayed, e.g globalNavigation, sidebar
      */
     display: PropTypes.shape({
       globalNavigation: PropTypes.bool,

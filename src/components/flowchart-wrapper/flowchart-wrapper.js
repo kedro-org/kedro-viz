@@ -63,6 +63,7 @@ export const FlowChartWrapper = ({
   nodeType,
   expandAllPipelines,
   displayMetadataPanel,
+  displayExportBtn,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -346,7 +347,7 @@ export const FlowChartWrapper = ({
           </div>
           {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
-        <ExportModal />
+        {displayExportBtn && <ExportModal />}
         <MetadataModal />
       </div>
     );
@@ -368,6 +369,7 @@ export const mapStateToProps = (state) => ({
   nodeType: state.nodeType.disabled,
   expandAllPipelines: state.expandAllPipelines,
   displayMetadataPanel: state.display.metadataPanel,
+  displayExportBtn: state.display.exportBtn,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
