@@ -58,6 +58,7 @@ export const FlowChartWrapper = ({
   pipelines,
   sidebarVisible,
   activePipeline,
+  displayExportBtn,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -349,7 +350,7 @@ export const FlowChartWrapper = ({
           </div>
           {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
-        <ExportModal />
+        {displayExportBtn && <ExportModal />}
         <MetadataModal />
       </div>
     );
@@ -366,6 +367,7 @@ export const mapStateToProps = (state) => ({
   pipelines: state.pipeline.ids,
   activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
+  displayExportBtn: state.display.exportBtn,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

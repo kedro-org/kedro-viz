@@ -135,9 +135,8 @@ export function loadPipelineData(pipelineID) {
         active: pipelineID,
       });
 
-      const shouldExpandAllPipelines = expandAllPipelines;
       const newState = await loadJsonData(url).then((data) =>
-        preparePipelineState(data, false, shouldExpandAllPipelines)
+        preparePipelineState(data, false, expandAllPipelines)
       );
 
       // Set active pipeline here rather than dispatching two separate actions,
