@@ -537,6 +537,17 @@ export class FlowChart extends Component {
     this.props.onApplyFilters(false);
   };
 
+  resetFilters = () => {
+    this.props.onResetFilterNodes();
+    this.setState({
+      filteredPipelineState: {
+        ...this.state.filteredPipelineState,
+        from: null,
+        to: null,
+      },
+    });
+  };
+
   /**
    * Remove a node's focus state and dim linked nodes
    */
@@ -552,14 +563,7 @@ export class FlowChart extends Component {
       this.sliceButtonRef.current.contains(event.target);
 
     if (this.props.filteredPipeline && !isSliceButtonClicked) {
-      this.props.onResetFilterNodes();
-      this.setState({
-        filteredPipelineState: {
-          ...this.state.filteredPipelineState,
-          from: null,
-          to: null,
-        },
-      });
+      this.resetFilters();
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -701,6 +705,7 @@ export class FlowChart extends Component {
       visibleGraph,
       displayGlobalToolbar,
       onApplyFilters,
+      onResetFilterNodes,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { filteredPipelineState } = this.state;
@@ -769,6 +774,7 @@ export class FlowChart extends Component {
             chartSize={chartSize}
             filteredPipeline={filteredPipelineState.range}
             onApplyFilters={() => onApplyFilters(true)}
+            onResetFilters={this.resetFilters}
           />
         </div>
 

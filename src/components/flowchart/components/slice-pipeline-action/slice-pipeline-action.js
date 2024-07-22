@@ -7,11 +7,12 @@ export const SlicePipelineAction = ({
   chartSize,
   filteredPipeline,
   onApplyFilters,
+  onResetFilters,
 }) => {
   const { outerWidth, sidebarWidth } = chartSize;
   const sidebarVisible = sidebarWidth > 140;
 
-  const transformX = sidebarVisible ? outerWidth / 2 + 100 : outerWidth / 2;
+  const transformX = sidebarVisible ? outerWidth / 2.5 : outerWidth / 3;
   if (filteredPipeline.length > 0) {
     return (
       <div
@@ -23,6 +24,9 @@ export const SlicePipelineAction = ({
         </div>
         <div className="pipeline-flowchart_slice-action--cta">
           <Button onClick={onApplyFilters}>Slice</Button>
+        </div>
+        <div className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--reset">
+          <Button onClick={onResetFilters}>Reset</Button>
         </div>
       </div>
     );

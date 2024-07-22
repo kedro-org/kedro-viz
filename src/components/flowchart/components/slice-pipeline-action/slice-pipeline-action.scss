@@ -27,6 +27,9 @@ $padding-right-left: 16px;
 }
 
 .pipeline-flowchart_slice-action--cta {
+  align-items: center;
+  display: flex;
+  justify-content: center;
   padding: $padding-top-bottom $padding-right-left;
 
   .button__btn {
@@ -35,5 +38,13 @@ $padding-right-left: 16px;
     font-size: 14px;
     padding: 0;
     width: 65px;
+  }
+}
+
+.pipeline-flowchart_slice-action--reset {
+  .button__btn {
+    background-color: red;
+    border-radius: 4px;
+    padding: 10px 12px;
   }
 }
