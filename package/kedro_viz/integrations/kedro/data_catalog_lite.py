@@ -5,12 +5,7 @@ to provide a MemoryDataset instance when running Kedro-Viz in lite mode.
 import copy
 from typing import Any, Optional
 
-from kedro.io.core import (
-    AbstractDataset,
-    DatasetError,
-    DatasetNotFoundError,
-    generate_timestamp,
-)
+from kedro.io.core import AbstractDataset, DatasetError, generate_timestamp
 from kedro.io.data_catalog import DataCatalog, _resolve_credentials
 from kedro.io.memory_dataset import MemoryDataset
 

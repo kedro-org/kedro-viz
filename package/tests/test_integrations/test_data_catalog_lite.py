@@ -6,6 +6,7 @@ from copy import deepcopy
 import pandas as pd
 import pytest
 from kedro.io import DatasetError
+from kedro_datasets.pandas import CSVDataset
 from pandas.testing import assert_frame_equal
 
 from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
@@ -51,6 +52,30 @@ def sane_config_with_nested_creds(sane_config):
         }
     }
     return sane_config
+
+
+@pytest.fixture
+def config_with_dataset_factories():
+    return {
+        "catalog": {
+            "{brand}_cars": {
+                "type": "pandas.CSVDataset",
+                "filepath": "data/01_raw/{brand}_cars.csv",
+            },
+            "audi_cars": {
+                "type": "pandas.ParquetDataset",
+                "filepath": "data/01_raw/audi_cars.pq",
+            },
+            "{type}_boats": {
+                "type": "pandas.CSVDataset",
+                "filepath": "data/01_raw/{type}_boats.csv",
+            },
+            "{default1}": {
+                "type": "pandas.CSVDataset",
+                "filepath": "data/01_raw/{default1}.csv",
+            },
+        },
+    }
 
 
 @pytest.fixture
@@ -285,3 +310,14 @@ class TestDataCatalogLiteFromConfig:
 
         with pytest.raises(DatasetError, match=re.escape(pattern)):
             data_catalog_lite.confirm(dataset_name)
+
+    def test_match_added_to_datasets_on_get(self, config_with_dataset_factories):
+        """Check that the datasets that match patterns are only added when fetched"""
+        catalog = DataCatalogLite.from_config(**config_with_dataset_factories)
+        assert "{brand}_cars" not in catalog._datasets
+        assert "tesla_cars" not in catalog._datasets
+        assert "{brand}_cars" in catalog._dataset_patterns
+
+        tesla_cars = catalog._get_dataset("tesla_cars")
+        assert isinstance(tesla_cars, CSVDataset)
+        assert "tesla_cars" in catalog._datasets
