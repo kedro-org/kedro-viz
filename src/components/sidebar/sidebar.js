@@ -17,7 +17,7 @@ import './sidebar.scss';
  */
 export const Sidebar = ({
   disableRunSelection,
-  displayGlobalToolbar,
+  displayGlobalNavigation,
   displaySidebar,
   enableComparisonView,
   enableShowChanges,
@@ -83,7 +83,7 @@ export const Sidebar = ({
         <div
           className={classnames('pipeline-sidebar', {
             'pipeline-sidebar--visible': visible,
-            'pipeline-sidebar--no-global-toolbar': !displayGlobalToolbar,
+            'pipeline-sidebar--no-global-toolbar': !displayGlobalNavigation,
           })}
         >
           <div className="pipeline-ui">
@@ -102,7 +102,7 @@ export const Sidebar = ({
 };
 
 const mapStateToProps = (state) => ({
-  displayGlobalToolbar: state.display.globalToolbar,
+  displayGlobalNavigation: state.display.globalNavigation,
   displaySidebar: state.display.sidebar,
   visible: state.visible.sidebar,
 });
