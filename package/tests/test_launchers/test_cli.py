@@ -196,6 +196,7 @@ def mock_project_path(mocker):
                 "include_hooks": False,
                 "package_name": None,
                 "extra_params": {"extra_param": "param"},
+                "is_lite": False,
             },
         ),
         (
