@@ -136,12 +136,7 @@ class LiteParser:
             unresolvable_imports: List[str] = self._get_unresolvable_imports(
                 file_path, imports
             )
-
-            print(f"File Path: {file_path}, Unresolved imports: {unresolvable_imports}")
-
             # Create mock imports
             self._create_mock_imports(unresolvable_imports, mocked_modules)
-
-        print(f"Mocked modules: {mocked_modules}")
 
         return mocked_modules

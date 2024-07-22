@@ -147,6 +147,16 @@ def exec_viz_command(context):
     )
 
 
+@when("I execute the kedro viz run command with lite option")
+def exec_viz_lite_command(context):
+    """Execute Kedro-Viz command."""
+    context.result = ChildTerminatingPopen(
+        [context.kedro, "viz", "run", "--lite", "--no-browser"],
+        env=context.env,
+        cwd=str(context.root_project_dir),
+    )
+
+
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that Kedro-Viz is up and responding to requests."""
