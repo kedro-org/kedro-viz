@@ -106,4 +106,4 @@ def test_update_preferences_failure(client, mocker):
     response = client.post("api/preferences", json={"showDatasetPreviews": True})
 
     assert response.status_code == 500
-    assert response.json() == {"detail": "Failed to update preferences"}
+    assert response.json() == {"message": "Failed to update preferences"}
