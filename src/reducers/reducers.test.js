@@ -20,6 +20,7 @@ import {
   UPDATE_CHART_SIZE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
+  UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -428,6 +429,47 @@ describe('Reducer', () => {
       });
       expect(mockState.spaceflights.hoveredFocusMode).toBe(false);
       expect(newState.hoveredFocusMode).toBe(true);
+    });
+  });
+
+  describe('UPDATE_STATE_FROM_OPTIONS', () => {
+    it('should update the theme state based on options props from a react component', () => {
+      const newOptions = {
+        theme: 'dark',
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.theme).toBe('dark');
+    });
+
+    it('should update the textLabels state based on options props from a react component', () => {
+      const newOptions = {
+        visible: {
+          textLabels: false,
+        },
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.visible.textLabels).toBe(false);
+    });
+
+    it('should update the tag state based on options props from a react component', () => {
+      const newOptions = {
+        tag: {
+          enabled: {
+            large: true,
+          },
+        },
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.tag.enabled.large).toBe(true);
     });
   });
 });

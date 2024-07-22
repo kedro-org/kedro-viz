@@ -237,7 +237,14 @@ To use Kedro-Viz as a standalone React component, you can follow the example bel
 import KedroViz from '@quantumblack/kedro-viz';
 import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 
-const MyApp = () => <KedroViz data={json} />;
+const MyApp = () => (
+  <div style={{height: `100vh`}}>
+    <KedroViz
+      data={json}
+      options={/* Options to configure Kedro Viz */}
+    />
+  </div>
+);
 ```
 
 To use with NextJS:
@@ -260,6 +267,8 @@ kedro viz run --save-file=filename
 ```
 
 We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX element that has a specified height (as seen in the above example) in order for Kedro-Viz to be styled properly.
+
+For more information on how to use Kedro-Viz as a React component, follow this [guide](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
 
