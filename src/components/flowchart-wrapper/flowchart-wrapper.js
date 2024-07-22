@@ -45,6 +45,7 @@ import './flowchart-wrapper.scss';
  */
 export const FlowChartWrapper = ({
   fullNodeNames,
+  displaySidebar,
   graph,
   loading,
   metadataVisible,
@@ -58,6 +59,11 @@ export const FlowChartWrapper = ({
   pipelines,
   sidebarVisible,
   activePipeline,
+  tag,
+  nodeType,
+  expandAllPipelines,
+  displayMetadataPanel,
+  displayExportBtn,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -97,24 +103,16 @@ export const FlowChartWrapper = ({
           }
         },
         tag: (value) => {
-          if (!searchParams.has(params.tags)) {
-            const enabledKeys = getKeysByValue(value.enabled, true);
-            enabledKeys && toSetQueryParam(params.tags, enabledKeys);
-          }
+          const enabledKeys = getKeysByValue(value.enabled, true);
+          enabledKeys && toSetQueryParam(params.tags, enabledKeys);
         },
         nodeType: (value) => {
-          if (!searchParams.has(params.types)) {
-            const disabledKeys = getKeysByValue(value.disabled, false);
-            // Replace task with node to keep UI label & the URL consistent
-            const mappedDisabledNodes = mapNodeTypes(disabledKeys);
-            disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
-          }
+          const disabledKeys = getKeysByValue(value.disabled, false);
+          // Replace task with node to keep UI label & the URL consistent
+          const mappedDisabledNodes = mapNodeTypes(disabledKeys);
+          disabledKeys && toSetQueryParam(params.types, mappedDisabledNodes);
         },
-        expandAllPipelines: (value) => {
-          if (!searchParams.has(params.expandAll)) {
-            toSetQueryParam(params.expandAll, value);
-          }
-        },
+        expandAllPipelines: (value) => toSetQueryParam(params.expandAll, value),
       };
 
       for (const [key, value] of Object.entries(localStorageParams)) {
@@ -128,7 +126,7 @@ export const FlowChartWrapper = ({
   useEffect(() => {
     setParamsFromLocalStorage(activePipeline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePipeline]);
+  }, [activePipeline, tag, nodeType, expandAllPipelines]);
 
   const resetErrorMessage = () => {
     setErrorMessage({});
@@ -308,8 +306,8 @@ export const FlowChartWrapper = ({
   if (isInvalidUrl) {
     return (
       <div className="kedro-pipeline">
-        <Sidebar />
-        <MetaData />
+        {displaySidebar && <Sidebar />}
+        {displayMetadataPanel && <MetaData />}
         <PipelineWarning
           errorMessage={errorMessage}
           invalidUrl={isInvalidUrl}
@@ -320,8 +318,8 @@ export const FlowChartWrapper = ({
   } else {
     return (
       <div className="kedro-pipeline">
-        <Sidebar />
-        <MetaData />
+        {displaySidebar && <Sidebar />}
+        {displayMetadataPanel && <MetaData />}
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
@@ -349,7 +347,7 @@ export const FlowChartWrapper = ({
           </div>
           {isRunningLocally() ? null : <ShareableUrlMetadata />}
         </div>
-        <ExportModal />
+        {displayExportBtn && <ExportModal />}
         <MetadataModal />
       </div>
     );
@@ -358,6 +356,7 @@ export const FlowChartWrapper = ({
 
 export const mapStateToProps = (state) => ({
   fullNodeNames: getNodeFullName(state),
+  displaySidebar: state.display.sidebar,
   graph: state.graph,
   loading: isLoading(state),
   metadataVisible: getVisibleMetaSidebar(state),
@@ -366,6 +365,11 @@ export const mapStateToProps = (state) => ({
   pipelines: state.pipeline.ids,
   activePipeline: state.pipeline.active,
   sidebarVisible: state.visible.sidebar,
+  tag: state.tag.enabled,
+  nodeType: state.nodeType.disabled,
+  expandAllPipelines: state.expandAllPipelines,
+  displayMetadataPanel: state.display.metadataPanel,
+  displayExportBtn: state.display.exportBtn,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

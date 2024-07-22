@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import KedroViz from '@quantumblack/kedro-viz';
-import VizComponent from './VizComponent';
+import VizComponent from './viz-component';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import spaceflights from '@quantumblack/kedro-viz/lib/utils/data/spaceflights.mock.json';
 import demo from '@quantumblack/kedro-viz/lib/utils/data/demo.mock.json';

@@ -39,7 +39,7 @@ describe('MiniMap', () => {
   });
 
   it('does not update nodes when not visible', () => {
-    const wrapper = setup.mount(<MiniMap visible={false} />);
+    const wrapper = setup.mount(<MiniMap miniMapVisible={false} />);
     const nodes = wrapper.render().find('.pipeline-minimap-node');
     expect(nodes.length).toEqual(0);
   });
@@ -144,7 +144,8 @@ describe('MiniMap', () => {
 
   it('maps state to props', () => {
     const expectedResult = {
-      visible: expect.any(Boolean),
+      miniMapVisible: expect.any(Boolean),
+      displayMiniMap: expect.any(Boolean),
       mapSize: expect.any(Object),
       clickedNode: null,
       chartSize: expect.any(Object),
