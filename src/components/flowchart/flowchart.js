@@ -22,6 +22,7 @@ import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
+import { getRunCommand } from '../../selectors/run-command';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
@@ -701,14 +702,16 @@ export class FlowChart extends Component {
   render() {
     const {
       chartSize,
-      layers,
-      visibleGraph,
       displayGlobalToolbar,
+      isFiltersApplied,
+      layers,
       onApplyFilters,
-      onResetFilterNodes,
+      runCommand,
+      visibleGraph,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { filteredPipelineState } = this.state;
+
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -773,8 +776,10 @@ export class FlowChart extends Component {
           <SlicePipelineAction
             chartSize={chartSize}
             filteredPipeline={filteredPipelineState.range}
+            isFiltersApplied={isFiltersApplied}
             onApplyFilters={() => onApplyFilters(true)}
             onResetFilters={this.resetFilters}
+            runCommand={runCommand}
           />
         </div>
 
@@ -828,6 +833,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   filteredPipeline: getFilteredPipeline(state),
   isFiltersApplied: state.filters.apply,
+  runCommand: getRunCommand(state),
   ...ownProps,
 });
 
