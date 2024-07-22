@@ -256,9 +256,6 @@ export const getNodeDataObject = createSelector(
     }, {})
 );
 
-/**
- * Return the modular pipelines tree with full data for each tree node for display.
- */
 export const getModularPipelinesTree = createSelector(
   [
     (state) => state.modularPipeline.tree,
@@ -267,37 +264,36 @@ export const getModularPipelinesTree = createSelector(
     getFilteredPipeline,
   ],
   (modularPipelinesTree, isFiltersApplied, nodes, filteredPipeline) => {
-    if (!modularPipelinesTree) {
-      return {};
-    }
+    if (!modularPipelinesTree) {return {};}
 
-    if (isFiltersApplied) {
-      // Filter nodes based on filteredPipeline
-      const filteredNodes = Object.fromEntries(
-        Object.entries(nodes).filter(([nodeId]) =>
-          filteredPipeline.includes(nodeId)
-        )
-      );
-      // Update modularPipelinesTree children data with filteredNodes
-      Object.values(modularPipelinesTree).forEach((modularPipeline) => {
-        modularPipeline.children = modularPipeline.children.filter(
-          (child) =>
-            // Filter out children whose IDs are not present in sourceNodes but if the child type is 'modularPipeline' then keep it
-            filteredNodes[child.id] !== undefined ||
-            child.type === 'modularPipeline'
-        );
+    // Helper function to update children data
+    const updateChildrenData = (children, sourceNodes) => {
+      children.forEach((child) => {
+        child.data = { ...sourceNodes[child.id] };
       });
-    } else {
-      // Update modularPipelinesTree data and children data with nodes
-      Object.entries(modularPipelinesTree).forEach(
-        ([modularPipelineID, modularPipeline]) => {
-          modularPipeline.data = { ...nodes[modularPipelineID] };
-          for (const child of modularPipeline.children) {
-            child.data = { ...nodes[child.id] };
-          }
-        }
+    };
+
+    // Helper function to filter nodes
+    const filterNodes = (nodes, filter) =>
+      Object.fromEntries(
+        Object.entries(nodes).filter(([nodeId]) => filter.includes(nodeId))
       );
-    }
+
+    // Determine the relevant nodes based on whether filters are applied
+    const relevantNodes = isFiltersApplied
+      ? filterNodes(nodes, filteredPipeline)
+      : nodes;
+
+    // Update modularPipelinesTree data and children data with relevantNodes
+    Object.entries(modularPipelinesTree).forEach(
+      ([modularPipelineID, modularPipeline]) => {
+        if (!isFiltersApplied) {
+          modularPipeline.data = { ...nodes[modularPipelineID] };
+        }
+        updateChildrenData(modularPipeline.children, relevantNodes);
+      }
+    );
+
     return modularPipelinesTree;
   }
 );
