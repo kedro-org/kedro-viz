@@ -124,7 +124,7 @@ describe('Reducer', () => {
         type: TOGGLE_IS_PRETTY_NAME,
         isPrettyName: true,
       });
-      expect(mockState.spaceflights.isPrettyName).toBe(true);
+      expect(mockState.spaceflights.isPrettyName).toBe(false);
       expect(newState.isPrettyName).toBe(true);
     });
   });

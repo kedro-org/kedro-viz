@@ -103,17 +103,12 @@ describe('App', () => {
     );
     const { container } = render(<App data={spaceflights} />);
     const pipelineDropdown = container.querySelector('.pipeline-list');
-    const menuOption = within(pipelineDropdown).getByText(
-      prettifyName(activePipeline.name)
-    );
+    const menuOption = within(pipelineDropdown).getByText(activePipeline.name);
     const pipelineDropdownLabel = pipelineDropdown.querySelector(
       '.dropdown__label > span:first-child'
     );
-
-    expect(pipelineDropdownLabel.innerHTML).toBe('Default');
+    expect(pipelineDropdownLabel.innerHTML).toBe('__default__');
     fireEvent.click(menuOption);
-    expect(pipelineDropdownLabel.innerHTML).toBe(
-      prettifyName(activePipeline.name)
-    );
+    expect(pipelineDropdownLabel.innerHTML).toBe(activePipeline.name);
   });
 });
