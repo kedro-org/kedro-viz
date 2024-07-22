@@ -76,7 +76,7 @@ async def get_preferences():
         logger.error("Failed to fetch preferences: %s", str(exception))
         return JSONResponse(
             status_code=500,
-            content={"message": f"Failed to fetch preferences: {str(exception)}"},
+            content={"message": "Failed to fetch preferences"},
         )
 
 
