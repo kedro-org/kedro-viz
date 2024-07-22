@@ -170,7 +170,7 @@ When `display.sidebar` is `false`, `display.miniMap` prop will be ignored.
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
-![Kedro-Viz component annotation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/kedro-viz-annotation.png)
+![Kedro-Viz component annotation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/kedro_viz_annotation.png)
 
 
 ## Standalone Example Repository
