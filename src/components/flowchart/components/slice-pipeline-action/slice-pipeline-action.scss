@@ -26,6 +26,20 @@ $padding-right-left: 16px;
   padding: $padding-top-bottom $padding-right-left;
 }
 
+.pipeline-flowchart_slice-action--run-command {
+  display: flex;
+  padding: 0 $padding-right-left;
+  border-right: 1px solid #d9dcde;
+
+  .command-value {
+    color: black;
+  }
+
+  .pipeline-icon {
+    fill: black;
+  }
+}
+
 .pipeline-flowchart_slice-action--cta {
   align-items: center;
   display: flex;
@@ -43,8 +57,6 @@ $padding-right-left: 16px;
 
 .pipeline-flowchart_slice-action--reset {
   .button__btn {
-    background-color: red;
     border-radius: 4px;
-    padding: 10px 12px;
   }
 }

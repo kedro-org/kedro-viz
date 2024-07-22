@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../../ui/button';
+import CommandCopier from '../../../ui/command-copier/command-copier';
 
 import './slice-pipeline-action.scss';
 
@@ -24,8 +25,8 @@ export const SlicePipelineAction = ({
         <div className="pipeline-flowchart_slice-action--info">
           {`${filteredPipeline.length} selected`}
         </div>
-        <div className="pipeline-flowchart_slice-action--info">
-          {runCommand}
+        <div className="pipeline-flowchart_slice-action--run-command">
+          <CommandCopier command={runCommand} isCommand={true} />
         </div>
         {isFiltersApplied ? (
           <div className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--reset">
