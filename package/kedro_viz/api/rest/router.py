@@ -61,7 +61,7 @@ async def update_preferences(preferences: UserPreference):
         logger.error("Failed to update preferences: %s", str(exception))
         return JSONResponse(
             status_code=500,
-            content={"message": f"Failed to update preferences: {str(exception)}"},
+            content={"message": f"Failed to update preferences"},
         )
 
 
