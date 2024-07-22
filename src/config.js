@@ -1,4 +1,5 @@
 import { sanitizedPathname } from './utils';
+import { fetchPreferences } from './utils/preferences-api';
 
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
@@ -83,6 +84,16 @@ export const settings = {
     default: true,
   },
 };
+
+// Fetch preferences from the backend and update settings
+(async () => {
+  try {
+    const preferences = await fetchPreferences();
+    settings.showDatasetPreviews.default = preferences.showDatasetPreviews;
+  } catch (error) {
+    console.error('Error fetching initial preferences:', error);
+  }
+})();
 
 // Sidebar groups is an ordered map of { id: label }
 export const sidebarGroups = {

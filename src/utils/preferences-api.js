@@ -30,3 +30,27 @@ export const updatePreferences = async (showDatasetPreviews) => {
     throw error;
   }
 };
+
+/**
+ * Fetch preferences from the backend.
+ * @return {Promise<Object>} Preferences object containing showDatasetPreviews.
+ */
+export const fetchPreferences = async () => {
+  try {
+    const response = await fetch('/api/preferences', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch preferences');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching preferences:', error);
+    throw error;
+  }
+};

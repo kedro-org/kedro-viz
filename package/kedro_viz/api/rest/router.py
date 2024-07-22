@@ -65,6 +65,21 @@ async def update_preferences(preferences: UserPreference):
         )
 
 
+@router.get("/preferences", response_model=UserPreference)
+async def get_preferences():
+    try:
+        show_dataset_previews = DataNodeMetadata.is_all_previews_enabled
+        return JSONResponse(
+            status_code=200, content={"showDatasetPreviews": show_dataset_previews}
+        )
+    except Exception as exception:
+        logger.error("Failed to fetch preferences: %s", str(exception))
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Failed to fetch preferences: {str(exception)}"},
+        )
+
+
 @router.get(
     "/pipelines/{registered_pipeline_id}",
     response_model=GraphAPIResponse,
