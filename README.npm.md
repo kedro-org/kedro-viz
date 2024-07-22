@@ -121,47 +121,48 @@ The example below demonstrates how to configure your kedro-viz using different `
 ```
 <KedroViz
     data={json}
-    options={
-      expandAllPipelines: false,
+    options={{
       display: {
-        globalNavigation: true,
-        sidebar: true,
-        metadataPanel: true,
-        miniMap: true,
+        expandPipelinesBtn: true,
         exportBtn: true,
+        globalNavigation: true,
         labelBtn: true,
         layerBtn: true,
-        expandPipelinesBtn: true,
+        metadataPanel: true,
+        miniMap: true,
+        sidebar: true,
         zoomToolbar: true,    
-      }
-      theme: "dark",
+      },
+      expandAllPipelines: false,
+      nodeType: {
+        disabled: {parameters: true}
+      },
       tag: {
         enabled: {companies: true}
       },
-      nodeType: {
-        disabled: {parameters: true}
-      }
-    }
- /> 
+      theme: "dark"
+    }}
+/>
+
 ```
 
 | Name         | Type    | Default | Description |
 | ------------ | ------- | ------- | ----------- |
 | `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data to be displayed on the chart |
-| options.theme | string | dark | select `Kedro-Viz` theme : dark/light |
-| options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
-| options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
-| options.expandAllPipelines | boolean | false | Expand/Collapse Modular pipelines on first load |
 | options.display |  |  |  |
+| `expandPipelinesBtn` | boolean | true | Show/Hide expand pipelines button |
+| `exportBtn` | boolean | true | Show/Hide export button |
 | `globalNavigation` | boolean | true | Show/Hide global navigation |
-| `miniMap` | boolean | true | Show/Hide Mini map and mini map button |
-| `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
-| `sidebar` | boolean | true | Show/Hide Sidebar and action toolbar |
 | `labelBtn` | boolean | true | Show/Hide label button |
 | `layerBtn` | boolean | true | Show/Hide layer button |
-| `exportBtn` | boolean | true | Show/Hide export button |
-| `expandPipelinesBtn` | boolean | true | Show/Hide expand pipelines button |
+| `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
+| `miniMap` | boolean | true | Show/Hide Mini map and mini map button |
+| `sidebar` | boolean | true | Show/Hide Sidebar and action toolbar |
 | `zoomToolbar` | boolean | true | Show/Hide zoom-in, zoom-out and zoom reset buttons together |
+| options.expandAllPipelines | boolean | false | Expand/Collapse Modular pipelines on first load |
+| options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
+| options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
+| options.theme | string | dark | select `Kedro-Viz` theme : dark/light |
 
 
 ### Note
