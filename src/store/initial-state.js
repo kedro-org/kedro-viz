@@ -33,25 +33,25 @@ export const createInitialState = () => ({
   },
   visible: {
     code: false,
-    exportBtn: true,
     exportModal: false,
     graph: true,
-    labelBtn: true,
-    layerBtn: true,
     metadataModal: false,
     miniMap: true,
-    miniMapBtn: true,
     modularPipelineFocusMode: null,
-    pipelineBtn: true,
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
   },
   display: {
-    globalToolbar: true,
+    globalNavigation: true,
     sidebar: true,
     miniMap: true,
-    expandAllPipelines: false,
+    expandPipelinesBtn: true,
+    exportBtn: true,
+    labelBtn: true,
+    layerBtn: true,
+    zoomToolbar: true,
+    metadataPanel: true,
   },
   zoom: {},
   runsMetadata: {},
@@ -216,17 +216,8 @@ export const preparePipelineState = (
  * @param {Object} urlParams An object containing parsed URL parameters.
  * @returns {Object} The new non-pipeline state with modifications applied.
  */
-export const prepareNonPipelineState = (props, urlParams) => {
+export const prepareNonPipelineState = (urlParams) => {
   let state = mergeLocalStorage(createInitialState());
-  let newVisibleProps = {};
-
-  if (props.display?.sidebar === false || state.display.sidebar === false) {
-    newVisibleProps['sidebar'] = false;
-  }
-
-  if (props.display?.minimap === false || state.display.miniMap === false) {
-    newVisibleProps['miniMap'] = false;
-  }
 
   if (urlParams) {
     state = applyUrlParametersToNonPipelineState(state, urlParams);
@@ -235,9 +226,6 @@ export const prepareNonPipelineState = (props, urlParams) => {
   return {
     ...state,
     flags: { ...state.flags, ...getFlagsFromUrl() },
-    theme: props.theme || state.theme,
-    visible: { ...state.visible, ...props.visible, ...newVisibleProps },
-    display: { ...state.display, ...props.display },
   };
 };
 
@@ -250,11 +238,13 @@ export const prepareNonPipelineState = (props, urlParams) => {
  */
 const getInitialState = (props = {}) => {
   const urlParams = parseUrlParameters();
-  const nonPipelineState = prepareNonPipelineState(props, urlParams);
+  const nonPipelineState = prepareNonPipelineState(urlParams);
+  let expandAllPipelines = nonPipelineState.expandAllPipelines;
 
-  const expandAllPipelines =
-    nonPipelineState.display.expandAllPipelines ||
-    nonPipelineState.expandAllPipelines;
+  if (props.options) {
+    expandAllPipelines =
+      props.options.expandAllPipelines || nonPipelineState.expandAllPipelines;
+  }
 
   const pipelineState = preparePipelineState(
     props.data,
@@ -263,10 +253,12 @@ const getInitialState = (props = {}) => {
     urlParams
   );
 
-  return {
+  const initialState = {
     ...nonPipelineState,
     ...pipelineState,
   };
+
+  return props.options ? deepmerge(initialState, props.options) : initialState;
 };
 
 export default getInitialState;

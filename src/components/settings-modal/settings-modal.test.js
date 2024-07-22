@@ -42,7 +42,6 @@ describe('SettingsModal', () => {
   it('maps state to props', () => {
     const expectedResult = {
       visible: expect.objectContaining({
-        exportBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
