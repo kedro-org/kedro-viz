@@ -56,10 +56,6 @@ const SettingsModal = ({
     setShowDatasetPreviewsValue(showDatasetPreviews);
   }, [showDatasetPreviews]);
 
-  useEffect(() => {
-    setToggleFlags(flags);
-  }, [flags]);
-
   const handleSavePreferences = useCallback(async () => {
     try {
       const result = await updatePreferences(showDatasetPreviewsValue);

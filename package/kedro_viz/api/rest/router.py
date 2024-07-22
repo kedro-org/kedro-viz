@@ -4,7 +4,7 @@
 import logging
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration, UserPreference
@@ -54,12 +54,15 @@ async def get_single_node_metadata(node_id: str):
 async def update_preferences(preferences: UserPreference):
     try:
         DataNodeMetadata.set_is_all_previews_enabled(preferences.showDatasetPreviews)
-        return {"message": "Preferences updated successfully"}
+        return JSONResponse(
+            status_code=200, content={"message": "Preferences updated successfully"}
+        )
     except Exception as exception:
         logger.error("Failed to update preferences: %s", str(exception))
-        raise HTTPException(
-            status_code=500, detail="Failed to update preferences"
-        ) from exception
+        return JSONResponse(
+            status_code=500,
+            content={"message": f"Failed to update preferences: {str(exception)}"},
+        )
 
 
 @router.get(
@@ -112,7 +115,7 @@ async def get_package_compatibilities():
         return get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
     except Exception as exc:
         logger.exception(
-            "An exception occured while getting package compatibility info : %s", exc
+            "An exception occurred while getting package compatibility info : %s", exc
         )
         return JSONResponse(
             status_code=500,
