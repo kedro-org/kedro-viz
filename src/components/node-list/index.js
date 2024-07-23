@@ -69,6 +69,7 @@ const NodeListProvider = ({
   disabledModularPipeline,
   inputOutputDataNodes,
   onResetFilterNodes,
+  isFiltersApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -111,7 +112,11 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
-        onResetFilterNodes();
+
+        // Reset node filters only if filters are currently applied.
+        if (!isFiltersApplied) {
+          onResetFilterNodes();
+        }
       }
     }
   };
@@ -330,6 +335,7 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
+  isFiltersApplied: state.filters.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

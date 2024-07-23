@@ -507,16 +507,20 @@ export class FlowChart extends Component {
     this.props.toSelectedNode(node);
 
     const { from, to } = this.state.filteredPipelineState;
-    // Reset or set the first node as the 'from' node based on current state
-    const newState =
+    // On single node clicked, if both 'from' and 'to' nodes are already selected, reset them to null.
+    // Otherwise, set the clicked node as the 'from' node, indicating the start of a new selection.
+    const newFilteredPipelineState =
       from !== null && to !== null
         ? { ...this.state.filteredPipelineState, from: null, to: null }
         : { ...this.state.filteredPipelineState, from: node.id };
 
-    this.setState({ filteredPipelineState: newState });
+    this.setState({ filteredPipelineState: newFilteredPipelineState });
 
-    // Reset the filterNodes on single node click
-    this.props.onFilterNodes(null, null);
+    // If no filters are currently applied, reset the node filters.
+    // This is done to ensure that clicking a node in an unfiltered state does not leave any stale filters.
+    if (!this.props.isFiltersApplied) {
+      this.props.onFilterNodes(null, null);
+    }
   };
 
   handleShiftClick = (node) => {
@@ -563,7 +567,12 @@ export class FlowChart extends Component {
       this.sliceButtonRef.current &&
       this.sliceButtonRef.current.contains(event.target);
 
-    if (this.props.filteredPipeline && !isSliceButtonClicked) {
+    // Check if the pipeline is filtered, no slice button is clicked, and no filters are applied
+    if (
+      this.props.filteredPipeline &&
+      !isSliceButtonClicked &&
+      !this.props.isFiltersApplied
+    ) {
       this.resetFilters();
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();

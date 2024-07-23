@@ -25,7 +25,9 @@ export const SlicePipelineAction = ({
         style={{ transform: `translateX(${transformX}px)` }}
       >
         <div className="pipeline-flowchart_slice-action--info">
-          {`${filteredPipeline.length} selected`}
+          {`${filteredPipeline.length} ${
+            isFiltersApplied ? 'sliced' : 'selected'
+          }`}
         </div>
         <div className="pipeline-flowchart_slice-action--run-command">
           <CommandCopier command={runCommand} isCommand={true} />
