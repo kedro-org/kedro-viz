@@ -58,7 +58,7 @@ describe('Flowchart DAG', () => {
 
     // Action
     cy.get('.pipeline-node.pipeline-node--task').first().click();
-    cy.get('[data-test="pipeline-toggle-input-code"]').check({ force: true });
+    cy.get('[data-test*="metadata-code-toggle-"]').check({ force: true });
 
     // Assert after action
     cy.get('.pipeline-metadata-code--visible').should('exist');
@@ -216,13 +216,13 @@ describe('Flowchart DAG', () => {
 
     // Assert after action
     cy.get('[data-label="Dataset statistics:"]').should('exist');
-    cy.get('[data-test=stats-value-rows]')
+    cy.get('[data-test=metadata-stats-value-rows]')
       .invoke('text')
       .should((rowsValue) => expect(rowsValue).to.be.eq('77,096'));
-    cy.get('[data-test=stats-value-columns]')
+    cy.get('[data-test=metadata-stats-value-columns]')
       .invoke('text')
       .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
-    cy.get('[data-test=stats-value-file_size]')
+    cy.get('[data-test=metadata-stats-value-file_size]')
       .invoke('text')
       .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
   });

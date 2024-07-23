@@ -53,6 +53,9 @@ const PublishedView = ({
         ) : (
           <div className="shareable-url-modal__published-dropdown-wrapper">
             <Dropdown
+              dataTest={
+                'shareable-url-modal-republish-dropdown-hosting-platform'
+              }
               defaultText={
                 (platform && filteredPlatforms[platform]) ||
                 Object.values(filteredPlatforms)[0]

@@ -369,22 +369,28 @@ describe('MetaData', () => {
         expect(wrapper.find('[data-label="Dataset statistics:"]').length).toBe(
           1
         );
-        expect(wrapper.find('[data-test="stats-label-rows"]').length).toBe(1);
-        expect(wrapper.find('[data-test="stats-label-columns"]').length).toBe(
-          1
-        );
-        expect(wrapper.find('[data-test="stats-label-file_size"]').length).toBe(
-          1
-        );
+        expect(
+          wrapper.find('[data-test="metadata-stats-label-rows"]').length
+        ).toBe(1);
+        expect(
+          wrapper.find('[data-test="metadata-stats-label-columns"]').length
+        ).toBe(1);
+        expect(
+          wrapper.find('[data-test="metadata-stats-label-file_size"]').length
+        ).toBe(1);
 
         expect(
-          parseInt(wrapper.find('[data-test="stats-value-rows"]').text())
+          parseInt(
+            wrapper.find('[data-test="metadata-stats-value-rows"]').text()
+          )
         ).toEqual(nodeDataStats.stats.rows);
         expect(
-          parseInt(wrapper.find('[data-test="stats-value-columns"]').text())
+          parseInt(
+            wrapper.find('[data-test="metadata-stats-value-columns"]').text()
+          )
         ).toEqual(nodeDataStats.stats.columns);
         expect(
-          wrapper.find('[data-test="stats-value-file_size"]').text()
+          wrapper.find('[data-test="metadata-stats-value-file_size"]').text()
         ).toEqual(formatFileSize(nodeDataStats.stats.file_size));
       });
     });

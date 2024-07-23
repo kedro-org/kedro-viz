@@ -59,7 +59,7 @@ describe('Shareable URLs with empty localStorage', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
 
     // Assert after action
     cy.get('.shareable-url-modal .menu-option').should(
@@ -77,7 +77,7 @@ describe('Shareable URLs with empty localStorage', () => {
 
     // Assert after action
     cy.get(
-      '.shareable-url-modal [data-test=kedro-pipeline-selector] .dropdown__label span'
+      '.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform] .dropdown__label span'
     ).contains(selectedPlatform);
     cy.get(
       '.shareable-url-modal .shareable-url-modal__input-wrapper input'
@@ -92,7 +92,7 @@ describe('Shareable URLs with empty localStorage', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
@@ -113,12 +113,12 @@ describe('Shareable URLs with empty localStorage', () => {
 
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
       endpointName
     );
 
@@ -134,12 +134,12 @@ describe('Shareable URLs with empty localStorage', () => {
     const primaryButtonNodeText = 'Publish';
     // Action
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
       endpointName
     );
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -167,12 +167,12 @@ describe('Shareable URLs with empty localStorage', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
       endpointName
     );
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -201,12 +201,12 @@ describe('Shareable URLs with empty localStorage', () => {
     // Action
     cy.reload();
     cy.get('.pipeline-menu-button--deploy').click();
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div')
       .first()
       .click();
-    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
       endpointName
     );
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -246,10 +246,10 @@ describe('Shareable URLs with valid localStorage', () => {
 
   it('verifies that after published to more than one platform, users can open the Published Content Kedro-Viz modal to select on different option. #TC-XX1', () => {
     const fillFormAndSubmit = (bucketName, endpointName) => {
-      cy.get('.shareable-url-modal [data-test="bucket_name"]').clear();
-      cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-      cy.get('.shareable-url-modal [data-test="endpoint_name"]').clear();
-      cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+      cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').clear();
+      cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+      cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').clear();
+      cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
         endpointName
       );
       cy.get('.shareable-url-modal__button-wrapper button')
@@ -259,7 +259,7 @@ describe('Shareable URLs with valid localStorage', () => {
 
     const selectHostingPlatform = (index) => {
       cy.get(
-        '.shareable-url-modal [data-test=kedro-pipeline-selector]'
+        '.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]'
       ).click();
       cy.get('.shareable-url-modal .dropdown__options section div')
         .eq(index)
@@ -288,7 +288,7 @@ describe('Shareable URLs with valid localStorage', () => {
       cy.get('.pipeline-menu-button--deploy').click();
 
       cy.get(
-        '.shareable-url-modal__published-dropdown-wrapper [data-test=kedro-pipeline-selector]'
+        '.shareable-url-modal__published-dropdown-wrapper [data-test=shareable-url-modal-republish-dropdown-hosting-platform]'
       ).click();
 
       cy.get(
