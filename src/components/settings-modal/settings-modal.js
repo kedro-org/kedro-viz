@@ -251,7 +251,7 @@ export const mapStateToProps = (state) => ({
   flags: state.flags,
   showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
-  showDatasetPreviews: state.preferences.showDatasetPreviews,
+  showDatasetPreviews: state.showDatasetPreviews,
   visible: state.visible,
 });
 
