@@ -10,9 +10,6 @@ import './export-modal.scss';
  * Modal to allow users to choose between SVG/PNG export formats
  */
 const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
-  if (!visible.exportBtn) {
-    return null;
-  }
   return (
     <Modal
       closeModal={() => onToggle(false)}

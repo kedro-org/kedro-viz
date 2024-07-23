@@ -29,7 +29,6 @@ describe('ExportModal', () => {
       }),
       theme: expect.stringMatching(/light|dark/),
       visible: expect.objectContaining({
-        exportBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),

@@ -8,6 +8,7 @@ import node from './nodes';
 import nodeType from './node-type';
 import pipeline from './pipeline';
 import tag from './tags';
+import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import {
@@ -21,6 +22,7 @@ import {
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
+  UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -53,6 +55,19 @@ function resetDataReducer(state = {}, action) {
   return state;
 }
 
+/**
+ * Update state from options props coming form react component
+ * @param {Object} state Complete app state
+ * @param {Object} action Redux action
+ * @return {Object} Updated state
+ */
+function updateStateFromOptionsReducer(state = {}, action) {
+  if (action.type === UPDATE_STATE_FROM_OPTIONS) {
+    return merge({}, state, action.payload);
+  }
+  return state;
+}
+
 const combinedReducer = combineReducers({
   // These props have their own reducers in other files
   flags,
@@ -75,7 +90,7 @@ const combinedReducer = combineReducers({
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
-  isPrettyName: createReducer(true, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
+  isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,
     TOGGLE_SHOW_FEATURE_HINTS,
@@ -103,7 +118,10 @@ const combinedReducer = combineReducers({
   ),
 });
 
-const rootReducer = (state, action) =>
-  combinedReducer(resetDataReducer(state, action), action);
+const rootReducer = (state, action) => {
+  let newState = resetDataReducer(state, action);
+  newState = updateStateFromOptionsReducer(newState, action);
+  return combinedReducer(newState, action);
+};
 
 export default rootReducer;
