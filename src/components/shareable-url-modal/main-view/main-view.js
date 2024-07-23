@@ -90,6 +90,7 @@ const MainView = ({
               defaultText={platform && hostingPlatforms[platform]}
               placeholderText={!platform ? 'Select a hosting platform' : null}
               onChanged={onPlatformChange}
+              dataTest={'shareable-url-modal-dropdown-hosting-platform'}
               width={null}
             >
               {Object.entries(hostingPlatforms).map(([value, label]) => (
@@ -100,7 +101,6 @@ const MainView = ({
                   key={value}
                   primaryText={label}
                   value={value}
-                  data-test={'hosting_platform'}
                 />
               ))}
             </Dropdown>
@@ -114,7 +114,7 @@ const MainView = ({
               resetValueTrigger={visible}
               size="small"
               type="input"
-              dataTest={'bucket_name'}
+              dataTest={'shareable-url-modal-input-bucket-name'}
             />
           </div>
           <div className="shareable-url-modal__input-wrapper">
@@ -168,7 +168,7 @@ const MainView = ({
               resetValueTrigger={visible}
               size="small"
               type="input"
-              dataTest={'endpoint_name'}
+              dataTest={'shareable-url-modal-input-endpoint'}
             />
           </div>
         </div>
@@ -178,7 +178,7 @@ const MainView = ({
           mode="secondary"
           onClick={handleModalClose}
           size="small"
-          dataTest={'publish_cancel'}
+          dataTest={'shareable-url-modal-cancel-btn'}
         >
           Cancel
         </Button>
@@ -186,7 +186,7 @@ const MainView = ({
           disabled={!Object.values(isFormDirty).every((value) => value)}
           size="small"
           onClick={handleSubmit}
-          dataTest={'publish_ok'}
+          dataTest={'shareable-url-modal-publish-publish-btn'}
         >
           Publish
         </Button>

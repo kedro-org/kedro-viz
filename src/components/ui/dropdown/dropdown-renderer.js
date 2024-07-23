@@ -156,7 +156,7 @@ const DropdownRenderer = ({
             </Button>
             <Button
               disabled={!haveSelectedValues}
-              dataTest={'btnMetricsChange'}
+              dataTest={`${dataTest}-apply-btn`}
               onClick={onApplyAndClose}
               mode={'primary'}
               size="small"

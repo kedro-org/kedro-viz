@@ -15,7 +15,7 @@ const IconButton = ({
   children,
   className,
   container = 'li',
-  dataTest = 'TestDefaultDataValue',
+  dataTest = 'test-default-btn',
   disabled = false,
   icon,
   labelText,

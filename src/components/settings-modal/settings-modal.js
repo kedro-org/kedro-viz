@@ -172,7 +172,7 @@ const SettingsModal = ({
             ) : null}
             <div className="pipeline-settings-modal-buttons">
               <Button
-                dataTest={'Cancel Button in Settings Modal'}
+                dataTest={'settings-modal-close-btn'}
                 mode="secondary"
                 onClick={resetStateCloseModal}
                 size="small"
@@ -180,7 +180,7 @@ const SettingsModal = ({
                 Cancel
               </Button>
               <Button
-                dataTest={'Apply changes and close in Settings Modal'}
+                dataTest={'settings-modal-apply-btn'}
                 disabled={hasNotInteracted}
                 onClick={() => {
                   setHasClickApplyAndClose(true);

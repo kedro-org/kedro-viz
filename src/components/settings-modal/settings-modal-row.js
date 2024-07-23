@@ -16,7 +16,7 @@ const SettingsModalRow = ({
     <Toggle
       id={id}
       className="pipeline-settings-modal__state"
-      dataTest={`pipeline-settings-modal-toggle-${id}-${toggleValue}`}
+      dataTest={`settings-modal-toggle-${id}-${toggleValue}`}
       title={toggleValue ? 'On' : 'Off'}
       checked={toggleValue}
       onChange={onToggleChange}

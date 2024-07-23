@@ -58,7 +58,7 @@ describe('Flowchart DAG', () => {
 
     // Action
     cy.get('.pipeline-node.pipeline-node--task').first().click();
-    cy.get('[data-test="metadata-code-toggle-true"]').check({ force: true });
+    cy.get('[data-test*="metadata-code-toggle-"]').check({ force: true });
 
     // Assert after action
     cy.get('.pipeline-metadata-code--visible').should('exist');

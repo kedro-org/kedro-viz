@@ -3,7 +3,7 @@
 describe('Flowchart Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
-    cy.get('[data-test="sidebar-flowchart-visible-btn-true"]').as('btnToggleMenu');
+    cy.get('[data-test*="sidebar-flowchart-visible-btn-"]').as('btnToggleMenu');
     cy.get('.pipeline-sidebar--visible').as('pipelineSideBar');
 
     // Assert before action
@@ -20,7 +20,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can hide/show the text labels. #TC-9', () => {
     // Alias
-    cy.get('[data-test="sidebar-flowchart-labels-btn-true"]').as('btnToggleLabels');
+    cy.get('[data-test*="sidebar-flowchart-labels-btn-"]').as('btnToggleLabels');
     cy.get('.pipeline-node__text').as('pipelineNodeLabels');
 
     // Assert before action
@@ -37,7 +37,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can hide/show layers. #TC-10', () => {
     // Alias
-    cy.get('[data-test="sidebar-flowchart-layers-btn-true"]').as('btnToggleLayers');
+    cy.get('[data-test*="sidebar-flowchart-layers-btn-"]').as('btnToggleLayers');
     cy.get('.pipeline-layer').as('pipelineLayer');
 
     // Assert before action
@@ -94,7 +94,7 @@ describe('Flowchart Primary Toolbar', () => {
 describe('Pipeline Minimap Toolbar', () => {
   it('verifies that users can hide/show minimap. #TC-14', () => {
     // Alias
-    cy.get('[data-test="btnToggleMinimap"]').as('btnToggleMinimap');
+    cy.get('[data-test*="sidebar-minimap-btn-"]').as('btnToggleMinimap');
     cy.get('.pipeline-minimap-container').as('minimapContainer');
 
     // Assert before action
@@ -115,9 +115,9 @@ describe('Pipeline Minimap Toolbar', () => {
 
   it('verifies that users can zoom in/out/reset. #TC-15', () => {
     // Alias
-    cy.get('[data-test="btnZoomIn"]').as('btnZoomIn');
-    cy.get('[data-test="btnZoomOut"]').as('btnZoomOut');
-    cy.get('[data-test="btnResetZoom"]').as('btnResetZoom');
+    cy.get('[data-test="sidebar-zoom-in-btn"]').as('btnZoomIn');
+    cy.get('[data-test="sidebar-zoom-out-btn"]').as('btnZoomOut');
+    cy.get('[data-test="sidebar-reset-zoom-btn"]').as('btnResetZoom');
     cy.get('.pipeline-minimap-toolbar__scale').as('zoomScale');
 
     // Zoom values are calculated once the flowchart is drawn, so we wait for pageLoad to complete
