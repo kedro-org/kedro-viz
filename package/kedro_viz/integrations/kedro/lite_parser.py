@@ -24,6 +24,14 @@ class LiteParser:
     def _get_import_statements_from_ast(
         parsed_content_ast_node: ast.Module,
     ) -> List[str]:
+        """Get all the import statements from an AST Node.
+
+        Args:
+            parsed_content_ast_node (ast.Module): The AST node to
+                    extract import statements
+        Returns:
+            A list of import statements as strings
+        """
         import_statements: List[str] = []
 
         for node in ast.walk(parsed_content_ast_node):
@@ -39,6 +47,14 @@ class LiteParser:
 
     @staticmethod
     def _is_module_importable(module_name: str) -> bool:
+        """Checks if a module is importable
+
+        Args:
+            module_name (str): The name of the module to check
+                    importability
+        Returns:
+            Whether the module can be imported
+        """
         try:
             importlib.import_module(module_name)
             return True
@@ -47,12 +63,30 @@ class LiteParser:
 
     @staticmethod
     def _is_relative_import_resolvable(file_path: Path, module_name: str) -> bool:
+        """Checks if a relative module is importable
+
+        Args:
+            file_path (Path): The file path where the module is mentioned
+                    as an import statement
+            module_name (str): The name of the module to check
+                    importability
+        Returns:
+            Whether the module can be imported
+        """
         base_dir = file_path.parent
         relative_path = (base_dir / module_name.replace(".", "/")).with_suffix(".py")
         return relative_path.exists()
 
     @staticmethod
     def _is_valid_import_stmt(statement: Any) -> bool:
+        """Checks for a valid import statement
+
+        Args:
+            statement (Any): The import statement to validate
+
+        Returns:
+            Whether the statement is a valid import string
+        """
         if not isinstance(statement, str) or not statement.strip():
             return False
 
@@ -69,6 +103,15 @@ class LiteParser:
     def _create_mock_imports(
         unresolvable_imports: List[str], mock_modules: Dict[str, MagicMock]
     ) -> None:
+        """Creates mock modules for the unresolvable imports and adds them to the
+        dictionary of mock_modules
+
+        Args:
+            unresolvable_imports (List[str]): A list of import statements
+                    that are not resolved
+            mock_modules (Dict[str, MagicMock]): A dictionary of mocked imports
+
+        """
         for statement in unresolvable_imports:
             module_name = statement.split(" ")[1]
             module_parts = module_name.split(".")
@@ -85,6 +128,15 @@ class LiteParser:
     def _get_unresolvable_imports(
         self, file_path: Path, import_statements: List[str]
     ) -> List[str]:
+        """Retrieves all the unresolved import statements from a file
+
+        Args:
+            file_path (Path): The file path where the import statements are mentioned
+            import_statements (List[str]): A list of all the import statements mentioned in
+                    the file
+        Returns:
+            A list of import statements that are not resolved
+        """
         unresolvable_imports: List[str] = []
 
         for statement in import_statements:
@@ -111,6 +163,13 @@ class LiteParser:
         return unresolvable_imports
 
     def _parse_project_for_imports(self) -> Dict[Path, List[str]]:
+        """Loops through all the python files, parses each file using
+        AST and creates a map containing the file path and the extracted
+        import statements
+
+        Returns:
+            A dictionary of file path and corresponding import statements
+        """
         all_imports: Dict[Path, List[str]] = {}
 
         for filepath in self._project_path.rglob("*.py"):
