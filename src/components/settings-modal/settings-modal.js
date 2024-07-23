@@ -7,6 +7,7 @@ import {
   toggleSettingsModal,
   toggleShowDatasetPreviews,
 } from '../../actions';
+import { getPreferences } from '../../actions/preferences';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig, localStorageName } from '../../config';
@@ -36,6 +37,7 @@ const SettingsModal = ({
   onToggleIsPrettyName,
   onToggleShowDatasetPreviews,
   showSettingsModal,
+  getPreferences,
   visible,
 }) => {
   const flagData = getFlagsState();
@@ -55,6 +57,12 @@ const SettingsModal = ({
   useEffect(() => {
     setShowDatasetPreviewsValue(showDatasetPreviews);
   }, [showDatasetPreviews]);
+
+  useEffect(() => {
+    if (visible.settingsModal) {
+      getPreferences();
+    }
+  }, [visible.settingsModal, getPreferences]);
 
   const handleSavePreferences = useCallback(async () => {
     try {
@@ -244,13 +252,16 @@ export const mapStateToProps = (state) => ({
   flags: state.flags,
   showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
-  showDatasetPreviews: state.showDatasetPreviews,
+  showDatasetPreviews: state.preferences.showDatasetPreviews,
   visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   showSettingsModal: (value) => {
     dispatch(toggleSettingsModal(value));
+  },
+  getPreferences: () => {
+    dispatch(getPreferences());
   },
   onToggleFlag: (name, value) => {
     dispatch(changeFlag(name, value));
