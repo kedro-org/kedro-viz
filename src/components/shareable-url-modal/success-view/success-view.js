@@ -14,6 +14,7 @@ const SuccessView = ({
         onCopyClick={onClick}
         href={handleResponseUrl}
         showCopiedText={showCopied}
+        dataTest={'shareable-url-modal-publish-success'}
       />
     </div>
   ) : null;

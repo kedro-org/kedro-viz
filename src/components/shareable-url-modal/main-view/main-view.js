@@ -50,6 +50,7 @@ const renderTextContent = (isPreviewEnabled, setIsPreviewEnabled) => {
         All dataset previews
         <Toggle
           className="shareable-url-modal__content-toggle"
+          dataTest={`shareable-url-modal-preview-dataset-${isPreviewEnabled}`}
           title={isPreviewEnabled ? 'On' : 'Off'}
           checked={isPreviewEnabled}
           onChange={() => setIsPreviewEnabled((prev) => !prev)}
@@ -99,6 +100,7 @@ const MainView = ({
                   key={value}
                   primaryText={label}
                   value={value}
+                  data-test={'hosting_platform'}
                 />
               ))}
             </Dropdown>
@@ -172,13 +174,19 @@ const MainView = ({
         </div>
       </div>
       <div className="shareable-url-modal__button-wrapper">
-        <Button mode="secondary" onClick={handleModalClose} size="small">
+        <Button
+          mode="secondary"
+          onClick={handleModalClose}
+          size="small"
+          dataTest={'publish_cancel'}
+        >
           Cancel
         </Button>
         <Button
           disabled={!Object.values(isFormDirty).every((value) => value)}
           size="small"
           onClick={handleSubmit}
+          dataTest={'publish_ok'}
         >
           Publish
         </Button>

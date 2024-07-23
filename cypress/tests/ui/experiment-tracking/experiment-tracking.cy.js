@@ -9,7 +9,7 @@ describe('Experiment Tracking', () => {
 
       // Alias
       cy.get('.details-metadata__title').first().as('metadataTitle');
-      cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+      cy.get('[data-test="run-details-modal-apply-changes"]').as(
         'applyChanges'
       );
 
