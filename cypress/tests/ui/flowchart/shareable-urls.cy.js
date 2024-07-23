@@ -288,7 +288,7 @@ describe('Shareable URLs with valid localStorage', () => {
       cy.get('.pipeline-menu-button--deploy').click();
 
       cy.get(
-        '.shareable-url-modal__published-dropdown-wrapper'
+        '.shareable-url-modal__published-dropdown-wrapper [data-test=shareable-url-modal-republish-dropdown-hosting-platform]'
       ).click();
 
       cy.get(
