@@ -1,7 +1,7 @@
 import { fetchPreferences } from '../utils/preferences-api';
 
 // Action Types
-export const PREFERENCES_LOADED = '[Preferences] loaded';
+export const PREFERENCES_LOADED = 'PREFERENCES_LOADED';
 
 // Action Creators
 export const preferencesLoaded = (preferences) => ({
