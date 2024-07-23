@@ -66,8 +66,7 @@ const SettingsModal = ({
 
   const handleSavePreferences = useCallback(async () => {
     try {
-      const result = await updatePreferences(showDatasetPreviewsValue);
-      console.log('Preferences updated successfully:', result);
+      await updatePreferences(showDatasetPreviewsValue);
     } catch (error) {
       console.error('Error updating preferences:', error);
     }
