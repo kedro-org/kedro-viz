@@ -557,12 +557,14 @@ export class FlowChart extends Component {
    * Remove a node's focus state and dim linked nodes
    */
   handleChartClick = (event) => {
+    // If a node was previously clicked, clear the selected node data and reset the URL.
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
 
+    // Determine if the click event occurred on the slice button.
     const isSliceButtonClicked =
       this.sliceButtonRef.current &&
       this.sliceButtonRef.current.contains(event.target);
