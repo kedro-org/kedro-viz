@@ -5,9 +5,11 @@ import {
   toggleShowFeatureHints,
   toggleIsPrettyName,
   toggleSettingsModal,
-  toggleShowDatasetPreviews,
 } from '../../actions';
-import { getPreferences } from '../../actions/preferences';
+import {
+  getPreferences,
+  toggleShowDatasetPreviews,
+} from '../../actions/preferences';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig, localStorageName } from '../../config';

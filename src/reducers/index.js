@@ -14,7 +14,6 @@ import visible from './visible';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
-  TOGGLE_SHOW_DATASET_PREVIEWS,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_IGNORE_LARGE_WARNING,
   TOGGLE_IS_PRETTY_NAME,
@@ -25,7 +24,10 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
-import { PREFERENCES_LOADED } from '../actions/preferences';
+import {
+  PREFERENCES_LOADED,
+  TOGGLE_SHOW_DATASET_PREVIEWS,
+} from '../actions/preferences';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**

@@ -141,19 +141,6 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
-export const TOGGLE_SHOW_DATASET_PREVIEWS = 'TOGGLE_SHOW_DATASET_PREVIEWS';
-
-/**
- * Toggle whether to show dataset previews on/off
- * @param {Boolean} showDatasetPreviews True if dataset previews are to be shown
- */
-export function toggleShowDatasetPreviews(showDatasetPreviews) {
-  return {
-    type: TOGGLE_SHOW_DATASET_PREVIEWS,
-    showDatasetPreviews,
-  };
-}
-
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**

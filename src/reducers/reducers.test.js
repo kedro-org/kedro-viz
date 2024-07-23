@@ -15,7 +15,6 @@ import {
   TOGGLE_SIDEBAR,
   TOGGLE_IS_PRETTY_NAME,
   TOGGLE_SHOW_FEATURE_HINTS,
-  TOGGLE_SHOW_DATASET_PREVIEWS,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
@@ -37,6 +36,7 @@ import {
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
+import { TOGGLE_SHOW_DATASET_PREVIEWS } from '../actions/preferences';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
