@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from '../../../ui/button';
 import CommandCopier from '../../../ui/command-copier/command-copier';
+import CutIcon from '../../../icons/cut';
+import IconButton from '../../../ui/icon-button';
 
 import './slice-pipeline-action.scss';
 
@@ -30,11 +32,22 @@ export const SlicePipelineAction = ({
         </div>
         {isFiltersApplied ? (
           <div className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--reset">
-            <Button onClick={onResetFilters}>Reset</Button>
+            <Button onClick={onResetFilters}>Reset slice</Button>
           </div>
         ) : (
-          <div className="pipeline-flowchart_slice-action--cta">
-            <Button onClick={onApplyFilters}>Slice</Button>
+          <div
+            className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--slice"
+            onClick={onApplyFilters}
+          >
+            <IconButton
+              ariaLabel="Copy run command to clipboard."
+              className="copy-button"
+              dataHeapEvent={`clicked.run_command`}
+              icon={CutIcon}
+            />
+            <span className="pipeline-flowchart_slice-action--slice-text">
+              Slice
+            </span>
           </div>
         )}
       </div>
