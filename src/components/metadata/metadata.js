@@ -249,6 +249,7 @@ const MetaData = ({
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier
                     command={runCommand}
+                    classNames={'pipeline-metadata__value'}
                     isCommand={metadata?.runCommand}
                     dataTest={'metadata-copy-command'}
                   />
