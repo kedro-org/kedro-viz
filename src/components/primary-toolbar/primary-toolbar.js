@@ -14,6 +14,7 @@ import './primary-toolbar.scss';
 export const PrimaryToolbar = ({
   children,
   onToggleSidebar,
+  dataTest,
   visible = { sidebar: true },
 }) => (
   <>
@@ -26,8 +27,7 @@ export const PrimaryToolbar = ({
           'pipeline-menu-button--menu',
           { 'pipeline-menu-button--inverse': !visible.sidebar }
         )}
-        dataTest={'btnToggleMenu'}
-        dataHeapEvent={`visible.sidebar.${visible.sidebar}`}
+        dataTest={dataTest}
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
         onClick={() => onToggleSidebar(!visible.sidebar)}

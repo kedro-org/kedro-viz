@@ -15,8 +15,7 @@ const IconButton = ({
   children,
   className,
   container = 'li',
-  dataTest = 'TestDefaultDataValue',
-  dataHeapEvent,
+  dataTest = 'test-default-btn',
   disabled = false,
   icon,
   labelText,
@@ -57,7 +56,6 @@ const IconButton = ({
           'pipeline-icon-toolbar__button--active': active,
         })}
         data-test={dataTest}
-        data-heap-event={dataHeapEvent}
         disabled={disabled}
         onClick={onClick}
         onMouseEnter={showTooltip}
@@ -101,7 +99,6 @@ IconButton.propTypes = {
   ariaLive: PropTypes.string,
   children: PropTypes.node,
   dataTest: PropTypes.string,
-  dataHeapEvent: PropTypes.string,
   disabled: PropTypes.bool,
   icon: PropTypes.func,
   labelText: PropTypes.oneOfType([PropTypes.string, PropTypes.node]), // it takes a string or a JSX element

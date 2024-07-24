@@ -67,6 +67,7 @@ const SelectDropdown = ({
         defaultText={`Metrics ${selected ? selected.length : 0}/${
           dropdownValues ? dropdownValues.length : 0
         }`}
+        dataTest={'experiments-metrics-select-dropdown'}
       >
         <div className="select-dropdown__title">Metrics</div>
         {dropdownValues &&

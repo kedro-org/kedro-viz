@@ -46,12 +46,16 @@ export const FlowchartPrimaryToolbar = ({
 
   return (
     <>
-      <PrimaryToolbar onToggleSidebar={onToggleSidebar} visible={visible}>
+      <PrimaryToolbar
+        onToggleSidebar={onToggleSidebar}
+        visible={visible}
+        dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
+      >
         <IconButton
           active={textLabels}
           ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
           className={'pipeline-menu-button--labels'}
-          dataTest={'btnToggleLabels'}
+          dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
           icon={LabelIcon}
           labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
           onClick={() => onToggleTextLabels(!textLabels)}
@@ -61,8 +65,7 @@ export const FlowchartPrimaryToolbar = ({
           active={visibleLayers}
           ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
           className={'pipeline-menu-button--layers'}
-          dataHeapEvent={`visible.layers.${visibleLayers}`}
-          dataTest={'btnToggleLayers'}
+          dataTest={`sidebar-flowchart-layers-btn-${visibleLayers}`}
           disabled={disableLayerBtn}
           icon={LayersIcon}
           labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
@@ -77,19 +80,18 @@ export const FlowchartPrimaryToolbar = ({
               : 'Expand all modular pipelines'
           }
           className={'pipeline-menu-button--pipeline'}
-          dataTest={'btnTogglePipeline'}
+          dataTest={`sidebar-flowchart-expand-pipeline-btn-${expandedPipelines}`}
           icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
           labelText={
             expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
           }
-          data-test={'expand-all-pipelines-toggle'}
           onClick={handleToggleExpandAllPipelines}
           visible={display.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
           className={'pipeline-menu-button--export'}
-          dataTest={'btnExportGraph'}
+          dataTest={'sidebar-flowchart-export-btn'}
           icon={ExportIcon}
           labelText="Export visualisation"
           onClick={() => onToggleExportModal(true)}
