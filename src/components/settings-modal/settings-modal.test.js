@@ -77,8 +77,8 @@ describe('SettingsModal', () => {
 
     mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(false);
     expect(dispatch.mock.calls[3][0]).toEqual({
-      type: 'TOGGLE_SHOW_DATASET_PREVIEWS',
-      showDatasetPreviews: false,
+      type: 'UPDATE_DATASET_PREVIEWS',
+      payload: { showDatasetPreviews: false },
     });
   });
 });
