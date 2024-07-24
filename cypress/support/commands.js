@@ -220,12 +220,12 @@ Cypress.Commands.add(
     cy.get('.pipeline-menu-button--deploy').click();
 
     // Select the first hosting platform from the dropdown
-    cy.get('.shareable-url-modal [data-test=kedro-pipeline-selector]').click();
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
     cy.get('.shareable-url-modal .dropdown__options section div').eq(1).click();
 
     // Fill in the form
-    cy.get('.shareable-url-modal [data-test="bucket_name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="endpoint_name"]').type(
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
       endpointName
     );
 
@@ -240,7 +240,7 @@ Cypress.Commands.add(
  * Custom command to wait for page load before enabling pretty names
  */
 Cypress.Commands.add('__waitForSettingsButton__', () => {
-  cy.get('[data-test="Change the settings flags"]', { timeout: 20000 }).should('be.visible');
+  cy.get('[data-test="global-toolbar-settings-btn"]', { timeout: 20000 }).should('be.visible');
 });
 
 /**
@@ -252,13 +252,13 @@ Cypress.Commands.add('enablePrettyNames', () => {
   cy.__waitForSettingsButton__();
 
   // Visit the settings panel
-  cy.get('[data-test="Change the settings flags"]').click();
+  cy.get('[data-test="global-toolbar-settings-btn"]').click();
 
   // Enable the pretty names setting
-  cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').check({ force: true });
+  cy.get('[data-test*="settings-modal-toggle-isPrettyName-"]').check({ force: true });
 
   // Apply changes and close the settings panel
-  cy.get('[data-test="Apply changes and close in Settings Modal"]').click({
+  cy.get('[data-test="settings-modal-apply-btn"]').click({
         force: true,
       });
 });

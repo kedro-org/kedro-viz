@@ -152,6 +152,7 @@ const MetaData = ({
               {showCodeSwitch && (
                 <Toggle
                   id="code"
+                  dataTest={`metadata-code-toggle-${visibleCode}`}
                   checked={visibleCode}
                   enabled={hasCode}
                   title="Show Code"
@@ -249,6 +250,7 @@ const MetaData = ({
                   <CommandCopier
                     command={runCommand}
                     isCommand={metadata?.runCommand}
+                    dataTest={'metadata-copy-command'}
                   />
                 </MetaDataRow>
                 {isDataNode && (

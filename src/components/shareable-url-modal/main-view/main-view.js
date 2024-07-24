@@ -50,6 +50,7 @@ const renderTextContent = (isPreviewEnabled, setIsPreviewEnabled) => {
         All dataset previews
         <Toggle
           className="shareable-url-modal__content-toggle"
+          dataTest={`shareable-url-modal-preview-dataset-${isPreviewEnabled}`}
           title={isPreviewEnabled ? 'On' : 'Off'}
           checked={isPreviewEnabled}
           onChange={() => setIsPreviewEnabled((prev) => !prev)}
@@ -89,6 +90,7 @@ const MainView = ({
               defaultText={platform && hostingPlatforms[platform]}
               placeholderText={!platform ? 'Select a hosting platform' : null}
               onChanged={onPlatformChange}
+              dataTest={'shareable-url-modal-dropdown-hosting-platform'}
               width={null}
             >
               {Object.entries(hostingPlatforms).map(([value, label]) => (
@@ -112,7 +114,7 @@ const MainView = ({
               resetValueTrigger={visible}
               size="small"
               type="input"
-              dataTest={'bucket_name'}
+              dataTest={'shareable-url-modal-input-bucket-name'}
             />
           </div>
           <div className="shareable-url-modal__input-wrapper">
@@ -166,19 +168,25 @@ const MainView = ({
               resetValueTrigger={visible}
               size="small"
               type="input"
-              dataTest={'endpoint_name'}
+              dataTest={'shareable-url-modal-input-endpoint'}
             />
           </div>
         </div>
       </div>
       <div className="shareable-url-modal__button-wrapper">
-        <Button mode="secondary" onClick={handleModalClose} size="small">
+        <Button
+          mode="secondary"
+          onClick={handleModalClose}
+          size="small"
+          dataTest={'shareable-url-modal-cancel-btn'}
+        >
           Cancel
         </Button>
         <Button
           disabled={!Object.values(isFormDirty).every((value) => value)}
           size="small"
           onClick={handleSubmit}
+          dataTest={'shareable-url-modal-publish-publish-btn'}
         >
           Publish
         </Button>
