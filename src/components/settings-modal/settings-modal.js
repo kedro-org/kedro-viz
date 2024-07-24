@@ -8,7 +8,7 @@ import {
 } from '../../actions';
 import {
   getPreferences,
-  toggleShowDatasetPreviews,
+  updateDatasetPreviews,
 } from '../../actions/preferences';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
@@ -274,7 +274,7 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleShowFeatureHints(value));
   },
   onToggleShowDatasetPreviews: (value) => {
-    dispatch(toggleShowDatasetPreviews(value));
+    dispatch(updateDatasetPreviews(value));
   },
 });
 

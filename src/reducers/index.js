@@ -24,10 +24,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
-import {
-  PREFERENCES_LOADED,
-  TOGGLE_SHOW_DATASET_PREVIEWS,
-} from '../actions/preferences';
+import { UPDATE_DATASET_PREVIEWS } from '../actions/preferences';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
@@ -102,10 +99,8 @@ const combinedReducer = combineReducers({
   ),
   showDatasetPreviews: (state = true, action) => {
     switch (action.type) {
-      case TOGGLE_SHOW_DATASET_PREVIEWS:
-        return action.showDatasetPreviews;
-      case PREFERENCES_LOADED:
-        return action.payload.showDatasetPreviews ?? state;
+      case UPDATE_DATASET_PREVIEWS:
+        return action.payload.showDatasetPreviews;
       default:
         return state;
     }
