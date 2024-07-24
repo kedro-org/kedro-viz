@@ -1,14 +1,19 @@
-import { UPDATE_DATASET_PREVIEWS } from '../actions/preferences';
+import { UPDATE_USER_PREFERENCES } from '../actions/preferences';
 
-const initialState = true;
+const initialState = {
+  showDatasetPreviews: true,
+};
 
-const showDatasetPreviews = (state = initialState, action) => {
+const userPreferences = (state = initialState, action) => {
   switch (action.type) {
-    case UPDATE_DATASET_PREVIEWS:
-      return action.payload.showDatasetPreviews;
+    case UPDATE_USER_PREFERENCES:
+      return {
+        ...state,
+        showDatasetPreviews: action.payload.preferences.showDatasetPreviews,
+      };
     default:
       return state;
   }
 };
 
-export default showDatasetPreviews;
+export default userPreferences;

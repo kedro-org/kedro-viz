@@ -57,7 +57,7 @@ const saveStateToLocalStorage = (state) => {
     theme: state.theme,
     isPrettyName: state.isPrettyName,
     showFeatureHints: state.showFeatureHints,
-    showDatasetPreviews: state.showDatasetPreviews,
+    userPreferences: state.userPreferences,
     flags: state.flags,
     expandAllPipelines: state.expandAllPipelines,
   });
