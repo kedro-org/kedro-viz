@@ -494,7 +494,8 @@ export class FlowChart extends Component {
       this.handleSingleNodeClick(node);
 
       // the hold shift only happens on clicking a node first
-      if (event.shiftKey) {
+      // but only if no filters are currently applied.
+      if (event.shiftKey && !this.props.isFiltersApplied) {
         this.handleShiftClick(node);
       }
     }
