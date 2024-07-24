@@ -36,7 +36,7 @@ import {
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
-import { TOGGLE_SHOW_DATASET_PREVIEWS } from '../actions/preferences';
+import { UPDATE_DATASET_PREVIEWS } from '../actions/preferences';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -142,11 +142,11 @@ describe('Reducer', () => {
     });
   });
 
-  describe('TOGGLE_SHOW_DATASET_PREVIEWS', () => {
-    it('should toggle the value of showDatasetPreviews', () => {
+  describe('UPDATE_DATASET_PREVIEWS', () => {
+    it('should update the value of showDatasetPreviews', () => {
       const newState = reducer(mockState.spaceflights, {
-        type: TOGGLE_SHOW_DATASET_PREVIEWS,
-        showDatasetPreviews: true,
+        type: UPDATE_DATASET_PREVIEWS,
+        payload: { showDatasetPreviews: true },
       });
       expect(mockState.spaceflights.showDatasetPreviews).toBe(true);
       expect(newState.showDatasetPreviews).toBe(true);

@@ -24,7 +24,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
-import { UPDATE_DATASET_PREVIEWS } from '../actions/preferences';
+import showDatasetPreviews from './preferences';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
@@ -82,6 +82,7 @@ const combinedReducer = combineReducers({
   modularPipeline,
   visible,
   runsMetadata,
+  showDatasetPreviews,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
@@ -97,14 +98,6 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_FEATURE_HINTS,
     'showFeatureHints'
   ),
-  showDatasetPreviews: (state = true, action) => {
-    switch (action.type) {
-      case UPDATE_DATASET_PREVIEWS:
-        return action.payload.showDatasetPreviews;
-      default:
-        return state;
-    }
-  },
   hoveredParameters: createReducer(
     false,
     TOGGLE_PARAMETERS_HOVERED,
