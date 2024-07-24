@@ -28,25 +28,6 @@ def identity(x):
     return x
 
 
-def assert_expected_modular_pipeline_values_for_edge_cases(
-    expected_modular_pipeline_tree_obj,
-    modular_pipeline_node_id,
-    data_access_manager,
-    modular_pipeline_tree_values,
-    expected_key,
-):
-    """This asserts an `expected_key` value present in modular_pipeline_tree
-    that is constructed in the edge cases with the expected_modular_pipeline_tree"""
-    assert sorted(
-        list(expected_modular_pipeline_tree_obj[modular_pipeline_node_id][expected_key])
-    ) == sorted(
-        list(
-            data_access_manager.nodes.get_node_by_id(node_id).name
-            for node_id in modular_pipeline_tree_values
-        )
-    )
-
-
 class TestAddCatalog:
     def test_add_catalog(
         self,

@@ -179,3 +179,26 @@ def check_kedroviz_up(context):
         )
     finally:
         context.result.terminate()
+
+
+@then("I store the response from main endpoint")
+def get_main_api_response(context):
+    max_duration = 30  # 30 seconds
+    end_by = time() + max_duration
+
+    while time() < end_by:
+        try:
+            response = requests.get("http://localhost:4141/api/main")
+            context.response = response.json()
+            assert response.status_code == 200
+        except Exception:
+            sleep(2.0)
+            continue
+        else:
+            break
+
+
+@then("I compare the responses in regular and lite mode")
+def compare_main_api_responses(context):
+    regular_mode_response = requests.get("http://localhost:4141/api/main").json()
+    assert context.response == regular_mode_response

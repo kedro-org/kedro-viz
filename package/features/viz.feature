@@ -30,3 +30,11 @@ Feature: Viz plugin in new project
         When I execute the kedro viz run command with lite option
         Then kedro-viz should start successfully
 
+    Scenario: Compare viz responses in regular and lite mode
+        Given I have installed kedro version "latest"
+        And I have run a non-interactive kedro new with spaceflights-pandas starter
+        When I execute the kedro viz run command with lite option
+        Then I store the response from main endpoint
+        Given I have installed the project's requirements
+        When I execute the kedro viz run command
+        Then I compare the responses in regular and lite mode
