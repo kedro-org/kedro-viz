@@ -77,6 +77,11 @@ export const settings = {
     description: 'Enable or disable all new feature hints in the interface.',
     default: true,
   },
+  showDatasetPreviews: {
+    name: 'Dataset previews',
+    description: 'Display preview data for all datasets.',
+    default: true,
+  },
 };
 
 // Sidebar groups is an ordered map of { id: label }
