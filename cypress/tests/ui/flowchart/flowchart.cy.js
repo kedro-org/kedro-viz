@@ -13,7 +13,7 @@ describe('Flowchart DAG', () => {
 
   it('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
     const modularPipelineText = 'feature_engineering';
-    const taskNodeText = 'Create Derived Features';
+    const taskNodeText = 'create_derived_features';
 
     // Assert before action
     cy.get('.pipeline-node > .pipeline-node__text').should(
