@@ -53,6 +53,40 @@
   }
 }
 
+.pipeline-nodelist__row::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100px;
+  display: block;
+  width: 100px;
+  background: transparent;
+  background: var(--color-nodelist-row-selected);
+  transform: translate(0, 0);
+  opacity: 0;
+  content: ' ';
+  pointer-events: none;
+}
+
+.Mui-selected {
+  .pipeline-nodelist__row--overwrite::before {
+    opacity: 1;
+  }
+
+  .MuiTreeItem-iconContainer {
+    z-index: 1;
+  }
+}
+
+.pipeline-nodelist__row--selected::before,
+.pipeline-nodelist__row--active::before {
+  opacity: 1;
+}
+
+.pipeline-nodelist__row:hover::before {
+  opacity: 1;
+}
+
 .pipeline-nodelist__row__icon {
   display: block;
   flex-shrink: 0;
