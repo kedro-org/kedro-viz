@@ -1,9 +1,9 @@
 import React from 'react';
 import Button from '../../../ui/button';
 
-import './slice-pipeline-action.scss';
+import './filtered-pipeline-action-bar.scss';
 
-export const SlicePipelineAction = ({ chartSize, filteredPipeline }) => {
+export const FilteredPipelineActionBar = ({ chartSize, filteredPipeline }) => {
   const { outerWidth, sidebarWidth } = chartSize;
   const sidebarVisible = sidebarWidth > 140;
 

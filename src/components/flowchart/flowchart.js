@@ -38,7 +38,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
-import { SlicePipelineAction } from './components/slice-pipeline-action/slice-pipeline-action';
+import { FilteredPipelineActionBar } from './components/filtered-pipeline-action-bar/filtered-pipeline-action-bar';
 import './styles/flowchart.scss';
 
 /**
@@ -775,7 +775,7 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <SlicePipelineAction
+        <FilteredPipelineActionBar
           chartSize={chartSize}
           filteredPipeline={filteredPipelineState.range}
         />
