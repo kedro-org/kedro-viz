@@ -6,7 +6,7 @@ import IconButton from '../../../ui/icon-button';
 
 import './filtered-pipeline-action-bar.scss';
 
-export const SlicePipelineAction = ({
+export const FilteredPipelineActionBar = ({
   chartSize,
   filteredPipeline,
   isFiltersApplied,
