@@ -67,6 +67,7 @@ export class FlowChart extends Component {
     this.nodesRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+    this.filteredPipelineActionRef = React.createRef();
 
     this.DURATION = 700;
     this.MARGIN = 500;
@@ -96,6 +97,20 @@ export class FlowChart extends Component {
     }
   }
 
+  /**
+   *  Updates the state of the filtered pipeline with new values for 'from', 'to', and 'range'.
+   */
+  updateFilteredPipelineState(from, to, range) {
+    this.setState({
+      filteredPipelineState: {
+        ...this.state.filteredPipelineState,
+        from,
+        to,
+        range,
+      },
+    });
+  }
+
   componentWillUnmount() {
     this.removeGlobalEventListeners();
   }
@@ -103,31 +118,20 @@ export class FlowChart extends Component {
   componentDidUpdate(prevProps) {
     this.update(prevProps);
 
+    const { from, to } = this.state.filteredPipelineState;
+
     const isFilteredPipelineChanged =
       this.props.filteredPipeline !== prevProps.filteredPipeline;
     const isFilteredPipelineEmpty = this.props.filteredPipeline.length === 0;
-    const isFilterdPipelineStateDefined =
-      this.state.filteredPipelineState.from !== null &&
-      this.state.filteredPipelineState.to !== null;
+    const isFilterdPipelineStateDefined = from !== null && to !== null;
 
     if (isFilteredPipelineChanged) {
-      this.setState({
-        filteredPipelineState: {
-          ...this.state.filteredPipelineState,
-          range: this.props.filteredPipeline,
-        },
-      });
-
-      // when the redux state's filteredPipeline is empty but local filteredPipeline state has values
-      // then reset the local state to be null to match the redux state
+      // Reset local state to null if the redux state's filteredPipeline is empty,
+      // but the local state still has 'from' and 'to' values defined.
       if (isFilteredPipelineEmpty && isFilterdPipelineStateDefined) {
-        this.setState({
-          filteredPipelineState: {
-            ...this.state.filteredPipelineState,
-            from: null,
-            to: null,
-          },
-        });
+        this.updateFilteredPipelineState(null, null, []);
+      } else {
+        this.updateFilteredPipelineState(from, to, this.props.filteredPipeline);
       }
     }
   }
@@ -519,14 +523,17 @@ export class FlowChart extends Component {
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
     toSelectedNode(node);
 
-    const { from, to } = this.state.filteredPipelineState;
-    // Reset or set the first node as the 'from' node based on current state
-    const newState =
-      from !== null && to !== null
-        ? { ...this.state.filteredPipelineState, from: null, to: null }
-        : { ...this.state.filteredPipelineState, from: node.id };
-
-    this.setState({ filteredPipelineState: newState });
+    const { from, to, range } = this.state.filteredPipelineState;
+    // if both "from" and "to" are defined
+    // then on a single node click, it should reset the filtered pipeline state
+    if (from !== null && to !== null) {
+      this.updateFilteredPipelineState(null, null, []);
+    } else {
+      // Else, set the first node as the 'from' node based on current state
+      // we need this so that if user hold shift and click on a second node,
+      // the 'from' node is already set
+      this.updateFilteredPipelineState(id, to, range);
+    }
 
     // Reset the filterNodes on single node click
     this.props.onFilterNodes(null, null);
@@ -554,22 +561,22 @@ export class FlowChart extends Component {
   /**
    * Remove a node's focus state and dim linked nodes
    */
-  handleChartClick = () => {
+  handleChartClick = (event) => {
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
 
-    if (this.props.filteredPipeline) {
+    // Determine if the click event occurred on the slice button.
+    const isSliceButtonClicked =
+      this.filteredPipelineActionRef.current &&
+      this.filteredPipelineActionRef.current.contains(event.target);
+
+    // Check if the pipeline is filtered, no slice button is clicked, and no filters are applied
+    if (this.props.filteredPipeline && !isSliceButtonClicked) {
       this.props.onResetFilterNodes();
-      this.setState({
-        filteredPipelineState: {
-          ...this.state.filteredPipelineState,
-          from: null,
-          to: null,
-        },
-      });
+      this.updateFilteredPipelineState(null, null, []);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -665,7 +672,7 @@ export class FlowChart extends Component {
       this.handleNodeClick(event, node);
     }
     if (event.keyCode === ESCAPE) {
-      this.handleChartClick();
+      this.handleChartClick(event);
       this.handleNodeMouseOut();
     }
   };
@@ -775,10 +782,12 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <FilteredPipelineActionBar
-          chartSize={chartSize}
-          filteredPipeline={filteredPipelineState.range}
-        />
+        <div ref={this.filteredPipelineActionRef}>
+          <FilteredPipelineActionBar
+            chartSize={chartSize}
+            filteredPipeline={filteredPipelineState.range}
+          />
+        </div>
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
