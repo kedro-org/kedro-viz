@@ -27,6 +27,7 @@ Please follow the established format:
 - Migrate from `toposort` to `graphlib`. (#1942)
 - Fix packaging. (#1766)
 - Adjust requirements file and dependabot versioning strategy. (#1978)
+- Refactor CommandCopier component. (#1998)
 
 # Release 9.1.0
 

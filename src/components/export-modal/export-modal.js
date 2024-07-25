@@ -18,7 +18,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
     >
       <div className="pipeline-export-modal">
         <Button
-          dataTest={'btnDownloadPNG'}
+          dataTest={'export-modal-download-png-btn'}
           onClick={() => {
             exportGraph({ format: 'png', theme, graphSize });
             onToggle(false);
@@ -27,7 +27,7 @@ const ExportModal = ({ graphSize, theme, onToggle, visible }) => {
           Download PNG
         </Button>
         <Button
-          dataTest={'btnDownloadSVG'}
+          dataTest={'export-modal-download-svg-btn'}
           onClick={() => {
             exportGraph({ format: 'svg', theme, graphSize });
             onToggle(false);
