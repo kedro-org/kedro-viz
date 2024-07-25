@@ -1,7 +1,5 @@
 // All E2E Tests Related to Flowchart Menu goes here.
 
-import { prettifyName } from '../../../../src/utils';
-
 describe('Flowchart Menu', () => {
   beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
@@ -147,7 +145,7 @@ describe('Flowchart Menu', () => {
       .invoke('text')
       .then((focusedNodesText) =>
         expect(focusedNodesText.toLowerCase()).to.contains(
-          prettifyName(nodeToFocusText).toLowerCase()
+          nodeToFocusText
         )
       );
     cy.get('.pipeline-node--active > .pipeline-node__text').should(
