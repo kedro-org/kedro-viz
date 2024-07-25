@@ -5,6 +5,9 @@ import { prettifyName } from '../../../../src/utils';
 describe('Flowchart Menu', () => {
   beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
+    cy.wait(500);
+    cy.get('.feature-hints__close').click(); // Close the feature hints so can click on a node
+    cy.wait(500);
   });
 
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
