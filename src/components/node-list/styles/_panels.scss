@@ -12,15 +12,6 @@
   }
 }
 
-.pipeline-nodelist-section > ul.MuiTreeView-root {
-  padding: 0 0 0 20px;
-
-  .pipeline-treeItem__root--highlight {
-    border-right: 1px solid colors.$blue-600;
-    background-color: var(--color-nodelist-row-selected);
-  }
-}
-
 .pipeline-nodelist__elements-panel {
   .pipeline-nodelist-section:last-child {
     padding-bottom: 28px;
