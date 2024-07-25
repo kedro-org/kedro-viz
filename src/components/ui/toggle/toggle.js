@@ -13,6 +13,7 @@ const Toggle = ({
   title,
   onChange,
   className = '',
+  dataTest,
 }) => (
   <div
     className={modifiers(classnames('pipeline-toggle', className), {
@@ -21,10 +22,9 @@ const Toggle = ({
   >
     <input
       id={`pipeline-toggle-input-${id}`}
-      data-test={`pipeline-toggle-input-${id}`}
+      data-test={dataTest}
       className="pipeline-toggle-input"
       type="checkbox"
-      data-heap-event={`visible.code.${checked}`}
       checked={checked}
       disabled={!enabled}
       onChange={onChange}

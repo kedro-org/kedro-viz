@@ -4,7 +4,7 @@ import CommandCopier from '../../../ui/command-copier/command-copier';
 import CutIcon from '../../../icons/cut';
 import IconButton from '../../../ui/icon-button';
 
-import './slice-pipeline-action.scss';
+import './filtered-pipeline-action-bar.scss';
 
 export const SlicePipelineAction = ({
   chartSize,

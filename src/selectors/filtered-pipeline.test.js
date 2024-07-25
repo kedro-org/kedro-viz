@@ -19,7 +19,7 @@ describe('Selectors', () => {
     expect(res).toEqual(expected);
   });
 
-  it('return onky fromNode and toNode if they are not connected', () => {
+  it('return only fromNode and toNode if they are not connected', () => {
     const fromNode = '47b81aa6';
     const toNode = 'f1f1425b';
 

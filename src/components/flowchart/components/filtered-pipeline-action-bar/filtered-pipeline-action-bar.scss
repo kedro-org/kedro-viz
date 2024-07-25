@@ -1,0 +1,50 @@
+@use '../../../../styles/variables' as colors;
+
+.kui-theme--light {
+  --filtered-pipeline-action-bar--background: #{colors.$slate-200};
+  --filtered-pipeline-action-bar--color: #{colors.$white-0};
+  --filtered-pipeline-action-bar--color-faded: #{colors.$white-800};
+}
+
+.kui-theme--dark {
+  --filtered-pipeline-action-bar--background: #{colors.$white-0};
+  --filtered-pipeline-action-bar--color: #{colors.$black-900};
+  --filtered-pipeline-action-bar--color-faded: #{colors.$black-200};
+}
+
+$padding-top-bottom: 8px;
+$padding-right-left: 16px;
+
+.pipeline-flowchart_slice-action {
+  background-color: var(--filtered-pipeline-action-bar--background);
+  border-radius: 4px;
+  bottom: 30px;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  transition: transform ease 0.7s;
+}
+
+.pipeline-flowchart_slice-action--info {
+  align-items: center;
+  border-right: 1px solid #d9dcde;
+  color: var(--filtered-pipeline-action-bar--color-faded);
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: $padding-top-bottom $padding-right-left;
+}
+
+.pipeline-flowchart_slice-action--cta {
+  padding: $padding-top-bottom $padding-right-left;
+
+  .button__btn {
+    border: none;
+    color: var(--filtered-pipeline-action-bar--color);
+    font-size: 14px;
+    padding: 0;
+    width: 65px;
+  }
+}

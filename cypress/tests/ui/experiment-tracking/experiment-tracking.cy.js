@@ -9,7 +9,7 @@ describe('Experiment Tracking', () => {
 
       // Alias
       cy.get('.details-metadata__title').first().as('metadataTitle');
-      cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+      cy.get('[data-test="run-details-modal-apply-changes"]').as(
         'applyChanges'
       );
 
@@ -41,7 +41,7 @@ describe('Experiment Tracking', () => {
 
       // Alias
       cy.get('.details-metadata__notes').as('metadataNotes');
-      cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+      cy.get('[data-test="run-details-modal-apply-changes"]').as(
         'applyChanges'
       );
 
@@ -114,9 +114,9 @@ describe('Experiment Tracking', () => {
         });
 
       // Action
-      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="experiments-metrics-select-dropdown"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
-      cy.get('[data-test="btnMetricsChange"]').click();
+      cy.get('[data-test="experiments-metrics-select-dropdown-apply-btn"]').click();
 
       // Assert after action
       cy.get('.time-series__metric-name')
@@ -167,9 +167,9 @@ describe('Experiment Tracking', () => {
         .and('eq', plotToCheckText);
 
       // Action
-      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="experiments-metrics-select-dropdown"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
-      cy.get('[data-test="btnMetricsChange"]').click();
+      cy.get('[data-test="experiments-metrics-select-dropdown-apply-btn"]').click();
 
       // Assert after action
       cy.get(`.metric-axis`)

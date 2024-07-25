@@ -1,10 +1,11 @@
 // All E2E Tests Related to Flowchart Menu goes here.
 
-import { prettifyName } from '../../../../src/utils';
-
 describe('Flowchart Menu', () => {
   beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
+    cy.wait(500);
+    cy.get('.feature-hints__close').click(); // Close the feature hints so can click on a node
+    cy.wait(500);
   });
 
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
@@ -52,9 +53,8 @@ describe('Flowchart Menu', () => {
   });
 
   it('verifies that users can search/filter for a flowchart component using the search box. #TC-17', () => {
-    cy.wait(2000);
-    const searchInput = 'ingestion';
-    cy.get('.search-input__field').type(searchInput);
+    const searchInput = 'Ingestion';
+    cy.get('.search-input__field').type(searchInput, { force: true });
 
     // Pipeline Label in the Menu
     cy.get('.pipeline-nodelist__row__label')
@@ -72,7 +72,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToClickText}]`
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToClickText}]`
     )
       .should('exist')
       .as('nodeToClick');
@@ -91,7 +91,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToHighlightText}]`
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToHighlightText}]`
     )
       .should('exist')
       .as('nodeToHighlight');
@@ -121,7 +121,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.__checkForText__(
-      `[data-test=node-${nodeToToggleText}] > .pipeline-nodelist__row__label--faded`,
+      `[data-test=nodelist-data-${nodeToToggleText}] > .pipeline-nodelist__row__label--faded`,
       nodeToToggleText
     );
     cy.get('.pipeline-node__text').should('not.contain', nodeToToggleText);
@@ -145,7 +145,7 @@ describe('Flowchart Menu', () => {
       .invoke('text')
       .then((focusedNodesText) =>
         expect(focusedNodesText.toLowerCase()).to.contains(
-          prettifyName(nodeToFocusText).toLowerCase()
+          nodeToFocusText
         )
       );
     cy.get('.pipeline-node--active > .pipeline-node__text').should(
@@ -168,7 +168,7 @@ describe('Flowchart Menu', () => {
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
     cy.get(
-      `[data-test=node-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
     )
       .should('not.have.class', 'pipeline-nodelist__row__label--faded')
       .should('not.have.class', 'pipeline-nodelist__row__label--disabled');
@@ -178,7 +178,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.get(
-      `[data-test=node-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
     )
       .should('have.class', 'pipeline-nodelist__row__label--faded')
       .should('have.class', 'pipeline-nodelist__row__label--disabled');

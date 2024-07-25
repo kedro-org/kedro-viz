@@ -4,7 +4,11 @@ import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
-import { loadNodeData, toggleNodeHovered } from '../../actions/nodes';
+import {
+  loadNodeData,
+  toggleNodeHovered,
+  toggleNodeClicked,
+} from '../../actions/nodes';
 import {
   applyFilters,
   filterNodes,
@@ -35,7 +39,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
-import { SlicePipelineAction } from './components/slice-pipeline-action/slice-pipeline-action';
+import { FilteredPipelineActionBar } from './components/filtered-pipeline-action-bar/filtered-pipeline-action-bar';
 import './styles/flowchart.scss';
 
 /**
@@ -488,8 +492,11 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeClick = (event, node) => {
-    if (node.type === 'modularPipeline') {
-      this.props.onClickToExpandModularPipeline(node.id);
+    const { type, id } = node;
+    const { onClickToExpandModularPipeline } = this.props;
+
+    if (type === 'modularPipeline') {
+      onClickToExpandModularPipeline(id);
     } else {
       this.handleSingleNodeClick(node);
 
@@ -504,8 +511,16 @@ export class FlowChart extends Component {
   };
 
   handleSingleNodeClick = (node) => {
-    this.props.onLoadNodeData(node.id);
-    this.props.toSelectedNode(node);
+    const { id } = node;
+    const {
+      displayMetadataPanel,
+      onLoadNodeData,
+      onToggleNodeClicked,
+      toSelectedNode,
+    } = this.props;
+
+    displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+    toSelectedNode(node);
 
     const { from, to } = this.state.filteredPipelineState;
     // On single node clicked, if both 'from' and 'to' nodes are already selected, reset them to null.
@@ -714,7 +729,8 @@ export class FlowChart extends Component {
   render() {
     const {
       chartSize,
-      displayGlobalToolbar,
+      displayGlobalNavigation,
+      displaySidebar,
       isFiltersApplied,
       layers,
       onApplyFilters,
@@ -780,12 +796,13 @@ export class FlowChart extends Component {
           className={classnames('pipeline-flowchart__layer-names', {
             'pipeline-flowchart__layer-names--visible': layers.length,
             'pipeline-flowchart__layer-names--no-global-toolbar':
-              !displayGlobalToolbar,
+              !displayGlobalNavigation,
+            'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
           })}
           ref={this.layerNamesRef}
         />
         <div ref={this.sliceButtonRef}>
-          <SlicePipelineAction
+          <FilteredPipelineActionBar
             chartSize={chartSize}
             filteredPipeline={filteredPipelineState.range}
             isFiltersApplied={isFiltersApplied}
@@ -824,7 +841,9 @@ export const mapStateToProps = (state, ownProps) => ({
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),
   chartZoom: getChartZoom(state),
-  displayGlobalToolbar: state.display.globalToolbar,
+  displayGlobalNavigation: state.display.globalNavigation,
+  displaySidebar: state.display.sidebar,
+  displayMetadataPanel: state.display.metadataPanel,
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
@@ -855,6 +874,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onLoadNodeData: (nodeClicked) => {
     dispatch(loadNodeData(nodeClicked));
+  },
+  onToggleNodeClicked: (id) => {
+    dispatch(toggleNodeClicked(id));
   },
   onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));

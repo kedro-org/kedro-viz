@@ -6,13 +6,14 @@ describe('Flowchart DAG', () => {
 
   beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
+    cy.wait(500);
+    cy.get('.feature-hints__close').click(); // Close the feature hints so can click on a node
+    cy.wait(500);
   });
 
   it('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
     const modularPipelineText = 'feature_engineering';
-    const taskNodeText = 'Create Derived Features';
-
-    cy.enablePrettyNames();
+    const taskNodeText = 'create_derived_features';
 
     // Assert before action
     cy.get('.pipeline-node > .pipeline-node__text').should(
@@ -58,7 +59,7 @@ describe('Flowchart DAG', () => {
 
     // Action
     cy.get('.pipeline-node.pipeline-node--task').first().click();
-    cy.get('[data-test="pipeline-toggle-input-code"]').check({ force: true });
+    cy.get('[data-test*="metadata-code-toggle-"]').check({ force: true });
 
     // Assert after action
     cy.get('.pipeline-metadata-code--visible').should('exist');
@@ -216,13 +217,13 @@ describe('Flowchart DAG', () => {
 
     // Assert after action
     cy.get('[data-label="Dataset statistics:"]').should('exist');
-    cy.get('[data-test=stats-value-rows]')
+    cy.get('[data-test=metadata-stats-value-rows]')
       .invoke('text')
       .should((rowsValue) => expect(rowsValue).to.be.eq('77,096'));
-    cy.get('[data-test=stats-value-columns]')
+    cy.get('[data-test=metadata-stats-value-columns]')
       .invoke('text')
       .should((colsValue) => expect(parseInt(colsValue)).to.be.eq(5));
-    cy.get('[data-test=stats-value-file_size]')
+    cy.get('[data-test=metadata-stats-value-file_size]')
       .invoke('text')
       .should((fileSizeValue) => expect(fileSizeValue).to.be.eq('1.8MB'));
   });

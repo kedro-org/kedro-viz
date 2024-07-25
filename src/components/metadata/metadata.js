@@ -152,6 +152,7 @@ const MetaData = ({
               {showCodeSwitch && (
                 <Toggle
                   id="code"
+                  dataTest={`metadata-code-toggle-${visibleCode}`}
                   checked={visibleCode}
                   enabled={hasCode}
                   title="Show Code"
@@ -248,7 +249,9 @@ const MetaData = ({
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier
                     command={runCommand}
+                    classNames={'pipeline-metadata__value'}
                     isCommand={metadata?.runCommand}
+                    dataTest={'metadata-copy-command'}
                   />
                 </MetaDataRow>
                 {isDataNode && (

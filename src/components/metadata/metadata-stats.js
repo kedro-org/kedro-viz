@@ -31,7 +31,7 @@ const MetaDataStats = ({ stats }) => {
         <React.Fragment key={statLabel}>
           <li
             className="pipeline-metadata__value pipeline-metadata-value__stats"
-            data-test={`stats-value-${statLabel}`}
+            data-test={`metadata-stats-value-${statLabel}`}
           >
             {stats?.hasOwnProperty(statLabel)
               ? statLabel !== 'file_size'
@@ -41,7 +41,7 @@ const MetaDataStats = ({ stats }) => {
           </li>
           <span
             className="pipeline-metadata__label pipeline-metadata-label__stats"
-            data-test={`stats-label-${statLabel}`}
+            data-test={`metadata-stats-label-${statLabel}`}
           >
             {statLabel && statLabel.replace(/_/g, ' ')}
           </span>

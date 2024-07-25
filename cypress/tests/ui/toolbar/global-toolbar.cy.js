@@ -10,7 +10,7 @@ describe('Global Toolbar', () => {
 
   it('verifies that users can access the flowchart page through the flowchart icon, when in the experiment tracking view. #TC-1', () => {
     cy.visit('/experiment-tracking');
-    cy.get('[data-test="View your pipeline"]').click();
+    cy.get('[data-test="global-toolbar-flowchart-btn"]').click();
     cy.location('pathname').should('eq', '/');
 
     // should exist
@@ -21,7 +21,7 @@ describe('Global Toolbar', () => {
   });
 
   it('verifies that users can access the experiment tracking page through the experiment tracking button, when in the flowchart view. #TC-2', () => {
-    cy.get('[data-test="View your experiments"]').click();
+    cy.get('[data-test="global-toolbar-experiments-btn"]').click();
     cy.location('pathname').should('eq', '/experiment-tracking');
 
     // should exist
@@ -33,7 +33,7 @@ describe('Global Toolbar', () => {
 
   it('verifies that users can change the theme from light to dark theme, or dark to light theme. #TC-3', () => {
     // Alias
-    cy.get('[data-test="Toggle Theme"]').as('toggleTheme');
+    cy.get('[data-test*="global-toolbar-theme-btn-"]').as('toggleTheme');
 
     // Assert before action
     cy.get('.kui-theme--dark').should('exist');
@@ -48,7 +48,7 @@ describe('Global Toolbar', () => {
   });
 
   it('verifies that users can access the settings panel with the settings button. #TC-4', () => {
-    cy.get('[data-test="Change the settings flags"]').click();
+    cy.get('[data-test="global-toolbar-settings-btn"]').click();
     cy.get('.pipeline-settings-modal > [role="dialog"]')
       .should('be.visible')
       .then(($dialog) => {
@@ -69,10 +69,11 @@ describe('Global Toolbar', () => {
       const prettyNodeNameText = prettifyName(
         stripNamespace(originalNodeNameText)
       );
+      const nodeNameType = 'plotly'
       const modularPipelineText = 'reporting';
 
       // Alias
-      cy.get('[data-test="pipeline-toggle-input-isPrettyName"]').as(
+      cy.get('[data-test*="settings-modal-toggle-isPrettyName-"]').as(
         'isPrettyNameCheckbox'
       );
 
@@ -80,14 +81,14 @@ describe('Global Toolbar', () => {
       cy.get('@isPrettyNameCheckbox').should('be.checked');
 
       // Menu
-      cy.get(`[data-test="node-${prettifyName(modularPipelineText)}"]`).click();
-      cy.get(`[data-test="node-${prettyNodeNameText}"]`).should('exist');
+      cy.get(`[data-test="nodelist-modularPipeline-${prettifyName(modularPipelineText)}"]`).click();
+      cy.get(`[data-test="nodelist-${nodeNameType}-${prettyNodeNameText}"]`).should('exist');
 
       // Flowchart
       cy.get('.pipeline-node__text').should('contain', prettyNodeNameText);
 
       // Metadata
-      cy.get(`[data-test="node-${prettyNodeNameText}"]`).click({ force: true });
+      cy.get(`[data-test="nodelist-${nodeNameType}-${prettyNodeNameText}"]`).click({ force: true });
       cy.get('.pipeline-metadata__title').should(
         'have.text',
         prettyNodeNameText
@@ -98,14 +99,14 @@ describe('Global Toolbar', () => {
 
       // Action
       cy.get('@isPrettyNameCheckbox').uncheck({ force: true });
-      cy.get('[data-test="Apply changes and close in Settings Modal"]').click({
+      cy.get('[data-test="settings-modal-apply-btn"]').click({
         force: true,
       });
 
       // Assert after action
       cy.__waitForPageLoad__(() => {
         // Menu
-        cy.get(`[data-test="node-${originalNodeNameText}"]`).should('exist');
+        cy.get(`[data-test="nodelist-${nodeNameType}-${originalNodeNameText}"]`).should('exist');
 
         // Flowchart
         cy.get('.pipeline-node__text').should('contain', originalNodeNameText);
@@ -123,7 +124,7 @@ describe('Global Toolbar', () => {
 
     it('verifies that users can show a warning before rendering very large graphs. #TC-6', () => {
       // Alias
-      cy.get('[data-test="pipeline-toggle-input-sizewarning"]').as(
+      cy.get('[data-test="settings-modal-toggle-sizewarning-true"]').as(
         'isSizeWarning'
       );
 
@@ -142,7 +143,7 @@ describe('Global Toolbar', () => {
 
       // Action
       cy.get('@isSizeWarning').uncheck({ force: true });
-      cy.get('[data-test="Apply changes and close in Settings Modal"]').click({
+      cy.get('[data-test="settings-modal-apply-btn"]').click({
         force: true,
       });
 
@@ -157,7 +158,7 @@ describe('Global Toolbar', () => {
       const modularPipelineChildNodeText = 'Create Derived Features';
 
       // Alias for better readability
-      cy.get('[data-test="expand-all-pipelines-toggle"]').as('expandAllPipelinesToggle');
+      cy.get('[data-test*="sidebar-flowchart-expand-pipeline-btn-"]').as('expandAllPipelinesToggle');
 
       // Assert before action
       cy.get('@expandAllPipelinesToggle').should('not.be.checked');
