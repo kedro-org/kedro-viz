@@ -146,7 +146,7 @@ describe('Reducer', () => {
     it('should update the value of showDatasetPreviews', () => {
       const newState = reducer(mockState.spaceflights, {
         type: UPDATE_USER_PREFERENCES,
-        payload: { preferences: { showDatasetPreviews: true } },
+        payload: { showDatasetPreviews: true },
       });
       expect(mockState.spaceflights.userPreferences.showDatasetPreviews).toBe(
         true

@@ -9,7 +9,7 @@ const userPreferences = (state = initialState, action) => {
     case UPDATE_USER_PREFERENCES:
       return {
         ...state,
-        showDatasetPreviews: action.payload.preferences.showDatasetPreviews,
+        showDatasetPreviews: action.payload.showDatasetPreviews,
       };
     default:
       return state;

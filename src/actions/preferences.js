@@ -6,7 +6,7 @@ export const UPDATE_USER_PREFERENCES = 'UPDATE_USER_PREFERENCES';
 // Action Creators
 export const updateUserPreferences = (preferences) => ({
   type: UPDATE_USER_PREFERENCES,
-  payload: { preferences },
+  payload: preferences,
 });
 
 export const getPreferences = () => async (dispatch) => {
