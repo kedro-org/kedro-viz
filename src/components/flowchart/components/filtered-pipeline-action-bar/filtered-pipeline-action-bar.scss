@@ -2,49 +2,121 @@
 
 .kui-theme--light {
   --filtered-pipeline-action-bar--background: #{colors.$slate-200};
+  --filtered-pipeline-action-bar--code-background: #{colors.$black-900};
   --filtered-pipeline-action-bar--color: #{colors.$white-0};
   --filtered-pipeline-action-bar--color-faded: #{colors.$white-800};
 }
 
 .kui-theme--dark {
   --filtered-pipeline-action-bar--background: #{colors.$white-0};
+  --filtered-pipeline-action-bar--code-background: #{colors.$white-200};
   --filtered-pipeline-action-bar--color: #{colors.$black-900};
   --filtered-pipeline-action-bar--color-faded: #{colors.$black-200};
 }
 
 $padding-top-bottom: 8px;
 $padding-right-left: 16px;
+$inner-gap: 12px;
 
-.pipeline-flowchart_slice-action {
+.filtered-pipeline-action-bar {
   background-color: var(--filtered-pipeline-action-bar--background);
   border-radius: 4px;
   bottom: 30px;
   display: flex;
   margin: 0;
-  padding: 0;
   position: absolute;
   transition: transform ease 0.7s;
+  padding: $padding-top-bottom $padding-right-left;
+
+  // create a ticket to investigate why there are so many opacities on button component
+  .pipeline-icon-toolbar__button {
+    opacity: 1;
+
+    svg {
+      fill: var(--filtered-pipeline-action-bar--color);
+      opacity: 1;
+    }
+  }
 }
 
-.pipeline-flowchart_slice-action--info {
+.filtered-pipeline-action-bar--info {
   align-items: center;
-  border-right: 1px solid #d9dcde;
   color: var(--filtered-pipeline-action-bar--color-faded);
   display: flex;
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  padding: $padding-top-bottom $padding-right-left;
 }
 
-.pipeline-flowchart_slice-action--cta {
-  padding: $padding-top-bottom $padding-right-left;
+.filtered-pipeline-action-bar--run-command {
+  display: flex;
+  padding: 0 $padding-right-left;
+  width: 780px;
+
+  .container {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .command-value {
+    color: var(--filtered-pipeline-action-bar--color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-x: scroll;
+    background-color: var(--filtered-pipeline-action-bar--code-background);
+    padding: $padding-top-bottom $inner-gap;
+  }
+
+  .toolbox {
+    margin-left: 10px;
+  }
+}
+
+.filtered-pipeline-action-bar--cta {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: $padding-top-bottom $inner-gap;
+  border: 1px solid var(--filtered-pipeline-action-bar--color);
+  border-radius: 4px;
+}
+
+.filtered-pipeline-action-bar--reset {
+  background: #f03b3a;
 
   .button__btn {
-    border: none;
-    color: var(--filtered-pipeline-action-bar--color);
     font-size: 14px;
     padding: 0;
-    width: 65px;
+    border: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+}
+
+.filtered-pipeline-action-bar--slice {
+  cursor: pointer;
+
+  .pipeline-icon--container {
+    list-style-type: none;
+  }
+
+  .pipeline-icon {
+    width: 24px;
+    height: 24px;
+
+    path {
+      fill: var(--filtered-pipeline-action-bar--color);
+    }
+  }
+
+  .filtered-pipeline-action-bar--slice-text {
+    font-size: 14px;
+    color: var(--filtered-pipeline-action-bar--color);
+    font-weight: 600;
+    margin-left: 10px;
   }
 }

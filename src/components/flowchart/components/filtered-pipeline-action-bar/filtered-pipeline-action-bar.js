@@ -21,33 +21,33 @@ export const FilteredPipelineActionBar = ({
   if (filteredPipeline.length > 0) {
     return (
       <div
-        className="pipeline-flowchart_slice-action"
+        className="filtered-pipeline-action-bar"
         style={{ transform: `translateX(${transformX}px)` }}
       >
-        <div className="pipeline-flowchart_slice-action--info">
+        <div className="filtered-pipeline-action-bar--info">
           {`${filteredPipeline.length} ${
             isFiltersApplied ? 'sliced' : 'selected'
           }`}
         </div>
-        <div className="pipeline-flowchart_slice-action--run-command">
+        <div className="filtered-pipeline-action-bar--run-command">
           <CommandCopier command={runCommand} isCommand={true} />
         </div>
         {isFiltersApplied ? (
-          <div className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--reset">
+          <div className="filtered-pipeline-action-bar--cta filtered-pipeline-action-bar--reset">
             <Button onClick={onResetFilters}>Reset slice</Button>
           </div>
         ) : (
           <div
-            className="pipeline-flowchart_slice-action--cta pipeline-flowchart_slice-action--slice"
+            className="filtered-pipeline-action-bar--cta filtered-pipeline-action-bar--slice"
             onClick={onApplyFilters}
           >
             <IconButton
               ariaLabel="Copy run command to clipboard."
               className="copy-button"
-              dataHeapEvent={`clicked.run_command`}
+              dataTest={`clicked.run_command`}
               icon={CutIcon}
             />
-            <span className="pipeline-flowchart_slice-action--slice-text">
+            <span className="filtered-pipeline-action-bar--slice-text">
               Slice
             </span>
           </div>
