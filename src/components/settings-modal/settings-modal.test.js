@@ -45,6 +45,7 @@ describe('SettingsModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
+      showDatasetPreviews: expect.any(Boolean),
       flags: expect.any(Object),
       isPrettyName: expect.any(Boolean),
       showFeatureHints: expect.any(Boolean),
@@ -72,6 +73,12 @@ describe('SettingsModal', () => {
     expect(dispatch.mock.calls[2][0]).toEqual({
       type: 'TOGGLE_IS_PRETTY_NAME',
       isPrettyName: false,
+    });
+
+    mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(false);
+    expect(dispatch.mock.calls[3][0]).toEqual({
+      type: 'UPDATE_USER_PREFERENCES',
+      payload: { showDatasetPreviews: false },
     });
   });
 });

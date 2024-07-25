@@ -36,6 +36,7 @@ import {
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
+import { UPDATE_USER_PREFERENCES } from '../actions/preferences';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -138,6 +139,19 @@ describe('Reducer', () => {
       });
       expect(mockState.spaceflights.showFeatureHints).toBe(true);
       expect(newState.showFeatureHints).toBe(true);
+    });
+  });
+
+  describe('UPDATE_USER_PREFERENCES', () => {
+    it('should update the value of showDatasetPreviews', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_USER_PREFERENCES,
+        payload: { showDatasetPreviews: true },
+      });
+      expect(mockState.spaceflights.userPreferences.showDatasetPreviews).toBe(
+        true
+      );
+      expect(newState.userPreferences.showDatasetPreviews).toBe(true);
     });
   });
 
