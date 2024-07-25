@@ -15,7 +15,7 @@
 $padding-top-bottom: 8px;
 $padding-right-left: 16px;
 
-.pipeline-flowchart_slice-action {
+.filtered-pipeline-action-bar {
   background-color: var(--filtered-pipeline-action-bar--background);
   border-radius: 4px;
   bottom: 30px;
@@ -26,7 +26,7 @@ $padding-right-left: 16px;
   transition: transform ease 0.7s;
 }
 
-.pipeline-flowchart_slice-action--info {
+.filtered-pipeline-action-bar--info {
   align-items: center;
   border-right: 1px solid #d9dcde;
   color: var(--filtered-pipeline-action-bar--color-faded);
@@ -37,7 +37,7 @@ $padding-right-left: 16px;
   padding: $padding-top-bottom $padding-right-left;
 }
 
-.pipeline-flowchart_slice-action--cta {
+.filtered-pipeline-action-bar--cta {
   padding: $padding-top-bottom $padding-right-left;
 
   .button__btn {
