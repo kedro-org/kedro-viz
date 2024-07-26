@@ -15,7 +15,7 @@ import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
-import { getFilteredPipeline } from '../../selectors/filtered-pipeline';
+import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
 
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
@@ -121,7 +121,7 @@ const TreeListProvider = ({
   disabledModularPipeline,
   expanded,
   onToggleNodeSelected,
-  filteredPipeline,
+  slicedPipeline,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
@@ -143,7 +143,7 @@ const TreeListProvider = ({
 
     const selected = nodeSelected[node.id];
 
-    const highlight = filteredPipeline.includes(node.id);
+    const highlight = slicedPipeline.includes(node.id);
     const data = getNodeRowData(node, disabled, selected, highlight);
 
     return (
@@ -246,7 +246,7 @@ const TreeListProvider = ({
 export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
-  filteredPipeline: getFilteredPipeline(state),
+  slicedPipeline: getSlicedPipeline(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

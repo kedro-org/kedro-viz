@@ -2,7 +2,7 @@ import { mockState } from '../utils/state.mock';
 import reducer from '../reducers';
 
 import { FILTER_NODES } from '../actions/filters';
-import { getFilteredPipeline } from './filtered-pipeline';
+import { getSlicedPipeline } from './filtered-pipeline';
 
 describe('Selectors', () => {
   it('return a filteredPipeline array with any node in between', () => {
@@ -15,7 +15,7 @@ describe('Selectors', () => {
       filters: { from: fromNode, to: toNode },
     });
 
-    const res = getFilteredPipeline(newState);
+    const res = getSlicedPipeline(newState);
     expect(res).toEqual(expected);
   });
 
@@ -28,7 +28,7 @@ describe('Selectors', () => {
       filters: { from: fromNode, to: toNode },
     });
 
-    const res = getFilteredPipeline(newState);
+    const res = getSlicedPipeline(newState);
     expect(res).toEqual([fromNode, toNode]);
   });
 });
