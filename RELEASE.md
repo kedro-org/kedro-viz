@@ -30,8 +30,8 @@ Please follow the established format:
 - Adjust requirements file and dependabot versioning strategy. (#1978)
 - Refactor CommandCopier component. (#1998)
 - Set `isPrettyName` toggle to False by Default. (#1958)
-- Add `-p` cli option for `kedro viz` to align with kedro pipeline options. (#1961)
-- Replace `data-heap-event` with standardized `data-test` for Cypress and Telemetry. (#1995)
+- Add `-p` argument option for `kedro viz` to align with kedro pipeline options. (#1961)
+- Replace `data-heap-event` with standardised `data-test` for Cypress and Telemetry. (#1995)
 
 ## Community contributions
 
