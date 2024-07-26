@@ -56,6 +56,7 @@ export class FlowChart extends Component {
         to: null,
         range: [],
       },
+      showNotification: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -528,11 +529,13 @@ export class FlowChart extends Component {
     // then on a single node click, it should reset the filtered pipeline state
     if (from !== null && to !== null) {
       this.updateFilteredPipelineState(null, null, []);
+      this.setState({ showNotification: false }); // Hide notification
     } else {
       // Else, set the first node as the 'from' node based on current state
       // we need this so that if user hold shift and click on a second node,
       // the 'from' node is already set
       this.updateFilteredPipelineState(id, to, range);
+      this.setState({ showNotification: true }); // Show notification
     }
 
     // Reset the filterNodes on single node click
@@ -556,6 +559,8 @@ export class FlowChart extends Component {
 
     this.props.onFilterNodes(fromNodeId, toNodeId);
     this.props.onApplyFilters(false);
+
+    this.setState({ showNotification: false }); // Hide notification after selecting the second node
   };
 
   /**
@@ -577,6 +582,7 @@ export class FlowChart extends Component {
     if (this.props.filteredPipeline && !isSliceButtonClicked) {
       this.props.onResetFilterNodes();
       this.updateFilteredPipelineState(null, null, []);
+      this.setState({ showNotification: false }); // Hide notification when clicking away
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -711,6 +717,17 @@ export class FlowChart extends Component {
   /**
    * Render React elements
    */
+  renderNotification() {
+    if (this.state.showNotification) {
+      return (
+        <div className="notification">
+          Hold Shift + Click on another node to slice pipeline
+        </div>
+      );
+    }
+    return null;
+  }
+
   render() {
     const {
       chartSize,
@@ -727,6 +744,7 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
+        {this.renderNotification()}
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
