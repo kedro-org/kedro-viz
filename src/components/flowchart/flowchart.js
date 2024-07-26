@@ -10,10 +10,10 @@ import {
   toggleNodeClicked,
 } from '../../actions/nodes';
 import {
-  applyFilters,
-  filterNodes,
-  resetFilterNodes,
-} from '../../actions/filters';
+  applySlice,
+  slicePipeline,
+  resetSlicePipeline,
+} from '../../actions/slice';
 import {
   getNodeActive,
   getNodeSelected,
@@ -98,7 +98,7 @@ export class FlowChart extends Component {
   }
 
   /**
-   *  Updates the state of the filtered pipeline with new values for 'from', 'to', and 'range'.
+   *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
    */
   updateSlicedPipelineState(from, to, range) {
     this.setState({
@@ -525,7 +525,7 @@ export class FlowChart extends Component {
 
     const { from, to, range } = this.state.slicedPipelineState;
     // if both "from" and "to" are defined
-    // then on a single node click, it should reset the filtered pipeline state
+    // then on a single node click, it should reset the sliced pipeline state
     if (from !== null && to !== null) {
       this.updateSlicedPipelineState(null, null, []);
     } else {
@@ -535,8 +535,8 @@ export class FlowChart extends Component {
       this.updateSlicedPipelineState(id, to, range);
     }
 
-    // Reset the filterNodes on single node click
-    this.props.onFilterNodes(null, null);
+    // Reset the slicePipeline on single node click
+    this.props.onSlicePipeline(null, null);
   };
 
   handleShiftClick = (node) => {
@@ -554,8 +554,8 @@ export class FlowChart extends Component {
 
     this.setState({ slicedPipelineState: newState });
 
-    this.props.onFilterNodes(fromNodeId, toNodeId);
-    this.props.onApplyFilters(false);
+    this.props.onSlicePipeline(fromNodeId, toNodeId);
+    this.props.onApplySlice(false);
   };
 
   /**
@@ -573,9 +573,9 @@ export class FlowChart extends Component {
       this.slicedPipelineActionRef.current &&
       this.slicedPipelineActionRef.current.contains(event.target);
 
-    // Check if the pipeline is filtered, no slice button is clicked, and no filters are applied
+    // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
     if (this.props.slicedPipeline && !isSliceButtonClicked) {
-      this.props.onResetFilterNodes();
+      this.props.onResetSlicePipeline();
       this.updateSlicedPipelineState(null, null, []);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
@@ -861,14 +861,14 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
-  onApplyFilters: (apply) => {
-    dispatch(applyFilters(apply));
+  onApplySlice: (apply) => {
+    dispatch(applySlice(apply));
   },
-  onFilterNodes: (fromID, toID) => {
-    dispatch(filterNodes(fromID, toID));
+  onSlicePipeline: (fromID, toID) => {
+    dispatch(slicePipeline(fromID, toID));
   },
-  onResetFilterNodes: () => {
-    dispatch(resetFilterNodes());
+  onResetSlicePipeline: () => {
+    dispatch(resetSlicePipeline());
   },
   ...ownProps,
 });

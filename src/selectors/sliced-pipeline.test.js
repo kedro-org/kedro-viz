@@ -1,8 +1,8 @@
 import { mockState } from '../utils/state.mock';
 import reducer from '../reducers';
 
-import { FILTER_NODES } from '../actions/filters';
-import { getSlicedPipeline } from './filtered-pipeline';
+import { SLICE_PIPELINE } from '../actions/slice';
+import { getSlicedPipeline } from './sliced-pipeline';
 
 describe('Selectors', () => {
   it('return a filteredPipeline array with any node in between', () => {
@@ -11,8 +11,8 @@ describe('Selectors', () => {
 
     const expected = ['23c94afb', '47b81aa6', 'data_processing'];
     const newState = reducer(mockState.spaceflights, {
-      type: FILTER_NODES,
-      filters: { from: fromNode, to: toNode },
+      type: SLICE_PIPELINE,
+      slice: { from: fromNode, to: toNode },
     });
 
     const res = getSlicedPipeline(newState);
@@ -24,8 +24,8 @@ describe('Selectors', () => {
     const toNode = 'f1f1425b';
 
     const newState = reducer(mockState.spaceflights, {
-      type: FILTER_NODES,
-      filters: { from: fromNode, to: toNode },
+      type: SLICE_PIPELINE,
+      slice: { from: fromNode, to: toNode },
     });
 
     const res = getSlicedPipeline(newState);
