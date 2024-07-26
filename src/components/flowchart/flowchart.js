@@ -717,17 +717,6 @@ export class FlowChart extends Component {
   /**
    * Render React elements
    */
-  renderNotification() {
-    if (this.state.showSlicingNotification) {
-      return (
-        <div className="slicing-notification">
-          Hold Shift + Click on another node to slice pipeline
-        </div>
-      );
-    }
-    return null;
-  }
-
   render() {
     const {
       chartSize,
@@ -737,14 +726,18 @@ export class FlowChart extends Component {
       displaySidebar,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { slicedPipelineState } = this.state;
+    const { slicedPipelineState, showSlicingNotification } = this.state;
     return (
       <div
         className="pipeline-flowchart kedro"
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        {this.renderNotification()}
+        <SlicedPipelineActionBar
+          chartSize={chartSize}
+          slicedPipeline={slicedPipelineState.range}
+          notification={showSlicingNotification}
+        />
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
