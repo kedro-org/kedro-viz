@@ -56,7 +56,7 @@ export class FlowChart extends Component {
         to: null,
         range: [],
       },
-      showNotification: false,
+      showSlicingNotification: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -529,13 +529,13 @@ export class FlowChart extends Component {
     // then on a single node click, it should reset the sliced pipeline state
     if (from !== null && to !== null) {
       this.updateSlicedPipelineState(null, null, []);
-      this.setState({ showNotification: false }); // Hide notification   
+      this.setState({ showSlicingNotification: false }); // Hide notification
     } else {
       // Else, set the first node as the 'from' node based on current state
       // we need this so that if user hold shift and click on a second node,
       // the 'from' node is already set
       this.updateSlicedPipelineState(id, to, range);
-      this.setState({ showNotification: true }); // Show notification
+      this.setState({ showSlicingNotification: true }); // Show notification
     }
 
     // Reset the slicePipeline on single node click
@@ -559,8 +559,8 @@ export class FlowChart extends Component {
 
     this.props.onSlicePipeline(fromNodeId, toNodeId);
     this.props.onApplySlice(false);
-    
-    this.setState({ showNotification: false }); // Hide notification after selecting the second node
+
+    this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
   };
 
   /**
@@ -582,7 +582,7 @@ export class FlowChart extends Component {
     if (this.props.slicedPipeline && !isSliceButtonClicked) {
       this.props.onResetSlicePipeline();
       this.updateSlicedPipelineState(null, null, []);
-      this.setState({ showNotification: false }); // Hide notification when clicking away
+      this.setState({ showSlicingNotification: false }); // Hide notification when clicking away
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -718,9 +718,9 @@ export class FlowChart extends Component {
    * Render React elements
    */
   renderNotification() {
-    if (this.state.showNotification) {
+    if (this.state.showSlicingNotification) {
       return (
-        <div className="notification">
+        <div className="slicing-notification">
           Hold Shift + Click on another node to slice pipeline
         </div>
       );
