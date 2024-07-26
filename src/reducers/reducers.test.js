@@ -22,7 +22,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
-import { FILTER_NODES, RESET_FILTER_NODES } from '../actions/filters';
+import { SLICE_PIPELINE, RESET_SLICE_PIPELINE } from '../actions/slice';
 import {
   TOGGLE_NODE_CLICKED,
   TOGGLE_NODES_DISABLED,
@@ -92,26 +92,26 @@ describe('Reducer', () => {
     });
   });
 
-  describe('FILTER_NODES', () => {
+  describe('SLICE_PIPELINE', () => {
     it('should add nodes to filters list, with from and to', () => {
       const fromNode = 'abc123';
       const toNode = 'def456';
       const newState = reducer(mockState.spaceflights, {
-        type: FILTER_NODES,
-        filters: { from: fromNode, to: toNode },
+        type: SLICE_PIPELINE,
+        slice: { from: fromNode, to: toNode },
       });
-      expect(newState.filters.from).toEqual(fromNode);
-      expect(newState.filters.to).toEqual(toNode);
+      expect(newState.slice.from).toEqual(fromNode);
+      expect(newState.slice.to).toEqual(toNode);
     });
   });
 
-  describe('RESET_FILTER_NODES', () => {
+  describe('RESET_SLICE_PIPELINE', () => {
     it('should reset the filters', () => {
       const newState = reducer(mockState.spaceflights, {
-        type: RESET_FILTER_NODES,
+        type: RESET_SLICE_PIPELINE,
       });
-      expect(newState.filters.from).toEqual(undefined);
-      expect(newState.filters.to).toEqual(undefined);
+      expect(newState.slice.from).toEqual(undefined);
+      expect(newState.slice.to).toEqual(undefined);
     });
   });
 

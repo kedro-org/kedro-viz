@@ -79,7 +79,7 @@ export const createInitialPipelineState = () => ({
     active: {},
     enabled: {},
   },
-  filters: {
+  slice: {
     from: null,
     to: null,
     apply: false,
