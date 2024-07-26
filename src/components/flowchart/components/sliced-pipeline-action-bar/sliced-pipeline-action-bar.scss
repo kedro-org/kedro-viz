@@ -1,22 +1,22 @@
 @use '../../../../styles/variables' as colors;
 
 .kui-theme--light {
-  --filtered-pipeline-action-bar--background: #{colors.$slate-200};
-  --filtered-pipeline-action-bar--color: #{colors.$white-0};
-  --filtered-pipeline-action-bar--color-faded: #{colors.$white-800};
+  --sliced-pipeline-action-bar--background: #{colors.$slate-200};
+  --sliced-pipeline-action-bar--color: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
 }
 
 .kui-theme--dark {
-  --filtered-pipeline-action-bar--background: #{colors.$white-0};
-  --filtered-pipeline-action-bar--color: #{colors.$black-900};
-  --filtered-pipeline-action-bar--color-faded: #{colors.$black-200};
+  --sliced-pipeline-action-bar--background: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
 }
 
 $padding-top-bottom: 8px;
 $padding-right-left: 16px;
 
-.filtered-pipeline-action-bar {
-  background-color: var(--filtered-pipeline-action-bar--background);
+.sliced-pipeline-action-bar {
+  background-color: var(--sliced-pipeline-action-bar--background);
   border-radius: 4px;
   bottom: 30px;
   display: flex;
@@ -26,10 +26,10 @@ $padding-right-left: 16px;
   transition: transform ease 0.7s;
 }
 
-.filtered-pipeline-action-bar--info {
+.sliced-pipeline-action-bar--info {
   align-items: center;
   border-right: 1px solid #d9dcde;
-  color: var(--filtered-pipeline-action-bar--color-faded);
+  color: var(--sliced-pipeline-action-bar--color-faded);
   display: flex;
   font-size: 14px;
   font-weight: 600;
@@ -37,12 +37,12 @@ $padding-right-left: 16px;
   padding: $padding-top-bottom $padding-right-left;
 }
 
-.filtered-pipeline-action-bar--cta {
+.sliced-pipeline-action-bar--cta {
   padding: $padding-top-bottom $padding-right-left;
 
   .button__btn {
     border: none;
-    color: var(--filtered-pipeline-action-bar--color);
+    color: var(--sliced-pipeline-action-bar--color);
     font-size: 14px;
     padding: 0;
     width: 65px;

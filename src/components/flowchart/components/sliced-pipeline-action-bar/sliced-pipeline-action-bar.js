@@ -11,13 +11,13 @@ export const SlicedPipelineActionBar = ({ chartSize, slicedPipeline }) => {
   if (slicedPipeline.length > 0) {
     return (
       <div
-        className="filtered-pipeline-action-bar"
+        className="sliced-pipeline-action-bar"
         style={{ transform: `translateX(${transformX}px)` }}
       >
-        <div className="filtered-pipeline-action-bar--info">
+        <div className="sliced-pipeline-action-bar--info">
           {`${slicedPipeline.length} selected`}
         </div>
-        <div className="filtered-pipeline-action-bar--cta">
+        <div className="sliced-pipeline-action-bar--cta">
           <Button>Slice</Button>
         </div>
       </div>

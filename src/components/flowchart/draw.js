@@ -266,11 +266,11 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
-        'pipeline-node--filtered-pipeline',
+        'pipeline-node--sliced-pipeline',
         (node) => slicedPipelineRange[node.id]
       )
       .classed(
-        'pipeline-node--from-to-filtered-pipeline',
+        'pipeline-node--from-to-sliced-pipeline',
         (node) => slicedPipelineFromTo[node.id]
       )
       .classed(
