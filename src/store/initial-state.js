@@ -24,6 +24,9 @@ export const createInitialState = () => ({
   expandAllPipelines: false,
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
+  userPreferences: {
+    showDatasetPreviews: settings.showDatasetPreviews.default,
+  },
   ignoreLargeWarning: false,
   loading: {
     graph: false,
