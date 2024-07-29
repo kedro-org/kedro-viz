@@ -69,7 +69,6 @@
 .pipeline-metadata__header {
   display: flex;
   justify-content: space-between;
-  margin-top: -0.12em;
 }
 
 .pipeline-metadata__header-toolbox {
@@ -77,7 +76,7 @@
   display: flex;
   flex-direction: column-reverse;
   justify-content: space-between;
-  margin: 3em 3.6em;
+  margin: 3.2em 3.6em;
   padding-right: 24px;
 }
 
@@ -261,12 +260,12 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__link-icon {
   width: 1.9em;
   height: 1.9em;
-  margin: 0 6px 0 36px;
+  margin: 0 0.8em 0 0;
   fill: var(--color-button-text);
 }
 
 .pipeline-metadata__link-text {
-  margin: 12px 10px 12px 5px;
+  margin: 18px 0;
   color: var(--color-button-text);
   font-size: 1.6em;
 }

@@ -284,7 +284,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Plotly Visualization
+                      Expand Preview
                     </span>
                   </button>
                 </>
@@ -307,7 +307,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Matplotlib Image
+                      Expand Preview
                     </span>
                   </button>
                 </>
@@ -346,7 +346,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview Table
+                      Expand Preview
                     </span>
                   </button>
                 </>
@@ -369,7 +369,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand JSON View
+                      Expand Preview
                     </span>
                   </button>
                 </>
