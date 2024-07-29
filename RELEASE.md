@@ -29,6 +29,14 @@ Please follow the established format:
 - Fix packaging. (#1766)
 - Adjust requirements file and dependabot versioning strategy. (#1978)
 - Refactor CommandCopier component. (#1998)
+- Set `isPrettyName` toggle to False by Default. (#1958)
+- Add `-p` argument option for `kedro viz` to align with kedro pipeline options. (#1961)
+- Replace `data-heap-event` with standardised `data-test` for Cypress and Telemetry. (#1995)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Vlad Cozma](https://github.com/VladCozma)
 
 # Release 9.1.0
 
