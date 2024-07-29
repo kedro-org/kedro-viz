@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import {
   changeFlag,
@@ -6,11 +6,16 @@ import {
   toggleIsPrettyName,
   toggleSettingsModal,
 } from '../../actions';
+import {
+  getPreferences,
+  updateUserPreferences,
+} from '../../actions/preferences';
 import { getFlagsState } from '../../utils/flags';
 import SettingsModalRow from './settings-modal-row';
 import { settings as settingsConfig, localStorageName } from '../../config';
 import { saveLocalStorage } from '../../store/helpers';
 import { localStorageKeyFeatureHintsStep } from '../../components/feature-hints/feature-hints';
+import { updatePreferences } from '../../utils/preferences-api';
 
 import Button from '../ui/button';
 import Modal from '../ui/modal';
@@ -27,11 +32,14 @@ const SettingsModal = ({
   showFeatureHints,
   isOutdated,
   isPrettyName,
+  showDatasetPreviews,
   latestVersion,
   onToggleFlag,
   onToggleShowFeatureHints,
   onToggleIsPrettyName,
+  onToggleShowDatasetPreviews,
   showSettingsModal,
+  getPreferences,
   visible,
 }) => {
   const flagData = getFlagsState();
@@ -40,11 +48,31 @@ const SettingsModal = ({
   const [isPrettyNameValue, setIsPrettyName] = useState(isPrettyName);
   const [showFeatureHintsValue, setShowFeatureHintsValue] =
     useState(showFeatureHints);
+  const [showDatasetPreviewsValue, setShowDatasetPreviewsValue] =
+    useState(showDatasetPreviews);
   const [toggleFlags, setToggleFlags] = useState(flags);
 
   useEffect(() => {
     setShowFeatureHintsValue(showFeatureHints);
   }, [showFeatureHints]);
+
+  useEffect(() => {
+    setShowDatasetPreviewsValue(showDatasetPreviews);
+  }, [showDatasetPreviews]);
+
+  useEffect(() => {
+    if (visible.settingsModal) {
+      getPreferences();
+    }
+  }, [visible.settingsModal, getPreferences]);
+
+  const handleSavePreferences = useCallback(async () => {
+    try {
+      await updatePreferences(showDatasetPreviewsValue);
+    } catch (error) {
+      console.error('Error updating preferences:', error);
+    }
+  }, [showDatasetPreviewsValue]);
 
   useEffect(() => {
     let modalTimeout, resetTimeout;
@@ -63,8 +91,10 @@ const SettingsModal = ({
           return onToggleFlag(name, value);
         });
 
+        handleSavePreferences();
         onToggleIsPrettyName(isPrettyNameValue);
         onToggleShowFeatureHints(showFeatureHintsValue);
+        onToggleShowDatasetPreviews(showDatasetPreviewsValue);
         setHasNotInteracted(true);
         setHasClickApplyAndClose(false);
 
@@ -80,11 +110,14 @@ const SettingsModal = ({
     hasClickedApplyAndClose,
     showFeatureHintsValue,
     isPrettyNameValue,
+    showDatasetPreviewsValue,
     onToggleFlag,
     onToggleShowFeatureHints,
     onToggleIsPrettyName,
+    onToggleShowDatasetPreviews,
     showSettingsModal,
     toggleFlags,
+    handleSavePreferences,
   ]);
 
   const resetStateCloseModal = () => {
@@ -92,7 +125,8 @@ const SettingsModal = ({
     setHasNotInteracted(true);
     setToggleFlags(flags);
     setIsPrettyName(isPrettyName);
-    setShowFeatureHintsValue(showFeatureHintsValue);
+    setShowFeatureHintsValue(showFeatureHints);
+    setShowDatasetPreviewsValue(showDatasetPreviews);
   };
 
   return (
@@ -128,6 +162,16 @@ const SettingsModal = ({
                     [localStorageKeyFeatureHintsStep]: 0,
                   });
                 }
+              }}
+            />
+            <SettingsModalRow
+              id="showDatasetPreviews"
+              name={settingsConfig['showDatasetPreviews'].name}
+              toggleValue={showDatasetPreviewsValue}
+              description={settingsConfig['showDatasetPreviews'].description}
+              onToggleChange={(event) => {
+                setShowDatasetPreviewsValue(event.target.checked);
+                setHasNotInteracted(false);
               }}
             />
             {flagData.map(({ name, value, description }) => (
@@ -209,12 +253,16 @@ export const mapStateToProps = (state) => ({
   flags: state.flags,
   showFeatureHints: state.showFeatureHints,
   isPrettyName: state.isPrettyName,
+  showDatasetPreviews: state.userPreferences.showDatasetPreviews,
   visible: state.visible,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
   showSettingsModal: (value) => {
     dispatch(toggleSettingsModal(value));
+  },
+  getPreferences: () => {
+    dispatch(getPreferences());
   },
   onToggleFlag: (name, value) => {
     dispatch(changeFlag(name, value));
@@ -224,6 +272,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleShowFeatureHints: (value) => {
     dispatch(toggleShowFeatureHints(value));
+  },
+  onToggleShowDatasetPreviews: (value) => {
+    dispatch(updateUserPreferences({ showDatasetPreviews: value }));
   },
 });
 
