@@ -12,24 +12,6 @@
   }
 }
 
-.pipeline-nodelist-section > ul.MuiTreeView-root {
-  padding: 0 0 0 20px;
-
-  .pipeline-treeItem__root--highlight {
-    position: relative;
-  }
-
-  .pipeline-treeItem__root--highlight::before {
-    content: '';
-    background-color: var(--color-nodelist-row-selected);
-    position: absolute;
-    height: 100%;
-    width: 343px;
-    left: -36px;
-    border: 2px solid colors.$blue-600;
-  }
-}
-
 .pipeline-nodelist__elements-panel {
   .pipeline-nodelist-section:last-child {
     padding-bottom: 28px;

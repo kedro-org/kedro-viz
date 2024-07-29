@@ -32,7 +32,7 @@ import {
   toggleModularPipelineDisabled,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { resetFilterNodes } from '../../actions/filters';
+import { resetSlicePipeline } from '../../actions/slice';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -68,8 +68,8 @@ const NodeListProvider = ({
   focusMode,
   disabledModularPipeline,
   inputOutputDataNodes,
-  onResetFilterNodes,
-  isFiltersApplied,
+  onResetslicePipeline,
+  isSlicingPipelineApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -114,8 +114,8 @@ const NodeListProvider = ({
         toSelectedNode(item);
 
         // Reset node filters only if filters are currently applied.
-        if (!isFiltersApplied) {
-          onResetFilterNodes();
+        if (!isSlicingPipelineApplied) {
+          onResetslicePipeline();
         }
       }
     }
@@ -335,7 +335,7 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
-  isFiltersApplied: state.filters.apply,
+  isSlicingPipelineApplied: state.slice.aply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -372,8 +372,8 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
-  onResetFilterNodes: () => {
-    dispatch(resetFilterNodes());
+  onResetslicePipeline: () => {
+    dispatch(resetSlicePipeline());
   },
 });
 

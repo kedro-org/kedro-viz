@@ -3,8 +3,8 @@ import { createSelector } from 'reselect';
 const getEdgeIDs = (state) => state.edge.ids;
 const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
-const getFromNodes = (state) => state.filters.from;
-const getToNodes = (state) => state.filters.to;
+const getFromNodes = (state) => state.slice.from;
+const getToNodes = (state) => state.slice.to;
 
 /**
  * Selector to get all edges formatted as an array of objects with id, source, and target properties.
@@ -108,7 +108,7 @@ const findNodesInBetween = (sourceEdges, startID, endID) => {
  * @returns {Array} Array of node IDs that are connected from startID to endID.
  */
 
-export const getFilteredPipeline = createSelector(
+export const getSlicedPipeline = createSelector(
   [getEdgesByNode, getFromNodes, getToNodes],
   ({ sourceEdges, targetEdges }, startID, endID) => {
     return findNodesInBetween(sourceEdges, startID, endID);

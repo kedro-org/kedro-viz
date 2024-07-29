@@ -6,7 +6,7 @@ import {
   getModularPipelinesTree,
 } from './modular-pipelines';
 import { getTagCount } from './tags';
-import { getFilteredPipeline } from './filtered-pipeline';
+import { getSlicedPipeline } from './sliced-pipeline';
 
 const getNodeIDs = (state) => state.node.ids;
 const getNodeDisabledNode = (state) => state.node.disabled;
@@ -23,7 +23,7 @@ const getLayersVisible = (state) => state.layer.visible;
 const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
-const getFiltersApply = (state) => state.filters.apply;
+const getSliceApply = (state) => state.slice.apply;
 
 /**
  * Return all inputs and outputs of currently visible modular pipelines
@@ -80,8 +80,8 @@ export const getNodeDisabled = createSelector(
     getVisibleSidebarNodes,
     getVisibleModularPipelineInputsOutputs,
     getDisabledModularPipeline,
-    getFilteredPipeline,
-    getFiltersApply,
+    getSlicedPipeline,
+    getSliceApply,
   ],
   (
     nodeIDs,
@@ -96,16 +96,16 @@ export const getNodeDisabled = createSelector(
     visibleSidebarNodes,
     visibleModularPipelineInputsOutputs,
     disabledModularPipeline,
-    filteredPipeline,
-    isFilterApplied
+    slicedPipeline,
+    isSliceApplied
   ) =>
     arrayToObject(nodeIDs, (id) => {
       let isDisabledViaModularPipeline =
         disabledModularPipeline[nodeModularPipelines[id]];
 
       let isDisabledViaFilters = false;
-      if (filteredPipeline.length > 0 && isFilterApplied) {
-        isDisabledViaFilters = !filteredPipeline.includes(id);
+      if (slicedPipeline.length > 0 && isSliceApplied) {
+        isDisabledViaFilters = !slicedPipeline.includes(id);
       }
 
       const isDisabledViaSidebar =

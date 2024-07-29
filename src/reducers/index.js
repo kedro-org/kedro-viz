@@ -11,7 +11,7 @@ import tag from './tags';
 import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
-import filters from './filters';
+import slice from './slice';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -25,6 +25,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
+import userPreferences from './preferences';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
@@ -78,11 +79,12 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   pipeline,
-  filters,
+  slice,
   tag,
   modularPipeline,
   visible,
   runsMetadata,
+  userPreferences,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),

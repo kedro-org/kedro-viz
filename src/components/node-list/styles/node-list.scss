@@ -97,3 +97,23 @@
     }
   }
 }
+
+.pipeline-treeItem__root--highlight {
+  border-right: 1px solid colors.$blue-600;
+  background-color: var(--color-nodelist-row-selected);
+  position: relative;
+
+  .MuiTreeItem-content::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -50px;
+    display: block;
+    width: 100px;
+    background: transparent;
+    background: var(--color-nodelist-row-selected);
+    content: ' ';
+    pointer-events: none;
+    height: 100%;
+  }
+}
