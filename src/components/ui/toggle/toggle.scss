@@ -22,6 +22,7 @@
   margin-top: 0.3em;
   margin-bottom: 2em;
   transition: opacity 0.2s ease;
+  display: flex;
 }
 
 .pipeline-toggle--no-hasCode {
@@ -41,7 +42,7 @@
 
 .pipeline-toggle-label {
   position: relative;
-  padding: 0 0 0 2.8em;
+  padding: 0 0 0 2.2em;
   cursor: pointer;
   user-select: none;
   color: var(--color-toggle-off-label);

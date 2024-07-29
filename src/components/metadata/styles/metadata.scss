@@ -28,7 +28,7 @@
   top: -1px; /* Avoids pixel rounding gaps */
   right: -1px;
   bottom: -1px;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -281,14 +281,14 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: hidden;
+  overflow: scroll;
   position: relative;
 }
 
 .pipeline-metadata__preview-json {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: hidden;
+  overflow: scroll;
   position: relative;
   padding: 10px 20px 0;
 }
