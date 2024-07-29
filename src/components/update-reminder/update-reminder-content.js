@@ -14,7 +14,7 @@ export const updateContent = {
       title:
         'Move session store and stats file to `.viz` directory conditionally',
       image: '',
-      copy: 'The session store and stats file are now conditionally moved to the `.viz` directory. If the user does not provide `SESSION_STORE_ARGS` in their `settings.py` file, Kedro-Viz will use the default `.viz` directory to store session and stats files.',
+      copy: 'The session store (a SQLite database) and stats file are now conditionally moved to the `.viz` directory. If the user does not provide `SESSION_STORE_ARGS` in their `settings.py` file, Kedro-Viz will use the default `.viz` directory to store session and stats files.',
       buttonLink: '',
       buttonText: '',
     },
