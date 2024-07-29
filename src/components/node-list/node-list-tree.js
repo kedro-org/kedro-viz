@@ -260,7 +260,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
   slicedPipeline: getSlicedPipeline(state),
-  isSlicingPipelineApplied: state.slice.aply,
+  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

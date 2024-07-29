@@ -1,12 +1,12 @@
 import { createSelector } from 'reselect';
 
-const getFilters = (state) => state.filters;
+const getSlicedPipeline = (state) => state.slice;
 const getNodesNames = (state) => state.node.fullName;
 
 export const getRunCommand = createSelector(
-  [getFilters, getNodesNames],
-  (filters, nodesNames) => {
-    const { from, to } = filters;
+  [getSlicedPipeline, getNodesNames],
+  (slicedPipeline, nodesNames) => {
+    const { from, to } = slicedPipeline;
 
     if (!from && !to) {
       return null;

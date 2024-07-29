@@ -17,7 +17,7 @@ export const SlicedPipelineActionBar = ({
   const { outerWidth, sidebarWidth } = chartSize;
   const sidebarVisible = sidebarWidth > 140;
 
-  const transformX = sidebarVisible ? outerWidth / 2 + 100 : outerWidth / 2;
+  const transformX = sidebarVisible ? outerWidth / 2.5 : outerWidth / 3;
   if (slicedPipeline.length > 0) {
     return (
       <div

@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import { getFilteredPipeline } from './filtered-pipeline';
+import { getSlicedPipeline } from './sliced-pipeline';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -259,12 +259,14 @@ export const getNodeDataObject = createSelector(
 export const getModularPipelinesTree = createSelector(
   [
     (state) => state.modularPipeline.tree,
-    (state) => state.filters.apply,
+    (state) => state.slice.apply,
     getNodeDataObject,
-    getFilteredPipeline,
+    getSlicedPipeline,
   ],
-  (modularPipelinesTree, isFiltersApplied, nodes, filteredPipeline) => {
-    if (!modularPipelinesTree) {return {};}
+  (modularPipelinesTree, isSlicingPipelineApplied, nodes, filteredPipeline) => {
+    if (!modularPipelinesTree) {
+      return {};
+    }
 
     // Helper function to update children data
     const updateChildrenData = (children, sourceNodes) => {
@@ -280,14 +282,14 @@ export const getModularPipelinesTree = createSelector(
       );
 
     // Determine the relevant nodes based on whether filters are applied
-    const relevantNodes = isFiltersApplied
+    const relevantNodes = isSlicingPipelineApplied
       ? filterNodes(nodes, filteredPipeline)
       : nodes;
 
     // Update modularPipelinesTree data and children data with relevantNodes
     Object.entries(modularPipelinesTree).forEach(
       ([modularPipelineID, modularPipeline]) => {
-        if (!isFiltersApplied) {
+        if (!isSlicingPipelineApplied) {
           modularPipeline.data = { ...nodes[modularPipelineID] };
         }
         updateChildrenData(modularPipeline.children, relevantNodes);

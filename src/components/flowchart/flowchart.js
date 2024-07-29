@@ -540,7 +540,7 @@ export class FlowChart extends Component {
     // If no filters are currently applied, reset the node filters.
     // This is done to ensure that clicking a node in an unfiltered state does not leave any stale filters.
     if (!this.props.isSlicingPipelineApplied) {
-      this.props.onResetSlicePipeline(null, null);
+      this.props.onResetSlicePipeline();
     }
   };
 
@@ -735,9 +735,11 @@ export class FlowChart extends Component {
       onApplySlice,
       runCommand,
       visibleGraph,
+      slicedPipeline,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { slicedPipelineState } = this.state;
+
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -802,7 +804,7 @@ export class FlowChart extends Component {
         <div ref={this.slicedPipelineActionRef}>
           <SlicedPipelineActionBar
             chartSize={chartSize}
-            slicedPipeline={slicedPipelineState.range}
+            slicedPipeline={slicedPipeline}
             isSlicingPipelineApplied={isSlicingPipelineApplied}
             onApplySlicingPipeline={() => onApplySlice(true)}
             onResetSlicingPipeline={this.resetSlicedPipeline}
@@ -860,7 +862,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   slicedPipeline: getSlicedPipeline(state),
-  isSlicingPipelineApplied: state.slice.aply,
+  isSlicingPipelineApplied: state.slice.apply,
   runCommand: getRunCommand(state),
   ...ownProps,
 });
