@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Button from '../../../ui/button';
 import CommandCopier from '../../../ui/command-copier/command-copier';
 import CutIcon from '../../../icons/cut';
@@ -29,7 +30,12 @@ export const SlicedPipelineActionBar = ({
             isSlicingPipelineApplied ? 'sliced' : 'selected'
           }`}
         </div>
-        <div className="sliced-pipeline-action-bar--run-command">
+        <div
+          className={classnames('sliced-pipeline-action-bar--run-command', {
+            'sliced-pipeline-action-bar--run-command-long':
+              runCommand.length > 90,
+          })}
+        >
           <CommandCopier command={runCommand} isCommand={true} />
         </div>
         {isSlicingPipelineApplied ? (

@@ -550,14 +550,9 @@ export class FlowChart extends Component {
 
     const fromNodeId = this.state.slicedPipelineState.from || node.id;
     const toNodeId = node.id;
+    const range = this.state.slicedPipelineState.range;
 
-    const newState = {
-      ...this.state.slicedPipelineState,
-      from: fromNodeId,
-      to: toNodeId,
-    };
-
-    this.setState({ slicedPipelineState: newState });
+    this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
 
     this.props.onSlicePipeline(fromNodeId, toNodeId);
     this.props.onApplySlice(false);
@@ -738,7 +733,6 @@ export class FlowChart extends Component {
       slicedPipeline,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { slicedPipelineState } = this.state;
 
     return (
       <div
