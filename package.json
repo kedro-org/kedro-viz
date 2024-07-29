@@ -16,6 +16,7 @@
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p start:app start:lib",
+    "start:dev": "rm -rf node_modules/.cache && npm start",
     "start:app": "PORT=4141 react-scripts start",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
     "lib": "npm-run-all -s lib:clean lib:copy lib:webpack lib:babel lib:prune",
