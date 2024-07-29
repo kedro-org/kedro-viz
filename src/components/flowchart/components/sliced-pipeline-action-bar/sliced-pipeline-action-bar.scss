@@ -73,7 +73,10 @@ $inner-gap: 12px;
   }
 
   .toolbox {
-    margin-left: 10px;
+    align-items: center;
+    display: flex;
+    margin-left: 18px;
+    margin-right: 10px;
   }
 }
 
@@ -104,6 +107,7 @@ $inner-gap: 12px;
 
 .sliced-pipeline-action-bar--reset {
   background: #f03b3a;
+  border: none;
 
   .button__btn {
     font-size: 14px;
@@ -136,6 +140,6 @@ $inner-gap: 12px;
     font-size: 14px;
     color: var(--sliced-pipeline-action-bar--color);
     font-weight: 600;
-    margin-left: 10px;
+    margin-left: 4px;
   }
 }
