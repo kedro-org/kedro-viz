@@ -3,11 +3,14 @@ import Button from '../../../ui/button';
 
 import './sliced-pipeline-action-bar.scss';
 
-export const SlicedPipelineActionBar = ({ chartSize, slicedPipeline }) => {
-  const { outerWidth, sidebarWidth } = chartSize;
-  const sidebarVisible = sidebarWidth > 140;
+export const SlicedPipelineActionBar = ({
+  chartSize,
+  slicedPipeline,
+  visibleSidebar,
+}) => {
+  const { outerWidth } = chartSize;
 
-  const transformX = sidebarVisible ? outerWidth / 2 + 100 : outerWidth / 2;
+  const transformX = visibleSidebar ? outerWidth / 2 + 100 : outerWidth / 2;
   if (slicedPipeline.length > 0) {
     return (
       <div

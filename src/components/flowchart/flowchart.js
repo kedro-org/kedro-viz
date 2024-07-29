@@ -718,6 +718,7 @@ export class FlowChart extends Component {
       visibleGraph,
       displayGlobalNavigation,
       displaySidebar,
+      visibleSidebar,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { slicedPipelineState } = this.state;
@@ -786,6 +787,7 @@ export class FlowChart extends Component {
           <SlicedPipelineActionBar
             chartSize={chartSize}
             slicedPipeline={slicedPipelineState.range}
+            visibleSidebar={visibleSidebar}
           />
         </div>
         <Tooltip
