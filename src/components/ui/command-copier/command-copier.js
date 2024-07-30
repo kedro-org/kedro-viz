@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import MetaDataValue from '../../metadata/metadata-value';
+import classnames from 'classnames';
 import IconButton from '../../ui/icon-button';
 import Tooltip from '../tooltip';
 import CopyIcon from '../../icons/copy';
 import './command-copier.scss';
 
-const CommandCopier = ({ command, isCommand }) => {
+const CommandCopier = ({ command, classNames, isCommand, dataTest }) => {
   const [showCopied, setShowCopied] = useState(false);
 
   const onCopyClick = () => {
@@ -17,17 +17,13 @@ const CommandCopier = ({ command, isCommand }) => {
 
   return (
     <div className="container">
-      <MetaDataValue
-        container={'code'}
-        className="command-value"
-        value={command}
-      />
+      <code className={classnames('command-value', classNames)}>{command}</code>
       {window.navigator.clipboard && isCommand && (
         <ul className="toolbox">
           <IconButton
             ariaLabel="Copy run command to clipboard."
             className="copy-button"
-            dataHeapEvent={`clicked.run_command`}
+            dataTest={dataTest}
             icon={CopyIcon}
             onClick={onCopyClick}
           />

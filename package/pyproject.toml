@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kedro-viz"
+authors = [
+    {name = "Kedro"}
+]
+description = "Kedro-Viz helps visualise Kedro data and analytics pipelines"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.9"
+keywords = [
+    "pipelines",
+    "machine learning",
+    "data pipelines",
+    "data science",
+    "data engineering",
+    "visualisation",
+]
+license = {text = "Apache Software License (Apache 2.0)"}
+dynamic = ["dependencies", "version"]
+
+[project.urls]
+Homepage = "https://kedro.org"
+Source = "https://github.com/kedro-org/kedro-viz"
+Documentation = "https://docs.kedro.org/projects/kedro-viz"
+Tracker = "https://github.com/kedro-org/kedro-viz/issues"
+
+[project.optional-dependencies]
+docs = [
+   "kedro-sphinx-theme==2024.4.0",
+]
+aws = ["s3fs>=2021.4"]
+azure = ["adlfs>=2021.4"]
+gcp = ["gcsfs>=2021.4"]
+
+[project.entry-points."kedro.global_commands"]
+kedro-viz = "kedro_viz.launchers.cli:viz_cli"
+
+[project.entry-points."kedro.line_magic"]
+line_magic = "kedro_viz.launchers.jupyter:run_viz"
+
+[project.entry-points."kedro.hooks"]
+kedro-dataset-stats = "kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+
+[tool.hatch.version]
+path = "kedro_viz/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "requirements.txt",
+    "/kedro_viz",
+]
+exclude = [
+    "/kedro_viz/docs",
+]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
+
+[tool.pytest.ini_options]
+addopts ="""
+--verbose -ra 
+--cov-report xml:coverage.xml 
+--cov-report term-missing 
+--cov kedro_viz 
+--ignore package/tests 
+--no-cov-on-fail 
+-ra 
+--asyncio-mode auto"""
+testpaths = [
+  "tests"
+]

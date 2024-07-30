@@ -8,7 +8,7 @@ describe('command copier', () => {
   it('shows the node command', () => {
     const wrapper = mount(<CommandCopier command={command} isCommand={true} />);
 
-    const row = wrapper.find('.pipeline-metadata__value');
+    const row = wrapper.find('.command-value');
     expect(row.text()).toEqual('test command');
   });
 

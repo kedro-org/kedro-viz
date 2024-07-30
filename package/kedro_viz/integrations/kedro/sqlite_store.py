@@ -1,5 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
+
 # pylint: disable=no-member, broad-exception-caught
 
 import getpass
@@ -10,12 +11,15 @@ from pathlib import Path
 from typing import Any, Optional
 
 import fsspec
+from kedro.framework.project import settings
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io.core import get_protocol_and_path
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
+from kedro_viz.constants import VIZ_SESSION_STORE_ARGS
 from kedro_viz.database import make_db_session_factory
+from kedro_viz.launchers.utils import _find_kedro_project
 from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
@@ -31,6 +35,15 @@ def _is_json_serializable(obj: Any):
         return True
     except (TypeError, OverflowError):
         return False
+
+
+def _get_session_path(session_path: str) -> str:
+    """Returns the session path by creating its parent directory
+    if unavailable.
+    """
+    session_file_path = Path(session_path)
+    session_file_path.parent.mkdir(parents=True, exist_ok=True)
+    return str(session_file_path)
 
 
 class SQLiteStore(BaseSessionStore):
@@ -49,7 +62,13 @@ class SQLiteStore(BaseSessionStore):
     @property
     def location(self) -> str:
         """Returns location of the sqlite_store database"""
-        return str(Path(self._path) / "session_store.db")
+        if "path" not in settings.SESSION_STORE_ARGS:
+            kedro_project_path = _find_kedro_project(Path.cwd()) or self._path
+            return _get_session_path(
+                f"{kedro_project_path}/{VIZ_SESSION_STORE_ARGS['path']}/session_store.db"
+            )
+
+        return _get_session_path(f"{self._path}/session_store.db")
 
     @property
     def remote_location(self) -> Optional[str]:

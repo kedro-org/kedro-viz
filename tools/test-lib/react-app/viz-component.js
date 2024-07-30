@@ -6,9 +6,9 @@ function VizComponent({ data }) {
     <div style={{ height: `90vh`, width: `100%` }}>
       <KedroViz
         data={data}
+        expandAllPipelines={false}
         display={{
-          expandAllPipelines: false,
-          globalToolbar: true,
+          globalNavigation: true,
           miniMap: false,
           sidebar: true,
         }}

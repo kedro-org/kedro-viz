@@ -83,7 +83,11 @@ const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
 
               <p className="subtext">Update command</p>
               <div className="command-copier">
-                <CommandCopier command={command} isCommand />
+                <CommandCopier
+                  command={command}
+                  isCommand
+                  dataTest={'update-reminder-copy-command'}
+                />
               </div>
             </>
           ) : (

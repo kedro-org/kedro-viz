@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import App, { dataSources } from './app';
 
 const keys = Object.keys(dataSources).filter((key) => key !== 'random');
@@ -20,13 +20,18 @@ describe('lib-test', () => {
       .querySelector('.pipeline-nodelist__row')
       .querySelector('.pipeline-nodelist__row__text--tree')
       .querySelector('.pipeline-nodelist__row__label')
-      .textContent;
+      .textContent.trim();
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;
     const modularPipelineNames = Object.keys(modularPipelinesTree).map(
-      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name
+      (modularPipelineID) => modularPipelinesTree[modularPipelineID].name.trim()
     );
-    expect(modularPipelineNames).toContain(firstNodeName);
+
+    const normalisedFirstNodeName = firstNodeName.replace(/ /g, '_').toLowerCase();
+    const normalisedPipelineNames = modularPipelineNames.map(name =>
+      name.replace(/ /g, '_').toLowerCase()
+    );
+    expect(normalisedPipelineNames).toContain(normalisedFirstNodeName);
   };
 
   test.each(keys)(`uses %s dataset when provided as prop`, (key) => {

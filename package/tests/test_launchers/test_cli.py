@@ -163,6 +163,38 @@ def mock_project_path(mocker):
             },
         ),
         (
+            [
+                "viz",
+                "run",
+                "--host",
+                "8.8.8.8",
+                "--port",
+                "4142",
+                "--no-browser",
+                "--save-file",
+                "save_dir",
+                "-p",
+                "data_science",
+                "-e",
+                "local",
+                "--params",
+                "extra_param=param",
+            ],
+            {
+                "host": "8.8.8.8",
+                "port": 4142,
+                "load_file": None,
+                "save_file": "save_dir",
+                "pipeline_name": "data_science",
+                "env": "local",
+                "project_path": "testPath",
+                "autoreload": False,
+                "include_hooks": False,
+                "package_name": None,
+                "extra_params": {"extra_param": "param"},
+            },
+        ),
+        (
             ["viz", "run", "--include-hooks"],
             {
                 "host": "127.0.0.1",
@@ -445,6 +477,25 @@ def test_viz_command_group(mocker, mock_click_echo):
                 "include_hooks": True,
             },
         ),
+        (
+            [
+                "viz",
+                "deploy",
+                "--platform",
+                "aws",
+                "--endpoint",
+                "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "--bucket-name",
+                "example-bucket",
+                "--include-previews",
+            ],
+            {
+                "platform": "aws",
+                "endpoint": "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
+                "bucket_name": "example-bucket",
+                "preview": True,
+            },
+        ),
     ],
 )
 def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mocker):
@@ -461,6 +512,7 @@ def test_viz_deploy_valid_endpoint_and_bucket(command_options, deployer_args, mo
 
     create_shareableviz_process_mock.assert_called_once_with(
         deployer_args.get("platform"),
+        deployer_args.get("preview", False),
         deployer_args.get("endpoint"),
         deployer_args.get("bucket_name"),
         deployer_args.get("include_hooks", False),
@@ -539,6 +591,10 @@ def test_viz_deploy_invalid_endpoint(mocker, mock_click_echo):
             ["viz", "build", "--include-hooks"],
             {"platform": "local", "include_hooks": True},
         ),
+        (
+            ["viz", "build", "--include-previews"],
+            {"platform": "local", "preview": True},
+        ),
     ],
 )
 def test_successful_build_with_existing_static_files(
@@ -557,15 +613,18 @@ def test_successful_build_with_existing_static_files(
 
     create_shareableviz_process_mock.assert_called_once_with(
         build_args.get("platform"),
+        build_args.get("preview", False),
         include_hooks=build_args.get("include_hooks", False),
     )
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name, include_hooks, process_completed_value",
+    "platform, is_all_previews_enabled, endpoint, bucket_name,"
+    "include_hooks, process_completed_value",
     [
         (
             "azure",
+            True,
             "https://example-bucket.web.core.windows.net",
             "example-bucket",
             True,
@@ -573,6 +632,7 @@ def test_successful_build_with_existing_static_files(
         ),
         (
             "aws",
+            True,
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             True,
@@ -580,14 +640,16 @@ def test_successful_build_with_existing_static_files(
         ),
         (
             "gcp",
+            False,
             "http://34.120.87.227/",
             "example-bucket",
             False,
             1,
         ),
-        ("local", None, None, False, 1),
+        ("local", False, None, None, False, 1),
         (
             "azure",
+            True,
             "https://example-bucket.web.core.windows.net",
             "example-bucket",
             False,
@@ -595,6 +657,7 @@ def test_successful_build_with_existing_static_files(
         ),
         (
             "aws",
+            False,
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             False,
@@ -602,16 +665,18 @@ def test_successful_build_with_existing_static_files(
         ),
         (
             "gcp",
+            True,
             "http://34.120.87.227/",
             "example-bucket",
             True,
             0,
         ),
-        ("local", None, None, True, 0),
+        ("local", True, None, None, True, 0),
     ],
 )
 def test_create_shareableviz_process(
     platform,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -624,13 +689,16 @@ def test_create_shareableviz_process(
     mock_click_echo,
 ):
     mock_process_completed.return_value.value = process_completed_value
-    cli.create_shareableviz_process(platform, endpoint, bucket_name, include_hooks)
+    cli.create_shareableviz_process(
+        platform, is_all_previews_enabled, endpoint, bucket_name, include_hooks
+    )
 
     # Assert the mocks were called as expected
     mock_viz_deploy_process.assert_called_once_with(
         target=mock_viz_load_and_deploy,
         args=(
             platform,
+            is_all_previews_enabled,
             endpoint,
             bucket_name,
             include_hooks,
@@ -670,10 +738,11 @@ def test_create_shareableviz_process(
 
 
 @pytest.mark.parametrize(
-    "platform, endpoint, bucket_name, include_hooks, package_name",
+    "platform, is_all_previews_enabled, endpoint, bucket_name, include_hooks, package_name",
     [
         (
             "azure",
+            False,
             "https://example-bucket.web.core.windows.net",
             "example-bucket",
             False,
@@ -681,17 +750,19 @@ def test_create_shareableviz_process(
         ),
         (
             "aws",
+            True,
             "http://example-bucket.s3-website.us-east-2.amazonaws.com/",
             "example-bucket",
             True,
             "demo_project",
         ),
-        ("gcp", "http://34.120.87.227/", "example-bucket", False, "demo_project"),
-        ("local", None, None, True, "demo_project"),
+        ("gcp", True, "http://34.120.87.227/", "example-bucket", False, "demo_project"),
+        ("local", False, None, None, True, "demo_project"),
     ],
 )
 def test_load_and_deploy_viz_success(
     platform,
+    is_all_previews_enabled,
     endpoint,
     bucket_name,
     include_hooks,
@@ -707,6 +778,7 @@ def test_load_and_deploy_viz_success(
 
     cli.load_and_deploy_viz(
         platform,
+        is_all_previews_enabled,
         endpoint,
         bucket_name,
         include_hooks,
@@ -721,5 +793,5 @@ def test_load_and_deploy_viz_success(
     mock_DeployerFactory.create_deployer.assert_called_once_with(
         platform, endpoint, bucket_name
     )
-    deployer_mock.deploy.assert_called_once()
+    deployer_mock.deploy.assert_called_once_with(is_all_previews_enabled)
     mock_click_echo.echo.assert_not_called()

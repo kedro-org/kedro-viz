@@ -33,9 +33,9 @@ class BaseDeployer(abc.ABC):
         self._path = None
         self._fs = None
 
-    def _upload_api_responses(self):
+    def _upload_api_responses(self, is_all_previews_enabled: bool):
         """Write API responses to the build."""
-        save_api_responses_to_fs(self._path, self._fs)
+        save_api_responses_to_fs(self._path, self._fs, is_all_previews_enabled)
 
     def _ingest_heap_analytics(self):
         """Ingest heap analytics to index file in the build."""
@@ -98,9 +98,9 @@ class BaseDeployer(abc.ABC):
             logger.exception("Upload failed: %s ", exc)
             raise exc
 
-    def deploy(self):
+    def deploy(self, is_all_previews_enabled: bool = False):
         """Create and deploy all static files to local/remote file system"""
 
-        self._upload_api_responses()
+        self._upload_api_responses(is_all_previews_enabled)
         self._upload_static_files(_HTML_DIR)
         self._upload_deploy_viz_metadata_file()

@@ -41,8 +41,12 @@ extensions = [
     "myst_parser",
     "notfound.extension",
     "sphinxcontrib.jquery",
+    'sphinx_favicon',
 ]
 
+favicons = [
+    "https://kedro.org/images/favicon.ico",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

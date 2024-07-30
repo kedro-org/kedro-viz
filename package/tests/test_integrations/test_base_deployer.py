@@ -14,9 +14,11 @@ class TestBaseDeployer:
             "kedro_viz.integrations.deployment.base_deployer.save_api_responses_to_fs"
         )
         build = ConcreteBaseDeployer()
-        build._upload_api_responses()
+        build._upload_api_responses(False)
 
-        save_api_responses_to_fs_mock.assert_called_once_with(build._path, build._fs)
+        save_api_responses_to_fs_mock.assert_called_once_with(
+            build._path, build._fs, False
+        )
 
     def test_upload_static_files(self, mocker):
         mocker.patch("fsspec.filesystem")

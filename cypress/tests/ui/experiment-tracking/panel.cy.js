@@ -3,7 +3,7 @@
 describe('Experiment Tracking Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-38', () => {
     // Alias
-    cy.get('[data-test="btnToggleMenu"]').as('btnToggleMenu');
+    cy.get('[data-test*="sidebar-experiments-visible-btn-"]').as('btnToggleMenu');
     cy.get('.pipeline-sidebar--visible').as('pipelineSideBar');
 
     // Assert before action
@@ -22,7 +22,7 @@ describe('Experiment Tracking Primary Toolbar', () => {
     const runGitShaText = '5f81cb5';
 
     // Alias
-    cy.get('[data-test="btnToggleBookmark"]').as('btnToggleBookmark');
+    cy.get('[data-test*="sidebar-experiments-bookmark-btn-"]').as('btnToggleBookmark');
     cy.get('.runs-list__accordion-header > .accordion__title').as(
       'accordionTitle'
     );
@@ -57,8 +57,8 @@ describe('Experiment Tracking Primary Toolbar', () => {
     const modifiedRunNotesText = 'Test';
 
     // Alias
-    cy.get('[data-test="btnEditRunDetails"]').as('btnEditRunDetails');
-    cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+    cy.get('[data-test="sidebar-experiments-edit-details"]').as('btnEditRunDetails');
+    cy.get('[data-test="run-details-modal-apply-changes"]').as(
       'applyChanges'
     );
 
@@ -103,8 +103,8 @@ describe('Experiment Tracking Primary Toolbar', () => {
     const exportRunTitleText = '2022-12-24T21.05.59.296Z';
 
     // Alias
-    cy.get('[data-test="btnExportRunData"]').as('btnExportRunData');
-    cy.get('[data-test="Export all and close"]').as('btnExportAll');
+    cy.get('[data-test="sidebar-experiments-export-runs"]').as('btnExportRunData');
+    cy.get('[data-test="run-export-modal-export-all"]').as('btnExportAll');
 
     // Action
     cy.get('@btnExportRunData').click();
@@ -129,7 +129,7 @@ describe('Experiment Tracking Primary Toolbar', () => {
     cy.get('@compareRunsToggle').check({ force: true });
 
     // Assert in comparison mode before selecting multiple runs
-    cy.get('[data-test="btnToggleChange"]').as('btnToggleChange');
+    cy.get('[data-test*="sidebar-experiments-show-changes-btn-"]').as('btnToggleChange');
     cy.get('@btnToggleChange').should('have.attr', 'disabled');
 
     // Mutation for two run comparison

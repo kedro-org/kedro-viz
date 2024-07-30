@@ -45,8 +45,8 @@ const Modal = ({
         })}
       >
         <div className="modal__wrapper">
-          {title && <div className="modal__title">{title}</div>}
-          {message && <div className="modal__description">{message}</div>}
+          {title && <h1 className="modal__title">{title}</h1>}
+          {message && <p className="modal__description">{message}</p>}
           {children}
         </div>
       </div>

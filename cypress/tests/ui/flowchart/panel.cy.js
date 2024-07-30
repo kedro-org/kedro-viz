@@ -3,7 +3,7 @@
 describe('Flowchart Primary Toolbar', () => {
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
-    cy.get('[data-test="btnToggleMenu"]').as('btnToggleMenu');
+    cy.get('[data-test*="sidebar-flowchart-visible-btn-"]').as('btnToggleMenu');
     cy.get('.pipeline-sidebar--visible').as('pipelineSideBar');
 
     // Assert before action
@@ -20,7 +20,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can hide/show the text labels. #TC-9', () => {
     // Alias
-    cy.get('[data-test="btnToggleLabels"]').as('btnToggleLabels');
+    cy.get('[data-test*="sidebar-flowchart-labels-btn-"]').as('btnToggleLabels');
     cy.get('.pipeline-node__text').as('pipelineNodeLabels');
 
     // Assert before action
@@ -37,7 +37,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can hide/show layers. #TC-10', () => {
     // Alias
-    cy.get('[data-test="btnToggleLayers"]').as('btnToggleLayers');
+    cy.get('[data-test*="sidebar-flowchart-layers-btn-"]').as('btnToggleLayers');
     cy.get('.pipeline-layer').as('pipelineLayer');
 
     // Assert before action
@@ -54,7 +54,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can access the export pipeline visualisation page. #TC-11', () => {
     // Action
-    cy.get('[data-test="btnExportGraph"]').click();
+    cy.get('[data-test="sidebar-flowchart-export-btn"]').click();
 
     // Assertions
     cy.get('.modal--visible').then(($dialog) => {
@@ -63,10 +63,10 @@ describe('Flowchart Primary Toolbar', () => {
           'have.text',
           'Export pipeline visualisation'
         );
-        cy.get('[data-test="btnDownloadPNG"]')
+        cy.get('[data-test="export-modal-download-png-btn"]')
           .should('exist')
           .and('have.text', 'Download PNG');
-        cy.get('[data-test="btnDownloadSVG"]')
+        cy.get('[data-test="export-modal-download-svg-btn"]')
           .should('exist')
           .and('have.text', 'Download SVG');
       });
@@ -76,7 +76,7 @@ describe('Flowchart Primary Toolbar', () => {
   // TO FIX in a separately PR
   // it('verifies that users can download a PNG of their visualisation. #TC-12', () => {
   //   // Action
-  //   cy.get('[data-test=btnDownloadPNG]').click({ force: true });
+  //   cy.get('[data-test=export-modal-download-png-btn]').click({ force: true });
 
   //   // Assertion
   //   cy.__validateImage__('kedro-pipeline.png');
@@ -84,7 +84,7 @@ describe('Flowchart Primary Toolbar', () => {
 
   it('verifies that users can download an SVG of their visualisation. #TC-13', () => {
     // Action
-    cy.get('[data-test=btnDownloadSVG]').click({ force: true });
+    cy.get('[data-test=export-modal-download-svg-btn]').click({ force: true });
 
     // Assertion
     cy.__validateImage__('kedro-pipeline.svg');
@@ -94,7 +94,7 @@ describe('Flowchart Primary Toolbar', () => {
 describe('Pipeline Minimap Toolbar', () => {
   it('verifies that users can hide/show minimap. #TC-14', () => {
     // Alias
-    cy.get('[data-test="btnToggleMinimap"]').as('btnToggleMinimap');
+    cy.get('[data-test*="sidebar-minimap-btn-"]').as('btnToggleMinimap');
     cy.get('.pipeline-minimap-container').as('minimapContainer');
 
     // Assert before action
@@ -115,9 +115,9 @@ describe('Pipeline Minimap Toolbar', () => {
 
   it('verifies that users can zoom in/out/reset. #TC-15', () => {
     // Alias
-    cy.get('[data-test="btnZoomIn"]').as('btnZoomIn');
-    cy.get('[data-test="btnZoomOut"]').as('btnZoomOut');
-    cy.get('[data-test="btnResetZoom"]').as('btnResetZoom');
+    cy.get('[data-test="sidebar-zoom-in-btn"]').as('btnZoomIn');
+    cy.get('[data-test="sidebar-zoom-out-btn"]').as('btnZoomOut');
+    cy.get('[data-test="sidebar-reset-zoom-btn"]').as('btnResetZoom');
     cy.get('.pipeline-minimap-toolbar__scale').as('zoomScale');
 
     // Zoom values are calculated once the flowchart is drawn, so we wait for pageLoad to complete

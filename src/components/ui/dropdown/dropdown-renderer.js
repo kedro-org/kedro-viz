@@ -27,6 +27,7 @@ const DropdownRenderer = ({
   title,
   width = 160,
   placeholderText,
+  dataTest,
 }) => {
   const wrapperClasses = classnames('kedro', 'dropdown', {
     'dropdown--open': open,
@@ -122,7 +123,7 @@ const DropdownRenderer = ({
   return (
     <div
       aria-expanded={open.toString()}
-      data-test="kedro-pipeline-selector"
+      data-test={dataTest}
       aria-haspopup="true"
       className={wrapperClasses}
       onKeyDown={_handleKeyDown}
@@ -155,7 +156,7 @@ const DropdownRenderer = ({
             </Button>
             <Button
               disabled={!haveSelectedValues}
-              dataTest={'btnMetricsChange'}
+              dataTest={`${dataTest}-apply-btn`}
               onClick={onApplyAndClose}
               mode={'primary'}
               size="small"

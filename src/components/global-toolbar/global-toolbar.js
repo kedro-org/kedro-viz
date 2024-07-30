@@ -37,18 +37,17 @@ export const GlobalToolbar = ({
           <IconButton
             ariaLabel={'Kedro Viz logo and link'}
             className={'pipeline-menu-button--logo pipeline-menu-button--large'}
-            dataTest={'Kedro Icon'}
+            dataTest={'global-toolbar-kedro-icon'}
             disabled={false}
             icon={LogoIcon}
           />
           <NavLink exact to={{ pathname: sanitizedPathname() }}>
             <IconButton
               ariaLabel={'View your pipeline'}
-              dataTest={'View your pipeline'}
+              dataTest={'global-toolbar-flowchart-btn'}
               className={
                 'pipeline-menu-button--large pipeline-menu-button--link'
               }
-              data-test={'FlowChart Icon'}
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
@@ -65,7 +64,7 @@ export const GlobalToolbar = ({
                 className={
                   'pipeline-menu-button--large pipeline-menu-button--link'
                 }
-                dataTest={'View your experiments'}
+                dataTest={'global-toolbar-experiments-btn'}
                 disabled={false}
                 icon={ExperimentsIcon}
                 labelText="Experiment tracking"
@@ -79,11 +78,10 @@ export const GlobalToolbar = ({
               theme === 'light' ? 'dark' : 'light'
             } theme`}
             ariaLive="polite"
-            dataTest={'Toggle Theme'}
+            dataTest={`global-toolbar-theme-btn-${theme}`}
             className={
               'pipeline-menu-button--theme pipeline-menu-button--large'
             }
-            dataHeapEvent={`theme.${theme}`}
             icon={ThemeIcon}
             labelText="Toggle theme"
             onClick={() => onToggleTheme(theme === 'light' ? 'dark' : 'light')}
@@ -94,7 +92,7 @@ export const GlobalToolbar = ({
               className={
                 'pipeline-menu-button--deploy pipeline-menu-button--large'
               }
-              dataTest={'Publish and share Kedro-Viz'}
+              dataTest={'global-toolbar-deploy-btn'}
               disabled={false}
               icon={DownloadIcon}
               labelText={'Publish and share'}
@@ -106,7 +104,7 @@ export const GlobalToolbar = ({
             className={
               'pipeline-menu-button--settings pipeline-menu-button--large'
             }
-            dataTest={'Change the settings flags'}
+            dataTest={'global-toolbar-settings-btn'}
             disabled={false}
             icon={SettingsIcon}
             labelText={'Settings'}

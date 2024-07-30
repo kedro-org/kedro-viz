@@ -18,7 +18,8 @@ from kedro_viz.integrations.deployment.local_deployer import LocalDeployer
         ("gcp", "http://mocked-url.com", "shareableviz", GCPDeployer),
     ],
 )
-def test_create_deployer(platform, endpoint, bucket_name, deployer_class):
+def test_create_deployer(platform, endpoint, bucket_name, deployer_class, mocker):
+    mocker.patch("fsspec.filesystem")
     deployer = DeployerFactory.create_deployer(platform, endpoint, bucket_name)
     assert isinstance(deployer, deployer_class)
     assert deployer._endpoint == endpoint

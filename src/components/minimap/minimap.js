@@ -95,14 +95,14 @@ export class MiniMap extends Component {
    * Updates drawing and zoom if props have changed
    */
   update(prevProps = {}) {
-    const { visible, chartZoom } = this.props;
+    const { miniMapVisible, chartZoom } = this.props;
 
-    if (visible) {
+    if (miniMapVisible) {
       const changed = (...names) => this.changed(names, prevProps, this.props);
 
       if (
         changed(
-          'visible',
+          'miniMapVisible',
           'nodes',
           'clickedNodes',
           'linkedNodes',
@@ -113,11 +113,11 @@ export class MiniMap extends Component {
         drawNodes.call(this);
       }
 
-      if (changed('visible', 'chartZoom') && chartZoom.applied) {
+      if (changed('miniMapVisible', 'chartZoom') && chartZoom.applied) {
         drawViewport.call(this);
       }
 
-      if (changed('visible', 'nodes', 'textLabels', 'chartSize')) {
+      if (changed('miniMapVisible', 'nodes', 'textLabels', 'chartSize')) {
         this.resetView();
       }
     }
@@ -329,7 +329,11 @@ export class MiniMap extends Component {
     return (
       <div
         className="pipeline-minimap-container"
-        style={this.props.visible ? transformStyle : {}}
+        style={
+          this.props.miniMapVisible && this.props.displayMiniMap
+            ? transformStyle
+            : {}
+        }
       >
         <div
           className="pipeline-minimap kedro"
@@ -401,7 +405,8 @@ const emptyNodes = [];
 const emptyGraphSize = {};
 
 export const mapStateToProps = (state, ownProps) => ({
-  visible: state.visible.miniMap,
+  miniMapVisible: state.visible.miniMap,
+  displayMiniMap: state.display.miniMap,
   mapSize: getMapSize(state),
   clickedNode: state.node.clicked,
   chartSize: getChartSize(state),

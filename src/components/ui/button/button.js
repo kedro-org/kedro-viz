@@ -8,7 +8,7 @@ import './button.scss';
  */
 const Button = ({
   children,
-  dataTest = 'TestDefaultDataValue',
+  dataTest = 'test-default-btn',
   disabled = false,
   onClick,
   size = 'regular',

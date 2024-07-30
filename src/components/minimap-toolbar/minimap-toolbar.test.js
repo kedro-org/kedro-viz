@@ -50,9 +50,9 @@ describe('MiniMapToolbar', () => {
     const expectedResult = {
       displayMiniMap: true,
       chartZoom: expect.any(Object),
+      displayZoomToolbar: expect.any(Boolean),
       visible: expect.objectContaining({
         miniMap: expect.any(Boolean),
-        miniMapBtn: expect.any(Boolean),
       }),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);

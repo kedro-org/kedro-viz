@@ -110,7 +110,7 @@ const RunDetailsModal = ({
             Cancel
           </Button>
           <Button
-            dataTest={'Apply changes and close in Run Details Modal'}
+            dataTest={'run-details-modal-apply-changes'}
             disabled={hasNotInteracted}
             onClick={onApplyChanges}
             mode={isSuccessful ? 'success' : 'primary'}

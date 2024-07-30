@@ -8,7 +8,6 @@ from demo_project.pipelines import feature_engineering as fe
 from demo_project.pipelines import modelling as mod
 from demo_project.pipelines import reporting as rep
 
-
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
 
@@ -25,7 +24,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     )
 
     reporting_pipeline = rep.create_pipeline()
-
+    
     return {
         "__default__": (
             ingestion_pipeline

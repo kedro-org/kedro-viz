@@ -9,7 +9,7 @@ describe('Experiment Tracking', () => {
 
       // Alias
       cy.get('.details-metadata__title').first().as('metadataTitle');
-      cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+      cy.get('[data-test="run-details-modal-apply-changes"]').as(
         'applyChanges'
       );
 
@@ -20,13 +20,14 @@ describe('Experiment Tracking', () => {
       cy.get('@metadataTitle').click();
 
       // Assert after action
-      cy.get('.modal--visible').then(($dialog) => {
-        cy.wrap($dialog).within(() => {
-          cy.get(':nth-child(2) > .input').clear();
-          cy.get(':nth-child(2) > .input').type(modifiedRunTitleText);
-          cy.get('@applyChanges').click();
-        });
-      });
+      cy.get('.modal--visible').should('exist');
+    
+      cy.get('.modal--visible').within(() => {
+        cy.get(':nth-child(2) > .input').as('inputField');
+        cy.get('@inputField').clear();
+        cy.get('@inputField').type(modifiedRunTitleText);
+        cy.get('@applyChanges').click();
+      });  
 
       cy.get('.modal--visible').should('not.exist');
       cy.get('.runs-list-card__title')
@@ -40,7 +41,7 @@ describe('Experiment Tracking', () => {
 
       // Alias
       cy.get('.details-metadata__notes').as('metadataNotes');
-      cy.get('[data-test="Apply changes and close in Run Details Modal"]').as(
+      cy.get('[data-test="run-details-modal-apply-changes"]').as(
         'applyChanges'
       );
 
@@ -113,9 +114,9 @@ describe('Experiment Tracking', () => {
         });
 
       // Action
-      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="experiments-metrics-select-dropdown"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
-      cy.get('[data-test="btnMetricsChange"]').click();
+      cy.get('[data-test="experiments-metrics-select-dropdown-apply-btn"]').click();
 
       // Assert after action
       cy.get('.time-series__metric-name')
@@ -166,9 +167,9 @@ describe('Experiment Tracking', () => {
         .and('eq', plotToCheckText);
 
       // Action
-      cy.get('.select-dropdown [data-test="kedro-pipeline-selector"]').click();
+      cy.get('.select-dropdown [data-test="experiments-metrics-select-dropdown"]').click();
       cy.get('.dropdown__options > :nth-child(2)').click();
-      cy.get('[data-test="btnMetricsChange"]').click();
+      cy.get('[data-test="experiments-metrics-select-dropdown-apply-btn"]').click();
 
       // Assert after action
       cy.get(`.metric-axis`)
@@ -189,16 +190,23 @@ describe('Experiment Tracking', () => {
 
       // Assert after action
       cy.get('@plotsTab').should('have.class', 'tabs__item--active');
+
+      cy.enablePrettyNames(); // Enable pretty names using the custom command
     });
 
     it('verifies that users can select the metrics name, and it takes them to the metrics in the DAG. #TC-49', () => {
       const plotNameText = 'reporting.feature_importance';
 
+      cy.enablePrettyNames();
+
       // Action
       cy.get('.accordion__title--hyperlink').first().click();
 
       // Assert after action
-      cy.location('search').should('contain', `?pid=__default__&sn=${plotNameText}`);
+      cy.location('search').should(
+        'contain',
+        `?pid=__default__&sn=${plotNameText}`
+      );
       cy.__checkForText__(
         '.pipeline-node--selected > .pipeline-node__text',
         prettifyName(stripNamespace(plotNameText))

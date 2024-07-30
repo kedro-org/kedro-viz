@@ -41,6 +41,7 @@ export const ExperimentPrimaryToolbar = ({
       displaySidebar={displaySidebar}
       onToggleSidebar={setSidebarVisible}
       visible={{ sidebar: sidebarVisible }}
+      dataTest={`sidebar-experiments-visible-btn-${sidebarVisible}`}
     >
       <SlideFromLeftToRight state={enableComparisonView} duration={duration}>
         {enableComparisonView && (
@@ -49,7 +50,7 @@ export const ExperimentPrimaryToolbar = ({
               active={enableShowChanges}
               ariaLabel="Toggle show changes"
               className={'pipeline-menu-button--labels'}
-              dataTest={'btnToggleChange'}
+              dataTest={`sidebar-experiments-show-changes-btn-${enableShowChanges}`}
               disabled={showChangesIconDisabled}
               icon={ShowChangesIcon}
               labelText={
@@ -61,6 +62,7 @@ export const ExperimentPrimaryToolbar = ({
             />
             <IconButton
               ariaLabel="Export Run Data"
+              dataTest={'sidebar-experiments-export-runs'}
               className={'pipeline-menu-button--export-runs'}
               icon={ExportIcon}
               labelText="Export run data"
@@ -76,7 +78,7 @@ export const ExperimentPrimaryToolbar = ({
               active={bookmark}
               ariaLabel="Toggle run bookmark"
               className={'pipeline-menu-button--labels'}
-              dataTest="btnToggleBookmark"
+              dataTest={`sidebar-experiments-bookmark-btn-${bookmark}`}
               icon={bookmark ? BookmarkIcon : BookmarkStrokeIcon}
               labelText={`${bookmark ? 'Unbookmark' : 'Bookmark'}`}
               onClick={() => toggleBookmark()}
@@ -84,7 +86,7 @@ export const ExperimentPrimaryToolbar = ({
             <IconButton
               ariaLabel="Edit run details"
               className={'pipeline-menu-button--labels'}
-              dataTest="btnEditRunDetails"
+              dataTest={'sidebar-experiments-edit-details'}
               icon={PencilIcon}
               labelText={`Edit details`}
               onClick={() => showRunDetailsModal(true)}
@@ -92,7 +94,7 @@ export const ExperimentPrimaryToolbar = ({
             <IconButton
               ariaLabel="Export Run Data"
               className={'pipeline-menu-button--export-runs'}
-              dataTest="btnExportRunData"
+              dataTest={'sidebar-experiments-export-runs'}
               icon={ExportIcon}
               labelText="Export run data"
               onClick={() => setShowRunExportModal(true)}

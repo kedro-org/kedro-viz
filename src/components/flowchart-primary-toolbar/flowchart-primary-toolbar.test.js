@@ -18,25 +18,25 @@ describe('PrimaryToolbar', () => {
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
-  it('hides all buttons (except menu button) when visible prop is false for each of them', () => {
-    const visible = {
+  it('hides all buttons (except menu button) when display prop is false for each of them', () => {
+    const display = {
       labelBtn: false,
       layerBtn: false,
       exportBtn: false,
-      pipelineBtn: false,
+      expandPipelinesBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
-      visible,
+      options: { display },
     });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
   });
 
-  it('hides one button when visible prop is false for one of them', () => {
-    const visible = {
+  it('hides one button when display prop is false for one of them', () => {
+    const display = {
       labelBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
-      visible,
+      options: { display },
     });
     expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
   });
@@ -57,6 +57,7 @@ describe('PrimaryToolbar', () => {
         displaySidebar: true,
         textLabels: mockState.spaceflights.textLabels,
         visible: mockState.spaceflights.visible,
+        display: mockState.spaceflights.display,
         [callback]: mockFn,
       };
       const wrapper = setup.mount(<FlowchartPrimaryToolbar {...props} />);
@@ -71,16 +72,17 @@ describe('PrimaryToolbar', () => {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
-      displaySidebar: true,
       visible: expect.objectContaining({
-        exportBtn: expect.any(Boolean),
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
+        sidebar: expect.any(Boolean),
+      }),
+      display: expect.objectContaining({
+        exportBtn: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
-        pipelineBtn: expect.any(Boolean),
-        sidebar: expect.any(Boolean),
+        expandPipelinesBtn: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),
     };

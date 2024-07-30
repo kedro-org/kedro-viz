@@ -83,6 +83,7 @@ Set up endpoint
 The endpoint link can be found under **S3 bucket -> Properties -> Static website hosting -> Bucket website endpoint**.
 ```
 
+Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
 ![](./images/kedro-publish-aws.gif)
@@ -103,6 +104,10 @@ If you are on Kedro-Viz 7.0.0 you can still publish and share Kedro-Viz project 
 
 ```bash
 kedro viz deploy --region=[aws-bucket-region] --bucket-name=[aws-bucket-name]
+```
+
+```{note}
+Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
 ```
 
 ## Permissions and access control

@@ -33,6 +33,7 @@ export const PipelineList = ({
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}
+        dataTest={'kedro-pipeline-selector'}
         onChanged={(selectedPipeline) => {
           onUpdateActivePipeline(selectedPipeline);
           // Reset the URL to the current active pipeline when switching between different view

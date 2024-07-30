@@ -420,8 +420,13 @@ def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
         raise exc
 
 
-def save_api_node_response_to_fs(nodes_path: str, remote_fs: Any):
+def save_api_node_response_to_fs(
+    nodes_path: str, remote_fs: Any, is_all_previews_enabled: bool
+):
     """Saves API /nodes/{node} response to a directory."""
+    # Set if preview is enabled/disabled for all data nodes
+    DataNodeMetadata.set_is_all_previews_enabled(is_all_previews_enabled)
+
     for nodeId in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
@@ -452,7 +457,7 @@ def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
             raise exc
 
 
-def save_api_responses_to_fs(path: str, remote_fs: Any):
+def save_api_responses_to_fs(path: str, remote_fs: Any, is_all_previews_enabled: bool):
     """Saves all Kedro Viz API responses to a directory."""
     try:
         logger.debug(
@@ -470,7 +475,7 @@ def save_api_responses_to_fs(path: str, remote_fs: Any):
             remote_fs.makedirs(pipelines_path, exist_ok=True)
 
         save_api_main_response_to_fs(main_path, remote_fs)
-        save_api_node_response_to_fs(nodes_path, remote_fs)
+        save_api_node_response_to_fs(nodes_path, remote_fs, is_all_previews_enabled)
         save_api_pipeline_response_to_fs(pipelines_path, remote_fs)
 
     except Exception as exc:  # pragma: no cover

@@ -22,6 +22,7 @@ const Dropdown = (props) => {
     showCancelApplyBtns,
     width = 160,
     placeholderText,
+    dataTest,
   } = props;
 
   /**
@@ -327,6 +328,7 @@ const Dropdown = (props) => {
       selectedOption={selectedOption}
       showCancelApplyBtns={showCancelApplyBtns}
       width={width}
+      dataTest={dataTest}
     >
       {children}
     </DropdownRenderer>

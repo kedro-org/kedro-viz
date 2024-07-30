@@ -22,7 +22,7 @@ describe('Selectors', () => {
   });
   const { nodes, edges } = mockState.graph;
   const disabledNode = nodes.find((node) =>
-    node.name.includes('Train Model')
+    node.name.includes('train_model')
   ).id;
   const sourceToDisabledNode = edges.find(
     (edge) =>

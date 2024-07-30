@@ -331,3 +331,16 @@ export function updateRunNotes(notes, runId) {
     runId,
   };
 }
+
+export const UPDATE_STATE_FROM_OPTIONS = 'UPDATE_STATE_FROM_OPTIONS';
+
+/**
+ * Update state with latest options prop coming from the react component
+ * @param {Object} updatedOptions
+ */
+export const updateStateFromOptions = (updatedOptions) => {
+  return {
+    type: UPDATE_STATE_FROM_OPTIONS,
+    payload: updatedOptions,
+  };
+};

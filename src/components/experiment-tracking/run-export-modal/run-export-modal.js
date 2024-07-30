@@ -76,7 +76,7 @@ const RunExportModal = ({
             onClick={updateExportData}
           >
             <Button
-              dataTest={'Export all and close'}
+              dataTest={'run-export-modal-export-all'}
               mode={isSuccessful ? 'success' : 'primary'}
               size="small"
             >

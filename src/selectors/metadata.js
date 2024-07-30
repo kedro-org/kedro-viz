@@ -3,6 +3,7 @@ import { getNodeLabel, getNodeFullName, getNodeName } from './nodes';
 import { prettifyName, stripNamespace } from '../utils';
 
 const getClickedNode = (state) => state.node.clicked;
+const getDisplayMetadataPanel = (state) => state.display.metadataPanel;
 /**
  * Comparison for sorting alphabetically by name, otherwise by value
  */
@@ -12,8 +13,8 @@ const sortAlpha = (a, b) => (a.name || a).localeCompare(b.name || b);
  * Returns true if metadata sidebar is visible
  */
 export const getVisibleMetaSidebar = createSelector(
-  [getClickedNode],
-  (nodeClicked) => Boolean(nodeClicked)
+  [getClickedNode, getDisplayMetadataPanel],
+  (nodeClicked, metadataPanel) => (metadataPanel ? Boolean(nodeClicked) : false)
 );
 
 /**

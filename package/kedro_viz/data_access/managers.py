@@ -24,8 +24,8 @@ from kedro_viz.models.flowchart import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.services import layers_services, modular_pipelines_services
-from kedro_viz.utils import _strip_transcoding
+from kedro_viz.services import layers_services
+from kedro_viz.utils import _strip_transcoding, is_dataset_param
 
 from .repositories import (
     CatalogRepository,
@@ -149,15 +149,21 @@ class DataAccessManager:
             pipeline: The Kedro pipeline instance to convert to graph models
                 and add to relevant repositories representing the graph.
         """
-        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
         self.registered_pipelines.add_pipeline(registered_pipeline_id)
+        modular_pipelines_repo_obj = self.modular_pipelines[registered_pipeline_id]
+        modular_pipelines_repo_obj.populate_tree(pipeline)
+
         free_inputs = pipeline.inputs()
 
         for node in pipeline.nodes:
-            task_node = self.add_node(registered_pipeline_id, node)
-            self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
+            # Add a Kedro node as a TaskNode to the NodesRepository
+            # for a given registered pipeline ID
+            task_node = self.add_node(
+                registered_pipeline_id, node, modular_pipelines_repo_obj
+            )
 
-            current_modular_pipeline_id = modular_pipelines.extract_from_node(task_node)
+            # Add the task node created above to RegisteredPipelinesRepository
+            self.registered_pipelines.add_node(registered_pipeline_id, task_node.id)
 
             # Add node's inputs as DataNode to the graph
             for input_ in node.inputs:
@@ -166,7 +172,11 @@ class DataAccessManager:
                 # because free inputs to the pipeline can't be transcoded.
                 is_free_input = input_ in free_inputs
                 input_node = self.add_node_input(
-                    registered_pipeline_id, input_, task_node, is_free_input
+                    registered_pipeline_id,
+                    input_,
+                    task_node,
+                    modular_pipelines_repo_obj,
+                    is_free_input,
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, input_node.id
@@ -174,18 +184,14 @@ class DataAccessManager:
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
-                # Add the input as an input of the task_node's modular_pipeline, if any.
-                # The method `add_input` will take care of figuring out whether
-                # it is an internal or external input of the modular pipeline.
-                modular_pipelines.extract_from_node(input_node)
-                if current_modular_pipeline_id is not None:
-                    modular_pipelines.add_input(current_modular_pipeline_id, input_node)
-
             # Add node outputs as DataNode to the graph.
             # It follows similar logic to adding inputs.
             for output in node.outputs:
                 output_node = self.add_node_output(
-                    registered_pipeline_id, output, task_node
+                    registered_pipeline_id,
+                    output,
+                    task_node,
+                    modular_pipelines_repo_obj,
                 )
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, output_node.id
@@ -194,23 +200,30 @@ class DataAccessManager:
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
 
-                modular_pipelines.extract_from_node(output_node)
-                if current_modular_pipeline_id is not None:
-                    modular_pipelines.add_output(
-                        current_modular_pipeline_id, output_node
-                    )
-
-    def add_node(self, registered_pipeline_id: str, node: KedroNode) -> TaskNode:
+    def add_node(
+        self,
+        registered_pipeline_id: str,
+        node: KedroNode,
+        modular_pipelines_repo_obj: ModularPipelinesRepository,
+    ) -> TaskNode:
         """Add a Kedro node as a TaskNode to the NodesRepository
         for a given registered pipeline ID.
 
         Args:
             registered_pipeline_id: The registered pipeline ID to which the node belongs.
             node: The Kedro node to add as TaskNode.
+            modular_pipelines_repo_obj: The modular pipelines repository
+                    instance for the registered pipeline.
         Returns:
             The GraphNode instance representing the Kedro node that was added to the graph.
         """
-        task_node: TaskNode = self.nodes.add_node(GraphNode.create_task_node(node))
+        (
+            node_id,
+            modular_pipeline_ids,
+        ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(node)
+        task_node: TaskNode = self.nodes.add_node(
+            GraphNode.create_task_node(node, node_id, modular_pipeline_ids)
+        )
         task_node.add_pipeline(registered_pipeline_id)
         self.tags.add_tags(task_node.tags)
         return task_node
@@ -220,6 +233,7 @@ class DataAccessManager:
         registered_pipeline_id: str,
         input_dataset: str,
         task_node: TaskNode,
+        modular_pipelines_repo_obj: ModularPipelinesRepository,
         is_free_input: bool = False,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
@@ -229,13 +243,18 @@ class DataAccessManager:
             registered_pipeline_id: The pipeline ID to which the node's input belongs.
             input_dataset: The input dataset of the TaskNode.
             task_node: The TaskNode to add input to.
+            modular_pipelines_repo_obj: The modular pipelines repository
+                    instance for the registered pipeline.
             is_free_input: Whether the input is a free input to the pipeline.
         Returns:
             The GraphNode instance representing the node's input that was added to the graph.
         """
 
         graph_node = self.add_dataset(
-            registered_pipeline_id, input_dataset, is_free_input=is_free_input
+            registered_pipeline_id,
+            input_dataset,
+            modular_pipelines_repo_obj,
+            is_free_input=is_free_input,
         )
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
@@ -250,7 +269,11 @@ class DataAccessManager:
         return graph_node
 
     def add_node_output(
-        self, registered_pipeline_id: str, output_dataset: str, task_node: TaskNode
+        self,
+        registered_pipeline_id: str,
+        output_dataset: str,
+        task_node: TaskNode,
+        modular_pipelines_repo_obj: ModularPipelinesRepository,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro node's output as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
@@ -259,10 +282,14 @@ class DataAccessManager:
             registered_pipeline_id: The pipeline ID to which the node's output belongs.
             output_dataset: The output dataset of the TaskNode.
             task_node: The TaskNode to add output to.
+            modular_pipelines_repo_obj: The modular pipelines repository
+                    instance for the registered pipeline.
         Returns:
             The GraphNode instance representing the node's output that was added to the graph.
         """
-        graph_node = self.add_dataset(registered_pipeline_id, output_dataset)
+        graph_node = self.add_dataset(
+            registered_pipeline_id, output_dataset, modular_pipelines_repo_obj
+        )
         graph_node.tags.update(task_node.tags)
         self.edges[registered_pipeline_id].add_edge(
             GraphEdge(source=task_node.id, target=graph_node.id)
@@ -274,6 +301,7 @@ class DataAccessManager:
         self,
         registered_pipeline_id: str,
         dataset_name: str,
+        modular_pipelines_repo_obj: ModularPipelinesRepository,
         is_free_input: bool = False,
     ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:
         """Add a Kedro dataset as a DataNode, TranscodedDataNode or ParametersNode
@@ -282,6 +310,8 @@ class DataAccessManager:
         Args:
             registered_pipeline_id: The registered pipeline ID to which the dataset belongs.
             dataset_name: The name of the dataset.
+            modular_pipelines_repo_obj: The modular pipelines repository
+                    instance for the registered pipeline.
             is_free_input: Whether the dataset is a free input to the registered pipeline.
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
@@ -289,20 +319,49 @@ class DataAccessManager:
         obj = self.catalog.get_dataset(dataset_name)
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
-        if self.catalog.is_dataset_param(dataset_name):
+        (
+            dataset_id,
+            modular_pipeline_ids,
+        ) = modular_pipelines_repo_obj.get_node_and_modular_pipeline_mapping(
+            dataset_name
+        )
+
+        # add datasets that are not part of a modular pipeline
+        # as a child to the root modular pipeline
+        if modular_pipeline_ids is None:
+            root_modular_pipeline_node = (
+                modular_pipelines_repo_obj.get_or_create_modular_pipeline(
+                    ROOT_MODULAR_PIPELINE_ID
+                )
+            )
+            root_modular_pipeline_node.children.add(
+                ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
+            )
+
+            # update the node_mod_pipeline_map
+            if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
+                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
+                    ROOT_MODULAR_PIPELINE_ID
+                }
+
+        if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
+                dataset_id=dataset_id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 parameters=obj,
+                modular_pipelines=None,
             )
         else:
             graph_node = GraphNode.create_data_node(
+                dataset_id=dataset_id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
                 dataset=obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
+                modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
             )
         graph_node = self.nodes.add_node(graph_node)
@@ -415,10 +474,10 @@ class DataAccessManager:
 
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
-        modular_pipelines = self.modular_pipelines[registered_pipeline_id]
-        modular_pipelines_tree = modular_pipelines_services.expand_tree(
-            modular_pipelines.as_dict()
-        )
+        modular_pipelines_tree = self.modular_pipelines[
+            registered_pipeline_id
+        ].as_dict()
+
         root_parameters = set()
 
         # turn all modular pipelines in the tree into a graph node for visualisation,
@@ -498,7 +557,7 @@ class DataAccessManager:
                 or not node.belongs_to_pipeline(registered_pipeline_id)
             ):
                 continue
-            if not node.modular_pipelines or node_id in root_parameters:
+            if node.modular_pipelines is None or node_id in root_parameters:
                 modular_pipelines_tree[ROOT_MODULAR_PIPELINE_ID].children.add(
                     ModularPipelineChild(
                         id=node_id, type=self.nodes.get_node_by_id(node_id).type

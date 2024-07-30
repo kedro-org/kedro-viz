@@ -156,5 +156,5 @@ class TestServer:
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)
         save_api_responses_to_fs_mock.assert_called_once_with(
-            save_file, mock_filesystem.return_value
+            save_file, mock_filesystem.return_value, True
         )

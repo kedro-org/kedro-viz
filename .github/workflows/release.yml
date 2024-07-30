@@ -31,6 +31,10 @@ jobs:
       run: |-
         node -v
         make build
+
+    # Renaming README.npm.md to README.md just for npm
+    - name: Use NPM specific README
+      run: mv README.npm.md README.md         
     
     - name: Publish to npm
       run: npm publish

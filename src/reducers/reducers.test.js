@@ -20,6 +20,7 @@ import {
   UPDATE_CHART_SIZE,
   TOGGLE_HOVERED_FOCUS_MODE,
   TOGGLE_EXPAND_ALL_PIPELINES,
+  UPDATE_STATE_FROM_OPTIONS,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -35,6 +36,7 @@ import {
 import { UPDATE_ACTIVE_PIPELINE } from '../actions/pipelines';
 import { TOGGLE_MODULAR_PIPELINE_ACTIVE } from '../actions/modular-pipelines';
 import { TOGGLE_GRAPH_LOADING } from '../actions/graph';
+import { UPDATE_USER_PREFERENCES } from '../actions/preferences';
 
 describe('Reducer', () => {
   it('should return an Object', () => {
@@ -124,7 +126,7 @@ describe('Reducer', () => {
         type: TOGGLE_IS_PRETTY_NAME,
         isPrettyName: true,
       });
-      expect(mockState.spaceflights.isPrettyName).toBe(true);
+      expect(mockState.spaceflights.isPrettyName).toBe(false);
       expect(newState.isPrettyName).toBe(true);
     });
   });
@@ -137,6 +139,19 @@ describe('Reducer', () => {
       });
       expect(mockState.spaceflights.showFeatureHints).toBe(true);
       expect(newState.showFeatureHints).toBe(true);
+    });
+  });
+
+  describe('UPDATE_USER_PREFERENCES', () => {
+    it('should update the value of showDatasetPreviews', () => {
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_USER_PREFERENCES,
+        payload: { showDatasetPreviews: true },
+      });
+      expect(mockState.spaceflights.userPreferences.showDatasetPreviews).toBe(
+        true
+      );
+      expect(newState.userPreferences.showDatasetPreviews).toBe(true);
     });
   });
 
@@ -428,6 +443,47 @@ describe('Reducer', () => {
       });
       expect(mockState.spaceflights.hoveredFocusMode).toBe(false);
       expect(newState.hoveredFocusMode).toBe(true);
+    });
+  });
+
+  describe('UPDATE_STATE_FROM_OPTIONS', () => {
+    it('should update the theme state based on options props from a react component', () => {
+      const newOptions = {
+        theme: 'dark',
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.theme).toBe('dark');
+    });
+
+    it('should update the textLabels state based on options props from a react component', () => {
+      const newOptions = {
+        visible: {
+          textLabels: false,
+        },
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.visible.textLabels).toBe(false);
+    });
+
+    it('should update the tag state based on options props from a react component', () => {
+      const newOptions = {
+        tag: {
+          enabled: {
+            large: true,
+          },
+        },
+      };
+      const newState = reducer(mockState.spaceflights, {
+        type: UPDATE_STATE_FROM_OPTIONS,
+        payload: newOptions,
+      });
+      expect(newState.tag.enabled.large).toBe(true);
     });
   });
 });

@@ -29,7 +29,7 @@ const ungroupNodes = (groupedNodes) =>
 describe('node-list-selectors', () => {
   describe('getFilteredNodes', () => {
     const nodes = getGroupedNodes(mockState.spaceflights);
-    let searchValue = 'Split';
+    let searchValue = 'split';
     const { filteredNodes } = getFilteredNodes({ nodes, searchValue });
     const nodeList = ungroupNodes(filteredNodes);
 
@@ -235,7 +235,7 @@ describe('node-list-selectors', () => {
 
     it('filters expected number of items', () => {
       expect(filteredItems.task).toHaveLength(5);
-      expect(filteredItems.data).toHaveLength(5);
+      expect(filteredItems.data).toHaveLength(11);
       expect(filteredItems.parameters).toHaveLength(1);
       expect(filteredItems.tag).toHaveLength(2);
       expect(filteredItems.modularPipeline).toHaveLength(2);
@@ -322,7 +322,7 @@ describe('node-list-selectors', () => {
 
   describe('highlightMatch', () => {
     const nodes = getGroupedNodes(mockState.spaceflights);
-    const searchValue = 'e';
+    const searchValue = 'data';
     const formattedNodes = highlightMatch(nodes, searchValue);
     const nodeList = ungroupNodes(formattedNodes);
 

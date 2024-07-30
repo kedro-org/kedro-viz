@@ -111,8 +111,7 @@ const NodeListRow = memo(
             `pipeline-nodelist__row__text--kind-${kind}`,
             `pipeline-nodelist__row__text--${rowType}`
           )}
-          data-heap-event={`clicked.sidebar.${icon}`}
-          data-test={`node-${children ? null : name}`}
+          data-test={`nodelist-${icon}-${children ? null : name}`}
           onClick={onClick}
           onFocus={onMouseEnter}
           onBlur={onMouseLeave}
@@ -155,7 +154,7 @@ const NodeListRow = memo(
             <input
               id={id}
               className="pipeline-nodelist__row__checkbox"
-              data-heap-event={kind === `visible.${name}.${isChecked}`}
+              data-test={kind === `nodelist-visible-${name}-${isChecked}`}
               type="checkbox"
               checked={isChecked}
               disabled={disabled}
@@ -201,7 +200,7 @@ const NodeListRow = memo(
             <input
               id={id + '-focus'}
               className="pipeline-nodelist__row__checkbox"
-              data-heap-event={kind === `focusMode.checked.${isChecked}`}
+              data-test={kind === `nodelist-focusMode-checked-${isChecked}`}
               type="checkbox"
               checked={isChecked}
               disabled={disabled}
