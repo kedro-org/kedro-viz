@@ -19,7 +19,11 @@ const slicePipelineReducer = (sliceState = {}, action) => {
         to: action.slice.to,
       });
     case RESET_SLICE_PIPELINE:
-      return {};
+      return {
+        from: null,
+        to: null,
+        apply: false,
+      };
     default:
       return sliceState;
   }

@@ -731,6 +731,7 @@ export class FlowChart extends Component {
       runCommand,
       visibleGraph,
       slicedPipeline,
+      visibleSidebar,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -795,16 +796,19 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <div ref={this.slicedPipelineActionRef}>
-          <SlicedPipelineActionBar
-            chartSize={chartSize}
-            slicedPipeline={slicedPipeline}
-            isSlicingPipelineApplied={isSlicingPipelineApplied}
-            onApplySlicingPipeline={() => onApplySlice(true)}
-            onResetSlicingPipeline={this.resetSlicedPipeline}
-            runCommand={runCommand}
-          />
-        </div>
+        {slicedPipeline.length > 0 && (
+          <div ref={this.slicedPipelineActionRef}>
+            <SlicedPipelineActionBar
+              chartSize={chartSize}
+              isSlicingPipelineApplied={isSlicingPipelineApplied}
+              onApplySlicingPipeline={() => onApplySlice(true)}
+              onResetSlicingPipeline={this.resetSlicedPipeline}
+              runCommand={runCommand}
+              visibleSidebar={visibleSidebar}
+              slicedPipeline={slicedPipeline}
+            />
+          </div>
+        )}
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}

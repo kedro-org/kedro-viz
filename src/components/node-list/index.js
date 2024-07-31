@@ -68,7 +68,7 @@ const NodeListProvider = ({
   focusMode,
   disabledModularPipeline,
   inputOutputDataNodes,
-  onResetslicePipeline,
+  onResetSlicePipeline,
   isSlicingPipelineApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
@@ -115,7 +115,7 @@ const NodeListProvider = ({
 
         // Reset node filters only if filters are currently applied.
         if (!isSlicingPipelineApplied) {
-          onResetslicePipeline();
+          onResetSlicePipeline();
         }
       }
     }
@@ -372,7 +372,7 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   },
-  onResetslicePipeline: () => {
+  onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());
   },
 });
