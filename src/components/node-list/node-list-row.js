@@ -85,6 +85,7 @@ const NodeListRow = memo(
             'pipeline-nodelist__row--highlight': highlight,
             'pipeline-nodelist__row--disabled': disabled,
             'pipeline-nodelist__row--unchecked': !isChecked,
+            'pipeline-nodelist__row--overwrite': !(active || selected),
           }
         )}
         title={name}
