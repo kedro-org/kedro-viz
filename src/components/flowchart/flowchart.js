@@ -734,12 +734,6 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        <SlicedPipelineActionBar
-          chartSize={chartSize}
-          slicedPipeline={slicedPipelineState.range}
-          visibleSidebar={visibleSidebar}
-          notification={showSlicingNotification}
-        />
         <svg
           id="pipeline-graph"
           className="pipeline-flowchart__graph"
@@ -795,6 +789,14 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
+        <div ref={this.slicedPipelineActionRef}>
+          <SlicedPipelineActionBar
+            chartSize={chartSize}
+            slicedPipeline={slicedPipelineState.range}
+            visibleSidebar={visibleSidebar}
+            notification={showSlicingNotification}
+          />
+        </div>
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
