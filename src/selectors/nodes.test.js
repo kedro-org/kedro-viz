@@ -14,6 +14,7 @@ import {
   getInputOutputNodesForFocusedModularPipeline,
   getNodeLabel,
   getOppositeForPrettyName,
+  filterNodes,
 } from './nodes';
 import {
   toggleTextLabels,
@@ -454,5 +455,21 @@ describe('getInputOutputDataNodes', () => {
     expect(
       getInputOutputNodesForFocusedModularPipeline(newMockState)
     ).toHaveProperty('23c94afb');
+  });
+});
+
+describe('filterNodes helper function', () => {
+  it('should return an object with nodes filtered by includedNodeIds', () => {
+    const nodes = {
+      1: { name: 'Node 1', value: 100 },
+      2: { name: 'Node 2', value: 200 },
+      3: { name: 'Node 3', value: 300 },
+    };
+    const filteredPipeline = ['1', '3'];
+    const filteredNodes = filterNodes(nodes, filteredPipeline);
+    expect(filteredNodes).toEqual({
+      1: { name: 'Node 1', value: 100 },
+      3: { name: 'Node 3', value: 300 },
+    });
   });
 });
