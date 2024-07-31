@@ -69,7 +69,6 @@ const NodeListProvider = ({
   disabledModularPipeline,
   inputOutputDataNodes,
   onResetSlicePipeline,
-  isSlicingPipelineApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -112,11 +111,7 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
-
-        // Reset node filters only if filters are currently applied.
-        if (!isSlicingPipelineApplied) {
-          onResetSlicePipeline();
-        }
+        onResetSlicePipeline();
       }
     }
   };
@@ -335,7 +330,6 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
-  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

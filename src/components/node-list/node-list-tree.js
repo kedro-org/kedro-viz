@@ -122,14 +122,9 @@ const TreeListProvider = ({
   expanded,
   onToggleNodeSelected,
   slicedPipeline,
-  isSlicingPipelineApplied,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
-    if (Object.keys(node).length === 0) {
-      return null;
-    }
-
     const disabled =
       node.disabledTag ||
       node.disabledType ||
@@ -148,8 +143,7 @@ const TreeListProvider = ({
 
     const selected = nodeSelected[node.id];
 
-    const highlight =
-      !isSlicingPipelineApplied && slicedPipeline.includes(node.id);
+    const highlight = slicedPipeline.includes(node.id);
     const data = getNodeRowData(node, disabled, selected, highlight);
 
     return (
@@ -168,14 +162,7 @@ const TreeListProvider = ({
   const renderTree = (tree, modularPipelineID) => {
     // current tree node to render
     const node = tree[modularPipelineID];
-
     if (!node) {
-      return;
-    }
-    const allChildrenDataEmpty = node.children.every(
-      (child) => Object.keys(child.data).length === 0
-    );
-    if (allChildrenDataEmpty) {
       return;
     }
 
@@ -260,7 +247,6 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
   slicedPipeline: getSlicedPipeline(state),
-  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

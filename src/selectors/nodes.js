@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { select } from 'd3-selection';
 import { arrayToObject } from '../utils';
 import { getPipelineNodeIDs } from './pipeline';
-import { getSlicedPipeline } from './sliced-pipeline';
 import {
   getNodeDisabled,
   getNodeDisabledTag,
@@ -42,16 +41,6 @@ export const getGraphNodes = createSelector(
       return result;
     }, {})
 );
-
-/**
- * Filters the `nodes` object to include only the nodes whose IDs are present in the `filter` array.
- * @param {Object} nodes - An object where keys are node IDs and values are node data objects.
- * @param {Array} slicedPipeline - An array of node IDs to include in the sliced pipeline .
- */
-export const filterNodes = (nodes, slicedPipeline) =>
-  Object.fromEntries(
-    Object.entries(nodes).filter(([nodeId]) => slicedPipeline.includes(nodeId))
-  );
 
 /**
  * Retrieves tags associated with both nodes and their corresponding modular pipelines.
@@ -266,32 +255,23 @@ export const getNodeDataObject = createSelector(
     }, {})
 );
 
+/**
+ * Return the modular pipelines tree with full data for each tree node for display.
+ */
 export const getModularPipelinesTree = createSelector(
-  [
-    (state) => state.modularPipeline.tree,
-    (state) => state.slice.apply,
-    getNodeDataObject,
-    getSlicedPipeline,
-  ],
-  (modularPipelinesTree, isSlicingPipelineApplied, nodes, slicedPipeline) => {
+  [(state) => state.modularPipeline.tree, getNodeDataObject],
+  (modularPipelinesTree, nodes) => {
     if (!modularPipelinesTree) {
       return {};
     }
-
-    // Determine the relevant nodes based on whether slicing is applied
-    const relevantNodes = isSlicingPipelineApplied
-      ? filterNodes(nodes, slicedPipeline)
-      : nodes;
-
     for (const modularPipelineID in modularPipelinesTree) {
       modularPipelinesTree[modularPipelineID].data = {
         ...nodes[modularPipelineID],
       };
       for (const child of modularPipelinesTree[modularPipelineID].children) {
-        child.data = { ...relevantNodes[child.id] };
+        child.data = { ...nodes[child.id] };
       }
     }
-
     return modularPipelinesTree;
   }
 );

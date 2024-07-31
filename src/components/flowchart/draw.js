@@ -149,7 +149,6 @@ export const drawNodes = function (changed) {
     nodes,
     focusMode,
     hoveredFocusMode,
-    isSlicingPipelineApplied,
   } = this.props;
   const { slicedPipelineState } = this.state;
 
@@ -268,11 +267,11 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--sliced-pipeline',
-        (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
+        (node) => slicedPipelineRange[node.id]
       )
       .classed(
         'pipeline-node--from-to-sliced-pipeline',
-        (node) => !isSlicingPipelineApplied && slicedPipelineFromTo[node.id]
+        (node) => slicedPipelineFromTo[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',
