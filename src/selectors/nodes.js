@@ -43,6 +43,24 @@ export const getGraphNodes = createSelector(
     }, {})
 );
 
+export const updateChildrenData = (children, sourceNodes) => {
+  children.forEach((child) => {
+    child.data = { ...sourceNodes[child.id] };
+  });
+};
+
+/**
+ * Filters the `nodes` object to include only the nodes whose IDs are present in the `filter` array.
+ * @param {Object} nodes - An object where keys are node IDs and values are node data objects.
+ * @param {Array} filteredPipeline - An array of node IDs to include in the filtered .
+ */
+export const filterNodes = (nodes, filteredPipeline) =>
+  Object.fromEntries(
+    Object.entries(nodes).filter(([nodeId]) =>
+      filteredPipeline.includes(nodeId)
+    )
+  );
+
 /**
  * Retrieves tags associated with both nodes and their corresponding modular pipelines.
  */
@@ -267,19 +285,6 @@ export const getModularPipelinesTree = createSelector(
     if (!modularPipelinesTree) {
       return {};
     }
-
-    // Helper function to update children data
-    const updateChildrenData = (children, sourceNodes) => {
-      children.forEach((child) => {
-        child.data = { ...sourceNodes[child.id] };
-      });
-    };
-
-    // Helper function to filter nodes
-    const filterNodes = (nodes, filter) =>
-      Object.fromEntries(
-        Object.entries(nodes).filter(([nodeId]) => filter.includes(nodeId))
-      );
 
     // Determine the relevant nodes based on whether filters are applied
     const relevantNodes = isSlicingPipelineApplied
