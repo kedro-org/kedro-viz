@@ -11,21 +11,17 @@ export const SlicedPipelineActionBar = ({
   const { outerWidth } = chartSize;
 
   const transformX = visibleSidebar ? outerWidth / 2 + 100 : outerWidth / 2;
-  if (slicedPipeline.length > 0) {
-    return (
-      <div
-        className="sliced-pipeline-action-bar"
-        style={{ transform: `translateX(${transformX}px)` }}
-      >
-        <div className="sliced-pipeline-action-bar--info">
-          {`${slicedPipeline.length} selected`}
-        </div>
-        <div className="sliced-pipeline-action-bar--cta">
-          <Button>Slice</Button>
-        </div>
+  return (
+    <div
+      className="sliced-pipeline-action-bar"
+      style={{ transform: `translateX(${transformX}px)` }}
+    >
+      <div className="sliced-pipeline-action-bar--info">
+        {`${slicedPipeline.length} selected`}
       </div>
-    );
-  } else {
-    return null;
-  }
+      <div className="sliced-pipeline-action-bar--cta">
+        <Button>Slice</Button>
+      </div>
+    </div>
+  );
 };

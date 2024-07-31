@@ -111,8 +111,9 @@ describe('Reducer', () => {
       const newState = reducer(mockState.spaceflights, {
         type: RESET_SLICE_PIPELINE,
       });
-      expect(newState.slice.from).toEqual(undefined);
-      expect(newState.slice.to).toEqual(undefined);
+      expect(newState.slice.from).toEqual(null);
+      expect(newState.slice.to).toEqual(null);
+      expect(newState.slice.apply).toEqual(false);
     });
   });
 
