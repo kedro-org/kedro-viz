@@ -103,9 +103,9 @@ export const getNodeDisabled = createSelector(
       let isDisabledViaModularPipeline =
         disabledModularPipeline[nodeModularPipelines[id]];
 
-      let isDisabledViaFilters = false;
-      if (slicedPipeline.length > 0 && isSliceApplied) {
-        isDisabledViaFilters = !slicedPipeline.includes(id);
+      let isDisabledViaSlicedPipeline = false;
+      if (isSliceApplied && slicedPipeline.length > 0) {
+        isDisabledViaSlicedPipeline = !slicedPipeline.includes(id);
       }
 
       const isDisabledViaSidebar =
@@ -137,7 +137,7 @@ export const getNodeDisabled = createSelector(
         isDisabledViaSidebar,
         isDisabledViaModularPipeline,
         isDisabledViaFocusedModularPipeline,
-        isDisabledViaFilters,
+        isDisabledViaSlicedPipeline,
       ].some(Boolean);
     })
 );

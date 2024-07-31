@@ -17,6 +17,7 @@ Please follow the established format:
 - Refactor namespace pipelines. (#1897)
 - Expose the internal Redux state through `options` prop while using Kedro-Viz as a React component. (#1969)
 - Enhance documentation for the Kedro-Viz standalone React component. (#1954)
+- Add Datasets preview toggle in the settings panel. (#1977)
 
 ## Bug fixes and other changes
 
@@ -28,6 +29,14 @@ Please follow the established format:
 - Fix packaging. (#1766)
 - Adjust requirements file and dependabot versioning strategy. (#1978)
 - Refactor CommandCopier component. (#1998)
+- Set `isPrettyName` toggle to False by Default. (#1958)
+- Add `-p` argument option for `kedro viz` to align with kedro pipeline options. (#1961)
+- Replace `data-heap-event` with standardised `data-test` for Cypress and Telemetry. (#1995)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Vlad Cozma](https://github.com/VladCozma)
 
 # Release 9.1.0
 

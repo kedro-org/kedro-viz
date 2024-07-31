@@ -6,12 +6,12 @@ import './sliced-pipeline-action-bar.scss';
 export const SlicedPipelineActionBar = ({
   chartSize,
   slicedPipeline,
+  visibleSidebar,
   notification,
 }) => {
-  const { outerWidth, sidebarWidth } = chartSize;
-  const sidebarVisible = sidebarWidth > 140;
+  const { outerWidth } = chartSize;
 
-  const transformX = sidebarVisible ? outerWidth / 2 + 100 : outerWidth / 2;
+  const transformX = visibleSidebar ? outerWidth / 2 + 100 : outerWidth / 2;
   if (notification) {
     return (
       <div
@@ -36,8 +36,9 @@ export const SlicedPipelineActionBar = ({
           <Button>Slice</Button>
         </div>
       </div>
-    );
-  } else {
-    return null;
-  }
+      <div className="sliced-pipeline-action-bar--cta">
+        <Button>Slice</Button>
+      </div>
+    </div>
+  );
 };
