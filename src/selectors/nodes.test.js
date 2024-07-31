@@ -14,7 +14,6 @@ import {
   getInputOutputNodesForFocusedModularPipeline,
   getNodeLabel,
   getOppositeForPrettyName,
-  updateChildrenData,
   filterNodes,
 } from './nodes';
 import {
@@ -456,24 +455,6 @@ describe('getInputOutputDataNodes', () => {
     expect(
       getInputOutputNodesForFocusedModularPipeline(newMockState)
     ).toHaveProperty('23c94afb');
-  });
-});
-
-describe('updateChildrenData helper function', () => {
-  it('should update the data property of each child object based on sourceNodes', () => {
-    const children = [
-      { id: '1', data: {} },
-      { id: '2', data: {} },
-    ];
-    const sourceNodes = {
-      1: { name: 'Node 1', value: 100 },
-      2: { name: 'Node 2', value: 200 },
-    };
-    updateChildrenData(children, sourceNodes);
-    expect(children).toEqual([
-      { id: '1', data: { name: 'Node 1', value: 100 } },
-      { id: '2', data: { name: 'Node 2', value: 200 } },
-    ]);
   });
 });
 

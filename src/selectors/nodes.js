@@ -43,22 +43,14 @@ export const getGraphNodes = createSelector(
     }, {})
 );
 
-export const updateChildrenData = (children, sourceNodes) => {
-  children.forEach((child) => {
-    child.data = { ...sourceNodes[child.id] };
-  });
-};
-
 /**
  * Filters the `nodes` object to include only the nodes whose IDs are present in the `filter` array.
  * @param {Object} nodes - An object where keys are node IDs and values are node data objects.
- * @param {Array} filteredPipeline - An array of node IDs to include in the filtered .
+ * @param {Array} slicedPipeline - An array of node IDs to include in the sliced pipeline .
  */
-export const filterNodes = (nodes, filteredPipeline) =>
+export const filterNodes = (nodes, slicedPipeline) =>
   Object.fromEntries(
-    Object.entries(nodes).filter(([nodeId]) =>
-      filteredPipeline.includes(nodeId)
-    )
+    Object.entries(nodes).filter(([nodeId]) => slicedPipeline.includes(nodeId))
   );
 
 /**
@@ -281,25 +273,24 @@ export const getModularPipelinesTree = createSelector(
     getNodeDataObject,
     getSlicedPipeline,
   ],
-  (modularPipelinesTree, isSlicingPipelineApplied, nodes, filteredPipeline) => {
+  (modularPipelinesTree, isSlicingPipelineApplied, nodes, slicedPipeline) => {
     if (!modularPipelinesTree) {
       return {};
     }
 
-    // Determine the relevant nodes based on whether filters are applied
+    // Determine the relevant nodes based on whether slicing is applied
     const relevantNodes = isSlicingPipelineApplied
-      ? filterNodes(nodes, filteredPipeline)
+      ? filterNodes(nodes, slicedPipeline)
       : nodes;
 
-    // Update modularPipelinesTree data and children data with relevantNodes
-    Object.entries(modularPipelinesTree).forEach(
-      ([modularPipelineID, modularPipeline]) => {
-        if (!isSlicingPipelineApplied) {
-          modularPipeline.data = { ...nodes[modularPipelineID] };
-        }
-        updateChildrenData(modularPipeline.children, relevantNodes);
+    for (const modularPipelineID in modularPipelinesTree) {
+      modularPipelinesTree[modularPipelineID].data = {
+        ...nodes[modularPipelineID],
+      };
+      for (const child of modularPipelinesTree[modularPipelineID].children) {
+        child.data = { ...relevantNodes[child.id] };
       }
-    );
+    }
 
     return modularPipelinesTree;
   }
