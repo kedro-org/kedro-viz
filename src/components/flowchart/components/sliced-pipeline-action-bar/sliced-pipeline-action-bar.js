@@ -36,9 +36,8 @@ export const SlicedPipelineActionBar = ({
           <Button>Slice</Button>
         </div>
       </div>
-      <div className="sliced-pipeline-action-bar--cta">
-        <Button>Slice</Button>
-      </div>
-    </div>
-  );
+    );
+  } else {
+    return null;
+  }
 };
