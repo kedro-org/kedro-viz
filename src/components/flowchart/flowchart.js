@@ -738,9 +738,10 @@ export class FlowChart extends Component {
       displayGlobalNavigation,
       displaySidebar,
       visibleSidebar,
+      slicedPipeline,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { slicedPipelineState, showSlicingNotification } = this.state;
+    const { showSlicingNotification } = this.state;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -802,11 +803,11 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        {(slicedPipelineState.range.length > 0 || showSlicingNotification) && (
+        {(slicedPipeline.length > 0 || showSlicingNotification) && (
           <div ref={this.slicedPipelineActionRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
-              slicedPipeline={slicedPipelineState.range}
+              slicedPipeline={slicedPipeline}
               visibleSidebar={visibleSidebar}
               notification={showSlicingNotification}
               displayMetadataPanel={Boolean(clickedNode)}

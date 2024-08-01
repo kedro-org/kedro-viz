@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import Button from '../../../ui/button';
 
 import './sliced-pipeline-action-bar.scss';
@@ -24,7 +25,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
 
   return (
     <div
-      className="sliced-pipeline-action-bar notification"
+      className="sliced-pipeline-action-bar"
       style={{ transform: `translateX(${transformX}px)` }}
     >
       {notification ? (
