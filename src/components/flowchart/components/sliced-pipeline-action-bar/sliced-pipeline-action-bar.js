@@ -22,11 +22,12 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
   const actionBarWidth =
     ref.current && ref.current.firstChild.getBoundingClientRect().width;
 
-  const metaDataPanelWidth = displayMetadataPanel ? 300 : 0;
-  const buffer = visibleSidebar ? 200 : 300;
+  const metaDataPanelWidth = displayMetadataPanel ? 600 : 400;
+  const nodeListWidth = visibleSidebar ? 200 : 400;
 
   const transformX =
-    screenWidth - actionBarWidth - buffer - metaDataPanelWidth / 2;
+    screenWidth - nodeListWidth - metaDataPanelWidth - actionBarWidth / 2;
+
   return (
     <div
       className="sliced-pipeline-action-bar"
