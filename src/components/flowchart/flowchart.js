@@ -549,15 +549,35 @@ export class FlowChart extends Component {
     const fromNodeId = this.state.slicedPipelineState.from || node.id;
     const toNodeId = node.id;
 
+    // Get bounding client rects of nodes
+    const fromNodeElement = document.querySelector(`[data-id="${fromNodeId}"]`);
+    const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
+
+    if (!fromNodeElement || !toNodeElement) {
+      return;
+    }
+
+    const fromNodeRect = fromNodeElement.getBoundingClientRect();
+    const toNodeRect = toNodeElement.getBoundingClientRect();
+
+    // Ensure that 'from' node has a larger Y-coordinate than 'to' node
+    const [bottomNodeId, topNodeId] =
+      fromNodeRect.y > toNodeRect.y
+        ? [fromNodeId, toNodeId]
+        : [toNodeId, fromNodeId];
+
     const newState = {
       ...this.state.slicedPipelineState,
-      from: fromNodeId,
-      to: toNodeId,
+      from: bottomNodeId,
+      to: topNodeId,
     };
+
+    console.log('Top Node:', topNodeId);
+    console.log('bottom Node:', bottomNodeId);
 
     this.setState({ slicedPipelineState: newState });
 
-    this.props.onSlicePipeline(fromNodeId, toNodeId);
+    this.props.onSlicePipeline(bottomNodeId, topNodeId);
     this.props.onApplySlice(false);
 
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
