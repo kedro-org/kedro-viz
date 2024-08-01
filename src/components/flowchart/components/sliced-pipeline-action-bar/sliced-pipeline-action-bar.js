@@ -7,18 +7,26 @@ import IconButton from '../../../ui/icon-button';
 
 import './sliced-pipeline-action-bar.scss';
 
-export const SlicedPipelineActionBar = ({
-  chartSize,
-  slicedPipeline,
-  visibleSidebar,
-  isSlicingPipelineApplied,
-  onApplySlicingPipeline,
-  onResetSlicingPipeline,
-  runCommand,
-}) => {
-  const { outerWidth } = chartSize;
+export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
+  const {
+    chartSize,
+    displayMetadataPanel,
+    isSlicingPipelineApplied,
+    onApplySlicingPipeline,
+    onResetSlicingPipeline,
+    runCommand,
+    slicedPipeline,
+    visibleSidebar,
+  } = props;
+  const { outerWidth: screenWidth } = chartSize;
+  const actionBarWidth =
+    ref.current && ref.current.firstChild.getBoundingClientRect().width;
 
-  const transformX = visibleSidebar ? outerWidth / 2.5 : outerWidth / 3;
+  const metaDataPanelWidth = displayMetadataPanel ? 300 : 0;
+  const buffer = visibleSidebar ? 200 : 300;
+
+  const transformX =
+    screenWidth - actionBarWidth - buffer - metaDataPanelWidth / 2;
   return (
     <div
       className="sliced-pipeline-action-bar"
@@ -57,4 +65,4 @@ export const SlicedPipelineActionBar = ({
       )}
     </div>
   );
-};
+});
