@@ -14,13 +14,7 @@
   --node-stroke-active: #{colors.$blue-600};
   --node-fill-selected: #{colors.$ocean-200};
   --node-stroke-selected: #{colors.$blue-900};
-  --node-fill-sliced: rgb(
-    172
-    204
-    218 /
-    50%
-  ); // to confirm with Steph on this colour
-
+  --node-fill-sliced: #{colors.$ocean-0-50};
   --node-stroke-sliced: #{colors.$blue-900};
   --node-labeltext-fill: #{colors.$black-800};
   --edge-stroke: #{colors.$grey-400};

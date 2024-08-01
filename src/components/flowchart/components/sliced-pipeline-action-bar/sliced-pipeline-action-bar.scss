@@ -11,7 +11,8 @@
   --sliced-pipeline-action-bar--background: #{colors.$white-0};
   --sliced-pipeline-action-bar--color: #{colors.$black-900};
   --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
-  --sliced-pipeline-action-bar--code-background: #{colors.$white-100};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--code-background: #{colors.$white-200};
 }
 
 $padding-top-bottom: 8px;
@@ -106,7 +107,7 @@ $inner-gap: 12px;
 }
 
 .sliced-pipeline-action-bar--reset {
-  background: #f03b3a;
+  background: #{colors.$red-0};
   border: none;
 
   .button__btn {

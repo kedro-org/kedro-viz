@@ -3,7 +3,7 @@
 @use './metadata-code-themes.scss';
 
 .kui-theme--light {
-  --color-metadata-code-bg: #{variables.$grey-200};
+  --color-metadata-code-bg: #{variables.$grey-0};
 }
 
 .kui-theme--dark {

@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --color-metadata-bg: #{variables.$grey-100};
+  --color-metadata-bg: #{variables.$grey-0};
   --color-metadata-preview-bg: #{variables.$grey-200};
   --color-metadata-kind-token-bg: #{variables.$grey-300};
   --color-plot-bg: #{variables.$white-400};
