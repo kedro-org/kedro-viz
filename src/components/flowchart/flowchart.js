@@ -739,6 +739,7 @@ export class FlowChart extends Component {
    */
   render() {
     const {
+      clickedNode,
       chartSize,
       layers,
       visibleGraph,
@@ -809,14 +810,19 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        <div ref={this.slicedPipelineActionRef}>
-          <SlicedPipelineActionBar
-            chartSize={chartSize}
-            slicedPipeline={slicedPipelineState.range}
-            visibleSidebar={visibleSidebar}
-            notification={showSlicingNotification}
-          />
-        </div>
+        {(slicedPipelineState.range.length > 0 || showSlicingNotification) && (
+          <div ref={this.slicedPipelineActionRef}>
+            <SlicedPipelineActionBar
+              chartSize={chartSize}
+              slicedPipeline={slicedPipelineState.range}
+              visibleSidebar={visibleSidebar}
+              notification={showSlicingNotification}
+              displayMetadataPanel={Boolean(clickedNode)}
+              ref={this.slicedPipelineActionRef}
+            />
+          </div>
+        )}
+
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
