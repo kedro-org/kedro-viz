@@ -1,9 +1,11 @@
 import React from 'react';
-import classnames from 'classnames';
 import Button from '../../../ui/button';
 
 import './sliced-pipeline-action-bar.scss';
 
+/**
+ * Displays a notification or action bar for slicing pipelines.
+ */
 export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
   const {
     chartSize,
@@ -13,13 +15,10 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     displayMetadataPanel,
   } = props;
   const { outerWidth: screenWidth } = chartSize;
-
   const actionBarWidth =
     ref.current && ref.current.firstChild.getBoundingClientRect().width;
-
   const metaDataPanelWidth = displayMetadataPanel ? 600 : 400;
   const nodeListWidth = visibleSidebar ? 200 : 400;
-
   const transformX =
     screenWidth - nodeListWidth - metaDataPanelWidth - actionBarWidth / 2;
 
