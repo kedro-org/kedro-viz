@@ -25,7 +25,7 @@ $inner-gap: 12px;
   display: flex;
   margin: 0;
   position: absolute;
-  transition: transform ease 0.7s;
+  transition: transform ease 0.1s;
   padding: $padding-top-bottom $padding-right-left;
 
   // create a ticket to investigate why there are so many opacities on button component
