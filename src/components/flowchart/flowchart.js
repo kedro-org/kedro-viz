@@ -545,8 +545,9 @@ export class FlowChart extends Component {
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
+    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
 
-    const fromNodeId = this.state.slicedPipelineState.from || node.id;
+    const fromNodeId = fromNodeIdState || node.id;
     const toNodeId = node.id;
 
     // Get bounding client rects of nodes
@@ -566,16 +567,7 @@ export class FlowChart extends Component {
         ? [fromNodeId, toNodeId] // 'from' node is higher
         : [toNodeId, fromNodeId]; // 'to' node is higher
 
-    const newState = {
-      ...this.state.slicedPipelineState,
-      from: topNodeId,
-      to: bottomNodeId,
-    };
-
-    console.log('Top Node:', topNodeId);
-    console.log('Bottom Node:', bottomNodeId);
-
-    this.setState({ slicedPipelineState: newState });
+    this.updateSlicedPipelineState(topNodeId, bottomNodeId, range);
 
     this.props.onSlicePipeline(topNodeId, bottomNodeId);
     this.props.onApplySlice(false);
