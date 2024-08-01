@@ -13,19 +13,6 @@
   transform: translate(0, 0);
   cursor: default;
 
-  // overwrite material-ui selected row background color settings
-  &--overwrite {
-    .Mui-selected & {
-      .kui-theme--dark & {
-        background-color: #{colors.$slate-200};
-      }
-
-      .kui-theme--light & {
-        background-color: #{colors.$white-0};
-      }
-    }
-  }
-
   // overwrite with highlighted background for row on hover
   &--overwrite:hover {
     .Mui-selected & {
