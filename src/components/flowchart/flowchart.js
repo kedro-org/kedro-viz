@@ -513,6 +513,13 @@ export class FlowChart extends Component {
     event.stopPropagation();
   };
 
+  resetSlicedPipeline = () => {
+    this.props.onResetSlicePipeline();
+    this.updateSlicedPipelineState(null, null, []);
+    // To reset URL to current active pipeline when click outside of a node on flowchart
+    this.props.toSelectedPipeline();
+  };
+
   handleSingleNodeClick = (node) => {
     const { id } = node;
     const {
@@ -529,7 +536,7 @@ export class FlowChart extends Component {
     // if both "from" and "to" are defined
     // then on a single node click, it should reset the sliced pipeline state
     if (from !== null && to !== null) {
-      this.updateSlicedPipelineState(null, null, []);
+      this.resetSlicedPipeline();
     } else {
       // Else, set the first node as the 'from' node based on current state
       // we need this so that if user hold shift and click on a second node,
@@ -556,13 +563,6 @@ export class FlowChart extends Component {
 
     this.props.onSlicePipeline(fromNodeId, toNodeId);
     this.props.onApplySlice(false);
-  };
-
-  resetSlicedPipeline = () => {
-    this.props.onResetSlicePipeline();
-    this.updateSlicedPipelineState(null, null, []);
-    // To reset URL to current active pipeline when click outside of a node on flowchart
-    this.props.toSelectedPipeline();
   };
 
   /**
