@@ -284,7 +284,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -307,7 +307,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -346,7 +346,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -369,7 +369,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview
+                      Expand preview
                     </span>
                   </button>
                 </>

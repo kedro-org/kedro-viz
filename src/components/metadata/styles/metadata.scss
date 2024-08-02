@@ -28,12 +28,11 @@
   top: -1px; /* Avoids pixel rounding gaps */
   right: -1px;
   bottom: -1px;
-  z-index: 4;
+  z-index: variables.$z-index-metadata-panel;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: variables.$metadata-sidebar-width-open;
-  padding: 6px 0 0;
   overflow: hidden auto;
   background: var(--color-metadata-bg);
   border-left: 1px solid var(--color-border-line);
