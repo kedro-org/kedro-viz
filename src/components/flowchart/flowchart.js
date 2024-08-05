@@ -529,25 +529,20 @@ export class FlowChart extends Component {
       toSelectedNode,
     } = this.props;
 
+    // Handle metadata panel display or node click toggle
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
     toSelectedNode(node);
 
     const { from, to, range } = this.state.slicedPipelineState;
     // if both "from" and "to" are defined
     // then on a single node click, it should reset the sliced pipeline state
-    if (from !== null && to !== null) {
+    if (from !== null && to !== null && !this.props.isSlicingPipelineApplied) {
       this.resetSlicedPipeline();
     } else {
       // Else, set the first node as the 'from' node based on current state
       // we need this so that if user hold shift and click on a second node,
       // the 'from' node is already set
       this.updateSlicedPipelineState(id, to, range);
-    }
-
-    // If no filters are currently applied, reset the node filters.
-    // This is done to ensure that clicking a node in an unfiltered state does not leave any stale filters.
-    if (!this.props.isSlicingPipelineApplied) {
-      this.props.onResetSlicePipeline();
     }
   };
 
