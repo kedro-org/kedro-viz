@@ -62,7 +62,7 @@
 
 .pipeline-metadata__label,
 .pipeline-metadata__row {
-  margin: 2.285em 36px;
+  margin: auto 36px 2.285em;
 }
 
 .pipeline-metadata__header {
@@ -236,7 +236,7 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__properties {
   flex-grow: 1;
   height: 0;
-  margin-top: -3em;
+  margin-top: auto;
   overflow-y: auto;
 }
 
