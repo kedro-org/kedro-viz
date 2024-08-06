@@ -542,6 +542,34 @@ export class FlowChart extends Component {
     this.props.onSlicePipeline(null, null);
   };
 
+  /**
+   * Determines the correct order of nodes based on their positions
+   * @param {string} initialFromNodeId - Initial from node ID
+   * @param {string} initialToNodeId - Initial to node ID
+   * @returns {Array} - Array with two elements: [topNodeId, bottomNodeId]
+   */
+  determineNodesOrder = (initialFromNodeId, initialToNodeId) => {
+    // Get bounding client rects of nodes
+    const fromNodeElement = document.querySelector(
+      `[data-id="${initialFromNodeId}"]`
+    );
+    const toNodeElement = document.querySelector(
+      `[data-id="${initialToNodeId}"]`
+    );
+
+    if (!fromNodeElement || !toNodeElement) {
+      return [null, null]; // If any element is missing, return nulls
+    }
+
+    const fromNodeRect = fromNodeElement.getBoundingClientRect();
+    const toNodeRect = toNodeElement.getBoundingClientRect();
+
+    // Ensure that 'from' node is higher (smaller Y-coordinate) than 'to' node
+    return fromNodeRect.y < toNodeRect.y
+      ? [initialFromNodeId, initialToNodeId] // 'from' node is higher
+      : [initialToNodeId, initialFromNodeId]; // 'to' node is higher
+  };
+
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
@@ -550,22 +578,14 @@ export class FlowChart extends Component {
     const fromNodeId = fromNodeIdState || node.id;
     const toNodeId = node.id;
 
-    // Get bounding client rects of nodes
-    const fromNodeElement = document.querySelector(`[data-id="${fromNodeId}"]`);
-    const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
+    const [topNodeId, bottomNodeId] = this.determineNodesOrder(
+      fromNodeId,
+      toNodeId
+    );
 
-    if (!fromNodeElement || !toNodeElement) {
-      return;
+    if (!topNodeId || !bottomNodeId) {
+      return; // Exit if node order couldn't be determined
     }
-
-    const fromNodeRect = fromNodeElement.getBoundingClientRect();
-    const toNodeRect = toNodeElement.getBoundingClientRect();
-
-    // Ensure that 'from' node is higher (smaller Y-coordinate) than 'to' node
-    const [topNodeId, bottomNodeId] =
-      fromNodeRect.y < toNodeRect.y
-        ? [fromNodeId, toNodeId] // 'from' node is higher
-        : [toNodeId, fromNodeId]; // 'to' node is higher
 
     this.updateSlicedPipelineState(topNodeId, bottomNodeId, range);
 

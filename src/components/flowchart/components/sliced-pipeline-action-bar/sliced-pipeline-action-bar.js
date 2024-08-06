@@ -27,19 +27,15 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
       className="sliced-pipeline-action-bar"
       style={{ transform: `translateX(${transformX}px)` }}
     >
-      {notification ? (
-        <div className="sliced-pipeline-action-bar--info">
-          Hold Shift + Click on another node to slice pipeline
+      <div className="sliced-pipeline-action-bar--info">
+        {notification
+          ? 'Hold Shift + Click on another node to slice pipeline'
+          : `${slicedPipeline.length} selected`}
+      </div>
+      {!notification && (
+        <div className="sliced-pipeline-action-bar--cta">
+          <Button>Slice</Button>
         </div>
-      ) : (
-        <>
-          <div className="sliced-pipeline-action-bar--info">
-            {`${slicedPipeline.length} selected`}
-          </div>
-          <div className="sliced-pipeline-action-bar--cta">
-            <Button>Slice</Button>
-          </div>
-        </>
       )}
     </div>
   );
