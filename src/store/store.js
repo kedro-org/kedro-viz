@@ -6,6 +6,7 @@ import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
 import { saveLocalStorage, pruneFalseyKeys } from './helpers';
 import { localStorageName, localStorageRunsMetadata } from '../config';
+import createCallbackMiddleware from './middleware';
 
 /**
  * Watch the getGraphInput selector, and dispatch an asynchronous action to
@@ -70,15 +71,18 @@ const saveStateToLocalStorage = (state) => {
  * Configure initial state and create the Redux store
  * @param {Object} initialState Initial Redux state (from initial-state.js)
  * @param {Object} dataType type of pipeline data - "static" or "json" (if data is loaded from API)
+ * @param {Function} onNodeClick Callback function to handle node click event from React component as prop
  * @return {Object} Redux store
  */
-export default function configureStore(initialState, dataType) {
+export default function configureStore(initialState, dataType, onNodeClick) {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+  const callbackMiddleware = createCallbackMiddleware(onNodeClick);
   const store = createStore(
     reducer,
     initialState,
-    composeEnhancers(applyMiddleware(thunk))
+    composeEnhancers(applyMiddleware(thunk, callbackMiddleware))
   );
 
   // dispatch the calculateGraph action to ensure the graph nodes still gets rendered
