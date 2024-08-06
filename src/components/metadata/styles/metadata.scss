@@ -279,16 +279,24 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: scroll;
   position: relative;
 }
 
 .pipeline-metadata__preview-json {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: scroll;
   position: relative;
   padding: 10px 20px 0;
+
+  .scrollable-container {
+    max-height: 280px;
+  }
+}
+
+.scrollable-container {
+  overflow: scroll;
+  max-width: 400px;
+  max-height: 300px;
 }
 
 .pipeline-metadata__preview-shadow-box-right {

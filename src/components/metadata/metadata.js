@@ -332,11 +332,13 @@ const MetaData = ({
               {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
-                    <PreviewTable
-                      data={metadata?.preview}
-                      size="small"
-                      onClick={onExpandMetaDataClick}
-                    />
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={metadata?.preview}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
@@ -354,12 +356,14 @@ const MetaData = ({
               {hasJSONPreview && (
                 <>
                   <div className="pipeline-metadata__preview-json">
-                    <JSONObject
-                      value={JSON.parse(metadata.preview)}
-                      theme={theme}
-                      style={{ background: 'transparent', fontSize: '14px' }}
-                      collapsed={3}
-                    />
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={JSON.parse(metadata.preview)}
+                        theme={theme}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
