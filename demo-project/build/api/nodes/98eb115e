@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "train_evaluation.model_options.linear_regression": {
+      "module": "sklearn.linear_model",
+      "class": "LinearRegression",
+      "kwargs": {
+        "fit_intercept": true,
+        "copy_X": true,
+        "positive": false
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "matplotlib.matplotlib_writer.MatplotlibWriter",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/08_reporting/confusion_matrix.png",
+  "run_command": "kedro run --to-outputs=reporting.confusion_matrix",
+  "preview": null,
+  "preview_type": null,
+  "stats": null
+}

@@ -1,0 +1,13 @@
+{
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/02_intermediate/typed_shuttles.pq",
+  "run_command": "kedro run --to-outputs=ingestion.int_typed_shuttles@pandas1",
+  "original_type": "pandas.parquet_dataset.ParquetDataset",
+  "transcoded_types": [
+    "pandas.parquet_dataset.ParquetDataset"
+  ],
+  "stats": {
+    "rows": 77096,
+    "columns": 13,
+    "file_size": 1235685
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "code": "def make_cancel_policy_bar_chart(\n    model_input_data: pd.DataFrame, top_counties: int = 20\n) -> pd.DataFrame:\n    \"\"\"This function performs a group by on the input table, limits the\n    results to the top n countries based on price and returns the\n    data needed to visualise a stacked bar chart. The DataFrame is\n    rendered as a Plot using the YAML API exposed in the Kedro Catalog.\n\n    Args:\n        model_input_data (pd.DataFrame): The data to plot\n        top_counties (int, optional): [description]. Defaults to 20.\n\n    Returns:\n        pd.DataFrame: The aggregated data ready for visualisation\n    \"\"\"\n    country_policy_df = (\n        model_input_data.groupby([\"company_location\", \"cancellation_policy\"])[\"price\"]\n        .sum()\n        .reset_index()\n    )\n\n    high_value_countries = (\n        model_input_data.groupby(\"company_location\")\n        .price.sum()\n        .sort_values()\n        .head(top_counties)\n        .index\n    )\n\n    high_value_filter = country_policy_df.company_location.isin(high_value_countries)\n    return country_policy_df[high_value_filter]\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews"
+  ],
+  "outputs": [
+    "reporting.cancellation_policy_breakdown"
+  ]
+}

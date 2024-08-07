@@ -1,0 +1,12 @@
+{
+  "code": "def create_feature_importance_plot(features: pd.DataFrame) -> go.Figure:\n    sorted_features = features.sort_values(by=\"Score\", ascending=True)\n    plotly_object = px.bar(\n        sorted_features,\n        x=\"Score\",\n        y=\"Feature\",\n        color=\"Score\",\n        color_continuous_scale=\"RdBu\",\n    )\n    return plotly_object\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "feature_importance_output"
+  ],
+  "outputs": [
+    "reporting.feature_importance"
+  ]
+}

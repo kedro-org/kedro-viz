@@ -1,0 +1,472 @@
+{
+  "nodes": [
+    {
+      "id": "9f266f06",
+      "name": "prm_shuttle_company_reviews",
+      "tags": [],
+      "pipelines": [
+        "__default__",
+        "Data ingestion",
+        "Feature engineering",
+        "Reporting stage",
+        "Pre-modelling"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "feature_engineering",
+        "ingestion",
+        "reporting"
+      ],
+      "layer": "primary",
+      "dataset_type": "pandas.parquet_dataset.ParquetDataset",
+      "stats": {
+        "rows": 29768,
+        "columns": 27,
+        "file_size": 1020356
+      }
+    },
+    {
+      "id": "1e3cc50a",
+      "name": "feature_importance_output",
+      "tags": [],
+      "pipelines": [
+        "Pre-modelling",
+        "Feature engineering",
+        "__default__",
+        "Reporting stage"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "feature_engineering",
+        "reporting"
+      ],
+      "layer": "feature",
+      "dataset_type": "pandas.csv_dataset.CSVDataset",
+      "stats": {
+        "rows": 15,
+        "columns": 2,
+        "file_size": 460
+      }
+    },
+    {
+      "id": "be6b7919",
+      "name": "create_matplotlib_chart",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3b199c6b",
+      "name": "reporting.confusion_matrix",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": null,
+      "dataset_type": "matplotlib.matplotlib_writer.MatplotlibWriter",
+      "stats": null
+    },
+    {
+      "id": "44ef9b48",
+      "name": "get_top_shuttles_data",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "c0be8342",
+      "name": "reporting.top_shuttle_data",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": "reporting",
+      "dataset_type": "json.json_dataset.JSONDataset",
+      "stats": null
+    },
+    {
+      "id": "c7646ea1",
+      "name": "make_cancel_policy_bar_chart",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "d0e9b00f",
+      "name": "reporting.cancellation_policy_breakdown",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": "reporting",
+      "dataset_type": "plotly.plotly_dataset.PlotlyDataset",
+      "stats": {
+        "rows": 21,
+        "columns": 3,
+        "file_size": 8744
+      }
+    },
+    {
+      "id": "3fb71518",
+      "name": "make_price_analysis_image",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "8838ca1f",
+      "name": "reporting.cancellation_policy_grid",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": null,
+      "dataset_type": "datasets.image_dataset.ImageDataset",
+      "stats": null
+    },
+    {
+      "id": "40886786",
+      "name": "make_price_histogram",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "c6992660",
+      "name": "reporting.price_histogram",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": "reporting",
+      "dataset_type": "plotly.json_dataset.JSONDataset",
+      "stats": null
+    },
+    {
+      "id": "4adb5c8b",
+      "name": "create_feature_importance_plot",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "task",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "eb7d6d28",
+      "name": "reporting.feature_importance",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage",
+        "__default__"
+      ],
+      "type": "data",
+      "modular_pipelines": [
+        "reporting"
+      ],
+      "layer": "reporting",
+      "dataset_type": "plotly.json_dataset.JSONDataset",
+      "stats": null
+    },
+    {
+      "id": "reporting",
+      "name": "reporting",
+      "tags": [],
+      "pipelines": [
+        "Reporting stage"
+      ],
+      "type": "modularPipeline",
+      "modular_pipelines": null,
+      "layer": null,
+      "dataset_type": null,
+      "stats": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "9f266f06",
+      "target": "c7646ea1"
+    },
+    {
+      "source": "40886786",
+      "target": "c6992660"
+    },
+    {
+      "source": "reporting",
+      "target": "8838ca1f"
+    },
+    {
+      "source": "9f266f06",
+      "target": "40886786"
+    },
+    {
+      "source": "reporting",
+      "target": "d0e9b00f"
+    },
+    {
+      "source": "1e3cc50a",
+      "target": "reporting"
+    },
+    {
+      "source": "be6b7919",
+      "target": "3b199c6b"
+    },
+    {
+      "source": "44ef9b48",
+      "target": "c0be8342"
+    },
+    {
+      "source": "9f266f06",
+      "target": "reporting"
+    },
+    {
+      "source": "reporting",
+      "target": "3b199c6b"
+    },
+    {
+      "source": "reporting",
+      "target": "eb7d6d28"
+    },
+    {
+      "source": "1e3cc50a",
+      "target": "4adb5c8b"
+    },
+    {
+      "source": "9f266f06",
+      "target": "3fb71518"
+    },
+    {
+      "source": "3fb71518",
+      "target": "8838ca1f"
+    },
+    {
+      "source": "4adb5c8b",
+      "target": "eb7d6d28"
+    },
+    {
+      "source": "reporting",
+      "target": "c0be8342"
+    },
+    {
+      "source": "9f266f06",
+      "target": "be6b7919"
+    },
+    {
+      "source": "9f266f06",
+      "target": "44ef9b48"
+    },
+    {
+      "source": "reporting",
+      "target": "c6992660"
+    },
+    {
+      "source": "c7646ea1",
+      "target": "d0e9b00f"
+    }
+  ],
+  "layers": [
+    "primary",
+    "feature",
+    "intermediate",
+    "raw",
+    "model_input",
+    "reporting"
+  ],
+  "tags": [
+    {
+      "id": "companies",
+      "name": "companies"
+    },
+    {
+      "id": "evaluate",
+      "name": "evaluate"
+    },
+    {
+      "id": "shuttles",
+      "name": "shuttles"
+    },
+    {
+      "id": "train",
+      "name": "train"
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "__default__",
+      "name": "__default__"
+    },
+    {
+      "id": "Data ingestion",
+      "name": "Data ingestion"
+    },
+    {
+      "id": "Modelling stage",
+      "name": "Modelling stage"
+    },
+    {
+      "id": "Feature engineering",
+      "name": "Feature engineering"
+    },
+    {
+      "id": "Reporting stage",
+      "name": "Reporting stage"
+    },
+    {
+      "id": "Pre-modelling",
+      "name": "Pre-modelling"
+    }
+  ],
+  "modular_pipelines": {
+    "__root__": {
+      "id": "__root__",
+      "name": "__root__",
+      "inputs": [],
+      "outputs": [],
+      "children": [
+        {
+          "id": "reporting",
+          "type": "modularPipeline"
+        },
+        {
+          "id": "c6992660",
+          "type": "data"
+        },
+        {
+          "id": "eb7d6d28",
+          "type": "data"
+        },
+        {
+          "id": "c0be8342",
+          "type": "data"
+        },
+        {
+          "id": "d0e9b00f",
+          "type": "data"
+        },
+        {
+          "id": "3b199c6b",
+          "type": "data"
+        },
+        {
+          "id": "1e3cc50a",
+          "type": "data"
+        },
+        {
+          "id": "8838ca1f",
+          "type": "data"
+        },
+        {
+          "id": "9f266f06",
+          "type": "data"
+        }
+      ]
+    },
+    "reporting": {
+      "id": "reporting",
+      "name": "reporting",
+      "inputs": [
+        "9f266f06",
+        "1e3cc50a"
+      ],
+      "outputs": [
+        "d0e9b00f",
+        "c0be8342",
+        "c6992660",
+        "3b199c6b",
+        "8838ca1f",
+        "eb7d6d28"
+      ],
+      "children": [
+        {
+          "id": "c7646ea1",
+          "type": "task"
+        },
+        {
+          "id": "4adb5c8b",
+          "type": "task"
+        },
+        {
+          "id": "be6b7919",
+          "type": "task"
+        },
+        {
+          "id": "44ef9b48",
+          "type": "task"
+        },
+        {
+          "id": "3fb71518",
+          "type": "task"
+        },
+        {
+          "id": "40886786",
+          "type": "task"
+        }
+      ]
+    }
+  },
+  "selected_pipeline": "Reporting stage"
+}

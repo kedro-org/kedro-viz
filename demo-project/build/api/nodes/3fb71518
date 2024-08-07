@@ -1,0 +1,12 @@
+{
+  "code": "def make_price_analysis_image(model_input_table: pd.DataFrame) -> PIL.Image:\n    \"\"\"This function accepts a Pandas DataFrame and renders a bitmap\n    plot of the data.\n\n    This method is intended to show how easy it is to use a custom\n    dataset in Kedro. You can read more here:\n    https://kedro.readthedocs.io/en/stable/07_extend_kedro/03_custom_datasets.html\n\n    Args:\n        model_input_table (pd.DataFrame): The data to plot\n\n    Returns:\n        PIL.Image: An image of a table ready to be saved as .png\n    \"\"\"\n\n    analysis_df = (\n        model_input_table.groupby(\"cancellation_policy\")[\n            [\"price\", \"review_scores_rating\"]\n        ]\n        .mean()\n        .reset_index()\n    )\n\n    pil_table = DrawTable(analysis_df)\n    return pil_table.image\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews"
+  ],
+  "outputs": [
+    "reporting.cancellation_policy_grid"
+  ]
+}

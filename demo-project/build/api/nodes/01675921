@@ -1,0 +1,8 @@
+{
+  "type": "pickle.pickle_dataset.PickleDataset",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/06_models/random_forest.pkl",
+  "run_command": "kedro run --to-outputs=train_evaluation.random_forest.regressor",
+  "preview": null,
+  "preview_type": null,
+  "stats": null
+}

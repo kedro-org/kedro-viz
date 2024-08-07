@@ -1,0 +1,25 @@
+{
+  "code": "def create_static_features(data: pd.DataFrame, column_names: List[str]) -> pd.DataFrame:\n    \"\"\"This function accepts a pandas DataFrame as well as a list of\n    columns to keep in scope. A DataFrame limited to any ID columns as well\n    as the provided column names will be returned\n\n    Args:\n        data (pd.DataFrame): The DataFrame to process\n        column_names (List[str]): The column names to keep in scope\n\n    Returns:\n        (pd.DataFrame): The limited DataFrame to return\n    \"\"\"\n    id_columns = _get_id_columns(data)\n    columns_to_select = id_columns + column_names\n    return data[columns_to_select]\n",
+  "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+  "parameters": {
+    "feature_engineering.feature.static": [
+      "engines",
+      "passenger_capacity",
+      "crew",
+      "d_check_complete",
+      "moon_clearance_complete",
+      "iata_approved",
+      "company_rating",
+      "review_scores_rating",
+      "price"
+    ]
+  },
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews",
+    "params:feature_engineering.feature.static"
+  ],
+  "outputs": [
+    "feature_engineering.feat_static_features"
+  ]
+}

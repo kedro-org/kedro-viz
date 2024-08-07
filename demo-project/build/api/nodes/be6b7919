@@ -1,0 +1,12 @@
+{
+  "code": "def create_matplotlib_chart(companies: pd.DataFrame) -> plt:\n    random_actuals = np.random.randint(2, size=11)\n    random_predicted = np.random.randint(2, size=11)\n\n    data = {\"y_Actual\": random_actuals, \"y_Predicted\": random_predicted}\n    plt.style.use(\"dark_background\")\n    df = pd.DataFrame(data, columns=[\"y_Actual\", \"y_Predicted\"])\n    confusion_matrix = pd.crosstab(\n        df[\"y_Actual\"], df[\"y_Predicted\"], rownames=[\"Actual\"], colnames=[\"Predicted\"]\n    )\n    sn.heatmap(confusion_matrix, annot=True)\n    return plt\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews"
+  ],
+  "outputs": [
+    "reporting.confusion_matrix"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "code": "def create_feature_importance(data: pd.DataFrame) -> pd.DataFrame:\n    feature_name = [f\"feature_{i}\" for i in range(15)]\n    feature_score = np.random.rand(15)\n    feature_importance_df = pd.DataFrame(\n        {\"Feature\": feature_name, \"Score\": feature_score}\n    )\n\n    return feature_importance_df\n",
+  "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_spine_table"
+  ],
+  "outputs": [
+    "feature_importance_output"
+  ]
+}

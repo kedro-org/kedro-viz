@@ -1,0 +1,15 @@
+{
+  "code": "def combine_shuttle_level_information(\n    shuttles: pd.DataFrame, companies: pd.DataFrame, reviews: pd.DataFrame\n) -> Tuple[pd.DataFrame, pd.DataFrame]:\n    \"\"\"Combines all data to create a domain level primary table.\n\n    Args:\n        shuttles: Preprocessed data for shuttles.\n        companies: Preprocessed data for companies.\n        reviews: Raw data for reviews.\n    Returns:\n        Combined primary layer table\n\n    \"\"\"\n    rated_shuttles = shuttles.rename(columns={\"id\": \"shuttle_id\"}).merge(\n        reviews, on=\"shuttle_id\", how=\"inner\"\n    )\n    combined_table = rated_shuttles.merge(companies, on=\"company_id\", how=\"inner\")\n\n    working_table = combined_table.dropna(how=\"any\")\n    id_columns = [x for x in working_table.columns if x.endswith(\"id\")]\n    return working_table, working_table[id_columns]\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+  "parameters": {},
+  "run_command": "kedro run --to-nodes=ingestion.combine_step",
+  "inputs": [
+    "ingestion.int_typed_shuttles@pandas2",
+    "ingestion.prm_agg_companies",
+    "ingestion.int_typed_reviews"
+  ],
+  "outputs": [
+    "prm_shuttle_company_reviews",
+    "prm_spine_table"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "pandas.parquet_dataset.ParquetDataset",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/05_model_input/model_input_table.pq",
+  "run_command": "kedro run --to-outputs=model_input_table",
+  "preview": null,
+  "preview_type": null,
+  "stats": {
+    "rows": 29768,
+    "columns": 12,
+    "file_size": 787351
+  }
+}

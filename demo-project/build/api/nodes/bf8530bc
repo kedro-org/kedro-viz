@@ -1,0 +1,14 @@
+{
+  "code": "def evaluate_model(\n    regressor: BaseEstimator,\n    X_test: pd.DataFrame,\n    y_test: pd.Series,\n) -> Dict[str, float]:\n    \"\"\"Calculates and logs the coefficient of determination.\n\n    Args:\n        regressor: Trained model.\n        X_test: Testing data of independent features.\n        y_test: Testing data for price.\n    \"\"\"\n    y_pred = regressor.predict(X_test)\n    score = r2_score(y_test, y_pred)\n    a2_score = random.randint(0,100)*0.1\n    b2_score = random.randint(0,100)*0.1\n    logger = logging.getLogger(__name__)\n    logger.info(\n        f\"Model has a coefficient R^2 of {score:.3f} on test data using a \"\n        f\"regressor of type '{type(regressor)}'\"\n    )\n    return {\n        \"r2_score\": score,\n        \"a2_score\":a2_score,\n        \"b2_score\":b2_score\n        }\n",
+  "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "train_evaluation.random_forest.regressor",
+    "X_test",
+    "y_test"
+  ],
+  "outputs": [
+    "train_evaluation.random_forest.r2_score"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "tracking.json_dataset.JSONDataset",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/09_tracking/linear_params.json",
+  "run_command": "kedro run --to-outputs=train_evaluation.linear_regression.experiment_params",
+  "preview": null,
+  "preview_type": null,
+  "stats": null
+}

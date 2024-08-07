@@ -1,0 +1,12 @@
+{
+  "code": "def aggregate_company_data(typed_companies: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"This function aggregates company data so that we have one\n    record per company.\n\n    Args:\n        typed_companies: The typed company information\n\n    Returns:\n        pd.DataFrame: Company with duplicates merged through aggregation.\n    \"\"\"\n\n    working_companies = typed_companies.groupby([\"id\"]).agg(\n        {\n            \"company_rating\": \"mean\",\n            \"company_location\": lambda x: list(set(x))[0],  # Take first item\n            \"total_fleet_count\": \"max\",\n            \"iata_approved\": any,\n        }\n    )\n    return working_companies.reset_index().rename(columns={\"id\": \"company_id\"})\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+  "parameters": {},
+  "run_command": "kedro run --to-nodes=ingestion.company_agg",
+  "inputs": [
+    "ingestion.int_typed_companies"
+  ],
+  "outputs": [
+    "ingestion.prm_agg_companies"
+  ]
+}

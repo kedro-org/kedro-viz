@@ -1,0 +1,14 @@
+{
+  "code": "def joiner(spine_df: pd.DataFrame, *dfs: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"This function takes an arbitrary number of DataFrames and will\n    keep left-joining them to themselves along any columns suffixed\n    with \"id\". There is an assumption that the tables passed in share\n    the same identifiers and grain.\n\n    Args:\n        spine_df (pd.DataFrame): The first argument should simply contain\n        the identifier columns at the correct grain.\n        *dfs (pd.DataFrame): Any subsequent tables are joined to the spine\n\n    Returns:\n        pd.DataFrame: A single data-frame where all inputs to this function\n            have been left joined together.\n    \"\"\"\n    id_columns = _get_id_columns(data=spine_df)\n\n    merged_dfs = reduce(\n        lambda df, df2: df.merge(df2, on=id_columns, how=\"left\"), dfs, spine_df\n    )\n    # Confirm that the number of rows is unchanged after the operation has completed\n    assert spine_df.shape[0] == merged_dfs.shape[0]\n    return merged_dfs\n",
+  "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_spine_table",
+    "feature_engineering.feat_static_features",
+    "feature_engineering.feat_derived_features"
+  ],
+  "outputs": [
+    "model_input_table"
+  ]
+}

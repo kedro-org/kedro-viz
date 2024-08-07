@@ -1,0 +1,12 @@
+{
+  "code": "def make_price_histogram(model_input_data: pd.DataFrame) -> go.Figure:\n    \"\"\"This function retrieves the two key columns needed to visualise the\n    price-engine histogram. We then prepare the Plotly figure using the\n    Plotly Python API\n\n    Args:\n        model_input_data (pd.DataFrame): The data to plot\n\n    Returns:\n        BaseFigure: Plotly object which is serialised as JSON for rendering\n    \"\"\"\n    price_data_df = model_input_data.loc[:, [\"price\", \"engine_type\"]]\n    p = np.random.dirichlet([1, 1, 1])\n    price_data_df[\"engine_type\"] = np.random.choice(\n        [\"Quantum\", \"Plasma\", \"Nuclear\"], len(price_data_df), p=p\n    )\n    plotly_object = px.histogram(\n        data_frame=price_data_df, x=\"price\", log_x=True, color=\"engine_type\"\n    )\n    return plotly_object\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews"
+  ],
+  "outputs": [
+    "reporting.price_histogram"
+  ]
+}

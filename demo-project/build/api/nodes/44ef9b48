@@ -1,0 +1,12 @@
+{
+  "code": "def get_top_shuttles_data(model_input_table: pd.DataFrame) -> Dict:\n    \"\"\"This function retrieves the head from the input table\n    and converts them into a JSON dataset.\n\n    Args:\n        model_input_table (pd.DataFrame): The data to retrieve the top N rows from\n        top_n (int, optional): The number of top rows to retrieve. Defaults to 5.\n\n    Returns:\n        str: A JSON string representing the top N rows of the dataset.\n    \"\"\"\n\n    # Get the top N rows of the model input table\n    top_shuttle_df = model_input_table.head(5)\n    top_shuttle_json = top_shuttle_df.to_dict(orient=\"records\")\n    return top_shuttle_json\n",
+  "filepath": "demo-project/src/demo_project/pipelines/reporting/nodes.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_shuttle_company_reviews"
+  ],
+  "outputs": [
+    "reporting.top_shuttle_data"
+  ]
+}
