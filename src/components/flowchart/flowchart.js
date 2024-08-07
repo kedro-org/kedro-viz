@@ -56,6 +56,7 @@ export class FlowChart extends Component {
         to: null,
         range: [],
       },
+      showSlicingNotification: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -528,34 +529,70 @@ export class FlowChart extends Component {
     // then on a single node click, it should reset the sliced pipeline state
     if (from !== null && to !== null) {
       this.updateSlicedPipelineState(null, null, []);
+      this.setState({ showSlicingNotification: false }); // Hide notification
     } else {
       // Else, set the first node as the 'from' node based on current state
       // we need this so that if user hold shift and click on a second node,
       // the 'from' node is already set
       this.updateSlicedPipelineState(id, to, range);
+      this.setState({ showSlicingNotification: true }); // Show notification
     }
 
     // Reset the slicePipeline on single node click
     this.props.onSlicePipeline(null, null);
   };
 
+  /**
+   * Determines the correct order of nodes based on their positions
+   * @param {string} initialFromNodeId - Initial from node ID
+   * @param {string} initialToNodeId - Initial to node ID
+   * @returns {Array} - Array with two elements: [topNodeId, bottomNodeId]
+   */
+  determineNodesOrder = (initialFromNodeId, initialToNodeId) => {
+    // Get bounding client rects of nodes
+    const fromNodeElement = document.querySelector(
+      `[data-id="${initialFromNodeId}"]`
+    );
+    const toNodeElement = document.querySelector(
+      `[data-id="${initialToNodeId}"]`
+    );
+
+    if (!fromNodeElement || !toNodeElement) {
+      return [null, null]; // If any element is missing, return nulls
+    }
+
+    const fromNodeRect = fromNodeElement.getBoundingClientRect();
+    const toNodeRect = toNodeElement.getBoundingClientRect();
+
+    // Ensure that 'from' node is higher (smaller Y-coordinate) than 'to' node
+    return fromNodeRect.y < toNodeRect.y
+      ? [initialFromNodeId, initialToNodeId] // 'from' node is higher
+      : [initialToNodeId, initialFromNodeId]; // 'to' node is higher
+  };
+
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
+    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
 
-    const fromNodeId = this.state.slicedPipelineState.from || node.id;
+    const fromNodeId = fromNodeIdState || node.id;
     const toNodeId = node.id;
 
-    const newState = {
-      ...this.state.slicedPipelineState,
-      from: fromNodeId,
-      to: toNodeId,
-    };
+    const [topNodeId, bottomNodeId] = this.determineNodesOrder(
+      fromNodeId,
+      toNodeId
+    );
 
-    this.setState({ slicedPipelineState: newState });
+    if (!topNodeId || !bottomNodeId) {
+      return; // Exit if node order couldn't be determined
+    }
 
-    this.props.onSlicePipeline(fromNodeId, toNodeId);
+    this.updateSlicedPipelineState(topNodeId, bottomNodeId, range);
+
+    this.props.onSlicePipeline(topNodeId, bottomNodeId);
     this.props.onApplySlice(false);
+
+    this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
   };
 
   /**
@@ -577,6 +614,7 @@ export class FlowChart extends Component {
     if (this.props.slicedPipeline && !isSliceButtonClicked) {
       this.props.onResetSlicePipeline();
       this.updateSlicedPipelineState(null, null, []);
+      this.setState({ showSlicingNotification: false }); // Hide notification when clicking away
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -713,15 +751,17 @@ export class FlowChart extends Component {
    */
   render() {
     const {
+      clickedNode,
       chartSize,
       layers,
       visibleGraph,
       displayGlobalNavigation,
       displaySidebar,
       visibleSidebar,
+      slicedPipeline,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { slicedPipelineState } = this.state;
+    const { showSlicingNotification } = this.state;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -783,15 +823,19 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        {slicedPipelineState.range.length > 0 && (
+        {(slicedPipeline.length > 0 || showSlicingNotification) && (
           <div ref={this.slicedPipelineActionRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
-              slicedPipeline={slicedPipelineState.range}
+              slicedPipeline={slicedPipeline}
               visibleSidebar={visibleSidebar}
+              notification={showSlicingNotification}
+              displayMetadataPanel={Boolean(clickedNode)}
+              ref={this.slicedPipelineActionRef}
             />
           </div>
         )}
+
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
