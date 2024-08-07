@@ -112,8 +112,7 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
-
-        // Reset node filters only if filters are currently applied.
+        // Reset the pipeline slicing filters if no slicing is currently applied
         if (!isSlicingPipelineApplied) {
           onResetSlicePipeline();
         }

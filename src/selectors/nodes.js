@@ -44,11 +44,11 @@ export const getGraphNodes = createSelector(
 );
 
 /**
- * Filters the `nodes` object to include only the nodes whose IDs are present in the `filter` array.
+ * Filters the `nodes` object to include only the nodes whose IDs are present in the `slicedPipeline` array.
  * @param {Object} nodes - An object where keys are node IDs and values are node data objects.
  * @param {Array} slicedPipeline - An array of node IDs to include in the sliced pipeline .
  */
-export const filterNodes = (nodes, slicedPipeline) =>
+export const filterNodesFromSlicingPipeline = (nodes, slicedPipeline) =>
   Object.fromEntries(
     Object.entries(nodes).filter(([nodeId]) => slicedPipeline.includes(nodeId))
   );
@@ -280,7 +280,7 @@ export const getModularPipelinesTree = createSelector(
 
     // Determine the relevant nodes based on whether slicing is applied
     const relevantNodes = isSlicingPipelineApplied
-      ? filterNodes(nodes, slicedPipeline)
+      ? filterNodesFromSlicingPipeline(nodes, slicedPipeline)
       : nodes;
 
     for (const modularPipelineID in modularPipelinesTree) {
