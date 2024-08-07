@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../../ui/button';
+import { sidebarWidth, metaSidebarWidth } from '../../../../config';
 
 import './sliced-pipeline-action-bar.scss';
 
@@ -15,15 +16,29 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     displayMetadataPanel,
   } = props;
   const { outerWidth: screenWidth } = chartSize;
+  const buffer = 200;
   const slicePipelineActionBarWidth =
     ref.current && ref.current.firstChild.getBoundingClientRect().width;
-  const metaDataPanelWidth = displayMetadataPanel ? 600 : 400;
-  const nodeListWidth = visibleSidebar ? 200 : 400;
-  const transformX =
+  const metaDataPanelWidth = displayMetadataPanel
+    ? metaSidebarWidth.open + buffer
+    : metaSidebarWidth.open;
+  const nodeListWidth = visibleSidebar
+    ? sidebarWidth.open - buffer
+    : sidebarWidth.open - buffer / 2;
+  const minimumTransformX = visibleSidebar
+    ? sidebarWidth.open
+    : sidebarWidth.closed;
+
+  // Calculate the transformX value ensuring it does not go below the minimum required for the sidebar opened and closed
+  const transformX = Math.max(
     screenWidth -
-    nodeListWidth -
-    metaDataPanelWidth -
-    slicePipelineActionBarWidth / 2;
+      nodeListWidth -
+      metaDataPanelWidth -
+      slicePipelineActionBarWidth / 2,
+    minimumTransformX
+  );
+
+  console.log(transformX);
 
   return (
     <div
