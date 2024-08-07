@@ -1,0 +1,35 @@
+{
+  "code": "def create_derived_features(\n    spine_df: pd.DataFrame, data: pd.DataFrame, derived_params: Dict[str, str]\n) -> pd.DataFrame:\n    \"\"\"[summary]\n\n    Args:\n        spine_df (pd.DataFrame): [description]\n        data (pd.DataFrame): [description]\n        derived_params (Dict[str, str]): [description]\n    \"\"\"\n    new_columns = [_create_metric_column(data, **kwargs) for kwargs in derived_params]\n    combined_df = joiner(spine_df, *new_columns)\n    return combined_df\n",
+  "filepath": "demo-project/src/demo_project/pipelines/feature_engineering/nodes.py",
+  "parameters": {
+    "feature_engineering.feature.derived": [
+      {
+        "column_a": "number_of_reviews",
+        "column_b": "total_fleet_count",
+        "numpy_method": "divide",
+        "conjunction": "over"
+      },
+      {
+        "column_a": "number_of_reviews",
+        "column_b": "total_fleet_count",
+        "numpy_method": "divide",
+        "conjunction": "over"
+      },
+      {
+        "column_a": "reviews_per_month",
+        "column_b": "company_rating",
+        "numpy_method": "multiply",
+        "conjunction": "by"
+      }
+    ]
+  },
+  "run_command": null,
+  "inputs": [
+    "prm_spine_table",
+    "prm_shuttle_company_reviews",
+    "params:feature_engineering.feature.derived"
+  ],
+  "outputs": [
+    "feature_engineering.feat_derived_features"
+  ]
+}

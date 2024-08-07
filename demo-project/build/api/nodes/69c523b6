@@ -1,0 +1,12 @@
+{
+  "code": "def apply_types_to_companies(companies: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Preprocesses the data for companies.\n\n    Args:\n        companies: Raw data.\n    Returns:\n        Preprocessed data, with `company_rating` converted to a float and\n        `iata_approved` converted to boolean.\n    \"\"\"\n    companies[\"iata_approved\"] = _is_true(companies[\"iata_approved\"])\n    companies[\"company_rating\"] = (\n        companies[\"company_rating\"].str.replace(\"%\", \"\").astype(float) / 100\n    )\n    return companies\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+  "parameters": {},
+  "run_command": "kedro run --to-nodes=ingestion.apply_types_to_companies",
+  "inputs": [
+    "companies"
+  ],
+  "outputs": [
+    "ingestion.int_typed_companies"
+  ]
+}

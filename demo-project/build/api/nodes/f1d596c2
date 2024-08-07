@@ -1,0 +1,12 @@
+{
+  "type": "pandas.excel_dataset.ExcelDataset",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/01_raw/shuttles.xlsx",
+  "run_command": null,
+  "preview": null,
+  "preview_type": null,
+  "stats": {
+    "rows": 77096,
+    "columns": 13,
+    "file_size": 4195290
+  }
+}

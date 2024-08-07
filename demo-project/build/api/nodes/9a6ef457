@@ -1,0 +1,12 @@
+{
+  "code": "                func=lambda x: x,\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/pipeline.py",
+  "parameters": {},
+  "run_command": null,
+  "inputs": [
+    "prm_spine_table"
+  ],
+  "outputs": [
+    "ingestion.prm_spine_table_clone"
+  ]
+}

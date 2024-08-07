@@ -1,0 +1,24 @@
+{
+  "parameters": {
+    "feature_engineering.feature.derived": [
+      {
+        "column_a": "number_of_reviews",
+        "column_b": "total_fleet_count",
+        "numpy_method": "divide",
+        "conjunction": "over"
+      },
+      {
+        "column_a": "number_of_reviews",
+        "column_b": "total_fleet_count",
+        "numpy_method": "divide",
+        "conjunction": "over"
+      },
+      {
+        "column_a": "reviews_per_month",
+        "column_b": "company_rating",
+        "numpy_method": "multiply",
+        "conjunction": "by"
+      }
+    ]
+  }
+}

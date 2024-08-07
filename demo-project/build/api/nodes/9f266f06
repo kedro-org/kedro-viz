@@ -1,0 +1,12 @@
+{
+  "type": "pandas.parquet_dataset.ParquetDataset",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/03_primary/prm_shuttle_company_reviews.pq",
+  "run_command": "kedro run --to-outputs=prm_shuttle_company_reviews",
+  "preview": null,
+  "preview_type": null,
+  "stats": {
+    "rows": 29768,
+    "columns": 27,
+    "file_size": 1020356
+  }
+}

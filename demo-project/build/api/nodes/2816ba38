@@ -1,0 +1,22 @@
+{
+  "code": "def split_data(data: pd.DataFrame, split_options: Dict) -> Tuple:\n    \"\"\"Splits data into features and targets training and test sets.\n\n    Args:\n        data: Data containing features and target.\n        parameters: Parameters defined in parameters.yml.\n    Returns:\n        Split data.\n    \"\"\"\n    target_variable = split_options[\"target\"]\n    independent_variables = [x for x in data.columns if x != target_variable]\n    test_size = split_options[\"test_size\"]\n    random_state = split_options[\"random_state\"]\n\n    logger = logging.getLogger(__name__)\n    logger.info(\n        f\"Splitting data for the following independent variables \"\n        f\"{independent_variables} against the target of '{target_variable}' \"\n        f\"with a test sized of {test_size} and a random state of \"\n        f\"'{random_state}'\"\n    )\n\n    X = data[independent_variables]\n    y = data[target_variable]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=test_size, random_state=random_state\n    )\n\n    return X_train, X_test, y_train, y_test\n",
+  "filepath": "demo-project/src/demo_project/pipelines/modelling/nodes.py",
+  "parameters": {
+    "split_options": {
+      "test_size": 0.2,
+      "random_state": 3,
+      "target": "price"
+    }
+  },
+  "run_command": null,
+  "inputs": [
+    "model_input_table",
+    "params:split_options"
+  ],
+  "outputs": [
+    "X_train",
+    "X_test",
+    "y_train",
+    "y_test"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "io.memory_dataset.MemoryDataset",
+  "filepath": null,
+  "run_command": "kedro run --to-outputs=y_train",
+  "preview": null,
+  "preview_type": null,
+  "stats": null
+}

@@ -1,0 +1,15 @@
+{
+  "status_code": 200,
+  "background": null,
+  "body": "{}",
+  "raw_headers": [
+    [
+      "content-length",
+      "2"
+    ],
+    [
+      "content-type",
+      "application/json"
+    ]
+  ]
+}

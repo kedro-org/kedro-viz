@@ -1,0 +1,12 @@
+{
+  "code": "def apply_types_to_shuttles(shuttles: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Preprocesses the data for shuttles.\n\n    Args:\n        shuttles: Raw data.\n    Returns:\n        Preprocessed data, with `price` converted to a float and `d_check_complete`,\n        `moon_clearance_complete` converted to boolean.\n    \"\"\"\n    shuttles[\"d_check_complete\"] = _is_true(shuttles[\"d_check_complete\"])\n    shuttles[\"moon_clearance_complete\"] = _is_true(shuttles[\"moon_clearance_complete\"])\n    shuttles[\"price\"] = (\n        shuttles[\"price\"].str.replace(r\"[\\$,]\", \"\", regex=True).astype(float)\n    )\n    return shuttles\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+  "parameters": {},
+  "run_command": "kedro run --to-nodes=ingestion.apply_types_to_shuttles",
+  "inputs": [
+    "shuttles"
+  ],
+  "outputs": [
+    "ingestion.int_typed_shuttles@pandas1"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "code": "def apply_types_to_reviews(\n    reviews: pd.DataFrame, columns_as_floats: List[str]\n) -> pd.DataFrame:\n    \"\"\"Preprocess the data for reviews\n\n    Args:\n        reviews: Raw data\n        columns_as_floats: Which columns to cast as floats\n    Returns:\n        Preprocessed data, with parametrised columns cast as `float`, all other columns\n        will be cast as `int` data types. Null values are dropped\n\n    \"\"\"\n    non_null_reviews = reviews.dropna()\n\n    # Retrieve columns to type\n    all_columns_set = set(non_null_reviews.columns)\n    float_columns_set = set(columns_as_floats)\n    integer_columns_set = all_columns_set - float_columns_set\n\n    # Prepare dictionaries to apply\n    new_integer_columns = {c: int for c in integer_columns_set}\n    new_float_columns = {c: float for c in float_columns_set}\n    new_dtypes = {**new_integer_columns, **new_float_columns}  # merge dictionaries\n\n    # Apply types\n    typed_reviews = non_null_reviews.astype(new_dtypes)\n\n    # With add ID column to review table\n    return typed_reviews.assign(review_id=lambda df: df.index + 1)\n",
+  "filepath": "demo-project/src/demo_project/pipelines/data_ingestion/nodes.py",
+  "parameters": {
+    "ingestion.typing.reviews.columns_as_floats": [
+      "reviews_per_month"
+    ]
+  },
+  "run_command": "kedro run --to-nodes=ingestion.apply_types_to_reviews",
+  "inputs": [
+    "reviews",
+    "params:ingestion.typing.reviews.columns_as_floats"
+  ],
+  "outputs": [
+    "ingestion.int_typed_reviews"
+  ]
+}
