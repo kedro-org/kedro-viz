@@ -64,13 +64,12 @@ $inner-gap: 12px;
   }
 
   .command-value {
-    color: var(--sliced-pipeline-action-bar--color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    overflow-x: scroll;
     background-color: var(--sliced-pipeline-action-bar--code-background);
+    color: var(--sliced-pipeline-action-bar--color);
+    overflow-x: scroll;
     padding: $padding-top-bottom $inner-gap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .toolbox {
@@ -99,11 +98,11 @@ $inner-gap: 12px;
 
 .sliced-pipeline-action-bar--cta {
   align-items: center;
+  border-radius: 4px;
+  border: 1px solid var(--sliced-pipeline-action-bar--color);
   display: flex;
   justify-content: center;
   padding: $padding-top-bottom $inner-gap;
-  border: 1px solid var(--sliced-pipeline-action-bar--color);
-  border-radius: 4px;
 }
 
 .sliced-pipeline-action-bar--reset {
@@ -111,9 +110,9 @@ $inner-gap: 12px;
   border: none;
 
   .button__btn {
+    border: none;
     font-size: 14px;
     padding: 0;
-    border: none;
 
     &:hover {
       background: none;
@@ -129,8 +128,8 @@ $inner-gap: 12px;
   }
 
   .pipeline-icon {
-    width: 24px;
     height: 24px;
+    width: 24px;
 
     path {
       fill: var(--sliced-pipeline-action-bar--color);
@@ -138,8 +137,8 @@ $inner-gap: 12px;
   }
 
   .sliced-pipeline-action-bar--slice-text {
-    font-size: 14px;
     color: var(--sliced-pipeline-action-bar--color);
+    font-size: 14px;
     font-weight: 600;
     margin-left: 4px;
   }
