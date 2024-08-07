@@ -14,7 +14,7 @@ import {
   getInputOutputNodesForFocusedModularPipeline,
   getNodeLabel,
   getOppositeForPrettyName,
-  filterNodes,
+  filterNodesFromSlicingPipeline,
 } from './nodes';
 import {
   toggleTextLabels,
@@ -458,18 +458,20 @@ describe('getInputOutputDataNodes', () => {
   });
 });
 
-describe('filterNodes helper function', () => {
+describe('filterNodesFromSlicingPipeline helper function', () => {
   it('should return an object with nodes filtered by includedNodeIds', () => {
     const nodes = {
       1: { name: 'Node 1', value: 100 },
       2: { name: 'Node 2', value: 200 },
       3: { name: 'Node 3', value: 300 },
     };
-    const filteredPipeline = ['1', '3'];
-    const filteredNodes = filterNodes(nodes, filteredPipeline);
-    expect(filteredNodes).toEqual({
+    const expected = {
       1: { name: 'Node 1', value: 100 },
       3: { name: 'Node 3', value: 300 },
-    });
+    };
+    const filteredPipeline = ['1', '3'];
+    const res = filterNodesFromSlicingPipeline(nodes, filteredPipeline);
+
+    expect(res).toEqual(expected);
   });
 });
