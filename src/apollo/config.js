@@ -2,27 +2,77 @@ import fetch from 'cross-fetch';
 import {
   ApolloClient,
   InMemoryCache,
-  createHttpLink,
-  split,
+  HttpLink,
+  ApolloLink,
+  Observable,
 } from '@apollo/client';
-import { getMainDefinition } from '@apollo/client/utilities';
+import { onError } from '@apollo/client/link/error';
 import { sanitizedPathname } from '../utils';
+import loadJsonData from '../store/load-data';
 
-const httpLink = createHttpLink({
-  // our graphql endpoint, normally here: http://localhost:4141/graphql
-  uri: `${sanitizedPathname()}graphql`,
+const apiBaseUrl = `${sanitizedPathname()}graphql`;
+
+// Static file fetching link
+const staticFileLink = new ApolloLink((operation, forward) => {
+  return new Observable((observer) => {
+    (async () => {
+      const { operationName, variables } = operation;
+      let staticFilePath = `/data/${operationName}.json`;
+
+      if (variables?.runIds) {
+        staticFilePath = `/data/${operationName}/${variables.runIds}.json`;
+      }
+
+      try {
+        const staticData = await loadJsonData(staticFilePath, null);
+        if (staticData) {
+          observer.next({ data: staticData });
+          observer.complete();
+        } else {
+          forward(operation).subscribe({
+            next: observer.next.bind(observer),
+            error: observer.error.bind(observer),
+            complete: observer.complete.bind(observer),
+          });
+        }
+      } catch (error) {
+        forward(operation).subscribe({
+          next: observer.next.bind(observer),
+          error: observer.error.bind(observer),
+          complete: observer.complete.bind(observer),
+        });
+      }
+    })();
+  });
+});
+
+// HTTP link for GraphQL API calls
+const httpLink = new HttpLink({
+  uri: apiBaseUrl,
   fetch,
 });
 
-const splitLink = split(({ query }) => {
-  const definition = getMainDefinition(query);
+// Error handling link
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.error(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    );
+  }
+  if (networkError) {
+    console.error(`[Network error]: ${networkError}`);
+  }
+});
 
-  return definition.kind === 'OperationDefinition';
-}, httpLink);
+// Combine the links
+const link = ApolloLink.from([staticFileLink, errorLink, httpLink]);
 
+// Create the Apollo Client
 export const client = new ApolloClient({
   connectToDevTools: true,
-  link: splitLink,
+  link,
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
