@@ -68,7 +68,7 @@ export class FlowChart extends Component {
     this.nodesRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
-    this.slicedPipelineActionRef = React.createRef();
+    this.slicedPipelineActionBarRef = React.createRef();
 
     this.DURATION = 700;
     this.MARGIN = 500;
@@ -534,15 +534,13 @@ export class FlowChart extends Component {
     toSelectedNode(node);
 
     const { from, to, range } = this.state.slicedPipelineState;
+
+    this.updateSlicedPipelineState(id, to, range);
+
     // if both "from" and "to" are defined
     // then on a single node click, it should reset the sliced pipeline state
-    if (from !== null && to !== null && !this.props.isSlicingPipelineApplied) {
+    if (from && to && !this.props.isSlicingPipelineApplied) {
       this.resetSlicedPipeline();
-    } else {
-      // Else, set the first node as the 'from' node based on current state
-      // we need this so that if user hold shift and click on a second node,
-      // the 'from' node is already set
-      this.updateSlicedPipelineState(id, to, range);
     }
   };
 
@@ -573,8 +571,8 @@ export class FlowChart extends Component {
 
     // Determine if the click event occurred on the slice button.
     const isSliceButtonClicked =
-      this.slicedPipelineActionRef.current &&
-      this.slicedPipelineActionRef.current.contains(event.target);
+      this.slicedPipelineActionBarRef.current &&
+      this.slicedPipelineActionBarRef.current.contains(event.target);
 
     // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
     if (
@@ -793,14 +791,14 @@ export class FlowChart extends Component {
           ref={this.layerNamesRef}
         />
         {slicedPipeline.length > 0 && (
-          <div ref={this.slicedPipelineActionRef}>
+          <div ref={this.slicedPipelineActionBarRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
               displayMetadataPanel={Boolean(clickedNode)}
               isSlicingPipelineApplied={isSlicingPipelineApplied}
               onApplySlicingPipeline={() => onApplySlice(true)}
               onResetSlicingPipeline={this.resetSlicedPipeline}
-              ref={this.slicedPipelineActionRef}
+              ref={this.slicedPipelineActionBarRef}
               runCommand={runCommand}
               slicedPipeline={slicedPipeline}
               visibleSidebar={visibleSidebar}
