@@ -7,8 +7,8 @@
       "pipelines": [
         "Pre-modelling",
         "Modelling stage",
-        "__default__",
-        "Feature engineering"
+        "Feature engineering",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -66,9 +66,9 @@
       ],
       "type": "data",
       "modular_pipelines": [
-        "train_evaluation.linear_regression",
         "train_evaluation",
-        "train_evaluation.random_forest"
+        "train_evaluation.random_forest",
+        "train_evaluation.linear_regression"
       ],
       "layer": null,
       "dataset_type": "io.memory_dataset.MemoryDataset",
@@ -89,9 +89,9 @@
       ],
       "type": "data",
       "modular_pipelines": [
-        "train_evaluation.linear_regression",
         "train_evaluation",
-        "train_evaluation.random_forest"
+        "train_evaluation.random_forest",
+        "train_evaluation.linear_regression"
       ],
       "layer": null,
       "dataset_type": "io.memory_dataset.MemoryDataset",
@@ -112,9 +112,9 @@
       ],
       "type": "data",
       "modular_pipelines": [
-        "train_evaluation.linear_regression",
         "train_evaluation",
-        "train_evaluation.random_forest"
+        "train_evaluation.random_forest",
+        "train_evaluation.linear_regression"
       ],
       "layer": null,
       "dataset_type": "io.memory_dataset.MemoryDataset",
@@ -132,9 +132,9 @@
       ],
       "type": "data",
       "modular_pipelines": [
-        "train_evaluation.linear_regression",
         "train_evaluation",
-        "train_evaluation.random_forest"
+        "train_evaluation.random_forest",
+        "train_evaluation.linear_regression"
       ],
       "layer": null,
       "dataset_type": "io.memory_dataset.MemoryDataset",
@@ -430,119 +430,55 @@
   ],
   "edges": [
     {
-      "source": "train_evaluation.linear_regression",
-      "target": "b701864d"
+      "source": "train_evaluation.random_forest",
+      "target": "4f79de77"
     },
     {
-      "source": "872981f9",
-      "target": "train_evaluation.linear_regression"
-    },
-    {
-      "source": "98eb115e",
+      "source": "cae2d1c7",
       "target": "train_evaluation"
-    },
-    {
-      "source": "23c94afb",
-      "target": "2816ba38"
-    },
-    {
-      "source": "872981f9",
-      "target": "bf8530bc"
     },
     {
       "source": "2816ba38",
       "target": "f6d9538c"
     },
     {
-      "source": "10e51dea",
-      "target": "d2885635"
-    },
-    {
-      "source": "038647c7",
-      "target": "4f79de77"
+      "source": "af9a43c8",
+      "target": "b701864d"
     },
     {
       "source": "2816ba38",
       "target": "9ca016a8"
     },
     {
-      "source": "872981f9",
-      "target": "train_evaluation"
-    },
-    {
-      "source": "72baf5c6",
-      "target": "038647c7"
-    },
-    {
       "source": "9ca016a8",
       "target": "af9a43c8"
     },
     {
-      "source": "cae2d1c7",
-      "target": "af9a43c8"
-    },
-    {
-      "source": "9ca016a8",
-      "target": "038647c7"
-    },
-    {
-      "source": "cae2d1c7",
-      "target": "038647c7"
-    },
-    {
       "source": "872981f9",
-      "target": "d2885635"
+      "target": "train_evaluation.linear_regression"
     },
     {
-      "source": "872981f9",
-      "target": "train_evaluation.random_forest"
-    },
-    {
-      "source": "038647c7",
-      "target": "01675921"
-    },
-    {
-      "source": "af9a43c8",
+      "source": "train_evaluation",
       "target": "b701864d"
     },
     {
-      "source": "9ca016a8",
-      "target": "train_evaluation.linear_regression"
-    },
-    {
-      "source": "2816ba38",
-      "target": "cae2d1c7"
-    },
-    {
-      "source": "cae2d1c7",
-      "target": "train_evaluation.linear_regression"
-    },
-    {
-      "source": "train_evaluation.random_forest",
-      "target": "4f79de77"
-    },
-    {
       "source": "f6d9538c",
-      "target": "train_evaluation.linear_regression"
-    },
-    {
-      "source": "train_evaluation.random_forest",
-      "target": "b16095d0"
+      "target": "bf8530bc"
     },
     {
       "source": "9ca016a8",
-      "target": "train_evaluation"
+      "target": "train_evaluation.random_forest"
     },
     {
-      "source": "bf8530bc",
-      "target": "b16095d0"
+      "source": "10e51dea",
+      "target": "d2885635"
     },
     {
       "source": "98eb115e",
-      "target": "af9a43c8"
+      "target": "train_evaluation.linear_regression"
     },
     {
-      "source": "cae2d1c7",
+      "source": "9ca016a8",
       "target": "train_evaluation"
     },
     {
@@ -550,44 +486,108 @@
       "target": "872981f9"
     },
     {
-      "source": "01675921",
-      "target": "bf8530bc"
-    },
-    {
-      "source": "f6d9538c",
-      "target": "bf8530bc"
-    },
-    {
       "source": "72baf5c6",
+      "target": "038647c7"
+    },
+    {
+      "source": "872981f9",
+      "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "495a0bbc"
+    },
+    {
+      "source": "038647c7",
+      "target": "01675921"
+    },
+    {
+      "source": "98eb115e",
+      "target": "af9a43c8"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "038647c7"
+    },
+    {
+      "source": "872981f9",
+      "target": "d2885635"
+    },
+    {
+      "source": "872981f9",
       "target": "train_evaluation"
     },
     {
-      "source": "train_evaluation",
-      "target": "b701864d"
+      "source": "train_evaluation.random_forest",
+      "target": "b16095d0"
     },
     {
-      "source": "train_evaluation",
+      "source": "038647c7",
       "target": "4f79de77"
     },
     {
-      "source": "train_evaluation",
-      "target": "495a0bbc"
+      "source": "23c94afb",
+      "target": "2816ba38"
     },
     {
-      "source": "train_evaluation.linear_regression",
-      "target": "495a0bbc"
+      "source": "f6d9538c",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "af9a43c8",
+      "target": "10e51dea"
     },
     {
       "source": "22eec376",
       "target": "2816ba38"
     },
     {
+      "source": "train_evaluation.linear_regression",
+      "target": "b701864d"
+    },
+    {
       "source": "9ca016a8",
-      "target": "train_evaluation.random_forest"
+      "target": "038647c7"
+    },
+    {
+      "source": "98eb115e",
+      "target": "train_evaluation"
+    },
+    {
+      "source": "d2885635",
+      "target": "495a0bbc"
+    },
+    {
+      "source": "train_evaluation",
+      "target": "4f79de77"
+    },
+    {
+      "source": "2816ba38",
+      "target": "cae2d1c7"
+    },
+    {
+      "source": "bf8530bc",
+      "target": "b16095d0"
     },
     {
       "source": "cae2d1c7",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "01675921",
+      "target": "bf8530bc"
+    },
+    {
+      "source": "f6d9538c",
       "target": "train_evaluation.random_forest"
+    },
+    {
+      "source": "872981f9",
+      "target": "bf8530bc"
+    },
+    {
+      "source": "train_evaluation.linear_regression",
+      "target": "495a0bbc"
     },
     {
       "source": "f6d9538c",
@@ -599,36 +599,36 @@
     },
     {
       "source": "f6d9538c",
+      "target": "d2885635"
+    },
+    {
+      "source": "9ca016a8",
+      "target": "train_evaluation.linear_regression"
+    },
+    {
+      "source": "cae2d1c7",
+      "target": "af9a43c8"
+    },
+    {
+      "source": "cae2d1c7",
       "target": "train_evaluation.random_forest"
     },
     {
-      "source": "98eb115e",
-      "target": "train_evaluation.linear_regression"
+      "source": "72baf5c6",
+      "target": "train_evaluation"
     },
     {
       "source": "train_evaluation",
       "target": "b16095d0"
-    },
-    {
-      "source": "f6d9538c",
-      "target": "d2885635"
-    },
-    {
-      "source": "d2885635",
-      "target": "495a0bbc"
-    },
-    {
-      "source": "af9a43c8",
-      "target": "10e51dea"
     }
   ],
   "layers": [
-    "raw",
     "primary",
+    "reporting",
     "model_input",
-    "feature",
     "intermediate",
-    "reporting"
+    "feature",
+    "raw"
   ],
   "tags": [
     {
@@ -682,46 +682,6 @@
       "outputs": [],
       "children": [
         {
-          "id": "4f79de77",
-          "type": "data"
-        },
-        {
-          "id": "22eec376",
-          "type": "parameters"
-        },
-        {
-          "id": "872981f9",
-          "type": "data"
-        },
-        {
-          "id": "9ca016a8",
-          "type": "data"
-        },
-        {
-          "id": "23c94afb",
-          "type": "data"
-        },
-        {
-          "id": "cae2d1c7",
-          "type": "data"
-        },
-        {
-          "id": "b16095d0",
-          "type": "data"
-        },
-        {
-          "id": "495a0bbc",
-          "type": "data"
-        },
-        {
-          "id": "b701864d",
-          "type": "data"
-        },
-        {
-          "id": "f6d9538c",
-          "type": "data"
-        },
-        {
           "id": "22eec376",
           "type": "data"
         },
@@ -730,12 +690,52 @@
           "type": "parameters"
         },
         {
-          "id": "72baf5c6",
-          "type": "parameters"
+          "id": "4f79de77",
+          "type": "data"
+        },
+        {
+          "id": "9ca016a8",
+          "type": "data"
+        },
+        {
+          "id": "b16095d0",
+          "type": "data"
+        },
+        {
+          "id": "872981f9",
+          "type": "data"
+        },
+        {
+          "id": "495a0bbc",
+          "type": "data"
         },
         {
           "id": "2816ba38",
           "type": "task"
+        },
+        {
+          "id": "b701864d",
+          "type": "data"
+        },
+        {
+          "id": "22eec376",
+          "type": "parameters"
+        },
+        {
+          "id": "23c94afb",
+          "type": "data"
+        },
+        {
+          "id": "72baf5c6",
+          "type": "parameters"
+        },
+        {
+          "id": "f6d9538c",
+          "type": "data"
+        },
+        {
+          "id": "cae2d1c7",
+          "type": "data"
         },
         {
           "id": "train_evaluation",
@@ -747,26 +747,26 @@
       "id": "train_evaluation",
       "name": "train_evaluation",
       "inputs": [
-        "9ca016a8",
+        "872981f9",
         "f6d9538c",
         "cae2d1c7",
         "72baf5c6",
-        "98eb115e",
-        "872981f9"
+        "9ca016a8",
+        "98eb115e"
       ],
       "outputs": [
-        "b701864d",
-        "b16095d0",
         "4f79de77",
-        "495a0bbc"
+        "b701864d",
+        "495a0bbc",
+        "b16095d0"
       ],
       "children": [
         {
-          "id": "train_evaluation.random_forest",
+          "id": "train_evaluation.linear_regression",
           "type": "modularPipeline"
         },
         {
-          "id": "train_evaluation.linear_regression",
+          "id": "train_evaluation.random_forest",
           "type": "modularPipeline"
         }
       ]
@@ -775,11 +775,11 @@
       "id": "train_evaluation.linear_regression",
       "name": "train_evaluation.linear_regression",
       "inputs": [
-        "9ca016a8",
+        "872981f9",
         "f6d9538c",
         "cae2d1c7",
-        "98eb115e",
-        "872981f9"
+        "9ca016a8",
+        "98eb115e"
       ],
       "outputs": [
         "b701864d",
@@ -787,16 +787,16 @@
       ],
       "children": [
         {
-          "id": "10e51dea",
-          "type": "data"
+          "id": "d2885635",
+          "type": "task"
         },
         {
           "id": "af9a43c8",
           "type": "task"
         },
         {
-          "id": "d2885635",
-          "type": "task"
+          "id": "10e51dea",
+          "type": "data"
         }
       ]
     },
@@ -804,27 +804,27 @@
       "id": "train_evaluation.random_forest",
       "name": "train_evaluation.random_forest",
       "inputs": [
-        "9ca016a8",
+        "872981f9",
         "f6d9538c",
         "cae2d1c7",
         "72baf5c6",
-        "872981f9"
+        "9ca016a8"
       ],
       "outputs": [
-        "b16095d0",
-        "4f79de77"
+        "4f79de77",
+        "b16095d0"
       ],
       "children": [
-        {
-          "id": "bf8530bc",
-          "type": "task"
-        },
         {
           "id": "01675921",
           "type": "data"
         },
         {
           "id": "038647c7",
+          "type": "task"
+        },
+        {
+          "id": "bf8530bc",
           "type": "task"
         }
       ]

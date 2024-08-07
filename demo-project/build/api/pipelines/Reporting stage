@@ -5,16 +5,16 @@
       "name": "prm_shuttle_company_reviews",
       "tags": [],
       "pipelines": [
-        "__default__",
+        "Pre-modelling",
         "Reporting stage",
         "Feature engineering",
-        "Pre-modelling",
+        "__default__",
         "Data ingestion"
       ],
       "type": "data",
       "modular_pipelines": [
-        "ingestion",
         "feature_engineering",
+        "ingestion",
         "reporting"
       ],
       "layer": "primary",
@@ -31,9 +31,9 @@
       "tags": [],
       "pipelines": [
         "Pre-modelling",
-        "__default__",
         "Reporting stage",
-        "Feature engineering"
+        "Feature engineering",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -53,8 +53,8 @@
       "name": "create_matplotlib_chart",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -67,8 +67,8 @@
       "name": "reporting.confusion_matrix",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -83,8 +83,8 @@
       "name": "get_top_shuttles_data",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -97,8 +97,8 @@
       "name": "reporting.top_shuttle_data",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -113,8 +113,8 @@
       "name": "make_cancel_policy_bar_chart",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -127,8 +127,8 @@
       "name": "reporting.cancellation_policy_breakdown",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -147,8 +147,8 @@
       "name": "make_price_analysis_image",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -161,8 +161,8 @@
       "name": "reporting.cancellation_policy_grid",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -177,8 +177,8 @@
       "name": "make_price_histogram",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -191,8 +191,8 @@
       "name": "reporting.price_histogram",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -207,8 +207,8 @@
       "name": "create_feature_importance_plot",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "task",
       "modular_pipelines": [
@@ -221,8 +221,8 @@
       "name": "reporting.feature_importance",
       "tags": [],
       "pipelines": [
-        "__default__",
-        "Reporting stage"
+        "Reporting stage",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -248,32 +248,68 @@
   ],
   "edges": [
     {
-      "source": "9f266f06",
-      "target": "40886786"
+      "source": "reporting",
+      "target": "eb7d6d28"
+    },
+    {
+      "source": "reporting",
+      "target": "3b199c6b"
     },
     {
       "source": "9f266f06",
-      "target": "c7646ea1"
+      "target": "reporting"
     },
     {
-      "source": "9f266f06",
-      "target": "44ef9b48"
+      "source": "be6b7919",
+      "target": "3b199c6b"
+    },
+    {
+      "source": "reporting",
+      "target": "c0be8342"
     },
     {
       "source": "44ef9b48",
       "target": "c0be8342"
     },
     {
+      "source": "c7646ea1",
+      "target": "d0e9b00f"
+    },
+    {
       "source": "1e3cc50a",
       "target": "reporting"
     },
     {
+      "source": "3fb71518",
+      "target": "8838ca1f"
+    },
+    {
       "source": "reporting",
-      "target": "eb7d6d28"
+      "target": "d0e9b00f"
+    },
+    {
+      "source": "9f266f06",
+      "target": "40886786"
     },
     {
       "source": "reporting",
       "target": "8838ca1f"
+    },
+    {
+      "source": "9f266f06",
+      "target": "44ef9b48"
+    },
+    {
+      "source": "40886786",
+      "target": "c6992660"
+    },
+    {
+      "source": "reporting",
+      "target": "c6992660"
+    },
+    {
+      "source": "9f266f06",
+      "target": "c7646ea1"
     },
     {
       "source": "9f266f06",
@@ -289,51 +325,15 @@
     },
     {
       "source": "9f266f06",
-      "target": "reporting"
-    },
-    {
-      "source": "reporting",
-      "target": "d0e9b00f"
-    },
-    {
-      "source": "c7646ea1",
-      "target": "d0e9b00f"
-    },
-    {
-      "source": "reporting",
-      "target": "c0be8342"
-    },
-    {
-      "source": "3fb71518",
-      "target": "8838ca1f"
-    },
-    {
-      "source": "reporting",
-      "target": "3b199c6b"
-    },
-    {
-      "source": "40886786",
-      "target": "c6992660"
-    },
-    {
-      "source": "reporting",
-      "target": "c6992660"
-    },
-    {
-      "source": "be6b7919",
-      "target": "3b199c6b"
-    },
-    {
-      "source": "9f266f06",
       "target": "be6b7919"
     }
   ],
   "layers": [
-    "feature",
     "primary",
-    "raw",
+    "feature",
     "model_input",
     "intermediate",
+    "raw",
     "reporting"
   ],
   "tags": [
@@ -388,7 +388,7 @@
       "outputs": [],
       "children": [
         {
-          "id": "c6992660",
+          "id": "8838ca1f",
           "type": "data"
         },
         {
@@ -396,15 +396,7 @@
           "type": "data"
         },
         {
-          "id": "c0be8342",
-          "type": "data"
-        },
-        {
-          "id": "9f266f06",
-          "type": "data"
-        },
-        {
-          "id": "8838ca1f",
+          "id": "c6992660",
           "type": "data"
         },
         {
@@ -412,12 +404,20 @@
           "type": "data"
         },
         {
-          "id": "reporting",
-          "type": "modularPipeline"
+          "id": "9f266f06",
+          "type": "data"
+        },
+        {
+          "id": "c0be8342",
+          "type": "data"
         },
         {
           "id": "3b199c6b",
           "type": "data"
+        },
+        {
+          "id": "reporting",
+          "type": "modularPipeline"
         },
         {
           "id": "d0e9b00f",
@@ -429,28 +429,24 @@
       "id": "reporting",
       "name": "reporting",
       "inputs": [
-        "1e3cc50a",
-        "9f266f06"
+        "9f266f06",
+        "1e3cc50a"
       ],
       "outputs": [
-        "c6992660",
-        "eb7d6d28",
-        "3b199c6b",
-        "c0be8342",
         "d0e9b00f",
-        "8838ca1f"
+        "8838ca1f",
+        "eb7d6d28",
+        "c6992660",
+        "3b199c6b",
+        "c0be8342"
       ],
       "children": [
         {
-          "id": "40886786",
+          "id": "44ef9b48",
           "type": "task"
         },
         {
-          "id": "c7646ea1",
-          "type": "task"
-        },
-        {
-          "id": "3fb71518",
+          "id": "be6b7919",
           "type": "task"
         },
         {
@@ -458,11 +454,15 @@
           "type": "task"
         },
         {
-          "id": "44ef9b48",
+          "id": "3fb71518",
           "type": "task"
         },
         {
-          "id": "be6b7919",
+          "id": "40886786",
+          "type": "task"
+        },
+        {
+          "id": "c7646ea1",
           "type": "task"
         }
       ]
