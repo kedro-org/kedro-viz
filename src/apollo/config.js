@@ -19,43 +19,46 @@ const httpLink = new HttpLink({
 });
 
 // Error handling link
-const errorLink = onError(({ graphQLErrors, networkError, operation, forward, response }) => {
-  if (networkError) {
-    console.error(`[Network error]: ${networkError}`);
-    
-    // Try reading from static file if network error occurs
-    return new Observable(observer => {
-      (async () => {
-        const { operationName, variables } = operation;
-        let staticFilePath = `/data/${operationName}.json`;
+const errorLink = onError(
+  ({ graphQLErrors, networkError, operation, forward, response }) => {
+    if (networkError) {
+      console.error(`[Network error]: ${networkError}`);
 
-        if (variables?.runIds) {
-          staticFilePath = `/data/${operationName}/${variables.runIds}.json`;
-        }
+      // Try reading from static file if network error occurs
+      return new Observable((observer) => {
+        (async () => {
+          const { operationName, variables } = operation;
+          let urlPath = window.location.pathname;
+          let staticFilePath = `${urlPath}/data/${operationName}.json`;
 
-        try {
-          const staticData = await loadJsonData(staticFilePath, null);
-          if (staticData) {
-            observer.next({ data: staticData });
-            observer.complete();
-          } else {
+          if (variables?.runIds) {
+            staticFilePath = `${urlPath}/data/${operationName}/${variables.runIds}.json`;
+          }
+
+          try {
+            const staticData = await loadJsonData(staticFilePath, null);
+            if (staticData) {
+              observer.next({ data: staticData });
+              observer.complete();
+            } else {
+              observer.error(networkError);
+            }
+          } catch (error) {
             observer.error(networkError);
           }
-        } catch (error) {
-          observer.error(networkError);
-        }
-      })();
-    });
-  }
+        })();
+      });
+    }
 
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.error(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
+    if (graphQLErrors) {
+      graphQLErrors.forEach(({ message, locations, path }) =>
+        console.error(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        )
+      );
+    }
   }
-});
+);
 
 // Combine the links
 const link = ApolloLink.from([errorLink, httpLink]);
