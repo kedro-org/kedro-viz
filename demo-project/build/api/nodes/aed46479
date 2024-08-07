@@ -1,6 +1,6 @@
 {
   "type": "pandas.csv_dataset.CSVDataset",
-  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/01_raw/companies.csv",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/rashida_fork/kedro-viz/demo-project/data/01_raw/companies.csv",
   "run_command": null,
   "preview": null,
   "preview_type": null,

@@ -6,16 +6,16 @@
       "tags": [],
       "pipelines": [
         "__default__",
-        "Data ingestion",
         "Feature engineering",
+        "Pre-modelling",
         "Reporting stage",
-        "Pre-modelling"
+        "Data ingestion"
       ],
       "type": "data",
       "modular_pipelines": [
+        "reporting",
         "feature_engineering",
-        "ingestion",
-        "reporting"
+        "ingestion"
       ],
       "layer": "primary",
       "dataset_type": "pandas.parquet_dataset.ParquetDataset",
@@ -30,10 +30,10 @@
       "name": "prm_spine_table",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
+        "Data ingestion",
         "Feature engineering",
-        "__default__",
-        "Data ingestion"
+        "Pre-modelling",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
@@ -53,8 +53,8 @@
       "name": "create_derived_features",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "task",
@@ -89,8 +89,8 @@
       "name": "params:feature_engineering.feature.derived",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "parameters",
@@ -104,8 +104,8 @@
       "name": "feature_engineering.feat_derived_features",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "data",
@@ -124,8 +124,8 @@
       "name": "create_feature_importance",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "task",
@@ -139,15 +139,15 @@
       "name": "feature_importance_output",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
+        "Reporting stage",
         "Feature engineering",
-        "__default__",
-        "Reporting stage"
+        "Pre-modelling",
+        "__default__"
       ],
       "type": "data",
       "modular_pipelines": [
-        "feature_engineering",
-        "reporting"
+        "reporting",
+        "feature_engineering"
       ],
       "layer": "feature",
       "dataset_type": "pandas.csv_dataset.CSVDataset",
@@ -162,8 +162,8 @@
       "name": "create_static_features",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "task",
@@ -189,8 +189,8 @@
       "name": "params:feature_engineering.feature.static",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "parameters",
@@ -204,8 +204,8 @@
       "name": "feature_engineering.feat_static_features",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "data",
@@ -224,8 +224,8 @@
       "name": "joiner",
       "tags": [],
       "pipelines": [
-        "Pre-modelling",
         "Feature engineering",
+        "Pre-modelling",
         "__default__"
       ],
       "type": "task",
@@ -240,8 +240,8 @@
       "tags": [],
       "pipelines": [
         "Pre-modelling",
-        "Modelling stage",
         "Feature engineering",
+        "Modelling stage",
         "__default__"
       ],
       "type": "data",
@@ -273,71 +273,35 @@
   "edges": [
     {
       "source": "f063cc82",
-      "target": "04ba733a"
-    },
-    {
-      "source": "6ea2ec2c",
-      "target": "23c94afb"
-    },
-    {
-      "source": "7c92a703",
-      "target": "6ea2ec2c"
-    },
-    {
-      "source": "04ba733a",
-      "target": "7c92a703"
-    },
-    {
-      "source": "9f266f06",
-      "target": "04ba733a"
-    },
-    {
-      "source": "e50f81b8",
-      "target": "8e4f1015"
-    },
-    {
-      "source": "abed6a4d",
-      "target": "feature_engineering"
-    },
-    {
-      "source": "a3627e31",
-      "target": "e50f81b8"
-    },
-    {
-      "source": "9f266f06",
-      "target": "e50f81b8"
-    },
-    {
-      "source": "f063cc82",
       "target": "7932e672"
     },
     {
-      "source": "feature_engineering",
-      "target": "1e3cc50a"
-    },
-    {
-      "source": "f063cc82",
-      "target": "feature_engineering"
-    },
-    {
-      "source": "f063cc82",
-      "target": "6ea2ec2c"
-    },
-    {
-      "source": "a3627e31",
-      "target": "feature_engineering"
-    },
-    {
       "source": "9f266f06",
-      "target": "feature_engineering"
+      "target": "e50f81b8"
     },
     {
       "source": "8e4f1015",
       "target": "6ea2ec2c"
     },
     {
-      "source": "abed6a4d",
+      "source": "9f266f06",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "9f266f06",
       "target": "04ba733a"
+    },
+    {
+      "source": "04ba733a",
+      "target": "7c92a703"
+    },
+    {
+      "source": "6ea2ec2c",
+      "target": "23c94afb"
+    },
+    {
+      "source": "a3627e31",
+      "target": "e50f81b8"
     },
     {
       "source": "feature_engineering",
@@ -346,6 +310,42 @@
     {
       "source": "7932e672",
       "target": "1e3cc50a"
+    },
+    {
+      "source": "a3627e31",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "f063cc82",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "f063cc82",
+      "target": "04ba733a"
+    },
+    {
+      "source": "abed6a4d",
+      "target": "feature_engineering"
+    },
+    {
+      "source": "abed6a4d",
+      "target": "04ba733a"
+    },
+    {
+      "source": "f063cc82",
+      "target": "6ea2ec2c"
+    },
+    {
+      "source": "e50f81b8",
+      "target": "8e4f1015"
+    },
+    {
+      "source": "7c92a703",
+      "target": "6ea2ec2c"
+    },
+    {
+      "source": "feature_engineering",
+      "target": "1e3cc50a"
     }
   ],
   "layers": [
@@ -353,8 +353,8 @@
     "intermediate",
     "raw",
     "reporting",
-    "feature",
-    "model_input"
+    "model_input",
+    "feature"
   ],
   "tags": [
     {
@@ -408,6 +408,10 @@
       "outputs": [],
       "children": [
         {
+          "id": "23c94afb",
+          "type": "data"
+        },
+        {
           "id": "f063cc82",
           "type": "data"
         },
@@ -416,11 +420,11 @@
           "type": "parameters"
         },
         {
-          "id": "feature_engineering",
-          "type": "modularPipeline"
+          "id": "1e3cc50a",
+          "type": "data"
         },
         {
-          "id": "1e3cc50a",
+          "id": "9f266f06",
           "type": "data"
         },
         {
@@ -428,12 +432,8 @@
           "type": "parameters"
         },
         {
-          "id": "9f266f06",
-          "type": "data"
-        },
-        {
-          "id": "23c94afb",
-          "type": "data"
+          "id": "feature_engineering",
+          "type": "modularPipeline"
         }
       ]
     },
@@ -441,10 +441,10 @@
       "id": "feature_engineering",
       "name": "feature_engineering",
       "inputs": [
+        "abed6a4d",
         "a3627e31",
-        "9f266f06",
         "f063cc82",
-        "abed6a4d"
+        "9f266f06"
       ],
       "outputs": [
         "23c94afb",
@@ -452,11 +452,19 @@
       ],
       "children": [
         {
+          "id": "04ba733a",
+          "type": "task"
+        },
+        {
+          "id": "7c92a703",
+          "type": "data"
+        },
+        {
           "id": "e50f81b8",
           "type": "task"
         },
         {
-          "id": "04ba733a",
+          "id": "6ea2ec2c",
           "type": "task"
         },
         {
@@ -464,16 +472,8 @@
           "type": "data"
         },
         {
-          "id": "6ea2ec2c",
-          "type": "task"
-        },
-        {
           "id": "7932e672",
           "type": "task"
-        },
-        {
-          "id": "7c92a703",
-          "type": "data"
         }
       ]
     }

@@ -1,6 +1,6 @@
 {
   "type": "pandas.excel_dataset.ExcelDataset",
-  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/kedro-viz/demo-project/data/01_raw/shuttles.xlsx",
+  "filepath": "/Users/Rashida_Kanchwala/kedro-universe/rashida_fork/kedro-viz/demo-project/data/01_raw/shuttles.xlsx",
   "run_command": null,
   "preview": null,
   "preview_type": null,
