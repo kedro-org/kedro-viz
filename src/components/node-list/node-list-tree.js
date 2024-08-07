@@ -126,6 +126,8 @@ const TreeListProvider = ({
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
+    // As part of the slicing pipeline logic, child nodes not included in the sliced pipeline are assigned an empty data object.
+    // Therefore, if a child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
     if (Object.keys(node).length === 0) {
       return null;
     }
@@ -172,6 +174,9 @@ const TreeListProvider = ({
     if (!node) {
       return;
     }
+
+    // If all children's data are empty, the subtree rooted at this node will not be rendered.
+    // in scenarios where the pipeline is being sliced, and some modular pipelines trees do not have any children
     const allChildrenDataEmpty = node.children.every(
       (child) => Object.keys(child.data).length === 0
     );
