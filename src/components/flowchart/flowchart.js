@@ -575,11 +575,7 @@ export class FlowChart extends Component {
       this.slicedPipelineActionBarRef.current.contains(event.target);
 
     // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
-    if (
-      this.props.slicedPipeline &&
-      !isSliceButtonClicked &&
-      !this.props.isSlicingPipelineApplied
-    ) {
+    if (!isSliceButtonClicked && !this.props.isSlicingPipelineApplied) {
       this.resetSlicedPipeline();
     }
   };
