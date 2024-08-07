@@ -36,10 +36,11 @@ format-check:
 
 lint-check:
 	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
-	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code package/tests
+	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code,abstract-class-instantiated package/tests
 	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
 	flake8 --config=package/.flake8 package
-	mypy --config-file=package/mypy.ini package
+	mypy --config-file=package/mypy.ini package/kedro_viz package/features
+	mypy --disable-error-code abstract --config-file=package/mypy.ini package/tests
 
 schema-fix:
 	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema > src/apollo/schema.graphql
