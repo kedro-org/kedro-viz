@@ -6,13 +6,14 @@ describe('Flowchart DAG', () => {
 
   beforeEach(() => {
     cy.enablePrettyNames(); // Enable pretty names using the custom command
+    cy.wait(500);
+    cy.get('.feature-hints__close').click(); // Close the feature hints so can click on a node
+    cy.wait(500);
   });
 
   it('verifies that users can expand a collapsed modular pipeline in the flowchart. #TC-23', () => {
     const modularPipelineText = 'feature_engineering';
-    const taskNodeText = 'Create Derived Features';
-
-    cy.enablePrettyNames();
+    const taskNodeText = 'create_derived_features';
 
     // Assert before action
     cy.get('.pipeline-node > .pipeline-node__text').should(

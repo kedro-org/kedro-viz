@@ -97,3 +97,8 @@
     }
   }
 }
+
+.pipeline-treeItem__root--highlight {
+  border-right: 1px solid colors.$blue-600;
+  background-color: var(--color-nodelist-row-selected);
+}

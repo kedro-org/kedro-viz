@@ -1,8 +1,10 @@
 import React from 'react';
+import uniqueId from 'lodash/uniqueId';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
 import NodeListRow from './node-list-row';
+import classNames from 'classnames';
 
 const arrowIconColor = '#8e8e90';
 
@@ -15,8 +17,10 @@ const NodeListTreeItem = ({
   children,
 }) => (
   <TreeItem
-    className="pipeline-treeItem__root--overwrite"
-    key={data.id}
+    className={classNames('pipeline-treeItem__root--overwrite', {
+      'pipeline-treeItem__root--highlight': data.highlight,
+    })}
+    key={uniqueId(data.id)}
     nodeId={data.id}
     // this setup is to allow flexibility for adjusting the setting for individual arrow icons
     collapseIcon={<ExpandMoreIcon style={{ color: arrowIconColor }} />}
@@ -37,6 +41,7 @@ const NodeListTreeItem = ({
         faded={data.faded}
         visible={data.visible}
         selected={data.selected}
+        highlight={data.highlight}
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}

@@ -4,8 +4,7 @@
     "curly": ["error"],
     "valid-typeof": ["error"],
     "camelcase": "error",
-    "id-length": ["error", { "min": 3, "exceptions": ["_","a","b","d","e","i","j","k","x","y","id","el","pi","PI","up"] }],
-    "no-var": ["error"],
+"id-length": ["error", { "min": 3, "exceptions": ["_","a","b","d","e","i","j","k","x","y","id","el","pi","PI","up","to"] }],    "no-var": ["error"],
     "lines-between-class-members": ["error", "always"]
   }
 }

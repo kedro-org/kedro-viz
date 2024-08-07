@@ -25,6 +25,20 @@ const toSinglePoint = (value) => parseFloat(value).toFixed(1);
 const limitPrecision = (path) => path.replace(matchFloats, toSinglePoint);
 
 /**
+ * Creates a mapping of node IDs to a boolean indicating if the node ID is included in the given values.
+ * @param {Array} nodes - Array of nodes to process.
+ * @param {Array} values - Array of values to check against node IDs.
+ * @returns {Object} An object mapping node IDs to booleans.
+ */
+function createNodeStateMap(nodes, values) {
+  const valueSet = new Set(values); // Convert to Set for efficient lookup
+  return nodes.reduce((acc, { id }) => {
+    acc[id] = valueSet.has(id);
+    return acc;
+  }, {});
+}
+
+/**
  * Render layer bands
  */
 export const drawLayers = function () {
@@ -136,6 +150,16 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
   } = this.props;
+  const { slicedPipelineState } = this.state;
+
+  const slicedPipelineFromTo = createNodeStateMap(nodes, [
+    slicedPipelineState.from,
+    slicedPipelineState.to,
+  ]);
+  const slicedPipelineRange = createNodeStateMap(
+    nodes,
+    slicedPipelineState.range
+  );
 
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
@@ -241,6 +265,14 @@ export const drawNodes = function (changed) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
+      .classed(
+        'pipeline-node--sliced-pipeline',
+        (node) => slicedPipelineRange[node.id]
+      )
+      .classed(
+        'pipeline-node--from-to-sliced-pipeline',
+        (node) => slicedPipelineFromTo[node.id]
+      )
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>

@@ -117,6 +117,32 @@
   }
 }
 
+.pipeline-node--sliced-pipeline {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: #{colors.$ocean-600};
+    stroke: #{colors.$blue-300};
+  }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: #{colors.$white-600};
+  }
+}
+
+.pipeline-node--from-to-sliced-pipeline {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: #{colors.$blue-600};
+    stroke: #{colors.$blue-300};
+  }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: #{colors.$white-600};
+  }
+}
+
 .pipeline-node--collapsed-hint {
   .pipeline-node__bg {
     stroke: var(--parameter-accent);

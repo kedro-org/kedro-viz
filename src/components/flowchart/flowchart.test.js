@@ -487,6 +487,7 @@ describe('FlowChart', () => {
       displayGlobalNavigation: expect.any(Boolean),
       displaySidebar: expect.any(Boolean),
       displayMetadataPanel: expect.any(Boolean),
+      slicedPipeline: expect.any(Object),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });

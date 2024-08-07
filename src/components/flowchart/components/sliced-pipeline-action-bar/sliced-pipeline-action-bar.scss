@@ -1,0 +1,50 @@
+@use '../../../../styles/variables' as colors;
+
+.kui-theme--light {
+  --sliced-pipeline-action-bar--background: #{colors.$slate-200};
+  --sliced-pipeline-action-bar--color: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
+}
+
+.kui-theme--dark {
+  --sliced-pipeline-action-bar--background: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
+}
+
+$padding-top-bottom: 8px;
+$padding-right-left: 16px;
+
+.sliced-pipeline-action-bar {
+  background-color: var(--sliced-pipeline-action-bar--background);
+  border-radius: 4px;
+  bottom: 30px;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  transition: transform ease 0.7s;
+}
+
+.sliced-pipeline-action-bar--info {
+  align-items: center;
+  border-right: 1px solid #d9dcde;
+  color: var(--sliced-pipeline-action-bar--color-faded);
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: $padding-top-bottom $padding-right-left;
+}
+
+.sliced-pipeline-action-bar--cta {
+  padding: $padding-top-bottom $padding-right-left;
+
+  .button__btn {
+    border: none;
+    color: var(--sliced-pipeline-action-bar--color);
+    font-size: 14px;
+    padding: 0;
+    width: 65px;
+  }
+}

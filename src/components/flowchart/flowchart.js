@@ -10,6 +10,11 @@ import {
   toggleNodeClicked,
 } from '../../actions/nodes';
 import {
+  applySlice,
+  slicePipeline,
+  resetSlicePipeline,
+} from '../../actions/slice';
+import {
   getNodeActive,
   getNodeSelected,
   getNodesWithInputParams,
@@ -17,6 +22,7 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
+import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -32,6 +38,7 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
+import { SlicedPipelineActionBar } from './components/sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import './styles/flowchart.scss';
 
 /**
@@ -44,6 +51,11 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
       activeLayer: undefined,
+      slicedPipelineState: {
+        from: null,
+        to: null,
+        range: [],
+      },
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -55,6 +67,7 @@ export class FlowChart extends Component {
     this.nodesRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
+    this.slicedPipelineActionRef = React.createRef();
 
     this.DURATION = 700;
     this.MARGIN = 500;
@@ -84,12 +97,43 @@ export class FlowChart extends Component {
     }
   }
 
+  /**
+   *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
+   */
+  updateSlicedPipelineState(from, to, range) {
+    this.setState({
+      slicedPipelineState: {
+        ...this.state.slicedPipelineState,
+        from,
+        to,
+        range,
+      },
+    });
+  }
+
   componentWillUnmount() {
     this.removeGlobalEventListeners();
   }
 
   componentDidUpdate(prevProps) {
     this.update(prevProps);
+
+    const { from, to } = this.state.slicedPipelineState;
+
+    const isSlicedPipelineChanged =
+      this.props.slicedPipeline !== prevProps.slicedPipeline;
+    const isSlicedPipelineEmpty = this.props.slicedPipeline.length === 0;
+    const isSlicedPipelineStateDefined = from !== null && to !== null;
+
+    if (isSlicedPipelineChanged) {
+      // Reset local state to null if the redux state's SlicedPipeline is empty,
+      // but the local state still has 'from' and 'to' values defined.
+      if (isSlicedPipelineEmpty && isSlicedPipelineStateDefined) {
+        this.updateSlicedPipelineState(null, null, []);
+      } else {
+        this.updateSlicedPipelineState(from, to, this.props.slicedPipeline);
+      }
+    }
   }
 
   /**
@@ -451,29 +495,88 @@ export class FlowChart extends Component {
    */
   handleNodeClick = (event, node) => {
     const { type, id } = node;
-    const {
-      onClickToExpandModularPipeline,
-      displayMetadataPanel,
-      onLoadNodeData,
-      toSelectedNode,
-      onToggleNodeClicked,
-    } = this.props;
+    const { onClickToExpandModularPipeline } = this.props;
 
     if (type === 'modularPipeline') {
       onClickToExpandModularPipeline(id);
     } else {
-      displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
-      toSelectedNode(node);
+      this.handleSingleNodeClick(node);
+
+      // the hold shift only happens on clicking a node first
+      if (event.shiftKey) {
+        this.handleShiftClick(node);
+      }
     }
+
     event.stopPropagation();
+  };
+
+  handleSingleNodeClick = (node) => {
+    const { id } = node;
+    const {
+      displayMetadataPanel,
+      onLoadNodeData,
+      onToggleNodeClicked,
+      toSelectedNode,
+    } = this.props;
+
+    displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
+    toSelectedNode(node);
+
+    const { from, to, range } = this.state.slicedPipelineState;
+    // if both "from" and "to" are defined
+    // then on a single node click, it should reset the sliced pipeline state
+    if (from !== null && to !== null) {
+      this.updateSlicedPipelineState(null, null, []);
+    } else {
+      // Else, set the first node as the 'from' node based on current state
+      // we need this so that if user hold shift and click on a second node,
+      // the 'from' node is already set
+      this.updateSlicedPipelineState(id, to, range);
+    }
+
+    // Reset the slicePipeline on single node click
+    this.props.onSlicePipeline(null, null);
+  };
+
+  handleShiftClick = (node) => {
+    // Close meta data panel
+    this.props.onLoadNodeData(null);
+
+    const fromNodeId = this.state.slicedPipelineState.from || node.id;
+    const toNodeId = node.id;
+
+    const newState = {
+      ...this.state.slicedPipelineState,
+      from: fromNodeId,
+      to: toNodeId,
+    };
+
+    this.setState({ slicedPipelineState: newState });
+
+    this.props.onSlicePipeline(fromNodeId, toNodeId);
+    this.props.onApplySlice(false);
   };
 
   /**
    * Remove a node's focus state and dim linked nodes
    */
-  handleChartClick = () => {
+  handleChartClick = (event) => {
     if (this.props.clickedNode) {
       this.props.onLoadNodeData(null);
+      // To reset URL to current active pipeline when click outside of a node on flowchart
+      this.props.toSelectedPipeline();
+    }
+
+    // Determine if the click event occurred on the slice button.
+    const isSliceButtonClicked =
+      this.slicedPipelineActionRef.current &&
+      this.slicedPipelineActionRef.current.contains(event.target);
+
+    // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
+    if (this.props.slicedPipeline && !isSliceButtonClicked) {
+      this.props.onResetSlicePipeline();
+      this.updateSlicedPipelineState(null, null, []);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
     }
@@ -569,7 +672,7 @@ export class FlowChart extends Component {
       this.handleNodeClick(event, node);
     }
     if (event.keyCode === ESCAPE) {
-      this.handleChartClick();
+      this.handleChartClick(event);
       this.handleNodeMouseOut();
     }
   };
@@ -615,9 +718,10 @@ export class FlowChart extends Component {
       visibleGraph,
       displayGlobalNavigation,
       displaySidebar,
+      visibleSidebar,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-
+    const { slicedPipelineState } = this.state;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -679,6 +783,15 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
+        {slicedPipelineState.range.length > 0 && (
+          <div ref={this.slicedPipelineActionRef}>
+            <SlicedPipelineActionBar
+              chartSize={chartSize}
+              slicedPipeline={slicedPipelineState.range}
+              visibleSidebar={visibleSidebar}
+            />
+          </div>
+        )}
         <Tooltip
           chartSize={chartSize}
           {...this.state.tooltip}
@@ -729,6 +842,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
+  slicedPipeline: getSlicedPipeline(state),
   ...ownProps,
 });
 
@@ -750,6 +864,15 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
+  },
+  onApplySlice: (apply) => {
+    dispatch(applySlice(apply));
+  },
+  onSlicePipeline: (fromID, toID) => {
+    dispatch(slicePipeline(fromID, toID));
+  },
+  onResetSlicePipeline: () => {
+    dispatch(resetSlicePipeline());
   },
   ...ownProps,
 });

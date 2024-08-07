@@ -12,7 +12,6 @@ import { localStorageName } from '../../config';
 import { prepareNonPipelineState } from '../../store/initial-state';
 import reducer from '../../reducers/index';
 import { TOGGLE_GRAPH_LOADING } from '../../actions/graph';
-import { prettifyName } from '../../utils/index';
 
 describe('App', () => {
   const getState = (wrapper) => wrapper.instance().store.getState();

@@ -31,8 +31,6 @@ import reducer from '../reducers';
 import { getVisibleNodeIDs } from './disabled';
 
 const getNodeIDs = (state) => state.node.ids;
-const getNodeName = (state) => state.node.name;
-const getNodeFullName = (state) => state.node.fullName;
 const getNodeType = (state) => state.node.type;
 const getNodePipelines = (state) => state.node.pipelines;
 

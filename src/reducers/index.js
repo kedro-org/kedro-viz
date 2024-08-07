@@ -11,6 +11,7 @@ import tag from './tags';
 import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
+import slice from './slice';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -78,6 +79,7 @@ const combinedReducer = combineReducers({
   node,
   nodeType,
   pipeline,
+  slice,
   tag,
   modularPipeline,
   visible,
