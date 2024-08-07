@@ -4,7 +4,7 @@ import Button from '../../../ui/button';
 import CommandCopier from '../../../ui/command-copier/command-copier';
 import CutIcon from '../../../icons/cut';
 import IconButton from '../../../ui/icon-button';
-import { sidebarWidth } from '../../../../config';
+import { sidebarWidth, metaSidebarWidth } from '../../../../config';
 
 import './sliced-pipeline-action-bar.scss';
 
@@ -20,10 +20,15 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     visibleSidebar,
   } = props;
   const { outerWidth: screenWidth } = chartSize;
+  const buffer = 200;
   const slicePipelineActionBarWidth =
     ref.current?.firstChild.getBoundingClientRect().width;
-  const metaDataPanelWidth = displayMetadataPanel ? 600 : 400;
-  const nodeListWidth = visibleSidebar ? 200 : 300;
+  const metaDataPanelWidth = displayMetadataPanel
+    ? metaSidebarWidth.open + buffer
+    : metaSidebarWidth.open;
+  const nodeListWidth = visibleSidebar
+    ? sidebarWidth.open - buffer
+    : sidebarWidth.open - buffer / 2;
   const minimumTransformX = visibleSidebar
     ? sidebarWidth.open
     : sidebarWidth.closed;
