@@ -15,12 +15,15 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     displayMetadataPanel,
   } = props;
   const { outerWidth: screenWidth } = chartSize;
-  const actionBarWidth =
+  const slicePipelineActionBarWidth =
     ref.current && ref.current.firstChild.getBoundingClientRect().width;
   const metaDataPanelWidth = displayMetadataPanel ? 600 : 400;
   const nodeListWidth = visibleSidebar ? 200 : 400;
   const transformX =
-    screenWidth - nodeListWidth - metaDataPanelWidth - actionBarWidth / 2;
+    screenWidth -
+    nodeListWidth -
+    metaDataPanelWidth -
+    slicePipelineActionBarWidth / 2;
 
   return (
     <div
