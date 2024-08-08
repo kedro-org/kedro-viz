@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
-import { toggleSingleModularPipelineExpanded } from '../../actions/modular-pipelines';
+import {
+  toggleSingleModularPipelineExpanded,
+  toggleModularPipelineActive,
+} from '../../actions/modular-pipelines';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -485,7 +488,11 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleNodeMouseOver = (event, node) => {
-    this.props.onToggleNodeHovered(node.id);
+    if (node.type === 'modularPipeline') {
+      this.props.onToggleModularPipelineActive(node.id, true);
+    } else {
+      this.props.onToggleNodeHovered(node.id);
+    }
     node && this.showTooltip(event, node.fullName);
   };
 
@@ -552,8 +559,12 @@ export class FlowChart extends Component {
    * Remove a node's active state, hide tooltip, and dim linked nodes
    * @param {Object} node Datum for a single node
    */
-  handleNodeMouseOut = () => {
-    this.props.onToggleNodeHovered(null);
+  handleNodeMouseOut = (event, node) => {
+    if (node.type === 'modularPipeline') {
+      this.props.onToggleModularPipelineActive(node.id, false);
+    } else {
+      this.props.onToggleNodeHovered(null);
+    }
     this.hideTooltip();
   };
 
@@ -741,6 +752,9 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onToggleNodeClicked: (id) => {
     dispatch(toggleNodeClicked(id));
+  },
+  onToggleModularPipelineActive: (modularPipelineIDs, active) => {
+    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
   },
   onToggleNodeHovered: (nodeHovered) => {
     dispatch(toggleNodeHovered(nodeHovered));

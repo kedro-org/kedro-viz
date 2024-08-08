@@ -73,7 +73,7 @@ const getModularPipelineRowData = ({
     type: 'modularPipeline',
     icon: 'modularPipeline',
     focusModeIcon: focusModeIcon,
-    active: false,
+    active: data.active,
     selected: false,
     faded: disabled || !checked,
     visible: !disabled && checked,
