@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - demo  
+      - demo-test
 jobs:
   deploy_demo:
     runs-on: ubuntu-latest
