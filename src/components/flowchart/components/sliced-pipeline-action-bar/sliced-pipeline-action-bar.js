@@ -22,7 +22,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
   const { outerWidth: screenWidth } = chartSize;
   const buffer = 200;
   const slicePipelineActionBarWidth =
-    ref.current?.firstChild.getBoundingClientRect().width;
+    ref.current && ref.current.firstChild.getBoundingClientRect().width;
   const metaDataPanelWidth = displayMetadataPanel
     ? metaSidebarWidth.open + buffer
     : metaSidebarWidth.open;

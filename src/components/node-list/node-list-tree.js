@@ -188,7 +188,7 @@ const TreeListProvider = ({
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-      (child) => child.data.name
+      (child) => child?.data?.name
     ).map((child) =>
       isModularPipelineType(child.type)
         ? renderTree(tree, child.id)
