@@ -70,7 +70,7 @@ $inner-gap: 12px;
     background-color: var(--sliced-pipeline-action-bar--code-background);
     color: var(--sliced-pipeline-action-bar--color);
     overflow-x: scroll;
-    padding: $padding-top-bottom $inner-gap;
+    padding: 10px $inner-gap;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -78,8 +78,20 @@ $inner-gap: 12px;
   .toolbox {
     align-items: center;
     display: flex;
-    margin-left: 18px;
-    margin-right: 10px;
+    margin: 0 10px;
+  }
+
+  .pipeline-icon--container {
+    padding: $padding-top-bottom;
+
+    &:hover {
+      background: var(--sliced-pipeline-action-bar--code-background);
+    }
+  }
+
+  .pipeline-icon {
+    width: 24px;
+    height: 24px;
   }
 }
 
