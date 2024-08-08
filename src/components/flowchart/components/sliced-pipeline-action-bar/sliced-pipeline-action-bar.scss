@@ -112,13 +112,18 @@ $inner-gap: 12px;
   background: #{colors.$red-0};
   border: none;
 
+  &:hover {
+    background: #{colors.$red-100};
+  }
+
   .button__btn {
     border: none;
     font-size: 14px;
     padding: 0;
 
     &:hover {
-      background: none;
+      background: #{colors.$red-100};
+      color: #{colors.$white-0};
     }
   }
 }
