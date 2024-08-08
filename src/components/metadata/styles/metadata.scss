@@ -50,8 +50,8 @@
 
 .pipeline-metadata__close-button {
   position: absolute;
-  top: 2px;
-  right: -14px;
+  top: 0;
+  right: 0;
 
   &,
   & svg {
@@ -62,7 +62,7 @@
 
 .pipeline-metadata__label,
 .pipeline-metadata__row {
-  margin: auto 36px 2.285em;
+  margin: 32px 36px;
 }
 
 .pipeline-metadata__header {
@@ -238,6 +238,10 @@ $list-inline-spacing: 0.2em;
   height: 0;
   margin-top: auto;
   overflow-y: auto;
+
+  & :nth-child(1) {
+    margin-top: 0;
+  }
 }
 
 .pipeline-metadata__link {
@@ -286,10 +290,10 @@ $list-inline-spacing: 0.2em;
   background: var(--color-metadata-preview-bg);
   height: 300px;
   position: relative;
-  padding: 10px 20px 0;
+  padding: 10px 0 0 20px;
 
   .scrollable-container {
-    max-height: 280px;
+    padding-bottom: 10px;
   }
 }
 
@@ -297,6 +301,8 @@ $list-inline-spacing: 0.2em;
   overflow: scroll;
   max-width: 400px;
   max-height: 300px;
+  height: 100%;
+  width: 100%;
 }
 
 .pipeline-metadata__preview-shadow-box-right {
