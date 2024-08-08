@@ -218,7 +218,7 @@ export const sanitizedPathname = () => {
  * @returns {Promise<Object>} A promise that resolves to the fetched package compatibilities.
  */
 export async function fetchPackageCompatibilities() {
-  const request = await fetch('/api/package-compatibilities', {
+  const request = await fetch('./api/package-compatibilities', {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -228,7 +228,7 @@ export async function fetchPackageCompatibilities() {
 }
 
 export async function deployViz(inputValues) {
-  const request = await fetch('/api/deploy', {
+  const request = await fetch('./api/deploy', {
     headers: {
       'Content-Type': 'application/json',
     },
