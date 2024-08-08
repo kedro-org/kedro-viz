@@ -19,7 +19,7 @@
 }
 
 $padding-top-bottom: 8px;
-$padding-right-left: 16px;
+$padding-right-left: 10px;
 $inner-gap: 12px;
 
 .sliced-pipeline-action-bar {
@@ -52,11 +52,12 @@ $inner-gap: 12px;
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
+  margin-left: 6px;
+  margin-right: 16px;
 }
 
 .sliced-pipeline-action-bar--run-command {
   display: flex;
-  padding: 0 $padding-right-left;
   min-width: 296px;
   max-width: 780px;
 
@@ -78,6 +79,7 @@ $inner-gap: 12px;
   .toolbox {
     align-items: center;
     display: flex;
+    justify-content: center;
     margin: 0 10px;
   }
 
