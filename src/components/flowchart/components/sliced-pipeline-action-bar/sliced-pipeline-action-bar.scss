@@ -4,6 +4,8 @@
   --sliced-pipeline-action-bar--background: #{colors.$slate-200};
   --sliced-pipeline-action-bar--color: #{colors.$white-0};
   --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
   --sliced-pipeline-action-bar--code-background: #{colors.$black-900};
 }
 
@@ -11,7 +13,8 @@
   --sliced-pipeline-action-bar--background: #{colors.$white-0};
   --sliced-pipeline-action-bar--color: #{colors.$black-900};
   --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
-  --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$white-0};
   --sliced-pipeline-action-bar--code-background: #{colors.$white-200};
 }
 
@@ -122,6 +125,20 @@ $inner-gap: 12px;
 
 .sliced-pipeline-action-bar--slice {
   cursor: pointer;
+
+  &:hover {
+    background: var(--sliced-pipeline-action-bar--background--hover);
+
+    .pipeline-icon {
+      path {
+        fill: var(--sliced-pipeline-action-bar--color--hover);
+      }
+    }
+
+    .sliced-pipeline-action-bar--slice-text {
+      color: var(--sliced-pipeline-action-bar--color--hover);
+    }
+  }
 
   .pipeline-icon--container {
     list-style-type: none;
