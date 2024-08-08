@@ -30,12 +30,6 @@
     }
   }
 
-  &:hover &--overwrite {
-    .Mui-selected & {
-      background-color: var(--color-nodelist-row-active);
-    }
-  }
-
   &--kind-filter {
     padding: 0 variables.$row-offset-right 0 variables.$row-offset-left;
   }
