@@ -8,7 +8,7 @@ export const getRunCommand = createSelector(
   (slicedPipeline, nodesNames) => {
     const { from, to } = slicedPipeline;
 
-    if (!from && !to) {
+    if (!from || !to) {
       return null;
     }
 
