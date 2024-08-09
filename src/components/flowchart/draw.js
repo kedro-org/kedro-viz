@@ -149,17 +149,20 @@ export const drawNodes = function (changed) {
     nodes,
     focusMode,
     hoveredFocusMode,
+    isSlicingPipelineApplied,
   } = this.props;
-  const { slicedPipelineState } = this.state;
+  const {
+    from: slicedPipelineFromId,
+    to: slicedPipelineToId,
+    range,
+  } = this.state.slicedPipelineState;
 
-  const slicedPipelineFromTo = createNodeStateMap(nodes, [
-    slicedPipelineState.from,
-    slicedPipelineState.to,
-  ]);
-  const slicedPipelineRange = createNodeStateMap(
-    nodes,
-    slicedPipelineState.range
-  );
+  const slicedPipelineFromTo =
+    slicedPipelineFromId &&
+    slicedPipelineToId &&
+    createNodeStateMap(nodes, [slicedPipelineFromId, slicedPipelineToId]);
+
+  const slicedPipelineRange = createNodeStateMap(nodes, range);
 
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
@@ -267,11 +270,14 @@ export const drawNodes = function (changed) {
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--sliced-pipeline',
-        (node) => slicedPipelineRange[node.id]
+        (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
       )
       .classed(
         'pipeline-node--from-to-sliced-pipeline',
-        (node) => slicedPipelineFromTo[node.id]
+        (node) =>
+          !isSlicingPipelineApplied &&
+          slicedPipelineFromTo &&
+          slicedPipelineFromTo[node.id]
       )
       .classed(
         'pipeline-node--collapsed-hint',

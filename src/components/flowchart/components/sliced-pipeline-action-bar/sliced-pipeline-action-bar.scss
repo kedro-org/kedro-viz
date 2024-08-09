@@ -1,19 +1,36 @@
 @use '../../../../styles/variables' as colors;
 
-.kui-theme--light {
-  --sliced-pipeline-action-bar--background: #{colors.$slate-200};
-  --sliced-pipeline-action-bar--color: #{colors.$white-0};
-  --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
+// Define a mixin for the gradient to make it easier to apply
+@mixin theme-gradient($direction, $start-color, $mid-color, $end-color) {
+  background: linear-gradient(
+    $direction,
+    $start-color 0%,
+    $mid-color 50%,
+    $end-color 100%
+  );
 }
 
 .kui-theme--dark {
+  --sliced-pipeline-action-bar--background: #{colors.$slate-200};
+  --sliced-pipeline-action-bar--color: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--code-background: #{colors.$black-900};
+}
+
+.kui-theme--light {
   --sliced-pipeline-action-bar--background: #{colors.$white-0};
   --sliced-pipeline-action-bar--color: #{colors.$black-900};
   --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$white-0};
+  --sliced-pipeline-action-bar--code-background: #{colors.$white-200};
 }
 
 $padding-top-bottom: 8px;
-$padding-right-left: 16px;
+$padding-right-left: 10px;
+$inner-gap: 12px;
 
 .sliced-pipeline-action-bar {
   background-color: var(--sliced-pipeline-action-bar--background);
@@ -21,30 +38,168 @@ $padding-right-left: 16px;
   bottom: 30px;
   display: flex;
   margin: 0;
-  padding: 0;
   position: absolute;
-  transition: transform ease 0.7s;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  padding: $padding-top-bottom $padding-right-left;
+
+  // create a ticket to investigate why there are so many opacities on button component
+  .pipeline-icon-toolbar__button {
+    height: 24px;
+    margin: 0;
+    opacity: 1;
+
+    svg {
+      fill: var(--sliced-pipeline-action-bar--color);
+      opacity: 1;
+    }
+  }
 }
 
 .sliced-pipeline-action-bar--info {
   align-items: center;
-  border-right: 1px solid #d9dcde;
   color: var(--sliced-pipeline-action-bar--color-faded);
   display: flex;
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  padding: $padding-top-bottom $padding-right-left;
+  margin-left: 6px;
+  margin-right: 16px;
+}
+
+.sliced-pipeline-action-bar--run-command {
+  display: flex;
+  min-width: 296px;
+  max-width: 780px;
+
+  .container {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .command-value {
+    background-color: var(--sliced-pipeline-action-bar--code-background);
+    color: var(--sliced-pipeline-action-bar--color);
+    overflow-x: scroll;
+    padding: 10px $inner-gap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbox {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 0 10px;
+  }
+
+  .pipeline-icon--container {
+    padding: $padding-top-bottom;
+
+    &:hover {
+      background: var(--sliced-pipeline-action-bar--code-background);
+    }
+  }
+
+  .pipeline-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.sliced-pipeline-action-bar--run-command-long {
+  .command-value {
+    background-image: 
+      /* Shadows */ linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      /* Shadow covers */ // dark theme
+      linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), #000),
+      linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), #000);
+
+    // light theme
+    // linear-gradient(to left,rgba(242, 243, 244, 0.00), rgba(242, 243, 244, 0.50), #F2F3F4),
+    // linear-gradient(to right,rgba(242, 243, 244, 0.00), rgba(242, 243, 244, 0.50), #F2F3F4);
+
+    background-position: left center, right center, left center, right center;
+    background-repeat: no-repeat;
+    background-size: 20px 100%, 20px 100%, 20px 100%, 20px 100%;
+
+    /* Opera doesn't support this in the shorthand */
+    background-attachment: local, local, scroll, scroll;
+  }
 }
 
 .sliced-pipeline-action-bar--cta {
-  padding: $padding-top-bottom $padding-right-left;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid var(--sliced-pipeline-action-bar--color);
+  display: flex;
+  justify-content: center;
+  padding: $padding-top-bottom $inner-gap;
+}
+
+.sliced-pipeline-action-bar--reset {
+  background: #{colors.$red-0};
+  border: none;
+
+  &:hover {
+    background: #{colors.$red-100};
+  }
 
   .button__btn {
     border: none;
-    color: var(--sliced-pipeline-action-bar--color);
     font-size: 14px;
     padding: 0;
-    width: 65px;
+
+    &:hover {
+      background: #{colors.$red-100};
+      color: #{colors.$white-0};
+    }
+  }
+}
+
+.sliced-pipeline-action-bar--slice {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sliced-pipeline-action-bar--background--hover);
+
+    .pipeline-icon {
+      path {
+        fill: var(--sliced-pipeline-action-bar--color--hover);
+      }
+    }
+
+    .sliced-pipeline-action-bar--slice-text {
+      color: var(--sliced-pipeline-action-bar--color--hover);
+    }
+  }
+
+  .pipeline-icon--container {
+    list-style-type: none;
+  }
+
+  .pipeline-icon {
+    height: 24px;
+    width: 24px;
+
+    path {
+      fill: var(--sliced-pipeline-action-bar--color);
+    }
+  }
+
+  .sliced-pipeline-action-bar--slice-text {
+    color: var(--sliced-pipeline-action-bar--color);
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 4px;
   }
 }
