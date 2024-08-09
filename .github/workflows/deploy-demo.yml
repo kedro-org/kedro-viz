@@ -62,7 +62,7 @@ jobs:
           pip install -e package
         shell: bash
 
-      - name: Update demo-project build directory wit the latest changes
+      - name: Update demo-project build directory with the latest changes
         run: |
           cd demo-project
           if ! (kedro viz build |& tee /dev/stderr | grep -i -q "Success!"); then
