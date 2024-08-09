@@ -234,7 +234,7 @@ export async function fetchPackageCompatibilities() {
 }
 
 export async function deployViz(inputValues) {
-  const request = await fetch('./api/deploy', {
+  const request = await fetch(`${pathRoot}/deploy`, {
     headers: {
       'Content-Type': 'application/json',
     },
