@@ -8,6 +8,26 @@ import { sidebarWidth, metaSidebarWidth } from '../../../../config';
 
 import './sliced-pipeline-action-bar.scss';
 
+/**
+ * Calculate the transformX value ensuring it does not go below the minimum required for the sidebar opened and closed
+ */
+const calculateTransformX = ({
+  screenWidth,
+  slicePipelineActionBarWidth,
+  metaDataPanelWidth,
+  nodeListWidth,
+  minimumTransformX,
+}) => {
+  const actionBarWidthAdjustment =
+    screenWidth > 2200
+      ? slicePipelineActionBarWidth
+      : slicePipelineActionBarWidth / 2;
+  return Math.max(
+    screenWidth - nodeListWidth - metaDataPanelWidth - actionBarWidthAdjustment,
+    minimumTransformX
+  );
+};
+
 export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
   const {
     chartSize,
@@ -33,19 +53,18 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     ? sidebarWidth.open
     : sidebarWidth.closed;
 
-  // Calculate the transformX value ensuring it does not go below the minimum required for the sidebar opened and closed
-  const transformX = Math.max(
-    screenWidth -
-      nodeListWidth -
-      metaDataPanelWidth -
-      slicePipelineActionBarWidth / 2,
-    minimumTransformX
-  );
+  const transformX = calculateTransformX({
+    screenWidth,
+    slicePipelineActionBarWidth,
+    metaDataPanelWidth,
+    nodeListWidth,
+    minimumTransformX,
+  });
 
   return (
     <div
       className="sliced-pipeline-action-bar"
-      style={{ transform: `translateX(${transformX}px)` }}
+      style={{ transform: `translateX(${transformX}px)`, opacity: 1 }}
     >
       <div className="sliced-pipeline-action-bar--info">
         {`${slicedPipeline.length} ${
