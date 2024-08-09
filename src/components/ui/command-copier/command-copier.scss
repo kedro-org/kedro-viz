@@ -11,6 +11,7 @@
   align-items: center;
   font-family: variables.$font-monospace;
   font-size: 13px;
+  padding-right: 24px;
 
   &--no-visible {
     opacity: 0;
@@ -32,7 +33,7 @@
   display: block;
   width: 26px;
   height: 34px;
-  margin: -0.1em 0 0 auto;
+  margin: -0.1em 0 0;
   padding: 0;
   list-style: none;
 }
@@ -41,7 +42,6 @@
   width: auto;
   height: auto;
   margin-top: 0.3em;
-  margin-right: -0.6em;
   opacity: 0.55;
 
   .pipeline-icon {

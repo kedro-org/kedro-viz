@@ -61,17 +61,6 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             layout={metadata.preview.layout}
             view="modal"
           />
-          <div className="pipeline-metadata-modal__bottom">
-            <button
-              className="pipeline-metadata-modal__collapse-plot"
-              onClick={onCollapsePlotClick}
-            >
-              <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
-              <span className="pipeline-metadata-modal__collapse-plot-text">
-                Collapse Plotly Visualization
-              </span>
-            </button>
-          </div>
         </>
       )}
       {hasImage && (
