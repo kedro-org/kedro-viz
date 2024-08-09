@@ -3,6 +3,7 @@ from typing import Dict
 import networkx as nx
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
+from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
 from kedro_datasets.pandas import CSVDataset
@@ -25,25 +26,6 @@ from kedro_viz.models.flowchart import (
 
 def identity(x):
     return x
-
-
-def assert_expected_modular_pipeline_values_for_edge_cases(
-    expected_modular_pipeline_tree_obj,
-    modular_pipeline_node_id,
-    data_access_manager,
-    modular_pipeline_tree_values,
-    expected_key,
-):
-    """This asserts an `expected_key` value present in modular_pipeline_tree
-    that is constructed in the edge cases with the expected_modular_pipeline_tree"""
-    assert sorted(
-        list(expected_modular_pipeline_tree_obj[modular_pipeline_node_id][expected_key])
-    ) == sorted(
-        list(
-            data_access_manager.nodes.get_node_by_id(node_id).name
-            for node_id in modular_pipeline_tree_values
-        )
-    )
 
 
 class TestAddCatalog:
@@ -377,6 +359,29 @@ class TestAddDataset:
             "uk",
             "uk.data_science",
         }
+
+    def test_add_dataset_with_unresolved_pattern(
+        self,
+        data_access_manager: DataAccessManager,
+        example_pipelines: Dict[str, Pipeline],
+        example_modular_pipelines_repo_obj,
+        mocker,
+    ):
+        dataset = CSVDataset(filepath="dataset.csv")
+        dataset_name = "companies#csv"
+        catalog = DataCatalog(datasets={dataset_name: dataset})
+        data_access_manager.add_catalog(catalog, example_pipelines)
+
+        with mocker.patch.object(
+            data_access_manager.catalog,
+            "get_dataset",
+            side_effect=DatasetError("Dataset not found"),
+        ):
+            dataset_obj = data_access_manager.add_dataset(
+                "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
+            )
+
+        assert isinstance(dataset_obj.kedro_obj, MemoryDataset)
 
     def test_add_all_parameters(
         self,
