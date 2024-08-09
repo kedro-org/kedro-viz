@@ -537,10 +537,12 @@ export class FlowChart extends Component {
 
     this.updateSlicedPipelineState(id, to, range);
 
-    // if both "from" and "to" are defined
-    // then on a single node click, it should reset the sliced pipeline state
+    // Clicking on a single node should reset the sliced pipeline
+    // if both "from" and "to" are defined and slicing is not yet applied
     if (from && to && !this.props.isSlicingPipelineApplied) {
-      this.resetSlicedPipeline();
+      this.props.onResetSlicePipeline();
+      // Also, prepare the "from" node for the next slicing action
+      this.updateSlicedPipelineState(id, null, []);
     }
   };
 
