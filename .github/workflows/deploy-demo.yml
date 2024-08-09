@@ -1,41 +1,83 @@
-name: Deploy demo
-# Builds a Docker image of the demo project, pushes it to 
-# AWS ECR, and deploys it to AWS Lightsail.
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
-  workflow_dispatch:
+  # Runs on pushes targeting the demo branch
   push:
-    branches:
-      - demo  
+    branches: ["demo"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: '3.9'
+
 jobs:
-  deploy_demo:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup environment
-      run: |-
-        cd demo-project
-        echo "AWS_ECR_URL=public.ecr.aws/g0x0s3o2/kedro-viz-live-demo" >> $GITHUB_ENV
-        echo "KEDRO_VIZ_VERSION=$(cat .version)" >> $GITHUB_ENV
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}    
 
-    - name: Install AWS CLI
-      run: pip3 install awscli
+      - name: Cache python packages for Linux
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-latest-python-3.9            
 
-    - name: Build demo container image
-      run: |-
-        cd demo-project
-        echo "kedro_viz==$KEDRO_VIZ_VERSION" >> src/docker_requirements.txt
-        docker build -t $AWS_ECR_URL:$KEDRO_VIZ_VERSION .
-        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
-        docker push $AWS_ECR_URL:$KEDRO_VIZ_VERSION
+      - name: Install Kedro and other Python Dependencies
+        uses: "./.github/actions/install_kedro_and_python_dependencies"
 
-    - name: Create a new lightsail deployment
-      run: |-
-        cd demo-project
-        # run https://docs.aws.amazon.com/cli/latest/reference/lightsail/create-container-service-deployment.html#create-container-service-deployment
-        aws lightsail create-container-service-deployment --region eu-west-2 --cli-input-json file://./lightsail.json
+      - name: Setup Node.js and Install Dependencies
+        uses: "./.github/actions/install_node_dependencies"
+
+      - name: Build React application
+        run: |-
+          node -v
+          make build
+
+      - name: Install Kedro-Viz development package
+        run: |
+          pip install -e package
+        shell: bash
+
+      - name: Update demo-project build directory with the latest changes
+        run: |
+          cd demo-project
+          if ! (kedro viz build |& tee /dev/stderr | grep -i -q "Success!"); then
+            exit 1
+          fi
+        shell: bash
+
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload entire repository
+          path: 'demo-project/build'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
