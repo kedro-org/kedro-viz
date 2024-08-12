@@ -552,53 +552,63 @@ export class FlowChart extends Component {
   };
 
   /**
-   * Determines the correct order of nodes based on their positions
-   * @param {string} initialFromNodeId - Initial from node ID
-   * @param {string} initialToNodeId - Initial to node ID
-   * @returns {Array} - Array with two elements: [topNodeId, bottomNodeId]
+   * Determines the correct order of nodes based on their positions,
+   * but keeps the user's original selection as the visual 'from' node.
+   * @param {string} userSelectedFromNodeId - User's initially selected 'from' node ID.
+   * @param {string} toNodeId - The current 'to' node ID.
+   * @returns {Object} - Object containing userVisualFromNodeId and adjustedFromNodeId, newToNodeId
    */
-  determineNodesOrder = (initialFromNodeId, initialToNodeId) => {
+  determineNodesOrder = (userSelectedFromNodeId, toNodeId) => {
     // Get bounding client rects of nodes
     const fromNodeElement = document.querySelector(
-      `[data-id="${initialFromNodeId}"]`
+      `[data-id="${userSelectedFromNodeId}"]`
     );
-    const toNodeElement = document.querySelector(
-      `[data-id="${initialToNodeId}"]`
-    );
+    const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
 
     if (!fromNodeElement || !toNodeElement) {
-      return [null, null]; // If any element is missing, return nulls
+      return {
+        userVisualFromNodeId: null,
+        adjustedFromNodeId: null,
+        newToNodeId: null,
+      }; // If any element is missing, return nulls
     }
 
     const fromNodeRect = fromNodeElement.getBoundingClientRect();
     const toNodeRect = toNodeElement.getBoundingClientRect();
 
-    // Ensure that 'from' node is higher (smaller Y-coordinate) than 'to' node
-    return fromNodeRect.y < toNodeRect.y
-      ? [initialFromNodeId, initialToNodeId] // 'from' node is higher
-      : [initialToNodeId, initialFromNodeId]; // 'to' node is higher
+    // Reorder the nodes based on their Y-coordinate
+    const [adjustedFromNodeId, newToNodeId] =
+      fromNodeRect.y < toNodeRect.y
+        ? [userSelectedFromNodeId, toNodeId] // Keep order
+        : [toNodeId, userSelectedFromNodeId]; // Swap if needed
+
+    return {
+      userVisualFromNodeId: userSelectedFromNodeId, // Keep user's selection visually as 'from'
+      adjustedFromNodeId,
+      newToNodeId,
+    };
   };
 
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
-    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
+    const { from: userSelectedFromNodeId, range } =
+      this.state.slicedPipelineState;
 
-    const fromNodeId = fromNodeIdState || node.id;
+    const fromNodeId = userSelectedFromNodeId || node.id; // Keep existing 'from' node or set the current one if not set
     const toNodeId = node.id;
 
-    const [topNodeId, bottomNodeId] = this.determineNodesOrder(
-      fromNodeId,
-      toNodeId
-    );
+    const { userVisualFromNodeId, adjustedFromNodeId, newToNodeId } =
+      this.determineNodesOrder(fromNodeId, toNodeId);
 
-    if (!topNodeId || !bottomNodeId) {
+    if (!adjustedFromNodeId || !newToNodeId) {
       return; // Exit if node order couldn't be determined
     }
 
-    this.updateSlicedPipelineState(topNodeId, bottomNodeId, range);
+    // Visually keep the 'from' node as the user's selection, but adjust internally based on Y-coordinate
+    this.updateSlicedPipelineState(userVisualFromNodeId, newToNodeId, range);
 
-    this.props.onSlicePipeline(topNodeId, bottomNodeId);
+    this.props.onSlicePipeline(adjustedFromNodeId, newToNodeId);
     this.props.onApplySlice(false);
 
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
