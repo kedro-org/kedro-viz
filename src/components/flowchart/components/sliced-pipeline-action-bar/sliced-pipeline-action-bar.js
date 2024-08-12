@@ -38,6 +38,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     runCommand,
     slicedPipeline,
     visibleSidebar,
+    notification,
   } = props;
   const { outerWidth: screenWidth } = chartSize;
   const buffer = 200;
@@ -66,36 +67,45 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
       className="sliced-pipeline-action-bar"
       style={{ transform: `translateX(${transformX}px)`, opacity: 1 }}
     >
-      <div className="sliced-pipeline-action-bar--info">
-        {`${slicedPipeline.length} ${
-          isSlicingPipelineApplied ? 'sliced' : 'selected'
-        }`}
-      </div>
-      <div
-        className={classnames('sliced-pipeline-action-bar--run-command', {
-          'sliced-pipeline-action-bar--run-command-long':
-            runCommand.length > 85,
-        })}
-      >
-        <CommandCopier command={runCommand} isCommand={true} />
-      </div>
-      {isSlicingPipelineApplied ? (
-        <div className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--reset">
-          <Button onClick={onResetSlicingPipeline}>Reset slice</Button>
+      {notification && (
+        <div className="sliced-pipeline-action-bar--info">
+          'Hold Shift + Click on another node to slice pipeline'
         </div>
-      ) : (
-        <div
-          className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--slice"
-          onClick={onApplySlicingPipeline}
-        >
-          <IconButton
-            ariaLabel="Copy run command to clipboard."
-            className="copy-button"
-            dataTest={`clicked.run_command`}
-            icon={CutIcon}
-          />
-          <span className="sliced-pipeline-action-bar--slice-text">Slice</span>
-        </div>
+      )}
+      {runCommand && (
+        <>
+          <div className="sliced-pipeline-action-bar--info">
+            {`${slicedPipeline.length} selected`}
+          </div>
+          <div
+            className={classnames('sliced-pipeline-action-bar--run-command', {
+              'sliced-pipeline-action-bar--run-command-long':
+                runCommand.length > 85,
+            })}
+          >
+            <CommandCopier command={runCommand} isCommand={true} />
+          </div>
+          {isSlicingPipelineApplied ? (
+            <div className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--reset">
+              <Button onClick={onResetSlicingPipeline}>Reset slice</Button>
+            </div>
+          ) : (
+            <div
+              className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--slice"
+              onClick={onApplySlicingPipeline}
+            >
+              <IconButton
+                ariaLabel="Copy run command to clipboard."
+                className="copy-button"
+                dataTest={`clicked.run_command`}
+                icon={CutIcon}
+              />
+              <span className="sliced-pipeline-action-bar--slice-text">
+                Slice
+              </span>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

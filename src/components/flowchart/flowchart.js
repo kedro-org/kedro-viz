@@ -57,6 +57,7 @@ export class FlowChart extends Component {
         to: null,
         range: [],
       },
+      showSlicingNotification: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -133,6 +134,15 @@ export class FlowChart extends Component {
         this.updateSlicedPipelineState(null, null, []);
       } else {
         this.updateSlicedPipelineState(from, to, this.props.slicedPipeline);
+      }
+    }
+
+    // Hide slicing notification if metadata panel is closed using button
+    if (!this.props.clickedNode && prevProps.clickedNode) {
+      if (!this.props.slicedPipeline.length) {
+        // Ensure this only runs when not in a slicing operation
+        this.updateSlicedPipelineState(null, null, []);
+        this.setState({ showSlicingNotification: false }); // Hide notification when clicking away
       }
     }
   }
@@ -536,6 +546,7 @@ export class FlowChart extends Component {
     const { from, to, range } = this.state.slicedPipelineState;
 
     this.updateSlicedPipelineState(id, to, range);
+    this.setState({ showSlicingNotification: true }); // Show notification
 
     // Clicking on a single node should reset the sliced pipeline
     // if both "from" and "to" are defined and slicing is not yet applied
@@ -543,21 +554,73 @@ export class FlowChart extends Component {
       this.props.onResetSlicePipeline();
       // Also, prepare the "from" node for the next slicing action
       this.updateSlicedPipelineState(id, null, []);
+      // Hide notification
+      this.setState({ showSlicingNotification: false });
     }
+  };
+
+  /**
+   * Determines the correct order of nodes based on their positions,
+   * but keeps the user's original selection as the visual 'from' node.
+   * @param {string} userSelectedFromNodeId - User's initially selected 'from' node ID.
+   * @param {string} toNodeId - The current 'to' node ID.
+   * @returns {Object} - Object containing userVisualFromNodeId and adjustedFromNodeId, newToNodeId
+   */
+  determineNodesOrder = (userSelectedFromNodeId, toNodeId) => {
+    // Get bounding client rects of nodes
+    const fromNodeElement = document.querySelector(
+      `[data-id="${userSelectedFromNodeId}"]`
+    );
+    const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
+
+    if (!fromNodeElement || !toNodeElement) {
+      return {
+        userVisualFromNodeId: null,
+        adjustedFromNodeId: null,
+        newToNodeId: null,
+      }; // If any element is missing, return nulls
+    }
+
+    const fromNodeRect = fromNodeElement.getBoundingClientRect();
+    const toNodeRect = toNodeElement.getBoundingClientRect();
+
+    // Reorder the nodes based on their Y-coordinate
+    const [adjustedFromNodeId, newToNodeId] =
+      fromNodeRect.y < toNodeRect.y
+        ? [userSelectedFromNodeId, toNodeId] // Keep order
+        : [toNodeId, userSelectedFromNodeId]; // Swap if needed
+
+    return {
+      userVisualFromNodeId: userSelectedFromNodeId, // Keep user's selection visually as 'from'
+      adjustedFromNodeId,
+      newToNodeId,
+    };
   };
 
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
 
-    const fromNodeId = this.state.slicedPipelineState.from || node.id;
+    const { from: userSelectedFromNodeId, range } =
+      this.state.slicedPipelineState;
+
+    const fromNodeId = userSelectedFromNodeId || node.id;
     const toNodeId = node.id;
-    const range = this.state.slicedPipelineState.range;
 
-    this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
+    const { userVisualFromNodeId, adjustedFromNodeId, newToNodeId } =
+      this.determineNodesOrder(fromNodeId, toNodeId);
 
-    this.props.onSlicePipeline(fromNodeId, toNodeId);
+    if (!adjustedFromNodeId || !newToNodeId) {
+      return; // Exit if node order couldn't be determined
+    }
+
+    // Visually keep the 'from' node as the user's selection, but adjust internally based on Y-coordinate
+    this.updateSlicedPipelineState(userVisualFromNodeId, newToNodeId, range);
+
+    this.props.onSlicePipeline(adjustedFromNodeId, newToNodeId);
     this.props.onApplySlice(false);
+
+    this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
   };
 
   /**
@@ -579,6 +642,7 @@ export class FlowChart extends Component {
     // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
     if (!isSliceButtonClicked && !this.props.isSlicingPipelineApplied) {
       this.resetSlicedPipeline();
+      this.setState({ showSlicingNotification: false });
     }
   };
 
@@ -726,6 +790,7 @@ export class FlowChart extends Component {
       clickedNode,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
+    const { showSlicingNotification } = this.state;
 
     return (
       <div
@@ -788,7 +853,7 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        {slicedPipeline.length > 0 && (
+        {(runCommand || showSlicingNotification) && (
           <div ref={this.slicedPipelineActionBarRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
@@ -800,6 +865,7 @@ export class FlowChart extends Component {
               runCommand={runCommand}
               slicedPipeline={slicedPipeline}
               visibleSidebar={visibleSidebar}
+              notification={showSlicingNotification}
             />
           </div>
         )}
