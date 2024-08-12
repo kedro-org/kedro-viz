@@ -80,7 +80,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
           <div
             className={classnames('sliced-pipeline-action-bar--run-command', {
               'sliced-pipeline-action-bar--run-command-long':
-                runCommand.length > 85,
+                runCommand.length > 90,
             })}
           >
             <CommandCopier command={runCommand} isCommand={true} />
