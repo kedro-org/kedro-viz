@@ -112,32 +112,18 @@ $inner-gap: 12px;
 }
 
 .sliced-pipeline-action-bar--run-command-long {
-  .command-value {
-    background-image: 
-      /* Shadows */ linear-gradient(
-        to right,
-        var(--sliced-pipeline-action-bar--code-background),
-        var(--sliced-pipeline-action-bar--code-background)
-      ),
-      linear-gradient(
-        to right,
-        var(--sliced-pipeline-action-bar--code-background),
-        var(--sliced-pipeline-action-bar--code-background)
-      ),
-      /* Shadow covers */ // dark theme
-      linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), #000),
-      linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5), #000);
-
-    // light theme
-    // linear-gradient(to left,rgba(242, 243, 244, 0.00), rgba(242, 243, 244, 0.50), #F2F3F4),
-    // linear-gradient(to right,rgba(242, 243, 244, 0.00), rgba(242, 243, 244, 0.50), #F2F3F4);
-
-    background-position: left center, right center, left center, right center;
-    background-repeat: no-repeat;
-    background-size: 20px 100%, 20px 100%, 20px 100%, 20px 100%;
-
-    /* Opera doesn't support this in the shorthand */
-    background-attachment: local, local, scroll, scroll;
+  .command-value::before {
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      var(--sliced-pipeline-action-bar--code-background)
+    );
+    content: '';
+    height: 33px;
+    position: absolute;
+    right: 52px;
+    text-align: center;
+    width: 80px;
   }
 }
 
