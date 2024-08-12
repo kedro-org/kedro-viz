@@ -135,6 +135,11 @@ export class FlowChart extends Component {
         this.updateSlicedPipelineState(from, to, this.props.slicedPipeline);
       }
     }
+
+    // Hide slicing notification if metadata panel is closed
+    if (!this.props.clickedNode && prevProps.clickedNode) {
+      this.setState({ showSlicingNotification: false });
+    }
   }
 
   /**
