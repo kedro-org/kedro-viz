@@ -105,6 +105,10 @@ $inner-gap: 12px;
     width: 24px;
     height: 24px;
   }
+
+  .pipeline-tooltip {
+    bottom: calc(100% + 20px);
+  }
 }
 
 .sliced-pipeline-action-bar--run-command-long {
@@ -144,6 +148,7 @@ $inner-gap: 12px;
   display: flex;
   justify-content: center;
   padding: $padding-top-bottom $inner-gap;
+  height: 40px;
 }
 
 .sliced-pipeline-action-bar--reset {
