@@ -24,7 +24,7 @@ cypress/screenshots
 cypress/downloads/
 
 # production
-build/
+/build/
 lib/
 
 # misc
