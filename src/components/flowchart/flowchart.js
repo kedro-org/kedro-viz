@@ -546,7 +546,11 @@ export class FlowChart extends Component {
     const { from, to, range } = this.state.slicedPipelineState;
 
     this.updateSlicedPipelineState(id, to, range);
-    this.setState({ showSlicingNotification: true }); // Show notification
+
+    if (!this.props.isSlicingPipelineApplied) {
+      // Show notification only when slicing is not applied
+      this.setState({ showSlicingNotification: true });
+    }
 
     // Clicking on a single node should reset the sliced pipeline
     // if both "from" and "to" are defined and slicing is not yet applied
@@ -599,10 +603,9 @@ export class FlowChart extends Component {
     // Close meta data panel
     this.props.onLoadNodeData(null);
 
-    const { from: userSelectedFromNodeId, range } =
-      this.state.slicedPipelineState;
+    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
 
-    const fromNodeId = userSelectedFromNodeId || node.id;
+    const fromNodeId = fromNodeIdState || node.id;
     const toNodeId = node.id;
 
     this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
