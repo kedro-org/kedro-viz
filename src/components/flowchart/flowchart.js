@@ -575,7 +575,6 @@ export class FlowChart extends Component {
 
     if (!fromNodeElement || !toNodeElement) {
       return {
-        userVisualFromNodeId: null,
         adjustedFromNodeId: null,
         newToNodeId: null,
       }; // If any element is missing, return nulls
@@ -585,15 +584,14 @@ export class FlowChart extends Component {
     const toNodeRect = toNodeElement.getBoundingClientRect();
 
     // Reorder the nodes based on their Y-coordinate
-    const [adjustedFromNodeId, newToNodeId] =
+    const [updatedFromNodeId, updatedToNodeId] =
       fromNodeRect.y < toNodeRect.y
         ? [userSelectedFromNodeId, toNodeId] // Keep order
         : [toNodeId, userSelectedFromNodeId]; // Swap if needed
 
     return {
-      userVisualFromNodeId: userSelectedFromNodeId, // Keep user's selection visually as 'from'
-      adjustedFromNodeId,
-      newToNodeId,
+      updatedFromNodeId,
+      updatedToNodeId,
     };
   };
 
@@ -607,19 +605,22 @@ export class FlowChart extends Component {
     const fromNodeId = userSelectedFromNodeId || node.id;
     const toNodeId = node.id;
 
-    const { userVisualFromNodeId, adjustedFromNodeId, newToNodeId } =
-      this.determineNodesOrder(fromNodeId, toNodeId);
+    this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
 
-    if (!adjustedFromNodeId || !newToNodeId) {
-      return; // Exit if node order couldn't be determined
+    const { updatedFromNodeId, updatedToNodeId } = this.determineNodesOrder(
+      fromNodeId,
+      toNodeId
+    );
+
+    // Slice the pipeline based on the determined node order
+    // If the order could not be determined, use the original selection
+    if (updatedFromNodeId && updatedToNodeId) {
+      this.props.onSlicePipeline(updatedFromNodeId, updatedToNodeId);
+    } else {
+      this.props.onSlicePipeline(fromNodeId, toNodeId);
     }
 
-    // Visually keep the 'from' node as the user's selection, but adjust internally based on Y-coordinate
-    this.updateSlicedPipelineState(userVisualFromNodeId, newToNodeId, range);
-
-    this.props.onSlicePipeline(adjustedFromNodeId, newToNodeId);
     this.props.onApplySlice(false);
-
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
   };
 
