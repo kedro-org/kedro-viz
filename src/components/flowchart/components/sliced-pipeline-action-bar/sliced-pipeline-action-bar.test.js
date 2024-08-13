@@ -1,6 +1,5 @@
-// sliced-pipeline-action-bar.test.js
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { SlicedPipelineActionBar } from './sliced-pipeline-action-bar';
 
 describe('SlicedPipelineActionBar', () => {
@@ -10,7 +9,7 @@ describe('SlicedPipelineActionBar', () => {
         firstChild: { getBoundingClientRect: () => ({ width: 100 }) },
       },
     };
-    render(
+    const { container } = render(
       <SlicedPipelineActionBar
         chartSize={{ outerWidth: 800 }}
         slicedPipeline={[]}
@@ -20,10 +19,15 @@ describe('SlicedPipelineActionBar', () => {
         ref={ref}
       />
     );
-    const notification = screen.getByText(
-      /Hold Shift \+ Click on another node to slice pipeline/i
+
+    // Check for the presence of the notification class
+    const notificationElement = container.querySelector(
+      '.sliced-pipeline-action-bar--info'
     );
-    expect(notification).toBeInTheDocument();
+    expect(notificationElement).toBeInTheDocument();
+    expect(notificationElement.textContent).toContain(
+      'Hold Shift + Click on another node to slice pipeline'
+    );
   });
 
   it('displays "Slice" button when slicedPipeline is not empty', () => {
@@ -32,7 +36,7 @@ describe('SlicedPipelineActionBar', () => {
         firstChild: { getBoundingClientRect: () => ({ width: 100 }) },
       },
     };
-    render(
+    const { container } = render(
       <SlicedPipelineActionBar
         chartSize={{ outerWidth: 800 }}
         slicedPipeline={[1, 2, 3]}
@@ -42,7 +46,14 @@ describe('SlicedPipelineActionBar', () => {
         ref={ref}
       />
     );
-    const sliceButton = screen.getByRole('button', { name: /slice/i });
+
+    const ctaElement = container.querySelector(
+      '.sliced-pipeline-action-bar--cta'
+    );
+    expect(ctaElement).toBeInTheDocument();
+
+    const sliceButton = ctaElement.querySelector('button');
     expect(sliceButton).toBeInTheDocument();
+    expect(sliceButton.textContent).toBe('Slice');
   });
 });
