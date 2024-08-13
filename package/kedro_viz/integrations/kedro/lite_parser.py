@@ -3,6 +3,7 @@
 import ast
 import importlib.util
 import logging
+import re
 from pathlib import Path
 from typing import Any, Dict, List
 from unittest.mock import MagicMock
@@ -39,9 +40,13 @@ class LiteParser:
                 for alias in node.names:
                     import_statements.append(f"import {alias.name}")
             elif isinstance(node, ast.ImportFrom):
-                module = node.module if node.module else ""
+                module_name = node.module if node.module else ""
+                level = node.level
                 for alias in node.names:
-                    import_statements.append(f"from {module} import {alias.name}")
+                    relative_module_name = "." * level + module_name
+                    import_statements.append(
+                        f"from {relative_module_name} import {alias.name}"
+                    )
 
         return import_statements
 
@@ -56,13 +61,16 @@ class LiteParser:
             Whether the module can be imported
         """
         try:
-            importlib.import_module(module_name)
+            if importlib.util.find_spec(module_name) is None:
+                return False
             return True
-        except ImportError:
+        except (ImportError, ModuleNotFoundError, ValueError):
             return False
 
     @staticmethod
-    def _is_relative_import_resolvable(file_path: Path, module_name: str) -> bool:
+    def _is_relative_import_resolvable(
+        file_path: Path, module_name: str, dot_count: int
+    ) -> bool:
         """Checks if a relative module is importable
 
         Args:
@@ -70,12 +78,32 @@ class LiteParser:
                     as an import statement
             module_name (str): The name of the module to check
                     importability
+            dot_count (int): The length of dots in the module_name
         Returns:
             Whether the module can be imported
         """
-        base_dir = file_path.parent
-        relative_path = (base_dir / module_name.replace(".", "/")).with_suffix(".py")
-        return relative_path.exists()
+        # Get the current directory of the file
+        current_dir = file_path.parent
+
+        # Navigate up the directory tree based on the dot count
+        target_dir = current_dir
+        for _ in range(dot_count - 1):
+            if not target_dir:
+                return False
+            target_dir = target_dir.parent
+
+        # Combine the target directory with module_name
+        if module_name:
+            module_parts = module_name.split(".")
+            module_path = target_dir.joinpath(*module_parts)
+        else:
+            module_path = target_dir
+
+        if module_path.is_dir():
+            # Check if it's a package by looking for __init__.py
+            init_file = module_path / "__init__.py"
+            return init_file.exists()
+        return module_path.with_suffix(".py").exists()
 
     @staticmethod
     def _is_valid_import_stmt(statement: Any) -> bool:
@@ -90,11 +118,10 @@ class LiteParser:
         if not isinstance(statement, str) or not statement.strip():
             return False
 
-        # Split the statement by spaces
-        parts = statement.split()
+        # Regex to match different import statements
+        import_match = re.match(r"(from|import)\s+(\.+)?([a-zA-Z0-9_.]+)", statement)
 
-        # Ensure that the statement has at least two parts
-        if len(parts) < 2:
+        if not import_match:
             return False
 
         return True
@@ -142,19 +169,26 @@ class LiteParser:
         for statement in import_statements:
             if self._is_valid_import_stmt(statement):
                 if statement.startswith("import "):
+                    # standard library imports, only considering root module
                     module_name = statement.split(" ")[1].split(".")[0]
 
                     if not self._is_module_importable(module_name):
                         unresolvable_imports.append(statement)
+                else:
+                    # relative imports
+                    module_name = statement.split(" ")[1]
 
-                elif statement.startswith("from "):
-                    parts = statement.split(" ")
-                    module_name = parts[1]
+                    # Get the dot count for relative imports
+                    dot_count = len(module_name) - len(module_name.lstrip("."))
 
-                    if self._is_relative_import_resolvable(file_path, module_name):
+                    if dot_count > 0:
+                        if not self._is_relative_import_resolvable(
+                            file_path, module_name[dot_count:], dot_count
+                        ):
+                            unresolvable_imports.append(statement)
                         continue
 
-                    # only checking for parent module
+                    # absolute imports, only considering root module
                     module_name = module_name.split(".")[0]
 
                     if not self._is_module_importable(module_name):

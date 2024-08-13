@@ -54,9 +54,11 @@ class DataCatalogLite(DataCatalog):
                             ds_name, ds_config, load_versions.get(ds_name), save_version
                         )
                     except DatasetError:
-                        datasets[ds_name] = MemoryDataset()
+                        # pylint: disable=abstract-class-instantiated
+                        datasets[ds_name] = MemoryDataset()  # type: ignore[abstract]
             except KeyError:
-                datasets[ds_name] = MemoryDataset()
+                # pylint: disable=abstract-class-instantiated
+                datasets[ds_name] = MemoryDataset()  # type: ignore[abstract]
 
         sorted_patterns = cls._sort_patterns(dataset_patterns)
         if sorted_patterns:

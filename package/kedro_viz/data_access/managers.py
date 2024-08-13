@@ -325,7 +325,9 @@ class DataAccessManager:
             # Kedro Viz in lite mode. The `get_dataset` function
             # of DataCatalog calls AbstractDataset.from_config
             # which tries to create a Dataset instance from the pattern
-            obj = MemoryDataset()
+
+            # pylint: disable=abstract-class-instantiated
+            obj = MemoryDataset()  # type: ignore[abstract]
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
