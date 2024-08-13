@@ -27,6 +27,10 @@ $metadata-modal-breakpoint: 700px;
 $global-toolbar-width: 80px;
 $run-list-controls-height: 95px;
 
+// -- levels -- //
+$z-index-metadata-panel: 3;
+$z-index-metadata-code: 3;
+
 // Micro-animation
 $run-width: 375px;
 $run-width-comparison-view: 310px;
