@@ -199,3 +199,66 @@ Cypress.Commands.add('__comparisonMode__', () => {
   cy.get(':nth-child(3) > .runs-list-card__checked').click();
   cy.wait('@compareThreeRuns').its('response.statusCode').should('eq', 200);
 });
+
+/**
+ * Custom command to fillout and submit the hosting shareable URL form
+ */
+Cypress.Commands.add(
+  '__setupAndSubmitShareableUrlForm__',
+  (bucketName, endpointName, primaryButtonNodeText) => {
+    // Intercept the network request to mock with a fixture
+    cy.__interceptRest__(
+      '/api/deploy',
+      'POST',
+      '/mock/deploySuccessResponse.json'
+    ).as('publishRequest');
+
+    // Reload the page to ensure a fresh state
+    cy.reload();
+
+    // Open the deploy modal
+    cy.get('.pipeline-menu-button--deploy').click();
+
+    // Select the first hosting platform from the dropdown
+    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
+    cy.get('.shareable-url-modal .dropdown__options section div').eq(1).click();
+
+    // Fill in the form
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
+    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
+      endpointName
+    );
+
+    // Submit the form
+    cy.get('.shareable-url-modal__button-wrapper button')
+      .contains(primaryButtonNodeText)
+      .click();
+  }
+);
+
+/**
+ * Custom command to wait for page load before enabling pretty names
+ */
+Cypress.Commands.add('__waitForSettingsButton__', () => {
+  cy.get('[data-test="global-toolbar-settings-btn"]', { timeout: 20000 }).should('be.visible');
+});
+
+/**
+ * Custom command to enable pretty name
+ */
+Cypress.Commands.add('enablePrettyNames', () => {
+
+  // Wait for the settings button to be visible
+  cy.__waitForSettingsButton__();
+
+  // Visit the settings panel
+  cy.get('[data-test="global-toolbar-settings-btn"]').click();
+
+  // Enable the pretty names setting
+  cy.get('[data-test*="settings-modal-toggle-isPrettyName-"]').check({ force: true });
+
+  // Apply changes and close the settings panel
+  cy.get('[data-test="settings-modal-apply-btn"]').click({
+        force: true,
+      });
+});

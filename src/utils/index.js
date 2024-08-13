@@ -189,14 +189,18 @@ export const formatNumberWithCommas = (number) => {
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
-  const hosts = ['localhost', '127.0.0.1', 'demo.kedro.org'];
-  const itemFoundIndex = hosts.indexOf(window.location.hostname);
+  const hosts = [
+    'localhost',
+    '127.0.0.1',
+    'demo.kedro.org',
+    'gitpod',
+    'kedro-org',
+  ];
+  const itemFound = hosts.some((host) =>
+    window.location.hostname.includes(host)
+  );
 
-  if (itemFoundIndex === -1) {
-    return false; // The hostname isn't in our list of local hosts
-  } else {
-    return true;
-  }
+  return itemFound;
 };
 
 /**
@@ -220,12 +224,24 @@ export const sanitizedPathname = () => {
  * @returns {Promise<Object>} A promise that resolves to the fetched package compatibilities.
  */
 export async function fetchPackageCompatibilities() {
-  const request = await fetch('/api/package-compatibilities', {
+  const request = await fetch(`${pathRoot}/package-compatibilities`, {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
   });
+  return request;
+}
+
+export async function deployViz(inputValues) {
+  const request = await fetch(`${pathRoot}/deploy`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(inputValues),
+  });
+
   return request;
 }
 

@@ -10,9 +10,8 @@ import FlowChart, {
 import { mockState, setup } from '../../utils/state.mock';
 import { getViewTransform, getViewExtents, origin } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
+import { getNodeLabel } from '../../selectors/nodes';
 import { toggleTypeDisabled } from '../../actions/node-type';
-
-const getNodeName = (state) => state.node.name;
 
 const chartWidth = chartSizeTestFallback.width;
 const chartHeight = chartSizeTestFallback.height;
@@ -41,26 +40,26 @@ const mockChartSize = (
 describe('FlowChart', () => {
   it('renders without crashing', () => {
     const svg = setup
-      .mount(<FlowChart displayGlobalToolbar={true} />)
+      .mount(<FlowChart displayGlobalNavigation={true} />)
       .find('svg');
     expect(svg.length).toEqual(1);
     expect(svg.hasClass('pipeline-flowchart__graph')).toBe(true);
   });
 
   it('renders nodes with D3', () => {
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     const nodes = wrapper.render().find('.pipeline-node');
     const nodeNames = nodes.map((i, el) => select(el).text()).get();
     const mockNodes = getVisibleNodeIDs(mockState.spaceflights);
     const mockNodeNames = mockNodes.map(
-      (d) => getNodeName(mockState.spaceflights)[d]
+      (d) => getNodeLabel(mockState.spaceflights)[d]
     );
     expect(nodes.length).toEqual(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
 
   it('a transform to fit the graph in container was applied', () => {
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     const instance = wrapper.find('FlowChart').instance();
     const viewTransform = getViewTransform(instance.view);
 
@@ -88,7 +87,7 @@ describe('FlowChart', () => {
     });
 
     const wrapper = setup.mount(
-      <FlowChart displayGlobalToolbar={true} chartSize={chartSize} />
+      <FlowChart displayGlobalNavigation={true} chartSize={chartSize} />
     );
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
@@ -131,7 +130,7 @@ describe('FlowChart', () => {
     });
 
     const wrapper = setup.mount(
-      <FlowChart displayGlobalToolbar={true} chartSize={chartSize} />
+      <FlowChart displayGlobalNavigation={true} chartSize={chartSize} />
     );
     const instance = wrapper.find('FlowChart').instance();
     const viewExtents = getViewExtents(instance.view);
@@ -182,7 +181,7 @@ describe('FlowChart', () => {
     window.addEventListener = jest.fn((event, callback) => {
       map[event] = callback;
     });
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     const spy = jest.spyOn(
       wrapper.find('FlowChart').instance(),
       'updateChartSize'
@@ -243,7 +242,7 @@ describe('FlowChart', () => {
   it('applies active class to nodes when nodeActive prop set', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeActive={{
           [dataScienceNodeId]: true,
           [dataProcessingNodeId]: true,
@@ -256,7 +255,7 @@ describe('FlowChart', () => {
   it('applies collapsed-hint class to nodes with input parameters are hovered during collapsed state', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         hoveredParameters={true}
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
@@ -273,7 +272,7 @@ describe('FlowChart', () => {
   it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeTypeDisabled={{ parameters: true }}
         nodesWithInputParams={{
           [dataScienceNodeId]: ['params1'],
@@ -297,11 +296,11 @@ describe('FlowChart', () => {
   it('applies pipeline-node--dataset-input class to input dataset nodes under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
       />
     );
@@ -313,7 +312,7 @@ describe('FlowChart', () => {
   it('applies pipeline-edge--dataset--input class to input dataset edges under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataEdges={{
@@ -331,11 +330,11 @@ describe('FlowChart', () => {
   it('applies pipeline-node-input--active class to input/outout nodes when hovering over them under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeActive={{
           '23c94afb': true,
@@ -350,11 +349,11 @@ describe('FlowChart', () => {
   it('applies pipeline-node-input--selected class to input/outout nodes when selecting one of them under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         nodeTypeDisabled={{ parameters: true }}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
-          '23c94afb': { id: '23c94afb', name: 'Model Input Table' },
+          '23c94afb': { id: '23c94afb', name: 'model_input_table' },
         }}
         nodeSelected={{
           '23c94afb': true,
@@ -369,7 +368,7 @@ describe('FlowChart', () => {
   it('applies pipeline-node--parameter-input class to input parameter nodes under focus mode', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         focusMode={{ id: dataScienceNodeId }}
         inputOutputDataNodes={{
           f1f1425b: { id: 'f1f1425b' },
@@ -401,7 +400,7 @@ describe('FlowChart', () => {
   });
 
   it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters ', () => {
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     const parameterNames = ['params1', 'params2'];
     const instance = wrapper.find('FlowChart').instance();
     const label = instance.getHoveredParameterLabel(parameterNames);
@@ -409,7 +408,7 @@ describe('FlowChart', () => {
   });
 
   it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter ', () => {
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     const parameterNames = ['params1'];
     const instance = wrapper.find('FlowChart').instance();
     const label = instance.getHoveredParameterLabel(parameterNames);
@@ -417,13 +416,13 @@ describe('FlowChart', () => {
   });
 
   it('shows layers when layers are visible', () => {
-    const wrapper = setup.mount(<FlowChart displayGlobalToolbar={true} />);
+    const wrapper = setup.mount(<FlowChart displayGlobalNavigation={true} />);
     expect(wrapper.render().find('.pipeline-layer').length).toBe(2);
   });
 
   it('hides layers when layers.length is 0', () => {
     const wrapper = setup.mount(
-      <FlowChart displayGlobalToolbar={true} layers={[]} />
+      <FlowChart displayGlobalNavigation={true} layers={[]} />
     );
     expect(wrapper.render().find('.pipeline-layer').length).toBe(0);
   });
@@ -431,7 +430,7 @@ describe('FlowChart', () => {
   it('shows tooltip when tooltip prop set as visible', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         tooltip={{
           targetRect: { top: 0, left: 0, width: 10, height: 10 },
           text: 'test tooltip',
@@ -449,7 +448,7 @@ describe('FlowChart', () => {
   it('hides tooltip when tooltip prop not set as visible', () => {
     const wrapper = setup.mount(
       <FlowChart
-        displayGlobalToolbar={true}
+        displayGlobalNavigation={true}
         tooltip={{
           targetRect: { top: 0, left: 0, width: 10, height: 10 },
           text: 'test tooltip',
@@ -485,7 +484,9 @@ describe('FlowChart', () => {
       inputOutputDataNodes: expect.any(Object),
       inputOutputDataEdges: expect.any(Object),
       focusMode: expect.any(Object),
-      displayGlobalToolbar: expect.any(Boolean),
+      displayGlobalNavigation: expect.any(Boolean),
+      displaySidebar: expect.any(Boolean),
+      displayMetadataPanel: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
@@ -533,7 +534,7 @@ describe('map dispatch props to async actions', () => {
 it('applies faded class to all nodes that are not included in the hovered focus mode icon pipeline', () => {
   const wrapper = setup.mount(
     <FlowChart
-      displayGlobalToolbar={true}
+      displayGlobalNavigation={true}
       hoveredFocusMode={true}
       nodeActive={{
         [dataScienceNodeId]: true,

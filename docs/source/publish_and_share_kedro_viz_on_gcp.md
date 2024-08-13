@@ -89,6 +89,7 @@ The endpoint link can be found under your **Application Load Balancer -> Fronten
 If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 ```
 
+Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
 
 ![](./images/kedro-publish-gcp.gif)
@@ -99,6 +100,10 @@ Use the `kedro viz deploy` command to publish Kedro-Viz on GCP. You can execute 
 
 ```bash
 kedro viz deploy --platform=gcp --endpoint=[gcp-endpoint] --bucket-name=[gcp-bucket-name]
+```
+
+```{note}
+Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
 ```
 
 ## Permissions and access control

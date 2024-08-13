@@ -25,13 +25,13 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
  */
 export const FlowchartPrimaryToolbar = ({
   disableLayerBtn,
-  displaySidebar,
   onToggleExportModal,
   onToggleLayers,
   onToggleSidebar,
   onToggleTextLabels,
   textLabels,
   visible,
+  display,
   visibleLayers,
   expandedPipelines,
   onToggleExpandAllPipelines,
@@ -47,31 +47,30 @@ export const FlowchartPrimaryToolbar = ({
   return (
     <>
       <PrimaryToolbar
-        displaySidebar={displaySidebar}
         onToggleSidebar={onToggleSidebar}
         visible={visible}
+        dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
       >
         <IconButton
           active={textLabels}
           ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
           className={'pipeline-menu-button--labels'}
-          dataTest={'btnToggleLabels'}
+          dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
           icon={LabelIcon}
           labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
           onClick={() => onToggleTextLabels(!textLabels)}
-          visible={visible.labelBtn}
+          visible={display.labelBtn}
         />
         <IconButton
           active={visibleLayers}
           ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
           className={'pipeline-menu-button--layers'}
-          dataHeapEvent={`visible.layers.${visibleLayers}`}
-          dataTest={'btnToggleLayers'}
+          dataTest={`sidebar-flowchart-layers-btn-${visibleLayers}`}
           disabled={disableLayerBtn}
           icon={LayersIcon}
           labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
           onClick={() => onToggleLayers(!visibleLayers)}
-          visible={visible.layerBtn}
+          visible={display.layerBtn}
         />
         <IconButton
           active={expandedPipelines}
@@ -81,23 +80,22 @@ export const FlowchartPrimaryToolbar = ({
               : 'Expand all modular pipelines'
           }
           className={'pipeline-menu-button--pipeline'}
-          dataTest={'btnTogglePipeline'}
+          dataTest={`sidebar-flowchart-expand-pipeline-btn-${expandedPipelines}`}
           icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
           labelText={
             expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
           }
-          data-test={'expand-all-pipelines-toggle'}
           onClick={handleToggleExpandAllPipelines}
-          visible={visible.pipelineBtn}
+          visible={display.expandPipelinesBtn}
         />
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
           className={'pipeline-menu-button--export'}
-          dataTest={'btnExportGraph'}
+          dataTest={'sidebar-flowchart-export-btn'}
           icon={ExportIcon}
           labelText="Export visualisation"
           onClick={() => onToggleExportModal(true)}
-          visible={visible.exportBtn}
+          visible={display.exportBtn}
         />
       </PrimaryToolbar>
     </>
@@ -106,9 +104,9 @@ export const FlowchartPrimaryToolbar = ({
 
 export const mapStateToProps = (state) => ({
   disableLayerBtn: !state.layer.ids.length,
-  displaySidebar: state.display.sidebar,
   textLabels: state.textLabels,
   visible: state.visible,
+  display: state.display,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   expandedPipelines: state.expandAllPipelines,
 });

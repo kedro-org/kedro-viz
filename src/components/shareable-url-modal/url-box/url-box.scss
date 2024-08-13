@@ -1,0 +1,81 @@
+@use '../../../styles/variables' as variables;
+
+.kui-theme--light {
+  --color-link: #{variables.$black-900};
+  --color-divider: #{variables.$white-900};
+  --color-bg: #{variables.$white-100};
+  --color-bg-copied: #{variables.$black-900};
+  --color-text-copied: #{variables.$white-0};
+}
+
+.kui-theme--dark {
+  --color-link: #{variables.$white-0};
+  --color-divider: #{variables.$black-500};
+  --color-bg: #{variables.$slate-700};
+  --color-bg-copied: #{variables.$white-0};
+  --color-text-copied: #{variables.$black-900};
+}
+
+.url-box__wrapper {
+  background-color: var(--color-bg);
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.url-box__wrapper--half-width {
+  border-left: 1px solid var(--color-divider);
+
+  .url-box__result-url-wrapper {
+    width: 300px;
+  }
+}
+
+.url-box__result-url-wrapper {
+  align-items: center;
+  display: flex;
+  max-width: 510px;
+  width: 100%;
+}
+
+.url-box__result-url {
+  align-items: center;
+  color: var(--color-link);
+  cursor: pointer;
+  display: block;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 32px;
+  overflow: hidden;
+  padding-left: 16px;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 90%;
+}
+
+.url-box___button {
+  align-items: center;
+  display: flex;
+  position: relative;
+
+  .button__btn {
+    width: 100px;
+    padding: 13px 0;
+  }
+
+  .button__btn--secondary::after {
+    display: none;
+  }
+}
+
+.url-box__button-copied {
+  border: none;
+
+  .button__btn {
+    background-color: var(--color-bg-copied);
+    color: var(--color-text-copied);
+  }
+}

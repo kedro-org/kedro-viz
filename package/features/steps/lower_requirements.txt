@@ -13,3 +13,6 @@ strawberry-graphql==0.192.0
 networkx==2.5
 orjson==3.9
 secure==0.3.0
+# numpy 2.0 breaks with old versions of pandas and this
+# could be removed when the lowest version supported is updated
+numpy==1.26.4

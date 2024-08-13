@@ -3,6 +3,10 @@
 import { prettifyName } from '../../../../src/utils';
 
 describe('Flowchart Menu', () => {
+  beforeEach(() => {
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
+  });
+
   it('verifies that users can select a section of the flowchart through the drop down. #TC-16', () => {
     // Alias
     cy.intercept('GET', '/api/pipelines/*').as('pipelineRequest');
@@ -49,7 +53,7 @@ describe('Flowchart Menu', () => {
 
   it('verifies that users can search/filter for a flowchart component using the search box. #TC-17', () => {
     const searchInput = 'Ingestion';
-    cy.get('.search-input__field').type(searchInput);
+    cy.get('.search-input__field').type(searchInput, { force: true });
 
     // Pipeline Label in the Menu
     cy.get('.pipeline-nodelist__row__label')
@@ -67,7 +71,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToClickText}]`
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToClickText}]`
     )
       .should('exist')
       .as('nodeToClick');
@@ -86,7 +90,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=node-${nodeToHighlightText}]`
+      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToHighlightText}]`
     )
       .should('exist')
       .as('nodeToHighlight');
@@ -116,7 +120,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.__checkForText__(
-      `[data-test=node-${nodeToToggleText}] > .pipeline-nodelist__row__label--faded`,
+      `[data-test=nodelist-data-${nodeToToggleText}] > .pipeline-nodelist__row__label--faded`,
       nodeToToggleText
     );
     cy.get('.pipeline-node__text').should('not.contain', nodeToToggleText);
@@ -136,10 +140,18 @@ describe('Flowchart Menu', () => {
     ).click();
 
     // Assert after action
-    cy.__checkForText__(
-      '.pipeline-node--active > .pipeline-node__text',
-      prettifyName(nodeToFocusText)
+    cy.get('.pipeline-node--active > .pipeline-node__text')
+      .invoke('text')
+      .then((focusedNodesText) =>
+        expect(focusedNodesText.toLowerCase()).to.contains(
+          prettifyName(nodeToFocusText).toLowerCase()
+        )
+      );
+    cy.get('.pipeline-node--active > .pipeline-node__text').should(
+      'have.length',
+      5
     );
+
     cy.get('.pipeline-node').should('have.length', 5);
   });
 
@@ -155,7 +167,7 @@ describe('Flowchart Menu', () => {
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
     cy.get(
-      `[data-test=node-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
     )
       .should('not.have.class', 'pipeline-nodelist__row__label--faded')
       .should('not.have.class', 'pipeline-nodelist__row__label--disabled');
@@ -165,7 +177,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.get(
-      `[data-test=node-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
     )
       .should('have.class', 'pipeline-nodelist__row__label--faded')
       .should('have.class', 'pipeline-nodelist__row__label--disabled');
@@ -190,7 +202,7 @@ describe('Flowchart Menu', () => {
   });
 
   it('Verify that if the URL contains the nodeTag query parameter, the same parameter should be reflected on the UI.', () => {
-    const visibleRowLabel = 'Companies';
+    const visibleRowLabel = 'companies';
     cy.visit(`/?tags=${visibleRowLabel}`);
 
     // Alias

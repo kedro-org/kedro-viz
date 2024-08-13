@@ -5,19 +5,16 @@ functionalities for a kedro run."""
 import json
 import logging
 from collections import defaultdict
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Any, Union
 
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 
-try:
-    # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
+from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.launchers.utils import _find_kedro_project
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +75,18 @@ class DatasetStatsHook:
 
         """
         try:
-            with open("stats.json", "w", encoding="utf8") as file:
+            kedro_project_path = _find_kedro_project(Path.cwd())
+
+            if not kedro_project_path:
+                logger.warning("Could not find a Kedro project to create stats file")
+                return
+
+            stats_file_path = Path(
+                f"{kedro_project_path}/{VIZ_METADATA_ARGS['path']}/stats.json"
+            )
+            stats_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with stats_file_path.open("w", encoding="utf8") as file:
                 sorted_stats_data = {
                     dataset_name: self.format_stats(stats)
                     for dataset_name, stats in self._stats.items()

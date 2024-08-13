@@ -152,6 +152,7 @@ const MetaData = ({
               {showCodeSwitch && (
                 <Toggle
                   id="code"
+                  dataTest={`metadata-code-toggle-${visibleCode}`}
                   checked={visibleCode}
                   enabled={hasCode}
                   title="Show Code"
@@ -248,7 +249,9 @@ const MetaData = ({
                 <MetaDataRow label="Run Command:" visible={Boolean(runCommand)}>
                   <CommandCopier
                     command={runCommand}
+                    classNames={'pipeline-metadata__value'}
                     isCommand={metadata?.runCommand}
+                    dataTest={'metadata-copy-command'}
                   />
                 </MetaDataRow>
                 {isDataNode && (
@@ -281,7 +284,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Plotly Visualization
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -304,7 +307,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Matplotlib Image
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -329,11 +332,13 @@ const MetaData = ({
               {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
-                    <PreviewTable
-                      data={metadata?.preview}
-                      size="small"
-                      onClick={onExpandMetaDataClick}
-                    />
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={metadata?.preview}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
@@ -343,7 +348,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview Table
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -351,12 +356,14 @@ const MetaData = ({
               {hasJSONPreview && (
                 <>
                   <div className="pipeline-metadata__preview-json">
-                    <JSONObject
-                      value={JSON.parse(metadata.preview)}
-                      theme={theme}
-                      style={{ background: 'transparent', fontSize: '14px' }}
-                      collapsed={3}
-                    />
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={JSON.parse(metadata.preview)}
+                        theme={theme}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
@@ -366,7 +373,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand JSON View
+                      Expand preview
                     </span>
                   </button>
                 </>

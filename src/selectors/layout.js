@@ -13,6 +13,8 @@ import {
 
 const getSizeWarningFlag = (state) => state.flags.sizewarning;
 const getVisibleSidebar = (state) => state.visible.sidebar;
+const getDisplayGlobalNavigation = (state) => state.display.globalNavigation;
+const getDisplaySidebar = (state) => state.display.sidebar;
 const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
@@ -70,15 +72,36 @@ export const getSidebarWidth = (visible, { open, closed }) =>
  * and add some useful new ones
  */
 export const getChartSize = createSelector(
-  [getVisibleSidebar, getVisibleMetaSidebar, getVisibleCode, getChartSizeState],
-  (visibleSidebar, visibleMetaSidebar, visibleCodeSidebar, chartSize) => {
+  [
+    getVisibleSidebar,
+    getVisibleMetaSidebar,
+    getVisibleCode,
+    getChartSizeState,
+    getDisplaySidebar,
+    getDisplayGlobalNavigation,
+  ],
+  (
+    visibleSidebar,
+    visibleMetaSidebar,
+    visibleCodeSidebar,
+    chartSize,
+    displaySidebar,
+    displayGlobalNavigation
+  ) => {
     const { left, top, width, height } = chartSize;
     if (!width || !height) {
       return {};
     }
 
+    // Determine if the sidebar is visible and open
+    const isSidebarVisible = displaySidebar && visibleSidebar;
+
     // Get the actual sidebar width
-    const sidebarWidthActual = getSidebarWidth(visibleSidebar, sidebarWidth);
+    const sidebarWidthActual =
+      displaySidebar || displayGlobalNavigation
+        ? getSidebarWidth(isSidebarVisible, sidebarWidth)
+        : 0;
+
     const metaSidebarWidthActual = getSidebarWidth(
       visibleMetaSidebar,
       metaSidebarWidth

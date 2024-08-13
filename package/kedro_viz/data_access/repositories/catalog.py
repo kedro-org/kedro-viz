@@ -6,17 +6,10 @@ import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
-
-try:
-    # kedro 0.19.4 onwards
-    from kedro.pipeline._transcoding import TRANSCODING_SEPARATOR, _strip_transcoding
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.pipeline.pipeline import TRANSCODING_SEPARATOR, _strip_transcoding
-
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
+from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
     # kedro 0.18.11 onwards
@@ -138,7 +131,8 @@ class CatalogRepository:
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
-            dataset_obj = MemoryDataset()
+            # pylint: disable=abstract-class-instantiated
+            dataset_obj = MemoryDataset()  # type: ignore[abstract]
 
         return dataset_obj
 
@@ -151,10 +145,3 @@ class CatalogRepository:
             for dataset_name in self._catalog.list()
             if self.get_dataset(dataset_name) is not None
         }
-
-    @staticmethod
-    def is_dataset_param(dataset_name: str) -> bool:
-        """Return whether a dataset is a parameter"""
-        return (
-            dataset_name.lower().startswith("params:") or dataset_name == "parameters"
-        )

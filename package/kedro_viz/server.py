@@ -125,9 +125,10 @@ def run_server(
             pipeline_name,
             extra_params,
         )
-
+        # [TODO: As we can do this with `kedro viz build`,
+        # we need to shift this feature outside of kedro viz run]
         if save_file:
-            save_api_responses_to_fs(save_file, fsspec.filesystem("file"))
+            save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
     else:

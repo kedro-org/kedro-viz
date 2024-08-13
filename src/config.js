@@ -4,6 +4,7 @@ export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
+export const localStorageShareableUrl = 'KedroViz-shareable-url';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -69,11 +70,16 @@ export const settings = {
   isPrettyName: {
     name: 'Pretty name',
     description: 'Display a formatted name for the kedro nodes',
-    default: true,
+    default: false,
   },
   showFeatureHints: {
     name: 'New feature hints',
     description: 'Enable or disable all new feature hints in the interface.',
+    default: true,
+  },
+  showDatasetPreviews: {
+    name: 'Dataset previews',
+    description: 'Display preview data for all datasets.',
     default: true,
   },
 };
@@ -149,10 +155,22 @@ export const datasetStatLabels = ['rows', 'columns', 'file_size'];
 
 export const statsRowLen = 33;
 
-export const hostingPlatform = {
+export const hostingPlatforms = {
   aws: 'Amazon Web Services',
   gcp: 'Google Cloud',
   azure: 'Microsoft Azure',
+};
+
+export const shareableUrlMessages = (status, info = '') => {
+  const messages = {
+    failure: 'Something went wrong. Please try again later.',
+    loading: 'Shooting your files through space. Sit tight...',
+    success:
+      'The deployment has been successful and Kedro-Viz is hosted via the link below..',
+    incompatible: `Publishing Kedro-Viz is only supported with fsspec>=2023.9.0. You are currently on version ${info}.\n\nPlease upgrade fsspec to a supported version and ensure you're using Kedro 0.18.2 or above.`,
+  };
+
+  return messages[status];
 };
 
 export const inputKeyToStateKeyMap = {

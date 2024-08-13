@@ -5,21 +5,68 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Next release
-
-## Major features and improvements
+# Upcoming Release
 
 ## Bug fixes and other changes
 
-- Upgrade the gitpod workspace-full to a newer version which includes both Node 18 and Python 3.11.5. (#1862)
+- Fixes design issues in metadata panel. (#2009)
+
+# Release 9.2.0
+
+## Major features and improvements
+
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from CLI. (#1894)
+- Enable/disable preview for all the datasets when publishing Kedro-Viz from UI. (#1895)
+- Display published URLs. (#1907)
+- Conditionally move session store and stats file to .viz directory. (#1915)
+- Introduce `metadataPanel` in `display` prop in Kedro-Viz react component. (#1965)
+- Refactor namespace pipelines. (#1897)
+- Expose the internal Redux state through `options` prop while using Kedro-Viz as a React component. (#1969)
+- Enhance documentation for the Kedro-Viz standalone React component. (#1954)
+- Add Datasets preview toggle in the settings panel. (#1977)
+
+## Bug fixes and other changes
+
+- Relax `packaging` pin in requirements. (#1947)
+- Add favicon to kedro-viz documentation. (#1959)
+- Add "-p" flag to kedro-viz to match kedro run. (#1960)
+- Fix bug related to nested namespace pipelines. (#1897)
+- Migrate from `toposort` to `graphlib`. (#1942)
+- Fix packaging. (#1766)
+- Adjust requirements file and dependabot versioning strategy. (#1978)
+- Refactor CommandCopier component. (#1998)
+- Set `isPrettyName` toggle to False by Default. (#1958)
+- Add `-p` argument option for `kedro viz` to align with kedro pipeline options. (#1961)
+- Replace `data-heap-event` with standardised `data-test` for Cypress and Telemetry. (#1995)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Vlad Cozma](https://github.com/VladCozma)
+
+# Release 9.1.0
+
+## Major features and improvements
+- Introduce the toggle to expand and collapse all pipelines button in the utility bar. (#1858)
+- Allow Kedro-Viz commands to run from any sub directory within Kedro project. (#1871)
+
+## Bug fixes and other changes
+- Fix broken URL when active pipeline name changes on initial load. (#1914)
+- Fix bug related to tag filtering and sharing with stateful URL. (#1878)
+- Update settings panel design (#1875)
+- Migrate from CircleCi to GitHub Actions. (#1876)
+- Include expandAllPipelines in initial state. (#1896)
 - Refactor backend integration with Kedro by replacing bootstrap_project with configure_project. (#1796)
 - Enhance kedro-viz doc integration. (#1874)
-- Fix Kedro-Viz waiting for valid Kedro project. (#1871)
-- Include expandAllPipelines in initial state. (#1896)
 - Enhance Kedro-Viz documentation by using Kedro-sphinx-theme. (#1898)
 - Remove default props from functional components. (#1906)
 - Fix for schema change in strawberry-graphql JSON scalar. (#1903)
 - Fix messaging level when package compatibility is not satisfied. (#1904)
+- Upgrade GitPod to include Node 18 and Python 3.11. (#1862)
+- Add utility functions related to Transcoding to Kedro viz. (#1928)
+- Include JSON dataset in the demo-project. (#1930)
+- Update intersphinx_mapping of kedro-datasets. (#1911)
+- Add GitPod to the local hosts list. (#1923)
 
 # Release 9.0.0
 
