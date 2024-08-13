@@ -552,66 +552,59 @@ export class FlowChart extends Component {
   };
 
   /**
-   * Determines the correct order of nodes based on their positions,
-   * but keeps the user's original selection as the visual 'from' node.
-   * @param {string} userSelectedFromNodeId - User's initially selected 'from' node ID.
-   * @param {string} toNodeId - The current 'to' node ID.
-   * @returns {Object} - Object containing userVisualFromNodeId and adjustedFromNodeId, newToNodeId
+   * Determines the correct order of nodes based on their positions.
+   * @param {string} fromNodeId - 'From' node ID.
+   * @param {string} toNodeId - 'To' node ID.
+   * @returns {Object} - Object containing updatedFromNodeId and updatedToNodeId.
    */
-  determineNodesOrder = (userSelectedFromNodeId, toNodeId) => {
+  determineNodesOrder = (fromNodeId, toNodeId) => {
     // Get bounding client rects of nodes
-    const fromNodeElement = document.querySelector(
-      `[data-id="${userSelectedFromNodeId}"]`
-    );
+    const fromNodeElement = document.querySelector(`[data-id="${fromNodeId}"]`);
     const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
 
     if (!fromNodeElement || !toNodeElement) {
       return {
-        userVisualFromNodeId: null,
-        adjustedFromNodeId: null,
-        newToNodeId: null,
-      }; // If any element is missing, return nulls
+        updatedFromNodeId: null,
+        updatedToNodeId: null,
+      };
     }
 
     const fromNodeRect = fromNodeElement.getBoundingClientRect();
     const toNodeRect = toNodeElement.getBoundingClientRect();
 
-    // Reorder the nodes based on their Y-coordinate
-    const [adjustedFromNodeId, newToNodeId] =
-      fromNodeRect.y < toNodeRect.y
-        ? [userSelectedFromNodeId, toNodeId] // Keep order
-        : [toNodeId, userSelectedFromNodeId]; // Swap if needed
-
-    return {
-      userVisualFromNodeId: userSelectedFromNodeId, // Keep user's selection visually as 'from'
-      adjustedFromNodeId,
-      newToNodeId,
-    };
+    // Reorder based on their Y-coordinate
+    return fromNodeRect.y < toNodeRect.y
+      ? { updatedFromNodeId: fromNodeId, updatedToNodeId: toNodeId }
+      : { updatedFromNodeId: toNodeId, updatedToNodeId: fromNodeId };
   };
 
   handleShiftClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
-    const { from: userSelectedFromNodeId, range } =
-      this.state.slicedPipelineState;
+    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
 
-    const fromNodeId = userSelectedFromNodeId || node.id; // Keep existing 'from' node or set the current one if not set
+    // Track user's selection directly in the state
+    const fromNodeId = fromNodeIdState || node.id;
     const toNodeId = node.id;
 
-    const { userVisualFromNodeId, adjustedFromNodeId, newToNodeId } =
-      this.determineNodesOrder(fromNodeId, toNodeId);
+    // Update the state to reflect the user's selections
+    this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
 
-    if (!adjustedFromNodeId || !newToNodeId) {
-      return; // Exit if node order couldn't be determined
+    // Reorder nodes internally for slicing
+    const { updatedFromNodeId, updatedToNodeId } = this.determineNodesOrder(
+      fromNodeId,
+      toNodeId
+    );
+
+    // Slice the pipeline based on the determined order, or fallback to original order if undefined
+    if (updatedFromNodeId && updatedToNodeId) {
+      this.props.onSlicePipeline(updatedFromNodeId, updatedToNodeId);
+    } else {
+      this.props.onSlicePipeline(fromNodeId, toNodeId);
     }
 
-    // Visually keep the 'from' node as the user's selection, but adjust internally based on Y-coordinate
-    this.updateSlicedPipelineState(userVisualFromNodeId, newToNodeId, range);
-
-    this.props.onSlicePipeline(adjustedFromNodeId, newToNodeId);
     this.props.onApplySlice(false);
-
-    this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
+    this.setState({ showSlicingNotification: false }); // Hide notification
   };
 
   /**
