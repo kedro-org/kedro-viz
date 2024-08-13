@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
-import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
