@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+
+- Fixes design issues in metadata panel. (#2009)
+
 # Release 9.2.0
 
 ## Major features and improvements
