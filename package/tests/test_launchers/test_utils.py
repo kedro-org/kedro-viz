@@ -7,8 +7,8 @@ import requests
 
 from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
 from kedro_viz.launchers.utils import (
-    _check_viz_up,
-    _find_kedro_project,
+    check_viz_up,
+    find_kedro_project,
     _is_project,
     _start_browser,
     viz_deploy_progress_timer,
@@ -52,7 +52,7 @@ def test_check_viz_up(host, port, status_code, expected_result, mocker):
     else:
         mocker.patch("requests.get", side_effect=requests.ConnectionError())
 
-    result = _check_viz_up(host, port)
+    result = check_viz_up(host, port)
     assert result == expected_result
 
 
@@ -118,4 +118,4 @@ class TestIsProject:
 )
 def test_find_kedro_project(project_dir, is_project_found, expected, mocker):
     mocker.patch("kedro_viz.launchers.utils._is_project", return_value=is_project_found)
-    assert _find_kedro_project(Path(project_dir)) == expected
+    assert find_kedro_project(Path(project_dir)) == expected

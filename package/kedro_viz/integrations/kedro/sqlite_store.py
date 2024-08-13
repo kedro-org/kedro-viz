@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 
 from kedro_viz.constants import VIZ_SESSION_STORE_ARGS
 from kedro_viz.database import make_db_session_factory
-from kedro_viz.launchers.utils import _find_kedro_project
+from kedro_viz.launchers.utils import find_kedro_project
 from kedro_viz.models.experiment_tracking import RunModel
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class SQLiteStore(BaseSessionStore):
     def location(self) -> str:
         """Returns location of the sqlite_store database"""
         if "path" not in settings.SESSION_STORE_ARGS:
-            kedro_project_path = _find_kedro_project(Path.cwd()) or self._path
+            kedro_project_path = find_kedro_project(Path.cwd()) or self._path
             return _get_session_path(
                 f"{kedro_project_path}/{VIZ_SESSION_STORE_ARGS['path']}/session_store.db"
             )

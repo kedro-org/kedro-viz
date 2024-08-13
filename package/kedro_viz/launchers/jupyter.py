@@ -16,7 +16,7 @@ from IPython.display import HTML, display
 from kedro.framework.project import PACKAGE_NAME
 from watchgod import RegExpWatcher, run_process
 
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.launchers.utils import check_viz_up, wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
 _VIZ_PROCESSES: Dict[str, int] = {}
@@ -166,7 +166,7 @@ def run_viz(  # pylint: disable=too-many-locals
     viz_process.start()
     _VIZ_PROCESSES[port] = viz_process
 
-    _wait_for(func=_check_viz_up, host=host, port=port)
+    wait_for(func=check_viz_up, host=host, port=port)
 
     if _is_databricks():
         _display_databricks_html(port)

@@ -15,7 +15,7 @@ from kedro_viz.server import run_server
 
 @pytest.fixture
 def patched_check_viz_up(mocker):
-    mocker.patch("kedro_viz.launchers.cli._check_viz_up", return_value=True)
+    mocker.patch("kedro_viz.launchers.cli.check_viz_up", return_value=True)
 
 
 @pytest.fixture
@@ -222,10 +222,10 @@ def test_kedro_viz_command_run_server(
     process_init = mocker.patch("multiprocessing.Process")
     runner = CliRunner()
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
     mocker.patch(
-        "kedro_viz.launchers.cli._find_kedro_project",
+        "kedro_viz.launchers.cli.find_kedro_project",
         return_value=run_server_args["project_path"],
     )
 
@@ -242,9 +242,9 @@ def test_kedro_viz_command_should_log_project_not_found(
     mocker, mock_project_path, mock_click_echo
 ):
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
-    mocker.patch("kedro_viz.launchers.cli._find_kedro_project", return_value=None)
+    mocker.patch("kedro_viz.launchers.cli.find_kedro_project", return_value=None)
     runner = CliRunner()
     with runner.isolated_filesystem():
         runner.invoke(cli.viz_cli, ["viz", "run"])
@@ -273,10 +273,10 @@ def test_kedro_viz_command_should_log_outdated_version(
     mocker.patch("kedro_viz.server.run_server")
 
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
     mocker.patch(
-        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+        "kedro_viz.launchers.cli.find_kedro_project", return_value=mock_project_path
     )
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -306,10 +306,10 @@ def test_kedro_viz_command_should_not_log_latest_version(
 
     mocker.patch("kedro_viz.server.run_server")
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
     mocker.patch(
-        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+        "kedro_viz.launchers.cli.find_kedro_project", return_value=mock_project_path
     )
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -328,10 +328,10 @@ def test_kedro_viz_command_should_not_log_if_pypi_is_down(
 
     mocker.patch("kedro_viz.server.run_server")
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
     mocker.patch(
-        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+        "kedro_viz.launchers.cli.find_kedro_project", return_value=mock_project_path
     )
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -348,10 +348,10 @@ def test_kedro_viz_command_with_autoreload(
     process_init = mocker.patch("multiprocessing.Process")
 
     # Reduce the timeout argument from 600 to 1 to make test run faster.
-    mocker.patch("kedro_viz.launchers.cli._wait_for.__defaults__", (True, 1, True, 1))
+    mocker.patch("kedro_viz.launchers.cli.wait_for.__defaults__", (True, 1, True, 1))
     # Mock finding kedro project
     mocker.patch(
-        "kedro_viz.launchers.cli._find_kedro_project", return_value=mock_project_path
+        "kedro_viz.launchers.cli.find_kedro_project", return_value=mock_project_path
     )
     runner = CliRunner()
     with runner.isolated_filesystem():

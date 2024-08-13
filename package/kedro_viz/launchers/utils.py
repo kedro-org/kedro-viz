@@ -2,7 +2,6 @@
 used in the `kedro_viz.launchers` package."""
 
 import logging
-import webbrowser
 from pathlib import Path
 from time import sleep, time
 from typing import Any, Callable, Union
@@ -17,7 +16,7 @@ class WaitForException(Exception):
     """WaitForException: if func doesn't return expected result within the specified time"""
 
 
-def _wait_for(
+def wait_for(
     func: Callable,
     expected_result: Any = True,
     # [TODO] This is a temporary fix for https://github.com/kedro-org/kedro-viz/issues/1768.
@@ -62,7 +61,7 @@ def _wait_for(
     )
 
 
-def _check_viz_up(host: str, port: int):
+def check_viz_up(host: str, port: int):
     """Checks if Kedro Viz Server has started and is responding to requests
 
     Args:
@@ -79,34 +78,12 @@ def _check_viz_up(host: str, port: int):
     return response.status_code == 200
 
 
-def _is_localhost(host: str) -> bool:
-    """Check whether a host is a localhost"""
-    return host in ("127.0.0.1", "localhost", "0.0.0.0")
-
-
-def _start_browser(host: str, port: int):
-    """Starts a new browser window only on a local interface
-
-    Args:
-        host: browser url host
-        port: browser url port
-    """
-
-    if _is_localhost(host):
-        webbrowser.open_new(f"http://{host}:{port}/")
-
-
-def viz_deploy_progress_timer(process_completed, timeout):
-    """Shows progress timer and message for kedro viz deploy"""
-    elapsed_time = 0
-    while elapsed_time <= timeout and not process_completed.value:
-        print(
-            f"...Creating your build/deploy Kedro-Viz ({elapsed_time}s)",
-            end="\r",
-            flush=True,
-        )
-        sleep(1)
-        elapsed_time += 1
+def find_kedro_project(current_dir: Path) -> Any:
+    paths_to_check = [current_dir] + list(current_dir.parents)
+    for project_dir in paths_to_check:
+        if _is_project(project_dir):
+            return project_dir
+    return None
 
 
 def _is_project(project_path: Union[str, Path]) -> bool:
@@ -119,11 +96,3 @@ def _is_project(project_path: Union[str, Path]) -> bool:
     # pylint: disable=broad-exception-caught
     except Exception:
         return False
-
-
-def _find_kedro_project(current_dir: Path) -> Any:
-    paths_to_check = [current_dir] + list(current_dir.parents)
-    for project_dir in paths_to_check:
-        if _is_project(project_dir):
-            return project_dir
-    return None

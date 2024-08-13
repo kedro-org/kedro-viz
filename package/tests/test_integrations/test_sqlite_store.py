@@ -29,7 +29,7 @@ def parametrize_session_store_args(request):
 
 @pytest.fixture
 def mock_session_store_args(request, mocker, setup_kedro_project):
-    """Fixture to mock SESSION_STORE_ARGS and _find_kedro_project."""
+    """Fixture to mock SESSION_STORE_ARGS and find_kedro_project."""
 
     # This fixture uses the class attribute has_session_store_args
     # to apply the appropriate mocks.
@@ -41,7 +41,7 @@ def mock_session_store_args(request, mocker, setup_kedro_project):
         )
     else:
         mocker.patch(
-            "kedro_viz.integrations.kedro.sqlite_store._find_kedro_project",
+            "kedro_viz.integrations.kedro.sqlite_store.find_kedro_project",
             return_value=setup_kedro_project,
         )
 

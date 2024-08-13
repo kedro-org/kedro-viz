@@ -13,7 +13,7 @@ from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.launchers.utils import _find_kedro_project
+from kedro_viz.launchers.utils import find_kedro_project
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class DatasetStatsHook:
 
         """
         try:
-            kedro_project_path = _find_kedro_project(Path.cwd())
+            kedro_project_path = find_kedro_project(Path.cwd())
 
             if not kedro_project_path:
                 logger.warning("Could not find a Kedro project to create stats file")
