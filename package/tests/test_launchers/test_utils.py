@@ -6,12 +6,12 @@ import pytest
 import requests
 
 from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
+from kedro_viz.launchers.cli.utils import _viz_deploy_progress_timer
 from kedro_viz.launchers.utils import (
     _check_viz_up,
     _find_kedro_project,
     _is_project,
     _start_browser,
-    viz_deploy_progress_timer,
 )
 
 
@@ -61,7 +61,7 @@ def test_viz_deploy_progress_timer(capsys):
     mock_process_completed.value = 0
 
     with patch("kedro_viz.launchers.utils.sleep") as mock_sleep:
-        viz_deploy_progress_timer(mock_process_completed, VIZ_DEPLOY_TIME_LIMIT)
+        _viz_deploy_progress_timer(mock_process_completed, VIZ_DEPLOY_TIME_LIMIT)
 
     assert mock_sleep.call_count == VIZ_DEPLOY_TIME_LIMIT + 1
 
