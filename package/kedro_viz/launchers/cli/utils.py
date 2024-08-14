@@ -17,13 +17,14 @@ def create_shareableviz_process(
     include_hooks: bool = False,
 ):
     """Creates platform specific deployer process"""
+
     import multiprocessing
 
     from kedro.framework.project import PACKAGE_NAME
 
     try:
         process_completed = multiprocessing.Value("i", 0)
-        exception_queue = multiprocessing.Queue()
+        exception_queue = multiprocessing.Queue()  # type: ignore[var-annotated]
 
         viz_deploy_process = multiprocessing.Process(
             target=_load_and_deploy_viz,
@@ -131,7 +132,7 @@ def _load_and_deploy_viz(
         try:
             from azure.core.exceptions import ServiceRequestError
         except ImportError:  # pragma: no cover
-            ServiceRequestError = None  # type: ignore
+            ServiceRequestError = None
 
         load_and_populate_data(
             Path.cwd(), include_hooks=include_hooks, package_name=package_name

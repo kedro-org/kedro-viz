@@ -35,7 +35,6 @@ class LazyGroup(click.Group):
         return super().get_command(ctx, cmd_name)
 
     def _lazy_load(self, cmd_name: str) -> click.BaseCommand:
-
         from importlib import import_module
 
         # lazily loading a command, first get the module name and attribute name
