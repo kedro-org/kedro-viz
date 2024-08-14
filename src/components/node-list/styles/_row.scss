@@ -1,8 +1,8 @@
-@use '../../../styles/variables' as colors;
+@use '../../../styles/variables' as var;
 @use './variables';
 
 .MuiTreeItem-iconContainer svg {
-  z-index: 99;
+  z-index: var.$z-index-MuiTreeItem-icon;
 }
 
 .pipeline-nodelist__row {
@@ -21,11 +21,11 @@
   &--overwrite {
     .Mui-selected & {
       .kui-theme--dark & {
-        background-color: colors.$slate-200;
+        background-color: var.$slate-200;
       }
 
       .kui-theme--light & {
-        background-color: colors.$white-0;
+        background-color: var.$white-0;
       }
     }
   }
@@ -43,7 +43,7 @@
   &--visible#{&}--selected {
     // Additional selector required to increase specificity to override previous rule
     background-color: var(--color-nodelist-row-selected);
-    border-right: 1px solid colors.$blue-300;
+    border-right: 1px solid var.$blue-300;
   }
 
   &--disabled {
@@ -84,7 +84,7 @@
   fill: var(--color-text);
 
   &.pipeline-row__toggle-icon--focus-checked {
-    fill: colors.$blue-300;
+    fill: var.$blue-300;
   }
 
   &--disabled > * {
