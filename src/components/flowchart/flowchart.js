@@ -138,12 +138,11 @@ export class FlowChart extends Component {
     }
 
     // Hide slicing notification if metadata panel is closed using button
-    if (!this.props.clickedNode && prevProps.clickedNode) {
-      if (!this.props.slicedPipeline.length) {
-        // Ensure this only runs when not in a slicing operation
-        this.updateSlicedPipelineState(null, null, []);
-        this.setState({ showSlicingNotification: false }); // Hide notification when clicking away
-      }
+    if (
+      this.props.clickedNode !== prevProps.clickedNode &&
+      !this.props.clickedNode
+    ) {
+      this.setState({ showSlicingNotification: false });
     }
   }
 
@@ -526,8 +525,6 @@ export class FlowChart extends Component {
   resetSlicedPipeline = () => {
     this.props.onResetSlicePipeline();
     this.updateSlicedPipelineState(null, null, []);
-    // To reset URL to current active pipeline when click outside of a node on flowchart
-    this.props.toSelectedPipeline();
   };
 
   handleSingleNodeClick = (node) => {

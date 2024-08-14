@@ -32,17 +32,26 @@ describe('SlicedPipelineActionBar', () => {
         firstChild: { getBoundingClientRect: () => ({ width: 100 }) },
       },
     };
-    render(
+    const { container } = render(
       <SlicedPipelineActionBar
         chartSize={{ outerWidth: 800 }}
+        displayMetadataPanel={false}
+        isSlicingPipelineApplied={false}
+        onApplySlicingPipeline={() => {}}
+        onResetSlicingPipeline={() => {}}
+        runCommand={'mock run command'}
+        notification={false}
+        ref={ref}
         slicedPipeline={[1, 2, 3]}
         visibleSidebar={true}
-        notification={false}
-        displayMetadataPanel={false}
-        ref={ref}
       />
     );
-    const sliceButton = screen.getByRole('button', { name: /slice/i });
+    const ctaElement = container.querySelector(
+      '.sliced-pipeline-action-bar--cta'
+    );
+
+    expect(ctaElement).toBeInTheDocument();
+    const sliceButton = ctaElement.querySelector('button');
     expect(sliceButton).toBeInTheDocument();
   });
 });
