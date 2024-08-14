@@ -28,12 +28,11 @@
   top: -1px; /* Avoids pixel rounding gaps */
   right: -1px;
   bottom: -1px;
-  z-index: 2;
+  z-index: variables.$z-index-metadata-panel;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: variables.$metadata-sidebar-width-open;
-  padding: 6px 0 0;
   overflow: hidden auto;
   background: var(--color-metadata-bg);
   border-left: 1px solid var(--color-border-line);
@@ -51,8 +50,8 @@
 
 .pipeline-metadata__close-button {
   position: absolute;
-  top: 2px;
-  right: -14px;
+  top: 0;
+  right: 0;
 
   &,
   & svg {
@@ -63,13 +62,13 @@
 
 .pipeline-metadata__label,
 .pipeline-metadata__row {
-  margin: 2.285em 36px;
+  margin: 32px 36px;
 }
 
 .pipeline-metadata__header {
   display: flex;
   justify-content: space-between;
-  margin-top: -0.12em;
+  padding-right: 8px;
 }
 
 .pipeline-metadata__header-toolbox {
@@ -77,7 +76,7 @@
   display: flex;
   flex-direction: column-reverse;
   justify-content: space-between;
-  margin: 3em 3.6em;
+  margin: 3.2em 3.6em;
   padding-right: 24px;
 }
 
@@ -238,8 +237,12 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__properties {
   flex-grow: 1;
   height: 0;
-  margin-top: -3em;
+  margin-top: auto;
   overflow-y: auto;
+
+  & :nth-child(1) {
+    margin-top: 0;
+  }
 }
 
 .pipeline-metadata__link {
@@ -261,12 +264,12 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__link-icon {
   width: 1.9em;
   height: 1.9em;
-  margin: 0 6px 0 36px;
+  margin: 0 0.8em 0 0;
   fill: var(--color-button-text);
 }
 
 .pipeline-metadata__link-text {
-  margin: 12px 10px 12px 5px;
+  margin: 18px 0;
   color: var(--color-button-text);
   font-size: 1.6em;
 }
@@ -281,16 +284,26 @@ $list-inline-spacing: 0.2em;
 .pipeline-metadata__preview {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: hidden;
   position: relative;
 }
 
 .pipeline-metadata__preview-json {
   background: var(--color-metadata-preview-bg);
   height: 300px;
-  overflow: hidden;
   position: relative;
-  padding: 10px 20px 0;
+  padding: 10px 0 0 20px;
+
+  .scrollable-container {
+    padding-bottom: 10px;
+  }
+}
+
+.scrollable-container {
+  overflow: scroll;
+  max-width: 400px;
+  max-height: 300px;
+  height: 100%;
+  width: 100%;
 }
 
 .pipeline-metadata__preview-shadow-box-right {
