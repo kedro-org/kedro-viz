@@ -11,9 +11,8 @@ class LazyGroup(click.Group):
         self.lazy_subcommands = lazy_subcommands or {}
 
     def list_commands(self, ctx):
-        base = super().list_commands(ctx)
         lazy = sorted(self.lazy_subcommands.keys())
-        return base + lazy
+        return lazy
 
     def get_command(self, ctx, cmd_name):
         if cmd_name in self.lazy_subcommands:

@@ -8,11 +8,6 @@ from pathlib import Path
 from kedro.framework.project import PACKAGE_NAME
 from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
 
-try:
-    from azure.core.exceptions import ServiceRequestError
-except ImportError:  # pragma: no cover
-    ServiceRequestError = None  # type: ignore
-
 
 def create_shareableviz_process(
     platform,
@@ -127,6 +122,10 @@ def _load_and_deploy_viz(
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         from kedro_viz.server import load_and_populate_data
+        try:
+            from azure.core.exceptions import ServiceRequestError
+        except ImportError:  # pragma: no cover
+            ServiceRequestError = None  # type: ignore
 
         load_and_populate_data(
             Path.cwd(), include_hooks=include_hooks, package_name=package_name

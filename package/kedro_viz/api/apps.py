@@ -62,7 +62,6 @@ def create_api_app_from_project(
     """
     app = _create_base_api_app()
     app.include_router(rest_router)
-    app.include_router(graphql_router)
 
     # Check for html directory existence.
     if Path(_HTML_DIR).is_dir():
@@ -117,7 +116,18 @@ def create_api_app_from_project(
             return Response(status_code=304)
 
         return Response()
+    
+    @app.middleware("http")
+    async def lazy_load_graphql_router(request: Request, call_next):
+        # Check if the request path matches GraphQL endpoints
+        if request.url.path.startswith("/graphql"):
+            if not hasattr(app, "_graphql_router_added"):
+                app.include_router(graphql_router)
+                app._graphql_router_added = True  # Mark the router as added
 
+        response = await call_next(request)
+        return response
+    
     return app
 
 

@@ -8,7 +8,7 @@ from kedro_viz.launchers.cli.lazy_group import LazyGroup
     name="Kedro-Viz",
     cls=LazyGroup,
     lazy_subcommands={
-        "viz": "kedro_viz.launchers.cli.viz",
+        "viz": "kedro_viz.launchers.cli.main.viz",
     },
 )
 def viz_cli():  # pylint: disable=missing-function-docstring

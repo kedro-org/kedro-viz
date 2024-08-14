@@ -9,7 +9,6 @@ from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration, UserPreference
 from kedro_viz.constants import PACKAGE_REQUIREMENTS
-from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
     APIErrorMessage,
@@ -22,11 +21,6 @@ from .responses import (
     get_package_compatibilities_response,
     get_selected_pipeline_response,
 )
-
-try:
-    from azure.core.exceptions import ServiceRequestError
-except ImportError:  # pragma: no cover
-    ServiceRequestError = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +84,13 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
+    from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
+
+    try:
+        from azure.core.exceptions import ServiceRequestError
+    except ImportError:  # pragma: no cover
+        ServiceRequestError = None  # type: ignore
+
     try:
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name

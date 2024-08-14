@@ -4,8 +4,6 @@
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
-
-import networkx as nx
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
@@ -472,6 +470,8 @@ class DataAccessManager:
             The modular pipelines tree represented as a dictionary of nodes with child references.
         """
 
+        import networkx as nx
+        
         edges = self.edges[registered_pipeline_id]
         node_dependencies = self.node_dependencies[registered_pipeline_id]
         modular_pipelines_tree = self.modular_pipelines[
