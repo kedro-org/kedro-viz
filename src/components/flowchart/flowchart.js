@@ -139,11 +139,11 @@ export class FlowChart extends Component {
     }
 
     // Hide slicing notification if metadata panel is closed using button
-    if (!this.props.clickedNode && prevProps.clickedNode) {
-      if (!this.props.slicedPipeline.length) {
-        // Ensure this only runs when not in a slicing operation
-        this.setState({ showSlicingNotification: false });
-      }
+    if (
+      this.props.clickedNode !== prevProps.clickedNode &&
+      !this.props.clickedNode
+    ) {
+      this.setState({ showSlicingNotification: false });
     }
   }
 
@@ -577,7 +577,7 @@ export class FlowChart extends Component {
       return {
         updatedFromNodeId: null,
         updatedToNodeId: null,
-      };
+      }; // If any element is missing, return nulls
     }
 
     const fromNodeRect = fromNodeElement.getBoundingClientRect();
