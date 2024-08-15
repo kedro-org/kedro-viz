@@ -558,7 +558,7 @@ export class FlowChart extends Component {
       // Also, prepare the "from" node for the next slicing action
       this.updateSlicedPipelineState(id, null, []);
       // Hide notification
-      this.setState({ showSlicingNotification: false });
+      this.setState({ showSlicingNotification: true });
     }
   };
 
