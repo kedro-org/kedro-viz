@@ -791,12 +791,15 @@ export class FlowChart extends Component {
       slicedPipeline,
       visibleSidebar,
       clickedNode,
+      modularPipelineIds,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { showSlicingNotification } = this.state;
 
-    console.log(slicedPipeline);
-
+    // Counts the nodes in the slicedPipeline array, excludes any modularPipeline Id
+    const numberOfNodesInSlicedPipeline = slicedPipeline.filter(
+      (id) => !modularPipelineIds.includes(id)
+    ).length;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -866,7 +869,7 @@ export class FlowChart extends Component {
             visibleSidebar={visibleSidebar}
           />
         )}
-        {slicedPipeline.length > 0 && runCommand.length > 0 && (
+        {numberOfNodesInSlicedPipeline > 0 && runCommand.length > 0 && (
           <div ref={this.slicedPipelineActionBarRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
@@ -876,7 +879,7 @@ export class FlowChart extends Component {
               onResetSlicingPipeline={this.resetSlicedPipeline}
               ref={this.slicedPipelineActionBarRef}
               runCommand={runCommand}
-              slicedPipeline={slicedPipeline}
+              slicedPipelineLength={numberOfNodesInSlicedPipeline}
               visibleSidebar={visibleSidebar}
             />
           </div>
@@ -925,6 +928,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeActive: getNodeActive(state),
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
+  modularPipelineIds: state.modularPipeline.ids,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
   visibleGraph: state.visible.graph,

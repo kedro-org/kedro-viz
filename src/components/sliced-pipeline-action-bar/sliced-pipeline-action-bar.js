@@ -36,7 +36,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     onApplySlicingPipeline,
     onResetSlicingPipeline,
     runCommand,
-    slicedPipeline,
+    slicedPipelineLength,
     visibleSidebar,
   } = props;
   const [isFirstRender, setIsFirstRender] = useState(true);
@@ -85,7 +85,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
       }}
     >
       <div className="sliced-pipeline-action-bar--info">
-        {`${slicedPipeline.length} selected`}
+        {`${slicedPipelineLength} selected`}
       </div>
       <div
         className={classnames('sliced-pipeline-action-bar--run-command', {
