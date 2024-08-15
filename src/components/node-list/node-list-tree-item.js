@@ -15,10 +15,12 @@ const NodeListTreeItem = ({
   onItemMouseLeave,
   onItemChange,
   children,
+  isSlicingPipelineApplied,
 }) => (
   <TreeItem
     className={classNames('pipeline-treeItem__root--overwrite', {
-      'pipeline-treeItem__root--highlight': data.highlight,
+      'pipeline-treeItem__root--highlight':
+        !isSlicingPipelineApplied && data.highlight,
     })}
     key={uniqueId(data.id)}
     nodeId={data.id}

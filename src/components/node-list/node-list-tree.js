@@ -122,9 +122,16 @@ const TreeListProvider = ({
   expanded,
   onToggleNodeSelected,
   slicedPipeline,
+  isSlicingPipelineApplied,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
+    // As part of the slicing pipeline logic, child nodes not included in the sliced pipeline are assigned an empty data object.
+    // Therefore, if a child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
+    if (Object.keys(node).length === 0) {
+      return null;
+    }
+
     const disabled =
       node.disabledTag ||
       node.disabledType ||
@@ -154,6 +161,7 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       />
     );
   };
@@ -166,11 +174,20 @@ const TreeListProvider = ({
       return;
     }
 
+    // If all children's data are empty, the subtree rooted at this node will not be rendered.
+    // in scenarios where the pipeline is being sliced, and some modular pipelines trees do not have any children
+    const allChildrenDataEmpty = node.children.every(
+      (child) => Object.keys(child.data).length === 0
+    );
+    if (allChildrenDataEmpty) {
+      return;
+    }
+
     // render each child of the tree node first
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-      (child) => child.data.name
+      (child) => child?.data?.name
     ).map((child) =>
       isModularPipelineType(child.type)
         ? renderTree(tree, child.id)
@@ -207,6 +224,7 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       >
         {children}
       </NodeListTreeItem>
@@ -247,6 +265,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
   slicedPipeline: getSlicedPipeline(state),
+  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

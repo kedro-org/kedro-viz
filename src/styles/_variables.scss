@@ -27,6 +27,10 @@ $metadata-modal-breakpoint: 700px;
 $global-toolbar-width: 80px;
 $run-list-controls-height: 95px;
 
+// -- levels -- //
+$z-index-metadata-panel: 3;
+$z-index-metadata-code: 3;
+
 // Micro-animation
 $run-width: 375px;
 $run-width-comparison-view: 310px;
@@ -85,6 +89,7 @@ $grey-700: #717d84;
 $grey-800: #5e6c74;
 $grey-900: #4c5b64;
 $ocean-0: #acccda;
+$ocean-0-50: #cfdfe7;
 $ocean-100: #97bac9;
 $ocean-200: #82a8b8;
 $ocean-300: #598395;
@@ -112,3 +117,5 @@ $yellow-0: #ffe300;
 $yellow-300: #ffbc00;
 $yellow-600: #b28400;
 $yellow-900: #7d5c00;
+$red-0: #f03b3a;
+$red-100: #dc3938;
