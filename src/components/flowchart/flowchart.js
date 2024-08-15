@@ -526,6 +526,7 @@ export class FlowChart extends Component {
   resetSlicedPipeline = () => {
     this.props.onResetSlicePipeline();
     this.updateSlicedPipelineState(null, null, []);
+    this.props.toSelectedPipeline();
   };
 
   handleSingleNodeClick = (node) => {
@@ -794,6 +795,8 @@ export class FlowChart extends Component {
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { showSlicingNotification } = this.state;
 
+    console.log(slicedPipeline);
+
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -875,7 +878,6 @@ export class FlowChart extends Component {
               runCommand={runCommand}
               slicedPipeline={slicedPipeline}
               visibleSidebar={visibleSidebar}
-              notification={showSlicingNotification}
             />
           </div>
         )}

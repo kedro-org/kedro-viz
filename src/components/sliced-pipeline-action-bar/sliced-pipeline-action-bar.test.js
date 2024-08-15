@@ -18,7 +18,6 @@ describe('SlicedPipelineActionBar', () => {
         onApplySlicingPipeline={() => {}}
         onResetSlicingPipeline={() => {}}
         runCommand={'mock run command'}
-        notification={false}
         ref={ref}
         slicedPipeline={[1, 2, 3]}
         visibleSidebar={true}

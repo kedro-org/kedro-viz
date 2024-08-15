@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import Button from '../ui/button';
 import CommandCopier from '../ui/command-copier/command-copier';
@@ -38,8 +38,19 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
     runCommand,
     slicedPipeline,
     visibleSidebar,
-    notification,
   } = props;
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  useEffect(() => {
+    // Set a timer to change `isFirstRender` state after the component has been rendered for 500ms
+    const timer = setTimeout(() => {
+      setIsFirstRender(false); // Update the state after 500ms
+    }, 500);
+
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
   const { outerWidth: screenWidth } = chartSize;
   const transitionMargin = 200;
   const slicePipelineActionBarWidth =
@@ -64,8 +75,14 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
 
   return (
     <div
-      className="sliced-pipeline-action-bar"
-      style={{ transform: `translateX(${transformX}px)`, opacity: 1 }}
+      className={classnames('sliced-pipeline-action-bar', {
+        'sliced-pipeline-action-bar--first-render': isFirstRender,
+      })}
+      style={{
+        transform: !isFirstRender ? `translateX(${transformX}px)` : 'none',
+        left: isFirstRender ? transformX : 'auto', // Positioning adjustment on first render
+        opacity: 1,
+      }}
     >
       <div className="sliced-pipeline-action-bar--info">
         {`${slicedPipeline.length} selected`}

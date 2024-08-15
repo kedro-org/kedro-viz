@@ -7,6 +7,8 @@
   --sliced-pipeline-action-bar--background--hover: #{colors.$white-0};
   --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
   --sliced-pipeline-action-bar--code-background: #{colors.$black-900};
+  --sliced-pipeline-action-bar-shadow-start: #{colors.$black-500};
+  --sliced-pipeline-action-bar-shadow-end: #{colors.$black-900};
 }
 
 .kui-theme--light {
@@ -16,11 +18,26 @@
   --sliced-pipeline-action-bar--background--hover: #{colors.$black-900};
   --sliced-pipeline-action-bar--color--hover: #{colors.$white-0};
   --sliced-pipeline-action-bar--code-background: #{colors.$white-200};
+  --sliced-pipeline-action-bar-shadow-start: #{colors.$white-900};
+  --sliced-pipeline-action-bar-shadow-end: #{colors.$white-200};
+}
+
+@keyframes slideUpTranslate {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 $padding-top-bottom: 8px;
 $padding-right-left: 10px;
 $inner-gap: 12px;
+$transitionTiming: 0.3s;
 
 .sliced-pipeline-action-bar {
   background-color: var(--sliced-pipeline-action-bar--background);
@@ -29,7 +46,8 @@ $inner-gap: 12px;
   display: flex;
   margin: 0;
   position: absolute;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transition: transform $transitionTiming ease-out,
+    opacity $transitionTiming ease-out;
   padding: $padding-top-bottom $padding-right-left;
 
   .pipeline-icon-toolbar__button {
@@ -42,6 +60,11 @@ $inner-gap: 12px;
       opacity: 1;
     }
   }
+}
+
+// First render it will be sliding up animation
+.sliced-pipeline-action-bar--first-render {
+  animation: slideUpTranslate $transitionTiming ease-out forwards;
 }
 
 .sliced-pipeline-action-bar--info {
@@ -80,6 +103,7 @@ $inner-gap: 12px;
     display: flex;
     justify-content: center;
     margin: 0 10px;
+    width: auto;
   }
 
   .pipeline-icon--container {
@@ -101,18 +125,37 @@ $inner-gap: 12px;
 }
 
 .sliced-pipeline-action-bar--run-command-long {
-  .command-value::before {
-    background-image: linear-gradient(
-      to right,
-      transparent,
-      var(--sliced-pipeline-action-bar--code-background)
-    );
-    content: '';
-    height: 33px;
-    position: absolute;
-    right: 50px;
-    text-align: center;
-    width: 80px;
+  .command-value {
+    background-image: 
+	
+    /* Shadows */ linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      /* Shadow covers*/
+        linear-gradient(
+          to right,
+          var(--sliced-pipeline-action-bar-shadow-start),
+          var(--sliced-pipeline-action-bar-shadow-end)
+        ),
+      linear-gradient(
+        to left,
+        var(--sliced-pipeline-action-bar-shadow-start),
+        var(--sliced-pipeline-action-bar-shadow-end)
+      );
+    background-position: left center, right center, left center, right center;
+    background-repeat: no-repeat;
+    background-color: var(--sliced-pipeline-action-bar--code-background);
+    background-size: 30px 100%, 30px 100%, 30px 100%, 30px 100%;
+
+    /* Opera doesn't support this in the shorthand */
+    background-attachment: local, local, scroll, scroll;
   }
 }
 
