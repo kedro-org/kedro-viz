@@ -39,7 +39,8 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
-import { SlicedPipelineActionBar } from './components/sliced-pipeline-action-bar/sliced-pipeline-action-bar';
+import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
+import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import './styles/flowchart.scss';
 
 /**
@@ -854,7 +855,15 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        {(runCommand || showSlicingNotification) && (
+        {showSlicingNotification && (
+          <SlicedPipelineNotification
+            notification={
+              'Hold Shift + Click on another node to slice pipeline'
+            }
+            visibleSidebar={visibleSidebar}
+          />
+        )}
+        {slicedPipeline.length > 0 && runCommand && (
           <div ref={this.slicedPipelineActionBarRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}

@@ -1,4 +1,4 @@
-@use '../../../../styles/variables' as colors;
+@use '../../styles/variables' as colors;
 
 // Define a mixin for the gradient to make it easier to apply
 @mixin theme-gradient($direction, $start-color, $mid-color, $end-color) {
@@ -39,7 +39,7 @@ $inner-gap: 12px;
   display: flex;
   margin: 0;
   position: absolute;
-  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  transition: transform 1s ease-out, opacity 1s ease-out;
   padding: $padding-top-bottom $padding-right-left;
 
   // create a ticket to investigate why there are so many opacities on button component
