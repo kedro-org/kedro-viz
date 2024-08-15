@@ -863,7 +863,7 @@ export class FlowChart extends Component {
             visibleSidebar={visibleSidebar}
           />
         )}
-        {slicedPipeline.length > 0 && runCommand && (
+        {slicedPipeline.length > 0 && runCommand.length > 0 && (
           <div ref={this.slicedPipelineActionBarRef}>
             <SlicedPipelineActionBar
               chartSize={chartSize}
