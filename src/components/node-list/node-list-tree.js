@@ -122,6 +122,7 @@ const TreeListProvider = ({
   expanded,
   onToggleNodeSelected,
   slicedPipeline,
+  isSlicingPipelineApplied,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
@@ -160,6 +161,7 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       />
     );
   };
@@ -222,6 +224,7 @@ const TreeListProvider = ({
         onItemChange={onItemChange}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       >
         {children}
       </NodeListTreeItem>
@@ -262,6 +265,7 @@ export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
   slicedPipeline: getSlicedPipeline(state),
+  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

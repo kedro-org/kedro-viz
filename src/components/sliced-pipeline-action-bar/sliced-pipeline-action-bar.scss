@@ -29,7 +29,7 @@ $inner-gap: 12px;
   display: flex;
   margin: 0;
   position: absolute;
-  transition: transform 1s ease-out, opacity 1s ease-out;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   padding: $padding-top-bottom $padding-right-left;
 
   .pipeline-icon-toolbar__button {
