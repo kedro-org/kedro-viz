@@ -23,7 +23,6 @@ class LazyGroup(click.Group):
         self.lazy_subcommands = lazy_subcommands or {}
 
     def list_commands(self, ctx: click.Context) -> list[str]:
-        # base = list(super().list_commands(ctx))
         lazy = sorted(self.lazy_subcommands.keys())
         return lazy
 
