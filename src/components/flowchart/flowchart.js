@@ -592,6 +592,7 @@ export class FlowChart extends Component {
   handleMultipleNodesClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
+
     const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
 
     const fromNodeId = fromNodeIdState || node.id;
@@ -604,6 +605,8 @@ export class FlowChart extends Component {
       toNodeId
     );
 
+    // Slice the pipeline based on the determined node order
+    // If the order could not be determined, use the original selection
     if (updatedFromNodeId && updatedToNodeId) {
       this.props.onSlicePipeline(updatedFromNodeId, updatedToNodeId);
     } else {
