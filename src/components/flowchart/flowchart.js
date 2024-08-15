@@ -515,7 +515,7 @@ export class FlowChart extends Component {
       // the hold shift only happens on clicking a node first
       // but only if no filters are currently applied.
       if (event.shiftKey && !this.props.isSlicingPipelineApplied) {
-        this.handleShiftClick(node);
+        this.handleMultipleNodesClick(node);
       }
     }
 
@@ -596,7 +596,7 @@ export class FlowChart extends Component {
     };
   };
 
-  handleShiftClick = (node) => {
+  handleMultipleNodesClick = (node) => {
     // Close meta data panel
     this.props.onLoadNodeData(null);
 
