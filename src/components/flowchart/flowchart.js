@@ -536,7 +536,7 @@ export class FlowChart extends Component {
     // if both "from" and "to" are defined
     // then on a single node click, it should reset the sliced pipeline state
     if (from !== null && to !== null) {
-      this.updateSlicedPipelineState(null, null, []);
+      this.updateSlicedPipelineState(id, null, []);
       this.setState({ showSlicingNotification: true }); // Show notification
     } else {
       // Else, set the first node as the 'from' node based on current state
