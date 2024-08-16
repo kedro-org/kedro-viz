@@ -2,7 +2,7 @@ import pytest
 from click.testing import CliRunner
 
 from kedro_viz.launchers.cli import main
-from kedro_viz.launchers.cli.lazy_group import LazyGroup
+from kedro_viz.launchers.cli.lazy_default_group import LazyDefaultGroup
 
 
 @pytest.fixture(scope="class")
@@ -22,7 +22,7 @@ class TestCLIMain:
         assert main.viz_cli.get_command(None, "viz") is not None
         assert main.viz.get_command(None, "run") is not None
 
-        assert isinstance(main.viz_cli.get_command(None, "viz"), LazyGroup)
+        assert isinstance(main.viz_cli.get_command(None, "viz"), LazyDefaultGroup)
 
     def test_viz_help(self, runner):
         with runner.isolated_filesystem():

@@ -39,23 +39,22 @@ class TestCliRunViz:
     @pytest.mark.parametrize(
         "command_options,run_server_args",
         [
-            # [TODO: DefaultGroupClass]
-            # (
-            #     ["viz"],
-            #     {
-            #         "host": "127.0.0.1",
-            #         "port": 4141,
-            #         "load_file": None,
-            #         "save_file": None,
-            #         "pipeline_name": None,
-            #         "env": None,
-            #         "project_path": "testPath",
-            #         "autoreload": False,
-            #         "include_hooks": False,
-            #         "package_name": None,
-            #         "extra_params": {},
-            #     },
-            # ),
+            (
+                ["viz"],
+                {
+                    "host": "127.0.0.1",
+                    "port": 4141,
+                    "load_file": None,
+                    "save_file": None,
+                    "pipeline_name": None,
+                    "env": None,
+                    "project_path": "testPath",
+                    "autoreload": False,
+                    "include_hooks": False,
+                    "package_name": None,
+                    "extra_params": {},
+                },
+            ),
             (
                 ["viz", "run"],
                 {
