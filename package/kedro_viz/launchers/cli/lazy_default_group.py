@@ -1,4 +1,4 @@
-"""`kedro_viz.launchers.cli.lazy_group` provides a custom mutli-command
+"""`kedro_viz.launchers.cli.lazy_default_group` provides a custom mutli-command
 subclass for a lazy subcommand loader"""
 
 # pylint: disable=import-outside-toplevel
