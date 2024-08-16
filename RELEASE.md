@@ -5,13 +5,15 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 9.3.0
+# Upcoming Release
 
 ## Major features and improvements
 
 - Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
 
 ## Bug fixes and other changes
+
+- Fixes design issues in metadata panel. (#2009)
 
 # Release 9.2.0
 
