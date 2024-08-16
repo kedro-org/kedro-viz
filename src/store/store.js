@@ -71,14 +71,18 @@ const saveStateToLocalStorage = (state) => {
  * Configure initial state and create the Redux store
  * @param {Object} initialState Initial Redux state (from initial-state.js)
  * @param {Object} dataType type of pipeline data - "static" or "json" (if data is loaded from API)
- * @param {Function} onNodeClick Callback function to handle node click event from React component as prop
+ * @param {Function} onActionCallback Callback function to be called on specific action
  * @return {Object} Redux store
  */
-export default function configureStore(initialState, dataType, onNodeClick) {
+export default function configureStore(
+  initialState,
+  dataType,
+  onActionCallback
+) {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  const callbackMiddleware = createCallbackMiddleware(onNodeClick);
+  const callbackMiddleware = createCallbackMiddleware(onActionCallback);
   const store = createStore(
     reducer,
     initialState,

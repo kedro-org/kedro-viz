@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Introduce `onNodeClickCallback` prop in Kedro-Viz react component. (#2022)
+- Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
 
 ## Bug fixes and other changes
 

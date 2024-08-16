@@ -28,7 +28,7 @@ class App extends React.Component {
     this.store = configureStore(
       initialState,
       this.props.data,
-      this.props.onNodeClickCallback
+      this.props.onActionCallback
     );
   }
 
