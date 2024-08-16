@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import PlotlyChart from '../plotly-chart';
 import PreviewTable from '../preview-table';
 import JSONObject from '../../components/json-object';
-import CollapseIcon from '../icons/collapse';
 import BackIcon from '../icons/back';
 import NodeIcon from '../icons/node-icon';
 import { togglePlotModal } from '../../actions';
@@ -61,17 +60,6 @@ const MetadataModal = ({ metadata, onToggle, visible, theme }) => {
             layout={metadata.preview.layout}
             view="modal"
           />
-          <div className="pipeline-metadata-modal__bottom">
-            <button
-              className="pipeline-metadata-modal__collapse-plot"
-              onClick={onCollapsePlotClick}
-            >
-              <CollapseIcon className="pipeline-metadata-modal__collapse-plot-icon"></CollapseIcon>
-              <span className="pipeline-metadata-modal__collapse-plot-text">
-                Collapse Plotly Visualization
-              </span>
-            </button>
-          </div>
         </>
       )}
       {hasImage && (
