@@ -558,44 +558,35 @@ export class FlowChart extends Component {
       // Also, prepare the "from" node for the next slicing action
       this.updateSlicedPipelineState(id, null, []);
       // Hide notification
-      this.setState({ showSlicingNotification: false });
+      this.setState({ showSlicingNotification: true });
     }
   };
 
   /**
-   * Determines the correct order of nodes based on their positions,
-   * but keeps the user's original selection as the visual 'from' node.
-   * @param {string} userSelectedFromNodeId - User's initially selected 'from' node ID.
-   * @param {string} toNodeId - The current 'to' node ID.
-   * @returns {Object} - Object containing userVisualFromNodeId and adjustedFromNodeId, newToNodeId
+   * Determines the correct order of nodes based on their positions.
+   * @param {string} fromNodeId - 'From' node ID.
+   * @param {string} toNodeId - 'To' node ID.
+   * @returns {Object} - Object containing updatedFromNodeId and updatedToNodeId.
    */
-  determineNodesOrder = (userSelectedFromNodeId, toNodeId) => {
+  determineNodesOrder = (fromNodeId, toNodeId) => {
     // Get bounding client rects of nodes
-    const fromNodeElement = document.querySelector(
-      `[data-id="${userSelectedFromNodeId}"]`
-    );
+    const fromNodeElement = document.querySelector(`[data-id="${fromNodeId}"]`);
     const toNodeElement = document.querySelector(`[data-id="${toNodeId}"]`);
 
     if (!fromNodeElement || !toNodeElement) {
       return {
-        adjustedFromNodeId: null,
-        newToNodeId: null,
+        updatedFromNodeId: null,
+        updatedToNodeId: null,
       }; // If any element is missing, return nulls
     }
 
     const fromNodeRect = fromNodeElement.getBoundingClientRect();
     const toNodeRect = toNodeElement.getBoundingClientRect();
 
-    // Reorder the nodes based on their Y-coordinate
-    const [updatedFromNodeId, updatedToNodeId] =
-      fromNodeRect.y < toNodeRect.y
-        ? [userSelectedFromNodeId, toNodeId] // Keep order
-        : [toNodeId, userSelectedFromNodeId]; // Swap if needed
-
-    return {
-      updatedFromNodeId,
-      updatedToNodeId,
-    };
+    // Reorder based on their Y-coordinate
+    return fromNodeRect.y < toNodeRect.y
+      ? { updatedFromNodeId: fromNodeId, updatedToNodeId: toNodeId }
+      : { updatedFromNodeId: toNodeId, updatedToNodeId: fromNodeId };
   };
 
   handleMultipleNodesClick = (node) => {
