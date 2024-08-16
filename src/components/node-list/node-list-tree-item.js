@@ -18,10 +18,7 @@ const NodeListTreeItem = ({
   isSlicingPipelineApplied,
 }) => (
   <TreeItem
-    className={classNames('pipeline-treeItem__root--overwrite', {
-      'pipeline-treeItem__root--highlight':
-        !isSlicingPipelineApplied && data.highlight,
-    })}
+    className={'pipeline-treeItem__root--overwrite'}
     key={uniqueId(data.id)}
     nodeId={data.id}
     // this setup is to allow flexibility for adjusting the setting for individual arrow icons
@@ -44,6 +41,7 @@ const NodeListTreeItem = ({
         visible={data.visible}
         selected={data.selected}
         highlight={data.highlight}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}
