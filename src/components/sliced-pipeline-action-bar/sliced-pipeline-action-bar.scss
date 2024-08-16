@@ -181,6 +181,7 @@ $transitionTiming: 0.3s;
     border: none;
     font-size: 14px;
     padding: 0;
+    color: #{colors.$white-0};
 
     &:hover {
       background: #{colors.$red-100};
