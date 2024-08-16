@@ -67,6 +67,7 @@ const getModularPipelineRowData = ({
   disabled,
   focused,
   focusModeIcon,
+  highlight,
 }) => {
   const checked = !data.disabledModularPipeline;
   return {
@@ -83,6 +84,7 @@ const getModularPipelineRowData = ({
     disabled: disabled,
     focused: focused,
     checked,
+    highlight,
   };
 };
 
@@ -209,11 +211,14 @@ const TreeListProvider = ({
       focusModeIcon = isFocusedModularPipeline ? FocusModeIcon : null;
     }
 
+    const isModularPipelineCollapsed = !expanded.includes(node.id);
+
     const data = getModularPipelineRowData({
       ...node,
       focusModeIcon,
       disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
       focused: isFocusedModularPipeline,
+      highlight: slicedPipeline.includes(node.id) && isModularPipelineCollapsed,
     });
 
     return (
