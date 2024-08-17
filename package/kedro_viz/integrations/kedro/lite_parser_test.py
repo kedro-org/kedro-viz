@@ -40,43 +40,25 @@ class LiteParser:
             return False
 
     @staticmethod
-    def _is_relative_import_resolvable(
-        file_path: Path, module_name: str, dot_count: int
-    ) -> bool:
-        """Checks if a relative module is importable
+    def _convert_relative_imports_to_absolute(
+        file_directory_path: Path,
+        relative_import: str,
+        level: int,
+        package_root_path: Path,
+    ) -> str:
+        """This handles cases where there is a relative import in the file"""
+        # Traverse up the directory structure
+        target_directory = file_directory_path
+        for _ in range(level - 1):
+            target_directory = target_directory.parent
 
-        Args:
-            file_path (Path): The file path where the module is mentioned
-                    as an import statement
-            module_name (str): The name of the module to check
-                    importability
-            dot_count (int): The length of dots in the module_name
-        Returns:
-            Whether the module can be imported
-        """
+        # Construct the full module path from the package root
+        relative_parts = target_directory.relative_to(package_root_path).parts
+        absolute_import = ".".join(
+            [PACKAGE_NAME] + list(relative_parts) + [relative_import]
+        )
 
-        # Get the current directory of the file
-        current_dir = file_path.parent
-
-        # Navigate up the directory tree based on the dot count
-        target_dir = current_dir
-        for _ in range(dot_count - 1):
-            if not target_dir:
-                return False
-            target_dir = target_dir.parent
-
-        # Combine the target directory with module_name
-        if module_name:
-            module_parts = module_name.split(".")
-            module_path = target_dir.joinpath(*module_parts)
-        else:
-            module_path = target_dir
-
-        if module_path.is_dir():
-            # Check if it's a package by looking for __init__.py
-            init_file = module_path / "__init__.py"
-            return init_file.exists()
-        return module_path.with_suffix(".py").exists()
+        return absolute_import
 
     def _create_absolute_mock_imports(
         self, module_name: str, mocked_modules: Dict[str, MagicMock]
@@ -103,28 +85,11 @@ class LiteParser:
             ):
                 mocked_modules[full_module_name] = MagicMock()
 
-    def get_mocked_modules(self) -> Dict[str, MagicMock]:
-        """Returns mocked modules for all the dependency errors
-        as a dictionary for each file in your Kedro project
-        """
-        mocked_modules: Dict[str, MagicMock] = {}
-
-        for filepath in self._project_path.rglob("*.py"):
-            with open(filepath, "r", encoding="utf-8") as file:
-                file_content = file.read()
-
-            # parse file content using ast
-            parsed_content_ast_node: ast.Module = ast.parse(file_content)
-            self._mock_missing_dependencies(
-                parsed_content_ast_node, filepath, mocked_modules
-            )
-
-        return mocked_modules
-
     def _mock_missing_dependencies(
         self,
         parsed_content_ast_node: ast.Module,
-        file_path: Path,
+        file_directory_path: Path,
+        package_root_path: Path,
         mocked_modules: Dict[str, MagicMock],
     ) -> None:
         """Mock missing dependencies
@@ -132,9 +97,10 @@ class LiteParser:
         Args:
             parsed_content_ast_node (ast.Module): The AST node to
                     extract import statements
-            file_path (Path): The current file path to check
+            file_directory_path (Path): The current file path to check
                     for missing dependencies
-            mocked_modules: A dictionary of mocked imports
+            package_root_path (Path): The root package directory path
+            mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
         """
         for node in ast.walk(parsed_content_ast_node):
             if isinstance(node, ast.Import):
@@ -150,69 +116,60 @@ class LiteParser:
                     return
 
                 for alias in node.names:
+                    # absolute modules in the env or within the
+                    # package starting from package root
                     if self._is_module_importable(module_name):
                         continue
 
-                    # find module within the current package
-                    absolute_module_name = self._convert_relative_imports_to_absolute(
-                        file_path, ("." * level + module_name)
-                    )
-                    self._create_absolute_mock_imports(
-                        absolute_module_name, mocked_modules
-                    )
+                    # convert relative imports to absolute imports 
+                    # based on leading dots
+                    if level > 0:
+                        absolute_module_name = (
+                            self._convert_relative_imports_to_absolute(
+                                file_directory_path,
+                                module_name,
+                                level,
+                                package_root_path,
+                            )
+                        )
+                        self._create_absolute_mock_imports(
+                            absolute_module_name, mocked_modules
+                        )
+        
+    def get_mocked_modules(self) -> Dict[str, MagicMock]:
+        """Returns mocked modules for all the dependency errors
+        as a dictionary for each file in your Kedro project
+        """
+        mocked_modules: Dict[str, MagicMock] = {}
+        package_root_path = None
 
-    @staticmethod
-    def _extract_path_starting_from_package(file_path: Path) -> Union[Path, None]:
-        # Convert the file path to a list of parts
-        path_parts = file_path.parts
+        for file_path in self._project_path.rglob("*.py"):
+            with open(file_path, "r", encoding="utf-8") as file:
+                file_content = file.read()
 
-        try:
-            package_index = path_parts.index(PACKAGE_NAME)
-        except ValueError:
-            return None
+            # parse file content using ast
+            parsed_content_ast_node: ast.Module = ast.parse(file_content)
+            file_path = file_path.resolve()
 
-        # Extract the path parts starting from the package name
-        sub_path = Path(*path_parts[package_index:])
+            # Ensure the package name is in the file path
+            if PACKAGE_NAME not in file_path.parts:
+                # we are only mocking the dependencies
+                # inside the package
+                continue
 
-        return sub_path
+            # Find the package root directory
+            if not package_root_path:
+                package_index = file_path.parts.index(PACKAGE_NAME)
+                package_root_path = Path(*file_path.parts[: package_index + 1])
 
-    @staticmethod
-    def _convert_relative_imports_to_absolute(
-        file_path: Path, relative_import: str
-    ) -> str:
-        file_path = file_path.resolve()
+            # Determine the directory of the current file
+            file_directory_path = file_path.parent
 
-        # Ensure the package name is in the file path
-        if PACKAGE_NAME not in file_path.parts:
-            raise ValueError(
-                f"Package name '{PACKAGE_NAME}' not found in the file path '{file_path}'."
+            self._mock_missing_dependencies(
+                parsed_content_ast_node,
+                file_directory_path,
+                package_root_path,
+                mocked_modules,
             )
 
-        # Find the package root directory
-        package_index = file_path.parts.index(PACKAGE_NAME)
-        package_root = Path(*file_path.parts[: package_index + 1])
-
-        # Determine the directory of the current file
-        file_directory = file_path.parent
-
-        # Count the dots in the relative import to determine how many levels to go up
-        if relative_import.startswith("."):
-            # Calculate levels to go up based on leading dots
-            levels_up = relative_import.count(".") - 1
-            target_module = relative_import.split(".")[levels_up + 1]
-        else:
-            levels_up = 0
-            target_module = relative_import.split(".")[-1]
-
-        # Traverse up the directory structure
-        target_directory = file_directory
-        for _ in range(levels_up):
-            target_directory = target_directory.parent
-
-        # Construct the full module path from the package root
-        relative_parts = target_directory.relative_to(package_root).parts
-        absolute_import = ".".join(
-            [PACKAGE_NAME] + list(relative_parts) + [target_module]
-        )
-
-        return absolute_import
+        return mocked_modules
