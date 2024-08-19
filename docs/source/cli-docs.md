@@ -155,7 +155,7 @@ kedro viz deploy --platform aws --endpoint http://mybucket.s3-website-us-west-2.
 To create a build directory with the visualisation data:
 
 ```bash
-kedro viz build --include-hooks
+kedro viz build --include-previews
 ```
 
 
