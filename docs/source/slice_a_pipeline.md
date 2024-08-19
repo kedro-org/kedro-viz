@@ -10,7 +10,7 @@ Slicing a pipeline refers to creating a subset of a pipeline's nodes, which can 
 
 - **Visual Representation:** View the relationships between nodes and identify which ones are part of your slice.
 - **Immediate Command Generation:** Get a ready-to-use CLI command for executing the sliced pipeline.
-- **Interactive Control:** Visually select and reset slices with just a couple of clicks.
+- **Interactive Control:** Visually select and reset slices with a couple of clicks.
 
 ## Steps to slice in Kedro-Viz
 
