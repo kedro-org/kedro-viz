@@ -1,4 +1,4 @@
-# Kedro Viz CLI Reference
+# Kedro Viz CLI reference
 
 The Kedro Viz CLI provides commands to visualise Kedro pipelines, deploy them to cloud platforms, and export the visualisation data. Below is a detailed description of the available commands and options.
 
