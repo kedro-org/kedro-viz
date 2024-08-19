@@ -94,7 +94,8 @@ class LiteParser:
 
                 # absolute modules in the env
                 if level == 0:
-                    self._create_absolute_mock_imports(module_name, mocked_modules)
+                    self._create_mock_imports(module_name, mocked_modules)
+                    
 
     def get_mocked_modules(self) -> Dict[str, MagicMock]:
         """Returns mocked modules for all the dependency errors
