@@ -30,4 +30,9 @@ kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
 experiment_tracking
+
+:caption: Other Documentation
+:maxdepth: 2
+
+cli-docs
 ```
