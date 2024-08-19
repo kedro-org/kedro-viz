@@ -30,7 +30,9 @@ kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
 experiment_tracking
+```
 
+```{toctree}
 :caption: Other Documentation
 :maxdepth: 2
 
