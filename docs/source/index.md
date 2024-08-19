@@ -34,7 +34,7 @@ experiment_tracking
 
 ```{toctree}
 :caption: Other Documentation
-:maxdepth: 2
+:maxdepth: 1
 
 cli-docs
 ```

@@ -34,25 +34,25 @@ kedro viz run [OPTIONS]
 
 **Options:**
 
-- `--host TEXT`
+- `--host <host>`
   - Host that Kedro Viz will listen to. Defaults to `localhost`.
   
-- `--port INTEGER`
+- `--port <port>`
   - TCP port that Kedro Viz will listen to. Defaults to `4141`.
 
 - `--browser / --no-browser`
   - Whether to open the Kedro Viz interface in the default browser. The browser will only open if the host is `localhost`. Defaults to `True`.
 
-- `--load-file TEXT`
+- `--load-file <path>`
   - Path to load Kedro Viz data from a directory. If provided, Kedro Viz will load the visualization data from this path instead of generating it from the pipeline.
 
-- `--save-file PATH`
+- `--save-file <path>`
   - Path to save Kedro Viz data to a directory. If provided, the visualization data will be saved to this path for later use.
 
-- `--pipeline, -p TEXT`
+- `--pipeline, -p <pipeline>`
   - Name of the registered pipeline to visualize. If not set, the default pipeline is visualized.
 
-- `--env, -e TEXT`
+- `--env, -e {environment>}`
   - Kedro configuration environment. If not specified, the catalog config in `local` will be used. You can also set this through the `KEDRO_ENV` environment variable.
 
 - `--autoreload, -a`
@@ -61,7 +61,7 @@ kedro viz run [OPTIONS]
 - `--include-hooks`
   - Include all registered hooks in the Kedro project for visualization.
 
-- `--params TEXT`
+- `--params <params>`
   - Specify extra parameters for the Kedro Viz run. This option supports the same format as the `params` option in the Kedro CLI.
 
 
@@ -75,7 +75,7 @@ When running Kedro Viz locally with the `--autoreload` option, the server will a
 Deploy and host Kedro Viz on a specified cloud platform.
 
 ```{note}
-The `deploy` command supports deployment to AWS or other supported platforms. Ensure that your cloud credentials and configurations are correctly set up before deploying.
+The `deploy` command supports deployment to AWS, Azure and GCP. Ensure that your cloud credentials and configurations are correctly set up before deploying.
 ```
 
 **Usage:**
@@ -86,13 +86,13 @@ kedro viz deploy [OPTIONS]
 
 **Options:**
 
-- `--platform TEXT`
-  - The cloud platform to host Kedro Viz on. Supported platforms include `aws` and `gcp`. This option is required.
+- `--platform <platform>`
+  - The cloud platform to host Kedro Viz on. Supported platforms include `aws` `azure` and and `gcp`. This option is required.
 
-- `--endpoint TEXT`
-  - The static website hosted endpoint. Example: `http://<bucket_name>.s3-website.<region_name>.amazonaws.com/`. This option is required.
+- `--endpoint <endpoint>`
+  - The static website hosted endpoint. This option is required.
 
-- `--bucket-name TEXT`
+- `--bucket-name <bucket-name>`
   - The name of the bucket where Kedro Viz will be hosted. This option is required.
 
 - `--include-hooks`
@@ -133,13 +133,13 @@ kedro viz
 To specify a particular pipeline and environment:
 
 ```bash
-kedro viz run -p my_pipeline -e dev
+kedro viz  -p my_pipeline -e dev
 ```
 
 or 
 
 ```bash
-kedro viz -p my_pipeline -e dev
+kedro viz run -p my_pipeline -e dev
 ```
 
 ### Deploying Kedro Viz to AWS
@@ -150,7 +150,7 @@ To deploy Kedro Viz to an S3 bucket on AWS:
 kedro viz deploy --platform aws --endpoint http://mybucket.s3-website-us-west-2.amazonaws.com --bucket-name mybucket
 ```
 
-### Building Kedro Viz for Offline Sharing
+### Building Kedro Viz to host on multiple platforms 
 
 To create a build directory with the visualization data:
 
