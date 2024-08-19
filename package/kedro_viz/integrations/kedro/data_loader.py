@@ -22,7 +22,7 @@ from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
-from kedro_viz.integrations.kedro.lite_parser_test import LiteParser
+from kedro_viz.integrations.kedro.lite_parser import LiteParser
 
 logger = logging.getLogger(__name__)
 
@@ -146,8 +146,6 @@ def load_data(
         lite_parser = LiteParser(project_path, package_name)
         mocked_modules = lite_parser.get_mocked_modules()
 
-        print(mocked_modules)
-        
         sys_modules_patch = sys.modules.copy()
         sys_modules_patch.update(mocked_modules)
 
