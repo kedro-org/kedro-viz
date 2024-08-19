@@ -95,15 +95,11 @@ export const FlowChartWrapper = ({
    */
   const setParamsFromLocalStorage = (activePipeline) => {
     const localStorageParams = loadLocalStorage(localStorageName);
-    const pipelineIdFromUrl = searchParams.get(params.pipeline);
 
     if (localStorageParams) {
       const paramActions = {
         pipeline: (value) => {
-          // Check if there's a pipeline ID in the URL, if so use it
-          if (pipelineIdFromUrl) {
-            toSetQueryParam(params.pipeline, pipelineIdFromUrl);
-          } else if (activePipeline) {
+          if (!searchParams.has(params.pipeline) && activePipeline) {
             toSetQueryParam(params.pipeline, value.active || activePipeline);
           }
         },
