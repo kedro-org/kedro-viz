@@ -20,7 +20,7 @@ This command launches the Kedro Viz server to visualize a Kedro pipeline. It is 
 
 **Options:**
 
-This command accepts all the options that are available in the `kedro viz`, `kedro viz run` command. See the [`kedro viz run`](#kedro-viz-run) section for a complete list of options.
+This command accepts all the options that are available in the `kedro viz`, `kedro viz run` command. See the `kedro viz run` section for a complete list of options.
 
 ### `kedro viz run`
 
