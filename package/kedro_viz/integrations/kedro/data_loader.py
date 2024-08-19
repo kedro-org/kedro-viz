@@ -77,17 +77,10 @@ def _load_data_helper(
     project_path: Path,
     env: Optional[str] = None,
     include_hooks: bool = False,
-    package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ):
     """Helper to load data from a Kedro project."""
-
-    if package_name:
-        configure_project(package_name)
-    else:
-        # bootstrap project when viz is run in dev mode
-        bootstrap_project(project_path)
 
     with KedroSession.create(
         project_path=project_path,
@@ -142,9 +135,24 @@ def load_data(
         A tuple containing the data catalog and the pipeline dictionary
         and the session store.
     """
+    if package_name:
+        configure_project(package_name)
+    else:
+        # bootstrap project when viz is run in dev mode
+        bootstrap_project(project_path)
+
     if is_lite:
         lite_parser = LiteParser(project_path, package_name)
         mocked_modules = lite_parser.get_mocked_modules()
+
+        if len(mocked_modules):
+            logger.warning(
+                "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
+                "%s \n"
+                "In order to get a complete experience of Viz, "
+                "please install the missing Kedro project dependencies\n",
+                list(mocked_modules.keys()),
+            )
 
         sys_modules_patch = sys.modules.copy()
         sys_modules_patch.update(mocked_modules)
@@ -152,9 +160,9 @@ def load_data(
         # Patch actual sys modules
         with patch.dict("sys.modules", sys_modules_patch):
             return _load_data_helper(
-                project_path, env, include_hooks, package_name, extra_params, is_lite
+                project_path, env, include_hooks, extra_params, is_lite
             )
     else:
         return _load_data_helper(
-            project_path, env, include_hooks, package_name, extra_params, is_lite
+            project_path, env, include_hooks, extra_params, is_lite
         )

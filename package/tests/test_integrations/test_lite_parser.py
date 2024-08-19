@@ -44,6 +44,17 @@ class TestLiteParser:
         with patch("importlib.util.find_spec", side_effect=ValueError):
             assert lite_parser._is_module_importable("nonexistentmodule") is False
 
+    def test_is_relative_import(self, lite_parser):
+        assert (
+            lite_parser._is_relative_import("mock_spaceflights.data_processing") is True
+        )
+        assert (
+            lite_parser._is_relative_import(
+                "mock_spaceflights.data_processing.random_module"
+            )
+            is False
+        )
+
     def test_create_mock_imports(self, lite_parser):
         mocked_modules = {}
         lite_parser._create_mock_imports("nonexistentmodule", mocked_modules)
@@ -56,7 +67,8 @@ class TestLiteParser:
             "import os\n"
             "import nonexistentmodule\n"
             "from math import sqrt\n"
-            "from mock_spaceflights import data_processing"
+            "from mock_spaceflights import data_processing\n"
+            "from . import some_module\n"
             "# import test"
         )
 
@@ -66,6 +78,7 @@ class TestLiteParser:
         assert "nonexistentmodule" in mocked_modules
         assert "os" not in mocked_modules
         assert "math" not in mocked_modules
+        assert None not in mocked_modules
 
     def test_get_mocked_modules(self, lite_parser):
         mocked_modules = lite_parser.get_mocked_modules()
@@ -74,16 +87,18 @@ class TestLiteParser:
         assert isinstance(mocked_modules["nonexistentmodule"], MagicMock)
         assert "os" not in mocked_modules
 
-    def test_get_mocked_modules_for_non_package_path(
-        self, sample_project_path, lite_parser
-    ):
+    def test_get_mocked_modules_for_non_package_path(self, sample_project_path):
         other_package_dir = sample_project_path / "mock_aircrafts"
         other_package_dir.mkdir()
         (other_package_dir / "__init__.py").touch()
         (other_package_dir / "data_science.py").write_text(
             "import os\nfrom data_processing import datascience_dependency"
         )
+        lite_parser_obj = LiteParser(
+            project_path=sample_project_path, package_name="mock_spaceflights"
+        )
+        mocked_modules = lite_parser_obj.get_mocked_modules()
 
-        mocked_modules = lite_parser.get_mocked_modules()
-
+        # dependencies mocked for only files under the package
+        # if package name is provided
         assert "data_processing" not in mocked_modules

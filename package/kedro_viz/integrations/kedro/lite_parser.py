@@ -23,6 +23,7 @@ class LiteParser:
     ) -> None:
         self._project_path = project_path
         self._package_name = package_name
+        self._project_file_paths = set(self._project_path.rglob("*.py"))
 
     @staticmethod
     def _is_module_importable(module_name: str) -> bool:
@@ -38,8 +39,53 @@ class LiteParser:
             if importlib.util.find_spec(module_name) is None:
                 return False
             return True
-        except (ImportError, ModuleNotFoundError, ValueError):
+        except ModuleNotFoundError as mnf_exc:
+            logger.debug(
+                "ModuleNotFoundError in resolving %s : %s", module_name, mnf_exc
+            )
             return False
+        except ImportError as imp_exc:
+            logger.debug("ImportError in resolving %s : %s", module_name, imp_exc)
+            return False
+        except ValueError as val_exc:
+            logger.debug("ValueError in resolving %s : %s", module_name, val_exc)
+            return False
+        # pylint: disable=broad-except
+        except Exception as exc:  # pragma: no cover
+            logger.debug(
+                "An exception occurred while resolving %s : %s", module_name, exc
+            )
+            return False
+
+    def _is_relative_import(self, module_name: str):
+        """Checks if a module is a relative import. This is needed
+        in dev or standalone mode when the package_name is None and
+        internal package files have unresolved external dependencies
+
+        Args:
+            module_name (str): The name of the module to check
+                    importability
+
+        Example:
+            >>> lite_parser_obj = LiteParser("path/to/kedro/project")
+            >>> module_name = "kedro_project_package.pipelines.reporting.nodes"
+            >>> lite_parser_obj._is_relative_import(module_name)
+            True
+
+        Returns:
+            Whether the module is a relative import starting
+                    from the root package dir
+        """
+        relative_module_path = module_name.replace(".", "/")
+
+        # Check if the relative_module_path
+        # is a substring of any Python file path
+        is_relative_import_path = any(
+            relative_module_path in str(project_file_path)
+            for project_file_path in self._project_file_paths
+        )
+
+        return is_relative_import_path
 
     def _create_mock_imports(
         self, module_name: str, mocked_modules: Dict[str, MagicMock]
@@ -52,7 +98,6 @@ class LiteParser:
             mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
 
         """
-
         module_parts = module_name.split(".")
         full_module_name = ""
 
@@ -88,10 +133,13 @@ class LiteParser:
                 module_name = node.module if node.module else ""
                 level = node.level
 
-                if (
-                    not module_name
-                    or module_name == ""
-                    or (self._package_name and self._package_name in module_name)
+                if not module_name or module_name == "":
+                    continue
+
+                if (self._package_name and self._package_name in module_name) or (
+                    # dev or standalone mode
+                    not self._package_name
+                    and self._is_relative_import(module_name)
                 ):
                     continue
 
@@ -105,7 +153,7 @@ class LiteParser:
         """
         mocked_modules: Dict[str, MagicMock] = {}
 
-        for file_path in self._project_path.rglob("*.py"):
+        for file_path in self._project_file_paths:
             with open(file_path, "r", encoding="utf-8") as file:
                 file_content = file.read()
 
