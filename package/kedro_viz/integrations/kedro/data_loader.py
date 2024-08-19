@@ -143,7 +143,7 @@ def load_data(
         and the session store.
     """
     if is_lite:
-        lite_parser = LiteParser(project_path)
+        lite_parser = LiteParser(project_path, package_name)
         mocked_modules = lite_parser.get_mocked_modules()
 
         print(mocked_modules)
