@@ -1,12 +1,12 @@
 # Kedro Viz CLI Reference
 
-The Kedro Viz CLI provides commands to visualize Kedro pipelines, deploy them to cloud platforms, and export the visualization data. Below is a detailed description of the available commands and options.
+The Kedro Viz CLI provides commands to visualise Kedro pipelines, deploy them to cloud platforms, and export the visualisation data. Below is a detailed description of the available commands and options.
 
 ## Commands
 
 ### `kedro viz`
 
-Launches a local Kedro Viz instance to visualize a Kedro pipeline.
+Launches a local Kedro Viz instance to visualise a Kedro pipeline.
 
 **Usage:**
 
@@ -16,7 +16,7 @@ kedro viz [OPTIONS]
 
 **Description:**
 
-This command launches the Kedro Viz server to visualize a Kedro pipeline. It is functionally equivalent to `kedro viz run`. If no subcommand is provided, `run` is used by default.
+This command launches the Kedro Viz server to visualise a Kedro pipeline. It is functionally the same as `kedro viz run`. If no sub-command is provided, `run` is used by default.
 
 **Options:**
 
@@ -24,7 +24,7 @@ This command accepts all the options that are available in the `kedro viz`, `ked
 
 ### `kedro viz run`
 
-Launches a local Kedro Viz instance to visualize a Kedro pipeline.
+Launches a local Kedro Viz instance to visualise a Kedro pipeline.
 
 **Usage:**
 
@@ -41,25 +41,25 @@ kedro viz run [OPTIONS]
   - TCP port that Kedro Viz will listen to. Defaults to `4141`.
 
 - `--browser / --no-browser`
-  - Whether to open the Kedro Viz interface in the default browser. The browser will only open if the host is `localhost`. Defaults to `True`.
+  - Whether to open the Kedro Viz interface in the default browser. The browser will open if the host is `localhost`. Defaults to `True`.
 
 - `--load-file <path>`
-  - Path to load Kedro Viz data from a directory. If provided, Kedro Viz will load the visualization data from this path instead of generating it from the pipeline.
+  - Path to load Kedro Viz data from a directory. If provided, Kedro Viz will load the visualisation data from this path instead of generating it from the pipeline.
 
 - `--save-file <path>`
-  - Path to save Kedro Viz data to a directory. If provided, the visualization data will be saved to this path for later use.
+  - Path to save Kedro Viz data to a directory. If provided, the visualisation data will be saved to this path for later use.
 
 - `--pipeline, -p <pipeline>`
-  - Name of the registered pipeline to visualize. If not set, the default pipeline is visualized.
+  - Name of the registered pipeline to visualise. If not set, the default pipeline is visualised.
 
 - `--env, -e {environment>}`
   - Kedro configuration environment. If not specified, the catalog config in `local` will be used. You can also set this through the `KEDRO_ENV` environment variable.
 
 - `--autoreload, -a`
-  - Enable autoreloading of the Kedro Viz server when a Python or YAML file changes in the Kedro project.
+  - Enable autoreload of the Kedro Viz server when a Python or YAML file changes in the Kedro project.
 
 - `--include-hooks`
-  - Include all registered hooks in the Kedro project for visualization.
+  - Include all registered hooks in the Kedro project for visualisation.
 
 - `--params <params>`
   - Specify extra parameters for the Kedro Viz run. This option supports the same format as the `params` option in the Kedro CLI.
@@ -87,7 +87,7 @@ kedro viz deploy [OPTIONS]
 **Options:**
 
 - `--platform <platform>`
-  - The cloud platform to host Kedro Viz on. Supported platforms include `aws` `azure` and and `gcp`. This option is required.
+  - The cloud platform to host Kedro Viz on. Supported platforms include `aws` `azure` and `gcp`. This option is required.
 
 - `--endpoint <endpoint>`
   - The static website hosted endpoint. This option is required.
@@ -96,10 +96,10 @@ kedro viz deploy [OPTIONS]
   - The name of the bucket where Kedro Viz will be hosted. This option is required.
 
 - `--include-hooks`
-  - Include all registered hooks in the Kedro project in the deployed visualization.
+  - Include all registered hooks in the Kedro project in the deployed visualisation.
 
 - `--include-previews`
-  - Include previews for all datasets in the deployed visualization.
+  - Include previews for all datasets in the deployed visualisation.
 
 ### `kedro viz build`
 
@@ -114,17 +114,17 @@ kedro viz build [OPTIONS]
 **Options:**
 
 - `--include-hooks`
-  - Include all registered hooks in the Kedro project in the built visualization.
+  - Include all registered hooks in the Kedro project in the built visualisation.
 
 - `--include-previews`
-  - Include previews for all datasets in the built visualization.
+  - Include previews for all datasets in the built visualisation.
 
 
 ## Examples
 
-### Running Kedro Viz Locally
+### Running Kedro Viz locally
 
-To run Kedro Viz on your local machine, simply use:
+To run Kedro Viz on your local machine, use:
 
 ```bash
 kedro viz
@@ -152,7 +152,7 @@ kedro viz deploy --platform aws --endpoint http://mybucket.s3-website-us-west-2.
 
 ### Building Kedro Viz to host on multiple platforms 
 
-To create a build directory with the visualization data:
+To create a build directory with the visualisation data:
 
 ```bash
 kedro viz build --include-hooks
