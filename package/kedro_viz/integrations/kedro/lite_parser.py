@@ -36,6 +36,9 @@ class LiteParser:
             Whether the module can be imported
         """
         try:
+            # Check if the module can be importable
+            # In case of submodule (contains a dot, e.g: sklearn.linear_model),
+            # find_spec imports the parent module
             if importlib.util.find_spec(module_name) is None:
                 return False
             return True
@@ -79,7 +82,7 @@ class LiteParser:
         relative_module_path = module_name.replace(".", "/")
 
         # Check if the relative_module_path
-        # is a substring of any Python file path
+        # is a substring of current project file path
         is_relative_import_path = any(
             relative_module_path in str(project_file_path)
             for project_file_path in self._project_file_paths
@@ -101,6 +104,9 @@ class LiteParser:
         module_parts = module_name.split(".")
         full_module_name = ""
 
+        # Try to import each sub-module starting from the root module
+        # Example: module_name = sklearn.linear_model
+        # We will try to find spec for sklearn, sklearn.linear_model
         for idx, sub_module_name in enumerate(module_parts):
             full_module_name = (
                 sub_module_name if idx == 0 else f"{full_module_name}.{sub_module_name}"
@@ -111,12 +117,12 @@ class LiteParser:
             ):
                 mocked_modules[full_module_name] = MagicMock()
 
-    def _mock_missing_dependencies(
+    def _populate_mocked_modules(
         self,
         parsed_content_ast_node: ast.Module,
         mocked_modules: Dict[str, MagicMock],
     ) -> None:
-        """Mock missing project dependencies
+        """Populate mocked_modules with missing external dependencies
 
         Args:
             parsed_content_ast_node (ast.Module): The AST node to
@@ -124,18 +130,34 @@ class LiteParser:
             mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
         """
         for node in ast.walk(parsed_content_ast_node):
+
+            # Handling dependencies that starts with "import "
+            # Example: import logging
+            # Corresponding AST node will be:
+            # Import(names=[alias(name='logging')])
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     module_name = alias.name
                     self._create_mock_imports(module_name, mocked_modules)
 
+            # Handling dependencies that starts with "from "
+            # Example: from typing import Dict, Union
+            # Corresponding AST node will be:
+            # ImportFrom(module='typing', names=[alias(name='Dict'),
+            #            alias(name='Union')],
+            #            level=0)
             elif isinstance(node, ast.ImportFrom):
                 module_name = node.module if node.module else ""
                 level = node.level
 
+                # Ignore relative imports like "from . import a"
                 if not module_name or module_name == "":
                     continue
 
+                # Ignore relative imports within the package
+                # Examples:
+                # "from demo_project.pipelines.reporting import test",
+                # "from ..nodes import func_test"
                 if (self._package_name and self._package_name in module_name) or (
                     # dev or standalone mode
                     not self._package_name
@@ -144,6 +166,9 @@ class LiteParser:
                     continue
 
                 # absolute modules in the env
+                # Examples:
+                # from typing import Dict, Union
+                # from sklearn.linear_model import LinearRegression
                 if level == 0:
                     self._create_mock_imports(module_name, mocked_modules)
 
@@ -167,7 +192,7 @@ class LiteParser:
                 # inside the package
                 continue
 
-            self._mock_missing_dependencies(
+            self._populate_mocked_modules(
                 parsed_content_ast_node,
                 mocked_modules,
             )

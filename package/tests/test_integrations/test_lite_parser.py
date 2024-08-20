@@ -61,7 +61,7 @@ class TestLiteParser:
         assert "nonexistentmodule" in mocked_modules
         assert isinstance(mocked_modules["nonexistentmodule"], MagicMock)
 
-    def test_mock_missing_dependencies(self, lite_parser):
+    def test_populate_mocked_modules(self, lite_parser):
         mocked_modules = {}
         content = (
             "import os\n"
@@ -73,7 +73,7 @@ class TestLiteParser:
         )
 
         parsed_content_ast_node = ast.parse(content)
-        lite_parser._mock_missing_dependencies(parsed_content_ast_node, mocked_modules)
+        lite_parser._populate_mocked_modules(parsed_content_ast_node, mocked_modules)
 
         assert "nonexistentmodule" in mocked_modules
         assert "os" not in mocked_modules
