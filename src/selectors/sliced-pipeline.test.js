@@ -1,7 +1,7 @@
 import { mockState } from '../utils/state.mock';
 import reducer from '../reducers';
 
-import { SLICE_PIPELINE } from '../actions/slice';
+import { SET_SLICE_PIPELINE } from '../actions/slice';
 import { getSlicedPipeline } from './sliced-pipeline';
 
 describe('Selectors', () => {
@@ -11,7 +11,7 @@ describe('Selectors', () => {
 
     const expected = ['23c94afb', '47b81aa6', 'data_processing'];
     const newState = reducer(mockState.spaceflights, {
-      type: SLICE_PIPELINE,
+      type: SET_SLICE_PIPELINE,
       slice: { from: fromNode, to: toNode },
     });
 
@@ -24,7 +24,7 @@ describe('Selectors', () => {
     const toNode = 'f1f1425b';
 
     const newState = reducer(mockState.spaceflights, {
-      type: SLICE_PIPELINE,
+      type: SET_SLICE_PIPELINE,
       slice: { from: fromNode, to: toNode },
     });
 

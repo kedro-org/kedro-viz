@@ -1,7 +1,7 @@
 import { mockState } from '../utils/state.mock';
 import reducer from '../reducers';
 
-import { SLICE_PIPELINE } from '../actions/slice';
+import { SET_SLICE_PIPELINE } from '../actions/slice';
 import { getRunCommand } from './run-command';
 
 describe('Selectors', () => {
@@ -14,7 +14,7 @@ describe('Selectors', () => {
     const expectedCommand = `kedro run --from-nodes=${expectedFromNodeName} --to-nodes=${expectedToNodeName}`;
 
     const newState = reducer(mockState.spaceflights, {
-      type: SLICE_PIPELINE,
+      type: SET_SLICE_PIPELINE,
       slice: { from: fromNodeId, to: toNodeId },
     });
 
