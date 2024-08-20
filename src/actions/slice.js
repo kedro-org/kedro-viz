@@ -1,20 +1,20 @@
-export const APPLY_SLICE = 'APPLY_SLICE';
+export const APPLY_SLICE_PIPELINE = 'APPLY_SLICE_PIPELINE';
 
-export const applySlice = (apply) => {
+export const applySlicePipeline = (apply) => {
   return async function (dispatch) {
     dispatch({
-      type: APPLY_SLICE,
+      type: APPLY_SLICE_PIPELINE,
       apply,
     });
   };
 };
 
-export const SLICE_PIPELINE = 'SLICE_PIPELINE';
+export const SET_SLICE_PIPELINE = 'SET_SLICE_PIPELINE';
 
-export const slicePipeline = (from, to) => {
+export const setSlicePipeline = (from, to) => {
   return async function (dispatch) {
     dispatch({
-      type: SLICE_PIPELINE,
+      type: SET_SLICE_PIPELINE,
       slice: { from, to },
     });
   };

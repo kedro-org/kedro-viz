@@ -13,8 +13,8 @@ import {
   toggleNodeClicked,
 } from '../../actions/nodes';
 import {
-  applySlice,
-  slicePipeline,
+  applySlicePipeline,
+  setSlicePipeline,
   resetSlicePipeline,
 } from '../../actions/slice';
 import {
@@ -966,10 +966,10 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(updateZoom(transform));
   },
   onApplySlice: (apply) => {
-    dispatch(applySlice(apply));
+    dispatch(applySlicePipeline(apply));
   },
   onSlicePipeline: (fromID, toID) => {
-    dispatch(slicePipeline(fromID, toID));
+    dispatch(setSlicePipeline(fromID, toID));
   },
   onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());
