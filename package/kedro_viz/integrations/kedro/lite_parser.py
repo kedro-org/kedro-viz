@@ -130,7 +130,6 @@ class LiteParser:
             mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
         """
         for node in ast.walk(parsed_content_ast_node):
-
             # Handling dependencies that starts with "import "
             # Example: import logging
             # Corresponding AST node will be:
@@ -151,7 +150,7 @@ class LiteParser:
                 level = node.level
 
                 # Ignore relative imports like "from . import a"
-                if not module_name or module_name == "":
+                if not module_name:
                     continue
 
                 # Ignore relative imports within the package

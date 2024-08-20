@@ -80,6 +80,28 @@ class TestLiteParser:
         assert "math" not in mocked_modules
         assert None not in mocked_modules
 
+    def test_populate_mocked_modules_in_standalone(self, sample_project_path):
+        lite_parser_obj = LiteParser(project_path=sample_project_path)
+        mocked_modules = {}
+        content = (
+            "import os\n"
+            "import nonexistentmodule\n"
+            "from math import sqrt\n"
+            "from mock_spaceflights import data_processing\n"
+            "from data_processing import some_module\n"
+            "# import test"
+        )
+
+        parsed_content_ast_node = ast.parse(content)
+        lite_parser_obj._populate_mocked_modules(
+            parsed_content_ast_node, mocked_modules
+        )
+
+        assert "nonexistentmodule" in mocked_modules
+        assert "os" not in mocked_modules
+        assert "math" not in mocked_modules
+        assert "data_processing" not in mocked_modules
+
     def test_get_mocked_modules(self, lite_parser):
         mocked_modules = lite_parser.get_mocked_modules()
 
