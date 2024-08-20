@@ -401,9 +401,9 @@ def get_package_compatibilities_response(
     return package_requirements_response
 
 
-def get_jsonable_response():
+def get_encoded_response(response: Any) -> bytes:
     """Encodes and enhances the default response using human-readable format."""
-    jsonable_response = jsonable_encoder(get_default_response())
+    jsonable_response = jsonable_encoder(response)
     encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
         jsonable_response
     )
@@ -411,20 +411,21 @@ def get_jsonable_response():
     return encoded_response
 
 
-def write_api_response_to_fs(file_path: str, remote_fs: Any):
-    """Get encodes, enhances responses and writes it to a file"""
+def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
+    """Get encoded responses and writes it to a file"""
+    encoded_response = get_encoded_response(response)
 
     with remote_fs.open(file_path, "wb") as file:
-        file.write(get_jsonable_response())
+        file.write(encoded_response)
 
 
 def get_kedro_project_json_data():
-    """Decodes the jsonable default response and returns the Kedro project JSON data.
+    """Decodes the default response and returns the Kedro project JSON data.
     This will be used in VSCode extension to get current Kedro project data."""
-    jsonable_response = get_jsonable_response()
+    encoded_response = get_encoded_response(get_default_response())
 
     try:
-        response_str = jsonable_response.decode("utf-8")
+        response_str = encoded_response.decode("utf-8")
         json_data = json.loads(response_str)
     except UnicodeDecodeError as exc:  # pragma: no cover
         json_data = None
