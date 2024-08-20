@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { sidebarWidth } from '../../config';
 
 import './sliced-pipeline-notification.scss';
 
