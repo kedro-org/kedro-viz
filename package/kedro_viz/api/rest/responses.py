@@ -2,9 +2,9 @@
 
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
+import json
 import logging
 from importlib.metadata import PackageNotFoundError
-import json
 from typing import Any, Dict, List, Optional, Union
 
 import orjson

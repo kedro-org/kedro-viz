@@ -951,7 +951,7 @@ class TestEnhancedORJSONResponse:
         ],
     )
     def test_write_api_response_to_fs(
-        self, file_path, response, encoded_response, mocker
+        self, file_path, encoded_response, mocker
     ):
         mock_encode_to_human_readable = mocker.patch(
             "kedro_viz.api.rest.responses.EnhancedORJSONResponse.encode_to_human_readable",
@@ -960,7 +960,7 @@ class TestEnhancedORJSONResponse:
         with patch("fsspec.filesystem") as mock_filesystem:
             mockremote_fs = mock_filesystem.return_value
             mockremote_fs.open.return_value.__enter__.return_value = Mock()
-            write_api_response_to_fs(file_path, response, mockremote_fs)
+            write_api_response_to_fs(file_path, mockremote_fs)
             mockremote_fs.open.assert_called_once_with(file_path, "wb")
             mock_encode_to_human_readable.assert_called_once()
 
