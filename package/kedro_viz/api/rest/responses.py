@@ -433,9 +433,6 @@ def get_kedro_project_json_data():
     except json.JSONDecodeError as exc:  # pragma: no cover
         json_data = None
         logger.error("Failed to parse JSON data. Error: %s", str(exc))
-    except Exception as exc:  # pragma: no cover
-        json_data = None
-        logger.exception("Unexpected error occurred. Error: %s", str(exc))
 
     return json_data
 
