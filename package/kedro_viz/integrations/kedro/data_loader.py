@@ -9,8 +9,8 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
-from unittest.mock import patch
+from typing import Any, Dict, Optional, Set, Tuple
+from unittest.mock import MagicMock, patch
 
 from kedro import __version__
 from kedro.framework.project import configure_project, pipelines, settings
@@ -142,10 +142,18 @@ def load_data(
         bootstrap_project(project_path)
 
     if is_lite:
-        lite_parser = LiteParser(project_path, package_name)
-        mocked_modules = lite_parser.get_mocked_modules()
+        lite_parser = LiteParser(package_name)
+        unresolved_imports = lite_parser.parse(project_path)
+        mocked_modules: Dict[str, MagicMock] = {}
 
-        if len(mocked_modules):
+        if len(unresolved_imports):
+            modules_to_mock: Set[str] = set()
+
+            for unresolved_module_set in unresolved_imports.values():
+                modules_to_mock = modules_to_mock.union(unresolved_module_set)
+
+            mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
+
             logger.warning(
                 "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
                 "%s \n"

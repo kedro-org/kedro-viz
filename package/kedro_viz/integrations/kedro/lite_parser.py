@@ -4,7 +4,7 @@ import ast
 import importlib.util
 import logging
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, List, Set, Union
 from unittest.mock import MagicMock
 
 logger = logging.getLogger(__name__)
@@ -14,16 +14,11 @@ class LiteParser:
     """Represents a Kedro Parser which uses AST
 
     Args:
-        project_path (Path): the path where the Kedro project is located.
         package_name (Union[str, None]): The name of the current package
     """
 
-    def __init__(
-        self, project_path: Path, package_name: Union[str, None] = None
-    ) -> None:
-        self._project_path = project_path
+    def __init__(self, package_name: Union[str, None] = None) -> None:
         self._package_name = package_name
-        self._project_file_paths = set(self._project_path.rglob("*.py"))
 
     @staticmethod
     def _is_module_importable(module_name: str) -> bool:
@@ -60,7 +55,34 @@ class LiteParser:
             )
             return False
 
-    def _is_relative_import(self, module_name: str):
+    @staticmethod
+    def _get_module_parts(module_name: str) -> List[str]:
+        """Creates a list of module parts to check for importability
+
+        Args:
+            module_name (str): The module name to split
+
+        Returns:
+            A list of module parts
+
+        Example:
+            >>> LiteParser._get_module_parts("kedro.framework.project")
+            ["kedro", "kedro.framework", "kedro.framework.project"]
+
+        """
+        module_split = module_name.split(".")
+        full_module_name = ""
+        module_parts = []
+
+        for idx, sub_module_name in enumerate(module_split):
+            full_module_name = (
+                sub_module_name if idx == 0 else f"{full_module_name}.{sub_module_name}"
+            )
+            module_parts.append(full_module_name)
+
+        return module_parts
+
+    def _is_relative_import(self, module_name: str, project_file_paths: Set[Path]):
         """Checks if a module is a relative import. This is needed
         in dev or standalone mode when the package_name is None and
         internal package files have unresolved external dependencies
@@ -68,16 +90,18 @@ class LiteParser:
         Args:
             module_name (str): The name of the module to check
                     importability
-
-        Example:
-            >>> lite_parser_obj = LiteParser("path/to/kedro/project")
-            >>> module_name = "kedro_project_package.pipelines.reporting.nodes"
-            >>> lite_parser_obj._is_relative_import(module_name)
-            True
+            project_file_paths (Set[Path]): A set of project file paths
 
         Returns:
             Whether the module is a relative import starting
                     from the root package dir
+
+        Example:
+            >>> lite_parser_obj = LiteParser()
+            >>> module_name = "kedro_project_package.pipelines.reporting.nodes"
+            >>> project_file_paths = set([Path("/path/to/relative/file")])
+            >>> lite_parser_obj._is_relative_import(module_name, project_file_paths)
+            True
         """
         relative_module_path = module_name.replace(".", "/")
 
@@ -85,50 +109,60 @@ class LiteParser:
         # is a substring of current project file path
         is_relative_import_path = any(
             relative_module_path in str(project_file_path)
-            for project_file_path in self._project_file_paths
+            for project_file_path in project_file_paths
         )
 
         return is_relative_import_path
 
-    def _create_mock_imports(
-        self, module_name: str, mocked_modules: Dict[str, MagicMock]
+    def _populate_missing_dependencies(
+        self, module_name: str, missing_dependencies: Set[str]
     ) -> None:
-        """Creates mock modules for unresolvable imports and adds them to the
-        dictionary of mocked_modules
+        """Helper to populate missing dependencies
 
         Args:
-            module_name (str): The module name to be mocked
-            mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
+            module_name (str): The module name to check if it is importable
+            missing_dependencies (Set[str]): A set of missing dependencies
 
         """
-        module_parts = module_name.split(".")
-        full_module_name = ""
-
-        # Try to import each sub-module starting from the root module
-        # Example: module_name = sklearn.linear_model
-        # We will try to find spec for sklearn, sklearn.linear_model
-        for idx, sub_module_name in enumerate(module_parts):
-            full_module_name = (
-                sub_module_name if idx == 0 else f"{full_module_name}.{sub_module_name}"
-            )
+        module_name_parts = self._get_module_parts(module_name)
+        for module_name_part in module_name_parts:
             if (
-                not self._is_module_importable(full_module_name)
-                and full_module_name not in mocked_modules
+                not self._is_module_importable(module_name_part)
+                and module_name_part not in missing_dependencies
             ):
-                mocked_modules[full_module_name] = MagicMock()
+                missing_dependencies.add(module_name_part)
 
-    def _populate_mocked_modules(
-        self,
-        parsed_content_ast_node: ast.Module,
-        mocked_modules: Dict[str, MagicMock],
-    ) -> None:
-        """Populate mocked_modules with missing external dependencies
+    def _get_unresolved_imports(
+        self, file_path: Path, project_file_paths: Union[Set[Path], None] = None
+    ) -> Set[str]:
+        """Parse the file using AST and return any missing dependencies
+        in the current file
 
         Args:
-            parsed_content_ast_node (ast.Module): The AST node to
-                    extract import statements
-            mocked_modules (Dict[str, MagicMock]): A dictionary of mocked imports
+            file_path (Path): The file path to parse
+            project_file_paths Union[Set[Path], None]: A set of project file paths
+
+        Returns:
+            A set of missing dependencies
         """
+
+        missing_dependencies = set()
+
+        # Read the file
+        with open(file_path, "r", encoding="utf-8") as file:
+            file_content = file.read()
+
+        # parse file content using ast
+        parsed_content_ast_node: ast.Module = ast.parse(file_content)
+        file_path = file_path.resolve()
+
+        # Ensure the package name is in the file path
+        if self._package_name and self._package_name not in file_path.parts:
+            # we are only mocking the dependencies
+            # inside the package
+            return missing_dependencies
+
+        # Explore each node in the AST tree
         for node in ast.walk(parsed_content_ast_node):
             # Handling dependencies that starts with "import "
             # Example: import logging
@@ -137,7 +171,9 @@ class LiteParser:
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     module_name = alias.name
-                    self._create_mock_imports(module_name, mocked_modules)
+                    self._populate_missing_dependencies(
+                        module_name, missing_dependencies
+                    )
 
             # Handling dependencies that starts with "from "
             # Example: from typing import Dict, Union
@@ -160,7 +196,8 @@ class LiteParser:
                 if (self._package_name and self._package_name in module_name) or (
                     # dev or standalone mode
                     not self._package_name
-                    and self._is_relative_import(module_name)
+                    and project_file_paths
+                    and self._is_relative_import(module_name, project_file_paths)
                 ):
                     continue
 
@@ -169,31 +206,60 @@ class LiteParser:
                 # from typing import Dict, Union
                 # from sklearn.linear_model import LinearRegression
                 if level == 0:
-                    self._create_mock_imports(module_name, mocked_modules)
+                    self._populate_missing_dependencies(
+                        module_name, missing_dependencies
+                    )
 
-    def get_mocked_modules(self) -> Dict[str, MagicMock]:
-        """Returns mocked modules for all the dependency errors
-        as a dictionary for each file in your Kedro project
+        return missing_dependencies
+
+    def create_mock_modules(self, unresolved_imports: Set[str]) -> Dict[str, MagicMock]:
+        """Creates mock modules for unresolved imports
+
+        Args:
+            unresolved_imports (Set[str]): A set of unresolved imports
+
+        Returns:
+            A dictionary of mocked modules for the unresolved imports
         """
         mocked_modules: Dict[str, MagicMock] = {}
 
-        for file_path in self._project_file_paths:
-            with open(file_path, "r", encoding="utf-8") as file:
-                file_content = file.read()
-
-            # parse file content using ast
-            parsed_content_ast_node: ast.Module = ast.parse(file_content)
-            file_path = file_path.resolve()
-
-            # Ensure the package name is in the file path
-            if self._package_name and self._package_name not in file_path.parts:
-                # we are only mocking the dependencies
-                # inside the package
-                continue
-
-            self._populate_mocked_modules(
-                parsed_content_ast_node,
-                mocked_modules,
-            )
+        for unresolved_import in unresolved_imports:
+            mocked_modules[unresolved_import] = MagicMock()
 
         return mocked_modules
+
+    def parse(self, target_path: Path) -> Union[Dict[str, Set[str]], None]:
+        """Parses the file(s) in the target path and returns
+        any unresolved imports for all the dependency errors
+        as a dictionary of file(s) in the target path and a set of module names
+
+        Args:
+            target_path (Path): The path to parse file(s)
+
+        Returns:
+            A dictionary of file(s) in the target path and a set of module names
+        """
+
+        if not target_path.exists():
+            logger.warning("Path `%s` does not exist", str(target_path))
+            return None
+
+        unresolved_imports: Dict[str, Set[str]] = {}
+
+        if target_path.is_file():
+            missing_dependencies = self._get_unresolved_imports(target_path)
+            if len(missing_dependencies) > 0:
+                unresolved_imports[str(target_path)] = missing_dependencies
+            return unresolved_imports
+
+        # handling directories
+        _project_file_paths = set(target_path.rglob("*.py"))
+
+        for file_path in _project_file_paths:
+            missing_dependencies = self._get_unresolved_imports(
+                file_path, _project_file_paths
+            )
+            if len(missing_dependencies) > 0:
+                unresolved_imports[str(file_path)] = missing_dependencies
+
+        return unresolved_imports
