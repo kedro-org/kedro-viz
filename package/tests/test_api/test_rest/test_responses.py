@@ -982,7 +982,9 @@ class TestEnhancedORJSONResponse:
         json_data = get_kedro_project_json_data()
 
         mock_get_default_response.assert_called_once()
-        mock_get_encoded_response.assert_called_once_with(mock_get_default_response.return_value)
+        mock_get_encoded_response.assert_called_once_with(
+            mock_get_default_response.return_value
+        )
         assert json_data == expected_json_data
 
     def test_save_api_main_response_to_fs(self, mocker):
