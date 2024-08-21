@@ -31,3 +31,10 @@ share_kedro_viz
 preview_datasets
 experiment_tracking
 ```
+
+```{toctree}
+:caption: Other Documentation
+:maxdepth: 1
+
+cli-docs
+```
