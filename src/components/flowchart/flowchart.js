@@ -41,6 +41,8 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
+import { getHeap } from '../../tracking/index';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
@@ -618,7 +620,8 @@ export class FlowChart extends Component {
 
     this.props.onApplySlice(false);
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
-    window.heap.track('Multiple Click - Slicing Pipeline', {
+
+    getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
       fromNodeId,
       toNodeId,
     });

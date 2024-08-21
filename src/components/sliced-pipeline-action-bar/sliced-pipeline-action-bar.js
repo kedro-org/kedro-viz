@@ -5,6 +5,7 @@ import CommandCopier from '../ui/command-copier/command-copier';
 import CutIcon from '../icons/cut';
 import IconButton from '../ui/icon-button';
 import { sidebarWidth, metaSidebarWidth } from '../../config';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 import './sliced-pipeline-action-bar.scss';
 
@@ -96,39 +97,40 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
         <CommandCopier
           command={runCommand}
           isCommand={true}
-          dataTest={'sliced-pipeline-action-bar--run-command-copied'}
+          dataTest={getDataTestAttribute(
+            'sliced-pipeline-action-bar',
+            'run-command',
+            'copied'
+          )}
         />
       </div>
       {isSlicingPipelineApplied ? (
         <div
           className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--reset"
-          data-test={'sliced-pipeline-action-bar--reset-btn-clicked'}
+          datat-test={getDataTestAttribute(
+            'sliced-pipeline-action-bar',
+            'reset-btn',
+            'clicked'
+          )}
         >
-          <Button
-            onClick={onResetSlicingPipeline}
-            dataTest={'sliced-pipeline-action-bar--reset-btn-clicked'}
-          >
-            Reset slice
-          </Button>
+          <Button onClick={onResetSlicingPipeline}>Reset slice</Button>
         </div>
       ) : (
         <div
           className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--slice"
-          data-test="sliced-pipeline-action-bar--slice-btn-clicked"
           onClick={onApplySlicingPipeline}
+          datat-test={getDataTestAttribute(
+            'sliced-pipeline-action-bar',
+            'slice-btn',
+            'clicked'
+          )}
         >
           <IconButton
-            ariaLabel="Copy run command to clipboard."
-            className="copy-button"
-            dataTest={`clicked.run_command`}
+            ariaLabel="Cut icon in slice button to slice a pipeline."
+            className="cut-icon"
             icon={CutIcon}
           />
-          <span
-            className="sliced-pipeline-action-bar--slice-text"
-            data-test="sliced-pipeline-action-bar--slice-text-clicked"
-          >
-            Slice
-          </span>
+          <span className="sliced-pipeline-action-bar--slice-text">Slice</span>
         </div>
       )}
     </div>
