@@ -93,15 +93,28 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
             runCommand.length > 90,
         })}
       >
-        <CommandCopier command={runCommand} isCommand={true} />
+        <CommandCopier
+          command={runCommand}
+          isCommand={true}
+          dataTest={'sliced-pipeline-action-bar--run-command-copied'}
+        />
       </div>
       {isSlicingPipelineApplied ? (
-        <div className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--reset">
-          <Button onClick={onResetSlicingPipeline}>Reset slice</Button>
+        <div
+          className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--reset"
+          data-test={'sliced-pipeline-action-bar--reset-btn-clicked'}
+        >
+          <Button
+            onClick={onResetSlicingPipeline}
+            dataTest={'sliced-pipeline-action-bar--reset-btn-clicked'}
+          >
+            Reset slice
+          </Button>
         </div>
       ) : (
         <div
           className="sliced-pipeline-action-bar--cta sliced-pipeline-action-bar--slice"
+          data-test="sliced-pipeline-action-bar--slice-btn-clicked"
           onClick={onApplySlicingPipeline}
         >
           <IconButton
@@ -110,7 +123,12 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
             dataTest={`clicked.run_command`}
             icon={CutIcon}
           />
-          <span className="sliced-pipeline-action-bar--slice-text">Slice</span>
+          <span
+            className="sliced-pipeline-action-bar--slice-text"
+            data-test="sliced-pipeline-action-bar--slice-text-clicked"
+          >
+            Slice
+          </span>
         </div>
       )}
     </div>

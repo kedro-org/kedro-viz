@@ -618,6 +618,10 @@ export class FlowChart extends Component {
 
     this.props.onApplySlice(false);
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
+    window.heap.track('Multiple Click - Slicing Pipeline', {
+      fromNodeId,
+      toNodeId,
+    });
   };
 
   /**
