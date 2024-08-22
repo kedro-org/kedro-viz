@@ -5,6 +5,7 @@ const getEdgeSources = (state) => state.edge.sources;
 const getEdgeTargets = (state) => state.edge.targets;
 const getFromNodes = (state) => state.slice.from;
 const getToNodes = (state) => state.slice.to;
+const getNames = (state) => state.node.name;
 
 /**
  * Selector to get all edges formatted as an array of objects with id, source, and target properties.
@@ -48,6 +49,46 @@ export const getEdgesByNode = createSelector([getEdges], (edges) => {
   return { sourceEdges, targetEdges };
 });
 
+const findPath = (input, startId, endId, path = []) => {
+  path.push(startId); // Add the current node to the path
+  if (startId === endId) {
+    // If the current node is the end node, return true
+    return true;
+  }
+  if (!input[startId]) {
+    // If the current node has no children, it's a dead end
+    path.pop();
+    return false;
+  }
+  for (const child of input[startId]) {
+    if (findPath(input, child, endId, path)) {
+      // If a path to the end node is found through the child, return true
+      return true;
+    }
+  }
+  path.pop(); // Remove the current node from the path if no path to endId is found through it
+  return false;
+};
+
+const sliceTree = (input, startId, endId) => {
+  const path = [];
+  findPath(input, startId, endId, path); // Find the path from startId to endId
+
+  const result = {};
+  for (let i = 0; i < path.length - 1; i++) {
+    // Build the tree structure based on the path
+    const currentId = path[i];
+    const nextId = path[i + 1];
+    if (!result[currentId]) {
+      result[currentId] = [nextId];
+    } else {
+      result[currentId].push(nextId);
+    }
+  }
+
+  return result;
+};
+
 /**
  * Recursive function to find all linked nodes starting from a given node ID.
  * @param {string} nodeID - The starting node ID.
@@ -73,27 +114,34 @@ const findLinkedNodes = (nodeID, edgesByNode, visited, names) => {
   return visited;
 };
 
-const findNodesInBetween = (sourceEdges, startID, endID) => {
+const findNodesInBetween = (
+  sourceEdges,
+  targetEdges,
+  startID,
+  endID,
+  names
+) => {
   if (!startID || !endID) {
     return [startID, endID].filter(Boolean);
   }
 
-  const linkedNodesBeforeEnd = {};
-  findLinkedNodes(endID, sourceEdges, linkedNodesBeforeEnd);
+  const slicedNodes = sliceTree(targetEdges, startID, endID);
+  const keys = Object.keys(slicedNodes);
+  const values = [].concat(...Object.values(slicedNodes));
+  const combined = keys.concat(values);
+  // Filter out duplicates to ensure each node ID is unique
+  const uniqueSlicedNodeIDs = [...new Set(combined)];
 
-  const linkedNodeBeforeStart = {};
-  findLinkedNodes(startID, sourceEdges, linkedNodeBeforeStart);
-
-  let filteredNodeIDs = Object.keys(linkedNodesBeforeEnd);
-
-  if (filteredNodeIDs.includes(startID) && filteredNodeIDs.includes(endID)) {
-    return filteredNodeIDs;
+  // Check if both startID and endID are included in the filtered node IDs
+  // If not, it implies they are not connected, and we return an empty array
+  if (
+    uniqueSlicedNodeIDs.includes(startID) &&
+    uniqueSlicedNodeIDs.includes(endID)
+  ) {
+    return uniqueSlicedNodeIDs;
   } else {
-    // If startID and endID are not connected, return empty array so it won't render the flowchart
-    filteredNodeIDs = [];
+    return [];
   }
-
-  return filteredNodeIDs;
 };
 
 /**
@@ -105,8 +153,8 @@ const findNodesInBetween = (sourceEdges, startID, endID) => {
  */
 
 export const getSlicedPipeline = createSelector(
-  [getEdgesByNode, getFromNodes, getToNodes],
-  ({ sourceEdges, targetEdges }, startID, endID) => {
-    return findNodesInBetween(sourceEdges, startID, endID);
+  [getEdgesByNode, getFromNodes, getToNodes, getNames],
+  ({ sourceEdges, targetEdges }, startID, endID, names) => {
+    return findNodesInBetween(sourceEdges, targetEdges, startID, endID, names);
   }
 );
