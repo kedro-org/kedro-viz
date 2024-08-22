@@ -156,12 +156,6 @@ class LiteParser:
         parsed_content_ast_node: ast.Module = ast.parse(file_content)
         file_path = file_path.resolve()
 
-        # Ensure the package name is in the file path
-        if self._package_name and self._package_name not in file_path.parts:
-            # we are only mocking the dependencies
-            # inside the package
-            return missing_dependencies
-
         # Explore each node in the AST tree
         for node in ast.walk(parsed_content_ast_node):
             # Handling dependencies that starts with "import "
@@ -256,10 +250,24 @@ class LiteParser:
         _project_file_paths = set(target_path.rglob("*.py"))
 
         for file_path in _project_file_paths:
-            missing_dependencies = self._get_unresolved_imports(
-                file_path, _project_file_paths
-            )
-            if len(missing_dependencies) > 0:
-                unresolved_imports[str(file_path)] = missing_dependencies
+            try:
+                # Ensure the package name is in the file path
+                if self._package_name and self._package_name not in file_path.parts:
+                    # we are only mocking the dependencies
+                    # inside the package
+                    continue
+
+                missing_dependencies = self._get_unresolved_imports(
+                    file_path, _project_file_paths
+                )
+                if len(missing_dependencies) > 0:
+                    unresolved_imports[str(file_path)] = missing_dependencies
+            # pylint: disable=broad-except
+            except Exception as exc:  # pragma: no cover
+                logger.error(
+                    "An error occurred in LiteParser while mocking dependencies : %s",
+                    exc,
+                )
+                continue
 
         return unresolved_imports

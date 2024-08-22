@@ -160,18 +160,6 @@ class TestLiteParser:
 
         assert len(unresolvable_imports) == 0
 
-    def test_get_unresolved_imports_for_non_package_paths(self, sample_project_path):
-        lite_parser_obj = LiteParser("mock_pyspark")
-        file_path = Path(sample_project_path / "mock_spaceflights/data_processing.py")
-
-        unresolvable_imports = lite_parser_obj._get_unresolved_imports(
-            file_path, set(sample_project_path.rglob("*.py"))
-        )
-
-        # ignore files in other packages if
-        # LiteParser is instantiated with a package_name
-        assert len(unresolvable_imports) == 0
-
     def test_create_mock_modules(self, lite_parser):
         unresolved_imports = {"sklearn", "pyspark.pandas"}
         mocked_modules = lite_parser.create_mock_modules(unresolved_imports)
@@ -197,3 +185,11 @@ class TestLiteParser:
             sample_project_path / "mock_spaceflights/data_processing.py"
         )
         assert unresolved_imports == {str(expected_file_path): {"nonexistentmodule"}}
+
+    def test_directory_parse_non_package_path(self, sample_project_path):
+        lite_parser_obj = LiteParser("mock_pyspark")
+        unresolvable_imports = lite_parser_obj.parse(sample_project_path)
+
+        # ignore files in other packages if
+        # LiteParser is instantiated with a package_name
+        assert len(unresolvable_imports) == 0
