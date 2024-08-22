@@ -55,17 +55,21 @@ export const getEdgesByNode = createSelector([getEdges], (edges) => {
  * @param {Object} visited - A map to keep track of visited nodes.
  * @returns {Object} A map of visited nodes.
  */
-
-const findLinkedNodes = (nodeID, edgesByNode, visited) => {
+const findLinkedNodes = (nodeID, edgesByNode, visited, names) => {
+  // Check if the current node has not been visited
   if (!visited[nodeID]) {
+    // Mark the current node as visited
     visited[nodeID] = true;
+    // If the current node has outgoing edges
     if (edgesByNode[nodeID]) {
+      // Recursively visit all connected nodes
       edgesByNode[nodeID].forEach((nodeID) =>
         findLinkedNodes(nodeID, edgesByNode, visited)
       );
     }
   }
 
+  // Return the map of visited nodes
   return visited;
 };
 
@@ -83,18 +87,10 @@ const findNodesInBetween = (sourceEdges, startID, endID) => {
   let filteredNodeIDs = Object.keys(linkedNodesBeforeEnd);
 
   if (filteredNodeIDs.includes(startID) && filteredNodeIDs.includes(endID)) {
-    // Remove any nodes before startID not including startID itself
-    Object.keys(linkedNodeBeforeStart).forEach((node) => {
-      if (node !== startID) {
-        const index = filteredNodeIDs.indexOf(node);
-        if (index > -1) {
-          filteredNodeIDs.splice(index, 1);
-        }
-      }
-    });
+    return filteredNodeIDs;
   } else {
-    // If startID and endID are not connected, return only them
-    filteredNodeIDs = [startID, endID];
+    // If startID and endID are not connected, return empty array so it won't render the flowchart
+    filteredNodeIDs = [];
   }
 
   return filteredNodeIDs;
