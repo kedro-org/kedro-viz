@@ -249,7 +249,7 @@ class LiteParser:
         if target_path.is_file():
             missing_dependencies = self._get_unresolved_imports(target_path)
             if len(missing_dependencies) > 0:
-                unresolved_imports[target_path.name] = missing_dependencies
+                unresolved_imports[str(target_path)] = missing_dependencies
             return unresolved_imports
 
         # handling directories
@@ -260,6 +260,6 @@ class LiteParser:
                 file_path, _project_file_paths
             )
             if len(missing_dependencies) > 0:
-                unresolved_imports[file_path.name] = missing_dependencies
+                unresolved_imports[str(file_path)] = missing_dependencies
 
         return unresolved_imports

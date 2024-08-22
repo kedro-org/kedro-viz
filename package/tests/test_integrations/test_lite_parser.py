@@ -189,8 +189,11 @@ class TestLiteParser:
         file_path = Path(sample_project_path / "mock_spaceflights/data_processing.py")
         unresolved_imports = lite_parser.parse(file_path)
 
-        assert unresolved_imports == {file_path.name: {"nonexistentmodule"}}
+        assert unresolved_imports == {str(file_path): {"nonexistentmodule"}}
 
     def test_directory_parse(self, lite_parser, sample_project_path):
         unresolved_imports = lite_parser.parse(sample_project_path)
-        assert unresolved_imports == {"data_processing.py": {"nonexistentmodule"}}
+        expected_file_path = Path(
+            sample_project_path / "mock_spaceflights/data_processing.py"
+        )
+        assert unresolved_imports == {str(expected_file_path): {"nonexistentmodule"}}
