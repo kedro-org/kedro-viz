@@ -149,6 +149,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | Name         | Type    | Default | Description |
 | ------------ | ------- | ------- | ----------- |
 | `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data to be displayed on the chart |
+| `onActionCallback` | function | - | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);`  |
 | options.display |  |  |  |
 | `expandPipelinesBtn` | boolean | true | Show/Hide expand pipelines button |
 | `exportBtn` | boolean | true | Show/Hide export button |
@@ -166,7 +167,8 @@ The example below demonstrates how to configure your kedro-viz using different `
 
 
 ### Note
-When `display.sidebar` is `false`, `display.miniMap` prop will be ignored.
+- `onActionCallback` callback is only called when the user clicks on a node in the flowchart, and we are passing the node object as the payload in the callback argument. In future releases, we will add more actions to be dispatched in this callback.
+- When `display.sidebar` is `false`, `display.miniMap` prop will be ignored.
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
