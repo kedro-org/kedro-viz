@@ -32,3 +32,10 @@ preview_datasets
 slice_a_pipeline
 experiment_tracking
 ```
+
+```{toctree}
+:caption: Other Documentation
+:maxdepth: 1
+
+cli-docs
+```

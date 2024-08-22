@@ -7,6 +7,10 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+
+- Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
+
 ## Bug fixes and other changes
 
 - Fixes design issues in metadata panel. (#2009)

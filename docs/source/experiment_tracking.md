@@ -346,7 +346,7 @@ Parallel coordinates displays all metrics on a single graph, with each vertical 
 When in comparison view, comparing runs highlights your selections on the respective chart types, improving readability even in the event there is a multitude of data points.
 
 ```{note}
-The following graphic is taken from the [Kedro-Viz experiment tracking demo](https://demo.kedro.org/experiment-tracking) (it is not a visualisation from the example code you created above).
+The following graphic is taken from the [Kedro-Viz experiment tracking demo](https://demo.kedro.org/) (it is not a visualisation from the example code you created above).
 ```
 
 ![](./images/experiment-tracking-metrics-comparison.gif)
