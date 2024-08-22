@@ -10,7 +10,7 @@ import logging
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Set, Tuple
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from kedro import __version__
 from kedro.framework.project import configure_project, pipelines, settings
@@ -80,7 +80,22 @@ def _load_data_helper(
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
 ):
-    """Helper to load data from a Kedro project."""
+    """Helper to load data from a Kedro project.
+
+    Args:
+        project_path: the path where the Kedro project is located.
+        env: the Kedro environment to load the data. If not provided.
+            it will use Kedro default, which is local.
+        include_hooks: A flag to include all registered hooks in your Kedro Project.
+        extra_params: Optional dictionary containing extra project parameters
+            for underlying KedroContext. If specified, will update (and therefore
+            take precedence over) the parameters retrieved from the project
+            configuration.
+        is_lite: A flag to run Kedro-Viz in lite mode.
+    Returns:
+        A tuple containing the data catalog, pipeline dictionary, session store
+        and dataset stats dictionary.
+    """
 
     with KedroSession.create(
         project_path=project_path,
@@ -132,8 +147,8 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog and the pipeline dictionary
-        and the session store.
+        A tuple containing the data catalog, pipeline dictionary, session store
+        and dataset stats dictionary.
     """
     if package_name:
         configure_project(package_name)
@@ -144,15 +159,16 @@ def load_data(
     if is_lite:
         lite_parser = LiteParser(package_name)
         unresolved_imports = lite_parser.parse(project_path)
-        mocked_modules: Dict[str, MagicMock] = {}
+        sys_modules_patch = sys.modules.copy()
 
-        if len(unresolved_imports):
+        if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
             for unresolved_module_set in unresolved_imports.values():
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
+            sys_modules_patch.update(mocked_modules)
 
             logger.warning(
                 "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
@@ -161,9 +177,6 @@ def load_data(
                 "please install the missing Kedro project dependencies\n",
                 list(mocked_modules.keys()),
             )
-
-        sys_modules_patch = sys.modules.copy()
-        sys_modules_patch.update(mocked_modules)
 
         # Patch actual sys modules
         with patch.dict("sys.modules", sys_modules_patch):
