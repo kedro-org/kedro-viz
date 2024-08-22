@@ -20,7 +20,7 @@ Kedro-Viz offers a user-friendly visual interface for slicing pipelines. Follow 
    - Click on the first node you want to include.
    - Hold the Shift key and select the second node.
    
-![](./images/slice_pipeline_full_view.gif)
+<img src="./images/slice_pipeline_multiple_click.gif" width="800" height="500">
 
 
 2. **Highlighted selection:** The flowchart will highlight all nodes between the selected elements, and the corresponding nodes in the list on the left will also be highlighted.
@@ -30,3 +30,5 @@ Kedro-Viz offers a user-friendly visual interface for slicing pipelines. Follow 
 4. **Slice the pipeline:** When you're ready, click the "Slice" button. This opens a new view where you can directly interact with the sliced pipeline.
 
 5. **Reset:** To discard your selection and return to the full pipeline view, click the "Reset" button. This will clear the slice and restore the default view.
+
+<img src="./images/slice_pipeline_slice_reset.gif" width="800" height="500">
