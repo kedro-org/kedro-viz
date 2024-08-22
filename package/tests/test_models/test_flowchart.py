@@ -315,7 +315,7 @@ class TestGraphNodeMetadata:
         assert not task_node_metadata.parameters
         assert (
             task_node_metadata.run_command
-            == "kedro run --to-nodes=namespace.identity_node"
+            == "kedro run --to-nodes='namespace.identity_node'"
         )
 
     def test_task_node_metadata_no_namespace(self):
@@ -338,9 +338,9 @@ class TestGraphNodeMetadata:
             Path(__file__).relative_to(Path.cwd().parent).expanduser()
         )
         assert not task_node_metadata.parameters
-        assert task_node_metadata.run_command == "kedro run --to-nodes=identity_node"
+        assert task_node_metadata.run_command == "kedro run --to-nodes='identity_node'"
 
-    def test_task_node_metadata_no_run_command(self):
+    def test_task_node_metadata_no_name(self):
         kedro_node = node(
             identity,
             inputs="x",
@@ -352,7 +352,10 @@ class TestGraphNodeMetadata:
             kedro_node, "identity_node", set(["namespace"])
         )
         task_node_metadata = TaskNodeMetadata(task_node=task_node)
-        assert task_node_metadata.run_command is None
+        assert (
+            task_node_metadata.run_command
+            == f"kedro run --to-nodes='{kedro_node.name}'"
+        )
 
     def test_task_node_metadata_with_decorated_func(self):
         kedro_node = node(
