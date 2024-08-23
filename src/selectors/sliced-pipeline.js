@@ -89,38 +89,7 @@ const sliceTree = (input, startId, endId) => {
   return result;
 };
 
-/**
- * Recursive function to find all linked nodes starting from a given node ID.
- * @param {string} nodeID - The starting node ID.
- * @param {Object} edgesByNode - A map of node IDs to their connected node IDs.
- * @param {Object} visited - A map to keep track of visited nodes.
- * @returns {Object} A map of visited nodes.
- */
-const findLinkedNodes = (nodeID, edgesByNode, visited, names) => {
-  // Check if the current node has not been visited
-  if (!visited[nodeID]) {
-    // Mark the current node as visited
-    visited[nodeID] = true;
-    // If the current node has outgoing edges
-    if (edgesByNode[nodeID]) {
-      // Recursively visit all connected nodes
-      edgesByNode[nodeID].forEach((nodeID) =>
-        findLinkedNodes(nodeID, edgesByNode, visited)
-      );
-    }
-  }
-
-  // Return the map of visited nodes
-  return visited;
-};
-
-const findNodesInBetween = (
-  sourceEdges,
-  targetEdges,
-  startID,
-  endID,
-  names
-) => {
+const findNodesInBetween = (targetEdges, startID, endID) => {
   if (!startID || !endID) {
     return [startID, endID].filter(Boolean);
   }
@@ -154,7 +123,7 @@ const findNodesInBetween = (
 
 export const getSlicedPipeline = createSelector(
   [getEdgesByNode, getFromNodes, getToNodes, getNames],
-  ({ sourceEdges, targetEdges }, startID, endID, names) => {
-    return findNodesInBetween(sourceEdges, targetEdges, startID, endID, names);
+  ({ sourceEdges, targetEdges }, startID, endID) => {
+    return findNodesInBetween(targetEdges, startID, endID);
   }
 );
