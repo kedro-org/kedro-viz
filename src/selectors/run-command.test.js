@@ -1,23 +1,36 @@
-import { mockState } from '../utils/state.mock';
-import reducer from '../reducers';
-
-import { SET_SLICE_PIPELINE } from '../actions/slice';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { getRunCommand } from './run-command';
 
-describe('Selectors', () => {
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+
+describe('Kedro command generation', () => {
   it('should generate a kedro run command with specified from and to nodes', () => {
+    // Define node IDs for from and to nodes
     const fromNodeId = '47b81aa6';
-    const toNodeId = '23c94afb';
+    const toNodeId = '65d0d789';
 
-    const expectedFromNodeName = ['create_model_input_table_node'];
-    const expectedToNodeName = ['model_input_table'];
-    const expectedCommand = `kedro run --from-nodes=${expectedFromNodeName} --to-nodes=${expectedToNodeName}`;
+    const expectedToNodeName = 'data_processing.companies';
+    const expectedCommand = `kedro run --to-outputs=${expectedToNodeName}`;
 
-    const newState = reducer(mockState.spaceflights, {
-      type: SET_SLICE_PIPELINE,
-      slice: { from: fromNodeId, to: toNodeId },
-    });
+    // Initial state with run commands for nodes
+    const initialState = {
+      node: {
+        runCommand: {
+          '65d0d789': 'kedro run --to-outputs=data_processing.companies',
+          '47b81aa6': 'kedro run --to-nodes=create_model_input_table_node',
+        },
+      },
+      slice: {
+        from: fromNodeId,
+        to: toNodeId,
+      },
+    };
 
+    // Create a mock store with the initial state
+    const store = mockStore(initialState);
+    const newState = store.getState();
     const generatedCommand = getRunCommand(newState);
 
     expect(generatedCommand).toEqual(expectedCommand);
