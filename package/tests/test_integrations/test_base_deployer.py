@@ -59,7 +59,7 @@ class TestBaseDeployer:
         mocker.patch("fsspec.filesystem")
         build = ConcreteBaseDeployer()
 
-        mocker.patch("kedro_viz.server.load_and_populate_data")
+        mocker.patch("kedro_viz.load_data.load_and_populate_data")
         mocker.patch.object(build, "_upload_static_files")
         mocker.patch.object(build, "_upload_api_responses")
         mocker.patch.object(build, "_upload_deploy_viz_metadata_file")
