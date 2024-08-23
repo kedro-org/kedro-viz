@@ -9,7 +9,18 @@ describe('Selectors', () => {
     const fromNode = '47b81aa6';
     const toNode = '23c94afb';
 
-    const expected = ['23c94afb', '47b81aa6', 'data_processing'];
+    const expected = [
+      '23c94afb',
+      '47b81aa6',
+      'daf35ba0',
+      'c09084f2',
+      '0abef172',
+      'e5a9ec27',
+      'b7bb7198',
+      'f192326a',
+      '90ebe5f3',
+      'data_processing',
+    ];
     const newState = reducer(mockState.spaceflights, {
       type: SET_SLICE_PIPELINE,
       slice: { from: fromNode, to: toNode },
@@ -19,7 +30,7 @@ describe('Selectors', () => {
     expect(res).toEqual(expected);
   });
 
-  it('return only fromNode and toNode if they are not connected', () => {
+  it('return empty if they are not connected', () => {
     const fromNode = '47b81aa6';
     const toNode = 'f1f1425b';
 
@@ -29,6 +40,6 @@ describe('Selectors', () => {
     });
 
     const res = getSlicedPipeline(newState);
-    expect(res).toEqual([fromNode, toNode]);
+    expect(res).toEqual([]);
   });
 });
