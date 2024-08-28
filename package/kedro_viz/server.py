@@ -73,6 +73,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
+# pylint: disable=too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -111,10 +112,10 @@ def run_server(
     # Importing below dependencies inside `run_server` to avoid ImportError
     # when calling `load_and_populate_data` from VSCode
 
-    import fsspec
-    import uvicorn
+    import fsspec  # pylint: disable=C0415
+    import uvicorn  # pylint: disable=C0415
 
-    from kedro_viz.api import apps
+    from kedro_viz.api import apps  # pylint: disable=C0415
 
     path = Path(project_path) if project_path else Path.cwd()
 
