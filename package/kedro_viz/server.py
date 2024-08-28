@@ -108,12 +108,11 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
-    # Importing below dependencies inside `run_server` to avoid ImportError when calling `load_and_populate_data` from VSCode
-    import multiprocessing
+    # Importing below dependencies inside `run_server` to avoid ImportError
+    # when calling `load_and_populate_data` from VSCode
 
     import fsspec
     import uvicorn
-    from watchgod import RegExpWatcher, run_process
 
     from kedro_viz.api import apps
 
@@ -145,6 +144,9 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+    import multiprocessing
+
+    from watchgod import RegExpWatcher, run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
