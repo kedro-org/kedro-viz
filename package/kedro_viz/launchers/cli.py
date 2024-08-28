@@ -30,7 +30,7 @@ from kedro_viz.launchers.utils import (
     _wait_for,
     viz_deploy_progress_timer,
 )
-from kedro_viz.load_data import load_and_populate_data
+from kedro_viz.server import load_and_populate_data
 
 try:
     from azure.core.exceptions import ServiceRequestError
