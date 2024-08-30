@@ -639,7 +639,7 @@ class TestNodeMetadataEndpoint:
         assert metadata["outputs"] == ["model_inputs"]
         assert (
             metadata["run_command"]
-            == "kedro run --to-nodes=uk.data_processing.process_data"
+            == "kedro run --to-nodes='uk.data_processing.process_data'"
         )
         assert str(Path("package/tests/conftest.py")) in metadata["filepath"]
 

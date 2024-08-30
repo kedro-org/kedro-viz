@@ -36,7 +36,7 @@ azure = ["adlfs>=2021.4"]
 gcp = ["gcsfs>=2021.4"]
 
 [project.entry-points."kedro.global_commands"]
-kedro-viz = "kedro_viz.launchers.cli:viz_cli"
+kedro-viz = "kedro_viz.launchers.cli.main:viz_cli"
 
 [project.entry-points."kedro.line_magic"]
 line_magic = "kedro_viz.launchers.jupyter:run_viz"
