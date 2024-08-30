@@ -7,9 +7,14 @@ Please follow the established format:
 -->
 # Upcoming Release
 
+## Major features and improvements
+
+- Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
+
 ## Bug fixes and other changes
 
 - Fixes design issues in metadata panel. (#2009)
+- Fix missing run command in metadata panel for task nodes. (#2055)
 
 # Release 9.2.0
 
