@@ -683,15 +683,37 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            preview_args = cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
-            preview_data = cls.dataset.preview(**preview_args) if preview_args else cls.dataset.preview()
+            preview_data = cls.dataset.preview()
+            preview_type = cls.data_node.viz_metadata.get("preview_type")
 
-            # Ensure the data is in the correct format
-            if isinstance(preview_data, dict) and 'data' in preview_data and 'columns' in preview_data:
-                return preview_data
-            else:
-                logger.warning(f"Preview data for {cls.data_node.name} is not in the expected format.")
-                return None
+            # Validate the format based on the preview type
+            if preview_type == "TablePreview":
+                if not isinstance(preview_data, dict) or not all(
+                        key in preview_data for key in ['index', 'columns', 'data']):
+                    logger.warning(
+                        f"Preview data for {cls.data_node.name} is not in the expected format for TablePreview.")
+                    return None
+
+            elif preview_type == "ImagePreview":
+                if not isinstance(preview_data, str):  # Image should be a base64 string
+                    logger.warning(
+                        f"Preview data for {cls.data_node.name} is not in the expected format for ImagePreview.")
+                    return None
+
+            elif preview_type == "JSONPreview":
+                if not isinstance(preview_data, dict):  # JSON should be a dictionary
+                    logger.warning(
+                        f"Preview data for {cls.data_node.name} is not in the expected format for JSONPreview.")
+                    return None
+
+            elif preview_type == "PlotlyPreview":
+                if not isinstance(preview_data, dict) or not all(key in preview_data for key in ['data', 'layout']):
+                    logger.warning(
+                        f"Preview data for {cls.data_node.name} is not in the expected format for PlotlyPreview.")
+                    return None
+
+            return preview_data
+
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
