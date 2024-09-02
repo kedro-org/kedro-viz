@@ -48,6 +48,7 @@ describe('SettingsModal', () => {
       flags: expect.any(Object),
       isPrettyName: expect.any(Boolean),
       showFeatureHints: expect.any(Boolean),
+      showDatasetPreviews: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
@@ -72,6 +73,12 @@ describe('SettingsModal', () => {
     expect(dispatch.mock.calls[2][0]).toEqual({
       type: 'TOGGLE_IS_PRETTY_NAME',
       isPrettyName: false,
+    });
+
+    mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(true);
+    expect(dispatch.mock.calls[3][0]).toEqual({
+      type: 'TOGGLE_SHOW_DATASET_PREVIEWS',
+      showDatasetPreviews: true,
     });
   });
 });
