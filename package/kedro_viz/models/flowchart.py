@@ -674,6 +674,7 @@ class DataNodeMetadata(GraphNodeMetadata):
 
     @field_validator("preview")
     @classmethod
+    # pylint: disable=too-many-return-statements
     def set_preview(cls, _):
         if (
             not cls.data_node.is_preview_enabled()
@@ -692,21 +693,24 @@ class DataNodeMetadata(GraphNodeMetadata):
                     key in preview_data for key in ["index", "columns", "data"]
                 ):
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for TablePreview."
+                        "Preview data for '%s' is not in the expected format for TablePreview.",
+                        cls.data_node.name,
                     )
                     return None
 
             elif preview_type == "ImagePreview":
                 if not isinstance(preview_data, str):  # Image should be a base64 string
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for ImagePreview."
+                        "Preview data for '%s' is not in the expected format for ImagePreview.",
+                        cls.data_node.name,
                     )
                     return None
 
             elif preview_type == "JSONPreview":
                 if not isinstance(preview_data, dict):  # JSON should be a dictionary
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for JSONPreview."
+                        "Preview data for '%s' is not in the expected format for JSONPreview.",
+                        cls.data_node.name,
                     )
                     return None
 
@@ -715,7 +719,8 @@ class DataNodeMetadata(GraphNodeMetadata):
                     key in preview_data for key in ["data", "layout"]
                 ):
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for PlotlyPreview."
+                        "Preview data for '%s' is not in the expected format for PlotlyPreview.",
+                        cls.data_node.name,
                     )
                     return None
 
