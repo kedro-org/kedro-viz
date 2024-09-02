@@ -40,6 +40,7 @@ const MetaData = ({
   theme,
   visible = true,
   visibleCode,
+  showDatasetPreviews,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
   const { toExperimentTrackingPath, toMetricsViewPath } =
@@ -266,7 +267,7 @@ const MetaData = ({
                   </>
                 )}
               </dl>
-              {hasPlot && (
+              {hasPlot && showDatasetPreviews && (
                 <>
                   <div
                     className="pipeline-metadata__plot"
@@ -289,7 +290,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasImage && (
+              {hasImage && showDatasetPreviews && (
                 <>
                   <div
                     className="pipeline-metadata__plot"
@@ -329,7 +330,7 @@ const MetaData = ({
                     </button>
                   )
                 : null}
-              {hasTablePreview && (
+              {hasTablePreview && showDatasetPreviews && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <div className="scrollable-container">
@@ -353,7 +354,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasJSONPreview && (
+              {hasJSONPreview && showDatasetPreviews && (
                 <>
                   <div className="pipeline-metadata__preview-json">
                     <div className="scrollable-container">
@@ -392,6 +393,7 @@ export const mapStateToProps = (state, ownProps) => ({
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
+  showDatasetPreviews: state.showDatasetPreviews,
   ...ownProps,
 });
 
