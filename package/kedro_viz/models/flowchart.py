@@ -689,27 +689,34 @@ class DataNodeMetadata(GraphNodeMetadata):
             # Validate the format based on the preview type
             if preview_type == "TablePreview":
                 if not isinstance(preview_data, dict) or not all(
-                        key in preview_data for key in ['index', 'columns', 'data']):
+                    key in preview_data for key in ["index", "columns", "data"]
+                ):
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for TablePreview.")
+                        f"Preview data for {cls.data_node.name} is not in the expected format for TablePreview."
+                    )
                     return None
 
             elif preview_type == "ImagePreview":
                 if not isinstance(preview_data, str):  # Image should be a base64 string
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for ImagePreview.")
+                        f"Preview data for {cls.data_node.name} is not in the expected format for ImagePreview."
+                    )
                     return None
 
             elif preview_type == "JSONPreview":
                 if not isinstance(preview_data, dict):  # JSON should be a dictionary
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for JSONPreview.")
+                        f"Preview data for {cls.data_node.name} is not in the expected format for JSONPreview."
+                    )
                     return None
 
             elif preview_type == "PlotlyPreview":
-                if not isinstance(preview_data, dict) or not all(key in preview_data for key in ['data', 'layout']):
+                if not isinstance(preview_data, dict) or not all(
+                    key in preview_data for key in ["data", "layout"]
+                ):
                     logger.warning(
-                        f"Preview data for {cls.data_node.name} is not in the expected format for PlotlyPreview.")
+                        f"Preview data for {cls.data_node.name} is not in the expected format for PlotlyPreview."
+                    )
                     return None
 
             return preview_data
