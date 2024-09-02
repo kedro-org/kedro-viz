@@ -683,13 +683,15 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            preview_args = (
-                cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
-            )
-            if preview_args is None:
-                return cls.dataset.preview()
-            return cls.dataset.preview(**preview_args)
+            preview_args = cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
+            preview_data = cls.dataset.preview(**preview_args) if preview_args else cls.dataset.preview()
 
+            # Ensure the data is in the correct format
+            if isinstance(preview_data, dict) and 'data' in preview_data and 'columns' in preview_data:
+                return preview_data
+            else:
+                logger.warning(f"Preview data for {cls.data_node.name} is not in the expected format.")
+                return None
         except Exception as exc:  # pylint: disable=broad-except
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
