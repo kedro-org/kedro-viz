@@ -57,6 +57,7 @@ export const createInitialState = () => ({
   },
   zoom: {},
   runsMetadata: {},
+  disableSlicing: false,
 });
 
 const parseUrlParameters = () => {

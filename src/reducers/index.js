@@ -88,6 +88,7 @@ const combinedReducer = combineReducers({
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
+  disableSlicing: createReducer(null),
   edge: createReducer({}),
   // These props have very simple non-nested actions
   chartSize: createReducer({}, UPDATE_CHART_SIZE, 'chartSize'),
