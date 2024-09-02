@@ -684,8 +684,20 @@ class DataNodeMetadata(GraphNodeMetadata):
             return None
 
         try:
-            preview_data = cls.dataset.preview()
-            preview_type = cls.data_node.viz_metadata.get("preview_type")
+            preview_args = (
+                cls.data_node.get_preview_args() if cls.data_node.viz_metadata else None
+            )
+
+            # Generate preview data with or without preview_args
+            if preview_args:
+                preview_data = cls.dataset.preview(**preview_args)
+            else:
+                preview_data = cls.dataset.preview()
+
+            # Determine the preview type
+            preview_type = (
+                cls.data_node.viz_metadata.get("preview_type") if cls.data_node.viz_metadata else None
+            )
 
             # Validate the format based on the preview type
             if preview_type == "TablePreview":
