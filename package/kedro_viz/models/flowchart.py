@@ -696,7 +696,9 @@ class DataNodeMetadata(GraphNodeMetadata):
 
             # Determine the preview type
             preview_type = (
-                cls.data_node.viz_metadata.get("preview_type") if cls.data_node.viz_metadata else None
+                cls.data_node.viz_metadata.get("preview_type")
+                if cls.data_node.viz_metadata
+                else None
             )
 
             # Validate the format based on the preview type
