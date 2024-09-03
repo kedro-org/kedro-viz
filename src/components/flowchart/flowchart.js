@@ -794,7 +794,7 @@ export class FlowChart extends Component {
       visibleSidebar,
       clickedNode,
       modularPipelineIds,
-      isSlicingDisable,
+      isSlicingDisabled,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const { showSlicingNotification } = this.state;
@@ -864,7 +864,7 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-        {showSlicingNotification && !isSlicingDisable && (
+        {showSlicingNotification && !isSlicingDisabled && (
           <SlicedPipelineNotification
             notification={
               'Hold Shift + Click on another node to slice pipeline'
@@ -940,7 +940,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   slicedPipeline: getSlicedPipeline(state),
   isSlicingPipelineApplied: state.slice.apply,
-  isSlicingDisable: state.disableSlicing,
+  isSlicingDisabled: state.disableSlicing,
   runCommand: getRunCommand(state),
   ...ownProps,
 });
