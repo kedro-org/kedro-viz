@@ -2,6 +2,7 @@
 
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
+import json
 import logging
 from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
@@ -400,15 +401,40 @@ def get_package_compatibilities_response(
     return package_requirements_response
 
 
-def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
-    """Encodes, enhances responses and writes it to a file"""
+def get_encoded_response(response: Any) -> bytes:
+    """Encodes and enhances the default response using human-readable format."""
     jsonable_response = jsonable_encoder(response)
     encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
         jsonable_response
     )
 
+    return encoded_response
+
+
+def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
+    """Get encoded responses and writes it to a file"""
+    encoded_response = get_encoded_response(response)
+
     with remote_fs.open(file_path, "wb") as file:
         file.write(encoded_response)
+
+
+def get_kedro_project_json_data():
+    """Decodes the default response and returns the Kedro project JSON data.
+    This will be used in VSCode extension to get current Kedro project data."""
+    encoded_response = get_encoded_response(get_default_response())
+
+    try:
+        response_str = encoded_response.decode("utf-8")
+        json_data = json.loads(response_str)
+    except UnicodeDecodeError as exc:  # pragma: no cover
+        json_data = None
+        logger.error("Failed to decode response string. Error: %s", str(exc))
+    except json.JSONDecodeError as exc:  # pragma: no cover
+        json_data = None
+        logger.error("Failed to parse JSON data. Error: %s", str(exc))
+
+    return json_data
 
 
 def save_api_main_response_to_fs(main_path: str, remote_fs: Any):

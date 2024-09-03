@@ -1,18 +1,13 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
-import multiprocessing
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import fsspec
-import uvicorn
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-from watchgod import RegExpWatcher, run_process
 
-from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
@@ -78,6 +73,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
+# pylint: disable=too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -113,6 +109,13 @@ def run_server(
             take precedence over) the parameters retrieved from the project
             configuration.
     """
+    # Importing below dependencies inside `run_server` to avoid ImportError
+    # when calling `load_and_populate_data` from VSCode
+
+    import fsspec  # pylint: disable=C0415
+    import uvicorn  # pylint: disable=C0415
+
+    from kedro_viz.api import apps  # pylint: disable=C0415
 
     path = Path(project_path) if project_path else Path.cwd()
 
@@ -142,6 +145,9 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+    import multiprocessing
+
+    from watchgod import RegExpWatcher, run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
