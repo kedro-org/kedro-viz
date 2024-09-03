@@ -43,6 +43,7 @@ export const createInitialState = () => ({
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
+    slicing: true,
   },
   display: {
     globalNavigation: true,
@@ -57,7 +58,6 @@ export const createInitialState = () => ({
   },
   zoom: {},
   runsMetadata: {},
-  disableSlicing: false,
 });
 
 const parseUrlParameters = () => {
