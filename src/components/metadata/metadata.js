@@ -58,7 +58,7 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPreview = metadata?.preview;
+  const hasPreview = showDatasetPreviews && metadata?.preview;
   const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
   const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
@@ -267,7 +267,7 @@ const MetaData = ({
                   </>
                 )}
               </dl>
-              {hasPlot && showDatasetPreviews && (
+              {hasPlot && (
                 <>
                   <div
                     className="pipeline-metadata__plot"
@@ -290,7 +290,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasImage && showDatasetPreviews && (
+              {hasImage && (
                 <>
                   <div
                     className="pipeline-metadata__plot"
@@ -330,7 +330,7 @@ const MetaData = ({
                     </button>
                   )
                 : null}
-              {hasTablePreview && showDatasetPreviews && (
+              {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
                     <div className="scrollable-container">
@@ -354,7 +354,7 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {hasJSONPreview && showDatasetPreviews && (
+              {hasJSONPreview && (
                 <>
                   <div className="pipeline-metadata__preview-json">
                     <div className="scrollable-container">
