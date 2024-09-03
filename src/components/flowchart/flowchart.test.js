@@ -491,6 +491,7 @@ describe('FlowChart', () => {
       isSlicingPipelineApplied: expect.any(Boolean),
       runCommand: expect.any(Object),
       modularPipelineIds: expect.any(Object),
+      visibleSlicing: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
