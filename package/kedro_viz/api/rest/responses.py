@@ -22,6 +22,13 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNodeMetadata,
 )
 
+# Dynamically import FastAPI modules when needed
+try:
+    from fastapi.responses import JSONResponse
+    fastapi_available = True
+except ImportError:
+    fastapi_available = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -271,14 +278,25 @@ class PackageCompatibilityAPIResponse(BaseAPIResponse):
     )
 
 
-def encode_response_to_json(response: Any) -> bytes:
+def encode_response_to_json(response: Any):
     """Encode the given response to JSON using orjson."""
+    if isinstance(response, JSONResponse):
+        return response.body
+    response = response.model_dump()
     return orjson.dumps(
         response,
         option=orjson.OPT_INDENT_2
         | orjson.OPT_NON_STR_KEYS
         | orjson.OPT_SERIALIZE_NUMPY,
     )
+
+
+def create_response(content: Any, status_code: int = 200):
+    """Custom response creation function."""
+    if fastapi_available:
+        return JSONResponse(content=content, status_code=status_code)
+    return encode_response_to_json(content)
+
 
 def get_default_response() -> GraphAPIResponse:
     """Default response for /api/main."""
@@ -313,10 +331,10 @@ def get_node_metadata_response(node_id: str):
     """API response for `/api/nodes/node_id`."""
     node = data_access_manager.nodes.get_node_by_id(node_id)
     if not node:
-        return encode_response_to_json({"message": "Invalid node ID"})  # Status code handling needs to be manual
+        return create_response({"message": "Invalid node ID"}, status_code=404)
 
     if not node.has_metadata():
-        return encode_response_to_json({})
+        return create_response({})
 
     if isinstance(node, TaskNode):
         return TaskNodeMetadata(task_node=node)
@@ -335,7 +353,7 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     if not data_access_manager.registered_pipelines.has_pipeline(
         registered_pipeline_id
     ):
-        return encode_response_to_json({"message": "Invalid pipeline ID"})
+        return create_response({"message": "Invalid pipeline ID"}, status_code=404)
 
     modular_pipelines_tree = (
         data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
@@ -363,7 +381,7 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
 def get_package_compatibilities_response(
     package_requirements: Dict[str, Dict[str, str]],
 ) -> List[PackageCompatibilityAPIResponse]:
-    """API response for /api/package_compatibility."""
+    """API response for `/api/package_compatibility`."""
     package_requirements_response = []
 
     for package_name, package_info in package_requirements.items():
@@ -399,8 +417,7 @@ def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
 def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
     """Saves API /main response to a directory."""
     try:
-        response = get_default_response()
-        write_api_response_to_fs(main_path, response.model_dump(), remote_fs)
+        write_api_response_to_fs(main_path, get_default_response(), remote_fs)
     except Exception as exc:  # pragma: no cover
         logger.exception("Failed to save default response. Error: %s", str(exc))
         raise exc
