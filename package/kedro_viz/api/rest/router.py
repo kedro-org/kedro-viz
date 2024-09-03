@@ -99,7 +99,7 @@ async def get_package_compatibilities():
         return get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
     except Exception as exc:
         logger.exception(
-            "An exception occured while getting package compatibility info : %s", exc
+            "An exception occurred while getting package compatibility info : %s", exc
         )
         return JSONResponse(
             status_code=500,

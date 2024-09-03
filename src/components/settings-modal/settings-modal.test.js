@@ -75,10 +75,10 @@ describe('SettingsModal', () => {
       isPrettyName: false,
     });
 
-    mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(true);
+    mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(false);
     expect(dispatch.mock.calls[3][0]).toEqual({
       type: 'TOGGLE_SHOW_DATASET_PREVIEWS',
-      showDatasetPreviews: true,
+      showDatasetPreviews: false,
     });
   });
 });
