@@ -14,7 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse
+from kedro_viz.api.rest.responses import encode_response_to_json
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router
@@ -32,8 +32,7 @@ def _create_base_api_app() -> FastAPI:
     app = FastAPI(
         title="Kedro-Viz API",
         description="REST API for Kedro-Viz",
-        version=__version__,
-        default_response_class=EnhancedORJSONResponse,
+        version=__version__
     )
 
     if os.getenv("ADD_SECURITY_HEADERS", "").lower() == "true":  # pragma: no cover
@@ -131,26 +130,31 @@ def create_api_app_from_file(api_dir: str) -> FastAPI:
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
         return HTMLResponse(html_content)
 
-    @app.get("/api/main", response_class=JSONResponse)
+    @app.get("/api/main")
     async def main():
-        return json.loads((Path(api_dir) / "main").read_text(encoding="utf8"))
+        data = json.loads((Path(api_dir) / "main").read_text(encoding="utf8"))
+        return Response(content=encode_response_to_json(data), media_type="application/json")
 
-    @app.get("/api/nodes/{node_id}", response_class=JSONResponse)
+    @app.get("/api/nodes/{node_id}")
     async def get_node_metadata(node_id):
-        return json.loads(  # pragma: no cover
+        data = json.loads(  # pragma: no cover
             (Path(api_dir) / "nodes" / node_id).read_text(encoding="utf8")
         )
+        return Response(content=encode_response_to_json(data), media_type="application/json")
 
-    @app.get("/api/pipelines/{pipeline_id}", response_class=JSONResponse)
+
+    @app.get("/api/pipelines/{pipeline_id}")
     async def get_registered_pipeline(pipeline_id):
-        return json.loads(  # pragma: no cover
+        data = json.loads(  # pragma: no cover
             (Path(api_dir) / "pipelines" / pipeline_id).read_text(encoding="utf8")
         )
+        return Response(content=encode_response_to_json(data), media_type="application/json")
 
-    @app.get("/api/deploy-viz-metadata", response_class=JSONResponse)
+    @app.get("/api/deploy-viz-metadata")
     async def get_deployed_viz_metadata():
-        return json.loads(  # pragma: no cover
+        data = json.loads(  # pragma: no cover
             (Path(api_dir) / "deploy-viz-metadata").read_text(encoding="utf8")
         )
-
+        return Response(content=encode_response_to_json(data), media_type="application/json")
+        
     return app
