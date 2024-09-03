@@ -53,6 +53,7 @@ class TestCliRunViz:
                     "include_hooks": False,
                     "package_name": None,
                     "extra_params": {},
+                    "is_lite": False,
                 },
             ),
             (
@@ -69,6 +70,7 @@ class TestCliRunViz:
                     "include_hooks": False,
                     "package_name": None,
                     "extra_params": {},
+                    "is_lite": False,
                 },
             ),
             (
@@ -90,6 +92,7 @@ class TestCliRunViz:
                     "include_hooks": False,
                     "package_name": None,
                     "extra_params": {},
+                    "is_lite": False,
                 },
             ),
             (
@@ -122,6 +125,7 @@ class TestCliRunViz:
                     "include_hooks": False,
                     "package_name": None,
                     "extra_params": {"extra_param": "param"},
+                    "is_lite": False,
                 },
             ),
             (
@@ -154,6 +158,7 @@ class TestCliRunViz:
                     "include_hooks": False,
                     "package_name": None,
                     "extra_params": {"extra_param": "param"},
+                    "is_lite": False,
                 },
             ),
             (
@@ -170,6 +175,24 @@ class TestCliRunViz:
                     "include_hooks": True,
                     "package_name": None,
                     "extra_params": {},
+                    "is_lite": False,
+                },
+            ),
+            (
+                ["viz", "run", "--lite"],
+                {
+                    "host": "127.0.0.1",
+                    "port": 4141,
+                    "load_file": None,
+                    "save_file": None,
+                    "pipeline_name": None,
+                    "env": None,
+                    "project_path": "testPath",
+                    "autoreload": False,
+                    "include_hooks": False,
+                    "package_name": None,
+                    "extra_params": {},
+                    "is_lite": True,
                 },
             ),
         ],
@@ -349,6 +372,7 @@ class TestCliRunViz:
                 "include_hooks": False,
                 "package_name": None,
                 "extra_params": {},
+                "is_lite": False,
             },
             "watcher_cls": RegExpWatcher,
             "watcher_kwargs": {"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
