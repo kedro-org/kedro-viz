@@ -11,7 +11,14 @@ PlotlyPreview = NewType("PlotlyPreview", dict)
 JSONPreview = NewType("JSONPreview", dict)
 ```
 
-Arbitrary arguments can be included in the `preview()` function, which can be later specified in the `catalog.yml` file.
+## TablePreview
+For `TablePreview`, the returned dictionary must contain the following keys:
+
+`index`: A list of row indices.
+`columns`: A list of column names.
+`data`: A list of rows, where each row is itself a list of values.
+
+Arbitrary arguments can be included in the `preview()` function, which can be later specified in the `catalog.yml` file. Ensure that these arguments (like `nrows`, `ncolumns`, and `filters`) match the structure of your dataset.
 
 Below is an example demonstrating how to implement the `preview()` function with user-specified arguments for a `CustomDataset` class that utilizes `TablePreview` to enable previewing tabular data on Kedro-Viz:
 
@@ -36,15 +43,16 @@ from kedro_datasets._typing import TablePreview
 
 class CustomDataset:
   def preview(self, nrows, ncolumns, filters) -> TablePreview:
-    filtered_data = self.data
+    data = self.load()
     for column, value in filters.items():
-        filtered_data = filtered_data[filtered_data[column] == value]
-    subset = filtered_data.iloc[:nrows, :ncolumns]
-    df_dict = {}
-    for column in subset.columns:
-        df_dict[column] = subset[column]
-    return df_dict
-    
+        data = data[data[column] == value]
+    subset = data.iloc[:nrows, :ncolumns]
+    preview_data = {
+        'index': list(subset.index),  # List of row indices
+        'columns': list(subset.columns),  # List of column names
+        'data': subset.values.tolist()  # List of rows, where each row is a list of values
+    }
+    return preview_data
 ```
 
 
