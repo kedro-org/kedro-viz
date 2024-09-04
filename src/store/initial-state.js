@@ -59,7 +59,7 @@ export const createInitialState = () => ({
   runsMetadata: {},
 });
 
-const parseUrlParameters = () => {
+export const parseUrlParameters = () => {
   const search = new URLSearchParams(window.location.search);
   return {
     pipelineIdFromURL: search.get(params.pipeline),
@@ -97,7 +97,7 @@ const applyUrlParametersToPipelineState = (state, urlParams) => {
   const nodeTypes = ['parameters', 'task', 'data'];
 
   // Use main pipeline if pipeline from URL isn't recognised
-  if (!newState.pipeline.active && pipelineIdFromURL) {
+  if (pipelineIdFromURL) {
     newState.pipeline.active = newState.pipeline.ids.includes(pipelineIdFromURL)
       ? pipelineIdFromURL
       : newState.pipeline.main;
@@ -252,7 +252,6 @@ const getInitialState = (props = {}) => {
     props.data,
     props.data !== 'json',
     expandAllPipelines,
-    urlParams
   );
 
   const initialState = {
