@@ -40,6 +40,7 @@ const MetaData = ({
   theme,
   visible = true,
   visibleCode,
+  showDatasetPreviews,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
   const { toExperimentTrackingPath, toMetricsViewPath } =
@@ -57,7 +58,7 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPreview = metadata?.preview;
+  const hasPreview = showDatasetPreviews && metadata?.preview;
   const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
   const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
@@ -392,6 +393,7 @@ export const mapStateToProps = (state, ownProps) => ({
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
+  showDatasetPreviews: state.showDatasetPreviews,
   ...ownProps,
 });
 
