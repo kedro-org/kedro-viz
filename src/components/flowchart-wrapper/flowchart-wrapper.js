@@ -95,7 +95,6 @@ export const FlowChartWrapper = ({
    */
   const setParamsFromLocalStorage = (activePipeline) => {
     const localStorageParams = loadLocalStorage(localStorageName);
-
     if (localStorageParams) {
       const paramActions = {
         pipeline: (value) => {
@@ -238,11 +237,8 @@ export const FlowChartWrapper = ({
    */
   useEffect(() => {
     const isGraphEmpty = Object.keys(graph).length === 0;
-    const navigationEntries = performance.getEntriesByType('navigation');
-    const isPageRefreshed = navigationEntries.length && navigationEntries[0].type === 'reload';
-
     if (
-      (graphRef.current === null || usedNavigationBtn || isInvalidUrl || isPageRefreshed) &&
+      (graphRef.current === null || usedNavigationBtn || isInvalidUrl) &&
       !isGraphEmpty
     ) {
       if (matchedFlowchartMainPage) {
