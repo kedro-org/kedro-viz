@@ -55,7 +55,7 @@ export const getEdgesByNode = createSelector([getEdges], (edges) => {
  * @param {Object} visited - A map to keep track of visited nodes.
  * @returns {Object} A map of visited nodes.
  */
-const findLinkedNodes = (nodeID, edgesByNode, visited, names) => {
+const findLinkedNodes = (nodeID, edgesByNode, visited) => {
   // Check if the current node has not been visited
   if (!visited[nodeID]) {
     // Mark the current node as visited
