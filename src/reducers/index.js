@@ -23,8 +23,8 @@ import {
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
+  TOGGLE_SHOW_DATASET_PREVIEWS
 } from '../actions';
-import userPreferences from './preferences';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
 /**
@@ -82,7 +82,6 @@ const combinedReducer = combineReducers({
   modularPipeline,
   visible,
   runsMetadata,
-  userPreferences,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
@@ -118,6 +117,12 @@ const combinedReducer = combineReducers({
     TOGGLE_EXPAND_ALL_PIPELINES,
     'shouldExpandAllPipelines'
   ),
+  showDatasetPreviews: createReducer(
+    true,
+    TOGGLE_SHOW_DATASET_PREVIEWS,
+    'showDatasetPreviews'
+),
+
 });
 
 const rootReducer = (state, action) => {
