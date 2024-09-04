@@ -212,13 +212,17 @@ const TreeListProvider = ({
     }
 
     const isModularPipelineCollapsed = !expanded.includes(node.id);
+    // Highlight modular pipeline if any child node of the current modular pipeline is part of the slicedPipeline and the modular pipeline is collapsed
+    const highlight =
+      node.children.some((child) => slicedPipeline.includes(child.id)) &&
+      isModularPipelineCollapsed;
 
     const data = getModularPipelineRowData({
       ...node,
       focusModeIcon,
       disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
       focused: isFocusedModularPipeline,
-      highlight: slicedPipeline.includes(node.id) && isModularPipelineCollapsed,
+      highlight,
     });
 
     return (
