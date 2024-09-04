@@ -238,9 +238,11 @@ export const FlowChartWrapper = ({
    */
   useEffect(() => {
     const isGraphEmpty = Object.keys(graph).length === 0;
+    const navigationEntries = performance.getEntriesByType('navigation');
+    const isPageRefreshed = navigationEntries.length && navigationEntries[0].type === 'reload';
 
     if (
-      (graphRef.current === null || usedNavigationBtn || isInvalidUrl) &&
+      (graphRef.current === null || usedNavigationBtn || isInvalidUrl || isPageRefreshed) &&
       !isGraphEmpty
     ) {
       if (matchedFlowchartMainPage) {
