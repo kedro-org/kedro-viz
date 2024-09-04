@@ -97,7 +97,7 @@ const applyUrlParametersToPipelineState = (state, urlParams) => {
   const nodeTypes = ['parameters', 'task', 'data'];
 
   // Use main pipeline if pipeline from URL isn't recognised
-  if (pipelineIdFromURL) {
+  if (!newState.pipeline.active && pipelineIdFromURL) {
     newState.pipeline.active = newState.pipeline.ids.includes(pipelineIdFromURL)
       ? pipelineIdFromURL
       : newState.pipeline.main;
