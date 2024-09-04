@@ -20,7 +20,8 @@ jobs:
           (
             (
               github.ref == 'refs/heads/main' || 
-              github.ref == 'refs/heads/demo'
+              github.ref == 'refs/heads/demo' ||
+              github.ref == 'refs/heads/fix/lite-win'
             ) && 
             inputs.os == 'windows-latest'
           )
