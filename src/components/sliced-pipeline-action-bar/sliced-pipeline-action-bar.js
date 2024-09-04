@@ -57,7 +57,7 @@ export const SlicedPipelineActionBar = React.forwardRef((props, ref) => {
   const slicePipelineActionBarWidth =
     ref.current && ref.current.firstChild.getBoundingClientRect().width;
   const metaDataPanelWidth = displayMetadataPanel
-    ? metaSidebarWidth.open + transitionMargin
+    ? metaSidebarWidth.open + transitionMargin / 2
     : metaSidebarWidth.open;
   const nodeListWidth = visibleSidebar
     ? sidebarWidth.open - transitionMargin
