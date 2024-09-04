@@ -177,7 +177,7 @@ export const FlowChartWrapper = ({
           (node) => node.id === nodeId && node.type === 'parameters'
         );
 
-      if (hasModularPipeline && !isParameterType) {
+      if (hasModularPipeline && !isParameterType && !expandAllPipelines) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
       onToggleNodeSelected(nodeId);
