@@ -24,7 +24,7 @@ Below is an example demonstrating how to implement the `preview()` function with
 
 ```yaml 
 companies:
-  type: CustomDataset
+  type: CustomTableDataset
   filepath: ${_base_location}/01_raw/companies.csv
   metadata:
     kedro-viz:
@@ -41,7 +41,7 @@ companies:
 
 from kedro_datasets._typing import TablePreview
 
-class CustomDataset:
+class CustomTableDataset:
   def preview(self, nrows, ncolumns, filters) -> TablePreview:
     data = self.load()
     for column, value in filters.items():
@@ -55,6 +55,55 @@ class CustomDataset:
     return preview_data
 ```
 
+## ImagePreview
+For `ImagePreview`, the function should return a base64-encoded string representing the image. This is typically used for datasets that output visual data such as plots or images.
+
+Below is an example implementation:
+
+```python
+
+from kedro_datasets._typing import ImagePreview
+
+class CustomImageDataset:
+  def preview(self) -> ImagePreview:
+    image_path = self._get_image_path()
+    with open(image_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+    return ImagePreview(encoded_string)
+```
+
+## PlotlyPreview
+For `PlotlyPreview`, the function should return a dictionary containing Plotly figure data. This includes the figure's `data` and `layout` keys.
+
+Below is an example implementation:
+
+```python
+
+from kedro_datasets._typing import PlotlyPreview
+
+class CustomPlotlyDataset:
+  def preview(self) -> PlotlyPreview:
+    figure = self._load_plotly_figure()
+    return PlotlyPreview({
+        "data": figure["data"],
+        "layout": figure["layout"]
+    })
+```
+
+## JSONPreview
+For `JSONPreview`, the function should return a dictionary representing the `JSON` data. This is useful for previewing complex nested data structures.
+
+Below is an example implementation:
+
+```python
+
+from kedro_datasets._typing import JSONPreview
+
+class CustomJSONDataset:
+  def preview(self) -> JSONPreview:
+    json_data = self._load_json_data()
+    return JSONPreview(json.dumps(json_data))
+```
 
 ## Examples of Previews
 
