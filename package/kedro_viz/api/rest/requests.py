@@ -10,9 +10,3 @@ class DeployerConfiguration(BaseModel):
     is_all_previews_enabled: bool = False
     endpoint: str
     bucket_name: str
-
-
-class UserPreference(BaseModel):
-    """User preferences for Kedro Viz."""
-
-    showDatasetPreviews: bool

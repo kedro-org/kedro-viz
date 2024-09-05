@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+import json
 import logging
 import operator
 from pathlib import Path
@@ -13,6 +14,7 @@ from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import (
     EnhancedORJSONResponse,
     PackageCompatibilityAPIResponse,
+    get_kedro_project_json_data,
     get_package_compatibilities_response,
     save_api_main_response_to_fs,
     save_api_node_response_to_fs,
@@ -963,6 +965,27 @@ class TestEnhancedORJSONResponse:
             write_api_response_to_fs(file_path, response, mockremote_fs)
             mockremote_fs.open.assert_called_once_with(file_path, "wb")
             mock_encode_to_human_readable.assert_called_once()
+
+    def test_get_kedro_project_json_data(self, mocker):
+        expected_json_data = {"key": "value"}
+        encoded_response = json.dumps(expected_json_data).encode("utf-8")
+
+        mock_get_default_response = mocker.patch(
+            "kedro_viz.api.rest.responses.get_default_response",
+            return_value={"key": "value"},
+        )
+        mock_get_encoded_response = mocker.patch(
+            "kedro_viz.api.rest.responses.get_encoded_response",
+            return_value=encoded_response,
+        )
+
+        json_data = get_kedro_project_json_data()
+
+        mock_get_default_response.assert_called_once()
+        mock_get_encoded_response.assert_called_once_with(
+            mock_get_default_response.return_value
+        )
+        assert json_data == expected_json_data
 
     def test_save_api_main_response_to_fs(self, mocker):
         expected_default_response = {"test": "json"}
