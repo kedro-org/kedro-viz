@@ -103,7 +103,7 @@ class LiteParser:
             >>> lite_parser_obj._is_relative_import(module_name, project_file_paths)
             True
         """
-        relative_module_path = module_name.replace(".", "/")
+        relative_module_path = str(Path(*module_name.split(".")))
 
         # Check if the relative_module_path
         # is a substring of current project file path
