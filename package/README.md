@@ -158,7 +158,7 @@ Options:
                             keys by '.', example: param_group.param1:value1.
 
   --lite                    An experimental flag to open Kedro-Viz with missing Kedro
-                            project dependencies
+                            project dependencies.
 
   -h, --help                Show this message and exit.
 ```

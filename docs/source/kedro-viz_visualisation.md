@@ -75,7 +75,7 @@ kedro viz run --lite
 
 Some of the known limitations while using `--lite` flag:
 
-* If the datasets are not resolved, they will be defaulted to `MemoryDataset`. 
+* If the datasets are not resolved, they will be defaulted to a custom dataset `UnavailableDataset`. 
 * The flowchart will not show the layers information for the datasets.
 * Experiment Tracking will not work if the pre-requisite of having kedro-datasets version 2.1.0 and above is not met.
 
