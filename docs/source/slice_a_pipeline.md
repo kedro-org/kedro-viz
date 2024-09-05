@@ -4,7 +4,7 @@ Slicing a pipeline in Kedro refers to creating a subset of a pipeline's nodes, w
 
 1. **Programmatically with the Kedro CLI.** This method is suitable for those comfortable with command-line tools. Detailed steps on how to achieve this are available in the kedro documentation: [Slice a Pipeline](https://docs.kedro.org/en/stable/nodes_and_pipelines/slice_a_pipeline.html).
 
-2. **Visually through Kedro-Viz:** This approach allows you to visually choose and slice pipeline nodes, which then generates a run command for executing the slice within your Kedro project.
+2. **Visually through Kedro-Viz:** This approach allows you to visually select and slice pipeline nodes, which then generates a run command for executing the slice within your Kedro project.
 
 ## Benefits of Kedro-Viz slicing
 
