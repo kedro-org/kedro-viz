@@ -703,19 +703,25 @@ class DataNodeMetadata(GraphNodeMetadata):
 
             # Validate the format based on the preview type
             if preview_type == "TablePreview":
-                if not isinstance(preview_data, dict) or not all(
-                    key in preview_data for key in ["index", "columns", "data"]
-                ):
+                if not isinstance(preview_data, dict):
                     logger.warning(
-                        "Preview data for '%s' is not in the expected format for TablePreview.",
+                        "Preview data for '%s' is not a dictionary, expected format for TablePreview.",
                         cls.data_node.name,
+                    )
+                    return None
+                missing_keys = [key for key in ["index", "columns", "data"] if key not in preview_data]
+                if missing_keys:
+                    logger.warning(
+                        "Preview data for '%s' is missing the following keys for TablePreview: %s.",
+                        cls.data_node.name,
+                        missing_keys
                     )
                     return None
 
             elif preview_type == "ImagePreview":
                 if not isinstance(preview_data, str):  # Image should be a base64 string
                     logger.warning(
-                        "Preview data for '%s' is not in the expected format for ImagePreview.",
+                        "Preview data for '%s' is not a valid base64 string for ImagePreview.",
                         cls.data_node.name,
                     )
                     return None
@@ -723,18 +729,24 @@ class DataNodeMetadata(GraphNodeMetadata):
             elif preview_type == "JSONPreview":
                 if not isinstance(preview_data, dict):  # JSON should be a dictionary
                     logger.warning(
-                        "Preview data for '%s' is not in the expected format for JSONPreview.",
+                        "Preview data for '%s' is not a dictionary, expected format for JSONPreview.",
                         cls.data_node.name,
                     )
                     return None
 
             elif preview_type == "PlotlyPreview":
-                if not isinstance(preview_data, dict) or not all(
-                    key in preview_data for key in ["data", "layout"]
-                ):
+                if not isinstance(preview_data, dict):
                     logger.warning(
-                        "Preview data for '%s' is not in the expected format for PlotlyPreview.",
+                        "Preview data for '%s' is not a dictionary, expected format for PlotlyPreview.",
                         cls.data_node.name,
+                    )
+                    return None
+                missing_keys = [key for key in ["data", "layout"] if key not in preview_data]
+                if missing_keys:
+                    logger.warning(
+                        "Preview data for '%s' is missing the following keys for PlotlyPreview: %s.",
+                        cls.data_node.name,
+                        missing_keys
                     )
                     return None
 
