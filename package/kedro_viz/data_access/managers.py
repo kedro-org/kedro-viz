@@ -7,6 +7,8 @@ from typing import Dict, List, Set, Union
 
 import networkx as nx
 from kedro.io import DataCatalog
+from kedro.io.core import DatasetError
+from kedro.io.memory_dataset import MemoryDataset
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 from sqlalchemy.orm import sessionmaker
@@ -316,7 +318,17 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        obj = self.catalog.get_dataset(dataset_name)
+        try:
+            obj = self.catalog.get_dataset(dataset_name)
+        except DatasetError:
+            # This is to handle dataset factory patterns when running
+            # Kedro Viz in lite mode. The `get_dataset` function
+            # of DataCatalog calls AbstractDataset.from_config
+            # which tries to create a Dataset instance from the pattern
+
+            # pylint: disable=abstract-class-instantiated
+            obj = MemoryDataset()  # type: ignore[abstract]
+
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
         (
