@@ -7,7 +7,8 @@ from typing import Any, Optional
 
 from kedro.io.core import AbstractDataset, DatasetError, generate_timestamp
 from kedro.io.data_catalog import DataCatalog, _resolve_credentials
-from kedro.io.memory_dataset import MemoryDataset
+
+from kedro_viz.integrations.utils import UnavailableDataset
 
 
 class DataCatalogLite(DataCatalog):
@@ -54,11 +55,9 @@ class DataCatalogLite(DataCatalog):
                             ds_name, ds_config, load_versions.get(ds_name), save_version
                         )
                     except DatasetError:
-                        # pylint: disable=abstract-class-instantiated
-                        datasets[ds_name] = MemoryDataset()  # type: ignore[abstract]
+                        datasets[ds_name] = UnavailableDataset()
             except KeyError:
-                # pylint: disable=abstract-class-instantiated
-                datasets[ds_name] = MemoryDataset()  # type: ignore[abstract]
+                datasets[ds_name] = UnavailableDataset()
 
         sorted_patterns = cls._sort_patterns(dataset_patterns)
         if sorted_patterns:
