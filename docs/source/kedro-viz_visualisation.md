@@ -248,7 +248,7 @@ To visualize Kedro project using Kedro-Viz in Visual Studio Code, follow these s
 Download Kedro extension from [marketplace](https://marketplace.visualstudio.com/items?itemName=kedro.Kedro) into Visual Studio Code.
 
 2. **Setup Kedro Extension**:
-Follow steps from [how-to-use-kedro-extension](https://github.com/kedro-org/vscode-kedro?tab=readme-ov-file#how-to-use-this-extension)
+Follow steps from [how-to-use-kedro-extension](https://github.com/kedro-org/vscode-kedro)
 
 3. **Open the Command Palette**: 
 Press `Cmd` + `Shift` + `P` (on macOS) or `Ctrl` + `Shift` + `P` (on Windows/Linux).
