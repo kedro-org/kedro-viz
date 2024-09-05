@@ -170,7 +170,7 @@ export const FlowChartWrapper = ({
       const modularPipeline = nodes[nodeId];
       const modularPipelineTree = modularPipelinesTree[modularPipeline];
       const isModularPipelineChild =
-        modularPipelineTree.children.includes(nodeId);
+        modularPipelineTree?.children?.includes(nodeId);
 
       const isParameterType =
         graph.nodes &&
