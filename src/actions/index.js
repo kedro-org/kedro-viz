@@ -141,6 +141,15 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
+export const TOGGLE_SHOW_DATASET_PREVIEWS = 'TOGGLE_SHOW_DATASET_PREVIEWS';
+
+export function toggleShowDatasetPreviews(showDatasetPreviews) {
+  return {
+    type: TOGGLE_SHOW_DATASET_PREVIEWS,
+    showDatasetPreviews,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**
