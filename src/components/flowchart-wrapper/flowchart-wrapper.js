@@ -168,7 +168,9 @@ export const FlowChartWrapper = ({
 
     if (nodeId) {
       const modularPipeline = nodes[nodeId];
-      const hasModularPipeline = modularPipeline?.length > 0;
+      const modularPipelineTree = modularPipelinesTree[modularPipeline];
+      const isModularPipelineChild =
+        modularPipelineTree.children.includes(nodeId);
 
       const isParameterType =
         graph.nodes &&
@@ -176,7 +178,7 @@ export const FlowChartWrapper = ({
           (node) => node.id === nodeId && node.type === 'parameters'
         );
 
-      if (hasModularPipeline && !isParameterType && !expandAllPipelines) {
+      if (isModularPipelineChild && !isParameterType) {
         onToggleModularPipelineExpanded(modularPipeline);
       }
       onToggleNodeSelected(nodeId);
