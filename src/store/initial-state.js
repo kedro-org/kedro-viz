@@ -58,7 +58,7 @@ export const createInitialState = () => ({
   runsMetadata: {},
 });
 
-const parseUrlParameters = () => {
+export const parseUrlParameters = () => {
   const search = new URLSearchParams(window.location.search);
   return {
     pipelineIdFromURL: search.get(params.pipeline),
@@ -251,7 +251,6 @@ const getInitialState = (props = {}) => {
     props.data,
     props.data !== 'json',
     expandAllPipelines,
-    urlParams
   );
 
   const initialState = {

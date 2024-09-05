@@ -91,11 +91,24 @@ def data_catalog_lite_from_config(sane_config):
 
 
 class TestDataCatalogLiteFromConfig:
-    def test_from_sane_config(self, data_catalog_lite_from_config, dummy_dataframe):
+    def test_from_sane_config(
+        self, data_catalog_lite_from_config, dummy_dataframe, sane_config, mocker
+    ):
         """Test populating the data catalog from config"""
         data_catalog_lite_from_config.save("boats", dummy_dataframe)
         reloaded_df = data_catalog_lite_from_config.load("boats")
         assert_frame_equal(reloaded_df, dummy_dataframe)
+
+        # testing error handling
+        mocker.patch(
+            "kedro_viz.integrations.kedro.data_catalog_lite.DataCatalog.__init__",
+            side_effect=[TypeError, None],
+        )
+
+        try:
+            DataCatalogLite.from_config(**sane_config)
+        except TypeError:
+            pytest.fail("TypeError was not handled by from_config method")
 
     def test_config_missing_type(self, sane_config):
         """Check for no error if type attribute is missing for some data set(s)

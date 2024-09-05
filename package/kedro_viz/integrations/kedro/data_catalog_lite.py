@@ -67,10 +67,20 @@ class DataCatalogLite(DataCatalog):
                 last_pattern = sorted_patterns.popitem()
                 user_default = {last_pattern[0]: last_pattern[1]}
 
-        return cls(
-            datasets=datasets,
-            dataset_patterns=sorted_patterns,
-            load_versions=load_versions,
-            save_version=save_version,
-            default_pattern=user_default,
-        )
+        try:
+            return cls(
+                datasets=datasets,
+                dataset_patterns=sorted_patterns,
+                load_versions=load_versions,
+                save_version=save_version,
+                default_pattern=user_default,
+            )
+        except TypeError:
+            # support for Kedro < 0.19.6
+            # DataCatalog does not have default_pattern
+            return cls(
+                datasets=datasets,
+                dataset_patterns=sorted_patterns,
+                load_versions=load_versions,
+                save_version=save_version,
+            )
