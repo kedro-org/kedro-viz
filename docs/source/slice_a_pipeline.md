@@ -16,7 +16,7 @@ Slicing a pipeline in Kedro refers to creating a subset of a pipeline's nodes, w
 
 Kedro-Viz offers a user-friendly visual interface for slicing pipelines. Follow these steps to use the slicing feature:
 
-1. **Select elements in the flowchart:** In Kedro-Viz, choose two elements to set the boundaries for your slice:
+1. **Select elements in the flowchart:** In Kedro-Viz, select two elements to set the boundaries for your slice:
    - Click on the first node you want to include.
    - Hold the Shift key and select the second node.
    
