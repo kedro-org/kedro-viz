@@ -50,5 +50,5 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
     def _exists(self):
         pass
 
-    def _describe(self):
+    def _describe(self) -> dict[str, Any]:
         return {"data": self._data}
