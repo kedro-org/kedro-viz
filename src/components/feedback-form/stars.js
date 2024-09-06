@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import range from 'lodash/range';
+import React from 'react';
 import IconButton from '../ui/icon-button';
 import StarIcon from '../icons/star';
-import { List } from './list';
 
 import './stars.scss';
 

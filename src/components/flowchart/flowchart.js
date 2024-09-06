@@ -47,8 +47,9 @@ import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackForm } from '../feedback-form/feedback-form';
+import {FeedbackButton} from '../feedback-button/feedback-button';
+
 import './styles/flowchart.scss';
-import { Feed } from '@mui/icons-material';
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -66,6 +67,7 @@ export class FlowChart extends Component {
         range: [],
       },
       showSlicingNotification: false,
+      showFeedbackForm: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -806,7 +808,7 @@ export class FlowChart extends Component {
       visibleSlicing,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { showSlicingNotification } = this.state;
+    const { showSlicingNotification, showFeedbackForm } = this.state;
 
     // Counts the nodes in the slicedPipeline array, excludes any modularPipeline Id
     const numberOfNodesInSlicedPipeline = slicedPipeline.filter(
@@ -873,9 +875,12 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-
-        <FeedbackForm title={'Rate your experience with us'} />
-
+        {isSlicingPipelineApplied && (
+          <>
+            <FeedbackButton onClick={() => this.setState({ showFeedbackForm: true })} visible={!showFeedbackForm} />
+            {showFeedbackForm && <FeedbackForm title={'Rate your experience with us'} />}
+          </>
+        )}
         {showSlicingNotification && visibleSlicing && (
           <SlicedPipelineNotification
             notification={
