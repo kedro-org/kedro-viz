@@ -73,6 +73,7 @@
     "highlight.js": "^10.7.3",
     "kiwi.js": "^1.1.3",
     "lodash": "^4.17.21",
+    "lodash.range": "^3.2.0",
     "plotly.js-dist-min": "^2.26.0",
     "react-content-loader": "^6.2.0",
     "react-csv": "^2.2.2",
