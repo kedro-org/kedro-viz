@@ -42,7 +42,7 @@ describe('lib-test', () => {
   test.each(keys)(
     `updates to %s dataset when radio button triggers change`,
     (key) => {
-      const { container } = render(<App />);
+      const { container } = render(<App initialData={key}/>);
 
       const radioInput = container.querySelector(`[value="${key}"]`);
       fireEvent.click(radioInput, { target: { value: key } });

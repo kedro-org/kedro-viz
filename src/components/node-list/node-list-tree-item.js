@@ -13,6 +13,7 @@ const NodeListTreeItem = ({
   onItemMouseLeave,
   onItemChange,
   children,
+  isSlicingPipelineApplied,
 }) => (
   <TreeItem
     className="pipeline-treeItem__root--overwrite"
@@ -37,6 +38,8 @@ const NodeListTreeItem = ({
         faded={data.faded}
         visible={data.visible}
         selected={data.selected}
+        highlight={data.highlight}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
         allUnchecked={true}
         visibleIcon={data.visibleIcon}
         invisibleIcon={data.invisibleIcon}
