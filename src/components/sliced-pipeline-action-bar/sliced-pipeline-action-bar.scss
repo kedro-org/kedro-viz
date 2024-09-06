@@ -1,0 +1,230 @@
+@use '../../styles/variables' as colors;
+
+.kui-theme--dark {
+  --sliced-pipeline-action-bar--background: #{colors.$slate-200};
+  --sliced-pipeline-action-bar--color: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$white-800};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--code-background: #{colors.$black-900};
+  --sliced-pipeline-action-bar-shadow-start: #{colors.$black-500};
+  --sliced-pipeline-action-bar-shadow-end: #{colors.$black-900};
+}
+
+.kui-theme--light {
+  --sliced-pipeline-action-bar--background: #{colors.$white-0};
+  --sliced-pipeline-action-bar--color: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color-faded: #{colors.$black-200};
+  --sliced-pipeline-action-bar--background--hover: #{colors.$black-900};
+  --sliced-pipeline-action-bar--color--hover: #{colors.$white-0};
+  --sliced-pipeline-action-bar--code-background: #{colors.$white-200};
+  --sliced-pipeline-action-bar-shadow-start: #{colors.$white-900};
+  --sliced-pipeline-action-bar-shadow-end: #{colors.$white-200};
+}
+
+@keyframes slideUpTranslate {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+$padding-top-bottom: 8px;
+$padding-right-left: 10px;
+$inner-gap: 12px;
+$transitionTiming: 0.3s;
+
+.sliced-pipeline-action-bar {
+  background-color: var(--sliced-pipeline-action-bar--background);
+  border-radius: 4px;
+  bottom: 30px;
+  display: flex;
+  margin: 0;
+  position: absolute;
+  transition: transform $transitionTiming ease-out,
+    opacity $transitionTiming ease-out;
+  padding: $padding-top-bottom $padding-right-left;
+
+  .pipeline-icon-toolbar__button {
+    height: 24px;
+    width: 24px;
+    margin: 0;
+    opacity: 1;
+
+    svg {
+      fill: var(--sliced-pipeline-action-bar--color);
+      opacity: 1;
+    }
+  }
+}
+
+// First render it will be sliding up animation
+.sliced-pipeline-action-bar--first-render {
+  animation: slideUpTranslate $transitionTiming ease-out forwards;
+}
+
+.sliced-pipeline-action-bar--info {
+  align-items: center;
+  color: var(--sliced-pipeline-action-bar--color-faded);
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  margin-left: 6px;
+  margin-right: 16px;
+}
+
+.sliced-pipeline-action-bar--run-command {
+  display: flex;
+  min-width: 296px;
+  max-width: 780px;
+
+  .container {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .command-value {
+    background-color: var(--sliced-pipeline-action-bar--code-background);
+    color: var(--sliced-pipeline-action-bar--color);
+    overflow-x: scroll;
+    padding: 10px $inner-gap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbox {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 0 10px;
+    width: auto;
+  }
+
+  .pipeline-icon--container {
+    padding: $padding-top-bottom;
+
+    &:hover {
+      background: var(--sliced-pipeline-action-bar--code-background);
+    }
+  }
+
+  .pipeline-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .pipeline-tooltip {
+    bottom: calc(100% + 20px);
+  }
+}
+
+.sliced-pipeline-action-bar--run-command-long {
+  .command-value {
+    background-image: 
+	
+    /* Shadows */ linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      linear-gradient(
+        to right,
+        var(--sliced-pipeline-action-bar--code-background),
+        var(--sliced-pipeline-action-bar--code-background)
+      ),
+      /* Shadow covers*/
+        linear-gradient(
+          to right,
+          var(--sliced-pipeline-action-bar-shadow-start),
+          var(--sliced-pipeline-action-bar-shadow-end)
+        ),
+      linear-gradient(
+        to left,
+        var(--sliced-pipeline-action-bar-shadow-start),
+        var(--sliced-pipeline-action-bar-shadow-end)
+      );
+    background-position: left center, right center, left center, right center;
+    background-repeat: no-repeat;
+    background-color: var(--sliced-pipeline-action-bar--code-background);
+    background-size: 30px 100%, 30px 100%, 30px 100%, 30px 100%;
+
+    /* Opera doesn't support this in the shorthand */
+    background-attachment: local, local, scroll, scroll;
+  }
+}
+
+.sliced-pipeline-action-bar--cta {
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid var(--sliced-pipeline-action-bar--color);
+  display: flex;
+  justify-content: center;
+  padding: $padding-top-bottom $inner-gap;
+  height: 40px;
+}
+
+.sliced-pipeline-action-bar--reset {
+  background: #{colors.$red-0};
+  border: none;
+
+  &:hover {
+    background: #{colors.$red-100};
+  }
+
+  .button__btn {
+    border: none;
+    font-size: 14px;
+    padding: 0;
+    color: #{colors.$white-0};
+
+    &:hover {
+      background: #{colors.$red-100};
+      color: #{colors.$white-0};
+    }
+  }
+}
+
+.sliced-pipeline-action-bar--slice {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sliced-pipeline-action-bar--background--hover);
+
+    .pipeline-icon {
+      path {
+        fill: var(--sliced-pipeline-action-bar--color--hover);
+      }
+    }
+
+    .sliced-pipeline-action-bar--slice-text {
+      color: var(--sliced-pipeline-action-bar--color--hover);
+    }
+  }
+
+  .pipeline-icon--container {
+    list-style-type: none;
+  }
+
+  .pipeline-icon {
+    height: 24px;
+    width: 24px;
+
+    path {
+      fill: var(--sliced-pipeline-action-bar--color);
+    }
+  }
+
+  .sliced-pipeline-action-bar--slice-text {
+    color: var(--sliced-pipeline-action-bar--color);
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+}

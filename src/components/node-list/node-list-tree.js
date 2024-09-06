@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import uniqueId from 'lodash/uniqueId';
 
 import { styled } from '@mui/system';
 import { TreeView } from '@mui/x-tree-view';
@@ -14,6 +15,7 @@ import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
+import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
 
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
@@ -65,6 +67,7 @@ const getModularPipelineRowData = ({
   disabled,
   focused,
   focusModeIcon,
+  highlight,
 }) => {
   const checked = !data.disabledModularPipeline;
   return {
@@ -81,6 +84,7 @@ const getModularPipelineRowData = ({
     disabled: disabled,
     focused: focused,
     checked,
+    highlight,
   };
 };
 
@@ -90,7 +94,7 @@ const getModularPipelineRowData = ({
  * @param {Boolean} selected Whether the node is currently disabled
  * @param {Boolean} selected Whether the node is currently selected
  */
-const getNodeRowData = (node, disabled, selected) => {
+const getNodeRowData = (node, disabled, selected, highlight) => {
   const checked = !node.disabledNode;
   return {
     ...node,
@@ -98,6 +102,7 @@ const getNodeRowData = (node, disabled, selected) => {
     invisibleIcon: InvisibleIcon,
     active: node.active,
     selected,
+    highlight,
     faded: disabled || node.disabledNode,
     visible: !disabled && checked,
     checked,
@@ -118,9 +123,17 @@ const TreeListProvider = ({
   disabledModularPipeline,
   expanded,
   onToggleNodeSelected,
+  slicedPipeline,
+  isSlicingPipelineApplied,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
+    // As part of the slicing pipeline logic, child nodes not included in the sliced pipeline are assigned an empty data object.
+    // Therefore, if a child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
+    if (Object.keys(node).length === 0) {
+      return null;
+    }
+
     const disabled =
       node.disabledTag ||
       node.disabledType ||
@@ -138,14 +151,19 @@ const TreeListProvider = ({
           .some(Boolean));
 
     const selected = nodeSelected[node.id];
+
+    const highlight = slicedPipeline.includes(node.id);
+    const data = getNodeRowData(node, disabled, selected, highlight);
+
     return (
       <NodeListTreeItem
-        data={getNodeRowData(node, disabled, selected)}
+        data={data}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={node.id}
+        key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       />
     );
   };
@@ -158,11 +176,20 @@ const TreeListProvider = ({
       return;
     }
 
+    // If all children's data are empty, the subtree rooted at this node will not be rendered.
+    // in scenarios where the pipeline is being sliced, and some modular pipelines trees do not have any children
+    const allChildrenDataEmpty = node.children.every(
+      (child) => Object.keys(child.data).length === 0
+    );
+    if (allChildrenDataEmpty) {
+      return;
+    }
+
     // render each child of the tree node first
     const children = sortBy(
       node.children,
       (child) => GROUPED_NODES_DISPLAY_ORDER[child.type],
-      (child) => child.data.name
+      (child) => child?.data?.name
     ).map((child) =>
       isModularPipelineType(child.type)
         ? renderTree(tree, child.id)
@@ -184,19 +211,29 @@ const TreeListProvider = ({
       focusModeIcon = isFocusedModularPipeline ? FocusModeIcon : null;
     }
 
+    const isModularPipelineCollapsed = !expanded.includes(node.id);
+    // Highlight modular pipeline if any child node of the current modular pipeline is part of the slicedPipeline and the modular pipeline is collapsed
+    const highlight =
+      node.children.some((child) => slicedPipeline.includes(child.id)) &&
+      isModularPipelineCollapsed;
+
+    const data = getModularPipelineRowData({
+      ...node,
+      focusModeIcon,
+      disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
+      focused: isFocusedModularPipeline,
+      highlight,
+    });
+
     return (
       <NodeListTreeItem
-        data={getModularPipelineRowData({
-          ...node,
-          focusModeIcon,
-          disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
-          focused: isFocusedModularPipeline,
-        })}
+        data={data}
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
         onItemClick={onItemClick}
-        key={node.id}
+        key={uniqueId(node.id)}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
       >
         {children}
       </NodeListTreeItem>
@@ -236,6 +273,8 @@ const TreeListProvider = ({
 export const mapStateToProps = (state) => ({
   nodeSelected: getNodeSelected(state),
   expanded: state.modularPipeline.expanded,
+  slicedPipeline: getSlicedPipeline(state),
+  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

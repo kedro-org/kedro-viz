@@ -1,4 +1,5 @@
 @use '../../../styles/variables' as colors;
+@use './variables';
 
 .pipeline-nodelist__filter-panel {
   z-index: 1;
@@ -9,10 +10,6 @@
     padding-bottom: 28px;
     padding-top: 4px;
   }
-}
-
-.pipeline-nodelist-section > ul.MuiTreeView-root {
-  padding: 0 0 0 20px;
 }
 
 .pipeline-nodelist__elements-panel {
