@@ -238,7 +238,7 @@ import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} options={options} /></div>;
 ``` 
 
-For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)
+For more information on how to use Kedro as a React component with all possible props, see [Kedro-Viz on NPM](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 
 ## Kedro-Viz in Visual Studio Code Extension
 
