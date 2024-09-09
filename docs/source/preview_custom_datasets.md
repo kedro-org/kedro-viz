@@ -55,6 +55,8 @@ class CustomTableDataset:
     return preview_data
 ```
 
+![](./images/preview_datasets_expanded.png)
+
 ## ImagePreview
 For `ImagePreview`, the function should return a base64-encoded string representing the image. This is typically used for datasets that output visual data such as plots or images.
 
@@ -71,6 +73,8 @@ class CustomImageDataset:
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
     return ImagePreview(encoded_string)
 ```
+
+![](./images/pipeline_visualisation_matplotlib_expand.png)
 
 ## PlotlyPreview
 For `PlotlyPreview`, the function should return a dictionary containing Plotly figure data. This includes the figure's `data` and `layout` keys.
@@ -90,6 +94,8 @@ class CustomPlotlyDataset:
     })
 ```
 
+![](./images/pipeline_visualisation_plotly_expand_1.png)
+
 ## JSONPreview
 For `JSONPreview`, the function should return a dictionary representing the `JSON` data. This is useful for previewing complex nested data structures.
 
@@ -104,23 +110,4 @@ class CustomJSONDataset:
     json_data = self._load_json_data()
     return JSONPreview(json.dumps(json_data))
 ```
-
-## Examples of Previews
-
-1. TablePreview 
-
-![](./images/preview_datasets_expanded.png)
-
-
-2. ImagePreview
-
-![](./images/pipeline_visualisation_matplotlib_expand.png)
-
-
-3. PlotlyPreview
-
-![](./images/pipeline_visualisation_plotly_expand_1.png)
-
-
-
-
+![](./images/preview_datasets_json.png)
