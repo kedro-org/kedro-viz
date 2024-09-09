@@ -67,6 +67,7 @@ const NodeRowList = ({
             faded={item.faded}
             visible={item.visible}
             selected={item.selected}
+            highlight={item.highlight}
             allUnchecked={group.allUnchecked}
             visibleIcon={item.visibleIcon}
             invisibleIcon={item.invisibleIcon}
