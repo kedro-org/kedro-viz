@@ -65,7 +65,7 @@ jobs:
       - name: Update demo-project build directory with the latest changes
         run: |
           cd demo-project
-          if ! (kedro viz build |& tee /dev/stderr | grep -i -q "Success!"); then
+          if ! (kedro viz build --include-previews |& tee /dev/stderr | grep -i -q "Success!"); then
             exit 1
           fi
         shell: bash
