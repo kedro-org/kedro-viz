@@ -1,6 +1,6 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
-import { preparePipelineState } from '../store/initial-state';
+import {parseUrlParameters, preparePipelineState} from '../store/initial-state';
 import { resetData } from './index';
 
 /**
@@ -99,14 +99,15 @@ export function loadInitialPipelineData() {
     // obtain the status of expandAllPipelines to decide whether it needs to overwrite the
     // list of visible nodes
     const expandAllPipelines = state.expandAllPipelines;
+    const urlParams = parseUrlParameters();
     let newState = await loadJsonData(url).then((data) =>
-      preparePipelineState(data, true, expandAllPipelines)
+      preparePipelineState(data, true, expandAllPipelines, urlParams)
     );
     // If the active pipeline isn't 'main' then request data from new URL
     if (requiresSecondRequest(newState.pipeline)) {
       const url = getPipelineUrl(newState.pipeline);
       newState = await loadJsonData(url).then((data) =>
-        preparePipelineState(data, false, expandAllPipelines)
+        preparePipelineState(data, false, expandAllPipelines, urlParams)
       );
     }
     dispatch(resetData(newState));
