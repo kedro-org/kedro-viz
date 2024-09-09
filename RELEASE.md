@@ -10,6 +10,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
+- Slice a pipeline functionality. (#2036)
 
 ## Bug fixes and other changes
 

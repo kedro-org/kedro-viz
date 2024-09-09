@@ -41,6 +41,7 @@ export const createInitialState = () => ({
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
+    slicing: true,
   },
   display: {
     globalNavigation: true,
