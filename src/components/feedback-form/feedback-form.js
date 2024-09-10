@@ -12,7 +12,7 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
   const [starNumber, setStars] = useState(0);
   const [feedbackText, setFeedbackText] = useState('');
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
 
     const data = {
