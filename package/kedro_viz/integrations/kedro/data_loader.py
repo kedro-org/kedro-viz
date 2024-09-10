@@ -23,28 +23,9 @@ from kedro.pipeline import Pipeline
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.utils import _VizNullPluginManager
 
 logger = logging.getLogger(__name__)
-
-
-class _VizNullPluginManager:
-    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
-    and registered plugins allowing the runner to function if no ``hook_manager``
-    has been instantiated.
-
-    NOTE: _VizNullPluginManager is a clone of _NullPluginManager class in Kedro.
-    This was introduced to support the earliest version of Kedro which does not
-    have _NullPluginManager defined
-    """
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __getattr__(self, name):
-        return self
-
-    def __call__(self, *args, **kwargs):
-        pass
 
 
 def _get_dataset_stats(project_path: Path) -> Dict:

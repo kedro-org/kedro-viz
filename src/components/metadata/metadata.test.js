@@ -504,7 +504,7 @@ describe('MetaData', () => {
         mockMetadata: nodeParameters,
       });
       const row = rowByLabel(wrapper, 'File Path:');
-      expect(textOf(rowValue(row))).toEqual(['-']);
+      expect(textOf(rowValue(row))).toEqual(['N/A']);
     });
 
     it('shows the first line (number of parameters) displayed in json viewer for parameter object', () => {
