@@ -65,7 +65,7 @@ kedro viz run [OPTIONS]
   - Specify extra parameters for the Kedro Viz run. This option supports the same format as the `params` option in the Kedro CLI.
 
 - `--lite`                    
-  - An experimental flag to open Kedro-Viz with missing Kedro project dependencies.
+  - An experimental flag to open Kedro-Viz without Kedro project dependencies.
 
 
 ```{note}

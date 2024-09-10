@@ -157,7 +157,7 @@ Options:
                             To pass a nested dictionary as parameter, separate
                             keys by '.', example: param_group.param1:value1.
 
-  --lite                    An experimental flag to open Kedro-Viz with missing Kedro
+  --lite                    An experimental flag to open Kedro-Viz without Kedro
                             project dependencies.
 
   -h, --help                Show this message and exit.
