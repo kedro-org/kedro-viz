@@ -47,7 +47,7 @@ import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackForm } from '../feedback-form/feedback-form';
-import {FeedbackButton} from '../feedback-button/feedback-button';
+import { FeedbackButton } from '../feedback-button/feedback-button';
 
 import './styles/flowchart.scss';
 
@@ -877,8 +877,17 @@ export class FlowChart extends Component {
         />
         {isSlicingPipelineApplied && (
           <>
-            <FeedbackButton onClick={() => this.setState({ showFeedbackForm: true })} visible={!showFeedbackForm} />
-            {showFeedbackForm && <FeedbackForm title={'Rate your experience with us'} />}
+            <FeedbackButton
+              onClick={() => this.setState({ showFeedbackForm: true })}
+              visible={!showFeedbackForm}
+            />
+            {showFeedbackForm && (
+              <FeedbackForm
+                onCancel={() => this.setState({ showFeedbackForm: false })}
+                title="Rate your experience with us"
+                usageContext="slicing-pipeline"
+              />
+            )}
           </>
         )}
         {showSlicingNotification && visibleSlicing && (

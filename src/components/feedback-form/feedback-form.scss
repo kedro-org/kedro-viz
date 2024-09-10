@@ -1,28 +1,32 @@
 @use '../../styles/variables' as colors;
 
 .kui-theme--dark {
-    --feedback-form--text-area--background: #{colors.$slate-200};
-    --feedback-form--text-area--color: #{colors.$white-0};
-  }
-  
-  .kui-theme--light {
-    --feedback-form--text-area--background: #{colors.$white-0};
-    --feedback-form--text-area--color: #{colors.$black-900};
-  }
-
-.feedback-form--text-area {
-    margin-top: 20px;
-
-    textarea {
-        background-color: transparent;
-        color: var(--feedback-form--text-area--color);
-        border: 1px solid var(--feedback-form--text-area--color) !important;
-        padding: 12px;
-        width: 100%;
-    }
+  --feedback-form--text-area--background: #{colors.$slate-200};
+  --feedback-form--text-area--color: #{colors.$white-0};
 }
+
+.kui-theme--light {
+  --feedback-form--text-area--background: #{colors.$white-0};
+  --feedback-form--text-area--color: #{colors.$black-900};
+}
+
+.feedback-form {
+  textarea {
+    background-color: transparent;
+    color: var(--feedback-form--text-area--color);
+    border: 1px solid var(--feedback-form--text-area--color) !important;
+    padding: 12px;
+    width: 100%;
+  }
+}
+
+.feedback-form--btn-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
 .feedback-form--wrapper {
-    .button__btn {
-        margin-top: 12px;
-    }
+  .button__btn {
+    margin-top: 12px;
+  }
 }
