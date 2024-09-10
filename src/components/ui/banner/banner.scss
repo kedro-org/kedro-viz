@@ -2,17 +2,21 @@
 @use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --banner--background: #{variables.$primary-dark-300};
+  --banner--background: #{variables.$slate-300};
   --banner--color: #{variables.$white-0};
   --banner-message-body--color: #{variables.$black-0};
   --banner-box-shadow: 0px 4px 8px -1px rgb(0 0 0 / 20%);
+  --color-button__text--hover: #{variables.$slate-300};
+  --color-button--border: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --banner--background: #{variables.$primary-light-200};
+  --banner--background: #{variables.$white-200};
   --banner--color: #{variables.$black-900};
   --banner-message-body--color: #{variables.$black-200};
   --banner-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
+  --color-button__text--hover: #{variables.$white-200};
+  --color-button--border: #{variables.$black-900};
 }
 
 .banner {
