@@ -206,6 +206,7 @@ const MetaData = ({
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
+                  empty="N/A"
                   value={removeInitialSlash(metadata.filepath)}
                 />
                 {hasTrackingData && (

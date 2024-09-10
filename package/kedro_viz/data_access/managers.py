@@ -8,12 +8,12 @@ from typing import Dict, List, Set, Union
 import networkx as nx
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetError
-from kedro.io.memory_dataset import MemoryDataset
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
@@ -325,9 +325,7 @@ class DataAccessManager:
             # Kedro Viz in lite mode. The `get_dataset` function
             # of DataCatalog calls AbstractDataset.from_config
             # which tries to create a Dataset instance from the pattern
-
-            # pylint: disable=abstract-class-instantiated
-            obj = MemoryDataset()  # type: ignore[abstract]
+            obj = UnavailableDataset()
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
