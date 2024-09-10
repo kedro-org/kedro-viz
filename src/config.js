@@ -206,3 +206,12 @@ export const NODE_TYPES = {
   data: { name: 'datasets', defaultState: false },
   parameters: { name: 'parameters', defaultState: true },
 };
+
+export const BANNER_METADATA = {
+  liteModeWarning: {
+    title: 'Missing dependencies',
+    body: 'For the best experience with full functionality, please install the missing Kedro project dependencies.',
+    docsLink:
+      'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies',
+  },
+};
