@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import './feedback-button.scss';
 
-export const FeedbackButton = ({ onClick, visible }) => {
+export const FeedbackButton = ({ onClick, visible, title }) => {
   return (
     <button
       className={classnames('feedback-button', {
@@ -11,7 +11,7 @@ export const FeedbackButton = ({ onClick, visible }) => {
       })}
       onClick={onClick}
     >
-      Feedback
+      {title}
     </button>
   );
 };

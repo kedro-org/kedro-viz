@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Modal from '../ui/modal';
 import Button from '../ui/button';
 import { Stars } from './stars';
 import { getHeap } from '../../tracking';
@@ -32,15 +31,13 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
   if (isSubmitted) {
     return (
       <div className="feedback-form--wrapper">
-        <Modal closeModal={onCancel} title={title} visible={true}>
           Thank you for submitting your feedback! 🙏
-        </Modal>
       </div>
     );
   } else {
     return (
       <div className="feedback-form--wrapper">
-        <Modal closeModal={onCancel} title={title} visible={true}>
+          <h2 className="feedback-form--title">{title}</h2>
           <div className="feedback-form">
             <Stars selectedRating={starNumber} onClick={setStars} />
             <textarea
@@ -69,7 +66,6 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
               </Button>
             </div>
           </div>
-        </Modal>
       </div>
     );
   }

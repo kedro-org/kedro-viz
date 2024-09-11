@@ -1,11 +1,17 @@
 @use '../../styles/variables' as colors;
 
 .kui-theme--dark {
+  --feedback-form-bg: #{colors.$slate-900};
+  --feedback-form-content: #{colors.$slate-0};
+  --feedback-form-title: #{colors.$white-0};
   --feedback-form--text-area--background: #{colors.$slate-200};
   --feedback-form--text-area--color: #{colors.$white-0};
 }
 
 .kui-theme--light {
+  --feedback-form-bg: #{colors.$black-700};
+  --feedback-form-content: #{colors.$white-0};
+  --feedback-form-title: #{colors.$black-900};
   --feedback-form--text-area--background: #{colors.$white-0};
   --feedback-form--text-area--color: #{colors.$black-900};
 }
@@ -26,6 +32,13 @@
 }
 
 .feedback-form--wrapper {
+  position: fixed; /* or 'absolute', depending on your layout */
+  right: 0;
+  top: 393px;
+  width: 300px; /* Adjust the width as needed */
+  padding: 20px;
+  background-color: var(--feedback-form-bg);
+
   .button__btn {
     margin-top: 12px;
   }

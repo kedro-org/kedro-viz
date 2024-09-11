@@ -879,6 +879,7 @@ export class FlowChart extends Component {
           <>
             <FeedbackButton
               onClick={() => this.setState({ showFeedbackForm: true })}
+              title="Feedback for pipeline slicing"
               visible={!showFeedbackForm}
             />
             {showFeedbackForm && (
