@@ -14,6 +14,7 @@ from kedro_viz.data_access.repositories.catalog import CatalogRepository
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
+from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
@@ -381,7 +382,7 @@ class TestAddDataset:
                 "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
             )
 
-        assert isinstance(dataset_obj.kedro_obj, MemoryDataset)
+        assert isinstance(dataset_obj.kedro_obj, UnavailableDataset)
 
     def test_add_all_parameters(
         self,
