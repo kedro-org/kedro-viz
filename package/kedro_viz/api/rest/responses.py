@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.api.rest.utils import get_package_version
+from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -274,6 +275,28 @@ class PackageCompatibilityAPIResponse(BaseAPIResponse):
     )
 
 
+class MetadataAPIResponse(BaseAPIResponse):
+    has_missing_dependencies: bool = False
+    package_compatibilities: List[PackageCompatibilityAPIResponse] = []
+    model_config = ConfigDict(
+        json_schema_extra={
+            "has_missing_dependencies": False,
+            "package_compatibilities": [
+                {
+                    "package_name": "fsspec",
+                    "package_version": "2024.6.1",
+                    "is_compatible": True,
+                },
+                {
+                    "package_name": "kedro-datasets",
+                    "package_version": "4.0.0",
+                    "is_compatible": True,
+                },
+            ],
+        }
+    )
+
+
 class EnhancedORJSONResponse(ORJSONResponse):
     @staticmethod
     def encode_to_human_readable(content: Any) -> bytes:
@@ -372,13 +395,11 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-def get_package_compatibilities_response(
-    package_requirements: Dict[str, Dict[str, str]],
-) -> List[PackageCompatibilityAPIResponse]:
-    """API response for `/api/package_compatibility`."""
-    package_requirements_response = []
+def get_metadata_response() -> MetadataAPIResponse:
+    """API response for `/api/metadata`."""
+    package_requirements_response: List[PackageCompatibilityAPIResponse] = []
 
-    for package_name, package_info in package_requirements.items():
+    for package_name, package_info in PACKAGE_REQUIREMENTS.items():
         compatible_version = package_info["min_compatible_version"]
         try:
             package_version = get_package_version(package_name)
@@ -398,7 +419,10 @@ def get_package_compatibilities_response(
             )
         )
 
-    return package_requirements_response
+    return MetadataAPIResponse(
+        has_missing_dependencies=True,  # TODO
+        package_compatibilities=package_requirements_response,
+    )
 
 
 def get_encoded_response(response: Any) -> bytes:

@@ -12,6 +12,7 @@ import merge from 'lodash/merge';
 import modularPipeline from './modular-pipelines';
 import visible from './visible';
 import slice from './slice';
+import bannerReducer from './banner';
 import {
   RESET_DATA,
   TOGGLE_SHOW_FEATURE_HINTS,
@@ -24,7 +25,7 @@ import {
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
-  TOGGLE_SHOW_DATASET_PREVIEWS
+  TOGGLE_SHOW_DATASET_PREVIEWS,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -84,6 +85,7 @@ const combinedReducer = combineReducers({
   modularPipeline,
   visible,
   runsMetadata,
+  showBanner: bannerReducer,
   // These props don't have any actions associated with them
   display: createReducer(null),
   dataSource: createReducer(null),
@@ -123,8 +125,7 @@ const combinedReducer = combineReducers({
     true,
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
-),
-
+  ),
 });
 
 const rootReducer = (state, action) => {

@@ -9,6 +9,7 @@ import {
   localStorageName,
   localStorageRunsMetadata,
   params,
+  BANNER_KEYS,
 } from '../config';
 
 /**
@@ -26,6 +27,9 @@ export const createInitialState = () => ({
   showFeatureHints: settings.showFeatureHints.default,
   showDatasetPreviews: settings.showDatasetPreviews.default,
   ignoreLargeWarning: false,
+  showBanner: {
+    [BANNER_KEYS.LITE]: false,
+  },
   loading: {
     graph: false,
     pipeline: false,
@@ -250,7 +254,7 @@ const getInitialState = (props = {}) => {
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines,
+    expandAllPipelines
   );
 
   const initialState = {

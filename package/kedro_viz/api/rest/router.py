@@ -15,11 +15,11 @@ from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
     NodeMetadataAPIResponse,
-    PackageCompatibilityAPIResponse,
+    MetadataAPIResponse,
     get_default_response,
     get_node_metadata_response,
-    get_package_compatibilities_response,
     get_selected_pipeline_response,
+    get_metadata_response,
 )
 
 try:
@@ -91,12 +91,12 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
 
 
 @router.get(
-    "/package-compatibilities",
-    response_model=List[PackageCompatibilityAPIResponse],
+    "/metadata",
+    response_model=MetadataAPIResponse,
 )
-async def get_package_compatibilities():
+async def get_metadata():
     try:
-        return get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
+        return get_metadata_response()
     except Exception as exc:
         logger.exception(
             "An exception occurred while getting package compatibility info : %s", exc
