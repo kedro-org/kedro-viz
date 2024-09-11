@@ -238,4 +238,23 @@ import '@quantumblack/kedro-viz/lib/styles/styles.min.css';
 const MyApp = () => <div style={{height: `100vh`}}><KedroViz data={json} options={options} /></div>;
 ``` 
 
-For more information on how to use kedro as React component with all possible props please refer to [Kedro-Viz on npm](https://www.npmjs.com/package/@quantumblack/kedro-viz)
+For more information on how to use Kedro as a React component with all possible props, see [Kedro-Viz on NPM](https://www.npmjs.com/package/@quantumblack/kedro-viz)
+
+## Kedro-Viz in Visual Studio Code Extension
+
+To visualize Kedro project using Kedro-Viz in Visual Studio Code, follow these steps:
+
+1. **Install Kedro Extension**:
+Download Kedro extension from [marketplace](https://marketplace.visualstudio.com/items?itemName=kedro.Kedro) into Visual Studio Code.
+
+2. **Setup Kedro Extension**:
+Follow steps from [how-to-use-kedro-extension](https://github.com/kedro-org/vscode-kedro)
+
+3. **Open the Command Palette**: 
+Press `Cmd` + `Shift` + `P` (on macOS) or `Ctrl` + `Shift` + `P` (on Windows/Linux).
+
+4. **Run Kedro-Viz**:
+Type `kedro: Run Kedro Viz` and select the command.
+This will launch Kedro-Viz and display your pipeline visually within the extension.
+
+![Kedro Viz in VSCode](./images/viz-in-vscode.gif)

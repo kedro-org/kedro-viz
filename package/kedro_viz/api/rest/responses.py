@@ -144,7 +144,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
-    filepath: str
+    filepath: Optional[str] = None
     original_type: str
     transcoded_types: List[str]
     run_command: Optional[str] = None

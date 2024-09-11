@@ -272,6 +272,12 @@ For more information on how to use Kedro-Viz as a React component, follow this [
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
 
+## Kedro-Viz in Visual Studio Code Extension
+
+To visualize Kedro project using Kedro-Viz in Visual Studio Code, please install Kedro extension in Visual Studio Code.
+
+For more information on how to use Kedro-Viz in Visual Studio Code, follow this [guide](https://marketplace.visualstudio.com/items?itemName=kedro.Kedro)
+
 ## Feature Flags
 
 Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
