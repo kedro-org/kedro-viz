@@ -8,11 +8,11 @@
   line-height: 40px;
   opacity: 0;
   position: fixed;
-  right: -2%;
+  right: -96px;
   text-align: center;
   top: 50%;
-  transform: translateY(-50%) rotate(-90deg);
-  width: 100px;
+  padding: 0 16px;
+  transform: translateY(-50%) rotate(90deg);
 }
 
 .feedback-button--visible {

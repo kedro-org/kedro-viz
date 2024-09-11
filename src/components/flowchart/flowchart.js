@@ -885,7 +885,7 @@ export class FlowChart extends Component {
             {showFeedbackForm && (
               <FeedbackForm
                 onCancel={() => this.setState({ showFeedbackForm: false })}
-                title="Rate your experience with us"
+                title="How satisfied are you with  pipeline slicing?"
                 usageContext="slicing-pipeline"
               />
             )}

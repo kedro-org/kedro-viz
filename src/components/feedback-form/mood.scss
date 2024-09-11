@@ -1,0 +1,26 @@
+@use '../../styles/variables' as colors;
+
+.mood-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.mood-wrapper {
+    .pipeline-icon--container {
+        list-style-type: none;
+        width: 32px;
+        height: 32px;
+    }
+
+    .pipeline-icon-toolbar__button svg {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.thumbs--active {
+    path {
+        fill: #{colors.$blue-300};
+    }
+}

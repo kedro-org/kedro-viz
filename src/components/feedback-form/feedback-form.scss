@@ -1,45 +1,93 @@
 @use '../../styles/variables' as colors;
 
 .kui-theme--dark {
-  --feedback-form-bg: #{colors.$slate-900};
+  --feedback-form-bg: #{colors.$white-0};
   --feedback-form-content: #{colors.$slate-0};
-  --feedback-form-title: #{colors.$white-0};
+  --feedback-form-title: #{colors.$black-900};
   --feedback-form--text-area--background: #{colors.$slate-200};
   --feedback-form--text-area--color: #{colors.$white-0};
 }
 
 .kui-theme--light {
-  --feedback-form-bg: #{colors.$black-700};
+  --feedback-form-bg: #{colors.$black-900};
   --feedback-form-content: #{colors.$white-0};
-  --feedback-form-title: #{colors.$black-900};
+  --feedback-form-title: #{colors.$white-0};
   --feedback-form--text-area--background: #{colors.$white-0};
   --feedback-form--text-area--color: #{colors.$black-900};
 }
 
-.feedback-form {
-  textarea {
+
+  .feedback-form--text-area {
+    align-items: center;
     background-color: transparent;
-    color: var(--feedback-form--text-area--color);
-    border: 1px solid var(--feedback-form--text-area--color) !important;
-    padding: 12px;
+    border: 1px solid grey;
+    display: flex;
+    height: 104px;
+    padding: 8px 12px;
+    text-align: center;
     width: 100%;
   }
-}
 
-.feedback-form--btn-wrapper {
-  display: flex;
-  justify-content: space-between;
+.feedback-form--text-area::placeholder {
+  text-align: center;
+  margin: auto; /* Centers the placeholder text vertically */
 }
 
 .feedback-form--wrapper {
-  position: fixed; /* or 'absolute', depending on your layout */
+  position: fixed;
   right: 0;
   top: 393px;
-  width: 300px; /* Adjust the width as needed */
-  padding: 20px;
+  width: 356px;
+  padding: 24px;
+  padding-bottom: 68px;
   background-color: var(--feedback-form-bg);
 
   .button__btn {
     margin-top: 12px;
   }
+}
+
+.feedback-form--title {
+  color: var(--feedback-form-title);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.feedback-form--close-icon {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  cursor: pointer; /* Optional: Changes the cursor on hover to indicate it's clickable */
+}
+
+.feedback-form--generic-message {
+  font-size: 14px;
+  text-align: center;
+  color: #{colors.$black-200};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.feedback-form--link {
+  background: none;
+  border: none;
+  color: #{colors.$black-200};
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+/* Optional: remove focus outline for mouse users but keep it for keyboard users */
+.feedback-form--link:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.feedback-form--link:focus-visible {
+  outline: thin dotted;
 }
