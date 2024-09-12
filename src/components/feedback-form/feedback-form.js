@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import classnames from 'classnames';
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
 import { Mood } from './mood';
@@ -9,6 +10,7 @@ import './feedback-form.scss';
 
 export const FeedbackForm = ({ title, onCancel, usageContext }) => {
   const [isSubmitted, setSubmitted] = useState(false);
+  const [closedWithoutFeedback, setClosedWithoutFeedback] = useState(false);
   const [activeMood, setActiveMood] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
 
@@ -27,12 +29,34 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
   const handleFormCancel = () => {
     onCancel();
     setSubmitted(false);
+    setClosedWithoutFeedback(true);
   };
 
-  if (isSubmitted) {
+  const getMessages = () => {
+    if (isSubmitted) {
+      return "Thank you for sharing feedback!"
+    }
+
+    if(closedWithoutFeedback) {
+      return "You can provide feedback at any time by clicking on the feedback button."
+    }
+  }
+
+  useEffect(() => {
+    if(isSubmitted){
+      const timer = setTimeout(() => {
+        onCancel();
+      }, 5000);
+  
+      return () => clearTimeout(timer);
+    }
+   
+  }, [isSubmitted]);
+
+  if (isSubmitted || closedWithoutFeedback) {
     return (
-      <div className="feedback-form--wrapper">
-          Thank you for submitting your feedback! 🙏
+      <div className={classnames("feedback-form--wrapper", "feedback-form--message")}>
+          {getMessages()}
       </div>
     );
   } else {

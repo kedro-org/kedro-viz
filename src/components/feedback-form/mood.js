@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import IconButton from '../ui/icon-button';
 import MoodDissatisfiedIcon from '../icons/mood-dissatisfied';
 import MoodVeryDissatisfiedIcon from '../icons/mood-very-dissatisfied';
-import MoodNeutralIcon from '../icons/mood-very-dissatisfied';
+import MoodNeutralIcon from '../icons/mood-neutral';
 import MoodSatisfiedIcon from '../icons/mood-satisfied';
 import MoodVerySatisfiedIcon from '../icons/mood-very-satisfied';
 
@@ -26,6 +26,9 @@ export const Mood = ({ selectedMood, onClick }) => {
                 })}>
                     <IconButton
                         icon={MoodIcon}
+                        className={classnames("mood-icon", {
+                            "mood-icon--selected": moodName === selectedMood,
+                        })}
                         onClick={() => onClick(moodName)}
                     />
                     <span 

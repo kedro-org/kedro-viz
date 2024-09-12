@@ -42,6 +42,7 @@
   padding: 24px;
   padding-bottom: 36px;
   background-color: var(--feedback-form-bg);
+  border-radius: 8px 0px 0px 8px;
 
   .button__btn {
     margin-top: 12px;
@@ -84,7 +85,6 @@
   font: inherit;
 }
 
-/* Optional: remove focus outline for mouse users but keep it for keyboard users */
 .feedback-form--link:focus:not(:focus-visible) {
   outline: none;
 }
@@ -104,4 +104,14 @@
 
     margin-top: 36px;
   }
+}
+
+.feedback-form--message {
+  color: black;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 36px 24px;
+  width: auto;
 }
