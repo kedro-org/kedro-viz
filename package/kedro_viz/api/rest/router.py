@@ -2,8 +2,6 @@
 
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
-from typing import List
-
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 

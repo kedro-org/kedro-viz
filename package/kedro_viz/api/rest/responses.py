@@ -13,7 +13,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel, ConfigDict
 
-from kedro_viz.api.rest.utils import get_package_version
+from kedro_viz.api.rest.utils import get_package_compatibilities, get_package_version
 from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
@@ -25,6 +25,7 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+from kedro_viz.models.metadata import Metadata, PackageCompatibility
 
 logger = logging.getLogger(__name__)
 
@@ -260,24 +261,9 @@ class GraphAPIResponse(BaseAPIResponse):
     selected_pipeline: str
 
 
-class PackageCompatibilityAPIResponse(BaseAPIResponse):
-    package_name: str
-    package_version: str
-    is_compatible: bool
-    model_config = ConfigDict(
-        json_schema_extra={
-            "example": {
-                "package_name": "fsspec",
-                "package_version": "2023.9.1",
-                "is_compatible": True,
-            }
-        }
-    )
-
-
 class MetadataAPIResponse(BaseAPIResponse):
     has_missing_dependencies: bool = False
-    package_compatibilities: List[PackageCompatibilityAPIResponse] = []
+    package_compatibilities: List[PackageCompatibility] = []
     model_config = ConfigDict(
         json_schema_extra={
             "has_missing_dependencies": False,
@@ -395,34 +381,11 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-def get_metadata_response() -> MetadataAPIResponse:
+def get_metadata_response():
     """API response for `/api/metadata`."""
-    package_requirements_response: List[PackageCompatibilityAPIResponse] = []
-
-    for package_name, package_info in PACKAGE_REQUIREMENTS.items():
-        compatible_version = package_info["min_compatible_version"]
-        try:
-            package_version = get_package_version(package_name)
-        except PackageNotFoundError:
-            logger.warning(package_info["warning_message"])
-            package_version = "0.0.0"
-
-        is_compatible = packaging.version.parse(
-            package_version
-        ) >= packaging.version.parse(compatible_version)
-
-        package_requirements_response.append(
-            PackageCompatibilityAPIResponse(
-                package_name=package_name,
-                package_version=package_version,
-                is_compatible=is_compatible,
-            )
-        )
-
-    return MetadataAPIResponse(
-        has_missing_dependencies=True,  # TODO
-        package_compatibilities=package_requirements_response,
-    )
+    package_compatibilities = get_package_compatibilities()
+    Metadata.set_package_compatibilities(package_compatibilities)
+    return Metadata()
 
 
 def get_encoded_response(response: Any) -> bytes:
