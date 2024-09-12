@@ -17,16 +17,17 @@
 }
 
 
-  .feedback-form--text-area {
-    align-items: center;
-    background-color: transparent;
-    border: 1px solid grey;
-    display: flex;
-    height: 104px;
-    padding: 8px 12px;
-    text-align: center;
-    width: 100%;
-  }
+.feedback-form--text-area {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid grey;
+  display: flex;
+  height: 104px;
+  padding: 8px 12px;
+  text-align: center;
+  width: 100%;
+  margin-top: 68px;
+}
 
 .feedback-form--text-area::placeholder {
   text-align: center;
@@ -36,10 +37,10 @@
 .feedback-form--wrapper {
   position: fixed;
   right: 0;
-  top: 393px;
+  top: 320px;
   width: 356px;
   padding: 24px;
-  padding-bottom: 68px;
+  padding-bottom: 36px;
   background-color: var(--feedback-form-bg);
 
   .button__btn {
@@ -90,4 +91,17 @@
 
 .feedback-form--link:focus-visible {
   outline: thin dotted;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .button__btn  {
+    border: 1px solid var(--feedback-form-title);
+    color: var(--feedback-form-title);
+
+    margin-top: 36px;
+  }
 }

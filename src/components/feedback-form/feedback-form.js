@@ -43,7 +43,7 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
           </div>
           <h2 className="feedback-form--title">{title}</h2>
           <div className="feedback-form">
-            <Mood activeMood={activeMood} onClick={(mood) => setActiveMood(mood)} />
+            <Mood selectedMood={activeMood} onClick={setActiveMood} />
             {
               activeMood !== null &&  (
                 <>
@@ -54,11 +54,10 @@ export const FeedbackForm = ({ title, onCancel, usageContext }) => {
                     placeholder="How can we improve this feature?"
                   />
                   <Button
-                    size="small"
                     type="submit"
                     onClick={handleFormSubmit}
                   >
-                    Submit
+                    Submit feedback
                   </Button>
                 </>
               )

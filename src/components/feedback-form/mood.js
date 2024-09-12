@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import IconButton from '../ui/icon-button';
 import MoodDissatisfiedIcon from '../icons/mood-dissatisfied';
 import MoodVeryDissatisfiedIcon from '../icons/mood-very-dissatisfied';
@@ -20,12 +21,21 @@ export const Mood = ({ selectedMood, onClick }) => {
     return (
         <section className="mood-wrapper">
             {Object.entries(moodConfig).map(([moodName, MoodIcon]) => (
-                <IconButton
-                    key={moodName}
-                    icon={MoodIcon}
-                    className={moodName === selectedMood ? 'mood-icon--selected' : ''}
-                    onClick={() => onClick(moodName)}
-                />
+                <div className={classnames("mood-icon-wrapper", {
+                    "mood-icon-wrapper--selected": moodName === selectedMood,
+                })}>
+                    <IconButton
+                        icon={MoodIcon}
+                        onClick={() => onClick(moodName)}
+                    />
+                    <span 
+                        className={classnames("mood-name", {
+                            "mood-name--selected": moodName === selectedMood,
+                        })}
+                    >
+                        {moodName}
+                    </span>
+                </div>
             ))}
         </section>
     );
