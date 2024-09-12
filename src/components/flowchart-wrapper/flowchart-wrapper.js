@@ -315,11 +315,13 @@ export const FlowChartWrapper = ({
   };
 
   const showBanner = (bannerKey) => {
-    const bannerStatus = loadLocalStorage(localStorageBannerStatus);
-    const shouldShowBanner =
-      displayBanner[bannerKey] &&
-      (bannerStatus[bannerKey] || bannerStatus[bannerKey] === undefined);
-    return shouldShowBanner;
+    return true;
+    // [TODO: Uncomment below part after design testing]
+    // const bannerStatus = loadLocalStorage(localStorageBannerStatus);
+    // const shouldShowBanner =
+    //   displayBanner[bannerKey] &&
+    //   (bannerStatus[bannerKey] || bannerStatus[bannerKey] === undefined);
+    // return shouldShowBanner;
   };
 
   if (isInvalidUrl) {
