@@ -7,39 +7,42 @@ import MoodNeutralIcon from '../icons/mood-neutral';
 import MoodSatisfiedIcon from '../icons/mood-satisfied';
 import MoodVerySatisfiedIcon from '../icons/mood-very-satisfied';
 
-import "./mood.scss";
+import './mood.scss';
 
 const moodConfig = {
-    "Very dissatisfied": MoodVeryDissatisfiedIcon,
-    "Dissatisfied": MoodDissatisfiedIcon,
-    "Neutral": MoodNeutralIcon,
-    "Satisfied": MoodSatisfiedIcon,
-    "Very satisfied": MoodVerySatisfiedIcon,
+  'Very dissatisfied': MoodVeryDissatisfiedIcon,
+  Dissatisfied: MoodDissatisfiedIcon,
+  Neutral: MoodNeutralIcon,
+  Satisfied: MoodSatisfiedIcon,
+  'Very satisfied': MoodVerySatisfiedIcon,
 };
 
 export const Mood = ({ selectedMood, onClick }) => {
-    return (
-        <section className="mood-wrapper">
-            {Object.entries(moodConfig).map(([moodName, MoodIcon]) => (
-                <div className={classnames("mood-icon-wrapper", {
-                    "mood-icon-wrapper--selected": moodName === selectedMood,
-                })}>
-                    <IconButton
-                        icon={MoodIcon}
-                        className={classnames("mood-icon", {
-                            "mood-icon--selected": moodName === selectedMood,
-                        })}
-                        onClick={() => onClick(moodName)}
-                    />
-                    <span 
-                        className={classnames("mood-name", {
-                            "mood-name--selected": moodName === selectedMood,
-                        })}
-                    >
-                        {moodName}
-                    </span>
-                </div>
-            ))}
-        </section>
-    );
+  return (
+    <section className="mood-wrapper">
+      {Object.entries(moodConfig).map(([moodName, MoodIcon]) => (
+        <div
+          key={moodName}
+          className={classnames('mood-icon-wrapper', {
+            'mood-icon-wrapper--selected': moodName === selectedMood,
+          })}
+        >
+          <IconButton
+            icon={MoodIcon}
+            className={classnames('mood-icon', {
+              'mood-icon--selected': moodName === selectedMood,
+            })}
+            onClick={() => onClick(moodName)}
+          />
+          <span
+            className={classnames('mood-name', {
+              'mood-name--selected': moodName === selectedMood,
+            })}
+          >
+            {moodName}
+          </span>
+        </div>
+      ))}
+    </section>
+  );
 };
