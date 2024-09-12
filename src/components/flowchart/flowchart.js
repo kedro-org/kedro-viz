@@ -46,8 +46,7 @@ import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
-import { FeedbackForm } from '../feedback-form/feedback-form';
-import { FeedbackButton } from '../feedback-button/feedback-button';
+import { Feedback } from '../feedback/feedback';
 
 import './styles/flowchart.scss';
 
@@ -876,20 +875,11 @@ export class FlowChart extends Component {
           ref={this.layerNamesRef}
         />
         {isSlicingPipelineApplied && (
-          <>
-            <FeedbackButton
-              onClick={() => this.setState({ showFeedbackForm: true })}
-              title="Feedback for pipeline slicing"
-              visible={!showFeedbackForm}
-            />
-            {showFeedbackForm && (
-              <FeedbackForm
-                onCancel={() => this.setState({ showFeedbackForm: false })}
-                title="How satisfied are you with  pipeline slicing?"
-                usageContext="slicing-pipeline"
-              />
-            )}
-          </>
+          <Feedback
+            buttonTitle={'Feedback for pipeline slicing'}
+            formTitle={'How satisfied are you with  pipeline slicing?'}
+            usageContext={'slicing-pipeline'}
+          />
         )}
         {showSlicingNotification && visibleSlicing && (
           <SlicedPipelineNotification
