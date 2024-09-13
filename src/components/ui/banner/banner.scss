@@ -30,7 +30,8 @@
   box-shadow: var(--banner-box-shadow);
   background-color: var(--banner--background);
   color: var(--banner--color);
-  font-size: 14px;
+  font-size: 16px;
+  max-height: 68px;
 
   // Banner positioning
   &.banner-top {
