@@ -11,13 +11,25 @@ export const Feedback = ({ buttonTitle, formTitle, usageContext }) => {
     localStorageFeedbackFirstTime
   );
   const [showFeedbackForm, setShowFeedbackForm] = useState(
-    Object.keys(firstTimeSeeingFeedbackComponent).length === 0 ||
-      firstTimeSeeingFeedbackComponent?.usageContext
+    firstTimeSeeingFeedbackComponent?.usageContext
   );
+  // const [showFeedbackForm, setShowFeedbackForm] = useState(
+  //   Object.keys(firstTimeSeeingFeedbackComponent).length === 0 ||
+  //     firstTimeSeeingFeedbackComponent?.usageContext
+  // );
   const [isCancelled, setIsCancelled] = useState(false);
   const [isSubmitted, setSubmitted] = useState(false);
   const [activeMood, setActiveMood] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (Object.keys(firstTimeSeeingFeedbackComponent).length === 0) {
+        updateLocalStorageUsageContext(true);
+        setShowFeedbackForm(true);
+      }
+    }, 5000);
+  }, []);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -30,17 +42,15 @@ export const Feedback = ({ buttonTitle, formTitle, usageContext }) => {
     getHeap().track(getDataTestAttribute(usageContext, 'feedback-form'), data);
     setSubmitted(true);
 
-    // Update local storage with usage context set to false
     updateLocalStorageUsageContext(false);
   };
 
   const handleFormCancel = () => {
     setIsCancelled(true);
-    // Update local storage with usage context set to false
     updateLocalStorageUsageContext(false);
   };
 
-  // Utility function to update the usage context in local storage
+  // to update the usage context in local storage
   const updateLocalStorageUsageContext = (value) => {
     // Load existing data or initialize to an empty object if null
     const existingData = loadLocalStorage(localStorageFeedbackFirstTime) || {};

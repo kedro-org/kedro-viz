@@ -47,6 +47,8 @@ import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { Feedback } from '../feedback/feedback';
+import { localStorageFeedbackFirstTime } from '../../config';
+import { loadLocalStorage } from '../../store/helpers';
 
 import './styles/flowchart.scss';
 
@@ -66,7 +68,7 @@ export class FlowChart extends Component {
         range: [],
       },
       showSlicingNotification: false,
-      showFeedbackForm: false,
+      resetSlicingPipelineBtnClicked: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -807,12 +809,18 @@ export class FlowChart extends Component {
       visibleSlicing,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { showSlicingNotification, showFeedbackForm } = this.state;
+    const { showSlicingNotification, resetSlicingPipelineBtnClicked } =
+      this.state;
 
     // Counts the nodes in the slicedPipeline array, excludes any modularPipeline Id
     const numberOfNodesInSlicedPipeline = slicedPipeline.filter(
       (id) => !modularPipelineIds.includes(id)
     ).length;
+
+    const shouldShowFeedback =
+      resetSlicingPipelineBtnClicked &&
+      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
+        undefined;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -874,13 +882,22 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
+
         {isSlicingPipelineApplied && (
           <Feedback
             buttonTitle={'Feedback for pipeline slicing'}
-            formTitle={'How satisfied are you with  pipeline slicing?'}
+            formTitle={'How satisfied are you with pipeline slicing?'}
             usageContext={'slicing-pipeline'}
           />
         )}
+        {/* { (isSlicingPipelineApplied || shouldShowFeedback) && (
+          <Feedback
+            buttonTitle={'Feedback for pipeline slicing'}
+            formTitle={'How satisfied are you with pipeline slicing?'}
+            usageContext={'slicing-pipeline'}
+            displayFormWithoutDelay={shouldShowFeedback}
+          />
+        )} */}
         {showSlicingNotification && visibleSlicing && (
           <SlicedPipelineNotification
             notification={
@@ -897,7 +914,10 @@ export class FlowChart extends Component {
               displayMetadataPanel={Boolean(clickedNode)}
               isSlicingPipelineApplied={isSlicingPipelineApplied}
               onApplySlicingPipeline={() => onApplySlice(true)}
-              onResetSlicingPipeline={this.resetSlicedPipeline}
+              onResetSlicingPipeline={() => {
+                this.resetSlicedPipeline();
+                this.setState({ resetSlicingPipelineBtnClicked: true });
+              }}
               ref={this.slicedPipelineActionBarRef}
               runCommand={runCommand}
               slicedPipelineLength={numberOfNodesInSlicedPipeline}
