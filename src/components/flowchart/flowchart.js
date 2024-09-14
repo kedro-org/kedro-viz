@@ -401,16 +401,16 @@ export class FlowChart extends Component {
 
     // Find the relative minimum scale to fit whole graph
     const minScale = Math.min(
-      chartWidth / (graphWidth || 1),
-      chartHeight / (graphHeight || 1)
+      chartWidth / (graphHeight || 1),
+      chartHeight / (graphWidth || 1)
     );
 
     setViewExtents(this.view, {
       translate: {
         minX: -leftSidebarOffset - margin,
-        maxX: graphWidth + margin + rightSidebarOffset,
+        maxX: graphHeight + margin + rightSidebarOffset,
         minY: -margin,
-        maxY: graphHeight + margin,
+        maxY: graphWidth + margin,
       },
       scale: {
         minK: this.MIN_SCALE * minScale,
@@ -471,9 +471,9 @@ export class FlowChart extends Component {
       focus,
       viewWidth: chartWidth,
       viewHeight: chartHeight,
-      objectWidth: graphWidth,
-      objectHeight: graphHeight,
-      minScaleX: 0.2,
+      objectWidth: graphHeight,
+      objectHeight: graphWidth,
+      minScaleY: 0.2,
       minScaleFocus: this.props.visibleMetaSidebar
         ? this.props.chartZoom.scale
         : 0.1,

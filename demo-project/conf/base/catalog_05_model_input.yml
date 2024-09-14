@@ -3,4 +3,4 @@ model_input_table:
   filepath: ${_base_location}/05_model_input/model_input_table.pq
   metadata:
     kedro-viz:
-      layer: model_input
+      layer1: model_input

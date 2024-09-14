@@ -73,7 +73,7 @@ export const layout = ({
   // Find the final node positions given these strict constraints
   solveStrict([...separationConstraints, ...parallelConstraints], constants, 1);
 
-  // Adjust vertical spacing between rows for legibility
+  // // Adjust vertical spacing between rows for legibility
   expandDenseRows(edges, rows, spaceY);
 };
 
@@ -218,20 +218,21 @@ const createParallelConstraints = (edges) =>
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, constants) => {
-  const { spaceX } = constants;
+  const { spaceX, spaceY } = constants;
   const separationConstraints = [];
 
   // For each row of nodes
-  for (let i = 0; i < rows.length; i += 1) {
+  for (let i = 0; i < rows.length - 1; i += 1) {
     const rowNodes = rows[i];
+    const nodeB = rows[i + 1][0];
 
     // Stable sort row nodes horizontally, breaks ties with ids
-    rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
+    rowNodes.sort((a, b) => compare(a.y, b.y, a.id, b.id));
 
     // Update constraints given updated row node order
-    for (let j = 0; j < rowNodes.length - 1; j += 1) {
+    for (let j = 0; j < rowNodes.length; j += 1) {
       const nodeA = rowNodes[j];
-      const nodeB = rowNodes[j + 1];
+      const nodeC = j + 1 < rowNodes.length ? rowNodes[j + 1] : null;
 
       // Count the connected edges
       const degreeA = Math.max(
@@ -242,16 +243,32 @@ const createSeparationConstraints = (rows, constants) => {
         1,
         nodeB.targets.length + nodeB.sources.length - 2
       );
+      if (nodeC) {
+        const degreeC = Math.max(
+          1,
+          nodeC.targets.length + nodeC.sources.length - 2
+        );
+        // Allow more spacing for nodes with more edges
+        const spreadInX = Math.min(10, degreeA * degreeC * constants.spreadX);
+        const spaceInX = snap(spreadInX * spaceX, spaceX);
+
+        separationConstraints.push({
+          base: { property: 'x', ...separationConstraint },
+          a: nodeA,
+          b: nodeC,
+          separation: nodeA.height * 0.5 + spaceInX + nodeC.height * 0.5,
+        });
+      }
 
       // Allow more spacing for nodes with more edges
-      const spread = Math.min(10, degreeA * degreeB * constants.spreadX);
-      const space = snap(spread * spaceX, spaceX);
+      const spreadInY = Math.min(10, degreeA * degreeB * constants.spreadX);
+      const spaceInY = snap(spreadInY * spaceY, spaceY);
 
       separationConstraints.push({
-        base: separationConstraint,
+        base: { property: 'y', ...separationConstraint },
         a: nodeA,
         b: nodeB,
-        separation: nodeA.width * 0.5 + space + nodeB.width * 0.5,
+        separation: nodeA.width * 0.5 + spaceInY + nodeB.width * 0.5,
       });
     }
   }
@@ -283,7 +300,7 @@ const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
 
     // Apply offset to all nodes following the current node
     for (const node of rows[i + 1]) {
-      node.y += currentOffsetY;
+      node.x += currentOffsetY;
     }
   }
 };

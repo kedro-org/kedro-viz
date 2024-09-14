@@ -5,8 +5,8 @@ import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
 
 const lineShape = line()
-  .x((d) => d.x)
-  .y((d) => d.y)
+  .x((d) => d.y)
+  .y((d) => d.x)
   .curve(curveBasis);
 
 /**
@@ -190,7 +190,7 @@ export const drawNodes = function (changed) {
     enterNodes
       .attr('tabindex', '0')
       .attr('class', 'pipeline-node')
-      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
+      .attr('transform', (node) => `translate(${node.y}, ${node.x})`)
       .attr('data-id', (node) => node.id)
       .classed(
         'pipeline-node--parameters',
@@ -319,7 +319,7 @@ export const drawNodes = function (changed) {
     allNodes
       .transition('update-nodes')
       .duration(this.DURATION)
-      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
+      .attr('transform', (node) => `translate(${node.y}, ${node.x})`)
       .on('end', () => {
         try {
           // Sort nodes so tab focus order follows X/Y position

@@ -11,7 +11,7 @@ import { routing } from './routing';
 const defaultOptions = {
   layout: {
     spaceX: 14,
-    spaceY: 110,
+    spaceY: 14,
     layerSpaceY: 55,
     spreadX: 2.2,
     padding: 100,

@@ -90,13 +90,12 @@ export const crossingConstraint = {
  * Layout constraint in X for minimum node separation
  */
 export const separationConstraint = {
-  property: 'x',
-
-  strict: (constraint, constants, variableA, variableB) =>
-    new Constraint(
+  strict: (constraint, constants, variableA, variableB) => {
+    return new Constraint(
       variableB.minus(variableA),
       Operator.Ge,
       constraint.separation,
       Strength.required
-    ),
+    );
+  },
 };
