@@ -256,7 +256,7 @@ const createSeparationConstraints = (rows, constants) => {
           base: { property: 'x', ...separationConstraint },
           a: nodeA,
           b: nodeC,
-          separation: nodeA.height * 0.5 + spaceInX + nodeC.height * 0.5,
+          separation: nodeA.height + spaceInX + nodeC.height,
         });
       }
 

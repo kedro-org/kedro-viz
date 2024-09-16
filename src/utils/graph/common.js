@@ -45,28 +45,28 @@ export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
  * @param {Object} node The node
  * @returns {Number} The left edge position
  */
-export const nodeLeft = (node) => node.x - node.width * 0.5;
+export const nodeLeft = (node) => node.x - node.height * 0.5;
 
 /**
  * Returns the right edge x-position of the node
  * @param {Object} node The node
  * @returns {Number} The right edge position
  */
-export const nodeRight = (node) => node.x + node.width * 0.5;
+export const nodeRight = (node) => node.x + node.height * 0.5;
 
 /**
  * Returns the top edge y-position of the node
  * @param {Object} node The node
  * @returns {Number} The top edge position
  */
-export const nodeTop = (node) => node.y - node.height * 0.5;
+export const nodeTop = (node) => node.y - node.width * 0.5;
 
 /**
  * Returns the bottom edge y-position of the node
  * @param {Object} node The node
  * @returns {Number} The bottom edge position
  */
-export const nodeBottom = (node) => node.y + node.height * 0.5;
+export const nodeBottom = (node) => node.y + node.width * 0.5;
 
 /**
  * Finds the rows formed by nodes given the their positions in Y.
