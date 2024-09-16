@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional, Set, Tuple
 from unittest.mock import patch
 
 from kedro import __version__
-from kedro.framework.project import configure_project, pipelines, settings
+from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
@@ -21,30 +21,11 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
+from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
+from kedro_viz.integrations.utils import _VizNullPluginManager
 
 logger = logging.getLogger(__name__)
-
-
-class _VizNullPluginManager:
-    """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
-    and registered plugins allowing the runner to function if no ``hook_manager``
-    has been instantiated.
-
-    NOTE: _VizNullPluginManager is a clone of _NullPluginManager class in Kedro.
-    This was introduced to support the earliest version of Kedro which does not
-    have _NullPluginManager defined
-    """
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __getattr__(self, name):
-        return self
-
-    def __call__(self, *args, **kwargs):
-        pass
 
 
 def _get_dataset_stats(project_path: Path) -> Dict:
@@ -110,13 +91,13 @@ def _load_data_helper(
         context = session.load_context()
         session_store = session._store
 
-        # Update the DataCatalog class for a custom implementation
-        # to handle kedro.io.core.DatasetError from
-        # `settings.DATA_CATALOG_CLASS.from_config`
+        # patch the AbstractDataset class for a custom
+        # implementation to handle kedro.io.core.DatasetError
         if is_lite:
-            settings.DATA_CATALOG_CLASS = DataCatalogLite
-
-        catalog = context.catalog
+            with patch("kedro.io.data_catalog.AbstractDataset", AbstractDatasetLite):
+                catalog = context.catalog
+        else:
+            catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
