@@ -46,7 +46,8 @@ import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
-import { Feedback } from '../feedback/feedback';
+import { FeedbackButton } from '../feedback-button/feedback-button';
+import { FeedbackForm } from '../feedback-form/feedback-form';
 import { localStorageFeedbackFirstTime } from '../../config';
 import { loadLocalStorage } from '../../store/helpers';
 
@@ -69,6 +70,7 @@ export class FlowChart extends Component {
       },
       showSlicingNotification: false,
       resetSlicingPipelineBtnClicked: false,
+      showFeedbackForm: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -809,14 +811,25 @@ export class FlowChart extends Component {
       visibleSlicing,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
-    const { showSlicingNotification, resetSlicingPipelineBtnClicked } =
-      this.state;
+    const {
+      showSlicingNotification,
+      resetSlicingPipelineBtnClicked,
+      showFeedbackForm,
+    } = this.state;
 
     // Counts the nodes in the slicedPipeline array, excludes any modularPipeline Id
     const numberOfNodesInSlicedPipeline = slicedPipeline.filter(
       (id) => !modularPipelineIds.includes(id)
     ).length;
 
+    const shouldShowFeedback =
+      resetSlicingPipelineBtnClicked &&
+      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
+        undefined;
+
+    const hasSeenFeedbackForm =
+      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
+      false;
     return (
       <div
         className="pipeline-flowchart kedro"
@@ -878,26 +891,24 @@ export class FlowChart extends Component {
           })}
           ref={this.layerNamesRef}
         />
-
-        {isSlicingPipelineApplied && (
-          <Feedback
-            buttonTitle={'Feedback for pipeline slicing'}
-            formTitle={[
+        <FeedbackButton
+          onClick={() => this.setState({ showFeedbackForm: true })}
+          title="Feedback for pipeline slicing"
+          visible={
+            isSlicingPipelineApplied && hasSeenFeedbackForm && !showFeedbackForm
+          }
+        />
+        {(shouldShowFeedback || showFeedbackForm) && (
+          <FeedbackForm
+            hideForm={() => this.setState({ showFeedbackForm: false })}
+            title={[
               'How satisfied are you with',
               <br key="1" />,
               'pipeline slicing?',
             ]}
-            usageContext={'slicing-pipeline'}
+            usageContext="slicing-pipeline"
           />
         )}
-        {/* { (isSlicingPipelineApplied || shouldShowFeedback) && (
-          <Feedback
-            buttonTitle={'Feedback for pipeline slicing'}
-            formTitle={'How satisfied are you with pipeline slicing?'}
-            usageContext={'slicing-pipeline'}
-            displayFormWithoutDelay={shouldShowFeedback}
-          />
-        )} */}
         {showSlicingNotification && visibleSlicing && (
           <SlicedPipelineNotification
             notification={
