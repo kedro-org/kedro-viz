@@ -16,36 +16,40 @@
   --feedback-form--text-area--color: #{colors.$black-900};
 }
 
+.feedback-form--wrapper {
+  background-color: var(--feedback-form-bg);
+  border-radius: 8px 0 0 8px;
+  min-width: 312px;
+  padding: 24px 24px 36px;
+  position: fixed;
+  right: 0;
+  top: 320px;
+
+  .button__btn {
+    margin-top: 12px;
+  }
+}
+
+.feedback-form--wrapper-no-form {
+  padding-bottom: 68px;
+}
+
 .feedback-form--text-area {
   align-items: center;
   background-color: transparent;
   border: 1px solid grey;
   display: flex;
   height: 104px;
-  padding: 8px 12px;
-  text-align: center;
-  width: 100%;
   margin-top: 68px;
+  padding: 8px 12px;
+  resize: none;
+  text-align: center;
+  width: 364px;
 }
 
 .feedback-form--text-area::placeholder {
   text-align: center;
   margin: auto; /* Centers the placeholder text vertically */
-}
-
-.feedback-form--wrapper {
-  position: fixed;
-  right: 0;
-  top: 320px;
-  width: 356px;
-  padding: 24px;
-  padding-bottom: 36px;
-  background-color: var(--feedback-form-bg);
-  border-radius: 8px 0 0 8px;
-
-  .button__btn {
-    margin-top: 12px;
-  }
 }
 
 .feedback-form--title {
@@ -54,8 +58,9 @@
   font-style: normal;
   font-weight: 400;
   line-height: 28px;
-  text-align: center;
   margin-top: 12px;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .feedback-form--close-icon {
@@ -70,15 +75,16 @@
 }
 
 .feedback-form {
+  align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
 
   .button__btn {
     border: 1px solid var(--feedback-form-title);
     color: var(--feedback-form-title);
     margin-top: 36px;
+    padding: 8px 12px;
   }
 }
 

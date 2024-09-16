@@ -886,7 +886,11 @@ export class FlowChart extends Component {
         {isSlicingPipelineApplied && (
           <Feedback
             buttonTitle={'Feedback for pipeline slicing'}
-            formTitle={'How satisfied are you with pipeline slicing?'}
+            formTitle={[
+              'How satisfied are you with',
+              <br key="1" />,
+              'pipeline slicing?',
+            ]}
             usageContext={'slicing-pipeline'}
           />
         )}

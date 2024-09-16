@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
@@ -45,7 +45,11 @@ export const FeedbackForm = ({
     );
   } else {
     return (
-      <div className="feedback-form--wrapper">
+      <div
+        className={classnames('feedback-form--wrapper', {
+          'feedback-form--wrapper-no-form': activeMood === null,
+        })}
+      >
         <div className="feedback-form--close-icon" onClick={onCancel}>
           <CloseIcon />
         </div>
