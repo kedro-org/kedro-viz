@@ -817,10 +817,6 @@ export class FlowChart extends Component {
       (id) => !modularPipelineIds.includes(id)
     ).length;
 
-    const shouldShowFeedback =
-      resetSlicingPipelineBtnClicked &&
-      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
-        undefined;
     return (
       <div
         className="pipeline-flowchart kedro"

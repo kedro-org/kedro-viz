@@ -13,10 +13,7 @@ export const Feedback = ({ buttonTitle, formTitle, usageContext }) => {
   const [showFeedbackForm, setShowFeedbackForm] = useState(
     firstTimeSeeingFeedbackComponent?.usageContext
   );
-  // const [showFeedbackForm, setShowFeedbackForm] = useState(
-  //   Object.keys(firstTimeSeeingFeedbackComponent).length === 0 ||
-  //     firstTimeSeeingFeedbackComponent?.usageContext
-  // );
+
   const [isCancelled, setIsCancelled] = useState(false);
   const [isSubmitted, setSubmitted] = useState(false);
   const [activeMood, setActiveMood] = useState(null);
@@ -28,8 +25,8 @@ export const Feedback = ({ buttonTitle, formTitle, usageContext }) => {
         updateLocalStorageUsageContext(true);
         setShowFeedbackForm(true);
       }
-    }, 5000);
-  }, []);
+    }, 4000);
+  }, [firstTimeSeeingFeedbackComponent]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
