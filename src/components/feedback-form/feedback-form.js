@@ -61,9 +61,9 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
     if (formStatus === 'cancelled') {
       return (
         <>
-          You can provide feedback at any time
+          You can provide feedback any time by using
           <br />
-          by clicking on the feedback button.
+          the feedback button in the sliced view.
         </>
       );
     }
@@ -79,7 +79,7 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
     return (
       <div
         className={classnames('feedback-form--wrapper', {
-          'feedback-form--wrapper-no-form': activeMood === null,
+          'feedback-form--wrapper-no-text-area': activeMood === null,
         })}
       >
         <div
