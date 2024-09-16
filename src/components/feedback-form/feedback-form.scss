@@ -16,7 +16,6 @@
   --feedback-form--text-area--color: #{colors.$black-900};
 }
 
-
 .feedback-form--text-area {
   align-items: center;
   background-color: transparent;
@@ -42,7 +41,7 @@
   padding: 24px;
   padding-bottom: 36px;
   background-color: var(--feedback-form-bg);
-  border-radius: 8px 0px 0px 8px;
+  border-radius: 8px 0 0 8px;
 
   .button__btn {
     margin-top: 12px;
@@ -64,33 +63,10 @@
   width: 24px;
   height: 24px;
   cursor: pointer; /* Optional: Changes the cursor on hover to indicate it's clickable */
-}
 
-.feedback-form--generic-message {
-  font-size: 14px;
-  text-align: center;
-  color: #{colors.$black-200};
-  font-style: normal;
-  font-weight: 400;
-  line-height: 20px;
-}
-
-.feedback-form--link {
-  background: none;
-  border: none;
-  color: #{colors.$black-200};
-  text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-}
-
-.feedback-form--link:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.feedback-form--link:focus-visible {
-  outline: thin dotted;
+  path {
+    fill: var(--feedback-form-title);
+  }
 }
 
 .feedback-form {
@@ -98,20 +74,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  .button__btn  {
+
+  .button__btn {
     border: 1px solid var(--feedback-form-title);
     color: var(--feedback-form-title);
-
     margin-top: 36px;
   }
 }
 
 .feedback-form--message {
-  color: black;
+  color: var(--feedback-form-title);
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
-  padding: 36px 24px;
+  padding: 24px 36px;
   width: auto;
 }

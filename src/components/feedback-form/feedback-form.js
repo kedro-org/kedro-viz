@@ -23,7 +23,13 @@ export const FeedbackForm = ({
     }
 
     if (isCancelled) {
-      return 'You can provide feedback at any time by clicking on the feedback button.';
+      return (
+        <>
+          You can provide feedback at any time
+          <br />
+          by clicking on the feedback button.
+        </>
+      );
     }
   };
   if (isSubmitted || isCancelled) {
