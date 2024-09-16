@@ -34,6 +34,8 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
+export const feedbackMessageDelayTimeout = 4000;
+
 // These colours variables come from styles/variables
 const slate600 = '#0e222d';
 const slate200 = '#21333e';

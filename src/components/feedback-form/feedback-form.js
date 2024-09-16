@@ -7,6 +7,7 @@ import { getHeap } from '../../tracking';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import { localStorageFeedbackFirstTime } from '../../config';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
+import { feedbackMessageDelayTimeout } from '../../config';
 
 import './feedback-form.scss';
 
@@ -15,14 +16,15 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
   const [activeMood, setActiveMood] = useState(null);
   const [feedbackText, setFeedbackText] = useState('');
 
-  const updateFormAndLocalStorage = () => {
-    updateLocalStorageUsageContext(false);
-    hideForm();
-  };
-
   const handleFormAction = (action) => {
     setFormStatus(action);
-    setTimeout(updateFormAndLocalStorage, 4000);
+
+    const timer = setTimeout(() => {
+      updateLocalStorageUsageContext(false);
+      hideForm();
+    }, feedbackMessageDelayTimeout);
+
+    return () => clearTimeout(timer);
   };
 
   const updateLocalStorageUsageContext = (value) => {
@@ -37,11 +39,20 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
         setFormStatus('active');
         setActiveMood(null);
         setFeedbackText('');
-      }, 4000);
+      }, feedbackMessageDelayTimeout);
 
       return () => clearTimeout(timer);
     }
   }, [formStatus]);
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    handleFormAction('submitted');
+    getHeap().track(getDataTestAttribute(usageContext, 'feedback-form'), {
+      rating: activeMood,
+      feedback: feedbackText,
+    });
+  };
 
   const getMessages = () => {
     if (formStatus === 'submitted') {
@@ -50,15 +61,15 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
     if (formStatus === 'cancelled') {
       return (
         <>
-          You can provide feedback any time by using
+          You can provide feedback at any time
           <br />
-          the feedback button in the sliced view.
+          by clicking on the feedback button.
         </>
       );
     }
   };
 
-  if (formStatus !== 'active') {
+  if (formStatus === 'submitted' || formStatus === 'cancelled') {
     return (
       <div className="feedback-form--wrapper feedback-form--message">
         {getMessages()}
@@ -88,18 +99,7 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
                 onChange={(event) => setFeedbackText(event.target.value)}
                 placeholder="How can we improve this feature?"
               />
-              <Button
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleFormAction('submitted');
-                  // Assuming getHeap().track(...) doesn't need to be changed or can be abstracted if necessary
-                  getHeap().track(
-                    getDataTestAttribute(usageContext, 'feedback-form'),
-                    { rating: activeMood, feedback: feedbackText }
-                  );
-                }}
-              >
+              <Button type="submit" onClick={handleFormSubmit}>
                 Submit feedback
               </Button>
             </>

@@ -822,12 +822,12 @@ export class FlowChart extends Component {
       (id) => !modularPipelineIds.includes(id)
     ).length;
 
-    const shouldShowFeedback =
+    const isFirstTimeFeedbackAfterResetSlicing =
       resetSlicingPipelineBtnClicked &&
       loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
         undefined;
 
-    const hasSeenFeedbackForm =
+    const seenSlicingFeedbackBefore =
       loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
       false;
     return (
@@ -895,10 +895,12 @@ export class FlowChart extends Component {
           onClick={() => this.setState({ showFeedbackForm: true })}
           title="Feedback for pipeline slicing"
           visible={
-            isSlicingPipelineApplied && hasSeenFeedbackForm && !showFeedbackForm
+            isSlicingPipelineApplied &&
+            seenSlicingFeedbackBefore &&
+            !showFeedbackForm
           }
         />
-        {(shouldShowFeedback || showFeedbackForm) && (
+        {(isFirstTimeFeedbackAfterResetSlicing || showFeedbackForm) && (
           <FeedbackForm
             hideForm={() => this.setState({ showFeedbackForm: false })}
             title={[
