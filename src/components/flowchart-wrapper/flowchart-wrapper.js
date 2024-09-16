@@ -43,6 +43,7 @@ import { isRunningLocally, mapNodeTypes } from '../../utils';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
 import Banner from '../ui/banner';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -315,13 +316,11 @@ export const FlowChartWrapper = ({
   };
 
   const showBanner = (bannerKey) => {
-    return true;
-    // [TODO: Uncomment below part after design testing]
-    // const bannerStatus = loadLocalStorage(localStorageBannerStatus);
-    // const shouldShowBanner =
-    //   displayBanner[bannerKey] &&
-    //   (bannerStatus[bannerKey] || bannerStatus[bannerKey] === undefined);
-    // return shouldShowBanner;
+    const bannerStatus = loadLocalStorage(localStorageBannerStatus);
+    const shouldShowBanner =
+      displayBanner[bannerKey] &&
+      (bannerStatus[bannerKey] || bannerStatus[bannerKey] === undefined);
+    return shouldShowBanner;
   };
 
   if (isInvalidUrl) {
@@ -350,6 +349,7 @@ export const FlowChartWrapper = ({
             }}
             btnUrl={BANNER_METADATA.liteModeWarning.docsLink}
             onClose={() => handleBannerClose(BANNER_KEYS.LITE)}
+            dataTest={getDataTestAttribute('flowchart-wrapper', 'lite-banner')}
           />
         )}
         <div className="pipeline-wrapper">

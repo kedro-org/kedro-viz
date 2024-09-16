@@ -15,6 +15,7 @@ const Banner = ({
   btnText = 'Learn More',
   position = 'top',
   onClose = null,
+  dataTest,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -30,7 +31,10 @@ const Banner = ({
   }
 
   return (
-    <div className={classnames('banner', `banner-${position}`)}>
+    <div
+      className={classnames('banner', `banner-${position}`)}
+      data-test={dataTest}
+    >
       {icon && <div className="banner-icon">{icon}</div>}
       <div className="banner-message">
         <span className="banner-message-title">{message.title}</span>

@@ -193,7 +193,7 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
   }, []);
 
   useEffect(() => {
-    async function getPackageCompatibility() {
+    async function checkPackageCompatibility() {
       try {
         const request = await fetchMetadata();
         const response = await request.json();
@@ -206,11 +206,11 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
           setIsKedroDatasetsCompatible(kedroDatasetsPackage.is_compatible);
         }
       } catch (error) {
-        console.error('package-compatibilities fetch error: ', error);
+        console.error('metadata fetch error: ', error);
       }
     }
 
-    getPackageCompatibility();
+    checkPackageCompatibility();
   }, []);
 
   useEffect(() => {

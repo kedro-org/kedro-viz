@@ -47,7 +47,7 @@ const ShareableUrlModal = ({ onToggleModal, onSetBanner, visible }) => {
   const [isPreviewEnabled, setIsPreviewEnabled] = useState(false);
 
   useEffect(() => {
-    async function getPackageCompatibility() {
+    async function checkPackageCompatibility() {
       try {
         const request = await fetchMetadata();
         const response = await request.json();
@@ -71,11 +71,11 @@ const ShareableUrlModal = ({ onToggleModal, onSetBanner, visible }) => {
           }
         }
       } catch (error) {
-        console.error('package-compatibilities fetch error: ', error);
+        console.error('metadata fetch error: ', error);
       }
     }
 
-    getPackageCompatibility();
+    checkPackageCompatibility();
   }, [onSetBanner]);
 
   const setStateForPublishedView = () => {
