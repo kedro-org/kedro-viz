@@ -1,10 +1,14 @@
 """`kedro_viz.models.metadata` defines metadata for Kedro-Viz application."""
 
+# pylint: disable=missing-function-docstring
 from typing import ClassVar, List
-from pydantic import BaseModel, ValidationInfo, field_validator
+
+from pydantic import BaseModel, field_validator
 
 
 class PackageCompatibility(BaseModel):
+    """Represent package compatibility in app metadata"""
+
     package_name: str
     package_version: str
     is_compatible: bool

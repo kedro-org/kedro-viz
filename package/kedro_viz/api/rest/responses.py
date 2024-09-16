@@ -4,17 +4,14 @@
 import abc
 import json
 import logging
-from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel, ConfigDict
 
-from kedro_viz.api.rest.utils import get_package_compatibilities, get_package_version
-from kedro_viz.constants import PACKAGE_REQUIREMENTS
+from kedro_viz.api.rest.utils import get_package_compatibilities
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
     DataNode,

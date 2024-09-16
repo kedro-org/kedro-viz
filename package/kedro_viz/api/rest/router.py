@@ -2,22 +2,22 @@
 
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
+
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
-from kedro_viz.constants import PACKAGE_REQUIREMENTS
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
     APIErrorMessage,
     GraphAPIResponse,
-    NodeMetadataAPIResponse,
     MetadataAPIResponse,
+    NodeMetadataAPIResponse,
     get_default_response,
+    get_metadata_response,
     get_node_metadata_response,
     get_selected_pipeline_response,
-    get_metadata_response,
 )
 
 try:
@@ -96,10 +96,8 @@ async def get_metadata():
     try:
         return get_metadata_response()
     except Exception as exc:
-        logger.exception(
-            "An exception occurred while getting package compatibility info : %s", exc
-        )
+        logger.exception("An exception occurred while getting app metadata: %s", exc)
         return JSONResponse(
             status_code=500,
-            content={"message": "Failed to get package compatibility info"},
+            content={"message": "Failed to get app metadata"},
         )

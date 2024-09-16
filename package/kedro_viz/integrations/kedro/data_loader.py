@@ -145,10 +145,10 @@ def load_data(
 
         if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
-            
+
             # for the viz lite banner
             Metadata.set_has_missing_dependencies(True)
-            
+
             for unresolved_module_set in unresolved_imports.values():
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
