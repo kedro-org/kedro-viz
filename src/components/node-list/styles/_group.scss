@@ -129,8 +129,8 @@ $placeholder-fade: 120px;
 }
 
 .pipeline-type-group-toggle {
-  width: var.$toggle-size;
-  height: var.$toggle-size;
+  width: variables.$toggle-size;
+  height: variables.$toggle-size;
   padding: 0;
   color: var(--color-default-alt);
   font-size: inherit;
