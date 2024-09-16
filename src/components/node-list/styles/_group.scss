@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as variables;
+@use '../../../styles/variables' as var;
 @use './variables';
 
 %nolist {
@@ -28,7 +28,7 @@ $placeholder-fade: 120px;
 
 .pipeline-nodelist__placeholder-upper,
 .pipeline-nodelist__placeholder-lower {
-  z-index: variables.$zindex-nodelist-placeholder;
+  z-index: var.$zindex-nodelist-placeholder;
   pointer-events: none;
 }
 
@@ -72,7 +72,7 @@ $placeholder-fade: 120px;
 .pipeline-nodelist__heading {
   position: sticky;
   top: 0;
-  z-index: variables.$zindex-nodelist-heading;
+  z-index: var.$zindex-nodelist-heading;
   margin: 0;
 
   // Avoid pixel gap above when scrolling.
@@ -94,7 +94,7 @@ $placeholder-fade: 120px;
   &::after {
     position: absolute;
     bottom: -19px;
-    z-index: variables.$zindex-group-background-fade;
+    z-index: var.$zindex-group-background-fade;
     width: 100%;
     height: 20px;
     background: linear-gradient(
@@ -114,7 +114,7 @@ $placeholder-fade: 120px;
   &::after {
     position: absolute;
     bottom: -19px;
-    z-index: variables.$zindex-group-background-fade;
+    z-index: var.$zindex-group-background-fade;
     width: 100%;
     height: 20px;
     background: linear-gradient(
@@ -129,8 +129,8 @@ $placeholder-fade: 120px;
 }
 
 .pipeline-type-group-toggle {
-  width: variables.$toggle-size;
-  height: variables.$toggle-size;
+  width: var.$toggle-size;
+  height: var.$toggle-size;
   padding: 0;
   color: var(--color-default-alt);
   font-size: inherit;
@@ -148,7 +148,7 @@ $placeholder-fade: 120px;
     outline: none;
 
     [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px variables.$blue-300 inset;
+      box-shadow: 0 0 0 3px var.$blue-300 inset;
     }
   }
 
@@ -167,7 +167,7 @@ $placeholder-fade: 120px;
   }
 
   &--disabled {
-    color: variables.$black-400;
+    color: var.$black-400;
     transform: rotate(90deg);
   }
 }
