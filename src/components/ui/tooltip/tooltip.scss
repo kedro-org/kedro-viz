@@ -1,3 +1,4 @@
+@use '../../../styles/variables' as variables;
 @use '../../../styles/extends';
 
 $x-offset: 20px;
@@ -9,7 +10,7 @@ $triangle-size-sm: 5px;
   position: absolute;
   bottom: calc(100% + 10px);
   left: 50%;
-  z-index: 9;
+  z-index: variables.$zindex-tooltip;
   transform: translate(-50%, 0);
   font-size: 12px;
   visibility: hidden;

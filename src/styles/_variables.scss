@@ -27,10 +27,67 @@ $metadata-modal-breakpoint: 700px;
 $global-toolbar-width: 80px;
 $run-list-controls-height: 95px;
 
-// -- levels -- //
-$z-index-metadata-panel: 3;
-$z-index-metadata-code: 3;
-$z-index-MuiTreeItem-icon: 1;
+// z-index values
+$base: 0;
+$above: 1;
+$below: -1;
+
+$zindex-metadata-code: $base + ($above * 3);
+
+$zindex-MuiTreeItem-icon: $base + $above;
+
+$zindex-sidebar: $base + $above;
+$zindex-ui: $base + ($above * 2);
+$zindex-toolbar: $base + ($above * 2);
+$zindex-sidebar-expanded: $base + ($above * 3);
+
+$zindex-plot-modal: $base + ($above * 3);
+
+$zindex-sticky-elements: $base + $above;
+
+$zindex-search-icon: $base + $above;
+
+$zindex-feature-hints: $base + ($above * 5);
+
+$zindex-modal: $base + ($above * 6);
+
+$zindex-go-back-btn: $base + ($above * 3);
+
+$zindex-global-toolbar: $base + ($above * 5);
+
+$zindex-toolbar-label: $base + $above;
+
+$zindex-metadata-modal: $base + ($above * 6);
+
+$zindex-metadata-panel: $base + ($above * 3);
+$zindex-metadata-link: $base + $above;
+
+$zindex-nodelist-placeholder: $base + ($above * 2);
+$zindex-nodelist-heading: $base + $above;
+
+$zindex-group-background-fade: $base + $below;
+
+$zindex-switch-root: $base;
+$zindex-switch-base: $base + $above;
+$zindex-switch-input: $base + $above;
+$zindex-switch-track: $base + $below;
+
+$zindex-filter-panel: $base + $above;
+$zindex-split-handle-focus: $base + $above;
+
+$zindex-preview-table-header: $base + $above;
+
+$zindex-search-close-icon: $base + $above;
+$zindex-search-input-focused: $base + $above;
+
+$zindex-dropdown-label: $base + ($above * 8);
+$zindex-dropdown-options: $base + ($above * 2); // fix closing transition animation bug
+$zindex-dropdown-btn-wrapper: $base + $above;
+
+$zindex-update-reminder: $base + ($above * 10); // For the main update reminder
+$zindex-update-reminder-elements: $base + ($above * 2); // For related elements
+
+$zindex-tooltip: $base + ($above * 9);
 
 // Micro-animation
 $run-width: 375px;

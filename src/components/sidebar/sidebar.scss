@@ -14,14 +14,14 @@
   }
 
   // Ensures sidebar tooltips are above code panel
-  z-index: 1;
+  z-index: variables.$zindex-sidebar;
   display: flex;
   width: 100%;
   transform: translateX(calc(-100% + #{variables.$sidebar-width-closed}));
   transition: transform ease 0.4s;
 
   @media (min-width: variables.$metadata-sidebar-code-breakpoint) {
-    z-index: 3;
+    z-index: variables.$zindex-sidebar-expanded;
   }
 
   @media (min-width: variables.$sidebar-width-breakpoint) {
@@ -55,7 +55,7 @@
   position: relative;
   transition: visibility 0.3s;
   visibility: hidden;
-  z-index: 2;
+  z-index: variables.$zindex-ui;
 
   .pipeline-sidebar--visible & {
     visibility: visible;
@@ -75,7 +75,7 @@
   height: 100%;
   position: relative;
   width: variables.$sidebar-width-closed;
-  z-index: 2;
+  z-index: variables.$zindex-toolbar;
 }
 
 .compare-switch-wrapper__text {

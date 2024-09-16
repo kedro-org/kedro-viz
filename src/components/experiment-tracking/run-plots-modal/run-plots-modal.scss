@@ -17,7 +17,7 @@
   flex-direction: column;
   overflow-y: scroll;
   position: absolute;
-  z-index: 3;
+  z-index: variables.$zindex-plot-modal;;
 }
 
 .pipeline-run-plots-modal__top {

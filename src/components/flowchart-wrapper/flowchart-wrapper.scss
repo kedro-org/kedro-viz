@@ -36,7 +36,7 @@ $sidebar-toolbar-width-open: variables.$sidebar-width-open +
   opacity: 0;
   pointer-events: none;
   position: relative;
-  z-index: 3;
+  z-index: variables.$zindex-go-back-btn;
 
   .button button {
     background-color: variables.$yellow-300;

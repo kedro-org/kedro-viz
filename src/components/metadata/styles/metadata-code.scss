@@ -26,7 +26,7 @@
   padding: 0 variables.$metadata-sidebar-width-open 0 0;
   transform: translateX(100vw);
   transition: transform ease 0.5s 0.1s, left ease 0.5s;
-  z-index: variables.$z-index-metadata-code;
+  z-index: variables.$zindex-metadata-code;
 
   &--visible {
     transform: translateX(variables.$global-toolbar-width);
