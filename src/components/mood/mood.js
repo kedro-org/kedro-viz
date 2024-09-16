@@ -20,7 +20,7 @@ const moodConfig = {
 export const Mood = ({ selectedMood, onClick }) => {
   return (
     <section className="mood-wrapper">
-      {Object.entries(moodConfig).map(([moodName, MoodIcon]) => (
+      {Object.entries(moodConfig).map(([moodName, moodIcon]) => (
         <div
           key={moodName}
           className={classnames('mood-icon-wrapper', {
@@ -28,7 +28,7 @@ export const Mood = ({ selectedMood, onClick }) => {
           })}
         >
           <IconButton
-            icon={MoodIcon}
+            icon={moodIcon}
             className={classnames('mood-icon', {
               'mood-icon--selected': moodName === selectedMood,
             })}

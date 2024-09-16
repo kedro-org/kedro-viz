@@ -1,5 +1,15 @@
 @use '../../styles/variables' as colors;
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .kui-theme--dark {
   --feedback-form-bg: #{colors.$white-0};
   --feedback-form-content: #{colors.$slate-0};
@@ -17,6 +27,7 @@
 }
 
 .feedback-form--wrapper {
+  animation: fadeIn 0.5s ease-in;
   background-color: var(--feedback-form-bg);
   border-radius: 8px 0 0 8px;
   min-width: 312px;
