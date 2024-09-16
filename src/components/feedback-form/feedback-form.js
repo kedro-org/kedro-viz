@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import Button from '../ui/button';
 import CloseIcon from '../icons/close';
-import { Mood } from './mood';
+import { Mood } from '../mood/mood';
 
 import './feedback-form.scss';
 
