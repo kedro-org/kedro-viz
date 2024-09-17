@@ -9,15 +9,26 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
-- Introduce `kedro viz --lite`, which allows users to run Kedro-Viz without installing Kedro project dependencies. (#1966, #2077)
-- Slice a pipeline functionality. (#2036)
+- Add `kedro viz --lite`, allowing users to run Kedro-Viz without installing Kedro project dependencies. (#1966, #2077, #2093)
+- Enable visual slicing of a Kedro pipeline in Kedro-viz. (#2036)
+- Improve Kedro-Viz CLI startup time with lazy subcommands and deferring imports (#1920)
+- Add documentation for Kedro-viz in VSCode Extension. (#2078)
+
 
 ## Bug fixes and other changes
 
-- Fixes design issues in metadata panel. (#2009)
+- Introduce `onActionCallback` prop in Kedro-Viz React component. (#2022)
+- Enhance documentation for Dataset previews on Kedro-viz. (#2074)
+- Add documentation for Kedro-viz CLI Commands. (#2044)
+- Fix design issues in metadata panel. (#2009)
+- Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
+- Fix bug where reloading the page reset to the default pipeline instead of retaining the selected one. (#2041)
 - Fix missing run command in metadata panel for task nodes. (#2055)
+- Refactor disable preview feature to run entirely on the frontend without backend calls. (#2067)
+- Implement a method to send JSON data to the VSCode integration without running the Kedro-viz server. (#2049)
 - Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
+- Fix highlight width inconsistency in the Nodelist component.(#2004)
+
 
 # Release 9.2.0
 
