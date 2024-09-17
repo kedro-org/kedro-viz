@@ -19,6 +19,7 @@ import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
+import AlertIcon from '../icons/alert';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
@@ -31,13 +32,18 @@ import {
   linkToFlowchartInitialVal,
   localStorageFlowchartLink,
   localStorageName,
+  localStorageBannerStatus,
   params,
+  BANNER_METADATA,
+  BANNER_KEYS,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
 import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
 import { isRunningLocally, mapNodeTypes } from '../../utils';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './flowchart-wrapper.scss';
+import Banner from '../ui/banner';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
@@ -64,6 +70,7 @@ export const FlowChartWrapper = ({
   expandAllPipelines,
   displayMetadataPanel,
   displayExportBtn,
+  displayBanner,
 }) => {
   const history = useHistory();
   const { pathname, search } = useLocation();
@@ -304,6 +311,18 @@ export const FlowChartWrapper = ({
     resetLinkingToFlowchartLocalStorage();
   };
 
+  const handleBannerClose = (bannerKey) => {
+    saveLocalStorage(localStorageBannerStatus, { [bannerKey]: false });
+  };
+
+  const showBanner = (bannerKey) => {
+    const bannerStatus = loadLocalStorage(localStorageBannerStatus);
+    const shouldShowBanner =
+      displayBanner[bannerKey] &&
+      (bannerStatus[bannerKey] || bannerStatus[bannerKey] === undefined);
+    return shouldShowBanner;
+  };
+
   if (isInvalidUrl) {
     return (
       <div className="kedro-pipeline">
@@ -321,6 +340,18 @@ export const FlowChartWrapper = ({
       <div className="kedro-pipeline">
         {displaySidebar && <Sidebar />}
         {displayMetadataPanel && <MetaData />}
+        {showBanner(BANNER_KEYS.LITE) && (
+          <Banner
+            icon={<AlertIcon />}
+            message={{
+              title: BANNER_METADATA.liteModeWarning.title,
+              body: BANNER_METADATA.liteModeWarning.body,
+            }}
+            btnUrl={BANNER_METADATA.liteModeWarning.docsLink}
+            onClose={() => handleBannerClose(BANNER_KEYS.LITE)}
+            dataTest={getDataTestAttribute('flowchart-wrapper', 'lite-banner')}
+          />
+        )}
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
@@ -371,6 +402,7 @@ export const mapStateToProps = (state) => ({
   expandAllPipelines: state.expandAllPipelines,
   displayMetadataPanel: state.display.metadataPanel,
   displayExportBtn: state.display.exportBtn,
+  displayBanner: state.showBanner,
 });
 
 export const mapDispatchToProps = (dispatch) => ({

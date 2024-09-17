@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { toggleShareableUrlModal } from '../../actions';
-import { fetchPackageCompatibilities } from '../../utils';
+import { toggleShareableUrlModal, setBanner } from '../../actions';
+import { fetchMetadata } from '../../utils';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 import {
+  BANNER_KEYS,
   hostingPlatforms,
   inputKeyToStateKeyMap,
   localStorageShareableUrl,
@@ -25,7 +26,7 @@ import { deployViz } from '../../utils';
 
 import './shareable-url-modal.scss';
 
-const ShareableUrlModal = ({ onToggleModal, visible }) => {
+const ShareableUrlModal = ({ onToggleModal, onSetBanner, visible }) => {
   const [deploymentState, setDeploymentState] = useState('default');
   const [inputValues, setInputValues] = useState({});
   const [isFormDirty, setIsFormDirty] = useState({
@@ -46,13 +47,18 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
   const [isPreviewEnabled, setIsPreviewEnabled] = useState(false);
 
   useEffect(() => {
-    async function fetchPackageCompatibility() {
+    async function checkPackageCompatibility() {
       try {
-        const request = await fetchPackageCompatibilities();
+        const request = await fetchMetadata();
         const response = await request.json();
 
         if (request.ok) {
-          const fsspecPackage = response.find(
+          onSetBanner(
+            BANNER_KEYS.LITE,
+            Boolean(response.has_missing_dependencies)
+          );
+          const packageCompatibilityInfo = response.package_compatibilities;
+          const fsspecPackage = packageCompatibilityInfo.find(
             (pckg) => pckg.package_name === PACKAGE_FSSPEC
           );
           setCompatibilityData(fsspecPackage);
@@ -65,12 +71,12 @@ const ShareableUrlModal = ({ onToggleModal, visible }) => {
           }
         }
       } catch (error) {
-        console.error('package-compatibilities fetch error: ', error);
+        console.error('metadata fetch error: ', error);
       }
     }
 
-    fetchPackageCompatibility();
-  }, []);
+    checkPackageCompatibility();
+  }, [onSetBanner]);
 
   const setStateForPublishedView = () => {
     if (Object.keys(hostingPlatformLocalStorageVal).length > 0) {
@@ -321,6 +327,9 @@ export const mapStateToProps = (state) => ({
 export const mapDispatchToProps = (dispatch) => ({
   onToggleModal: (value) => {
     dispatch(toggleShareableUrlModal(value));
+  },
+  onSetBanner: (name, value) => {
+    dispatch(setBanner(name, value));
   },
 });
 

@@ -18,6 +18,7 @@ Please follow the established format:
 - Fixes design issues in metadata panel. (#2009)
 - Fix missing run command in metadata panel for task nodes. (#2055)
 - Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
+- Add `kedro viz --lite` user warning banner UI. (#2092)
 
 # Release 9.2.0
 
