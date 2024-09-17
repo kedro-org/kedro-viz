@@ -15,7 +15,7 @@
   --feedback-form-content: #{colors.$slate-0};
   --feedback-form-title: #{colors.$black-900};
   --feedback-form--text-area--background: #{colors.$slate-200};
-  --feedback-form--text-area--color: #{colors.$white-0};
+  --feedback-form--text-area--color: #{colors.$black-200};
 }
 
 .kui-theme--light {
@@ -23,7 +23,7 @@
   --feedback-form-content: #{colors.$white-0};
   --feedback-form-title: #{colors.$white-0};
   --feedback-form--text-area--background: #{colors.$white-0};
-  --feedback-form--text-area--color: #{colors.$black-900};
+  --feedback-form--text-area--color: #{colors.$black-0};
 }
 
 .feedback-form--wrapper {
@@ -49,6 +49,7 @@
   align-items: center;
   background-color: transparent;
   border: 1px solid grey;
+  color: var(--feedback-form--text-area--color);
   display: flex;
   height: 104px;
   margin-top: 68px;
