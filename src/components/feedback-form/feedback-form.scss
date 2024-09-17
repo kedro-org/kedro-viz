@@ -47,8 +47,9 @@
 
 .feedback-form--text-area::placeholder {
   color: var(--feedback-form--text-area-placeholder--color);
-  text-align: center;
   margin: auto; /* Centers the placeholder text vertically */
+  text-align: center;
+  font-family: Inter, sans-serif;
 }
 
 .feedback-form--text-area {
