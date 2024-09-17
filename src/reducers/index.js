@@ -24,7 +24,7 @@ import {
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
-  TOGGLE_SHOW_DATASET_PREVIEWS
+  TOGGLE_SHOW_DATASET_PREVIEWS,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -123,8 +123,7 @@ const combinedReducer = combineReducers({
     true,
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
-),
-
+  ),
 });
 
 const rootReducer = (state, action) => {

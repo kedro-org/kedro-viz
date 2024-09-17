@@ -63,6 +63,22 @@ If a visualisation panel opens up and a pipeline is not visible, refresh the vie
 
 To exit the visualisation, close the browser tab. To regain control of the terminal, enter `^+c` on Mac or `Ctrl+c` on Windows or Linux machines.
 
+## Visualise a Kedro project without installing project dependencies
+
+You can use the experimental `--lite` flag to visualise your pipelines without installing Kedro project dependencies. Add the flag to the command you use to start Kedro-Viz:
+
+```bash
+kedro viz run --lite
+```
+> [!Important]
+> Since this is an experimental feature, Kedro-Viz will run with limited functionality and you should see a warning message in your terminal informing you about any missing dependencies.
+
+Some of the known limitations while using `--lite` flag:
+
+* If the datasets are not resolved, they will be defaulted to a custom dataset `UnavailableDataset`. 
+* The flowchart will not show the layers information for the datasets.
+* Experiment Tracking will not work if the pre-requisite of having kedro-datasets version 2.1.0 and above is not met.
+
 ## Automatic visualisation updates
 
 You can use the `--autoreload` flag to autoreload Kedro-Viz when a `Python` or `YAML` file changes in the project. Add the flag to the command you use to start Kedro-Viz:

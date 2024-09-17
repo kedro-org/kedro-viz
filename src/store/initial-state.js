@@ -250,7 +250,7 @@ const getInitialState = (props = {}) => {
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines,
+    expandAllPipelines
   );
 
   const initialState = {
