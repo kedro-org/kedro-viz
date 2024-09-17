@@ -81,7 +81,7 @@ _VIZ_PROCESSES: Dict[str, int] = {}
 @click.option(
     "--lite",
     is_flag=True,
-    help="A flag to load an experimental light-weight Kedro Viz",
+    help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
 # pylint: disable=import-outside-toplevel, too-many-locals
 def run(

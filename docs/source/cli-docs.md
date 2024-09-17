@@ -64,6 +64,9 @@ kedro viz run [OPTIONS]
 - `--params <params>`
   - Specify extra parameters for the Kedro Viz run. This option supports the same format as the `params` option in the Kedro CLI.
 
+- `--lite`                    
+  - An experimental flag to open Kedro-Viz without Kedro project dependencies.
+
 
 ```{note}
 When running Kedro Viz locally with the `--autoreload` option, the server will automatically restart whenever there are changes to Python, YAML, or JSON files in the Kedro project. This is particularly useful during development.
