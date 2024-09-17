@@ -48,7 +48,7 @@ import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pi
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
-import { localStorageFeedbackSeen } from '../../config';
+import { localStorageFeedbackSeen, feedbacks } from '../../config';
 import { loadLocalStorage } from '../../store/helpers';
 
 import './styles/flowchart.scss';
@@ -892,7 +892,7 @@ export class FlowChart extends Component {
         />
         <FeedbackButton
           onClick={() => this.setState({ showFeedbackForm: true })}
-          title="Feedback for pipeline slicing"
+          title={feedbacks.slicingPipeline.buttonTittle}
           visible={
             isSlicingPipelineApplied &&
             seenSlicingFeedbackBefore &&
@@ -902,12 +902,8 @@ export class FlowChart extends Component {
         {(isFirstTimeFeedbackAfterResetSlicing || showFeedbackForm) && (
           <FeedbackForm
             hideForm={() => this.setState({ showFeedbackForm: false })}
-            title={[
-              'How satisfied are you with',
-              <br key="1" />,
-              'pipeline slicing?',
-            ]}
-            usageContext="slicing-pipeline"
+            title={feedbacks.slicingPipeline.formTitle}
+            usageContext={feedbacks.slicingPipeline.usageContext}
           />
         )}
         {showSlicingNotification && visibleSlicing && (

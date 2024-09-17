@@ -100,6 +100,18 @@ export const sidebarElementTypes = {
   parameters: 'Parameters',
 };
 
+export const feedbacks = {
+  slicingPipeline: {
+    formTitle: [
+      'How satisfied are you with',
+      <br key="1" />,
+      'pipeline slicing?',
+    ],
+    buttonTittle: 'Feedback for pipeline slicing',
+    usageContext: 'slicing-pipeline',
+  },
+};
+
 export const shortTypeMapping = {
   'plotly.plotly_dataset.PlotlyDataset': 'plotly',
   'plotly.json_dataset.JSONDataset': 'plotly',
