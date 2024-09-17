@@ -1,6 +1,9 @@
 import { getUrl } from '../utils';
 import loadJsonData from '../store/load-data';
-import {parseUrlParameters, preparePipelineState} from '../store/initial-state';
+import {
+  parseUrlParameters,
+  preparePipelineState,
+} from '../store/initial-state';
 import { resetData } from './index';
 
 /**

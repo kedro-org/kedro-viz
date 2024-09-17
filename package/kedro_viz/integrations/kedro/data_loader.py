@@ -152,10 +152,10 @@ def load_data(
             sys_modules_patch.update(mocked_modules)
 
             logger.warning(
-                "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
-                "%s \n"
-                "In order to get a complete experience of Viz, "
-                "please install the missing Kedro project dependencies\n",
+                "Kedro-Viz is running with limited functionality. "
+                "For the best experience with full functionality, please\n"
+                "install the missing Kedro project dependencies:\n"
+                "%s \n",
                 list(mocked_modules.keys()),
             )
 
