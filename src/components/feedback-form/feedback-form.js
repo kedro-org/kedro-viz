@@ -5,7 +5,7 @@ import CloseIcon from '../icons/close';
 import { Mood } from '../mood/mood';
 import { getHeap } from '../../tracking';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
-import { localStorageFeedbackFirstTime } from '../../config';
+import { localStorageFeedbackSeen } from '../../config';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import { feedbackMessageDelayTimeout } from '../../config';
 
@@ -28,9 +28,9 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
   };
 
   const updateLocalStorageUsageContext = (value) => {
-    const existingData = loadLocalStorage(localStorageFeedbackFirstTime) || {};
+    const existingData = loadLocalStorage(localStorageFeedbackSeen) || {};
     existingData[usageContext] = value;
-    saveLocalStorage(localStorageFeedbackFirstTime, existingData);
+    saveLocalStorage(localStorageFeedbackSeen, existingData);
   };
 
   useEffect(() => {

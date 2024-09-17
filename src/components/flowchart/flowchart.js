@@ -48,7 +48,7 @@ import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pi
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
-import { localStorageFeedbackFirstTime } from '../../config';
+import { localStorageFeedbackSeen } from '../../config';
 import { loadLocalStorage } from '../../store/helpers';
 
 import './styles/flowchart.scss';
@@ -824,12 +824,11 @@ export class FlowChart extends Component {
 
     const isFirstTimeFeedbackAfterResetSlicing =
       resetSlicingPipelineBtnClicked &&
-      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
+      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] ===
         undefined;
 
     const seenSlicingFeedbackBefore =
-      loadLocalStorage(localStorageFeedbackFirstTime)['slicing-pipeline'] ===
-      false;
+      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] === false;
     return (
       <div
         className="pipeline-flowchart kedro"
