@@ -49,6 +49,7 @@ import { SlicedPipelineNotification } from '../sliced-pipeline-notification/slic
 import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
 import { loadLocalStorage } from '../../store/helpers';
+import { localStorageFeedbackSeen } from '../../config';
 
 import './styles/flowchart.scss';
 
@@ -835,11 +836,12 @@ export class FlowChart extends Component {
 
     const isFirstTimeFeedbackAfterResetSlicing =
       resetSlicingPipelineBtnClicked &&
-      loadLocalStorage('KedroViz-feedback-seen')['slicing-pipeline'] ===
+      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] ===
         undefined;
 
     const seenSlicingFeedbackBefore =
-      loadLocalStorage('KedroViz-feedback-seen')['slicing-pipeline'] === false;
+      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] === false;
+
     return (
       <div
         className="pipeline-flowchart kedro"

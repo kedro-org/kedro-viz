@@ -6,6 +6,7 @@ import { Mood } from '../mood/mood';
 import { getHeap } from '../../tracking';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
+import { localStorageFeedbackSeen } from '../../config';
 
 import './feedback-form.scss';
 
@@ -26,9 +27,9 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
   };
 
   const updateLocalStorageUsageContext = (value) => {
-    const existingData = loadLocalStorage('KedroViz-feedback-seen') || {};
+    const existingData = loadLocalStorage(localStorageFeedbackSeen) || {};
     existingData[usageContext] = value;
-    saveLocalStorage('KedroViz-feedback-seen', existingData);
+    saveLocalStorage(localStorageFeedbackSeen, existingData);
   };
 
   useEffect(() => {
