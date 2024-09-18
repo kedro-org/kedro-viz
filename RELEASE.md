@@ -28,7 +28,7 @@ Please follow the established format:
 - Implement a method to send JSON data to the VSCode integration without running the Kedro-viz server. (#2049)
 - Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
 - Fix highlight width inconsistency in the Nodelist component.(#2004)
-
+- Add `kedro viz --lite` user warning banner UI. (#2092)
 
 # Release 9.2.0
 
