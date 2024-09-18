@@ -21,16 +21,17 @@ Please follow the established format:
 - Enhance documentation for Dataset previews on Kedro-viz. (#2074)
 - Add documentation for Kedro-viz CLI Commands. (#2044)
 - Fix design issues in metadata panel. (#2009)
-- Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
 - Fix bug where reloading the page reset to the default pipeline instead of retaining the selected one. (#2041)
 - Add feedback component for slicing pipeline. (#2085)
+- Add `kedro viz --lite` user warning banner UI. (#2092)
 - Fixes design issues in metadata panel. (#2009)
+- Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
 - Fix missing run command in metadata panel for task nodes. (#2055)
+- Fix highlight width inconsistency in the Nodelist component.(#2004)
+- Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
 - Refactor disable preview feature to run entirely on the frontend without backend calls. (#2067)
 - Implement a method to send JSON data to the VSCode integration without running the Kedro-viz server. (#2049)
-- Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
-- Fix highlight width inconsistency in the Nodelist component.(#2004)
-- Add `kedro viz --lite` user warning banner UI. (#2092)
+
 
 # Release 9.2.0
 
