@@ -5,7 +5,6 @@ export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 export const localStorageShareableUrl = 'KedroViz-shareable-url';
-export const localStorageFeedbackSeen = 'KedroViz-feedback-seen';
 export const localStorageBannerStatus = 'KedroViz-banners';
 
 export const linkToFlowchartInitialVal = {
@@ -34,8 +33,6 @@ export const codeSidebarWidth = {
   closed: 0,
   open: 480,
 };
-
-export const feedbackMessageDelayTimeout = 4000;
 
 // These colours variables come from styles/variables
 const slate600 = '#0e222d';
@@ -99,18 +96,6 @@ export const sidebarElementTypes = {
   task: 'Nodes',
   data: 'Datasets',
   parameters: 'Parameters',
-};
-
-export const feedbacks = {
-  slicingPipeline: {
-    formTitle: [
-      'How satisfied are you with',
-      <br key="1" />,
-      'pipeline slicing?',
-    ],
-    buttonTittle: 'Feedback for pipeline slicing',
-    usageContext: 'slicing-pipeline',
-  },
 };
 
 export const shortTypeMapping = {
