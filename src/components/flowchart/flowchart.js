@@ -48,10 +48,21 @@ import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pi
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
-import { localStorageFeedbackSeen, feedbacks } from '../../config';
 import { loadLocalStorage } from '../../store/helpers';
 
 import './styles/flowchart.scss';
+
+export const feedbacks = {
+  slicingPipeline: {
+    formTitle: [
+      'How satisfied are you with',
+      <br key="1" />,
+      'pipeline slicing?',
+    ],
+    buttonTittle: 'Feedback for pipeline slicing',
+    usageContext: 'slicing-pipeline',
+  },
+};
 
 /**
  * Display a pipeline flowchart, mostly rendered with D3
@@ -824,11 +835,11 @@ export class FlowChart extends Component {
 
     const isFirstTimeFeedbackAfterResetSlicing =
       resetSlicingPipelineBtnClicked &&
-      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] ===
+      loadLocalStorage('KedroViz-feedback-seen')['slicing-pipeline'] ===
         undefined;
 
     const seenSlicingFeedbackBefore =
-      loadLocalStorage(localStorageFeedbackSeen)['slicing-pipeline'] === false;
+      loadLocalStorage('KedroViz-feedback-seen')['slicing-pipeline'] === false;
     return (
       <div
         className="pipeline-flowchart kedro"

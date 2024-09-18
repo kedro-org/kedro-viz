@@ -5,9 +5,7 @@ import CloseIcon from '../icons/close';
 import { Mood } from '../mood/mood';
 import { getHeap } from '../../tracking';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
-import { localStorageFeedbackSeen } from '../../config';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import { feedbackMessageDelayTimeout } from '../../config';
 
 import './feedback-form.scss';
 
@@ -22,15 +20,15 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
     const timer = setTimeout(() => {
       updateLocalStorageUsageContext(false);
       hideForm();
-    }, feedbackMessageDelayTimeout);
+    }, 4000);
 
     return () => clearTimeout(timer);
   };
 
   const updateLocalStorageUsageContext = (value) => {
-    const existingData = loadLocalStorage(localStorageFeedbackSeen) || {};
+    const existingData = loadLocalStorage('KedroViz-feedback-seen') || {};
     existingData[usageContext] = value;
-    saveLocalStorage(localStorageFeedbackSeen, existingData);
+    saveLocalStorage('KedroViz-feedback-seen', existingData);
   };
 
   useEffect(() => {
@@ -39,7 +37,7 @@ export const FeedbackForm = ({ hideForm, title, usageContext }) => {
         setFormStatus('active');
         setActiveMood(null);
         setFeedbackText('');
-      }, feedbackMessageDelayTimeout);
+      }, 4000);
 
       return () => clearTimeout(timer);
     }
