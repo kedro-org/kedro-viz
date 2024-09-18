@@ -1,0 +1,67 @@
+@use '../../styles/variables' as colors;
+
+$x-offset: 20px;
+
+.kui-theme--dark {
+  --mood-name--color: #{colors.$black-200};
+}
+
+.kui-theme--light {
+  --mood-name--color: #{colors.$black-0};
+}
+
+.mood-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+
+  .pipeline-icon--container {
+    list-style-type: none;
+  }
+
+  .pipeline-icon-toolbar__button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pipeline-icon-toolbar__button:hover {
+    path {
+      fill: #{colors.$blue-300};
+    }
+  }
+
+  .pipeline-icon-toolbar__button svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.mood-icon--selected {
+  path {
+    fill: #{colors.$blue-300};
+  }
+}
+
+.mood-icon-wrapper--selected {
+  position: relative;
+}
+
+.mood-name {
+  color: var(--mood-name--color);
+  left: 50%;
+  margin-top: 12px;
+  opacity: 0;
+  position: absolute;
+  text-align: center;
+  top: 125%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.mood-name--selected {
+  opacity: 1;
+}

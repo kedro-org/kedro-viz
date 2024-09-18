@@ -23,6 +23,8 @@ Please follow the established format:
 - Fix design issues in metadata panel. (#2009)
 - Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
 - Fix bug where reloading the page reset to the default pipeline instead of retaining the selected one. (#2041)
+- Add feedback component for slicing pipeline. (#2085)
+- Fixes design issues in metadata panel. (#2009)
 - Fix missing run command in metadata panel for task nodes. (#2055)
 - Refactor disable preview feature to run entirely on the frontend without backend calls. (#2067)
 - Implement a method to send JSON data to the VSCode integration without running the Kedro-viz server. (#2049)
