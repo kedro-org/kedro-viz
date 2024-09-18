@@ -18,7 +18,7 @@ import {
   PACKAGE_KEDRO_DATASETS,
 } from '../../config';
 import { findMatchedPath } from '../../utils/match-path';
-import { fetchPackageCompatibilities } from '../../utils';
+import { fetchMetadata } from '../../utils';
 import { saveLocalStorage, loadLocalStorage } from '../../store/helpers';
 
 import './experiment-wrapper.scss';
@@ -193,23 +193,24 @@ const ExperimentWrapper = ({ theme, runsMetadata }) => {
   }, []);
 
   useEffect(() => {
-    async function fetchPackageCompatibility() {
+    async function checkPackageCompatibility() {
       try {
-        const request = await fetchPackageCompatibilities();
+        const request = await fetchMetadata();
         const response = await request.json();
 
         if (request.ok) {
-          const kedroDatasetsPackage = response.find(
+          const packageCompatibilityInfo = response.package_compatibilities;
+          const kedroDatasetsPackage = packageCompatibilityInfo.find(
             (pckg) => pckg.package_name === PACKAGE_KEDRO_DATASETS
           );
           setIsKedroDatasetsCompatible(kedroDatasetsPackage.is_compatible);
         }
       } catch (error) {
-        console.error('package-compatibilities fetch error: ', error);
+        console.error('metadata fetch error: ', error);
       }
     }
 
-    fetchPackageCompatibility();
+    checkPackageCompatibility();
   }, []);
 
   useEffect(() => {

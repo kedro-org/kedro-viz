@@ -13,7 +13,7 @@ from typing import Any, Dict, Optional, Set, Tuple
 from unittest.mock import patch
 
 from kedro import __version__
-from kedro.framework.project import configure_project, pipelines, settings
+from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
@@ -21,9 +21,10 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
-from kedro_viz.integrations.kedro.data_catalog_lite import DataCatalogLite
+from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
+from kedro_viz.models.metadata import Metadata
 
 logger = logging.getLogger(__name__)
 
@@ -91,13 +92,13 @@ def _load_data_helper(
         context = session.load_context()
         session_store = session._store
 
-        # Update the DataCatalog class for a custom implementation
-        # to handle kedro.io.core.DatasetError from
-        # `settings.DATA_CATALOG_CLASS.from_config`
+        # patch the AbstractDataset class for a custom
+        # implementation to handle kedro.io.core.DatasetError
         if is_lite:
-            settings.DATA_CATALOG_CLASS = DataCatalogLite
-
-        catalog = context.catalog
+            with patch("kedro.io.data_catalog.AbstractDataset", AbstractDatasetLite):
+                catalog = context.catalog
+        else:
+            catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
@@ -145,6 +146,9 @@ def load_data(
         if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
+            # for the viz lite banner
+            Metadata.set_has_missing_dependencies(True)
+
             for unresolved_module_set in unresolved_imports.values():
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
@@ -152,10 +156,10 @@ def load_data(
             sys_modules_patch.update(mocked_modules)
 
             logger.warning(
-                "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
-                "%s \n"
-                "In order to get a complete experience of Viz, "
-                "please install the missing Kedro project dependencies\n",
+                "Kedro-Viz is running with limited functionality. "
+                "For the best experience with full functionality, please\n"
+                "install the missing Kedro project dependencies:\n"
+                "%s \n",
                 list(mocked_modules.keys()),
             )
 

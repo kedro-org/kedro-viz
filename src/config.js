@@ -5,6 +5,7 @@ export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
 export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 export const localStorageShareableUrl = 'KedroViz-shareable-url';
+export const localStorageBannerStatus = 'KedroViz-banners';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -205,4 +206,17 @@ export const NODE_TYPES = {
   task: { name: 'nodes', defaultState: false },
   data: { name: 'datasets', defaultState: false },
   parameters: { name: 'parameters', defaultState: true },
+};
+
+export const BANNER_METADATA = {
+  liteModeWarning: {
+    title: 'Missing dependencies',
+    body: 'For the best experience with full functionality, please install the missing Kedro project dependencies.',
+    docsLink:
+      'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies',
+  },
+};
+
+export const BANNER_KEYS = {
+  LITE: 'lite',
 };
