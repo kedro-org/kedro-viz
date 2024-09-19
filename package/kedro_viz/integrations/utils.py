@@ -46,7 +46,7 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
 
     def _save(self, *args, **kwargs):
         pass
-    
+
     load = _load
     save = _save
 
