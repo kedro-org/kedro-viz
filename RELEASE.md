@@ -23,7 +23,7 @@ Please follow the established format:
 - Fix design issues in metadata panel. (#2009)
 - Fix bug where reloading the page reset to the default pipeline instead of retaining the selected one. (#2041)
 - Add feedback component for slicing pipeline. (#2085)
-- Add `kedro viz --lite` user warning banner UI. (#2092)
+- Add `kedro viz --lite` user warning banner component. (#2092)
 - Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
 - Fix missing run command in metadata panel for task nodes. (#2055)
 - Fix highlight width inconsistency in the Nodelist component.(#2004)
