@@ -41,11 +41,14 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
         self._data = data
         self.metadata = metadata
 
-    def load(self, *args, **kwargs):
+    def _load(self, *args, **kwargs):
         pass
 
-    def save(self, *args, **kwargs):
+    def _save(self, *args, **kwargs):
         pass
+
+    load = _load
+    save = _save
 
     def _exists(self):
         pass

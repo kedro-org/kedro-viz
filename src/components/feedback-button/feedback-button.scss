@@ -1,0 +1,21 @@
+.feedback-button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  height: 40px;
+  line-height: 40px;
+  opacity: 0;
+  position: fixed;
+  right: -96px;
+  text-align: center;
+  top: 50%;
+  padding: 0 16px;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.feedback-button--visible {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
