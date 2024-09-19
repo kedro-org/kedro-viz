@@ -29,7 +29,7 @@ Please follow the established format:
 - Fix highlight width inconsistency in the Nodelist component.(#2004)
 - Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
 - Refactor disable preview feature to run entirely on the frontend without backend calls. (#2067)
-- Implement a method to send JSON data to the VSCode integration without running the Kedro-viz server. (#2049)
+- Implement a method to send JSON data to the VSCode integration without running the Kedro-Viz server. (#2049)
 
 
 # Release 9.2.0
