@@ -70,8 +70,10 @@ You can use the experimental `--lite` flag to visualise your pipelines without i
 ```bash
 kedro viz run --lite
 ```
-> [!Important]
-> Since this is an experimental feature, Kedro-Viz will run with limited functionality and you should see a warning message in your terminal informing you about any missing dependencies.
+
+```{important}
+Since this is an experimental feature, Kedro-Viz will run with limited functionality and you should see a warning message in your terminal informing you about any missing dependencies.
+```
 
 Some of the known limitations while using `--lite` flag:
 
