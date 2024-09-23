@@ -24,6 +24,7 @@ from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLite
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
+from kedro_viz.models.metadata import Metadata
 
 logger = logging.getLogger(__name__)
 
@@ -145,6 +146,9 @@ def load_data(
         if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
+            # for the viz lite banner
+            Metadata.set_has_missing_dependencies(True)
+
             for unresolved_module_set in unresolved_imports.values():
                 modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
@@ -152,10 +156,10 @@ def load_data(
             sys_modules_patch.update(mocked_modules)
 
             logger.warning(
-                "Kedro-Viz has mocked the following dependencies for lite-mode.\n"
-                "%s \n"
-                "In order to get a complete experience of Viz, "
-                "please install the missing Kedro project dependencies\n",
+                "Kedro-Viz is running with limited functionality. "
+                "For the best experience with full functionality, please\n"
+                "install the missing Kedro project dependencies:\n"
+                "%s \n",
                 list(mocked_modules.keys()),
             )
 

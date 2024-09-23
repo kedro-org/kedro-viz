@@ -230,6 +230,21 @@ export function changeFlag(name, value) {
   };
 }
 
+export const SET_BANNER = 'SET_BANNER';
+
+/**
+ * Change the given banner status
+ * @param {String} name The banner name
+ * @param {Value} value The value to set
+ */
+export function setBanner(name, value) {
+  return {
+    type: SET_BANNER,
+    name,
+    value,
+  };
+}
+
 export const TOGGLE_IGNORE_LARGE_WARNING = 'TOGGLE_IGNORE_LARGE_WARNING';
 
 /**

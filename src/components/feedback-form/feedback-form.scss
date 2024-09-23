@@ -1,0 +1,120 @@
+@use '../../styles/variables' as colors;
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.kui-theme--dark {
+  --feedback-form-bg: #{colors.$white-0};
+  --feedback-form-content: #{colors.$slate-0};
+  --feedback-form-title: #{colors.$black-900};
+  --feedback-form--text-area--background: #{colors.$slate-200};
+  --feedback-form--text-area-placeholder--color: #{colors.$black-200};
+}
+
+.kui-theme--light {
+  --feedback-form-bg: #{colors.$black-900};
+  --feedback-form-content: #{colors.$white-0};
+  --feedback-form-title: #{colors.$white-0};
+  --feedback-form--text-area--background: #{colors.$white-0};
+  --feedback-form--text-area-placeholder--color: #{colors.$black-0};
+}
+
+.feedback-form--wrapper {
+  animation: fadeIn 0.5s ease-in;
+  background-color: var(--feedback-form-bg);
+  border-radius: 8px 0 0 8px;
+  min-width: 312px;
+  padding: 24px 24px 36px;
+  position: fixed;
+  right: 0;
+  top: 320px;
+
+  .button__btn {
+    margin-top: 12px;
+  }
+}
+
+.feedback-form--wrapper-no-text-area {
+  padding-bottom: 68px;
+}
+
+.feedback-form--text-area::placeholder {
+  color: var(--feedback-form--text-area-placeholder--color);
+  margin: auto; /* Centers the placeholder text vertically */
+  text-align: center;
+  font-family: Inter, sans-serif;
+}
+
+.feedback-form--text-area {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid grey;
+  color: var(--feedback-form-title);
+  display: flex;
+  font-size: 14px;
+  font-family: Inter, sans-serif;
+  height: 104px;
+  margin-top: 68px;
+  padding: 8px 12px;
+  resize: none;
+  text-align: left;
+  width: 364px;
+}
+
+.feedback-form--title {
+  color: var(--feedback-form-title);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  margin-top: 12px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.feedback-form--close-icon {
+  cursor: pointer;
+  height: 24px;
+  margin-left: auto;
+  width: 24px;
+
+  path {
+    fill: var(--feedback-form-title);
+  }
+}
+
+.feedback-form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .button__btn {
+    border: 1px solid var(--feedback-form-title);
+    color: var(--feedback-form-title);
+    margin-top: 36px;
+    padding: 8px 12px;
+
+    &:hover {
+      background-color: var(--feedback-form-title);
+      color: var(--feedback-form-bg);
+    }
+  }
+}
+
+.feedback-form--message {
+  color: var(--feedback-form-title);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 24px 36px;
+  width: auto;
+}

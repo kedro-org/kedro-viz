@@ -47,42 +47,46 @@ def test_deploy_kedro_viz(
         (
             None,
             200,
-            [
-                {
-                    "package_name": "fsspec",
-                    "package_version": "2023.9.1",
-                    "is_compatible": True,
-                },
-                {
-                    "package_name": "kedro-datasets",
-                    "package_version": "1.8.0",
-                    "is_compatible": False,
-                },
-            ],
+            {
+                "has_missing_dependencies": False,
+                "package_compatibilities": [
+                    {
+                        "package_name": "fsspec",
+                        "package_version": "2023.9.1",
+                        "is_compatible": True,
+                    },
+                    {
+                        "package_name": "kedro-datasets",
+                        "package_version": "1.8.0",
+                        "is_compatible": False,
+                    },
+                ],
+            },
         ),
         (
             Exception,
             500,
-            {"message": "Failed to get package compatibility info"},
+            {"message": "Failed to get app metadata"},
         ),
     ],
 )
-def test_get_package_compatibilities(
+def test_metadata(
     client, exception_type, expected_status_code, expected_response, mocker
 ):
     # Mock the function that may raise an exception
     if exception_type is None:
-        mocker.patch(
-            "kedro_viz.api.rest.router.get_package_compatibilities_response",
+        mock_get_metadata_response = mocker.patch(
+            "kedro_viz.api.rest.router.get_metadata_response",
             return_value=expected_response,
         )
     else:
-        mocker.patch(
-            "kedro_viz.api.rest.router.get_package_compatibilities_response",
+        mock_get_metadata_response = mocker.patch(
+            "kedro_viz.api.rest.router.get_metadata_response",
             side_effect=exception_type("Test Exception"),
         )
 
-    response = client.get("/api/package-compatibilities")
+    response = client.get("/api/metadata")
 
+    mock_get_metadata_response.assert_called_once()
     assert response.status_code == expected_status_code
     assert response.json() == expected_response

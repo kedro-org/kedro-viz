@@ -220,11 +220,11 @@ export const sanitizedPathname = () => {
 };
 
 /**
- * Fetches package compatibilities from the server.
- * @returns {Promise<Object>} A promise that resolves to the fetched package compatibilities.
+ * Fetches viz metadata from the server.
+ * @returns {Promise<Object>} A promise that resolves the fetched viz metadata.
  */
-export async function fetchPackageCompatibilities() {
-  const request = await fetch(`${pathRoot}/package-compatibilities`, {
+export async function fetchMetadata() {
+  const request = await fetch(`${pathRoot}/metadata`, {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
