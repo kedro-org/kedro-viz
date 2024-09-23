@@ -5,20 +5,32 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
+# Release 10.0.0
 
 ## Major features and improvements
 
-- Introduce `onActionCallback` prop in Kedro-Viz react component. (#2022)
-- Introduce `kedro viz --lite`, which allows users to run Kedro-Viz without installing Kedro project dependencies. (#1966, #2077)
-- Slice a pipeline functionality. (#2036)
+- Add `kedro viz --lite`, allowing users to run Kedro-Viz without installing Kedro project dependencies. (#1966, #2077, #2093)
+- Enable visual slicing of a Kedro pipeline in Kedro-viz. (#2036)
+- Improve Kedro-Viz CLI startup time with lazy subcommands and deferring imports (#1920)
+- Add documentation for Kedro-viz in VSCode Extension. (#2078)
+
 
 ## Bug fixes and other changes
+
+- Introduce `onActionCallback` prop in Kedro-Viz React component. (#2022)
+- Enhance documentation for Dataset previews on Kedro-viz. (#2074)
+- Add documentation for Kedro-viz CLI Commands. (#2044)
+- Fix design issues in metadata panel. (#2009)
+- Fix bug where reloading the page reset to the default pipeline instead of retaining the selected one. (#2041)
 - Add feedback component for slicing pipeline. (#2085)
-- Fixes design issues in metadata panel. (#2009)
-- Fix missing run command in metadata panel for task nodes. (#2055)
+- Add `kedro viz --lite` user warning banner component. (#2092)
 - Add `UnavailableDataset` as a default dataset for `--lite` mode. (#2083)
-- Add `kedro viz --lite` user warning banner UI. (#2092)
+- Fix missing run command in metadata panel for task nodes. (#2055)
+- Fix highlight width inconsistency in the Nodelist component.(#2004)
+- Migrate `demo.kedro.org` from AWS Lightsail to Github Pages. (#2034, #2084)
+- Refactor disable preview feature to run entirely on the frontend without backend calls. (#2067)
+- Implement a method to send JSON data to the VSCode integration without running the Kedro-Viz server. (#2049)
+
 
 # Release 9.2.0
 
