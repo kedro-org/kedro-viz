@@ -1,4 +1,4 @@
-ipython==7.0.0
+ipython==8.10.0
 fastapi==0.100.0
 fsspec==2021.4
 aiofiles==22.1.0
