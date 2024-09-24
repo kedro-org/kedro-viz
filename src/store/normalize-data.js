@@ -79,6 +79,11 @@ export const createInitialPipelineState = () => ({
     active: {},
     enabled: {},
   },
+  slice: {
+    from: null,
+    to: null,
+    apply: false,
+  },
   hoveredParameters: false,
   hoveredFocusMode: false,
 });

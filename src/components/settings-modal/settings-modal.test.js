@@ -45,10 +45,10 @@ describe('SettingsModal', () => {
         exportModal: expect.any(Boolean),
         settingsModal: expect.any(Boolean),
       }),
-      showDatasetPreviews: expect.any(Boolean),
       flags: expect.any(Object),
       isPrettyName: expect.any(Boolean),
       showFeatureHints: expect.any(Boolean),
+      showDatasetPreviews: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
@@ -77,8 +77,8 @@ describe('SettingsModal', () => {
 
     mapDispatchToProps(dispatch).onToggleShowDatasetPreviews(false);
     expect(dispatch.mock.calls[3][0]).toEqual({
-      type: 'UPDATE_USER_PREFERENCES',
-      payload: { showDatasetPreviews: false },
+      type: 'TOGGLE_SHOW_DATASET_PREVIEWS',
+      showDatasetPreviews: false,
     });
   });
 });

@@ -1,0 +1,89 @@
+/** Imports **/
+@use '../../../styles/variables' as variables;
+
+.kui-theme--light {
+  --banner--background: #{variables.$slate-300};
+  --banner--color: #{variables.$white-0};
+  --banner-message-body--color: #{variables.$black-0};
+  --banner-box-shadow: 0px 4px 8px -1px rgb(0 0 0 / 20%);
+  --color-button__text--hover: #{variables.$slate-300};
+  --color-button--border: #{variables.$white-0};
+}
+
+.kui-theme--dark {
+  --banner--background: #{variables.$white-200};
+  --banner--color: #{variables.$black-900};
+  --banner-message-body--color: #{variables.$black-200};
+  --banner-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%);
+  --color-button__text--hover: #{variables.$white-200};
+  --color-button--border: #{variables.$black-900};
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  width: 100%;
+  z-index: variables.$z-index-banner;
+  font-family: inherit;
+  box-shadow: var(--banner-box-shadow);
+  background-color: var(--banner--background);
+  color: var(--banner--color);
+  font-size: 16px;
+  max-height: 68px;
+
+  // Banner positioning
+  &.banner-top {
+    position: fixed;
+    top: 0;
+  }
+
+  // Icon styling
+  .banner-icon {
+    margin-right: 12px;
+    display: flex;
+
+    & svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  // Message styling
+  .banner-message {
+    flex-grow: 1;
+
+    .banner-message-title {
+      font-weight: bold;
+    }
+
+    .banner-message-body {
+      margin-left: 12px;
+      color: var(--banner-message-body--color);
+    }
+  }
+
+  // Learn More button styling
+  .button__btn {
+    border: 1px solid var(--banner--color);
+    color: var(--banner--color);
+    font-size: 14px;
+  }
+
+  // Close icon styling
+  .banner-close {
+    cursor: pointer;
+    margin-left: 12px;
+    display: flex;
+
+    & svg {
+      path {
+        fill: var(--banner-message-body--color);
+      }
+
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

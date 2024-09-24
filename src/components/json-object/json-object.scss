@@ -7,6 +7,11 @@
   margin-right: -35px;
   margin-top: 1.2em;
 
+  // to contain contents of parameter json similar to a metadata value
+  word-break: break-word;
+  white-space: pre-wrap;
+  display: contents;
+
   .pretty-json-container {
     font-family: variables.$font-monospace;
     font-size: 0.87em;

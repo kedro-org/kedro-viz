@@ -9,6 +9,7 @@ import {
   localStorageName,
   localStorageRunsMetadata,
   params,
+  BANNER_KEYS,
 } from '../config';
 
 /**
@@ -24,10 +25,11 @@ export const createInitialState = () => ({
   expandAllPipelines: false,
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
-  userPreferences: {
-    showDatasetPreviews: settings.showDatasetPreviews.default,
-  },
+  showDatasetPreviews: settings.showDatasetPreviews.default,
   ignoreLargeWarning: false,
+  showBanner: {
+    [BANNER_KEYS.LITE]: false,
+  },
   loading: {
     graph: false,
     pipeline: false,
@@ -43,6 +45,7 @@ export const createInitialState = () => ({
     settingsModal: false,
     shareableUrlModal: false,
     sidebar: window.innerWidth > sidebarWidth.breakpoint,
+    slicing: true,
   },
   display: {
     globalNavigation: true,
@@ -59,7 +62,7 @@ export const createInitialState = () => ({
   runsMetadata: {},
 });
 
-const parseUrlParameters = () => {
+export const parseUrlParameters = () => {
   const search = new URLSearchParams(window.location.search);
   return {
     pipelineIdFromURL: search.get(params.pipeline),
@@ -251,8 +254,7 @@ const getInitialState = (props = {}) => {
   const pipelineState = preparePipelineState(
     props.data,
     props.data !== 'json',
-    expandAllPipelines,
-    urlParams
+    expandAllPipelines
   );
 
   const initialState = {

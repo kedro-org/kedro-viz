@@ -1,18 +1,13 @@
 """`kedro_viz.server` provides utilities to launch a webserver
 for Kedro pipeline visualisation."""
 
-import multiprocessing
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import fsspec
-import uvicorn
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-from watchgod import RegExpWatcher, run_process
 
-from kedro_viz.api import apps
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
@@ -56,16 +51,13 @@ def load_and_populate_data(
     package_name: Optional[str] = None,
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False,
 ):
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
-        path,
-        env,
-        include_hooks,
-        package_name,
-        extra_params,
+        path, env, include_hooks, package_name, extra_params, is_lite
     )
 
     pipelines = (
@@ -78,6 +70,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
+# pylint: disable=too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -90,6 +83,7 @@ def run_server(
     include_hooks: bool = False,
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
+    is_lite: bool = False,
 ):  # pylint: disable=redefined-outer-name
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -112,18 +106,21 @@ def run_server(
             for underlying KedroContext. If specified, will update (and therefore
             take precedence over) the parameters retrieved from the project
             configuration.
+        is_lite: A flag to run Kedro-Viz in lite mode.
     """
+    # Importing below dependencies inside `run_server` to avoid ImportError
+    # when calling `load_and_populate_data` from VSCode
+
+    import fsspec  # pylint: disable=C0415
+    import uvicorn  # pylint: disable=C0415
+
+    from kedro_viz.api import apps  # pylint: disable=C0415
 
     path = Path(project_path) if project_path else Path.cwd()
 
     if load_file is None:
         load_and_populate_data(
-            path,
-            env,
-            include_hooks,
-            package_name,
-            pipeline_name,
-            extra_params,
+            path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
@@ -142,6 +139,9 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
+    import multiprocessing
+
+    from watchgod import RegExpWatcher, run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")

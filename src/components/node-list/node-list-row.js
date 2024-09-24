@@ -27,6 +27,7 @@ const shouldMemo = (prevProps, nextProps) =>
       'focused',
       'visible',
       'selected',
+      'highlight',
       'label',
       'children',
       'count',
@@ -56,6 +57,8 @@ const NodeListRow = memo(
     onChange,
     onClick,
     selected,
+    highlight,
+    isSlicingPipelineApplied,
     type,
     icon,
     visibleIcon = VisibleIcon,
@@ -79,7 +82,8 @@ const NodeListRow = memo(
           {
             'pipeline-nodelist__row--visible': visible,
             'pipeline-nodelist__row--active': active,
-            'pipeline-nodelist__row--selected': selected,
+            'pipeline-nodelist__row--selected':
+              selected || (!isSlicingPipelineApplied && highlight),
             'pipeline-nodelist__row--disabled': disabled,
             'pipeline-nodelist__row--unchecked': !isChecked,
             'pipeline-nodelist__row--overwrite': !(active || selected),

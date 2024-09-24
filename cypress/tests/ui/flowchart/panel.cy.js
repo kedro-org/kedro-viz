@@ -124,7 +124,7 @@ describe('Pipeline Minimap Toolbar', () => {
     cy.__waitForPageLoad__(() => {
       let initialZoomValue;
       let zoomInValue;
-
+      
       cy.get('@zoomScale')
         .invoke('text')
         .then((text) => {
@@ -155,6 +155,7 @@ describe('Pipeline Minimap Toolbar', () => {
       cy.get('@zoomScale')
         .invoke('text')
         .should((text) => {
+          initialZoomValue = parseFloat(text.replace('%', ''));
           expect(initialZoomValue).to.be.eq(parseFloat(text.replace('%', '')));
         });
     });

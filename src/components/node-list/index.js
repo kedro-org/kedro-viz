@@ -32,6 +32,7 @@ import {
   toggleModularPipelineDisabled,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
+import { resetSlicePipeline } from '../../actions/slice';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -67,6 +68,8 @@ const NodeListProvider = ({
   focusMode,
   disabledModularPipeline,
   inputOutputDataNodes,
+  onResetSlicePipeline,
+  isSlicingPipelineApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
@@ -109,6 +112,10 @@ const NodeListProvider = ({
       } else {
         onToggleNodeSelected(item.id);
         toSelectedNode(item);
+        // Reset the pipeline slicing filters if no slicing is currently applied
+        if (!isSlicingPipelineApplied) {
+          onResetSlicePipeline();
+        }
       }
     }
   };
@@ -327,6 +334,7 @@ export const mapStateToProps = (state) => ({
   disabledModularPipeline: state.modularPipeline.disabled,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
+  isSlicingPipelineApplied: state.slice.apply,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
@@ -362,6 +370,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
+  },
+  onResetSlicePipeline: () => {
+    dispatch(resetSlicePipeline());
   },
 });
 

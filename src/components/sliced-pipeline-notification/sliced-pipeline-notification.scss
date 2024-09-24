@@ -1,0 +1,43 @@
+@use '../../styles/variables' as colors;
+
+.kui-theme--dark {
+  --sliced-pipeline-notification--background: #{colors.$slate-200};
+  --sliced-pipeline-notification--color: #{colors.$white-0};
+}
+
+.kui-theme--light {
+  --sliced-pipeline-notification--background: #{colors.$white-0};
+  --sliced-pipeline-notification--color: #{colors.$black-900};
+}
+
+// Define a fade-in animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.sliced-pipeline-notification {
+  background-color: var(--sliced-pipeline-notification--background);
+  color: var(--sliced-pipeline-notification--color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  bottom: 30px;
+  left: 40%;
+  display: flex;
+  margin: 0;
+  position: absolute;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  transition: left 0.5s ease-out;
+  animation: fadeIn 0.5s ease-out forwards; // Apply the fade-in animation
+}
+
+.sliced-pipeline-notification--no-sidebar {
+  left: 30%;
+}

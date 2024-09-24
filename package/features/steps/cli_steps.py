@@ -147,6 +147,16 @@ def exec_viz_command(context):
     )
 
 
+@when("I execute the kedro viz run command with lite option")
+def exec_viz_lite_command(context):
+    """Execute Kedro-Viz command."""
+    context.result = ChildTerminatingPopen(
+        [context.kedro, "viz", "run", "--lite", "--no-browser"],
+        env=context.env,
+        cwd=str(context.root_project_dir),
+    )
+
+
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that Kedro-Viz is up and responding to requests."""
@@ -169,3 +179,26 @@ def check_kedroviz_up(context):
         )
     finally:
         context.result.terminate()
+
+
+@then("I store the response from main endpoint")
+def get_main_api_response(context):
+    max_duration = 30  # 30 seconds
+    end_by = time() + max_duration
+
+    while time() < end_by:
+        try:
+            response = requests.get("http://localhost:4141/api/main")
+            context.response = response.json()
+            assert response.status_code == 200
+        except Exception:
+            sleep(2.0)
+            continue
+        else:
+            break
+
+
+@then("I compare the responses in regular and lite mode")
+def compare_main_api_responses(context):
+    regular_mode_response = requests.get("http://localhost:4141/api/main").json()
+    assert context.response == regular_mode_response

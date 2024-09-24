@@ -26,25 +26,6 @@
   variables.$row-selected-dark
 );
 
-.pipeline-row__toggle::before {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -100px;
-  display: block;
-  width: 100px;
-  background: transparent;
-  background: linear-gradient(
-    90deg,
-    var(--row-selected-transparent, 0) 0%,
-    var(--color-nodelist-row-selected) 100%
-  );
-  transform: translate(0, 0);
-  opacity: 0;
-  content: ' ';
-  pointer-events: none;
-}
-
 .pipeline-row__toggle--selected::before {
   opacity: 1;
 }

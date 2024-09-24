@@ -2,17 +2,16 @@
 
 # pylint: disable=missing-class-docstring,invalid-name
 import abc
+import json
 import logging
-from importlib.metadata import PackageNotFoundError
 from typing import Any, Dict, List, Optional, Union
 
 import orjson
-import packaging
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, ORJSONResponse
 from pydantic import BaseModel, ConfigDict
 
-from kedro_viz.api.rest.utils import get_package_version
+from kedro_viz.api.rest.utils import get_package_compatibilities
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -23,6 +22,7 @@ from kedro_viz.models.flowchart import (
     TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+from kedro_viz.models.metadata import Metadata, PackageCompatibility
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ class DataNodeMetadataAPIResponse(BaseAPIResponse):
 
 
 class TranscodedDataNodeMetadataAPIReponse(BaseAPIResponse):
-    filepath: str
+    filepath: Optional[str] = None
     original_type: str
     transcoded_types: List[str]
     run_command: Optional[str] = None
@@ -258,17 +258,24 @@ class GraphAPIResponse(BaseAPIResponse):
     selected_pipeline: str
 
 
-class PackageCompatibilityAPIResponse(BaseAPIResponse):
-    package_name: str
-    package_version: str
-    is_compatible: bool
+class MetadataAPIResponse(BaseAPIResponse):
+    has_missing_dependencies: bool = False
+    package_compatibilities: List[PackageCompatibility] = []
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {
-                "package_name": "fsspec",
-                "package_version": "2023.9.1",
-                "is_compatible": True,
-            }
+            "has_missing_dependencies": False,
+            "package_compatibilities": [
+                {
+                    "package_name": "fsspec",
+                    "package_version": "2024.6.1",
+                    "is_compatible": True,
+                },
+                {
+                    "package_name": "kedro-datasets",
+                    "package_version": "4.0.0",
+                    "is_compatible": True,
+                },
+            ],
         }
     )
 
@@ -371,44 +378,47 @@ def get_selected_pipeline_response(registered_pipeline_id: str):
     )
 
 
-def get_package_compatibilities_response(
-    package_requirements: Dict[str, Dict[str, str]],
-) -> List[PackageCompatibilityAPIResponse]:
-    """API response for `/api/package_compatibility`."""
-    package_requirements_response = []
-
-    for package_name, package_info in package_requirements.items():
-        compatible_version = package_info["min_compatible_version"]
-        try:
-            package_version = get_package_version(package_name)
-        except PackageNotFoundError:
-            logger.warning(package_info["warning_message"])
-            package_version = "0.0.0"
-
-        is_compatible = packaging.version.parse(
-            package_version
-        ) >= packaging.version.parse(compatible_version)
-
-        package_requirements_response.append(
-            PackageCompatibilityAPIResponse(
-                package_name=package_name,
-                package_version=package_version,
-                is_compatible=is_compatible,
-            )
-        )
-
-    return package_requirements_response
+def get_metadata_response():
+    """API response for `/api/metadata`."""
+    package_compatibilities = get_package_compatibilities()
+    Metadata.set_package_compatibilities(package_compatibilities)
+    return Metadata()
 
 
-def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
-    """Encodes, enhances responses and writes it to a file"""
+def get_encoded_response(response: Any) -> bytes:
+    """Encodes and enhances the default response using human-readable format."""
     jsonable_response = jsonable_encoder(response)
     encoded_response = EnhancedORJSONResponse.encode_to_human_readable(
         jsonable_response
     )
 
+    return encoded_response
+
+
+def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
+    """Get encoded responses and writes it to a file"""
+    encoded_response = get_encoded_response(response)
+
     with remote_fs.open(file_path, "wb") as file:
         file.write(encoded_response)
+
+
+def get_kedro_project_json_data():
+    """Decodes the default response and returns the Kedro project JSON data.
+    This will be used in VSCode extension to get current Kedro project data."""
+    encoded_response = get_encoded_response(get_default_response())
+
+    try:
+        response_str = encoded_response.decode("utf-8")
+        json_data = json.loads(response_str)
+    except UnicodeDecodeError as exc:  # pragma: no cover
+        json_data = None
+        logger.error("Failed to decode response string. Error: %s", str(exc))
+    except json.JSONDecodeError as exc:  # pragma: no cover
+        json_data = None
+        logger.error("Failed to parse JSON data. Error: %s", str(exc))
+
+    return json_data
 
 
 def save_api_main_response_to_fs(main_path: str, remote_fs: Any):

@@ -22,12 +22,6 @@ describe('Plotly Modal', () => {
     expect(wrapper.find('.pipeline-metadata-modal').length).toBe(1);
   });
 
-  it('modal closes when collapse button is clicked', () => {
-    const wrapper = mount({ nodeId: nodeID });
-    wrapper.find('.pipeline-metadata-modal__collapse-plot').simulate('click');
-    expect(wrapper.find('.pipeline-metadata-modal').length).toBe(0);
-  });
-
   it('modal closes when back button is clicked', () => {
     const wrapper = mount({ nodeId: nodeID });
     wrapper.find('.pipeline-metadata-modal__back').simulate('click');

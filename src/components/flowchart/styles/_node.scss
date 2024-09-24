@@ -34,7 +34,7 @@
 
   text,
   .pipeline-node__icon {
-    fill: #{colors.$white-600};
+    fill: var(--node-icon-fill);
   }
 }
 
@@ -113,7 +113,33 @@
 
   .pipeline-node__icon,
   .pipeline-node__text {
-    fill: #{colors.$white-600};
+    fill: var(--node-icon-fill);
+  }
+}
+
+.pipeline-node--sliced-pipeline {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: var(--node-fill-sliced);
+    stroke: var(--node-stroke-sliced);
+  }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: var(--node-icon-fill);
+  }
+}
+
+.pipeline-node--from-to-sliced-pipeline {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: var(--node-fill-selected);
+    stroke: var(--node-stroke-selected);
+  }
+
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: var(--node-icon-fill);
   }
 }
 

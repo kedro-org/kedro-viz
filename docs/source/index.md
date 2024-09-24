@@ -29,5 +29,13 @@ Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopen
 kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
+slice_a_pipeline
 experiment_tracking
+```
+
+```{toctree}
+:caption: Other Documentation
+:maxdepth: 1
+
+cli-docs
 ```

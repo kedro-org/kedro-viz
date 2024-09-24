@@ -2,24 +2,21 @@
 
 # pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
-from typing import List
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from kedro_viz.api.rest.requests import DeployerConfiguration, UserPreference
-from kedro_viz.constants import PACKAGE_REQUIREMENTS
+from kedro_viz.api.rest.requests import DeployerConfiguration
 from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
 from .responses import (
     APIErrorMessage,
-    DataNodeMetadata,
     GraphAPIResponse,
+    MetadataAPIResponse,
     NodeMetadataAPIResponse,
-    PackageCompatibilityAPIResponse,
     get_default_response,
+    get_metadata_response,
     get_node_metadata_response,
-    get_package_compatibilities_response,
     get_selected_pipeline_response,
 )
 
@@ -48,36 +45,6 @@ async def main():
 )
 async def get_single_node_metadata(node_id: str):
     return get_node_metadata_response(node_id)
-
-
-@router.post("/preferences")
-async def update_preferences(preferences: UserPreference):
-    try:
-        DataNodeMetadata.set_is_all_previews_enabled(preferences.showDatasetPreviews)
-        return JSONResponse(
-            status_code=200, content={"message": "Preferences updated successfully"}
-        )
-    except Exception as exception:
-        logger.error("Failed to update preferences: %s", str(exception))
-        return JSONResponse(
-            status_code=500,
-            content={"message": "Failed to update preferences"},
-        )
-
-
-@router.get("/preferences", response_model=UserPreference)
-async def get_preferences():
-    try:
-        show_dataset_previews = DataNodeMetadata.is_all_previews_enabled
-        return JSONResponse(
-            status_code=200, content={"showDatasetPreviews": show_dataset_previews}
-        )
-    except Exception as exception:
-        logger.error("Failed to fetch preferences: %s", str(exception))
-        return JSONResponse(
-            status_code=500,
-            content={"message": "Failed to fetch preferences"},
-        )
 
 
 @router.get(
@@ -122,17 +89,15 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
 
 
 @router.get(
-    "/package-compatibilities",
-    response_model=List[PackageCompatibilityAPIResponse],
+    "/metadata",
+    response_model=MetadataAPIResponse,
 )
-async def get_package_compatibilities():
+async def get_metadata():
     try:
-        return get_package_compatibilities_response(PACKAGE_REQUIREMENTS)
+        return get_metadata_response()
     except Exception as exc:
-        logger.exception(
-            "An exception occurred while getting package compatibility info : %s", exc
-        )
+        logger.exception("An exception occurred while getting app metadata: %s", exc)
         return JSONResponse(
             status_code=500,
-            content={"message": "Failed to get package compatibility info"},
+            content={"message": "Failed to get app metadata"},
         )

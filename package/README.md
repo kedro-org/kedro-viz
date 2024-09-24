@@ -157,6 +157,9 @@ Options:
                             To pass a nested dictionary as parameter, separate
                             keys by '.', example: param_group.param1:value1.
 
+  --lite                    An experimental flag to open Kedro-Viz without Kedro
+                            project dependencies.
+
   -h, --help                Show this message and exit.
 ```
 
@@ -271,6 +274,12 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 For more information on how to use Kedro-Viz as a React component, follow this [guide](https://www.npmjs.com/package/@quantumblack/kedro-viz)
 
 **_Our documentation contains [additional examples on how to visualise with Kedro-Viz.](https://docs.kedro.org/en/stable/visualisation/index.html)_**
+
+## Kedro-Viz in Visual Studio Code Extension
+
+To visualize Kedro project using Kedro-Viz in Visual Studio Code, please install Kedro extension in Visual Studio Code.
+
+For more information on how to use Kedro-Viz in Visual Studio Code, follow this [guide](https://marketplace.visualstudio.com/items?itemName=kedro.Kedro)
 
 ## Feature Flags
 

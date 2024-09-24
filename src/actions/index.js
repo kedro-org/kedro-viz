@@ -141,6 +141,15 @@ export function toggleShowFeatureHints(showFeatureHints) {
   };
 }
 
+export const TOGGLE_SHOW_DATASET_PREVIEWS = 'TOGGLE_SHOW_DATASET_PREVIEWS';
+
+export function toggleShowDatasetPreviews(showDatasetPreviews) {
+  return {
+    type: TOGGLE_SHOW_DATASET_PREVIEWS,
+    showDatasetPreviews,
+  };
+}
+
 export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';
 
 /**
@@ -216,6 +225,21 @@ export const CHANGE_FLAG = 'CHANGE_FLAG';
 export function changeFlag(name, value) {
   return {
     type: CHANGE_FLAG,
+    name,
+    value,
+  };
+}
+
+export const SET_BANNER = 'SET_BANNER';
+
+/**
+ * Change the given banner status
+ * @param {String} name The banner name
+ * @param {Value} value The value to set
+ */
+export function setBanner(name, value) {
+  return {
+    type: SET_BANNER,
     name,
     value,
   };

@@ -452,14 +452,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
     @field_validator("run_command")
     @classmethod
     def set_run_command(cls, _):
-        # if a node doesn't have a user-supplied `_name` attribute,
-        # a human-readable run command `kedro run --to-nodes/nodes` is not available
-        if cls.kedro_node._name is not None:
-            if cls.task_node.namespace is not None:
-                return f"kedro run --to-nodes={cls.task_node.namespace}.{cls.kedro_node._name}"
-            return f"kedro run --to-nodes={cls.kedro_node._name}"
-
-        return None
+        return f"kedro run --to-nodes='{cls.kedro_node.name}'"
 
     @field_validator("inputs")
     @classmethod

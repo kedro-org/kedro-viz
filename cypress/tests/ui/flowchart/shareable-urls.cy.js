@@ -7,9 +7,9 @@ describe('Shareable URLs with empty localStorage', () => {
   it('verifies that users can open the Deploy Kedro-Viz modal if the localStorage is empty. #TC-52', () => {
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
-      '/api/package-compatibilities',
+      '/api/metadata',
       'GET',
-      '/mock/package-compatibilities-compatible.json'
+      '/mock/compatibleMetadata.json'
     );
 
     // Action
@@ -25,9 +25,9 @@ describe('Shareable URLs with empty localStorage', () => {
   it("shows an incompatible message given the user's fsspec package version is outdated. #TC-53", () => {
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__(
-      '/api/package-compatibilities',
+      '/api/metadata',
       'GET',
-      '/mock/package-compatibilities-incompatible.json'
+      '/mock/inCompatibleMetadata.json'
     );
 
     // Action

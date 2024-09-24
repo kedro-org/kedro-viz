@@ -1,0 +1,15 @@
+{
+  "has_missing_dependencies": false,
+  "package_compatibilities": [
+    {
+      "package_name": "fsspec",
+      "package_version": "2023.9.1",
+      "is_compatible": true
+    },
+    {
+      "package_name": "kedro-datasets",
+      "package_version": "2.0.0",
+      "is_compatible": true
+    }
+  ]
+}

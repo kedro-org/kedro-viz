@@ -40,6 +40,7 @@ const MetaData = ({
   theme,
   visible = true,
   visibleCode,
+  showDatasetPreviews,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
   const { toExperimentTrackingPath, toMetricsViewPath } =
@@ -57,7 +58,7 @@ const MetaData = ({
   const isDataNode = metadata?.type === 'data';
   const isParametersNode = metadata?.type === 'parameters';
   const nodeTypeIcon = getShortType(metadata?.datasetType, metadata?.type);
-  const hasPreview = metadata?.preview;
+  const hasPreview = showDatasetPreviews && metadata?.preview;
   const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
   const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
   const hasTrackingData =
@@ -205,6 +206,7 @@ const MetaData = ({
                 <MetaDataRow
                   label="File Path:"
                   kind="path"
+                  empty="N/A"
                   value={removeInitialSlash(metadata.filepath)}
                 />
                 {hasTrackingData && (
@@ -284,7 +286,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Plotly Visualization
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -307,7 +309,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Matplotlib Image
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -332,11 +334,13 @@ const MetaData = ({
               {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">
-                    <PreviewTable
-                      data={metadata?.preview}
-                      size="small"
-                      onClick={onExpandMetaDataClick}
-                    />
+                    <div className="scrollable-container">
+                      <PreviewTable
+                        data={metadata?.preview}
+                        size="small"
+                        onClick={onExpandMetaDataClick}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
@@ -346,7 +350,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand Preview Table
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -354,12 +358,14 @@ const MetaData = ({
               {hasJSONPreview && (
                 <>
                   <div className="pipeline-metadata__preview-json">
-                    <JSONObject
-                      value={JSON.parse(metadata.preview)}
-                      theme={theme}
-                      style={{ background: 'transparent', fontSize: '14px' }}
-                      collapsed={3}
-                    />
+                    <div className="scrollable-container">
+                      <JSONObject
+                        value={JSON.parse(metadata.preview)}
+                        theme={theme}
+                        style={{ background: 'transparent', fontSize: '14px' }}
+                        collapsed={3}
+                      />
+                    </div>
                     <div className="pipeline-metadata__preview-shadow-box-right" />
                     <div className="pipeline-metadata__preview-shadow-box-bottom" />
                   </div>
@@ -369,7 +375,7 @@ const MetaData = ({
                   >
                     <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
                     <span className="pipeline-metadata__link-text">
-                      Expand JSON View
+                      Expand preview
                     </span>
                   </button>
                 </>
@@ -388,6 +394,7 @@ export const mapStateToProps = (state, ownProps) => ({
   theme: state.theme,
   visible: getVisibleMetaSidebar(state),
   visibleCode: state.visible.code,
+  showDatasetPreviews: state.showDatasetPreviews,
   ...ownProps,
 });
 

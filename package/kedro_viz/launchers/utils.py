@@ -96,19 +96,6 @@ def _start_browser(host: str, port: int):
         webbrowser.open_new(f"http://{host}:{port}/")
 
 
-def viz_deploy_progress_timer(process_completed, timeout):
-    """Shows progress timer and message for kedro viz deploy"""
-    elapsed_time = 0
-    while elapsed_time <= timeout and not process_completed.value:
-        print(
-            f"...Creating your build/deploy Kedro-Viz ({elapsed_time}s)",
-            end="\r",
-            flush=True,
-        )
-        sleep(1)
-        elapsed_time += 1
-
-
 def _is_project(project_path: Union[str, Path]) -> bool:
     metadata_file = Path(project_path).expanduser().resolve() / _PYPROJECT
     if not metadata_file.is_file():
