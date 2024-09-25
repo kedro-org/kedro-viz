@@ -20,9 +20,11 @@ def test_get_heap_app_id_no_consent(tmpdir):
     assert kedro_telemetry.get_heap_app_id(tmpdir) is None
 
 
-@mock.patch("kedro_viz.integrations.kedro.telemetry._get_heap_app_id")
-def test_get_heap_app_id_with_consent(original_get_heap_app_id, tmpdir):
-    original_get_heap_app_id.return_value = "my_heap_id"
+@mock.patch("kedro_telemetry.plugin._get_heap_app_id")
+@mock.patch("kedro_telemetry.plugin._check_for_telemetry_consent")
+def test_get_heap_app_id_with_consent(mock_check_for_telemetry_consent, mock_get_heap_app_id, tmpdir):
+    mock_check_for_telemetry_consent.return_value = True
+    mock_get_heap_app_id.return_value = "my_heap_id"
     telemetry_file = tmpdir / ".telemetry"
     telemetry_file.write_text("consent: true", encoding="utf-8")
     assert kedro_telemetry.get_heap_app_id(tmpdir) == "my_heap_id"
