@@ -7,8 +7,6 @@ from typing import Any, Dict, Optional
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -125,6 +123,8 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
+            from kedro_viz.api.rest.responses.deploy import save_api_responses_to_fs
+
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
