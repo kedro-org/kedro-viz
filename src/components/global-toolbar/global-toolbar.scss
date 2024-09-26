@@ -11,7 +11,7 @@
   position: absolute;
   top: 0;
   width: variables.$global-toolbar-width;
-  z-index: 5;
+  z-index: variables.$zindex-global-toolbar;
 }
 
 .pipeline-global-routes-toolbar {
