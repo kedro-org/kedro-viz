@@ -2,7 +2,7 @@
 @use './variables';
 
 .MuiTreeItem-iconContainer svg {
-  z-index: var.$z-index-MuiTreeItem-icon;
+  z-index: var.$zindex-MuiTreeItem-icon;
 }
 
 .pipeline-nodelist__row {
