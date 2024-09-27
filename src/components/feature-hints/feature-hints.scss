@@ -1,9 +1,9 @@
-@use '../../styles/variables' as colors;
+@use '../../styles/variables' as variables;
 
 .feature-hints {
-  background-color: colors.$yellow-0;
+  background-color: variables.$yellow-0;
   bottom: 36px;
-  color: colors.$black-900;
+  color: variables.$black-900;
   display: flex;
   flex-direction: column;
   height: auto;
@@ -11,7 +11,7 @@
   position: absolute;
   transition: height 0.3s ease-in-out, right ease 0.4s;
   width: 365px;
-  z-index: 5;
+  z-index: variables.$zindex-feature-hints;
 
   &__reopen-message {
     font-size: 14px;
@@ -20,7 +20,7 @@
   }
 
   &__nav {
-    color: colors.$black-300;
+    color: variables.$black-300;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.024px;
@@ -69,17 +69,17 @@
     }
 
     .button button {
-      color: colors.$black-900;
-      border-color: colors.$black-900;
+      color: variables.$black-900;
+      border-color: variables.$black-900;
 
       &:hover:not(.button__btn--secondary) {
-        background: colors.$black-900;
-        color: colors.$white-0;
+        background: variables.$black-900;
+        color: variables.$white-0;
       }
     }
 
     .button__btn--secondary:hover::after {
-      background: colors.$black-900;
+      background: variables.$black-900;
     }
 
     .button__btn--secondary:active {
@@ -101,7 +101,6 @@
   pointer-events: none;
   position: absolute;
   transform: translate(-50%, -50%);
-  transition: left 0.3s ease-in-out, top 0.3s ease-in-out,
-    opacity 0.1s ease-in-out;
-  z-index: 5;
+  transition: left 0.3s ease-in-out, top 0.3s ease-in-out, opacity 0.1s ease-in-out;
+  z-index: variables.$zindex-feature-hints;
 }

@@ -1,7 +1,7 @@
-@use '../../../styles/variables' as colors;
+@use '../../../styles/variables' as variables;
 
 .kui-theme--light {
-  --header-border-bottom: #{colors.$white-300};
+  --header-border-bottom: #{variables.$white-300};
 }
 
 .kui-theme--dark {
@@ -11,7 +11,7 @@
 .runs-list-top-wrapper {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: variables.$zindex-sticky-elements;
 }
 
 .search-bar-wrapper {
@@ -19,7 +19,7 @@
   padding-top: 24px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: variables.$zindex-sticky-elements;
 }
 
 .runs-list__wrapper {
@@ -40,7 +40,7 @@
   padding: 3.5em 3.5em 1.2em 3em;
   position: sticky;
   top: 64px;
-  z-index: 1;
+  z-index: variables.$zindex-sticky-elements;
 }
 
 .compare-switch-wrapper__text {
