@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as colors;
+@use '../../../styles/variables' as variables;
 
 $default-input-width: 320px;
 $size-icon: 24px;
@@ -23,7 +23,7 @@ $size-pos-base: 10px;
   .search-bar & {
     position: absolute;
     top: 50%;
-    z-index: 1;
+    z-index: variables.$zindex-search-icon;
     opacity: 0.3;
     transform: translate(0, -50%);
   }
@@ -86,7 +86,7 @@ $size-pos-base: 10px;
   width: 20px;
 
   &:focus {
-    outline-color: colors.$blue-300;
+    outline-color: variables.$blue-300;
   }
 
   .search-bar & {
