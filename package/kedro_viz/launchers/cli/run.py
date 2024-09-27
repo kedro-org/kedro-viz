@@ -10,8 +10,6 @@ from kedro.framework.cli.utils import _split_params
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.launchers.cli.main import viz
 
-_VIZ_PROCESSES: Dict[str, int] = {}
-
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
@@ -99,8 +97,8 @@ def run(
 ):
     """Launch local Kedro Viz instance"""
     # Deferring Imports
-    import multiprocessing
     import traceback
+    import threading
     from pathlib import Path
 
     from kedro.framework.cli.utils import KedroCliError
@@ -146,9 +144,6 @@ def run(
             "yellow",
         )
     try:
-        if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
-            _VIZ_PROCESSES[port].terminate()
-
         run_server_kwargs = {
             "host": host,
             "port": port,
@@ -173,19 +168,17 @@ def run(
                 "watcher_cls": RegExpWatcher,
                 "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
             }
-            viz_process = multiprocessing.Process(
-                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            viz_app_thread = threading.Thread(
+                target=run_process, daemon=True, kwargs={**run_process_kwargs}
             )
         else:
-            viz_process = multiprocessing.Process(
-                target=run_server, daemon=False, kwargs={**run_server_kwargs}
+            viz_app_thread = threading.Thread(
+                target=run_server, daemon=True, kwargs={**run_server_kwargs}
             )
 
         display_cli_message("Starting Kedro Viz ...", "green")
 
-        viz_process.start()
-
-        _VIZ_PROCESSES[port] = viz_process
+        viz_app_thread.start()
 
         _wait_for(func=_check_viz_up, host=host, port=port)
 
@@ -198,6 +191,13 @@ def run(
         if browser:
             _start_browser(host, port)
 
+        # Ensure the thread completes before the
+        # main program exits
+        viz_app_thread.join()
+
+    except KeyboardInterrupt as ex:
+        display_cli_message("\nKedro Viz has been stopped.", "red")
+        return
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
