@@ -163,7 +163,6 @@ class GraphNode(BaseModel, abc.ABC):
             modular_pipelines=modular_pipelines,
         )
 
-    # pylint: disable=too-many-positional-arguments
     @classmethod
     def create_data_node(
         cls,
@@ -216,7 +215,6 @@ class GraphNode(BaseModel, abc.ABC):
             modular_pipelines=modular_pipelines,
         )
 
-    # pylint: disable=too-many-positional-arguments
     @classmethod
     def create_parameters_node(
         cls,
