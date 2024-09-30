@@ -96,7 +96,7 @@ def run(
     include_hooks,
     params,
     lite,
-):  # pylint: disable=too-many-arguments
+):
     """Launch local Kedro Viz instance"""
     # Deferring Imports
     import multiprocessing
