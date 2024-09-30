@@ -139,6 +139,11 @@ Now you're ready to begin development. Start the development server:
 npm start
 ```
 
+> _*Note*_: If you face any issues running this, we recommend installing Node.js v18:
+> 
+> 1. Delete `package-lock.json` and `node_modules`.
+> 2. Run `npm install` to reinstall dependencies.
+
 This will serve the app at [localhost:4141](http://localhost:4141/), and watch files in `/src` for changes. It will also update the `/lib` directory, which contains a Babel-compiled copy of the source. This directory is exported to `npm`, and is used when importing as a React component into another application. It is updated automatically when you save in case you need to test/debug it locally (e.g. with `npm link`). You can also update it manually, by running
 
 ```bash

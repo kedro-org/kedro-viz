@@ -230,6 +230,7 @@ class DataAccessManager:
         self.tags.add_tags(task_node.tags)
         return task_node
 
+    # pylint: disable=too-many-positional-arguments
     def add_node_input(
         self,
         registered_pipeline_id: str,
