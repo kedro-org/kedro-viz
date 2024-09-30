@@ -237,7 +237,9 @@ class DataAccessManager:
         task_node: TaskNode,
         modular_pipelines_repo_obj: ModularPipelinesRepository,
         is_free_input: bool = False,
-    ) -> Union[DataNode, TranscodedDataNode, ParametersNode]:  # pylint: disable=too-many-positional-arguments
+    ) -> Union[
+        DataNode, TranscodedDataNode, ParametersNode
+    ]:  # pylint: disable=too-many-positional-arguments
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
 

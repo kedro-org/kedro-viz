@@ -174,7 +174,9 @@ class GraphNode(BaseModel, abc.ABC):
         stats: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
-    ) -> Union["DataNode", "TranscodedDataNode"]:  # pylint: disable=too-many-positional-arguments
+    ) -> Union[
+        "DataNode", "TranscodedDataNode"
+    ]:  # pylint: disable=too-many-positional-arguments
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
             dataset_id: A hashed id for the dataset node
