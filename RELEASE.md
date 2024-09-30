@@ -5,6 +5,14 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 10.1.0
+
+## Major features and improvements
+
+- Update Kedro-Viz telemetry for opt-out model (#2022)
+
+
 # Release 10.0.0
 
 ## Major features and improvements

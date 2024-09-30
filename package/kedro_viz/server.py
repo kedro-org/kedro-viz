@@ -44,6 +44,7 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
+# pylint: disable=too-many-positional-arguments
 def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
@@ -70,7 +71,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
-# pylint: disable=too-many-locals
+# pylint: disable=too-many-positional-arguments, too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
