@@ -123,7 +123,7 @@ def _load_and_deploy_viz(
     package_name,
     process_completed,
     exception_queue,
-):
+):  # pylint: disable=too-many-positional-arguments
     """Loads Kedro Project data, creates a deployer and deploys to a platform"""
     try:
         from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory

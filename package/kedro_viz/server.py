@@ -52,7 +52,7 @@ def load_and_populate_data(
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):
+):  # pylint: disable=too-many-positional-arguments
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
@@ -84,7 +84,7 @@ def run_server(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):  # pylint: disable=redefined-outer-name
+):  # pylint: disable=redefined-outer-name, too-many-positional-arguments
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 

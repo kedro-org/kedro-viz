@@ -115,7 +115,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:  # pylint: disable=too-many-positional-arguments
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
