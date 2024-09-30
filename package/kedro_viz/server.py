@@ -71,7 +71,7 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
-# pylint: disable=too-many-positional-arguments
+# pylint: disable=too-many-positional-arguments, too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
