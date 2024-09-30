@@ -108,7 +108,7 @@ def _load_data_helper(
     return catalog, pipelines_dict, session_store, stats_dict
 
 
-# pylint: too-many-arguments
+# pylint: disable=too-many-arguments
 def load_data(
     project_path: Path,
     env: Optional[str] = None,

@@ -52,7 +52,7 @@ def load_and_populate_data(
     pipeline_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):  # pylint: too-many-arguments
+):  # pylint: disable=too-many-arguments
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project

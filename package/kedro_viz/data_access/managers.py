@@ -239,7 +239,7 @@ class DataAccessManager:
         is_free_input: bool = False,
     ) -> Union[
         DataNode, TranscodedDataNode, ParametersNode
-    ]:  # pylint: too-many-arguments
+    ]:  # pylint: disable=too-many-arguments
         """Add a Kedro node's input as a DataNode, TranscodedDataNode or ParametersNode
         to the NodesRepository for a given registered pipeline ID.
 
