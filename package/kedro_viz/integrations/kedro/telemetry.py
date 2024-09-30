@@ -32,5 +32,5 @@ def get_heap_identity() -> Optional[str]:  # pragma: no cover
         return None
     try:
         return _get_or_create_uuid()
-    except Exception:
+    except Exception:  # pragma: no cover
         return None

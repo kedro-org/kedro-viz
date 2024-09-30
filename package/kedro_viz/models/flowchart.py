@@ -174,7 +174,7 @@ class GraphNode(BaseModel, abc.ABC):
         stats: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
-    ) -> Union["DataNode", "TranscodedDataNode"]:
+    ) -> Union["DataNode", "TranscodedDataNode"]:  # pylint: too-many-arguments
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
             dataset_id: A hashed id for the dataset node
@@ -224,7 +224,7 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         parameters: AbstractDataset,
         modular_pipelines: Optional[Set[str]],
-    ) -> "ParametersNode":
+    ) -> "ParametersNode":  # pylint: too-many-arguments
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
             dataset_id: A hashed id for the parameters node
