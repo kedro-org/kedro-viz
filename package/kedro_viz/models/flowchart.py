@@ -163,6 +163,7 @@ class GraphNode(BaseModel, abc.ABC):
             modular_pipelines=modular_pipelines,
         )
 
+    # pylint: disable=too-many-positional-arguments
     @classmethod
     def create_data_node(
         cls,
@@ -174,9 +175,7 @@ class GraphNode(BaseModel, abc.ABC):
         stats: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
-    ) -> Union[
-        "DataNode", "TranscodedDataNode"
-    ]:  # pylint: disable=too-many-positional-arguments
+    ) -> Union["DataNode", "TranscodedDataNode"]:
         """Create a graph node of type data for a given Kedro Dataset instance.
         Args:
             dataset_id: A hashed id for the dataset node
@@ -217,6 +216,7 @@ class GraphNode(BaseModel, abc.ABC):
             modular_pipelines=modular_pipelines,
         )
 
+    # pylint: disable=too-many-positional-arguments
     @classmethod
     def create_parameters_node(
         cls,
@@ -226,7 +226,7 @@ class GraphNode(BaseModel, abc.ABC):
         tags: Set[str],
         parameters: AbstractDataset,
         modular_pipelines: Optional[Set[str]],
-    ) -> "ParametersNode":  # pylint: disable=too-many-positional-arguments
+    ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
         Args:
             dataset_id: A hashed id for the parameters node
