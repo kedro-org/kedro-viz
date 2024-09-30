@@ -26,6 +26,7 @@ def get_heap_app_id(project_path: Path) -> Optional[str]:
     return None
 
 
+# pylint: disable=broad-exception-caught
 def get_heap_identity() -> Optional[str]:  # pragma: no cover
     """Reads a UUID from a configuration file or generates and saves a new one if not present."""
     if not _IS_TELEMETRY_INSTALLED:

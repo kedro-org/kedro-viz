@@ -83,7 +83,7 @@ _VIZ_PROCESSES: Dict[str, int] = {}
     is_flag=True,
     help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
-# pylint: disable=import-outside-toplevel, too-many-locals
+# pylint: too-many-positional-arguments, disable=import-outside-toplevel, too-many-locals
 def run(
     host,
     port,
