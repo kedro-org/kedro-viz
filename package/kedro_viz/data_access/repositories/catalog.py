@@ -132,7 +132,7 @@ class CatalogRepository:
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
             # pylint: disable=abstract-class-instantiated
-            dataset_obj = MemoryDataset()  # type: ignore[abstract]
+            dataset_obj = MemoryDataset()  # type: ignore
 
         return dataset_obj
 
