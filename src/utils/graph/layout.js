@@ -33,10 +33,10 @@ export const layout = ({
   layerSpaceY,
   iterations,
 }) => {
-  // Set initial positions for nodes
+
 
   let orientation = 'top-to-bottom'
-  // orientation = 'right-to-left'
+  orientation = 'right-to-left'
 
   let coordPrimary = 'x';
   let coordSecondary = 'y';
@@ -59,10 +59,12 @@ export const layout = ({
 
   }
 
+   // Set initial positions for nodes
   for (const node of nodes) {
     node[coordPrimary] = 0;
     node[coordSecondary] = 0;
   }
+
 
   // Constants used by constraints
   const constants = {
@@ -117,7 +119,6 @@ const createRowConstraints = (edges, constants) =>
     base: rowConstraint,
     a: edge.targetNode,
     b: edge.sourceNode,
-    // property: constants.coordSecondary
   }));
 
 /**
@@ -212,7 +213,7 @@ const createCrossingConstraints = (edges, constants) => {
 
       crossingConstraints.push({
         base: crossingConstraint,
-        // property : coordPrimary,
+        property : coordPrimary,
         edgeA: edgeA,
         edgeB: edgeB,
         // The required horizontal spacing between connected nodes
@@ -256,6 +257,8 @@ const createSeparationConstraints = (rows, constants) => {
   const { spacePrimary, spaceSecondary, coordPrimary, coordSecondary, sizePrimary, sizeSecondary, orientation, spreadPrimary } = constants;
   const separationConstraints = [];
 
+  console.log(rows)
+
   rows.forEach((rowNodes, rowIndex) => {
       // Separation constraints along the primary axis (either x or y)
       if (orientation === 'top-to-bottom') {
@@ -283,11 +286,11 @@ const createSeparationConstraints = (rows, constants) => {
 
     if (orientation === 'right-to-left') {
       // Ensure we're not at the last row
+      rowNodes.sort((a, b) => compare(a.y, b.y, a.id, b.id));
       if (rowIndex < rows.length - 1) {
         const nextRowNodes = rows[rowIndex + 1];  // Get nodes from the next row
-        const nodeB = nextRowNodes[0]; 
-
-        rowNodes.sort((a, b) => compare(a.y, b.y, a.id, b.id));
+        const maxIndex = nextRowNodes.reduce((maxIdx, node, idx) => node.width > nextRowNodes[maxIdx].width ? idx : maxIdx, 0);
+        const nodeB = nextRowNodes[maxIndex]; 
     
         // Loop through each node in the current row
         for (let j = 0; j < rowNodes.length; j++) {
@@ -306,19 +309,18 @@ const createSeparationConstraints = (rows, constants) => {
             const spaceC = snap(spreadC * spaceSecondary, spaceSecondary);
             separationConstraints.push({
               base: separationConstraint,
-              property: coordPrimary,  // Primary axis (y for right-to-left)
+              property: coordPrimary, 
               a: nodeA,
               b: nodeC,
               separation: nodeA.height + spaceC + nodeC.height
             });
           }
-    
             separationConstraints.push({
               base: separationConstraint,
               property: coordSecondary, 
               a: nodeA,
               b: nodeB,
-              separation: nodeA.width * 0.5 + space + nodeB.width * 0.5
+              separation: nodeA[sizeSecondary]*0.5 + space + nodeB[sizeSecondary]*0.5,
             });
           }
         

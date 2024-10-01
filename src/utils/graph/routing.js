@@ -48,7 +48,6 @@ export const routing = ({
 
   // For each node
   for (const node of nodes) {
-    console.log(node)
     // Sort the node's target edges by the angle between source and target nodes
     node.targets.sort((a, b) =>
       compare(
@@ -278,17 +277,17 @@ export const routing = ({
     // Combine all points
     const points = [...sourceStem, ...edge.points, ...targetStem];
 
-    // Fix any invalid points caused by invalid layouts
-    let pointYMax = points[0].y;
+    // // Fix any invalid points caused by invalid layouts
+    // let pointXMax = points[0].y;
 
-    for (const point of points) {
-      // Ensure increasing Y values for each point
-      if (point.y < pointYMax) {
-        point.y = pointYMax;
-      } else {
-        pointYMax = point.y;
-      }
-    }
+    // for (const point of points) {
+    //   // Ensure increasing Y values for each point
+    //   if (point.x < pointXMax) {
+    //     point.x = pointXMax;
+    //   } else {
+    //     pointXMax = point.x;
+    //   }
+    // }
 
     // Assign finished points to edge
     edge.points = points;
