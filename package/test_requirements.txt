@@ -11,7 +11,7 @@ flake8~=7.1
 isort~=5.11
 matplotlib~=3.9
 mypy~=1.11
-moto~=5.0.9
+moto~=5.0.16
 psutil==5.9.6  # same as Kedro for now
 pylint~=3.2
 pylint-pydantic>=0.3.0
