@@ -3,7 +3,7 @@ reporting.cancellation_policy_breakdown:
   filepath: ${_base_location}/08_reporting/cancellation_breakdown.json
   metadata:
     kedro-viz:
-      layer: reporting
+      layer1: reporting
   plotly_args:
     type: bar
     fig:
@@ -19,7 +19,7 @@ reporting.price_histogram:
   filepath: ${_base_location}/08_reporting/price_histogram.json
   metadata:
     kedro-viz:
-      layer: reporting
+      layer1: reporting
   versioned: true
 
 reporting.feature_importance:
@@ -27,7 +27,7 @@ reporting.feature_importance:
   filepath: ${_base_location}/08_reporting/feature_importance_plot.json
   metadata:
     kedro-viz:
-      layer: reporting
+      layer1: reporting
   versioned: true
 
 reporting.cancellation_policy_grid:
@@ -44,4 +44,4 @@ reporting.top_shuttle_data:
   filepath: ${_base_location}/08_reporting/top_shuttle_data.json
   metadata:
     kedro-viz:
-      layer: reporting
+      layer1: reporting

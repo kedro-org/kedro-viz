@@ -55,22 +55,23 @@ export const solveStrict = (constraints, constants) => {
       variable.obj = obj;
     }
   };
-
   for (const constraint of constraints) {
-    addVariable(constraint.a, constraint.base.property);
-    addVariable(constraint.b, constraint.base.property);
+    const property = constraint.property || constraint.base.property;
+    addVariable(constraint.a, property);
+    addVariable(constraint.b, property);
   }
 
   let unsolvableCount = 0;
 
   for (const constraint of constraints) {
+    const property = constraint.property || constraint.base.property;
     try {
       solver.addConstraint(
         constraint.base.strict(
           constraint,
           constants,
-          variables[variableId(constraint.a, constraint.base.property)],
-          variables[variableId(constraint.b, constraint.base.property)]
+          variables[variableId(constraint.a, property)],
+          variables[variableId(constraint.b, property)]
         )
       );
     } catch (err) {

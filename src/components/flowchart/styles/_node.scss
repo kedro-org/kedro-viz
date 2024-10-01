@@ -14,6 +14,7 @@
     stroke-width: 1px;
     fill: var(--node-fill-default);
     stroke: var(--node-stroke-default);
+    opacity: 0;
   }
 
   &:focus {

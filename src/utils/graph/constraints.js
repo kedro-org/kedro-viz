@@ -18,7 +18,7 @@ export const rowConstraint = {
     new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
-      constants.spaceY,
+      constants.spaceSecondary,
       Strength.required
     ),
 };
@@ -42,7 +42,7 @@ export const layerConstraint = {
  * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  property: 'x',
+  property: 'y',
 
   solve: (constraint) => {
     const { a, b, strength } = constraint;

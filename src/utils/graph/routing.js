@@ -42,10 +42,13 @@ export const routing = ({
   stemSpaceTarget,
 }) => {
   // Find the rows formed by nodes
+  let orientation = 'top-to-bottom';
+  orientation = 'right-to-left';
   const rows = groupByRow(nodes);
 
   // For each node
   for (const node of nodes) {
+    console.log(node)
     // Sort the node's target edges by the angle between source and target nodes
     node.targets.sort((a, b) =>
       compare(
@@ -54,7 +57,7 @@ export const routing = ({
       )
     );
   }
-
+  
   // For each edge
   for (const edge of edges) {
     const source = edge.sourceNode;
@@ -201,38 +204,76 @@ export const routing = ({
       target.sources.length *
       (1 - Math.abs(targetEdgeDistance) / target.sources.length);
 
-    // Build the source stem for the edge
-    const sourceStem = [
-      {
-        x: source.x + sourceOffsetX,
-        y: nodeBottom(source),
-      },
-      {
-        x: source.x + sourceOffsetX,
-        y: nodeBottom(source) + stemMinSource,
-      },
-      {
-        x: source.x + sourceOffsetX,
-        y:
-          nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
-      },
-    ];
+      let sourceStem, targetStem;
 
-    // Build the target stem for the edge
-    const targetStem = [
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
-      },
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget,
-      },
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target),
-      },
-    ];
+      if (orientation === 'top-to-bottom') {
+        // Build the source stem for the edge (top-to-bottom)
+        sourceStem = [
+          {
+            x: source.x + sourceOffsetX,
+            y: nodeBottom(source),
+          },
+          {
+            x: source.x + sourceOffsetX,
+            y: nodeBottom(source) + stemMinSource,
+          },
+          {
+            x: source.x + sourceOffsetX,
+            y:
+              nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
+          },
+        ];
+      
+        // Build the target stem for the edge (top-to-bottom)
+        targetStem = [
+          {
+            x: target.x + targetOffsetX,
+            y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
+          },
+          {
+            x: target.x + targetOffsetX,
+            y: nodeTop(target) - stemMinTarget,
+          },
+          {
+            x: target.x + targetOffsetX,
+            y: nodeTop(target),
+          },
+        ];
+      } else if (orientation === 'right-to-left') {
+        // Build the source stem for the edge (right-to-left)
+        sourceStem = [
+          {
+            x: nodeRight(source),
+            y: source.y + sourceOffsetY,
+          },
+          {
+            y: source.y + sourceOffsetY,
+            x: nodeRight(source) + stemMinSource,
+          },
+          {
+            y: source.y + sourceOffsetY,
+            x: nodeRight(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
+          },
+        ];
+      
+        // Build the target stem for the edge (right-to-left)
+        targetStem = [
+          {
+            y: target.y + targetOffsetY,
+            x: nodeLeft(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
+          },
+          {
+            y: target.y + targetOffsetY,
+            x: nodeLeft(target) - stemMinTarget,
+          },
+          {
+            y: target.y + targetOffsetY,
+            x: nodeLeft(target),
+          },
+        ];
+      } else {
+        throw new Error(`Unsupported orientation: ${orientation}`);
+      }
 
     // Combine all points
     const points = [...sourceStem, ...edge.points, ...targetStem];
