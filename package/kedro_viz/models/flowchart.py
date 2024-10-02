@@ -9,6 +9,7 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
+from fastapi.encoders import jsonable_encoder
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import (
     BaseModel,
@@ -19,7 +20,7 @@ from pydantic import (
     model_validator,
 )
 
-from kedro_viz.models.utils import get_dataset_type, serialize_dict
+from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
@@ -862,13 +863,11 @@ class ParametersNode(GraphNode):
 
         try:
             actual_parameter_value = self.kedro_obj.load()
-            if self.is_all_parameters() and isinstance(actual_parameter_value, dict):
-                serialized_parameter_value = serialize_dict(actual_parameter_value)
-                return serialized_parameter_value
-            if isinstance(actual_parameter_value, (int, float)):
-                # handles a single parameter value which can be serialized
-                return actual_parameter_value
-            # handles any complex type that can't be serialized
+            # Return only json serializable value
+            return jsonable_encoder(actual_parameter_value)
+        except (TypeError, ValueError, RecursionError):
+            # In case the parameter is not JSON serializable,
+            # return the string representation
             return str(actual_parameter_value)
         except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
@@ -876,6 +875,14 @@ class ParametersNode(GraphNode):
             # the kedro_obj is None (AttributeError) -- GH#1231
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
+            )
+            return None
+        # pylint: disable=broad-exception-caught
+        except Exception as exc:  # pragma: no cover
+            logger.error(
+                "An error occurred when loading parameter `%s` in the catalog :: %s",
+                self.parameter_name,
+                exc,
             )
             return None
 

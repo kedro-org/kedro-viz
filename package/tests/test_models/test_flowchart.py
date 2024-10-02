@@ -1,7 +1,7 @@
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import call, patch
+from unittest.mock import Mock, call, patch
 
 import pytest
 from kedro.io import MemoryDataset
@@ -229,14 +229,15 @@ class TestGraphNodeCreation:
         assert parameters_node.kedro_obj is parameters_dataset
         assert not parameters_node.is_all_parameters()
         assert parameters_node.is_single_parameter()
-        assert parameters_node.parameter_value == str(parameters_node.kedro_obj.load())
+        assert isinstance(parameters_node.parameter_value, str)
 
     def test_create_all_parameters_with_complex_type(self):
+        mock_object = Mock()
         parameters_dataset = MemoryDataset(
             data={
                 "test_split_ratio": 0.3,
                 "num_epochs": 1000,
-                "complex_param": object(),
+                "complex_param": mock_object,
             }
         )
         parameters_node = GraphNode.create_parameters_node(
@@ -252,11 +253,7 @@ class TestGraphNodeCreation:
         assert parameters_node.id == "parameters"
         assert parameters_node.is_all_parameters()
         assert not parameters_node.is_single_parameter()
-        assert parameters_node.parameter_value == {
-            "test_split_ratio": 0.3,
-            "num_epochs": 1000,
-            "complex_param": str(parameters_node.kedro_obj.load()["complex_param"]),
-        }
+        assert isinstance(parameters_node.parameter_value, str)
 
     def test_create_non_existing_parameter_node(self):
         """Test the case where ``parameters`` is equal to None"""

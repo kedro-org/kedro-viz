@@ -1,6 +1,5 @@
 """`kedro_viz.models.utils` contains utility functions used in the `kedro_viz.models` package"""
 
-import json
 import logging
 from typing import TYPE_CHECKING
 
@@ -45,23 +44,3 @@ def get_dataset_type(dataset: "AbstractDataset") -> str:
     abbreviated_module_name = ".".join(dataset.__class__.__module__.split(".")[-2:])
     class_name = f"{dataset.__class__.__qualname__}"
     return f"{abbreviated_module_name}.{class_name}"
-
-
-def serialize_dict(original_dict: dict) -> dict:
-    """Serialize a dictionary by converting its values to strings
-    if the value is non serializable."""
-    serialized_dict = {}
-
-    for key, value in original_dict.items():
-        if isinstance(value, dict):
-            # Recursively process the nested dictionary
-            serialized_dict[key] = serialize_dict(value)
-        else:
-            try:
-                # Check if the value is serializable
-                json.dumps(value)
-                serialized_dict[key] = value
-            except (TypeError, ValueError):
-                # Convert to string if serialization fails
-                serialized_dict[key] = str(value)  # type: ignore
-    return serialized_dict
