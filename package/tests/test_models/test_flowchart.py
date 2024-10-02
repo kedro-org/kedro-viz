@@ -215,6 +215,49 @@ class TestGraphNodeCreation:
         assert parameters_node.parameter_value == 0.3
         assert parameters_node.modular_pipelines == expected_modular_pipelines
 
+    def test_create_single_parameter_with_complex_type(self):
+        parameters_dataset = MemoryDataset(data=object())
+        parameters_node = GraphNode.create_parameters_node(
+            dataset_id="params:test_split_ratio",
+            dataset_name="params:test_split_ratio",
+            layer=None,
+            tags=set(),
+            parameters=parameters_dataset,
+            modular_pipelines=set(),
+        )
+        assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.kedro_obj is parameters_dataset
+        assert not parameters_node.is_all_parameters()
+        assert parameters_node.is_single_parameter()
+        assert parameters_node.parameter_value == str(parameters_node.kedro_obj.load())
+
+    def test_create_all_parameters_with_complex_type(self):
+        parameters_dataset = MemoryDataset(
+            data={
+                "test_split_ratio": 0.3,
+                "num_epochs": 1000,
+                "complex_param": object(),
+            }
+        )
+        parameters_node = GraphNode.create_parameters_node(
+            dataset_id="parameters",
+            dataset_name="parameters",
+            layer=None,
+            tags=set(),
+            parameters=parameters_dataset,
+            modular_pipelines=set(),
+        )
+        assert isinstance(parameters_node, ParametersNode)
+        assert parameters_node.kedro_obj is parameters_dataset
+        assert parameters_node.id == "parameters"
+        assert parameters_node.is_all_parameters()
+        assert not parameters_node.is_single_parameter()
+        assert parameters_node.parameter_value == {
+            "test_split_ratio": 0.3,
+            "num_epochs": 1000,
+            "complex_param": str(parameters_node.kedro_obj.load()["complex_param"]),
+        }
+
     def test_create_non_existing_parameter_node(self):
         """Test the case where ``parameters`` is equal to None"""
         parameters_node = GraphNode.create_parameters_node(

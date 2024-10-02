@@ -19,7 +19,7 @@ from pydantic import (
     model_validator,
 )
 
-from kedro_viz.models.utils import get_dataset_type
+from kedro_viz.models.utils import get_dataset_type, serialize_dict
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
 try:
@@ -861,7 +861,15 @@ class ParametersNode(GraphNode):
             return None
 
         try:
-            return self.kedro_obj.load()
+            actual_parameter_value = self.kedro_obj.load()
+            if self.is_all_parameters() and isinstance(actual_parameter_value, dict):
+                serialized_parameter_value = serialize_dict(actual_parameter_value)
+                return serialized_parameter_value
+            if isinstance(actual_parameter_value, (int, float)):
+                # handles a single parameter value which can be serialized
+                return actual_parameter_value
+            # handles any complex type that can't be serialized
+            return str(actual_parameter_value)
         except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
             # defined in the catalog (DatasetError) it also catches any case where
