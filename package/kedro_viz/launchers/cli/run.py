@@ -81,7 +81,7 @@ from kedro_viz.launchers.cli.main import viz
     is_flag=True,
     help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
-# pylint: disable=import-outside-toplevel, too-many-locals
+# pylint: disable=import-outside-toplevel, too-many-locals, too-many-positional-arguments
 def run(
     host,
     port,

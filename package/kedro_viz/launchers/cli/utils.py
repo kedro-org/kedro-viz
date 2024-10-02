@@ -114,6 +114,7 @@ def display_cli_message(msg, msg_color=None):
     )
 
 
+# pylint: disable=too-many-positional-arguments
 def _load_and_deploy_viz(
     platform,
     is_all_previews_enabled,

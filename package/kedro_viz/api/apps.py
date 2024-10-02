@@ -42,7 +42,7 @@ def _create_base_api_app() -> FastAPI:
         @app.middleware("http")
         async def set_secure_headers(request, call_next):
             response = await call_next(request)
-            secure_headers.framework.fastapi(response)
+            secure_headers.framework.fastapi(response)  # pylint: disable=no-member
             return response
 
     return app
