@@ -15,7 +15,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 <br />
 
-[![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/kedro-org/kedro-viz/merge-gatekeeper.yml?label=Actions&logo=github)](https://github.com/kedro-org/kedro-viz/actions)
 [![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
 [![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
@@ -67,7 +67,7 @@ const MyApp = () => (
       options={/* Options to configure Kedro Viz */}
     />
   </div>
-); 
+);
 ```
 
 To use with NextJS:
@@ -89,7 +89,7 @@ The JSON can be obtained by running:
 kedro viz run --save-file=<path-to-save-kedro-viz-data-to-a-directory>
 ```
 
-On successful execution of the command above, it will generate a folder at the specified directory, containing the following structure: 
+On successful execution of the command above, it will generate a folder at the specified directory, containing the following structure:
 
 ```
 <filename>/api/
@@ -116,7 +116,7 @@ We also recommend wrapping the `Kedro-Viz` component with a parent HTML/JSX elem
 
 ## Configure Kedro-viz with `options`
 
-The example below demonstrates how to configure your kedro-viz using different `options`. 
+The example below demonstrates how to configure your kedro-viz using different `options`.
 
 ```
 <KedroViz
@@ -131,7 +131,7 @@ The example below demonstrates how to configure your kedro-viz using different `
         metadataPanel: true,
         miniMap: true,
         sidebar: true,
-        zoomToolbar: true,    
+        zoomToolbar: true,
       },
       expandAllPipelines: false,
       nodeType: {
@@ -146,34 +146,33 @@ The example below demonstrates how to configure your kedro-viz using different `
 
 ```
 
-| Name         | Type    | Default | Description |
-| ------------ | ------- | ------- | ----------- |
-| `data` | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | - | Pipeline data to be displayed on the chart |
-| `onActionCallback` | function | - | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);`  |
-| options.display |  |  |  |
-| `expandPipelinesBtn` | boolean | true | Show/Hide expand pipelines button |
-| `exportBtn` | boolean | true | Show/Hide export button |
-| `globalNavigation` | boolean | true | Show/Hide global navigation |
-| `labelBtn` | boolean | true | Show/Hide label button |
-| `layerBtn` | boolean | true | Show/Hide layer button |
-| `metadataPanel` | boolean | true | Show/Hide Metadata Panel |
-| `miniMap` | boolean | true | Show/Hide Mini map and mini map button |
-| `sidebar` | boolean | true | Show/Hide Sidebar and action toolbar |
-| `zoomToolbar` | boolean | true | Show/Hide zoom-in, zoom-out and zoom reset buttons together |
-| options.expandAllPipelines | boolean | false | Expand/Collapse Modular pipelines on first load |
-| options.nodeType | `{disabled: {parameters: boolean,task: boolean,data: boolean}}` | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options |
-| options.tag | `{enabled: {<tagName>: boolean}}` | - | Configuration for tag options |
-| options.theme | string | dark | select `Kedro-Viz` theme : dark/light |
-
+| Name                       | Type                                                                               | Default                                                  | Description                                                                                                                                                   |
+| -------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data`                     | `{ edges: array (required), layers: array, nodes: array (required), tags: array }` | -                                                        | Pipeline data to be displayed on the chart                                                                                                                    |
+| `onActionCallback`         | function                                                                           | -                                                        | Callback function to be invoked when the specified action is dispatched. e.g. `const action = { type: NODE_CLICK, payload: node }; onActionCallback(action);` |
+| options.display            |                                                                                    |                                                          |                                                                                                                                                               |
+| `expandPipelinesBtn`       | boolean                                                                            | true                                                     | Show/Hide expand pipelines button                                                                                                                             |
+| `exportBtn`                | boolean                                                                            | true                                                     | Show/Hide export button                                                                                                                                       |
+| `globalNavigation`         | boolean                                                                            | true                                                     | Show/Hide global navigation                                                                                                                                   |
+| `labelBtn`                 | boolean                                                                            | true                                                     | Show/Hide label button                                                                                                                                        |
+| `layerBtn`                 | boolean                                                                            | true                                                     | Show/Hide layer button                                                                                                                                        |
+| `metadataPanel`            | boolean                                                                            | true                                                     | Show/Hide Metadata Panel                                                                                                                                      |
+| `miniMap`                  | boolean                                                                            | true                                                     | Show/Hide Mini map and mini map button                                                                                                                        |
+| `sidebar`                  | boolean                                                                            | true                                                     | Show/Hide Sidebar and action toolbar                                                                                                                          |
+| `zoomToolbar`              | boolean                                                                            | true                                                     | Show/Hide zoom-in, zoom-out and zoom reset buttons together                                                                                                   |
+| options.expandAllPipelines | boolean                                                                            | false                                                    | Expand/Collapse Modular pipelines on first load                                                                                                               |
+| options.nodeType           | `{disabled: {parameters: boolean,task: boolean,data: boolean}}`                    | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options                                                                                                                           |
+| options.tag                | `{enabled: {<tagName>: boolean}}`                                                  | -                                                        | Configuration for tag options                                                                                                                                 |
+| options.theme              | string                                                                             | dark                                                     | select `Kedro-Viz` theme : dark/light                                                                                                                         |
 
 ### Note
+
 - `onActionCallback` callback is only called when the user clicks on a node in the flowchart, and we are passing the node object as the payload in the callback argument. In future releases, we will add more actions to be dispatched in this callback.
 - When `display.sidebar` is `false`, `display.miniMap` prop will be ignored.
 
 All components are annotated to understand their positions in the Kedro-Viz UI.
 
 ![Kedro-Viz component annotation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/kedro_viz_annotation.png)
-
 
 ## Standalone Example Repository
 
