@@ -40,10 +40,9 @@ export const routing = ({
   stemMax,
   stemSpaceSource,
   stemSpaceTarget,
+  orientation,
 }) => {
-  // Find the rows formed by nodes
-  let orientation = 'top-to-bottom';
-  orientation = 'right-to-left';
+
   const rows = groupByRow(nodes);
 
   // For each node

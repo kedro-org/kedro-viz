@@ -32,11 +32,8 @@ export const layout = ({
   spreadX,
   layerSpaceY,
   iterations,
+  orientation,
 }) => {
-
-
-  let orientation = 'top-to-bottom'
-  orientation = 'right-to-left'
 
   let coordPrimary = 'x';
   let coordSecondary = 'y';

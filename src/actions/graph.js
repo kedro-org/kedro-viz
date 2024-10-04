@@ -33,7 +33,10 @@ export function updateGraph(graph) {
  * @param {Object} state A subset of main state
  * @return {Function} Promise function
  */
-const layout = async (instance, state) => instance.graphNew(state);
+
+const layout = async (instance, state) => {
+  return instance.graphNew(state);
+} 
 
 // Prepare new layout worker
 const layoutWorker = preventWorkerQueues(worker, layout);
