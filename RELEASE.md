@@ -12,6 +12,10 @@ Please follow the established format:
 
 - Update Kedro-Viz telemetry for opt-out model (#2022)
 
+## Bug fixes and other changes
+
+- Improve `kedro viz build` usage documentation (#2126)
+
 
 # Release 10.0.0
 
