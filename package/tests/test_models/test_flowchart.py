@@ -232,7 +232,7 @@ class TestGraphNodeCreation:
         assert isinstance(parameters_node.parameter_value, str)
 
     def test_create_all_parameters_with_complex_type(self):
-        mock_object = Mock()
+        mock_object = object()
         parameters_dataset = MemoryDataset(
             data={
                 "test_split_ratio": 0.3,
