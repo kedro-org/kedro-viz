@@ -21,7 +21,6 @@ jobs:
             (
               github.ref == 'refs/heads/main' || 
               github.ref == 'refs/heads/demo' ||
-              github.ref == 'refs/heads/fix/win-build-encoder'
             ) && 
             inputs.os == 'windows-latest'
           )
