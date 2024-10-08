@@ -1,7 +1,7 @@
 from functools import partial
 from pathlib import Path
 from textwrap import dedent
-from unittest.mock import Mock, call, patch
+from unittest.mock import call, patch
 
 import pytest
 from kedro.io import MemoryDataset
