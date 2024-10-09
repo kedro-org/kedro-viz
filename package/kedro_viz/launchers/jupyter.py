@@ -24,8 +24,10 @@ _DATABRICKS_HOST = "0.0.0.0"
 
 logger = logging.getLogger(__name__)
 
+
 def custom_filter(_, file_path: str) -> bool:
     return file_path.endswith((".yml", ".yaml", ".py", ".json"))
+
 
 def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:
     acceptable_ports = range(start_at, end_at + 1)
@@ -157,10 +159,10 @@ def run_viz(  # pylint: disable=too-many-locals
             "watch_filter": custom_filter,
         }
         viz_process = process_context.Process(
-            target=run_process, 
-            daemon=False, 
+            target=run_process,
+            daemon=False,
             args=run_process_args,
-            kwargs={**run_process_kwargs}
+            kwargs={**run_process_kwargs},
         )
     else:
         viz_process = process_context.Process(

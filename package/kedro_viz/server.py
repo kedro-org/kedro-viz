@@ -70,8 +70,10 @@ def load_and_populate_data(
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
+
 def custom_filter(_, file_path: str) -> bool:
-    return file_path.endswith(('.yml', '.yaml', '.py', '.json'))   
+    return file_path.endswith((".yml", ".yaml", ".py", ".json"))
+
 
 # pylint: disable=too-many-positional-arguments, too-many-locals
 def run_server(
@@ -170,10 +172,10 @@ if __name__ == "__main__":  # pragma: no cover
     }
 
     viz_process = multiprocessing.Process(
-        target=run_process, 
-        daemon=False, 
+        target=run_process,
+        daemon=False,
         args=run_process_args,
-        kwargs={**run_process_kwargs}
+        kwargs={**run_process_kwargs},
     )
 
     print("Starting Kedro Viz ...")

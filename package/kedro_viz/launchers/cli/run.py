@@ -12,8 +12,10 @@ from kedro_viz.launchers.cli.main import viz
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
+
 def custom_filter(_, path: str) -> bool:
-    return path.endswith(('.yml', '.yaml', '.py', '.json'))
+    return path.endswith((".yml", ".yaml", ".py", ".json"))
+
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
@@ -175,10 +177,10 @@ def run(
                 "watch_filter": custom_filter,
             }
             viz_process = multiprocessing.Process(
-                target=run_process, 
-                daemon=False, 
+                target=run_process,
+                daemon=False,
                 args=run_process_args,
-                kwargs={**run_process_kwargs}
+                kwargs={**run_process_kwargs},
             )
         else:
             viz_process = multiprocessing.Process(

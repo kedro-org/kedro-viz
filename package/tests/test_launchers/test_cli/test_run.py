@@ -374,13 +374,13 @@ class TestCliRunViz:
                 "extra_params": {},
                 "is_lite": False,
             },
-            "watch_filter": custom_filter
+            "watch_filter": custom_filter,
         }
 
         process_init.assert_called_once_with(
-            target=run_process, 
-            daemon=False, 
+            target=run_process,
+            daemon=False,
             args=run_process_args,
-            kwargs={**run_process_kwargs}
+            kwargs={**run_process_kwargs},
         )
         assert run_process_kwargs["kwargs"]["port"] in _VIZ_PROCESSES
