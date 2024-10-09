@@ -14,7 +14,7 @@ from typing import Any, Dict
 import IPython
 from IPython.display import HTML, display
 from kedro.framework.project import PACKAGE_NAME
-from watchgod import RegExpWatcher, run_process
+from watchfiles import run_process
 
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
@@ -24,6 +24,8 @@ _DATABRICKS_HOST = "0.0.0.0"
 
 logger = logging.getLogger(__name__)
 
+def custom_filter(_, file_path: str) -> bool:
+    return file_path.endswith((".yml", ".yaml", ".py", ".json"))
 
 def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:
     acceptable_ports = range(start_at, end_at + 1)
@@ -148,15 +150,17 @@ def run_viz(  # pylint: disable=too-many-locals
     }
     process_context = multiprocessing.get_context("spawn")
     if autoreload:
+        run_process_args = [str(project_path)]
         run_process_kwargs = {
-            "path": project_path,
             "target": run_server,
             "kwargs": run_server_kwargs,
-            "watcher_cls": RegExpWatcher,
-            "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            "watch_filter": custom_filter,
         }
         viz_process = process_context.Process(
-            target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            target=run_process, 
+            daemon=False, 
+            args=run_process_args,
+            kwargs={**run_process_kwargs}
         )
     else:
         viz_process = process_context.Process(

@@ -4,11 +4,11 @@ import pytest
 import requests
 from click.testing import CliRunner
 from packaging.version import parse
-from watchgod import RegExpWatcher, run_process
+from watchfiles import run_process
 
 from kedro_viz import __version__
 from kedro_viz.launchers.cli import main
-from kedro_viz.launchers.cli.run import _VIZ_PROCESSES
+from kedro_viz.launchers.cli.run import _VIZ_PROCESSES, custom_filter
 from kedro_viz.launchers.utils import _PYPROJECT
 from kedro_viz.server import run_server
 
@@ -357,8 +357,8 @@ class TestCliRunViz:
         with runner.isolated_filesystem():
             runner.invoke(main.viz_cli, ["viz", "run", "--autoreload"])
 
+        run_process_args = [str(mock_project_path)]
         run_process_kwargs = {
-            "path": mock_project_path,
             "target": run_server,
             "kwargs": {
                 "host": "127.0.0.1",
@@ -374,11 +374,13 @@ class TestCliRunViz:
                 "extra_params": {},
                 "is_lite": False,
             },
-            "watcher_cls": RegExpWatcher,
-            "watcher_kwargs": {"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
+            "watch_filter": custom_filter
         }
 
         process_init.assert_called_once_with(
-            target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            target=run_process, 
+            daemon=False, 
+            args=run_process_args,
+            kwargs={**run_process_kwargs}
         )
         assert run_process_kwargs["kwargs"]["port"] in _VIZ_PROCESSES

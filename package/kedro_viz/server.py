@@ -70,6 +70,8 @@ def load_and_populate_data(
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
+def custom_filter(_, file_path: str) -> bool:
+    return file_path.endswith(('.yml', '.yaml', '.py', '.json'))   
 
 # pylint: disable=too-many-positional-arguments, too-many-locals
 def run_server(
@@ -142,7 +144,7 @@ if __name__ == "__main__":  # pragma: no cover
     import argparse
     import multiprocessing
 
-    from watchgod import RegExpWatcher, run_process
+    from watchfiles import run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
@@ -156,20 +158,22 @@ if __name__ == "__main__":  # pragma: no cover
 
     project_path = (Path.cwd() / args.project_path).absolute()
 
+    run_process_args = [str(project_path)]
     run_process_kwargs = {
-        "path": project_path,
         "target": run_server,
         "kwargs": {
             "host": args.host,
             "port": args.port,
             "project_path": str(project_path),
         },
-        "watcher_cls": RegExpWatcher,
-        "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+        "watch_filter": custom_filter,
     }
 
     viz_process = multiprocessing.Process(
-        target=run_process, daemon=False, kwargs={**run_process_kwargs}
+        target=run_process, 
+        daemon=False, 
+        args=run_process_args,
+        kwargs={**run_process_kwargs}
     )
 
     print("Starting Kedro Viz ...")

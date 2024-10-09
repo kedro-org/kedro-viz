@@ -12,6 +12,8 @@ from kedro_viz.launchers.cli.main import viz
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
+def custom_filter(_, path: str) -> bool:
+    return path.endswith(('.yml', '.yaml', '.py', '.json'))
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
@@ -164,17 +166,19 @@ def run(
             "is_lite": lite,
         }
         if autoreload:
-            from watchgod import RegExpWatcher, run_process
+            from watchfiles import run_process
 
+            run_process_args = [str(kedro_project_path)]
             run_process_kwargs = {
-                "path": kedro_project_path,
                 "target": run_server,
                 "kwargs": run_server_kwargs,
-                "watcher_cls": RegExpWatcher,
-                "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+                "watch_filter": custom_filter,
             }
             viz_process = multiprocessing.Process(
-                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+                target=run_process, 
+                daemon=False, 
+                args=run_process_args,
+                kwargs={**run_process_kwargs}
             )
         else:
             viz_process = multiprocessing.Process(
