@@ -5,23 +5,31 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.models.experiment_tracking import Base
 
+import shutil
+import os
+from pathlib import Path
+
 
 def make_db_session_factory(session_store_location: str) -> sessionmaker:
     """SQLAlchemy connection to a SQLite DB with WAL mode enabled."""
-    database_url = f"sqlite:///{session_store_location}"
+    # Use a temporary path for database operations to avoid CIFS locks.
+    temp_db_path = "/tmp/session_store.db"
+    shutil.copy(session_store_location, temp_db_path)
+
+    database_url = f"sqlite:///{temp_db_path}"
     engine = create_engine(
         database_url,
-        connect_args={"check_same_thread": False}  # Allows multi-threaded access
+        connect_args={"check_same_thread": False}
     )
 
-    # Enable Write-Ahead Logging (WAL) mode and other optimizations.
     with engine.connect() as conn:
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA synchronous=NORMAL")
-        conn.execute("PRAGMA busy_timeout=30000")  # 30 seconds timeout for locks
+        conn.execute(text("PRAGMA journal_mode=WAL;"))
+        conn.execute(text("PRAGMA synchronous=NORMAL;"))
+        conn.execute(text("PRAGMA busy_timeout=60000;"))
 
-    # Create the database tables if they do not exist.
     Base.metadata.create_all(bind=engine)
 
-    # Return a session factory bound to the engine.
+    # Copy back the database to persistent location after session operations.
+    shutil.copy(temp_db_path, session_store_location)
+
     return sessionmaker(bind=engine)
