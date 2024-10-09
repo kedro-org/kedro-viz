@@ -16,3 +16,4 @@ sqlalchemy>=1.4, <3
 strawberry-graphql>=0.192.0, <1.0
 uvicorn[standard]>=0.30.0, <1.0
 watchgod>=0.8.2, <1.0
+git+https://github.com/kedro-org/kedro-sphinx-theme.git@fix-active-navigation

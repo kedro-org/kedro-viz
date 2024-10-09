@@ -28,9 +28,6 @@ Documentation = "https://docs.kedro.org/projects/kedro-viz"
 Tracker = "https://github.com/kedro-org/kedro-viz/issues"
 
 [project.optional-dependencies]
-docs = [
-    "git+https://github.com/kedro-org/kedro-sphinx-theme.git@fix-active-navigation",
-]
 aws = ["s3fs>=2021.4"]
 azure = ["adlfs>=2021.4"]
 gcp = ["gcsfs>=2021.4"]
