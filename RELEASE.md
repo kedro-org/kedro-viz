@@ -12,6 +12,9 @@ Please follow the established format:
 
 - Update Kedro-Viz telemetry for opt-out model (#2022)
 
+## Bug fixes and other changes
+
+- Fix unserializable parameters value (#2122)
 
 # Release 10.0.0
 
