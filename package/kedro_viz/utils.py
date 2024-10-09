@@ -60,13 +60,5 @@ def is_dataset_param(dataset_name: str) -> bool:
 
 
 def file_extension_filter(_, file_path: str) -> bool:
-    """
-    Determine if a given file path ends with one of the specified extensions.
-
-    Args:
-        file_path (str): The path of the file to check.
-
-    Returns:
-        bool: True if the file path ends with '.yml', '.yaml', '.py', or '.json', False otherwise.
-    """
+    """Determine if a given file path ends with one of the specified extensions."""
     return file_path.endswith((".yml", ".yaml", ".py", ".json"))
