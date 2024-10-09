@@ -9,7 +9,7 @@ from kedro_viz.models.experiment_tracking import Base
 
 
 def make_db_session_factory(session_store_location: str) -> sessionmaker:
-    """SQLAlchemy connection to a SQLite DB with WAL mode enabled."""
+    """SQLAlchemy connection to a SQLite DB"""
     database_url = f"sqlite:///{session_store_location}"
     engine = create_engine(database_url, connect_args={"check_same_thread": False})
 
