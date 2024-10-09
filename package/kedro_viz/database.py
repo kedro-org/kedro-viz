@@ -2,6 +2,7 @@
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+import os
 
 from kedro_viz.models.experiment_tracking import Base
 
@@ -13,11 +14,19 @@ def make_db_session_factory(session_store_location: str) -> sessionmaker:
         connect_args={"check_same_thread": False}
     )
 
-    # Apply PRAGMA settings for WAL mode.
-    with engine.connect() as conn:
-        conn.execute(text("PRAGMA journal_mode=WAL;"))
-        conn.execute(text("PRAGMA synchronous=NORMAL;"))
-        conn.execute(text("PRAGMA busy_timeout=30000;"))  # 30 seconds timeout for locks
+    # Check if we are running in an Azure ML environment.
+    is_azure_ml = any(
+        var in os.environ for var in [
+            "AZUREML_ARM_SUBSCRIPTION",
+            "AZUREML_ARM_RESOURCEGROUP",
+            "AZUREML_RUN_ID"
+        ]
+    )
+
+    # Apply WAL mode only if we are running in Azure ML.
+    if is_azure_ml:
+        with engine.connect() as conn:
+            conn.execute(text("PRAGMA journal_mode=WAL;"))
 
     # Create the database tables if they do not exist.
     Base.metadata.create_all(bind=engine)
