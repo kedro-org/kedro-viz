@@ -1,5 +1,7 @@
 import pytest
+
 from kedro_viz.utils import file_extension_filter
+
 
 @pytest.mark.parametrize(
     "file_path, expected",
