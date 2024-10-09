@@ -64,7 +64,6 @@ def file_extension_filter(_, file_path: str) -> bool:
     Determine if a given file path ends with one of the specified extensions.
 
     Args:
-        _: Unused parameter.
         file_path (str): The path of the file to check.
 
     Returns:
