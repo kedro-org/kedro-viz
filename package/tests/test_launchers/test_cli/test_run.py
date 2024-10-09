@@ -8,9 +8,10 @@ from watchfiles import run_process
 
 from kedro_viz import __version__
 from kedro_viz.launchers.cli import main
-from kedro_viz.launchers.cli.run import _VIZ_PROCESSES, custom_filter
+from kedro_viz.launchers.cli.run import _VIZ_PROCESSES
 from kedro_viz.launchers.utils import _PYPROJECT
 from kedro_viz.server import run_server
+from kedro_viz.utils import file_extension_filter
 
 
 @pytest.fixture
@@ -374,7 +375,7 @@ class TestCliRunViz:
                 "extra_params": {},
                 "is_lite": False,
             },
-            "watch_filter": custom_filter,
+            "watch_filter": file_extension_filter,
         }
 
         process_init.assert_called_once_with(

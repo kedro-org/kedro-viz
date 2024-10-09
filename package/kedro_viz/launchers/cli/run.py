@@ -9,12 +9,9 @@ from kedro.framework.cli.utils import _split_params
 
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.launchers.cli.main import viz
+from kedro_viz.utils import file_extension_filter
 
 _VIZ_PROCESSES: Dict[str, int] = {}
-
-
-def custom_filter(_, path: str) -> bool:
-    return path.endswith((".yml", ".yaml", ".py", ".json"))
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -174,7 +171,7 @@ def run(
             run_process_kwargs = {
                 "target": run_server,
                 "kwargs": run_server_kwargs,
-                "watch_filter": custom_filter,
+                "watch_filter": file_extension_filter,
             }
             viz_process = multiprocessing.Process(
                 target=run_process,

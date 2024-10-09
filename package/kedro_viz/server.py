@@ -15,6 +15,7 @@ from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.utils import file_extension_filter
 
 DEV_PORT = 4142
 
@@ -69,10 +70,6 @@ def load_and_populate_data(
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
-
-
-def custom_filter(_, file_path: str) -> bool:
-    return file_path.endswith((".yml", ".yaml", ".py", ".json"))
 
 
 # pylint: disable=too-many-positional-arguments, too-many-locals
@@ -168,7 +165,7 @@ if __name__ == "__main__":  # pragma: no cover
             "port": args.port,
             "project_path": str(project_path),
         },
-        "watch_filter": custom_filter,
+        "watch_filter": file_extension_filter,
     }
 
     viz_process = multiprocessing.Process(

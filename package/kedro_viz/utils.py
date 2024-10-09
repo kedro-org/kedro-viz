@@ -57,3 +57,17 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+
+
+def file_extension_filter(_, file_path: str) -> bool:
+    """
+    Determine if a given file path ends with one of the specified extensions.
+
+    Args:
+        _: Unused parameter.
+        file_path (str): The path of the file to check.
+
+    Returns:
+        bool: True if the file path ends with '.yml', '.yaml', '.py', or '.json', False otherwise.
+    """
+    return file_path.endswith((".yml", ".yaml", ".py", ".json"))
