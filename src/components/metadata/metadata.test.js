@@ -303,7 +303,7 @@ describe('MetaData', () => {
         mockMetadata: nodeData,
       });
       const row = rowByLabel(wrapper, 'Dataset Type:');
-      expect(textOf(rowValue(row))).toEqual(['CSVDataset']);
+      expect(textOf(rowValue(row))).toEqual(['pandas.CSVDataset']);
     });
 
     it('shows the node filepath', () => {
@@ -402,7 +402,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Original Type:');
-        expect(textOf(rowValue(row))).toEqual(['SparkDataset']);
+        expect(textOf(rowValue(row))).toEqual(['spark.SparkDataset']);
       });
 
       it('shows the node transcoded type', () => {
@@ -411,7 +411,7 @@ describe('MetaData', () => {
           mockMetadata: nodeTranscodedData,
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
-        expect(textOf(rowValue(row))).toEqual(['ParquetDataset']);
+        expect(textOf(rowValue(row))).toEqual(['pandas.ParquetDataset']);
       });
     });
     describe('Metrics dataset nodes', () => {
