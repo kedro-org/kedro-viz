@@ -3,17 +3,15 @@ for Kedro pipeline visualisation."""
 
 from pathlib import Path
 from typing import Any, Dict, Optional
-
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from kedro_viz.launchers.cli.utils import display_cli_message
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 
 DEV_PORT = 4142
@@ -126,6 +124,8 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
+            from kedro_viz.api.rest.responses.deploy import save_api_responses_to_fs
+
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
@@ -140,45 +140,58 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
-    import multiprocessing
-
+    import threading
+    import traceback
     from watchgod import RegExpWatcher, run_process
+    from kedro.framework.cli.utils import KedroCliError
 
-    parser = argparse.ArgumentParser(description="Launch a development viz server")
-    parser.add_argument("project_path", help="Path to a Kedro project")
-    parser.add_argument(
-        "--host", help="The host of the development server", default=DEFAULT_HOST
-    )
-    parser.add_argument(
-        "--port", help="The port of the development server", default=DEV_PORT
-    )
-    args = parser.parse_args()
+    try:
+        parser = argparse.ArgumentParser(description="Launch a development viz server")
+        parser.add_argument("project_path", help="Path to a Kedro project")
+        parser.add_argument(
+            "--host", help="The host of the development server", default=DEFAULT_HOST
+        )
+        parser.add_argument(
+            "--port", help="The port of the development server", default=DEV_PORT
+        )
+        args = parser.parse_args()
 
-    project_path = (Path.cwd() / args.project_path).absolute()
+        project_path = (Path.cwd() / args.project_path).absolute()
 
-    run_process_kwargs = {
-        "path": project_path,
-        "target": run_server,
-        "kwargs": {
-            "host": args.host,
-            "port": args.port,
-            "project_path": str(project_path),
-        },
-        "watcher_cls": RegExpWatcher,
-        "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
-    }
+        run_process_kwargs = {
+            "path": project_path,
+            "target": run_server,
+            "kwargs": {
+                "host": args.host,
+                "port": args.port,
+                "project_path": str(project_path),
+            },
+            "watcher_cls": RegExpWatcher,
+            "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+        }
 
-    viz_process = multiprocessing.Process(
-        target=run_process, daemon=False, kwargs={**run_process_kwargs}
-    )
+        viz_app_thread = threading.Thread(
+            target=run_process, daemon=True, kwargs={**run_process_kwargs}
+        )
 
-    print("Starting Kedro Viz ...")
+        display_cli_message("Starting Kedro Viz ...", "green")
 
-    viz_process.start()
+        viz_app_thread.start()
 
-    _wait_for(func=_check_viz_up, host=args.host, port=args.port)
+        _wait_for(func=_check_viz_up, host=args.host, port=args.port)
 
-    print(
-        "Kedro Viz started successfully. \n\n"
-        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/"
-    )
+        display_cli_message(
+            "Kedro Viz started successfully. \n\n"
+            f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/",
+            "green",
+        )
+
+        # Ensure the thread completes before the
+        # main program exits
+        viz_app_thread.join()
+
+    except KeyboardInterrupt as ex:
+        display_cli_message("\nKedro Viz has been stopped.", "red")
+    except Exception as ex:  # pragma: no cover
+        traceback.print_exc()
+        raise KedroCliError(str(ex)) from ex
