@@ -46,6 +46,34 @@ Starting from Kedro-Viz 9.2.0, `kedro viz build` will not include dataset previe
 
 This creates a `build` folder containing your Kedro-Viz app package in your project directory. 
 
+## Running Kedro-Viz Locally
+
+When you generate the build folder using the command `kedro viz build`, it creates a build directory with an `index.html` file, which serves as the entry point for visualizing your pipeline.
+
+
+To view your pipeline visualization correctly, you need to serve `index.html` using an HTTP server. Here are a few simple ways to do this:
+
+1. Python's Built-in HTTP Server:
+    - Navigate to the build directory and run:
+        ```bash
+        python -m http.server
+        ```
+    - This starts a web server at `http://localhost:8000`, which you can use to view index.html.
+
+2. Node's http-server:
+    - First, install it globally:
+        ```bash
+        npm install -g http-server
+        ```
+    - Then, run it from the build directory:
+        ```bash
+        http-server
+        ```
+
+```{warning}
+Simply opening `index.html` using the `file://` protocol is not supported due to Cross-Origin Resource Sharing (CORS) policies in modern browsers.
+```
+
 ## Static website hosting platforms such as GitHub Pages
 
 Follow the steps [listed in the GitHub pages documentation](https://docs.github.com/en/pages/quickstart) to create a Git repository that supports GitHub Pages. On completion, push the contents of the previously created `build` folder to this new repository. Your site will be available at the following URL: `http://<username>.github.io`

@@ -14,7 +14,9 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Improve `kedro viz build` usage documentation (#2126)
 - Fix unserializable parameters value (#2122)
+
 
 # Release 10.0.0
 
