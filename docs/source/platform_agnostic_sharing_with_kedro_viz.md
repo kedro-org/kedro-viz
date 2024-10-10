@@ -48,9 +48,8 @@ This creates a `build` folder containing your Kedro-Viz app package in your proj
 
 ## Running Kedro-Viz Locally
 
-When you generate the build folder using the command `kedro viz build`, it creates a build directory with an `index.html` file, which serves as the entry point for visualizing your pipeline. However, simply opening `index.html` using the `file://` protocol is not supported due to Cross-Origin Resource Sharing (CORS) policies in modern browsers.
+When you generate the build folder using the command `kedro viz build`, it creates a build directory with an `index.html` file, which serves as the entry point for visualizing your pipeline.
 
-### Using a Local Server
 
 To view your pipeline visualization correctly, you need to serve `index.html` using an HTTP server. Here are a few simple ways to do this:
 
@@ -71,6 +70,9 @@ To view your pipeline visualization correctly, you need to serve `index.html` us
         http-server
         ```
 
+```{warning}
+Simply opening `index.html` using the `file://` protocol is not supported due to Cross-Origin Resource Sharing (CORS) policies in modern browsers.
+```
 
 ## Static website hosting platforms such as GitHub Pages
 
