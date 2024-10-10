@@ -9,6 +9,7 @@ from kedro.framework.cli.utils import _split_params
 
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.launchers.cli.main import viz
+from kedro_viz.utils import file_extension_filter
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 
@@ -164,17 +165,19 @@ def run(
             "is_lite": lite,
         }
         if autoreload:
-            from watchgod import RegExpWatcher, run_process
+            from watchfiles import run_process
 
+            run_process_args = [str(kedro_project_path)]
             run_process_kwargs = {
-                "path": kedro_project_path,
                 "target": run_server,
                 "kwargs": run_server_kwargs,
-                "watcher_cls": RegExpWatcher,
-                "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+                "watch_filter": file_extension_filter,
             }
             viz_process = multiprocessing.Process(
-                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+                target=run_process,
+                daemon=False,
+                args=run_process_args,
+                kwargs={**run_process_kwargs},
             )
         else:
             viz_process = multiprocessing.Process(

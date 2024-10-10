@@ -16,6 +16,7 @@ Please follow the established format:
 
 - Improve `kedro viz build` usage documentation (#2126)
 - Fix unserializable parameters value (#2122)
+- Replace `watchgod` library with `watchfiles` (#2134)
 
 
 # Release 10.0.0
