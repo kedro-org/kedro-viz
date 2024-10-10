@@ -8,7 +8,7 @@ from pathlib import Path
 import boto3
 import pytest
 from moto import mock_aws
-from sqlalchemy import create_engine, func, select
+from sqlalchemy import create_engine, func, select, text
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.database import make_db_session_factory
@@ -372,3 +372,22 @@ class TestSQLiteStore:
         mock_merge.assert_called_once()
         mock_upload.assert_called_once()
         assert "Merge failed on sync: Merge failed" in caplog.text
+
+    def test_make_db_session_factory_with_azure_env_var(self, mocker, tmp_path):
+        """Test that WAL mode is enabled when running in an Azure environment."""
+        mocker.patch.dict(
+            os.environ,
+            {
+                "AZUREML_ARM_SUBSCRIPTION": "dummy_value",
+                "AZUREML_ARM_RESOURCEGROUP": "dummy_value",
+            },
+        )
+        db_location = str(tmp_path / "test_session_store.db")
+        session_class = make_db_session_factory(db_location)
+
+        # Ensure that the session can be created without issues.
+        with session_class() as session:
+            assert session is not None
+            # Check if the database is using WAL mode by querying the PRAGMA
+            result = session.execute(text("PRAGMA journal_mode;")).scalar()
+            assert result == "wal"
