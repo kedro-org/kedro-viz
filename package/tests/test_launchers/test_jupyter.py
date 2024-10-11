@@ -140,6 +140,7 @@ class TestRunVizLineMagic:
         mock_process.assert_called_once_with(
             target=mocker.ANY,
             daemon=False,  # No daemon for autoreload
+            args=mocker.ANY,
             kwargs=mocker.ANY,
         )
 
