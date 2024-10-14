@@ -46,7 +46,9 @@ To start Kedro-Viz, type the following into your terminal from the project direc
 kedro viz run
 ```
 
-Please note you can also type `kedro viz` to start Kedro-viz 
+```{note}
+You can also type `kedro viz` to start Kedro-viz
+```
 
 The command opens a browser tab to serve the visualisation at `http://127.0.0.1:4141/`.
 
