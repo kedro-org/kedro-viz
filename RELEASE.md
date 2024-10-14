@@ -17,6 +17,7 @@ Please follow the established format:
 - Improve `kedro viz build` usage documentation (#2126)
 - Fix unserializable parameters value (#2122)
 - Display full dataset type with library prefix in metadata panel (#2136)
+- Enable SQLite WAL mode for Azure ML to fix database locking issues (#2131)
 
 
 # Release 10.0.0
