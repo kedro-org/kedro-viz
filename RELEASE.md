@@ -20,7 +20,6 @@ Please follow the established format:
 - Enable SQLite WAL mode for Azure ML to fix database locking issues (#2131)
 
 
-
 # Release 10.0.0
 
 ## Major features and improvements
