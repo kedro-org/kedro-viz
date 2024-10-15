@@ -31,7 +31,7 @@ describe('NodeListRow', () => {
     it('handles mouseenter events', () => {
       const { props } = setupProps();
       const wrapper = setup.mount(<NodeListRow {...props} />);
-      const nodeRow = () => wrapper.find('.pipeline-nodelist__row');
+      const nodeRow = () => wrapper.find('.node-list-row');
       nodeRow().simulate('mouseenter');
       expect(props.onMouseEnter.mock.calls.length).toEqual(1);
     });
@@ -39,7 +39,7 @@ describe('NodeListRow', () => {
     it('handles mouseleave events', () => {
       const { props } = setupProps();
       const wrapper = setup.mount(<NodeListRow {...props} />);
-      const nodeRow = () => wrapper.find('.pipeline-nodelist__row');
+      const nodeRow = () => wrapper.find('.node-list-row');
       nodeRow().simulate('mouseleave');
       expect(props.onMouseLeave.mock.calls.length).toEqual(1);
     });
@@ -51,8 +51,8 @@ describe('NodeListRow', () => {
       );
       expect(
         activeNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--overwrite')
+          .find('.node-list-row')
+          .hasClass('node-list-row--overwrite')
       ).toBe(true);
     });
 
@@ -63,8 +63,8 @@ describe('NodeListRow', () => {
       );
       expect(
         activeNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--overwrite')
+          .find('.node-list-row')
+          .hasClass('node-list-row--overwrite')
       ).toBe(true);
     });
 
@@ -75,8 +75,8 @@ describe('NodeListRow', () => {
       );
       expect(
         activeNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--overwrite')
+          .find('.node-list-row')
+          .hasClass('node-list-row--overwrite')
       ).toBe(false);
     });
 
@@ -87,8 +87,8 @@ describe('NodeListRow', () => {
       );
       expect(
         activeNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--overwrite')
+          .find('.node-list-row')
+          .hasClass('node-list-row--overwrite')
       ).toBe(false);
     });
 
@@ -99,8 +99,8 @@ describe('NodeListRow', () => {
       );
       expect(
         activeNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--active')
+          .find('.node-list-row')
+          .hasClass('node-list-row--active')
       ).toBe(true);
     });
 
@@ -111,8 +111,8 @@ describe('NodeListRow', () => {
       );
       expect(
         disabledNodeWrapper
-          .find('.pipeline-nodelist__row')
-          .hasClass('pipeline-nodelist__row--disabled')
+          .find('.node-list-row')
+          .hasClass('node-list-row--disabled')
       ).toBe(true);
     });
 
@@ -120,7 +120,7 @@ describe('NodeListRow', () => {
       const { props } = setupProps();
       const mockCount = 123;
       const wrapper = setup.mount(<NodeListRow {...props} count={mockCount} />);
-      expect(wrapper.find('.pipeline-nodelist__row__count').text()).toBe(
+      expect(wrapper.find('.node-list-row__count').text()).toBe(
         mockCount.toString()
       );
     });
@@ -128,9 +128,7 @@ describe('NodeListRow', () => {
     it('does not show count if count prop not set', () => {
       const { props } = setupProps();
       const wrapper = setup.mount(<NodeListRow {...props} count={null} />);
-      expect(wrapper.find('.pipeline-nodelist__row__count').exists()).toBe(
-        false
-      );
+      expect(wrapper.find('.node-list-row__count').exists()).toBe(false);
     });
 
     describe('focus mode', () => {
