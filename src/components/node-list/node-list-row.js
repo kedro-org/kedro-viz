@@ -8,6 +8,7 @@ import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { getNodeActive } from '../../selectors/nodes';
 import { toggleHoveredFocusMode } from '../../actions';
+import { NodeListRowToggle } from '../node-list-row-toggle/node-list-row-toggle';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -141,95 +142,36 @@ const NodeListRow = memo(
           </span>
         )}
         {VisibilityIcon && (
-          <label
-            htmlFor={id}
-            className={classnames(
-              'node-list-row__toggle',
-              `node-list-row__toggle--kind-${kind}`,
-              {
-                'node-list-row__toggle--disabled': isModularPipeline
-                  ? focused
-                  : disabled,
-                'node-list-row__toggle--selected': selected,
-              }
-            )}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <input
-              id={id}
-              className="node-list-row__checkbox"
-              data-test={kind === `nodelist-visible-${name}-${isChecked}`}
-              type="checkbox"
-              checked={isChecked}
-              disabled={disabled}
-              name={name}
-              onChange={onChange}
-            />
-            <VisibilityIcon
-              aria-label={name}
-              checked={isChecked}
-              className={classnames(
-                'node-list-row__icon',
-                'node-list-row__toggle-icon',
-                `node-list-row__toggle-icon--kind-${kind}`,
-                {
-                  'node-list-row__toggle-icon--parent': Boolean(children),
-                  'node-list-row__toggle-icon--child': !children,
-                  'node-list-row__toggle-icon--checked': isChecked,
-                  'node-list-row__toggle-icon--unchecked': !isChecked,
-                  'node-list-row__toggle-icon--all-unchecked': allUnchecked,
-                  'node-list-row__toggle-icon--focus-checked': isModularPipeline
-                    ? false
-                    : focused,
-                }
-              )}
-            />
-          </label>
+          <NodeListRowToggle 
+            allUnchecked={allUnchecked}
+            isParent={Boolean(children)}
+            disabled={disabled}
+            focusChecked={isModularPipeline ? false : focused}
+            IconComponent={VisibilityIcon}
+            id={id}
+            isChecked={isChecked}
+            kind={kind}
+            name={name}
+            onChange={onChange}
+            onToggleHoveredFocusMode={onToggleHoveredFocusMode}
+            selected={selected}
+          />
         )}
         {FocusIcon && (
-          <label
-            htmlFor={id + '-focus'}
-            className={classnames(
-              'node-list-row__toggle',
-              `node-list-row__toggle--kind-${kind}`,
-              {
-                'node-list-row__toggle--disabled': disabled,
-                'node-list-row__toggle--selected': selected,
-              }
-            )}
-            onClick={(e) => e.stopPropagation()}
-            onMouseEnter={() => onToggleHoveredFocusMode(true)}
-            onMouseLeave={() => onToggleHoveredFocusMode(false)}
-          >
-            <input
-              id={id + '-focus'}
-              className="node-list-row__checkbox"
-              data-test={kind === `nodelist-focusMode-checked-${isChecked}`}
-              type="checkbox"
-              checked={isChecked}
-              disabled={disabled}
-              name={name}
-              onChange={onChange}
-              data-icon-type="focus"
-            />
-            <FocusIcon
-              aria-label={name}
-              checked={isChecked}
-              className={classnames(
-                'node-list-row__icon',
-                'node-list-row__toggle-icon',
-                `node-list-row__toggle-icon--kind-${kind}`,
-                {
-                  'node-list-row__toggle-icon--parent': Boolean(children),
-                  'node-list-row__toggle-icon--child': !children,
-                  'node-list-row__toggle-icon--checked': isChecked,
-                  'node-list-row__toggle-icon--unchecked': !isChecked,
-                  'node-list-row__toggle-icon--all-unchecked': allUnchecked,
-                  'node-list-row__toggle-icon--focus-checked': focused,
-                }
-              )}
-            />
-          </label>
+          <NodeListRowToggle 
+            allUnchecked={allUnchecked}
+            isParent={Boolean(children)}
+            disabled={disabled}
+            focusChecked={focused}
+            IconComponent={FocusIcon}
+            id={id}
+            isChecked={isChecked}
+            kind={kind}
+            name={name}
+            onChange={onChange}
+            onToggleHoveredFocusMode={onToggleHoveredFocusMode}
+            selected={selected}
+          />
         )}
         {children}
       </Container>
