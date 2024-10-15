@@ -75,24 +75,30 @@ export const nodeBottom = (node) => node.y + node.height * 0.5;
  * @param {Array} nodes The input nodes
  * @returns {Array} The sorted rows of nodes
  */
-export const groupByRow = (nodes) => {
+export const groupByRow = (nodes, orientation = 'top-to-bottom') => {
   const rows = {};
 
-  // Create rows using node Y values
+  // Define the coordinate keys based on the orientation
+  const primaryCoord = orientation === 'left-to-right' ? 'x' : 'y';
+  const secondaryCoord = orientation === 'left-to-right' ? 'y' : 'x';
+
+  // Create rows using the primary coordinate (Y for top-to-bottom, X for left-to-right)
   for (const node of nodes) {
-    rows[node.y] = rows[node.y] || [];
-    rows[node.y].push(node);
+    const key = snap(node[primaryCoord], 10);
+    rows[key] = rows[key] || [];
+    rows[key].push(node);
   }
 
-  // Sort the set of rows accounting for keys being strings
+  // Sort the set of rows by the primary coordinate
   const rowNumbers = Object.keys(rows).map((row) => parseFloat(row));
   rowNumbers.sort((a, b) => a - b);
 
-  // Sort rows in order of X position if set. Break ties with ids for stability
+  // Sort rows in order of the secondary coordinate, then by ids for stability
   const sortedRows = rowNumbers.map((row) => rows[row]);
   for (let i = 0; i < sortedRows.length; i += 1) {
-    sortedRows[i].sort((a, b) => compare(a.x, b.x, a.id, b.id));
-
+    sortedRows[i].sort((a, b) => compare(a[secondaryCoord], b[secondaryCoord], a.id, b.id));
+   
+    // Assign row index to each node in the row
     for (const node of sortedRows[i]) {
       node.row = i;
     }
@@ -100,6 +106,7 @@ export const groupByRow = (nodes) => {
 
   return sortedRows;
 };
+
 
 /**
  * Generalised comparator function for sorting

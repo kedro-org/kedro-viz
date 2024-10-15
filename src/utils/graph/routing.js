@@ -43,7 +43,7 @@ export const routing = ({
   orientation,
 }) => {
 
-  const rows = groupByRow(nodes);
+  const rows = groupByRow(nodes, orientation);
 
   // For each node
   for (const node of nodes) {
@@ -237,8 +237,8 @@ export const routing = ({
             y: nodeTop(target),
           },
         ];
-      } else if (orientation === 'right-to-left') {
-        // Build the source stem for the edge (right-to-left)
+      } else if (orientation === 'left-to-right') {
+        // Build the source stem for the edge (left-to-right)
         sourceStem = [
           {
             x: nodeRight(source),
@@ -254,7 +254,7 @@ export const routing = ({
           },
         ];
       
-        // Build the target stem for the edge (right-to-left)
+        // Build the target stem for the edge (left-to-right)
         targetStem = [
           {
             y: target.y + targetOffsetY,

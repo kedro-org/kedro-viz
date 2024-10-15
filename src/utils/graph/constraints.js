@@ -12,13 +12,11 @@ import { Constraint, Operator, Strength } from 'kiwi.js';
  * Layout constraint in Y for separating rows
  */
 export const rowConstraint = {
-  property: 'y',
-
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
-      constants.spaceSecondary,
+      constraint.separation,
       Strength.required
     ),
 };
@@ -42,13 +40,13 @@ export const layerConstraint = {
  * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  property: 'y',
+  property: 'x',
 
-  solve: (constraint) => {
+  solve: (constraint, constants) => {
     const { a, b, strength } = constraint;
-    const resolve = strength * (a.x - b.x);
-    a.x -= resolve;
-    b.x += resolve;
+    const resolve = strength * (a[constants.coordPrimary] - b[constants.coordPrimary]);
+    a[constants.coordPrimary] -= resolve;
+    b[constants.coordPrimary] += resolve;
   },
 
   strict: (constraint, constants, variableA, variableB) =>

@@ -6,7 +6,7 @@ import { graph } from './graph';
  * as possible, and keep it separate from other properties (like node.active)
  * which don't affect layout.
  */
-export const graphNew = ({ nodes, edges, layers, expand =false }) => {
+export const graphNew = ({ nodes, edges, layers, orient =false }) => {
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
     node.icon = node.icon || 'node';
@@ -25,8 +25,8 @@ export const graphNew = ({ nodes, edges, layers, expand =false }) => {
     node.iconOffset = node.iconOffset || -innerWidth / 2;
   }
   let orientation = "top-to-bottom";
-  if (expand) {
-    orientation = "right-to-left"
+  if (orient) {
+    orientation = "left-to-right"
   }
   const result = graph(nodes, edges, layers, orientation);
 

@@ -19,7 +19,7 @@ const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
-const getExpand = (state) => state.expandPipelines;
+const getOrient = (state) => state.layer.visible;
 
 /**
  * Show the large graph warning only if there are sufficient nodes + edges,
@@ -52,14 +52,14 @@ export const getGraphInput = createSelector(
     getVisibleEdges,
     getVisibleLayerIDs,
     getTriggerLargeGraphWarning,
-    getExpand,
+    getOrient,
   ],
-  (nodes, edges, layers, triggerLargeGraphWarning, expand) => {
+  (nodes, edges, layers, triggerLargeGraphWarning, orient) => {
     if (triggerLargeGraphWarning) {
       return null;
     }
 
-    return { nodes, edges, layers, expand };
+    return { nodes, edges, layers, orient };
   }
 );
 
