@@ -140,7 +140,7 @@ def run_server(
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
-    import threading
+    import multiprocessing
     import traceback
     from watchgod import RegExpWatcher, run_process
     from kedro.framework.cli.utils import KedroCliError
@@ -170,13 +170,13 @@ if __name__ == "__main__":  # pragma: no cover
             "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
         }
 
-        viz_app_thread = threading.Thread(
-            target=run_process, daemon=True, kwargs={**run_process_kwargs}
+        viz_process = multiprocessing.Process(
+            target=run_process, daemon=False, kwargs={**run_process_kwargs}
         )
 
         display_cli_message("Starting Kedro Viz ...", "green")
 
-        viz_app_thread.start()
+        viz_process.start()
 
         _wait_for(func=_check_viz_up, host=args.host, port=args.port)
 
@@ -186,11 +186,7 @@ if __name__ == "__main__":  # pragma: no cover
             "green",
         )
 
-        # Ensure the thread completes before the
-        # main program exits
-        viz_app_thread.join()
-
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt as ex:  # pragma: no cover
         display_cli_message("\nKedro Viz has been stopped.", "red")
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
