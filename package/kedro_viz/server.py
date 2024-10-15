@@ -141,53 +141,44 @@ def run_server(
 if __name__ == "__main__":  # pragma: no cover
     import argparse
     import multiprocessing
-    import traceback
     from watchgod import RegExpWatcher, run_process
-    from kedro.framework.cli.utils import KedroCliError
 
-    try:
-        parser = argparse.ArgumentParser(description="Launch a development viz server")
-        parser.add_argument("project_path", help="Path to a Kedro project")
-        parser.add_argument(
-            "--host", help="The host of the development server", default=DEFAULT_HOST
-        )
-        parser.add_argument(
-            "--port", help="The port of the development server", default=DEV_PORT
-        )
-        args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="Launch a development viz server")
+    parser.add_argument("project_path", help="Path to a Kedro project")
+    parser.add_argument(
+        "--host", help="The host of the development server", default=DEFAULT_HOST
+    )
+    parser.add_argument(
+        "--port", help="The port of the development server", default=DEV_PORT
+    )
+    args = parser.parse_args()
 
-        project_path = (Path.cwd() / args.project_path).absolute()
+    project_path = (Path.cwd() / args.project_path).absolute()
 
-        run_process_kwargs = {
-            "path": project_path,
-            "target": run_server,
-            "kwargs": {
-                "host": args.host,
-                "port": args.port,
-                "project_path": str(project_path),
-            },
-            "watcher_cls": RegExpWatcher,
-            "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
-        }
+    run_process_kwargs = {
+        "path": project_path,
+        "target": run_server,
+        "kwargs": {
+            "host": args.host,
+            "port": args.port,
+            "project_path": str(project_path),
+        },
+        "watcher_cls": RegExpWatcher,
+        "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+    }
 
-        viz_process = multiprocessing.Process(
-            target=run_process, daemon=False, kwargs={**run_process_kwargs}
-        )
+    viz_process = multiprocessing.Process(
+        target=run_process, daemon=False, kwargs={**run_process_kwargs}
+    )
 
-        display_cli_message("Starting Kedro Viz ...", "green")
+    display_cli_message("Starting Kedro Viz ...", "green")
 
-        viz_process.start()
+    viz_process.start()
 
-        _wait_for(func=_check_viz_up, host=args.host, port=args.port)
+    _wait_for(func=_check_viz_up, host=args.host, port=args.port)
 
-        display_cli_message(
-            "Kedro Viz started successfully. \n\n"
-            f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/",
-            "green",
-        )
-
-    except KeyboardInterrupt as ex:  # pragma: no cover
-        display_cli_message("\nKedro Viz has been stopped.", "red")
-    except Exception as ex:  # pragma: no cover
-        traceback.print_exc()
-        raise KedroCliError(str(ex)) from ex
+    display_cli_message(
+        "Kedro Viz started successfully. \n\n"
+        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/",
+        "green",
+    )

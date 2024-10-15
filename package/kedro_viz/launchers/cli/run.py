@@ -198,9 +198,6 @@ def run(
         if browser:
             _start_browser(host, port)
 
-    except KeyboardInterrupt as ex:  # pragma: no cover
-        display_cli_message("\nKedro Viz has been stopped.", "red")
-        return
     except Exception as ex:  # pragma: no cover
         traceback.print_exc()
         raise KedroCliError(str(ex)) from ex
