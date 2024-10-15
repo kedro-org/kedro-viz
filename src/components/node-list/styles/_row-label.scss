@@ -8,7 +8,7 @@
   width: calc(100% - #{$icon-offset});
 }
 
-.pipeline-nodelist__row__text {
+.node-list-row__text {
   display: flex;
   align-items: center;
 
@@ -43,7 +43,7 @@
   }
 }
 
-.pipeline-nodelist__row__label {
+.node-list-row__label {
   overflow: hidden;
   font-size: 1.4em;
   white-space: nowrap;
@@ -63,7 +63,7 @@
   }
 }
 
-.pipeline-nodelist__row__count {
+.node-list-row__count {
   display: inline-block;
   flex-shrink: 0;
   width: 2.2em;
@@ -82,20 +82,20 @@
 
 .pipeline-nodelist__row--unchecked {
   // Fade row text when unchecked
-  .pipeline-nodelist__row__label--kind-filter {
+  .node-list-row__label--kind-filter {
     opacity: 0.55;
   }
 
   // Brighter row text when unchecked and hovered
   &:hover {
-    .pipeline-nodelist__row__label--kind-filter {
+    .node-list-row__label--kind-filter {
       opacity: 0.8;
     }
   }
 
   // Bright row text when all unchecked
   .pipeline-nodelist__group--all-unchecked & {
-    .pipeline-nodelist__row__label--kind-filter {
+    .node-list-row__label--kind-filter {
       opacity: 1;
     }
   }

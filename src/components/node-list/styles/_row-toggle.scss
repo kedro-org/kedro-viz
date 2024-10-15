@@ -30,7 +30,7 @@
   opacity: 1;
 }
 
-.pipeline-nodelist__row__checkbox {
+.node-list-row__checkbox {
   @include mixins.screenReaderOnly;
 }
 
@@ -42,7 +42,7 @@
   padding: variables.$toggle-icon-padding;
   border-radius: 50%;
 
-  .pipeline-nodelist__row__checkbox:focus + & {
+  .node-list-row__checkbox:focus + & {
     outline: none;
 
     [data-whatintent='keyboard'] & {
@@ -78,7 +78,7 @@ $element-icon-opacity-2: 1;
     opacity: $element-icon-opacity-0;
   }
 
-  .pipeline-nodelist__row:hover & {
+  .node-list-row:hover & {
     > * {
       opacity: $element-icon-opacity-1;
     }
@@ -90,7 +90,7 @@ $element-icon-opacity-2: 1;
     }
   }
 
-  .pipeline-nodelist__row &:hover {
+  .node-list-row &:hover {
     > * {
       opacity: $element-icon-opacity-2;
     }
@@ -156,13 +156,13 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  .pipeline-nodelist__row:hover & {
+  .node-list-row:hover & {
     > * {
       opacity: $filter-icon-opacity-1;
     }
   }
 
-  .pipeline-nodelist__row:hover & {
+  .node-list-row:hover & {
     &.pipeline-row__toggle-icon--parent:hover {
       > * {
         opacity: $filter-icon-opacity-2;
@@ -170,7 +170,7 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  .pipeline-nodelist__row & {
+  .node-list-row & {
     &.pipeline-row__toggle-icon--checked {
       > * {
         opacity: $filter-icon-opacity-2;
@@ -178,7 +178,7 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  .pipeline-nodelist__row:hover & {
+  .node-list-row:hover & {
     &.pipeline-row__toggle-icon--child {
       &.pipeline-row__toggle-icon--checked {
         > * {
@@ -188,7 +188,7 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  .pipeline-nodelist__row & {
+  .node-list-row & {
     &.pipeline-row__toggle-icon--parent:hover {
       &.pipeline-row__toggle-icon--checked {
         > * {
@@ -224,7 +224,7 @@ $filter-icon-opacity-3: 1;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .pipeline-nodelist__row:hover &.pipeline-row__toggle-icon--all-unchecked,
+  .node-list-row:hover &.pipeline-row__toggle-icon--all-unchecked,
   &.pipeline-row__toggle-icon--parent {
     fill: colors.$blue-300;
     stroke: colors.$blue-300;

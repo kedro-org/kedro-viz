@@ -77,16 +77,16 @@ const NodeListRow = memo(
     return (
       <Container
         className={classnames(
-          'pipeline-nodelist__row kedro',
-          `pipeline-nodelist__row--kind-${kind}`,
+          'node-list-row kedro',
+          `node-list-row--kind-${kind}`,
           {
-            'pipeline-nodelist__row--visible': visible,
-            'pipeline-nodelist__row--active': active,
-            'pipeline-nodelist__row--selected':
+            'node-list-row--visible': visible,
+            'node-list-row--active': active,
+            'node-list-row--selected':
               selected || (!isSlicingPipelineApplied && highlight),
-            'pipeline-nodelist__row--disabled': disabled,
-            'pipeline-nodelist__row--unchecked': !isChecked,
-            'pipeline-nodelist__row--overwrite': !(active || selected),
+            'node-list-row--disabled': disabled,
+            'node-list-row--unchecked': !isChecked,
+            'node-list-row--overwrite': !(active || selected),
           }
         )}
         title={name}
@@ -96,14 +96,14 @@ const NodeListRow = memo(
         {icon && (
           <NodeIcon
             className={classnames(
-              'pipeline-nodelist__row__type-icon',
-              'pipeline-nodelist__row__icon',
+              'node-list-row__type-icon',
+              'node-list-row__icon',
               {
-                'pipeline-nodelist__row__type-icon--faded': faded,
-                'pipeline-nodelist__row__type-icon--disabled': disabled,
-                'pipeline-nodelist__row__type-icon--nested': !children,
-                'pipeline-nodelist__row__type-icon--active': active,
-                'pipeline-nodelist__row__type-icon--selected': selected,
+                'node-list-row__type-icon--faded': faded,
+                'node-list-row__type-icon--disabled': disabled,
+                'node-list-row__type-icon--nested': !children,
+                'node-list-row__type-icon--active': active,
+                'node-list-row__type-icon--selected': selected,
               }
             )}
             icon={icon}
@@ -111,9 +111,9 @@ const NodeListRow = memo(
         )}
         <TextButton
           className={classnames(
-            'pipeline-nodelist__row__text',
-            `pipeline-nodelist__row__text--kind-${kind}`,
-            `pipeline-nodelist__row__text--${rowType}`
+            'node-list-row__text',
+            `node-list-row__text--kind-${kind}`,
+            `node-list-row__text--${rowType}`
           )}
           data-test={`nodelist-${icon}-${children ? null : name}`}
           onClick={onClick}
@@ -123,11 +123,11 @@ const NodeListRow = memo(
         >
           <span
             className={classnames(
-              'pipeline-nodelist__row__label',
-              `pipeline-nodelist__row__label--kind-${kind}`,
+              'node-list-row__label',
+              `node-list-row__label--kind-${kind}`,
               {
-                'pipeline-nodelist__row__label--faded': faded,
-                'pipeline-nodelist__row__label--disabled': disabled,
+                'node-list-row__label--faded': faded,
+                'node-list-row__label--disabled': disabled,
               }
             )}
             dangerouslySetInnerHTML={{
@@ -136,7 +136,7 @@ const NodeListRow = memo(
           />
         </TextButton>
         {typeof count === 'number' && (
-          <span onClick={onClick} className={'pipeline-nodelist__row__count'}>
+          <span onClick={onClick} className={'node-list-row__count'}>
             {count}
           </span>
         )}
@@ -157,7 +157,7 @@ const NodeListRow = memo(
           >
             <input
               id={id}
-              className="pipeline-nodelist__row__checkbox"
+              className="node-list-row__checkbox"
               data-test={kind === `nodelist-visible-${name}-${isChecked}`}
               type="checkbox"
               checked={isChecked}
@@ -169,7 +169,7 @@ const NodeListRow = memo(
               aria-label={name}
               checked={isChecked}
               className={classnames(
-                'pipeline-nodelist__row__icon',
+                'node-list-row__icon',
                 'pipeline-row__toggle-icon',
                 `pipeline-row__toggle-icon--kind-${kind}`,
                 {
@@ -203,7 +203,7 @@ const NodeListRow = memo(
           >
             <input
               id={id + '-focus'}
-              className="pipeline-nodelist__row__checkbox"
+              className="node-list-row__checkbox"
               data-test={kind === `nodelist-focusMode-checked-${isChecked}`}
               type="checkbox"
               checked={isChecked}
@@ -216,7 +216,7 @@ const NodeListRow = memo(
               aria-label={name}
               checked={isChecked}
               className={classnames(
-                'pipeline-nodelist__row__icon',
+                'node-list-row__icon',
                 'pipeline-row__toggle-icon',
                 `pipeline-row__toggle-icon--kind-${kind}`,
                 {
