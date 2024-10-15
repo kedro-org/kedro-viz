@@ -83,7 +83,7 @@
   height: variables.$row-icon-size;
   fill: var(--color-text);
 
-  &.pipeline-row__toggle-icon--focus-checked {
+  &.node-list-row__toggle-icon--focus-checked {
     fill: var.$blue-300;
   }
 

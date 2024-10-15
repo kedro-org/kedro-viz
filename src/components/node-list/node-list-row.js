@@ -144,13 +144,13 @@ const NodeListRow = memo(
           <label
             htmlFor={id}
             className={classnames(
-              'pipeline-row__toggle',
-              `pipeline-row__toggle--kind-${kind}`,
+              'node-list-row__toggle',
+              `node-list-row__toggle--kind-${kind}`,
               {
-                'pipeline-row__toggle--disabled': isModularPipeline
+                'node-list-row__toggle--disabled': isModularPipeline
                   ? focused
                   : disabled,
-                'pipeline-row__toggle--selected': selected,
+                'node-list-row__toggle--selected': selected,
               }
             )}
             onClick={(e) => e.stopPropagation()}
@@ -170,15 +170,15 @@ const NodeListRow = memo(
               checked={isChecked}
               className={classnames(
                 'node-list-row__icon',
-                'pipeline-row__toggle-icon',
-                `pipeline-row__toggle-icon--kind-${kind}`,
+                'node-list-row__toggle-icon',
+                `node-list-row__toggle-icon--kind-${kind}`,
                 {
-                  'pipeline-row__toggle-icon--parent': Boolean(children),
-                  'pipeline-row__toggle-icon--child': !children,
-                  'pipeline-row__toggle-icon--checked': isChecked,
-                  'pipeline-row__toggle-icon--unchecked': !isChecked,
-                  'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
-                  'pipeline-row__toggle-icon--focus-checked': isModularPipeline
+                  'node-list-row__toggle-icon--parent': Boolean(children),
+                  'node-list-row__toggle-icon--child': !children,
+                  'node-list-row__toggle-icon--checked': isChecked,
+                  'node-list-row__toggle-icon--unchecked': !isChecked,
+                  'node-list-row__toggle-icon--all-unchecked': allUnchecked,
+                  'node-list-row__toggle-icon--focus-checked': isModularPipeline
                     ? false
                     : focused,
                 }
@@ -190,11 +190,11 @@ const NodeListRow = memo(
           <label
             htmlFor={id + '-focus'}
             className={classnames(
-              'pipeline-row__toggle',
-              `pipeline-row__toggle--kind-${kind}`,
+              'node-list-row__toggle',
+              `node-list-row__toggle--kind-${kind}`,
               {
-                'pipeline-row__toggle--disabled': disabled,
-                'pipeline-row__toggle--selected': selected,
+                'node-list-row__toggle--disabled': disabled,
+                'node-list-row__toggle--selected': selected,
               }
             )}
             onClick={(e) => e.stopPropagation()}
@@ -217,15 +217,15 @@ const NodeListRow = memo(
               checked={isChecked}
               className={classnames(
                 'node-list-row__icon',
-                'pipeline-row__toggle-icon',
-                `pipeline-row__toggle-icon--kind-${kind}`,
+                'node-list-row__toggle-icon',
+                `node-list-row__toggle-icon--kind-${kind}`,
                 {
-                  'pipeline-row__toggle-icon--parent': Boolean(children),
-                  'pipeline-row__toggle-icon--child': !children,
-                  'pipeline-row__toggle-icon--checked': isChecked,
-                  'pipeline-row__toggle-icon--unchecked': !isChecked,
-                  'pipeline-row__toggle-icon--all-unchecked': allUnchecked,
-                  'pipeline-row__toggle-icon--focus-checked': focused,
+                  'node-list-row__toggle-icon--parent': Boolean(children),
+                  'node-list-row__toggle-icon--child': !children,
+                  'node-list-row__toggle-icon--checked': isChecked,
+                  'node-list-row__toggle-icon--unchecked': !isChecked,
+                  'node-list-row__toggle-icon--all-unchecked': allUnchecked,
+                  'node-list-row__toggle-icon--focus-checked': focused,
                 }
               )}
             />

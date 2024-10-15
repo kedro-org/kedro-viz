@@ -4,7 +4,7 @@
 
 // --- Toggle ---//
 
-.pipeline-row__toggle {
+.node-list-row__toggle {
   cursor: pointer;
 
   &--kind-element {
@@ -26,7 +26,7 @@
   variables.$row-selected-dark
 );
 
-.pipeline-row__toggle--selected::before {
+.node-list-row__toggle--selected::before {
   opacity: 1;
 }
 
@@ -36,7 +36,7 @@
 
 // --- Toggle icon ---//
 
-.pipeline-row__toggle-icon {
+.node-list-row__toggle-icon {
   width: variables.$toggle-icon-size;
   height: variables.$toggle-icon-size;
   padding: variables.$toggle-icon-padding;
@@ -71,7 +71,7 @@ $element-icon-opacity-0: 0;
 $element-icon-opacity-1: 0.55;
 $element-icon-opacity-2: 1;
 
-.pipeline-row__toggle-icon--kind-element {
+.node-list-row__toggle-icon--kind-element {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
@@ -83,7 +83,7 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.pipeline-row__toggle-icon--focus-checked {
+    &.node-list-row__toggle-icon--focus-checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
@@ -101,14 +101,14 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.pipeline-row__toggle-icon--checked {
+    &.node-list-row__toggle-icon--checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
     }
   }
 
-  &.pipeline-row__toggle-icon--focus-checked {
+  &.node-list-row__toggle-icon--focus-checked {
     > * {
       opacity: $element-icon-opacity-2;
     }
@@ -139,18 +139,18 @@ $filter-icon-opacity-1: 0.55;
 $filter-icon-opacity-2: 0.9;
 $filter-icon-opacity-3: 1;
 
-.pipeline-row__toggle-icon--kind-filter {
+.node-list-row__toggle-icon--kind-filter {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
     opacity: $filter-icon-opacity-1;
   }
 
-  .pipeline-nodelist__heading &.pipeline-row__toggle-icon--all-unchecked > * {
+  .pipeline-nodelist__heading &.node-list-row__toggle-icon--all-unchecked > * {
     opacity: $filter-icon-opacity-0;
   }
 
-  &.pipeline-row__toggle-icon--all-unchecked {
+  &.node-list-row__toggle-icon--all-unchecked {
     > * {
       opacity: $filter-icon-opacity-1;
     }
@@ -163,7 +163,7 @@ $filter-icon-opacity-3: 1;
   }
 
   .node-list-row:hover & {
-    &.pipeline-row__toggle-icon--parent:hover {
+    &.node-list-row__toggle-icon--parent:hover {
       > * {
         opacity: $filter-icon-opacity-2;
       }
@@ -171,7 +171,7 @@ $filter-icon-opacity-3: 1;
   }
 
   .node-list-row & {
-    &.pipeline-row__toggle-icon--checked {
+    &.node-list-row__toggle-icon--checked {
       > * {
         opacity: $filter-icon-opacity-2;
       }
@@ -179,8 +179,8 @@ $filter-icon-opacity-3: 1;
   }
 
   .node-list-row:hover & {
-    &.pipeline-row__toggle-icon--child {
-      &.pipeline-row__toggle-icon--checked {
+    &.node-list-row__toggle-icon--child {
+      &.node-list-row__toggle-icon--checked {
         > * {
           opacity: $filter-icon-opacity-3;
         }
@@ -189,8 +189,8 @@ $filter-icon-opacity-3: 1;
   }
 
   .node-list-row & {
-    &.pipeline-row__toggle-icon--parent:hover {
-      &.pipeline-row__toggle-icon--checked {
+    &.node-list-row__toggle-icon--parent:hover {
+      &.node-list-row__toggle-icon--checked {
         > * {
           opacity: $filter-icon-opacity-3;
         }
@@ -203,7 +203,7 @@ $filter-icon-opacity-3: 1;
       opacity: $filter-icon-opacity-2;
     }
 
-    &.pipeline-row__toggle-icon--checked {
+    &.node-list-row__toggle-icon--checked {
       > * {
         opacity: $filter-icon-opacity-3;
       }
@@ -213,19 +213,19 @@ $filter-icon-opacity-3: 1;
 
 // --- Toggle (kind=filter) icon fills and strokes ---//
 
-.pipeline-row__toggle-icon--kind-filter {
-  &.pipeline-row__toggle-icon--checked {
+.node-list-row__toggle-icon--kind-filter {
+  &.node-list-row__toggle-icon--checked {
     fill: var(--color-nodelist-filter-indicator-on);
     stroke: var(--color-nodelist-filter-indicator-on);
   }
 
-  &.pipeline-row__toggle-icon--unchecked {
+  &.node-list-row__toggle-icon--unchecked {
     fill: none;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .node-list-row:hover &.pipeline-row__toggle-icon--all-unchecked,
-  &.pipeline-row__toggle-icon--parent {
+  .node-list-row:hover &.node-list-row__toggle-icon--all-unchecked,
+  &.node-list-row__toggle-icon--parent {
     fill: colors.$blue-300;
     stroke: colors.$blue-300;
   }
