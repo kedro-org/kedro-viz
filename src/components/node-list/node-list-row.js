@@ -144,6 +144,7 @@ const NodeListRow = memo(
         {VisibilityIcon && (
           <NodeListRowToggle 
             allUnchecked={allUnchecked}
+            className={'node-list-row__icon'}
             isParent={Boolean(children)}
             disabled={disabled}
             focusChecked={isModularPipeline ? false : focused}
@@ -160,6 +161,7 @@ const NodeListRow = memo(
         {FocusIcon && (
           <NodeListRowToggle 
             allUnchecked={allUnchecked}
+            className={'node-list-row__icon'}
             isParent={Boolean(children)}
             disabled={disabled}
             focusChecked={focused}
