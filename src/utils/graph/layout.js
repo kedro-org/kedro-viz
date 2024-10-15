@@ -1,4 +1,4 @@
-import { HALF_PI, snap, angle, groupByRow } from './common';
+import { HALF_PI, snap, angle, compare, groupByRow } from './common';
 import { solveLoose, solveStrict } from './solver';
 import {
   rowConstraint,
@@ -245,6 +245,8 @@ const createSeparationConstraints = (rows, constants) => {
   // For each row of nodes
   for (let i = 0; i < rows.length; i += 1) {
     const rowNodes = rows[i];
+
+    rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
   
     // Update constraints for the sorted row node order
     for (let j = 0; j < rowNodes.length-1; j += 1) {
