@@ -1,12 +1,12 @@
 """`kedro_viz.launchers.cli.utils` provides utility functions for cli commands."""
+
 # pylint: disable=import-outside-toplevel
 from pathlib import Path
 from time import sleep
 from typing import Union
 
-import click
-
 from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
+from kedro_viz.launchers.utils import display_cli_message
 
 
 def create_shareableviz_process(
@@ -102,16 +102,6 @@ def create_shareableviz_process(
 
     finally:
         viz_deploy_process.terminate()
-
-
-def display_cli_message(msg, msg_color=None):
-    """Displays message for Kedro Viz build and deploy commands"""
-    click.echo(
-        click.style(
-            msg,
-            fg=msg_color,
-        )
-    )
 
 
 # pylint: disable=too-many-positional-arguments

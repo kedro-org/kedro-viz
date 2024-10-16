@@ -4,6 +4,7 @@
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
+
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -390,9 +391,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[parameters_node.parameter_name] = (
-                parameters_node.parameter_value
-            )
+            task_node.parameters[
+                parameters_node.parameter_name
+            ] = parameters_node.parameter_value
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
@@ -544,7 +545,7 @@ class DataAccessManager:
         # so no need to check non modular pipeline nodes.
         #
         # We leverage networkx to help with graph traversal
-        import networkx as nx
+        import networkx as nx  # pylint: disable=import-outside-toplevel
 
         digraph = nx.DiGraph()
         for edge in edges:

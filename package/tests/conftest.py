@@ -484,7 +484,12 @@ def example_api(
         example_stats_dict,
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -503,7 +508,12 @@ def example_api_no_default_pipeline(
         data_access_manager, example_catalog, example_pipelines, session_store, {}
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -533,7 +543,12 @@ def example_api_for_edge_case_pipelines(
         {},
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -555,7 +570,12 @@ def example_transcoded_api(
         {},
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 

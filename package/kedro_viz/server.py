@@ -3,16 +3,17 @@ for Kedro pipeline visualisation."""
 
 from pathlib import Path
 from typing import Any, Dict, Optional
+
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
+
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.launchers.cli.utils import display_cli_message
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 
 DEV_PORT = 4142
 
@@ -124,6 +125,7 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
+            # pylint: disable=import-outside-toplevel
             from kedro_viz.api.rest.responses.deploy import save_api_responses_to_fs
 
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
@@ -141,6 +143,7 @@ def run_server(
 if __name__ == "__main__":  # pragma: no cover
     import argparse
     import multiprocessing
+
     from watchgod import RegExpWatcher, run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")

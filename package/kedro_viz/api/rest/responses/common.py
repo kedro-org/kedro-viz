@@ -1,11 +1,14 @@
-"""`kedro_viz.api.rest.responses.common` contains common 
+"""`kedro_viz.api.rest.responses.common` contains common
 response classes for the REST endpoints"""
+
+# pylint: disable=missing-class-docstring
 
 import abc
 import logging
-from fastapi.encoders import jsonable_encoder
-import orjson
 from typing import Any
+
+import orjson
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel, ConfigDict
 

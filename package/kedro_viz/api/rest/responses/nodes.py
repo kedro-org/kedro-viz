@@ -1,10 +1,11 @@
-"""`kedro_viz.api.rest.responses.nodes` contains response classes 
+"""`kedro_viz.api.rest.responses.nodes` contains response classes
 and utility functions for the `/nodes/*` REST endpoints"""
 
 # pylint: disable=missing-class-docstring,invalid-name
 
 import logging
 from typing import Any, Dict, List, Optional, Union
+
 from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
 
