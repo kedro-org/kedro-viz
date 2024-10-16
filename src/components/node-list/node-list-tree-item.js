@@ -2,7 +2,7 @@ import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
-import NodeListRow from './node-list-row';
+import { NodeListRow } from './node-list-row';
 
 const arrowIconColor = '#8e8e90';
 
@@ -12,6 +12,7 @@ const NodeListTreeItem = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onItemChange,
+  onToggleHoveredFocusMode,
   children,
   isSlicingPipelineApplied,
 }) => (
@@ -50,6 +51,7 @@ const NodeListTreeItem = ({
         onChange={(e) =>
           onItemChange(data, !e.target.checked, e.target.dataset.iconType)
         }
+        onToggleHoveredFocusMode={onToggleHoveredFocusMode}
         rowType="tree"
         focused={data.focused}
       />

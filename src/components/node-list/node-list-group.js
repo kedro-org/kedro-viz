@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import NodeListRow from './node-list-row';
+import { NodeListRow } from './node-list-row';
 import NodeRowList from './node-list-row-list';
 
 export const NodeListGroup = ({

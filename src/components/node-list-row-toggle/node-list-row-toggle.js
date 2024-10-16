@@ -18,6 +18,7 @@ export const NodeListRowToggle = ({
   onChange,
   onToggleHoveredFocusMode,
   selected,
+  dataIconType,
 }) => {
   const handleMouseHover = (isEntering) =>
     onToggleHoveredFocusMode && onToggleHoveredFocusMode(isEntering);
@@ -68,7 +69,7 @@ export const NodeListRowToggle = ({
         disabled={disabled}
         name={name}
         onChange={onChange}
-        data--icon-type={kind}
+        data-icon-type={dataIconType}
       />
       <IconComponent
         aria-label={name}

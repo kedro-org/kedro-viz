@@ -1,18 +1,14 @@
 import React, { memo } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { changed, replaceAngleBracketMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
-import { getNodeActive } from '../../selectors/nodes';
-import { toggleHoveredFocusMode } from '../../actions';
 import { NodeListRowToggle } from '../node-list-row-toggle/node-list-row-toggle';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
-
 /**
  * Returns `true` if there are no props changes, therefore the last render can be reused.
  * Performance: Checks only the minimal set of props known to change after first render.
@@ -37,36 +33,36 @@ const shouldMemo = (prevProps, nextProps) =>
     nextProps
   );
 
-const NodeListRow = memo(
+export const NodeListRow = memo(
   ({
-    container: Container = 'div',
     active,
-    checked,
     allUnchecked,
+    checked,
     children,
+    container: Container = 'div',
+    count,
     disabled,
     faded,
     focused,
-    visible,
+    focusModeIcon = FocusModeIcon,
+    highlight,
+    icon,
     id,
-    label,
-    count,
-    name,
+    invisibleIcon = InvisibleIcon,
+    isSlicingPipelineApplied,
     kind,
-    onMouseEnter,
-    onMouseLeave,
+    label,
+    name,
     onChange,
     onClick,
-    selected,
-    highlight,
-    isSlicingPipelineApplied,
-    type,
-    icon,
-    visibleIcon = VisibleIcon,
-    invisibleIcon = InvisibleIcon,
-    focusModeIcon = FocusModeIcon,
-    rowType,
+    onMouseEnter,
+    onMouseLeave,
     onToggleHoveredFocusMode,
+    rowType,
+    selected,
+    type,
+    visible,
+    visibleIcon = VisibleIcon,
   }) => {
     const isModularPipeline = type === 'modularPipeline';
     const FocusIcon = isModularPipeline ? focusModeIcon : null;
@@ -146,7 +142,7 @@ const NodeListRow = memo(
             allUnchecked={allUnchecked}
             className={'node-list-row__icon'}
             isParent={Boolean(children)}
-            disabled={disabled}
+            disabled={isModularPipeline ? focused : disabled}
             focusChecked={isModularPipeline ? false : focused}
             IconComponent={VisibilityIcon}
             id={id}
@@ -165,13 +161,14 @@ const NodeListRow = memo(
             disabled={disabled}
             focusChecked={focused}
             IconComponent={FocusIcon}
-            id={id + '-focus'}
+            id={`${id}-focus`}
             isChecked={isChecked}
             kind={kind}
             name={name}
             onChange={onChange}
             onToggleHoveredFocusMode={onToggleHoveredFocusMode}
             selected={selected}
+            dataIconType="focus"
           />
         )}
         {children}
@@ -180,19 +177,3 @@ const NodeListRow = memo(
   },
   shouldMemo
 );
-
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleHoveredFocusMode: (active) => {
-    dispatch(toggleHoveredFocusMode(active));
-  },
-});
-
-export const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  active:
-    typeof ownProps.active !== 'undefined'
-      ? ownProps.active
-      : getNodeActive(state)[ownProps.id] || false,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NodeListRow);

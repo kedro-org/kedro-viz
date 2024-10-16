@@ -1,5 +1,5 @@
 import React from 'react';
-import NodeListRow, { mapStateToProps } from './node-list-row';
+import { NodeListRow, mapStateToProps } from './node-list-row';
 import { getNodeData } from '../../selectors/nodes';
 import { setup, mockState } from '../../utils/state.mock';
 
