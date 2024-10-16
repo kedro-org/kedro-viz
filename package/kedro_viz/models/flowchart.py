@@ -9,6 +9,7 @@ from pathlib import Path
 from types import FunctionType
 from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
 
+from fastapi.encoders import jsonable_encoder
 from kedro.pipeline.node import Node as KedroNode
 from pydantic import (
     BaseModel,
@@ -861,13 +862,27 @@ class ParametersNode(GraphNode):
             return None
 
         try:
-            return self.kedro_obj.load()
+            actual_parameter_value = self.kedro_obj.load()
+            # Return only json serializable value
+            return jsonable_encoder(actual_parameter_value)
+        except (TypeError, ValueError, RecursionError):
+            # In case the parameter is not JSON serializable,
+            # return the string representation
+            return str(actual_parameter_value)
         except (AttributeError, DatasetError):
             # This except clause triggers if the user passes a parameter that is not
             # defined in the catalog (DatasetError) it also catches any case where
             # the kedro_obj is None (AttributeError) -- GH#1231
             logger.warning(
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
+            )
+            return None
+        # pylint: disable=broad-exception-caught
+        except Exception as exc:  # pragma: no cover
+            logger.error(
+                "An error occurred when loading parameter `%s` in the catalog :: %s",
+                self.parameter_name,
+                exc,
             )
             return None
 
