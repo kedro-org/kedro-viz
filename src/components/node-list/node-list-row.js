@@ -142,7 +142,7 @@ const NodeListRow = memo(
           </span>
         )}
         {VisibilityIcon && (
-          <NodeListRowToggle 
+          <NodeListRowToggle
             allUnchecked={allUnchecked}
             className={'node-list-row__icon'}
             isParent={Boolean(children)}
@@ -154,19 +154,18 @@ const NodeListRow = memo(
             kind={kind}
             name={name}
             onChange={onChange}
-            onToggleHoveredFocusMode={onToggleHoveredFocusMode}
             selected={selected}
           />
         )}
         {FocusIcon && (
-          <NodeListRowToggle 
+          <NodeListRowToggle
             allUnchecked={allUnchecked}
             className={'node-list-row__icon'}
             isParent={Boolean(children)}
             disabled={disabled}
             focusChecked={focused}
             IconComponent={FocusIcon}
-            id={id}
+            id={id + '-focus'}
             isChecked={isChecked}
             kind={kind}
             name={name}
