@@ -31,6 +31,7 @@ export const layout = ({
   spaceY,
   spreadX,
   layerSpaceY,
+  iterations,
   orientation,
 }) => {
 
@@ -75,10 +76,11 @@ export const layout = ({
   const parallelConstraints = createParallelConstraints(edges, constants);
 
   // Solve these constraints iteratively
-  // for (let i = 0; i < iterations; i += 1) {
+  for (let i = 0; i < 300; i += 1) {
+    console.log("Being applied")
     solveLoose(crossingConstraints, 1, constants);
     solveLoose(parallelConstraints, 50, constants);
-  // }
+  }
 
   // Constraints to maintain a minimum horizontal node spacing
   const separationConstraints = createSeparationConstraints(rows, constants);
@@ -246,7 +248,7 @@ const createSeparationConstraints = (rows, constants) => {
   for (let i = 0; i < rows.length; i += 1) {
     const rowNodes = rows[i];
 
-    rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
+    rowNodes.sort((a, b) => compare(a[coordPrimary], b[coordPrimary], a.id, b.id));
   
     // Update constraints for the sorted row node order
     for (let j = 0; j < rowNodes.length-1; j += 1) {

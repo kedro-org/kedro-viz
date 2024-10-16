@@ -43,7 +43,7 @@ export const routing = ({
   orientation,
 }) => {
 
-  const rows = groupByRow(nodes, orientation);
+  const rows = groupByRow(nodes);
 
   // For each node
   for (const node of nodes) {

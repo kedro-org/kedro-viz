@@ -40,7 +40,6 @@ export const layerConstraint = {
  * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  property: 'x',
 
   solve: (constraint, constants) => {
     const { a, b, strength } = constraint;
@@ -62,25 +61,24 @@ export const parallelConstraint = {
  * Crossing constraint in X for minimising edge crossings
  */
 export const crossingConstraint = {
-  property: 'x',
 
-  solve: (constraint) => {
+  solve: (constraint, constants) => {
     const { edgeA, edgeB, separationA, separationB, strength } = constraint;
 
     // Amount to move each node towards required separation
     const resolveSource =
       strength *
-      ((edgeA.sourceNode.x - edgeB.sourceNode.x - separationA) / separationA);
+      ((edgeA.sourceNode[constants.coordPrimary] - edgeB.sourceNode[constants.coordPrimary] - separationA) / separationA);
 
     const resolveTarget =
       strength *
-      ((edgeA.targetNode.x - edgeB.targetNode.x - separationB) / separationB);
+      ((edgeA.targetNode[constants.coordPrimary] - edgeB.targetNode[constants.coordPrimary] - separationB) / separationB);
 
     // Apply the resolve each node
-    edgeA.sourceNode.x -= resolveSource;
-    edgeB.sourceNode.x += resolveSource;
-    edgeA.targetNode.x -= resolveTarget;
-    edgeB.targetNode.x += resolveTarget;
+    edgeA.sourceNode[constants.coordPrimary] -= resolveSource;
+    edgeB.sourceNode[constants.coordPrimary] += resolveSource;
+    edgeA.targetNode[constants.coordPrimary] -= resolveTarget;
+    edgeB.targetNode[constants.coordPrimary] += resolveTarget;
   },
 };
 
@@ -88,7 +86,6 @@ export const crossingConstraint = {
  * Layout constraint in X for minimum node separation
  */
 export const separationConstraint = {
-  property: 'x',
 
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
