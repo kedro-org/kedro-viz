@@ -75,12 +75,12 @@
   opacity: 0.75;
   user-select: none;
 
-  .pipeline-nodelist__row--unchecked & {
+  .node-list-row--unchecked & {
     opacity: 0.55;
   }
 }
 
-.pipeline-nodelist__row--unchecked {
+.node-list-row--unchecked {
   // Fade row text when unchecked
   .node-list-row__label--kind-filter {
     opacity: 0.55;
