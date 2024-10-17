@@ -117,6 +117,7 @@ const TreeListProvider = ({
   onItemChange,
   onItemMouseEnter,
   onItemMouseLeave,
+  onToggleHoveredFocusMode,
   onItemClick,
   onNodeToggleExpanded,
   focusMode,
@@ -161,6 +162,7 @@ const TreeListProvider = ({
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
+        onToggleHoveredFocusMode={onToggleHoveredFocusMode}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
         isSlicingPipelineApplied={isSlicingPipelineApplied}
@@ -231,6 +233,7 @@ const TreeListProvider = ({
         onItemMouseEnter={onItemMouseEnter}
         onItemMouseLeave={onItemMouseLeave}
         onItemChange={onItemChange}
+        onToggleHoveredFocusMode={onToggleHoveredFocusMode}
         onItemClick={onItemClick}
         key={uniqueId(node.id)}
         isSlicingPipelineApplied={isSlicingPipelineApplied}

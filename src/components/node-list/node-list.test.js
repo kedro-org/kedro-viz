@@ -59,7 +59,7 @@ describe('NodeList', () => {
           const search = () => wrapper.find('.search-input__field');
           search().simulate('change', { target: { value: searchText } });
           const nodeList = wrapper.find(
-            '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
+            '.pipeline-nodelist__elements-panel .node-list-row'
           );
           const nodes = getNodeData(mockState.spaceflights);
           const tags = getTagData(mockState.spaceflights);
@@ -101,9 +101,7 @@ describe('NodeList', () => {
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
-        wrapper.find(
-          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
-        );
+        wrapper.find('.pipeline-nodelist__elements-panel .node-list-row');
 
       const nodes = getNodeData(mockState.spaceflights);
       const tags = getTagData(mockState.spaceflights);
@@ -148,9 +146,7 @@ describe('NodeList', () => {
       // Re-find elements from root each time to see updates
       const search = () => wrapper.find('.search-input__field');
       const nodeList = () =>
-        wrapper.find(
-          '.pipeline-nodelist__elements-panel .pipeline-nodelist__row'
-        );
+        wrapper.find('.pipeline-nodelist__elements-panel .node-list-row');
 
       const nodes = getNodeData(mockState.spaceflights);
       const tags = getTagData(mockState.spaceflights);
@@ -192,7 +188,7 @@ describe('NodeList', () => {
     const elements = (wrapper) =>
       wrapper
         .find('.MuiTreeItem-label')
-        .find('.pipeline-nodelist__row')
+        .find('.node-list-row')
         .map((row) => [row.prop('title')]);
 
     it('shows full node names when pretty name is turned off', () => {
@@ -233,10 +229,10 @@ describe('NodeList', () => {
 
   describe('checkboxes on tag filter items', () => {
     const checkboxByName = (wrapper, text) =>
-      wrapper.find(`.pipeline-nodelist__row__checkbox[name="${text}"]`);
+      wrapper.find(`.node-list-row__checkbox[name="${text}"]`);
 
     const rowByName = (wrapper, text) =>
-      wrapper.find(`.pipeline-nodelist__row[title="${text}"]`);
+      wrapper.find(`.node-list-row[title="${text}"]`);
 
     const changeRows = (wrapper, names, checked) =>
       names.forEach((name) =>
@@ -248,10 +244,10 @@ describe('NodeList', () => {
     const elements = (wrapper) =>
       wrapper
         .find('.MuiTreeItem-label')
-        .find('.pipeline-nodelist__row')
+        .find('.node-list-row')
         .map((row) => [
           row.prop('title'),
-          !row.hasClass('pipeline-nodelist__row--disabled'),
+          !row.hasClass('node-list-row--disabled'),
         ]);
 
     const elementsEnabled = (wrapper) => {
@@ -331,7 +327,7 @@ describe('NodeList', () => {
           <NodeList />
         </MemoryRouter>
       );
-      const uncheckedClass = 'pipeline-nodelist__row--unchecked';
+      const uncheckedClass = 'node-list-row--unchecked';
 
       expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
         true
@@ -391,7 +387,7 @@ describe('NodeList', () => {
         </MemoryRouter>
       );
       const nodeList = wrapper.find(
-        '.pipeline-nodelist__list--nested .pipeline-nodelist__row'
+        '.pipeline-nodelist__list--nested .node-list-row'
       );
       // const nodes = getNodeData(mockState.spaceflights);
       const tags = getTagData(mockState.spaceflights);
@@ -404,7 +400,7 @@ describe('NodeList', () => {
           <NodeList />
         </MemoryRouter>
       );
-      const nodeList = wrapper.find('.pipeline-nodelist__row__text--tree');
+      const nodeList = wrapper.find('.node-list-row__text--tree');
       const modularPipelinesTree = getModularPipelinesTree(
         mockState.spaceflights
       );
@@ -444,16 +440,16 @@ describe('NodeList', () => {
       </MemoryRouter>
     );
     // this needs to be the 3rd element as the first 2 elements are modular pipelines rows which does not apply the '--active' class
-    const nodeRow = () => wrapper.find('.pipeline-nodelist__row').at(3);
+    const nodeRow = () => wrapper.find('.node-list-row').at(3);
 
     it('handles mouseenter events', () => {
       nodeRow().simulate('mouseenter');
-      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(true);
+      expect(nodeRow().hasClass('node-list-row--active')).toBe(true);
     });
 
     it('handles mouseleave events', () => {
       nodeRow().simulate('mouseleave');
-      expect(nodeRow().hasClass('pipeline-nodelist__row--active')).toBe(false);
+      expect(nodeRow().hasClass('node-list-row--active')).toBe(false);
     });
   });
 
@@ -463,7 +459,7 @@ describe('NodeList', () => {
         <NodeList />
       </MemoryRouter>
     );
-    const checkbox = () => wrapper.find('.pipeline-nodelist__row input').at(4);
+    const checkbox = () => wrapper.find('.node-list-row input').at(4);
 
     it('handles toggle off event', () => {
       checkbox().simulate('change', {
@@ -507,7 +503,7 @@ describe('NodeList', () => {
 
     it('After applying any filter filter button should not be disabled', () => {
       const nodeTypeFilter = wrapper.find(
-        `.pipeline-nodelist__row__checkbox[name="Datasets"]`
+        `.node-list-row__checkbox[name="Datasets"]`
       );
       nodeTypeFilter.simulate('click');
 
