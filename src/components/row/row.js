@@ -7,6 +7,8 @@ import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
 
+import './row.scss';
+
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
 
@@ -47,42 +49,33 @@ export const Row = ({
 
   return (
     <Container
-      className={classnames(
-        'node-list-row kedro',
-        `node-list-row--kind-${kind}`,
-        {
-          'node-list-row--visible': visible,
-          'node-list-row--active': active,
-          'node-list-row--selected':
-            selected || (!isSlicingPipelineApplied && highlight),
-          'node-list-row--disabled': disabled,
-          'node-list-row--unchecked': !isChecked,
-          'node-list-row--overwrite': !(active || selected),
-        }
-      )}
+      className={classnames('row kedro', `row--kind-${kind}`, {
+        'row--visible': visible,
+        'row--active': active,
+        'row--selected': selected || (!isSlicingPipelineApplied && highlight),
+        'row--disabled': disabled,
+        'row--unchecked': !isChecked,
+        'row--overwrite': !(active || selected),
+      })}
       title={name}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}
     >
       <NodeIcon
-        className={classnames(
-          'node-list-row__type-icon',
-          'node-list-row__icon',
-          {
-            'node-list-row__type-icon--faded': faded,
-            'node-list-row__type-icon--disabled': disabled,
-            // 'node-list-row__type-icon--nested': !children,
-            'node-list-row__type-icon--active': active,
-            'node-list-row__type-icon--selected': selected,
-          }
-        )}
+        className={classnames('row__type-icon', 'row__icon', {
+          'row__type-icon--faded': faded,
+          'row__type-icon--disabled': disabled,
+          'row__type-icon--nested': !children,
+          'row__type-icon--active': active,
+          'row__type-icon--selected': selected,
+        })}
         icon={icon}
       />
       <TextButton
         className={classnames(
-          'node-list-row__text',
-          `node-list-row__text--kind-${kind}`,
-          `node-list-row__text--${rowType}`
+          'row__text',
+          `row__text--kind-${kind}`,
+          `row__text--${rowType}`
         )}
         //   data-test={`nodelist-${icon}-${children ? null : name}`}
         onClick={onClick}
@@ -91,14 +84,10 @@ export const Row = ({
         title={name}
       >
         <span
-          className={classnames(
-            'node-list-row__label',
-            `node-list-row__label--kind-${kind}`,
-            {
-              'node-list-row__label--faded': faded,
-              'node-list-row__label--disabled': disabled,
-            }
-          )}
+          className={classnames('row__label', `row__label--kind-${kind}`, {
+            'row__label--faded': faded,
+            'row__label--disabled': disabled,
+          })}
           dangerouslySetInnerHTML={{
             __html: replaceAngleBracketMatches(label),
           }}
@@ -106,7 +95,7 @@ export const Row = ({
       </TextButton>
       {VisibilityIcon && (
         <ToggleIcon
-          className={'node-list-row__icon'}
+          className={'row__icon'}
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
           IconComponent={VisibilityIcon}
@@ -120,7 +109,7 @@ export const Row = ({
       )}
       {FocusIcon && (
         <ToggleIcon
-          className={'node-list-row__icon'}
+          className={'row__icon'}
           disabled={disabled}
           focusChecked={focused}
           IconComponent={FocusIcon}

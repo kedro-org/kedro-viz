@@ -5,6 +5,8 @@ import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
 
+import './filter-row.scss';
+
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
 export const FilterRow = ({
@@ -29,22 +31,18 @@ export const FilterRow = ({
 
   return (
     <Container
-      className={classnames(
-        'node-list-row kedro',
-        `node-list-row--kind-${kind}`,
-        {
-          'node-list-row--visible': visible,
-          'node-list-row--unchecked': !checked,
-        }
-      )}
+      className={classnames('filter-row kedro', `filter-row--kind-${kind}`, {
+        'filter-row--visible': visible,
+        'filter-row--unchecked': !checked,
+      })}
       title={name}
       onMouseEnter={visible ? onMouseEnter : null}
       onMouseLeave={visible ? onMouseLeave : null}
     >
       <button
         className={classnames(
-          'node-list-row__text',
-          `node-list-row__text--kind-${kind}`
+          'filter-row__text',
+          `filter-row__text--kind-${kind}`
         )}
         //   data-test={`nodelist-${icon}-${children ? null : name}`}
         onClick={onClick}
@@ -54,20 +52,20 @@ export const FilterRow = ({
       >
         <span
           className={classnames(
-            'node-list-row__label',
-            `node-list-row__label--kind-${kind}`
+            'filter-row__label',
+            `filter-row__label--kind-${kind}`
           )}
           dangerouslySetInnerHTML={{
             __html: replaceAngleBracketMatches(label),
           }}
         />
       </button>
-      <span onClick={onClick} className={'node-list-row__count'}>
+      <span onClick={onClick} className={'filter-row__count'}>
         {count}
       </span>
       <ToggleIcon
         allUnchecked={allUnchecked}
-        className={'node-list-row__icon'}
+        className={'filter-row__icon'}
         IconComponent={VisibilityIcon}
         id={id}
         isChecked={checked}

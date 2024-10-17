@@ -78,7 +78,8 @@ $placeholder-fade: 120px;
   // Avoid pixel gap above when scrolling.
   transform: translateY(-1px);
 
-  .pipeline-nodelist__row__text {
+  .pipeline-nodelist__row__text,
+  .filter-row__text {
     position: relative;
     opacity: 0.65;
   }
