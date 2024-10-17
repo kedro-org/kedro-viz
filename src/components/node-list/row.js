@@ -5,7 +5,7 @@ import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
-import { NodeListRowToggle } from '../node-list-row-toggle/node-list-row-toggle';
+import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -106,8 +106,8 @@ export const Row = ({
         />
       </TextButton>
       {VisibilityIcon && (
-        <NodeListRowToggle
-          allUnchecked={allUnchecked}
+        <ToggleIcon
+          //   allUnchecked={allUnchecked}
           className={'node-list-row__icon'}
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
@@ -121,8 +121,8 @@ export const Row = ({
         />
       )}
       {FocusIcon && (
-        <NodeListRowToggle
-          allUnchecked={allUnchecked}
+        <ToggleIcon
+          //   allUnchecked={allUnchecked}
           className={'node-list-row__icon'}
           disabled={disabled}
           focusChecked={focused}

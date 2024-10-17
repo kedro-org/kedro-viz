@@ -1,6 +1,6 @@
-@use '../../styles/mixins' as mixins;
-@use '../../styles/variables' as colors;
-@use '../node-list/styles/variables';
+@use '../../../styles/mixins' as mixins;
+@use '../../../styles/variables' as colors;
+@use '../../node-list/styles/variables';
 
 .node-list-row-toggle {
   cursor: pointer;
@@ -177,7 +177,7 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-// --- Toggle (kind=filter) icon fills and strokes ---//
+  // --- Toggle (kind=filter) icon fills and strokes ---//
 
   &.node-list-row-toggle--icon--checked {
     fill: var(--color-nodelist-filter-indicator-on);

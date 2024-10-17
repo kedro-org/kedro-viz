@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { replaceAngleBracketMatches } from '../../utils';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
-import { NodeListRowToggle } from '../node-list-row-toggle/node-list-row-toggle';
+import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
@@ -66,7 +66,7 @@ export const FilterRow = ({
         {count}
       </span>
       {VisibilityIcon && (
-        <NodeListRowToggle
+        <ToggleIcon
           allUnchecked={allUnchecked}
           className={'node-list-row__icon'}
           IconComponent={VisibilityIcon}

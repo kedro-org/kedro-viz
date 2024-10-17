@@ -1,10 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
-import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
-import './node-list-row-toggle.scss';
+import './toggle-icon.scss';
 
-export const NodeListRowToggle = ({
+export const ToggleIcon = ({
   allUnchecked,
   className,
   disabled,
