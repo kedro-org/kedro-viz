@@ -1,6 +1,7 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import { FilterRow, nodeListRowHeight } from '../filter-row/filter-row';
+import { FilterRow } from '../filter-row/filter-row';
+import { nodeListRowHeight } from '../../config';
 import LazyList from '../lazy-list';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 

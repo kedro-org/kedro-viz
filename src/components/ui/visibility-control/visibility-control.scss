@@ -28,11 +28,9 @@
   opacity: 1;
 }
 
-.node-list-row__checkbox {
+.visibility-control__checkbox {
   @include mixins.screenReaderOnly;
 }
-
-// --- Toggle icon ---//
 
 .visibility-control--icon {
   width: variables.$toggle-icon-size;
@@ -40,7 +38,7 @@
   padding: variables.$toggle-icon-padding;
   border-radius: 50%;
 
-  .node-list-row__checkbox:focus + & {
+  .visibility-control__checkbox:focus + & {
     outline: none;
 
     [data-whatintent='keyboard'] & {
@@ -76,7 +74,7 @@ $element-icon-opacity-2: 1;
     opacity: $element-icon-opacity-0;
   }
 
-  .node-list-row:hover & {
+  .node-list-tree-item-row:hover & {
     > * {
       opacity: $element-icon-opacity-1;
     }
@@ -88,7 +86,7 @@ $element-icon-opacity-2: 1;
     }
   }
 
-  .node-list-row &:hover {
+  .node-list-tree-item-row &:hover {
     > * {
       opacity: $element-icon-opacity-2;
     }
@@ -151,7 +149,7 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  .node-list-row:hover & {
+  .node-list-tree-item-row:hover & {
     > * {
       opacity: $filter-icon-opacity-1;
     }
@@ -177,8 +175,6 @@ $filter-icon-opacity-3: 1;
     }
   }
 
-  // --- Toggle (kind=filter) icon fills and strokes ---//
-
   &.visibility-control--icon--checked {
     fill: var(--color-nodelist-filter-indicator-on);
     stroke: var(--color-nodelist-filter-indicator-on);
@@ -189,7 +185,7 @@ $filter-icon-opacity-3: 1;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .node-list-row:hover &.visibility-control--icon--all-unchecked,
+  .node-list-tree-item-row:hover &.visibility-control--icon--all-unchecked,
   &.visibility-control--icon--parent {
     fill: colors.$blue-300;
     stroke: colors.$blue-300;

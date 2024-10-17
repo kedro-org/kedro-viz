@@ -63,7 +63,7 @@ export const VisibilityControl = ({
     >
       <input
         id={id}
-        className="node-list-row__checkbox"
+        className="visibility-control__checkbox"
         data-test={dataTestValue}
         type="checkbox"
         checked={isChecked}

@@ -7,8 +7,6 @@ import { RowText } from '../ui/row-text/row-text';
 
 import './filter-row.scss';
 
-// The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 32;
 export const FilterRow = ({
   allUnchecked,
   checked,

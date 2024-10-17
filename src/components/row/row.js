@@ -9,12 +9,10 @@ import { RowText } from '../ui/row-text/row-text';
 
 import './row.scss';
 
-// The exact fixed height of a row as measured by getBoundingClientRect()
-export const nodeListRowHeight = 32;
-
 export const Row = ({
   active,
   checked,
+  children,
   dataTest,
   disabled,
   faded,
@@ -45,6 +43,8 @@ export const Row = ({
   const isChecked = isModularPipeline ? checked || focused : checked;
   const VisibilityIcon = isChecked ? visibleIcon : invisibleIcon;
 
+  console.log(selected, 'selected');
+
   return (
     <div
       className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
@@ -63,6 +63,7 @@ export const Row = ({
         className={classnames('row__type-icon', 'row__icon', {
           'row__type-icon--faded': faded,
           'row__type-icon--disabled': disabled,
+          'row__type-icon--nested': !children,
           'row__type-icon--active': active,
           'row__type-icon--selected': selected,
         })}
