@@ -50,8 +50,8 @@ export const routing = ({
     // Sort the node's target edges by the angle between source and target nodes
     node.targets.sort((a, b) =>
       compare(
-        angle(b.sourceNode, b.targetNode),
-        angle(a.sourceNode, a.targetNode)
+        angle(b.sourceNode, b.targetNode, orientation),
+        angle(a.sourceNode, a.targetNode, orientation)
       )
     );
   }
@@ -154,15 +154,15 @@ export const routing = ({
     // Sort the node's outgoing edges by the starting angle of the edge path
     node.targets.sort((a, b) =>
       compare(
-        angle(b.sourceNode, b.points[0] || b.targetNode),
-        angle(a.sourceNode, a.points[0] || a.targetNode)
+        angle(b.sourceNode, b.points[0] || b.targetNode, orientation),
+        angle(a.sourceNode, a.points[0] || a.targetNode, orientation)
       )
     );
     // Sort the node's incoming edges by the ending angle of the edge path
     node.sources.sort((a, b) =>
       compare(
-        angle(a.points[a.points.length - 1] || a.sourceNode, a.targetNode),
-        angle(b.points[b.points.length - 1] || b.sourceNode, b.targetNode)
+        angle(a.points[a.points.length - 1] || a.sourceNode, a.targetNode, orientation),
+        angle(b.points[b.points.length - 1] || b.sourceNode, b.targetNode, orientation)
       )
     );
   }
@@ -242,14 +242,14 @@ export const routing = ({
         sourceStem = [
           {
             x: nodeRight(source),
-            y: source.y + sourceOffsetY,
+            y: source.y + sourceOffsetX,
           },
           {
-            y: source.y + sourceOffsetY,
+            y: source.y + sourceOffsetX,
             x: nodeRight(source) + stemMinSource,
           },
           {
-            y: source.y + sourceOffsetY,
+            y: source.y + sourceOffsetX,
             x: nodeRight(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
           },
         ];
@@ -257,15 +257,15 @@ export const routing = ({
         // Build the target stem for the edge (left-to-right)
         targetStem = [
           {
-            y: target.y + targetOffsetY,
+            y: target.y + targetOffsetX,
             x: nodeLeft(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
           },
           {
-            y: target.y + targetOffsetY,
+            y: target.y + targetOffsetX,
             x: nodeLeft(target) - stemMinTarget,
           },
           {
-            y: target.y + targetOffsetY,
+            y: target.y + targetOffsetX,
             x: nodeLeft(target),
           },
         ];

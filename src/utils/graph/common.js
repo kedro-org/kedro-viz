@@ -33,12 +33,24 @@ export const snap = (value, unit) => Math.round(value / unit) * unit;
 export const distance1d = (a, b) => Math.abs(a - b);
 
 /**
- * Returns the angle in radians between the points a and b relative to the X-axis about the origin
+ * Returns the angle in radians between the points a and b based on the given orientation
  * @param {Object} a The first point
  * @param {Object} b The second point
+ * @param {String} orientation The layout orientation ('top-to-bottom' or 'left-to-right')
  * @returns {Number} The angle
  */
-export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
+export const angle = (a, b, orientation) => {
+  if (orientation === 'top-to-bottom') {
+    // Top-to-bottom orientation
+    return Math.atan2(a.y - b.y, a.x - b.x);
+  } else if (orientation === 'left-to-right') {
+    // Left-to-right orientation
+    return Math.atan2(a.x - b.x, a.y - b.y);
+  } else {
+    throw new Error(`Unsupported orientation: ${orientation}`);
+  }
+};
+
 
 /**
  * Returns the left edge x-position of the node

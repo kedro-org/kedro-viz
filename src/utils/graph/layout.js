@@ -76,8 +76,7 @@ export const layout = ({
   const parallelConstraints = createParallelConstraints(edges, constants);
 
   // Solve these constraints iteratively
-  for (let i = 0; i < 300; i += 1) {
-    console.log("Being applied")
+  for (let i = 0; i < iterations; i += 1) {
     solveLoose(crossingConstraints, 1, constants);
     solveLoose(parallelConstraints, 50, constants);
   }
@@ -292,7 +291,7 @@ const createSeparationConstraints = (rows, constants) => {
  * @param {Number} [unit=0.25] The unit size for rounding expansion relative to spaceY
  */
 const expandDenseRows = (edges, rows, coordSecondary, spaceY, orientation, scale = 1.25, unit = 0.25, ) => {
-  const densities = rowDensity(edges);
+  const densities = rowDensity(edges, orientation);
   const spaceYUnit = Math.round(spaceY * unit);
   let currentOffset = 0; // Use generic offset instead of currentOffsetY
 
@@ -310,7 +309,7 @@ const expandDenseRows = (edges, rows, coordSecondary, spaceY, orientation, scale
       const maxWidthInNextRow = Math.max(...rows[i + 1].map(node => node.width));
 
       // Adjust current offset by the max width between rows
-      currentOffset += offset + maxWidthInCurrentRow*0.25 + maxWidthInNextRow*0.25;
+      currentOffset += offset + maxWidthInCurrentRow*0.5 + maxWidthInNextRow*0.5;
     } else {
       // If not left-to-right, only add the calculated offset
       currentOffset += offset;
@@ -332,13 +331,13 @@ const expandDenseRows = (edges, rows, coordSecondary, spaceY, orientation, scale
  * @param {Array} edges The input edges
  * @returns {Array} The density of each row
  */
-const rowDensity = (edges) => {
+const rowDensity = (edges, orientation) => {
   const rows = {};
 
   for (const edge of edges) {
     // Find the normalized angle of the edge source and target nodes, relative to the X axis
     const edgeAngle =
-      Math.abs(angle(edge.targetNode, edge.sourceNode) - HALF_PI) / HALF_PI;
+      Math.abs(angle(edge.targetNode, edge.sourceNode, orientation) - HALF_PI) / HALF_PI;
 
     const sourceRow = edge.sourceNode.row;
     const targetRow = edge.targetNode.row - 1;
