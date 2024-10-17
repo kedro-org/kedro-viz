@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.api.rest.utils import get_package_compatibilities
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.flowchart import (
     DataNode,
     DataNodeMetadata,
     ParametersNodeMetadata,

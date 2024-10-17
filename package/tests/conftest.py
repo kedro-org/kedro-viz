@@ -21,7 +21,7 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.models.flowchart import DataNodeMetadata, GraphNode
+from kedro_viz.models.flowchart.flowchart import DataNodeMetadata, GraphNode
 from kedro_viz.server import populate_data
 
 
