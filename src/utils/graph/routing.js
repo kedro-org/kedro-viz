@@ -105,17 +105,30 @@ export const routing = ({
           continue;
         }
 
+
         const offsetX = Math.min(spaceX, nodeGap * 0.5);
 
-        // Find the next potential point. Include offset to reduce overlapping edges
-        const candidatePoint = nearestOnLine(
-          currentPoint.x,
-          currentPoint.y,
-          nodeRight(node) + offsetX,
-          nodeTop(node) - spaceY,
-          nodeLeft(nextNode) - offsetX,
-          nodeTop(nextNode) - spaceY
-        );
+      // Define variables for source and target positions based on orientation
+      let sourceX, sourceY, targetX, targetY;
+
+      if (orientation === 'top-to-bottom') {
+        // Top-to-bottom orientation
+        sourceX = nodeRight(node) + offsetX;      // Right side of the current node
+        sourceY = nodeTop(node) - spaceY;         // Above the current node
+        targetX = nodeLeft(nextNode) - offsetX;   // Left side of the next node
+        targetY = nodeTop(nextNode) - spaceY;     // Above the next node
+      } 
+
+      // Calculate the nearest point using the computed source and target positions
+      const candidatePoint = nearestOnLine(
+        currentPoint.x,
+        currentPoint.y,
+        sourceX,
+        sourceY,
+        targetX,
+        targetY
+      );
+      
 
         const distance = distance1d(currentPoint.x, candidatePoint.x);
 
