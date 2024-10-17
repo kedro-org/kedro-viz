@@ -24,7 +24,7 @@ const defaultOptions = {
     stemUnit: 8,
     stemMinSource: 5,
     stemMinTarget: 5,
-    stemMax: 20,
+    stemMax: 10,
     stemSpaceSource: 6,
     stemSpaceTarget: 10,
   },
