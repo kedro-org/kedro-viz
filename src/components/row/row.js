@@ -15,10 +15,8 @@ export const nodeListRowHeight = 32;
 export const Row = ({
   active,
   checked,
-  children,
-  container: Container = 'div',
-  disabled,
   dataTest,
+  disabled,
   faded,
   focused,
   focusModeIcon = FocusModeIcon,
@@ -35,6 +33,7 @@ export const Row = ({
   onMouseEnter,
   onMouseLeave,
   onToggleHoveredFocusMode,
+  parentClassName,
   rowType,
   selected,
   type,
@@ -47,8 +46,8 @@ export const Row = ({
   const VisibilityIcon = isChecked ? visibleIcon : invisibleIcon;
 
   return (
-    <Container
-      className={classnames('row kedro', `row--kind-${kind}`, {
+    <div
+      className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
         'row--visible': visible,
         'row--active': active,
         'row--selected': selected || (!isSlicingPipelineApplied && highlight),
@@ -64,7 +63,6 @@ export const Row = ({
         className={classnames('row__type-icon', 'row__icon', {
           'row__type-icon--faded': faded,
           'row__type-icon--disabled': disabled,
-          'row__type-icon--nested': !children,
           'row__type-icon--active': active,
           'row__type-icon--selected': selected,
         })}
@@ -112,7 +110,6 @@ export const Row = ({
           dataIconType="focus"
         />
       )}
-      {children}
-    </Container>
+    </div>
   );
 };

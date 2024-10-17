@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { replaceAngleBracketMatches } from '../../utils';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
@@ -14,8 +13,8 @@ export const FilterRow = ({
   allUnchecked,
   checked,
   children,
-  dataTest,
   count,
+  dataTest,
   id,
   invisibleIcon = InvisibleIcon,
   kind,
@@ -23,6 +22,7 @@ export const FilterRow = ({
   name,
   onChange,
   onClick,
+  parentClassName,
   visible,
   visibleIcon = VisibleIcon,
 }) => {
@@ -30,10 +30,15 @@ export const FilterRow = ({
 
   return (
     <div
-      className={classnames('filter-row kedro', `filter-row--kind-${kind}`, {
-        'filter-row--visible': visible,
-        'filter-row--unchecked': !checked,
-      })}
+      className={classnames(
+        'filter-row kedro',
+        `filter-row--kind-${kind}`,
+        parentClassName,
+        {
+          'filter-row--visible': visible,
+          'filter-row--unchecked': !checked,
+        }
+      )}
       title={name}
     >
       <RowText

@@ -3,6 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
 import { Row } from '../row/row';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 const arrowIconColor = '#8e8e90';
 
@@ -25,35 +26,35 @@ const NodeListTreeItem = ({
     expandIcon={<ChevronRightIcon style={{ color: arrowIconColor }} />}
     label={
       <Row
-        container="div"
-        key={data.id}
+        active={data.active}
+        checked={data.checked}
+        dataTest={getDataTestAttribute('node-list-tree-item', 'row')}
+        disabled={data.disabled}
+        faded={data.faded}
+        focused={data.focused}
+        focusModeIcon={data.focusModeIcon}
+        highlight={data.highlight}
+        icon={data.icon}
         id={data.id}
+        invisibleIcon={data.invisibleIcon}
+        isSlicingPipelineApplied={isSlicingPipelineApplied}
+        key={data.id}
         kind="element"
         label={data.highlightedLabel || data.name}
         name={data.name}
-        icon={data.icon}
-        type={data.type}
-        active={data.active}
-        checked={data.checked}
-        disabled={data.disabled}
-        faded={data.faded}
-        visible={data.visible}
-        selected={data.selected}
-        highlight={data.highlight}
-        isSlicingPipelineApplied={isSlicingPipelineApplied}
-        allUnchecked={true}
-        visibleIcon={data.visibleIcon}
-        invisibleIcon={data.invisibleIcon}
-        focusModeIcon={data.focusModeIcon}
-        onClick={() => onItemClick(data)}
-        onMouseEnter={() => onItemMouseEnter(data)}
-        onMouseLeave={() => onItemMouseLeave(data)}
         onChange={(e) =>
           onItemChange(data, !e.target.checked, e.target.dataset.iconType)
         }
+        onClick={() => onItemClick(data)}
+        onMouseEnter={() => onItemMouseEnter(data)}
+        onMouseLeave={() => onItemMouseLeave(data)}
         onToggleHoveredFocusMode={onToggleHoveredFocusMode}
+        parentClassName={'node-list-tree-item-row'}
         rowType="tree"
-        focused={data.focused}
+        selected={data.selected}
+        type={data.type}
+        visible={data.visible}
+        visibleIcon={data.visibleIcon}
       />
     }
   >

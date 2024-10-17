@@ -53,31 +53,21 @@ const NodeRowList = ({
         />
         {items.slice(start, end).map((item) => (
           <FilterRow
-            container="li"
+            allUnchecked={group.allUnchecked}
+            checked={item.checked}
+            count={item.count}
             dataTest={getDataTestAttribute('node-list-row', 'filter-row')}
-            key={item.id}
             id={item.id}
+            invisibleIcon={item.invisibleIcon}
+            key={item.id}
             kind={group.kind}
             label={item.highlightedLabel}
-            count={item.count}
             name={item.name}
-            type={item.type}
-            icon={item.icon}
-            active={item.active}
-            checked={item.checked}
-            disabled={item.disabled}
-            faded={item.faded}
-            visible={item.visible}
-            selected={item.selected}
-            highlight={item.highlight}
-            allUnchecked={group.allUnchecked}
-            visibleIcon={item.visibleIcon}
-            invisibleIcon={item.invisibleIcon}
-            onClick={() => onItemClick(item)}
-            onMouseEnter={() => onItemMouseEnter(item)}
-            onMouseLeave={() => onItemMouseLeave(item)}
             onChange={(e) => onItemChange(item, !e.target.checked)}
-            rowType="filter"
+            onClick={() => onItemClick(item)}
+            parentClassName={'node-list-filter-row'}
+            visible={item.visible}
+            visibleIcon={item.visibleIcon}
           />
         ))}
       </ul>
