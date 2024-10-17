@@ -4,7 +4,7 @@ import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
-import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
+import { VisibilityControl } from '../ui/visibility-control/visibility-control';
 import { RowText } from '../ui/row-text/row-text';
 
 import './row.scss';
@@ -81,7 +81,7 @@ export const Row = ({
         rowType={rowType}
       />
       {VisibilityIcon && (
-        <ToggleIcon
+        <VisibilityControl
           className={'row__icon'}
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
@@ -95,7 +95,7 @@ export const Row = ({
         />
       )}
       {FocusIcon && (
-        <ToggleIcon
+        <VisibilityControl
           className={'row__icon'}
           disabled={disabled}
           focusChecked={focused}

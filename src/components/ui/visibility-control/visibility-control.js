@@ -2,9 +2,9 @@ import React from 'react';
 import classnames from 'classnames';
 import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
-import './toggle-icon.scss';
+import './visibility-control.scss';
 
-export const ToggleIcon = ({
+export const VisibilityControl = ({
   allUnchecked,
   className,
   disabled,
@@ -23,31 +23,32 @@ export const ToggleIcon = ({
   const handleMouseHover = (isEntering) =>
     onToggleHoveredFocusMode && onToggleHoveredFocusMode(isEntering);
 
+  // update classname here
   const iconClassNames = classnames(
     className,
-    'node-list-row-toggle--icon',
-    `node-list-row-toggle--icon--kind-${kind}`,
+    'visibility-control--icon',
+    `visibility-control--icon--kind-${kind}`,
     {
-      'node-list-row-toggle--icon--parent': isParent,
-      'node-list-row-toggle--icon--child': !isParent,
-      'node-list-row-toggle--icon--checked': isChecked,
-      'node-list-row-toggle--icon--unchecked': !isChecked,
-      'node-list-row-toggle--icon--all-unchecked': allUnchecked,
-      'node-list-row-toggle--icon--focus-checked': focusChecked,
+      'visibility-control--icon--parent': isParent,
+      'visibility-control--icon--child': !isParent,
+      'visibility-control--icon--checked': isChecked,
+      'visibility-control--icon--unchecked': !isChecked,
+      'visibility-control--icon--all-unchecked': allUnchecked,
+      'visibility-control--icon--focus-checked': focusChecked,
     }
   );
 
   const labelClassNames = classnames(
-    'node-list-row-toggle',
-    `node-list-row-toggle--kind-${kind}`,
+    'visibility-control',
+    `visibility-control--kind-${kind}`,
     {
-      'node-list-row-toggle--disabled': disabled,
-      'node-list-row-toggle--selected': selected,
+      'visibility-control--disabled': disabled,
+      'visibility-control--selected': selected,
     }
   );
 
   const dataTestValue = getDataTestAttribute(
-    'node-list-row-toggle',
+    'visibility-control',
     kind === 'focus' ? 'focusMode' : 'visible',
     name
   );

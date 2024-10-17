@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as colors;
 @use '../../node-list/styles/variables';
 
-.node-list-row-toggle {
+.visibility-control {
   cursor: pointer;
 
   &--kind-element {
@@ -24,7 +24,7 @@
   variables.$row-selected-dark
 );
 
-.node-list-row-toggle--selected::before {
+.visibility-control--selected::before {
   opacity: 1;
 }
 
@@ -34,7 +34,7 @@
 
 // --- Toggle icon ---//
 
-.node-list-row-toggle--icon {
+.visibility-control--icon {
   width: variables.$toggle-icon-size;
   height: variables.$toggle-icon-size;
   padding: variables.$toggle-icon-padding;
@@ -69,7 +69,7 @@ $element-icon-opacity-0: 0;
 $element-icon-opacity-1: 0.55;
 $element-icon-opacity-2: 1;
 
-.node-list-row-toggle--icon--kind-element {
+.visibility-control--icon--kind-element {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
@@ -81,7 +81,7 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.node-list-row-toggle--icon--focus-checked {
+    &.visibility-control--icon--focus-checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
@@ -99,14 +99,14 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.node-list-row-toggle--icon--checked {
+    &.visibility-control--icon--checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
     }
   }
 
-  &.node-list-row-toggle--icon--focus-checked {
+  &.visibility-control--icon--focus-checked {
     > * {
       opacity: $element-icon-opacity-2;
     }
@@ -137,15 +137,15 @@ $filter-icon-opacity-1: 0.55;
 $filter-icon-opacity-2: 0.9;
 $filter-icon-opacity-3: 1;
 
-.node-list-row-toggle--icon--kind-filter {
+.visibility-control--icon--kind-filter {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
     opacity: $filter-icon-opacity-1;
   }
 
-  &.node-list-row-toggle--icon--all-unchecked,
-  .pipeline-nodelist__heading &.node-list-row-toggle--icon--all-unchecked > * {
+  &.visibility-control--icon--all-unchecked,
+  .pipeline-nodelist__heading &.visibility-control--icon--all-unchecked > * {
     > * {
       opacity: $filter-icon-opacity-0;
     }
@@ -156,9 +156,9 @@ $filter-icon-opacity-3: 1;
       opacity: $filter-icon-opacity-1;
     }
 
-    &.node-list-row-toggle--icon--parent:hover,
-    &.node-list-row-toggle--icon--checked,
-    &.node-list-row-toggle--icon--child.node-list-row-toggle--icon--checked {
+    &.visibility-control--icon--parent:hover,
+    &.visibility-control--icon--checked,
+    &.visibility-control--icon--child.visibility-control--icon--checked {
       > * {
         opacity: $filter-icon-opacity-2; // Increase opacity for checked or parent hover
       }
@@ -170,7 +170,7 @@ $filter-icon-opacity-3: 1;
       opacity: $filter-icon-opacity-2; // Increase opacity on keyboard focus
     }
 
-    &.node-list-row-toggle--icon--checked {
+    &.visibility-control--icon--checked {
       > * {
         opacity: $filter-icon-opacity-3; // Further increase for checked on focus
       }
@@ -179,18 +179,18 @@ $filter-icon-opacity-3: 1;
 
   // --- Toggle (kind=filter) icon fills and strokes ---//
 
-  &.node-list-row-toggle--icon--checked {
+  &.visibility-control--icon--checked {
     fill: var(--color-nodelist-filter-indicator-on);
     stroke: var(--color-nodelist-filter-indicator-on);
   }
 
-  &.node-list-row-toggle--icon--unchecked {
+  &.visibility-control--icon--unchecked {
     fill: none;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .node-list-row:hover &.node-list-row-toggle--icon--all-unchecked,
-  &.node-list-row-toggle--icon--parent {
+  .node-list-row:hover &.visibility-control--icon--all-unchecked,
+  &.visibility-control--icon--parent {
     fill: colors.$blue-300;
     stroke: colors.$blue-300;
   }
