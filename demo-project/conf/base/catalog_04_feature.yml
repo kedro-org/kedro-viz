@@ -2,11 +2,11 @@
 "feature_engineering.feat_{metric_type}_metrics":
  type: pandas.ParquetDataset
  filepath: ${_base_location}/04_feature/feat_{metric_type}_metrics.pq
- layer: feature
+ layer1: feature
 
 feature_importance_output:
   type: pandas.CSVDataset
   filepath: ${_base_location}/04_feature/feature_importance_output.csv
   metadata:
     kedro-viz:
-      layer: feature
+      layer1: feature
