@@ -2,6 +2,7 @@ import React from 'react';
 import modifiers from '../../utils/modifiers';
 import { FilterRow, nodeListRowHeight } from '../filter-row/filter-row';
 import LazyList from '../lazy-list';
+import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 const NodeRowList = ({
   items = [],
@@ -53,6 +54,7 @@ const NodeRowList = ({
         {items.slice(start, end).map((item) => (
           <FilterRow
             container="li"
+            dataTest={getDataTestAttribute('node-list-row', 'filter-row')}
             key={item.id}
             id={item.id}
             kind={group.kind}

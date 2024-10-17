@@ -1,11 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
-import { replaceAngleBracketMatches } from '../../utils';
 import NodeIcon from '../icons/node-icon';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
+import { RowText } from '../ui/row-text/row-text';
 
 import './row.scss';
 
@@ -18,6 +18,7 @@ export const Row = ({
   children,
   container: Container = 'div',
   disabled,
+  dataTest,
   faded,
   focused,
   focusModeIcon = FocusModeIcon,
@@ -44,8 +45,6 @@ export const Row = ({
   const FocusIcon = isModularPipeline ? focusModeIcon : null;
   const isChecked = isModularPipeline ? checked || focused : checked;
   const VisibilityIcon = isChecked ? visibleIcon : invisibleIcon;
-  const isButton = onClick && kind !== 'filter';
-  const TextButton = isButton ? 'button' : 'div';
 
   return (
     <Container
@@ -71,28 +70,18 @@ export const Row = ({
         })}
         icon={icon}
       />
-      <TextButton
-        className={classnames(
-          'row__text',
-          `row__text--kind-${kind}`,
-          `row__text--${rowType}`
-        )}
-        //   data-test={`nodelist-${icon}-${children ? null : name}`}
+      <RowText
+        dataTest={dataTest}
+        disabled={disabled}
+        faded={faded}
+        kind={kind}
+        label={label}
+        name={name}
         onClick={onClick}
-        onFocus={onMouseEnter}
-        onBlur={onMouseLeave}
-        title={name}
-      >
-        <span
-          className={classnames('row__label', `row__label--kind-${kind}`, {
-            'row__label--faded': faded,
-            'row__label--disabled': disabled,
-          })}
-          dangerouslySetInnerHTML={{
-            __html: replaceAngleBracketMatches(label),
-          }}
-        />
-      </TextButton>
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        rowType={rowType}
+      />
       {VisibilityIcon && (
         <ToggleIcon
           className={'row__icon'}

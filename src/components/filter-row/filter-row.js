@@ -4,6 +4,7 @@ import { replaceAngleBracketMatches } from '../../utils';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import { ToggleIcon } from '../ui/toggle-icon/toggle-icon';
+import { RowText } from '../ui/row-text/row-text';
 
 import './filter-row.scss';
 
@@ -13,7 +14,7 @@ export const FilterRow = ({
   allUnchecked,
   checked,
   children,
-  container: Container = 'div',
+  dataTest,
   count,
   id,
   invisibleIcon = InvisibleIcon,
@@ -22,44 +23,26 @@ export const FilterRow = ({
   name,
   onChange,
   onClick,
-  onMouseEnter,
-  onMouseLeave,
   visible,
   visibleIcon = VisibleIcon,
 }) => {
   const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
 
   return (
-    <Container
+    <div
       className={classnames('filter-row kedro', `filter-row--kind-${kind}`, {
         'filter-row--visible': visible,
         'filter-row--unchecked': !checked,
       })}
       title={name}
-      onMouseEnter={visible ? onMouseEnter : null}
-      onMouseLeave={visible ? onMouseLeave : null}
     >
-      <button
-        className={classnames(
-          'filter-row__text',
-          `filter-row__text--kind-${kind}`
-        )}
-        //   data-test={`nodelist-${icon}-${children ? null : name}`}
+      <RowText
+        kind={kind}
+        dataTest={dataTest}
         onClick={onClick}
-        onFocus={onMouseEnter}
-        onBlur={onMouseLeave}
-        title={children ? null : name}
-      >
-        <span
-          className={classnames(
-            'filter-row__label',
-            `filter-row__label--kind-${kind}`
-          )}
-          dangerouslySetInnerHTML={{
-            __html: replaceAngleBracketMatches(label),
-          }}
-        />
-      </button>
+        name={children ? null : name}
+        label={label}
+      />
       <span onClick={onClick} className={'filter-row__count'}>
         {count}
       </span>
@@ -74,6 +57,6 @@ export const FilterRow = ({
         onChange={onChange}
       />
       {children}
-    </Container>
+    </div>
   );
 };
