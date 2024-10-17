@@ -21,7 +21,7 @@ def test_deploy_kedro_viz(
     client, platform, endpoint, bucket_name, is_all_previews_enabled, mocker
 ):
     mocker.patch(
-        "kedro_viz.api.rest.router.DeployerFactory.create_deployer",
+        "kedro_viz.integrations.deployment.deployer_factory.DeployerFactory.create_deployer",
         return_value=MockDeployer(platform, endpoint, bucket_name),
     )
     response = client.post(

@@ -5,7 +5,6 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
-import networkx as nx
 from kedro.io import DataCatalog
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline as KedroPipeline
@@ -546,6 +545,8 @@ class DataAccessManager:
         # so no need to check non modular pipeline nodes.
         #
         # We leverage networkx to help with graph traversal
+        import networkx as nx  # pylint: disable=import-outside-toplevel
+
         digraph = nx.DiGraph()
         for edge in edges:
             digraph.add_edge(edge.source, edge.target)
