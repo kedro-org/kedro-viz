@@ -1,6 +1,6 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import { NodeListRow, nodeListRowHeight } from './node-list-row';
+import { FilterRow, nodeListRowHeight } from './filter-row';
 import LazyList from '../lazy-list';
 
 const NodeRowList = ({
@@ -51,7 +51,7 @@ const NodeRowList = ({
           style={lowerStyle}
         />
         {items.slice(start, end).map((item) => (
-          <NodeListRow
+          <FilterRow
             container="li"
             key={item.id}
             id={item.id}

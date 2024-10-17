@@ -24,6 +24,7 @@ const NodeList = ({
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
+  onToggleHoveredFocusMode,
   onItemChange,
   onModularPipelineToggleExpanded,
   focusMode,
@@ -65,6 +66,7 @@ const NodeList = ({
                     onItemClick={onItemClick}
                     onItemMouseEnter={onItemMouseEnter}
                     onItemMouseLeave={onItemMouseLeave}
+                    onToggleHoveredFocusMode={onToggleHoveredFocusMode}
                     onItemChange={onItemChange}
                     onNodeToggleExpanded={onModularPipelineToggleExpanded}
                     focusMode={focusMode}
