@@ -12,7 +12,6 @@ export const nodeListRowHeight = 32;
 
 export const Row = ({
   active,
-  allUnchecked,
   checked,
   children,
   container: Container = 'div',
@@ -107,7 +106,6 @@ export const Row = ({
       </TextButton>
       {VisibilityIcon && (
         <ToggleIcon
-          //   allUnchecked={allUnchecked}
           className={'node-list-row__icon'}
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
@@ -122,7 +120,6 @@ export const Row = ({
       )}
       {FocusIcon && (
         <ToggleIcon
-          //   allUnchecked={allUnchecked}
           className={'node-list-row__icon'}
           disabled={disabled}
           focusChecked={focused}

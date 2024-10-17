@@ -1,6 +1,6 @@
 import React from 'react';
 import modifiers from '../../utils/modifiers';
-import { FilterRow, nodeListRowHeight } from './filter-row';
+import { FilterRow, nodeListRowHeight } from '../filter-row/filter-row';
 import LazyList from '../lazy-list';
 
 const NodeRowList = ({

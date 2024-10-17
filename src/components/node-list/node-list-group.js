@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { FilterRow } from './filter-row';
+import { FilterRow } from '../filter-row/filter-row';
 import NodeRowList from './node-list-row-list';
 
 export const NodeListGroup = ({

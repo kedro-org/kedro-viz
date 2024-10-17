@@ -65,18 +65,16 @@ export const FilterRow = ({
       <span onClick={onClick} className={'node-list-row__count'}>
         {count}
       </span>
-      {VisibilityIcon && (
-        <ToggleIcon
-          allUnchecked={allUnchecked}
-          className={'node-list-row__icon'}
-          IconComponent={VisibilityIcon}
-          id={id}
-          isChecked={checked}
-          kind={kind}
-          name={name}
-          onChange={onChange}
-        />
-      )}
+      <ToggleIcon
+        allUnchecked={allUnchecked}
+        className={'node-list-row__icon'}
+        IconComponent={VisibilityIcon}
+        id={id}
+        isChecked={checked}
+        kind={kind}
+        name={name}
+        onChange={onChange}
+      />
       {children}
     </Container>
   );
