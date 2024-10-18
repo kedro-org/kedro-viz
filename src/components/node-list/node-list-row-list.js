@@ -11,8 +11,6 @@ const NodeRowList = ({
   collapsed,
   onItemClick,
   onItemChange,
-  onItemMouseEnter,
-  onItemMouseLeave,
 }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
