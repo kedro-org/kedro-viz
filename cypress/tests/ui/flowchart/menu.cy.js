@@ -41,7 +41,7 @@ describe('Flowchart Menu', () => {
       });
 
       // Pipeline Label in the Menu
-      cy.get('.pipeline-nodelist__row__label')
+      cy.get('.node-list-row__label')
         .first()
         .invoke('text')
         .should((pipelineLabel) => {
@@ -57,7 +57,7 @@ describe('Flowchart Menu', () => {
     cy.get('.search-input__field').type(searchInput, { force: true });
 
     // Pipeline Label in the Menu
-    cy.get('.pipeline-nodelist__row__label')
+    cy.get('.node-list-row__label')
       .first()
       .invoke('text')
       .should((pipelineLabel) => {
@@ -72,7 +72,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToClickText}]`
+      `.MuiTreeItem-label > .node-list-row > [data-test=nodelist-data-${nodeToClickText}]`
     )
       .should('exist')
       .as('nodeToClick');
@@ -91,7 +91,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .pipeline-nodelist__row > [data-test=nodelist-data-${nodeToHighlightText}]`
+      `.MuiTreeItem-label > .node-list-row > [data-test=nodelist-data-${nodeToHighlightText}]`
     )
       .should('exist')
       .as('nodeToHighlight');
@@ -108,7 +108,7 @@ describe('Flowchart Menu', () => {
     const nodeToToggleText = 'Companies';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`, {
+    cy.get(`.node-list-row__checkbox[name=${nodeToToggleText}]`, {
       timeout: 5000,
     }).as('nodeToToggle');
 
@@ -121,7 +121,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.__checkForText__(
-      `[data-test=nodelist-data-${nodeToToggleText}] > .pipeline-nodelist__row__label--faded`,
+      `[data-test=nodelist-data-${nodeToToggleText}] > .node-list-row__label--faded`,
       nodeToToggleText
     );
     cy.get('.pipeline-node__text').should('not.contain', nodeToToggleText);
@@ -137,7 +137,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `[for=${nodeToFocusText}-focus] > .pipeline-nodelist__row__icon`
+      `[for=${nodeToFocusText}-focus] > .node-list-row__icon`
     ).click();
 
     // Assert after action
@@ -161,14 +161,14 @@ describe('Flowchart Menu', () => {
     const visibleRowLabel = 'Companies';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
+    cy.get(`.node-list-row__checkbox[name=${nodeToToggleText}]`).as(
       'nodeToToggle'
     );
 
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
     cy.get(
-      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .node-list-row__label`
     )
       .should('not.have.class', 'pipeline-nodelist__row__label--faded')
       .should('not.have.class', 'pipeline-nodelist__row__label--disabled');
@@ -178,7 +178,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.get(
-      `[data-test=nodelist-data-${visibleRowLabel}] > .pipeline-nodelist__row__label`
+      `[data-test=nodelist-data-${visibleRowLabel}] > .node-list-row__label`
     )
       .should('have.class', 'pipeline-nodelist__row__label--faded')
       .should('have.class', 'pipeline-nodelist__row__label--disabled');
@@ -188,7 +188,7 @@ describe('Flowchart Menu', () => {
     const nodeToToggleText = 'Parameters';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
+    cy.get(`.node-list-row__checkbox[name=${nodeToToggleText}]`).as(
       'nodeToToggle'
     );
 
@@ -207,7 +207,7 @@ describe('Flowchart Menu', () => {
     cy.visit(`/?tags=${visibleRowLabel}`);
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(
+    cy.get(`.node-list-row__checkbox[name=${visibleRowLabel}]`).as(
       'nodeToToggle'
     );
 
@@ -220,7 +220,7 @@ describe('Flowchart Menu', () => {
     cy.visit('/?types=datasets');
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${visibleRowLabel}]`).as(
+    cy.get(`.node-list-row__checkbox[name=${visibleRowLabel}]`).as(
       'nodeToToggle'
     );
 

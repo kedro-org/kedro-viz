@@ -26,7 +26,11 @@ import {
 } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { toggleParametersHovered, toggleFocusMode } from '../../actions';
+import {
+  toggleParametersHovered,
+  toggleFocusMode,
+  toggleHoveredFocusMode,
+} from '../../actions';
 import {
   toggleModularPipelineActive,
   toggleModularPipelineDisabled,
@@ -64,6 +68,7 @@ const NodeListProvider = ({
   onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
   onToggleFocusMode,
+  onToggleHoveredFocusMode,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -315,6 +320,7 @@ const NodeListProvider = ({
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
+      onToggleHoveredFocusMode={onToggleHoveredFocusMode}
       onItemChange={onItemChange}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
@@ -370,6 +376,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
+  },
+  onToggleHoveredFocusMode: (active) => {
+    dispatch(toggleHoveredFocusMode(active));
   },
   onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());
