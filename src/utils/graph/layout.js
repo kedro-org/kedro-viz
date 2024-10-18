@@ -32,30 +32,44 @@ export const layout = ({
   spreadX,
   layerSpaceY,
   iterations,
+  orientation,
 }) => {
-  // Set initial positions for nodes
-  for (const node of nodes) {
-    node.x = 0;
-    node.y = 0;
+
+  let coordPrimary = 'x';
+  let coordSecondary = 'y';
+
+  if (orientation === 'left-to-right') {
+    coordPrimary = 'y';
+    coordSecondary = 'x';
   }
+
+   // Set initial positions for nodes
+  for (const node of nodes) {
+    node[coordPrimary] = 0;
+    node[coordSecondary] = 0;
+  }
+
 
   // Constants used by constraints
   const constants = {
+    orientation,
     spaceX,
     spaceY,
     spreadX,
-    layerSpace: (spaceY + layerSpaceY) * 0.5,
+    layerSpace: (spaceX + layerSpaceY) * 0.5,
+    coordPrimary,
+    coordSecondary,
   };
 
   // Constraints to separate nodes into rows and layers
-  const rowConstraints = createRowConstraints(edges);
-  const layerConstraints = createLayerConstraints(nodes, layers);
+  const rowConstraints = createRowConstraints(edges, constants);
+  const layerConstraints = createLayerConstraints(nodes, layers, constants);
 
   // Find the node positions given these constraints
   solveStrict([...rowConstraints, ...layerConstraints], constants, 1);
 
   // Find the solved rows using the node positions after solving
-  const rows = groupByRow(nodes);
+  const rows = groupByRow(nodes, orientation);
 
   // Constraints to avoid edges crossing and maintain parallel vertical edges
   const crossingConstraints = createCrossingConstraints(edges, constants);
@@ -74,7 +88,7 @@ export const layout = ({
   solveStrict([...separationConstraints, ...parallelConstraints], constants, 1);
 
   // Adjust vertical spacing between rows for legibility
-  expandDenseRows(edges, rows, spaceY);
+  expandDenseRows(edges, rows, coordSecondary, spaceY, orientation);
 };
 
 /**
@@ -82,12 +96,16 @@ export const layout = ({
  * @param {Array} edges The input edges
  * @returns {Array} The constraints
  */
-const createRowConstraints = (edges) =>
-  edges.map((edge) => ({
-    base: rowConstraint,
-    a: edge.targetNode,
-    b: edge.sourceNode,
-  }));
+const createRowConstraints = (edges, constants) =>
+  edges.map((edge) => {
+    return {
+      base: rowConstraint,
+      property: constants.coordSecondary,
+      a: edge.targetNode,
+      b: edge.sourceNode,
+      separation: constants.spaceY,
+    };
+  });
 
 /**
  * Creates layer constraints for the given nodes and layers.
@@ -95,7 +113,7 @@ const createRowConstraints = (edges) =>
  * @param {Array=} layers The input layers if any
  * @returns {Array} The constraints
  */
-const createLayerConstraints = (nodes, layers) => {
+const createLayerConstraints = (nodes, layers, constants) => {
   const layerConstraints = [];
 
   // Early out if no layers defined
@@ -122,6 +140,7 @@ const createLayerConstraints = (nodes, layers) => {
         base: layerConstraint,
         a: intermediary,
         b: node,
+        // property: constants.coordSecondary
       });
     }
 
@@ -131,6 +150,7 @@ const createLayerConstraints = (nodes, layers) => {
         base: layerConstraint,
         a: node,
         b: intermediary,
+        // property: constants.coordSecondary
       });
     }
   }
@@ -146,7 +166,7 @@ const createLayerConstraints = (nodes, layers) => {
  * @returns {Array} The constraints
  */
 const createCrossingConstraints = (edges, constants) => {
-  const { spaceX } = constants;
+  const { spaceX, coordPrimary } = constants;
   const crossingConstraints = [];
 
   // For every pair of edges
@@ -179,6 +199,7 @@ const createCrossingConstraints = (edges, constants) => {
 
       crossingConstraints.push({
         base: crossingConstraint,
+        property : coordPrimary,
         edgeA: edgeA,
         edgeB: edgeB,
         // The required horizontal spacing between connected nodes
@@ -201,9 +222,10 @@ const createCrossingConstraints = (edges, constants) => {
  * @param {Array} edges The input edges
  * @returns {Object} An object containing the constraints
  */
-const createParallelConstraints = (edges) =>
+const createParallelConstraints = (edges, constants) =>
   edges.map(({ sourceNode, targetNode }) => ({
     base: parallelConstraint,
+    property: constants.coordPrimary,
     a: sourceNode,
     b: targetNode,
     // Evenly distribute the constraint
@@ -218,44 +240,44 @@ const createParallelConstraints = (edges) =>
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, constants) => {
-  const { spaceX } = constants;
+  const { spaceX, coordPrimary, spreadX, orientation } = constants;
   const separationConstraints = [];
 
   // For each row of nodes
   for (let i = 0; i < rows.length; i += 1) {
     const rowNodes = rows[i];
 
-    // Stable sort row nodes horizontally, breaks ties with ids
-    rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
-
-    // Update constraints given updated row node order
-    for (let j = 0; j < rowNodes.length - 1; j += 1) {
+    rowNodes.sort((a, b) => compare(a[coordPrimary], b[coordPrimary], a.id, b.id));
+  
+    // Update constraints for the sorted row node order
+    for (let j = 0; j < rowNodes.length-1; j += 1) {
       const nodeA = rowNodes[j];
       const nodeB = rowNodes[j + 1];
-
+      
+  
       // Count the connected edges
-      const degreeA = Math.max(
-        1,
-        nodeA.targets.length + nodeA.sources.length - 2
-      );
-      const degreeB = Math.max(
-        1,
-        nodeB.targets.length + nodeB.sources.length - 2
-      );
-
-      // Allow more spacing for nodes with more edges
-      const spread = Math.min(10, degreeA * degreeB * constants.spreadX);
+      const degreeA = Math.max(1, nodeA.targets.length + nodeA.sources.length - 2);
+      const degreeB = Math.max(1, nodeB.targets.length + nodeB.sources.length - 2);
+  
+      // Calculate spacing and separation for primary orientation
+      const spread = Math.min(10, degreeA * degreeB * spreadX);
       const space = snap(spread * spaceX, spaceX);
-
+      let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
+  
+      // Adjust separation if the orientation is 'left-to-right' (using height instead of width)
+      if (orientation === 'left-to-right') {
+        separation = nodeA.height + nodeB.height;
+      }
+  
       separationConstraints.push({
         base: separationConstraint,
+        property: coordPrimary,
         a: nodeA,
         b: nodeB,
-        separation: nodeA.width * 0.5 + space + nodeB.width * 0.5,
+        separation,
       });
     }
   }
-
   return separationConstraints;
 };
 
@@ -268,22 +290,34 @@ const createSeparationConstraints = (rows, constants) => {
  * @param {Number} [scale=1.25] The amount of expansion to apply relative to row density
  * @param {Number} [unit=0.25] The unit size for rounding expansion relative to spaceY
  */
-const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
-  const densities = rowDensity(edges);
+const expandDenseRows = (edges, rows, coordSecondary, spaceY, orientation, scale = 1.25, unit = 0.25, ) => {
+  const densities = rowDensity(edges, orientation);
   const spaceYUnit = Math.round(spaceY * unit);
-  let currentOffsetY = 0;
+  let currentOffset = 0; // Use generic offset instead of currentOffsetY
 
   // Add spacing based relative to row density
   for (let i = 0; i < rows.length - 1; i += 1) {
     const density = densities[i] || 0;
 
-    // Round offset to a common unit amount to improve vertical rhythm
-    const offsetY = snap(density * scale * spaceY, spaceYUnit);
-    currentOffsetY += offsetY;
+    // Round offset to a common unit amount to improve rhythm
+    const offset = snap(density * scale * spaceY, spaceYUnit);
 
-    // Apply offset to all nodes following the current node
+    // Only calculate width-based offset if orientation is 'left-to-right'
+    if (orientation === 'left-to-right') {
+      // Calculate the maximum width between the two rows
+      const maxWidthInCurrentRow = Math.max(...rows[i].map(node => node.width));
+      const maxWidthInNextRow = Math.max(...rows[i + 1].map(node => node.width));
+
+      // Adjust current offset by the max width between rows
+      currentOffset += offset + maxWidthInCurrentRow*0.5 + maxWidthInNextRow*0.5;
+    } else {
+      // If not left-to-right, only add the calculated offset
+      currentOffset += offset;
+    }
+
+    // Apply offset to all nodes following the current node in the appropriate coordinate (X or Y)
     for (const node of rows[i + 1]) {
-      node.y += currentOffsetY;
+      node[coordSecondary] += currentOffset; // This now handles both 'x' and 'y'
     }
   }
 };
@@ -297,13 +331,13 @@ const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
  * @param {Array} edges The input edges
  * @returns {Array} The density of each row
  */
-const rowDensity = (edges) => {
+const rowDensity = (edges, orientation) => {
   const rows = {};
 
   for (const edge of edges) {
     // Find the normalized angle of the edge source and target nodes, relative to the X axis
     const edgeAngle =
-      Math.abs(angle(edge.targetNode, edge.sourceNode) - HALF_PI) / HALF_PI;
+      Math.abs(angle(edge.targetNode, edge.sourceNode, orientation) - HALF_PI) / HALF_PI;
 
     const sourceRow = edge.sourceNode.row;
     const targetRow = edge.targetNode.row - 1;

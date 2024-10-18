@@ -23,12 +23,12 @@ export const getLayers = createSelector(
       if (layer) {
         const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
 
-        if (node.y - node.height < bound[0]) {
-          bound[0] = node.y - node.height;
+        if (node.x - node.width < bound[0]) {
+          bound[0] = node.x - node.width;
         }
 
-        if (node.y + node.height > bound[1]) {
-          bound[1] = node.y + node.height;
+        if (node.x + node.width > bound[1]) {
+          bound[1] = node.x + node.width;
         }
       }
     }
@@ -50,10 +50,10 @@ export const getLayers = createSelector(
       return {
         id,
         name: layerName[id],
-        x: (rectWidth - width) / -2,
-        y: start,
-        width: rectWidth,
-        height: Math.max(end - start, 0),
+        y: (rectWidth - width) / -2,
+        x: start,
+        height: rectWidth,
+        width: Math.max(end - start, 0),
       };
     });
   }
