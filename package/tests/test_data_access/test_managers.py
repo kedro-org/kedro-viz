@@ -15,7 +15,7 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart.flowchart import (
+from kedro_viz.models.flowchart import (
     DataNode,
     GraphEdge,
     ParametersNode,

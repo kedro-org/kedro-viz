@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class GraphEdge(BaseModel, frozen=True):
     """Represent an edge in the graph
 

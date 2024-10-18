@@ -4,7 +4,7 @@ from collections import defaultdict
 from graphlib import CycleError, TopologicalSorter
 from typing import Dict, List, Set
 
-from kedro_viz.models.flowchart.flowchart import GraphNode
+from kedro_viz.models.flowchart import GraphNode
 
 logger = logging.getLogger(__name__)
 

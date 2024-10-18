@@ -9,7 +9,7 @@ from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.models.flowchart.flowchart import (
+from kedro_viz.models.flowchart import (
     GraphNode,
     GraphNodeType,
     ModularPipelineChild,

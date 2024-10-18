@@ -9,7 +9,7 @@ from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
 from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
 
-from kedro_viz.models.flowchart.flowchart import (
+from kedro_viz.models.flowchart import (
     DataNode,
     DataNodeMetadata,
     GraphNode,
