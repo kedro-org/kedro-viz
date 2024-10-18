@@ -1,5 +1,3 @@
-# kedro_viz/models/utils.py
-
 import inspect
 from pathlib import Path
 from types import FunctionType
