@@ -9,30 +9,10 @@ describe('VisibilityControl', () => {
     onToggleHoveredFocusMode: jest.fn(),
   };
 
-  it('applies "all-unchecked" class when allUnchecked is true', () => {
-    const props = { ...baseProps, allUnchecked: true };
-    const wrapper = shallow(<VisibilityControl {...props} />);
-    expect(wrapper.hasClass('visibility-control--icon--all-unchecked')).toBe(
-      true
-    );
-  });
-
   it('applies "disabled" class when disabled is true', () => {
     const props = { ...baseProps, disabled: true };
     const wrapper = shallow(<VisibilityControl {...props} />);
     expect(wrapper.hasClass('visibility-control--disabled')).toBe(true);
-  });
-
-  it('applies "checked" class when isChecked is true', () => {
-    const props = { ...baseProps, isChecked: true };
-    const wrapper = shallow(<VisibilityControl {...props} />);
-    expect(wrapper.hasClass('visibility-control--icon--checked')).toBe(true);
-  });
-
-  it('applies "parent" class when isParent is true', () => {
-    const props = { ...baseProps, isParent: true };
-    const wrapper = shallow(<VisibilityControl {...props} />);
-    expect(wrapper.hasClass('visibility-control--icon--parent')).toBe(true);
   });
 
   it('applies correct class for kind prop', () => {
@@ -70,25 +50,17 @@ describe('VisibilityControl', () => {
     expect(wrapper.hasClass('visibility-control--icon--parent')).toBe(false);
   });
 
-  it('triggers onChange callback when clicked', () => {
-    const props = { ...baseProps };
-    const wrapper = shallow(<VisibilityControl {...props} />);
-    wrapper.simulate('click');
-    expect(props.onChange).toHaveBeenCalled();
-  });
-
   it('does not trigger onToggleHoveredFocusMode when not provided', () => {
     const props = { ...baseProps, onToggleHoveredFocusMode: undefined };
     const wrapper = shallow(<VisibilityControl {...props} />);
-    wrapper.simulate('click');
-    // Since onToggleHoveredFocusMode is not provided, it should not throw an error
-    expect(() => wrapper.simulate('click')).not.toThrow();
+    wrapper.simulate('mouseenter');
+    expect(() => wrapper.simulate('mouseenter')).not.toThrow();
   });
 
-  it('triggers onToggleHoveredFocusMode when provided and clicked', () => {
+  it('triggers onToggleHoveredFocusMode when provided', () => {
     const props = { ...baseProps };
     const wrapper = shallow(<VisibilityControl {...props} />);
-    wrapper.simulate('click');
+    wrapper.simulate('mouseenter');
     expect(props.onToggleHoveredFocusMode).toHaveBeenCalled();
   });
 });

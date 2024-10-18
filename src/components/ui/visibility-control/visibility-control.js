@@ -23,7 +23,6 @@ export const VisibilityControl = ({
   const handleMouseHover = (isEntering) =>
     onToggleHoveredFocusMode && onToggleHoveredFocusMode(isEntering);
 
-  // update classname here
   const iconClassNames = classnames(
     className,
     'visibility-control--icon',
