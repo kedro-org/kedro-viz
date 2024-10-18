@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Set, Optional
-from .enums import GraphNodeType
+from .nodes import GraphNodeType
 
 
 class ModularPipelineChild(BaseModel):

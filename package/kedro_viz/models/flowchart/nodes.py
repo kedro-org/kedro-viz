@@ -1,4 +1,5 @@
 from abc import ABC
+from enum import Enum
 from pydantic import (
     BaseModel,
     Field,
@@ -26,12 +27,20 @@ except ImportError:  # pragma: no cover
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 from .entities import NamedEntity
-from .enums import GraphNodeType
 from .utils import _parse_filepath, _extract_wrapped_func, get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 from .modular_pipelines import ModularPipelineChild
 
 logger = logging.getLogger(__name__)
+
+
+class GraphNodeType(str, Enum):
+    """Represent all possible node types in the graph representation of a Kedro pipeline."""
+
+    TASK = "task"
+    DATA = "data"
+    PARAMETERS = "parameters"
+    MODULAR_PIPELINE = "modularPipeline"  # CamelCase for frontend compatibility
 
 
 class GraphNode(BaseModel, ABC):
