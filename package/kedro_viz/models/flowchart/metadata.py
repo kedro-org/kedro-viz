@@ -1,5 +1,3 @@
-# kedro_viz/models/metadata.py
-
 from abc import ABC
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 from typing import Optional, Dict, Any, Union, List, ClassVar, cast

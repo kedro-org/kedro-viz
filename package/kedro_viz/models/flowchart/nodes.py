@@ -1,5 +1,3 @@
-# kedro_viz/models/nodes.py
-
 from abc import ABC
 from pydantic import (
     BaseModel,
