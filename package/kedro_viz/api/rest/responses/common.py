@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses.common` contains common
-response classes for the REST endpoints"""
+response classes and utility functions for the REST endpoints"""
 
 # pylint: disable=missing-class-docstring
 

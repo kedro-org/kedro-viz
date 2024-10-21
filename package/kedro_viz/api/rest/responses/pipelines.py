@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses.pipelines` contains response classes
-and utility functions for the `/main` and `/pipelines/* REST endpoint"""
+and utility functions for the `/main` and `/pipelines/* REST endpoints"""
 
 # pylint: disable=missing-class-docstring,invalid-name
 
