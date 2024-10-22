@@ -1,11 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
-import NodeIcon from '../icons/node-icon';
-import VisibleIcon from '../icons/visible';
-import InvisibleIcon from '../icons/invisible';
-import FocusModeIcon from '../icons/focus-mode';
-import { VisibilityControl } from '../ui/visibility-control/visibility-control';
-import { RowText } from '../ui/row-text/row-text';
+import NodeIcon from '../../../icons/node-icon';
+import VisibleIcon from '../../../icons/visible';
+import InvisibleIcon from '../../../icons/invisible';
+import FocusModeIcon from '../../../icons/focus-mode';
+import { VisibilityControl } from '../../../ui/visibility-control/visibility-control';
+import { RowText } from '../../../ui/row-text/row-text';
 
 import './row.scss';
 
