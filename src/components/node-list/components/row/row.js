@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { uniqueId } from 'lodash';
 import classnames from 'classnames';
 import NodeIcon from '../../../icons/node-icon';
 import VisibleIcon from '../../../icons/visible';
@@ -6,10 +8,11 @@ import InvisibleIcon from '../../../icons/invisible';
 import FocusModeIcon from '../../../icons/focus-mode';
 import { VisibilityControl } from '../../../ui/visibility-control/visibility-control';
 import { RowText } from '../../../ui/row-text/row-text';
+import { getNodeActive } from '../../../../selectors/nodes';
 
 import './row.scss';
 
-export const Row = ({
+const Row = ({
   active,
   checked,
   children,
@@ -43,10 +46,8 @@ export const Row = ({
   const isChecked = isModularPipeline ? checked || focused : checked;
   const VisibilityIcon = isChecked ? visibleIcon : invisibleIcon;
 
-  console.log(selected, 'selected');
-
   return (
-    <div
+    <form
       className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
         'row--visible': visible,
         'row--active': active,
@@ -56,8 +57,8 @@ export const Row = ({
         'row--overwrite': !(active || selected),
       })}
       title={name}
-      onMouseEnter={visible ? onMouseEnter : null}
-      onMouseLeave={visible ? onMouseLeave : null}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <NodeIcon
         className={classnames('row__type-icon', 'row__icon', {
@@ -87,7 +88,7 @@ export const Row = ({
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
           IconComponent={VisibilityIcon}
-          id={id}
+          id={uniqueId(id)}
           isChecked={isChecked}
           kind={kind}
           name={name}
@@ -101,7 +102,7 @@ export const Row = ({
           disabled={disabled}
           focusChecked={focused}
           IconComponent={FocusIcon}
-          id={`${id}-focus`}
+          id={uniqueId(id + '-focus')}
           isChecked={isChecked}
           kind={kind}
           name={name}
@@ -111,6 +112,16 @@ export const Row = ({
           dataIconType="focus"
         />
       )}
-    </div>
+    </form>
   );
 };
+
+export const mapStateToProps = (state, ownProps) => ({
+  ...ownProps,
+  active:
+    typeof ownProps.active !== 'undefined'
+      ? ownProps.active
+      : getNodeActive(state)[ownProps.id] || false,
+});
+
+export default connect(mapStateToProps)(Row);

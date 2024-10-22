@@ -2,7 +2,7 @@ import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
-import { Row } from './components/row/row';
+import Row from './components/row/row';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 const arrowIconColor = '#8e8e90';
