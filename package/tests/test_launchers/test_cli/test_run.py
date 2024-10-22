@@ -206,7 +206,11 @@ class TestCliRunViz:
         patched_check_viz_up,
         patched_start_browser,
     ):
-        process_init = mocker.patch("multiprocessing.Process")
+        # process_init = mocker.patch("multiprocessing.Process")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
         runner = CliRunner()
 
         # Reduce the timeout argument from 600 to 1 to make test run faster.
@@ -223,7 +227,7 @@ class TestCliRunViz:
         with runner.isolated_filesystem():
             runner.invoke(main.viz_cli, command_options)
 
-        process_init.assert_called_once_with(
+        mock_process.assert_called_once_with(
             target=run_server, daemon=False, kwargs={**run_server_args}
         )
 
@@ -343,7 +347,11 @@ class TestCliRunViz:
     def test_kedro_viz_command_with_autoreload(
         self, mocker, mock_project_path, patched_check_viz_up, patched_start_browser
     ):
-        process_init = mocker.patch("multiprocessing.Process")
+        # process_init = mocker.patch("multiprocessing.Process")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
 
         # Reduce the timeout argument from 600 to 1 to make test run faster.
         mocker.patch(
@@ -378,7 +386,7 @@ class TestCliRunViz:
             "watch_filter": AutoreloadFileFilter(),
         }
 
-        process_init.assert_called_once_with(
+        mock_process.assert_called_once_with(
             target=run_process,
             daemon=False,
             args=run_process_args,
