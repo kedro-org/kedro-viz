@@ -1,0 +1,15 @@
+target-version = "py39"
+
+include = [
+    "kedro_viz/*.py",
+    "tests/*.py",
+    "features/*.py",
+]
+
+[lint]
+select = [
+    "I", # Isort
+]
+
+[lint.isort]
+known-first-party = ["kedro_viz"]
