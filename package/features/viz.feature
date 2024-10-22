@@ -24,6 +24,12 @@ Feature: Viz plugin in new project
         When I execute the kedro viz run command
         Then kedro-viz should start successfully
 
+    Scenario: Execute viz lite with the earliest Kedro version that it supports 
+        Given I have installed kedro version "0.18.3"
+        And I have run a non-interactive kedro new with pandas-iris starter
+        When I execute the kedro viz run command with lite option
+        Then kedro-viz should start successfully
+
     Scenario: Execute viz lite with latest Kedro
         Given I have installed kedro version "latest"
         And I have run a non-interactive kedro new with spaceflights-pandas starter

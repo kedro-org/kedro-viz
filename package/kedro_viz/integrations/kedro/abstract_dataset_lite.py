@@ -5,7 +5,20 @@ to provide an UnavailableDataset instance when running Kedro-Viz in lite mode.
 import logging
 from typing import Any, Optional
 
-from kedro.io.core import AbstractDataset, DatasetError
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io.core import DatasetError
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
+
+try:
+    # kedro 0.18.12 onwards
+    from kedro.io.core import AbstractDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
+
 
 from kedro_viz.integrations.utils import UnavailableDataset
 

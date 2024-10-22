@@ -7,7 +7,14 @@ from typing import Dict, List, Set, Union
 
 import networkx as nx
 from kedro.io import DataCatalog
-from kedro.io.core import DatasetError
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io.core import DatasetError
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
+
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 from sqlalchemy.orm import sessionmaker
