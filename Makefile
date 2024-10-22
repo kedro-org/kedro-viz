@@ -27,18 +27,15 @@ e2e-tests:
 lint: format-fix lint-check
 
 format-fix:
-	isort package/kedro_viz package/tests package/features
+	ruff check package --fix
 	black package/kedro_viz package/tests package/features
 
 format-check:
-	isort --check package/kedro_viz package/tests package/features
+	ruff check package
 	black --check package/kedro_viz package/tests package/features
 
 lint-check:
-	pylint --rcfile=package/.pylintrc -j 0 package/kedro_viz
-	pylint --rcfile=package/.pylintrc -j 0 --disable=protected-access,missing-docstring,redefined-outer-name,invalid-name,too-few-public-methods,no-member,unused-argument,duplicate-code,abstract-class-instantiated package/tests
-	pylint --rcfile=package/.pylintrc -j 0 --disable=missing-docstring,no-name-in-module,unused-argument package/features
-	flake8 --config=package/.flake8 package
+	ruff check package
 	mypy --config-file=package/mypy.ini package/kedro_viz package/features
 	mypy --disable-error-code abstract --config-file=package/mypy.ini package/tests
 
