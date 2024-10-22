@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
+import IndicatorIcon from '../icons/indicator';
 import { VisibilityControl } from '../ui/visibility-control/visibility-control';
 import { RowText } from '../ui/row-text/row-text';
 
@@ -24,7 +25,7 @@ export const FilterRow = ({
   visible,
   visibleIcon = VisibleIcon,
 }) => {
-  const VisibilityIcon = checked ? visibleIcon : invisibleIcon;
+  const Icon = checked ? visibleIcon : invisibleIcon;
 
   return (
     <div
@@ -52,7 +53,7 @@ export const FilterRow = ({
       <VisibilityControl
         allUnchecked={allUnchecked}
         className={'filter-row__icon'}
-        IconComponent={VisibilityIcon}
+        IconComponent={Icon}
         id={id}
         isChecked={checked}
         kind={kind}

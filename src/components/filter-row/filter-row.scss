@@ -41,20 +41,20 @@
 
 .filter-row--unchecked {
   // Fade row text when unchecked
-  .filter-row__label--kind-filter {
+  .row-text__label--kind-filter {
     opacity: 0.55;
   }
 
   // Brighter row text when unchecked and hovered
   &:hover {
-    .filter-row__label--kind-filter {
+    .row-text__label--kind-filter {
       opacity: 0.8;
     }
   }
 
   // Bright row text when all unchecked
   .pipeline-nodelist__group--all-unchecked & {
-    .filter-row__label--kind-filter {
+    .row-text__label--kind-filter {
       opacity: 1;
     }
   }

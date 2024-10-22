@@ -79,12 +79,12 @@ $placeholder-fade: 120px;
   transform: translateY(-1px);
 
   .pipeline-nodelist__row__text,
-  .filter-row__text {
+  .row-text {
     position: relative;
     opacity: 0.65;
   }
 
-  .pipeline-nodelist__row__text .pipeline-nodelist__row__label {
+  .row-text .row-text__label {
     font-size: 1.3em;
   }
 }
