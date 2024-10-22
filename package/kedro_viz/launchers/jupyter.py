@@ -16,9 +16,9 @@ from IPython.display import HTML, display
 from kedro.framework.project import PACKAGE_NAME
 from watchfiles import run_process
 
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
-from kedro_viz.utils import file_extension_filter
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _DATABRICKS_HOST = "0.0.0.0"
@@ -153,7 +153,7 @@ def run_viz(  # pylint: disable=too-many-locals
         run_process_kwargs = {
             "target": run_server,
             "kwargs": run_server_kwargs,
-            "watch_filter": file_extension_filter,
+            "watch_filter": AutoreloadFileFilter(),
         }
         viz_process = process_context.Process(
             target=run_process,

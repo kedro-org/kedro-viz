@@ -9,13 +9,13 @@ from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api.rest.responses import save_api_responses_to_fs
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
-from kedro_viz.utils import file_extension_filter
 
 DEV_PORT = 4142
 
@@ -165,10 +165,12 @@ if __name__ == "__main__":  # pragma: no cover
             "port": args.port,
             "project_path": str(project_path),
         },
-        "watch_filter": file_extension_filter,
+        "watch_filter": AutoreloadFileFilter(),
     }
 
-    viz_process = multiprocessing.Process(
+    process_context = multiprocessing.get_context("spawn")
+
+    viz_process = process_context.Process(
         target=run_process,
         daemon=False,
         args=run_process_args,
