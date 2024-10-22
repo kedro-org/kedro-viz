@@ -10,6 +10,7 @@ include = [
 select = [
     "I", # Isort
     "B", # Bugbear
+    "BLE", # Blind exceptions
     "PL", # Pylint
     "C90", # Mccabe complexity
     "E", # Pycodestyle errors
