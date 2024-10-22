@@ -16,6 +16,7 @@ select = [
     "E", # Pycodestyle errors
     "F", # Pyflakes
     "W", # Pycodestyle warnings
+    "N", # PEP8-compliant object names
 ]
 ignore = [
     "E203",
@@ -45,3 +46,15 @@ max-complexity = 18
 
 [lint.pylint]
 max-args = 12
+
+[lint.pep8-naming]
+extend-ignore-names = [
+    "ServiceRequestError",
+    "mock_DeployerFactory",
+    "Session",
+    "WaitForException",
+    "displayHTML",
+    "nodeId*",
+    "pipelineId*",
+    "*_None_*",
+]

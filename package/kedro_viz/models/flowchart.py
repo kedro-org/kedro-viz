@@ -165,7 +165,6 @@ class GraphNode(BaseModel, abc.ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_data_node(
         cls,
         dataset_id: str,
@@ -218,7 +217,6 @@ class GraphNode(BaseModel, abc.ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_parameters_node(
         cls,
         dataset_id: str,
