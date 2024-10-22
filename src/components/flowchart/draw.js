@@ -71,16 +71,26 @@ export const drawLayers = function () {
  */
 export const drawLayerNames = function () {
   const {
-    graphSize,
+    chartSize,
     layers,
+    orientation
   } = this.props;
 
-  const layerNamePosition = graphSize?.max?.y || 0;
+
+  // Calculate the layer name position based on orientation
+  const layerNamePosition = orientation
+    ? chartSize.height - 100 || 0  // Vertical: position based on height
+    : chartSize.sidebarWidth || 0;  // Horizontal: position based on sidebar width
+
+  // Apply the correct translation based on orientation
+  const transformValue = orientation
+    ? `translateY(${layerNamePosition}px)`  // Vertical: use translateY
+    : `translateX(${layerNamePosition}px)`;  // Horizontal: use translateX
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
     .duration(this.DURATION)
-    .style('transform', `translateY(${layerNamePosition}px)`);
+    .style('transform', transformValue);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')

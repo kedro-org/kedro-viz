@@ -118,6 +118,12 @@ export const routing = ({
         targetX = nodeLeft(nextNode) - offsetX;   // Left side of the next node
         targetY = nodeTop(nextNode) - spaceY;     // Above the next node
       } 
+      // else if (orientation === 'left-to-right') {
+      //   sourceX = nodeTop(node);      // Right side of the current node
+      //   sourceY = nodeLeft(node) ;         // Above the current node
+      //   targetX = nodeBottom(nextNode);   // Left side of the next node
+      //   targetY = nodeLeft(nextNode);     // Above the next node
+      // }
 
       // Calculate the nearest point using the computed source and target positions
       const candidatePoint = nearestOnLine(

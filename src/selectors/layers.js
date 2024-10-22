@@ -3,13 +3,14 @@ import { getVisibleLayerIDs } from './disabled';
 
 const getGraph = (state) => state.graph;
 const getLayerName = (state) => state.layer.name;
+const getOrientation = (state) => state.textLabels;
 
 /**
  * Get layer positions
  */
 export const getLayers = createSelector(
-  [getGraph, getVisibleLayerIDs, getLayerName],
-  ({ nodes, size }, layerIDs, layerName) => {
+  [getGraph, getVisibleLayerIDs, getLayerName, getOrientation],
+  ({ nodes, size }, layerIDs, layerName, orientation) => {
     if (!nodes || !size || !nodes.length || !layerIDs.length) {
       return [];
     }
@@ -17,22 +18,35 @@ export const getLayers = createSelector(
 
     const bounds = {};
 
+    // Calculate the bounds for each layer based on node positions
     for (const node of nodes) {
       const layer = node.nearestLayer || node.layer;
 
       if (layer) {
         const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
 
-        if (node.x - node.width < bound[0]) {
-          bound[0] = node.x - node.width;
-        }
+        if (orientation) { // Vertical orientation (when true)
+          if (node.x - node.width < bound[0]) {
+            bound[0] = node.x - node.width;
+          }
 
-        if (node.x + node.width > bound[1]) {
-          bound[1] = node.x + node.width;
+          if (node.x + node.width > bound[1]) {
+            bound[1] = node.x + node.width;
+          }
+        
+        } else { // Horizontal orientation (when false)
+          if (node.y - node.height < bound[0]) {
+            bound[0] = node.y - node.height;
+          }
+
+          if (node.y + node.height > bound[1]) {
+            bound[1] = node.y + node.height;
+          }
         }
       }
     }
 
+    // Calculate the layer positions based on the orientation
     return layerIDs.map((id, i) => {
       const currentBound = bounds[id] || [0, 0];
       const prevBound = bounds[layerIDs[i - 1]] || [
@@ -45,16 +59,28 @@ export const getLayers = createSelector(
       ];
       const start = (prevBound[1] + currentBound[0]) / 2;
       const end = (currentBound[1] + nextBound[0]) / 2;
-      const rectWidth = Math.max(width, height) * 5;
+      const rectSize = Math.max(width, height) * 5; // Adjust size calculation
 
-      return {
-        id,
-        name: layerName[id],
-        y: (rectWidth - width) / -2,
-        x: start,
-        height: rectWidth,
-        width: Math.max(end - start, 0),
-      };
+      // Return positions based on boolean orientation
+      if (orientation) { // Vertical layout when orientation is true
+        return {
+          id,
+          name: layerName[id],
+          x: start, // Horizontal layout moves along the x-axis
+          y: (rectSize - height) / -2, // Centered along y-axis
+          width: Math.max(end - start, 0),
+          height: rectSize,
+        };
+      } else { // Horizontal layout when orientation is false
+        return {
+          id,
+          name: layerName[id],
+          y: start, // Vertical layout moves along the y-axis
+          x: (rectSize - width) / -2, // Centered along x-axis
+          height: Math.max(end - start, 0),
+          width: rectSize,
+        };
+      }
     });
   }
 );

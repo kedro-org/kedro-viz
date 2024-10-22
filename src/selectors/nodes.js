@@ -24,7 +24,7 @@ const getHoveredNode = (state) => state.node.hovered;
 const getIsPrettyName = (state) => state.isPrettyName;
 const getTagActive = (state) => state.tag.active;
 const getModularPipelineActive = (state) => state.modularPipeline.active;
-const getTextLabels = (state) => state.textLabels;
+const getTextLabels = (state) => true;
 const getNodeTypeDisabled = (state) => state.nodeType.disabled;
 const getClickedNode = (state) => state.node.clicked;
 const getEdgeIDs = (state) => state.edge.ids;
