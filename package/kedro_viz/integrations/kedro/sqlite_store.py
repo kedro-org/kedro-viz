@@ -1,7 +1,7 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
 
-# pylint: disable=no-member, broad-exception-caught
+# pylint: disable=no-member
 
 import getpass
 import json
@@ -87,7 +87,7 @@ class SQLiteStore(BaseSessionStore):
                     value["branch"] = branch.name
                 except ImportError as exc:  # pragma: no cover
                     logger.warning("%s:%s", exc.__class__.__name__, exc.msg)
-                except Exception as exc:  # pragma: no cover
+                except Exception as exc:  # noqa: BLE001 # pragma: no cover
                     logger.warning("Something went wrong when fetching git metadata.")
                     logger.warning(exc)
 

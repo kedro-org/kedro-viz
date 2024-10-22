@@ -112,7 +112,7 @@ class TrackingDatasetModel:
                 }
             else:
                 self.runs[run_id] = self.dataset.preview()  # type: ignore
-        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "'%s' with version '%s' could not be loaded. Full exception: %s: %s",
                 self.dataset_name,

@@ -46,7 +46,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
             stats = json.load(stats_file)
             return stats
 
-    except Exception as exc:  # pylint: disable=broad-exception-caught
+    except Exception as exc:  # noqa: BLE001
         logger.warning(
             "Unable to get dataset statistics from project path %s : %s",
             project_path,

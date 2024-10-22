@@ -1,4 +1,4 @@
-# pylint: disable=broad-exception-caught, protected-access
+# pylint: disable=protected-access
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
@@ -37,7 +37,7 @@ class DatasetStatsHook:
         # Temporary try/except block so the Kedro develop branch can work with Viz.
         try:
             self.datasets = catalog._datasets
-        except Exception:  # pragma: no cover
+        except Exception:  # noqa: BLE001 # pragma: no cover
             # Support for Kedro 0.18.x
             self.datasets = catalog._data_sets  # type: ignore[attr-defined]
 
@@ -93,7 +93,7 @@ class DatasetStatsHook:
                 }
                 json.dump(sorted_stats_data, file)
 
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "Unable to write dataset statistics for the pipeline: %s", exc
             )
@@ -129,7 +129,7 @@ class DatasetStatsHook:
                 dataset_name,
                 exc,
             )
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "[hook: after_dataset_saved] Unable to create statistics for the dataset %s : %s",
                 dataset_name,
@@ -154,7 +154,7 @@ class DatasetStatsHook:
             )
             return dataset._fs.size(file_path)
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "Unable to get file size for the dataset %s: %s", dataset, exc
             )

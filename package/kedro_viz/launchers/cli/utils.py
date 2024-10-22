@@ -96,8 +96,7 @@ def create_shareableviz_process(
                 "you have write access to the current directory",
                 "red",
             )
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:  # noqa: BLE001 # pragma: no cover
         display_cli_message(f"ERROR: Failed to build/deploy Kedro-Viz : {exc} ", "red")
 
     finally:
@@ -150,8 +149,7 @@ def _load_and_deploy_viz(
         else FileNotFoundError
     ):  # pragma: no cover
         exception_queue.put(Exception("The specified bucket does not exist"))
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:  # noqa: BLE001 # pragma: no cover
         exception_queue.put(exc)
     finally:
         process_completed.value = 1

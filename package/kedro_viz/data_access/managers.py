@@ -87,8 +87,7 @@ class DataAccessManager:
             for dataset_name in datasets:
                 try:
                     catalog._get_dataset(dataset_name, suggest=False)
-                # pylint: disable=broad-except
-                except Exception:  # pragma: no cover
+                except Exception:  # noqa: BLE001 # pragma: no cover
                     continue
 
     def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):

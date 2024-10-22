@@ -82,8 +82,7 @@ class CatalogRepository:
         # Temporary try/except block so the Kedro develop branch can work with Viz.
         try:
             datasets = self._catalog._data_sets
-        # pylint: disable=broad-exception-caught
-        except Exception:  # pragma: no cover
+        except Exception:  # noqa: BLE001 # pragma: no cover
             datasets = self._catalog._datasets
 
         # Support for Kedro 0.18.x
