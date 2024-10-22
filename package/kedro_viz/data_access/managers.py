@@ -466,8 +466,7 @@ class DataAccessManager:
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
         )
 
-    # pylint: disable=too-many-locals,too-many-branches
-    def create_modular_pipelines_tree_for_registered_pipeline(
+    def create_modular_pipelines_tree_for_registered_pipeline(  # noqa: PLR0912
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
         """Create the modular pipelines tree for a specific registered pipeline.

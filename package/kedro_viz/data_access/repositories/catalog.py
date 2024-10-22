@@ -52,8 +52,7 @@ class CatalogRepository:
             )
 
     @property
-    def layers_mapping(self):
-        # pylint: disable=too-many-branches
+    def layers_mapping(self):  # noqa: PLR0912
         """Return layer mapping: dataset_name -> layer it belongs to in the catalog
         From kedro-datasets 1.3.0 onwards, the 'layers' attribute is defined inside the 'metadata'
         under 'kedro-viz' plugin.
