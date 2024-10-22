@@ -9,7 +9,38 @@ include = [
 [lint]
 select = [
     "I", # Isort
+    "B", # Bugbear
+    "PL", # Pylint
+    "C90", # Mccabe complexity
+    "E", # Pycodestyle errors
+    "F", # Pyflakes
+    "W", # Pycodestyle warnings
 ]
+ignore = [
+    "E203",
+    "E231",
+    "E266",
+    "E501",
+    "F401",
+    "B030", # Except handler is something other than exception class
+    "C405", # Inconsistent definition of literal collections
+    "PLR2004", # Magic values in comparisons
+]
+
+[lint.per-file-ignores]
+"*/cli_steps.py" = ["B011"] # assert False instead of AssertionError
+"*/base_deployer.py" = ["B024"] # ABCs without abstract methods
+"kedro_viz/__init__.py" = ["B028"] # Risky usage of positional arguments
+"tests/test_integrations/test_sqlite_store.py" = ["C401"] # Unnecessary generators
+"kedro_viz/data_access/repositories/tags.py" = ["C413"] # Unnecessary list call around sorted()
+"kedro_viz/data_access/repositories/catalog.py" = ["PLW2901"] # Overwrite for loop variable inside the loop
+"features/steps/sh_run.py" = ["PLW1510"] # `subprocess.run` without explicit `check` argument
 
 [lint.isort]
 known-first-party = ["kedro_viz"]
+
+[lint.mccabe]
+max-complexity = 18
+
+[lint.pylint]
+max-args = 12
