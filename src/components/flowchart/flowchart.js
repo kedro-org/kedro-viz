@@ -358,8 +358,8 @@ export class FlowChart extends Component {
     // Update layer label y positions
     if (this.el.layerNames) {
       this.el.layerNames.style('transform', (d) => {
-        const updateY = y + (d.y + d.height / 2) * scale;
-        return `translateY(${updateY}px)`;
+        const updateY = x + (d.x + d.width/6) * scale;
+        return `translateX(${updateY}px)`;
       });
     }
 

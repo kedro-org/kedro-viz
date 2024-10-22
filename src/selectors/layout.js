@@ -19,7 +19,7 @@ const getVisibleCode = (state) => state.visible.code;
 const getIgnoreLargeWarning = (state) => state.ignoreLargeWarning;
 const getGraphHasNodes = (state) => Boolean(state.graph?.nodes?.length);
 const getChartSizeState = (state) => state.chartSize;
-const getOrient = (state) => state.layer.visible;
+const getOrient = (state) => state.textLabels;
 
 /**
  * Show the large graph warning only if there are sufficient nodes + edges,

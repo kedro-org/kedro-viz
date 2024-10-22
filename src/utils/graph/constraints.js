@@ -22,11 +22,9 @@ export const rowConstraint = {
 };
 
 /**
- * Layout constraint in Y for separating layers
+ * Layout constraint for separating layers
  */
 export const layerConstraint = {
-  property: 'y',
-
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),

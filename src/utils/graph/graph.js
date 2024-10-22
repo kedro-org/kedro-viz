@@ -12,7 +12,7 @@ const defaultOptions = {
   layout: {
     spaceX: 14,
     spaceY: 110,
-    layerSpaceY: 55,
+    layerSpaceY: 100,
     spreadX: 2.2,
     padding: 100,
     iterations: 25,

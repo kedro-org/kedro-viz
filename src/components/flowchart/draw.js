@@ -71,14 +71,16 @@ export const drawLayers = function () {
  */
 export const drawLayerNames = function () {
   const {
-    chartSize: { sidebarWidth = 0 },
+    graphSize,
     layers,
   } = this.props;
+
+  const layerNamePosition = graphSize?.max?.y || 0;
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
     .duration(this.DURATION)
-    .style('transform', `translateX(${sidebarWidth}px)`);
+    .style('transform', `translateY(${layerNamePosition}px)`);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')

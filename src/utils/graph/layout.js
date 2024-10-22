@@ -140,7 +140,7 @@ const createLayerConstraints = (nodes, layers, constants) => {
         base: layerConstraint,
         a: intermediary,
         b: node,
-        // property: constants.coordSecondary
+        property: constants.coordSecondary
       });
     }
 
@@ -150,7 +150,7 @@ const createLayerConstraints = (nodes, layers, constants) => {
         base: layerConstraint,
         a: node,
         b: intermediary,
-        // property: constants.coordSecondary
+        property: constants.coordSecondary
       });
     }
   }
