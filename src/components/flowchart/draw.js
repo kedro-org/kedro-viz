@@ -70,22 +70,17 @@ export const drawLayers = function () {
  * Render layer name labels
  */
 export const drawLayerNames = function () {
-  const {
-    chartSize,
-    layers,
-    orientation
-  } = this.props;
-
+  const { chartSize, layers, orientation } = this.props;
 
   // Calculate the layer name position based on orientation
   const layerNamePosition = orientation
-    ? chartSize.height - 100 || 0  // Vertical: position based on height
-    : chartSize.sidebarWidth || 0;  // Horizontal: position based on sidebar width
+    ? chartSize.height - 100 || 0 // Vertical: position based on height
+    : chartSize.sidebarWidth || 0; // Horizontal: position based on sidebar width
 
   // Apply the correct translation based on orientation
   const transformValue = orientation
-    ? `translateY(${layerNamePosition}px)`  // Vertical: use translateY
-    : `translateX(${layerNamePosition}px)`;  // Horizontal: use translateX
+    ? `translateY(${layerNamePosition}px)` // Vertical: use translateY
+    : `translateX(${layerNamePosition}px)`; // Horizontal: use translateX
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')

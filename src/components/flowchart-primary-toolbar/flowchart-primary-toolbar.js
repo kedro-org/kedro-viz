@@ -66,9 +66,10 @@ export const FlowchartPrimaryToolbar = ({
           ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
           className={'pipeline-menu-button--layers'}
           dataTest={`sidebar-flowchart-layers-btn-${visibleLayers}`}
+          disabled={disableLayerBtn}
           icon={LayersIcon}
           labelText={`${visibleLayers ? 'Hide' : 'Show'} layers`}
-          onClick={() => onToggleLayers(!disableLayerBtn)}
+          onClick={() => onToggleLayers(!visibleLayers)}
           visible={display.layerBtn}
         />
         <IconButton
@@ -102,7 +103,7 @@ export const FlowchartPrimaryToolbar = ({
 };
 
 export const mapStateToProps = (state) => ({
-  disableLayerBtn: state.layer.visible,
+  disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   visible: state.visible,
   display: state.display,
