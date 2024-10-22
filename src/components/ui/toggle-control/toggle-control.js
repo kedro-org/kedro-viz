@@ -5,14 +5,11 @@ import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 import './toggle-control.scss';
 
 export const ToggleControl = ({
-  // allUnchecked,
   className,
-  disabled,
   focusChecked,
   IconComponent,
   id,
   isChecked,
-  // children,
   kind,
   name,
   onChange,
@@ -28,11 +25,8 @@ export const ToggleControl = ({
     'toggle-control--icon',
     `toggle-control--icon--kind-${kind}`,
     {
-      // 'toggle-control--icon--parent': Boolean(children),
-      // 'toggle-control--icon--child': Boolean(children),
       'toggle-control--icon--checked': isChecked,
       'toggle-control--icon--unchecked': !isChecked,
-      // 'toggle-control--icon--all-unchecked': allUnchecked,
       'toggle-control--icon--focus-checked': focusChecked,
     }
   );
@@ -41,7 +35,6 @@ export const ToggleControl = ({
     'toggle-control',
     `toggle-control--kind-${kind}`,
     {
-      'toggle-control--disabled': disabled,
       'toggle-control--selected': selected,
     }
   );
@@ -66,7 +59,6 @@ export const ToggleControl = ({
         data-test={dataTestValue}
         type="checkbox"
         checked={isChecked}
-        disabled={disabled}
         name={name}
         onChange={onChange}
         data-icon-type={dataIconType}

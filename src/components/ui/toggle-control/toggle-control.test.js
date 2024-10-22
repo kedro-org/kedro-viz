@@ -9,12 +9,6 @@ describe('ToggleControl', () => {
     onToggleHoveredFocusMode: jest.fn(),
   };
 
-  it('applies "disabled" class when disabled is true', () => {
-    const props = { ...baseProps, disabled: true };
-    const wrapper = shallow(<ToggleControl {...props} />);
-    expect(wrapper.hasClass('toggle-control--disabled')).toBe(true);
-  });
-
   it('applies correct class for kind prop', () => {
     const kinds = ['modularPipeline', 'data', 'task'];
     kinds.forEach((kind) => {

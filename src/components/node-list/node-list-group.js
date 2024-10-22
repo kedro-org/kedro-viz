@@ -38,7 +38,6 @@ export const NodeListGroup = ({
         <FilterRow
           allUnchecked={allUnchecked}
           checked={checked}
-          disabled={disabledGroup}
           id={id}
           invisibleIcon={invisibleIcon}
           kind={kind}
@@ -54,7 +53,6 @@ export const NodeListGroup = ({
             aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
             className={classnames('pipeline-type-group-toggle', {
               'pipeline-type-group-toggle--alt': collapsed,
-              'pipeline-type-group-toggle--disabled': disabledGroup,
             })}
             disabled={disabledGroup}
             onClick={() => onToggleCollapsed(id)}
