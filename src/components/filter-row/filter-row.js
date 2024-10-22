@@ -2,8 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
-import IndicatorIcon from '../icons/indicator';
-import { VisibilityControl } from '../ui/visibility-control/visibility-control';
+import { ToggleControl } from '../ui/toggle-control/toggle-control';
 import { RowText } from '../ui/row-text/row-text';
 
 import './filter-row.scss';
@@ -50,7 +49,7 @@ export const FilterRow = ({
       <span onClick={onClick} className={'filter-row__count'}>
         {count}
       </span>
-      <VisibilityControl
+      <ToggleControl
         allUnchecked={allUnchecked}
         className={'filter-row__icon'}
         IconComponent={Icon}

@@ -2,17 +2,17 @@ import React from 'react';
 import classnames from 'classnames';
 import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
-import './visibility-control.scss';
+import './toggle-control.scss';
 
-export const VisibilityControl = ({
-  allUnchecked,
+export const ToggleControl = ({
+  // allUnchecked,
   className,
   disabled,
   focusChecked,
   IconComponent,
   id,
   isChecked,
-  isParent,
+  // children,
   kind,
   name,
   onChange,
@@ -25,29 +25,29 @@ export const VisibilityControl = ({
 
   const iconClassNames = classnames(
     className,
-    'visibility-control--icon',
-    `visibility-control--icon--kind-${kind}`,
+    'toggle-control--icon',
+    `toggle-control--icon--kind-${kind}`,
     {
-      'visibility-control--icon--parent': isParent,
-      'visibility-control--icon--child': !isParent,
-      'visibility-control--icon--checked': isChecked,
-      'visibility-control--icon--unchecked': !isChecked,
-      'visibility-control--icon--all-unchecked': allUnchecked,
-      'visibility-control--icon--focus-checked': focusChecked,
+      // 'toggle-control--icon--parent': Boolean(children),
+      // 'toggle-control--icon--child': Boolean(children),
+      'toggle-control--icon--checked': isChecked,
+      'toggle-control--icon--unchecked': !isChecked,
+      // 'toggle-control--icon--all-unchecked': allUnchecked,
+      'toggle-control--icon--focus-checked': focusChecked,
     }
   );
 
   const labelClassNames = classnames(
-    'visibility-control',
-    `visibility-control--kind-${kind}`,
+    'toggle-control',
+    `toggle-control--kind-${kind}`,
     {
-      'visibility-control--disabled': disabled,
-      'visibility-control--selected': selected,
+      'toggle-control--disabled': disabled,
+      'toggle-control--selected': selected,
     }
   );
 
   const dataTestValue = getDataTestAttribute(
-    'visibility-control',
+    'toggle-control',
     kind === 'focus' ? 'focusMode' : 'visible',
     name
   );
@@ -62,7 +62,7 @@ export const VisibilityControl = ({
     >
       <input
         id={id}
-        className="visibility-control__checkbox"
+        className="toggle-control__checkbox"
         data-test={dataTestValue}
         type="checkbox"
         checked={isChecked}

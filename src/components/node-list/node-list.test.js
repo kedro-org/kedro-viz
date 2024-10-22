@@ -233,7 +233,7 @@ describe('NodeList', () => {
 
   describe('checkboxes on tag filter items', () => {
     const checkboxByName = (wrapper, text) =>
-      wrapper.find(`.visibility-control__checkbox[name="${text}"]`);
+      wrapper.find(`.toggle-control__checkbox[name="${text}"]`);
 
     const rowByName = (wrapper, text) =>
       wrapper.find(`.node-list-tree-item-row[title="${text}"]`);
@@ -328,7 +328,7 @@ describe('NodeList', () => {
           <NodeList />
         </MemoryRouter>
       );
-      const uncheckedClass = 'visibility-control--icon--unchecked';
+      const uncheckedClass = 'toggle-control--icon--unchecked';
 
       expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
         true
@@ -505,7 +505,7 @@ describe('NodeList', () => {
 
     it('After applying any filter filter button should not be disabled', () => {
       const nodeTypeFilter = wrapper.find(
-        `.visibility-control__checkbox[name="Datasets"]`
+        `.toggle-control__checkbox[name="Datasets"]`
       );
       nodeTypeFilter.simulate('click');
 

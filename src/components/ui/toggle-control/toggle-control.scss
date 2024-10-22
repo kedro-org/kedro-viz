@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as colors;
 @use '../../node-list/styles/variables';
 
-.visibility-control {
+.toggle-control {
   cursor: pointer;
 
   &--kind-element {
@@ -24,21 +24,21 @@
   variables.$row-selected-dark
 );
 
-.visibility-control--selected::before {
+.toggle-control--selected::before {
   opacity: 1;
 }
 
-.visibility-control__checkbox {
+.toggle-control__checkbox {
   @include mixins.screenReaderOnly;
 }
 
-.visibility-control--icon {
+.toggle-control--icon {
   width: variables.$toggle-icon-size;
   height: variables.$toggle-icon-size;
   padding: variables.$toggle-icon-padding;
   border-radius: 50%;
 
-  .visibility-control__checkbox:focus + & {
+  .toggle-control__checkbox:focus + & {
     outline: none;
 
     [data-whatintent='keyboard'] & {
@@ -67,7 +67,7 @@ $element-icon-opacity-0: 0;
 $element-icon-opacity-1: 0.55;
 $element-icon-opacity-2: 1;
 
-.visibility-control--icon--kind-element {
+.toggle-control--icon--kind-element {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
@@ -79,7 +79,7 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.visibility-control--icon--focus-checked {
+    &.toggle-control--icon--focus-checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
@@ -97,14 +97,14 @@ $element-icon-opacity-2: 1;
       opacity: $element-icon-opacity-1;
     }
 
-    &.visibility-control--icon--checked {
+    &.toggle-control--icon--checked {
       > * {
         opacity: $element-icon-opacity-2;
       }
     }
   }
 
-  &.visibility-control--icon--focus-checked {
+  &.toggle-control--icon--focus-checked {
     > * {
       opacity: $element-icon-opacity-2;
     }
@@ -135,15 +135,15 @@ $filter-icon-opacity-1: 0.55;
 $filter-icon-opacity-2: 0.9;
 $filter-icon-opacity-3: 1;
 
-.visibility-control--icon--kind-filter {
+.toggle-control--icon--kind-filter {
   // Change opacity on the SVG's child elements instead, in order to
   // maintain 100% opacity outline on parent SVG on keyboard focus
   > * {
     opacity: $filter-icon-opacity-1;
   }
 
-  &.visibility-control--icon--all-unchecked,
-  .pipeline-nodelist__heading &.visibility-control--icon--all-unchecked > * {
+  &.toggle-control--icon--all-unchecked,
+  .pipeline-nodelist__heading &.toggle-control--icon--all-unchecked > * {
     > * {
       opacity: $filter-icon-opacity-0;
     }
@@ -154,9 +154,9 @@ $filter-icon-opacity-3: 1;
       opacity: $filter-icon-opacity-1;
     }
 
-    &.visibility-control--icon--parent:hover,
-    &.visibility-control--icon--checked,
-    &.visibility-control--icon--child.visibility-control--icon--checked {
+    &.toggle-control--icon--parent:hover,
+    &.toggle-control--icon--checked,
+    &.toggle-control--icon--child.toggle-control--icon--checked {
       > * {
         opacity: $filter-icon-opacity-2; // Increase opacity for checked or parent hover
       }
@@ -168,25 +168,25 @@ $filter-icon-opacity-3: 1;
       opacity: $filter-icon-opacity-2; // Increase opacity on keyboard focus
     }
 
-    &.visibility-control--icon--checked {
+    &.toggle-control--icon--checked {
       > * {
         opacity: $filter-icon-opacity-3; // Further increase for checked on focus
       }
     }
   }
 
-  &.visibility-control--icon--checked {
+  &.toggle-control--icon--checked {
     fill: var(--color-nodelist-filter-indicator-on);
     stroke: var(--color-nodelist-filter-indicator-on);
   }
 
-  &.visibility-control--icon--unchecked {
+  &.toggle-control--icon--unchecked {
     fill: none;
     stroke: var(--color-nodelist-filter-indicator-off);
   }
 
-  .node-list-tree-item-row:hover &.visibility-control--icon--all-unchecked,
-  &.visibility-control--icon--parent {
+  .node-list-tree-item-row:hover &.toggle-control--icon--all-unchecked,
+  &.toggle-control--icon--parent {
     fill: colors.$blue-300;
     stroke: colors.$blue-300;
   }
