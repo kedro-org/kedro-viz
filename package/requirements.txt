@@ -15,4 +15,5 @@ secure>=0.3.0
 sqlalchemy>=1.4, <3
 strawberry-graphql>=0.192.0, <1.0
 uvicorn[standard]>=0.30.0, <1.0
-watchgod>=0.8.2, <1.0
+watchfiles>=0.24.0
+pathspec>=0.12.1
