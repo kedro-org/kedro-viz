@@ -5,19 +5,6 @@
 @use './section';
 @use './variables';
 
-// Mixin for the ::after pseudo-element
-@mixin after-shadow($left, $width, $color) {
-  &::after {
-    content: '';
-    position: absolute;
-    left: $left;
-    top: 0;
-    height: 100%; // Match the height of the parent
-    width: $width;
-    background-color: $color;
-  }
-}
-
 .kui-theme--light {
   --color-nodelist-row-active: #{variables.$row-active-light};
   --color-nodelist-row-selected: #{variables.$row-selected-light};
@@ -116,23 +103,16 @@
       position: relative;
 
       // Apply the after-shadow mixin to ensure the background covers the full width on hover
-      @include after-shadow(-40px, 50px, var(--color-nodelist-row-active));
+      &::after {
+        content: '';
+        position: absolute;
+        left: $left;
+        top: 0;
+        height: 100%; // Match the height of the parent
+        width: $width;
+        background-color: $color;
+      }
     }
-  }
-}
-
-// Focused state for the pipeline tree item
-.pipeline-treeItem__root--overwrite--focused {
-  .MuiTreeItem-content,
-  .MuiTreeItem-group {
-    background-color: var(
-      --color-nodelist-row-active
-    ); // Change background color
-
-    position: relative; // Ensure .MuiTreeItem-group is positioned relative
-
-    // Apply the after-shadow mixin to ensure the background covers the full width on hover
-    @include after-shadow(-40px, 50px, var(--color-nodelist-row-active));
   }
 }
 

@@ -48,6 +48,10 @@
   height: variables.$row-icon-size;
   fill: var(--color-text);
 
+  &.toggle-control--icon--focus-checked {
+    fill: var.$blue-300;
+  }
+
   &--disabled > * {
     opacity: 0.1;
   }
