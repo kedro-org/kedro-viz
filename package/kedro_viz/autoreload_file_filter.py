@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional, Set
 
 import pathspec
+from pathspec import PathSpec
 from watchfiles import Change, DefaultFilter
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,7 @@ class AutoreloadFileFilter(DefaultFilter):
         try:
             with open(gitignore_path, "r", encoding="utf-8") as gitignore_file:
                 ignore_patterns = gitignore_file.read().splitlines()
-            self.gitignore_spec = pathspec.PathSpec.from_lines(
+            self.gitignore_spec: Optional[PathSpec] = pathspec.PathSpec.from_lines(
                 "gitwildmatch", ignore_patterns
             )
         except FileNotFoundError:
