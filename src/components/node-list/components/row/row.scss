@@ -26,11 +26,6 @@
     }
   }
 
-  &--active,
-  &--visible:hover {
-    background-color: var(--color-nodelist-row-active);
-  }
-
   &--selected,
   &--visible#{&}--selected {
     // Additional selector required to increase specificity to override previous rule

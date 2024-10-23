@@ -38,7 +38,6 @@ const Row = ({
   rowType,
   selected,
   type,
-  visible,
   visibleIcon = VisibleIcon,
 }) => {
   const isModularPipeline = type === 'modularPipeline';
@@ -49,11 +48,9 @@ const Row = ({
   return (
     <form
       className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
-        'row--visible': visible,
         'row--active': active,
         'row--selected': selected || (!isSlicingPipelineApplied && highlight),
         'row--disabled': disabled,
-        'row--unchecked': !isChecked,
         'row--overwrite': !(active || selected),
       })}
       title={name}
@@ -116,12 +113,4 @@ const Row = ({
   );
 };
 
-export const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  active:
-    typeof ownProps.active !== 'undefined'
-      ? ownProps.active
-      : getNodeActive(state)[ownProps.id] || false,
-});
-
-export default connect(mapStateToProps)(Row);
+export default Row;

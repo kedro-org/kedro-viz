@@ -1,6 +1,6 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { Row } from './row';
+import Row from './row';
+import { setup } from '../../../../utils/state.mock';
 
 // Mock props
 const mockProps = {
@@ -21,34 +21,51 @@ const mockProps = {
 
 describe('Row Component', () => {
   it('renders without crashing', () => {
-    const wrapper = mount(<Row {...mockProps} />);
-    expect(wrapper.find({ title: mockProps.name }).exists()).toBe(true);
+    expect(() => setup.mount(<Row {...mockProps} />)).not.toThrow();
   });
 
-  it('handles mouse enter and leave events', () => {
-    const wrapper = mount(<Row {...mockProps} />);
+  it('handles mouseenter events', () => {
+    const wrapper = setup.mount(<Row {...mockProps} />);
     const nodeRow = () => wrapper.find('.row');
-
     nodeRow().simulate('mouseenter');
-    expect(mockProps.onMouseEnter).toHaveBeenCalled();
-    nodeRow().simulate('mouseleave');
-    expect(mockProps.onMouseLeave).toHaveBeenCalled();
+    expect(mockProps.onMouseEnter.mock.calls.length).toEqual(1);
   });
 
-  it('toggles visibility correctly', () => {
-    let wrapper = mount(<Row {...mockProps} />);
+  it('handles mouseleave events', () => {
+    const wrapper = setup.mount(<Row {...mockProps} />);
     const nodeRow = () => wrapper.find('.row');
-
-    expect(nodeRow().hasClass('row--visible')).toBe(true);
-    wrapper = mount(<Row {...mockProps} visible={false} />);
-    expect(nodeRow().hasClass('row--visible')).toBe(false);
+    nodeRow().simulate('mouseleave');
+    expect(mockProps.onMouseLeave.mock.calls.length).toEqual(1);
   });
 
-  it('updates class when the "selected" prop changes', () => {
-    let wrapper = mount(<Row {...mockProps} />);
-    expect(wrapper.find('.row').hasClass('row--selected')).toBe(false);
-    wrapper.setProps({ selected: true });
-    wrapper = wrapper.update();
+  it('applies the row--active class when active is true', () => {
+    const wrapper = setup.mount(<Row {...mockProps} active={true} />);
+    expect(wrapper.find('.row').hasClass('row--active')).toBe(true);
+  });
+
+  it('applies the row--selected class when selected is true', () => {
+    const wrapper = setup.mount(<Row {...mockProps} selected={true} />);
     expect(wrapper.find('.row').hasClass('row--selected')).toBe(true);
+  });
+
+  it('applies the row--selected class when highlight is true and isSlicingPipelineApplied is false', () => {
+    const wrapper = setup.mount(
+      <Row {...mockProps} highlight={true} isSlicingPipelineApplied={false} />
+    );
+    expect(wrapper.find('.row').hasClass('row--selected')).toBe(true);
+  });
+
+  it('applies the row--disabled class when disabled is true', () => {
+    const wrapper = setup.mount(<Row {...mockProps} disabled={true} />);
+    expect(wrapper.find('.row').hasClass('row--disabled')).toBe(true);
+  });
+
+  it('applies the overwrite class if not selected or active', () => {
+    const activeNodeWrapper = setup.mount(
+      <Row {...mockProps} selected={false} active={false} />
+    );
+    expect(activeNodeWrapper.find('.row').hasClass('row--overwrite')).toBe(
+      true
+    );
   });
 });

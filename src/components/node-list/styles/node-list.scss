@@ -81,12 +81,38 @@
   }
 }
 
+// Root class for overwriting styles of the pipeline tree item
 .pipeline-treeItem__root--overwrite {
+  position: relative;
+
   .Mui-selected {
-    background-color: transparent !important;
+    background-color: transparent !important; // Override default background color
   }
 
+  // // Style for tree item content
   .MuiTreeItem-content {
     padding: 0;
+  }
+
+  // When hovering over the tree item content, which represents the modular pipeline node
+  .MuiTreeItem-content:hover {
+    background-color: var(--color-nodelist-row-active);
+
+    // Change the color of the sibling .MuiTreeItem-group, which contains all nodes belonging to that modular pipeline
+    ~ .MuiTreeItem-group {
+      background-color: var(--color-nodelist-row-active);
+      position: relative;
+
+      // To create the background shadow on the left
+      &::after {
+        content: '';
+        position: absolute;
+        left: -40px;
+        top: 0;
+        height: 100%; // Match the height of the parent
+        width: 50px;
+        background-color: var(--color-nodelist-row-active);
+      }
+    }
   }
 }
