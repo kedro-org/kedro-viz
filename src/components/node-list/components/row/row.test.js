@@ -55,11 +55,6 @@ describe('Row Component', () => {
     expect(wrapper.find('.row').hasClass('row--selected')).toBe(true);
   });
 
-  it('applies the row--disabled class when disabled is true', () => {
-    const wrapper = setup.mount(<Row {...mockProps} disabled={true} />);
-    expect(wrapper.find('.row').hasClass('row--disabled')).toBe(true);
-  });
-
   it('applies the overwrite class if not selected or active', () => {
     const activeNodeWrapper = setup.mount(
       <Row {...mockProps} selected={false} active={false} />

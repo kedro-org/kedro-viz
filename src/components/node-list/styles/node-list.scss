@@ -106,14 +106,19 @@
       &::after {
         content: '';
         position: absolute;
-        left: $left;
+        left: -40px;
         top: 0;
         height: 100%; // Match the height of the parent
-        width: $width;
-        background-color: $color;
+        width: 50px;
+        background-color: var(--color-nodelist-row-active);
       }
     }
   }
+}
+
+// disable mouse events for the overwrite disabled class
+.pipeline-treeItem__root--overwrite--disabled {
+  pointer-events: none;
 }
 
 .pipeline-nodelist__elements-panel .MuiTreeItem-label {

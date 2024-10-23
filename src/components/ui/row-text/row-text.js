@@ -6,6 +6,7 @@ import './row-text.scss';
 
 export const RowText = ({
   dataTest,
+  disabled,
   faded,
   kind,
   label,
@@ -37,6 +38,7 @@ export const RowText = ({
           `row-text__label--kind-${kind}`,
           {
             'row-text__label--faded': faded,
+            'row-text__label--disabled': disabled,
           }
         )}
         dangerouslySetInnerHTML={{

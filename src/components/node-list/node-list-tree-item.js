@@ -21,6 +21,7 @@ const NodeListTreeItem = ({
   <TreeItem
     className={classnames('pipeline-treeItem__root--overwrite', {
       'pipeline-treeItem__root--overwrite--focused': data.focused,
+      'pipeline-treeItem__root--overwrite--disabled': data.disabled,
     })}
     key={data.id}
     nodeId={data.id}
