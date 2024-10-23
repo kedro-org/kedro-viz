@@ -1,3 +1,8 @@
+"""
+This module provides a custom file filter for autoreloading that filters out files based on allowed
+file extensions and patterns specified in a .gitignore file.
+"""
+
 import logging
 from pathlib import Path
 from typing import Optional, Set
@@ -19,8 +24,10 @@ class AutoreloadFileFilter(DefaultFilter):
     def __init__(self, base_path: Optional[Path] = None):
         """
         Initialize the AutoreloadFileFilter.
+
         Args:
-            base_path (Optional[Path]): The base path to set as the current working directory for the filter.
+            base_path (Optional[Path]): The base path to set as the current working directory
+                for the filter.
         """
         self.cwd = base_path or Path.cwd()
 
@@ -30,7 +37,7 @@ class AutoreloadFileFilter(DefaultFilter):
         # Load .gitignore patterns
         gitignore_path = self.cwd / ".gitignore"
         try:
-            with open(gitignore_path, "r") as gitignore_file:
+            with open(gitignore_path, "r", encoding="utf-8") as gitignore_file:
                 ignore_patterns = gitignore_file.read().splitlines()
             self.gitignore_spec = pathspec.PathSpec.from_lines(
                 "gitwildmatch", ignore_patterns
@@ -41,14 +48,16 @@ class AutoreloadFileFilter(DefaultFilter):
     def __call__(self, change: Change, path: str) -> bool:
         """
         Determine whether a file change should be processed.
+
         Args:
             change (Change): The type of change detected.
             path (str): The path to the file that changed.
+
         Returns:
             bool: True if the file should be processed, False otherwise.
         """
         if not super().__call__(change, path):
-            logger.debug(f"Filtered out by DefaultFilter: {path}")
+            logger.debug("Filtered out by DefaultFilter: %s", path)
             return False
 
         path_obj = Path(path)
@@ -57,23 +66,20 @@ class AutoreloadFileFilter(DefaultFilter):
         try:
             relative_path = path_obj.resolve().relative_to(self.cwd.resolve())
         except ValueError:
-            logger.debug(f"Path not relative to CWD: {path}")
+            logger.debug("Path not relative to CWD: %s", path)
             return False
 
         try:
-            if self.gitignore_spec and self.gitignore_spec.match_file(
-                str(relative_path)
-            ):
-                logger.debug(f"Filtered out by .gitignore: {relative_path}")
+            if self.gitignore_spec and self.gitignore_spec.match_file(str(relative_path)):
+                logger.debug("Filtered out by .gitignore: %s", relative_path)
                 return False
-        except Exception as e:
-            logger.debug(f"Exception during .gitignore matching: {e}")
+        except Exception as exc:
+            logger.debug("Exception during .gitignore matching: %s", exc)
             return True  # Pass the file if .gitignore matching fails
 
         # Include only files with allowed extensions
         if path_obj.suffix in self.allowed_extensions:
-            logger.debug(f"Allowed file: {path}")
+            logger.debug("Allowed file: %s", path)
             return True
-        else:
-            logger.debug(f"Filtered out by allowed_extensions: {path_obj.suffix}")
-            return False
+        logger.debug("Filtered out by allowed_extensions: %s", path_obj.suffix)
+        return False

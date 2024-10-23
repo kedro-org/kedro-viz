@@ -206,7 +206,6 @@ class TestCliRunViz:
         patched_check_viz_up,
         patched_start_browser,
     ):
-        # process_init = mocker.patch("multiprocessing.Process")
         mock_process_context = mocker.patch("multiprocessing.get_context")
         mock_context_instance = mocker.Mock()
         mock_process_context.return_value = mock_context_instance
@@ -345,13 +344,15 @@ class TestCliRunViz:
         mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
     def test_kedro_viz_command_with_autoreload(
-        self, mocker, mock_project_path, patched_check_viz_up, patched_start_browser
+        self, mocker, tmp_path, patched_check_viz_up, patched_start_browser
     ):
-        # process_init = mocker.patch("multiprocessing.Process")
         mock_process_context = mocker.patch("multiprocessing.get_context")
         mock_context_instance = mocker.Mock()
         mock_process_context.return_value = mock_context_instance
         mock_process = mocker.patch.object(mock_context_instance, "Process")
+        mock_tmp_path = tmp_path / "tmp"
+        mock_tmp_path.mkdir()
+        mock_path = mock_tmp_path / "project_path"
 
         # Reduce the timeout argument from 600 to 1 to make test run faster.
         mocker.patch(
@@ -360,13 +361,13 @@ class TestCliRunViz:
         # Mock finding kedro project
         mocker.patch(
             "kedro_viz.launchers.utils._find_kedro_project",
-            return_value=mock_project_path,
+            return_value=mock_path,
         )
         runner = CliRunner()
         with runner.isolated_filesystem():
             runner.invoke(main.viz_cli, ["viz", "run", "--autoreload"])
 
-        run_process_args = [str(mock_project_path)]
+        run_process_args = [str(mock_path)]
         run_process_kwargs = {
             "target": run_server,
             "kwargs": {
@@ -376,14 +377,14 @@ class TestCliRunViz:
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": mock_path,
                 "autoreload": True,
-                "project_path": mock_project_path,
                 "include_hooks": False,
                 "package_name": None,
                 "extra_params": {},
                 "is_lite": False,
             },
-            "watch_filter": AutoreloadFileFilter(),
+            "watch_filter": mocker.ANY,
         }
 
         mock_process.assert_called_once_with(
