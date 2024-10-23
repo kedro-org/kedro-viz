@@ -1,4 +1,5 @@
 """`kedro_viz.services.layers` defines layers-related logic."""
+
 import logging
 from collections import defaultdict
 from graphlib import CycleError, TopologicalSorter

@@ -1,6 +1,7 @@
 """`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
 This data could either come from a real Kedro project or a file.
 """
+
 import json
 import os
 import time
@@ -42,7 +43,7 @@ def _create_base_api_app() -> FastAPI:
         @app.middleware("http")
         async def set_secure_headers(request, call_next):
             response = await call_next(request)
-            secure_headers.framework.fastapi(response)  # pylint: disable=no-member
+            secure_headers.framework.fastapi(response)
             return response
 
     return app

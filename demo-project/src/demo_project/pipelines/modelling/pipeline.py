@@ -22,13 +22,13 @@ def new_train_eval_template() -> Pipeline:
                 func=train_model,
                 inputs=["X_train", "y_train", "params:dummy_model_options"],
                 outputs=["regressor", "experiment_params"],
-                tags="train"
+                tags="train",
             ),
             node(
                 func=evaluate_model,
                 inputs=["regressor", "X_test", "y_test"],
                 outputs="r2_score",
-                tags="evaluate"
+                tags="evaluate",
             ),
         ]
     )
@@ -83,7 +83,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
         pipeline(
             pipe=new_train_eval_template(),
             parameters={"dummy_model_options": f"model_options.{model_type}"},
-            inputs={k: k for k in test_train_refs},  
+            inputs={k: k for k in test_train_refs},
             namespace=model_type,
         )
         for model_type in model_types

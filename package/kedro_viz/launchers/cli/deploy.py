@@ -1,6 +1,6 @@
 """`kedro_viz.launchers.cli.deploy` provides a cli command to deploy
 a Kedro-Viz instance on cloud platforms"""
-# pylint: disable=import-outside-toplevel
+
 import click
 
 from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS

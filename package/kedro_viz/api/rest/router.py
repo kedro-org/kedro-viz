@@ -1,6 +1,5 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
-# pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
 
 from fastapi import APIRouter
@@ -74,7 +73,6 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
             status_code=401, content={"message": "Please provide valid credentials"}
         )
     except (
-        # pylint: disable=catching-non-exception
         (FileNotFoundError, ServiceRequestError)
         if ServiceRequestError is not None
         else FileNotFoundError

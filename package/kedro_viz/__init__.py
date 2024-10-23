@@ -1,4 +1,5 @@
 """Kedro plugin for visualising a Kedro pipeline"""
+
 import sys
 import warnings
 

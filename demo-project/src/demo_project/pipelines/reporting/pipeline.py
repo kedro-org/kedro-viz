@@ -8,10 +8,10 @@ from kedro.pipeline import Pipeline, node, pipeline
 from demo_project.pipelines.reporting.nodes import (
     create_feature_importance_plot,
     create_matplotlib_chart,
+    get_top_shuttles_data,
     make_cancel_policy_bar_chart,
     make_price_analysis_image,
     make_price_histogram,
-    get_top_shuttles_data,
 )
 
 

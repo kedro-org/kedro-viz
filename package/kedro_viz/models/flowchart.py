@@ -1,6 +1,5 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 
-# pylint: disable=protected-access, missing-function-docstring
 import abc
 import inspect
 import logging
@@ -165,7 +164,6 @@ class GraphNode(BaseModel, abc.ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_data_node(
         cls,
         dataset_id: str,
@@ -218,7 +216,6 @@ class GraphNode(BaseModel, abc.ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_parameters_node(
         cls,
         dataset_id: str,
@@ -468,7 +465,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
         return cls.kedro_node.outputs
 
 
-# pylint: disable=missing-function-docstring
 class DataNode(GraphNode):
     """Represent a graph node of type data
 
@@ -693,7 +689,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 return cls.dataset.preview()
             return cls.dataset.preview(**preview_args)
 
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
                 cls.data_node.name,
@@ -723,7 +719,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             )
             return preview_type_name
 
-        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "'%s' did not have preview type. Full exception: %s: %s",
                 cls.data_node.name,
@@ -877,8 +873,7 @@ class ParametersNode(GraphNode):
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
             return None
-        # pylint: disable=broad-exception-caught
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.error(
                 "An error occurred when loading parameter `%s` in the catalog :: %s",
                 self.parameter_name,

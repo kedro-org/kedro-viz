@@ -1,4 +1,3 @@
-# pylint: disable=broad-exception-caught, protected-access
 """`kedro_viz.integrations.kedro.hooks` defines hooks to add additional
 functionalities for a kedro run."""
 
@@ -108,7 +107,7 @@ class DatasetStatsHook:
 
         """
         try:
-            import pandas as pd  # pylint: disable=import-outside-toplevel
+            import pandas as pd
 
             stats_dataset_name = self.get_stats_dataset_name(dataset_name)
 

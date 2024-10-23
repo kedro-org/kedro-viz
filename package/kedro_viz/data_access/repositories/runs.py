@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.runs` defines repository to
 centralise access to runs data from the session store."""
-# pylint: disable=missing-class-docstring,missing-function-docstring
+
 import logging
 from functools import wraps
 from typing import Callable, Dict, Iterable, List, Optional
@@ -19,7 +19,7 @@ def check_db_session(method: Callable) -> Callable:
 
     @wraps(method)
     def func(self: "RunsRepository", *method_args, **method_kwargs):
-        if not self._db_session_class:  # pylint: disable=protected-access
+        if not self._db_session_class:
             return None
         return method(self, *method_args, **method_kwargs)
 

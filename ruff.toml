@@ -1,0 +1,85 @@
+target-version = "py39"
+
+include = [
+    "package/kedro_viz/*.py",
+    "package/tests/*.py",
+    "package/features/*.py",
+    "demo-project/*.py",
+]
+
+[lint]
+select = [
+    "I", # Isort
+    "B", # Bugbear
+    "BLE", # Blind exceptions
+    "PL", # Pylint
+    "C90", # Mccabe complexity
+    "E", # Pycodestyle errors
+    "F", # Pyflakes
+    "W", # Pycodestyle warnings
+    "N", # PEP8-compliant object names
+    "SLF", # Private members access
+    "D101", # Class docstrings
+    "D103", # Function docstrings
+    "ARG", # Unused arguments
+    "T10", # Debug statements
+]
+ignore = [
+    "E203",
+    "E231",
+    "E266",
+    "E501",
+    "F401",
+    "B030", # Except handler is something other than exception class
+    "C405", # Inconsistent definition of literal collections
+    "PLR2004", # Magic values in comparisons
+]
+
+[lint.per-file-ignores]
+"*/cli_steps.py" = ["B011"] # assert False instead of AssertionError
+"*/base_deployer.py" = ["B024"] # ABCs without abstract methods
+"package/kedro_viz/__init__.py" = ["B028"] # Risky usage of positional arguments
+"package/tests/test_integrations/test_sqlite_store.py" = ["C401"] # Unnecessary generators
+"package/kedro_viz/data_access/repositories/tags.py" = ["C413", "D101", "D103"]
+"package/kedro_viz/data_access/repositories/catalog.py" = ["PLW2901", "SLF", "D"]
+"package/features/steps/sh_run.py" = ["PLW1510"] # `subprocess.run` without explicit `check` argument
+"*/tests/*.py" = ["SLF", "D", "ARG"]
+"package/kedro_viz/models/experiment_tracking.py" = ["SLF"]
+"package/kedro_viz/models/flowchart.py" = ["SLF"]
+"package/kedro_viz/integrations/kedro/hooks.py" = ["SLF", "BLE"]
+"package/kedro_viz/integrations/kedro/sqlite_store.py" = ["BLE"]
+"package/kedro_viz/integrations/kedro/data_loader.py" = ["SLF"]
+"package/kedro_viz/data_access/managers.py" = ["SLF"]
+"package/kedro_viz/data_access/repositories/tracking_datasets.py" = ["SLF", "D"]
+"package/kedro_viz/launchers/cli/main.py" = ["D"]
+"package/kedro_viz/api/rest/router.py" = ["D"]
+"package/features/steps/cli_steps.py" = ["D"]
+"package/features/environment.py" = ["D"]
+"package/kedro_viz/api/graphql/schema.py" = ["D"]
+"package/kedro_viz/data_access/repositories/registered_pipelines.py" = ["D"]
+"package/kedro_viz/api/rest/responses.py" = ["D"]
+"package/kedro_viz/api/graphql/types.py" = ["D"]
+"package/kedro_viz/data_access/repositories/graph.py" = ["D"]
+"package/kedro_viz/data_access/repositories/runs.py" = ["D"]
+"demo-project/*.py" = ["D", "ARG", "PLW0603"] # Allow unused arguments in node functions for them to generate constant outputs, but mimic the DAG and technically have inputs.
+
+[lint.mccabe]
+max-complexity = 18
+
+[lint.pylint]
+max-args = 12
+
+[lint.pep8-naming]
+extend-ignore-names = [
+    "ServiceRequestError",
+    "mock_DeployerFactory",
+    "Session",
+    "WaitForException",
+    "displayHTML",
+    "nodeId*",
+    "pipelineId*",
+    "*_None_*",
+    "X_test",
+    "X_train",
+    "X",
+]

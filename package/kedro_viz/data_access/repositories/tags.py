@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.tags` defines repository to
 centralise access to tags data."""
-# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from typing import Iterable, List, Set
 
 from kedro_viz.models.flowchart import Tag
