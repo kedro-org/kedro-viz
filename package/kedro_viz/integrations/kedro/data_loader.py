@@ -95,17 +95,11 @@ def _load_data_helper(
         # patch the AbstractDataset class for a custom
         # implementation to handle kedro.io.core.DatasetError
         if is_lite:
-            try:
-                # kedro 0.18.12 onwards
-                from kedro.io.data_catalog import AbstractDataset
-
+            # kedro 0.18.12 onwards
+            if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
                 abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
-            except ImportError:  # pragma: no cover
+            else:  # pragma: no cover
                 # older versions
-                from kedro.io.data_catalog import (
-                    AbstractDataSet as AbstractDataset,  # type: ignore
-                )
-
                 abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataSet"
 
             with patch(abstract_ds_patch_target, AbstractDatasetLite):
