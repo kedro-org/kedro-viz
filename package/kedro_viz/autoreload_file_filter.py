@@ -75,6 +75,7 @@ class AutoreloadFileFilter(DefaultFilter):
             ):
                 logger.debug("Filtered out by .gitignore: %s", relative_path)
                 return False
+        # pylint: disable=broad-exception-caught
         except Exception as exc:
             logger.debug("Exception during .gitignore matching: %s", exc)
             return True  # Pass the file if .gitignore matching fails
