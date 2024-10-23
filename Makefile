@@ -28,11 +28,11 @@ lint: format-fix lint-check
 
 format-fix:
 	ruff check package --fix
-	black package/kedro_viz package/tests package/features
+	ruff format package
 
 format-check:
 	ruff check package
-	black --check package/kedro_viz package/tests package/features
+	ruff format package --check
 
 lint-check:
 	ruff check package
