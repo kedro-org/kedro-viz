@@ -21,7 +21,7 @@ if TYPE_CHECKING:
         from kedro.io import AbstractVersionedDataset
     except ImportError:
         # older versions
-        from kedro.io import (  # type: ignore # isort:skip
+        from kedro.io import (  # type: ignore
             AbstractVersionedDataSet as AbstractVersionedDataset,
         )
 

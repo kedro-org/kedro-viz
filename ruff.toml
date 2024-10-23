@@ -22,6 +22,7 @@ select = [
     "D101", # Class docstrings
     "D103", # Function docstrings
     "ARG", # Unused arguments
+    "T10", # Debug statements
 ]
 ignore = [
     "E203",
