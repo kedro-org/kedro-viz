@@ -115,13 +115,14 @@ def test_directory_path(file_filter, test_environment):
     result = file_filter(Change.modified, str(directory_path))
     assert not result, "Directories should not pass the filter"
 
+
 def test_filtered_out_by_default_filter(file_filter, test_environment, mocker):
     test_dir = Path(test_environment)
     filtered_file = test_dir / "filtered.py"
     filtered_file.touch()
 
     # Mock the super().__call__ method to return False
-    mocker.patch.object(DefaultFilter, '__call__', return_value=False)
+    mocker.patch.object(DefaultFilter, "__call__", return_value=False)
 
     result = file_filter(Change.modified, str(filtered_file))
-    assert not result, "File should be filtered out by DefaultFilter"  
+    assert not result, "File should be filtered out by DefaultFilter"

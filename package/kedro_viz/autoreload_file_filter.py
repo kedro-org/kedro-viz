@@ -70,7 +70,9 @@ class AutoreloadFileFilter(DefaultFilter):
             return False
 
         try:
-            if self.gitignore_spec and self.gitignore_spec.match_file(str(relative_path)):
+            if self.gitignore_spec and self.gitignore_spec.match_file(
+                str(relative_path)
+            ):
                 logger.debug("Filtered out by .gitignore: %s", relative_path)
                 return False
         except Exception as exc:
