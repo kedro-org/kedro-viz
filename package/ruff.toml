@@ -2,3 +2,4 @@ extend = "../ruff.toml"
 
 [lint.isort]
 known-first-party = ["kedro_viz"]
+known-third-party = ["kedro"]
