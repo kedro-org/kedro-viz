@@ -27,15 +27,15 @@ e2e-tests:
 lint: format-fix lint-check
 
 format-fix:
-	ruff check package --fix
-	ruff format package
+	ruff check --fix
+	ruff format
 
 format-check:
-	ruff check package
-	ruff format package --check
+	ruff check
+	ruff format --check
 
 lint-check:
-	ruff check package
+	ruff check
 	mypy --config-file=package/mypy.ini package/kedro_viz package/features
 	mypy --disable-error-code abstract --config-file=package/mypy.ini package/tests
 
