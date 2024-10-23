@@ -5,6 +5,19 @@
 @use './section';
 @use './variables';
 
+// Mixin for the ::after pseudo-element
+@mixin after-shadow($left, $width, $color) {
+  &::after {
+    content: '';
+    position: absolute;
+    left: $left;
+    top: 0;
+    height: 100%; // Match the height of the parent
+    width: $width;
+    background-color: $color;
+  }
+}
+
 .kui-theme--light {
   --color-nodelist-row-active: #{variables.$row-active-light};
   --color-nodelist-row-selected: #{variables.$row-selected-light};
@@ -89,9 +102,8 @@
     background-color: transparent !important; // Override default background color
   }
 
-  // // Style for tree item content
   .MuiTreeItem-content {
-    padding: 0;
+    padding: 0; // Remove padding
   }
 
   // When hovering over the tree item content, which represents the modular pipeline node
@@ -103,16 +115,30 @@
       background-color: var(--color-nodelist-row-active);
       position: relative;
 
-      // To create the background shadow on the left
-      &::after {
-        content: '';
-        position: absolute;
-        left: -40px;
-        top: 0;
-        height: 100%; // Match the height of the parent
-        width: 50px;
-        background-color: var(--color-nodelist-row-active);
-      }
+      // Apply the after-shadow mixin to ensure the background covers the full width on hover
+      @include after-shadow(-40px, 50px, var(--color-nodelist-row-active));
     }
   }
+}
+
+// Focused state for the pipeline tree item
+.pipeline-treeItem__root--overwrite--focused {
+  .MuiTreeItem-content,
+  .MuiTreeItem-group {
+    background-color: var(
+      --color-nodelist-row-active
+    ); // Change background color
+
+    position: relative; // Ensure .MuiTreeItem-group is positioned relative
+
+    // Apply the after-shadow mixin to ensure the background covers the full width on hover
+    @include after-shadow(-40px, 50px, var(--color-nodelist-row-active));
+  }
+}
+
+.pipeline-nodelist__elements-panel .MuiTreeItem-label {
+  // Handle MuiTreeItem icon offset for correct width
+  $icon-offset: 15px + 4px;
+
+  width: calc(100% - #{$icon-offset});
 }

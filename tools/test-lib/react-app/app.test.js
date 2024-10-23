@@ -17,8 +17,8 @@ describe('lib-test', () => {
    */
   const testFirstNodeNameMatch = (container, key) => {
     const firstNodeName = container
-      .querySelector('.node-list-row')
-      .querySelector('.node-list-row__label')
+      .querySelector('.node-list-tree-item-row')
+      .querySelector('.row-text__label')
       .textContent.trim();
 
     const modularPipelinesTree = dataSources[key]().modular_pipelines;

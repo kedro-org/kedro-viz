@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { uniqueId } from 'lodash';
 import classnames from 'classnames';
 import NodeIcon from '../../../icons/node-icon';
@@ -8,7 +7,6 @@ import InvisibleIcon from '../../../icons/invisible';
 import FocusModeIcon from '../../../icons/focus-mode';
 import { ToggleControl } from '../../../ui/toggle-control/toggle-control';
 import { RowText } from '../../../ui/row-text/row-text';
-import { getNodeActive } from '../../../../selectors/nodes';
 
 import './row.scss';
 
@@ -50,7 +48,6 @@ const Row = ({
       className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
         'row--active': active,
         'row--selected': selected || (!isSlicingPipelineApplied && highlight),
-        'row--disabled': disabled,
         'row--overwrite': !(active || selected),
       })}
       title={name}

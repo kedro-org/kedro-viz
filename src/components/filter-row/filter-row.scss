@@ -6,12 +6,12 @@
 }
 
 .filter-row {
-  position: relative;
-  display: flex;
   align-items: center;
-  height: 32px; // Fixed row height required for lazy list, apply any changes to filter-row.js.
   background-color: initial;
   cursor: default;
+  display: flex;
+  height: 32px;
+  position: relative;
 
   &--kind-filter {
     padding: 0 variables.$row-offset-right 0 variables.$row-offset-left;

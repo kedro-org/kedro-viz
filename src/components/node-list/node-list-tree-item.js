@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
@@ -18,7 +19,9 @@ const NodeListTreeItem = ({
   isSlicingPipelineApplied,
 }) => (
   <TreeItem
-    className="pipeline-treeItem__root--overwrite"
+    className={classnames('pipeline-treeItem__root--overwrite', {
+      'pipeline-treeItem__root--overwrite--focused': data.focused,
+    })}
     key={data.id}
     nodeId={data.id}
     // this setup is to allow flexibility for adjusting the setting for individual arrow icons

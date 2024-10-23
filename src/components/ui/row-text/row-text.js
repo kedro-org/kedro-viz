@@ -6,7 +6,6 @@ import './row-text.scss';
 
 export const RowText = ({
   dataTest,
-  disabled,
   faded,
   kind,
   label,
@@ -21,7 +20,10 @@ export const RowText = ({
       className={classnames(
         'row-text',
         `row-text--kind-${kind}`,
-        `row-text--${rowType}`
+        `row-text--${rowType}`,
+        {
+          'row-text--faded': faded,
+        }
       )}
       data-test={dataTest}
       onClick={onClick}
@@ -35,7 +37,6 @@ export const RowText = ({
           `row-text__label--kind-${kind}`,
           {
             'row-text__label--faded': faded,
-            'row-text__label--disabled': disabled,
           }
         )}
         dangerouslySetInnerHTML={{

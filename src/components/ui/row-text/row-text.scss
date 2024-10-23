@@ -22,8 +22,13 @@
   cursor: default;
   user-select: none;
 
+  // add padding between icon and text
   &--tree {
     padding: variables.$row-padding-y 0 variables.$row-padding-y 1em;
+  }
+
+  &--faded {
+    pointer-events: none;
   }
 
   &:focus {
