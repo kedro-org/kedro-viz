@@ -1,5 +1,6 @@
 """`kedro_viz.launchers.cli.deploy` provides a cli command to deploy
 a Kedro-Viz instance on cloud platforms"""
+
 import click
 
 from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS

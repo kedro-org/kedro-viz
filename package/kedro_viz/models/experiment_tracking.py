@@ -1,5 +1,6 @@
 """kedro_viz.models.experiment_tracking` defines data models to represent run data and
 tracking datasets."""
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum

@@ -1,4 +1,5 @@
 """`kedro_viz.launchers.cli.utils` provides utility functions for cli commands."""
+
 from pathlib import Path
 from time import sleep
 from typing import Union

@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.graph` defines interface to
 centralise access to graph objects."""
+
 from typing import Dict, Generator, List, Optional, Set
 
 from kedro_viz.models.flowchart import GraphEdge, GraphNode

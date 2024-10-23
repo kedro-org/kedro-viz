@@ -1,5 +1,4 @@
-"""`kedro_viz.integrations.kedro.telemetry` helps integrate Kedro-Viz with Kedro-Telemetry
-"""
+"""`kedro_viz.integrations.kedro.telemetry` helps integrate Kedro-Viz with Kedro-Telemetry"""
 
 from pathlib import Path
 from typing import Optional

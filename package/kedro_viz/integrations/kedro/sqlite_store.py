@@ -1,7 +1,6 @@
 """kedro_viz.intergrations.kedro.sqlite_store is a child of BaseSessionStore
 which stores sessions data in the SQLite database"""
 
-
 import getpass
 import json
 import logging

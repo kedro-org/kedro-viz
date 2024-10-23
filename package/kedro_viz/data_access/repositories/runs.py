@@ -1,5 +1,6 @@
 """`kedro_viz.data_access.repositories.runs` defines repository to
 centralise access to runs data from the session store."""
+
 import logging
 from functools import wraps
 from typing import Callable, Dict, Iterable, List, Optional
