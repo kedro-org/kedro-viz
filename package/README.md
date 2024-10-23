@@ -283,16 +283,15 @@ For more information on how to use Kedro-Viz in Visual Studio Code, follow this 
 
 ## Feature Flags
 
-Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
-
-| Flag               | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
-| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
+Kedro-Viz uses features flags to roll out some experimental features. No feature flags are currently in use.
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
 Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
+
+
+## Python version support policy
+Kedro Viz supports all Python versions that are actively maintained by the CPython core team. When a [Python version reaches end of life](https://devguide.python.org/versions/#versions), support for that version is dropped from Kedro-viz. This is not considered a breaking change.
 
 ## Maintainers
 
