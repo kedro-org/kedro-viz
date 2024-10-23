@@ -92,9 +92,7 @@ def parse_args(args):  # pragma: no cover
     return arg_dict
 
 
-def run_viz(  # pylint: disable=too-many-locals
-    args: str = "", local_ns: Dict[str, Any] = None
-) -> None:
+def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     """
     Line magic function to start Kedro Viz with optional arguments.
 

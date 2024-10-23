@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 import json
 import operator
 from pathlib import Path

@@ -1,6 +1,5 @@
 """`kedro_viz.models.flowchart` defines data models to represent Kedro entities in a viz graph."""
 
-# pylint: disable=protected-access, missing-function-docstring
 import abc
 import inspect
 import logging
@@ -466,7 +465,6 @@ class TaskNodeMetadata(GraphNodeMetadata):
         return cls.kedro_node.outputs
 
 
-# pylint: disable=missing-function-docstring
 class DataNode(GraphNode):
     """Represent a graph node of type data
 

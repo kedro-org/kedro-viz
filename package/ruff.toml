@@ -17,6 +17,10 @@ select = [
     "F", # Pyflakes
     "W", # Pycodestyle warnings
     "N", # PEP8-compliant object names
+    "SLF", # Private members access
+    "D101", # Class docstrings
+    "D103", # Function docstrings
+    "ARG", # Unused arguments
 ]
 ignore = [
     "E203",
@@ -34,9 +38,26 @@ ignore = [
 "*/base_deployer.py" = ["B024"] # ABCs without abstract methods
 "kedro_viz/__init__.py" = ["B028"] # Risky usage of positional arguments
 "tests/test_integrations/test_sqlite_store.py" = ["C401"] # Unnecessary generators
-"kedro_viz/data_access/repositories/tags.py" = ["C413"] # Unnecessary list call around sorted()
-"kedro_viz/data_access/repositories/catalog.py" = ["PLW2901"] # Overwrite for loop variable inside the loop
+"kedro_viz/data_access/repositories/tags.py" = ["C413", "D101", "D103"]
+"kedro_viz/data_access/repositories/catalog.py" = ["PLW2901", "SLF", "D"]
 "features/steps/sh_run.py" = ["PLW1510"] # `subprocess.run` without explicit `check` argument
+"tests/*.py" = ["SLF", "D", "ARG"]
+"kedro_viz/models/experiment_tracking.py" = ["SLF"]
+"kedro_viz/models/flowchart.py" = ["SLF"]
+"kedro_viz/integrations/kedro/hooks.py" = ["SLF"]
+"kedro_viz/integrations/kedro/data_loader.py" = ["SLF"]
+"kedro_viz/data_access/repositories/tracking_datasets.py" = ["SLF", "D"]
+"kedro_viz/data_access/managers.py" = ["SLF"]
+"kedro_viz/launchers/cli/main.py" = ["D"]
+"kedro_viz/api/rest/router.py" = ["D"]
+"features/steps/cli_steps.py" = ["D"]
+"features/environment.py" = ["D"]
+"kedro_viz/api/graphql/schema.py" = ["D"]
+"kedro_viz/data_access/repositories/registered_pipelines.py" = ["D"]
+"kedro_viz/api/rest/responses.py" = ["D"]
+"kedro_viz/api/graphql/types.py" = ["D"]
+"kedro_viz/data_access/repositories/graph.py" = ["D"]
+"kedro_viz/data_access/repositories/runs.py" = ["D"]
 
 [lint.isort]
 known-first-party = ["kedro_viz"]

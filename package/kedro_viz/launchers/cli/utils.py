@@ -1,5 +1,4 @@
 """`kedro_viz.launchers.cli.utils` provides utility functions for cli commands."""
-# pylint: disable=import-outside-toplevel
 from pathlib import Path
 from time import sleep
 from typing import Union
@@ -142,7 +141,6 @@ def _load_and_deploy_viz(
         deployer.deploy(is_all_previews_enabled)
 
     except (
-        # pylint: disable=catching-non-exception
         (FileNotFoundError, ServiceRequestError)
         if ServiceRequestError is not None
         else FileNotFoundError

@@ -3,7 +3,6 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 
-# pylint: disable=protected-access
 
 import json
 import logging

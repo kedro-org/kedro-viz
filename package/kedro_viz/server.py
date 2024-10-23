@@ -25,7 +25,7 @@ def populate_data(
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
     stats_dict: Dict,
-):  # pylint: disable=redefined-outer-name
+):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
@@ -83,7 +83,7 @@ def run_server(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):  # pylint: disable=redefined-outer-name
+):
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
@@ -110,10 +110,10 @@ def run_server(
     # Importing below dependencies inside `run_server` to avoid ImportError
     # when calling `load_and_populate_data` from VSCode
 
-    import fsspec  # pylint: disable=C0415
-    import uvicorn  # pylint: disable=C0415
+    import fsspec
+    import uvicorn
 
-    from kedro_viz.api import apps  # pylint: disable=C0415
+    from kedro_viz.api import apps
 
     path = Path(project_path) if project_path else Path.cwd()
 

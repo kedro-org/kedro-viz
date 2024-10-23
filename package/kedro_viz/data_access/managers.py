@@ -1,6 +1,5 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 
-# pylint: disable=too-many-instance-attributes,protected-access
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
