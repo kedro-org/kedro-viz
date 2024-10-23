@@ -16,3 +16,4 @@ secure==0.3.0
 # numpy 2.0 breaks with old versions of pandas and this
 # could be removed when the lowest version supported is updated
 numpy==1.26.4
+pathspec=0.12.1
