@@ -627,7 +627,7 @@ class TestNodeMetadataEndpoint:
         metadata = response.json()
         assert (
             metadata["code"].replace(" ", "")
-            == "defprocess_data(raw_data,train_test_split):\n...\n"
+            == "defprocess_data(raw_data,train_test_split):\npass\n"
         )
         assert metadata["parameters"] == {"uk.data_processing.train_test_split": 0.1}
         assert metadata["inputs"] == [
