@@ -35,6 +35,9 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
+// The exact fixed height of a row as measured by getBoundingClientRect()
+export const nodeListRowHeight = 32;
+
 // These colours variables come from styles/variables
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
