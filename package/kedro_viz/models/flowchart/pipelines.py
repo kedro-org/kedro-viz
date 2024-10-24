@@ -1,5 +1,8 @@
+from typing import Optional, Set
+
 from pydantic import BaseModel, Field
-from typing import Set, Optional
+
+from .model_utils import NamedEntity
 from .nodes import GraphNodeType
 
 
@@ -26,3 +29,7 @@ class ModularPipelineNode(BaseModel):
         set(), description="The output datasets from the modular pipeline node"
     )
     type: str = GraphNodeType.MODULAR_PIPELINE.value
+
+
+class RegisteredPipeline(NamedEntity):
+    """Represent a registered pipeline in a Kedro project."""

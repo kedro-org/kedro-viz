@@ -1,7 +1,8 @@
-from abc import ABC
-from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
-from typing import Optional, Dict, Any, Union, List, ClassVar, cast
 import logging
+from abc import ABC
+from typing import Any, ClassVar, Dict, List, Optional, Union, cast
+
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 try:
     # kedro 0.18.11 onwards
@@ -17,8 +18,8 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
-from .nodes import TaskNode, DataNode, TranscodedDataNode, ParametersNode
-from .utils import _extract_wrapped_func, _parse_filepath, get_dataset_type
+from .model_utils import _extract_wrapped_func, _parse_filepath, get_dataset_type
+from .nodes import DataNode, ParametersNode, TaskNode, TranscodedDataNode
 
 logger = logging.getLogger(__name__)
 

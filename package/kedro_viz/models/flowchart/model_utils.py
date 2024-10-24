@@ -1,8 +1,10 @@
 import inspect
+import logging
 from pathlib import Path
 from types import FunctionType
 from typing import Any, Dict, Optional, Union
-import logging
+
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 try:
     # kedro 0.18.12 onwards
@@ -31,3 +33,20 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
 def get_dataset_type(dataset: AbstractDataset) -> str:
     """Utility function to get the dataset type."""
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
+
+
+class NamedEntity(BaseModel):
+    """Represent a named entity (Tag/Registered Pipeline) in a Kedro project."""
+
+    id: str
+    name: Optional[str] = Field(
+        default=None,
+        validate_default=True,
+        description="The name of the entity",
+    )
+
+    @field_validator("name")
+    @classmethod
+    def set_name(cls, _, info: ValidationInfo):
+        assert "id" in info.data
+        return info.data["id"]

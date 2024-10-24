@@ -1,16 +1,17 @@
+import logging
 from abc import ABC
 from enum import Enum
+from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
+
+from fastapi.encoders import jsonable_encoder
 from pydantic import (
     BaseModel,
-    Field,
     ConfigDict,
+    Field,
     ValidationInfo,
     field_validator,
     model_validator,
 )
-from typing import Optional, Set, Union, Dict, Any, ClassVar, List, cast
-from fastapi.encoders import jsonable_encoder
-import logging
 
 try:
     # kedro 0.18.11 onwards
@@ -26,10 +27,11 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
-from .entities import NamedEntity
-from .utils import _parse_filepath, _extract_wrapped_func, get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
+
+from .entities import NamedEntity
 from .modular_pipelines import ModularPipelineChild
+from .utils import _extract_wrapped_func, _parse_filepath, get_dataset_type
 
 logger = logging.getLogger(__name__)
 
