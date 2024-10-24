@@ -6,8 +6,17 @@ from .model_utils import NamedEntity
 from .nodes import GraphNodeType
 
 
-class ModularPipelineChild(BaseModel):
-    """Represent a child of a modular pipeline."""
+class RegisteredPipeline(NamedEntity):
+    """Represent a registered pipeline in a Kedro project."""
+
+
+class ModularPipelineChild(BaseModel, frozen=True):
+    """Represent a child of a modular pipeline.
+
+    Args:
+        id (str): Id of the modular pipeline child
+        type (GraphNodeType): Type of modular pipeline child
+    """
 
     id: str
     type: GraphNodeType
@@ -29,7 +38,3 @@ class ModularPipelineNode(BaseModel):
         set(), description="The output datasets from the modular pipeline node"
     )
     type: str = GraphNodeType.MODULAR_PIPELINE.value
-
-
-class RegisteredPipeline(NamedEntity):
-    """Represent a registered pipeline in a Kedro project."""
