@@ -14,17 +14,19 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import (
     DataNode,
-    GraphEdge,
     GraphNode,
     GraphNodeType,
-    ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
-    RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
+)
+from kedro_viz.models.flowchart.pipelines import (
+    ModularPipelineChild,
+    RegisteredPipeline,
 )
 from kedro_viz.services import layers_services
 from kedro_viz.utils import _strip_transcoding, is_dataset_param

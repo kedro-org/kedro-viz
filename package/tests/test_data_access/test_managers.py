@@ -15,14 +15,14 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import (
     DataNode,
-    GraphEdge,
     ParametersNode,
-    Tag,
     TaskNode,
     TranscodedDataNode,
 )
+from kedro_viz.models.flowchart.tag import Tag
 
 
 def identity(x):
