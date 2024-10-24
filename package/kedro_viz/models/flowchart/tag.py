@@ -1,3 +1,5 @@
+"""`kedro_viz.models.tag` defines data models to represent Kedro tags in a viz graph."""
+
 from .model_utils import NamedEntity
 
 

@@ -1,3 +1,5 @@
+"""`kedro_viz.models.flowchart.edge` defines data models to represent Kedro edges in a viz graph."""
+
 from pydantic import BaseModel
 
 

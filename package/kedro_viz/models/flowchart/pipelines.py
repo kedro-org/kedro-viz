@@ -1,3 +1,5 @@
+"""`kedro_viz.models.flowchart.pipelines` represent Kedro pipelines in a viz graph."""
+
 from typing import Optional, Set
 
 from pydantic import BaseModel, Field

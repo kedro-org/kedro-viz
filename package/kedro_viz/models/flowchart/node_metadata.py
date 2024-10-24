@@ -1,11 +1,13 @@
+"""`kedro_viz.models.flowchart.node_metadata` defines data models to represent Kedro metadata in a viz graph."""
+
 import inspect
 import logging
 from abc import ABC
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Union, cast
+from typing import ClassVar, Dict, List, Optional, Union, cast
 
 from kedro.pipeline.node import Node as KedroNode
-from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 try:
     # kedro 0.18.11 onwards

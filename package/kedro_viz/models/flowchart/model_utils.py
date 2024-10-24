@@ -1,8 +1,8 @@
-import inspect
+"""`kedro_viz.models.flowchart.model_utils` defines utils for Kedro entities in a viz graph."""
+
 import logging
-from pathlib import Path
 from types import FunctionType
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 

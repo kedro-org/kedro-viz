@@ -9,18 +9,20 @@ from kedro.pipeline.node import node
 from kedro_datasets.pandas import CSVDataset, ParquetDataset
 from kedro_datasets.partitions.partitioned_dataset import PartitionedDataset
 
-from kedro_viz.models.flowchart import (
-    DataNode,
+from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
-    GraphNode,
-    ParametersNode,
     ParametersNodeMetadata,
-    RegisteredPipeline,
-    TaskNode,
     TaskNodeMetadata,
-    TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+from kedro_viz.models.flowchart.nodes import (
+    DataNode,
+    GraphNode,
+    ParametersNode,
+    TaskNode,
+    TranscodedDataNode,
+)
+from kedro_viz.models.flowchart.pipelines import RegisteredPipeline
 
 
 def identity(x):

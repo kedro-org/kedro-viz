@@ -1,9 +1,12 @@
+"""`kedro_viz.models.flowchart.nodes` defines data models to represent Kedro nodes in a viz graph."""
+
 import logging
 from abc import ABC
 from enum import Enum
-from typing import Any, ClassVar, Dict, List, Optional, Set, Union, cast
+from typing import Any, Dict, Optional, Set, Union, cast
 
 from fastapi.encoders import jsonable_encoder
+from kedro.pipeline.node import Node as KedroNode
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -15,11 +18,10 @@ from pydantic import (
 
 try:
     # kedro 0.18.11 onwards
-    from kedro.pipeline.node import Node as KedroNode
+    from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
-    # Handle older versions or custom implementations
-    KedroNode = Any  # Replace with appropriate import or definition
-
+    # older versions
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
 try:
     # kedro 0.18.12 onwards
     from kedro.io.core import AbstractDataset
@@ -29,9 +31,8 @@ except ImportError:  # pragma: no cover
 
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from .entities import NamedEntity
-from .modular_pipelines import ModularPipelineChild
-from .utils import _extract_wrapped_func, _parse_filepath, get_dataset_type
+from .model_utils import get_dataset_type
+from .pipelines import ModularPipelineChild
 
 logger = logging.getLogger(__name__)
 
