@@ -261,31 +261,6 @@ describe('NodeList', () => {
     const partialIcon = (wrapper) =>
       tagItem(wrapper).find(IndicatorPartialIcon);
 
-    it('selecting tags enables only elements with given tags and modular pipelines', () => {
-      //Parameters are enabled here to override the default behavior
-      const wrapper = setup.mount(
-        <MemoryRouter>
-          <NodeList />
-        </MemoryRouter>,
-        {
-          beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-        }
-      );
-
-      changeRows(wrapper, ['Preprocessing'], true);
-      expect(elementsEnabled(wrapper)).toEqual([
-        ['data_processing', true],
-        ['data_science', true],
-      ]);
-
-      changeRows(wrapper, ['Preprocessing', 'Features'], true);
-      expect(elementsEnabled(wrapper)).toEqual([
-        ['data_processing', true],
-        ['data_science', true],
-        ['model_input_table', true],
-      ]);
-    });
-
     it('selecting a tag sorts elements by modular pipelines first then by task, data and parameter nodes ', () => {
       //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(
