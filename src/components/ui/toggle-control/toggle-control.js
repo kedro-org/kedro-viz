@@ -8,7 +8,7 @@ export const ToggleControl = ({
   className,
   focusChecked,
   IconComponent,
-  dsiabled,
+  disabled,
   id,
   isChecked,
   kind,
@@ -29,7 +29,7 @@ export const ToggleControl = ({
       'toggle-control--icon--checked': isChecked,
       'toggle-control--icon--unchecked': !isChecked,
       'toggle-control--icon--focus-checked': focusChecked,
-      'toggle-control--icon--disabled': dsiabled,
+      'toggle-control--icon--disabled': disabled,
     }
   );
 

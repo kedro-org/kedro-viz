@@ -29,13 +29,13 @@
 }
 
 .toggle-control--icon {
-  width: variables.$toggle-icon-size;
-  height: variables.$toggle-icon-size;
+  width: variables.$toggle-icon-size !important;
+  height: variables.$toggle-icon-size !important;
   padding: variables.$toggle-icon-padding;
   border-radius: 50%;
 
   &--disabled {
-    display: none;
+    display: none !important;
   }
 
   .toggle-control__checkbox:focus + & {
@@ -44,6 +44,10 @@
     [data-whatintent='keyboard'] & {
       box-shadow: 0 0 0 3px colors.$blue-300 inset;
     }
+  }
+
+  &.toggle-control--icon--focus-checked {
+    fill: colors.$blue-300;
   }
 }
 
