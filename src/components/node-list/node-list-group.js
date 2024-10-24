@@ -39,7 +39,7 @@ export const NodeListGroup = ({
           allUnchecked={allUnchecked}
           checked={checked}
           id={id}
-          invisibleIcon={invisibleIcon}
+          offIndicatorIcon={invisibleIcon}
           kind={kind}
           label={name}
           name={name}
@@ -47,7 +47,7 @@ export const NodeListGroup = ({
             onToggleChecked(id, !e.target.checked);
           }}
           rowType="filter"
-          visibleIcon={visibleIcon}
+          indicatorIcon={visibleIcon}
         >
           <button
             aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}

@@ -57,7 +57,7 @@ const NodeRowList = ({
             count={item.count}
             dataTest={getDataTestAttribute('node-list-row', 'filter-row')}
             id={item.id}
-            invisibleIcon={item.invisibleIcon}
+            offIndicatorIcon={item.invisibleIcon}
             key={item.id}
             kind={group.kind}
             label={item.highlightedLabel}
@@ -66,7 +66,7 @@ const NodeRowList = ({
             onClick={() => onItemClick(item)}
             parentClassName={'node-list-filter-row'}
             visible={item.visible}
-            visibleIcon={item.visibleIcon}
+            indicatorIcon={item.visibleIcon}
           />
         ))}
       </ul>

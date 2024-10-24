@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
-import VisibleIcon from '../icons/visible';
-import InvisibleIcon from '../icons/invisible';
+import IndicatorIcon from '../icons/indicator';
+import OffIndicatorIcon from '../icons/indicator-off';
 import { ToggleControl } from '../ui/toggle-control/toggle-control';
 import { RowText } from '../ui/row-text/row-text';
 
@@ -14,7 +14,7 @@ export const FilterRow = ({
   count,
   dataTest,
   id,
-  invisibleIcon = InvisibleIcon,
+  offIndicatorIcon = OffIndicatorIcon,
   kind,
   label,
   name,
@@ -22,9 +22,9 @@ export const FilterRow = ({
   onClick,
   parentClassName,
   visible,
-  visibleIcon = VisibleIcon,
+  indicatorIcon = IndicatorIcon,
 }) => {
-  const Icon = checked ? visibleIcon : invisibleIcon;
+  const Icon = checked ? indicatorIcon : offIndicatorIcon;
 
   return (
     <div
