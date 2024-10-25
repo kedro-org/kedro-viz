@@ -7,19 +7,13 @@ from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-try:
-    # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
-
-from kedro_viz.models.utils import get_dataset_type
-
 logger = logging.getLogger(__name__)
 
 
 def _parse_filepath(dataset_description: Dict[str, Any]) -> Optional[str]:
+    """
+    Extract the file path from a dataset description dictionary.
+    """
     filepath = dataset_description.get("filepath") or dataset_description.get("path")
     return str(filepath) if filepath else None
 
@@ -60,6 +54,7 @@ class NamedEntity(BaseModel):
     @field_validator("name")
     @classmethod
     def set_name(cls, _, info: ValidationInfo):
+        """Ensures that the 'name' field is set to the value of 'id' if 'name' is not provided."""
         assert "id" in info.data
         return info.data["id"]
 

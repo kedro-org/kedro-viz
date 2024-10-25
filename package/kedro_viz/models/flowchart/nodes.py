@@ -1,5 +1,7 @@
 """`kedro_viz.models.flowchart.nodes` defines models to represent Kedro nodes in a viz graph."""
 
+# pylint: disable=protected-access, missing-function-docstring
+
 import logging
 from abc import ABC
 from typing import Any, Dict, Optional, Set, Union, cast
@@ -28,9 +30,10 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
+from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from .model_utils import GraphNodeType, ModularPipelineChild, get_dataset_type
+from .model_utils import GraphNodeType, ModularPipelineChild
 
 logger = logging.getLogger(__name__)
 

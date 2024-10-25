@@ -1,4 +1,9 @@
-"""`kedro_viz.models.flowchart.node_metadata` defines data models to represent Kedro metadata in a viz graph."""
+"""
+`kedro_viz.models.flowchart.node_metadata` defines data models to represent
+Kedro metadata in a visualization graph.
+"""
+
+# pylint: disable=protected-access, missing-function-docstring
 
 import inspect
 import logging
@@ -16,24 +21,26 @@ except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
-from .model_utils import _extract_wrapped_func, _parse_filepath, get_dataset_type
+from kedro_viz.models.utils import get_dataset_type
+
+from .model_utils import _extract_wrapped_func, _parse_filepath
 from .nodes import DataNode, ParametersNode, TaskNode, TranscodedDataNode
 
 logger = logging.getLogger(__name__)
 
 
 class GraphNodeMetadata(BaseModel, ABC):
-    """Represent a graph node's metadata"""
+    """Represent a graph node's metadata."""
 
 
 class TaskNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a TaskNode
+    """Represent the metadata of a TaskNode.
 
     Args:
         task_node (TaskNode): Task node to which this metadata belongs to.
 
     Raises:
-        AssertionError: If task_node is not supplied during instantiation
+        AssertionError: If task_node is not supplied during instantiation.
     """
 
     task_node: TaskNode = Field(..., exclude=True)
@@ -133,7 +140,7 @@ class TaskNodeMetadata(GraphNodeMetadata):
 
 
 class DataNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a DataNode
+    """Represent the metadata of a DataNode.
 
     Args:
         data_node (DataNode): Data node to which this metadata belongs to.
@@ -144,7 +151,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             or UI to manage the preview settings.
 
     Raises:
-        AssertionError: If data_node is not supplied during instantiation
+        AssertionError: If data_node is not supplied during instantiation.
     """
 
     data_node: DataNode = Field(..., exclude=True)
@@ -287,13 +294,12 @@ class DataNodeMetadata(GraphNodeMetadata):
 
 
 class TranscodedDataNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a TranscodedDataNode
+    """Represent the metadata of a TranscodedDataNode.
     Args:
-        transcoded_data_node (TranscodedDataNode): The underlying transcoded
-                data node to which this metadata belongs to.
+        transcoded_data_node: The transcoded data node to which this metadata belongs.
 
     Raises:
-        AssertionError: If transcoded_data_node is not supplied during instantiation
+        AssertionError: If `transcoded_data_node` is not supplied during instantiation.
     """
 
     transcoded_data_node: TranscodedDataNode = Field(..., exclude=True)
@@ -368,14 +374,14 @@ class TranscodedDataNodeMetadata(GraphNodeMetadata):
 
 
 class ParametersNodeMetadata(GraphNodeMetadata):
-    """Represent the metadata of a ParametersNode
+    """Represent the metadata of a ParametersNode.
 
     Args:
         parameters_node (ParametersNode): The underlying parameters node
                 for the parameters metadata node.
 
     Raises:
-        AssertionError: If parameters_node is not supplied during instantiation
+        AssertionError: If parameters_node is not supplied during instantiation.
     """
 
     parameters_node: ParametersNode = Field(..., exclude=True)
