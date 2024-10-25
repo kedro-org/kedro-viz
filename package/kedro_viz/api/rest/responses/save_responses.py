@@ -1,4 +1,4 @@
-"""`kedro_viz.api.rest.responses.deploy` contains response classes
+"""`kedro_viz.api.rest.responses.save_responses` contains response classes
 and utility functions for the `/deploy` REST endpoint"""
 
 # pylint: disable=invalid-name
