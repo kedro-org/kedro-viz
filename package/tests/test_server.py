@@ -151,7 +151,7 @@ class TestServer:
     def test_save_file(self, tmp_path, mocker):
         mock_filesystem = mocker.patch("fsspec.filesystem")
         save_api_responses_to_fs_mock = mocker.patch(
-            "kedro_viz.server.save_api_responses_to_fs"
+            "kedro_viz.api.rest.responses.save_responses.save_api_responses_to_fs"
         )
         save_file = tmp_path / "save.json"
         run_server(save_file=save_file)

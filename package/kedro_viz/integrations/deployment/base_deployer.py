@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader
 from packaging.version import parse
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
+from kedro_viz.api.rest.responses.save_responses import save_api_responses_to_fs
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
