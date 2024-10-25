@@ -4,15 +4,12 @@ and utility functions for the `/nodes/*` REST endpoints"""
 # pylint: disable=missing-class-docstring,invalid-name
 
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
 
-from kedro_viz.api.rest.responses.common import (
-    BaseAPIResponse,
-    write_api_response_to_fs,
-)
+from kedro_viz.api.rest.responses.base import BaseAPIResponse
 from kedro_viz.data_access import data_access_manager
 from kedro_viz.models.flowchart import (
     DataNode,
@@ -125,22 +122,3 @@ def get_node_metadata_response(node_id: str):
         return TranscodedDataNodeMetadata(transcoded_data_node=node)
 
     return ParametersNodeMetadata(parameters_node=node)
-
-
-def save_api_node_response_to_fs(
-    nodes_path: str, remote_fs: Any, is_all_previews_enabled: bool
-):
-    """Saves API /nodes/{node} response to a directory."""
-    # Set if preview is enabled/disabled for all data nodes
-    DataNodeMetadata.set_is_all_previews_enabled(is_all_previews_enabled)
-
-    for nodeId in data_access_manager.nodes.get_node_ids():
-        try:
-            write_api_response_to_fs(
-                f"{nodes_path}/{nodeId}", get_node_metadata_response(nodeId), remote_fs
-            )
-        except Exception as exc:  # pragma: no cover
-            logger.exception(
-                "Failed to save node data for node ID %s. Error: %s", nodeId, str(exc)
-            )
-            raise exc

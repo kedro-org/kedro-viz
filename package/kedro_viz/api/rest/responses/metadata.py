@@ -7,7 +7,7 @@ from typing import List
 
 from pydantic import ConfigDict
 
-from kedro_viz.api.rest.responses.common import BaseAPIResponse
+from kedro_viz.api.rest.responses.base import BaseAPIResponse
 from kedro_viz.api.rest.utils import get_package_compatibilities
 from kedro_viz.models.metadata import Metadata, PackageCompatibility
 

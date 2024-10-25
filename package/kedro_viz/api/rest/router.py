@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
-from kedro_viz.api.rest.responses.common import APINotFoundResponse
+from kedro_viz.api.rest.responses.base import APINotFoundResponse
 from kedro_viz.api.rest.responses.metadata import (
     MetadataAPIResponse,
     get_metadata_response,

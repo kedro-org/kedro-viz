@@ -1,26 +1,16 @@
-"""`kedro_viz.api.rest.responses.common` contains common
-response classes and utility functions for the REST endpoints"""
+"""`kedro_viz.api.rest.responses.utils` contains utility
+response classes and functions for the REST endpoints"""
 
 # pylint: disable=missing-class-docstring
 
-import abc
 import logging
 from typing import Any
 
 import orjson
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import ORJSONResponse
-from pydantic import BaseModel, ConfigDict
 
 logger = logging.getLogger(__name__)
-
-
-class APINotFoundResponse(BaseModel):
-    message: str
-
-
-class BaseAPIResponse(BaseModel, abc.ABC):
-    model_config = ConfigDict(from_attributes=True)
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
@@ -49,11 +39,3 @@ def get_encoded_response(response: Any) -> bytes:
     )
 
     return encoded_response
-
-
-def write_api_response_to_fs(file_path: str, response: Any, remote_fs: Any):
-    """Get encoded responses and writes it to a file"""
-    encoded_response = get_encoded_response(response)
-
-    with remote_fs.open(file_path, "wb") as file:
-        file.write(encoded_response)

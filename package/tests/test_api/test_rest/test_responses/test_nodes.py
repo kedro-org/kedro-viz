@@ -3,7 +3,6 @@ from unittest import mock
 
 from fastapi.testclient import TestClient
 
-from kedro_viz.api.rest.responses.nodes import save_api_node_response_to_fs
 from kedro_viz.models.flowchart import TaskNode
 from tests.test_api.test_rest.test_responses.assert_helpers import (
     assert_example_transcoded_data,
@@ -90,36 +89,3 @@ class TestNodeMetadataEndpoint:
         with mock.patch.object(TaskNode, "has_metadata", return_value=False):
             response = client.get("/api/nodes/782e4a43")
         assert response.json() == {}
-
-    def test_save_api_node_response_to_fs(self, mocker):
-        nodes_path = "/nodes"
-        nodeIds = ["01f456", "01f457"]
-        expected_metadata_response = {"test": "json"}
-
-        mock_get_node_metadata_response = mocker.patch(
-            "kedro_viz.api.rest.responses.nodes.get_node_metadata_response",
-            return_value=expected_metadata_response,
-        )
-        mock_write_api_response_to_fs = mocker.patch(
-            "kedro_viz.api.rest.responses.nodes.write_api_response_to_fs"
-        )
-        mocker.patch(
-            "kedro_viz.api.rest.responses.nodes.data_access_manager.nodes.get_node_ids",
-            return_value=nodeIds,
-        )
-        remote_fs = mock.Mock()
-
-        save_api_node_response_to_fs(nodes_path, remote_fs, False)
-
-        assert mock_write_api_response_to_fs.call_count == len(nodeIds)
-        assert mock_get_node_metadata_response.call_count == len(nodeIds)
-
-        expected_calls = [
-            mock.call(
-                f"{nodes_path}/{nodeId}",
-                mock_get_node_metadata_response.return_value,
-                remote_fs,
-            )
-            for nodeId in nodeIds
-        ]
-        mock_write_api_response_to_fs.assert_has_calls(expected_calls, any_order=True)

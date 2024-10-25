@@ -126,7 +126,9 @@ def run_server(
         # we need to shift this feature outside of kedro viz run]
         if save_file:
             # pylint: disable=import-outside-toplevel
-            from kedro_viz.api.rest.responses.deploy import save_api_responses_to_fs
+            from kedro_viz.api.rest.responses.save_responses import (
+                save_api_responses_to_fs,
+            )
 
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 

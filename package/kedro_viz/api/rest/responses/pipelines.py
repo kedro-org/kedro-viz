@@ -5,16 +5,13 @@ and utility functions for the `/main` and `/pipelines/* REST endpoints"""
 
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from fastapi.responses import JSONResponse
 from pydantic import ConfigDict
 
-from kedro_viz.api.rest.responses.common import (
-    BaseAPIResponse,
-    get_encoded_response,
-    write_api_response_to_fs,
-)
+from kedro_viz.api.rest.responses.base import BaseAPIResponse
+from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.data_access import data_access_manager
 
 logger = logging.getLogger(__name__)
@@ -191,33 +188,6 @@ def get_pipeline_response(
         modular_pipelines=modular_pipelines_tree,
         selected_pipeline=pipeline_id,
     )
-
-
-def save_api_main_response_to_fs(main_path: str, remote_fs: Any):
-    """Saves API /main response to a directory."""
-    try:
-        write_api_response_to_fs(main_path, get_pipeline_response(), remote_fs)
-    except Exception as exc:  # pragma: no cover
-        logger.exception("Failed to save default response. Error: %s", str(exc))
-        raise exc
-
-
-def save_api_pipeline_response_to_fs(pipelines_path: str, remote_fs: Any):
-    """Saves API /pipelines/{pipeline} response to a directory."""
-    for pipelineId in data_access_manager.registered_pipelines.get_pipeline_ids():
-        try:
-            write_api_response_to_fs(
-                f"{pipelines_path}/{pipelineId}",
-                get_pipeline_response(pipelineId),
-                remote_fs,
-            )
-        except Exception as exc:  # pragma: no cover
-            logger.exception(
-                "Failed to save pipeline data for pipeline ID %s. Error: %s",
-                pipelineId,
-                str(exc),
-            )
-            raise exc
 
 
 def get_kedro_project_json_data():
