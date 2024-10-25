@@ -80,7 +80,9 @@ def save_api_node_response_to_fs(
     for node_id in data_access_manager.nodes.get_node_ids():
         try:
             write_api_response_to_fs(
-                f"{nodes_path}/{node_id}", get_node_metadata_response(node_id), remote_fs
+                f"{nodes_path}/{node_id}",
+                get_node_metadata_response(node_id),
+                remote_fs,
             )
         except Exception as exc:  # pragma: no cover
             logger.exception(

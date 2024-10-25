@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+
 from fastapi.testclient import TestClient
 
 from kedro_viz.api import apps
