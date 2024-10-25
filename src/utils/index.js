@@ -121,6 +121,9 @@ export const stripNamespace = (str) => {
  * @returns {String} The string with or without replaced values
  */
 export const prettifyName = (str) => {
+  if (!str) {
+    return '';
+  }
   const replacedString = str
     .replace(/-/g, ' ')
     .replace(/_/g, ' ')
