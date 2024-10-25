@@ -120,7 +120,10 @@ export const stripNamespace = (str) => {
  * @param {String} str The string to check
  * @returns {String} The string with or without replaced values
  */
-export const prettifyName = (str = '') => {
+export const prettifyName = (str) => {
+  if (!str) {
+    return '';
+  }
   const replacedString = str
     .replace(/-/g, ' ')
     .replace(/_/g, ' ')
