@@ -2,7 +2,6 @@
 
 import logging
 from abc import ABC
-from enum import Enum
 from typing import Any, Dict, Optional, Set, Union, cast
 
 from fastapi.encoders import jsonable_encoder
@@ -31,22 +30,9 @@ except ImportError:  # pragma: no cover
 
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from .model_utils import get_dataset_type
-from .pipelines import ModularPipelineChild
+from .model_utils import GraphNodeType, ModularPipelineChild, get_dataset_type
 
 logger = logging.getLogger(__name__)
-
-
-class GraphNodeType(str, Enum):
-    """Represent all possible node types in the graph representation of a Kedro pipeline.
-    The type needs to inherit from str as well so FastAPI can serialise it. See:
-    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
-    """
-
-    TASK = "task"
-    DATA = "data"
-    PARAMETERS = "parameters"
-    MODULAR_PIPELINE = "modularPipeline"  # CamelCase for frontend compatibility
 
 
 class GraphNode(BaseModel, ABC):

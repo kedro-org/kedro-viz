@@ -1,6 +1,7 @@
 """`kedro_viz.models.flowchart.model_utils` defines utils for Kedro entities in a viz graph."""
 
 import logging
+from enum import Enum
 from types import FunctionType
 from typing import Any, Dict, Optional
 
@@ -38,6 +39,11 @@ def get_dataset_type(dataset: AbstractDataset) -> str:
     return f"{dataset.__class__.__module__}.{dataset.__class__.__qualname__}"
 
 
+# =============================================================================
+# Shared base classes and enumerations for model components
+# =============================================================================
+
+
 class NamedEntity(BaseModel):
     """Represent a named entity (Tag/Registered Pipeline) in a Kedro project
     Args:
@@ -59,3 +65,27 @@ class NamedEntity(BaseModel):
     def set_name(cls, _, info: ValidationInfo):
         assert "id" in info.data
         return info.data["id"]
+
+
+class GraphNodeType(str, Enum):
+    """Represent all possible node types in the graph representation of a Kedro pipeline.
+    The type needs to inherit from str as well so FastAPI can serialise it. See:
+    https://fastapi.tiangolo.com/tutorial/path-params/#working-with-python-enumerations
+    """
+
+    TASK = "task"
+    DATA = "data"
+    PARAMETERS = "parameters"
+    MODULAR_PIPELINE = "modularPipeline"  # CamelCase for frontend compatibility
+
+
+class ModularPipelineChild(BaseModel, frozen=True):
+    """Represent a child of a modular pipeline.
+
+    Args:
+        id (str): Id of the modular pipeline child
+        type (GraphNodeType): Type of modular pipeline child
+    """
+
+    id: str
+    type: GraphNodeType

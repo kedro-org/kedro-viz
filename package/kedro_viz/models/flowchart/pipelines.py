@@ -4,24 +4,11 @@ from typing import Optional, Set
 
 from pydantic import BaseModel, Field
 
-from .model_utils import NamedEntity
-from .nodes import GraphNodeType
+from .model_utils import GraphNodeType, ModularPipelineChild, NamedEntity
 
 
 class RegisteredPipeline(NamedEntity):
     """Represent a registered pipeline in a Kedro project."""
-
-
-class ModularPipelineChild(BaseModel, frozen=True):
-    """Represent a child of a modular pipeline.
-
-    Args:
-        id (str): Id of the modular pipeline child
-        type (GraphNodeType): Type of modular pipeline child
-    """
-
-    id: str
-    type: GraphNodeType
 
 
 class ModularPipelineNode(BaseModel):
