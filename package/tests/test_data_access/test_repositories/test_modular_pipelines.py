@@ -6,8 +6,8 @@ from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.repositories import ModularPipelinesRepository
-from kedro_viz.models.flowchart.nodes import GraphNodeType, ModularPipelineNode
-from kedro_viz.models.flowchart.pipelines import ModularPipelineChild
+from kedro_viz.models.flowchart.model_utils import GraphNodeType, ModularPipelineChild
+from kedro_viz.models.flowchart.nodes import ModularPipelineNode
 
 
 @pytest.fixture

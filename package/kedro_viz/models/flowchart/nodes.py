@@ -1,4 +1,4 @@
-"""`kedro_viz.models.flowchart.nodes` defines data models to represent Kedro nodes in a viz graph."""
+"""`kedro_viz.models.flowchart.nodes` defines models to represent Kedro nodes in a viz graph."""
 
 import logging
 from abc import ABC

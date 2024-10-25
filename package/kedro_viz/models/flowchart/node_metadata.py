@@ -10,13 +10,6 @@ from kedro.pipeline.node import Node as KedroNode
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 try:
-    # kedro 0.18.11 onwards
-    from kedro.io.core import DatasetError
-except ImportError:  # pragma: no cover
-    # older versions
-    from kedro.io.core import DataSetError as DatasetError  # type: ignore
-
-try:
     # kedro 0.18.12 onwards
     from kedro.io.core import AbstractDataset
 except ImportError:  # pragma: no cover

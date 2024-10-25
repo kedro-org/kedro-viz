@@ -5,6 +5,7 @@ from kedro_viz.data_access.repositories import (
     GraphNodesRepository,
 )
 from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 
 class TestGraphNodeRepository:
