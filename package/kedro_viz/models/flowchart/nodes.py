@@ -1,7 +1,5 @@
 """`kedro_viz.models.flowchart.nodes` defines models to represent Kedro nodes in a viz graph."""
 
-# pylint: disable=protected-access, missing-function-docstring
-
 import logging
 from abc import ABC
 from typing import Any, Dict, Optional, Set, Union, cast
@@ -99,7 +97,6 @@ class GraphNode(BaseModel, ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_data_node(
         cls,
         dataset_id: str,
@@ -152,7 +149,6 @@ class GraphNode(BaseModel, ABC):
         )
 
     @classmethod
-    # pylint: disable=too-many-positional-arguments
     def create_parameters_node(
         cls,
         dataset_id: str,
@@ -262,7 +258,6 @@ class TaskNode(GraphNode):
         return info.data["kedro_obj"].namespace
 
 
-# pylint: disable=missing-function-docstring
 class DataNode(GraphNode):
     """Represent a graph node of type data
 
@@ -436,8 +431,7 @@ class ParametersNode(GraphNode):
                 "Cannot find parameter `%s` in the catalog.", self.parameter_name
             )
             return None
-        # pylint: disable=broad-exception-caught
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.error(
                 "An error occurred when loading parameter `%s` in the catalog :: %s",
                 self.parameter_name,

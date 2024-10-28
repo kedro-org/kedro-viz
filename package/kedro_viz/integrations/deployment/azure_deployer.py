@@ -1,5 +1,6 @@
 """`kedro_viz.integrations.deployment.azure_deployer` defines
 deployment class for Azure Blob Storage"""
+
 import glob
 import logging
 import mimetypes

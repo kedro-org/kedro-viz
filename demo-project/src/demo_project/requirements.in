@@ -1,7 +1,4 @@
-black~=22.0
-flake8>=3.7.9, <4.0
 ipython~=7.0
-isort~=5.0
 jupyter~=1.0
 jupyter_client>=5.1, <7.0
 jupyterlab~=3.0
@@ -16,4 +13,5 @@ wheel>=0.35, <0.37
 pillow~=9.0
 matplotlib==3.5.0
 pre-commit~=1.17
+ruff==0.7.0
 seaborn>=0.13.0

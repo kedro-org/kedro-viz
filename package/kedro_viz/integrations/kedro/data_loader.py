@@ -3,8 +3,6 @@ load data from a Kedro project. It takes care of making sure viz can
 load data from projects created in a range of Kedro versions.
 """
 
-# pylint: disable=protected-access
-
 import json
 import logging
 import sys
@@ -46,7 +44,7 @@ def _get_dataset_stats(project_path: Path) -> Dict:
             stats = json.load(stats_file)
             return stats
 
-    except Exception as exc:  # pylint: disable=broad-exception-caught
+    except Exception as exc:  # noqa: BLE001
         logger.warning(
             "Unable to get dataset statistics from project path %s : %s",
             project_path,
@@ -95,7 +93,14 @@ def _load_data_helper(
         # patch the AbstractDataset class for a custom
         # implementation to handle kedro.io.core.DatasetError
         if is_lite:
-            with patch("kedro.io.data_catalog.AbstractDataset", AbstractDatasetLite):
+            # kedro 0.18.12 onwards
+            if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
+                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
+            else:  # pragma: no cover
+                # older versions
+                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataSet"
+
+            with patch(abstract_ds_patch_target, AbstractDatasetLite):
                 catalog = context.catalog
         else:
             catalog = context.catalog
@@ -108,7 +113,6 @@ def _load_data_helper(
     return catalog, pipelines_dict, session_store, stats_dict
 
 
-# pylint: disable=too-many-positional-arguments
 def load_data(
     project_path: Path,
     env: Optional[str] = None,

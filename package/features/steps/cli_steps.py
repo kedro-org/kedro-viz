@@ -166,7 +166,7 @@ def check_kedroviz_up(context):
     while time() < end_by:
         try:
             data_json = requests.get("http://localhost:4141/api/main").json()
-        except Exception:
+        except Exception:  # noqa: BLE001
             sleep(2.0)
             continue
         else:
@@ -191,7 +191,7 @@ def get_main_api_response(context):
             response = requests.get("http://localhost:4141/api/main")
             context.response = response.json()
             assert response.status_code == 200
-        except Exception:
+        except Exception:  # noqa: BLE001
             sleep(2.0)
             continue
         else:
