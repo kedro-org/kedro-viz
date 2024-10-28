@@ -235,8 +235,8 @@ describe('NodeList', () => {
     const checkboxByName = (wrapper, text) =>
       wrapper.find(`.toggle-control__checkbox[name="${text}"]`);
 
-    const rowByName = (wrapper, text) =>
-      wrapper.find(`.node-list-tree-item-row[title="${text}"]`);
+    const filterRowByName = (wrapper, text) =>
+      wrapper.find(`.node-list-filter-row[title="${text}"]`);
 
     const changeRows = (wrapper, names, checked) =>
       names.forEach((name) =>
@@ -297,28 +297,36 @@ describe('NodeList', () => {
       expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
     });
 
-    // it('adds a class to the row when a tag row unchecked', () => {
-    //   const wrapper = setup.mount(
-    //     <MemoryRouter>
-    //       <NodeList />
-    //     </MemoryRouter>
-    //   );
+    it('adds a class to the row when a tag row unchecked', () => {
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
+      const uncheckedClass = 'toggle-control--icon--unchecked';
 
-    //   console.log(wrapper.debug(), 'NodeList debug');
-    //   const uncheckedClass = 'toggle-control--icon--unchecked';
+      const filterRow = filterRowByName(wrapper, 'Preprocessing');
+      const hasUncheckedClass = filterRow.find(`.${uncheckedClass}`).exists();
+      expect(hasUncheckedClass).toBe(true);
 
-    //   eexpect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
-    //     true
-    //   );
-    //   changeRows(wrapper, ['Preprocessing'], true);
-    //   expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
-    //     false
-    //   );
-    //   changeRows(wrapper, ['Preprocessing'], false);
-    //   expect(rowByName(wrapper, 'Preprocessing').hasClass(uncheckedClass)).toBe(
-    //     true
-    //   );
-    // });
+      changeRows(wrapper, ['Preprocessing'], true);
+      const hasUncheckedClassAfterChangeTrue = filterRowByName(
+        wrapper,
+        'Preprocessing'
+      )
+        .find(`.${uncheckedClass}`)
+        .exists();
+      expect(hasUncheckedClassAfterChangeTrue).toBe(false);
+
+      changeRows(wrapper, ['Preprocessing'], false);
+      const hasUncheckedClassAfterChangeFalse = filterRowByName(
+        wrapper,
+        'Preprocessing'
+      )
+        .find(`.${uncheckedClass}`)
+        .exists();
+      expect(hasUncheckedClassAfterChangeFalse).toBe(true);
+    });
 
     it('shows as partially selected when at least one but not all tags selected', () => {
       const wrapper = setup.mount(
@@ -372,6 +380,22 @@ describe('NodeList', () => {
       const tags = getTagData(mockState.spaceflights);
       const elementTypes = Object.keys(sidebarElementTypes);
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
+    });
+
+    it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
+      const wrapper = setup.mount(
+        <MemoryRouter>
+          <NodeList />
+        </MemoryRouter>
+      );
+
+      const nodeList = wrapper.find('.row-text--tree');
+      const modularPipelinesTree = getModularPipelinesTree(
+        mockState.spaceflights
+      );
+      expect(nodeList.length).toBe(
+        modularPipelinesTree['__root__'].children.length
+      );
     });
 
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
