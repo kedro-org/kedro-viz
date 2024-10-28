@@ -33,7 +33,7 @@ except ImportError:  # pragma: no cover
 from kedro_viz.models.utils import get_dataset_type
 from kedro_viz.utils import TRANSCODING_SEPARATOR, _strip_transcoding
 
-from .model_utils import GraphNodeType, ModularPipelineChild
+from .model_utils import GraphNodeType
 
 logger = logging.getLogger(__name__)
 
@@ -216,6 +216,18 @@ class GraphNode(BaseModel, ABC):
         we just need to check whether the underlying object exists.
         """
         return self.kedro_obj is not None
+
+
+class ModularPipelineChild(BaseModel, frozen=True):
+    """Represent a child of a modular pipeline.
+
+    Args:
+        id (str): Id of the modular pipeline child
+        type (GraphNodeType): Type of modular pipeline child
+    """
+
+    id: str
+    type: GraphNodeType
 
 
 class TaskNode(GraphNode):

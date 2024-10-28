@@ -69,15 +69,3 @@ class GraphNodeType(str, Enum):
     DATA = "data"
     PARAMETERS = "parameters"
     MODULAR_PIPELINE = "modularPipeline"  # CamelCase for frontend compatibility
-
-
-class ModularPipelineChild(BaseModel, frozen=True):
-    """Represent a child of a modular pipeline.
-
-    Args:
-        id (str): Id of the modular pipeline child
-        type (GraphNodeType): Type of modular pipeline child
-    """
-
-    id: str
-    type: GraphNodeType

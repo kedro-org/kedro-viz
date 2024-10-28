@@ -22,7 +22,7 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.models.flowchart.pipelines import RegisteredPipeline
+from kedro_viz.models.flowchart.pipeline import RegisteredPipeline
 
 
 def identity(x):
