@@ -102,6 +102,11 @@
       background-color: var(--color-nodelist-row-active);
       position: relative;
 
+      // Ensure all .row__type-icon path elements have opacity 1
+      .row__type-icon path {
+        opacity: 1;
+      }
+
       // Apply the after-shadow mixin to ensure the background covers the full width on hover
       &::after {
         content: '';
