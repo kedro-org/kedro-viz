@@ -16,17 +16,7 @@ const NodeRowList = ({
     height={(start, end) => (end - start) * nodeListRowHeight}
     total={items.length}
   >
-    {({
-      start,
-      end,
-      total,
-      listRef,
-      upperRef,
-      lowerRef,
-      listStyle,
-      upperStyle,
-      lowerStyle,
-    }) => (
+    {({ start, end, listRef, listStyle }) => (
       <ul
         ref={listRef}
         style={listStyle}
@@ -36,24 +26,11 @@ const NodeRowList = ({
           'pipeline-nodelist__list pipeline-nodelist__list--nested'
         )}
       >
-        <li
-          className={modifiers('pipeline-nodelist__placeholder-upper', {
-            fade: start !== end && start > 0,
-          })}
-          ref={upperRef}
-          style={upperStyle}
-        />
-        <li
-          className={modifiers('pipeline-nodelist__placeholder-lower', {
-            fade: start !== end && end < total,
-          })}
-          ref={lowerRef}
-          style={lowerStyle}
-        />
         {items.slice(start, end).map((item) => (
           <FilterRow
             allUnchecked={group.allUnchecked}
             checked={item.checked}
+            container={'li'}
             count={item.count}
             dataTest={getDataTestAttribute('node-list-row', 'filter-row')}
             id={item.id}

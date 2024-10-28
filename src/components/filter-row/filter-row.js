@@ -11,23 +11,24 @@ export const FilterRow = ({
   allUnchecked,
   checked,
   children,
+  container: ContainerWrapper,
   count,
   dataTest,
   id,
-  offIndicatorIcon = OffIndicatorIcon,
+  indicatorIcon = IndicatorIcon,
   kind,
   label,
   name,
+  offIndicatorIcon = OffIndicatorIcon,
   onChange,
   onClick,
   parentClassName,
   visible,
-  indicatorIcon = IndicatorIcon,
 }) => {
   const Icon = checked ? indicatorIcon : offIndicatorIcon;
 
   return (
-    <div
+    <ContainerWrapper
       className={classnames(
         'filter-row kedro',
         `filter-row--kind-${kind}`,
@@ -60,6 +61,6 @@ export const FilterRow = ({
         onChange={onChange}
       />
       {children}
-    </div>
+    </ContainerWrapper>
   );
 };

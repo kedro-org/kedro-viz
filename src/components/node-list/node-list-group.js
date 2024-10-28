@@ -38,6 +38,7 @@ export const NodeListGroup = ({
         <FilterRow
           allUnchecked={allUnchecked}
           checked={checked}
+          container="div"
           id={id}
           offIndicatorIcon={invisibleIcon}
           kind={kind}
