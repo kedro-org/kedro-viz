@@ -3,8 +3,6 @@
 Kedro metadata in a visualization graph.
 """
 
-# pylint: disable=protected-access, missing-function-docstring
-
 import inspect
 import logging
 from abc import ABC
@@ -248,7 +246,7 @@ class DataNodeMetadata(GraphNodeMetadata):
                 return cls.dataset.preview()
             return cls.dataset.preview(**preview_args)
 
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "'%s' could not be previewed. Full exception: %s: %s",
                 cls.data_node.name,
@@ -278,7 +276,7 @@ class DataNodeMetadata(GraphNodeMetadata):
             )
             return preview_type_name
 
-        except Exception as exc:  # pylint: disable=broad-except # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.warning(
                 "'%s' did not have preview type. Full exception: %s: %s",
                 cls.data_node.name,
