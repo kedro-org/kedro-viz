@@ -42,7 +42,8 @@
 }
 
 .row--active::before,
-.row--selected::before {
+.row--selected::before,
+.row:hover::before {
   opacity: 1;
 }
 

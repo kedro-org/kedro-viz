@@ -95,7 +95,7 @@
 
   // When hovering over the tree item content
   .MuiTreeItem-content:hover {
-    background-color: var(--color-nodelist-row-active);
+    background-color: var(--color-nodelist-row-active) !important;
 
     &::before {
       position: absolute;
@@ -103,7 +103,7 @@
       bottom: 0;
       left: -100px;
       width: 100px;
-      background: var(--color-nodelist-row-selected);
+      background: var(--color-nodelist-row-active);
       transform: translate(0, 0);
       opacity: 1;
       content: ' ';
