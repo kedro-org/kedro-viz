@@ -220,20 +220,26 @@ export class FlowChart extends Component {
 
     if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
-      if (prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar) {
+      const metaSidebarChanged =
+        prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
+
+      const codeChangedWithoutMetaSidebar =
+        prevProps.visibleCode !== this.props.visibleCode &&
+        !this.props.visibleMetaSidebar;
+
+      // Don't zoom out when the clicked node changes and the nodeReFocus is disabled
+      const clickedNodeChangedWithoutReFocus =
+        prevProps.clickedNode !== this.props.clickedNode &&
+        !this.props.nodeReFocus;
+
+      if (
+        metaSidebarChanged ||
+        codeChangedWithoutMetaSidebar ||
+        clickedNodeChangedWithoutReFocus
+      ) {
         drawNodes.call(this, changed);
         drawEdges.call(this, changed);
-
         return;
-      }
-
-      if (prevProps.visibleCode !== this.props.visibleCode) {
-        if (!this.props.visibleMetaSidebar) {
-          drawNodes.call(this, changed);
-          drawEdges.call(this, changed);
-
-          return;
-        }
       }
 
       this.resetView(preventZoom);
@@ -467,6 +473,7 @@ export class FlowChart extends Component {
    * Zoom and scale to fit graph and any selected node in view
    */
   resetView(preventZoom) {
+    console.log('resetView, preventZoom', preventZoom);
     const { chartSize, graphSize, clickedNode, nodes } = this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
@@ -1000,6 +1007,7 @@ export const mapStateToProps = (state, ownProps) => ({
   slicedPipeline: getSlicedPipeline(state),
   isSlicingPipelineApplied: state.slice.apply,
   visibleSlicing: state.visible.slicing,
+  nodeReFocus: state.modeOptions.reFocus,
   runCommand: getRunCommand(state),
   ...ownProps,
 });
