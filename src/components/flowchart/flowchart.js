@@ -473,7 +473,6 @@ export class FlowChart extends Component {
    * Zoom and scale to fit graph and any selected node in view
    */
   resetView(preventZoom) {
-    console.log('resetView, preventZoom', preventZoom);
     const { chartSize, graphSize, clickedNode, nodes } = this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
