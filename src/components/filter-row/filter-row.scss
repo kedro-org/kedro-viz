@@ -51,11 +51,4 @@
       opacity: 0.8;
     }
   }
-
-  // Bright row text when all unchecked
-  .pipeline-nodelist__group--all-unchecked & {
-    .row-text__label--kind-filter {
-      opacity: 1;
-    }
-  }
 }

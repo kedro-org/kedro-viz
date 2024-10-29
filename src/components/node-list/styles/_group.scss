@@ -129,3 +129,10 @@ $placeholder-fade: 120px;
     transform: rotate(90deg);
   }
 }
+
+// Bright row text when the parent groups are all unchecked
+.pipeline-nodelist__group--all-unchecked {
+  .row-text__label--kind-filter {
+    opacity: 1;
+  }
+}
