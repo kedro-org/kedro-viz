@@ -49,7 +49,7 @@ const NodeListTreeItem = ({
         onChange={(e) =>
           onItemChange(data, !e.target.checked, e.target.dataset.iconType)
         }
-        onClick={() => onItemClick(data)}
+        onClick={(e) => onItemClick(e, data)}
         onMouseEnter={() => onItemMouseEnter(data)}
         onMouseLeave={() => onItemMouseLeave(data)}
         onToggleHoveredFocusMode={onToggleHoveredFocusMode}

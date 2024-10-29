@@ -105,7 +105,7 @@ const NodeListProvider = ({
 
   const groups = getGroups({ items });
 
-  const onItemClick = (item) => {
+  const onItemClick = (event, item) => {
     if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
     } else if (isModularPipelineType(item.type)) {
@@ -123,6 +123,9 @@ const NodeListProvider = ({
         }
       }
     }
+
+    // to prevent page reload on form submission
+    event.preventDefault();
   };
 
   // To get existing values from URL query parameters
