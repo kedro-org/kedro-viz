@@ -1,6 +1,3 @@
-# We need to disable pylint because of this issue -
-#  https://github.com/pylint-dev/pylint/issues/8138
-# pylint: disable=E1102
 import json
 import os
 from pathlib import Path

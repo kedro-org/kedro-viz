@@ -6,7 +6,7 @@ from kedro_viz.launchers.cli.lazy_default_group import LazyDefaultGroup
 
 
 @click.group(name="Kedro-Viz")
-def viz_cli():  # pylint: disable=missing-function-docstring
+def viz_cli():
     pass
 
 
@@ -22,5 +22,5 @@ def viz_cli():  # pylint: disable=missing-function-docstring
     default_if_no_args=True,
 )
 @click.pass_context
-def viz(ctx):  # pylint: disable=unused-argument
+def viz(ctx):
     """Visualise a Kedro pipeline using Kedro viz."""
