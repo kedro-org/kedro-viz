@@ -72,7 +72,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=nodelist-data-${nodeToClickText}]`
+      `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=node-list-tree-item--row--${nodeToClickText}]`
     )
       .should('exist')
       .as('nodeToClick');
@@ -91,7 +91,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=nodelist-data-${nodeToHighlightText}]`
+      `.MuiTreeItem-label > .node-list-tree-item-row > [data-test=node-list-tree-item--row--${nodeToHighlightText}]`
     )
       .should('exist')
       .as('nodeToHighlight');
@@ -121,7 +121,7 @@ describe('Flowchart Menu', () => {
 
     // Assert after action
     cy.__checkForText__(
-      `[data-test=nodelist-data-${nodeToToggleText}] > .row-text__label--faded`,
+      `[data-test=node-list-tree-item--row--${nodeToToggleText}] > .row-text__label--faded`,
       nodeToToggleText
     );
     cy.get('.pipeline-node__text').should('not.contain', nodeToToggleText);
@@ -168,20 +168,20 @@ describe('Flowchart Menu', () => {
     // Assert before action
     cy.get('@nodeToToggle').should('be.checked');
     cy.get(
-      `[data-test=nodelist-data-${visibleRowLabel}] > .row-text__label`
+      `[data-test=node-list-tree-item--row--${visibleRowLabel}] > .row-text__label`
     )
-      .should('not.have.class', 'pipeline-nodelist__row__label--faded')
-      .should('not.have.class', 'pipeline-nodelist__row__label--disabled');
+      .should('not.have.class', 'row-text__label--faded')
+      .should('not.have.class', 'row-text__label--disabled');
 
     // Action
     cy.get('@nodeToToggle').uncheck({ force: true });
 
     // Assert after action
     cy.get(
-      `[data-test=nodelist-data-${visibleRowLabel}] > .row-text__label`
+      `[data-test=node-list-tree-item--row--${visibleRowLabel}] > .row-text__label`
     )
-      .should('have.class', 'pipeline-nodelist__row__label--faded')
-      .should('have.class', 'pipeline-nodelist__row__label--disabled');
+      .should('have.class', 'row-text__label--faded')
+      .should('have.class', 'row-text__label--disabled');
   });
 
   it('verifies that after checking node type URL should be updated with correct query params', () => {

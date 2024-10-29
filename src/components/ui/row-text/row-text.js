@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { replaceAngleBracketMatches } from '../../../utils';
+import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
 import './row-text.scss';
 
@@ -26,7 +27,7 @@ export const RowText = ({
           'row-text--faded': faded,
         }
       )}
-      data-test={dataTest}
+      data-test={getDataTestAttribute(dataTest, label)}
       onClick={onClick}
       onFocus={onMouseEnter}
       onBlur={onMouseLeave}

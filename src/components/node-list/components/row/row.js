@@ -50,6 +50,7 @@ const Row = ({
         'row--selected': selected || (!isSlicingPipelineApplied && highlight),
         'row--overwrite': !(active || selected),
       })}
+      data-test={dataTest}
       title={name}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -82,7 +83,7 @@ const Row = ({
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
           IconComponent={VisibilityIcon}
-          id={uniqueId(id)}
+          id={id}
           isChecked={isChecked}
           kind={kind}
           name={name}
@@ -96,7 +97,7 @@ const Row = ({
           disabled={disabled}
           focusChecked={focused}
           IconComponent={FocusIcon}
-          id={uniqueId(id + '-focus')}
+          id={id + '-focus'}
           isChecked={isChecked}
           kind={kind}
           name={name}
