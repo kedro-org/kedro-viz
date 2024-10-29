@@ -15,9 +15,13 @@ class GraphNodesRepository:
         return node.id in self.nodes_dict
 
     def add_node(self, node: GraphNode) -> GraphNode:
-        if not self.has_node(node):
+        existing_node = self.nodes_dict.get(node.id)
+        if existing_node:
+            # Update tags or other attributes if the node already exists
+            existing_node.tags.update(node.tags)
+        else:
             self.nodes_dict[node.id] = node
-            self.nodes_list.append(node)
+            self.nodes_list.append(node)      
         return self.nodes_dict[node.id]
 
     def get_node_by_id(self, node_id: str) -> Optional[GraphNode]:
