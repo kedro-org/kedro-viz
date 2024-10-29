@@ -137,7 +137,7 @@ describe('Flowchart Menu', () => {
 
     // Action
     cy.get(
-      `[for=${nodeToFocusText}-focus] > row__icon`
+      `[for=feature_engineering-focus]`
     ).click();
 
     // Assert after action
