@@ -1,0 +1,83 @@
+@use '../../../../styles/variables' as var;
+@use '../../styles/variables';
+
+.MuiTreeItem-iconContainer svg {
+  z-index: var.$zindex-MuiTreeItem-icon;
+}
+
+.row {
+  align-items: center;
+  cursor: default;
+  display: flex;
+  height: 32px;
+  position: relative;
+  transform: translate(0, 0);
+
+  &:hover,
+  &--selected {
+    // Additional selector required to increase specificity to override previous rule
+    background-color: var(--color-nodelist-row-selected);
+    border-right: 1px solid var.$blue-300;
+  }
+
+  // to ensure the background of the row covers the full width on hover
+  &::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100px;
+    width: 100px;
+    background: var(--color-nodelist-row-selected);
+    transform: translate(0, 0);
+    opacity: 0;
+    content: ' ';
+    pointer-events: none;
+  }
+}
+
+.MuiTreeItem-content:hover {
+  .row__type-icon path {
+    opacity: 1;
+  }
+}
+
+.row--active::before,
+.row--selected::before,
+.row:hover::before {
+  opacity: 1;
+}
+
+.row__icon {
+  display: block;
+  flex-shrink: 0;
+  width: variables.$row-icon-size;
+  height: variables.$row-icon-size;
+  fill: var(--color-text);
+
+  &--disabled > * {
+    opacity: 0.1;
+  }
+}
+
+.row__type-icon {
+  &--nested > * {
+    opacity: 0.3;
+  }
+
+  &--faded > * {
+    opacity: 0.2;
+  }
+
+  &--active,
+  &--selected,
+  .row--visible:hover &,
+  [data-whatintent='keyboard'] .row__text:focus & {
+    > * {
+      opacity: 1;
+    }
+
+    &--faded > * {
+      opacity: 0.55;
+    }
+  }
+}

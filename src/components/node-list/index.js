@@ -26,7 +26,11 @@ import {
 } from '../../selectors/nodes';
 import { toggleTagActive, toggleTagFilter } from '../../actions/tags';
 import { toggleTypeDisabled } from '../../actions/node-type';
-import { toggleParametersHovered, toggleFocusMode } from '../../actions';
+import {
+  toggleParametersHovered,
+  toggleFocusMode,
+  toggleHoveredFocusMode,
+} from '../../actions';
 import {
   toggleModularPipelineActive,
   toggleModularPipelineDisabled,
@@ -64,6 +68,7 @@ const NodeListProvider = ({
   onToggleModularPipelineExpanded,
   onToggleTypeDisabled,
   onToggleFocusMode,
+  onToggleHoveredFocusMode,
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
@@ -100,7 +105,7 @@ const NodeListProvider = ({
 
   const groups = getGroups({ items });
 
-  const onItemClick = (item) => {
+  const onItemClick = (event, item) => {
     if (isGroupType(item.type)) {
       onGroupItemChange(item, item.checked);
     } else if (isModularPipelineType(item.type)) {
@@ -118,6 +123,9 @@ const NodeListProvider = ({
         }
       }
     }
+
+    // to prevent page reload on form submission
+    event.preventDefault();
   };
 
   // To get existing values from URL query parameters
@@ -315,6 +323,7 @@ const NodeListProvider = ({
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}
       onItemMouseLeave={onItemMouseLeave}
+      onToggleHoveredFocusMode={onToggleHoveredFocusMode}
       onItemChange={onItemChange}
       focusMode={focusMode}
       disabledModularPipeline={disabledModularPipeline}
@@ -370,6 +379,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleFocusMode: (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
+  },
+  onToggleHoveredFocusMode: (active) => {
+    dispatch(toggleHoveredFocusMode(active));
   },
   onResetSlicePipeline: () => {
     dispatch(resetSlicePipeline());

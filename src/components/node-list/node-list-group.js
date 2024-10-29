@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import NodeListRow from './node-list-row';
+import { FilterRow } from '../filter-row/filter-row';
 import NodeRowList from './node-list-row-list';
 
 export const NodeListGroup = ({
@@ -35,12 +35,12 @@ export const NodeListGroup = ({
       )}
     >
       <h3 className="pipeline-nodelist__heading">
-        <NodeListRow
+        <FilterRow
           allUnchecked={allUnchecked}
           checked={checked}
-          disabled={disabledGroup}
+          container="div"
           id={id}
-          invisibleIcon={invisibleIcon}
+          offIndicatorIcon={invisibleIcon}
           kind={kind}
           label={name}
           name={name}
@@ -48,18 +48,17 @@ export const NodeListGroup = ({
             onToggleChecked(id, !e.target.checked);
           }}
           rowType="filter"
-          visibleIcon={visibleIcon}
+          indicatorIcon={visibleIcon}
         >
           <button
             aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
             className={classnames('pipeline-type-group-toggle', {
               'pipeline-type-group-toggle--alt': collapsed,
-              'pipeline-type-group-toggle--disabled': disabledGroup,
             })}
             disabled={disabledGroup}
             onClick={() => onToggleCollapsed(id)}
           />
-        </NodeListRow>
+        </FilterRow>
       </h3>
       <NodeRowList
         collapsed={collapsed}
