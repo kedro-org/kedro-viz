@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def file_filter(tmp_path):
+    """
+    Fixture to create a temporary .gitignore file and initialize the AutoreloadFileFilter
+    with the test directory as the base path.
+    """
     # Create a .gitignore file
     gitignore_path = tmp_path / ".gitignore"
     gitignore_path.write_text("ignored.py\n")
@@ -23,6 +27,9 @@ def file_filter(tmp_path):
 
 
 def test_no_gitignore(tmp_path):
+    """
+    Test that a file passes the filter when the .gitignore file is missing.
+    """
     gitignored_file = tmp_path / "ignored.py"
     gitignored_file.touch()
 
@@ -37,6 +44,9 @@ def test_no_gitignore(tmp_path):
 
 
 def test_gitignore_exception(file_filter, tmp_path):
+    """
+    Test that a file passes the filter if an exception occurs during .gitignore matching.
+    """
     allowed_file = tmp_path / "test.py"
     allowed_file.touch()
 
@@ -48,6 +58,9 @@ def test_gitignore_exception(file_filter, tmp_path):
 
 
 def test_allowed_file(file_filter, tmp_path):
+    """
+    Test that a file with an allowed extension passes the filter.
+    """
     allowed_file = tmp_path / "test.py"
     allowed_file.touch()
 
@@ -56,6 +69,9 @@ def test_allowed_file(file_filter, tmp_path):
 
 
 def test_disallowed_file(file_filter, tmp_path):
+    """
+    Test that a file with a disallowed extension does not pass the filter.
+    """
     disallowed_file = tmp_path / "test.txt"
     disallowed_file.touch()
 
@@ -64,6 +80,9 @@ def test_disallowed_file(file_filter, tmp_path):
 
 
 def test_gitignored_file(file_filter, tmp_path):
+    """
+    Test that a file listed in the .gitignore file does not pass the filter.
+    """
     gitignored_file = tmp_path / "ignored.py"
     gitignored_file.touch()
 
@@ -72,6 +91,9 @@ def test_gitignored_file(file_filter, tmp_path):
 
 
 def test_non_relative_path(file_filter):
+    """
+    Test that a file outside the current working directory does not pass the filter.
+    """
     original_cwd = Path.cwd().parent  # Go up one directory
     outside_file = original_cwd / "outside.py"
     outside_file.touch()
@@ -84,6 +106,9 @@ def test_non_relative_path(file_filter):
 
 
 def test_no_allowed_extension(file_filter, tmp_path):
+    """
+    Test that a file without an allowed extension does not pass the filter.
+    """
     no_extension_file = tmp_path / "no_extension"
     no_extension_file.touch()
 
@@ -92,6 +117,9 @@ def test_no_allowed_extension(file_filter, tmp_path):
 
 
 def test_directory_path(file_filter, tmp_path):
+    """
+    Test that a directory does not pass the filter.
+    """
     directory_path = tmp_path / "some_directory"
     directory_path.mkdir()
 
@@ -100,6 +128,9 @@ def test_directory_path(file_filter, tmp_path):
 
 
 def test_filtered_out_by_default_filter(file_filter, tmp_path, mocker):
+    """
+    Test that a file is filtered out by the DefaultFilter.
+    """
     filtered_file = tmp_path / "filtered.py"
     filtered_file.touch()
 
