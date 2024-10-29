@@ -1,6 +1,5 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 
-# pylint: disable=too-many-instance-attributes,protected-access
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
@@ -94,8 +93,7 @@ class DataAccessManager:
             for dataset_name in datasets:
                 try:
                     catalog._get_dataset(dataset_name, suggest=False)
-                # pylint: disable=broad-except
-                except Exception:  # pragma: no cover
+                except Exception:  # noqa: BLE001 # pragma: no cover
                     continue
 
     def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
@@ -237,7 +235,6 @@ class DataAccessManager:
         self.tags.add_tags(task_node.tags)
         return task_node
 
-    # pylint: disable=too-many-positional-arguments
     def add_node_input(
         self,
         registered_pipeline_id: str,
@@ -399,9 +396,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[
-                parameters_node.parameter_name
-            ] = parameters_node.parameter_value
+            task_node.parameters[parameters_node.parameter_name] = (
+                parameters_node.parameter_value
+            )
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
@@ -473,8 +470,7 @@ class DataAccessManager:
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
         )
 
-    # pylint: disable=too-many-locals,too-many-branches
-    def create_modular_pipelines_tree_for_registered_pipeline(
+    def create_modular_pipelines_tree_for_registered_pipeline(  # noqa: PLR0912
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
         """Create the modular pipelines tree for a specific registered pipeline.
