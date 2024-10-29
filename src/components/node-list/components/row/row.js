@@ -1,5 +1,4 @@
 import React from 'react';
-import { uniqueId } from 'lodash';
 import classnames from 'classnames';
 import NodeIcon from '../../../icons/node-icon';
 import VisibleIcon from '../../../icons/visible';
