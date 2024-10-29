@@ -19,30 +19,13 @@
     background-color: var(--color-nodelist-row-selected);
     border-right: 1px solid var.$blue-300;
   }
-
-  &:hover .row__type-icon path {
-    opacity: 1;
-  }
-
-  // to ensure the background of the row covers the full width on hover
-  &::before {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -100px;
-    width: 100px;
-    background: var(--color-nodelist-row-selected);
-    transform: translate(0, 0);
-    opacity: 0;
-    content: ' ';
-    pointer-events: none;
-  }
 }
 
-.row--active::before,
-.row--selected::before,
-.row:hover::before {
-  opacity: 1;
+.row:hover,
+.MuiTreeItem-content:hover {
+  .row__type-icon path {
+    opacity: 1;
+  }
 }
 
 .row__icon {
