@@ -23,10 +23,6 @@ class APINotFoundResponse(BaseModel):
 class BaseAPIResponse(BaseModel, abc.ABC):
     """
     BaseAPIResponse is an abstract base class for API responses.
-
-    Attributes:
-        model_config (ConfigDict): Configuration dictionary for the model,
-                                   initialized with attributes from the model.
     """
 
     model_config = ConfigDict(from_attributes=True)
