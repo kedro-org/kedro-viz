@@ -381,6 +381,29 @@ def edge_case_example_pipelines(
 
 
 @pytest.fixture
+def edge_case_example_pipelines_with_tags(
+    example_pipeline_with_dataset_as_input_and_output,
+    example_pipeline_with_dataset_as_input_to_outer_namespace,
+):
+    """
+    Fixture to mock the use cases mentioned in
+    https://github.com/kedro-org/kedro-viz/issues/2106
+    """
+
+    pipelines_dict = {
+        "customer_pipeline": example_pipeline_with_dataset_as_input_and_output,
+        "car_pipeline": example_pipeline_with_dataset_as_input_to_outer_namespace,
+    }
+
+    pipelines_dict["__default__"] = pipeline(
+        sum(pipeline for pipeline in pipelines_dict.values()),
+        tags=["default_tag1", "default_tag2"],
+    )
+
+    yield pipelines_dict
+
+
+@pytest.fixture
 def expected_modular_pipeline_tree_for_edge_cases():
     expected_tree_for_edge_cases_file_path = (
         Path(__file__).parent / "test_api/expected_modular_pipeline_tree_for_edge_cases"
@@ -529,6 +552,36 @@ def example_api_for_edge_case_pipelines(
         data_access_manager,
         example_catalog,
         edge_case_example_pipelines,
+        session_store,
+        {},
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+    )
+    yield api
+
+
+@pytest.fixture
+def example_api_for_edge_case_pipelines_with_tags(
+    data_access_manager: DataAccessManager,
+    edge_case_example_pipelines_with_tags: Dict[str, Pipeline],
+    example_catalog: DataCatalog,
+    session_store: BaseSessionStore,
+    mocker,
+):
+    api = apps.create_api_app_from_project(mock.MagicMock())
+
+    # For readability we are not hashing the node id
+    mocker.patch("kedro_viz.utils._hash", side_effect=lambda value: value)
+    mocker.patch(
+        "kedro_viz.data_access.repositories.modular_pipelines._hash",
+        side_effect=lambda value: value,
+    )
+
+    populate_data(
+        data_access_manager,
+        example_catalog,
+        edge_case_example_pipelines_with_tags,
         session_store,
         {},
     )

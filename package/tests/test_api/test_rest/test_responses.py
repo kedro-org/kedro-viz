@@ -594,6 +594,19 @@ class TestMainEndpoint:
             actual_modular_pipelines_tree, expected_modular_pipeline_tree_for_edge_cases
         )
 
+    def test_endpoint_main_for_edge_case_pipelines_with_tags(
+        self,
+        example_api_for_edge_case_pipelines_with_tags,
+    ):
+        expected_tags = [
+            {"id": "default_tag1", "name": "default_tag1"},
+            {"id": "default_tag2", "name": "default_tag2"},
+        ]
+        client = TestClient(example_api_for_edge_case_pipelines_with_tags)
+        response = client.get("/api/main")
+        actual_tags = response.json()["tags"]
+        assert actual_tags == expected_tags
+
 
 class TestTranscodedDataset:
     """Test a viz API created from a Kedro project."""
