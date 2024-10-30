@@ -1,22 +1,22 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { FilterRow } from './filter-row';
+import FiltersRow from './filters-row';
 
-describe('FilterRow Component', () => {
+describe('FiltersRow Component', () => {
   it('renders without crashing', () => {
-    const wrapper = mount(<FilterRow container={'div'} />);
+    const wrapper = mount(<FiltersRow container={'div'} />);
     expect(wrapper.exists()).toBe(true);
   });
 
   it('renders correct visible classnames', () => {
-    const wrapper = mount(<FilterRow container={'div'} visible={true} />);
+    const wrapper = mount(<FiltersRow container={'div'} visible={true} />);
     expect(wrapper.find('.filter-row').hasClass('filter-row--visible')).toBe(
       true
     );
   });
 
   it('renders correct unchecked classnames', () => {
-    const wrapper = mount(<FilterRow container={'div'} checked={false} />);
+    const wrapper = mount(<FiltersRow container={'div'} checked={false} />);
     expect(wrapper.find('.filter-row').hasClass('filter-row--unchecked')).toBe(
       true
     );

@@ -1,13 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
-import IndicatorIcon from '../icons/indicator';
-import OffIndicatorIcon from '../icons/indicator-off';
-import { ToggleControl } from '../ui/toggle-control/toggle-control';
-import { RowText } from '../ui/row-text/row-text';
+import IndicatorIcon from '../../../icons/indicator';
+import OffIndicatorIcon from '../../../icons/indicator-off';
+import { ToggleControl } from '../../../ui/toggle-control/toggle-control';
+import { RowText } from '../../../ui/row-text/row-text';
 
-import './filter-row.scss';
+import './filters-row.scss';
 
-export const FilterRow = ({
+const FiltersRow = ({
   allUnchecked,
   checked,
   children,
@@ -64,3 +64,5 @@ export const FilterRow = ({
     </ContainerWrapper>
   );
 };
+
+export default FiltersRow;

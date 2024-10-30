@@ -44,7 +44,10 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
-import { params, NODE_TYPES } from '../../config';
+import { params, NODE_TYPES, localStorageName } from '../../config';
+import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
+
+const storedState = loadLocalStorage(localStorageName);
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -78,6 +81,9 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
+  const [groupCollapsed, setGroupCollapsed] = useState(
+    storedState.groupsCollapsed || {}
+  );
 
   const {
     toSelectedPipeline,
@@ -225,6 +231,18 @@ const NodeListProvider = ({
     }
   };
 
+  // Collapse/expand node group
+
+  const onToggleGroupCollapsed = (groupID) => {
+    const res = {
+      ...groupCollapsed,
+      [groupID]: !groupCollapsed[groupID],
+    };
+
+    setGroupCollapsed(res);
+    saveLocalStorage(localStorageName, { groupsCollapsed: res });
+  };
+
   const onGroupToggleChanged = (groupType) => {
     // Enable all items in group if none enabled, otherwise disable all of them
     const groupItems = items[groupType] || [];
@@ -319,6 +337,8 @@ const NodeListProvider = ({
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
       onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
       onGroupToggleChanged={onGroupToggleChanged}
+      onToggleGroupCollapsed={onToggleGroupCollapsed}
+      groupCollapsed={groupCollapsed}
       onToggleFocusMode={onToggleFocusMode}
       onItemClick={onItemClick}
       onItemMouseEnter={onItemMouseEnter}

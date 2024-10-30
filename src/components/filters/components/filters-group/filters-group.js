@@ -1,11 +1,13 @@
 import React from 'react';
-import modifiers from '../../utils/modifiers';
-import { FilterRow } from '../filter-row/filter-row';
-import { nodeListRowHeight } from '../../config';
-import LazyList from '../lazy-list';
-import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import modifiers from '../../../../utils/modifiers';
+import FiltersRow from '../filters-row/filters-row';
+import { nodeListRowHeight } from '../../../../config';
+import LazyList from '../../../lazy-list';
+import { getDataTestAttribute } from '../../../../utils/get-data-test-attribute';
 
-const NodeRowList = ({
+import './filters-group.scss';
+
+const FiltersGroup = ({
   items = [],
   group,
   collapsed,
@@ -23,11 +25,11 @@ const NodeRowList = ({
         className={modifiers(
           'pipeline-nodelist__children',
           { closed: collapsed },
-          'pipeline-nodelist__list pipeline-nodelist__list--nested'
+          'pipeline-nodelist__list pipeline-nodelist__list-s-nested'
         )}
       >
         {items.slice(start, end).map((item) => (
-          <FilterRow
+          <FiltersRow
             allUnchecked={group.allUnchecked}
             checked={item.checked}
             container={'li'}
@@ -51,4 +53,4 @@ const NodeRowList = ({
   </LazyList>
 );
 
-export default NodeRowList;
+export default FiltersGroup;

@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
-import NodeListGroups from './node-list-groups';
+import Filters from '../filters/filters';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
 
@@ -21,6 +21,8 @@ const NodeList = ({
   getGroupState,
   onUpdateSearchValue,
   onGroupToggleChanged,
+  onToggleGroupCollapsed,
+  groupCollapsed,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -95,7 +97,7 @@ const NodeList = ({
                     Reset
                   </button>
                 </div>
-                <NodeListGroups
+                <Filters
                   items={items}
                   groups={groups}
                   searchValue={searchValue}
@@ -105,6 +107,8 @@ const NodeList = ({
                   onItemMouseLeave={onItemMouseLeave}
                   onItemChange={onItemChange}
                   onGroupToggleChanged={onGroupToggleChanged}
+                  onToggleGroupCollapsed={onToggleGroupCollapsed}
+                  groupCollapsed={groupCollapsed}
                 />
               </Scrollbars>
             </div>
