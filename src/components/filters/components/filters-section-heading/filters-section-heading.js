@@ -13,6 +13,7 @@ const FiltersSectionHeading = ({
 }) => {
   const { id, kind, name, allUnchecked, checked, invisibleIcon, visibleIcon } =
     group;
+  const disabled = groupItems.length === 0;
 
   return (
     <h3 className="filters-section-heading">
@@ -32,10 +33,11 @@ const FiltersSectionHeading = ({
       >
         <button
           aria-label={`${collapsed ? 'Show' : 'Hide'} ${name.toLowerCase()}`}
-          className={classnames('pipeline-type-group-toggle', {
-            'pipeline-type-group-toggle--alt': collapsed,
+          className={classnames('filters-section-heading__toggle-btn', {
+            'filters-section-heading__toggle-btn--alt': collapsed,
+            'filters-section-heading__toggle-btn--disabled': disabled,
           })}
-          disabled={groupItems.length === 0}
+          disabled={disabled}
           onClick={() => onToggleGroupCollapsed(id)}
         />
       </FiltersRow>
