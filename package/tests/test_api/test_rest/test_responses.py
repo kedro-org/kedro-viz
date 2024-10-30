@@ -19,7 +19,7 @@ from kedro_viz.api.rest.responses import (
     save_api_responses_to_fs,
     write_api_response_to_fs,
 )
-from kedro_viz.models.flowchart import TaskNode
+from kedro_viz.models.flowchart.nodes import TaskNode
 from kedro_viz.models.metadata import Metadata
 
 
