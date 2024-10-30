@@ -3,7 +3,8 @@ centralise access to graph objects."""
 
 from typing import Dict, Generator, List, Optional, Set
 
-from kedro_viz.models.flowchart import GraphEdge, GraphNode
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 
 class GraphNodesRepository:

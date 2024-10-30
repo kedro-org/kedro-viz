@@ -12,15 +12,13 @@ from pydantic import BaseModel, ConfigDict
 
 from kedro_viz.api.rest.utils import get_package_compatibilities
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.flowchart import (
-    DataNode,
+from kedro_viz.models.flowchart.node_metadata import (
     DataNodeMetadata,
     ParametersNodeMetadata,
-    TaskNode,
     TaskNodeMetadata,
-    TranscodedDataNode,
     TranscodedDataNodeMetadata,
 )
+from kedro_viz.models.flowchart.nodes import DataNode, TaskNode, TranscodedDataNode
 from kedro_viz.models.metadata import Metadata, PackageCompatibility
 
 logger = logging.getLogger(__name__)

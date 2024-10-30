@@ -20,15 +20,15 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
+from kedro_viz.models.flowchart.nodes import (
     DataNode,
-    GraphEdge,
     GraphNode,
-    GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
-    RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
 )
