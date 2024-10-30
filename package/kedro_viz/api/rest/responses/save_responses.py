@@ -1,8 +1,6 @@
 """`kedro_viz.api.rest.responses.save_responses` contains response classes
 and utility functions for writing and saving REST endpoint responses to file system"""
 
-# pylint: disable=invalid-name
-
 import logging
 from typing import Any
 
@@ -10,7 +8,7 @@ from kedro_viz.api.rest.responses.nodes import get_node_metadata_response
 from kedro_viz.api.rest.responses.pipelines import get_pipeline_response
 from kedro_viz.api.rest.responses.utils import get_encoded_response
 from kedro_viz.data_access import data_access_manager
-from kedro_viz.models.flowchart import DataNodeMetadata
+from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 
 logger = logging.getLogger(__name__)
 

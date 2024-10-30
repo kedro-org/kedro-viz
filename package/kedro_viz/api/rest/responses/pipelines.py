@@ -1,8 +1,6 @@
 """`kedro_viz.api.rest.responses.pipelines` contains response classes
 and utility functions for the `/main` and `/pipelines/* REST endpoints"""
 
-# pylint: disable=missing-class-docstring,invalid-name
-
 import json
 import logging
 from typing import Dict, List, Optional, Union
@@ -18,6 +16,19 @@ logger = logging.getLogger(__name__)
 
 
 class BaseGraphNodeAPIResponse(BaseAPIResponse):
+    """
+    BaseGraphNodeAPIResponse is a data model for representing the response of a graph node in the API.
+
+    Attributes:
+        id (str): The unique identifier of the graph node.
+        name (str): The name of the graph node.
+        tags (List[str]): A list of tags associated with the graph node.
+        pipelines (List[str]): A list of pipelines that the graph node belongs to.
+        type (str): The type of the graph node.
+        modular_pipelines (Optional[List[str]]): A list of modular pipelines associated with the graph node.
+                                                 This value will be None if the node is a ModularPipeline node.
+    """
+
     id: str
     name: str
     tags: List[str]
@@ -29,6 +40,13 @@ class BaseGraphNodeAPIResponse(BaseAPIResponse):
 
 
 class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
+    """
+    TaskNodeAPIResponse is a subclass of BaseGraphNodeAPIResponse that represents the response for a task node in the API.
+
+    Attributes:
+        parameters (Dict): A dictionary containing the parameters for the task node.
+    """
+
     parameters: Dict
     model_config = ConfigDict(
         json_schema_extra={
@@ -59,6 +77,15 @@ class TaskNodeAPIResponse(BaseGraphNodeAPIResponse):
 
 
 class DataNodeAPIResponse(BaseGraphNodeAPIResponse):
+    """
+    DataNodeAPIResponse is a subclass of BaseGraphNodeAPIResponse that represents the response model for a data node in the API.
+
+    Attributes:
+        layer (Optional[str]): The layer to which the data node belongs. Default is None.
+        dataset_type (Optional[str]): The type of dataset. Default is None.
+        stats (Optional[Dict]): Statistics related to the dataset, such as number of rows, columns, and file size. Default is None.
+    """
+
     layer: Optional[str] = None
     dataset_type: Optional[str] = None
     stats: Optional[Dict] = None
@@ -86,6 +113,14 @@ NodeAPIResponse = Union[
 
 
 class GraphEdgeAPIResponse(BaseAPIResponse):
+    """
+    GraphEdgeAPIResponse represents the response model for an edge in the graph.
+
+    Attributes:
+        source (str): The source node id for the edge.
+        target (str): The target node id for the edge.
+    """
+
     source: str
     target: str
 
@@ -152,6 +187,19 @@ ModularPipelinesTreeAPIResponse = Dict[str, ModularPipelinesTreeNodeAPIResponse]
 
 
 class GraphAPIResponse(BaseAPIResponse):
+    """
+    GraphAPIResponse is a data model for the response of the graph API.
+
+    Attributes:
+        nodes (List[NodeAPIResponse]): A list of nodes in the graph.
+        edges (List[GraphEdgeAPIResponse]): A list of edges connecting the nodes in the graph.
+        layers (List[str]): A list of layers in the graph.
+        tags (List[NamedEntityAPIResponse]): A list of tags associated with the graph entities.
+        pipelines (List[NamedEntityAPIResponse]): A list of pipelines in the graph.
+        modular_pipelines (ModularPipelinesTreeAPIResponse): A tree structure representing modular pipelines.
+        selected_pipeline (str): The identifier of the selected pipeline.
+    """
+
     nodes: List[NodeAPIResponse]
     edges: List[GraphEdgeAPIResponse]
     layers: List[str]
@@ -162,7 +210,7 @@ class GraphAPIResponse(BaseAPIResponse):
 
 
 def get_pipeline_response(
-    pipeline_id: Union[str, None] = None
+    pipeline_id: Union[str, None] = None,
 ) -> Union[GraphAPIResponse, JSONResponse]:
     """API response for `/api/pipelines/pipeline_id`."""
     if pipeline_id is None:

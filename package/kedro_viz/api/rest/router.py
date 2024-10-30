@@ -52,11 +52,9 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 
 @router.post("/deploy")
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
-    # pylint: disable=import-outside-toplevel
     from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
 
     try:
-        # pylint: disable=import-outside-toplevel
         from azure.core.exceptions import ServiceRequestError
     except ImportError:  # pragma: no cover
         ServiceRequestError = None  # type: ignore

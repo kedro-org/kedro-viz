@@ -1,8 +1,6 @@
 """`kedro_viz.api.rest.responses.base` contains base
 response classes and utility functions for the REST endpoints"""
 
-# pylint: disable=missing-class-docstring
-
 import abc
 import logging
 
@@ -12,8 +10,23 @@ logger = logging.getLogger(__name__)
 
 
 class APINotFoundResponse(BaseModel):
+    """
+    APINotFoundResponse is a Pydantic model representing a response for an API not found error.
+
+    Attributes:
+        message (str): A message describing the error.
+    """
+
     message: str
 
 
 class BaseAPIResponse(BaseModel, abc.ABC):
+    """
+    BaseAPIResponse is an abstract base class for API responses.
+
+    Attributes:
+        model_config (ConfigDict): Configuration dictionary for the model,
+                                   initialized with attributes from the model.
+    """
+
     model_config = ConfigDict(from_attributes=True)

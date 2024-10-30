@@ -1,8 +1,6 @@
 """`kedro_viz.api.rest.responses.metadata` contains response classes
 and utility functions for the `/metadata` REST endpoint"""
 
-# pylint: disable=missing-class-docstring
-
 from typing import List
 
 from pydantic import ConfigDict
@@ -13,6 +11,14 @@ from kedro_viz.models.metadata import Metadata, PackageCompatibility
 
 
 class MetadataAPIResponse(BaseAPIResponse):
+    """
+    MetadataAPIResponse is a subclass of BaseAPIResponse that represents the response structure for metadata API.
+
+    Attributes:
+        has_missing_dependencies (bool): Indicates if there are any missing dependencies. Defaults to False.
+        package_compatibilities (List[PackageCompatibility]): A list of package compatibility information. Defaults to an empty list.
+    """
+
     has_missing_dependencies: bool = False
     package_compatibilities: List[PackageCompatibility] = []
     model_config = ConfigDict(

@@ -123,7 +123,6 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
-            # pylint: disable=import-outside-toplevel
             from kedro_viz.api.rest.responses.save_responses import (
                 save_api_responses_to_fs,
             )

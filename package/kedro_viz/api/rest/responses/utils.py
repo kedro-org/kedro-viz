@@ -1,8 +1,6 @@
 """`kedro_viz.api.rest.responses.utils` contains utility
 response classes and functions for the REST endpoints"""
 
-# pylint: disable=missing-class-docstring
-
 import logging
 from typing import Any
 
@@ -14,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
+    """
+    EnhancedORJSONResponse is a subclass of ORJSONResponse that provides
+    additional functionality for encoding content to a human-readable JSON format.
+    """
+
     @staticmethod
     def encode_to_human_readable(content: Any) -> bytes:
         """A method to encode the given content to JSON, with the
