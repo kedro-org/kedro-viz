@@ -21,7 +21,8 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.models.flowchart import DataNodeMetadata, GraphNode
+from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
+from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.server import populate_data
 
 
@@ -60,10 +61,10 @@ def example_stats_dict():
 @pytest.fixture
 def example_pipelines():
     def process_data(raw_data, train_test_split):
-        ...
+        pass
 
     def train_model(model_inputs, parameters):
-        ...
+        pass
 
     data_processing_pipeline = pipeline(
         [
@@ -420,10 +421,10 @@ def example_catalog():
 @pytest.fixture
 def example_transcoded_pipelines():
     def process_data(raw_data, train_test_split):
-        ...
+        pass
 
     def train_model(model_inputs, parameters):
-        ...
+        pass
 
     data_processing_pipeline = pipeline(
         [

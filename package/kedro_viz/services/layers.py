@@ -1,10 +1,11 @@
 """`kedro_viz.services.layers` defines layers-related logic."""
+
 import logging
 from collections import defaultdict
 from graphlib import CycleError, TopologicalSorter
 from typing import Dict, List, Set
 
-from kedro_viz.models.flowchart import GraphNode
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 logger = logging.getLogger(__name__)
 

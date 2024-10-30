@@ -22,7 +22,6 @@ class DrawTable:
         self._populate(_df)
 
     def _draw_grid(self):
-
         width, height = self.image.size
         row_step = (height - self.border * 2) / (self.rows)
         col_step = (width - self.border * 2) / (self.cols)

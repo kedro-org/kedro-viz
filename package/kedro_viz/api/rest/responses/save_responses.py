@@ -1,5 +1,5 @@
 """`kedro_viz.api.rest.responses.save_responses` contains response classes
-and utility functions for the `/deploy` REST endpoint"""
+and utility functions for writing and saving REST endpoint responses to file system"""
 
 # pylint: disable=invalid-name
 

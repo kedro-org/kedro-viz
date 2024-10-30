@@ -1,27 +1,33 @@
 """`kedro_viz.data_access.managers` defines data access managers."""
 
-# pylint: disable=too-many-instance-attributes,protected-access
 import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
 from kedro.io import DataCatalog
-from kedro.io.core import DatasetError
+
+try:
+    # kedro 0.18.11 onwards
+    from kedro.io.core import DatasetError
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
+
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
+from kedro_viz.models.flowchart.nodes import (
     DataNode,
-    GraphEdge,
     GraphNode,
-    GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
-    RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
 )
@@ -86,8 +92,7 @@ class DataAccessManager:
             for dataset_name in datasets:
                 try:
                     catalog._get_dataset(dataset_name, suggest=False)
-                # pylint: disable=broad-except
-                except Exception:  # pragma: no cover
+                except Exception:  # noqa: BLE001 # pragma: no cover
                     continue
 
     def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
@@ -229,7 +234,6 @@ class DataAccessManager:
         self.tags.add_tags(task_node.tags)
         return task_node
 
-    # pylint: disable=too-many-positional-arguments
     def add_node_input(
         self,
         registered_pipeline_id: str,
@@ -391,9 +395,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[
-                parameters_node.parameter_name
-            ] = parameters_node.parameter_value
+            task_node.parameters[parameters_node.parameter_name] = (
+                parameters_node.parameter_value
+            )
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
@@ -465,8 +469,7 @@ class DataAccessManager:
             self.get_node_dependencies_for_registered_pipeline(registered_pipeline_id),
         )
 
-    # pylint: disable=too-many-locals,too-many-branches
-    def create_modular_pipelines_tree_for_registered_pipeline(
+    def create_modular_pipelines_tree_for_registered_pipeline(  # noqa: PLR0912
         self, registered_pipeline_id: str = DEFAULT_REGISTERED_PIPELINE_ID
     ) -> Dict[str, ModularPipelineNode]:
         """Create the modular pipelines tree for a specific registered pipeline.

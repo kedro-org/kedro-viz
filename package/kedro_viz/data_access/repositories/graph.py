@@ -1,9 +1,10 @@
 """`kedro_viz.data_access.repositories.graph` defines interface to
 centralise access to graph objects."""
-# pylint: disable=missing-class-docstring,missing-function-docstring
+
 from typing import Dict, Generator, List, Optional, Set
 
-from kedro_viz.models.flowchart import GraphEdge, GraphNode
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 
 class GraphNodesRepository:

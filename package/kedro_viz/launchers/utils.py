@@ -50,7 +50,7 @@ def _wait_for(
     while time() <= end:
         try:
             retval = func(**kwargs)
-        except Exception as err:  # pylint: disable=broad-except
+        except Exception as err:  # noqa: BLE001
             if print_error:
                 logger.error(err)
         else:
@@ -104,8 +104,7 @@ def _is_project(project_path: Union[str, Path]) -> bool:
 
     try:
         return "[tool.kedro]" in metadata_file.read_text(encoding="utf-8")
-    # pylint: disable=broad-exception-caught
-    except Exception:
+    except Exception:  # noqa: BLE001
         return False
 
 
