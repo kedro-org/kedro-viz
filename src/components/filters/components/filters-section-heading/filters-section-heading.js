@@ -2,17 +2,20 @@ import React from 'react';
 import classnames from 'classnames';
 import FiltersRow from '../filters-row/filters-row';
 
+import './filters-section-heading.scss';
+
 const FiltersSectionHeading = ({
   group,
   collapsed,
   groupItems,
   onGroupToggleChanged,
+  onToggleGroupCollapsed,
 }) => {
   const { id, kind, name, allUnchecked, checked, invisibleIcon, visibleIcon } =
     group;
 
   return (
-    <h3 className="pipeline-nodelist__heading">
+    <h3 className="filters-section-heading">
       <FiltersRow
         allUnchecked={allUnchecked}
         checked={checked}
@@ -33,7 +36,7 @@ const FiltersSectionHeading = ({
             'pipeline-type-group-toggle--alt': collapsed,
           })}
           disabled={groupItems.length === 0}
-          onClick={() => onGroupToggleChanged(id)}
+          onClick={() => onToggleGroupCollapsed(id)}
         />
       </FiltersRow>
     </h3>

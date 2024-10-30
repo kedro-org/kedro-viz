@@ -10,6 +10,7 @@ const FiltersSection = ({
   groupCollapsed,
   searchValue,
   onGroupToggleChanged,
+  onToggleGroupCollapsed,
   onItemChange,
   onItemClick,
   onItemMouseEnter,
@@ -36,6 +37,7 @@ const FiltersSection = ({
         collapsed={collapsed}
         groupItems={groupItems}
         onGroupToggleChanged={onGroupToggleChanged}
+        onToggleGroupCollapsed={onToggleGroupCollapsed}
       />
       <FiltersGroup
         collapsed={collapsed}

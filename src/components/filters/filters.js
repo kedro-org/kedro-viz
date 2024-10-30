@@ -12,7 +12,7 @@ const Filters = ({
   onItemMouseEnter,
   onItemMouseLeave,
   onResetFilter,
-  // onToggleGroupCollapsed,
+  onToggleGroupCollapsed,
   searchValue,
 }) => {
   return (
@@ -39,6 +39,7 @@ const Filters = ({
                 groupCollapsed={groupCollapsed}
                 searchValue={searchValue}
                 onGroupToggleChanged={onGroupToggleChanged}
+                onToggleGroupCollapsed={onToggleGroupCollapsed}
                 onItemChange={onItemChange}
                 onItemClick={onItemClick}
                 onItemMouseEnter={onItemMouseEnter}

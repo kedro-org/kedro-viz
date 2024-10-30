@@ -1,0 +1,18 @@
+@use '../../../../styles/variables' as var;
+@use '../../../node-list/styles/variables';
+
+.filters-section-heading {
+  background: var(--color-nodelist-filter-panel);
+  margin: 0;
+  position: sticky;
+  top: 0;
+
+  // Avoid pixel gap above when scrolling.
+  transform: translateY(-1px);
+  z-index: var.$zindex-nodelist-heading;
+
+  .row-text .row-text__label {
+    font-size: 1.3em;
+    opacity: 0.65;
+  }
+}
