@@ -7,6 +7,7 @@ import { getDataTestAttribute } from '../../../../utils/get-data-test-attribute'
 
 import './filters-group.scss';
 
+/** A group collection of FiltersRow */
 const FiltersGroup = ({
   items = [],
   group,

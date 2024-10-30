@@ -85,30 +85,20 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <div className="pipeline-nodelist-section__filters">
-                  <h2 className="pipeline-nodelist-section__title">
-                    <span>Filters</span>
-                  </h2>
-                  <button
-                    disabled={!isResetFilterActive}
-                    onClick={onResetFilter}
-                    className="pipeline-nodelist-section__reset-filter"
-                  >
-                    Reset
-                  </button>
-                </div>
                 <Filters
-                  items={items}
-                  groups={groups}
-                  searchValue={searchValue}
                   getGroupState={getGroupState}
+                  groupCollapsed={groupCollapsed}
+                  groups={groups}
+                  isResetFilterActive={isResetFilterActive}
+                  items={items}
+                  onGroupToggleChanged={onGroupToggleChanged}
+                  onItemChange={onItemChange}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
-                  onItemChange={onItemChange}
-                  onGroupToggleChanged={onGroupToggleChanged}
+                  onResetFilter={onResetFilter}
                   onToggleGroupCollapsed={onToggleGroupCollapsed}
-                  groupCollapsed={groupCollapsed}
+                  searchValue={searchValue}
                 />
               </Scrollbars>
             </div>
