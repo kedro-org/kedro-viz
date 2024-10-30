@@ -4,7 +4,12 @@ to integrate Kedro-Viz with external data sources.
 
 from typing import Any, Union
 
-from kedro.io.core import AbstractDataset
+try:
+    # kedro 0.18.12 onwards
+    from kedro.io.core import AbstractDataset
+except ImportError:  # pragma: no cover
+    # older versions
+    from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
 
 _EMPTY = object()
 

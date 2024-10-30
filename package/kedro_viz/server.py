@@ -8,13 +8,12 @@ from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 
 DEV_PORT = 4142
 
@@ -25,7 +24,7 @@ def populate_data(
     pipelines: Dict[str, Pipeline],
     session_store: BaseSessionStore,
     stats_dict: Dict,
-):  # pylint: disable=redefined-outer-name
+):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
@@ -44,7 +43,6 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
-# pylint: disable=too-many-positional-arguments
 def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,
@@ -71,7 +69,6 @@ def load_and_populate_data(
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
-# pylint: disable=too-many-positional-arguments, too-many-locals
 def run_server(
     host: str = DEFAULT_HOST,
     port: int = DEFAULT_PORT,
@@ -85,7 +82,7 @@ def run_server(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-):  # pylint: disable=redefined-outer-name
+):
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
 
@@ -112,10 +109,10 @@ def run_server(
     # Importing below dependencies inside `run_server` to avoid ImportError
     # when calling `load_and_populate_data` from VSCode
 
-    import fsspec  # pylint: disable=C0415
-    import uvicorn  # pylint: disable=C0415
+    import fsspec
+    import uvicorn
 
-    from kedro_viz.api import apps  # pylint: disable=C0415
+    from kedro_viz.api import apps
 
     path = Path(project_path) if project_path else Path.cwd()
 
@@ -126,6 +123,10 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
+            from kedro_viz.api.rest.responses.save_responses import (
+                save_api_responses_to_fs,
+            )
+
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
@@ -172,13 +173,14 @@ if __name__ == "__main__":  # pragma: no cover
         target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
 
-    print("Starting Kedro Viz ...")
+    display_cli_message("Starting Kedro Viz ...", "green")
 
     viz_process.start()
 
     _wait_for(func=_check_viz_up, host=args.host, port=args.port)
 
-    print(
+    display_cli_message(
         "Kedro Viz started successfully. \n\n"
-        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/"
+        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/",
+        "green",
     )

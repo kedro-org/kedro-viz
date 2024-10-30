@@ -1,7 +1,6 @@
 """`kedro_viz.data_access.repositories.modular_pipelines` defines
 repository to centralise access for modular pipelines data."""
 
-
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple, Union
 
@@ -9,9 +8,9 @@ from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
+from kedro_viz.models.flowchart.nodes import (
     GraphNode,
-    GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
 )

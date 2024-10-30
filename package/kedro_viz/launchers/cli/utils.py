@@ -1,12 +1,11 @@
 """`kedro_viz.launchers.cli.utils` provides utility functions for cli commands."""
-# pylint: disable=import-outside-toplevel
+
 from pathlib import Path
 from time import sleep
 from typing import Union
 
-import click
-
 from kedro_viz.constants import VIZ_DEPLOY_TIME_LIMIT
+from kedro_viz.launchers.utils import display_cli_message
 
 
 def create_shareableviz_process(
@@ -96,25 +95,13 @@ def create_shareableviz_process(
                 "you have write access to the current directory",
                 "red",
             )
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:  # noqa: BLE001 # pragma: no cover
         display_cli_message(f"ERROR: Failed to build/deploy Kedro-Viz : {exc} ", "red")
 
     finally:
         viz_deploy_process.terminate()
 
 
-def display_cli_message(msg, msg_color=None):
-    """Displays message for Kedro Viz build and deploy commands"""
-    click.echo(
-        click.style(
-            msg,
-            fg=msg_color,
-        )
-    )
-
-
-# pylint: disable=too-many-positional-arguments
 def _load_and_deploy_viz(
     platform,
     is_all_previews_enabled,
@@ -144,14 +131,12 @@ def _load_and_deploy_viz(
         deployer.deploy(is_all_previews_enabled)
 
     except (
-        # pylint: disable=catching-non-exception
         (FileNotFoundError, ServiceRequestError)
         if ServiceRequestError is not None
         else FileNotFoundError
     ):  # pragma: no cover
         exception_queue.put(Exception("The specified bucket does not exist"))
-    # pylint: disable=broad-exception-caught
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:  # noqa: BLE001 # pragma: no cover
         exception_queue.put(exc)
     finally:
         process_completed.value = 1

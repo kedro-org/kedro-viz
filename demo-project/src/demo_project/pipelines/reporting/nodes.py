@@ -2,6 +2,9 @@
 This is a boilerplate pipeline 'reporting'
 generated using Kedro 0.18.1
 """
+
+from typing import Dict
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,7 +12,7 @@ import PIL
 import plotly.express as px
 import seaborn as sn
 from plotly import graph_objects as go
-from typing import Dict
+
 from .image_utils import DrawTable
 
 

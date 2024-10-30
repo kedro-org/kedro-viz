@@ -22,6 +22,7 @@ import re
 
 from kedro.framework.cli.utils import find_stylesheets
 from recommonmark.transform import AutoStructify
+
 from demo_project import __version__ as release
 
 # -- Project information -----------------------------------------------------
