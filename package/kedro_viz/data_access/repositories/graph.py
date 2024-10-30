@@ -21,7 +21,7 @@ class GraphNodesRepository:
             existing_node.tags.update(node.tags)
         else:
             self.nodes_dict[node.id] = node
-            self.nodes_list.append(node)      
+            self.nodes_list.append(node)
         return self.nodes_dict[node.id]
 
     def get_node_by_id(self, node_id: str) -> Optional[GraphNode]:
