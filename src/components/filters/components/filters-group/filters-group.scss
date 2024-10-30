@@ -1,71 +1,15 @@
 @use '../../../../styles/variables' as var;
 @use '../../../node-list/styles/variables';
 
-%nolist {
-  margin: 0;
-  padding: 0;
+.filters-group {
   list-style: none;
-}
-
-.pipeline-nodelist__list {
-  @extend %nolist;
-
-  &--nested {
-    margin: 0 0 1.2em;
-  }
-
-  .pipeline-nodelist__children {
-    // Avoid placeholder fade leaking out for small lists
-    overflow: hidden;
-
-    &--closed {
-      display: none;
-    }
-  }
-}
-
-$placeholder-fade: 120px;
-
-.pipeline-type-group-toggle {
-  width: variables.$toggle-size;
-  height: variables.$toggle-size;
   padding: 0;
-  color: var(--color-default-alt);
-  font-size: inherit;
-  font-family: inherit;
-  line-height: 1em;
-  text-align: center;
-  background: none;
-  border: none;
-  border-radius: 50%;
-  box-shadow: none;
-  cursor: pointer;
-  transition: transform ease 0.1s;
+  margin: 0 0 1.2em;
 
-  &:focus {
-    outline: none;
+  // Avoid placeholder fade leaking out for small lists
+  overflow: hidden;
 
-    [data-whatintent='keyboard'] & {
-      box-shadow: 0 0 0 3px var.$blue-300 inset;
-    }
-  }
-
-  &::before {
-    font-size: 1.8em;
-    opacity: 0.55;
-    content: '▾';
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-
-  &--alt {
-    transform: rotate(90deg);
-  }
-
-  &--disabled {
-    color: var.$black-400;
-    transform: rotate(90deg);
+  &--closed {
+    display: none;
   }
 }

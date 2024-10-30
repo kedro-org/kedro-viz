@@ -1,5 +1,5 @@
 import React from 'react';
-import modifiers from '../../../../utils/modifiers';
+import classnames from 'classnames';
 import FiltersRow from '../filters-row/filters-row';
 import { nodeListRowHeight } from '../../../../config';
 import LazyList from '../../../lazy-list';
@@ -23,11 +23,9 @@ const FiltersGroup = ({
       <ul
         ref={listRef}
         style={listStyle}
-        className={modifiers(
-          'pipeline-nodelist__children',
-          { closed: collapsed },
-          'pipeline-nodelist__list pipeline-nodelist__list-s-nested'
-        )}
+        className={classnames('filters-group', {
+          'filters-group--closed': collapsed,
+        })}
       >
         {items.slice(start, end).map((item) => (
           <FiltersRow

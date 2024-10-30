@@ -8,15 +8,15 @@ import './filters-section.scss';
 /** Represents a section within the filters. */
 const FiltersSection = ({
   group,
-  items,
   groupCollapsed,
-  searchValue,
+  items,
   onGroupToggleChanged,
-  onToggleGroupCollapsed,
   onItemChange,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
+  onToggleGroupCollapsed,
+  searchValue,
 }) => {
   const { id, allUnchecked } = group;
   const collapsed = Boolean(searchValue) ? false : groupCollapsed[id];
