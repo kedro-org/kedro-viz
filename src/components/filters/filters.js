@@ -1,6 +1,8 @@
 import React from 'react';
 import FiltersSection from './components/filters-section/filters-section';
 
+import './filters.scss';
+
 const Filters = ({
   groupCollapsed,
   groups,
@@ -17,38 +19,37 @@ const Filters = ({
 }) => {
   return (
     <>
-      <div className="pipeline-nodelist-section__filters">
-        <h2 className="pipeline-nodelist-section__title">
+      <div className="filters__header">
+        <h2 className="filters__title">
           <span>Filters</span>
         </h2>
         <button
           disabled={!isResetFilterActive}
           onClick={onResetFilter}
-          className="pipeline-nodelist-section__reset-filter"
+          className="filters__reset-button"
         >
           Reset
         </button>
       </div>
-      <nav className="pipeline-nodelist-section kedro">
-        <ul className="pipeline-nodelist__list">
-          {Object.values(groups).map((group) => {
-            return (
-              <FiltersSection
-                group={group}
-                items={items}
-                groupCollapsed={groupCollapsed}
-                searchValue={searchValue}
-                onGroupToggleChanged={onGroupToggleChanged}
-                onToggleGroupCollapsed={onToggleGroupCollapsed}
-                onItemChange={onItemChange}
-                onItemClick={onItemClick}
-                onItemMouseEnter={onItemMouseEnter}
-                onItemMouseLeave={onItemMouseLeave}
-              />
-            );
-          })}
-        </ul>
-      </nav>
+      <ul className="filters__section-wrapper">
+        {Object.values(groups).map((group) => {
+          return (
+            <FiltersSection
+              group={group}
+              groupCollapsed={groupCollapsed}
+              items={items}
+              key={group.id}
+              onGroupToggleChanged={onGroupToggleChanged}
+              onItemChange={onItemChange}
+              onItemClick={onItemClick}
+              onItemMouseEnter={onItemMouseEnter}
+              onItemMouseLeave={onItemMouseLeave}
+              onToggleGroupCollapsed={onToggleGroupCollapsed}
+              searchValue={searchValue}
+            />
+          );
+        })}
+      </ul>
     </>
   );
 };
