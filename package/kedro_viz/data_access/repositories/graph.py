@@ -11,9 +11,6 @@ class GraphNodesRepository:
         self.nodes_dict: Dict[str, GraphNode] = {}
         self.nodes_list: List[GraphNode] = []
 
-    def has_node(self, node: GraphNode) -> bool:
-        return node.id in self.nodes_dict
-
     def add_node(self, node: GraphNode) -> GraphNode:
         existing_node = self.nodes_dict.get(node.id)
         if existing_node:
