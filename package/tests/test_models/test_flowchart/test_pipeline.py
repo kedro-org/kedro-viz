@@ -1,7 +1,7 @@
 from kedro_datasets.pandas import CSVDataset
 
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
 from kedro_viz.models.flowchart.nodes import GraphNode
-from kedro_viz.models.flowchart.pipeline import RegisteredPipeline
 
 
 class TestGraphNodePipelines:

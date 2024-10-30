@@ -22,6 +22,7 @@ from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIP
 from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
 from kedro_viz.models.flowchart.nodes import (
     DataNode,
     GraphNode,
@@ -31,7 +32,6 @@ from kedro_viz.models.flowchart.nodes import (
     TaskNode,
     TranscodedDataNode,
 )
-from kedro_viz.models.flowchart.pipeline import RegisteredPipeline
 from kedro_viz.services import layers_services
 from kedro_viz.utils import _strip_transcoding, is_dataset_param
 

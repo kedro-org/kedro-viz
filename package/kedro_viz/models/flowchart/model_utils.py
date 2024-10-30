@@ -5,8 +5,6 @@ from enum import Enum
 from types import FunctionType
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
-
 logger = logging.getLogger(__name__)
 
 
@@ -33,30 +31,6 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
 # =============================================================================
 # Shared base classes and enumerations for model components
 # =============================================================================
-
-
-class NamedEntity(BaseModel):
-    """Represent a named entity (Tag/Registered Pipeline) in a Kedro project
-    Args:
-        id (str): Id of the registered pipeline
-
-    Raises:
-        AssertionError: If id is not supplied during instantiation
-    """
-
-    id: str
-    name: Optional[str] = Field(
-        default=None,
-        validate_default=True,
-        description="The name of the entity",
-    )
-
-    @field_validator("name")
-    @classmethod
-    def set_name(cls, _, info: ValidationInfo):
-        """Ensures that the 'name' field is set to the value of 'id' if 'name' is not provided."""
-        assert "id" in info.data
-        return info.data["id"]
 
 
 class GraphNodeType(str, Enum):
