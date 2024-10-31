@@ -220,10 +220,10 @@ export class FlowChart extends Component {
 
     if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
-      const metaSidebarChanged =
+      const metaSidebarViewChanged =
         prevProps.visibleMetaSidebar !== this.props.visibleMetaSidebar;
 
-      const codeChangedWithoutMetaSidebar =
+      const codeViewChangedWithoutMetaSidebar =
         prevProps.visibleCode !== this.props.visibleCode &&
         !this.props.visibleMetaSidebar;
 
@@ -233,8 +233,8 @@ export class FlowChart extends Component {
         !this.props.nodeReFocus;
 
       if (
-        metaSidebarChanged ||
-        codeChangedWithoutMetaSidebar ||
+        metaSidebarViewChanged ||
+        codeViewChangedWithoutMetaSidebar ||
         clickedNodeChangedWithoutReFocus
       ) {
         drawNodes.call(this, changed);
