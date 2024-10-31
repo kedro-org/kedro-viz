@@ -32,7 +32,6 @@ describe('FiltersSectionHeading', () => {
   });
 
   it('adds class when collapsed prop true', () => {
-    const type = getNodeTypes(mockState.spaceflights)[0];
     const wrapper = setup.mount(
       <FiltersSectionHeading {...mockProps()} collapsed={true} />
     );
@@ -43,7 +42,6 @@ describe('FiltersSectionHeading', () => {
   });
 
   it('adds class when disabled prop true', () => {
-    const type = getNodeTypes(mockState.spaceflights)[0];
     const wrapper = setup.mount(
       <FiltersSectionHeading {...mockProps()} disabled={true} />
     );

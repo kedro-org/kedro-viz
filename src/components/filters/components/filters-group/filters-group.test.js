@@ -25,7 +25,6 @@ describe('FiltersGroup Component', () => {
   });
 
   it('removes class when collapsed prop false', () => {
-    const type = getNodeTypes(mockState.spaceflights)[0];
     const wrapper = setup.mount(
       <FiltersGroup {...mockProps()} collapsed={false} />
     );

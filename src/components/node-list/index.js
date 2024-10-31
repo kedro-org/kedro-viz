@@ -231,8 +231,7 @@ const NodeListProvider = ({
     }
   };
 
-  // Collapse/expand node group
-
+  // Collapse/expand node group of filters
   const onToggleGroupCollapsed = (groupID) => {
     const res = {
       ...groupCollapsed,
