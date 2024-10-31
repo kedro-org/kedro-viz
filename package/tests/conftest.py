@@ -382,9 +382,7 @@ def edge_case_example_pipelines(
 
 
 @pytest.fixture
-def example_pipelines_with_additional_tags(
-    example_pipeline_with_node_namespaces
-):
+def example_pipelines_with_additional_tags(example_pipeline_with_node_namespaces):
     """
     Fixture to mock the use cases mentioned in
     https://github.com/kedro-org/kedro-viz/issues/2106
@@ -392,9 +390,11 @@ def example_pipelines_with_additional_tags(
 
     pipelines_dict = {
         "pipeline": example_pipeline_with_node_namespaces,
-        "pipeline_with_tags": pipeline(example_pipeline_with_node_namespaces, tags=["tag1", "tag2"]),
+        "pipeline_with_tags": pipeline(
+            example_pipeline_with_node_namespaces, tags=["tag1", "tag2"]
+        ),
     }
-    
+
     yield pipelines_dict
 
 

@@ -602,7 +602,6 @@ class TestMainEndpoint:
             {"id": "tag1", "name": "tag1"},
             {"id": "tag2", "name": "tag2"},
             {"id": "validation", "name": "validation"},
-            
         ]
         client = TestClient(example_api_for_pipelines_with_additional_tags)
         response = client.get("/api/main")
