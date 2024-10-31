@@ -221,6 +221,7 @@ def example_pipeline_with_node_namespaces():
                 inputs=["raw_transaction_data", "cleaned_transaction_data"],
                 outputs="validated_transaction_data",
                 name="validation_node",
+                tags=["validation"],
             ),
             node(
                 func=lambda validated_data, enrichment_data: (
@@ -381,9 +382,8 @@ def edge_case_example_pipelines(
 
 
 @pytest.fixture
-def edge_case_example_pipelines_with_tags(
-    example_pipeline_with_dataset_as_input_and_output,
-    example_pipeline_with_dataset_as_input_to_outer_namespace,
+def example_pipelines_with_additional_tags(
+    example_pipeline_with_node_namespaces
 ):
     """
     Fixture to mock the use cases mentioned in
@@ -391,15 +391,10 @@ def edge_case_example_pipelines_with_tags(
     """
 
     pipelines_dict = {
-        "customer_pipeline": example_pipeline_with_dataset_as_input_and_output,
-        "car_pipeline": example_pipeline_with_dataset_as_input_to_outer_namespace,
+        "pipeline": example_pipeline_with_node_namespaces,
+        "pipeline_with_tags": pipeline(example_pipeline_with_node_namespaces, tags=["tag1", "tag2"]),
     }
-
-    pipelines_dict["__default__"] = pipeline(
-        sum(pipeline for pipeline in pipelines_dict.values()),
-        tags=["default_tag1", "default_tag2"],
-    )
-
+    
     yield pipelines_dict
 
 
@@ -562,9 +557,9 @@ def example_api_for_edge_case_pipelines(
 
 
 @pytest.fixture
-def example_api_for_edge_case_pipelines_with_tags(
+def example_api_for_pipelines_with_additional_tags(
     data_access_manager: DataAccessManager,
-    edge_case_example_pipelines_with_tags: Dict[str, Pipeline],
+    example_pipelines_with_additional_tags: Dict[str, Pipeline],
     example_catalog: DataCatalog,
     session_store: BaseSessionStore,
     mocker,
@@ -581,7 +576,7 @@ def example_api_for_edge_case_pipelines_with_tags(
     populate_data(
         data_access_manager,
         example_catalog,
-        edge_case_example_pipelines_with_tags,
+        example_pipelines_with_additional_tags,
         session_store,
         {},
     )

@@ -594,15 +594,17 @@ class TestMainEndpoint:
             actual_modular_pipelines_tree, expected_modular_pipeline_tree_for_edge_cases
         )
 
-    def test_endpoint_main_for_edge_case_pipelines_with_tags(
+    def test_endpoint_main_for_pipelines_with_additional_tags(
         self,
-        example_api_for_edge_case_pipelines_with_tags,
+        example_api_for_pipelines_with_additional_tags,
     ):
         expected_tags = [
-            {"id": "default_tag1", "name": "default_tag1"},
-            {"id": "default_tag2", "name": "default_tag2"},
+            {"id": "tag1", "name": "tag1"},
+            {"id": "tag2", "name": "tag2"},
+            {"id": "validation", "name": "validation"},
+            
         ]
-        client = TestClient(example_api_for_edge_case_pipelines_with_tags)
+        client = TestClient(example_api_for_pipelines_with_additional_tags)
         response = client.get("/api/main")
         actual_tags = response.json()["tags"]
         assert actual_tags == expected_tags
