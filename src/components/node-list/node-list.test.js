@@ -31,7 +31,7 @@ describe('NodeList', () => {
       </MemoryRouter>
     );
     const search = wrapper.find('.pipeline-search-list');
-    const nodeList = wrapper.find('.pipeline-nodelist__list');
+    const nodeList = wrapper.find('.filters__section-wrapper');
     expect(search.length).toBe(1);
     expect(nodeList.length).toBeGreaterThan(0);
   });
@@ -255,8 +255,7 @@ describe('NodeList', () => {
       return elements(wrapper).filter(([_, enabled]) => enabled);
     };
 
-    const tagItem = (wrapper) =>
-      wrapper.find('.pipeline-nodelist__group--type-tag');
+    const tagItem = (wrapper) => wrapper.find('.filters-section--type-tag');
 
     const partialIcon = (wrapper) =>
       tagItem(wrapper).find(IndicatorPartialIcon);
@@ -288,7 +287,7 @@ describe('NodeList', () => {
           <NodeList />
         </MemoryRouter>
       );
-      const uncheckedClass = 'pipeline-nodelist__group--all-unchecked';
+      const uncheckedClass = 'filters-section--all-unchecked';
 
       expect(tagItem(wrapper).hasClass(uncheckedClass)).toBe(true);
       changeRows(wrapper, ['Preprocessing'], true);
@@ -373,10 +372,7 @@ describe('NodeList', () => {
           <NodeList />
         </MemoryRouter>
       );
-      const nodeList = wrapper.find(
-        '.pipeline-nodelist__list--nested .node-list-filter-row'
-      );
-      // const nodes = getNodeData(mockState.spaceflights);
+      const nodeList = wrapper.find('.filters-group .node-list-filter-row');
       const tags = getTagData(mockState.spaceflights);
       const elementTypes = Object.keys(sidebarElementTypes);
       expect(nodeList.length).toBe(tags.length + elementTypes.length);
@@ -462,9 +458,7 @@ describe('NodeList', () => {
       </MemoryRouter>
     );
 
-    const resetFilterButton = wrapper.find(
-      '.pipeline-nodelist-section__reset-filter'
-    );
+    const resetFilterButton = wrapper.find('.filters__reset-button');
 
     it('On first load before applying filter button should be disabled', () => {
       expect(resetFilterButton.prop('disabled')).toBe(true);
