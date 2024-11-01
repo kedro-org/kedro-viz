@@ -4,7 +4,7 @@ defines repository to centralise access to registered pipelines data."""
 from collections import OrderedDict, defaultdict
 from typing import Dict, List, Optional, Set
 
-from kedro_viz.models.flowchart import RegisteredPipeline
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
 
 
 class RegisteredPipelinesRepository:

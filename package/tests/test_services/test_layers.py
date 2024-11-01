@@ -1,6 +1,6 @@
 import pytest
 
-from kedro_viz.models.flowchart import GraphNode
+from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.services.layers import sort_layers
 
 

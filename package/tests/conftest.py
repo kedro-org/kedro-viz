@@ -21,7 +21,8 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.models.flowchart import DataNodeMetadata, GraphNode
+from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
+from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.server import populate_data
 
 
@@ -484,7 +485,12 @@ def example_api(
         example_stats_dict,
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -503,7 +509,12 @@ def example_api_no_default_pipeline(
         data_access_manager, example_catalog, example_pipelines, session_store, {}
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -533,7 +544,12 @@ def example_api_for_edge_case_pipelines(
         {},
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
@@ -555,7 +571,12 @@ def example_transcoded_api(
         {},
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 

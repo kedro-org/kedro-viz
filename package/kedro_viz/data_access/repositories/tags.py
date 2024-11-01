@@ -3,7 +3,7 @@ centralise access to tags data."""
 
 from typing import Iterable, List, Set
 
-from kedro_viz.models.flowchart import Tag
+from kedro_viz.models.flowchart.named_entities import Tag
 
 
 class TagsRepository:
