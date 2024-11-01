@@ -34,7 +34,7 @@ class TestMainEndpoint:
             {"id": "data_science", "name": "data_science"},
             {"id": "data_processing", "name": "data_processing"},
         ]
-    
+
     def test_endpoint_main_for_pipelines_with_additional_tags(
         self,
         example_api_for_pipelines_with_additional_tags,

@@ -597,7 +597,12 @@ def example_api_for_pipelines_with_additional_tags(
         {},
     )
     mocker.patch(
-        "kedro_viz.api.rest.responses.data_access_manager", new=data_access_manager
+        "kedro_viz.api.rest.responses.pipelines.data_access_manager",
+        new=data_access_manager,
+    )
+    mocker.patch(
+        "kedro_viz.api.rest.responses.nodes.data_access_manager",
+        new=data_access_manager,
     )
     yield api
 
