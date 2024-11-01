@@ -4,7 +4,6 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
-import networkx as nx
 from kedro.io import DataCatalog
 
 try:
@@ -20,15 +19,15 @@ from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
-from kedro_viz.models.flowchart import (
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.model_utils import GraphNodeType
+from kedro_viz.models.flowchart.named_entities import RegisteredPipeline
+from kedro_viz.models.flowchart.nodes import (
     DataNode,
-    GraphEdge,
     GraphNode,
-    GraphNodeType,
     ModularPipelineChild,
     ModularPipelineNode,
     ParametersNode,
-    RegisteredPipeline,
     TaskNode,
     TranscodedDataNode,
 )
@@ -549,6 +548,8 @@ class DataAccessManager:
         # so no need to check non modular pipeline nodes.
         #
         # We leverage networkx to help with graph traversal
+        import networkx as nx
+
         digraph = nx.DiGraph()
         for edge in edges:
             digraph.add_edge(edge.source, edge.target)

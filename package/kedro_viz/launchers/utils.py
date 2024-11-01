@@ -7,6 +7,7 @@ from pathlib import Path
 from time import sleep, time
 from typing import Any, Callable, Union
 
+import click
 import requests
 
 logger = logging.getLogger(__name__)
@@ -113,3 +114,13 @@ def _find_kedro_project(current_dir: Path) -> Any:
         if _is_project(project_dir):
             return project_dir
     return None
+
+
+def display_cli_message(msg, msg_color=None):
+    """Displays message for Kedro Viz build and deploy commands"""
+    click.echo(
+        click.style(
+            msg,
+            fg=msg_color,
+        )
+    )
