@@ -9,19 +9,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App
-      options={{
-        display: {
-          globalNavigation: false,
-          sidebar: false,
-          metadataPanel: false,
-        },
-        behaviour: {
-          reFocus: false,
-        },
-      }}
-      data={getPipelineData()}
-    />
+    <App data={getPipelineData()} />
   </>
 );
 
