@@ -33,6 +33,15 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    if (!window.location.hash || window.location.hash === '#/') {
+      const newURL =
+        window.location.origin +
+        window.location.pathname +
+        '#' +
+        window.location.search;
+      window.location.replace(newURL);
+    }
+
     if (this.props.data === 'json') {
       this.store.dispatch(loadInitialPipelineData());
     }

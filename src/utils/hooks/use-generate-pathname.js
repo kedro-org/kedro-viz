@@ -47,7 +47,9 @@ export const useGeneratePathname = () => {
       const url = decodeURIComponent(
         history.location.pathname + '?' + searchParams.toString()
       );
-      history.push(url);
+      if (history.location.pathname + history.location.search !== url) {
+        history.push(url);
+      }
     },
     [history]
   );
