@@ -1006,7 +1006,7 @@ export const mapStateToProps = (state, ownProps) => ({
   slicedPipeline: getSlicedPipeline(state),
   isSlicingPipelineApplied: state.slice.apply,
   visibleSlicing: state.visible.slicing,
-  nodeReFocus: state.modeOptions.reFocus,
+  nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
   ...ownProps,
 });

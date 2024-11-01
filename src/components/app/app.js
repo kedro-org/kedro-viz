@@ -122,7 +122,7 @@ App.propTypes = {
     /**
      * Whether to re-focus the graph when a node is clicked
      */
-    modeOptions: PropTypes.shape({
+    behaviour: PropTypes.shape({
       reFocus: PropTypes.bool,
     }),
     /**

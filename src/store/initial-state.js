@@ -58,7 +58,7 @@ export const createInitialState = () => ({
     zoomToolbar: true,
     metadataPanel: true,
   },
-  modeOptions: {
+  behaviour: {
     reFocus: true,
   },
   zoom: {},
