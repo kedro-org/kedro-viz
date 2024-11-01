@@ -5,6 +5,7 @@ import click
 
 from kedro_viz.constants import SHAREABLEVIZ_SUPPORTED_PLATFORMS
 from kedro_viz.launchers.cli.main import viz
+from kedro_viz.launchers.utils import display_cli_message
 
 
 @viz.command(context_settings={"help_option_names": ["-h", "--help"]})
@@ -39,10 +40,7 @@ from kedro_viz.launchers.cli.main import viz
 )
 def deploy(platform, endpoint, bucket_name, include_hooks, include_previews):
     """Deploy and host Kedro Viz on provided platform"""
-    from kedro_viz.launchers.cli.utils import (
-        create_shareableviz_process,
-        display_cli_message,
-    )
+    from kedro_viz.launchers.cli.utils import create_shareableviz_process
 
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(

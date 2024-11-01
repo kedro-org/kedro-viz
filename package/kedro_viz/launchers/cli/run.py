@@ -111,13 +111,13 @@ def run(
         get_latest_version,
         is_running_outdated_version,
     )
-    from kedro_viz.launchers.cli.utils import display_cli_message
     from kedro_viz.launchers.utils import (
         _PYPROJECT,
         _check_viz_up,
         _find_kedro_project,
         _start_browser,
         _wait_for,
+        display_cli_message,
     )
     from kedro_viz.server import run_server
 

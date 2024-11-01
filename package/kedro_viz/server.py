@@ -8,13 +8,12 @@ from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 
 DEV_PORT = 4142
 
@@ -124,6 +123,10 @@ def run_server(
         # [TODO: As we can do this with `kedro viz build`,
         # we need to shift this feature outside of kedro viz run]
         if save_file:
+            from kedro_viz.api.rest.responses.save_responses import (
+                save_api_responses_to_fs,
+            )
+
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
@@ -170,13 +173,14 @@ if __name__ == "__main__":  # pragma: no cover
         target=run_process, daemon=False, kwargs={**run_process_kwargs}
     )
 
-    print("Starting Kedro Viz ...")
+    display_cli_message("Starting Kedro Viz ...", "green")
 
     viz_process.start()
 
     _wait_for(func=_check_viz_up, host=args.host, port=args.port)
 
-    print(
+    display_cli_message(
         "Kedro Viz started successfully. \n\n"
-        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/"
+        f"\u2728 Kedro Viz is running at \n http://{args.host}:{args.port}/",
+        "green",
     )
