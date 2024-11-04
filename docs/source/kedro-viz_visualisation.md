@@ -204,7 +204,7 @@ kedro viz run --save-file=my_shareable_pipeline
 
 This command saves your visualisation in a `my_shareable_pipeline` folder, which contains all pipeline and node information from your Kedro project.
 
-To visualise your saved Kedro-Viz, load the `my_shareable_pipelin` folder from the terminal with:
+To visualise your saved Kedro-Viz, load the `my_shareable_pipeline` folder from the terminal with:
 
 ```bash
 kedro viz run --load-file=my_shareable_pipeline
