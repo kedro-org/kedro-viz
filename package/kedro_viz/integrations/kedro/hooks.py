@@ -148,10 +148,15 @@ class DatasetStatsHook:
             return None
 
         try:
-            file_path = get_filepath_str(
-                PurePosixPath(dataset._filepath), dataset._protocol
-            )
-            return dataset._fs.size(file_path)
+            if hasattr(dataset, "_protocol") and hasattr(dataset, "_fs"):
+                file_path = get_filepath_str(
+                    PurePosixPath(dataset._filepath), dataset._protocol
+                )
+                file_size = dataset._fs.size(file_path)
+                return file_size
+            else:
+                # Unable to determine file size
+                return None
 
         except Exception as exc:
             logger.warning(
