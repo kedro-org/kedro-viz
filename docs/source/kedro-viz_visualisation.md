@@ -202,7 +202,7 @@ You can save a pipeline structure within a Kedro-Viz visualization directly from
 kedro viz run --save-file=my_shareable_pipeline
 ```
 
-This command saves your visualization in a my_shareable_pipeline folder, which contains all pipeline and node information from your Kedro project.
+This command saves your visualization in a `my_shareable_pipeline` folder, which contains all pipeline and node information from your Kedro project.
 
 To visualize your saved Kedro-Viz file, load it from the terminal with:
 
