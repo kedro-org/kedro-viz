@@ -1,9 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
-import IndicatorIcon from '../../../icons/indicator';
-import OffIndicatorIcon from '../../../icons/indicator-off';
-import { ToggleControl } from '../../../ui/toggle-control/toggle-control';
-import { RowText } from '../../../ui/row-text/row-text';
+import IndicatorIcon from '../../icons/indicator';
+import OffIndicatorIcon from '../../icons/indicator-off';
+import { ToggleControl } from '../../ui/toggle-control/toggle-control';
+import { RowText } from '../../ui/row-text/row-text';
 
 import './filters-row.scss';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import FiltersSection from './components/filters-section/filters-section';
+import FiltersSection from './filters-section/filters-section';
 
 import './filters.scss';
 

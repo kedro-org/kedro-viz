@@ -1,5 +1,5 @@
-@use '../../../../styles/variables' as var;
-@use '../../../node-list/styles/variables';
+@use '../../../styles/variables' as var;
+@use '../../node-list/styles/variables';
 
 .filters-group {
   list-style: none;

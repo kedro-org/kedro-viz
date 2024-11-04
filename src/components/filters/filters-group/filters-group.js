@@ -1,9 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 import FiltersRow from '../filters-row/filters-row';
-import { nodeListRowHeight } from '../../../../config';
-import LazyList from '../../../lazy-list';
-import { getDataTestAttribute } from '../../../../utils/get-data-test-attribute';
+import { nodeListRowHeight } from '../../../config';
+import LazyList from '../../lazy-list';
+import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
 import './filters-group.scss';
 
