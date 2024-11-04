@@ -196,7 +196,7 @@ The visualisation now includes the layers:
 
 ## Share a pipeline visualisation
 
-You can save a pipeline structure within a Kedro-Viz visualisation directly from the terminal.
+You can save a pipeline structure within a Kedro-Viz visualisation directly from the terminal as follows:
 
 ```bash
 kedro viz run --save-file=my_shareable_pipeline
