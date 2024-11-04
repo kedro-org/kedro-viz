@@ -44,10 +44,8 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
-import { params, NODE_TYPES, localStorageName } from '../../config';
-import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-
-const storedState = loadLocalStorage(localStorageName);
+import { params, NODE_TYPES } from '../../config';
+import { FiltersContextProvider } from './utils/filters-context';
 
 /**
  * Provides data from the store to populate a NodeList component.
@@ -81,17 +79,12 @@ const NodeListProvider = ({
 }) => {
   const [searchValue, updateSearchValue] = useState('');
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
-  const [groupCollapsed, setGroupCollapsed] = useState(
-    storedState.groupsCollapsed || {}
-  );
 
   const {
     toSelectedPipeline,
     toSelectedNode,
     toFocusedModularPipeline,
-    toUpdateUrlParamsOnResetFilter,
     toUpdateUrlParamsOnFilter,
-    toSetQueryParam,
   } = useGeneratePathname();
 
   const items = getFilteredItems({
@@ -149,24 +142,6 @@ const NodeListProvider = ({
     );
 
     toUpdateUrlParamsOnFilter(item, paramName, existingValues);
-  };
-
-  // To update URL query parameters when a filter group is clicked
-  const handleUrlParamsUpdateOnGroupFilter = (
-    groupType,
-    groupItems,
-    groupItemsDisabled
-  ) => {
-    if (groupItemsDisabled) {
-      // If all items in group are disabled
-      groupItems.forEach((item) => {
-        handleUrlParamsUpdateOnFilter(item);
-      });
-    } else {
-      // If some items in group are enabled
-      const paramName = isElementType(groupType) ? params.types : params.tags;
-      toSetQueryParam(paramName, []);
-    }
   };
 
   const onItemChange = (item, checked, clickedIconType) => {
@@ -231,46 +206,6 @@ const NodeListProvider = ({
     }
   };
 
-  // Collapse/expand node group of filters
-  const onToggleGroupCollapsed = (groupID) => {
-    const res = {
-      ...groupCollapsed,
-      [groupID]: !groupCollapsed[groupID],
-    };
-
-    setGroupCollapsed(res);
-    saveLocalStorage(localStorageName, { groupsCollapsed: res });
-  };
-
-  const onGroupToggleChanged = (groupType) => {
-    // Enable all items in group if none enabled, otherwise disable all of them
-    const groupItems = items[groupType] || [];
-    const groupItemsDisabled = groupItems.every(
-      (groupItem) => !groupItem.checked
-    );
-
-    // Update URL query parameters when a filter group is clicked
-    handleUrlParamsUpdateOnGroupFilter(
-      groupType,
-      groupItems,
-      groupItemsDisabled
-    );
-
-    if (isTagType(groupType)) {
-      onToggleTagFilter(
-        groupItems.map((item) => item.id),
-        groupItemsDisabled
-      );
-    } else if (isElementType(groupType)) {
-      onToggleTypeDisabled(
-        groupItems.reduce(
-          (state, item) => ({ ...state, [item.id]: !groupItemsDisabled }),
-          {}
-        )
-      );
-    }
-  };
-
   const handleToggleModularPipelineExpanded = (expanded) => {
     onToggleModularPipelineExpanded(expanded);
   };
@@ -295,17 +230,6 @@ const NodeListProvider = ({
     }
   };
 
-  // Reset applied filters to default
-  const onResetFilter = () => {
-    onToggleTypeDisabled({ task: false, data: false, parameters: true });
-    onToggleTagFilter(
-      tags.map((item) => item.id),
-      false
-    );
-
-    toUpdateUrlParamsOnResetFilter();
-  };
-
   // Helper function to check if NodeTypes is modified
   const hasModifiedNodeTypes = (nodeTypes) => {
     return nodeTypes.some(
@@ -326,29 +250,31 @@ const NodeListProvider = ({
   });
 
   return (
-    <NodeList
-      faded={faded}
-      items={items}
-      modularPipelinesTree={modularPipelinesTree}
-      modularPipelinesSearchResult={modularPipelinesSearchResult}
-      groups={groups}
-      searchValue={searchValue}
-      onUpdateSearchValue={debounce(updateSearchValue, 250)}
-      onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
-      onGroupToggleChanged={onGroupToggleChanged}
-      onToggleGroupCollapsed={onToggleGroupCollapsed}
-      groupCollapsed={groupCollapsed}
-      onToggleFocusMode={onToggleFocusMode}
-      onItemClick={onItemClick}
-      onItemMouseEnter={onItemMouseEnter}
-      onItemMouseLeave={onItemMouseLeave}
-      onToggleHoveredFocusMode={onToggleHoveredFocusMode}
-      onItemChange={onItemChange}
-      focusMode={focusMode}
-      disabledModularPipeline={disabledModularPipeline}
-      onResetFilter={onResetFilter}
-      isResetFilterActive={isResetFilterActive}
-    />
+    <FiltersContextProvider>
+      <NodeList
+        faded={faded}
+        items={items}
+        modularPipelinesTree={modularPipelinesTree}
+        modularPipelinesSearchResult={modularPipelinesSearchResult}
+        groups={groups}
+        searchValue={searchValue}
+        onUpdateSearchValue={debounce(updateSearchValue, 250)}
+        onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
+        // onGroupToggleChanged={onGroupToggleChanged}
+        // onToggleGroupCollapsed={onToggleGroupCollapsed}
+        // groupCollapsed={groupCollapsed}
+        onToggleFocusMode={onToggleFocusMode}
+        onItemClick={onItemClick}
+        onItemMouseEnter={onItemMouseEnter}
+        onItemMouseLeave={onItemMouseLeave}
+        onToggleHoveredFocusMode={onToggleHoveredFocusMode}
+        onItemChange={onItemChange}
+        focusMode={focusMode}
+        disabledModularPipeline={disabledModularPipeline}
+        // onResetFilter={onResetFilter}
+        isResetFilterActive={isResetFilterActive}
+      />
+    </FiltersContextProvider>
   );
 };
 

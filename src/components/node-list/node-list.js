@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
 import Filters from '../filters/filters';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
+import { FiltersContext } from './utils/filters-context';
 
 import './styles/node-list.scss';
 
@@ -20,9 +21,9 @@ const NodeList = ({
   searchValue,
   getGroupState,
   onUpdateSearchValue,
-  onGroupToggleChanged,
-  onToggleGroupCollapsed,
-  groupCollapsed,
+  // onGroupToggleChanged,
+  // onToggleGroupCollapsed,
+  // groupCollapsed,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -31,9 +32,16 @@ const NodeList = ({
   onModularPipelineToggleExpanded,
   focusMode,
   disabledModularPipeline,
-  onResetFilter,
+  // onResetFilter,
   isResetFilterActive,
 }) => {
+  const {
+    onResetFilter,
+    onGroupToggleChanged,
+    onToggleGroupCollapsed,
+    groupCollapsed,
+  } = useContext(FiltersContext);
+
   return (
     <div
       className={classnames('pipeline-nodelist', {
