@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
-import NodeListGroups from './node-list-groups';
+import Filters from '../filters/filters';
 import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
 
@@ -21,6 +21,8 @@ const NodeList = ({
   getGroupState,
   onUpdateSearchValue,
   onGroupToggleChanged,
+  onToggleGroupCollapsed,
+  groupCollapsed,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -83,28 +85,20 @@ const NodeList = ({
                 autoHide
                 hideTracksWhenNotNeeded
               >
-                <div className="pipeline-nodelist-section__filters">
-                  <h2 className="pipeline-nodelist-section__title">
-                    <span>Filters</span>
-                  </h2>
-                  <button
-                    disabled={!isResetFilterActive}
-                    onClick={onResetFilter}
-                    className="pipeline-nodelist-section__reset-filter"
-                  >
-                    Reset
-                  </button>
-                </div>
-                <NodeListGroups
-                  items={items}
-                  groups={groups}
-                  searchValue={searchValue}
+                <Filters
                   getGroupState={getGroupState}
+                  groupCollapsed={groupCollapsed}
+                  groups={groups}
+                  isResetFilterActive={isResetFilterActive}
+                  items={items}
+                  onGroupToggleChanged={onGroupToggleChanged}
+                  onItemChange={onItemChange}
                   onItemClick={onItemClick}
                   onItemMouseEnter={onItemMouseEnter}
                   onItemMouseLeave={onItemMouseLeave}
-                  onItemChange={onItemChange}
-                  onGroupToggleChanged={onGroupToggleChanged}
+                  onResetFilter={onResetFilter}
+                  onToggleGroupCollapsed={onToggleGroupCollapsed}
+                  searchValue={searchValue}
                 />
               </Scrollbars>
             </div>

@@ -1,8 +1,6 @@
 @use '../../../styles/mixins' as mixins;
 @use '../../../styles/variables' as colors;
-@use './group';
 @use './panels';
-@use './section';
 @use './variables';
 
 .kui-theme--light {
