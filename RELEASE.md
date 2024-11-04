@@ -17,6 +17,7 @@ Please follow the established format:
 
 - Improve `kedro viz build` usage documentation (#2126)
 - Fix unserializable parameters value (#2122)
+- Replace `watchgod` library with `watchfiles` and improve autoreload file watching filter (#2134)
 - Display full dataset type with library prefix in metadata panel (#2136)
 - Enable SQLite WAL mode for Azure ML to fix database locking issues (#2131)
 - Replace `flake8`, `isort`, `pylint` and `black` by `ruff` (#2149)

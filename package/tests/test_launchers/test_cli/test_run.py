@@ -4,9 +4,10 @@ import pytest
 import requests
 from click.testing import CliRunner
 from packaging.version import parse
-from watchgod import RegExpWatcher, run_process
+from watchfiles import run_process
 
 from kedro_viz import __version__
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.launchers.cli import main
 from kedro_viz.launchers.cli.run import _VIZ_PROCESSES
 from kedro_viz.launchers.utils import _PYPROJECT
@@ -205,7 +206,10 @@ class TestCliRunViz:
         patched_check_viz_up,
         patched_start_browser,
     ):
-        process_init = mocker.patch("multiprocessing.Process")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
         runner = CliRunner()
 
         # Reduce the timeout argument from 600 to 1 to make test run faster.
@@ -222,7 +226,7 @@ class TestCliRunViz:
         with runner.isolated_filesystem():
             runner.invoke(main.viz_cli, command_options)
 
-        process_init.assert_called_once_with(
+        mock_process.assert_called_once_with(
             target=run_server, daemon=False, kwargs={**run_server_args}
         )
 
@@ -340,9 +344,15 @@ class TestCliRunViz:
         mock_click_echo.assert_has_calls(mock_click_echo_calls)
 
     def test_kedro_viz_command_with_autoreload(
-        self, mocker, mock_project_path, patched_check_viz_up, patched_start_browser
+        self, mocker, tmp_path, patched_check_viz_up, patched_start_browser
     ):
-        process_init = mocker.patch("multiprocessing.Process")
+        mock_process_context = mocker.patch("multiprocessing.get_context")
+        mock_context_instance = mocker.Mock()
+        mock_process_context.return_value = mock_context_instance
+        mock_process = mocker.patch.object(mock_context_instance, "Process")
+        mock_tmp_path = tmp_path / "tmp"
+        mock_tmp_path.mkdir()
+        mock_path = mock_tmp_path / "project_path"
 
         # Reduce the timeout argument from 600 to 1 to make test run faster.
         mocker.patch(
@@ -351,14 +361,14 @@ class TestCliRunViz:
         # Mock finding kedro project
         mocker.patch(
             "kedro_viz.launchers.utils._find_kedro_project",
-            return_value=mock_project_path,
+            return_value=mock_path,
         )
         runner = CliRunner()
         with runner.isolated_filesystem():
             runner.invoke(main.viz_cli, ["viz", "run", "--autoreload"])
 
+        run_process_args = [str(mock_path)]
         run_process_kwargs = {
-            "path": mock_project_path,
             "target": run_server,
             "kwargs": {
                 "host": "127.0.0.1",
@@ -367,18 +377,20 @@ class TestCliRunViz:
                 "save_file": None,
                 "pipeline_name": None,
                 "env": None,
+                "project_path": mock_path,
                 "autoreload": True,
-                "project_path": mock_project_path,
                 "include_hooks": False,
                 "package_name": None,
                 "extra_params": {},
                 "is_lite": False,
             },
-            "watcher_cls": RegExpWatcher,
-            "watcher_kwargs": {"re_files": "^.*(\\.yml|\\.yaml|\\.py|\\.json)$"},
+            "watch_filter": mocker.ANY,
         }
 
-        process_init.assert_called_once_with(
-            target=run_process, daemon=False, kwargs={**run_process_kwargs}
+        mock_process.assert_called_once_with(
+            target=run_process,
+            daemon=False,
+            args=run_process_args,
+            kwargs={**run_process_kwargs},
         )
         assert run_process_kwargs["kwargs"]["port"] in _VIZ_PROCESSES
