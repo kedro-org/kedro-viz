@@ -147,8 +147,8 @@ def test_get_file_size_no_protocol(example_dataset_stats_hook_obj, mocker):
     mock_dataset = MockDataset()
 
     mocker.patch(
-        'kedro_viz.integrations.kedro.hooks.get_filepath_str',
-        return_value=mock_dataset._filepath
+        "kedro_viz.integrations.kedro.hooks.get_filepath_str",
+        return_value=mock_dataset._filepath,
     )
 
     # Call get_file_size and expect it to return None
