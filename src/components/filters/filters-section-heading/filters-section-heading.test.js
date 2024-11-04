@@ -1,9 +1,9 @@
 import React from 'react';
 import FiltersSectionHeading from './filters-section-heading';
-import { mockState, setup } from '../../../../utils/state.mock';
-import { getNodeTypes } from '../../../../selectors/node-types';
-import { getGroupedNodes } from '../../../../selectors/nodes';
-import { getGroups } from '../../../node-list/node-list-items';
+import { mockState, setup } from '../../../utils/state.mock';
+import { getNodeTypes } from '../../../selectors/node-types';
+import { getGroupedNodes } from '../../../selectors/nodes';
+import { getGroups } from '../../node-list/node-list-items';
 
 describe('FiltersSectionHeading', () => {
   const mockProps = () => {
