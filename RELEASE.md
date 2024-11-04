@@ -11,6 +11,7 @@ Please follow the established format:
 ## Major features and improvements
 
 - Update Kedro-Viz telemetry for opt-out model (#2022)
+- Introduce `behaviour` prop object with `reFocus` prop (#2161)
 
 ## Bug fixes and other changes
 
