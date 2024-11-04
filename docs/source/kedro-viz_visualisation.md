@@ -213,7 +213,7 @@ kedro viz run --load-file=my_shareable_pipeline
 ```{note}
 This way of sharing requires a Kedro environment setup. 
 
-For users who prefer not to set up a Kedro environment, Kedro-Viz visualisations can also be shared via multiple hosting solutions. More details are available on [the following page](./share_kedro_viz).
+For users who prefer not to set up a Kedro environment, [Kedro-Viz visualisations can also be shared via multiple hosting solutions](./share_kedro_viz).
 ```
 
 ## Running Kedro-viz in a notebook. 
