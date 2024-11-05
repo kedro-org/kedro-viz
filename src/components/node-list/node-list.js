@@ -1,4 +1,5 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import debounce from 'lodash/debounce';
 import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
@@ -7,18 +8,16 @@ import NodeListTree from './node-list-tree';
 import SplitPanel from '../split-panel';
 import { FiltersContext } from './utils/filters-context';
 import { NodeListContext } from './utils/node-list-context';
+import { getModularPipelinesSearchResult } from '../../selectors/modular-pipelines';
 
 import './styles/node-list.scss';
 
 /**
  * Scrollable list of toggleable items, with search & filter functionality
  */
-const NodeList = ({
-  faded,
-  modularPipelinesSearchResult,
-  searchValue,
-  onUpdateSearchValue,
-}) => {
+const NodeList = ({ faded }) => {
+  const [searchValue, updateSearchValue] = useState('');
+
   const {
     groupCollapsed,
     groups,
@@ -32,17 +31,20 @@ const NodeList = ({
 
   const {
     modularPipelinesTree,
-    onModularPipelineToggleExpanded,
-    // onToggleFocusMode,
-    onNodeListRowClicked,
-    onNodeListRowChanged,
-    onItemMouseEnter,
-    onItemMouseLeave,
-    onToggleHoveredFocusMode,
+    handleModularPipelineToggleExpanded,
+    handleNodeListRowClicked,
+    handleNodeListRowChanged,
+    handleItemMouseEnter,
+    handleItemMouseLeave,
+    handleToggleHoveredFocusMode,
     focusMode,
     disabledModularPipeline,
     handleKeyDown,
   } = useContext(NodeListContext);
+
+  const modularPipelinesSearchResult = searchValue
+    ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
+    : null;
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -56,7 +58,7 @@ const NodeList = ({
       })}
     >
       <SearchList
-        onUpdateSearchValue={onUpdateSearchValue}
+        onUpdateSearchValue={debounce(updateSearchValue, 250)}
         searchValue={searchValue}
       />
       <SplitPanel>
@@ -80,12 +82,12 @@ const NodeList = ({
                     modularPipelinesTree={modularPipelinesTree}
                     searchValue={searchValue}
                     faded={faded}
-                    onItemClick={onNodeListRowClicked}
-                    onItemMouseEnter={onItemMouseEnter}
-                    onItemMouseLeave={onItemMouseLeave}
-                    onToggleHoveredFocusMode={onToggleHoveredFocusMode}
-                    onItemChange={onNodeListRowChanged}
-                    onNodeToggleExpanded={onModularPipelineToggleExpanded}
+                    onItemClick={handleNodeListRowClicked}
+                    onItemMouseEnter={handleItemMouseEnter}
+                    onItemMouseLeave={handleItemMouseLeave}
+                    onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
+                    onItemChange={handleNodeListRowChanged}
+                    onNodeToggleExpanded={handleModularPipelineToggleExpanded}
                     focusMode={focusMode}
                     disabledModularPipeline={disabledModularPipeline}
                   />

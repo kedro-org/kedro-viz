@@ -1,32 +1,18 @@
-import React, { useState } from 'react';
-import debounce from 'lodash/debounce';
+import React from 'react';
 import NodeList from './node-list';
-import { getModularPipelinesSearchResult } from '../../selectors/modular-pipelines';
 
 import { AppContextProvider } from './utils/app-context';
 
 import './styles/node-list.scss';
 
 /**
- * Provides data from the store to populate a NodeList component.
- * Also handles user interaction and dispatches updates back to the store.
+ * Acts as a wrapper component that provides the AppContext to the NodeList component.
+ * This ensures that NodeList has access to the necessary context values and functions.
  */
-const NodeListProvider = ({ faded, modularPipelinesTree }) => {
-  const [searchValue, updateSearchValue] = useState('');
-
-  const modularPipelinesSearchResult = searchValue
-    ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
-    : null;
-
+const NodeListProvider = ({ faded }) => {
   return (
     <AppContextProvider>
-      <NodeList
-        faded={faded}
-        modularPipelinesTree={modularPipelinesTree}
-        modularPipelinesSearchResult={modularPipelinesSearchResult}
-        searchValue={searchValue}
-        onUpdateSearchValue={debounce(updateSearchValue, 250)}
-      />
+      <NodeList faded={faded} />
     </AppContextProvider>
   );
 };
