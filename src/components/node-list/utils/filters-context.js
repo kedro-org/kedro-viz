@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useGeneratePathname } from '../../../utils/hooks/use-generate-pathname';
@@ -16,11 +16,18 @@ import { getFocusedModularPipeline } from '../../../selectors/modular-pipelines'
 import { toggleTagFilter } from '../../../actions/tags';
 import { toggleTypeDisabled } from '../../../actions/node-type';
 
-import { params, localStorageName } from '../../../config';
-import { getFilteredItems, isTagType, isElementType } from '../node-list-items';
+import { params, localStorageName, NODE_TYPES } from '../../../config';
+import {
+  getFilteredItems,
+  isTagType,
+  isElementType,
+  getGroups,
+} from '../node-list-items';
 
+// Load the stored state from local storage
 const storedState = loadLocalStorage(localStorageName);
 
+// Create a context for filters
 export const FiltersContext = createContext();
 
 export const FiltersContextProvider = ({ children, value }) => {
@@ -35,9 +42,26 @@ export const FiltersContextProvider = ({ children, value }) => {
     getInputOutputNodesForFocusedModularPipeline
   );
 
+  // State to manage collapsed groups
   const [groupCollapsed, setGroupCollapsed] = useState(
     storedState.groupsCollapsed || {}
   );
+  // State to manage the reset filter button status
+  const [isResetFilterActive, setIsResetFilterActive] = useState(false);
+
+  // Helper function to check if NodeTypes are modified
+  const hasModifiedNodeTypes = (nodeTypes) => {
+    return nodeTypes.some(
+      (item) => NODE_TYPES[item.id]?.defaultState !== item.disabled
+    );
+  };
+
+  // Effect to update the reset filter button status based on node types and tags
+  useEffect(() => {
+    const isNodeTypeModified = hasModifiedNodeTypes(nodeTypes);
+    const isNodeTagModified = tags.some((tag) => tag.enabled);
+    setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
+  }, [tags, nodeTypes]);
 
   const {
     toUpdateUrlParamsOnResetFilter,
@@ -45,8 +69,8 @@ export const FiltersContextProvider = ({ children, value }) => {
     toSetQueryParam,
   } = useGeneratePathname();
 
-  // Reset applied filters to default
-  const onResetFilter = () => {
+  // Function to reset applied filters to default
+  const handleResetFilter = () => {
     dispatch(
       toggleTypeDisabled({ task: false, data: false, parameters: true })
     );
@@ -56,19 +80,19 @@ export const FiltersContextProvider = ({ children, value }) => {
         false
       )
     );
-
     toUpdateUrlParamsOnResetFilter();
   };
 
-  // Collapse/expand node group of filters
-  const onToggleGroupCollapsed = (groupID) => {
-    const res = {
+  // Function to collapse/expand node group of filters
+  const handleToggleGroupCollapsed = (groupID) => {
+    const updatedGroupCollapsed = {
       ...groupCollapsed,
       [groupID]: !groupCollapsed[groupID],
     };
-
-    setGroupCollapsed(res);
-    saveLocalStorage(localStorageName, { groupsCollapsed: res });
+    setGroupCollapsed(updatedGroupCollapsed);
+    saveLocalStorage(localStorageName, {
+      groupsCollapsed: updatedGroupCollapsed,
+    });
   };
 
   const items = getFilteredItems({
@@ -82,13 +106,15 @@ export const FiltersContextProvider = ({ children, value }) => {
     inputOutputDataNodes,
   });
 
-  // duplicated in index.js
+  const groups = getGroups({ items });
 
-  // To get existing values from URL query parameters
+  // Function to get existing values from URL query parameters
   const getExistingValuesFromUrlQueryParams = (paramName, searchParams) => {
     const paramValues = searchParams.get(paramName);
     return new Set(paramValues ? paramValues.split(',') : []);
   };
+
+  // Function to update URL query parameters when a filter is applied
   const handleUrlParamsUpdateOnFilter = (item) => {
     const searchParams = new URLSearchParams(window.location.search);
     const paramName = isElementType(item.type) ? params.types : params.tags;
@@ -96,36 +122,32 @@ export const FiltersContextProvider = ({ children, value }) => {
       paramName,
       searchParams
     );
-
     toUpdateUrlParamsOnFilter(item, paramName, existingValues);
   };
 
-  // To update URL query parameters when a filter group is clicked
+  // Function to update URL query parameters when a filter group is clicked
   const handleUrlParamsUpdateOnGroupFilter = (
     groupType,
     groupItems,
     groupItemsDisabled
   ) => {
     if (groupItemsDisabled) {
-      // If all items in group are disabled
       groupItems.forEach((item) => {
         handleUrlParamsUpdateOnFilter(item);
       });
     } else {
-      // If some items in group are enabled
       const paramName = isElementType(groupType) ? params.types : params.tags;
       toSetQueryParam(paramName, []);
     }
   };
 
-  const onGroupToggleChanged = (groupType) => {
-    // Enable all items in group if none enabled, otherwise disable all of them
+  // Function to handle group toggle change
+  const handleGroupToggleChanged = (groupType) => {
     const groupItems = items[groupType] || [];
     const groupItemsDisabled = groupItems.every(
       (groupItem) => !groupItem.checked
     );
 
-    // Update URL query parameters when a filter group is clicked
     handleUrlParamsUpdateOnGroupFilter(
       groupType,
       groupItems,
@@ -154,10 +176,13 @@ export const FiltersContextProvider = ({ children, value }) => {
   return (
     <FiltersContext.Provider
       value={{
-        onResetFilter,
-        onGroupToggleChanged,
-        onToggleGroupCollapsed,
         groupCollapsed,
+        groups,
+        isResetFilterActive,
+        items,
+        onGroupToggleChanged: handleGroupToggleChanged,
+        onResetFilter: handleResetFilter,
+        onToggleGroupCollapsed: handleToggleGroupCollapsed,
       }}
     >
       {children}

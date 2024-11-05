@@ -14,16 +14,10 @@ import './styles/node-list.scss';
  */
 const NodeList = ({
   faded,
-  items,
   modularPipelinesTree,
   modularPipelinesSearchResult,
-  groups,
   searchValue,
-  getGroupState,
   onUpdateSearchValue,
-  // onGroupToggleChanged,
-  // onToggleGroupCollapsed,
-  // groupCollapsed,
   onItemClick,
   onItemMouseEnter,
   onItemMouseLeave,
@@ -32,14 +26,15 @@ const NodeList = ({
   onModularPipelineToggleExpanded,
   focusMode,
   disabledModularPipeline,
-  // onResetFilter,
-  isResetFilterActive,
 }) => {
   const {
-    onResetFilter,
-    onGroupToggleChanged,
-    onToggleGroupCollapsed,
     groupCollapsed,
+    groups,
+    isResetFilterActive,
+    items,
+    onGroupToggleChanged,
+    onResetFilter,
+    onToggleGroupCollapsed,
   } = useContext(FiltersContext);
 
   return (
@@ -94,7 +89,6 @@ const NodeList = ({
                 hideTracksWhenNotNeeded
               >
                 <Filters
-                  getGroupState={getGroupState}
                   groupCollapsed={groupCollapsed}
                   groups={groups}
                   isResetFilterActive={isResetFilterActive}
@@ -102,8 +96,6 @@ const NodeList = ({
                   onGroupToggleChanged={onGroupToggleChanged}
                   onItemChange={onItemChange}
                   onItemClick={onItemClick}
-                  onItemMouseEnter={onItemMouseEnter}
-                  onItemMouseLeave={onItemMouseLeave}
                   onResetFilter={onResetFilter}
                   onToggleGroupCollapsed={onToggleGroupCollapsed}
                   searchValue={searchValue}

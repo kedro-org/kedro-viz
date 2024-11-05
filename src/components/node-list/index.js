@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import NodeList from './node-list';
-import {
-  getFilteredItems,
-  getGroups,
-  isTagType,
-  isElementType,
-  isGroupType,
-} from './node-list-items';
+import { isTagType, isElementType, isGroupType } from './node-list-items';
 import {
   getNodeTypes,
   isModularPipelineType,
@@ -44,7 +38,7 @@ import {
 } from '../../actions/nodes';
 import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 import './styles/node-list.scss';
-import { params, NODE_TYPES } from '../../config';
+import { params } from '../../config';
 import { FiltersContextProvider } from './utils/filters-context';
 
 /**
@@ -53,11 +47,6 @@ import { FiltersContextProvider } from './utils/filters-context';
  */
 const NodeListProvider = ({
   faded,
-  nodes,
-  nodeSelected,
-  tags,
-  tagNodeCounts,
-  nodeTypes,
   onToggleNodesDisabled,
   onToggleNodeSelected,
   onToggleNodeActive,
@@ -73,12 +62,10 @@ const NodeListProvider = ({
   modularPipelinesTree,
   focusMode,
   disabledModularPipeline,
-  inputOutputDataNodes,
   onResetSlicePipeline,
   isSlicingPipelineApplied,
 }) => {
   const [searchValue, updateSearchValue] = useState('');
-  const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
   const {
     toSelectedPipeline,
@@ -87,22 +74,9 @@ const NodeListProvider = ({
     toUpdateUrlParamsOnFilter,
   } = useGeneratePathname();
 
-  const items = getFilteredItems({
-    nodes,
-    tags,
-    nodeTypes,
-    tagNodeCounts,
-    nodeSelected,
-    searchValue,
-    focusMode,
-    inputOutputDataNodes,
-  });
-
   const modularPipelinesSearchResult = searchValue
     ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
     : null;
-
-  const groups = getGroups({ items });
 
   const onItemClick = (event, item) => {
     if (isGroupType(item.type)) {
@@ -230,20 +204,6 @@ const NodeListProvider = ({
     }
   };
 
-  // Helper function to check if NodeTypes is modified
-  const hasModifiedNodeTypes = (nodeTypes) => {
-    return nodeTypes.some(
-      (item) => NODE_TYPES[item.id]?.defaultState !== item.disabled
-    );
-  };
-
-  // Updates the reset filter button status based on the node types and tags.
-  useEffect(() => {
-    const isNodeTypeModified = hasModifiedNodeTypes(nodeTypes);
-    const isNodeTagModified = tags.some((tag) => tag.enabled);
-    setIsResetFilterActive(isNodeTypeModified || isNodeTagModified);
-  }, [tags, nodeTypes]);
-
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -253,16 +213,11 @@ const NodeListProvider = ({
     <FiltersContextProvider>
       <NodeList
         faded={faded}
-        items={items}
         modularPipelinesTree={modularPipelinesTree}
         modularPipelinesSearchResult={modularPipelinesSearchResult}
-        groups={groups}
         searchValue={searchValue}
         onUpdateSearchValue={debounce(updateSearchValue, 250)}
         onModularPipelineToggleExpanded={handleToggleModularPipelineExpanded}
-        // onGroupToggleChanged={onGroupToggleChanged}
-        // onToggleGroupCollapsed={onToggleGroupCollapsed}
-        // groupCollapsed={groupCollapsed}
         onToggleFocusMode={onToggleFocusMode}
         onItemClick={onItemClick}
         onItemMouseEnter={onItemMouseEnter}
@@ -271,22 +226,14 @@ const NodeListProvider = ({
         onItemChange={onItemChange}
         focusMode={focusMode}
         disabledModularPipeline={disabledModularPipeline}
-        // onResetFilter={onResetFilter}
-        isResetFilterActive={isResetFilterActive}
       />
     </FiltersContextProvider>
   );
 };
 
 export const mapStateToProps = (state) => ({
-  tags: getTagData(state),
-  tagNodeCounts: getTagNodeCounts(state),
-  nodes: getGroupedNodes(state),
-  nodeSelected: getNodeSelected(state),
-  nodeTypes: getNodeTypes(state),
   focusMode: getFocusedModularPipeline(state),
   disabledModularPipeline: state.modularPipeline.disabled,
-  inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   modularPipelinesTree: getModularPipelinesTree(state),
   isSlicingPipelineApplied: state.slice.apply,
 });

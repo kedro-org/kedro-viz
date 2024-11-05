@@ -41,7 +41,7 @@ const FiltersGroup = ({
             label={item.highlightedLabel}
             name={item.name}
             onChange={(e) => onItemChange(item, !e.target.checked)}
-            onClick={() => onItemClick(item)}
+            onClick={(e) => onItemClick(e, item)}
             parentClassName={'node-list-filter-row'}
             visible={item.visible}
             indicatorIcon={item.visibleIcon}
