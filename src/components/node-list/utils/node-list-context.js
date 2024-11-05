@@ -22,9 +22,8 @@ import {
 } from '../../../actions/nodes';
 import { resetSlicePipeline } from '../../../actions/slice';
 
-export const NodeListContext = createContext();
-
-export const NodeListContextProvider = ({ children }) => {
+// Custom hook to group useSelector calls
+const useNodeListContextSelector = () => {
   const dispatch = useDispatch();
   const modularPipelinesTree = useSelector(getModularPipelinesTree);
   const isSlicingPipelineApplied = useSelector((state) => state.slice.apply);
@@ -33,38 +32,87 @@ export const NodeListContextProvider = ({ children }) => {
     (state) => state.modularPipeline.disabled
   );
 
-  const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
-    useGeneratePathname();
-
-  // Toggle the expanded state of modular pipelines
-  const handleModularPipelineToggleExpanded = (expanded) => {
-    dispatch(toggleModularPipelinesExpanded(expanded));
-  };
-
-  // Toggle the focus mode for a modular pipeline
-  const handleToggleFocusMode = (modularPipeline) => {
+  const onToggleFocusMode = (modularPipeline) => {
     dispatch(toggleFocusMode(modularPipeline));
   };
-
-  // Select or deselect a node
-  const handleToggleNodeSelected = (nodeID) => {
+  const onToggleHoveredFocusMode = (active) => {
+    dispatch(toggleHoveredFocusMode(active));
+  };
+  const onToggleNodeSelected = (nodeID) => {
     dispatch(loadNodeData(nodeID));
   };
+  const onToggleNodeHovered = (nodeID) => {
+    dispatch(toggleNodeHovered(nodeID));
+  };
+  const onToggleNodesDisabled = (nodeIDs, disabled) => {
+    dispatch(toggleNodesDisabled(nodeIDs, disabled));
+  };
+  const onToggleModularPipelineExpanded = (expanded) => {
+    dispatch(toggleModularPipelinesExpanded(expanded));
+  };
+  const onToggleModularPipelineDisabled = (modularPipelineIDs, disabled) => {
+    dispatch(toggleModularPipelineDisabled(modularPipelineIDs, disabled));
+  };
+  const onToggleModularPipelineActive = (modularPipelineIDs, active) => {
+    dispatch(toggleModularPipelineActive(modularPipelineIDs, active));
+  };
+  const onResetSlicePipeline = () => {
+    dispatch(resetSlicePipeline());
+  };
+
+  return {
+    modularPipelinesTree,
+    isSlicingPipelineApplied,
+    focusMode,
+    disabledModularPipeline,
+    onToggleModularPipelineExpanded,
+    onToggleFocusMode,
+    onToggleNodeSelected,
+    onResetSlicePipeline,
+    onToggleNodeHovered,
+    onToggleModularPipelineDisabled,
+    onToggleModularPipelineActive,
+    onToggleNodesDisabled,
+    onToggleHoveredFocusMode,
+  };
+};
+
+export const NodeListContext = createContext();
+
+export const NodeListContextProvider = ({ children }) => {
+  const {
+    modularPipelinesTree,
+    isSlicingPipelineApplied,
+    focusMode,
+    disabledModularPipeline,
+    onToggleModularPipelineExpanded,
+    onToggleFocusMode,
+    onToggleNodeSelected,
+    onResetSlicePipeline,
+    onToggleNodeHovered,
+    onToggleModularPipelineDisabled,
+    onToggleModularPipelineActive,
+    onToggleNodesDisabled,
+    onToggleHoveredFocusMode,
+  } = useNodeListContextSelector();
+
+  const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
+    useGeneratePathname();
 
   // Handle row click in the node list
   const handleNodeListRowClicked = (event, item) => {
     if (isModularPipelineType(item.type)) {
-      handleToggleNodeSelected(null);
+      onToggleNodeSelected(null);
     } else {
       if (item.faded || item.selected) {
-        handleToggleNodeSelected(null);
+        onToggleNodeSelected(null);
         toSelectedPipeline();
       } else {
-        handleToggleNodeSelected(item.id);
+        onToggleNodeSelected(item.id);
         toSelectedNode(item);
         // Reset the pipeline slicing filters if no slicing is currently applied
         if (!isSlicingPipelineApplied) {
-          dispatch(resetSlicePipeline());
+          onResetSlicePipeline();
         }
       }
     }
@@ -76,65 +124,65 @@ export const NodeListContextProvider = ({ children }) => {
   // Handle changes in the node list row
   const handleNodeListRowChanged = (item, checked, clickedIconType) => {
     // reset the node data
-    dispatch(loadNodeData(null));
-    dispatch(toggleNodeHovered(null));
+    onToggleNodeSelected(null);
+    onToggleNodeHovered(null);
 
     if (isModularPipelineType(item.type)) {
       debugger;
       if (clickedIconType === 'focus') {
         if (focusMode === null) {
-          handleToggleFocusMode(item);
+          onToggleFocusMode(item);
           toFocusedModularPipeline(item);
 
           if (disabledModularPipeline[item.id]) {
-            dispatch(toggleModularPipelineDisabled([item.id], checked));
+            onToggleModularPipelineDisabled([item.id], checked);
           }
         } else {
-          handleToggleFocusMode(null);
+          onToggleFocusMode(null);
           toSelectedPipeline();
         }
       } else {
-        dispatch(toggleModularPipelineDisabled([item.id], checked));
-        dispatch(toggleModularPipelineActive([item.id], false));
+        onToggleModularPipelineDisabled([item.id], checked);
+        onToggleModularPipelineActive([item.id], false);
       }
     } else {
       if (checked) {
-        dispatch(toggleNodeHovered(null));
+        onToggleNodeHovered(null);
       }
-      dispatch(toggleNodesDisabled([item.id], checked));
+      onToggleNodesDisabled([item.id], checked);
     }
   };
 
   // Handle mouse enter event on an item
   const handleItemMouseEnter = (item) => {
     if (isModularPipelineType(item.type)) {
-      dispatch(toggleModularPipelineActive(item.id, true));
+      onToggleModularPipelineActive(item.id, true);
     }
 
     if (item.visible) {
-      dispatch(toggleNodeHovered(item.id));
+      onToggleNodeHovered(item.id);
     }
   };
 
   // Handle mouse leave event on an item
   const handleItemMouseLeave = (item) => {
     if (isModularPipelineType(item.type)) {
-      dispatch(toggleModularPipelineActive(item.id, false));
+      onToggleModularPipelineActive(item.id, false);
     }
     if (item.visible) {
-      dispatch(toggleNodeHovered(null));
+      onToggleNodeHovered(null);
     }
   };
 
   // Toggle hovered focus mode
   const handleToggleHoveredFocusMode = (active) => {
-    dispatch(toggleHoveredFocusMode(active));
+    onToggleHoveredFocusMode(active);
   };
 
   // Deselect node on Escape key
   const handleKeyDown = (event) => {
     if (event.keyCode === 27) {
-      dispatch(loadNodeData(null));
+      onToggleNodeSelected(null);
     }
   };
 
@@ -142,8 +190,7 @@ export const NodeListContextProvider = ({ children }) => {
     <NodeListContext.Provider
       value={{
         modularPipelinesTree,
-        handleModularPipelineToggleExpanded,
-        //   handleToggleFocusMode,
+        handleModularPipelineToggleExpanded: onToggleModularPipelineExpanded,
         handleNodeListRowClicked,
         handleNodeListRowChanged,
         handleItemMouseEnter,

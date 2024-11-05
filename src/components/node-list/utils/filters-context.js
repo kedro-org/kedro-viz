@@ -27,10 +27,8 @@ import {
 // Load the stored state from local storage
 const storedState = loadLocalStorage(localStorageName);
 
-// Create a context for filters
-export const FiltersContext = createContext();
-
-export const FiltersContextProvider = ({ children, value }) => {
+// Custom hook to group useSelector calls
+const useFiltersContextSelector = () => {
   const dispatch = useDispatch();
   const tags = useSelector(getTagData);
   const nodes = useSelector(getGroupedNodes);
@@ -41,6 +39,43 @@ export const FiltersContextProvider = ({ children, value }) => {
   const inputOutputDataNodes = useSelector(
     getInputOutputNodesForFocusedModularPipeline
   );
+
+  const onToggleTypeDisabled = (typeID, disabled) => {
+    dispatch(toggleTypeDisabled(typeID, disabled));
+  };
+
+  const onToggleTagFilter = (tagIDs, enabled) => {
+    dispatch(toggleTagFilter(tagIDs, enabled));
+  };
+
+  return {
+    tags,
+    nodes,
+    nodeTypes,
+    tagNodeCounts,
+    nodeSelected,
+    focusMode,
+    inputOutputDataNodes,
+    onToggleTypeDisabled,
+    onToggleTagFilter,
+  };
+};
+
+// Create a context for filters
+export const FiltersContext = createContext();
+
+export const FiltersContextProvider = ({ children }) => {
+  const {
+    tags,
+    nodes,
+    nodeTypes,
+    tagNodeCounts,
+    nodeSelected,
+    focusMode,
+    inputOutputDataNodes,
+    onToggleTypeDisabled,
+    onToggleTagFilter,
+  } = useFiltersContextSelector();
 
   const [groupCollapsed, setGroupCollapsed] = useState(
     storedState.groupsCollapsed || {}
@@ -69,14 +104,10 @@ export const FiltersContextProvider = ({ children, value }) => {
 
   // Function to reset applied filters to default
   const handleResetFilter = () => {
-    dispatch(
-      toggleTypeDisabled({ task: false, data: false, parameters: true })
-    );
-    dispatch(
-      toggleTagFilter(
-        tags.map((item) => item.id),
-        false
-      )
+    onToggleTypeDisabled({ task: false, data: false, parameters: true });
+    onToggleTagFilter(
+      tags.map((item) => item.id),
+      false
     );
     toUpdateUrlParamsOnResetFilter();
   };
@@ -153,19 +184,15 @@ export const FiltersContextProvider = ({ children, value }) => {
     );
 
     if (isTagType(groupType)) {
-      dispatch(
-        toggleTagFilter(
-          groupItems.map((item) => item.id),
-          groupItemsDisabled
-        )
+      onToggleTagFilter(
+        groupItems.map((item) => item.id),
+        groupItemsDisabled
       );
     } else if (isElementType(groupType)) {
-      dispatch(
-        toggleTypeDisabled(
-          groupItems.reduce(
-            (state, item) => ({ ...state, [item.id]: !groupItemsDisabled }),
-            {}
-          )
+      onToggleTypeDisabled(
+        groupItems.reduce(
+          (state, item) => ({ ...state, [item.id]: !groupItemsDisabled }),
+          {}
         )
       );
     }
@@ -174,9 +201,9 @@ export const FiltersContextProvider = ({ children, value }) => {
   const onGroupItemChange = (item, wasChecked) => {
     // Toggle the group
     if (isTagType(item.type)) {
-      dispatch(toggleTagFilter(item.id, !wasChecked));
+      onToggleTagFilter(item.id, !wasChecked);
     } else if (isElementType(item.type)) {
-      dispatch(toggleTypeDisabled({ [item.id]: wasChecked }));
+      onToggleTypeDisabled({ [item.id]: wasChecked });
     }
 
     // Reset node selection
