@@ -12,7 +12,6 @@ const FiltersSection = ({
   items,
   onGroupToggleChanged,
   onItemChange,
-  onItemClick,
   onToggleGroupCollapsed,
   searchValue,
 }) => {
@@ -39,7 +38,6 @@ const FiltersSection = ({
         group={group}
         items={groupItems}
         onItemChange={onItemChange}
-        onItemClick={onItemClick}
       />
     </li>
   );

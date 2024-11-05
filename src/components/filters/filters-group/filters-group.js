@@ -8,13 +8,7 @@ import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 import './filters-group.scss';
 
 /** A group collection of FiltersRow */
-const FiltersGroup = ({
-  items = [],
-  group,
-  collapsed,
-  onItemClick,
-  onItemChange,
-}) => (
+const FiltersGroup = ({ items = [], group, collapsed, onItemChange }) => (
   <LazyList
     height={(start, end) => (end - start) * nodeListRowHeight}
     total={items.length}
@@ -40,8 +34,8 @@ const FiltersGroup = ({
             kind={group.kind}
             label={item.highlightedLabel}
             name={item.name}
-            onChange={(e) => onItemChange(item, !e.target.checked)}
-            onClick={(e) => onItemClick(e, item)}
+            onChange={(e) => onItemChange(e, item)}
+            onClick={(e) => onItemChange(e, item)}
             parentClassName={'node-list-filter-row'}
             visible={item.visible}
             indicatorIcon={item.visibleIcon}

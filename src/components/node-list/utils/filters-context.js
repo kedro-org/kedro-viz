@@ -42,11 +42,9 @@ export const FiltersContextProvider = ({ children, value }) => {
     getInputOutputNodesForFocusedModularPipeline
   );
 
-  // State to manage collapsed groups
   const [groupCollapsed, setGroupCollapsed] = useState(
     storedState.groupsCollapsed || {}
   );
-  // State to manage the reset filter button status
   const [isResetFilterActive, setIsResetFilterActive] = useState(false);
 
   // Helper function to check if NodeTypes are modified
@@ -173,6 +171,26 @@ export const FiltersContextProvider = ({ children, value }) => {
     }
   };
 
+  const onGroupItemChange = (item, wasChecked) => {
+    // Toggle the group
+    if (isTagType(item.type)) {
+      dispatch(toggleTagFilter(item.id, !wasChecked));
+    } else if (isElementType(item.type)) {
+      dispatch(toggleTypeDisabled({ [item.id]: wasChecked }));
+    }
+
+    // Reset node selection
+    // onToggleNodeSelected(null);
+    // onToggleNodeActive(null);
+  };
+
+  const handleFiltersRowClicked = (event, item) => {
+    onGroupItemChange(item, item.checked);
+
+    // to prevent page reload on form submission
+    event.preventDefault();
+  };
+
   return (
     <FiltersContext.Provider
       value={{
@@ -183,6 +201,7 @@ export const FiltersContextProvider = ({ children, value }) => {
         onGroupToggleChanged: handleGroupToggleChanged,
         onResetFilter: handleResetFilter,
         onToggleGroupCollapsed: handleToggleGroupCollapsed,
+        onFiltersRowClicked: handleFiltersRowClicked,
       }}
     >
       {children}

@@ -10,7 +10,6 @@ const Filters = ({
   items,
   onGroupToggleChanged,
   onItemChange,
-  onItemClick,
   onResetFilter,
   onToggleGroupCollapsed,
   searchValue,
@@ -39,7 +38,6 @@ const Filters = ({
               key={group.id}
               onGroupToggleChanged={onGroupToggleChanged}
               onItemChange={onItemChange}
-              onItemClick={onItemClick}
               onToggleGroupCollapsed={onToggleGroupCollapsed}
               searchValue={searchValue}
             />
