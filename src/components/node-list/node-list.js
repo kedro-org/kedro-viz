@@ -23,10 +23,10 @@ const NodeList = ({ faded }) => {
     groups,
     isResetFilterActive,
     items,
-    onGroupToggleChanged,
-    onResetFilter,
-    onToggleGroupCollapsed,
-    onFiltersRowClicked,
+    handleGroupToggleChanged,
+    handleResetFilter,
+    handleToggleGroupCollapsed,
+    handleFiltersRowClicked,
   } = useContext(FiltersContext);
 
   const {
@@ -107,10 +107,10 @@ const NodeList = ({ faded }) => {
                   groups={groups}
                   isResetFilterActive={isResetFilterActive}
                   items={items}
-                  onGroupToggleChanged={onGroupToggleChanged}
-                  onItemChange={onFiltersRowClicked}
-                  onResetFilter={onResetFilter}
-                  onToggleGroupCollapsed={onToggleGroupCollapsed}
+                  onGroupToggleChanged={handleGroupToggleChanged}
+                  onItemChange={handleFiltersRowClicked}
+                  onResetFilter={handleResetFilter}
+                  onToggleGroupCollapsed={handleToggleGroupCollapsed}
                   searchValue={searchValue}
                 />
               </Scrollbars>

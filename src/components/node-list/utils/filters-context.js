@@ -225,10 +225,10 @@ export const FiltersContextProvider = ({ children }) => {
         groups,
         isResetFilterActive,
         items,
-        onGroupToggleChanged: handleGroupToggleChanged,
-        onResetFilter: handleResetFilter,
-        onToggleGroupCollapsed: handleToggleGroupCollapsed,
-        onFiltersRowClicked: handleFiltersRowClicked,
+        handleGroupToggleChanged,
+        handleResetFilter,
+        handleToggleGroupCollapsed,
+        handleFiltersRowClicked,
       }}
     >
       {children}
