@@ -10,7 +10,7 @@ from kedro_viz import __version__
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.launchers.cli import main
 from kedro_viz.launchers.cli.run import _VIZ_PROCESSES
-from kedro_viz.launchers.utils import _PYPROJECT
+from kedro_viz.launchers.utils import _PYPROJECT, _find_available_port
 from kedro_viz.server import run_server
 
 
@@ -394,3 +394,17 @@ class TestCliRunViz:
             kwargs={**run_process_kwargs},
         )
         assert run_process_kwargs["kwargs"]["port"] in _VIZ_PROCESSES
+
+    # Test case to simulate port occupation and check available port selection
+    def test_find_available_port_with_occupied_ports(self, mocker):
+        mock_is_port_in_use = mocker.patch("kedro_viz.launchers.utils._is_port_in_use")
+
+        # Mock ports 4141, 4142 being occupied and 4143 is free
+        mock_is_port_in_use.side_effect = [True, True, False]
+
+        available_port = _find_available_port("127.0.0.1", 4141)
+
+        # Assert that the function returns the first free port, 4143
+        assert (
+            available_port == 4143
+        ), "Expected port 4143 to be returned as the available port"
