@@ -189,7 +189,7 @@ def run(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        display_cli_message(f"Starting Kedro Viz on port {port}...", "green")
+        display_cli_message("Starting Kedro Viz ...", "green")
         viz_process.start()
 
         _VIZ_PROCESSES[port] = viz_process
