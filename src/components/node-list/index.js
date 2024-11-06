@@ -14,10 +14,7 @@ import {
   isModularPipelineType,
 } from '../../selectors/node-types';
 import { getTagData, getTagNodeCounts } from '../../selectors/tags';
-import {
-  getFocusedModularPipeline,
-  getModularPipelinesSearchResult,
-} from '../../selectors/modular-pipelines';
+import { getFocusedModularPipeline } from '../../selectors/modular-pipelines';
 import {
   getGroupedNodes,
   getNodeSelected,
@@ -93,10 +90,6 @@ const NodeListProvider = ({
     focusMode,
     inputOutputDataNodes,
   });
-
-  const modularPipelinesSearchResult = searchValue
-    ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
-    : null;
 
   const groups = getGroups({ items });
 
@@ -305,7 +298,6 @@ const NodeListProvider = ({
       faded={faded}
       items={items}
       modularPipelinesTree={modularPipelinesTree}
-      modularPipelinesSearchResult={modularPipelinesSearchResult}
       groups={groups}
       searchValue={searchValue}
       onUpdateSearchValue={debounce(updateSearchValue, 250)}
