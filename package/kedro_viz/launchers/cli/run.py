@@ -115,8 +115,8 @@ def run(
     from kedro_viz.launchers.utils import (
         _PYPROJECT,
         _check_viz_up,
+        _find_available_port,
         _find_kedro_project,
-        _is_port_in_use,
         _start_browser,
         _wait_for,
         display_cli_message,
@@ -147,17 +147,8 @@ def run(
             "yellow",
         )
 
-    # Check if the port is already in use
-    if _is_port_in_use(host, port):
-        display_cli_message(
-            f"Error: Port {port} is already in use. Kedro Viz could not start.",
-            "red",
-        )
-        display_cli_message(
-            "Please specify a different port using the '--port' option.",
-            "red",
-        )
-        return
+    port = _find_available_port(host, port)
+
     try:
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
             _VIZ_PROCESSES[port].terminate()
@@ -198,8 +189,7 @@ def run(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
-        display_cli_message("Starting Kedro Viz ...", "green")
-
+        display_cli_message(f"Starting Kedro Viz on port {port}...", "green")
         viz_process.start()
 
         _VIZ_PROCESSES[port] = viz_process
