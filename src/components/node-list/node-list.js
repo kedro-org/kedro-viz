@@ -30,16 +30,21 @@ const NodeList = ({ faded }) => {
   } = useContext(FiltersContext);
 
   const {
-    modularPipelinesTree,
-    handleModularPipelineToggleExpanded,
-    handleNodeListRowClicked,
-    handleNodeListRowChanged,
+    activeNodes,
+    disabledModularPipeline,
+    expanded,
+    focusMode,
     handleItemMouseEnter,
     handleItemMouseLeave,
-    handleToggleHoveredFocusMode,
-    focusMode,
-    disabledModularPipeline,
     handleKeyDown,
+    handleModularPipelineToggleExpanded,
+    handleNodeListRowChanged,
+    handleNodeListRowClicked,
+    handleToggleHoveredFocusMode,
+    isSlicingPipelineApplied,
+    modularPipelinesTree,
+    selectedNodes,
+    slicedPipeline,
   } = useContext(NodeListContext);
 
   const modularPipelinesSearchResult = searchValue
@@ -78,18 +83,23 @@ const NodeList = ({ faded }) => {
               >
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
+                    activeNodes={activeNodes}
+                    disabledModularPipeline={disabledModularPipeline}
+                    expanded={expanded}
+                    faded={faded}
+                    focusMode={focusMode}
+                    isSlicingPipelineApplied={isSlicingPipelineApplied}
                     modularPipelinesSearchResult={modularPipelinesSearchResult}
                     modularPipelinesTree={modularPipelinesTree}
-                    searchValue={searchValue}
-                    faded={faded}
+                    nodeSelected={selectedNodes}
+                    onItemChange={handleNodeListRowChanged}
                     onItemClick={handleNodeListRowClicked}
                     onItemMouseEnter={handleItemMouseEnter}
                     onItemMouseLeave={handleItemMouseLeave}
-                    onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
-                    onItemChange={handleNodeListRowChanged}
                     onNodeToggleExpanded={handleModularPipelineToggleExpanded}
-                    focusMode={focusMode}
-                    disabledModularPipeline={disabledModularPipeline}
+                    onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
+                    searchValue={searchValue}
+                    slicedPipeline={slicedPipeline}
                   />
                 </div>
               </Scrollbars>

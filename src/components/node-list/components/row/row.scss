@@ -14,6 +14,7 @@
   transform: translate(0, 0);
 
   &:hover,
+  &--active,
   &--selected {
     // Additional selector required to increase specificity to override previous rule
     background-color: var(--color-nodelist-row-selected);

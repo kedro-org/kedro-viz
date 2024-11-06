@@ -8,6 +8,8 @@ import {
   getModularPipelinesTree,
 } from '../../../selectors/modular-pipelines';
 import { isModularPipelineType } from '../../../selectors/node-types';
+import { getNodeActive, getNodeSelected } from '../../../selectors/nodes';
+import { getSlicedPipeline } from '../../../selectors/sliced-pipeline';
 
 import {
   toggleModularPipelinesExpanded,
@@ -25,6 +27,10 @@ import { resetSlicePipeline } from '../../../actions/slice';
 // Custom hook to group useSelector calls
 const useNodeListContextSelector = () => {
   const dispatch = useDispatch();
+  const activeNodes = useSelector(getNodeActive);
+  const selectedNodes = useSelector(getNodeSelected);
+  const expanded = useSelector((state) => state.modularPipeline.expanded);
+  const slicedPipeline = useSelector(getSlicedPipeline);
   const modularPipelinesTree = useSelector(getModularPipelinesTree);
   const isSlicingPipelineApplied = useSelector((state) => state.slice.apply);
   const focusMode = useSelector(getFocusedModularPipeline);
@@ -61,19 +67,23 @@ const useNodeListContextSelector = () => {
   };
 
   return {
-    modularPipelinesTree,
-    isSlicingPipelineApplied,
-    focusMode,
+    activeNodes,
     disabledModularPipeline,
-    onToggleModularPipelineExpanded,
-    onToggleFocusMode,
-    onToggleNodeSelected,
+    expanded,
+    focusMode,
+    isSlicingPipelineApplied,
+    modularPipelinesTree,
+    selectedNodes,
+    slicedPipeline,
     onResetSlicePipeline,
-    onToggleNodeHovered,
-    onToggleModularPipelineDisabled,
-    onToggleModularPipelineActive,
-    onToggleNodesDisabled,
+    onToggleFocusMode,
     onToggleHoveredFocusMode,
+    onToggleModularPipelineActive,
+    onToggleModularPipelineDisabled,
+    onToggleModularPipelineExpanded,
+    onToggleNodeHovered,
+    onToggleNodesDisabled,
+    onToggleNodeSelected,
   };
 };
 
@@ -81,21 +91,24 @@ export const NodeListContext = createContext();
 
 export const NodeListContextProvider = ({ children }) => {
   const {
-    modularPipelinesTree,
-    isSlicingPipelineApplied,
-    focusMode,
+    activeNodes,
     disabledModularPipeline,
-    onToggleModularPipelineExpanded,
-    onToggleFocusMode,
-    onToggleNodeSelected,
+    expanded,
+    focusMode,
+    isSlicingPipelineApplied,
+    modularPipelinesTree,
+    selectedNodes,
+    slicedPipeline,
     onResetSlicePipeline,
-    onToggleNodeHovered,
-    onToggleModularPipelineDisabled,
-    onToggleModularPipelineActive,
-    onToggleNodesDisabled,
+    onToggleFocusMode,
     onToggleHoveredFocusMode,
+    onToggleModularPipelineActive,
+    onToggleModularPipelineDisabled,
+    onToggleModularPipelineExpanded,
+    onToggleNodeHovered,
+    onToggleNodesDisabled,
+    onToggleNodeSelected,
   } = useNodeListContextSelector();
-
   const { toSelectedPipeline, toSelectedNode, toFocusedModularPipeline } =
     useGeneratePathname();
 
@@ -123,12 +136,7 @@ export const NodeListContextProvider = ({ children }) => {
 
   // Handle changes in the node list row
   const handleNodeListRowChanged = (item, checked, clickedIconType) => {
-    // reset the node data
-    onToggleNodeSelected(null);
-    onToggleNodeHovered(null);
-
     if (isModularPipelineType(item.type)) {
-      debugger;
       if (clickedIconType === 'focus') {
         if (focusMode === null) {
           onToggleFocusMode(item);
@@ -149,14 +157,19 @@ export const NodeListContextProvider = ({ children }) => {
       if (checked) {
         onToggleNodeHovered(null);
       }
+
       onToggleNodesDisabled([item.id], checked);
     }
+    // reset the node data
+    onToggleNodeSelected(null);
+    onToggleNodeHovered(null);
   };
 
   // Handle mouse enter event on an item
   const handleItemMouseEnter = (item) => {
     if (isModularPipelineType(item.type)) {
-      onToggleModularPipelineActive(item.id, true);
+      // onToggleModularPipelineActive(item.id, true);
+      return;
     }
 
     if (item.visible) {
@@ -167,7 +180,8 @@ export const NodeListContextProvider = ({ children }) => {
   // Handle mouse leave event on an item
   const handleItemMouseLeave = (item) => {
     if (isModularPipelineType(item.type)) {
-      onToggleModularPipelineActive(item.id, false);
+      // onToggleModularPipelineActive(item.id, false);
+      return;
     }
     if (item.visible) {
       onToggleNodeHovered(null);
@@ -189,15 +203,20 @@ export const NodeListContextProvider = ({ children }) => {
   return (
     <NodeListContext.Provider
       value={{
+        activeNodes,
+        disabledModularPipeline,
+        expanded,
+        focusMode,
+        isSlicingPipelineApplied,
         modularPipelinesTree,
+        selectedNodes,
+        slicedPipeline,
         handleModularPipelineToggleExpanded: onToggleModularPipelineExpanded,
         handleNodeListRowClicked,
         handleNodeListRowChanged,
         handleItemMouseEnter,
         handleItemMouseLeave,
         handleToggleHoveredFocusMode,
-        focusMode,
-        disabledModularPipeline,
         handleKeyDown,
       }}
     >

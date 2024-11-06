@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import uniqueId from 'lodash/uniqueId';
 
 import { styled } from '@mui/system';
@@ -8,14 +7,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import sortBy from 'lodash/sortBy';
 
-import { loadNodeData } from '../../actions/nodes';
-import { getNodeSelected } from '../../selectors/nodes';
 import { isModularPipelineType } from '../../selectors/node-types';
 import NodeListTreeItem from './node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
-import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
 
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
@@ -94,13 +90,13 @@ const getModularPipelineRowData = ({
  * @param {Boolean} selected Whether the node is currently disabled
  * @param {Boolean} selected Whether the node is currently selected
  */
-const getNodeRowData = (node, disabled, selected, highlight) => {
+const getNodeRowData = (node, disabled, active, selected, highlight) => {
   const checked = !node.disabledNode;
   return {
     ...node,
     visibleIcon: VisibleIcon,
     invisibleIcon: InvisibleIcon,
-    active: node.active,
+    active: node.active ?? (active || false),
     selected,
     highlight,
     faded: disabled || node.disabledNode,
@@ -111,6 +107,7 @@ const getNodeRowData = (node, disabled, selected, highlight) => {
 };
 
 const TreeListProvider = ({
+  activeNodes,
   nodeSelected,
   modularPipelinesSearchResult,
   modularPipelinesTree,
@@ -152,9 +149,10 @@ const TreeListProvider = ({
           .some(Boolean));
 
     const selected = nodeSelected[node.id];
+    const active = activeNodes[node.id];
 
     const highlight = slicedPipeline.includes(node.id);
-    const data = getNodeRowData(node, disabled, selected, highlight);
+    const data = getNodeRowData(node, disabled, active, selected, highlight);
 
     return (
       <NodeListTreeItem
@@ -273,17 +271,4 @@ const TreeListProvider = ({
   );
 };
 
-export const mapStateToProps = (state) => ({
-  nodeSelected: getNodeSelected(state),
-  expanded: state.modularPipeline.expanded,
-  slicedPipeline: getSlicedPipeline(state),
-  isSlicingPipelineApplied: state.slice.apply,
-});
-
-export const mapDispatchToProps = (dispatch) => ({
-  onToggleNodeSelected: (nodeID) => {
-    dispatch(loadNodeData(nodeID));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TreeListProvider);
+export default TreeListProvider;
