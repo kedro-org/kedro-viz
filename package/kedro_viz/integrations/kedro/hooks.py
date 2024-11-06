@@ -148,6 +148,9 @@ class DatasetStatsHook:
         try:
             if hasattr(dataset, "filepath") and dataset.filepath:
                 filepath = dataset.filepath
+            # Fallback to private '_filepath' for known datasets
+            elif hasattr(dataset, "_filepath") and dataset._filepath:
+                filepath = dataset._filepath
             else:
                 return None
 

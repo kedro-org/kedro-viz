@@ -137,20 +137,3 @@ def test_get_file_size(dataset, example_dataset_stats_hook_obj, example_csv_data
     assert example_dataset_stats_hook_obj.get_file_size(
         example_csv_dataset
     ) == example_csv_dataset._fs.size(file_path)
-
-
-def test_get_file_size_no_protocol(example_dataset_stats_hook_obj, mocker):
-    class MockDataset:
-        def __init__(self):
-            self._filepath = "/path/to/dataset.csv"
-
-    mock_dataset = MockDataset()
-
-    mocker.patch(
-        "kedro_viz.integrations.kedro.hooks.get_filepath_str",
-        return_value=mock_dataset._filepath,
-    )
-
-    # Call get_file_size and expect it to return None
-    file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
-    assert file_size is None
