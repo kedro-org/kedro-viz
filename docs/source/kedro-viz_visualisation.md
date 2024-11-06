@@ -196,21 +196,25 @@ The visualisation now includes the layers:
 
 ## Share a pipeline visualisation
 
-You can share a pipeline structure within a Kedro-Viz visualisation as a JSON file from the terminal:
+You can save a pipeline structure within a Kedro-Viz visualisation directly from the terminal as follows:
 
 ```bash
 kedro viz run --save-file=my_shareable_pipeline
 ```
 
-This command will save a visualisation of the `__default__` pipeline as a JSON file called `my_shareable_pipeline.json`. It doesn't share data, such as that in the code panel, nor can you share images or charts.
+This command saves your visualisation in a `my_shareable_pipeline` folder, which contains all pipeline and node information from your Kedro project.
 
-To visualise the shared file, type the following to load it from the terminal:
+To visualise your saved Kedro-Viz, load the `my_shareable_pipeline` folder from the terminal with:
 
 ```bash
 kedro viz run --load-file=my_shareable_pipeline
 ```
 
-You can also share a complete project visualisation, described in more detail on [the following page](./share_kedro_viz). 
+```{note}
+This way of sharing requires a Kedro environment setup. 
+
+For users who prefer not to set up a Kedro environment, [Kedro-Viz visualisations can also be shared via multiple hosting solutions](./share_kedro_viz).
+```
 
 ## Running Kedro-viz in a notebook. 
 

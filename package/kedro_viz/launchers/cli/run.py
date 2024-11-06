@@ -7,6 +7,7 @@ import click
 from kedro.framework.cli.project import PARAMS_ARG_HELP
 from kedro.framework.cli.utils import _split_params
 
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.launchers.cli.main import viz
 
@@ -162,21 +163,25 @@ def run(
             "extra_params": params,
             "is_lite": lite,
         }
-        if autoreload:
-            from watchgod import RegExpWatcher, run_process
 
+        process_context = multiprocessing.get_context("spawn")
+        if autoreload:
+            from watchfiles import run_process
+
+            run_process_args = [str(kedro_project_path)]
             run_process_kwargs = {
-                "path": kedro_project_path,
                 "target": run_server,
                 "kwargs": run_server_kwargs,
-                "watcher_cls": RegExpWatcher,
-                "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+                "watch_filter": AutoreloadFileFilter(),
             }
-            viz_process = multiprocessing.Process(
-                target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            viz_process = process_context.Process(
+                target=run_process,
+                daemon=False,
+                args=run_process_args,
+                kwargs={**run_process_kwargs},
             )
         else:
-            viz_process = multiprocessing.Process(
+            viz_process = process_context.Process(
                 target=run_server, daemon=False, kwargs={**run_server_kwargs}
             )
 
