@@ -7,6 +7,7 @@ from collections import defaultdict
 from pathlib import Path, PurePosixPath
 from typing import Any, Union
 
+import fsspec
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.io.core import get_filepath_str
@@ -141,21 +142,20 @@ class DatasetStatsHook:
         Args:
             dataset: A dataset instance for which we need the file size
 
-        Returns: file size for the dataset if file_path is valid, if not returns None
+        Returns:
+            File size for the dataset if available, otherwise None.
         """
-
-        if not (hasattr(dataset, "_filepath") and dataset._filepath):
-            return None
-
         try:
-            if hasattr(dataset, "_protocol") and hasattr(dataset, "_fs"):
-                file_path = get_filepath_str(
-                    PurePosixPath(dataset._filepath), dataset._protocol
-                )
-                file_size = dataset._fs.size(file_path)
+            if hasattr(dataset, "filepath") and dataset.filepath:
+                filepath = dataset.filepath
+            else:
+                return None
+
+            fs, path_in_fs = fsspec.core.url_to_fs(filepath)
+            if fs.exists(path_in_fs):
+                file_size = fs.size(path_in_fs)
                 return file_size
             else:
-                # Unable to determine file size
                 return None
 
         except Exception as exc:
