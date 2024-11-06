@@ -2,6 +2,7 @@
 used in the `kedro_viz.launchers` package."""
 
 import logging
+import socket
 import webbrowser
 from pathlib import Path
 from time import sleep, time
@@ -78,6 +79,11 @@ def _check_viz_up(host: str, port: int):
         return False
 
     return response.status_code == 200
+
+
+def _is_port_in_use(host: str, port: int):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex((host, port)) == 0
 
 
 def _is_localhost(host: str) -> bool:
