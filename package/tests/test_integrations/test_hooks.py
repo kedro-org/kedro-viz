@@ -156,3 +156,25 @@ def test_get_file_size_file_does_not_exist(example_dataset_stats_hook_obj, mocke
     # Call get_file_size and expect it to return None
     file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
     assert file_size is None
+
+
+def test_get_file_size_public_filepath(example_dataset_stats_hook_obj, mocker):
+    class MockDataset:
+        def __init__(self):
+            self.filepath = "/path/to/existing/file.csv"
+
+    mock_dataset = MockDataset()
+
+    # Mock fs.exists to return True
+    mock_fs = mocker.Mock()
+    mock_fs.exists.return_value = True
+    mock_fs.size.return_value = 456
+
+    mocker.patch(
+        "fsspec.core.url_to_fs",
+        return_value=(mock_fs, "/path/to/existing/file.csv"),
+    )
+
+    # Call get_file_size and expect it to return the mocked file size
+    file_size = example_dataset_stats_hook_obj.get_file_size(mock_dataset)
+    assert file_size == 456
