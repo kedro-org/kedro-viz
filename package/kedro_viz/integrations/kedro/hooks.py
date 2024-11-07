@@ -161,7 +161,7 @@ class DatasetStatsHook:
             else:
                 return None
 
-        except Exception as exc:
+        except Exception as exc:  # pragma: no cover
             logger.warning(
                 "Unable to get file size for the dataset %s: %s", dataset, exc
             )
