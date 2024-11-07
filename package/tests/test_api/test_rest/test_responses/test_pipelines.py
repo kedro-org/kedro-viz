@@ -35,6 +35,20 @@ class TestMainEndpoint:
             {"id": "data_processing", "name": "data_processing"},
         ]
 
+    def test_endpoint_main_for_pipelines_with_additional_tags(
+        self,
+        example_api_for_pipelines_with_additional_tags,
+    ):
+        expected_tags = [
+            {"id": "tag1", "name": "tag1"},
+            {"id": "tag2", "name": "tag2"},
+            {"id": "validation", "name": "validation"},
+        ]
+        client = TestClient(example_api_for_pipelines_with_additional_tags)
+        response = client.get("/api/main")
+        actual_tags = response.json()["tags"]
+        assert actual_tags == expected_tags
+
     def test_endpoint_main_for_edge_case_pipelines(
         self,
         example_api_for_edge_case_pipelines,

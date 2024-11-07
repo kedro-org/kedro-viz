@@ -120,6 +120,12 @@ App.propTypes = {
       enabled: PropTypes.objectOf(PropTypes.bool),
     }),
     /**
+     * Whether to re-focus the graph when a node is clicked
+     */
+    behaviour: PropTypes.shape({
+      reFocus: PropTypes.bool,
+    }),
+    /**
      * Override the default enabled/disabled node types
      */
     nodeType: PropTypes.shape({

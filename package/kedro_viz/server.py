@@ -8,6 +8,7 @@ from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
 from kedro_viz.database import make_db_session_factory
@@ -143,7 +144,7 @@ if __name__ == "__main__":  # pragma: no cover
     import argparse
     import multiprocessing
 
-    from watchgod import RegExpWatcher, run_process
+    from watchfiles import run_process
 
     parser = argparse.ArgumentParser(description="Launch a development viz server")
     parser.add_argument("project_path", help="Path to a Kedro project")
@@ -157,20 +158,24 @@ if __name__ == "__main__":  # pragma: no cover
 
     project_path = (Path.cwd() / args.project_path).absolute()
 
+    run_process_args = [str(project_path)]
     run_process_kwargs = {
-        "path": project_path,
         "target": run_server,
         "kwargs": {
             "host": args.host,
             "port": args.port,
             "project_path": str(project_path),
         },
-        "watcher_cls": RegExpWatcher,
-        "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+        "watch_filter": AutoreloadFileFilter(),
     }
 
-    viz_process = multiprocessing.Process(
-        target=run_process, daemon=False, kwargs={**run_process_kwargs}
+    process_context = multiprocessing.get_context("spawn")
+
+    viz_process = process_context.Process(
+        target=run_process,
+        daemon=False,
+        args=run_process_args,
+        kwargs={**run_process_kwargs},
     )
 
     display_cli_message("Starting Kedro Viz ...", "green")
