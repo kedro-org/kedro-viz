@@ -22,7 +22,7 @@ import {
   isTagType,
   isElementType,
   getGroups,
-} from './get-filtered-items';
+} from '../../../selectors/filtered-node-list-items';
 
 // Load the stored state from local storage
 const storedState = loadLocalStorage(localStorageName);

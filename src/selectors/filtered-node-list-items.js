@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
-import { sidebarElementTypes, sidebarGroups } from '../../../config';
-import IndicatorIcon from '../../icons/indicator';
-import IndicatorOffIcon from '../../icons/indicator-off';
-import IndicatorPartialIcon from '../../icons/indicator-partial';
-import InvisibleIcon from '../../icons/invisible';
-import VisibleIcon from '../../icons/visible';
-import { escapeRegExp, getHighlightedText } from '../../../utils/search-utils';
+import { sidebarElementTypes, sidebarGroups } from '../config';
+import IndicatorIcon from '../components/icons/indicator';
+import IndicatorOffIcon from '../components/icons/indicator-off';
+import IndicatorPartialIcon from '../components/icons/indicator-partial';
+import InvisibleIcon from '../components/icons/invisible';
+import VisibleIcon from '../components/icons/visible';
+import { escapeRegExp, getHighlightedText } from '../utils/search-utils';
 
 export const isTagType = (type) => type === 'tag';
 export const isElementType = (type) => type === 'elementType';
