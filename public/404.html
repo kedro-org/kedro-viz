@@ -1,0 +1,23 @@
+<!-- Handle GitHub Pages redirect by storing the requested path and redirecting to the root -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting</title>
+    <p>Redirecting...</p>
+    <script>
+      try {
+        const path = window.location.pathname.slice(1);
+        const search = window.location.search;
+        if (window.localStorage) {
+          localStorage.setItem('ghp-redirect-path', `${path}${search}`);
+        }
+        window.location.href = '../';
+      } catch (e) {
+        console.error('Failed to handle redirect:', e);
+        window.location.href = '/'; // Fallback to root
+      }
+    </script>
+  </head>
+  <body></body>
+</html>
