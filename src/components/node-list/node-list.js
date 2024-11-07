@@ -30,7 +30,7 @@ const NodeList = ({ faded }) => {
   } = useContext(FiltersContext);
 
   const {
-    activeNodes,
+    hoveredNode,
     disabledModularPipeline,
     expanded,
     focusMode,
@@ -83,7 +83,7 @@ const NodeList = ({ faded }) => {
               >
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
-                    activeNodes={activeNodes}
+                    hoveredNode={hoveredNode}
                     disabledModularPipeline={disabledModularPipeline}
                     expanded={expanded}
                     faded={faded}

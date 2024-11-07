@@ -90,13 +90,14 @@ const getModularPipelineRowData = ({
  * @param {Boolean} selected Whether the node is currently disabled
  * @param {Boolean} selected Whether the node is currently selected
  */
-const getNodeRowData = (node, disabled, active, selected, highlight) => {
+const getNodeRowData = (node, disabled, hoveredNode, selected, highlight) => {
   const checked = !node.disabledNode;
+
   return {
     ...node,
     visibleIcon: VisibleIcon,
     invisibleIcon: InvisibleIcon,
-    active: node.active ?? (active || false),
+    active: node.active || hoveredNode === node.id,
     selected,
     highlight,
     faded: disabled || node.disabledNode,
@@ -107,7 +108,7 @@ const getNodeRowData = (node, disabled, active, selected, highlight) => {
 };
 
 const TreeListProvider = ({
-  activeNodes,
+  hoveredNode,
   nodeSelected,
   modularPipelinesSearchResult,
   modularPipelinesTree,
@@ -149,10 +150,15 @@ const TreeListProvider = ({
           .some(Boolean));
 
     const selected = nodeSelected[node.id];
-    const active = activeNodes[node.id];
 
     const highlight = slicedPipeline.includes(node.id);
-    const data = getNodeRowData(node, disabled, active, selected, highlight);
+    const data = getNodeRowData(
+      node,
+      disabled,
+      hoveredNode,
+      selected,
+      highlight
+    );
 
     return (
       <NodeListTreeItem

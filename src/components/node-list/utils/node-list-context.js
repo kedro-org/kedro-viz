@@ -8,7 +8,7 @@ import {
   getModularPipelinesTree,
 } from '../../../selectors/modular-pipelines';
 import { isModularPipelineType } from '../../../selectors/node-types';
-import { getNodeActive, getNodeSelected } from '../../../selectors/nodes';
+import { getNodeSelected } from '../../../selectors/nodes';
 import { getSlicedPipeline } from '../../../selectors/sliced-pipeline';
 
 import {
@@ -27,7 +27,7 @@ import { resetSlicePipeline } from '../../../actions/slice';
 // Custom hook to group useSelector calls
 const useNodeListContextSelector = () => {
   const dispatch = useDispatch();
-  const activeNodes = useSelector(getNodeActive);
+  const hoveredNode = useSelector((state) => state.node.hovered);
   const selectedNodes = useSelector(getNodeSelected);
   const expanded = useSelector((state) => state.modularPipeline.expanded);
   const slicedPipeline = useSelector(getSlicedPipeline);
@@ -67,10 +67,10 @@ const useNodeListContextSelector = () => {
   };
 
   return {
-    activeNodes,
     disabledModularPipeline,
     expanded,
     focusMode,
+    hoveredNode,
     isSlicingPipelineApplied,
     modularPipelinesTree,
     selectedNodes,
@@ -91,10 +91,10 @@ export const NodeListContext = createContext();
 
 export const NodeListContextProvider = ({ children }) => {
   const {
-    activeNodes,
     disabledModularPipeline,
     expanded,
     focusMode,
+    hoveredNode,
     isSlicingPipelineApplied,
     modularPipelinesTree,
     selectedNodes,
@@ -168,7 +168,7 @@ export const NodeListContextProvider = ({ children }) => {
   // Handle mouse enter event on an item
   const handleItemMouseEnter = (item) => {
     if (isModularPipelineType(item.type)) {
-      // onToggleModularPipelineActive(item.id, true);
+      onToggleModularPipelineActive(item.id, true);
       return;
     }
 
@@ -180,7 +180,7 @@ export const NodeListContextProvider = ({ children }) => {
   // Handle mouse leave event on an item
   const handleItemMouseLeave = (item) => {
     if (isModularPipelineType(item.type)) {
-      // onToggleModularPipelineActive(item.id, false);
+      onToggleModularPipelineActive(item.id, false);
       return;
     }
     if (item.visible) {
@@ -203,10 +203,10 @@ export const NodeListContextProvider = ({ children }) => {
   return (
     <NodeListContext.Provider
       value={{
-        activeNodes,
         disabledModularPipeline,
         expanded,
         focusMode,
+        hoveredNode,
         isSlicingPipelineApplied,
         modularPipelinesTree,
         selectedNodes,
