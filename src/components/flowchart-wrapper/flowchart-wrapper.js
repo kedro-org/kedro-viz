@@ -101,6 +101,7 @@ export const FlowChartWrapper = ({
     if (ghpRedirectPath) {
       history.push(ghpRedirectPath);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
