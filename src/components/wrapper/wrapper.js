@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
@@ -36,6 +41,12 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     }
   }, [versionData]);
 
+  const handleRedirect = () => {
+    let ghpRedirectPath = localStorage.getItem('ghp-redirect-path');
+    localStorage.removeItem('ghp-redirect-path');
+    return ghpRedirectPath ? <Redirect exact to={ghpRedirectPath} /> : null;
+  };
+
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -60,6 +71,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               />
             )}
             <Switch>
+              {handleRedirect()}
               <Route exact path={sanitizedPathname()}>
                 <FlowChartWrapper />
                 <FeatureHints />

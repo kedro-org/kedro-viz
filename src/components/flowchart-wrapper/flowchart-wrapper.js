@@ -95,15 +95,6 @@ export const FlowChartWrapper = ({
     matchedFocusedNode,
   } = findMatchedPath(pathname, search);
 
-  useEffect(() => {
-    // Handle GitHub Pages redirect by checking for a stored path and navigating to it if present
-    let ghpRedirectPath = localStorage.getItem('ghp-redirect-path');
-    if (ghpRedirectPath) {
-      history.push(ghpRedirectPath);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   /**
    * On initial load & when user switch active pipeline,
    * sets the query params from local storage based on NodeType, tag, expandAllPipelines and active pipeline.
@@ -140,13 +131,7 @@ export const FlowChartWrapper = ({
   };
 
   useEffect(() => {
-    // After processing the redirect, remove the stored path or set parameters from local storage
-    let ghpRedirectPath = localStorage.getItem('ghp-redirect-path');
-    if (ghpRedirectPath) {
-      localStorage.removeItem('ghp-redirect-path');
-    } else {
-      setParamsFromLocalStorage(activePipeline);
-    }
+    setParamsFromLocalStorage(activePipeline);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePipeline, tag, nodeType, expandAllPipelines]);
 
