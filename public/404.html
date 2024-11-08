@@ -10,7 +10,11 @@
         const path = window.location.pathname.slice(1);
         const search = window.location.search;
         if (window.localStorage) {
-          localStorage.setItem('ghp-redirect-path', `${path}${search}`);
+          if (path === 'experiment-tracking') {
+            localStorage.setItem('ghp-redirect-path', `${path}${search}`);
+          } else {
+            localStorage.setItem('ghp-redirect-path', '/');
+          }
         }
         window.location.href = '../';
       } catch (e) {
