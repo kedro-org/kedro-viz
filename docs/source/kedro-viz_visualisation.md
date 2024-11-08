@@ -194,6 +194,17 @@ The visualisation now includes the layers:
 
 ![](./images/pipeline_visualisation_with_layers.png)
 
+```{tip}
+Duplicated defititions like
+
+metadata:
+  kedro-viz:
+    layer: raw
+
+can be avoided by leveraging YAML's native syntax for anchors and aliases.
+See [this example from the Kedro docs](https://docs.kedro.org/en/stable/data/data_catalog_yaml_examples.html#load-multiple-datasets-with-similar-configuration-using-yaml-anchors).
+```
+
 ## Share a pipeline visualisation
 
 You can save a pipeline structure within a Kedro-Viz visualisation directly from the terminal as follows:
