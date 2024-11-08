@@ -197,9 +197,11 @@ The visualisation now includes the layers:
 ```{tip}
 Duplicated defititions like
 
-metadata:
-  kedro-viz:
-    layer: raw
+  ```yaml
+  metadata:
+    kedro-viz:
+      layer: raw
+  ```
 
 can be avoided by leveraging YAML's native syntax for anchors and aliases.
 See [this example from the Kedro docs](https://docs.kedro.org/en/stable/data/data_catalog_yaml_examples.html#load-multiple-datasets-with-similar-configuration-using-yaml-anchors).
