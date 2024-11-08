@@ -217,6 +217,9 @@ class TestCliRunViz:
             "kedro_viz.launchers.utils._wait_for.__defaults__", (True, 1, True, 1)
         )
 
+        # Mock _is_port_in_use to speed up test.
+        mocker.patch("kedro_viz.launchers.utils._is_port_in_use", return_value=False)
+
         # Mock finding kedro project
         mocker.patch(
             "kedro_viz.launchers.utils._find_kedro_project",
