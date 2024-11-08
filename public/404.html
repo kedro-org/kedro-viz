@@ -11,8 +11,10 @@
         const search = window.location.search;
         if (window.localStorage) {
           if (path === 'experiment-tracking') {
+            // For the 'experiment-tracking' path, store the full path and search parameters
             localStorage.setItem('ghp-redirect-path', `${path}${search}`);
           } else {
+            // For other paths, store the root path '/'
             localStorage.setItem('ghp-redirect-path', '/');
           }
         }
