@@ -41,12 +41,6 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     }
   }, [versionData]);
 
-  const handleRedirect = () => {
-    let ghpRedirectPath = localStorage.getItem('ghp-redirect-path');
-    localStorage.removeItem('ghp-redirect-path');
-    return ghpRedirectPath ? <Redirect exact to={ghpRedirectPath} /> : null;
-  };
-
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -71,7 +65,6 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               />
             )}
             <Switch>
-              {handleRedirect()}
               <Route exact path={sanitizedPathname()}>
                 <FlowChartWrapper />
                 <FeatureHints />
