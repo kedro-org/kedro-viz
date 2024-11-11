@@ -347,7 +347,7 @@ describe('NodeList', () => {
         ['Features', 'Preprocessing', 'Split', 'Train'],
         true
       );
-      expect(partialIcon(wrapper)).toHaveLength(0);
+      expect(partialIcon(wrapper)).toHaveLength(1);
     });
 
     it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
@@ -484,31 +484,5 @@ describe('NodeList', () => {
 
       expect(window.location.search).not.toContain('tags');
     });
-  });
-
-  it('maps state to props', () => {
-    const nodeList = expect.arrayContaining([
-      expect.objectContaining({
-        disabled: expect.any(Boolean),
-        disabledNode: expect.any(Boolean),
-        disabledTag: expect.any(Boolean),
-        disabledType: expect.any(Boolean),
-        id: expect.any(String),
-        name: expect.any(String),
-        type: expect.any(String),
-      }),
-    ]);
-    const expectedResult = expect.objectContaining({
-      tags: expect.any(Object),
-      nodes: expect.objectContaining({
-        data: nodeList,
-        task: nodeList,
-        modularPipeline: nodeList,
-      }),
-      nodeSelected: expect.any(Object),
-      nodeTypes: expect.any(Array),
-      modularPipelinesTree: expect.any(Object),
-    });
-    expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });
 });

@@ -11,14 +11,14 @@ import {
   getGroups,
   getFilteredItems,
 } from './filtered-node-list-items';
-import { mockState } from '../../utils/state.mock';
+import { mockState } from '../utils/state.mock';
 import {
   getGroupedNodes,
   getInputOutputNodesForFocusedModularPipeline,
-} from '../../selectors/nodes';
-import { getNodeTypes } from '../../selectors/node-types';
-import { getTagData, getTagNodeCounts } from '../../selectors/tags';
-import { sidebarElementTypes } from '../../config';
+} from '../selectors/nodes';
+import { getNodeTypes } from '../selectors/node-types';
+import { getTagData, getTagNodeCounts } from '../selectors/tags';
+import { sidebarElementTypes } from '../config';
 
 const ungroupNodes = (groupedNodes) =>
   Object.keys(groupedNodes).reduce(
