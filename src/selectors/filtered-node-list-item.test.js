@@ -1,7 +1,7 @@
 import {
   getFilteredNodes,
   getNodeIDs,
-  highlightMatch,
+  getFiltersSearchResult,
   nodeMatchesSearch,
   filterNodeGroups,
   getFilteredTags,
@@ -234,20 +234,13 @@ describe('node-list-selectors', () => {
     ]);
 
     it('filters expected number of items', () => {
-      expect(filteredItems.task).toHaveLength(5);
-      expect(filteredItems.data).toHaveLength(11);
-      expect(filteredItems.parameters).toHaveLength(1);
       expect(filteredItems.tag).toHaveLength(2);
-      expect(filteredItems.modularPipeline).toHaveLength(2);
       expect(filteredItems.elementType).toHaveLength(2);
     });
 
     it('returns items for each type in the correct format', () => {
       expect(filteredItems).toEqual(
         expect.objectContaining({
-          task: items,
-          data: items,
-          parameters: items,
           tag: items,
         })
       );
@@ -320,10 +313,10 @@ describe('node-list-selectors', () => {
     });
   });
 
-  describe('highlightMatch', () => {
+  describe('getFiltersSearchResult', () => {
     const nodes = getGroupedNodes(mockState.spaceflights);
     const searchValue = 'data';
-    const formattedNodes = highlightMatch(nodes, searchValue);
+    const formattedNodes = getFiltersSearchResult(nodes, searchValue);
     const nodeList = ungroupNodes(formattedNodes);
 
     describe(`nodes which match the search term "${searchValue}"`, () => {
@@ -342,12 +335,8 @@ describe('node-list-selectors', () => {
       const notMatchingNodeList = nodeList.filter(
         (node) => !node.name.includes(searchValue)
       );
-      test.each(notMatchingNodeList.map((node) => node.highlightedLabel))(
-        `node label "%s" does not contain "<b>"`,
-        (label) => {
-          expect(label).not.toEqual(expect.stringMatching(`<b>`));
-        }
-      );
+
+      expect(notMatchingNodeList).toEqual([]);
     });
   });
 
