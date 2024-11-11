@@ -1,5 +1,5 @@
 @use '../../../styles/variables' as var;
-@use '../../node-list/styles/variables';
+@use '../../nodes-panel/styles/variables';
 
 .filters-section-heading {
   background: var(--color-nodelist-filter-panel);

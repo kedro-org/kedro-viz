@@ -15,7 +15,7 @@ import './styles/node-list.scss';
 /**
  * Scrollable list of toggleable items, with search & filter functionality
  */
-const NodeList = ({ faded }) => {
+const NodesPanel = ({ faded }) => {
   const [searchValue, updateSearchValue] = useState('');
 
   const {
@@ -132,4 +132,4 @@ const NodeList = ({ faded }) => {
   );
 };
 
-export default NodeList;
+export default NodesPanel;

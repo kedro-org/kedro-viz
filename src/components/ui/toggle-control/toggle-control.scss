@@ -1,6 +1,6 @@
 @use '../../../styles/mixins' as mixins;
 @use '../../../styles/variables' as colors;
-@use '../../node-list/styles/variables';
+@use '../../nodes-panel/styles/variables';
 
 .toggle-control {
   cursor: pointer;

@@ -12,14 +12,14 @@ import { getTagData } from '../../selectors/tags';
 import { mockState, setup } from '../../utils/state.mock';
 import IndicatorPartialIcon from '../icons/indicator-partial';
 import SplitPanel from '../split-panel';
-import NodeList, { mapStateToProps } from './index';
+import NodesPanel from './index';
 
 jest.mock('lodash/debounce', () => (func) => {
   func.cancel = jest.fn();
   return func;
 });
 
-describe('NodeList', () => {
+describe('NodesPanel', () => {
   beforeEach(() => {
     window.localStorage.clear();
   });
@@ -27,7 +27,7 @@ describe('NodeList', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(
       <MemoryRouter>
-        <NodeList />
+        <NodesPanel />
       </MemoryRouter>
     );
     const search = wrapper.find('.pipeline-search-list');
@@ -40,7 +40,7 @@ describe('NodeList', () => {
     describe('displays nodes matching search value', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
 
@@ -94,7 +94,7 @@ describe('NodeList', () => {
     it('clears the search input and resets the list when hitting the Escape key', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       const searchWrapper = wrapper.find('.pipeline-search-list');
@@ -141,7 +141,7 @@ describe('NodeList', () => {
     it('displays search results when in focus mode', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList focusMode={{ id: 'data_science' }} />
+          <NodesPanel focusMode={{ id: 'data_science' }} />
         </MemoryRouter>
       );
       const searchWrapper = wrapper.find('.pipeline-search-list');
@@ -198,7 +198,7 @@ describe('NodeList', () => {
     it('shows full node names when pretty name is turned off', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>,
         {
           beforeLayoutActions: [() => toggleIsPrettyName(false)],
@@ -215,7 +215,7 @@ describe('NodeList', () => {
     it('shows formatted node names when pretty name is turned on', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>,
         {
           beforeLayoutActions: [() => toggleIsPrettyName(true)],
@@ -264,7 +264,7 @@ describe('NodeList', () => {
       //Parameters are enabled here to override the default behavior
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>,
         {
           beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
@@ -284,7 +284,7 @@ describe('NodeList', () => {
     it('adds a class to tag group item when all tags unchecked', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       const uncheckedClass = 'filters-section--all-unchecked';
@@ -299,7 +299,7 @@ describe('NodeList', () => {
     it('adds a class to the row when a tag row unchecked', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       const uncheckedClass = 'toggle-control--icon--unchecked';
@@ -330,7 +330,7 @@ describe('NodeList', () => {
     it('shows as partially selected when at least one but not all tags selected', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
 
@@ -353,7 +353,7 @@ describe('NodeList', () => {
     it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       changeRows(wrapper, ['Preprocessing'], true);
@@ -369,7 +369,7 @@ describe('NodeList', () => {
     it('renders the correct number of tags in the filter panel', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       const nodeList = wrapper.find('.filters-group .node-list-filter-row');
@@ -381,7 +381,7 @@ describe('NodeList', () => {
     it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
 
@@ -397,7 +397,7 @@ describe('NodeList', () => {
     it('renders elements panel, filter panel inside a SplitPanel with a handle', () => {
       const wrapper = setup.mount(
         <MemoryRouter>
-          <NodeList />
+          <NodesPanel />
         </MemoryRouter>
       );
       const split = wrapper.find(SplitPanel);
@@ -421,7 +421,7 @@ describe('NodeList', () => {
   describe('node list element item checkbox', () => {
     const wrapper = setup.mount(
       <MemoryRouter>
-        <NodeList />
+        <NodesPanel />
       </MemoryRouter>
     );
     const checkbox = () => wrapper.find('.node-list-tree-item-row input').at(4);
@@ -454,7 +454,7 @@ describe('NodeList', () => {
   describe('Reset node filters', () => {
     const wrapper = setup.mount(
       <MemoryRouter>
-        <NodeList />
+        <NodesPanel />
       </MemoryRouter>
     );
 
