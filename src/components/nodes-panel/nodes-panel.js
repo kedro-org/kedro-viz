@@ -9,6 +9,7 @@ import SplitPanel from '../split-panel';
 import { FiltersContext } from './utils/filters-context';
 import { NodeListContext } from './utils/node-list-context';
 import { getModularPipelinesSearchResult } from '../../selectors/modular-pipelines';
+import { getFiltersSearchResult } from '../../selectors/filtered-node-list-items';
 
 import './styles/node-list.scss';
 
@@ -49,6 +50,10 @@ const NodesPanel = ({ faded }) => {
 
   const modularPipelinesSearchResult = searchValue
     ? getModularPipelinesSearchResult(modularPipelinesTree, searchValue)
+    : null;
+
+  const filtersSearchResult = searchValue
+    ? getFiltersSearchResult(items, searchValue)
     : null;
 
   useEffect(() => {
@@ -116,7 +121,7 @@ const NodesPanel = ({ faded }) => {
                   groupCollapsed={groupCollapsed}
                   groups={groups}
                   isResetFilterActive={isResetFilterActive}
-                  items={items}
+                  items={searchValue.length > 0 ? filtersSearchResult : items}
                   onGroupToggleChanged={handleGroupToggleChanged}
                   onItemChange={handleFiltersRowClicked}
                   onResetFilter={handleResetFilter}

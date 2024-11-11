@@ -25,16 +25,21 @@ export const getNodeIDs = (nodeGroups) =>
  * @param {String} searchValue Search term
  * @return {Object} The grouped nodes with highlightedLabel fields added
  */
-export const highlightMatch = (nodeGroups, searchValue) => {
+export const getFiltersSearchResult = (nodeGroups, searchValue) => {
   const highlightedGroups = {};
-
   for (const type of Object.keys(nodeGroups)) {
-    highlightedGroups[type] = nodeGroups[type].map((node) => ({
-      ...node,
-      highlightedLabel: getHighlightedText(node.name, searchValue),
-    }));
+    highlightedGroups[type] = nodeGroups[type]
+      .map((node) => {
+        if (node.name.toLowerCase().includes(searchValue.toLowerCase())) {
+          return {
+            ...node,
+            highlightedLabel: getHighlightedText(node.name, searchValue),
+          };
+        }
+        return undefined; // Return undefined if it doesn't include the searchValue
+      })
+      .filter((node) => node !== undefined); // Filter out undefined values
   }
-
   return highlightedGroups;
 };
 
@@ -81,7 +86,7 @@ export const getFilteredNodes = createSelector(
   (nodeGroups, searchValue) => {
     const filteredGroups = filterNodeGroups(nodeGroups, searchValue);
     return {
-      filteredNodes: highlightMatch(filteredGroups, searchValue),
+      filteredNodes: getFiltersSearchResult(filteredGroups, searchValue),
       nodeIDs: getNodeIDs(filteredGroups),
     };
   }
@@ -96,7 +101,10 @@ export const getFilteredNodes = createSelector(
 export const getFilteredTags = createSelector(
   [(state) => state.tags, (state) => state.searchValue],
   (tags, searchValue) =>
-    highlightMatch(filterNodeGroups({ tag: tags }, searchValue), searchValue)
+    getFiltersSearchResult(
+      filterNodeGroups({ tag: tags }, searchValue),
+      searchValue
+    )
 );
 
 /**
@@ -131,7 +139,7 @@ export const getFilteredTagItems = createSelector(
 export const getFilteredElementTypes = createSelector(
   [(state) => state.searchValue],
   (searchValue) =>
-    highlightMatch(
+    getFiltersSearchResult(
       filterNodeGroups(
         {
           elementType: Object.entries(sidebarElementTypes).map(
@@ -271,10 +279,9 @@ export const getGroups = createSelector([(state) => state.items], (items) => {
  * @return {Array} final list of all filtered items from the three filtered item sets
  */
 export const getFilteredItems = createSelector(
-  [getFilteredNodeItems, getFilteredTagItems, getFilteredElementTypeItems],
-  (filteredNodeItems, filteredTagItems, filteredElementTypeItems) => ({
+  [getFilteredTagItems, getFilteredElementTypeItems],
+  (filteredTagItems, filteredElementTypeItems) => ({
     ...filteredTagItems,
-    ...filteredNodeItems,
     ...filteredElementTypeItems,
   })
 );
