@@ -7,13 +7,8 @@ import { graph } from './graph';
  * which don't affect layout.
  */
 export const graphNew = ({ nodes, edges, layers }) => {
-  /* 
-  Sort edges to ensure consistent ordering and eliminate randomness in 
-  graph calculations for each render 
-  */
+  // Sort edges to ensure consistent ordering and eliminate randomness in graph calculations
   const sortedEdges = edges.sort((a, b) => a.id.localeCompare(b.id));
-
-  console.log(nodes, sortedEdges, layers);
 
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
