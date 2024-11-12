@@ -15,6 +15,7 @@ import { getFocusedModularPipeline } from '../../../selectors/modular-pipelines'
 
 import { toggleTagFilter } from '../../../actions/tags';
 import { toggleTypeDisabled } from '../../../actions/node-type';
+import { loadNodeData, toggleNodeHovered } from '../../../actions/nodes';
 
 import { params, localStorageName, NODE_TYPES } from '../../../config';
 import {
@@ -48,6 +49,14 @@ const useFiltersContextSelector = () => {
     dispatch(toggleTagFilter(tagIDs, enabled));
   };
 
+  const onToggleNodeSelected = (nodeID) => {
+    dispatch(loadNodeData(nodeID));
+  };
+
+  const onToggleNodeHovered = (nodeID) => {
+    dispatch(toggleNodeHovered(nodeID));
+  };
+
   return {
     tags,
     nodes,
@@ -58,6 +67,8 @@ const useFiltersContextSelector = () => {
     inputOutputDataNodes,
     onToggleTypeDisabled,
     onToggleTagFilter,
+    onToggleNodeSelected,
+    onToggleNodeHovered,
   };
 };
 
@@ -75,6 +86,8 @@ export const FiltersContextProvider = ({ children }) => {
     inputOutputDataNodes,
     onToggleTypeDisabled,
     onToggleTagFilter,
+    onToggleNodeSelected,
+    onToggleNodeHovered,
   } = useFiltersContextSelector();
 
   const [groupCollapsed, setGroupCollapsed] = useState(
@@ -207,12 +220,13 @@ export const FiltersContextProvider = ({ children }) => {
     }
 
     // Reset node selection
-    // onToggleNodeSelected(null);
-    // onToggleNodeActive(null);
+    onToggleNodeSelected(null);
+    onToggleNodeHovered(null);
   };
 
   const handleFiltersRowClicked = (event, item) => {
     onGroupItemChange(item, item.checked);
+    handleUrlParamsUpdateOnFilter(item);
 
     // to prevent page reload on form submission
     event.preventDefault();
