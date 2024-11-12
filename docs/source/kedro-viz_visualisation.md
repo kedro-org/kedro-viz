@@ -202,8 +202,34 @@ metadata:
     layer: raw
 ```
 
-can be avoided by leveraging YAML's native syntax for anchors and aliases.
-See [this example from the Kedro docs](https://docs.kedro.org/en/stable/data/data_catalog_yaml_examples.html#load-multiple-datasets-with-similar-configuration-using-yaml-anchors).
+can be avoided by leveraging YAML native syntax for anchors and aliases.
+
+Use an anchor (`&`) first, to create a reusable piece of configuration:
+
+```yaml
+_raw_layer: &raw_layer
+  metadata:
+    kedro-viz:
+      layer: 01_raw
+```
+
+And then leverage aliases (`*`) to reference it:
+
+```yaml
+companies:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/companies.csv
+  <<: *raw_layer
+
+reviews:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/reviews.csv
+  <<: *raw_layer
+
+# Same for other datasets of the raw layer...
+```
+
+See [this example from the Kedro docs](https://docs.kedro.org/en/stable/data/data_catalog_yaml_examples.html#load-multiple-datasets-with-similar-configuration-using-yaml-anchors) for more details.
 
 ## Share a pipeline visualisation
 
