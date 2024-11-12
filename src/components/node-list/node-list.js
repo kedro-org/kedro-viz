@@ -15,6 +15,7 @@ const NodeList = ({
   faded,
   items,
   modularPipelinesTree,
+  modularPipelinesSearchResult,
   groups,
   searchValue,
   getGroupState,
@@ -57,6 +58,7 @@ const NodeList = ({
               >
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
+                    modularPipelinesSearchResult={modularPipelinesSearchResult}
                     modularPipelinesTree={modularPipelinesTree}
                     searchValue={searchValue}
                     faded={faded}
