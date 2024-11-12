@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import SearchList from '../search-list';
 import Filters from '../filters/filters';
-import NodeListTree from './node-list-tree';
+import NodeListTree from '../node-list-tree/node-list-tree';
 import SplitPanel from '../split-panel';
 import { FiltersContext } from './utils/filters-context';
 import { NodeListContext } from './utils/node-list-context';

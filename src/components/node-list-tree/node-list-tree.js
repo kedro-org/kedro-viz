@@ -8,7 +8,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import sortBy from 'lodash/sortBy';
 
 import { isModularPipelineType } from '../../selectors/node-types';
-import NodeListTreeItem from './node-list-tree-item';
+import NodeListTreeItem from './node-list-tree-item/node-list-tree-item';
 import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
