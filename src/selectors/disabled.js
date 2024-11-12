@@ -100,13 +100,8 @@ export const getNodeDisabled = createSelector(
     isSliceApplied
   ) =>
     arrayToObject(nodeIDs, (id) => {
-      let isDisabledViaModularPipeline = false;
-      // sometimes a node can belong to multiple modular pipelines so we need to check all of them
-      nodeModularPipelines[id].forEach((modularPipelineID) => {
-        if (disabledModularPipeline[modularPipelineID]) {
-          isDisabledViaModularPipeline = true;
-        }
-      });
+      let isDisabledViaModularPipeline =
+        disabledModularPipeline[nodeModularPipelines[id]];
 
       let isDisabledViaSlicedPipeline = false;
       if (isSliceApplied && slicedPipeline.length > 0) {
