@@ -7,9 +7,9 @@ import FocusModeIcon from '../../icons/focus-mode';
 import { ToggleControl } from '../../ui/toggle-control/toggle-control';
 import { RowText } from '../../ui/row-text/row-text';
 
-import './row.scss';
+import './node-list-row.scss';
 
-const Row = ({
+const NodeListRow = ({
   active,
   checked,
   children,
@@ -44,24 +44,34 @@ const Row = ({
 
   return (
     <form
-      className={classnames('row kedro', `row--kind-${kind}`, parentClassName, {
-        'row--active': active,
-        'row--selected': selected || (!isSlicingPipelineApplied && highlight),
-        'row--overwrite': !(active || selected),
-      })}
+      className={classnames(
+        'node-list-row kedro',
+        `node-list-row--kind-${kind}`,
+        parentClassName,
+        {
+          'node-list-row--active': active,
+          'node-list-row--selected':
+            selected || (!isSlicingPipelineApplied && highlight),
+          'node-list-row--overwrite': !(active || selected),
+        }
+      )}
       data-test={dataTest}
       title={name}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <NodeIcon
-        className={classnames('row__type-icon', 'row__icon', {
-          'row__type-icon--faded': faded,
-          'row__type-icon--disabled': disabled,
-          'row__type-icon--nested': !children,
-          'row__type-icon--active': active,
-          'row__type-icon--selected': selected,
-        })}
+        className={classnames(
+          'node-list-row__type-icon',
+          'node-list-row__icon',
+          {
+            'node-list-row__type-icon--faded': faded,
+            'node-list-row__type-icon--disabled': disabled,
+            'node-list-row__type-icon--nested': !children,
+            'node-list-row__type-icon--active': active,
+            'node-list-row__type-icon--selected': selected,
+          }
+        )}
         icon={icon}
       />
       <RowText
@@ -78,7 +88,7 @@ const Row = ({
       />
       {VisibilityIcon && (
         <ToggleControl
-          className={'row__icon'}
+          className={'node-list-row__icon'}
           disabled={isModularPipeline ? focused : disabled}
           focusChecked={isModularPipeline ? false : focused}
           IconComponent={VisibilityIcon}
@@ -92,7 +102,7 @@ const Row = ({
       )}
       {FocusIcon && (
         <ToggleControl
-          className={'row__icon'}
+          className={'node-list-row__icon'}
           disabled={disabled}
           focusChecked={focused}
           IconComponent={FocusIcon}
@@ -110,4 +120,4 @@ const Row = ({
   );
 };
 
-export default Row;
+export default NodeListRow;
