@@ -213,7 +213,7 @@ _raw_layer: &raw_layer
       layer: 01_raw
 ```
 
-And then leverage aliases (`*`) to reference it:
+And then use aliases (`*`) to reference it:
 
 ```yaml
 companies:
