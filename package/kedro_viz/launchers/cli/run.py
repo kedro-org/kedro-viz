@@ -115,6 +115,7 @@ def run(
     from kedro_viz.launchers.utils import (
         _PYPROJECT,
         _check_viz_up,
+        _find_available_port,
         _find_kedro_project,
         _start_browser,
         _wait_for,
@@ -145,6 +146,9 @@ def run(
             "https://github.com/kedro-org/kedro-viz/releases.",
             "yellow",
         )
+
+    port = _find_available_port(host, port)
+
     try:
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
             _VIZ_PROCESSES[port].terminate()
@@ -186,7 +190,6 @@ def run(
             )
 
         display_cli_message("Starting Kedro Viz ...", "green")
-
         viz_process.start()
 
         _VIZ_PROCESSES[port] = viz_process
