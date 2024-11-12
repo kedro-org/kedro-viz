@@ -11,8 +11,6 @@ import { NodeListContext } from './utils/node-list-context';
 import { getModularPipelinesSearchResult } from '../../selectors/modular-pipelines';
 import { getFiltersSearchResult } from '../../selectors/filtered-node-list-items';
 
-import './styles/node-list.scss';
-
 /**
  * Scrollable list of toggleable items, with search & filter functionality
  */

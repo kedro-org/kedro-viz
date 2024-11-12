@@ -13,6 +13,8 @@ import VisibleIcon from '../icons/visible';
 import InvisibleIcon from '../icons/invisible';
 import FocusModeIcon from '../icons/focus-mode';
 
+import './styles/node-list.scss';
+
 // Display order of node groups
 const GROUPED_NODES_DISPLAY_ORDER = {
   modularPipeline: 0,
