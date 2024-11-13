@@ -2,7 +2,7 @@ import React from 'react';
 import { NodeListContextProvider } from './node-list-context';
 import { FiltersContextProvider } from './filters-context';
 
-export const AppContextProvider = ({ children }) => {
+export const NodesPanelContextProvider = ({ children }) => {
   return (
     <NodeListContextProvider>
       <FiltersContextProvider>{children}</FiltersContextProvider>

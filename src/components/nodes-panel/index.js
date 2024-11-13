@@ -1,7 +1,7 @@
 import React from 'react';
 import NodesPanel from './nodes-panel';
 
-import { AppContextProvider } from './utils/app-context';
+import { NodesPanelContextProvider } from './utils/nodes-panel-context';
 
 /**
  * Acts as a wrapper component that provides the AppContext to the NodesPanel component.
@@ -9,9 +9,9 @@ import { AppContextProvider } from './utils/app-context';
  */
 const NodesPanelProvider = ({ faded }) => {
   return (
-    <AppContextProvider>
+    <NodesPanelContextProvider>
       <NodesPanel faded={faded} />
-    </AppContextProvider>
+    </NodesPanelContextProvider>
   );
 };
 
