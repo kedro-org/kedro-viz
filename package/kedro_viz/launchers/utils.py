@@ -2,11 +2,14 @@
 used in the `kedro_viz.launchers` package."""
 
 import logging
+import socket
+import sys
 import webbrowser
 from pathlib import Path
 from time import sleep, time
 from typing import Any, Callable, Union
 
+import click
 import requests
 
 logger = logging.getLogger(__name__)
@@ -79,6 +82,33 @@ def _check_viz_up(host: str, port: int):
     return response.status_code == 200
 
 
+def _is_port_in_use(host: str, port: int):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex((host, port)) == 0
+
+
+def _find_available_port(host: str, start_port: int, max_attempts: int = 5) -> int:
+    max_port = start_port + max_attempts - 1
+    port = start_port
+    while port <= max_port:
+        if not _is_port_in_use(host, port):
+            return port
+        display_cli_message(
+            f"Port {port} is already in use. Trying the next port...",
+            "yellow",
+        )
+        port += 1
+    display_cli_message(
+        f"Error: All ports in the range {start_port}-{max_port} are in use.",
+        "red",
+    )
+    display_cli_message(
+        "Please specify a different port using the '--port' option.",
+        "red",
+    )
+    sys.exit(1)
+
+
 def _is_localhost(host: str) -> bool:
     """Check whether a host is a localhost"""
     return host in ("127.0.0.1", "localhost", "0.0.0.0")
@@ -113,3 +143,13 @@ def _find_kedro_project(current_dir: Path) -> Any:
         if _is_project(project_dir):
             return project_dir
     return None
+
+
+def display_cli_message(msg, msg_color=None):
+    """Displays message for Kedro Viz build and deploy commands"""
+    click.echo(
+        click.style(
+            msg,
+            fg=msg_color,
+        )
+    )

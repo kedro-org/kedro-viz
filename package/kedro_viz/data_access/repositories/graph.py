@@ -3,7 +3,8 @@ centralise access to graph objects."""
 
 from typing import Dict, Generator, List, Optional, Set
 
-from kedro_viz.models.flowchart import GraphEdge, GraphNode
+from kedro_viz.models.flowchart.edge import GraphEdge
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 
 class GraphNodesRepository:
@@ -11,11 +12,12 @@ class GraphNodesRepository:
         self.nodes_dict: Dict[str, GraphNode] = {}
         self.nodes_list: List[GraphNode] = []
 
-    def has_node(self, node: GraphNode) -> bool:
-        return node.id in self.nodes_dict
-
     def add_node(self, node: GraphNode) -> GraphNode:
-        if not self.has_node(node):
+        existing_node = self.nodes_dict.get(node.id)
+        if existing_node:
+            # Update tags or other attributes if the node already exists
+            existing_node.tags.update(node.tags)
+        else:
             self.nodes_dict[node.id] = node
             self.nodes_list.append(node)
         return self.nodes_dict[node.id]

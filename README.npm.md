@@ -140,6 +140,9 @@ The example below demonstrates how to configure your kedro-viz using different `
       tag: {
         enabled: {companies: true}
       },
+      behaviour: { 
+        reFocus: true,
+      },
       theme: "dark"
     }}
 />
@@ -161,6 +164,9 @@ The example below demonstrates how to configure your kedro-viz using different `
 | `sidebar`                  | boolean                                                                            | true                                                     | Show/Hide Sidebar and action toolbar                                                                                                                          |
 | `zoomToolbar`              | boolean                                                                            | true                                                     | Show/Hide zoom-in, zoom-out and zoom reset buttons together                                                                                                   |
 | options.expandAllPipelines | boolean                                                                            | false                                                    | Expand/Collapse Modular pipelines on first load                                                                                                               |
+| options.behaviour            |                                                                                    |                                                          |                                                                                                                                                               |
+| `reFocus`       | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behavior when clicking on nodes.
+ 
 | options.nodeType           | `{disabled: {parameters: boolean,task: boolean,data: boolean}}`                    | `{disabled: {parameters: true,task: false,data: false}}` | Configuration for node type options                                                                                                                           |
 | options.tag                | `{enabled: {<tagName>: boolean}}`                                                  | -                                                        | Configuration for tag options                                                                                                                                 |
 | options.theme              | string                                                                             | dark                                                     | select `Kedro-Viz` theme : dark/light                                                                                                                         |
