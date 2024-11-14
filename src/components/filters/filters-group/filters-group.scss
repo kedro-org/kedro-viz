@@ -1,0 +1,15 @@
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables';
+
+.filters-group {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2em;
+
+  // Avoid placeholder fade leaking out for small lists
+  overflow: hidden;
+
+  &--closed {
+    display: none;
+  }
+}

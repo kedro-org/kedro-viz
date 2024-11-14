@@ -1,0 +1,62 @@
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables';
+
+.row-text {
+  display: flex;
+  align-items: center;
+
+  // Fixed with required for overflow elipsis
+  width: calc(100% - 7em);
+  margin-right: auto;
+  padding: variables.$row-padding-y 0 variables.$row-padding-y 0;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1.6;
+  letter-spacing: inherit;
+  text-align: inherit;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: default;
+  user-select: none;
+
+  // add padding between icon and text
+  &--tree {
+    padding: variables.$row-padding-y 0 variables.$row-padding-y 1em;
+  }
+
+  &--faded {
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var.$blue-300 inset;
+
+    [data-whatintent='mouse'] & {
+      box-shadow: none;
+    }
+  }
+}
+
+.row-text__label {
+  overflow: hidden;
+  font-size: 1.4em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &--faded {
+    opacity: 0.65;
+  }
+
+  &--disabled {
+    opacity: 0.3;
+  }
+
+  b {
+    color: var(--color-nodelist-highlight);
+    font-weight: normal;
+  }
+}
