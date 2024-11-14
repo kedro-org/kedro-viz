@@ -99,7 +99,6 @@ const TreeListProvider = ({
   hoveredNode,
   nodeSelected,
   modularPipelinesSearchResult,
-  nodeDisabledViaModularPipeline,
   modularPipelinesTree,
   onItemChange,
   onItemMouseEnter,
@@ -112,11 +111,12 @@ const TreeListProvider = ({
   onToggleNodeSelected,
   slicedPipeline,
   isSlicingPipelineApplied,
+  nodesDisabledViaModularPipeline,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
     // As part of the slicing pipeline logic, child nodes not included in the sliced pipeline are assigned an empty data object.
-    // Therefore, if ƒa child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
+    // Therefore, if a child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
     if (!node || Object.keys(node).length === 0) {
       return null;
     }
@@ -124,7 +124,7 @@ const TreeListProvider = ({
     const disabled =
       node.disabledTag ||
       node.disabledType ||
-      nodeDisabledViaModularPipeline[node.id];
+      nodesDisabledViaModularPipeline[node.id];
 
     const selected = nodeSelected[node.id];
     const highlight = slicedPipeline.includes(node.id);
@@ -202,7 +202,7 @@ const TreeListProvider = ({
     const data = getModularPipelineRowData({
       ...node,
       focusModeIcon,
-      disabled: nodeDisabledViaModularPipeline[node.id],
+      disabled: nodesDisabledViaModularPipeline[node.id],
       focused: isFocusedModularPipeline,
       highlight,
     });

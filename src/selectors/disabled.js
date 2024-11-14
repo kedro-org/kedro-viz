@@ -66,7 +66,7 @@ export const getNodeDisabledTag = createSelector(
 /**
  * Determine if a node is disabled via disabled modular pipeline or focused modular pipeline.
  */
-export const getNodeDisabledViaModularPipeline = createSelector(
+export const getnodesDisabledViaModularPipeline = createSelector(
   [
     getNodeIDs,
     getNodeType,
@@ -123,7 +123,7 @@ export const getNodeDisabled = createSelector(
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeDisabledPipeline,
-    getNodeDisabledViaModularPipeline,
+    getnodesDisabledViaModularPipeline,
     getNodeType,
     getNodeTypeDisabled,
     getVisibleSidebarNodes,
@@ -137,7 +137,7 @@ export const getNodeDisabled = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledPipeline,
-    nodeDisabledViaModularPipeline,
+    nodesDisabledViaModularPipeline,
     nodeType,
     typeDisabled,
     visibleSidebarNodes,
@@ -156,7 +156,7 @@ export const getNodeDisabled = createSelector(
         !visibleSidebarNodes[id] &&
         !visibleModularPipelineInputsOutputs.has(id);
 
-      const isDisabledViaModularPipeline = nodeDisabledViaModularPipeline[id];
+      const isDisabledViaModularPipeline = nodesDisabledViaModularPipeline[id];
 
       return [
         nodeDisabledNode[id],

@@ -291,7 +291,6 @@ const normalizeData = (data, expandAllPipelines) => {
 
   data.nodes.forEach(addNode(state));
   data.edges.forEach(addEdge(state));
-
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
     if (state.pipeline.ids.length) {

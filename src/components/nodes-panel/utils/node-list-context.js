@@ -23,12 +23,16 @@ import {
   toggleNodesDisabled,
 } from '../../../actions/nodes';
 import { resetSlicePipeline } from '../../../actions/slice';
+import { getnodesDisabledViaModularPipeline } from '../../../selectors/disabled';
 
 // Custom hook to group useSelector calls
 const useNodeListContextSelector = () => {
   const dispatch = useDispatch();
   const hoveredNode = useSelector((state) => state.node.hovered);
   const selectedNodes = useSelector(getNodeSelected);
+  const nodesDisabledViaModularPipeline = useSelector(
+    getnodesDisabledViaModularPipeline
+  );
   const expanded = useSelector((state) => state.modularPipeline.expanded);
   const slicedPipeline = useSelector(getSlicedPipeline);
   const modularPipelinesTree = useSelector(getModularPipelinesTree);
@@ -75,6 +79,7 @@ const useNodeListContextSelector = () => {
     modularPipelinesTree,
     selectedNodes,
     slicedPipeline,
+    nodesDisabledViaModularPipeline,
     onResetSlicePipeline,
     onToggleFocusMode,
     onToggleHoveredFocusMode,
@@ -99,6 +104,7 @@ export const NodeListContextProvider = ({ children }) => {
     modularPipelinesTree,
     selectedNodes,
     slicedPipeline,
+    nodesDisabledViaModularPipeline,
     onResetSlicePipeline,
     onToggleFocusMode,
     onToggleHoveredFocusMode,
@@ -203,7 +209,6 @@ export const NodeListContextProvider = ({ children }) => {
   return (
     <NodeListContext.Provider
       value={{
-        disabledModularPipeline,
         expanded,
         focusMode,
         hoveredNode,
@@ -211,6 +216,7 @@ export const NodeListContextProvider = ({ children }) => {
         modularPipelinesTree,
         selectedNodes,
         slicedPipeline,
+        nodesDisabledViaModularPipeline,
         handleModularPipelineToggleExpanded: onToggleModularPipelineExpanded,
         handleNodeListRowClicked,
         handleNodeListRowChanged,
