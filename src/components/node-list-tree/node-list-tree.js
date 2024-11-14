@@ -100,7 +100,6 @@ const TreeListProvider = ({
   nodeSelected,
   modularPipelinesSearchResult,
   nodeDisabledViaModularPipeline,
-  searchValue,
   modularPipelinesTree,
   onItemChange,
   onItemMouseEnter,

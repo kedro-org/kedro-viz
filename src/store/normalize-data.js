@@ -289,17 +289,8 @@ const normalizeData = (data, expandAllPipelines) => {
     return state;
   }
 
-  if (data.nodes) {
-    console.log(data.nodes);
-    data.nodes.sort((a, b) => a.id.localeCompare(b.id));
-    data.nodes.forEach(addNode(state));
-  }
-
-  if (data.edges) {
-    console.log(data.edges);
-    data.edges.sort((a, b) => a.id.localeCompare(b.id));
-    data.edges.forEach(addEdge(state));
-  }
+  data.nodes.forEach(addNode(state));
+  data.edges.forEach(addEdge(state));
 
   if (data.pipelines) {
     data.pipelines.forEach(addPipeline(state));
@@ -338,7 +329,6 @@ const normalizeData = (data, expandAllPipelines) => {
     data.tags.forEach(addTag(state));
   }
   if (data.layers) {
-    data.layers.sort((a, b) => a.id.localeCompare(b.id));
     data.layers.forEach(addLayer(state));
   }
 
