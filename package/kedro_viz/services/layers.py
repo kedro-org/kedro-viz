@@ -108,7 +108,7 @@ def sort_layers(
 
     # Sort `layer_dependencies` keys for consistent ordering of layers with the same dependencies
     layer_dependencies = {k: layer_dependencies[k] for k in sorted(layer_dependencies)}
-        
+
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
         sorter = TopologicalSorter(layer_dependencies)
