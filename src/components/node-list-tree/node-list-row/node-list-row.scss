@@ -1,11 +1,11 @@
-@use '../../../../styles/variables' as var;
-@use '../../styles/variables';
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables' as variables;
 
 .MuiTreeItem-iconContainer svg {
   z-index: var.$zindex-MuiTreeItem-icon;
 }
 
-.row {
+.node-list-row {
   align-items: center;
   cursor: default;
   display: flex;
@@ -14,6 +14,10 @@
   transform: translate(0, 0);
 
   &:hover,
+  &--active {
+    background-color: var(--color-nodelist-row-selected);
+  }
+
   &--selected {
     // Additional selector required to increase specificity to override previous rule
     background-color: var(--color-nodelist-row-selected);
@@ -36,18 +40,18 @@
 }
 
 .MuiTreeItem-content:hover {
-  .row__type-icon path {
+  .node-list-row__type-icon path {
     opacity: 1;
   }
 }
 
-.row--active::before,
-.row--selected::before,
-.row:hover::before {
+.node-list-row--active::before,
+.node-list-row--selected::before,
+.node-list-row:hover::before {
   opacity: 1;
 }
 
-.row__icon {
+.node-list-row__icon {
   display: block;
   flex-shrink: 0;
   width: variables.$row-icon-size;
@@ -59,7 +63,7 @@
   }
 }
 
-.row__type-icon {
+.node-list-row__type-icon {
   &--nested > * {
     opacity: 0.3;
   }
@@ -70,8 +74,8 @@
 
   &--active,
   &--selected,
-  .row--visible:hover &,
-  [data-whatintent='keyboard'] .row__text:focus & {
+  .node-list-row--visible:hover &,
+  [data-whatintent='keyboard'] .node-list-row__text:focus & {
     > * {
       opacity: 1;
     }

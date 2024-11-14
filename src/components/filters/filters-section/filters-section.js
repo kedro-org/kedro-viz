@@ -12,9 +12,6 @@ const FiltersSection = ({
   items,
   onGroupToggleChanged,
   onItemChange,
-  onItemClick,
-  onItemMouseEnter,
-  onItemMouseLeave,
   onToggleGroupCollapsed,
   searchValue,
 }) => {
@@ -41,9 +38,6 @@ const FiltersSection = ({
         group={group}
         items={groupItems}
         onItemChange={onItemChange}
-        onItemClick={onItemClick}
-        onItemMouseEnter={onItemMouseEnter}
-        onItemMouseLeave={onItemMouseLeave}
       />
     </li>
   );

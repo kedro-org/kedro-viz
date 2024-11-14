@@ -1,5 +1,5 @@
 @use '../../../styles/variables' as var;
-@use '../../node-list/styles/variables';
+@use '../../node-list-tree/styles/variables';
 
 .MuiTreeItem-iconContainer svg {
   z-index: var.$zindex-MuiTreeItem-icon;

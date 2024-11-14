@@ -3,8 +3,8 @@ import classnames from 'classnames';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeItem } from '@mui/x-tree-view';
-import Row from './components/row/row';
-import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import NodeListRow from '../node-list-row/node-list-row';
+import { getDataTestAttribute } from '../../../utils/get-data-test-attribute';
 
 const arrowIconColor = '#8e8e90';
 
@@ -29,7 +29,7 @@ const NodeListTreeItem = ({
     collapseIcon={<ExpandMoreIcon style={{ color: arrowIconColor }} />}
     expandIcon={<ChevronRightIcon style={{ color: arrowIconColor }} />}
     label={
-      <Row
+      <NodeListRow
         active={data.active}
         checked={data.checked}
         dataTest={getDataTestAttribute('node-list-tree-item', 'row')}
