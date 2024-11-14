@@ -7,9 +7,6 @@ import { graph } from './graph';
  * which don't affect layout.
  */
 export const graphNew = ({ nodes, edges, layers }) => {
-  // Sort edges to ensure consistent ordering and eliminate randomness in graph calculations
-  const sortedEdges = edges.sort((a, b) => a.id.localeCompare(b.id));
-
   for (const node of nodes) {
     node.iconSize = node.iconSize || 24;
     node.icon = node.icon || 'node';
@@ -28,7 +25,7 @@ export const graphNew = ({ nodes, edges, layers }) => {
     node.iconOffset = node.iconOffset || -innerWidth / 2;
   }
 
-  const result = graph(nodes, sortedEdges, layers);
+  const result = graph(nodes, edges, layers);
 
   return {
     ...result,
