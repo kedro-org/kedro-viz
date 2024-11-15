@@ -251,10 +251,6 @@ describe('NodesPanel', () => {
         .find('.node-list-tree-item-row')
         .map((row) => [row.prop('title'), !row.hasClass('row--disabled')]);
 
-    const elementsEnabled = (wrapper) => {
-      return elements(wrapper).filter(([_, enabled]) => enabled);
-    };
-
     const tagItem = (wrapper) => wrapper.find('.filters-section--type-tag');
 
     const partialIcon = (wrapper) =>

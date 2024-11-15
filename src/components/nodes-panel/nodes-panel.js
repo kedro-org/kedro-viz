@@ -30,7 +30,6 @@ const NodesPanel = ({ faded }) => {
 
   const {
     hoveredNode,
-    disabledModularPipeline,
     expanded,
     focusMode,
     handleItemMouseEnter,
@@ -44,6 +43,7 @@ const NodesPanel = ({ faded }) => {
     modularPipelinesTree,
     selectedNodes,
     slicedPipeline,
+    nodesDisabledViaModularPipeline,
   } = useContext(NodeListContext);
 
   const modularPipelinesSearchResult = searchValue
@@ -87,7 +87,6 @@ const NodesPanel = ({ faded }) => {
                 <div className="pipeline-nodelist-section">
                   <NodeListTree
                     hoveredNode={hoveredNode}
-                    disabledModularPipeline={disabledModularPipeline}
                     expanded={expanded}
                     faded={faded}
                     focusMode={focusMode}
@@ -103,6 +102,9 @@ const NodesPanel = ({ faded }) => {
                     onToggleHoveredFocusMode={handleToggleHoveredFocusMode}
                     searchValue={searchValue}
                     slicedPipeline={slicedPipeline}
+                    nodesDisabledViaModularPipeline={
+                      nodesDisabledViaModularPipeline
+                    }
                   />
                 </div>
               </Scrollbars>

@@ -35,20 +35,6 @@ const StyledTreeView = styled(TreeView)({
 });
 
 /**
- * Return whether the given modular pipeline ID is on focus mode path, i.e.
- * it's not the currently focused pipeline nor one of its children.
- * @param {String} focusModeID The currently focused modular pipeline ID.
- * @param {String} modularPipelineID The modular pipeline ID to check.
- * @return {Boolean} Whether the given modular pipeline ID is on focus mode path.
- */
-const isOnFocusedModePath = (focusModeID, modularPipelineID) => {
-  return (
-    modularPipelineID === focusModeID ||
-    modularPipelineID.startsWith(`${focusModeID}.`)
-  );
-};
-
-/**
  * Return the data of a modular pipeline to display as a row in the node list.
  * @param {Object} params
  * @param {String} params.id The modular pipeline ID
@@ -102,7 +88,7 @@ const getNodeRowData = (node, disabled, hoveredNode, selected, highlight) => {
     active: node.active || hoveredNode === node.id,
     selected,
     highlight,
-    faded: disabled || node.disabledNode,
+    faded: disabled || !checked,
     visible: !disabled && checked,
     checked,
     disabled,
@@ -121,38 +107,26 @@ const TreeListProvider = ({
   onItemClick,
   onNodeToggleExpanded,
   focusMode,
-  disabledModularPipeline,
   expanded,
   onToggleNodeSelected,
   slicedPipeline,
   isSlicingPipelineApplied,
+  nodesDisabledViaModularPipeline,
 }) => {
   // render a leaf node in the modular pipelines tree
   const renderLeafNode = (node) => {
     // As part of the slicing pipeline logic, child nodes not included in the sliced pipeline are assigned an empty data object.
     // Therefore, if a child node has an empty data object, it indicates it's not part of the slicing pipeline and should not be rendered.
-    if (Object.keys(node).length === 0) {
+    if (!node || Object.keys(node).length === 0) {
       return null;
     }
 
     const disabled =
       node.disabledTag ||
       node.disabledType ||
-      (focusMode &&
-        !node.modularPipelines
-          .map((modularPipelineID) =>
-            isOnFocusedModePath(focusMode.id, modularPipelineID)
-          )
-          .some(Boolean)) ||
-      (node.modularPipelines &&
-        node.modularPipelines
-          .map(
-            (modularPipelineID) => disabledModularPipeline[modularPipelineID]
-          )
-          .some(Boolean));
+      nodesDisabledViaModularPipeline[node.id];
 
     const selected = nodeSelected[node.id];
-
     const highlight = slicedPipeline.includes(node.id);
     const data = getNodeRowData(
       node,
@@ -228,7 +202,7 @@ const TreeListProvider = ({
     const data = getModularPipelineRowData({
       ...node,
       focusModeIcon,
-      disabled: focusMode && !isOnFocusedModePath(focusMode.id, node.id),
+      disabled: nodesDisabledViaModularPipeline[node.id],
       focused: isFocusedModularPipeline,
       highlight,
     });
