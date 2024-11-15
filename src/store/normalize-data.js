@@ -251,10 +251,10 @@ const getNodeTypesFromUrl = (state, typeQueryParams) => {
 };
 
 /**
- * Sort the edges, nodes, and layers in the state object to ensure deterministic graph layout
+ * Sort the edges, nodes in the state object to ensure deterministic graph layout
  * @param {Object} state The state object to sort
  */
-const organizeStateElements = (state) => {
+const sortNodesEdges = (state) => {
   state.edge?.ids?.sort((a, b) => a.localeCompare(b));
   state.node?.ids?.sort((a, b) => a.localeCompare(b));
 };
@@ -340,7 +340,7 @@ const normalizeData = (data, expandAllPipelines) => {
     data.layers.forEach(addLayer(state));
   }
 
-  organizeStateElements(state);
+  sortNodesEdges(state);
   const updatedState = updateStateWithFilters(state, data.tags);
   return updatedState;
 };
