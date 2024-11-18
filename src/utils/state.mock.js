@@ -4,6 +4,7 @@ import { mount, shallow } from 'enzyme';
 import configureStore from '../store';
 import getInitialState from '../store/initial-state';
 import spaceflights from './data/spaceflights.mock.json';
+import spaceflightsReordered from './data/spaceflights_reordered.mock.json';
 import demo from './data/demo.mock.json';
 import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
@@ -53,6 +54,7 @@ export const mockState = {
   json: prepareState({ data: 'json' }),
   demo: prepareState({ data: demo }),
   spaceflights: prepareState({ data: spaceflights }),
+  spaceflightsReordered: prepareState({ data: spaceflightsReordered }),
 };
 
 /**

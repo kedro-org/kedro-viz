@@ -106,6 +106,11 @@ def sort_layers(
         if layer not in layer_dependencies:
             layer_dependencies[layer] = set()
 
+    # Sort `layer_dependencies` keys for consistent ordering of layers with the same dependencies
+    layer_dependencies = defaultdict(
+        set, {k: layer_dependencies[k] for k in sorted(layer_dependencies)}
+    )
+
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:
         sorter = TopologicalSorter(layer_dependencies)
