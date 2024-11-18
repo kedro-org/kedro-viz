@@ -1,5 +1,6 @@
 import normalizeData, { createInitialPipelineState } from './normalize-data';
 import spaceflights from '../utils/data/spaceflights.mock.json';
+import spaceflightsReordered from '../utils/data/spaceflights_reordered.mock.json';
 
 const initialState = createInitialPipelineState();
 
@@ -89,5 +90,21 @@ describe('normalizeData', () => {
     data.nodes.forEach((node) => {
       expect(node).toHaveProperty('name');
     });
+  });
+
+  it('should have identical nodes and edges, in the same order, regardless of the different ordering from the api', () => {
+    // Normalize both datasets
+    const initialState = normalizeData(spaceflights, true);
+    const reorderedState = normalizeData(spaceflightsReordered, true);
+
+    // Compare nodes and edges by converting to JSON for deep equality
+    // Directly compare specific properties of nodes and edges, ensuring order and content
+    expect(initialState.node.ids).toEqual(reorderedState.node.ids);
+    expect(initialState.node.name).toEqual(reorderedState.node.name);
+    expect(initialState.node.type).toEqual(reorderedState.node.type);
+
+    expect(initialState.edge.ids).toEqual(reorderedState.edge.ids);
+    expect(initialState.edge.sources).toEqual(reorderedState.edge.sources);
+    expect(initialState.edge.targets).toEqual(reorderedState.edge.targets);
   });
 });
