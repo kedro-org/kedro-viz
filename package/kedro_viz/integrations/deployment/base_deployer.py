@@ -51,7 +51,9 @@ class BaseDeployer(abc.ABC):
         if should_add_telemetry:
             logger.debug("Ingesting heap analytics.")
             telemetry_content = env.get_template("telemetry.html").render(
-                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+                heap_app_id=heap_app_id,
+                heap_user_identity=heap_user_identity,
+                kedro_viz_version=__version__,
             )
             injected_head_content.append(telemetry_content)
 
