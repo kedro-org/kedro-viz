@@ -98,20 +98,30 @@ export const getnodesDisabledViaModularPipeline = createSelector(
         const isChildModularPipeline = (modularPipelineId, focusedPipelineId) =>
           modularPipelineId.startsWith(`${focusedPipelineId}.`);
 
+        const isParentModularPipeline = (
+          modularPipelineId,
+          focusedPipelineId
+        ) => focusedPipelineId.startsWith(`${modularPipelineId}.`);
+
         const isChildNode = (nodeId) =>
-          nodeModularPipelines[nodeId].includes(focusedModularPipeline.id);
+          nodeModularPipelines[nodeId]?.includes(focusedModularPipeline.id);
 
         if (nodeType[id] === 'modularPipeline') {
           return (
             id !== focusedModularPipeline.id &&
-            !isChildModularPipeline(id, focusedModularPipeline.id)
+            !isChildModularPipeline(id, focusedModularPipeline.id) &&
+            !isParentModularPipeline(id, focusedModularPipeline.id)
           );
         }
 
         isDisabledViaFocusedModularPipeline =
           !isChildNode(id) &&
-          !nodeModularPipelines[id].some((pipelineId) =>
+          !nodeModularPipelines[id]?.some((pipelineId) =>
             isChildModularPipeline(pipelineId, focusedModularPipeline.id)
+          ) &&
+          !isParentModularPipeline(
+            nodeModularPipelines[id],
+            focusedModularPipeline.id
           ) &&
           !inputOutputNodeIDs.includes(id);
       }
