@@ -211,7 +211,7 @@ export const NODE_TYPES = {
 
 export const BANNER_METADATA = {
   liteModeWarning: {
-    title: 'Missing dependencies',
+    title: 'Lite mode enabled',
     body: 'Some features might be disabled in --lite mode due to missing dependencies',
     docsLink:
       'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies',
