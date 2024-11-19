@@ -154,6 +154,32 @@ from kedro_viz.services.layers import sort_layers
             {"node_1": {}, "node_2": {}},
             ["a", "b"],
         ),
+        (
+            # Case where if two layers e.g. `int` and `primary` layers share the same dependencies, they get sorted alphabetically.
+            """
+            node_1(layer=raw) -> node_3(layer=int)
+            node_2(layer=raw) -> node_4(layer=primary)
+            node_3(layer=int) -> node_5(layer=feature)
+            node_4(layer=primary) -> node_6(layer=feature)
+            """,
+            {
+                "node_1": {"id": "node_1", "layer": "raw"},
+                "node_2": {"id": "node_2", "layer": "raw"},
+                "node_3": {"id": "node_3", "layer": "int"},
+                "node_4": {"id": "node_4", "layer": "primary"},
+                "node_5": {"id": "node_5", "layer": "feature"},
+                "node_6": {"id": "node_6", "layer": "feature"},
+            },
+            {
+                "node_1": {"node_3"},
+                "node_2": {"node_4"},
+                "node_3": {"node_5"},
+                "node_4": {"node_6"},
+                "node_5": set(),
+                "node_6": set(),
+            },
+            ["raw", "int", "primary", "feature"],
+        ),
     ],
 )
 def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
@@ -170,7 +196,7 @@ def test_sort_layers(graph_schema, nodes, node_dependencies, expected):
         for node_id, node_dict in nodes.items()
     }
     sorted_layers = sort_layers(nodes, node_dependencies)
-    assert sorted(sorted_layers) == sorted(expected), graph_schema
+    assert sorted_layers == expected, graph_schema
 
 
 def test_sort_layers_should_return_empty_list_on_cyclic_layers(mocker):
