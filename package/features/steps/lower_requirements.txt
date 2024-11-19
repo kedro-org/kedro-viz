@@ -12,9 +12,11 @@ pandas==1.5; python_version >= '3.10' and python_version < '3.12'
 pandas==2.1.1; python_version >= '3.12' and python_version < '3.13'
 pandas==2.2.3; python_version >= '3.13'
 sqlalchemy==1.4
-strawberry-graphql==0.192.0
+strawberry-graphql==0.192.0; python_version < '3.13'
+strawberry-graphql==0.240.1; python_version >= '3.13'
 networkx==2.5
-orjson==3.9
+orjson==3.9; python_version < '3.13'
+orjson==3.10.10; python_version >= '3.13'
 secure==0.3.0
 # numpy 2.0 breaks with old versions of pandas and this
 # could be removed when the lowest version supported is updated
