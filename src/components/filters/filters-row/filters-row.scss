@@ -1,0 +1,54 @@
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables';
+
+.MuiTreeItem-iconContainer svg {
+  z-index: var.$zindex-MuiTreeItem-icon;
+}
+
+.filter-row {
+  align-items: center;
+  background-color: initial;
+  cursor: default;
+  display: flex;
+  height: 32px;
+  position: relative;
+
+  &--kind-filter {
+    padding: 0 variables.$row-offset-right 0 variables.$row-offset-left;
+  }
+
+  &--visible:hover {
+    background-color: var(--color-nodelist-row-active);
+  }
+}
+
+.filter-row__count {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 2.2em;
+  margin: 0 0.7em 0.1em auto;
+  overflow: hidden;
+  font-size: 1.16em;
+  text-align: right;
+  text-overflow: ellipsis;
+  opacity: 0.75;
+  user-select: none;
+
+  .filter-row--unchecked & {
+    opacity: 0.55;
+  }
+}
+
+.filter-row--unchecked {
+  // Fade row text when unchecked
+  .row-text__label--kind-filter {
+    opacity: 0.55;
+  }
+
+  // Brighter row text when unchecked and hovered
+  &:hover {
+    .row-text__label--kind-filter {
+      opacity: 0.8;
+    }
+  }
+}
