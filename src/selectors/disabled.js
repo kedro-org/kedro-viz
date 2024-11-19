@@ -64,6 +64,76 @@ export const getNodeDisabledTag = createSelector(
 );
 
 /**
+ * Determine if a node is disabled via disabled modular pipeline or focused modular pipeline.
+ */
+export const getnodesDisabledViaModularPipeline = createSelector(
+  [
+    getNodeIDs,
+    getNodeType,
+    getNodeModularPipelines,
+    getModularPipelinesTree,
+    getFocusedModularPipeline,
+    getDisabledModularPipeline,
+  ],
+  (
+    nodeIDs,
+    nodeType,
+    nodeModularPipelines,
+    modularPipelinesTree,
+    focusedModularPipeline,
+    disabledModularPipeline
+  ) =>
+    arrayToObject(nodeIDs, (id) => {
+      let isDisabledViaModularPipeline =
+        disabledModularPipeline[nodeModularPipelines[id]];
+
+      let isDisabledViaFocusedModularPipeline = false;
+
+      if (focusedModularPipeline) {
+        const inputOutputNodeIDs = [
+          ...modularPipelinesTree[focusedModularPipeline.id].inputs,
+          ...modularPipelinesTree[focusedModularPipeline.id].outputs,
+        ];
+
+        const isChildModularPipeline = (modularPipelineId, focusedPipelineId) =>
+          modularPipelineId.startsWith(`${focusedPipelineId}.`);
+
+        const isParentModularPipeline = (
+          modularPipelineId,
+          focusedPipelineId
+        ) => focusedPipelineId.startsWith(`${modularPipelineId}.`);
+
+        const isChildNode = (nodeId) =>
+          nodeModularPipelines[nodeId]?.includes(focusedModularPipeline.id);
+
+        if (nodeType[id] === 'modularPipeline') {
+          return (
+            id !== focusedModularPipeline.id &&
+            !isChildModularPipeline(id, focusedModularPipeline.id) &&
+            !isParentModularPipeline(id, focusedModularPipeline.id)
+          );
+        }
+
+        isDisabledViaFocusedModularPipeline =
+          !isChildNode(id) &&
+          !nodeModularPipelines[id]?.some((pipelineId) =>
+            isChildModularPipeline(pipelineId, focusedModularPipeline.id)
+          ) &&
+          !isParentModularPipeline(
+            nodeModularPipelines[id],
+            focusedModularPipeline.id
+          ) &&
+          !inputOutputNodeIDs.includes(id);
+      }
+
+      return [
+        isDisabledViaFocusedModularPipeline,
+        isDisabledViaModularPipeline,
+      ].some(Boolean);
+    })
+);
+
+/**
  * Set disabled status if the node is specifically hidden, and/or via a tag/view/type/modularPipeline
  */
 export const getNodeDisabled = createSelector(
@@ -72,11 +142,9 @@ export const getNodeDisabled = createSelector(
     getNodeDisabledNode,
     getNodeDisabledTag,
     getNodeDisabledPipeline,
+    getnodesDisabledViaModularPipeline,
     getNodeType,
     getNodeTypeDisabled,
-    getNodeModularPipelines,
-    getModularPipelinesTree,
-    getFocusedModularPipeline,
     getVisibleSidebarNodes,
     getVisibleModularPipelineInputsOutputs,
     getDisabledModularPipeline,
@@ -88,11 +156,9 @@ export const getNodeDisabled = createSelector(
     nodeDisabledNode,
     nodeDisabledTag,
     nodeDisabledPipeline,
+    nodesDisabledViaModularPipeline,
     nodeType,
     typeDisabled,
-    nodeModularPipelines,
-    modularPipelinesTree,
-    focusedModularPipeline,
     visibleSidebarNodes,
     visibleModularPipelineInputsOutputs,
     disabledModularPipeline,
@@ -100,9 +166,6 @@ export const getNodeDisabled = createSelector(
     isSliceApplied
   ) =>
     arrayToObject(nodeIDs, (id) => {
-      let isDisabledViaModularPipeline =
-        disabledModularPipeline[nodeModularPipelines[id]];
-
       let isDisabledViaSlicedPipeline = false;
       if (isSliceApplied && slicedPipeline.length > 0) {
         isDisabledViaSlicedPipeline = !slicedPipeline.includes(id);
@@ -112,22 +175,8 @@ export const getNodeDisabled = createSelector(
         !visibleSidebarNodes[id] &&
         !visibleModularPipelineInputsOutputs.has(id);
 
-      let isDisabledViaFocusedModularPipeline = false;
-      if (focusedModularPipeline) {
-        const inputOutputNodeIDs = [
-          ...modularPipelinesTree[focusedModularPipeline.id].inputs,
-          ...modularPipelinesTree[focusedModularPipeline.id].outputs,
-        ];
-        if (nodeType[id] === 'modularPipeline') {
-          isDisabledViaFocusedModularPipeline =
-            id !== focusedModularPipeline.id &&
-            !id.startsWith(`${focusedModularPipeline.id}.`);
-        } else {
-          isDisabledViaFocusedModularPipeline =
-            !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
-            !inputOutputNodeIDs.includes(id);
-        }
-      }
+      const isDisabledViaModularPipeline = nodesDisabledViaModularPipeline[id];
+
       return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
@@ -136,7 +185,6 @@ export const getNodeDisabled = createSelector(
         typeDisabled[nodeType[id]],
         isDisabledViaSidebar,
         isDisabledViaModularPipeline,
-        isDisabledViaFocusedModularPipeline,
         isDisabledViaSlicedPipeline,
       ].some(Boolean);
     })
