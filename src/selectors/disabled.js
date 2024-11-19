@@ -95,15 +95,24 @@ export const getnodesDisabledViaModularPipeline = createSelector(
           ...modularPipelinesTree[focusedModularPipeline.id].outputs,
         ];
 
+        const isChildModularPipeline = (modularPipelineId, focusedPipelineId) =>
+          modularPipelineId.startsWith(`${focusedPipelineId}.`);
+
+        const isChildNode = (nodeId) =>
+          nodeModularPipelines[nodeId].includes(focusedModularPipeline.id);
+
         if (nodeType[id] === 'modularPipeline') {
           return (
             id !== focusedModularPipeline.id &&
-            !id.startsWith(`${focusedModularPipeline.id}.`)
+            !isChildModularPipeline(id, focusedModularPipeline.id)
           );
         }
 
         isDisabledViaFocusedModularPipeline =
-          !nodeModularPipelines[id].includes(focusedModularPipeline.id) &&
+          !isChildNode(id) &&
+          !nodeModularPipelines[id].some((pipelineId) =>
+            isChildModularPipeline(pipelineId, focusedModularPipeline.id)
+          ) &&
           !inputOutputNodeIDs.includes(id);
       }
 
