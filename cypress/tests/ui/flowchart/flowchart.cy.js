@@ -70,7 +70,7 @@ describe('Flowchart DAG', () => {
     const nodeToToggleText = 'Parameters';
 
     // Alias
-    cy.get(`.pipeline-nodelist__row__checkbox[name=${nodeToToggleText}]`).as(
+    cy.get(`.toggle-control__checkbox[name=${nodeToToggleText}]`).as(
       'nodeToToggle'
     );
 
