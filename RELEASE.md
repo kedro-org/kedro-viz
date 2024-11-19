@@ -24,6 +24,7 @@ Please follow the established format:
 - Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info (#2174)
 - Fix 404 error when accessing the experiment tracking page on the demo site (#2179)
 - Add check for port availability before starting Kedro Viz to prevent unintended browser redirects when the port is already in use (#2176)
+- Include Kedro Viz version in telemetry.. (#2194)
 
 
 # Release 10.0.0

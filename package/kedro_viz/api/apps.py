@@ -92,7 +92,9 @@ def create_api_app_from_project(
         env = Environment(loader=FileSystemLoader(_HTML_DIR))
         if should_add_telemetry:
             telemetry_content = env.get_template("telemetry.html").render(
-                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+                heap_app_id=heap_app_id,
+                heap_user_identity=heap_user_identity,
+                kedro_viz_version=__version__,
             )
             injected_head_content.append(telemetry_content)
 
