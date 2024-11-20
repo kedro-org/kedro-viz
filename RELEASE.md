@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add support for Python 3.12
+- Add support for Python 3.12, 3.13 (#2190, #2191)
 - Update Kedro-Viz telemetry for opt-out model (#2022)
 - Introduce `behaviour` prop object with `reFocus` prop (#2161)
 
