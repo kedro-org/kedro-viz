@@ -340,18 +340,18 @@ export const FlowChartWrapper = ({
       <div className="kedro-pipeline">
         {displaySidebar && <Sidebar />}
         {displayMetadataPanel && <MetaData />}
-        {showBanner(BANNER_KEYS.LITE) && (
-          <Banner
-            icon={<InfoBannerIcon />}
-            message={{
-              title: BANNER_METADATA.liteModeWarning.title,
-              body: BANNER_METADATA.liteModeWarning.body,
-            }}
-            btnUrl={BANNER_METADATA.liteModeWarning.docsLink}
-            onClose={() => handleBannerClose(BANNER_KEYS.LITE)}
-            dataTest={getDataTestAttribute('flowchart-wrapper', 'lite-banner')}
-          />
-        )}
+        {/* {showBanner(BANNER_KEYS.LITE) && ( */}
+        <Banner
+          icon={<InfoBannerIcon />}
+          message={{
+            title: BANNER_METADATA.liteModeWarning.title,
+            body: BANNER_METADATA.liteModeWarning.body,
+          }}
+          btnUrl={BANNER_METADATA.liteModeWarning.docsLink}
+          onClose={() => handleBannerClose(BANNER_KEYS.LITE)}
+          dataTest={getDataTestAttribute('flowchart-wrapper', 'lite-banner')}
+        />
+        {/* )} */}
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
