@@ -25,6 +25,7 @@ Please follow the established format:
 - Refactor `node-list-tree` component. (#2193)
 - Fix 404 error when accessing the experiment tracking page on the demo site (#2179)
 - Add check for port availability before starting Kedro Viz to prevent unintended browser redirects when the port is already in use (#2176)
+- Update kedro-viz lite banner icon and message. (#2196)
 - Include Kedro Viz version in telemetry.. (#2194)
 
 
