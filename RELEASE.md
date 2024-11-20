@@ -15,17 +15,17 @@ Please follow the established format:
 - Introduce `behaviour` prop object with `reFocus` prop (#2161)
 
 ## Bug fixes and other changes
-- Improve `kedro viz build` usage documentation (#2126)
-- Fix unserializable parameters value (#2122)
-- Replace `watchgod` library with `watchfiles` and improve autoreload file watching filter (#2134)
-- Display full dataset type with library prefix in metadata panel (#2136)
-- Enable SQLite WAL mode for Azure ML to fix database locking issues (#2131)
-- Replace `flake8`, `isort`, `pylint` and `black` by `ruff` (#2149)
-- Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info (#2174)
+- Improve `kedro viz build` usage documentation. (#2126)
+- Fix unserializable parameters value. (#2122)
+- Replace `watchgod` library with `watchfiles` and improve autoreload file watching filter. (#2134)
+- Display full dataset type with library prefix in metadata panel. (#2136)
+- Enable SQLite WAL mode for Azure ML to fix database locking issues. (#2131)
+- Replace `flake8`, `isort`, `pylint` and `black` by `ruff`. (#2149)
+- Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info. (#2174)
 - Refactor `node-list-tree` component. (#2193)
-- Fix 404 error when accessing the experiment tracking page on the demo site (#2179)
-- Add check for port availability before starting Kedro Viz to prevent unintended browser redirects when the port is already in use (#2176)
-- Include Kedro Viz version in telemetry.. (#2194)
+- Fix 404 error when accessing the experiment tracking page on the demo site. (#2179)
+- Check port availability before starting Kedro Viz to prevent unintended redirects when the port is in use. (#2176)
+- Include Kedro Viz version in telemetry. (#2194)
 
 
 # Release 10.0.0
