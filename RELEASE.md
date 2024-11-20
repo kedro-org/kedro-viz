@@ -19,7 +19,7 @@ Please follow the established format:
 - Fix unserializable parameters value. (#2122)
 - Replace `watchgod` library with `watchfiles` and improve autoreload file watching filter. (#2134)
 - Display full dataset type with library prefix in metadata panel. (#2136)
-- Enable SQLite WAL mode for Azure ML to fix database locking issues. (#2131)
+- Enable SQLite WAL mode for to fix database locking issues in Azure ML. (#2131)
 - Replace `flake8`, `isort`, `pylint` and `black` by `ruff`. (#2149)
 - Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info. (#2174)
 - Refactor `node-list-tree` component. (#2193)

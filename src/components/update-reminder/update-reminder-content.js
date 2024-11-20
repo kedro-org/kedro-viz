@@ -10,17 +10,9 @@ export const updateContent = {
     {
       title: 'Support for Python 3.12 and 3.13',
       image: '',
-      copy: 'Kedro and Kedro-Viz now support Python 3.12 and 3.13, allowing users to leverage the latest features and improvements in the Python ecosystem.',
+      copy: 'Kedro-Viz now supports Python 3.12 and 3.13, allowing users to leverage the latest features and improvements in the Python ecosystem.',
       buttonLink:
         'https://github.com/kedro-org/kedro-viz?tab=readme-ov-file#usage',
-      buttonText: 'Learn more',
-    },
-    {
-      title:
-        'The introduction of a `behaviour` prop object with a `reFocus` property',
-      image: '',
-      copy: 'The introduction of a `behaviour` prop object with a `reFocus` property gives users enhanced control over pipeline visualization behaviors.',
-      buttonLink: 'https://www.npmjs.com/package/@quantumblack/kedro-viz',
       buttonText: 'Learn more',
     },
     {
