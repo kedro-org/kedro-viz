@@ -17,8 +17,8 @@ describe('Banners in Kedro-Viz', () => {
 
     // Assert after action
     cy.get('[data-test="flowchart-wrapper--lite-banner"]').should('exist');
-    cy.get('.banner-message-body').should('contains.text', 'please install the missing Kedro project dependencies')
-    cy.get('.banner-message-title').should('contains.text', 'Missing dependencies')
+    cy.get('.banner-message-body').should('contains.text', 'Some features might be disabled in --lite mode due to missing dependencies')
+    cy.get('.banner-message-title').should('contains.text', 'Lite mode enabled')
 
     // Test Learn more link
     cy.get(".banner a")

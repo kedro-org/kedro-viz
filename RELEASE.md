@@ -10,7 +10,7 @@ Please follow the established format:
 
 ## Major features and improvements
 
-- Add support for Python 3.12
+- Add support for Python 3.12, 3.13 (#2190, #2191)
 - Update Kedro-Viz telemetry for opt-out model (#2022)
 - Introduce `behaviour` prop object with `reFocus` prop (#2161)
 
@@ -25,7 +25,13 @@ Please follow the established format:
 - Refactor `node-list-tree` component. (#2193)
 - Fix 404 error when accessing the experiment tracking page on the demo site. (#2179)
 - Check port availability before starting Kedro Viz to prevent unintended redirects when the port is in use. (#2176)
+- Update kedro-viz lite banner icon and message. (#2196)
 - Include Kedro Viz version in telemetry. (#2194)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Yury Fedotov](https://github.com/yury-fedotov)
 
 
 # Release 10.0.0
