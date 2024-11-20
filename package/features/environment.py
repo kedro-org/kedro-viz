@@ -41,7 +41,7 @@ def before_scenario(context, scenario):
 
     if (
         kedro_version
-        and kedro_version <= parse("0.18.12")
+        and kedro_version < parse("0.18.12")
         and sys.version_info >= (3, 11)
     ):
         print(

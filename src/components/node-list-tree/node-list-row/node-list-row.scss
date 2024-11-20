@@ -1,0 +1,87 @@
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables' as variables;
+
+.MuiTreeItem-iconContainer svg {
+  z-index: var.$zindex-MuiTreeItem-icon;
+}
+
+.node-list-row {
+  align-items: center;
+  cursor: default;
+  display: flex;
+  height: 32px;
+  position: relative;
+  transform: translate(0, 0);
+
+  &:hover,
+  &--active {
+    background-color: var(--color-nodelist-row-selected);
+  }
+
+  &--selected {
+    // Additional selector required to increase specificity to override previous rule
+    background-color: var(--color-nodelist-row-selected);
+    border-right: 1px solid var.$blue-300;
+  }
+
+  // to ensure the background of the row covers the full width on hover
+  &::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100px;
+    width: 100px;
+    background: var(--color-nodelist-row-selected);
+    transform: translate(0, 0);
+    opacity: 0;
+    content: ' ';
+    pointer-events: none;
+  }
+}
+
+.MuiTreeItem-content:hover {
+  .node-list-row__type-icon path {
+    opacity: 1;
+  }
+}
+
+.node-list-row--active::before,
+.node-list-row--selected::before,
+.node-list-row:hover::before {
+  opacity: 1;
+}
+
+.node-list-row__icon {
+  display: block;
+  flex-shrink: 0;
+  width: variables.$row-icon-size;
+  height: variables.$row-icon-size;
+  fill: var(--color-text);
+
+  &--disabled > * {
+    opacity: 0.1;
+  }
+}
+
+.node-list-row__type-icon {
+  &--nested > * {
+    opacity: 0.3;
+  }
+
+  &--faded > * {
+    opacity: 0.2;
+  }
+
+  &--active,
+  &--selected,
+  .node-list-row--visible:hover &,
+  [data-whatintent='keyboard'] .node-list-row__text:focus & {
+    > * {
+      opacity: 1;
+    }
+
+    &--faded > * {
+      opacity: 0.55;
+    }
+  }
+}
