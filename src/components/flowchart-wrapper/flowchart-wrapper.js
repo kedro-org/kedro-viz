@@ -19,7 +19,7 @@ import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
-import AlertIcon from '../icons/alert';
+import InfoBannerIcon from '../icons/info-banner';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
@@ -342,7 +342,7 @@ export const FlowChartWrapper = ({
         {displayMetadataPanel && <MetaData />}
         {showBanner(BANNER_KEYS.LITE) && (
           <Banner
-            icon={<AlertIcon />}
+            icon={<InfoBannerIcon />}
             message={{
               title: BANNER_METADATA.liteModeWarning.title,
               body: BANNER_METADATA.liteModeWarning.body,
