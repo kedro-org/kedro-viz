@@ -1,6 +1,5 @@
 """`kedro_viz.api.graphql.types` defines strawberry types."""
 
-# pylint: disable=too-few-public-methods,missing-class-docstring
 from __future__ import annotations
 
 import sys

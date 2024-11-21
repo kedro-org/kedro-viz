@@ -28,7 +28,7 @@
   top: -1px; /* Avoids pixel rounding gaps */
   right: -1px;
   bottom: -1px;
-  z-index: variables.$z-index-metadata-panel;
+  z-index: variables.$zindex-metadata-panel;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -254,7 +254,7 @@ $list-inline-spacing: 0.2em;
   flex-direction: row;
   justify-content: center;
   padding: 0;
-  z-index: 1;
+  z-index: variables.$zindex-metadata-link;
 
   &:hover {
     background-color: var(--color-button-plot-hovered);

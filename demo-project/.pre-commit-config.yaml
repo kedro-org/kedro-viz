@@ -14,31 +14,11 @@ repos:
           - id: check-json # Checks json files for parseable syntax.
           - id: check-case-conflict # Check for files that would conflict in case-insensitive filesystems
           - id: check-merge-conflict # Check for files that contain merge conflict strings.
-          - id: debug-statements # Check for debugger imports and py37+ `breakpoint()` calls in python source.
           - id: requirements-txt-fixer # Sorts entries in requirements.txt
-          - id: flake8
-            args:
-            - "--max-line-length=100"
-            - "--max-complexity=18"
-            - "--max-complexity=18"
-            - "--select=B,C,E,F,W,T4,B9"
-            - "--ignore=E203,E266,E501,W503"
 
-    - repo: local
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      rev: v0.7.0
       hooks:
-          - id: isort
-            name: "Sort imports"
-            language: system
-            types: [file, python]
-            entry: isort
-          - id: black
-            name: "Black"
-            language: system
-            types: [file, python]
-            entry: black
-          - id: kedro lint
-            name: "Kedro lint"
-            language: python_venv
-            types: [file, python]
-            entry: kedro lint
-            stages: [commit]
+        - id: ruff
+          args: [--fix]
+        - id: ruff-format

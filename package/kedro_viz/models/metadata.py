@@ -1,6 +1,5 @@
 """`kedro_viz.models.metadata` defines metadata for Kedro-Viz application."""
 
-# pylint: disable=missing-function-docstring
 from typing import ClassVar, List
 
 from pydantic import BaseModel, field_validator

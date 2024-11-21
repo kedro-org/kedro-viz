@@ -1,10 +1,11 @@
 """`kedro_viz.services.layers` defines layers-related logic."""
+
 import logging
 from collections import defaultdict
 from graphlib import CycleError, TopologicalSorter
 from typing import Dict, List, Set
 
-from kedro_viz.models.flowchart import GraphNode
+from kedro_viz.models.flowchart.nodes import GraphNode
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +105,11 @@ def sort_layers(
     for layer in all_layers:
         if layer not in layer_dependencies:
             layer_dependencies[layer] = set()
+
+    # Sort `layer_dependencies` keys for consistent ordering of layers with the same dependencies
+    layer_dependencies = defaultdict(
+        set, {k: layer_dependencies[k] for k in sorted(layer_dependencies)}
+    )
 
     # Use graphlib.TopologicalSorter to sort the layer dependencies.
     try:

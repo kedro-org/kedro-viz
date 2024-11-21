@@ -12,7 +12,7 @@ from jinja2 import Environment, FileSystemLoader
 from packaging.version import parse
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import save_api_responses_to_fs
+from kedro_viz.api.rest.responses.save_responses import save_api_responses_to_fs
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 _HTML_DIR = Path(__file__).parent.parent.parent.absolute() / "html"
@@ -51,7 +51,9 @@ class BaseDeployer(abc.ABC):
         if should_add_telemetry:
             logger.debug("Ingesting heap analytics.")
             telemetry_content = env.get_template("telemetry.html").render(
-                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+                heap_app_id=heap_app_id,
+                heap_user_identity=heap_user_identity,
+                kedro_viz_version=__version__,
             )
             injected_head_content.append(telemetry_content)
 

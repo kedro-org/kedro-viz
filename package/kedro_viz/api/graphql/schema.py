@@ -1,5 +1,4 @@
 """`kedro_viz.api.graphql.schema` defines the GraphQL schema: queries and mutations."""
-# pylint: disable=missing-function-docstring,missing-class-docstring
 
 from __future__ import annotations
 
@@ -77,7 +76,6 @@ class RunsQuery:
         group: TrackingDatasetGroup,
         show_diff: Optional[bool] = True,
     ) -> List[TrackingDataset]:
-        # pylint: disable=line-too-long
         tracking_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids, group
         )
@@ -110,7 +108,6 @@ class RunsQuery:
         ]
         group = TrackingDatasetGroup.METRIC
 
-        # pylint: disable=line-too-long
         metric_dataset_models = data_access_manager.tracking_datasets.get_tracking_datasets_by_group_by_run_ids(
             run_ids, group
         )

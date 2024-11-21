@@ -1,41 +1,36 @@
 """`kedro_viz.api.rest.router` defines REST routes and handling logic."""
 
-# pylint: disable=missing-function-docstring, broad-exception-caught
 import logging
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from kedro_viz.api.rest.requests import DeployerConfiguration
-from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
-
-from .responses import (
-    APIErrorMessage,
-    GraphAPIResponse,
+from kedro_viz.api.rest.responses.base import APINotFoundResponse
+from kedro_viz.api.rest.responses.metadata import (
     MetadataAPIResponse,
-    NodeMetadataAPIResponse,
-    get_default_response,
     get_metadata_response,
-    get_node_metadata_response,
-    get_selected_pipeline_response,
 )
-
-try:
-    from azure.core.exceptions import ServiceRequestError
-except ImportError:  # pragma: no cover
-    ServiceRequestError = None  # type: ignore
+from kedro_viz.api.rest.responses.nodes import (
+    NodeMetadataAPIResponse,
+    get_node_metadata_response,
+)
+from kedro_viz.api.rest.responses.pipelines import (
+    GraphAPIResponse,
+    get_pipeline_response,
+)
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/api",
-    responses={404: {"model": APIErrorMessage}},
+    responses={404: {"model": APINotFoundResponse}},
 )
 
 
 @router.get("/main", response_model=GraphAPIResponse)
 async def main():
-    return get_default_response()
+    return get_pipeline_response()
 
 
 @router.get(
@@ -52,11 +47,18 @@ async def get_single_node_metadata(node_id: str):
     response_model=GraphAPIResponse,
 )
 async def get_single_pipeline_data(registered_pipeline_id: str):
-    return get_selected_pipeline_response(registered_pipeline_id)
+    return get_pipeline_response(registered_pipeline_id)
 
 
 @router.post("/deploy")
 async def deploy_kedro_viz(input_values: DeployerConfiguration):
+    from kedro_viz.integrations.deployment.deployer_factory import DeployerFactory
+
+    try:
+        from azure.core.exceptions import ServiceRequestError
+    except ImportError:  # pragma: no cover
+        ServiceRequestError = None  # type: ignore
+
     try:
         deployer = DeployerFactory.create_deployer(
             input_values.platform, input_values.endpoint, input_values.bucket_name
@@ -74,7 +76,6 @@ async def deploy_kedro_viz(input_values: DeployerConfiguration):
             status_code=401, content={"message": "Please provide valid credentials"}
         )
     except (
-        # pylint: disable=catching-non-exception
         (FileNotFoundError, ServiceRequestError)
         if ServiceRequestError is not None
         else FileNotFoundError

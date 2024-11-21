@@ -1,11 +1,11 @@
-@use '../../styles/variables' as colors;
+@use '../../styles/variables' as variables;
 
 $panel-width: 484px;
 $spacing-left: 48px;
 
 .update-reminder {
   position: relative;
-  z-index: 10;
+  z-index: variables.$zindex-update-reminder;
 }
 
 %h3 {
@@ -21,36 +21,36 @@ $spacing-left: 48px;
   width: 430px;
 
   a {
-    color: colors.$blue-900;
+    color: variables.$blue-900;
   }
 }
 
 .kui-theme--light {
-  --color-detail-bg: #{colors.$white-400};
-  --color-header-bg: #{colors.$yellow-0};
-  --color-header-bg--up-to-date: #{colors.$grey-400};
-  --color-header-text--up-to-date: #{colors.$black-900};
-  --color-link: #{colors.$blue-600};
-  --color-subtext: #{colors.$black-400};
-  --color-content-bg: #{colors.$white-300};
-  --color-version-tag: #{colors.$black-900};
-  --color-version-tag--hover-outdated: #{colors.$black-900};
-  --color-version-tag--hover-up-to-date-bg: #{colors.$black-300};
-  --color-version-tag--hover-up-to-date: #{colors.$white-0};
+  --color-detail-bg: #{variables.$white-400};
+  --color-header-bg: #{variables.$yellow-0};
+  --color-header-bg--up-to-date: #{variables.$grey-400};
+  --color-header-text--up-to-date: #{variables.$black-900};
+  --color-link: #{variables.$blue-600};
+  --color-subtext: #{variables.$black-400};
+  --color-content-bg: #{variables.$white-300};
+  --color-version-tag: #{variables.$black-900};
+  --color-version-tag--hover-outdated: #{variables.$black-900};
+  --color-version-tag--hover-up-to-date-bg: #{variables.$black-300};
+  --color-version-tag--hover-up-to-date: #{variables.$white-0};
 }
 
 .kui-theme--dark {
-  --color-detail-bg: #{colors.$slate-300};
-  --color-header-bg: #{colors.$yellow-0};
-  --color-header-bg--up-to-date: #{colors.$white-0};
-  --color-header-text--up-to-date: #{colors.$black-900};
-  --color-link: #{colors.$blue-300};
-  --color-subtext: #{colors.$black-400};
-  --color-content-bg: #{colors.$slate-300};
-  --color-version-tag: #{colors.$white-500};
-  --color-version-tag--hover-outdated: #{colors.$black-900};
-  --color-version-tag--hover-up-to-date-bg: #{colors.$black-400};
-  --color-version-tag--hover-up-to-date: #{colors.$white-500};
+  --color-detail-bg: #{variables.$slate-300};
+  --color-header-bg: #{variables.$yellow-0};
+  --color-header-bg--up-to-date: #{variables.$white-0};
+  --color-header-text--up-to-date: #{variables.$black-900};
+  --color-link: #{variables.$blue-300};
+  --color-subtext: #{variables.$black-400};
+  --color-content-bg: #{variables.$slate-300};
+  --color-version-tag: #{variables.$white-500};
+  --color-version-tag--hover-outdated: #{variables.$black-900};
+  --color-version-tag--hover-up-to-date-bg: #{variables.$black-400};
+  --color-version-tag--hover-up-to-date: #{variables.$white-500};
 }
 
 .update-reminder-unexpanded {
@@ -64,10 +64,10 @@ $spacing-left: 48px;
   right: 0;
   top: 0;
   width: $panel-width;
-  z-index: 2;
+  z-index: variables.$zindex-update-reminder-elements;
 
   p {
-    color: colors.$slate-700;
+    color: variables.$slate-700;
     text-align: center;
     margin-top: 7.5px;
     font-size: 12px;
@@ -80,7 +80,7 @@ $spacing-left: 48px;
   button {
     background-color: var(--color-header-bg);
     border: none;
-    color: colors.$black-700;
+    color: variables.$black-700;
     cursor: pointer;
     font-size: 12px;
     padding: 0;
@@ -92,7 +92,7 @@ $spacing-left: 48px;
     }
 
     &:hover {
-      color: colors.$black-800;
+      color: variables.$black-800;
     }
   }
 }
@@ -107,7 +107,7 @@ $spacing-left: 48px;
   right: 0;
   top: 0;
   width: $panel-width;
-  z-index: 2;
+  z-index: variables.$zindex-update-reminder-elements;
 
   .close-button-container {
     margin-right: 20px;
@@ -115,7 +115,7 @@ $spacing-left: 48px;
 
   .close-button {
     svg {
-      fill: colors.$black-800;
+      fill: variables.$black-800;
       height: 24px;
       width: 24px;
     }
@@ -134,13 +134,13 @@ $spacing-left: 48px;
 
 .update-reminder-expanded-detail {
   background-color: var(--color-header-bg);
-  color: colors.$black-900;
+  color: variables.$black-900;
   padding-bottom: 40px;
   position: absolute;
   right: 0;
   top: 36px;
   width: $panel-width;
-  z-index: 2;
+  z-index: variables.$zindex-update-reminder-elements;
 
   &--up-to-date {
     background-color: var(--color-header-bg--up-to-date);
@@ -178,7 +178,7 @@ $spacing-left: 48px;
   }
 
   .pipeline-icon {
-    fill: colors.$black-900;
+    fill: variables.$black-900;
   }
 }
 
@@ -193,7 +193,7 @@ $spacing-left: 48px;
   right: 0;
   top: 270px;
   width: $panel-width;
-  z-index: 2;
+  z-index: variables.$zindex-update-reminder-elements;
 
   &--up-to-date {
     height: calc(100vh - 144px);
@@ -241,20 +241,20 @@ $spacing-left: 48px;
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 2;
+  z-index: variables.$zindex-update-reminder-elements;
 
   &--outdated {
     &:hover {
-      background-color: colors.$yellow-0;
+      background-color: variables.$yellow-0;
       color: var(--color-version-tag--hover-outdated);
 
       > span {
-        background-color: colors.$yellow-600;
+        background-color: variables.$yellow-600;
       }
     }
 
     > span {
-      background-color: colors.$yellow-0;
+      background-color: variables.$yellow-0;
       border-radius: 50%;
       display: inline-block;
       height: 8px;

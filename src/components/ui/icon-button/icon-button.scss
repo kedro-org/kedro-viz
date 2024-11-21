@@ -68,7 +68,7 @@ $triangle-size: 7px;
   white-space: nowrap;
 
   // to ensure the tooltip will show on the top of the bookmark dropdown
-  z-index: 1;
+  z-index: variables.$zindex-toolbar-label;
 
   @media (max-width: variables.$sidebar-width-breakpoint) {
     .pipeline-sidebar--visible & {

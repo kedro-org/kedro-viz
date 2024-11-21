@@ -1,5 +1,6 @@
 """`kedro_viz.integrations.deployment.gcp_deployer` defines
 deployment class for Google Cloud Storage Bucket"""
+
 import glob
 import logging
 import mimetypes

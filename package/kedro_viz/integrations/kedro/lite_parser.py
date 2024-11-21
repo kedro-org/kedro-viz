@@ -48,8 +48,7 @@ class LiteParser:
         except ValueError as val_exc:
             logger.debug("ValueError in resolving %s : %s", module_name, val_exc)
             return False
-        # pylint: disable=broad-except
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:  # noqa: BLE001 # pragma: no cover
             logger.debug(
                 "An exception occurred while resolving %s : %s", module_name, exc
             )
@@ -262,8 +261,7 @@ class LiteParser:
                 )
                 if len(missing_dependencies) > 0:
                     unresolved_imports[str(file_path)] = missing_dependencies
-            # pylint: disable=broad-except
-            except Exception as exc:  # pragma: no cover
+            except Exception as exc:  # noqa: BLE001 # pragma: no cover
                 logger.error(
                     "An error occurred in LiteParser while mocking dependencies : %s",
                     exc,

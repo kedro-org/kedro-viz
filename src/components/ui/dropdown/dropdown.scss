@@ -66,7 +66,7 @@ $menu-item-padding: 12px;
   position: relative;
   user-select: none;
   width: 100%;
-  z-index: 8;
+  z-index: variables.$zindex-dropdown-label;
 
   &:disabled {
     cursor: not-allowed;
@@ -107,7 +107,7 @@ $menu-item-padding: 12px;
 }
 
 .dropdown__options {
-  z-index: 2; // fix closing transition animation bug
+  z-index: variables.$zindex-dropdown-options;
   background: var(--dropdown-options-bg);
   border-top: none;
   box-shadow: 0 0 2px variables.$black-800;
@@ -144,5 +144,5 @@ $menu-item-padding: 12px;
   justify-content: space-around;
   padding: 24px 0;
   position: sticky;
-  z-index: 1;
+  z-index: variables.$zindex-dropdown-btn-wrapper;
 }

@@ -27,11 +27,63 @@ $metadata-modal-breakpoint: 700px;
 $global-toolbar-width: 80px;
 $run-list-controls-height: 95px;
 
-// -- levels -- //
-$z-index-metadata-panel: 3;
-$z-index-metadata-code: 3;
-$z-index-MuiTreeItem-icon: 1;
-$z-index-banner: 6;
+// z-index values
+
+// z-index -1
+$zindex-switch-track: -1;
+$zindex-group-background-fade: -1;
+
+// z-index 0
+$zindex-switch-root: 0;
+
+// z-index 1
+$zindex-MuiTreeItem-icon: 1;
+$zindex-sidebar: 1;
+$zindex-sticky-elements: 1;
+$zindex-search-icon: 1;
+$zindex-toolbar-label: 1;
+$zindex-metadata-link: 1;
+$zindex-nodelist-heading: 1;
+$zindex-switch-base: 1;
+$zindex-switch-input: 1;
+$zindex-filter-panel: 1;
+$zindex-split-handle-focus: 1;
+$zindex-preview-table-header: 1;
+$zindex-search-close-icon: 1;
+$zindex-search-input-focused: 1;
+$zindex-dropdown-btn-wrapper: 1;
+
+// z-index 2
+$zindex-ui: 2;
+$zindex-toolbar: 2;
+$zindex-nodelist-placeholder: 2;
+$zindex-update-reminder-elements: 2;
+$zindex-dropdown-options: 2; // fix closing transition animation bug
+
+// z-index 3
+$zindex-metadata-code: 3;
+$zindex-sidebar-expanded: 3;
+$zindex-plot-modal: 3;
+$zindex-go-back-btn: 3;
+$zindex-metadata-panel: 3;
+
+// z-index 5
+$zindex-feature-hints: 5;
+$zindex-global-toolbar: 5;
+
+// z-index 6
+$zindex-modal: 6;
+$zindex-metadata-modal: 6;
+$zindex-banner: 6;
+
+// z-index 8
+$zindex-dropdown-label: 8;
+
+// z-index 9
+$zindex-tooltip: 9;
+
+// z-index 10
+$zindex-update-reminder: 10; // For the main update reminder
 
 // Micro-animation
 $run-width: 375px;

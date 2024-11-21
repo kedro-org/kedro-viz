@@ -35,6 +35,9 @@ export const codeSidebarWidth = {
   open: 480,
 };
 
+// The exact fixed height of a row as measured by getBoundingClientRect()
+export const nodeListRowHeight = 32;
+
 // These colours variables come from styles/variables
 const slate600 = '#0e222d';
 const slate200 = '#21333e';
@@ -211,8 +214,8 @@ export const NODE_TYPES = {
 
 export const BANNER_METADATA = {
   liteModeWarning: {
-    title: 'Missing dependencies',
-    body: 'For the best experience with full functionality, please install the missing Kedro project dependencies.',
+    title: 'Lite mode enabled',
+    body: 'Some features might be disabled in --lite mode due to missing dependencies. You can find more information about lite mode in our docs.',
     docsLink:
       'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#visualise-a-kedro-project-without-installing-project-dependencies',
   },

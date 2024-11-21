@@ -1,0 +1,62 @@
+@use '../../../styles/variables' as var;
+@use '../../node-list-tree/styles/variables';
+
+.filters-section-heading {
+  background: var(--color-nodelist-filter-panel);
+  margin: 0;
+  position: sticky;
+  top: 0;
+
+  // Avoid pixel gap above when scrolling.
+  transform: translateY(-1px);
+  z-index: var.$zindex-nodelist-heading;
+
+  .row-text .row-text__label {
+    font-size: 1.3em;
+    opacity: 0.65;
+  }
+}
+
+.filters-section-heading__toggle-btn {
+  width: variables.$toggle-size;
+  height: variables.$toggle-size;
+  padding: 0;
+  color: var(--color-default-alt);
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1em;
+  text-align: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform ease 0.1s;
+
+  &:focus {
+    outline: none;
+
+    [data-whatintent='keyboard'] & {
+      box-shadow: 0 0 0 3px var.$blue-300 inset;
+    }
+  }
+
+  &::before {
+    font-size: 1.8em;
+    opacity: 0.55;
+    content: '▾';
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &--alt {
+    transform: rotate(90deg);
+  }
+
+  &--disabled {
+    color: var.$black-400;
+    transform: rotate(90deg);
+  }
+}

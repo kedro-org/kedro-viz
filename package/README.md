@@ -15,7 +15,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 <br />
 
-[![CircleCI](https://circleci.com/gh/kedro-org/kedro-viz/tree/main.svg?style=shield)](https://circleci.com/gh/kedro-org/kedro-viz/tree/main)
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/kedro-org/kedro-viz/merge-gatekeeper.yml?label=Actions&logo=github)](https://github.com/kedro-org/kedro-viz/actions)
 [![Documentation](https://readthedocs.org/projects/kedro/badge/?version=stable)](https://docs.kedro.org/en/stable/visualisation/)
 [![Python Version](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11-orange.svg)](https://pypi.org/project/kedro-viz/)
 [![PyPI version](https://img.shields.io/pypi/v/kedro-viz.svg?color=yellow)](https://pypi.org/project/kedro-viz/)
@@ -283,16 +283,15 @@ For more information on how to use Kedro-Viz in Visual Studio Code, follow this 
 
 ## Feature Flags
 
-Kedro-Viz uses features flags to roll out some experimental features. The following flags are currently in use:
-
-| Flag               | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| sizewarning        | From release v3.9.1. Show a warning before rendering very large graphs (default `true`) |
-| expandAllPipelines | From release v4.3.2. Expand all modular pipelines on first load (default `false`)       |
+Kedro-Viz uses features flags to roll out some experimental features. No feature flags are currently in use.
 
 To enable or disable a flag, click on the settings icon in the toolbar and toggle the flag on/off.
 
 Kedro-Viz also logs a message in your browser's [developer console](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools#The_JavaScript_console) to show the available flags and their values as currently set on your machine.
+
+
+## Python version support policy
+Kedro Viz supports all Python versions that are actively maintained by the CPython core team. When a [Python version reaches end of life](https://devguide.python.org/versions/#versions), support for that version is dropped from Kedro-viz. This is not considered a breaking change.
 
 ## Maintainers
 

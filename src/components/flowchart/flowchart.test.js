@@ -492,6 +492,7 @@ describe('FlowChart', () => {
       runCommand: expect.any(Object),
       modularPipelineIds: expect.any(Object),
       visibleSlicing: expect.any(Boolean),
+      nodeReFocus: expect.any(Boolean),
     };
     expect(mapStateToProps(mockState.spaceflights)).toEqual(expectedResult);
   });

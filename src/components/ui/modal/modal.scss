@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as colors;
+@use '../../../styles/variables' as variables;
 
 /** Variables **/
 
@@ -8,17 +8,17 @@ $size-content-maxwidth: 400px;
 $duration-visibility: 0.4s;
 
 .kui-theme--light {
-  --color-modal-bg: #{colors.$black-700};
-  --color-modal-content: #{colors.$white-0};
-  --color-modal-title: #{colors.$black-900};
-  --color-modal-description: #{colors.$black-700};
+  --color-modal-bg: #{variables.$black-700};
+  --color-modal-content: #{variables.$white-0};
+  --color-modal-title: #{variables.$black-900};
+  --color-modal-description: #{variables.$black-700};
 }
 
 .kui-theme--dark {
-  --color-modal-bg: #{colors.$slate-900};
-  --color-modal-content: #{colors.$slate-0};
-  --color-modal-title: #{colors.$white-0};
-  --color-modal-description: #{colors.$black-0};
+  --color-modal-bg: #{variables.$slate-900};
+  --color-modal-content: #{variables.$slate-0};
+  --color-modal-title: #{variables.$white-0};
+  --color-modal-description: #{variables.$black-0};
 }
 
 /** Implementation **/
@@ -29,7 +29,7 @@ $duration-visibility: 0.4s;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 6;
+  z-index: variables.$zindex-modal;
   visibility: hidden;
   transition: visibility ease $duration-visibility;
 }

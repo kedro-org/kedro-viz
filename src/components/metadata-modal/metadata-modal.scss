@@ -23,7 +23,7 @@
   height: 100%; /* Full height (cover the whole page) */
   inset: 0 0 0 variables.$global-toolbar-width;
   position: absolute;
-  z-index: 6;
+  z-index: variables.$zindex-metadata-modal;
 
   /* We don't need full width as sometime the preview table can take up more than a width of the page */
   background-color: var(--color-bg-plot);

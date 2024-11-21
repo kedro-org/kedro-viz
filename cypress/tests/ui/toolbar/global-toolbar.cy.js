@@ -81,14 +81,14 @@ describe('Global Toolbar', () => {
       cy.get('@isPrettyNameCheckbox').should('be.checked');
 
       // Menu
-      cy.get(`[data-test="nodelist-modularPipeline-${prettifyName(modularPipelineText)}"]`).click();
-      cy.get(`[data-test="nodelist-${nodeNameType}-${prettyNodeNameText}"]`).should('exist');
+      cy.get(`[data-test="node-list-tree-item--row--${prettifyName(modularPipelineText)}"]`).click();
+      cy.get(`[data-test="node-list-tree-item--row--${prettyNodeNameText}"]`).should('exist');
 
       // Flowchart
       cy.get('.pipeline-node__text').should('contain', prettyNodeNameText);
 
       // Metadata
-      cy.get(`[data-test="nodelist-${nodeNameType}-${prettyNodeNameText}"]`).click({ force: true });
+      cy.get(`[data-test="node-list-tree-item--row--${prettyNodeNameText}"]`).click({ force: true });
       cy.get('.pipeline-metadata__title').should(
         'have.text',
         prettyNodeNameText
@@ -106,7 +106,7 @@ describe('Global Toolbar', () => {
       // Assert after action
       cy.__waitForPageLoad__(() => {
         // Menu
-        cy.get(`[data-test="nodelist-${nodeNameType}-${originalNodeNameText}"]`).should('exist');
+        cy.get(`[data-test="node-list-tree-item--row--${originalNodeNameText}"]`).should('exist');
 
         // Flowchart
         cy.get('.pipeline-node__text').should('contain', originalNodeNameText);

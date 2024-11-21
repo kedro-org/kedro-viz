@@ -85,15 +85,11 @@ def evaluate_model(
     """
     y_pred = regressor.predict(X_test)
     score = r2_score(y_test, y_pred)
-    a2_score = random.randint(0,100)*0.1
-    b2_score = random.randint(0,100)*0.1
+    a2_score = random.randint(0, 100) * 0.1
+    b2_score = random.randint(0, 100) * 0.1
     logger = logging.getLogger(__name__)
     logger.info(
         f"Model has a coefficient R^2 of {score:.3f} on test data using a "
         f"regressor of type '{type(regressor)}'"
     )
-    return {
-        "r2_score": score,
-        "a2_score":a2_score,
-        "b2_score":b2_score
-        }
+    return {"r2_score": score, "a2_score": a2_score, "b2_score": b2_score}

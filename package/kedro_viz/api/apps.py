@@ -1,6 +1,7 @@
 """`kedro_viz.api.app` defines the FastAPI app to serve Kedro data in a RESTful API.
 This data could either come from a real Kedro project or a file.
 """
+
 import json
 import os
 import time
@@ -14,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 
 from kedro_viz import __version__
-from kedro_viz.api.rest.responses import EnhancedORJSONResponse
+from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
 from .graphql.router import router as graphql_router
@@ -91,7 +92,9 @@ def create_api_app_from_project(
         env = Environment(loader=FileSystemLoader(_HTML_DIR))
         if should_add_telemetry:
             telemetry_content = env.get_template("telemetry.html").render(
-                heap_app_id=heap_app_id, heap_user_identity=heap_user_identity
+                heap_app_id=heap_app_id,
+                heap_user_identity=heap_user_identity,
+                kedro_viz_version=__version__,
             )
             injected_head_content.append(telemetry_content)
 

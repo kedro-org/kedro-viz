@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { getPipelineTagIDs } from './pipeline';
+import { prettifyName } from '../utils';
 
 const getNodeTags = (state) => state.node.tags;
 const getTagName = (state) => state.tag.name;
@@ -14,7 +15,7 @@ export const getTagData = createSelector(
   (tagIDs, tagName, tagActive, tagEnabled) =>
     tagIDs.sort().map((id) => ({
       id,
-      name: tagName[id],
+      name: tagName[id] || prettifyName(id),
       active: Boolean(tagActive[id]),
       enabled: Boolean(tagEnabled[id]),
     }))

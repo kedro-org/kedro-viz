@@ -86,6 +86,7 @@ export const getTagsForNodesAndModularPipelines = createSelector(
 /**
  * Set active status if the node is specifically highlighted, and/or via an associated tag or modular pipeline
  */
+
 export const getNodeActive = createSelector(
   [
     getPipelineNodeIDs,
@@ -94,7 +95,7 @@ export const getNodeActive = createSelector(
     getTagActive,
     getNodeModularPipelines,
     getModularPipelineActive,
-
+    getModularPipelineDisabled,
     (state) => state.modularPipeline.tree,
   ],
   (
@@ -104,27 +105,43 @@ export const getNodeActive = createSelector(
     tagActive,
     nodeModularPipelines,
     modularPipelineActive,
+    modularPipelineDisabled,
     modularPipelinesTree
   ) => {
     const activeModularPipelines = Object.keys(modularPipelineActive).filter(
       (modularPipelineID) => modularPipelineActive[modularPipelineID]
     );
-    const nodesActiveViaModularPipeline = activeModularPipelines.flatMap((id) =>
-      modularPipelinesTree[id].children.map((child) => child.id)
-    );
+
+    // return the disabled modular pipelines if its value is true, which means it is disabled
+    const disabledModularPipelines = Object.entries(modularPipelineDisabled)
+      .filter(([key, value]) => value === true)
+      .map(([key]) => key);
+
+    let activeViaModularPipeline = false;
 
     return arrayToObject(nodeIDs, (nodeID) => {
       if (nodeID === hoveredNode) {
         return true;
       }
+      // Check if the node is active via tags
       const activeViaTag = nodeTags[nodeID].some((tag) => tagActive[tag]);
+
       const activeModularPipeline = activeModularPipelines.includes(nodeID);
-      const activeViaModularPipeline =
-        nodesActiveViaModularPipeline.includes(nodeID) ||
-        (nodeModularPipelines[nodeID] &&
-          nodeModularPipelines[nodeID].some(
-            (modularPipeline) => modularPipelineActive[modularPipeline]
-          ));
+
+      // highlight nodes via modular pipelines if the modular pipeline is not disabled
+      if (!disabledModularPipelines.includes(activeModularPipelines[0])) {
+        const nodesActiveViaModularPipeline = activeModularPipelines.flatMap(
+          (id) => modularPipelinesTree[id].children.map((child) => child.id)
+        );
+
+        activeViaModularPipeline =
+          nodesActiveViaModularPipeline.includes(nodeID) ||
+          (nodeModularPipelines[nodeID] &&
+            nodeModularPipelines[nodeID].some(
+              (modularPipeline) => modularPipelineActive[modularPipeline]
+            ));
+      }
+
       return (
         Boolean(activeViaTag) ||
         Boolean(activeViaModularPipeline) ||

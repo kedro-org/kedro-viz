@@ -1,4 +1,5 @@
 """`kedro_viz.integrations.pypi` provides an interface to integrate Kedro-Viz with PyPI."""
+
 import logging
 from typing import Optional, Union
 

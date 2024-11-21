@@ -6,6 +6,7 @@ For further information, see also:
 
 - [Kedro-Viz contributing documentation](CONTRIBUTING.md), which covers how to start development on the project
 - [Kedro-Viz style guide](STYLE_GUIDE.md), which walks through our standards and recommended best practices for our codebase
+- [Kedro-Viz Architecture Diagram](https://miro.com/app/board/uXjVKhNg1RE=/?moveToWidget=3458764606468376036&cot=10), to see a high level overview of both back-end and front-end and how they are connected.
 
 ## High-level Overview
 
@@ -62,7 +63,7 @@ The `localStorage` state is updated automatically on every Redux store update, v
 
 ## Data ingestion
 
-![Kedro-Viz data flow diagram](/.github/img/app-architecture-data-flow.png)
+![Kedro-Viz data flow diagram](/.github/img/frontend-architecture.png)
 
 Kedro-Viz currently utilizes two different methods of data ingestion: the Redux setup for the pipeline and flowchart-view related components, and GraphQL via Apollo Client for the experiment tracking components.
 
@@ -147,3 +148,9 @@ Kedro-Viz includes a graph layout engine, for details see the [layout engine doc
 Our layout engine runs inside a web worker, which asynchronously performs these expensive calculations in a separate CPU thread, in order to avoid this blocking other operations on the main thread (e.g. CSS transitions and other state updates).
 
 The app uses [redux-watch](https://github.com/ExodusMovement/redux-watch) with a graph input selector to watch the store for state changes relevant to the graph layout. If the layout needs to change, this listener dispatches an asynchronous action which sends a message to the web worker to instruct it to calculate the new layout. Once the layout worker completes its calculations, it returns a new action to update the store's `state.graph` property with the new layout. Updates to the graph input state during worker calculations will interrupt the worker and cause it to start over from scratch.
+
+## Backend Architecture
+
+![Kedro-Viz backend architecture](/.github/img/backend-architecture.png)
+
+The backend of Kedro-Viz serves as the data provider and API layer that interacts with Kedro projects and manages data access for visualisations in the frontend.  It offers both REST and GraphQL APIs to support data retrieval for the frontend, allowing access to pipeline structures, node-specific details, and experiment tracking data. Key components include the `DataAccessManager`, which interfaces with data `Repositories` to fetch and structure data. The CLI enables users launch with Kedro-Viz from the command line, while deploy and build options enables seamless sharing of pipeline visualisations on any static website hosting platform.

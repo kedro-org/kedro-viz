@@ -12,13 +12,13 @@ describe('Selectors', () => {
     const expected = [
       '23c94afb',
       '47b81aa6',
+      '90ebe5f3',
       'daf35ba0',
       'c09084f2',
       '0abef172',
       'e5a9ec27',
       'b7bb7198',
       'f192326a',
-      '90ebe5f3',
       'data_processing',
     ];
     const newState = reducer(mockState.spaceflights, {

@@ -5,7 +5,7 @@ import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-
 import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
 import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
-import NodeList from '../node-list';
+import NodesPanel from '../nodes-panel';
 import PipelineList from '../pipeline-list';
 import RunsList from '../experiment-tracking/runs-list';
 
@@ -88,7 +88,7 @@ export const Sidebar = ({
         >
           <div className="pipeline-ui">
             <PipelineList onToggleOpen={togglePipeline} />
-            <NodeList faded={pipelineIsOpen} />
+            <NodesPanel faded={pipelineIsOpen} />
           </div>
           <nav className="pipeline-toolbar">
             <FlowchartPrimaryToolbar />

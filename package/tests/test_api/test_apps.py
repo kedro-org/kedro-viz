@@ -10,7 +10,7 @@ class TestIndexEndpoint:
     def test_index(self, client):
         response = client.get("/")
         assert response.status_code == 200
-        assert "heap" not in response.text
+        assert "heap" in response.text
         assert "checkReloadStatus" not in response.text
 
     @mock.patch("kedro_viz.integrations.kedro.telemetry.get_heap_app_id")

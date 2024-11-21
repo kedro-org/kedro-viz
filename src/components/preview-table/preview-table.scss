@@ -48,7 +48,7 @@
     background: var(--color-bg);
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: variables.$zindex-preview-table-header;
   }
 
   .preview-table__row:hover,

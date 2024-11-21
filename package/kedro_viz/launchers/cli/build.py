@@ -1,6 +1,6 @@
 """`kedro_viz.launchers.cli.build` provides a cli command to build
 a Kedro-Viz instance"""
-# pylint: disable=import-outside-toplevel
+
 import click
 
 from kedro_viz.launchers.cli.main import viz

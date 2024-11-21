@@ -121,10 +121,17 @@ const MetaData = ({
 
   const shortenDatasetType = (value) => {
     const isList = Array.isArray(value);
+    // Extract the library (first part) and the dataset type (last part)
+    const getQualifier = (val) => {
+      if (typeof val === 'string' && val.includes('.')) {
+        const parts = val.split('.');
+        return `${parts[0]}.${parts.pop()}`;
+      }
+      // If val is not a string or does not include a dot return as is
+      return val;
+    };
 
-    return isList
-      ? value.map((val) => val.split('.').pop())
-      : value?.split('.').pop();
+    return isList ? value.map(getQualifier) : getQualifier(value);
   };
 
   return (

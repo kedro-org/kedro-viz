@@ -14,8 +14,9 @@ from typing import Any, Dict
 import IPython
 from IPython.display import HTML, display
 from kedro.framework.project import PACKAGE_NAME
-from watchgod import RegExpWatcher, run_process
+from watchfiles import run_process
 
+from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
@@ -75,7 +76,7 @@ def _make_databricks_url(port: int) -> str:  # pragma: no cover
 
 def _display_databricks_html(port: int):  # pragma: no cover
     url = _make_databricks_url(port)
-    displayHTML = _get_databricks_object("displayHTML")  # pylint: disable=invalid-name
+    displayHTML = _get_databricks_object("displayHTML")
     if displayHTML is not None:
         displayHTML(f"""<a href="{url}">Open Kedro-Viz</a>""")
     else:
@@ -92,9 +93,7 @@ def parse_args(args):  # pragma: no cover
     return arg_dict
 
 
-def run_viz(  # pylint: disable=too-many-locals
-    args: str = "", local_ns: Dict[str, Any] = None
-) -> None:
+def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     """
     Line magic function to start Kedro Viz with optional arguments.
 
@@ -148,15 +147,17 @@ def run_viz(  # pylint: disable=too-many-locals
     }
     process_context = multiprocessing.get_context("spawn")
     if autoreload:
+        run_process_args = [str(project_path)]
         run_process_kwargs = {
-            "path": project_path,
             "target": run_server,
             "kwargs": run_server_kwargs,
-            "watcher_cls": RegExpWatcher,
-            "watcher_kwargs": {"re_files": r"^.*(\.yml|\.yaml|\.py|\.json)$"},
+            "watch_filter": AutoreloadFileFilter(),
         }
         viz_process = process_context.Process(
-            target=run_process, daemon=False, kwargs={**run_process_kwargs}
+            target=run_process,
+            daemon=False,
+            args=run_process_args,
+            kwargs={**run_process_kwargs},
         )
     else:
         viz_process = process_context.Process(

@@ -1,6 +1,6 @@
 // sliced-pipeline-action-bar.test.js
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { SlicedPipelineActionBar } from './sliced-pipeline-action-bar';
 
 describe('SlicedPipelineActionBar', () => {

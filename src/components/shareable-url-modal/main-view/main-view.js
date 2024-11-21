@@ -43,8 +43,8 @@ const renderTextContent = (isPreviewEnabled, setIsPreviewEnabled) => {
         Disclaimer{' '}
       </h2>
       <p className="shareable-url-modal__content-description">
-        Disclaimer Kedro-Viz contains preview data for multiple datasets. You
-        can enable or disable all previews when publishing Kedro-Viz.
+        Kedro-Viz contains preview data for multiple datasets. You can enable or
+        disable all previews when publishing Kedro-Viz.
       </p>
       <div className="shareable-url-modal__content-preview-dataset">
         All dataset previews

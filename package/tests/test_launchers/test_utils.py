@@ -7,6 +7,7 @@ import requests
 
 from kedro_viz.launchers.utils import (
     _check_viz_up,
+    _find_available_port,
     _find_kedro_project,
     _is_project,
     _start_browser,
@@ -99,3 +100,20 @@ class TestIsProject:
 def test_find_kedro_project(project_dir, is_project_found, expected, mocker):
     mocker.patch("kedro_viz.launchers.utils._is_project", return_value=is_project_found)
     assert _find_kedro_project(Path(project_dir)) == expected
+
+
+def test_find_available_port_all_ports_occupied(mocker):
+    mocker.patch("kedro_viz.launchers.utils._is_port_in_use", return_value=True)
+    mock_display_message = mocker.patch("kedro_viz.launchers.utils.display_cli_message")
+
+    # Check for SystemExit when all ports are occupied
+    with pytest.raises(SystemExit) as exit_exception:
+        _find_available_port("127.0.0.1", 4141, max_attempts=5)
+    assert exit_exception.value.code == 1
+
+    mock_display_message.assert_any_call(
+        "Error: All ports in the range 4141-4145 are in use.", "red"
+    )
+    mock_display_message.assert_any_call(
+        "Please specify a different port using the '--port' option.", "red"
+    )

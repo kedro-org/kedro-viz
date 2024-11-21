@@ -41,7 +41,7 @@ def before_scenario(context, scenario):
 
     if (
         kedro_version
-        and kedro_version <= parse("0.18.12")
+        and kedro_version < parse("0.18.12")
         and sys.version_info >= (3, 11)
     ):
         print(
@@ -97,7 +97,7 @@ def _setup_context_with_venv(context, venv_dir):
     return context
 
 
-def after_scenario(context, scenario):
+def after_scenario(context, scenario):  # noqa: ARG001
     for path in _PATHS_TO_REMOVE:
         # ignore errors when attempting to remove already removed directories
         shutil.rmtree(path, ignore_errors=True)

@@ -1,6 +1,6 @@
 """`kedro_viz.data_access.repositories.tracking_datasets` defines an interface to
 centralise access to datasets used in experiment tracking."""
-# pylint: disable=missing-class-docstring,missing-function-docstring,protected-access
+
 from collections import defaultdict
 from typing import TYPE_CHECKING, Dict, List
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
         from kedro.io import AbstractVersionedDataset
     except ImportError:
         # older versions
-        from kedro.io import (  # type: ignore # isort:skip
+        from kedro.io import (  # type: ignore
             AbstractVersionedDataSet as AbstractVersionedDataset,
         )
 
