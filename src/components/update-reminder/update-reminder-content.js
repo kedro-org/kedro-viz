@@ -2,9 +2,9 @@ export const updateContent = {
   date: '21 November 2024',
   features: [
     {
-      title: 'Support for Python 3.12',
+      title: 'Support for Python 3.12 and 3.13',
       image: '',
-      copy: 'Kedro-Viz now supports Python 3.12, ensuring compatibility with the latest Python version.',
+      copy: 'Kedro-Viz now supports Python 3.12 and 3.13, ensuring compatibility with the latest Python version.',
       buttonLink:
         'https://github.com/kedro-org/kedro-viz?tab=readme-ov-file#usage',
       buttonText: 'Learn more',
