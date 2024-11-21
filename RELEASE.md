@@ -11,22 +11,38 @@ Please follow the established format:
 ## Major features and improvements
 
 - Add support for Python 3.12, 3.13 (#2190, #2191)
-- Update Kedro-Viz telemetry for opt-out model (#2022)
-- Introduce `behaviour` prop object with `reFocus` prop (#2161)
+- Ensure consistent flowchart positioning by maintaining uniform layer, node, and edge ordering in Kedro-Viz. (#2185)
+- Improve `--autoreload` file watching filter and replace `watchgod` library with `watchfiles`. (#2134)
+- Check port availability before starting Kedro Viz to prevent unintended redirects when the port is in use. (#2176)
+
 
 ## Bug fixes and other changes
-- Improve `kedro viz build` usage documentation (#2126)
-- Fix unserializable parameters value (#2122)
-- Replace `watchgod` library with `watchfiles` and improve autoreload file watching filter (#2134)
-- Display full dataset type with library prefix in metadata panel (#2136)
-- Enable SQLite WAL mode for Azure ML to fix database locking issues (#2131)
-- Replace `flake8`, `isort`, `pylint` and `black` by `ruff` (#2149)
-- Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info (#2174)
-- Refactor `node-list-tree` component. (#2193)
-- Fix 404 error when accessing the experiment tracking page on the demo site (#2179)
-- Add check for port availability before starting Kedro Viz to prevent unintended browser redirects when the port is already in use (#2176)
+- Fix tag being undefined when pipeline are ordered differently (#2162, #2146)
+- Fix unserializable parameters value. (#2122)
 - Update kedro-viz lite banner icon and message. (#2196)
-- Include Kedro Viz version in telemetry.. (#2194)
+- Display full dataset type with library prefix in metadata panel. (#2136)
+- Introduce `behaviour` prop object with `reFocus` prop. (#2161)
+- Include Kedro Viz version in telemetry. (#2194)
+- Update Kedro-Viz telemetry for opt-out model (#2022)
+- Improve `kedro viz build` usage documentation. (#2126)
+- Updated documentation to include Python version policies and made minor improvements. (#2139)
+- Add a tip on YAML anchors to docs on dataset layers. (#2181)
+- Enable SQLite WAL mode for to fix database locking issues in Azure ML. (#2131)
+- Replace `flake8`, `isort`, `pylint` and `black` by `ruff`. (#2149)
+- Refactor `DatasetStatsHook` to avoid showing error when dataset doesn't have file size info. (#2174)
+- Refactor `node-list-tree` component. (#2193)
+- Refactor response classes. (#2113)
+- Refactor flowchart models into separate files. (#2144)
+- Standardized `z-index` values using variables for easier maintenance. (#2095)
+- Fix 404 error when accessing the experiment tracking page on the demo site. (#2179)
+- Update Kedro-viz architecture diagram. (#2183)
+- Replace CircleCI badge in readme with GitHub actions. (#2124)
+- Add troubleshooting note in CONTRIBUTING.md. (#2110)
+
+## Community contributions
+
+Many thanks to the following Kedroids for contributing PR to this release:
+* [Yury Fedotov](https://github.com/yury-fedotov)
 
 
 # Release 10.0.0
