@@ -7,7 +7,6 @@ import {
   settings,
   sidebarWidth,
   localStorageName,
-  localStorageRunsMetadata,
   params,
   BANNER_KEYS,
 } from '../config';
@@ -62,7 +61,6 @@ export const createInitialState = () => ({
     reFocus: true,
   },
   zoom: {},
-  runsMetadata: {},
 });
 
 export const parseUrlParameters = () => {
@@ -167,18 +165,17 @@ const applyUrlParametersToNonPipelineState = (state, urlParams) => {
  */
 export const mergeLocalStorage = (state) => {
   const localStorageState = loadLocalStorage(localStorageName);
-  const localStorageRunsMetadataState = loadLocalStorage(
-    localStorageRunsMetadata
-  );
+
   Object.keys(localStorageState).forEach((key) => {
     if (!(key in state)) {
       delete localStorageState[key];
     }
   });
+
   const allLocalStorageState = {
     ...localStorageState,
-    ...{ runsMetadata: localStorageRunsMetadataState },
   };
+
   return deepmerge(state, allLocalStorageState);
 };
 
