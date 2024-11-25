@@ -33,6 +33,11 @@ runs:
         path: ~\AppData\Local\pip\Cache
         key: ${{inputs.os}}-python-${{inputs.python-version}}
 
+    - name: Install uv
+      run: |
+        pip install uv
+      shell: bash
+
     - name: Install Kedro and other Python Dependencies
       uses: "./.github/actions/install_kedro_and_python_dependencies"
 
