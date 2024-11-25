@@ -5,11 +5,11 @@ runs:
   steps:
   - name: Install Python dependencies
     run: |-
-      pip install git+https://github.com/kedro-org/kedro@main
-      pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
+      uv pip install git+https://github.com/kedro-org/kedro@main
+      uv pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt -U
     shell: bash
   - name: Echo package versions
     run: |-
       python -V
-      pip freeze
+      uv pip freeze
     shell: bash
