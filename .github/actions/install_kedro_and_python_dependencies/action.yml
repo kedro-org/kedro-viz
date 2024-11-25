@@ -3,6 +3,10 @@ description: Installs Kedro from the main branch and other Python dependencies, 
 runs:
   using: composite
   steps:
+  - name: Install uv
+    run: |-
+      pip install uv
+    shell: bash
   - name: Install Python dependencies
     run: |-
       uv pip install git+https://github.com/kedro-org/kedro@main
