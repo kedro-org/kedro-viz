@@ -122,7 +122,7 @@ def run(
         display_cli_message,
     )
     from kedro_viz.server import run_server
-    
+
     kedro_project_path = None
 
     if load_file:
@@ -166,6 +166,7 @@ def run(
             "pipeline_name": pipeline,
             "env": env,
             "project_path": kedro_project_path,
+            "autoreload": autoreload,
             "include_hooks": include_hooks,
             "package_name": PACKAGE_NAME,
             "extra_params": params,
