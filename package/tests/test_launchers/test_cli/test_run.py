@@ -417,7 +417,7 @@ class TestCliRunViz:
 def test_invalid_load_file_directory(mocker):
     """
     Test that Kedro-Viz raises a ValueError when an invalid filepath
-    is provided to the `--load-file` argument
+    is provided to the `--load-file` argument.
     """
     runner = CliRunner()
 
