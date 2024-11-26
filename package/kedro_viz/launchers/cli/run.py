@@ -123,11 +123,10 @@ def run(
     )
     from kedro_viz.server import run_server
 
-  
     if load_file:
         if not Path(load_file).exists():
             raise ValueError(f"The provided filepath '{load_file}' does not exist.")
-        kedro_project_path = None 
+        kedro_project_path = None
     else:
         kedro_project_path = _find_kedro_project(Path.cwd())
         if kedro_project_path is None:
