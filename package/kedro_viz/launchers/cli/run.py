@@ -122,6 +122,8 @@ def run(
         display_cli_message,
     )
     from kedro_viz.server import run_server
+    
+    kedro_project_path = None
 
     if load_file:
         if not Path(load_file).exists():
@@ -163,8 +165,7 @@ def run(
             "save_file": save_file,
             "pipeline_name": pipeline,
             "env": env,
-            "project_path": kedro_project_path or None,
-            "autoreload": autoreload,
+            "project_path": kedro_project_path,
             "include_hooks": include_hooks,
             "package_name": PACKAGE_NAME,
             "extra_params": params,
