@@ -11,5 +11,4 @@ runs:
   - name: Echo package versions
     run: |-
       python -V
-      pip freeze
     shell: bash
