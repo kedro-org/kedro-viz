@@ -44,10 +44,10 @@ kedro viz run [OPTIONS]
   - Whether to open the Kedro Viz interface in the default browser. The browser will open if the host is `localhost`. Defaults to `True`.
 
 - `--load-file <path>`
-  - Path to load Kedro Viz data from a [directory](https://docs.kedro.org/projects/kedro-viz/en/stable/cli-docs.html#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, Kedro Viz will load the visualisation data from this path instead of generating it from the pipeline
+  - Path to load Kedro Viz data from a [directory](https://docs.kedro.org/projects/kedro-viz/en/latest/cli-docs.html#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, Kedro Viz will load the visualisation data from this path instead of generating it from the pipeline
 
 - `--save-file <path>`
-  - Path to save Kedro Viz data to a [directory](https://docs.kedro.org/projects/kedro-viz/en/stable/cli-docs.html#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, the visualisation data will be saved to this path for later use.
+  - Path to save Kedro Viz data to a [directory](https://docs.kedro.org/projects/kedro-viz/en/latest/cli-docs.html#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, the visualisation data will be saved to this path for later use.
 
 - `--pipeline, -p <pipeline>`
   - Name of the registered pipeline to visualise. If not set, the default pipeline is visualised.
