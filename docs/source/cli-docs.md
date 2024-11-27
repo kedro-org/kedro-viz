@@ -170,15 +170,14 @@ The generated directory structure looks like this:
 
 ```bash
 api/
-├── main/
-│   └── pipeline.json        # Main file containing pipeline structure and metadata
+├── main       # Main file containing pipeline structure and metadata
 ├── nodes/
-│   ├── node1.json           # JSON files for individual nodes
-│   ├── node2.json
+│   ├── node1           # JSON files for individual nodes
+│   ├── node2
 │   └── ...
 ├── pipelines/
-│   ├── pipeline1.json       # JSON files for individual pipelines
-│   ├── pipeline2.json
+│   ├── pipeline1      # JSON files for individual pipelines
+│   ├── pipeline2
 │   └── ...
 ```
 
