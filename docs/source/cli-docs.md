@@ -170,7 +170,7 @@ The generated directory structure looks like this:
 
 ```bash
 api/
-├── main       # Main file containing pipeline structure and metadata
+├── main       # Main file containing pipeline structure
 ├── nodes/
 │   ├── node1           # JSON files for individual nodes
 │   ├── node2
