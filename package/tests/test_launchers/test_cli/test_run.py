@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import call
 
 import pytest
@@ -411,3 +412,23 @@ class TestCliRunViz:
         assert (
             available_port == 4143
         ), "Expected port 4143 to be returned as the available port"
+
+
+def test_invalid_load_file_directory(mocker):
+    """
+    Test that Kedro-Viz raises a ValueError when an invalid filepath
+    is provided to the `--load-file` argument.
+    """
+    runner = CliRunner()
+
+    # Mock the existence of the file path to always return False (invalid path)
+    mocker.patch.object(Path, "exists", return_value=False)
+
+    # Invoke the CLI with an invalid `--load-file` path
+    result = runner.invoke(
+        main.viz_cli, ["viz", "run", "--load-file", "nonexistent_path.json"]
+    )
+
+    assert "The provided filepath 'nonexistent_path.json' does not exist." == str(
+        result.exception
+    )

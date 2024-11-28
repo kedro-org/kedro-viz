@@ -6,6 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 10.2.0 
+
+
+## Major features and improvements
+
+## Bug fixes and other changes
+
+- Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. (#2206)
+
 # Release 10.1.0
 
 ## Major features and improvements
@@ -17,6 +26,7 @@ Please follow the established format:
 
 
 ## Bug fixes and other changes
+
 - Fix tag being undefined when pipeline are ordered differently (#2162, #2146)
 - Fix unserializable parameters value. (#2122)
 - Update kedro-viz lite banner icon and message. (#2196)
