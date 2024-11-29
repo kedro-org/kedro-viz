@@ -279,8 +279,8 @@ The `%run_viz` command supports various optional arguments found in `kedro viz r
 
 * `--host=<host>`: Specify the server host.
 * `--port=<port>`: Set the server port.
-* `--load-file=<file>`: Load a specific pipeline visualisation file.
-* `--save-file=<file>`: Save the current pipeline visualisation to a file.
+* `--load-file=<file>`: Load a specific pipeline visualisation from a [directory](./cli-docs.md#kedro-viz-directory-structure-when-you-save-it-as-a-file).
+* `--save-file=<file>`: Save the current pipeline visualisation to a [directory](./cli-docs.md#kedro-viz-directory-structure-when-you-save-it-as-a-file).
 * `--pipeline=<name>`: Visualise a specific pipeline.
 * `--env=<name>`: Set the environment for the visualisation.
 * `--autoreload`: Enable automatic reloading of the visualisation when source code changes.

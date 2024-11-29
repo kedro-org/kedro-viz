@@ -54,7 +54,7 @@ templates_path = ["_templates"]
 exclude_patterns = []
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
-myst_heading_anchors = 2
+myst_heading_anchors = 7
 
 intersphinx_mapping = {
     "kedro": ("https://docs.kedro.org/en/stable/", None),

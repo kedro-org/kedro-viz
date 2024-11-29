@@ -123,16 +123,21 @@ def run(
     )
     from kedro_viz.server import run_server
 
-    kedro_project_path = _find_kedro_project(Path.cwd())
+    kedro_project_path = None
 
-    if kedro_project_path is None:
-        display_cli_message(
-            "ERROR: Failed to start Kedro-Viz : "
-            "Could not find the project configuration "
-            f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
-            "red",
-        )
-        return
+    if load_file:
+        if not Path(load_file).exists():
+            raise ValueError(f"The provided filepath '{load_file}' does not exist.")
+    else:
+        kedro_project_path = _find_kedro_project(Path.cwd())
+        if kedro_project_path is None:
+            display_cli_message(
+                "ERROR: Failed to start Kedro-Viz : "
+                "Could not find the project configuration "
+                f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
+                "red",
+            )
+            return
 
     installed_version = parse(__version__)
     latest_version = get_latest_version()
