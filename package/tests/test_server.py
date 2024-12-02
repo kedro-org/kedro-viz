@@ -84,30 +84,6 @@ class TestServer:
         # an uvicorn server is launched
         patched_uvicorn_run.assert_called_once()
 
-    def test_run_server_from_project_with_sqlite_store(
-        self,
-        patched_create_api_app_from_project,
-        patched_data_access_manager,
-        patched_uvicorn_run,
-        patched_load_data_with_sqlite_session_store,
-        example_catalog,
-        example_pipelines,
-    ):
-        run_server()
-        # assert that when running server, data are added correctly to the data access manager
-        patched_data_access_manager.add_catalog.assert_called_once_with(
-            example_catalog, example_pipelines
-        )
-        patched_data_access_manager.add_pipelines.assert_called_once_with(
-            example_pipelines
-        )
-        patched_data_access_manager.set_db_session.assert_called_once()
-
-        # correct api app is created
-        patched_create_api_app_from_project.assert_called_once()
-
-        # an uvicorn server is launched
-        patched_uvicorn_run.assert_called_once()
 
     def test_specific_pipeline(
         self,

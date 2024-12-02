@@ -20,7 +20,6 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
 from kedro_viz.integrations.kedro.hooks import DatasetStatsHook
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.models.flowchart.node_metadata import DataNodeMetadata
 from kedro_viz.models.flowchart.nodes import GraphNode
 from kedro_viz.server import populate_data
@@ -42,10 +41,6 @@ def data_access_manager():
 def session_store():
     yield BaseSessionStore("dummy_path", "dummy_session_id")
 
-
-@pytest.fixture
-def sqlite_session_store(tmp_path):
-    yield SQLiteStore(tmp_path, "dummy_session_id")
 
 
 @pytest.fixture
