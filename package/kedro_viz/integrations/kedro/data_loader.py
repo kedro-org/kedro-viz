@@ -72,8 +72,7 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
 
     with KedroSession.create(
@@ -87,7 +86,6 @@ def _load_data_helper(
             session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()
-        session_store = session._store
 
         # patch the AbstractDataset class for a custom
         # implementation to handle kedro.io.core.DatasetError
@@ -109,7 +107,7 @@ def _load_data_helper(
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
         stats_dict = _get_dataset_stats(project_path)
-    return catalog, pipelines_dict, session_store, stats_dict
+    return catalog, pipelines_dict, stats_dict
 
 
 def load_data(
