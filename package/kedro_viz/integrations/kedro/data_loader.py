@@ -133,8 +133,7 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary,and dataset stats dictionary.
     """
     if package_name:
         configure_project(package_name)

@@ -7,57 +7,7 @@ from kedro.io import DataCatalog, Version
 from kedro_datasets import matplotlib, pandas, plotly, tracking
 
 from kedro_viz.api.graphql.types import Run
-from kedro_viz.database import make_db_session_factory
 from kedro_viz.models.experiment_tracking import RunModel, UserRunDetailsModel
-
-
-@pytest.fixture
-def example_run_ids():
-    yield ["2021-11-03T18.24.24.379Z", "2021-11-02T18.24.24.379Z"]
-
-
-@pytest.fixture
-def example_db_session(tmp_path):
-    session_store_location = Path(tmp_path / "session_store.db")
-    session_class = make_db_session_factory(session_store_location)
-    yield session_class
-
-
-@pytest.fixture
-def example_db_session_with_runs(example_db_session, example_run_ids):
-    with example_db_session.begin() as session:
-        for run_id in example_run_ids:
-            session_data = {
-                "package_name": "testsql",
-                "project_path": "/Users/Projects/testsql",
-                "session_id": run_id,
-                "cli": {
-                    "args": [],
-                    "params": {
-                        "from_inputs": [],
-                        "to_outputs": [],
-                        "from_nodes": [],
-                        "to_nodes": [],
-                        "node_names": (),
-                        "runner": None,
-                        "parallel": False,
-                        "is_async": False,
-                        "env": None,
-                        "tag": (),
-                        "load_version": {},
-                        "pipeline": None,
-                        "config": None,
-                        "params": {},
-                    },
-                    "command_name": "run",
-                    "command_path": "kedro run",
-                },
-            }
-            run = RunModel(id=run_id, blob=json.dumps(session_data))
-            user_run_details = UserRunDetailsModel(run_id=run.id, bookmark=True)
-            session.add(run)
-            session.add(user_run_details)
-    yield example_db_session
 
 
 @pytest.fixture

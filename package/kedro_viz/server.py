@@ -10,7 +10,6 @@ from kedro.pipeline import Pipeline
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 
