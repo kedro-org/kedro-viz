@@ -84,7 +84,6 @@ class TestServer:
         # an uvicorn server is launched
         patched_uvicorn_run.assert_called_once()
 
-
     def test_specific_pipeline(
         self,
         patched_data_access_manager,

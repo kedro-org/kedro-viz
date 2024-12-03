@@ -42,7 +42,6 @@ def session_store():
     yield BaseSessionStore("dummy_path", "dummy_session_id")
 
 
-
 @pytest.fixture
 def example_stats_dict():
     yield {
