@@ -6,7 +6,6 @@ from unittest import mock
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
-from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog, MemoryDataset, Version
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -35,11 +34,6 @@ def setup_kedro_project(tmp_path):
 @pytest.fixture
 def data_access_manager():
     yield DataAccessManager()
-
-
-@pytest.fixture
-def session_store():
-    yield BaseSessionStore("dummy_path", "dummy_session_id")
 
 
 @pytest.fixture
@@ -484,7 +478,6 @@ def example_api(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store: BaseSessionStore,
     example_stats_dict: Dict,
     mocker,
 ):
@@ -493,7 +486,6 @@ def example_api(
         data_access_manager,
         example_catalog,
         example_pipelines,
-        session_store,
         example_stats_dict,
     )
     mocker.patch(
@@ -512,14 +504,11 @@ def example_api_no_default_pipeline(
     data_access_manager: DataAccessManager,
     example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store: BaseSessionStore,
     mocker,
 ):
     del example_pipelines["__default__"]
     api = apps.create_api_app_from_project(mock.MagicMock())
-    populate_data(
-        data_access_manager, example_catalog, example_pipelines, session_store, {}
-    )
+    populate_data(data_access_manager, example_catalog, example_pipelines, {})
     mocker.patch(
         "kedro_viz.api.rest.responses.pipelines.data_access_manager",
         new=data_access_manager,
@@ -536,7 +525,6 @@ def example_api_for_edge_case_pipelines(
     data_access_manager: DataAccessManager,
     edge_case_example_pipelines: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -552,7 +540,6 @@ def example_api_for_edge_case_pipelines(
         data_access_manager,
         example_catalog,
         edge_case_example_pipelines,
-        session_store,
         {},
     )
     mocker.patch(
@@ -571,7 +558,6 @@ def example_api_for_pipelines_with_additional_tags(
     data_access_manager: DataAccessManager,
     example_pipelines_with_additional_tags: Dict[str, Pipeline],
     example_catalog: DataCatalog,
-    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -587,7 +573,6 @@ def example_api_for_pipelines_with_additional_tags(
         data_access_manager,
         example_catalog,
         example_pipelines_with_additional_tags,
-        session_store,
         {},
     )
     mocker.patch(
@@ -606,7 +591,6 @@ def example_transcoded_api(
     data_access_manager: DataAccessManager,
     example_transcoded_pipelines: Dict[str, Pipeline],
     example_transcoded_catalog: DataCatalog,
-    session_store: BaseSessionStore,
     mocker,
 ):
     api = apps.create_api_app_from_project(mock.MagicMock())
@@ -614,7 +598,6 @@ def example_transcoded_api(
         data_access_manager,
         example_transcoded_catalog,
         example_transcoded_pipelines,
-        session_store,
         {},
     )
     mocker.patch(
