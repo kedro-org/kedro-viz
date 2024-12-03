@@ -13,7 +13,6 @@ from unittest.mock import patch
 from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
-from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -120,7 +119,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.

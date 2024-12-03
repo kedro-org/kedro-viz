@@ -48,7 +48,7 @@ def load_and_populate_data(
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
-    catalog, pipelines, stats_dict, _ = kedro_data_loader.load_data(
+    catalog, pipelines, stats_dict = kedro_data_loader.load_data(
         path, env, include_hooks, package_name, extra_params, is_lite
     )
 
