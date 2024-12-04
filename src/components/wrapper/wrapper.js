@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
-import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { isRunningLocally } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
@@ -59,7 +59,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               />
             )}
             <Switch>
-              <Route exact path={sanitizedPathname()}>
+              <Route exact path="/">
                 <FlowChartWrapper />
                 <FeatureHints />
               </Route>

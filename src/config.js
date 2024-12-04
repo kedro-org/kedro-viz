@@ -1,5 +1,3 @@
-import { sanitizedPathname } from './utils';
-
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
 export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
@@ -112,15 +110,14 @@ export const params = {
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
-const pathname = sanitizedPathname();
 
 export const routes = {
   flowchart: {
-    main: pathname,
-    focusedNode: `${pathname}?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `${pathname}?${activePipeline}&${params.selected}=:id`,
-    selectedName: `${pathname}?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `${pathname}?${activePipeline}`,
+    main: '/',
+    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `/?${activePipeline}`,
   },
 };
 
