@@ -6,7 +6,7 @@
 
 </p>
 
-Kedro-Viz is an interactive development tool for visualising data science pipelines built with [Kedro](https://github.com/kedro-org/kedro).
+Kedro-Viz is an interactive development tool for visualising data science pipelines built with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also enables users to view and compare different experiment runs within their Kedro project.
 
 Kedro-Viz features include:
 
@@ -18,6 +18,7 @@ Kedro-Viz features include:
 🎨 Rich metadata side panel to display parameters, plots, etc.     
 📊 Support for all types of [Plotly charts](https://plotly.com/javascript/).   
 ♻️ Autoreload on code change.   
+🧪 Support for experiment tracking and comparing runs in a Kedro project.
 
 Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">live demo</a> for a preview of Kedro-Viz.
 
@@ -29,6 +30,7 @@ kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
 slice_a_pipeline
+experiment_tracking
 ```
 
 ```{toctree}
