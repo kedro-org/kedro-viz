@@ -3,7 +3,7 @@
 kedro >=0.18.0
 kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, plotly.JSONDataset]>=2.1.0
 kedro-telemetry>=0.1.1  # for testing telemetry integration
-bandit~=1.7
+bandit~=1.8
 behave~=1.2
 boto3~=1.34
 matplotlib~=3.9
