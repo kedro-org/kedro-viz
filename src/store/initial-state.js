@@ -172,11 +172,7 @@ export const mergeLocalStorage = (state) => {
     }
   });
 
-  const allLocalStorageState = {
-    ...localStorageState,
-  };
-
-  return deepmerge(state, allLocalStorageState);
+  return deepmerge(state, localStorageState);
 };
 
 /**
