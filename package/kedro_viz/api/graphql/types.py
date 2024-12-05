@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import strawberry
 
+
 @strawberry.type(description="Installed and latest Kedro-Viz versions")
 class Version:
     installed: str
