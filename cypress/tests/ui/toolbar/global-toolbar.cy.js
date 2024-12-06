@@ -20,17 +20,6 @@ describe('Global Toolbar', () => {
     cy.get('.details__tabs').should('not.exist');
   });
 
-  it('verifies that users can access the experiment tracking page through the experiment tracking button, when in the flowchart view. #TC-2', () => {
-    cy.get('[data-test="global-toolbar-experiments-btn"]').click();
-    cy.location('pathname').should('eq', '/experiment-tracking');
-
-    // should exist
-    cy.get('.details__tabs').should('exist');
-
-    // should not exist
-    cy.get('.pipeline-wrapper').should('not.exist');
-  });
-
   it('verifies that users can change the theme from light to dark theme, or dark to light theme. #TC-3', () => {
     // Alias
     cy.get('[data-test*="global-toolbar-theme-btn-"]').as('toggleTheme');

@@ -173,24 +173,6 @@ describe('Flowchart DAG', () => {
     ).should('exist');
   });
 
-  it('verifies that users can navigate to experiment tracking by clicking on Open in Experiment Tracking button on the metadata panel. #TC-32', () => {
-    const nodeToClickText = 'R2 Score';
-
-    // Assert before action
-    cy.location('pathname').should('not.eq', '/experiment-tracking');
-    cy.location('search').should('not.eq', '?view=Metrics');
-
-    // Action
-    cy.contains('text', nodeToClickText).click({ force: true });
-    cy.get('.pipeline-metadata__link').click();
-
-    // Assert after action
-    cy.location('pathname').should('eq', '/experiment-tracking');
-    cy.location('search').should('eq', '?view=Metrics');
-    cy.get('.details-mainframe').should('exist');
-    cy.get('.details__tabs').should('exist');
-  });
-
   it('verifies that users see an error message when there are no nodes/pipelines. #TC-33', () => {
     // Intercept the network request to mock with a fixture
     cy.__interceptRest__('/api/main', 'GET', '/mock/emptyDataset.json');
