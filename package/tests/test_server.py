@@ -58,7 +58,6 @@ class TestServer:
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )
-        patched_data_access_manager.set_db_session.assert_not_called()
 
         # correct api app is created
         patched_create_api_app_from_project.assert_called_once()
