@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
-import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { isRunningLocally } from '../../utils';
 import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
@@ -11,7 +11,6 @@ import { GET_VERSIONS } from '../../apollo/queries';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -60,12 +59,9 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               />
             )}
             <Switch>
-              <Route exact path={sanitizedPathname()}>
+              <Route exact path="/">
                 <FlowChartWrapper />
                 <FeatureHints />
-              </Route>
-              <Route path={`${sanitizedPathname()}experiment-tracking`}>
-                <ExperimentWrapper />
               </Route>
             </Switch>
           </GraphQLProvider>
