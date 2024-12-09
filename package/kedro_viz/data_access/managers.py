@@ -105,7 +105,6 @@ class DataAccessManager:
 
         self.catalog.set_catalog(catalog)
 
-
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
         into the relevant repositories.
@@ -389,9 +388,9 @@ class DataAccessManager:
         if parameters_node.is_all_parameters():
             task_node.parameters = parameters_node.parameter_value
         else:
-            task_node.parameters[parameters_node.parameter_name] = (
-                parameters_node.parameter_value
-            )
+            task_node.parameters[
+                parameters_node.parameter_name
+            ] = parameters_node.parameter_value
 
     def get_default_selected_pipeline(self) -> RegisteredPipeline:
         """Return the default selected pipeline ID to display on first page load.
