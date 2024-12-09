@@ -19,14 +19,10 @@ import {
 import { toggleNodeClicked } from '../../actions/nodes';
 import { toggleCode, togglePlotModal } from '../../actions';
 import getShortType from '../../utils/short-type';
-import {
-  useGeneratePathname,
-  useGeneratePathnameForExperimentTracking,
-} from '../../utils/hooks/use-generate-pathname';
+import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
 
 import './styles/metadata.scss';
 import MetaDataStats from './metadata-stats';
-import { isRunningLocally } from '../../utils';
 
 /**
  * Shows node meta data
@@ -43,8 +39,6 @@ const MetaData = ({
   showDatasetPreviews,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
-  const { toExperimentTrackingPath, toMetricsViewPath } =
-    useGeneratePathnameForExperimentTracking();
 
   // Hide code panel when selected metadata changes
   useEffect(() => onToggleCode(false), [metadata, onToggleCode]);
@@ -321,23 +315,6 @@ const MetaData = ({
                   </button>
                 </>
               )}
-              {isRunningLocally()
-                ? hasTrackingData && (
-                    <button
-                      className="pipeline-metadata__link"
-                      onClick={
-                        isMetricsTrackingDataset
-                          ? toMetricsViewPath
-                          : toExperimentTrackingPath
-                      }
-                    >
-                      <ExpandIcon className="pipeline-metadata__link-icon"></ExpandIcon>
-                      <span className="pipeline-metadata__link-text">
-                        Open in Experiment Tracking
-                      </span>
-                    </button>
-                  )
-                : null}
               {hasTablePreview && (
                 <>
                   <div className="pipeline-metadata__preview">

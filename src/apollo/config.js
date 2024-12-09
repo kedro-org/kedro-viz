@@ -7,10 +7,9 @@ import {
   Observable,
 } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { sanitizedPathname } from '../utils';
 import loadJsonData from '../store/load-data';
 
-const apiBaseUrl = `${sanitizedPathname()}graphql`;
+const apiBaseUrl = `/graphql`;
 
 // HTTP link for GraphQL API calls
 const httpLink = new HttpLink({
