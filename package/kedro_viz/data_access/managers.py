@@ -66,12 +66,7 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.runs = {}
         self.dataset_stats = {}
-
-    def set_db_session(self, db_session_class: sessionmaker):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
 
     def resolve_dataset_factory_patterns(
         self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
