@@ -201,7 +201,7 @@ export const isRunningLocally = () => {
     'kedro-org',
   ];
 
-  const hostname = window.location.hostname;
+  const hostname = window.location.hostname.toLowerCase();
 
   // Check if hostname matches known hosts
   if (hosts.some((host) => hostname.includes(host))) {
