@@ -40,9 +40,7 @@ from .repositories import (
     GraphNodesRepository,
     ModularPipelinesRepository,
     RegisteredPipelinesRepository,
-    RunsRepository,
     TagsRepository,
-    TrackingDatasetsRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -68,13 +66,7 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.runs = RunsRepository()
-        self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
-
-    def set_db_session(self, db_session_class: sessionmaker):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
 
     def resolve_dataset_factory_patterns(
         self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
@@ -107,10 +99,6 @@ class DataAccessManager:
         self.resolve_dataset_factory_patterns(catalog, pipelines)
 
         self.catalog.set_catalog(catalog)
-
-        for dataset_name, dataset in self.catalog.as_dict().items():
-            if self.tracking_datasets.is_tracking_dataset(dataset):
-                self.tracking_datasets.add_tracking_dataset(dataset_name, dataset)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
