@@ -126,7 +126,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
-    dispatch(loadInitialPipelineData());
   },
 });
 
