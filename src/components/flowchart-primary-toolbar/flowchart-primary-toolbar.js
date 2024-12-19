@@ -7,7 +7,6 @@ import {
   toggleTextLabels,
   toggleExpandAllPipelines,
 } from '../../actions';
-import { loadInitialPipelineData } from '../../actions/pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
