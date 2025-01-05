@@ -188,22 +188,38 @@ export const formatNumberWithCommas = (number) => {
 };
 
 /**
- * Test if Kedro-Viz is running on our known local ports.
+ * Test if Kedro-Viz is running on our known local ports or private IP ranges.
  * @returns {Boolean} True if the app is running locally.
  */
 export const isRunningLocally = () => {
   const hosts = [
     'localhost',
     '127.0.0.1',
+    '0.0.0.0',
     'demo.kedro.org',
     'gitpod',
     'kedro-org',
   ];
-  const itemFound = hosts.some((host) =>
-    window.location.hostname.includes(host)
-  );
 
-  return itemFound;
+  const hostname = window.location.hostname.toLowerCase();
+
+  // Check if hostname matches known hosts
+  if (hosts.some((host) => hostname.includes(host))) {
+    return true;
+  }
+
+  // Regular expressions for private IP ranges
+  const privateIpRanges = [
+    // 10.0.0.0 – 10.255.255.255
+    /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
+    // 172.16.0.0 – 172.31.255.255
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}$/,
+    // 192.168.0.0 – 192.168.255.255
+    /^192\.168\.\d{1,3}\.\d{1,3}$/,
+  ];
+
+  // Check if hostname is a private IP address
+  return privateIpRanges.some((regex) => regex.test(hostname));
 };
 
 /**
