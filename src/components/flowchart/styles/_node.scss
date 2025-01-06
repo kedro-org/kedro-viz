@@ -143,6 +143,14 @@
   }
 }
 
+.pipeline-node--sliced-pipeline-dependency {
+  .pipeline-node__bg {
+    stroke-width: 2px;
+    fill: colors.$grey-800;
+    stroke: colors.$grey-800;
+  }
+}
+
 .pipeline-node--collapsed-hint {
   .pipeline-node__bg {
     stroke: var(--parameter-accent);

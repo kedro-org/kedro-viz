@@ -155,6 +155,7 @@ export const drawNodes = function (changed) {
     from: slicedPipelineFromId,
     to: slicedPipelineToId,
     range,
+    dependencies: slicedPipelineDependencies,
   } = this.state.slicedPipelineState;
 
   const slicedPipelineFromTo =
@@ -278,6 +279,13 @@ export const drawNodes = function (changed) {
           !isSlicingPipelineApplied &&
           slicedPipelineFromTo &&
           slicedPipelineFromTo[node.id]
+      )
+      .classed(
+        'pipeline-node--sliced-pipeline-dependency',
+        (node) =>
+          !isSlicingPipelineApplied &&
+          slicedPipelineDependencies &&
+          slicedPipelineDependencies.includes(node.id)
       )
       .classed(
         'pipeline-node--collapsed-hint',

@@ -25,7 +25,10 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
-import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
+import {
+  getSlicedPipeline,
+  getSlicedPipelineDependencies,
+} from '../../selectors/sliced-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -79,6 +82,7 @@ export class FlowChart extends Component {
         from: null,
         to: null,
         range: [],
+        dependencies: [],
       },
       showSlicingNotification: false,
       resetSlicingPipelineBtnClicked: false,
@@ -127,13 +131,14 @@ export class FlowChart extends Component {
   /**
    *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
    */
-  updateSlicedPipelineState(from, to, range) {
+  updateSlicedPipelineState(from, to, range, dependencies) {
     this.setState({
       slicedPipelineState: {
         ...this.state.slicedPipelineState,
         from,
         to,
         range,
+        dependencies,
       },
     });
   }
@@ -156,9 +161,14 @@ export class FlowChart extends Component {
       // Reset local state to null if the redux state's SlicedPipeline is empty,
       // but the local state still has 'from' and 'to' values defined.
       if (isSlicedPipelineEmpty && isSlicedPipelineStateDefined) {
-        this.updateSlicedPipelineState(null, null, []);
+        this.updateSlicedPipelineState(null, null, [], []);
       } else {
-        this.updateSlicedPipelineState(from, to, this.props.slicedPipeline);
+        this.updateSlicedPipelineState(
+          from,
+          to,
+          this.props.slicedPipeline,
+          this.props.slicedPipelineDependencies
+        );
       }
     }
 
@@ -555,7 +565,7 @@ export class FlowChart extends Component {
 
   resetSlicedPipeline = () => {
     this.props.onResetSlicePipeline();
-    this.updateSlicedPipelineState(null, null, []);
+    this.updateSlicedPipelineState(null, null, [], []);
     this.props.toSelectedPipeline();
   };
 
@@ -572,9 +582,9 @@ export class FlowChart extends Component {
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
     toSelectedNode(node);
 
-    const { from, to, range } = this.state.slicedPipelineState;
+    const { from, to, range, dependencies } = this.state.slicedPipelineState;
 
-    this.updateSlicedPipelineState(id, to, range);
+    this.updateSlicedPipelineState(id, to, range, dependencies);
 
     if (!this.props.isSlicingPipelineApplied) {
       // Show notification only when slicing is not applied
@@ -586,7 +596,7 @@ export class FlowChart extends Component {
     if (from && to && !this.props.isSlicingPipelineApplied) {
       this.props.onResetSlicePipeline();
       // Also, prepare the "from" node for the next slicing action
-      this.updateSlicedPipelineState(id, null, []);
+      this.updateSlicedPipelineState(id, null, [], []);
       // Hide notification
       this.setState({ showSlicingNotification: true });
     }
@@ -1005,6 +1015,7 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   slicedPipeline: getSlicedPipeline(state),
   isSlicingPipelineApplied: state.slice.apply,
+  slicedPipelineDependencies: getSlicedPipelineDependencies(state),
   visibleSlicing: state.visible.slicing,
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
