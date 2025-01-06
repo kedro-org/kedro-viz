@@ -1,19 +1,25 @@
 import { createSelector } from 'reselect';
 
-const getSlicedPipelineState = (state) => state.slice;
-const getNodesRunCommand = (state) => state.node.runCommand;
+const getSlicedPipeline = (state) => state.slice;
+const getNodesNames = (state) => state.node.fullName;
+const getNodesTypes = (state) => state.node.type;
 
 export const getRunCommand = createSelector(
-  [getSlicedPipelineState, getNodesRunCommand],
-  (slicedPipelineState, nodeRunCommand) => {
-    const { from, to } = slicedPipelineState;
+  [getSlicedPipeline, getNodesNames, getNodesTypes],
+  (slicedPipeline, nodesNames, nodesTypes) => {
+    const { from, to } = slicedPipeline;
 
     if (!from || !to) {
       return null;
     }
 
-    const slicingPipelineCommand =
-      nodeRunCommand[to] || 'please define a run command for this node';
-    return slicingPipelineCommand;
+    const fromNodeName = nodesNames[from];
+    const toNodeName = nodesNames[to];
+    const fromNodeType = nodesTypes[from];
+    const toNodeType = nodesTypes[to];
+    // Determine the correct flag based on the node type
+    const fromFlag = fromNodeType === 'data' ? '--from-inputs' : '--from-nodes';
+    const toFlag = toNodeType === 'data' ? '--to-outputs' : '--to-nodes';
+    return `kedro run ${fromFlag}=${fromNodeName} ${toFlag}=${toNodeName}`;
   }
 );
