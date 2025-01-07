@@ -18,7 +18,7 @@ ruff==0.7.0
 sqlalchemy-stubs~=0.4
 strawberry-graphql[cli]>=0.99.0, <1.0
 trufflehog~=2.2
-httpx~=0.28.0
+httpx~=0.28.1
 pathspec>=0.12.1
 
 # mypy
