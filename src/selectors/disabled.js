@@ -24,7 +24,6 @@ const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 const getSliceApply = (state) => state.slice.apply;
-const getExpandAllPipelines = (state) => state.expandAllPipelines;
 
 /**
  * Return all inputs and outputs of currently visible modular pipelines
@@ -151,7 +150,7 @@ export const getNodeDisabled = createSelector(
     getDisabledModularPipeline,
     getSlicedPipeline,
     getSliceApply,
-    getExpandAllPipelines,
+    getModularPipelinesTree,
   ],
   (
     nodeIDs,
@@ -166,23 +165,32 @@ export const getNodeDisabled = createSelector(
     disabledModularPipeline,
     slicedPipeline,
     isSliceApplied,
-    expandAllPipelines
+    modularPipelinesTree
   ) =>
     arrayToObject(nodeIDs, (id) => {
+      const rootChildren = modularPipelinesTree?.['__root__']?.children || [];
+      const isRootChild = rootChildren.some((child) => child.id === id);
+
+      // Check the node's type:
+      const isTaskNode = nodeType[id] === 'task';
+
+      if (isRootChild && isTaskNode) {
+        // Hardcode "not disabled":
+        // so it can never vanish even when pipelines collapse
+        console.log('[DEBUG] Overriding root-task node => enabling node', id);
+        return false;
+      }
+
       let isDisabledViaSlicedPipeline = false;
       if (isSliceApplied && slicedPipeline.length > 0) {
         isDisabledViaSlicedPipeline = !slicedPipeline.includes(id);
       }
-      let isDisabledViaSidebar = false;
-      let isDisabledViaModularPipeline = false;
-      if (!expandAllPipelines) {
-        isDisabledViaSidebar =
-          !visibleSidebarNodes[id] &&
-          !visibleModularPipelineInputsOutputs.has(id);
 
-        isDisabledViaModularPipeline = nodesDisabledViaModularPipeline[id];
-      }
+      const isDisabledViaSidebar =
+        !visibleSidebarNodes[id] &&
+        !visibleModularPipelineInputsOutputs.has(id);
 
+      const isDisabledViaModularPipeline = nodesDisabledViaModularPipeline[id];
       return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],

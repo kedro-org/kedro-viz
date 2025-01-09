@@ -7,6 +7,7 @@ import {
   toggleTextLabels,
   toggleExpandAllPipelines,
 } from '../../actions';
+import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
@@ -23,6 +24,7 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
  * @param {Boolean} textLabels Whether text labels are displayed
  */
 export const FlowchartPrimaryToolbar = ({
+  modularPipelineIDs,
   disableLayerBtn,
   onToggleExportModal,
   onToggleLayers,
@@ -33,12 +35,19 @@ export const FlowchartPrimaryToolbar = ({
   display,
   visibleLayers,
   expandedPipelines,
+  onToggleExpandPipelines,
   onToggleExpandAllPipelines,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
+  console.log(modularPipelineIDs);
+
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
+
+    // Pass an empty array when collapsing all pipelines
+    onToggleExpandPipelines(isExpanded ? [] : modularPipelineIDs);
+
     onToggleExpandAllPipelines(isExpanded);
     toSetQueryParam('expandAllPipelines', isExpanded.toString());
   };
@@ -102,6 +111,7 @@ export const FlowchartPrimaryToolbar = ({
 };
 
 export const mapStateToProps = (state) => ({
+  modularPipelineIDs: state?.modularPipeline?.ids,
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   visible: state.visible,
@@ -122,6 +132,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));
+  },
+  onToggleExpandPipelines: (ids) => {
+    dispatch(toggleModularPipelinesExpanded(ids));
   },
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
