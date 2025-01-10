@@ -175,9 +175,6 @@ export const getNodeDisabled = createSelector(
       const isTaskNode = nodeType[id] === 'task';
 
       if (isRootChild && isTaskNode) {
-        // Hardcode "not disabled":
-        // so it can never vanish even when pipelines collapse
-        console.log('[DEBUG] Overriding root-task node => enabling node', id);
         return false;
       }
 
