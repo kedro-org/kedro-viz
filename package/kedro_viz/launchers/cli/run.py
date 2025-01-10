@@ -159,8 +159,8 @@ def run(  # noqa: PLR0915
             hooks_message = "INFO: Running Kedro-Viz with hooks."
         else:
             hooks_message = (
-                "INFO: Running Kedro-Viz without hooks. If you spot missing functionality, "
-                "try `kedro viz run --include-hooks`."
+                "INFO: Running Kedro-Viz without hooks. "
+                "Try `kedro viz run --include-hooks` to include hook functionality."
             )
 
         display_cli_message(hooks_message, "yellow")

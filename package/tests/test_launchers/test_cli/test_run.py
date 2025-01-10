@@ -292,7 +292,8 @@ class TestCliRunViz:
             runner.invoke(main.viz_cli, ["viz", "run"])
 
         assert any(
-            "INFO: Running Kedro-Viz without hooks. If you spot missing functionality, try `kedro viz run --include-hooks`."
+            "INFO: Running Kedro-Viz without hooks. "
+            "Try `kedro viz run --include-hooks` to include hook functionality."
             in call.args[0]
             for call in mock_click_echo.mock_calls
         ), "Expected message about running without hooks not found."
