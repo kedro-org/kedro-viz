@@ -40,8 +40,6 @@ export const FlowchartPrimaryToolbar = ({
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
-  console.log(modularPipelineIDs);
-
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
 
