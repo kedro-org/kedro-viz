@@ -44,7 +44,7 @@ export const FlowchartPrimaryToolbar = ({
     const isExpanded = !expandedPipelines;
 
     // Pass an empty array when collapsing all pipelines
-    onToggleExpandPipelines(isExpanded ? [] : modularPipelineIDs);
+    onToggleExpandPipelines(isExpanded ? modularPipelineIDs : []);
 
     onToggleExpandAllPipelines(isExpanded);
     toSetQueryParam('expandAllPipelines', isExpanded.toString());
