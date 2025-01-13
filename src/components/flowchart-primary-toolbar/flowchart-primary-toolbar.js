@@ -42,10 +42,12 @@ export const FlowchartPrimaryToolbar = ({
 
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
-
+    // Exclude root from modularPipelineIDs
+    const filteredModularPipelineIDs = modularPipelineIDs.filter(
+      (id) => id !== '__root__'
+    );
     // Pass an empty array when collapsing all pipelines
-    onToggleExpandPipelines(isExpanded ? modularPipelineIDs : []);
-
+    onToggleExpandPipelines(isExpanded ? filteredModularPipelineIDs : []);
     onToggleExpandAllPipelines(isExpanded);
     toSetQueryParam('expandAllPipelines', isExpanded.toString());
   };

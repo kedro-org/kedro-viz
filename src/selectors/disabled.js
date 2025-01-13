@@ -24,7 +24,6 @@ const getNodeLayer = (state) => state.node.layer;
 const getNodeModularPipelines = (state) => state.node.modularPipelines;
 const getVisibleSidebarNodes = (state) => state.modularPipeline.visible;
 const getSliceApply = (state) => state.slice.apply;
-const modularPipelineFocusMode = (state) => state.modularPipelineFocusMode;
 
 /**
  * Return all inputs and outputs of currently visible modular pipelines
@@ -151,8 +150,6 @@ export const getNodeDisabled = createSelector(
     getDisabledModularPipeline,
     getSlicedPipeline,
     getSliceApply,
-    modularPipelineFocusMode,
-    getModularPipelinesTree,
   ],
   (
     nodeIDs,
@@ -166,21 +163,9 @@ export const getNodeDisabled = createSelector(
     visibleModularPipelineInputsOutputs,
     disabledModularPipeline,
     slicedPipeline,
-    isSliceApplied,
-    isModularPipelineFocusMode,
-    modularPipelinesTree
+    isSliceApplied
   ) =>
     arrayToObject(nodeIDs, (id) => {
-      const rootChildren = modularPipelinesTree?.['__root__']?.children || [];
-      const isRootChild = rootChildren.some((child) => child.id === id);
-
-      // Check the node's type:
-      const isTaskNode = nodeType[id] === 'task';
-
-      if (!isModularPipelineFocusMode && isRootChild && isTaskNode) {
-        return false;
-      }
-
       let isDisabledViaSlicedPipeline = false;
       if (isSliceApplied && slicedPipeline.length > 0) {
         isDisabledViaSlicedPipeline = !slicedPipeline.includes(id);
