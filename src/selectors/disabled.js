@@ -176,6 +176,7 @@ export const getNodeDisabled = createSelector(
         !visibleModularPipelineInputsOutputs.has(id);
 
       const isDisabledViaModularPipeline = nodesDisabledViaModularPipeline[id];
+
       return [
         nodeDisabledNode[id],
         nodeDisabledTag[id],
