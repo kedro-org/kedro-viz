@@ -20,7 +20,7 @@ from pathlib import Path
 from click import secho, style
 from kedro_viz import __version__ as release
 
-from package import kedro_viz
+import kedro_viz
 
 # -- Project information -----------------------------------------------------
 
