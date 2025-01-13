@@ -84,7 +84,7 @@ _VIZ_PROCESSES: Dict[str, int] = {}
     is_flag=True,
     help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
-def run(
+def run(  # noqa: PLR0915
     host,
     port,
     browser,
@@ -155,6 +155,16 @@ def run(
     port = _find_available_port(host, port)
 
     try:
+        if include_hooks:
+            hooks_message = "INFO: Running Kedro-Viz with hooks."
+        else:
+            hooks_message = (
+                "INFO: Running Kedro-Viz without hooks. "
+                "Try `kedro viz run --include-hooks` to include hook functionality."
+            )
+
+        display_cli_message(hooks_message, "yellow")
+
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
             _VIZ_PROCESSES[port].terminate()
 
