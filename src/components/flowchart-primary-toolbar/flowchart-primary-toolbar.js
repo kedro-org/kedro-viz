@@ -7,7 +7,10 @@ import {
   toggleTextLabels,
   toggleExpandAllPipelines,
 } from '../../actions';
-import { toggleModularPipelinesExpanded } from '../../actions/modular-pipelines';
+import {
+  toggleModularPipelinesExpanded,
+  toggleAllModularPipelinesExpanded,
+} from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
@@ -42,12 +45,6 @@ export const FlowchartPrimaryToolbar = ({
 
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
-    // Exclude root from modularPipelineIDs
-    const filteredModularPipelineIDs = modularPipelineIDs.filter(
-      (id) => id !== '__root__'
-    );
-    // Pass an empty array when collapsing all pipelines
-    onToggleExpandPipelines(isExpanded ? filteredModularPipelineIDs : []);
     onToggleExpandAllPipelines(isExpanded);
     toSetQueryParam('expandAllPipelines', isExpanded.toString());
   };
@@ -138,6 +135,7 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
+    dispatch(toggleAllModularPipelinesExpanded(isExpanded));
   },
 });
 
