@@ -32,7 +32,7 @@ def mock_click_echo(mocker):
 
 @pytest.fixture
 def mock_project_path(mocker):
-    mock_path = "/tmp/project_path"
+    mock_path = Path("/tmp/project_path")
     mocker.patch("pathlib.Path.cwd", return_value=mock_path)
     return mock_path
 
@@ -258,6 +258,45 @@ class TestCliRunViz:
         ]
 
         mock_click_echo.assert_has_calls(mock_click_echo_calls)
+
+    def test_kedro_viz_command_logs_hooks_message(
+        self, mocker, mock_project_path, mock_click_echo
+    ):
+        """
+        Test that Kedro-Viz logs the correct message when
+        the `--include-hooks` flag is used or omitted.
+        """
+        # Mock server setup and readiness checks
+        mocker.patch("kedro_viz.server.run_server")
+        mocker.patch(
+            "kedro_viz.launchers.utils._wait_for.__defaults__", (True, 1, True, 1)
+        )
+        mocker.patch(
+            "kedro_viz.launchers.utils._find_kedro_project",
+            return_value=mock_project_path,
+        )
+
+        runner = CliRunner()
+
+        # Test with --include-hooks
+        with runner.isolated_filesystem():
+            runner.invoke(main.viz_cli, ["viz", "run", "--include-hooks"])
+
+        assert any(
+            "INFO: Running Kedro-Viz with hooks." in call.args[0]
+            for call in mock_click_echo.mock_calls
+        ), "Expected message about running with hooks not found."
+
+        # Test without --include-hooks
+        with runner.isolated_filesystem():
+            runner.invoke(main.viz_cli, ["viz", "run"])
+
+        assert any(
+            "INFO: Running Kedro-Viz without hooks. "
+            "Try `kedro viz run --include-hooks` to include hook functionality."
+            in call.args[0]
+            for call in mock_click_echo.mock_calls
+        ), "Expected message about running without hooks not found."
 
     def test_kedro_viz_command_should_log_outdated_version(
         self, mocker, mock_http_response, mock_click_echo, mock_project_path
