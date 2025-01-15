@@ -23,6 +23,7 @@ from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLi
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata
+from kedro_viz.utils import NotebookUser
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +111,20 @@ def _load_data_helper(
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
         stats_dict = _get_dataset_stats(project_path)
+    return catalog, pipelines_dict, session_store, stats_dict
+
+
+def load_data_for_notebook_users(notebook_user: NotebookUser) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+
+    # Create a dummy data catalog with all datasets as memory datasets
+    catalog = DataCatalog()
+    session_store = None
+    stats_dict = {}
+
+    # create a dictionary of pipelines, for now we will have single pipeline
+    # i.e., a __default__ pipeline
+
+    pipelines_dict = {"__default__": notebook_user.pipeline[0]}
     return catalog, pipelines_dict, session_store, stats_dict
 
 

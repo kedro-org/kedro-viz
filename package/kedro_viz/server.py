@@ -15,6 +15,7 @@ from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
+from kedro_viz.utils import NotebookUser
 
 DEV_PORT = 4142
 
@@ -42,6 +43,13 @@ def populate_data(
     data_access_manager.add_dataset_stats(stats_dict)
 
     data_access_manager.add_pipelines(pipelines)
+
+
+def load_and_populate_data_for_notebook_users(notebook_user: NotebookUser):
+    """Loads pipeline data and populates Kedro Viz Repositories"""
+    catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data_for_notebook_users(notebook_user)
+    # Creates data repositories which are used by Kedro Viz Backend APIs
+    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 
 
 def load_and_populate_data(
@@ -83,6 +91,7 @@ def run_server(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
+    notebook_user: NotebookUser = None
 ):
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -117,7 +126,12 @@ def run_server(
 
     path = Path(project_path) if project_path else Path.cwd()
 
-    if load_file is None:
+    if notebook_user:
+        load_and_populate_data_for_notebook_users(notebook_user)
+        app = apps.create_api_app_for_notebook()
+    elif load_file:
+        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
+    else:
         load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
@@ -131,8 +145,6 @@ def run_server(
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
-    else:
-        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 

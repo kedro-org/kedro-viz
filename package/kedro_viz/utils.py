@@ -3,6 +3,9 @@
 import hashlib
 from typing import Tuple
 
+from kedro.io.data_catalog import DataCatalog
+from kedro.pipeline import Pipeline
+
 TRANSCODING_SEPARATOR = "@"
 
 
@@ -57,3 +60,8 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+
+class NotebookUser:
+    def __init__(self, pipeline: Pipeline = None, catalog: DataCatalog = None):
+        self.pipeline = pipeline,
+        self.catalog = catalog
