@@ -7,6 +7,7 @@ import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
+import { getVersion } from '../../utils';
 
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
@@ -29,11 +30,30 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   const [latestVersion, setLatestVersion] = useState(null);
 
   useEffect(() => {
-    if (versionData) {
-      setIsOutdated(versionData.version.isOutdated);
-      setLatestVersion(versionData.version.latest);
+    async function checkKedroVizVersion() {
+      try {
+        debugger;
+        const request = await getVersion();
+        const response = await request.json();
+
+        if (request.ok) {
+          setIsOutdated(response.isOutdated);
+          setLatestVersion(response.latest);
+        }
+      } catch (error) {
+        console.error('Error fetching Kedro-Viz version:', error);
+      }
     }
-  }, [versionData]);
+
+    checkKedroVizVersion();
+  }, []);
+
+  // useEffect(() => {
+  //   if (versionData) {
+  //     setIsOutdated(versionData.version.isOutdated);
+  //     setLatestVersion(versionData.version.latest);
+  //   }
+  // }, [versionData]);
 
   return (
     <div
