@@ -29,12 +29,12 @@ class VersionAPIResponse(BaseAPIResponse):
 
 def get_version_response():
     """API response for `/api/version`."""
-    installed_version = __version__
-    latest_version = get_latest_version()
+    installed_version = str(__version__)
+    latest_version = str(get_latest_version())
     is_outdated = is_running_outdated_version(installed_version, latest_version)
 
     return VersionAPIResponse(
         installed=installed_version,
         isOutdated=is_outdated,
-        latest=latest_version
+        latest=latest_version,
     )

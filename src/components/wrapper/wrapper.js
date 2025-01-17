@@ -32,7 +32,6 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   useEffect(() => {
     async function checkKedroVizVersion() {
       try {
-        debugger;
         const request = await getVersion();
         const response = await request.json();
 
