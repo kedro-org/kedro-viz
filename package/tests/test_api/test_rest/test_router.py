@@ -98,9 +98,9 @@ def test_version(client):
 
     json_response = response.json()
     assert "installed" in json_response
-    assert "is_outdated " in json_response
+    assert "is_outdated" in json_response
     assert "latest" in json_response
 
     assert isinstance(json_response["installed"], str)
-    assert isinstance(json_response["is_outdated "], bool)
+    assert isinstance(json_response["is_outdated"], bool)
     assert isinstance(json_response["latest"], str)
