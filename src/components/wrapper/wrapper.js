@@ -36,7 +36,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
         const response = await request.json();
 
         if (request.ok) {
-          setIsOutdated(response.isOutdated);
+          setIsOutdated(response.is_outdated);
           setLatestVersion(response.latest);
         }
       } catch (error) {

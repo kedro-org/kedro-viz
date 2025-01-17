@@ -91,15 +91,16 @@ def test_metadata(
     assert response.status_code == expected_status_code
     assert response.json() == expected_response
 
+
 def test_version(client):
     response = client.get("/api/version")
     assert response.status_code == 200
 
     json_response = response.json()
     assert "installed" in json_response
-    assert "isOutdated" in json_response
+    assert "is_outdated " in json_response
     assert "latest" in json_response
 
     assert isinstance(json_response["installed"], str)
-    assert isinstance(json_response["isOutdated"], bool)
+    assert isinstance(json_response["is_outdated "], bool)
     assert isinstance(json_response["latest"], str)
