@@ -48,13 +48,6 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     checkKedroVizVersion();
   }, []);
 
-  // useEffect(() => {
-  //   if (versionData) {
-  //     setIsOutdated(versionData.version.isOutdated);
-  //     setLatestVersion(versionData.version.latest);
-  //   }
-  // }, [versionData]);
-
   return (
     <div
       className={classnames('kedro-pipeline kedro', {

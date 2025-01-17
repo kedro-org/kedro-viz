@@ -249,7 +249,7 @@ export async function deployViz(inputValues) {
 }
 
 export async function getVersion() {
-  const request = await fetch(`api/version`, {
+  const request = await fetch(`${pathRoot}/version`, {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

@@ -2,7 +2,8 @@
 and utility functions for the `/version` REST endpoint"""
 
 from kedro_viz import __version__
-from pydantic import BaseModel, ConfigDict
+from kedro_viz.integrations.pypi import get_latest_version, is_running_outdated_version
+from pydantic import ConfigDict
 from kedro_viz.api.rest.responses.base import BaseAPIResponse
 
 class VersionAPIResponse(BaseAPIResponse):
@@ -22,15 +23,15 @@ class VersionAPIResponse(BaseAPIResponse):
         json_schema_extra={
             "installed": __version__,
             "isOutdated": False,  
-            "latest": "0.5.0" # how do i check the latest version?
+            "latest": "0.0.0"
         }
     )
 
 def get_version_response():
     """API response for `/api/version`."""
     installed_version = __version__
-    latest_version = "0.5.0"  # how do i check the latest version?
-    is_outdated = installed_version != latest_version 
+    latest_version = get_latest_version()
+    is_outdated = is_running_outdated_version(installed_version, latest_version)
 
     return VersionAPIResponse(
         installed=installed_version,

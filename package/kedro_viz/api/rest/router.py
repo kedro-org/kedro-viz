@@ -58,7 +58,7 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
     response_model=VersionAPIResponse,
 )
 
-asyn def get_version():
+async def get_version():
     return get_version_response()
 
 
