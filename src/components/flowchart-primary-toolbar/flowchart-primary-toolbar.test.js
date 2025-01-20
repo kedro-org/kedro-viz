@@ -59,6 +59,8 @@ describe('PrimaryToolbar', () => {
         visible: mockState.spaceflights.visible,
         display: mockState.spaceflights.display,
         [callback]: mockFn,
+        modularPipelineIDs: ['pipeline1', '__root__'],
+        onToggleExpandPipelines: jest.fn(),
       };
       const wrapper = setup.mount(<FlowchartPrimaryToolbar {...props} />);
       expect(mockFn.mock.calls.length).toBe(0);
@@ -72,6 +74,7 @@ describe('PrimaryToolbar', () => {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
+      modularPipelineIDs: expect.any(Array),
       visible: expect.objectContaining({
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),
