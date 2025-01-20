@@ -3,12 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally } from '../../utils';
-import { useApolloQuery } from '../../apollo/utils';
-import { client } from '../../apollo/config';
-import { GraphQLProvider } from '../provider/provider';
-import { GET_VERSIONS } from '../../apollo/queries';
 import { getVersion } from '../../utils';
-
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -22,12 +17,9 @@ import './wrapper.scss';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ displayGlobalNavigation, theme }) => {
-  const { data: versionData } = useApolloQuery(GET_VERSIONS, {
-    client,
-    skip: !displayGlobalNavigation || !isRunningLocally(),
-  });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  const [versions, setVersions] = useState(null);
 
   useEffect(() => {
     async function checkKedroVizVersion() {
@@ -38,6 +30,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
         if (request.ok) {
           setIsOutdated(response.is_outdated);
           setLatestVersion(response.latest);
+          setVersions(response);
         }
       } catch (error) {
         console.error('Error fetching Kedro-Viz version:', error);
@@ -57,18 +50,15 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
       <h1 className="pipeline-title">Kedro-Viz</h1>
       <Router>
         {displayGlobalNavigation ? (
-          <GraphQLProvider>
+          <>
             <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
-            {versionData && (
-              <UpdateReminder
-                isOutdated={isOutdated}
-                versions={versionData.version}
-              />
+            {versions && (
+              <UpdateReminder isOutdated={isOutdated} versions={versions} />
             )}
             <Switch>
               <Route exact path="/">
@@ -76,7 +66,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
                 <FeatureHints />
               </Route>
             </Switch>
-          </GraphQLProvider>
+          </>
         ) : (
           <FlowChartWrapper />
         )}
