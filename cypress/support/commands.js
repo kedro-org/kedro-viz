@@ -2,32 +2,6 @@
 import { join } from 'path';
 
 /**
- * Custom command for intercepting network requests using fixtures for GraphQL
- * @param {String} operationName
- * @returns {Object} The mock/fixtured json response
- */
-Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
-  // Assign an alias to the intercept based on the graphql request (mutation or query).
-  const interceptAlias = mutationFor ? mutationFor : operationName;
-
-  cy.intercept('POST', '/graphql', (req) => {
-    const requestBody = req.body;
-
-    // check for the operation name match in the graphql request body
-    if (requestBody?.operationName === operationName) {
-      // Assign a fixture path based on the graphql request (mutation or query).
-      const fixturePath = mutationFor
-        ? `graphql/${mutationFor}.json`
-        : `graphql/${operationName}.json`;
-
-      // Stub the server response (request will never reach the origin server, instead the response is
-      // served from the fixture)
-      req.reply({ fixture: fixturePath });
-    }
-  }).as(interceptAlias);
-});
-
-/**
  * Custom command for intercepting network requests for REST
  * @param {String} url
  * @param {String} method

@@ -18,7 +18,6 @@ from kedro_viz import __version__
 from kedro_viz.api.rest.responses.utils import EnhancedORJSONResponse
 from kedro_viz.integrations.kedro import telemetry as kedro_telemetry
 
-from .graphql.router import router as graphql_router
 from .rest.router import router as rest_router
 
 _HTML_DIR = Path(__file__).parent.parent.absolute() / "html"
@@ -63,7 +62,6 @@ def create_api_app_from_project(
     """
     app = _create_base_api_app()
     app.include_router(rest_router)
-    app.include_router(graphql_router)
 
     # Check for html directory existence.
     if Path(_HTML_DIR).is_dir():
