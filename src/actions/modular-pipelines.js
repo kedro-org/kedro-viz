@@ -56,11 +56,16 @@ export function toggleModularPipelinesExpanded(expandedIDs) {
   };
 }
 
-export const TOGGLE_ALL_MODULAR_PIPELINES_EXPANDED =
-  'TOGGLE_ALL_MODULAR_PIPELINES_EXPANDED';
-export function toggleAllModularPipelinesExpanded(expandAllPipelines) {
+export const TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE =
+  'TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE';
+
+/**
+ * Toggles all modular pipelines to be expanded and updates the state.
+ * @param {Array[Number]} expandAllPipelines
+ */
+export function toggleModularPipelinesVisibilityState(expandAllPipelines) {
   return {
-    type: TOGGLE_ALL_MODULAR_PIPELINES_EXPANDED,
+    type: TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE,
     expandAllPipelines,
   };
 }

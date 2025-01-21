@@ -5,12 +5,9 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  toggleExpandAllPipelines,
+  toggleGlobalPipelineExpansion,
 } from '../../actions';
-import {
-  toggleModularPipelinesExpanded,
-  toggleAllModularPipelinesExpanded,
-} from '../../actions/modular-pipelines';
+import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
@@ -27,7 +24,6 @@ import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
  * @param {Boolean} textLabels Whether text labels are displayed
  */
 export const FlowchartPrimaryToolbar = ({
-  modularPipelineIDs,
   disableLayerBtn,
   onToggleExportModal,
   onToggleLayers,
@@ -130,12 +126,9 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));
   },
-  onToggleExpandPipelines: (ids) => {
-    dispatch(toggleModularPipelinesExpanded(ids));
-  },
   onToggleExpandAllPipelines: (isExpanded) => {
-    dispatch(toggleExpandAllPipelines(isExpanded));
-    dispatch(toggleAllModularPipelinesExpanded(isExpanded));
+    dispatch(toggleGlobalPipelineExpansion(isExpanded));
+    dispatch(toggleModularPipelinesVisibilityState(isExpanded));
   },
 });
 

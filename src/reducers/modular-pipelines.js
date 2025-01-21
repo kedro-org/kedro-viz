@@ -3,7 +3,7 @@ import {
   TOGGLE_MODULAR_PIPELINES_EXPANDED,
   TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
   TOGGLE_MODULAR_PIPELINE_DISABLED,
-  TOGGLE_ALL_MODULAR_PIPELINES_EXPANDED,
+  TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE,
 } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
@@ -111,7 +111,7 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
         visible: newVisibleState,
       });
     }
-    case TOGGLE_ALL_MODULAR_PIPELINES_EXPANDED: {
+    case TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE: {
       let newVisibleState = {};
 
       // Determine which IDs should be expanded based on the action

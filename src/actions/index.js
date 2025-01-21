@@ -24,15 +24,16 @@ export function toggleLayers(visible) {
   };
 }
 
-export const TOGGLE_EXPAND_ALL_PIPELINES = 'TOGGLE_EXPAND_ALL_PIPELINES';
+export const TOGGLE_GLOBAL_PIPELINE_EXPANSION =
+  'TOGGLE_GLOBAL_PIPELINE_EXPANSION';
 
 /**
- * Toggle whether to expand all modular pipelines or collapse
+ * Toggle whether to expand all modular pipelines or collapse with boolean.
  * @param {Boolean} shouldExpandAllPipelines
  */
-export function toggleExpandAllPipelines(shouldExpandAllPipelines) {
+export function toggleGlobalPipelineExpansion(shouldExpandAllPipelines) {
   return {
-    type: TOGGLE_EXPAND_ALL_PIPELINES,
+    type: TOGGLE_GLOBAL_PIPELINE_EXPANSION,
     shouldExpandAllPipelines,
   };
 }

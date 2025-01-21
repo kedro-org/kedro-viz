@@ -23,7 +23,7 @@ import {
   TOGGLE_THEME,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
-  TOGGLE_EXPAND_ALL_PIPELINES,
+  TOGGLE_GLOBAL_PIPELINE_EXPANSION,
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
 } from '../actions';
@@ -119,7 +119,7 @@ const combinedReducer = combineReducers({
   ),
   expandAllPipelines: createReducer(
     false,
-    TOGGLE_EXPAND_ALL_PIPELINES,
+    TOGGLE_GLOBAL_PIPELINE_EXPANSION,
     'shouldExpandAllPipelines'
   ),
   showDatasetPreviews: createReducer(
