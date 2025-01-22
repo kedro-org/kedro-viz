@@ -320,15 +320,20 @@ class TaskNode(GraphNode):
 
 
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
-    """Extract a wrapped decorated function to inspect the source code if available.
-    Adapted from https://stackoverflow.com/a/43506509/1684058
-    """
-    if func.__closure__ is None:
-        return func
-    closure = (c.cell_contents for c in func.__closure__)
-    wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
-    # return the original function if it's not a decorated function
-    return func if wrapped_func is None else wrapped_func
+    """Extract a wrapped decorated function to inspect the source code if available."""
+    # Check if the function has a `__wrapped__` attribute (set by functools.wraps)
+    if hasattr(func, '__wrapped__'):
+        return func.__wrapped__
+
+    # Inspect the closure for the original function if still wrapped
+    if func.__closure__:
+        closure = (c.cell_contents for c in func.__closure__)
+        wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
+        if wrapped_func:
+            return wrapped_func
+
+    # Return the original function if no wrapping detected
+    return func
 
 
 class ModularPipelineNode(GraphNode):
