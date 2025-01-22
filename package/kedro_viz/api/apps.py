@@ -74,8 +74,27 @@ def create_api_app_for_notebook() -> FastAPI:
 
     @app.get("/")
     async def index():
+        # static window config
+        config_script = """
+        <script>
+            window.__APP_CONFIG__ = {
+                onlyChartView: "true",
+            };
+        </script>
+        """
+
         html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
-        return HTMLResponse(html_content)
+        html_content = html_content.replace("</body>", config_script + "</body>")
+        response = HTMLResponse(html_content)
+
+        # Add custom headers
+        # response.headers["X-Show-ChartView"] = "True"
+
+        # Example headers
+        # response.headers["X-Show-MainNav"] = "False"
+        # response.headers["X-Show-MetaData"] = "False"
+
+        return response
 
     return app
 
