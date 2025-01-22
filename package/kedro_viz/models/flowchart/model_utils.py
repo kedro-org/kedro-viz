@@ -26,11 +26,7 @@ def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     if func.__closure__:
         closure = (c.cell_contents for c in func.__closure__)
         wrapped_func = next((c for c in closure if isinstance(c, FunctionType)), None)
-        if wrapped_func:
-            return wrapped_func
-
-    # Return the original function if no wrapping detected
-    return func
+        return func if wrapped_func is None else wrapped_func
 
 
 # =============================================================================
