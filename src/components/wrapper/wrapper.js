@@ -19,7 +19,7 @@ import './wrapper.scss';
 export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
-  const [versions, setVersions] = useState(null);
+  const [version, setVersion] = useState(null);
 
   useEffect(() => {
     async function checkKedroVizVersion() {
@@ -30,7 +30,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
         if (request.ok) {
           setIsOutdated(response.is_outdated);
           setLatestVersion(response.latest);
-          setVersions(response);
+          setVersion(response);
         }
       } catch (error) {
         console.error('Error fetching Kedro-Viz version:', error);
@@ -57,8 +57,8 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
-            {versions && (
-              <UpdateReminder isOutdated={isOutdated} versions={versions} />
+            {version && (
+              <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
               <Route exact path="/">
