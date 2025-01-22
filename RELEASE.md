@@ -14,6 +14,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. (#2206)
+- Improved modular pipeline expand/collapse logic for better state synchronisation. (#2225)
 
 # Release 10.1.0
 
