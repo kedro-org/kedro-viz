@@ -1,4 +1,4 @@
-from functools import partial
+from functools import partial, wraps
 from pathlib import Path
 from textwrap import dedent
 from unittest.mock import call, patch
@@ -41,8 +41,25 @@ def decorator(fun):
     return _new_fun
 
 
+def wrapped_decorator(fun):
+    """
+    Decorator that wraps a function.
+    """
+
+    @wraps(fun)
+    def _new_fun(*args, **kwargs):
+        return fun(*args, **kwargs)
+
+    return _new_fun
+
+
 @decorator
 def decorated(x):
+    return x
+
+
+@wrapped_decorator
+def wrapped_decorated(x):
     return x
 
 
@@ -374,6 +391,31 @@ class TestGraphNodeMetadata:
             """\
             @decorator
             def decorated(x):
+                return x
+            """
+        )
+        assert task_node_metadata.filepath == str(
+            Path(__file__).relative_to(Path.cwd().parent).expanduser()
+        )
+        assert not task_node_metadata.parameters
+
+    def test_task_node_metadata_with_wrapped_decorated_func(self):
+        kedro_node = node(
+            wrapped_decorated,
+            inputs="x",
+            outputs="y",
+            name="identity_node",
+            tags={"tag"},
+            namespace="namespace",
+        )
+        task_node = GraphNode.create_task_node(
+            kedro_node, "identity_node", set(["namespace"])
+        )
+        task_node_metadata = TaskNodeMetadata(task_node=task_node)
+        assert task_node_metadata.code == dedent(
+            """\
+            @wrapped_decorator
+            def wrapped_decorated(x):
                 return x
             """
         )
