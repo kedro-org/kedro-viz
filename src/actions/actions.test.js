@@ -16,7 +16,7 @@ import {
   TOGGLE_CODE,
   TOGGLE_MODULAR_PIPELINE_FOCUS_MODE,
   TOGGLE_HOVERED_FOCUS_MODE,
-  TOGGLE_GLOBAL_PIPELINE_EXPANSION,
+  TOGGLE_EXPAND_ALL_PIPELINES,
   changeFlag,
   resetData,
   toggleIgnoreLargeWarning,
@@ -33,7 +33,7 @@ import {
   updateChartSize,
   toggleFocusMode,
   toggleHoveredFocusMode,
-  toggleGlobalPipelineExpansion,
+  toggleExpandAllPipelines,
 } from '../actions';
 import {
   TOGGLE_NODE_CLICKED,
@@ -80,10 +80,10 @@ describe('actions', () => {
   it('should create an action to toggle whether to expand all modular pipelines or collapse', () => {
     const shouldExpandAllPipelines = false;
     const expectedAction = {
-      type: TOGGLE_GLOBAL_PIPELINE_EXPANSION,
+      type: TOGGLE_EXPAND_ALL_PIPELINES,
       shouldExpandAllPipelines,
     };
-    expect(toggleGlobalPipelineExpansion(shouldExpandAllPipelines)).toEqual(
+    expect(toggleExpandAllPipelines(shouldExpandAllPipelines)).toEqual(
       expectedAction
     );
   });

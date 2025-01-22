@@ -5,7 +5,7 @@ import {
   toggleLayers,
   toggleSidebar,
   toggleTextLabels,
-  toggleGlobalPipelineExpansion,
+  toggleExpandAllPipelines,
 } from '../../actions';
 import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
@@ -125,7 +125,7 @@ export const mapDispatchToProps = (dispatch) => ({
     dispatch(toggleTextLabels(Boolean(value)));
   },
   onToggleExpandAllPipelines: (isExpanded) => {
-    dispatch(toggleGlobalPipelineExpansion(isExpanded));
+    dispatch(toggleExpandAllPipelines(isExpanded));
     dispatch(toggleModularPipelinesVisibilityState(isExpanded));
   },
 });
