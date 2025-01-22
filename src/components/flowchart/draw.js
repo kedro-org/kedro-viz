@@ -74,7 +74,7 @@ export const drawLayerNames = function () {
 
   // Calculate the layer name position based on orientation
   const layerNamePosition = orientation
-    ? chartSize.height - 100 || 0 // Vertical: position based on height
+    ? 100 || 0 // Vertical: position based on height
     : chartSize.sidebarWidth || 0; // Horizontal: position based on sidebar width
 
   // Apply the correct translation based on orientation
@@ -133,12 +133,12 @@ const updateNodeRects = (nodeRects) =>
       return node.height / 2;
     });
 
-const updateParameterRect = (nodeRects) =>
+const updateParameterRect = (nodeRects, orientation) =>
   nodeRects
     .attr('width', 12)
     .attr('height', 12)
-    .attr('x', (node) => (node.width + 20) / -2)
-    .attr('y', -6);
+    .attr('x', (node) => orientation ? -node.width/2 + 10: (node.width + 20)/-2)
+    .attr('y', (node) => orientation ? -node.height+12 : -6);
 
 /**
  * Render node icons and name labels
@@ -157,6 +157,7 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
     isSlicingPipelineApplied,
+    orientation
   } = this.props;
   const {
     from: slicedPipelineFromId,
@@ -230,7 +231,7 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
       .on('mouseover', this.handleParamsIndicatorMouseOver)
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: use a single path per icon
     enterNodes
@@ -351,7 +352,7 @@ export const drawNodes = function (changed) {
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: icon transitions with CSS on GPU
     allNodes

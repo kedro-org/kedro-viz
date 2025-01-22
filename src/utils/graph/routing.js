@@ -76,7 +76,7 @@ export const routing = ({
     const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
 
     // Start at source node offset
-    const startPoint = { x: source.x + sourceOffsetX, y: source.y };
+    const startPoint = { x: source.x, y: source.y };
     let currentPoint = startPoint;
 
     // For each row between the source and target rows exclusive
@@ -191,24 +191,11 @@ export const routing = ({
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
-    // Find the ideal gap between edge source and target anchors
-    const sourceSeparation = Math.min(
-      (source.width - stemSpaceSource) / source.targets.length,
-      stemSpaceSource
-    );
-
-    const targetSeparation = Math.min(
-      (target.width - stemSpaceTarget) / target.sources.length,
-      stemSpaceTarget
-    );
-
     const sourceEdgeDistance =
       source.targets.indexOf(edge) - (source.targets.length - 1) * 0.5;
     const targetEdgeDistance =
       target.sources.indexOf(edge) - (target.sources.length - 1) * 0.5;
 
-    const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
-    const targetOffsetX = targetSeparation * targetEdgeDistance;
 
     // Decrease stem length outwards from the middle stem
     const sourceOffsetY =
@@ -227,15 +214,15 @@ export const routing = ({
         // Build the source stem for the edge (top-to-bottom)
         sourceStem = [
           {
-            x: source.x + sourceOffsetX,
+            x: source.x,
             y: nodeBottom(source),
           },
           {
-            x: source.x + sourceOffsetX,
+            x: source.x,
             y: nodeBottom(source) + stemMinSource,
           },
           {
-            x: source.x + sourceOffsetX,
+            x: source.x,
             y:
               nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
           },
@@ -244,15 +231,15 @@ export const routing = ({
         // Build the target stem for the edge (top-to-bottom)
         targetStem = [
           {
-            x: target.x + targetOffsetX,
+            x: target.x,
             y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
           },
           {
-            x: target.x + targetOffsetX,
+            x: target.x,
             y: nodeTop(target) - stemMinTarget,
           },
           {
-            x: target.x + targetOffsetX,
+            x: target.x,
             y: nodeTop(target),
           },
         ];
@@ -261,14 +248,14 @@ export const routing = ({
         sourceStem = [
           {
             x: nodeRight(source),
-            y: source.y + sourceOffsetX,
+            y: source.y,
           },
           {
-            y: source.y + sourceOffsetX,
+            y: source.y,
             x: nodeRight(source) + stemMinSource,
           },
           {
-            y: source.y + sourceOffsetX,
+            y: source.y,
             x: nodeRight(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
           },
         ];
@@ -276,15 +263,15 @@ export const routing = ({
         // Build the target stem for the edge (left-to-right)
         targetStem = [
           {
-            y: target.y + targetOffsetX,
+            y: target.y,
             x: nodeLeft(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
           },
           {
-            y: target.y + targetOffsetX,
+            y: target.y,
             x: nodeLeft(target) - stemMinTarget,
           },
           {
-            y: target.y + targetOffsetX,
+            y: target.y,
             x: nodeLeft(target),
           },
         ];
