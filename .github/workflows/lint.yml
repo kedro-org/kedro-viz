@@ -38,8 +38,5 @@ jobs:
           - name: Run security scan
             run: make security-scan
 
-          - name: Verify GraphQL schema is up to date
-            run: make schema-check
-
           - name: Run Python formatters and linters
             run: make format-check lint-check          

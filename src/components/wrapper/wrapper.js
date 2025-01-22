@@ -3,11 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally } from '../../utils';
-import { useApolloQuery } from '../../apollo/utils';
-import { client } from '../../apollo/config';
-import { GraphQLProvider } from '../provider/provider';
-import { GET_VERSIONS } from '../../apollo/queries';
-
+import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -21,19 +17,28 @@ import './wrapper.scss';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
 export const Wrapper = ({ displayGlobalNavigation, theme }) => {
-  const { data: versionData } = useApolloQuery(GET_VERSIONS, {
-    client,
-    skip: !displayGlobalNavigation || !isRunningLocally(),
-  });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  const [version, setVersion] = useState(null);
 
   useEffect(() => {
-    if (versionData) {
-      setIsOutdated(versionData.version.isOutdated);
-      setLatestVersion(versionData.version.latest);
+    async function checkKedroVizVersion() {
+      try {
+        const request = await getVersion();
+        const response = await request.json();
+
+        if (request.ok) {
+          setIsOutdated(response.is_outdated);
+          setLatestVersion(response.latest);
+          setVersion(response);
+        }
+      } catch (error) {
+        console.error('Error fetching Kedro-Viz version:', error);
+      }
     }
-  }, [versionData]);
+
+    checkKedroVizVersion();
+  }, []);
 
   return (
     <div
@@ -45,18 +50,15 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
       <h1 className="pipeline-title">Kedro-Viz</h1>
       <Router>
         {displayGlobalNavigation ? (
-          <GraphQLProvider>
+          <>
             <GlobalToolbar isOutdated={isOutdated} />
             <SettingsModal
               isOutdated={isOutdated}
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
-            {versionData && (
-              <UpdateReminder
-                isOutdated={isOutdated}
-                versions={versionData.version}
-              />
+            {version && (
+              <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
               <Route exact path="/">
@@ -64,7 +66,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
                 <FeatureHints />
               </Route>
             </Switch>
-          </GraphQLProvider>
+          </>
         ) : (
           <FlowChartWrapper />
         )}
