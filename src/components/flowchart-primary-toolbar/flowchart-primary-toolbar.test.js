@@ -74,7 +74,6 @@ describe('PrimaryToolbar', () => {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
-      modularPipelineIDs: expect.any(Array),
       visible: expect.objectContaining({
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),
