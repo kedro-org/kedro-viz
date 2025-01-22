@@ -34,7 +34,6 @@ export const FlowchartPrimaryToolbar = ({
   display,
   visibleLayers,
   expandedPipelines,
-  onToggleExpandPipelines,
   onToggleExpandAllPipelines,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
@@ -104,7 +103,6 @@ export const FlowchartPrimaryToolbar = ({
 };
 
 export const mapStateToProps = (state) => ({
-  modularPipelineIDs: state?.modularPipeline?.ids,
   disableLayerBtn: !state.layer.ids.length,
   textLabels: state.textLabels,
   visible: state.visible,
