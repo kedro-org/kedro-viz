@@ -322,7 +322,7 @@ class TaskNode(GraphNode):
 def _extract_wrapped_func(func: FunctionType) -> FunctionType:
     """Extract a wrapped decorated function to inspect the source code if available."""
     # Check if the function has a `__wrapped__` attribute (set by functools.wraps)
-    if hasattr(func, '__wrapped__'):
+    if hasattr(func, "__wrapped__"):
         return func.__wrapped__
 
     # Inspect the closure for the original function if still wrapped
