@@ -7,7 +7,7 @@ import {
   toggleTextLabels,
   toggleExpandAllPipelines,
 } from '../../actions';
-import { loadInitialPipelineData } from '../../actions/pipelines';
+import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
@@ -126,7 +126,7 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
-    dispatch(loadInitialPipelineData());
+    dispatch(toggleModularPipelinesVisibilityState(isExpanded));
   },
 });
 
