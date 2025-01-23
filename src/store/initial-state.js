@@ -14,7 +14,9 @@ import {
 
 const config = window.__APP_CONFIG__;
 const onlyChartView = Boolean(
-  config.onlyChartView && config.onlyChartView.toLowerCase() === 'true'
+  config &&
+    config.onlyChartView &&
+    config.onlyChartView.toLowerCase() === 'true'
 );
 
 /**

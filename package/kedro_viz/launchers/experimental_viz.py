@@ -1,20 +1,15 @@
-import multiprocessing
-from typing import Dict
-
+import json
+from pathlib import Path
 from IPython.display import HTML, IFrame, display
 from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
-
-from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
-from kedro_viz.launchers.jupyter import _allocate_port
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
-from kedro_viz.server import run_server
+from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
+from kedro_viz.server import load_and_populate_data_for_notebook_users
 from kedro_viz.utils import NotebookUser
 
-_VIZ_PROCESSES: Dict[str, int] = {}
-
 class KedroVizNotebook:
-    def visualize(self, pipeline: Pipeline, catalog: DataCatalog = None, host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, embed_in_notebook=True):
+    
+    def visualize(self, pipeline: Pipeline, catalog: DataCatalog = None, embed_in_notebook=True):
         """
         Show the visualization either in a browser or embedded in a notebook.
 
@@ -28,38 +23,52 @@ class KedroVizNotebook:
         Raises:
             RuntimeError: If the server is not running.
         """
-
-        print("The pipeline we get::", pipeline)
-
-        # Allocate port
-        port = _allocate_port(host, start_at=port)
-
-        # Terminate existing process if needed
-        if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
-            _VIZ_PROCESSES[port].terminate()
-
+        # [TODO: <script src='http://localhost:8000/kedroViz.bundle.js'></script> - This needs publishing to CDN (may be bundle it and publish on npm)]
         notebook_user = NotebookUser(pipeline=pipeline, catalog=catalog)
+        load_and_populate_data_for_notebook_users(notebook_user)
+        json_to_visualize = json.dumps(get_kedro_project_json_data())
+        
+        # To be configured as arg
+        view_options = {"onlyChartView": "true"}
+        # Define the HTML content
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Kedro-Viz</title>
+        </head>
+        <body>
+            <div id='root'></div>
+            <script>
+                window.__APP_CONFIG__ = {view_options};
+            </script>
+            <script src='http://localhost:8000/kedroViz.bundle.js'></script>
+            <script>
+                viz_data = {json_to_visualize};
+                const {{ React, createRoot, KedroViz }} = window;
+                const container = document.getElementById('root');
+                const root = createRoot(container);
+                root.render(React.createElement(KedroViz));
+            </script>
+        </body>
+        </html>
+        """
 
-        run_server_kwargs = {
-            "host": host,
-            "port": port,
-            "notebook_user": notebook_user
-        }
+        # Save the HTML file in the current directory
+        viz_folder = Path(".viz")
+        viz_folder.mkdir(exist_ok=True)
+        
+        # Define the HTML file path
+        file_path = Path(viz_folder / "jupyter_viz_exploration.html")
 
-        process_context = multiprocessing.get_context("fork")
-        viz_process = process_context.Process(
-            target=run_server, daemon=True, kwargs={**run_server_kwargs}
-        )
-
-        viz_process.start()
-        _VIZ_PROCESSES[port] = viz_process
-
-        _wait_for(func=_check_viz_up, host=host, port=port)
-
-        url = f"http://{host}:{port}/"
+        with open(file_path, "w") as f:
+            f.write(html_content)
 
         if embed_in_notebook:
-            display(IFrame(src=url, width=900, height=600))
+            display(IFrame(src=file_path, width="100%", height="600"))
         else:
-            link_html = f'<a href="{url}" target="_blank">Open Kedro-Viz</a>'
+            link_html = f'<a href="{file_path}" target="_blank">Open Kedro-Viz</a>'
             display(HTML(link_html))
+            
