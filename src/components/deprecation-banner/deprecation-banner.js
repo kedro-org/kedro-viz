@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
+import { localStorageDeprecationBannerSeen } from '../../config';
+import { saveLocalStorage } from '../../store/helpers';
 
 import './deprecation-banner.scss';
 
 export const DeprecationBanner = ({ visible }) => {
-  const handleAcknowledgeAndDismiss = () => {};
+  const [showModal, setShowModal] = useState(visible);
+
+  const handleAcknowledgeAndDismiss = () => {
+    saveLocalStorage(localStorageDeprecationBannerSeen, {
+      'experiment-tracking': true,
+    });
+    setShowModal(false);
+  };
 
   const handleProvideFeedbackClick = () => {
     window.open('https://github.com/kedro-org/kedro-viz/issues/2247', '_blank');
@@ -14,9 +23,8 @@ export const DeprecationBanner = ({ visible }) => {
   return (
     <Modal
       className="deprecation-banner-modal"
-      closeModal={handleAcknowledgeAndDismiss}
       title={'Experiment tracking will be disabled soon.'}
-      visible={visible}
+      visible={showModal}
     >
       <div className="deprecation-banner-modal__message-wrapper">
         <p>

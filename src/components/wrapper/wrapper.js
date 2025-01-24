@@ -7,6 +7,8 @@ import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
+import { localStorageDeprecationBannerSeen } from '../../config';
+import { loadLocalStorage } from '../../store/helpers';
 
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
@@ -29,6 +31,9 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  const [showDeprecationBannerForET, setShowDeprecationBannerForET] = useState(
+    loadLocalStorage(localStorageDeprecationBannerSeen)
+  );
 
   useEffect(() => {
     if (versionData) {
@@ -36,6 +41,15 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
       setLatestVersion(versionData.version.latest);
     }
   }, [versionData]);
+
+  useEffect(() => {
+    const bannerSeen = loadLocalStorage(localStorageDeprecationBannerSeen);
+    if (bannerSeen['experiment-tracking'] === undefined) {
+      setShowDeprecationBannerForET(true);
+    } else {
+      setShowDeprecationBannerForET(!bannerSeen);
+    }
+  }, [showDeprecationBannerForET]);
 
   return (
     <div
@@ -54,7 +68,9 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
-            {<DeprecationBanner visible={true} />}
+            {showDeprecationBannerForET ? (
+              <DeprecationBanner visible={showDeprecationBannerForET} />
+            ) : null}
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}
