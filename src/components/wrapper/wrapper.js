@@ -7,6 +7,8 @@ import { useApolloQuery } from '../../apollo/utils';
 import { client } from '../../apollo/config';
 import { GraphQLProvider } from '../provider/provider';
 import { GET_VERSIONS } from '../../apollo/queries';
+import { localStorageDeprecationBannerSeen } from '../../config';
+import { loadLocalStorage } from '../../store/helpers';
 
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
@@ -15,6 +17,7 @@ import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
+import { DeprecationBanner } from '../deprecation-banner/deprecation-banner';
 
 import './wrapper.scss';
 
@@ -28,6 +31,8 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  const [showDeprecationBannerForET, setShowDeprecationBannerForET] =
+    useState(false);
 
   useEffect(() => {
     if (versionData) {
@@ -36,6 +41,15 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     }
   }, [versionData]);
 
+  useEffect(() => {
+    const bannerSeen = loadLocalStorage(localStorageDeprecationBannerSeen);
+    const shouldShowBanner =
+      bannerSeen['experiment-tracking'] === undefined ||
+      bannerSeen['experiment-tracking'] === false;
+    setShowDeprecationBannerForET(shouldShowBanner);
+  }, []);
+
+  console.log(showDeprecationBannerForET, 'showDeprecationBannerForET');
   return (
     <div
       className={classnames('kedro-pipeline kedro', {
@@ -53,6 +67,9 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
+            {showDeprecationBannerForET ? (
+              <DeprecationBanner visible={showDeprecationBannerForET} />
+            ) : null}
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}
