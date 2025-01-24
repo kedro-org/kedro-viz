@@ -23,7 +23,7 @@ $text-margin: 24px;
   }
 
   .modal__wrapper {
-    width: 446px;
+    width: $modal-width;
     padding: 0;
     margin: $modal-margin;
   }
@@ -32,53 +32,53 @@ $text-margin: 24px;
     text-align: left;
     margin-bottom: 0;
   }
-}
 
-.deprecation-banner-modal__message-wrapper {
-  p {
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 20px;
-    margin-bottom: 0;
-    margin-top: $text-margin;
-    text-align: left;
+  .deprecation-banner-modal__message-wrapper {
+    p {
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+      margin-bottom: 0;
+      margin-top: $text-margin;
+      text-align: left;
+    }
+
+    .deprecation-banner-modal__secondary-text {
+      color: var(--secondary-text-color);
+    }
   }
 
-  .deprecation-banner-modal__secondary-text {
+  .deprecation-banner-modal__button-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: $modal-margin;
+    width: 100%;
+
+    .button__btn--secondary {
+      padding-left: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover::after {
+        background-color: transparent;
+      }
+    }
+
+    .button__btn--primary {
+      border-color: var(--primary-button-background);
+
+      &:hover {
+        background-color: var(--primary-button-background);
+        color: var(--primary-button-text-color);
+      }
+    }
+  }
+
+  .deprecation-banner-modal__link {
     color: var(--secondary-text-color);
-  }
-}
-
-.deprecation-banner-modal__button-wrapper {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-top: $modal-margin;
-  width: 100%;
-
-  .button__btn--secondary {
-    padding-left: 0;
     text-decoration: underline;
     text-underline-offset: 3px;
-
-    &:hover::after {
-      background-color: transparent;
-    }
   }
-
-  .button__btn--primary {
-    border-color: var(--primary-button-background);
-
-    &:hover {
-      background-color: var(--primary-button-background);
-      color: var(--primary-button-text-color);
-    }
-  }
-}
-
-.deprecation-banner-modal__link {
-  color: var(--secondary-text-color);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }

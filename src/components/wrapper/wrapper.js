@@ -31,9 +31,8 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
   });
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
-  const [showDeprecationBannerForET, setShowDeprecationBannerForET] = useState(
-    loadLocalStorage(localStorageDeprecationBannerSeen)
-  );
+  const [showDeprecationBannerForET, setShowDeprecationBannerForET] =
+    useState(false);
 
   useEffect(() => {
     if (versionData) {
@@ -44,13 +43,13 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
 
   useEffect(() => {
     const bannerSeen = loadLocalStorage(localStorageDeprecationBannerSeen);
-    if (bannerSeen['experiment-tracking'] === undefined) {
-      setShowDeprecationBannerForET(true);
-    } else {
-      setShowDeprecationBannerForET(!bannerSeen);
-    }
-  }, [showDeprecationBannerForET]);
+    const shouldShowBanner =
+      bannerSeen['experiment-tracking'] === undefined ||
+      bannerSeen['experiment-tracking'] === false;
+    setShowDeprecationBannerForET(shouldShowBanner);
+  }, []);
 
+  console.log(showDeprecationBannerForET, 'showDeprecationBannerForET');
   return (
     <div
       className={classnames('kedro-pipeline kedro', {

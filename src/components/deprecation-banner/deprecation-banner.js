@@ -20,10 +20,21 @@ export const DeprecationBanner = ({ visible }) => {
     window.open('https://github.com/kedro-org/kedro-viz/issues/2247', '_blank');
   };
 
+  const renderLink = (url, text) => (
+    <a
+      href={url}
+      className="deprecation-banner-modal__link"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {text}
+    </a>
+  );
+
   return (
     <Modal
       className="deprecation-banner-modal"
-      title={'Experiment tracking will be disabled soon.'}
+      title="Experiment tracking will be disabled soon."
       visible={showModal}
     >
       <div className="deprecation-banner-modal__message-wrapper">
@@ -34,37 +45,21 @@ export const DeprecationBanner = ({ visible }) => {
 
         <p className="deprecation-banner-modal__secondary-text">
           More information behind Kedro’s decision can be found on{' '}
-          <a
-            href="https://example.com/blog-post"
-            className="deprecation-banner-modal__link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            this blog post
-          </a>
-          .
+          {renderLink('https://example.com/blog-post', 'this blog post')}.
         </p>
 
         <p className="deprecation-banner-modal__secondary-text">
           To support current experiment tracking users, please read Kedro’s
           documentation on{' '}
-          <a
-            href="https://google.com"
-            className="deprecation-banner-modal__link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            how to continue using Kedro with other experiment tracking tools
-          </a>
+          {renderLink(
+            'https://google.com',
+            'how to continue using Kedro with other experiment tracking tools'
+          )}
           , and{' '}
-          <a
-            href="https://google.com"
-            className="deprecation-banner-modal__link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            how to migrate your existing Kedro project
-          </a>
+          {renderLink(
+            'https://google.com',
+            'how to migrate your existing Kedro project'
+          )}
           .
         </p>
 
@@ -81,7 +76,7 @@ export const DeprecationBanner = ({ visible }) => {
           onClick={handleProvideFeedbackClick}
           size="small"
           className="deprecation-banner-modal__provide-feedback-btn"
-          dataTest={'deprecation-banner-modal__provide-feedback-btn'}
+          dataTest="deprecation-banner-modal__provide-feedback-btn"
         >
           Provide feedback
         </Button>
@@ -89,7 +84,7 @@ export const DeprecationBanner = ({ visible }) => {
           size="small"
           onClick={handleAcknowledgeAndDismiss}
           className="deprecation-banner-modal--acknowledge-and-dismiss-btn"
-          dataTest={'deprecation-banner-modal--acknowledge-and-dismiss-btn'}
+          dataTest="deprecation-banner-modal--acknowledge-and-dismiss-btn"
         >
           Acknowledge and dismiss
         </Button>
