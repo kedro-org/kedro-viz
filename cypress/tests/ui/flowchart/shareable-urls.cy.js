@@ -2,6 +2,7 @@ describe('Shareable URLs with empty localStorage', () => {
   beforeEach(() => {
     // Clears localStorage before each test
     cy.clearLocalStorage();
+    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
   });
 
   it('verifies that users can open the Deploy Kedro-Viz modal if the localStorage is empty. #TC-52', () => {
@@ -222,6 +223,9 @@ describe('Shareable URLs with empty localStorage', () => {
 });
 
 describe('Shareable URLs with valid localStorage', () => {
+  beforeEach(() => {
+    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
+  });
   const bucketName = 'myBucketName';
   const endpointName = 'http://www.example.com';
   const secondBucketName = 'mySecondBucketName';

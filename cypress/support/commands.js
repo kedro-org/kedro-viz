@@ -262,3 +262,12 @@ Cypress.Commands.add('enablePrettyNames', () => {
         force: true,
       });
 });
+
+/**
+ * Custom command to click the acknowledge button in the deprecation banner
+ */
+Cypress.Commands.add('acknowledgeAndDismissDeprecationBanner', () => {
+  cy.get('[data-test="deprecation-banner-modal--acknowledge-and-dismiss-btn"]')
+    .click()
+});
+

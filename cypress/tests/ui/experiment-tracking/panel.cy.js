@@ -1,6 +1,10 @@
 // All E2E Tests Related to Experiment Tracking Primary Toolbar goes here.
 
 describe('Experiment Tracking Primary Toolbar', () => {
+  beforeEach(() => {
+    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
+  });
+  
   it('verifies that users can hide/show the side menu. #TC-38', () => {
     // Alias
     cy.get('[data-test*="sidebar-experiments-visible-btn-"]').as('btnToggleMenu');

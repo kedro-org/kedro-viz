@@ -1,6 +1,10 @@
 // All E2E Tests Related to Flowchart Primary Toolbar goes here.
 
 describe('Flowchart Primary Toolbar', () => {
+  beforeEach(() => {
+    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
+  });
+
   it('verifies that users can hide/show the side menu. #TC-8', () => {
     // Alias
     cy.get('[data-test*="sidebar-flowchart-visible-btn-"]').as('btnToggleMenu');
@@ -92,6 +96,10 @@ describe('Flowchart Primary Toolbar', () => {
 });
 
 describe('Pipeline Minimap Toolbar', () => {
+  beforeEach(() => {
+    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
+  });
+  
   it('verifies that users can hide/show minimap. #TC-14', () => {
     // Alias
     cy.get('[data-test*="sidebar-minimap-btn-"]').as('btnToggleMinimap');
