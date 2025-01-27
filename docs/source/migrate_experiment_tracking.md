@@ -1,15 +1,15 @@
-# Migration from Kedro-Viz Native Experiment Tracking to Kedro-MLflow
+# Migration from Kedro-Viz Native Experiment Tracking to [`kedro-mlflow`](https://github.com/kedro-org/kedro-viz/pull/2250)
 
-With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [Kedro-MLflow](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
+With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
 1. **Remove deprecated configurations related to Kedro-Viz experiment tracking.**
 2. **Update existing dataset configurations in the catalog.**
 3. **Optionally, delete old experiment tracking data.**
 4. **Refer to MLflow documentation for further setup.**
 
-## Step 1: Remove deprecated configurations related to Kedro-Viz experiment tracking
+## Remove deprecated configurations related to Kedro-Viz experiment tracking
 
-### a. Remove Session Store Setup
+### 1. Remove Session Store Setup
 
 In `src/<project_name>/settings.py`, locate and remove the session store configuration:
 
@@ -20,22 +20,26 @@ SESSION_STORE_CLASS = SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
-### b. Remove Environment Variables
+### 2. Remove Environment Variables
 Remove any environment variables associated with collaborative tracking:
 
 ```bash
 export KEDRO_SQLITE_STORE_USERNAME="your_unique_username"
 ```
 
-### c. Delete SQLite Database
-If a session_store.db SQLite database was created, delete it. Typically, it is located in the project root or under the data directory.
+### 3. Delete SQLite Database
+If a `session_store.db` SQLite database was created, you can delete it to clean up your project. This file is typically located in one of the following directories:
+
+- The project root 
+- The `.viz` folder within the project root
+- The `data` folder
 
 
-## Step 2: Update Dataset Configurations in Catalog
+## Update Dataset Configurations in Catalog
 
 Update the dataset configurations in your `catalog.yml` to transition to `kedro-mlflow`. Refer to the table below for the changes:
 
-### Dataset Migration Table
+### Dataset migration Table
 
 | Kedro-Viz Dataset Type         | MLflow Dataset Type        | Update Instructions                                      |
 |---------------------------------|----------------------------|---------------------------------------------------------|
@@ -45,10 +49,7 @@ Update the dataset configurations in your `catalog.yml` to transition to `kedro-
 | `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset` as `plotly.HTMLDataset`. |
 | `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset`.                   |
 
-
-
-
-### a. Metrics Dataset
+### Metrics Dataset
 For `tracking.MetricsDataset`, update its type to `MlflowMetricDataset`:
 
 Before:
@@ -65,7 +66,7 @@ metrics:
   type: kedro_mlflow.io.metrics.MlflowMetricDataset
 ```
 
-### b. JSON Dataset
+### JSON Dataset
 For `tracking.JSONDataset`, wrap it within `MlflowArtifactDataset` and configure it as `json.JSONDataset`:
 
 Before:
@@ -85,7 +86,7 @@ companies_columns:
     filepath: data/02_intermediate/companies_columns.json
 ```
 
-### c. Plotly Dataset
+### Plotly Dataset
 For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within `MlflowArtifactDataset` and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
 
 Before:
@@ -104,7 +105,7 @@ plotly_json_data:
     filepath: data/08_reporting/plotly.html
 ```
 
-### d. Matplotlib Writer
+### Matplotlib Writer
 For `matplotlib.MatplotlibWriter`, wrap it within `MlflowArtifactDataset`:
 
 Before:
@@ -124,7 +125,7 @@ confusion_matrix:
     filepath: data/07_reporting/confusion_matrix.png
 ```
 
-## Step 3: [Optional] Delete Old Tracking Data
+## [Optional] Delete Old Tracking Data
 
 Old experiment tracking data stored in data/09_tracking/ is no longer needed. You can delete this directory to clean up your project:
 
@@ -132,7 +133,7 @@ Old experiment tracking data stored in data/09_tracking/ is no longer needed. Yo
 rm -rf data/09_tracking/
 ```
 
-## Step 4: Refer to MLflow documentation for further setup
+## Refer to MLflow documentation for further setup
 
 After completing these steps, refer to the below Mlflow documentation to complete your experiment tracking setup with MLflow.
 
