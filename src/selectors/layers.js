@@ -63,20 +63,20 @@ export const getLayers = createSelector(
         return {
           id,
           name: layerName[id],
-          x: start, // Horizontal layout moves along the x-axis
-          y: (rectSize - height) / -2, // Centered along y-axis
-          width: Math.max(end - start, 0),
-          height: rectSize,
+          y: start, // Vertical layout moves along the y-axis
+          x: (rectSize - width) / -2, // Centered along x-axis
+          height: Math.max(end - start, 0),
+          width: rectSize,
         };
       } else {
         // Horizontal layout when orientation is false
         return {
           id,
           name: layerName[id],
-          y: start, // Vertical layout moves along the y-axis
-          x: (rectSize - width) / -2, // Centered along x-axis
-          height: Math.max(end - start, 0),
-          width: rectSize,
+          x: start, // Horizontal layout moves along the x-axis
+          y: (rectSize - height) / -2, // Centered along y-axis
+          width: Math.max(end - start, 0),
+          height: rectSize,
         };
       }
     });

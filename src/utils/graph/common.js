@@ -85,21 +85,22 @@ export const nodeBottom = (node) => node.y + node.height * 0.5;
 export const groupByRow = (nodes, orientation) => {
   const rows = {};
 
-  const primaryCoord = orientation === 'vertical' ? 'x' : 'y';
-  const secondaryCoord = orientation === 'horizontal' ? 'y' : 'x';
+  // Define the coordinate keys based on the orientation
+  const primaryCoord = orientation === 'vertical' ? 'y' : 'x';
+  const secondaryCoord = orientation === 'vertical' ? 'x' : 'y';
 
-  // Create rows using primaryCoord values
+  // Create rows using the primary coordinate
   for (const node of nodes) {
     const key = snap(node[primaryCoord], 10);
     rows[key] = rows[key] || [];
     rows[key].push(node);
   }
 
-  // Sort the set of rows accounting for keys being strings
+  // Sort the set of rows by the primary coordinate
   const rowNumbers = Object.keys(rows).map((row) => parseFloat(row));
   rowNumbers.sort((a, b) => a - b);
 
-  // Sort rows in order of secondaryCoord position if set. Break ties with ids for stability
+  // Sort rows in order of the secondary coordinate, then by ids for stability
   const sortedRows = rowNumbers.map((row) => rows[row]);
   for (let i = 0; i < sortedRows.length; i += 1) {
     sortedRows[i].sort((a, b) =>

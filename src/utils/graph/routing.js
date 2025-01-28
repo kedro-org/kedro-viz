@@ -107,14 +107,24 @@ export const routing = ({
 
         const offsetX = Math.min(spaceX, nodeGap * 0.5);
 
+        let sourceX, sourceY, targetX, targetY;
+
+        //TODO: Need to do this for horizontal orientation as well.
+        if (orientation === 'vertical') {
+          sourceX = nodeRight(node) + offsetX;
+          sourceY = nodeTop(node) - spaceY;
+          targetX = nodeLeft(nextNode) - offsetX;
+          targetY = nodeTop(nextNode) - spaceY;
+        }
+
         // Find the next potential point. Include offset to reduce overlapping edges
         const candidatePoint = nearestOnLine(
           currentPoint.x,
           currentPoint.y,
-          nodeRight(node) + offsetX,
-          nodeTop(node) - spaceY,
-          nodeLeft(nextNode) - offsetX,
-          nodeTop(nextNode) - spaceY
+          sourceX,
+          sourceY,
+          targetX,
+          targetY
         );
 
         const distance = distance1d(currentPoint.x, candidatePoint.x);
@@ -268,6 +278,21 @@ export const routing = ({
 
     // Combine all points
     const points = [...sourceStem, ...edge.points, ...targetStem];
+
+    // Fix any invalid points caused by invalid layouts
+    const coordPrimary = orientation === 'vertical' ? 'y' : 'x';
+
+    // Initialize the maximum value for the primary coordinate
+    let pointMax = points[0][coordPrimary];
+
+    for (const point of points) {
+      // Ensure increasing values for the primary coordinate
+      if (point[coordPrimary] < pointMax) {
+        point[coordPrimary] = pointMax;
+      } else {
+        pointMax = point[coordPrimary];
+      }
+    }
 
     // Assign finished points to edge
     edge.points = points;

@@ -34,8 +34,6 @@ export const layout = ({
   iterations,
   orientation,
 }) => {
-  console.log(orientation);
-
   let coordPrimary = 'x';
   let coordSecondary = 'y';
 
@@ -55,7 +53,7 @@ export const layout = ({
     spaceX,
     spaceY,
     spreadX,
-    layerSpace: (spaceX + layerSpaceY) * 0.5,
+    layerSpace: (spaceY + layerSpaceY) * 0.5,
     coordPrimary,
     coordSecondary,
   };
@@ -72,7 +70,7 @@ export const layout = ({
 
   // Constraints to avoid edges crossing and maintain parallel vertical edges
   const crossingConstraints = createCrossingConstraints(edges, constants);
-  const parallelConstraints = createParallelConstraints(edges, coordPrimary);
+  const parallelConstraints = createParallelConstraints(edges, constants);
 
   // Solve these constraints iteratively
   for (let i = 0; i < iterations; i += 1) {
@@ -299,9 +297,9 @@ const createSeparationConstraints = (rows, constants) => {
 const expandDenseRows = (
   edges,
   rows,
+  coordSecondary,
   spaceY,
   orientation,
-  coordSecondary,
   scale = 1.25,
   unit = 0.25
 ) => {
