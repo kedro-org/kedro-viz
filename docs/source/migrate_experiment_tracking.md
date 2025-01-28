@@ -133,7 +133,7 @@ rm -rf data/09_tracking/
 
 ## Refer to the `kedro-mlflow` documentation for further setup
 
-After completing these steps, refer to the below MLflow documentation to complete your experiment tracking setup with MLflow.
+After completing these steps, follow the below MLflow documentation to complete your experiment tracking setup with MLflow.
 
 - [The official Kedro + MLflow guide in the Kedro documentation](https://docs.kedro.org/en/stable/integrations/mlflow.html)
 - The documentation of [`kedro-mlflow`](https://docs.kedro.org/en/latest/integrations/mlflow.html) plugin 
