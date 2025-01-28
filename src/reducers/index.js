@@ -21,6 +21,7 @@ import {
   TOGGLE_IS_PRETTY_NAME,
   TOGGLE_TEXT_LABELS,
   TOGGLE_THEME,
+  TOGGLE_ORIENTATION,
   UPDATE_CHART_SIZE,
   UPDATE_ZOOM,
   TOGGLE_EXPAND_ALL_PIPELINES,
@@ -96,6 +97,7 @@ const combinedReducer = combineReducers({
   zoom: createReducer({}, UPDATE_ZOOM, 'zoom'),
   textLabels: createReducer(true, TOGGLE_TEXT_LABELS, 'textLabels'),
   theme: createReducer('dark', TOGGLE_THEME, 'theme'),
+  orientation: createReducer('vertical', TOGGLE_ORIENTATION, 'orientation'),
   isPrettyName: createReducer(false, TOGGLE_IS_PRETTY_NAME, 'isPrettyName'),
   showFeatureHints: createReducer(
     true,

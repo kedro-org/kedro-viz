@@ -40,17 +40,18 @@ export const routing = ({
   stemMax,
   stemSpaceSource,
   stemSpaceTarget,
+  orientation,
 }) => {
   // Find the rows formed by nodes
-  const rows = groupByRow(nodes);
+  const rows = groupByRow(nodes, orientation);
 
   // For each node
   for (const node of nodes) {
     // Sort the node's target edges by the angle between source and target nodes
     node.targets.sort((a, b) =>
       compare(
-        angle(b.sourceNode, b.targetNode),
-        angle(a.sourceNode, a.targetNode)
+        angle(b.sourceNode, b.targetNode, orientation),
+        angle(a.sourceNode, a.targetNode, orientation)
       )
     );
   }
@@ -75,7 +76,7 @@ export const routing = ({
     const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
 
     // Start at source node offset
-    const startPoint = { x: source.x + sourceOffsetX, y: source.y };
+    const startPoint = { x: source.x, y: source.y };
     let currentPoint = startPoint;
 
     // For each row between the source and target rows exclusive
@@ -153,15 +154,23 @@ export const routing = ({
     // Sort the node's outgoing edges by the starting angle of the edge path
     node.targets.sort((a, b) =>
       compare(
-        angle(b.sourceNode, b.points[0] || b.targetNode),
-        angle(a.sourceNode, a.points[0] || a.targetNode)
+        angle(b.sourceNode, b.points[0] || b.targetNode, orientation),
+        angle(a.sourceNode, a.points[0] || a.targetNode, orientation)
       )
     );
     // Sort the node's incoming edges by the ending angle of the edge path
     node.sources.sort((a, b) =>
       compare(
-        angle(a.points[a.points.length - 1] || a.sourceNode, a.targetNode),
-        angle(b.points[b.points.length - 1] || b.sourceNode, b.targetNode)
+        angle(
+          a.points[a.points.length - 1] || a.sourceNode,
+          a.targetNode,
+          orientation
+        ),
+        angle(
+          b.points[b.points.length - 1] || b.sourceNode,
+          b.targetNode,
+          orientation
+        )
       )
     );
   }
@@ -171,24 +180,10 @@ export const routing = ({
     const source = edge.sourceNode;
     const target = edge.targetNode;
 
-    // Find the ideal gap between edge source and target anchors
-    const sourceSeparation = Math.min(
-      (source.width - stemSpaceSource) / source.targets.length,
-      stemSpaceSource
-    );
-
-    const targetSeparation = Math.min(
-      (target.width - stemSpaceTarget) / target.sources.length,
-      stemSpaceTarget
-    );
-
     const sourceEdgeDistance =
       source.targets.indexOf(edge) - (source.targets.length - 1) * 0.5;
     const targetEdgeDistance =
       target.sources.indexOf(edge) - (target.sources.length - 1) * 0.5;
-
-    const sourceOffsetX = sourceSeparation * sourceEdgeDistance;
-    const targetOffsetX = targetSeparation * targetEdgeDistance;
 
     // Decrease stem length outwards from the middle stem
     const sourceOffsetY =
@@ -201,53 +196,78 @@ export const routing = ({
       target.sources.length *
       (1 - Math.abs(targetEdgeDistance) / target.sources.length);
 
-    // Build the source stem for the edge
-    const sourceStem = [
-      {
-        x: source.x + sourceOffsetX,
-        y: nodeBottom(source),
-      },
-      {
-        x: source.x + sourceOffsetX,
-        y: nodeBottom(source) + stemMinSource,
-      },
-      {
-        x: source.x + sourceOffsetX,
-        y:
-          nodeBottom(source) + stemMinSource + Math.min(sourceOffsetY, stemMax),
-      },
-    ];
+    let sourceStem, targetStem;
 
-    // Build the target stem for the edge
-    const targetStem = [
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
-      },
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target) - stemMinTarget,
-      },
-      {
-        x: target.x + targetOffsetX,
-        y: nodeTop(target),
-      },
-    ];
+    // Build the source stem for the edge
+    if (orientation === 'vertical') {
+      sourceStem = [
+        {
+          x: source.x,
+          y: nodeBottom(source),
+        },
+        {
+          x: source.x,
+          y: nodeBottom(source) + stemMinSource,
+        },
+        {
+          x: source.x,
+          y:
+            nodeBottom(source) +
+            stemMinSource +
+            Math.min(sourceOffsetY, stemMax),
+        },
+      ];
+      targetStem = [
+        {
+          x: target.x,
+          y: nodeTop(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
+        },
+        {
+          x: target.x,
+          y: nodeTop(target) - stemMinTarget,
+        },
+        {
+          x: target.x,
+          y: nodeTop(target),
+        },
+      ];
+    } else {
+      sourceStem = [
+        {
+          x: nodeRight(source),
+          y: source.y,
+        },
+        {
+          y: source.y,
+          x: nodeRight(source) + stemMinSource,
+        },
+        {
+          y: source.y,
+          x:
+            nodeRight(source) +
+            stemMinSource +
+            Math.min(sourceOffsetY, stemMax),
+        },
+      ];
+      targetStem = [
+        {
+          y: target.y,
+          x:
+            nodeLeft(target) - stemMinTarget - Math.min(targetOffsetY, stemMax),
+        },
+        {
+          y: target.y,
+          x: nodeLeft(target) - stemMinTarget,
+        },
+        {
+          y: target.y,
+          x: nodeLeft(target),
+        },
+      ];
+    }
 
     // Combine all points
     const points = [...sourceStem, ...edge.points, ...targetStem];
-
-    // Fix any invalid points caused by invalid layouts
-    let pointYMax = points[0].y;
-
-    for (const point of points) {
-      // Ensure increasing Y values for each point
-      if (point.y < pointYMax) {
-        point.y = pointYMax;
-      } else {
-        pointYMax = point.y;
-      }
-    }
 
     // Assign finished points to edge
     edge.points = points;
