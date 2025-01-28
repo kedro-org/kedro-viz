@@ -8,7 +8,7 @@ With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, trans
 
 ## Remove deprecated Kedro-Viz experiment tracking configurations
 
-### 1. Remove Session Store setup
+### 1. Remove session store setup
 
 In `src/<project_name>/settings.py`, locate and remove the session store configuration:
 
