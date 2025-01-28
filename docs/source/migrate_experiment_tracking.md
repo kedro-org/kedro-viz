@@ -1,4 +1,4 @@
-# Migration from Kedro-Viz native Experiment Tracking to `kedro-mlflow`
+# Migration from Kedro-Viz native experiment tracking to `kedro-mlflow`
 
 With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
@@ -125,7 +125,7 @@ confusion_matrix:
 
 ## [Optional] Delete old tracking data
 
-Old experiment tracking data stored in data/09_tracking/ is no longer needed. You can delete this directory to clean up your project:
+Old experiment tracking data stored in `data/09_tracking/` is no longer needed. You can delete this directory to clean up your project:
 
 ```bash 
 rm -rf data/09_tracking/
