@@ -25,20 +25,20 @@ export const getLayers = createSelector(
         const bound = bounds[layer] || (bounds[layer] = [Infinity, -Infinity]);
 
         if (orientation === 'vertical') {
-          if (node.x - node.width < bound[0]) {
-            bound[0] = node.x - node.width;
-          }
-
-          if (node.x + node.width > bound[1]) {
-            bound[1] = node.x + node.width;
-          }
-        } else {
           if (node.y - node.height < bound[0]) {
             bound[0] = node.y - node.height;
           }
 
           if (node.y + node.height > bound[1]) {
             bound[1] = node.y + node.height;
+          }
+        } else {
+          if (node.x - node.width < bound[0]) {
+            bound[0] = node.x - node.width;
+          }
+
+          if (node.x + node.width > bound[1]) {
+            bound[1] = node.x + node.width;
           }
         }
       }
