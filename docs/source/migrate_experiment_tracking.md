@@ -3,7 +3,7 @@
 With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
 1. **Remove deprecated Kedro-Viz experiment tracking configurations.**
-2. **Update existing dataset configurations in the catalog.**
+2. **Update existing dataset configurations in the catalog to use `kedro-mlflow`.**
 3. **Optionally, delete old experiment tracking data.**
 
 ## Remove deprecated Kedro-Viz experiment tracking configurations
