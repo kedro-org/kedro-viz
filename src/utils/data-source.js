@@ -36,6 +36,7 @@ export const getSourceID = () => {
 export const getDataValue = (source) => {
   // Add data source string to data object
   const nameSource = (data) => Object.assign(data, { source });
+
   switch (source) {
     case 'spaceflights':
       // Use data from the 'spaceflights' test dataset
@@ -54,7 +55,7 @@ export const getDataValue = (source) => {
       return source;
     default:
       throw new Error(
-        `Unexpected data source value '${source}'. Your input should be one of the following values: 'spaceflights', 'demo', 'json', 'selectors' or 'random'`
+        `Unexpected data source value '${source}'. Your input should be one of the following values: 'spaceflights', 'demo', 'json', 'selectors', or 'random'`
       );
   }
 };
