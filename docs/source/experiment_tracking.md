@@ -1,7 +1,7 @@
 # Experiment tracking in Kedro-Viz
 
 ```{important}
-Starting from version 8.0.0 of Kedro-Viz, Experiment Tracking is exclusively supported for users with kedro-datasets version 2.1.0 or higher.
+Starting from Kedro-Viz 11.0.0, native Experiment Tracking will be deprecated in Kedro and Kedro-Viz. To enable experiment tracking in Kedro with MLflow, refer to the [`kedro-mlflow` documentation](https://docs.kedro.org/en/latest/integrations/mlflow.html).
 ```
 
 Experiment tracking is the process of saving all the metadata related to an experiment each time you run it. It enables you to compare different runs of a machine-learning model as part of the experimentation process.
