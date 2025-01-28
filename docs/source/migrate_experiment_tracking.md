@@ -1,15 +1,14 @@
-# Migration from Kedro-Viz Native Experiment Tracking to [`kedro-mlflow`](https://github.com/kedro-org/kedro-viz/pull/2250)
+# Migration from Kedro-Viz native Experiment Tracking to `kedro-mlflow`
 
 With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
-1. **Remove deprecated configurations related to Kedro-Viz experiment tracking.**
+1. **Remove deprecated Kedro-Viz experiment tracking configurations.**
 2. **Update existing dataset configurations in the catalog.**
 3. **Optionally, delete old experiment tracking data.**
-4. **Refer to MLflow documentation for further setup.**
 
-## Remove deprecated configurations related to Kedro-Viz experiment tracking
+## Remove deprecated Kedro-Viz experiment tracking configurations
 
-### 1. Remove Session Store Setup
+### 1. Remove Session Store setup
 
 In `src/<project_name>/settings.py`, locate and remove the session store configuration:
 
@@ -20,37 +19,36 @@ SESSION_STORE_CLASS = SQLiteStore
 SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 ```
 
-### 2. Remove Environment Variables
+### 2. Remove environment variables
 Remove any environment variables associated with collaborative tracking:
 
 ```bash
-export KEDRO_SQLITE_STORE_USERNAME="your_unique_username"
+unset KEDRO_SQLITE_STORE_USERNAME
 ```
 
-### 3. Delete SQLite Database
+### 3. Delete SQLite database
 If a `session_store.db` SQLite database was created, you can delete it to clean up your project. This file is typically located in one of the following directories:
 
 - The project root 
 - The `.viz` folder within the project root
 - The `data` folder
 
-
-## Update Dataset Configurations in Catalog
+## Update dataset configurations in catalog to use `kedro-mlflow`
 
 Update the dataset configurations in your `catalog.yml` to transition to `kedro-mlflow`. Refer to the table below for the changes:
 
-### Dataset migration Table
+### Dataset migration table
 
 | Kedro-Viz Dataset Type         | MLflow Dataset Type        | Update Instructions                                      |
 |---------------------------------|----------------------------|---------------------------------------------------------|
-| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to `MlflowMetricDataset`.                  |
-| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset` as `json.JSONDataset`. |
-| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset` as `plotly.HTMLDataset`. |
-| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset` as `plotly.HTMLDataset`. |
-| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within `MlflowArtifactDataset`.                   |
+| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.metrics.mlflow_metric_dataset.MlflowMetricDataset).                  |
+| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `json.JSONDataset`. |
+| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `plotly.HTMLDataset`. |
+| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `plotly.HTMLDataset`. |
+| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset).                   |
 
-### Metrics Dataset
-For `tracking.MetricsDataset`, update its type to `MlflowMetricDataset`:
+### Metrics dataset
+For `tracking.MetricsDataset`, update its type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.metrics.mlflow_metric_dataset.MlflowMetricDataset):
 
 Before:
 ```yaml
@@ -66,8 +64,8 @@ metrics:
   type: kedro_mlflow.io.metrics.MlflowMetricDataset
 ```
 
-### JSON Dataset
-For `tracking.JSONDataset`, wrap it within `MlflowArtifactDataset` and configure it as `json.JSONDataset`:
+### JSON dataset
+For `tracking.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) and configure it as `json.JSONDataset`:
 
 Before:
 ```yaml
@@ -86,8 +84,8 @@ companies_columns:
     filepath: data/02_intermediate/companies_columns.json
 ```
 
-### Plotly Dataset
-For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within `MlflowArtifactDataset` and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
+### Plotly dataset
+For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
 
 Before:
 ```yaml
@@ -105,8 +103,8 @@ plotly_json_data:
     filepath: data/08_reporting/plotly.html
 ```
 
-### Matplotlib Writer
-For `matplotlib.MatplotlibWriter`, wrap it within `MlflowArtifactDataset`:
+### Matplotlib writer
+For `matplotlib.MatplotlibWriter`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/08_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset):
 
 Before:
 ```yaml
@@ -122,10 +120,10 @@ confusion_matrix:
   type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
   dataset:
     type: matplotlib.MatplotlibWriter
-    filepath: data/07_reporting/confusion_matrix.png
+    filepath: data/08_reporting/confusion_matrix.png
 ```
 
-## [Optional] Delete Old Tracking Data
+## [Optional] Delete old tracking data
 
 Old experiment tracking data stored in data/09_tracking/ is no longer needed. You can delete this directory to clean up your project:
 
@@ -133,9 +131,9 @@ Old experiment tracking data stored in data/09_tracking/ is no longer needed. Yo
 rm -rf data/09_tracking/
 ```
 
-## Refer to MLflow documentation for further setup
+## Refer to the `kedro-mlflow` documentation for further setup
 
-After completing these steps, refer to the below Mlflow documentation to complete your experiment tracking setup with MLflow.
+After completing these steps, refer to the below MLflow documentation to complete your experiment tracking setup with MLflow.
 
 - [The official Kedro + MLflow guide in the Kedro documentation](https://docs.kedro.org/en/stable/integrations/mlflow.html)
 - The documentation of [`kedro-mlflow`](https://docs.kedro.org/en/latest/integrations/mlflow.html) plugin 
