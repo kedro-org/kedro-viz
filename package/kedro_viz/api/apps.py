@@ -48,56 +48,6 @@ def _create_base_api_app() -> FastAPI:
 
     return app
 
-def create_api_app_for_notebook() -> FastAPI:
-    """Create an API app for notebook users without full blown kedro project.
-
-    Returns:
-        The FastAPI app
-    """
-    app = _create_base_api_app()
-    app.include_router(rest_router)
-
-    # Check for html directory existence.
-    if Path(_HTML_DIR).is_dir():
-        # The html is needed when kedro_viz is used in cli but not required when running
-        # frontend e2e tests via Cypress
-        app.mount("/static", StaticFiles(directory=_HTML_DIR / "static"), name="static")
-
-    # every time the server reloads, a new app with a new timestamp will be created.
-    # this is used as an etag embedded in the frontend for client to use when making requests.
-    app_etag = _create_etag()
-
-    # Serve the favicon.ico file from the "html" directory
-    @app.get("/favicon.ico", include_in_schema=False)
-    async def favicon():
-        return FileResponse(_HTML_DIR / "favicon.ico")
-
-    @app.get("/")
-    async def index():
-        # static window config
-        config_script = """
-        <script>
-            window.__APP_CONFIG__ = {
-                onlyChartView: "true",
-            };
-        </script>
-        """
-
-        html_content = (_HTML_DIR / "index.html").read_text(encoding="utf-8")
-        html_content = html_content.replace("</body>", config_script + "</body>")
-        response = HTMLResponse(html_content)
-
-        # Add custom headers
-        # response.headers["X-Show-ChartView"] = "True"
-
-        # Example headers
-        # response.headers["X-Show-MainNav"] = "False"
-        # response.headers["X-Show-MetaData"] = "False"
-
-        return response
-
-    return app
-
 
 def create_api_app_from_project(
     project_path: Path, autoreload: bool = False

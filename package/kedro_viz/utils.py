@@ -1,7 +1,7 @@
 """Transcoding related utility functions."""
 
 import hashlib
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
@@ -60,6 +60,17 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+
+def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str, Any]:
+    import copy
+    merged = copy.deepcopy(dict_one)
+    
+    for key, value in dict_two.items():
+        if isinstance(value, dict) and key in merged:
+            merged[key] = merge_dicts(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
 
 class NotebookUser:
     def __init__(self, pipeline: Pipeline = None, catalog: DataCatalog = None):

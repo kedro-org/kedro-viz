@@ -27,12 +27,17 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
   if (hasGraph) {
     width = graphSize.width + graphSize.marginx * 2;
     height = graphSize.height + graphSize.marginy * 2;
-    clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    clone && clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
   }
-  clone.querySelector('#zoom-wrapper').removeAttribute('transform');
-  clone
-    .querySelector('#zoom-wrapper')
-    .setAttribute('transform', `translate(${globalToolbarWidth}, 0)`);
+  if (clone) {
+    let zoomWrapperElement = clone.querySelector('#zoom-wrapper');
+    zoomWrapperElement && zoomWrapperElement.removeAttribute('transform');
+    zoomWrapperElement &&
+      zoomWrapperElement.setAttribute(
+        'transform',
+        `translate(${globalToolbarWidth}, 0)`
+      );
+  }
 
   // Impose a maximum size on PNGs because otherwise they break when downloading
   if (format === 'png') {
@@ -41,8 +46,8 @@ const exportGraph = ({ format, theme, graphSize, mockFn }) => {
     height = Math.min(height, maxWidth * (height / width));
   }
   if (hasGraph) {
-    clone.setAttribute('width', width);
-    clone.setAttribute('height', height);
+    clone && clone.setAttribute('width', width);
+    clone && clone.setAttribute('height', height);
   }
 
   const style = document.createElement('style');

@@ -3,6 +3,9 @@
 import sys
 import warnings
 
+# alias to ease Notebook visualization import
+from .launchers.notebook_visualizer import NotebookVisualizer
+
 __version__ = "10.1.0"
 
 

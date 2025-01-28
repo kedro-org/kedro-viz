@@ -91,7 +91,6 @@ def run_server(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-    notebook_user: NotebookUser = None
 ):
     """Run a uvicorn server with a FastAPI app that either launches API response data from a file
     or from reading data from a real Kedro project.
@@ -126,12 +125,7 @@ def run_server(
 
     path = Path(project_path) if project_path else Path.cwd()
 
-    if notebook_user:
-        load_and_populate_data_for_notebook_users(notebook_user)
-        app = apps.create_api_app_for_notebook()
-    elif load_file:
-        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
-    else:
+    if load_file is None:
         load_and_populate_data(
             path, env, include_hooks, package_name, pipeline_name, extra_params, is_lite
         )
@@ -145,6 +139,8 @@ def run_server(
             save_api_responses_to_fs(save_file, fsspec.filesystem("file"), True)
 
         app = apps.create_api_app_from_project(path, autoreload)
+    else:
+        app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 

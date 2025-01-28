@@ -12,13 +12,6 @@ import {
   BANNER_KEYS,
 } from '../config';
 
-const config = window.__APP_CONFIG__;
-const onlyChartView = Boolean(
-  config &&
-    config.onlyChartView &&
-    config.onlyChartView.toLowerCase() === 'true'
-);
-
 /**
  * Create new default state instance for properties that aren't overridden
  * when the pipeline is reset with new data via the App component's data prop
@@ -55,15 +48,15 @@ export const createInitialState = () => ({
     slicing: true,
   },
   display: {
-    globalNavigation: true && !onlyChartView,
-    sidebar: true && !onlyChartView,
-    miniMap: true && !onlyChartView,
+    globalNavigation: true,
+    sidebar: true,
+    miniMap: true,
     expandPipelinesBtn: true,
     exportBtn: true,
     labelBtn: true,
     layerBtn: true,
     zoomToolbar: true,
-    metadataPanel: true && !onlyChartView,
+    metadataPanel: true,
   },
   behaviour: {
     reFocus: true,

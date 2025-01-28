@@ -1,13 +1,14 @@
 const path = require('path');
-const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
+    mode: 'production',
     entry: {
-        kedroViz: './src/utils/viz-entry.js', // Entry point for KedroViz
+        KedroViz: './src/utils/viz-entry.js', // Entry point for KedroViz
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].bundle.js', // Generates app.bundle.js and kedroViz.bundle.js
+        filename: '[name].bundle.min.js',
     },
     module: {
         rules: [
@@ -31,9 +32,8 @@ module.exports = {
           },
         ],
       },
-      plugins: [
-        new webpack.DefinePlugin({
-          'process.env': JSON.stringify({'REACT_APP_DATA_SOURCE': 'prop'})
-        }),
-      ],
+    optimization: {
+      minimize: true,
+      minimizer: [new TerserPlugin()]
+    }
 };
