@@ -12,13 +12,11 @@ import { Constraint, Operator, Strength } from 'kiwi.js';
  * Layout constraint in Y for separating rows
  */
 export const rowConstraint = {
-  property: 'y',
-
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
-      constants.spaceY,
+      constraint.separation,
       Strength.required
     ),
 };
@@ -27,8 +25,6 @@ export const rowConstraint = {
  * Layout constraint in Y for separating layers
  */
 export const layerConstraint = {
-  property: 'y',
-
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
@@ -42,13 +38,12 @@ export const layerConstraint = {
  * Layout constraint in X for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  property: 'x',
-
-  solve: (constraint) => {
+  solve: (constraint, constants) => {
     const { a, b, strength } = constraint;
-    const resolve = strength * (a.x - b.x);
-    a.x -= resolve;
-    b.x += resolve;
+    const resolve =
+      strength * (a[constants.coordPrimary] - b[constants.coordPrimary]);
+    a[constants.coordPrimary] -= resolve;
+    b[constants.coordPrimary] += resolve;
   },
 
   strict: (constraint, constants, variableA, variableB) =>
@@ -64,25 +59,29 @@ export const parallelConstraint = {
  * Crossing constraint in X for minimising edge crossings
  */
 export const crossingConstraint = {
-  property: 'x',
-
-  solve: (constraint) => {
+  solve: (constraint, constants) => {
     const { edgeA, edgeB, separationA, separationB, strength } = constraint;
 
     // Amount to move each node towards required separation
     const resolveSource =
       strength *
-      ((edgeA.sourceNode.x - edgeB.sourceNode.x - separationA) / separationA);
+      ((edgeA.sourceNode[constants.coordPrimary] -
+        edgeB.sourceNode[constants.coordPrimary] -
+        separationA) /
+        separationA);
 
     const resolveTarget =
       strength *
-      ((edgeA.targetNode.x - edgeB.targetNode.x - separationB) / separationB);
+      ((edgeA.targetNode[constants.coordPrimary] -
+        edgeB.targetNode[constants.coordPrimary] -
+        separationB) /
+        separationB);
 
     // Apply the resolve each node
-    edgeA.sourceNode.x -= resolveSource;
-    edgeB.sourceNode.x += resolveSource;
-    edgeA.targetNode.x -= resolveTarget;
-    edgeB.targetNode.x += resolveTarget;
+    edgeA.sourceNode[constants.coordPrimary] -= resolveSource;
+    edgeB.sourceNode[constants.coordPrimary] += resolveSource;
+    edgeA.targetNode[constants.coordPrimary] -= resolveTarget;
+    edgeB.targetNode[constants.coordPrimary] += resolveTarget;
   },
 };
 
@@ -90,8 +89,6 @@ export const crossingConstraint = {
  * Layout constraint in X for minimum node separation
  */
 export const separationConstraint = {
-  property: 'x',
-
   strict: (constraint, constants, variableA, variableB) =>
     new Constraint(
       variableB.minus(variableA),

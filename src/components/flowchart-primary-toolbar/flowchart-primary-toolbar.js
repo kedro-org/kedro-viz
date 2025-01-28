@@ -6,6 +6,7 @@ import {
   toggleSidebar,
   toggleTextLabels,
   toggleExpandAllPipelines,
+  toggleOrientation,
 } from '../../actions';
 import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
@@ -35,6 +36,8 @@ export const FlowchartPrimaryToolbar = ({
   visibleLayers,
   expandedPipelines,
   onToggleExpandAllPipelines,
+  orientation,
+  onToggleOrientation,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
@@ -97,6 +100,19 @@ export const FlowchartPrimaryToolbar = ({
           onClick={() => onToggleExportModal(true)}
           visible={display.exportBtn}
         />
+        <IconButton
+          ariaLabel="Change flowchart orientation"
+          className={'pipeline-menu-button--orientation'}
+          dataTest={'sidebar-flowchart-orientation-btn'}
+          icon={ExportIcon}
+          labelText="Change Orientation"
+          onClick={() =>
+            onToggleOrientation(
+              orientation === 'vertical' ? 'horizontal' : 'vertical'
+            )
+          }
+          visible={display.orientationBtn}
+        />
       </PrimaryToolbar>
     </>
   );
@@ -108,6 +124,7 @@ export const mapStateToProps = (state) => ({
   visible: state.visible,
   display: state.display,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
+  orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
 });
 
@@ -127,6 +144,9 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
     dispatch(toggleModularPipelinesVisibilityState(isExpanded));
+  },
+  onToggleOrientation: (value) => {
+    dispatch(toggleOrientation(value));
   },
 });
 

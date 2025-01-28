@@ -70,15 +70,20 @@ export const drawLayers = function () {
  * Render layer name labels
  */
 export const drawLayerNames = function () {
-  const {
-    chartSize: { sidebarWidth = 0 },
-    layers,
-  } = this.props;
+  const { chartSize, layers, orientation } = this.props;
+
+  const layerNamePosition =
+    orientation === 'vertical' ? chartSize.sidebarWidth || 0 : 100 || 0;
+
+  const transformValue =
+    orientation === 'vertical'
+      ? `translateX(${layerNamePosition}px)`
+      : `translateY(${layerNamePosition}px)`;
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
     .duration(this.DURATION)
-    .style('transform', `translateX(${sidebarWidth}px)`);
+    .style('transform', transformValue);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
@@ -126,12 +131,14 @@ const updateNodeRects = (nodeRects) =>
       return node.height / 2;
     });
 
-const updateParameterRect = (nodeRects) =>
+const updateParameterRect = (nodeRects, orientation) =>
   nodeRects
     .attr('width', 12)
     .attr('height', 12)
-    .attr('x', (node) => (node.width + 20) / -2)
-    .attr('y', -6);
+    .attr('x', (node) =>
+      orientation === 'vertical' ? (node.width + 20) / -2 : -node.width / 2 + 10
+    )
+    .attr('y', (node) => (orientation === 'vertical' ? -6 : -node.height + 12));
 
 /**
  * Render node icons and name labels
@@ -150,6 +157,7 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
     isSlicingPipelineApplied,
+    orientation,
   } = this.props;
   const {
     from: slicedPipelineFromId,
@@ -223,7 +231,7 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
       .on('mouseover', this.handleParamsIndicatorMouseOver)
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: use a single path per icon
     enterNodes
@@ -344,7 +352,7 @@ export const drawNodes = function (changed) {
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: icon transitions with CSS on GPU
     allNodes

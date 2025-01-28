@@ -12,7 +12,7 @@ const defaultOptions = {
   layout: {
     spaceX: 14,
     spaceY: 110,
-    layerSpaceY: 55,
+    layerSpaceY: 100,
     spreadX: 2.2,
     padding: 100,
     iterations: 25,
@@ -22,9 +22,9 @@ const defaultOptions = {
     spaceY: 28,
     minPassageGap: 40,
     stemUnit: 8,
-    stemMinSource: 5,
-    stemMinTarget: 5,
-    stemMax: 20,
+    stemMinSource: 0,
+    stemMinTarget: 15,
+    stemMax: 10,
     stemSpaceSource: 6,
     stemSpaceTarget: 10,
   },
@@ -41,12 +41,18 @@ const defaultOptions = {
  * @param {Object=} options The graph options
  * @returns {Object} The generated graph
  */
-export const graph = (nodes, edges, layers, options = defaultOptions) => {
+export const graph = (
+  nodes,
+  edges,
+  layers,
+  orientation,
+  options = defaultOptions
+) => {
   addEdgeLinks(nodes, edges);
   addNearestLayers(nodes, layers);
 
-  layout({ nodes, edges, layers, ...options.layout });
-  routing({ nodes, edges, layers, ...options.routing });
+  layout({ nodes, edges, layers, orientation, ...options.layout });
+  routing({ nodes, edges, layers, orientation, ...options.routing });
 
   const size = bounds(nodes, options.layout.padding);
   nodes.forEach((node) => offsetNode(node, size.min));

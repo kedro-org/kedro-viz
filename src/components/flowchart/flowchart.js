@@ -183,7 +183,7 @@ export class FlowChart extends Component {
       this.updateChartSize();
     }
 
-    if (changed('layers', 'chartSize')) {
+    if (changed('layers', 'chartSize', 'orientation')) {
       drawLayers.call(this);
       drawLayerNames.call(this);
     }
@@ -364,8 +364,14 @@ export class FlowChart extends Component {
     // Update layer label y positions
     if (this.el.layerNames) {
       this.el.layerNames.style('transform', (d) => {
-        const updateY = y + (d.y + d.height / 2) * scale;
-        return `translateY(${updateY}px)`;
+        if (this.props.orientation === 'vertical') {
+          const updateY = y + (d.y + d.height / 2) * scale;
+          return `translateY(${updateY}px)`; // Use translateY for vertical layout
+        } else {
+          // Horizontal orientation
+          const updateX = x + (d.x + d.width / 4) * scale;
+          return `translateX(${updateX}px)`; // Use translateX for horizontal layout
+        }
       });
     }
 
@@ -997,6 +1003,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
   modularPipelineIds: state.modularPipeline.ids,
+  orientation: state.orientation,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
   visibleGraph: state.visible.graph,
