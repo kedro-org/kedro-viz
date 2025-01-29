@@ -39,34 +39,32 @@ export const DeprecationBanner = ({ visible }) => {
     >
       <div className="deprecation-banner-modal__message-wrapper">
         <p>
-          The Kedro team have decided to deprecate the native experiment
-          tracking feature on 99 Feb 2025.
+          We have decided to deprecate experiment tracking feature from
+          Kedro-Viz version 11.0.0
         </p>
 
         <p className="deprecation-banner-modal__secondary-text">
-          More information behind Kedro’s decision can be found on{' '}
+          Find out more from{' '}
           {renderLink('https://example.com/blog-post', 'this blog post')}.
         </p>
 
         <p className="deprecation-banner-modal__secondary-text">
-          To support current experiment tracking users, please read Kedro’s
-          documentation on{' '}
+          Our documentation explains{' '}
           {renderLink(
             'https://google.com',
-            'how to continue using Kedro with other experiment tracking tools'
+            'how to continue using Kedro with MLflow for experiment tracking'
           )}
           , and{' '}
           {renderLink(
             'https://google.com',
-            'how to migrate your existing Kedro project'
+            'how to migrate a Kedro project to use them'
           )}
           .
         </p>
 
         <p className="deprecation-banner-modal__secondary-text">
-          We sincerely thank our users that have utilised Kedro’s experiment
-          tracking feature. If you have any further feedback for us, please feel
-          free to share your thoughts below.
+          If you have any further feedback for us, feel free to share your
+          thoughts below.
         </p>
       </div>
 

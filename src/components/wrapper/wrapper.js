@@ -49,7 +49,6 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
     setShowDeprecationBannerForET(shouldShowBanner);
   }, []);
 
-  console.log(showDeprecationBannerForET, 'showDeprecationBannerForET');
   return (
     <div
       className={classnames('kedro-pipeline kedro', {

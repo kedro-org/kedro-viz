@@ -1,7 +1,6 @@
 // All E2E Tests Related to Experiment Tracking Menu goes here.
 
 describe('Experiment Tracking Menu', () => {
-
   it('verifies that users can search for a run. #TC-34', () => {
     const searchInput = '2022-09';
 
