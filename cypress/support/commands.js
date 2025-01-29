@@ -262,4 +262,3 @@ Cypress.Commands.add('enablePrettyNames', () => {
         force: true,
       });
 });
-
