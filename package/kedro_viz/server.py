@@ -48,6 +48,10 @@ def populate_data(
 def load_and_populate_data_for_notebook_users(notebook_user: NotebookUser):
     """Loads pipeline data and populates Kedro Viz Repositories"""
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data_for_notebook_users(notebook_user)
+
+    # make each cell independent
+    data_access_manager.reset_fields()
+    
     # Creates data repositories which are used by Kedro Viz Backend APIs
     populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
 

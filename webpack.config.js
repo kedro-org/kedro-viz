@@ -9,6 +9,9 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].bundle.min.js',
+        library: 'KedroVizBundle', // Name of the UMD library
+        libraryTarget: 'umd', // UMD allows compatibility across environments
+        globalObject: 'this', // Ensures compatibility for both browsers and Node.js
     },
     module: {
         rules: [

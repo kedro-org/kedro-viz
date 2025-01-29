@@ -1,5 +1,6 @@
 import json
 from typing import Any, Dict
+import uuid
 from IPython.display import HTML, display
 from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
@@ -47,7 +48,10 @@ class NotebookVisualizer:
             viz_options = merge_dicts(viz_options, options)
 
         viz_options = json.dumps(viz_options)
-
+        
+        # To isolate container for each cell execution
+        unique_id = uuid.uuid4().hex[:8]
+        
         html_content = r"""<!DOCTYPE html>
         <html lang='en'>
         <head>
@@ -56,15 +60,29 @@ class NotebookVisualizer:
             <title>Kedro-Viz</title>
         </head>
         <body>
-            <div id='root' style='height: 600px'></div>
-            <script src='http://localhost:8012/kedroViz.bundle.min.js'></script>
+            <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
+            <script src="http://localhost:8013/kedroViz.bundle.min.js"></script>
             <script>
-                window.viz_container =  document.getElementById('root');
-
-                if (window.createRoot) {
-                    window.viz_root = window.createRoot(window.viz_container);
-                    window.viz_root && window.viz_root.render(window.React.createElement(window.KedroViz, { data: """ + json_to_visualize + r""", options: """ + viz_options + r""" }));
-                }
+                (function waitForBundle(maxRetries = 50, retries = 0) {
+                    if (typeof KedroVizBundle !== 'undefined') {
+                        const { KedroViz, createRoot, React } = KedroVizBundle;
+                        const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
+                        
+                        if (createRoot && viz_container) {
+                            const viz_root = createRoot(viz_container);
+                            viz_root.render(
+                                React.createElement(KedroViz, {
+                                    data: """ + json_to_visualize + """,
+                                    options: """ + viz_options + """
+                                })
+                            );
+                        }
+                    } else if (retries < maxRetries) {
+                        setTimeout(() => waitForBundle(maxRetries, retries + 1), 10);  // Retry every 10ms
+                    } else {
+                        console.error("Failed to load KedroVizBundle after 500ms");
+                    }
+            })();
             </script>
         </body>
         </html>"""
