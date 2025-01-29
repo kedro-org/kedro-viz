@@ -121,11 +121,15 @@ def load_data_for_notebook_users(notebook_user: NotebookUser) -> Tuple[DataCatal
     session_store = None
     stats_dict = {}
 
-    # create a dictionary of pipelines, for now we will have single pipeline
-    # i.e., a __default__ pipeline
+    # create a default pipeline if a dictionary of pipelines are sent
+    notebook_user_pipeline = notebook_user.pipeline[0]
 
-    pipelines_dict = {"__default__": notebook_user.pipeline[0]}
-    return catalog, pipelines_dict, session_store, stats_dict
+    if isinstance(notebook_user_pipeline, dict):
+        notebook_user_pipeline = {"__default__": sum(notebook_user_pipeline.values())}
+    else:
+        notebook_user_pipeline = {"__default__": notebook_user_pipeline}
+
+    return catalog, notebook_user_pipeline, session_store, stats_dict
 
 
 def load_data(

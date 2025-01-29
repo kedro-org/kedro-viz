@@ -1,7 +1,7 @@
 """Transcoding related utility functions."""
 
 import hashlib
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union
 
 from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
@@ -73,6 +73,6 @@ def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str,
     return merged
 
 class NotebookUser:
-    def __init__(self, pipeline: Pipeline = None, catalog: DataCatalog = None):
+    def __init__(self, pipeline: Union[Pipeline, Dict[str, Pipeline]] = None, catalog: DataCatalog = None):
         self.pipeline = pipeline,
         self.catalog = catalog

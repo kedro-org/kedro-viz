@@ -87,4 +87,10 @@ class NotebookVisualizer:
         </body>
         </html>"""
 
+        # Works but Security errors as KedroViz interacts with Browser history and iframe starts on a different origin
+        # html_content = f"""<iframe srcdoc="{html_content.replace('"', '&quot;')}"  style="width:100%; height:600px; border:none;" sandbox="allow-scripts"></iframe>"""
+        # display(HTML(html_content))
+
+        # Works but interacts directly with browser window 
+        # leading to unexpected URL params
         display(HTML(html_content))
