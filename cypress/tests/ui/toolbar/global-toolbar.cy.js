@@ -6,6 +6,10 @@ describe('Global Toolbar', () => {
   before(() => {
     cy.visit('/'); // Visit the application
     cy.enablePrettyNames(); // Enable pretty names using the custom command
+    cy.window().then((win) => {
+      win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+    });
+    cy.reload();
   });
 
   it('verifies that users can access the flowchart page through the flowchart icon, when in the experiment tracking view. #TC-1', () => {

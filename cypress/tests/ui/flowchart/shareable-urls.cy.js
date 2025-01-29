@@ -2,6 +2,10 @@ describe('Shareable URLs with empty localStorage', () => {
   beforeEach(() => {
     // Clears localStorage before each test
     cy.clearLocalStorage();
+    cy.window().then((win) => {
+      win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+    });
+    cy.reload();
   });
 
   it('verifies that users can open the Deploy Kedro-Viz modal if the localStorage is empty. #TC-52', () => {
