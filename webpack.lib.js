@@ -65,7 +65,7 @@ module.exports = [
         KedroViz: './src/utils/viz-entry.js', // Entry point for KedroViz
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'lib/umd'),
         filename: '[name].bundle.min.js',
         library: 'KedroVizBundle', // Name of the UMD library
         libraryTarget: 'umd', // UMD allows compatibility across environments
