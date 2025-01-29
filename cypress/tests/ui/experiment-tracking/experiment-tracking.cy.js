@@ -4,10 +4,6 @@ import { prettifyName, stripNamespace } from '../../../../src/utils';
 
 describe('Experiment Tracking', () => {
   describe('Overview', () => {
-    beforeEach(() => {
-      cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
-    });
-
     it('verifies that users can edit the run name, apply changes, and see the changes reflected from the overview page. #TC-43', () => {
       const modifiedRunTitleText = '2022-12-25T21.05.59.296Z';
 
@@ -71,7 +67,6 @@ describe('Experiment Tracking', () => {
 
   describe('Metrics', () => {
     beforeEach(() => {
-      cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
       // Go into metrics tab
 
       // Alias
@@ -185,8 +180,6 @@ describe('Experiment Tracking', () => {
 
   describe('Plots', () => {
     beforeEach(() => {
-      cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
-
       // Go into Plots tab
 
       // Alias

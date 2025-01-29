@@ -1,9 +1,6 @@
 // All E2E Tests Related to Experiment Tracking Menu goes here.
 
 describe('Experiment Tracking Menu', () => {
-  beforeEach(() => {
-    cy.acknowledgeAndDismissDeprecationBanner(); // Acknowledge and dismiss the deprecation banner
-  });
 
   it('verifies that users can search for a run. #TC-34', () => {
     const searchInput = '2022-09';
