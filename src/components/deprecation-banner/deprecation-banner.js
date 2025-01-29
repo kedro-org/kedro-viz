@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import Modal from '../ui/modal';
 import Button from '../ui/button';
-import { localStorageDeprecationBannerSeen } from '../../config';
-import { saveLocalStorage } from '../../store/helpers';
+import { localStorageETDeprecationBannerSeen } from '../../config';
 
 import './deprecation-banner.scss';
 
-export const DeprecationBanner = ({ visible }) => {
+export const DeprecationBanner = () => {
+  const visible = !window.localStorage.getItem(
+    localStorageETDeprecationBannerSeen
+  );
   const [showModal, setShowModal] = useState(visible);
 
   const handleAcknowledgeAndDismiss = () => {
-    saveLocalStorage(localStorageDeprecationBannerSeen, {
-      'experiment-tracking': true,
-    });
+    window.localStorage.setItem(localStorageETDeprecationBannerSeen, true);
     setShowModal(false);
   };
 
