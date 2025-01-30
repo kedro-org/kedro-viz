@@ -24,11 +24,11 @@
 	},
 
 	"containerEnv": {
-        "DISPLAY": "dummy",
-        "PYTHONUNBUFFERED": "True",
-        "UV_LINK_MODE": "copy",
-        "VIRTUAL_ENV": "/home/vscode/venv"
-    },
+		"DISPLAY": "dummy",
+		"PYTHONUNBUFFERED": "True",
+		"UV_LINK_MODE": "copy",
+		"VIRTUAL_ENV": "/home/vscode/venv"
+	},
 
 	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
 
