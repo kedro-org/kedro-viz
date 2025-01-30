@@ -30,6 +30,15 @@
 		"VIRTUAL_ENV": "/home/vscode/venv"
 	},
 
+	// FIXME: Why does it say "Property build is not allowed" despite it being part of the standard and the docs?
+	// https://containers.dev/implementors/json_reference/#image-specific
+	// https://code.visualstudio.com/docs/devcontainers/create-dev-container#_dockerfile
+	"build": {
+		"args": {
+			"NODE_VERSION": "18"
+		}
+	},
+
 	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
 
 	"postStartCommand": {
