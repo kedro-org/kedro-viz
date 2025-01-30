@@ -1,15 +1,16 @@
 // All E2E Tests Related to global-toolbar goes here.
 
 import { prettifyName, stripNamespace } from '../../../../src/utils';
+import { localStorageETDeprecationBannerSeen } from '../../../../src/config';
 
 describe('Global Toolbar', () => {
   before(() => {
-    cy.visit('/'); // Visit the application
-    cy.enablePrettyNames(); // Enable pretty names using the custom command
-    cy.window().then((win) => {
-      win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+      }
     });
-    cy.reload();
+    cy.enablePrettyNames(); // Enable pretty names using the custom command
   });
 
   it('verifies that users can access the flowchart page through the flowchart icon, when in the experiment tracking view. #TC-1', () => {
