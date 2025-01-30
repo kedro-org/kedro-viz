@@ -1,0 +1,47 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python 3",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
+
+	"forwardPorts": [4141, 4142],
+
+	"portsAttributes": {
+		"4142": {
+			"label": "Backend",
+			"onAutoForward": "notify"
+		},
+		"4141": {
+			"label": "Frontend",
+			"onAutoForward": "openBrowser"
+		}
+	},
+
+	"containerEnv": {
+        "DISPLAY": "dummy",
+        "PYTHONUNBUFFERED": "True",
+        "UV_LINK_MODE": "copy",
+        "VIRTUAL_ENV": "/home/vscode/venv"
+    },
+
+	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
+
+	"postStartCommand": {
+		"backend": ["uv", "run", "python", "package/kedro_viz/server.py", "demo-project"],
+		"frontend": ["npm", "start"]
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python"
+			]
+		}
+	}
+}
