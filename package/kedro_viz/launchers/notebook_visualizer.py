@@ -61,7 +61,7 @@ class NotebookVisualizer:
         </head>
         <body>
             <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
-            <script src="http://localhost:8013/kedroViz.bundle.min.js"></script>
+            <script src="http://localhost:8015/kedroViz.bundle.min.js"></script>
             <script>
                 (function waitForBundle(maxRetries = 50, retries = 0) {
                     if (typeof KedroVizBundle !== 'undefined') {
