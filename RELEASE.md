@@ -6,10 +6,7 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 10.2.0 
-
-
-## Major features and improvements
+# Release 10.2.0
 
 ## Bug fixes and other changes
 
