@@ -62,11 +62,11 @@ module.exports = [
   {
     mode: 'production',
     entry: {
-        KedroViz: './src/utils/viz-entry.js', // Entry point for KedroViz
+        "kedro-viz": './src/utils/viz-entry.js', // Entry point for KedroViz
     },
     output: {
         path: path.resolve(__dirname, 'lib/umd'),
-        filename: '[name].bundle.min.js',
+        filename: '[name].production.min.js',
         library: 'KedroVizBundle', // Name of the UMD library
         libraryTarget: 'umd', // UMD allows compatibility across environments
         globalObject: 'this', // Ensures compatibility for both browsers and Node.js

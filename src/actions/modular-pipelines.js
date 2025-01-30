@@ -55,3 +55,17 @@ export function toggleModularPipelinesExpanded(expandedIDs) {
     expandedIDs,
   };
 }
+
+export const TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE =
+  'TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE';
+
+/**
+ * Toggles the visibility state for all modular pipelines (expand or collapse all).
+ * @param {Boolean} expandAllPipelines - Whether to expand (true) or collapse (false) all pipelines.
+ */
+export function toggleModularPipelinesVisibilityState(expandAllPipelines) {
+  return {
+    type: TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE,
+    expandAllPipelines,
+  };
+}
