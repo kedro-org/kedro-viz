@@ -11,3 +11,6 @@ uv venv $VIRTUAL_ENV
 
 uv pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt
 uv pip install -e package/
+
+# Now the NPM dependencies too
+npm install
