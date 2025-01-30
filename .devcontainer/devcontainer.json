@@ -33,8 +33,8 @@
 	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
 
 	"postStartCommand": {
-		"backend": ["uv", "run", "python", "package/kedro_viz/server.py", "demo-project"],
-		"frontend": ["npm", "start"]
+		"backend": "nohup bash -c 'uv run python package/kedro_viz/server.py demo-project &' > backend.out 2> backend.err < /dev/null",
+		// "frontend": "nohup bash -c 'npm start &' > frontend.out 2> frontend.err"
 	},
 
 	"customizations": {
