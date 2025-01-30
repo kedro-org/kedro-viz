@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: '21 November 2024',
+  date: '30 January 2025',
   features: [
     {
       title: 'Support for Python 3.12 and 3.13',
