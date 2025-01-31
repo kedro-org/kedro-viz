@@ -1,8 +1,4 @@
 describe('Shareable URLs with empty localStorage', () => {
-  beforeEach(() => {
-    // Clears localStorage before each test
-    cy.clearLocalStorage();
-  });
 
   it('verifies that users can open the Deploy Kedro-Viz modal if the localStorage is empty. #TC-52', () => {
     // Intercept the network request to mock with a fixture
