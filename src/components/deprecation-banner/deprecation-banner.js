@@ -58,7 +58,7 @@ export const DeprecationBanner = () => {
             'https://docs.kedro.org/en/stable/integrations/mlflow.html',
             'how to continue using Kedro with MLflow for experiment tracking'
           )}
-          , and{' '}
+          and{' '}
           {renderLink(
             'https://docs.kedro.org/projects/kedro-viz/en/latest/migrate_experiment_tracking.html',
             'how to migrate a Kedro project accordingly'
