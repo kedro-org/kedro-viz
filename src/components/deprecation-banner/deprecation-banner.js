@@ -45,18 +45,22 @@ export const DeprecationBanner = () => {
 
         <p className="deprecation-banner-modal__secondary-text">
           Find out more from{' '}
-          {renderLink('https://example.com/blog-post', 'this blog post')}.
+          {renderLink(
+            'https://kedro.org/blog/deprecate-experiment-tracking-kedro-viz',
+            'this blog post'
+          )}
+          .
         </p>
 
         <p className="deprecation-banner-modal__secondary-text">
           Our documentation explains{' '}
           {renderLink(
-            'https://google.com',
+            'https://docs.kedro.org/en/stable/integrations/mlflow.html',
             'how to continue using Kedro with MLflow for experiment tracking'
           )}
           , and{' '}
           {renderLink(
-            'https://google.com',
+            'https://docs.kedro.org/projects/kedro-viz/en/latest/migrate_experiment_tracking.html',
             'how to migrate a Kedro project to use them'
           )}
           .
