@@ -61,7 +61,7 @@ export const DeprecationBanner = () => {
           , and{' '}
           {renderLink(
             'https://docs.kedro.org/projects/kedro-viz/en/latest/migrate_experiment_tracking.html',
-            'how to migrate a Kedro project to use them'
+            'how to migrate a Kedro project accordingly'
           )}
           .
         </p>
