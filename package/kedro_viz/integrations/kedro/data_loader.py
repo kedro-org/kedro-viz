@@ -117,7 +117,7 @@ def _load_data_helper(
 def load_data_for_notebook_users(notebook_user: NotebookUser) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
 
     # Create a dummy data catalog with all datasets as memory datasets
-    catalog = DataCatalog()
+    catalog = DataCatalog() if notebook_user.catalog is None else notebook_user.catalog
     session_store = None
     stats_dict = {}
 

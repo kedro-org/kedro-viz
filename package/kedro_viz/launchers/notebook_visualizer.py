@@ -41,6 +41,9 @@ class NotebookVisualizer:
                 "zoomToolbar": False,
             },
             "expandAllPipelines": False,
+            "behaviour": { 
+                "reFocus": False,
+            },
             "theme": "dark"
         }
 
@@ -61,6 +64,7 @@ class NotebookVisualizer:
         </head>
         <body>
             <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
+            <script src="https://www.unpkg.com/@ravikumarpilla/kedro-viz@latest/lib/umd/vendors.production.min.js"></script>
             <script src="https://www.unpkg.com/@ravikumarpilla/kedro-viz@latest/lib/umd/kedro-viz.production.min.js"></script>
             <script>
                 (function waitForBundle(maxRetries = 50, retries = 0) {
@@ -88,9 +92,10 @@ class NotebookVisualizer:
         </html>"""
 
         # Works but Security errors as KedroViz interacts with Browser history and iframe starts on a different origin
+        # This is good for graphview but does not work with click events (Recommended)
         html_content = f"""<iframe srcdoc="{html_content.replace('"', '&quot;')}"  style="width:100%; height:600px; border:none;" sandbox="allow-scripts"></iframe>"""
         display(HTML(html_content))
 
         # Works but interacts directly with browser window 
-        # leading to unexpected URL params
+        # leading to unexpected URL params, works with click events
         # display(HTML(html_content))
