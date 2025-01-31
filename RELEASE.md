@@ -13,6 +13,7 @@ Please follow the established format:
 - Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. (#2206)
 - Improved modular pipeline expand/collapse logic for better state synchronisation. (#2225)
 - Fix inconsistent function inspection for decorated functions. (#2246)
+- Add deprecation warning for Experiment Tracking removal. (#2248)
 
 # Release 10.1.0
 
