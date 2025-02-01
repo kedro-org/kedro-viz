@@ -5,7 +5,7 @@ kedro-datasets[pandas.ParquetDataset, pandas.CSVDataset, pandas.ExcelDataset, pl
 kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.8
 behave~=1.2
-boto3~=1.35
+boto3~=1.36
 matplotlib~=3.9
 mypy~=1.11
 moto~=5.0.21
