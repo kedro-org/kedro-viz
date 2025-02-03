@@ -1,38 +1,24 @@
 export const updateContent = {
-  date: '30 January 2025',
+  date: '03 February 2025',
   features: [
     {
-      title: 'Support for Python 3.12 and 3.13',
+      title: 'Deprecation warning for Experiment Tracking removal',
       image: '',
-      copy: 'Kedro-Viz now supports Python 3.12 and 3.13, ensuring compatibility with the latest Python version.',
-      buttonLink:
-        'https://github.com/kedro-org/kedro-viz?tab=readme-ov-file#usage',
-      buttonText: 'Learn more',
-    },
-    {
-      title: 'Consistent Flowchart Positioning',
-      image: '',
-      copy: 'Flowchart positions now remain consistent across renders. Previously, the flowchart layout would change every time users made changes to their Kedro project, especially when using the` --autoreload` function. This issue has been resolved, and the layout will only change for significant node or pipeline updates.',
+      copy: 'The experiment tracking feature in Kedro-Viz is being deprecated, a warning banner will be displayed.',
       buttonLink: '',
     },
     {
-      title: 'Smarter `--autoreload` File Watcher',
+      title:
+        'Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. ',
       image: '',
-      copy: 'The `--autoreload` watcher has been optimized to monitor only relevant files, reducing unnecessary reloads. It now excludes files listed in the user’s .gitignore and focuses on key files like `.py` and `.yaml`.',
-      buttonLink:
-        'https://docs.kedro.org/projects/kedro-viz/en/latest/kedro-viz_visualisation.html#automatic-visualisation-updates',
-      buttonText: 'View the docs',
-    },
-    {
-      title: 'Improved Port Management',
-      image: '',
-      copy: 'Kedro-Viz will now open on a new port if the default port 4141 is already in use. This fixes an issue where running multiple instances of Kedro-Viz caused one to overwrite the other. For example, if 4141 is occupied, the next instance will use 4142, and so on.',
+      copy: 'Kedro viz `--load-file` can run from anywhere as long as it has the correct path to the API data directory .',
       buttonLink: '',
     },
     {
-      title: 'Fixed Tag Undefined Issue',
+      title:
+        'Improved modular pipeline expand/collapse logic for better state synchronisation',
       image: '',
-      copy: 'Resolved a bug where the tag was occasionally undefined when pipelines were ordered differently in the pipeline registry. This was a user-reported issue, and it’s now fully addressed.',
+      copy: 'The Expand All Pipelines button did a page reload everytime it was clicked, now it purely relies on redux actions',
       buttonLink: '',
     },
   ],
