@@ -139,11 +139,11 @@ def run(  # noqa: PLR0915
             )
             return
 
-        display_cli_message(
-            "WARNING: Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. "
-            "Please refer to the Kedro documentation for migration guidance.",
-            "yellow",
-        )
+    display_cli_message(
+        "WARNING: Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. "
+        "Please refer to the Kedro documentation for migration guidance.",
+        "yellow",
+    )
 
     installed_version = parse(__version__)
     latest_version = get_latest_version()
