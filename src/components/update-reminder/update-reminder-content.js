@@ -4,8 +4,10 @@ export const updateContent = {
     {
       title: 'Deprecation warning for Experiment Tracking removal',
       image: '',
-      copy: 'The experiment tracking feature in Kedro-Viz is being deprecated, a warning banner will be displayed.',
-      buttonLink: '',
+      copy: 'Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. Please refer to the Kedro documentation for migration guidance.',
+      buttonLink:
+        'https://docs.kedro.org/projects/kedro-viz/en/latest/migrate_experiment_tracking.html',
+      buttonText: 'View the docs',
     },
     {
       title:
@@ -18,7 +20,7 @@ export const updateContent = {
       title:
         'Improved modular pipeline expand/collapse logic for better state synchronisation',
       image: '',
-      copy: 'The Expand All Pipelines button did a page reload everytime it was clicked, now it purely relies on redux actions',
+      copy: 'Previously the Expand All Pipelines button did a data reload every time it was clicked, now it purely relies on redux actions.',
       buttonLink: '',
     },
   ],
