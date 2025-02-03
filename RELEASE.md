@@ -8,12 +8,14 @@ Please follow the established format:
 
 # Release 10.2.0
 
+## Deprecations
+- Added a deprecation warning for the removal of the Experiment Tracking feature, which will be deprecated in Kedro-Viz version 11.0.0. For more details, please refer to our [blog post](https://kedro.org/blog/deprecate-experiment-tracking-kedro-viz). (#2248)
+
 ## Bug fixes and other changes
 
 - Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. (#2206)
 - Improved modular pipeline expand/collapse logic for better state synchronisation. (#2225)
 - Fix inconsistent function inspection for decorated functions. (#2246)
-- Add deprecation warning for Experiment Tracking removal. (#2248)
 
 # Release 10.1.0
 
