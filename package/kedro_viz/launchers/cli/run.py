@@ -138,13 +138,13 @@ def run(  # noqa: PLR0915
                 "red",
             )
             return
-        
+
         click.echo(
-        click.style(
-            "WARNING: Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. "
-            "Please refer to the Kedro documentation for migration guidance.",
-            fg="yellow",
-        ),
+            click.style(
+                "WARNING: Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. "
+                "Please refer to the Kedro documentation for migration guidance.",
+                fg="yellow",
+            ),
         )
 
     installed_version = parse(__version__)
