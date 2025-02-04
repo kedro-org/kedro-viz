@@ -13,6 +13,8 @@ import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
+import LeftRightIcon from '../icons/left-right';
+import TopBottomIcon from '../icons/top-bottom';
 import PrimaryToolbar from '../primary-toolbar';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
@@ -104,7 +106,7 @@ export const FlowchartPrimaryToolbar = ({
           ariaLabel="Change flowchart orientation"
           className={'pipeline-menu-button--orientation'}
           dataTest={'sidebar-flowchart-orientation-btn'}
-          icon={ExportIcon}
+          icon={orientation === 'vertical' ? TopBottomIcon : LeftRightIcon}
           labelText="Change Orientation"
           onClick={() =>
             onToggleOrientation(
