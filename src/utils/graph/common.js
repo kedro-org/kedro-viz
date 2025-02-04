@@ -91,7 +91,7 @@ export const groupByRow = (nodes, orientation) => {
 
   // Create rows using the primary coordinate
   for (const node of nodes) {
-    const key = snap(node[primaryCoord], 10);
+    const key = node[primaryCoord];
     rows[key] = rows[key] || [];
     rows[key].push(node);
   }

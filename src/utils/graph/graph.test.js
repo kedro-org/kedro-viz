@@ -126,24 +126,39 @@ describe('commmon', () => {
 
   it('angle returns the angle between two points relative to x-axis', () => {
     // Degenerate case (coincident)
-    expect(angle({ x: 0, y: 0 }, { x: 0, y: 0 })).toEqual(0);
+
+    const normalizeAngle = (angle) =>
+      ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+    expect(angle({ x: 0, y: 0 }, { x: 0, y: 0 }, 'horizontal')).toEqual(0);
+    expect(angle({ x: 0, y: 0 }, { x: 0, y: 0 }, 'vertical')).toEqual(0);
 
     // Same quadrants
     for (let a = -Math.PI; a <= Math.PI; a += Math.PI / 3) {
       const pointA = { x: 2 * Math.cos(a), y: 2 * Math.sin(a) };
       expect(
-        angle(pointA, { x: 0.5 * pointA.x, y: 0.5 * pointA.y })
+        angle(pointA, { x: 0.5 * pointA.x, y: 0.5 * pointA.y }, 'vertical')
       ).toBeCloseTo(a);
     }
 
     // Different quadrants
     for (let a = -Math.PI; a <= Math.PI; a += Math.PI / 2) {
       const pointA = { x: Math.cos(a), y: Math.sin(a) };
-      expect(angle(pointA, { x: -pointA.x, y: -pointA.y })).toBeCloseTo(a);
+      expect(
+        angle(pointA, { x: -pointA.x, y: -pointA.y }, 'vertical')
+      ).toBeCloseTo(a);
+    }
+
+    // Same quadrants
+    for (let a = -Math.PI; a <= Math.PI; a += Math.PI / 3) {
+      const pointA = { x: 2 * Math.cos(a), y: 2 * Math.sin(a) };
+      expect(
+        angle(pointA, { x: 0.5 * pointA.x, y: 0.5 * pointA.y }, 'horizontal')
+      ).toBeCloseTo(normalizeAngle(Math.PI / 2 - a));
     }
   });
 
-  it('groupByRow finds the rows formed by nodes given the their positions in Y sorted in X and Y.', () => {
+  describe('groupByRow function', () => {
     const nodes = [
       { x: 1, y: 0 },
       { x: 0, y: 1 },
@@ -155,20 +170,39 @@ describe('commmon', () => {
       { x: 3, y: 2 },
     ];
 
-    expect(groupByRow(nodes)).toEqual([
-      [
-        { x: 0, y: 0, row: 0 },
-        { x: 1, y: 0, row: 0 },
-      ],
-      [{ x: 0, y: 1, row: 1 }],
-      [
-        { x: 1, y: 2, row: 2 },
-        { x: 2, y: 2, row: 2 },
-        { x: 3, y: 2, row: 2 },
-      ],
-      [{ x: 0, y: 3, row: 3 }],
-      [{ x: 0, y: 4, row: 4 }],
-    ]);
+    it('groups nodes by rows in vertical orientation', () => {
+      expect(groupByRow(nodes, 'vertical')).toEqual([
+        [
+          { x: 0, y: 0, row: 0 },
+          { x: 1, y: 0, row: 0 },
+        ],
+        [{ x: 0, y: 1, row: 1 }],
+        [
+          { x: 1, y: 2, row: 2 },
+          { x: 2, y: 2, row: 2 },
+          { x: 3, y: 2, row: 2 },
+        ],
+        [{ x: 0, y: 3, row: 3 }],
+        [{ x: 0, y: 4, row: 4 }],
+      ]);
+    });
+
+    it('groups nodes by rows in horizontal orientation', () => {
+      expect(groupByRow(nodes, 'horizontal')).toEqual([
+        [
+          { x: 0, y: 0, row: 0 },
+          { x: 0, y: 1, row: 0 },
+          { x: 0, y: 3, row: 0 },
+          { x: 0, y: 4, row: 0 },
+        ],
+        [
+          { x: 1, y: 0, row: 1 },
+          { x: 1, y: 2, row: 1 },
+        ],
+        [{ x: 2, y: 2, row: 2 }],
+        [{ x: 3, y: 2, row: 3 }],
+      ]);
+    });
   });
 
   it('nodeLeft returns the left edge x-position of the node', () => {
@@ -317,12 +351,16 @@ describe('constraints', () => {
       base: rowConstraint,
       a: testB,
       b: testA,
+      property: 'y',
+      separation: spaceY,
     };
 
     const rowConstraintBC = {
       base: rowConstraint,
       a: testC,
       b: testB,
+      property: 'y',
+      separation: spaceY,
     };
 
     // Expect initial y values with no separation
@@ -330,7 +368,7 @@ describe('constraints', () => {
     expect(testC.y - testB.y).toBe(0);
 
     // Solve test constraints
-    solveStrict([rowConstraintAB, rowConstraintBC], { spaceY });
+    solveStrict([rowConstraintAB, rowConstraintBC]);
 
     // Expect order in y is A -> B -> C
     expect(testA.y).toBeLessThan(testB.y);
@@ -354,12 +392,14 @@ describe('constraints', () => {
       base: layerConstraint,
       a: testB,
       b: testA,
+      property: 'y',
     };
 
     const layerConstraintBC = {
       base: layerConstraint,
       a: testC,
       b: testB,
+      property: 'y',
     };
 
     // Expect initial y values have no separation
@@ -392,6 +432,7 @@ describe('constraints', () => {
       strength: 0.5,
       a: testA,
       b: testB,
+      property: 'x',
     };
 
     const parallelConstraintBC = {
@@ -399,6 +440,7 @@ describe('constraints', () => {
       strength: 0.5,
       a: testB,
       b: testC,
+      property: 'x',
     };
 
     // Expect initial x values have some separation
@@ -427,6 +469,7 @@ describe('constraints', () => {
       strength: 0.5,
       a: testA,
       b: testB,
+      property: 'x',
     };
 
     const parallelConstraintBC = {
@@ -434,6 +477,7 @@ describe('constraints', () => {
       strength: 0.5,
       a: testB,
       b: testC,
+      property: 'x',
     };
 
     // Expect initial x values have some separation
@@ -462,6 +506,7 @@ describe('constraints', () => {
       a: testA,
       b: testB,
       separation,
+      property: 'x',
     };
 
     const separationConstraintBC = {
@@ -469,6 +514,7 @@ describe('constraints', () => {
       a: testB,
       b: testC,
       separation,
+      property: 'x',
     };
 
     // Expect initial x values have no separation
@@ -509,6 +555,7 @@ describe('constraints', () => {
       strength: 0.9,
       separationA: separation,
       separationB: separation,
+      property: 'x',
     };
 
     // Use the dot product to determine if edges cross in X
