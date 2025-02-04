@@ -136,7 +136,9 @@ const updateParameterRect = (nodeRects, orientation) =>
     .attr('width', 12)
     .attr('height', 12)
     .attr('x', (node) =>
-      orientation === 'vertical' ? (node.width + 20) / -2 : -node.width / 2 + 10
+      orientation === 'vertical'
+        ? (node.width + 20) / -2
+        : -(node.width / 2) + 10
     )
     .attr('y', (node) => (orientation === 'vertical' ? -6 : -node.height + 12));
 

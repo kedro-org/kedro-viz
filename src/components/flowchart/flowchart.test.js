@@ -190,6 +190,93 @@ describe('FlowChart', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  it('applies transform correctly for different orientations', () => {
+    const chartSize = mockChartSize({
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    });
+
+    const wrapperVertical = setup.mount(
+      <FlowChart
+        chartSize={chartSize}
+        displayGlobalNavigation={true}
+        orientation="vertical"
+      />
+    );
+    const wrapperHorizontal = setup.mount(
+      <FlowChart
+        chartSize={chartSize}
+        displayGlobalNavigation={true}
+        orientation="horizontal"
+      />
+    );
+
+    const instanceVertical = wrapperVertical.find('FlowChart').instance();
+    const instanceHorizontal = wrapperHorizontal.find('FlowChart').instance();
+
+    const viewTransformVertical = getViewTransform(instanceVertical.view);
+    const viewTransformHorizontal = getViewTransform(instanceHorizontal.view);
+
+    expect(viewTransformVertical.y).toBe(0);
+    expect(viewTransformHorizontal.x).toBe(0);
+  });
+
+  it('applies expected view extents for different orientations', () => {
+    const chartSize = mockChartSize({
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    });
+
+    const wrapperVertical = setup.mount(
+      <FlowChart
+        displayGlobalNavigation={true}
+        chartSize={chartSize}
+        orientation="vertical"
+      />
+    );
+    const wrapperHorizontal = setup.mount(
+      <FlowChart
+        displayGlobalNavigation={true}
+        chartSize={chartSize}
+        orientation="horizontal"
+      />
+    );
+
+    const instanceVertical = wrapperVertical.find('FlowChart').instance();
+    const instanceHorizontal = wrapperHorizontal.find('FlowChart').instance();
+
+    const viewExtentsVertical = getViewExtents(instanceVertical.view);
+    const viewExtentsHorizontal = getViewExtents(instanceHorizontal.view);
+
+    // Verify vertical orientation behavior
+    expect(viewExtentsVertical.translate.minX).toBe(-instanceVertical.MARGIN);
+    expect(viewExtentsVertical.translate.maxX).toEqual(
+      instanceVertical.props.graphSize.width + instanceVertical.MARGIN
+    );
+    expect(viewExtentsVertical.translate.minY).toEqual(
+      -instanceVertical.MARGIN
+    );
+    expect(viewExtentsVertical.translate.maxY).toEqual(
+      instanceVertical.props.graphSize.height + instanceVertical.MARGIN
+    );
+
+    // Verify horizontal orientation behavior
+    expect(viewExtentsHorizontal.translate.minX).toEqual(
+      -instanceHorizontal.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.maxX).toEqual(
+      instanceHorizontal.props.graphSize.width + instanceHorizontal.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.minY).toEqual(
+      -instanceHorizontal.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.maxY).toEqual(
+      instanceHorizontal.props.graphSize.height + instanceHorizontal.MARGIN
+    );
+  });
+
   it('removes the resize event listener on unmount', () => {
     const map = {};
     window.addEventListener = jest.fn((event, callback) => {
@@ -267,6 +354,53 @@ describe('FlowChart', () => {
     expect(wrapper.render().find('.pipeline-node--collapsed-hint').length).toBe(
       2
     );
+  });
+
+  it('correctly positions parameter icons in vertical orientation', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        displayGlobalNavigation={true}
+        hoveredParameters={true}
+        nodeTypeDisabled={{ parameters: true }}
+        nodesWithInputParams={{
+          [dataScienceNodeId]: ['params1'],
+        }}
+      />
+    );
+
+    const nodeRects = wrapper
+      .render()
+      .find('.pipeline-node__parameter-indicator--visible');
+    nodeRects.each((i, el) => {
+      const y = parseFloat(select(el).attr('y'));
+      expect(y).toEqual(-6);
+    });
+  });
+
+  it('correctly positions parameter icons in horizontal orientation', () => {
+    const wrapper = setup.mount(
+      <FlowChart
+        displayGlobalNavigation={true}
+        hoveredParameters={true}
+        orientation="horizontal"
+        nodeTypeDisabled={{ parameters: true }}
+        nodesWithInputParams={{
+          [dataScienceNodeId]: ['params1'],
+        }}
+      />
+    );
+
+    // Find the corresponding pipeline node for `params1`
+    const nodeElement = wrapper.render().find(`.pipeline-node__bg`);
+    const nodeY = parseFloat(select(nodeElement).attr('y'));
+
+    const nodeRects = wrapper
+      .render()
+      .find('.pipeline-node__parameter-indicator--visible');
+    nodeRects.each((i, el) => {
+      const y = parseFloat(select(el).attr('y'));
+      expect(y).toBeLessThan(nodeY);
+    });
   });
 
   it('applies parameter-indicator--visible class to nodes with input parameters when nodeDisabled prop set', () => {
