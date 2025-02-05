@@ -66,7 +66,7 @@ class NotebookVisualizer:
             <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
             
             <script type="module">
-                import { KedroViz, React, createRoot } from 'http://localhost:8003/kedro-viz.production.mjs'; 
+                import { KedroViz, React, createRoot } from 'https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@feat/viz-pipe/esm/kedro-viz.production.mjs'; 
                 const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
                         
                 if (createRoot && viz_container) {
