@@ -56,7 +56,7 @@ strawberry-server:
 	strawberry server --app-dir=package kedro_viz.api.graphql.schema --host 127.0.0.1
 
 version:
-	npm run build:umd
+	npm run build:esm
 	python3 tools/versioning.py $(VERSION)
 
 sign-off:
