@@ -64,29 +64,20 @@ class NotebookVisualizer:
         </head>
         <body>
             <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
-            <script src="https://www.unpkg.com/@ravikumarpilla/kedro-viz@latest/lib/umd/vendors.production.min.js"></script>
-            <script src="https://www.unpkg.com/@ravikumarpilla/kedro-viz@latest/lib/umd/kedro-viz.production.min.js"></script>
-            <script>
-                (function waitForBundle(maxRetries = 50, retries = 0) {
-                    if (typeof KedroVizBundle !== 'undefined') {
-                        const { KedroViz, createRoot, React } = KedroVizBundle;
-                        const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
+            
+            <script type="module">
+                import { KedroViz, React, createRoot } from 'http://localhost:8003/kedro-viz.production.mjs'; 
+                const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
                         
-                        if (createRoot && viz_container) {
-                            const viz_root = createRoot(viz_container);
-                            viz_root.render(
-                                React.createElement(KedroViz, {
-                                    data: """ + json_to_visualize + """,
-                                    options: """ + viz_options + """
-                                })
-                            );
-                        }
-                    } else if (retries < maxRetries) {
-                        setTimeout(() => waitForBundle(maxRetries, retries + 1), 10);  // Retry every 10ms
-                    } else {
-                        console.error("Failed to load KedroVizBundle after 500ms");
-                    }
-            })();
+                if (createRoot && viz_container) {
+                    const viz_root = createRoot(viz_container);
+                    viz_root.render(
+                        React.createElement(KedroViz, {
+                            data: """ + json_to_visualize + """,
+                            options: """ + viz_options + """
+                        })
+                    );
+                }
             </script>
         </body>
         </html>"""
