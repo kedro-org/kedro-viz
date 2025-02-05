@@ -479,7 +479,8 @@ export class FlowChart extends Component {
    * Zoom and scale to fit graph and any selected node in view
    */
   resetView(preventZoom) {
-    const { chartSize, graphSize, clickedNode, nodes } = this.props;
+    const { chartSize, graphSize, clickedNode, nodes, orientation } =
+      this.props;
     const { width: chartWidth, height: chartHeight } = chartSize;
     const { width: graphWidth, height: graphHeight } = graphSize;
 
@@ -497,6 +498,7 @@ export class FlowChart extends Component {
       : null;
 
     // Find a transform that fits everything in view
+
     const transform = viewTransformToFit({
       offset,
       focus,
@@ -504,15 +506,17 @@ export class FlowChart extends Component {
       viewHeight: chartHeight,
       objectWidth: graphWidth,
       objectHeight: graphHeight,
+      sidebarWidth: chartSize.sidebarWidth,
       minScaleX: 0.05,
       minScaleFocus: this.props.visibleMetaSidebar
         ? this.props.chartZoom.scale
         : 0.1,
       focusOffset: 0,
       preventZoom,
+      orientation,
     });
 
-    if (this.props.orientation === 'horizontal') {
+    if (orientation === 'horizontal') {
       transform.x = -offset.x; // Ensure the graph starts after sidebar
     }
 
