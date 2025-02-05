@@ -6,7 +6,7 @@ import warnings
 # alias to ease Notebook visualization import
 from .launchers.notebook_visualizer import NotebookVisualizer
 
-__version__ = "10.1.0"
+__version__ = "10.2.0"
 
 
 class KedroVizPythonVersionWarning(UserWarning):

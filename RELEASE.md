@@ -6,10 +6,10 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
-# Release 10.2.0 
+# Release 10.2.0
 
-
-## Major features and improvements
+## Deprecations
+- Added a deprecation warning for the removal of the Experiment Tracking feature, which will be deprecated in Kedro-Viz version 11.0.0. For more details, please refer to our [blog post](https://kedro.org/blog/deprecate-experiment-tracking-kedro-viz). (#2248, #2263)
 
 ## Bug fixes and other changes
 
