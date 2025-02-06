@@ -39,13 +39,6 @@ lint-check:
 	mypy --config-file=package/mypy.ini package/kedro_viz package/features
 	mypy --disable-error-code abstract --config-file=package/mypy.ini package/tests
 
-schema-fix:
-	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema > src/apollo/schema.graphql
-	graphqlviz src/apollo/schema.graphql | dot -Tpng -o .github/img/schema.graphql.png
-
-schema-check:
-	strawberry export-schema --app-dir=package kedro_viz.api.graphql.schema | diff src/apollo/schema.graphql -
-
 secret-scan:
 	trufflehog --max_depth 1 --exclude_path trufflehog-ignore.txt .
 
