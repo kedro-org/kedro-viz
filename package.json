@@ -1,7 +1,7 @@
 {
-  "name": "@quantumblack/kedro-viz",
-  "version": "10.2.0",
-  "description": "Kedro-Viz is an interactive development tool for building data science pipelines with Kedro.",
+  "name": "kedro-vi122",
+  "version": "1.21.0-rc1",
+  "description": "Viz is an interactive development tool for building data science pipelines with Kedro.",
   "main": "lib/components/app/index.js",
   "files": [
     "lib"
@@ -9,7 +9,7 @@
   "homepage": ".",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kedro-org/kedro-viz.git"
+    "url": "https://github.com/jitu5/kedro-viz.git"
   },
   "proxy": "http://localhost:4142/",
   "scripts": {
