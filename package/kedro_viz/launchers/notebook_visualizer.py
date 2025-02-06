@@ -64,20 +64,8 @@ class NotebookVisualizer:
         </head>
         <body>
             <div id=kedro-viz-""" + unique_id + """ style='height: 600px'></div>
-            <script type="importmap">
-                {
-                    "imports": {
-                    "react": "https://esm.sh/react@18.2.0",
-                    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
-                    "lodash": "https://esm.sh/lodash@4.17.2"
-                    }
-                }
-            </script>
             <script type="module">
-                import React from "react";
-                import { createRoot } from "react-dom/client";
-                import lodash from "lodash";
-                import KedroViz from "http://localhost:8003/kedro-viz.production.min.mjs"; 
+                import { KedroViz, React, createRoot } from "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@feat/esm-viz-bundle/esm/kedro-viz.production.mjs"; 
                 
                 const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
                         

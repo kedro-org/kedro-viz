@@ -11,7 +11,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
-- Add UMD bundle for Kedro-Viz. (#2256)
+- Add ESM bundle for Kedro-Viz. (#2268)
 
 ## Community contributions
 
