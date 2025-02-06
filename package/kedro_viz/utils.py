@@ -9,23 +9,24 @@ from kedro.pipeline import Pipeline
 TRANSCODING_SEPARATOR = "@"
 
 DEFAULT_VIZ_OPTIONS = {
-            "display": {
-                "expandPipelinesBtn": False,
-                "exportBtn": False,
-                "globalNavigation": False,
-                "labelBtn": False,
-                "layerBtn": False,
-                "metadataPanel": False,
-                "miniMap": False,
-                "sidebar": False,
-                "zoomToolbar": False,
-            },
-            "expandAllPipelines": False,
-            "behaviour": { 
-                "reFocus": False,
-            },
-            "theme": "dark"
-        }
+    "display": {
+        "expandPipelinesBtn": False,
+        "exportBtn": False,
+        "globalNavigation": False,
+        "labelBtn": False,
+        "layerBtn": False,
+        "metadataPanel": False,
+        "miniMap": False,
+        "sidebar": False,
+        "zoomToolbar": False,
+    },
+    "expandAllPipelines": False,
+    "behaviour": {
+        "reFocus": False,
+    },
+    "theme": "dark",
+}
+
 
 def _hash(value: str):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
@@ -79,10 +80,13 @@ def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
 
+
 def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str, Any]:
+    """Utility to merge two dictionaries"""
     import copy
+
     merged = copy.deepcopy(dict_one)
-    
+
     for key, value in dict_two.items():
         if isinstance(value, dict) and key in merged:
             merged[key] = merge_dicts(merged[key], value)
@@ -90,8 +94,26 @@ def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str,
             merged[key] = value
     return merged
 
+
 class NotebookUser:
-    def __init__(self, pipeline: Union[Pipeline, Dict[str, Pipeline]] = None, catalog: DataCatalog = None, options: Dict[str, Any] = None):
-        self.pipeline = pipeline,
-        self.catalog = catalog,
-        self.options = DEFAULT_VIZ_OPTIONS if options is None else merge_dicts(DEFAULT_VIZ_OPTIONS, options)
+    """Represent a notebook user exploring Kedro Pipeline
+    Args:
+        pipeline (Union[Pipeline, Dict[str, Pipeline]]): Kedro Pipeline to visualize
+        catalog (DataCatalog): Data Catalog for the pipeline
+        options (Dict[str, Any]): Kedro-Viz visualization options available at
+        https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md#configure-kedro-viz-with-options
+    """
+
+    def __init__(
+        self,
+        pipeline: Union[Pipeline, Dict[str, Pipeline]] = None,
+        catalog: DataCatalog = None,
+        options: Union[Dict[str, Any], None] = None,
+    ):
+        self.pipeline = pipeline
+        self.catalog = catalog
+        self.options = (
+            DEFAULT_VIZ_OPTIONS
+            if options is None
+            else merge_dicts(DEFAULT_VIZ_OPTIONS, options)
+        )
