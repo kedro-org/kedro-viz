@@ -17,7 +17,7 @@ class NotebookVisualizer:
     def show(
         self,
         pipeline: Union[Pipeline, Dict[str, Pipeline]],
-        catalog: DataCatalog = None,
+        catalog: Union[DataCatalog, None] = None,
         options: Union[Dict[str, Any], None] = None,
     ):
         """

@@ -106,8 +106,8 @@ class NotebookUser:
 
     def __init__(
         self,
-        pipeline: Union[Pipeline, Dict[str, Pipeline]] = None,
-        catalog: DataCatalog = None,
+        pipeline: Union[Pipeline, Dict[str, Pipeline]],
+        catalog: Union[DataCatalog, None] = None,
         options: Union[Dict[str, Any], None] = None,
     ):
         self.pipeline = pipeline

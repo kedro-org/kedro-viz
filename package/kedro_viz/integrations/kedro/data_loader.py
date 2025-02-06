@@ -121,13 +121,17 @@ def load_data_for_notebook_users(
     # Create a dummy data catalog with all datasets as memory datasets
     catalog = DataCatalog() if notebook_user.catalog is None else notebook_user.catalog
     session_store = None
-    stats_dict = {}
+    stats_dict: Dict = {}
 
-    notebook_user_pipeline = notebook_user.pipeline[0]
+    notebook_user_pipeline = notebook_user.pipeline
 
     # create a default pipeline if a dictionary of pipelines are sent
     if isinstance(notebook_user_pipeline, dict):
-        notebook_user_pipeline = {"__default__": sum(notebook_user_pipeline.values())}
+        notebook_user_pipeline = {
+            "__default__": notebook_user_pipeline["__default__"]
+            if "__default__" in notebook_user_pipeline
+            else sum(notebook_user_pipeline.values())
+        }
     else:
         notebook_user_pipeline = {"__default__": notebook_user_pipeline}
 
