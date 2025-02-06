@@ -8,6 +8,24 @@ from kedro.pipeline import Pipeline
 
 TRANSCODING_SEPARATOR = "@"
 
+DEFAULT_VIZ_OPTIONS = {
+            "display": {
+                "expandPipelinesBtn": False,
+                "exportBtn": False,
+                "globalNavigation": False,
+                "labelBtn": False,
+                "layerBtn": False,
+                "metadataPanel": False,
+                "miniMap": False,
+                "sidebar": False,
+                "zoomToolbar": False,
+            },
+            "expandAllPipelines": False,
+            "behaviour": { 
+                "reFocus": False,
+            },
+            "theme": "dark"
+        }
 
 def _hash(value: str):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
@@ -73,6 +91,7 @@ def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str,
     return merged
 
 class NotebookUser:
-    def __init__(self, pipeline: Union[Pipeline, Dict[str, Pipeline]] = None, catalog: DataCatalog = None):
+    def __init__(self, pipeline: Union[Pipeline, Dict[str, Pipeline]] = None, catalog: DataCatalog = None, options: Dict[str, Any] = None):
         self.pipeline = pipeline,
-        self.catalog = catalog
+        self.catalog = catalog,
+        self.options = DEFAULT_VIZ_OPTIONS if options is None else merge_dicts(DEFAULT_VIZ_OPTIONS, options)

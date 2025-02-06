@@ -115,15 +115,15 @@ def _load_data_helper(
 
 
 def load_data_for_notebook_users(notebook_user: NotebookUser) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
-
+    """Load data from a notebook user's pipeline"""
     # Create a dummy data catalog with all datasets as memory datasets
     catalog = DataCatalog() if notebook_user.catalog is None else notebook_user.catalog
     session_store = None
     stats_dict = {}
 
-    # create a default pipeline if a dictionary of pipelines are sent
     notebook_user_pipeline = notebook_user.pipeline[0]
-
+    
+    # create a default pipeline if a dictionary of pipelines are sent
     if isinstance(notebook_user_pipeline, dict):
         notebook_user_pipeline = {"__default__": sum(notebook_user_pipeline.values())}
     else:

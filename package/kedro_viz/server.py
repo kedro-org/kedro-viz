@@ -46,7 +46,7 @@ def populate_data(
 
 
 def load_and_populate_data_for_notebook_users(notebook_user: NotebookUser):
-    """Loads pipeline data and populates Kedro Viz Repositories"""
+    """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
     catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data_for_notebook_users(notebook_user)
 
     # make each cell independent

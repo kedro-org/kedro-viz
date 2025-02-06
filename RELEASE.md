@@ -9,9 +9,9 @@ Please follow the established format:
 
 ## Major features and improvements
 
-## Bug fixes and other changes
+-  Visualize pipeline objects in notebook. (#2241)
 
-- Add ESM bundle for Kedro-Viz. (#2268)
+## Bug fixes and other changes
 
 ## Community contributions
 
