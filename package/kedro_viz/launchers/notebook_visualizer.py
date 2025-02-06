@@ -77,7 +77,7 @@ class NotebookVisualizer:
                 import React from "react";
                 import { createRoot } from "react-dom/client";
                 import lodash from "lodash";
-                import KedroViz from "http://localhost:8003/kedro-viz.production.mjs"; 
+                import KedroViz from "http://localhost:8003/kedro-viz.production.min.mjs"; 
                 
                 const viz_container = document.getElementById('kedro-viz-""" + unique_id + """');
                         

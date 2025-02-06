@@ -1,10 +1,10 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
-// Bundle and inline web-workers
 module.exports = {
-  mode: 'production', // Production mode
+  mode: 'production', // Ensures optimizations for production by default
   entry: {
-    "kedro-viz": './src/components/app/index', // Entry point for KedroViz
+    "kedro-viz": './src/components/app/index',
   },
   output: {
     path: path.resolve(__dirname, 'esm'),
@@ -41,6 +41,21 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
         sideEffects: true,
       },
+    ],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // Removes console logs
+          },
+          output: {
+            comments: false, // Remove comments
+          },
+        },
+      }),
     ],
   },
 };
