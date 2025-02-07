@@ -7,7 +7,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple, cast
 from unittest.mock import patch
 
 from kedro import __version__
@@ -130,12 +130,12 @@ def load_data_for_notebook_users(
         notebook_user_pipeline = {
             "__default__": notebook_user_pipeline["__default__"]
             if "__default__" in notebook_user_pipeline
-            else sum(notebook_user_pipeline.values())
+            else cast(Pipeline, sum(notebook_user_pipeline.values()))
         }
     else:
         notebook_user_pipeline = {"__default__": notebook_user_pipeline}
 
-    return catalog, notebook_user_pipeline, session_store, stats_dict
+    return catalog, notebook_user_pipeline, session_store, stats_dict  # type: ignore[return-value]
 
 
 def load_data(
