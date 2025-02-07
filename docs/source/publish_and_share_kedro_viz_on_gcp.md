@@ -116,4 +116,4 @@ You can control who can view your visualisation using [IAM permissions and ACLs]
 
 Kedro-Viz does not handle billing. You pay for storing objects on your Google Cloud Storage. The amount you pay depends on the amount of data stored, data processing and network usage. Additionally you may be charged for using cloud load balancing.
 
-See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancer Billing](https://cloud.google.com/vpc/network-pricing#lb) for more information.
+See the official [Google Cloud Storage Billing](https://cloud.google.com/storage/pricing) and [Google Cloud Load Balancer Billing](https://cloud.google.com/vpc/network-pricing) for more information.
