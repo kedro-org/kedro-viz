@@ -59,7 +59,7 @@ export const getLayers = createSelector(
       const rectSize = Math.max(width, height) * 5;
 
       if (orientation === 'vertical') {
-        // Vertical layout when orientation is true
+        // Vertical layout when orientation is vertical
         return {
           id,
           name: layerName[id],
@@ -68,17 +68,15 @@ export const getLayers = createSelector(
           height: Math.max(end - start, 0),
           width: rectSize,
         };
-      } else {
-        // Horizontal layout when orientation is false
-        return {
-          id,
-          name: layerName[id],
-          x: start, // Horizontal layout moves along the x-axis
-          y: (rectSize - height) / -2, // Centered along y-axis
-          width: Math.max(end - start, 0),
-          height: rectSize,
-        };
       }
+      return {
+        id,
+        name: layerName[id],
+        x: start, // Horizontal layout moves along the x-axis
+        y: (rectSize - height) / -2, // Centered along y-axis
+        width: Math.max(end - start, 0),
+        height: rectSize,
+      };
     });
   }
 );

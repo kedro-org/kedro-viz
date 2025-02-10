@@ -77,8 +77,10 @@ export const drawLayerNames = function () {
 
   const transformValue =
     orientation === 'vertical'
-      ? `translateX(${layerNamePosition}px)`
-      : `translateY(${layerNamePosition}px)`;
+      ? // In vertical mode, layer names are positioned along the X-axis at sidebarWidth
+        `translateX(${layerNamePosition}px)`
+      : // In horizontal mode, layer names are positioned at a fixed Y = 100px
+        `translateY(${layerNamePosition}px)`;
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
@@ -136,10 +138,14 @@ const updateParameterRect = (nodeRects, orientation) =>
     .attr('width', 12)
     .attr('height', 12)
     .attr('x', (node) =>
+      // Position parameter icon on the left side of the node in vertical mode
+      // Position it slightly inside the node in horizontal mode
       orientation === 'vertical'
         ? (node.width + 20) / -2
         : -(node.width / 2) + 10
     )
+    // Center parameter icon vertically on the left side of the node (12px parameter icon height, so -6 for centering)
+    // Place parameter icon on top of the node (12px parameter icon height)
     .attr('y', (node) => (orientation === 'vertical' ? -6 : -node.height + 12));
 
 /**
