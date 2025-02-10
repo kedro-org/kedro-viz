@@ -516,10 +516,6 @@ export class FlowChart extends Component {
       orientation,
     });
 
-    if (orientation === 'horizontal') {
-      transform.x = -offset.x; // Ensure the graph starts after sidebar
-    }
-
     // Detect first transform
     const isFirstTransform = isOrigin(getViewTransform(this.view));
 
