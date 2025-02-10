@@ -13,6 +13,8 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 
+- Fix `%run_viz` using old process in jupyter notebook. (#2267)
+
 ## Community contributions
 
 # Release 10.2.0
