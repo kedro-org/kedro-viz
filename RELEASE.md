@@ -12,6 +12,7 @@ Please follow the established format:
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)
+- Fix `%run_viz` using old process in jupyter notebook. (#2267)
 
 ## Community contributions
 
