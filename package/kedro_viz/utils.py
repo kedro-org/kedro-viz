@@ -1,32 +1,9 @@
 """Transcoding related utility functions."""
 
 import hashlib
-from typing import Any, Dict, Tuple, Union
-
-from kedro.io.data_catalog import DataCatalog
-from kedro.pipeline import Pipeline
+from typing import Any, Tuple
 
 TRANSCODING_SEPARATOR = "@"
-
-DEFAULT_VIZ_OPTIONS = {
-    "display": {
-        "expandPipelinesBtn": False,
-        "exportBtn": False,
-        "globalNavigation": False,
-        "labelBtn": False,
-        "layerBtn": False,
-        "metadataPanel": False,
-        "miniMap": False,
-        "sidebar": False,
-        "zoomToolbar": False,
-    },
-    "expandAllPipelines": False,
-    "behaviour": {
-        "reFocus": False,
-    },
-    "theme": "dark",
-}
-
 
 def _hash(value: str):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
@@ -81,7 +58,7 @@ def is_dataset_param(dataset_name: str) -> bool:
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
 
 
-def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str, Any]:
+def merge_dicts(dict_one: dict[str, Any], dict_two: dict[str, Any]) -> dict[str, Any]:
     """Utility to merge two dictionaries"""
     import copy
 
@@ -93,27 +70,3 @@ def merge_dicts(dict_one: Dict[str, Any], dict_two: Dict[str, Any]) -> Dict[str,
         else:
             merged[key] = value
     return merged
-
-
-class NotebookUser:
-    """Represent a notebook user exploring Kedro Pipeline
-    Args:
-        pipeline (Union[Pipeline, Dict[str, Pipeline]]): Kedro Pipeline to visualize
-        catalog (DataCatalog): Data Catalog for the pipeline
-        options (Dict[str, Any]): Kedro-Viz visualization options available at
-        https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md#configure-kedro-viz-with-options
-    """
-
-    def __init__(
-        self,
-        pipeline: Union[Pipeline, Dict[str, Pipeline]],
-        catalog: Union[DataCatalog, None] = None,
-        options: Union[Dict[str, Any], None] = None,
-    ):
-        self.pipeline = pipeline
-        self.catalog = catalog
-        self.options = (
-            DEFAULT_VIZ_OPTIONS
-            if options is None
-            else merge_dicts(DEFAULT_VIZ_OPTIONS, options)
-        )

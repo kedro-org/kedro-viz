@@ -7,7 +7,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional, Set, Tuple, cast
+from typing import Any, Dict, Optional, Set, Tuple, Union, cast
 from unittest.mock import patch
 
 from kedro import __version__
@@ -23,7 +23,6 @@ from kedro_viz.integrations.kedro.abstract_dataset_lite import AbstractDatasetLi
 from kedro_viz.integrations.kedro.lite_parser import LiteParser
 from kedro_viz.integrations.utils import _VizNullPluginManager
 from kedro_viz.models.metadata import Metadata
-from kedro_viz.utils import NotebookUser
 
 logger = logging.getLogger(__name__)
 
@@ -115,15 +114,15 @@ def _load_data_helper(
 
 
 def load_data_for_notebook_users(
-    notebook_user: NotebookUser,
+    notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]], notebook_catalog: DataCatalog
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a notebook user's pipeline"""
     # Create a dummy data catalog with all datasets as memory datasets
-    catalog = DataCatalog() if notebook_user.catalog is None else notebook_user.catalog
+    catalog = DataCatalog() if notebook_catalog is None else notebook_catalog
     session_store = None
     stats_dict: Dict = {}
 
-    notebook_user_pipeline = notebook_user.pipeline
+    notebook_user_pipeline = notebook_pipeline
 
     # create a default pipeline if a dictionary of pipelines are sent
     if isinstance(notebook_user_pipeline, dict):

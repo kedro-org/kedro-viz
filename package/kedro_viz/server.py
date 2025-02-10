@@ -2,7 +2,7 @@
 for Kedro pipeline visualisation."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
@@ -15,10 +15,8 @@ from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
 from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
-from kedro_viz.utils import NotebookUser
 
 DEV_PORT = 4142
-
 
 def populate_data(
     data_access_manager: DataAccessManager,
@@ -45,10 +43,10 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
-def load_and_populate_data_for_notebook_users(notebook_user: NotebookUser):
+def load_and_populate_data_for_notebook_users(notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]], notebook_catalog: DataCatalog):
     """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
     catalog, pipelines, session_store, stats_dict = (
-        kedro_data_loader.load_data_for_notebook_users(notebook_user)
+        kedro_data_loader.load_data_for_notebook_users(notebook_pipeline, notebook_catalog)
     )
 
     # make each cell independent
