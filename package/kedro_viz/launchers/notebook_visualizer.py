@@ -14,7 +14,6 @@ DEFAULT_VIZ_OPTIONS = {
     "display": {
         "expandPipelinesBtn": False,
         "exportBtn": False,
-        "globalNavigation": False,
         "labelBtn": False,
         "layerBtn": False,
         "metadataPanel": False,
@@ -29,7 +28,9 @@ DEFAULT_VIZ_OPTIONS = {
     "theme": "dark",
 }
 
-DEFAULT_JS_URL = "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@main/esm/kedro-viz.production.mjs"
+DEFAULT_JS_URL = (
+    "https://cdn.jsdelivr.net/gh/kedro-org/kedro-viz@main/esm/kedro-viz.production.mjs"
+)
 
 
 class NotebookVisualizer:
