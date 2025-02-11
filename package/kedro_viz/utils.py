@@ -5,6 +5,7 @@ from typing import Any, Tuple
 
 TRANSCODING_SEPARATOR = "@"
 
+
 def _hash(value: str):
     return hashlib.sha1(value.encode("UTF-8")).hexdigest()[:8]
 

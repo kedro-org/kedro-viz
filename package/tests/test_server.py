@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from kedro_viz.server import load_and_populate_data_for_notebook_users, run_server
 
+
 class ExampleAPIResponse(BaseModel):
     content: str
 
@@ -164,7 +165,6 @@ class TestLoadAndPopulateData:
             "kedro_viz.server.data_access_manager.reset_fields"
         )
 
-        
         load_and_populate_data_for_notebook_users(example_pipelines, example_catalog)
 
         mock_load_data.assert_called_once_with(example_pipelines, example_catalog)

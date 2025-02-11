@@ -18,6 +18,7 @@ from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_mess
 
 DEV_PORT = 4142
 
+
 def populate_data(
     data_access_manager: DataAccessManager,
     catalog: DataCatalog,
@@ -43,10 +44,15 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
-def load_and_populate_data_for_notebook_users(notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]], notebook_catalog: DataCatalog):
+def load_and_populate_data_for_notebook_users(
+    notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
+    notebook_catalog: Optional[DataCatalog],
+):
     """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
     catalog, pipelines, session_store, stats_dict = (
-        kedro_data_loader.load_data_for_notebook_users(notebook_pipeline, notebook_catalog)
+        kedro_data_loader.load_data_for_notebook_users(
+            notebook_pipeline, notebook_catalog
+        )
     )
 
     # make each cell independent

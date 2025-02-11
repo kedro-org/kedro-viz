@@ -114,7 +114,8 @@ def _load_data_helper(
 
 
 def load_data_for_notebook_users(
-    notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]], notebook_catalog: DataCatalog
+    notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
+    notebook_catalog: Optional[DataCatalog],
 ) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
     """Load data from a notebook user's pipeline"""
     # Create a dummy data catalog with all datasets as memory datasets
