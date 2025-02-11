@@ -13,6 +13,7 @@ from kedro_viz.utils import merge_dicts
 DEFAULT_VIZ_OPTIONS = {
     "display": {
         "expandPipelinesBtn": False,
+        "globalNavigation": False,
         "exportBtn": False,
         "labelBtn": False,
         "layerBtn": False,
