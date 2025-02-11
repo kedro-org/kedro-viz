@@ -74,7 +74,11 @@ class TestNotebookVisualizer:
         mock_generate_html.assert_called_once_with(
             mock_load_viz_data.return_value, visualizer.options, visualizer.js_url
         )
-        mock_wrap_in_iframe.assert_called_once_with(mock_generate_html.return_value)
+        mock_wrap_in_iframe.assert_called_once_with(
+            mock_generate_html.return_value,
+            visualizer.options.get("width"),
+            visualizer.options.get("height"),
+        )
         assert mock_display.called
 
     def test_show_exception_handling(self, example_pipelines):

@@ -1,5 +1,7 @@
 import json
+import logging
 import uuid
+from contextlib import contextmanager
 from typing import Any, Dict, Optional, Union
 
 from IPython.display import HTML, display
@@ -8,7 +10,7 @@ from kedro.pipeline import Pipeline
 
 from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
 from kedro_viz.server import load_and_populate_data_for_notebook_users
-from kedro_viz.utils import merge_dicts
+from kedro_viz.utils import Spinner, merge_dicts
 
 DEFAULT_VIZ_OPTIONS = {
     "display": {
@@ -27,6 +29,8 @@ DEFAULT_VIZ_OPTIONS = {
         "reFocus": False,
     },
     "theme": "dark",
+    "width": "100%",
+    "height": "600px",
 }
 
 DEFAULT_JS_URL = (
@@ -136,26 +140,52 @@ class NotebookVisualizer:
         return html_content
 
     @staticmethod
-    def _wrap_in_iframe(html_content: str) -> str:
+    def _wrap_in_iframe(
+        html_content: str,
+        width: str = str(DEFAULT_VIZ_OPTIONS.get("width", "")),
+        height: str = str(DEFAULT_VIZ_OPTIONS.get("height", "")),
+    ) -> str:
         """Wrap the HTML content in an iframe.
 
         Args:
             html_content: The HTML markup template as a string for visualization
+            width: iframe width
+            height: iframe height
 
         Returns:
             A string containing html markup embedded in an iframe
         """
         sanitized_content = html_content.replace('"', "&quot;")
-        return f"""<iframe srcdoc="{sanitized_content}"  style="width:100%; height:600px; border:none;" sandbox="allow-scripts"></iframe>"""
+        return f"""<iframe srcdoc="{sanitized_content}"  style="width:{width}; height:{height}; border:none;" sandbox="allow-scripts"></iframe>"""
+
+    @staticmethod
+    @contextmanager
+    def _suppress_logs():
+        logger = logging.getLogger()
+        previous_level = logger.level
+        logger.setLevel(logging.CRITICAL)  # Suppress logs
+        try:
+            yield
+        finally:
+            logger.setLevel(previous_level)  # Restore the original level
 
     def show(self) -> None:
         """Display Kedro-Viz in a notebook."""
-        try:
-            json_to_visualize = self._load_viz_data()
-            html_content = self.generate_html(
-                json_to_visualize, self.options, self.js_url
-            )
-            iframe_content = self._wrap_in_iframe(html_content)
-            display(HTML(iframe_content))
-        except Exception as exc:  # noqa: BLE001
-            display(HTML(f"<strong>Error: {str(exc)}</strong>"))
+        with self._suppress_logs():
+            try:
+                spinner = Spinner("Starting Kedro-Viz...")
+                spinner.start()
+                json_to_visualize = self._load_viz_data()
+                html_content = self.generate_html(
+                    json_to_visualize, self.options, self.js_url
+                )
+                iframe_content = self._wrap_in_iframe(
+                    html_content,
+                    str(self.options.get("width", "")),
+                    str(self.options.get("height", "")),
+                )
+                spinner.stop()
+                display(HTML(iframe_content))
+            except Exception as exc:  # noqa: BLE001
+                spinner.stop()
+                display(HTML(f"<strong>Error: {str(exc)}</strong>"))
