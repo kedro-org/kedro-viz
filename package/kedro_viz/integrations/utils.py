@@ -13,6 +13,10 @@ except ImportError:  # pragma: no cover
 
 _EMPTY = object()
 
+import sys
+import time
+import threading
+from itertools import cycle
 
 class _VizNullPluginManager:  # pragma: no cover
     """This class creates an empty ``hook_manager`` that will ignore all calls to hooks
@@ -60,3 +64,27 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
 
     def _describe(self) -> dict[str, Any]:
         return {"data": self._data}
+
+
+
+
+class Spinner:
+    def __init__(self, message: str = "Processing"):
+        self.spinner = cycle(["-", "\\", "|", "/"])
+        self.message = message
+        self.stop_running = False
+
+    def start(self):
+        def run_spinner():
+            while not self.stop_running:
+                sys.stdout.write(f"\r{self.message} {next(self.spinner)} ")
+                sys.stdout.flush()
+                time.sleep(0.1)
+            sys.stdout.write("\r" + " " * (len(self.message) + 2) + "\r")  # Clear the line
+
+        self._spinner_thread = threading.Thread(target=run_spinner, daemon=True)
+        self._spinner_thread.start()
+
+    def stop(self):
+        self.stop_running = True
+        self._spinner_thread.join()
