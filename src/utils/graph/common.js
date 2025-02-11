@@ -33,12 +33,19 @@ export const snap = (value, unit) => Math.round(value / unit) * unit;
 export const distance1d = (a, b) => Math.abs(a - b);
 
 /**
- * Returns the angle in radians between the points a and b relative to the X-axis about the origin
+ * Returns the angle in radians between the points a and b based on the given orientation
  * @param {Object} a The first point
  * @param {Object} b The second point
+ * @param {String} orientation The layout orientation
  * @returns {Number} The angle
  */
-export const angle = (a, b) => Math.atan2(a.y - b.y, a.x - b.x);
+export const angle = (a, b, orientation) => {
+  if (orientation === 'vertical') {
+    return Math.atan2(a.y - b.y, a.x - b.x);
+  } else {
+    return Math.atan2(a.x - b.x, a.y - b.y);
+  }
+};
 
 /**
  * Returns the left edge x-position of the node
@@ -75,23 +82,30 @@ export const nodeBottom = (node) => node.y + node.height * 0.5;
  * @param {Array} nodes The input nodes
  * @returns {Array} The sorted rows of nodes
  */
-export const groupByRow = (nodes) => {
+export const groupByRow = (nodes, orientation) => {
   const rows = {};
 
-  // Create rows using node Y values
+  // Define the coordinate keys based on the orientation
+  const primaryCoord = orientation === 'vertical' ? 'y' : 'x';
+  const secondaryCoord = orientation === 'vertical' ? 'x' : 'y';
+
+  // Create rows using the primary coordinate
   for (const node of nodes) {
-    rows[node.y] = rows[node.y] || [];
-    rows[node.y].push(node);
+    const key = node[primaryCoord];
+    rows[key] = rows[key] || [];
+    rows[key].push(node);
   }
 
-  // Sort the set of rows accounting for keys being strings
+  // Sort the set of rows by the primary coordinate
   const rowNumbers = Object.keys(rows).map((row) => parseFloat(row));
   rowNumbers.sort((a, b) => a - b);
 
-  // Sort rows in order of X position if set. Break ties with ids for stability
+  // Sort rows in order of the secondary coordinate, then by ids for stability
   const sortedRows = rowNumbers.map((row) => rows[row]);
   for (let i = 0; i < sortedRows.length; i += 1) {
-    sortedRows[i].sort((a, b) => compare(a.x, b.x, a.id, b.id));
+    sortedRows[i].sort((a, b) =>
+      compare(a[secondaryCoord], b[secondaryCoord], a.id, b.id)
+    );
 
     for (const node of sortedRows[i]) {
       node.row = i;
