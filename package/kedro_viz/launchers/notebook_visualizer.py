@@ -64,6 +64,10 @@ class NotebookVisualizer:
             if options is None
             else merge_dicts(DEFAULT_VIZ_OPTIONS, options)
         )
+        # Force `globalNavigation` to always be False as it
+        # breaks visualizer due to security concerns
+        self.options.setdefault("display", {})["globalNavigation"] = False  # type: ignore
+
         self.js_url = js_url or DEFAULT_JS_URL
 
     def _load_viz_data(self) -> Optional[Any]:
