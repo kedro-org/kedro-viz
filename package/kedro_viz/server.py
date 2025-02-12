@@ -44,24 +44,6 @@ def populate_data(
     data_access_manager.add_pipelines(pipelines)
 
 
-def load_and_populate_data_for_notebook_users(
-    notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
-    notebook_catalog: Optional[DataCatalog],
-):
-    """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
-    catalog, pipelines, session_store, stats_dict = (
-        kedro_data_loader.load_data_for_notebook_users(
-            notebook_pipeline, notebook_catalog
-        )
-    )
-
-    # make each cell independent
-    data_access_manager.reset_fields()
-
-    # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
-
-
 def load_and_populate_data(
     path: Path,
     env: Optional[str] = None,

@@ -9,7 +9,9 @@ from kedro.io.data_catalog import DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
-from kedro_viz.server import load_and_populate_data_for_notebook_users
+from kedro_viz.integrations.notebook.data_loader import (
+    load_and_populate_data_for_notebook_users,
+)
 from kedro_viz.utils import Spinner, merge_dicts
 
 DEFAULT_VIZ_OPTIONS = {

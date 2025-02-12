@@ -3,7 +3,7 @@ import json
 import pytest
 from pydantic import BaseModel
 
-from kedro_viz.server import load_and_populate_data_for_notebook_users, run_server
+from kedro_viz.server import run_server
 
 
 class ExampleAPIResponse(BaseModel):
@@ -141,32 +141,3 @@ class TestServer:
         save_api_responses_to_fs_mock.assert_called_once_with(
             save_file, mock_filesystem.return_value, True
         )
-
-
-class TestLoadAndPopulateData:
-    def test_load_and_populate_data_for_notebook_users(
-        self,
-        example_pipelines,
-        example_catalog,
-        mocker,
-    ):
-        """Test that data is loaded and populated correctly for notebook users."""
-        mock_load_data = mocker.patch(
-            "kedro_viz.server.kedro_data_loader.load_data_for_notebook_users",
-            return_value=(
-                example_catalog,
-                example_pipelines,
-                None,
-                {},
-            ),
-        )
-        mock_populate_data = mocker.patch("kedro_viz.server.populate_data")
-        mock_reset_fields = mocker.patch(
-            "kedro_viz.server.data_access_manager.reset_fields"
-        )
-
-        load_and_populate_data_for_notebook_users(example_pipelines, example_catalog)
-
-        mock_load_data.assert_called_once_with(example_pipelines, example_catalog)
-        mock_reset_fields.assert_called_once()
-        mock_populate_data.assert_called_once()
