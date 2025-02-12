@@ -18,9 +18,9 @@ from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog  # Old version
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
-    is_DataCatalog_2 = True
+    IS_DATACATALOG_2 = True
 except ImportError:
-    is_DataCatalog_2 = False
+    IS_DATACATALOG_2 = False
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -97,7 +97,7 @@ def _load_data_helper(
 
         catalog = context.catalog
 
-        if is_DataCatalog_2 and isinstance(catalog, KedroDataCatalog):
+        if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
             logger.info("Using DataCatalog 2.0. Skipping lite patch.")
 
         else:

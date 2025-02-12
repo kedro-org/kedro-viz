@@ -9,9 +9,9 @@ from kedro.io import DataCatalog
 # MODIFICATION: Detect if new kedro_data_catalog is available
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
-    is_DataCatalog_2 = True
+    IS_DATACATALOG_2 = True
 except ImportError:
-    is_DataCatalog_2 = False
+    IS_DATACATALOG_2 = False
 
 try:
     # kedro 0.18.11 onwards
@@ -117,7 +117,7 @@ class DataAccessManager:
             pipelines: A dictionary which holds project pipelines
         """
 
-        self._is_new_catalog = is_DataCatalog_2 and isinstance(catalog, KedroDataCatalog)
+        self._is_new_catalog = IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog)
 
         self.resolve_dataset_factory_patterns(catalog, pipelines)
 
