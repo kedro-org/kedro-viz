@@ -7,9 +7,10 @@ import logging
 from pathlib import Path
 from typing import Optional, Set
 
-from kedro_viz.utils import load_gitignore_patterns
 from pathspec import GitIgnoreSpec
 from watchfiles import Change, DefaultFilter
+
+from kedro_viz.utils import load_gitignore_patterns
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ class AutoreloadFileFilter(DefaultFilter):
 
         # Load .gitignore patterns
         self.gitignore_spec = load_gitignore_patterns(self.cwd)
-    
+
     def __call__(self, change: Change, path: str) -> bool:
         """
         Determine whether a file change should be processed.

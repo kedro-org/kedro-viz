@@ -7,8 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Set, Union
 from unittest.mock import MagicMock
 
-from kedro_viz.integrations.utils import Spinner
-from kedro_viz.utils import is_file_ignored, load_gitignore_patterns
+from kedro_viz.utils import Spinner, is_file_ignored, load_gitignore_patterns
 
 logger = logging.getLogger(__name__)
 
@@ -248,10 +247,9 @@ class LiteParser:
         gitignore_spec = load_gitignore_patterns(target_path)
 
         if target_path.is_file():
-
             if is_file_ignored(target_path):
                 return unresolved_imports
-            
+
             try:
                 missing_dependencies = self._get_unresolved_imports(target_path)
                 if len(missing_dependencies) > 0:
@@ -266,7 +264,11 @@ class LiteParser:
             return unresolved_imports
 
         # handling directories
-        _project_file_paths = set(file_path for file_path in target_path.rglob("*.py") if not is_file_ignored(file_path, target_path, gitignore_spec))
+        _project_file_paths = set(
+            file_path
+            for file_path in target_path.rglob("*.py")
+            if not is_file_ignored(file_path, target_path, gitignore_spec)
+        )
 
         for file_path in _project_file_paths:
             try:
