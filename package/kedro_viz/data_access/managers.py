@@ -352,8 +352,10 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        dataset_obj = None
-        if not self._is_new_catalog:
+        # If we are skipping instantiation for DataCatalog 2.0, fallback to an UnavailableDataset
+        if self._is_new_catalog:
+            dataset_obj = UnavailableDataset()
+        else:
             try:
                 dataset_obj = self.catalog.get_dataset(dataset_name)
             except DatasetError:
@@ -379,11 +381,8 @@ class DataAccessManager:
                 ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
             )
 
-            # update the node_mod_pipeline_map
-            if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
-                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
-                    ROOT_MODULAR_PIPELINE_ID
-                }
+        # Instead of reassigning graph_node with different types, define one union variable:
+        graph_node: Union[ParametersNode, DataNode, TranscodedDataNode]
 
         if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
