@@ -1,7 +1,10 @@
 """Transcoding related utility functions."""
 
 import hashlib
-from typing import Tuple
+from pathlib import Path
+from typing import Optional, Tuple
+
+from pathspec import GitIgnoreSpec
 
 TRANSCODING_SEPARATOR = "@"
 
@@ -57,3 +60,24 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+
+def load_gitignore_patterns(project_path: Path) -> Optional[GitIgnoreSpec]:
+    gitignore_path = project_path / ".gitignore"
+
+    if not gitignore_path.exists():
+        return
+    
+    with open(gitignore_path, "r", encoding="utf-8") as gitignore_file:
+        ignore_patterns = gitignore_file.read().splitlines()
+        gitignore_spec = GitIgnoreSpec.from_lines(
+            "gitwildmatch", ignore_patterns
+        )
+        return gitignore_spec
+
+def is_file_ignored(file_path: Path, project_path: Optional[Path], gitignore_spec: Optional[GitIgnoreSpec]) -> bool:
+    """Returns True if the file should be ignored."""
+    if file_path.name.startswith("."):  # Ignore hidden files/folders
+        return True
+    if gitignore_spec and project_path and gitignore_spec.match_file(str(file_path.relative_to(project_path))):
+        return True
+    return False
