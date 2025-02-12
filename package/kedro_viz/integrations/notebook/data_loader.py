@@ -36,7 +36,7 @@ def load_data_for_notebook_users(
     else:
         notebook_user_pipeline = {"__default__": notebook_user_pipeline}
 
-    return catalog, notebook_user_pipeline, session_store, stats_dict
+    return catalog, notebook_user_pipeline, session_store, stats_dict  # type: ignore[return-value]
 
 
 def load_and_populate_data_for_notebook_users(
