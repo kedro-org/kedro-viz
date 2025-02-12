@@ -6,7 +6,6 @@ from typing import Dict, List, Set, Union
 
 from kedro.io import DataCatalog
 
-# MODIFICATION: Detect if new kedro_data_catalog is available
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
     IS_DATACATALOG_2 = True
