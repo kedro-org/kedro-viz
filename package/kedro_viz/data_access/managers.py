@@ -8,6 +8,7 @@ from kedro.io import DataCatalog
 
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
+
     IS_DATACATALOG_2 = True
 except ImportError:
     IS_DATACATALOG_2 = False
@@ -91,7 +92,9 @@ class DataAccessManager:
         them against the datasets in the pipelines.
         """
         if self._is_new_catalog:
-            logger.debug("Skipping dataset factory pattern resolution for KedroDataCatalog (lazy loading).")
+            logger.debug(
+                "Skipping dataset factory pattern resolution for KedroDataCatalog (lazy loading)."
+            )
             return
 
         for pipeline in pipelines.values():
@@ -116,7 +119,9 @@ class DataAccessManager:
             pipelines: A dictionary which holds project pipelines
         """
 
-        self._is_new_catalog = IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog)
+        self._is_new_catalog = IS_DATACATALOG_2 and isinstance(
+            catalog, KedroDataCatalog
+        )
 
         self.resolve_dataset_factory_patterns(catalog, pipelines)
 
@@ -203,7 +208,10 @@ class DataAccessManager:
                 )
 
                 # For old catalog
-                if isinstance(input_node, TranscodedDataNode) and not self._is_new_catalog:
+                if (
+                    isinstance(input_node, TranscodedDataNode)
+                    and not self._is_new_catalog
+                ):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
             # Add node outputs as DataNode to the graph.
@@ -220,8 +228,13 @@ class DataAccessManager:
                 )
 
                 # For old catalog
-                if isinstance(output_node, TranscodedDataNode) and not self._is_new_catalog:
-                    output_node.transcoded_versions.add(self.catalog.get_dataset(output))
+                if (
+                    isinstance(output_node, TranscodedDataNode)
+                    and not self._is_new_catalog
+                ):
+                    output_node.transcoded_versions.add(
+                        self.catalog.get_dataset(output)
+                    )
 
     def add_node(
         self,

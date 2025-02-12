@@ -16,8 +16,10 @@ from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog  # Old version
+
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
+
     IS_DATACATALOG_2 = True
 except ImportError:
     IS_DATACATALOG_2 = False
@@ -100,19 +102,18 @@ def _load_data_helper(
         if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
             logger.info("Using DataCatalog 2.0. Skipping lite patch.")
 
-        else:
-            # patch the AbstractDataset class for a custom
-            # implementation to handle kedro.io.core.DatasetError
-            if is_lite:
-                # kedro 0.18.12 onwards
-                if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
-                    abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
-                else:  # pragma: no cover
-                    # older versions
-                    abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataSet"
+        # patch the AbstractDataset class for a custom
+        # implementation to handle kedro.io.core.DatasetError
+        elif is_lite:
+            # kedro 0.18.12 onwards
+            if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
+                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
+            else:  # pragma: no cover
+                # older versions
+                abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataSet"
 
-                with patch(abstract_ds_patch_target, AbstractDatasetLite):
-                    catalog = context.catalog
+            with patch(abstract_ds_patch_target, AbstractDatasetLite):
+                catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
