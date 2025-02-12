@@ -24,3 +24,6 @@ secure==0.3.0
 numpy==1.26.4; python_version < '3.13'
 numpy==2.1.0; python_version >= '3.13'
 pathspec==0.12.1
+kedro-datasets[pandas]>=6.0.0
+requests>=2.28.2
+urllib3>=1.26.16

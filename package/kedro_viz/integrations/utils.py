@@ -6,10 +6,12 @@ from typing import Any, Union
 
 try:
     # kedro 0.18.12 onwards
-    from kedro.io.core import AbstractDataset
+    from kedro.io.core import AbstractDataset, DatasetError
 except ImportError:  # pragma: no cover
     # older versions
     from kedro.io.core import AbstractDataSet as AbstractDataset  # type: ignore
+    from kedro.io.core import DataSetError as DatasetError  # type: ignore
+
 
 _EMPTY = object()
 
@@ -34,7 +36,7 @@ class _VizNullPluginManager:  # pragma: no cover
         pass
 
 
-class UnavailableDataset(AbstractDataset):  # pragma: no cover
+class UnavailableDataset(AbstractDataset[Any, Any]):  # pragma: no cover
     """This class is a custom dataset implementation for `Kedro Viz Lite`
     when kedro-datasets are unavailable"""
 
@@ -46,17 +48,18 @@ class UnavailableDataset(AbstractDataset):  # pragma: no cover
         self._data = data
         self.metadata = metadata
 
-    def _load(self, *args, **kwargs):
-        pass
+    def _load(self, *args, **kwargs) -> None:
+        raise DatasetError("Unavailable dataset cannot be loaded.")
 
-    def _save(self, *args, **kwargs):
-        pass
+    def _save(self, *args, **kwargs) -> None:
+        raise DatasetError("Unavailable dataset cannot be saved.")
 
     load = _load
     save = _save
 
-    def _exists(self):
-        pass
+    def _exists(self) -> bool:
+        return False
 
     def _describe(self) -> dict[str, Any]:
-        return {"data": self._data}
+        """Return a minimal placeholder dict for code that expects _describe() output."""
+        return {"unavailable": True, "data": self._data}
