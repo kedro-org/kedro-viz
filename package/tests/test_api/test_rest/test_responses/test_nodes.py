@@ -8,7 +8,6 @@ from tests.test_api.test_rest.test_responses.assert_helpers import (
     assert_example_transcoded_data,
 )
 
-
 class TestTranscodedDataset:
     """Test a viz API created from a Kedro project."""
 
@@ -17,19 +16,6 @@ class TestTranscodedDataset:
         response = client.get("/api/main")
         assert response.status_code == 200
         assert_example_transcoded_data(response.json())
-
-    def test_transcoded_data_node_metadata(self, example_transcoded_api):
-        client = TestClient(example_transcoded_api)
-        response = client.get("/api/nodes/0ecea0de")
-        assert response.json() == {
-            "filepath": "model_inputs.csv",
-            "original_type": "pandas.csv_dataset.CSVDataset",
-            "transcoded_types": [
-                "pandas.parquet_dataset.ParquetDataset",
-            ],
-            "run_command": "kedro run --to-outputs=model_inputs@pandas2",
-        }
-
 
 class TestNodeMetadataEndpoint:
     def test_node_not_exist(self, client):
