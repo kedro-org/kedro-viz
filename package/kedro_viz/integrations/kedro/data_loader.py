@@ -15,7 +15,15 @@ from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog  # Old version
+
+try:
+    from kedro.io.kedro_data_catalog import KedroDataCatalog
+
+    IS_DATACATALOG_2 = True
+except ImportError:
+    IS_DATACATALOG_2 = False
+
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -90,9 +98,14 @@ def _load_data_helper(
         context = session.load_context()
         session_store = session._store
 
+        catalog = context.catalog
+
+        if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
+            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
+
         # patch the AbstractDataset class for a custom
         # implementation to handle kedro.io.core.DatasetError
-        if is_lite:
+        elif is_lite:
             # kedro 0.18.12 onwards
             if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
                 abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
@@ -102,8 +115,6 @@ def _load_data_helper(
 
             with patch(abstract_ds_patch_target, AbstractDatasetLite):
                 catalog = context.catalog
-        else:
-            catalog = context.catalog
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
@@ -148,14 +159,14 @@ def load_data(
         unresolved_imports = lite_parser.parse(project_path)
         sys_modules_patch = sys.modules.copy()
 
-        if unresolved_imports and len(unresolved_imports) > 0:
+        if unresolved_imports:
             modules_to_mock: Set[str] = set()
 
             # for the viz lite banner
             Metadata.set_has_missing_dependencies(True)
 
             for unresolved_module_set in unresolved_imports.values():
-                modules_to_mock = modules_to_mock.union(unresolved_module_set)
+                modules_to_mock.update(unresolved_module_set)
 
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
             sys_modules_patch.update(mocked_modules)
