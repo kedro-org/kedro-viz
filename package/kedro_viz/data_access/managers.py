@@ -207,7 +207,7 @@ class DataAccessManager:
                     registered_pipeline_id, input_node.id
                 )
 
-                # For old catalog
+                # For older catalog
                 if (
                     isinstance(input_node, TranscodedDataNode)
                     and not self._is_new_catalog
@@ -227,7 +227,7 @@ class DataAccessManager:
                     registered_pipeline_id, output_node.id
                 )
 
-                # For old catalog
+                # For older catalog
                 if (
                     isinstance(output_node, TranscodedDataNode)
                     and not self._is_new_catalog
@@ -352,9 +352,8 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        # If we are skipping instantiation for DataCatalog 2.0, fallback to an UnavailableDataset
         if self._is_new_catalog:
-            dataset_obj = UnavailableDataset()
+            dataset_obj = None
         else:
             try:
                 dataset_obj = self.catalog.get_dataset(dataset_name)
@@ -381,8 +380,7 @@ class DataAccessManager:
                 ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
             )
 
-        # Instead of reassigning graph_node with different types, define one union variable:
-        graph_node: Union[ParametersNode, DataNode, TranscodedDataNode]
+        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
 
         if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
