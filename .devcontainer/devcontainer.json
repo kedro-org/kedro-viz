@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "Python 3",
+	"name": "Kedro Viz Dev Container",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
 
@@ -44,7 +44,7 @@
 	"postStartCommand": {
 		"backend": "nohup bash -c 'uv run python package/kedro_viz/server.py demo-project &' > backend.out 2> backend.err < /dev/null",
 		// FIXME: Looks like the frontend is not needed? The backend stands on its own
-		"frontend": "nohup bash -c 'npm start &' > frontend.out 2> frontend.err < /dev/null"
+		"frontend": "nohup bash -c 'npm run start:app &' > frontend.out 2> frontend.err < /dev/null"
 	},
 
 	"customizations": {
