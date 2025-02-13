@@ -103,7 +103,7 @@ class GraphNode(BaseModel, ABC):
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
-        dataset: AbstractDataset,
+        dataset: Optional[AbstractDataset],
         stats: Optional[Dict],
         modular_pipelines: Optional[Set[str]],
         is_free_input: bool = False,
@@ -155,7 +155,7 @@ class GraphNode(BaseModel, ABC):
         dataset_name: str,
         layer: Optional[str],
         tags: Set[str],
-        parameters: AbstractDataset,
+        parameters: Optional[AbstractDataset],
         modular_pipelines: Optional[Set[str]],
     ) -> "ParametersNode":
         """Create a graph node of type parameters for a given Kedro parameters dataset instance.
@@ -246,16 +246,20 @@ class TaskNode(GraphNode):
         description="The original namespace on this node",
     )
 
+    # Remove forced assertion that kedro_obj is not None
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_exists(cls, values):
-        assert "kedro_obj" in values
+        # assert "kedro_obj" in values
         return values
 
     @field_validator("namespace")
     @classmethod
     def set_namespace(cls, _, info: ValidationInfo):
-        return info.data["kedro_obj"].namespace
+        kedro_obj = info.data.get("kedro_obj")
+        if kedro_obj is not None:
+            return kedro_obj.namespace
+        return None
 
 
 class DataNode(GraphNode):
@@ -295,24 +299,26 @@ class DataNode(GraphNode):
     # The type for data node
     type: str = GraphNodeType.DATA.value
 
+    # Remove forced assertion that kedro_obj is in values
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_exists(cls, values):
-        assert "kedro_obj" in values
+        # assert "kedro_obj" in values
         return values
 
     @field_validator("dataset_type")
     @classmethod
     def set_dataset_type(cls, _, info: ValidationInfo):
-        kedro_obj = cast(AbstractDataset, info.data.get("kedro_obj"))
-        return get_dataset_type(kedro_obj)
+        kedro_obj = cast(Optional[AbstractDataset], info.data.get("kedro_obj"))
+        if kedro_obj is not None:
+            return get_dataset_type(kedro_obj)
+        return None
 
     @field_validator("viz_metadata")
     @classmethod
     def set_viz_metadata(cls, _, info: ValidationInfo):
-        kedro_obj = cast(AbstractDataset, info.data.get("kedro_obj"))
-
-        if hasattr(kedro_obj, "metadata") and kedro_obj.metadata:
+        kedro_obj = cast(Optional[AbstractDataset], info.data.get("kedro_obj"))
+        if kedro_obj and hasattr(kedro_obj, "metadata") and kedro_obj.metadata:
             return kedro_obj.metadata.get("kedro-viz", None)
 
         return None
@@ -350,6 +356,8 @@ class TranscodedDataNode(GraphNode):
         False, description="Determines whether the transcoded data node is a free input"
     )
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
+
+    # Used by the old approach that sets them
     original_version: Optional[AbstractDataset] = Field(
         None,
         description="The original Kedro's AbstractDataset for this transcoded data node",
@@ -389,11 +397,12 @@ class ParametersNode(GraphNode):
     # The type for Parameters Node
     type: str = GraphNodeType.PARAMETERS.value
 
+    # Remove forced assertion that kedro_obj, name are in values
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_and_name_exists(cls, values):
-        assert "kedro_obj" in values
-        assert "name" in values
+        # assert "kedro_obj" in values
+        # assert "name" in values
         return values
 
     def is_all_parameters(self) -> bool:

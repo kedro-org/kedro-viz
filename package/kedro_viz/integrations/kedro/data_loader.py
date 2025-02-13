@@ -19,6 +19,7 @@ from kedro.io import DataCatalog  # Old version
 
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
+
     IS_DATACATALOG_2 = True
 except ImportError:
     IS_DATACATALOG_2 = False

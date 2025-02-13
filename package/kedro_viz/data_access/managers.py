@@ -379,6 +379,11 @@ class DataAccessManager:
             root_modular_pipeline_node.children.add(
                 ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
             )
+            # update the node_mod_pipeline_map
+            if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
+                modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
+                    ROOT_MODULAR_PIPELINE_ID
+                }
 
         graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
 
