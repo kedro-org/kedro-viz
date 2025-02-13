@@ -5,7 +5,6 @@ load data from pipelines created in a range of Kedro versions.
 
 from typing import Dict, Optional, Tuple, Union, cast
 
-from kedro import __version__
 from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
