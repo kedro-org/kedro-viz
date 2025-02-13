@@ -8,7 +8,8 @@
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "18"
+			"version": "18",
+			"nodeGypDependencies": true
 		}
 	},
 
@@ -31,6 +32,12 @@
 		"UV_LINK_MODE": "copy",
 		"VIRTUAL_ENV": "/home/vscode/venv"
 	},
+
+	// https://code.visualstudio.com/remote/advancedcontainers/improve-performance#_use-a-targeted-named-volume
+	"mounts": [
+		{"source": "${localWorkspaceFolderBasename}-node_modules", "target": "${containerWorkspaceFolder}/node_modules", "type": "volume"},
+		{"source": "${localWorkspaceFolderBasename}-venv", "target": "${containerWorkspaceFolder}/.venv", "type": "volume"}
+	],
 
 	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
 
