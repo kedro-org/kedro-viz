@@ -1,7 +1,11 @@
 """Transcoding related utility functions."""
 
 import hashlib
-from typing import Tuple
+import sys
+import threading
+import time
+from itertools import cycle
+from typing import Any, Tuple
 
 TRANSCODING_SEPARATOR = "@"
 
@@ -57,3 +61,43 @@ def _strip_transcoding(element: str) -> str:
 def is_dataset_param(dataset_name: str) -> bool:
     """Return whether a dataset is a parameter"""
     return dataset_name.lower().startswith("params:") or dataset_name == "parameters"
+
+
+def merge_dicts(dict_one: dict[str, Any], dict_two: dict[str, Any]) -> dict[str, Any]:
+    """Utility to merge two dictionaries"""
+    import copy
+
+    merged = copy.deepcopy(dict_one)
+
+    for key, value in dict_two.items():
+        if isinstance(value, dict) and key in merged:
+            merged[key] = merge_dicts(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+class Spinner:
+    """Represent a simple spinner instance"""
+
+    def __init__(self, message: str = "Processing"):
+        self.spinner = cycle(["-", "\\", "|", "/"])
+        self.message = message
+        self.stop_running = False
+
+    def start(self):
+        def run_spinner():
+            while not self.stop_running:
+                sys.stdout.write(f"\r{self.message} {next(self.spinner)} ")
+                sys.stdout.flush()
+                time.sleep(0.1)
+            sys.stdout.write(
+                "\r" + " " * (len(self.message) + 2) + "\r"
+            )  # Clear the line
+
+        self._spinner_thread = threading.Thread(target=run_spinner, daemon=True)
+        self._spinner_thread.start()
+
+    def stop(self):
+        self.stop_running = True
+        self._spinner_thread.join()

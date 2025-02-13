@@ -52,6 +52,10 @@ class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
 
     def __init__(self):
+        self._initialize_fields()
+
+    def _initialize_fields(self):
+        """Initialize or reset all instance variables."""
         self.catalog = CatalogRepository()
         self.nodes = GraphNodesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
@@ -71,6 +75,10 @@ class DataAccessManager:
         self.runs = RunsRepository()
         self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
+
+    def reset_fields(self):
+        """Reset all instance variables."""
+        self._initialize_fields()
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
