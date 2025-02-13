@@ -43,7 +43,6 @@
 
 	"postStartCommand": {
 		"backend": "nohup bash -c 'uv run python package/kedro_viz/server.py demo-project &' > backend.out 2> backend.err < /dev/null",
-		// FIXME: Looks like the frontend is not needed? The backend stands on its own
 		"frontend": "nohup bash -c 'BROWSER=none npm run start:app &' > frontend.out 2> frontend.err < /dev/null"
 	},
 
