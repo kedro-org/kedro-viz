@@ -40,11 +40,16 @@ class TestNotebookVisualizer:
         )
         mock_get_project_json.assert_called_once()
 
-    def test_generate_html(self):
-        mock_json = {"nodes": [{"id": "1", "name": "Test Node"}]}
-        html_content = NotebookVisualizer.generate_html(mock_json)
+    def test_generate_html(self, example_pipelines, mocker):
+        custom_response = {"nodes": [{"id": "1", "name": "Test Node"}]}
+        mock_load_viz_data = mocker.patch(
+            "kedro_viz.integrations.notebook.visualizer.NotebookVisualizer._load_viz_data",
+            return_value=custom_response,
+        )
+        html_content = NotebookVisualizer(example_pipelines).generate_html()
 
-        assert json.dumps(mock_json) in html_content
+        mock_load_viz_data.assert_called_once()
+        assert json.dumps(custom_response) in html_content
         assert json.dumps(DEFAULT_VIZ_OPTIONS) in html_content
         assert DEFAULT_JS_URL in html_content
 
@@ -56,11 +61,6 @@ class TestNotebookVisualizer:
     def test_show(self, example_pipelines, mocker):
         visualizer = NotebookVisualizer(
             pipeline=example_pipelines, options={"theme": "light"}
-        )
-        custom_response = {"nodes": [{"id": "1", "name": "Test Node"}]}
-        mock_load_viz_data = mocker.patch(
-            "kedro_viz.integrations.notebook.visualizer.NotebookVisualizer._load_viz_data",
-            return_value=custom_response,
         )
         mock_generate_html = mocker.patch(
             "kedro_viz.integrations.notebook.visualizer.NotebookVisualizer.generate_html",
@@ -76,10 +76,7 @@ class TestNotebookVisualizer:
 
         visualizer.show()
 
-        mock_load_viz_data.assert_called_once()
-        mock_generate_html.assert_called_once_with(
-            mock_load_viz_data.return_value, visualizer.options, visualizer.js_url
-        )
+        mock_generate_html.assert_called_once()
         mock_wrap_in_iframe.assert_called_once_with(
             mock_generate_html.return_value,
             visualizer.options.get("width"),

@@ -81,25 +81,11 @@ class NotebookVisualizer:
         load_and_populate_data_for_notebook_users(self.pipeline, self.catalog)
         return get_kedro_project_json_data()
 
-    @staticmethod
-    def generate_html(
-        json_to_visualize: Optional[Any],
-        options: Dict[str, Any] = DEFAULT_VIZ_OPTIONS,
-        js_url: str = DEFAULT_JS_URL,
-    ) -> str:
-        """Generate HTML markup for Kedro-Viz.
-
-        Args:
-            json_to_visualize: Kedro project pipeline data as a json object.
-            options: Visualization options.
-            js_url: Optional URL for the Kedro-Viz JS bundle.
-
-        Returns:
-            The HTML markup template as a string
-        """
+    def generate_html(self) -> str:
+        """Generate HTML markup for Kedro-Viz as a string."""
         unique_id = uuid.uuid4().hex[:8]  # To isolate container for each cell execution
-        json_data_str = json.dumps(json_to_visualize)
-        options_str = json.dumps(options)
+        json_data_str = json.dumps(self._load_viz_data())
+        options_str = json.dumps(self.options)
 
         html_content = (
             r"""<!DOCTYPE html>
@@ -115,7 +101,7 @@ class NotebookVisualizer:
             + """ style='height: 600px'></div>
             <script type="module">
                 import { KedroViz, React, createRoot } from '"""
-            + js_url
+            + self.js_url
             + """';
                 const viz_container = document.getElementById('kedro-viz-"""
             + unique_id
@@ -177,14 +163,12 @@ class NotebookVisualizer:
             try:
                 spinner = Spinner("Starting Kedro-Viz...")
                 spinner.start()
-                json_to_visualize = self._load_viz_data()
-                html_content = self.generate_html(
-                    json_to_visualize, self.options, self.js_url
-                )
+
+                html_content = self.generate_html()
                 iframe_content = self._wrap_in_iframe(
                     html_content,
-                    str(self.options.get("width", "")),
-                    str(self.options.get("height", "")),
+                    str(self.options.get("width", "100%")),
+                    str(self.options.get("height", "600px")),
                 )
                 spinner.stop()
                 display(HTML(iframe_content))
