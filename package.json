@@ -14,6 +14,7 @@
   "proxy": "http://localhost:4142/",
   "scripts": {
     "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build && cp ./build/index.html ./build/404.html",
+    "build:esm": "rm -rf esm && webpack --config webpack.config.js",
     "postbuild": "rm -rf build/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p start:app start:lib",
     "start:dev": "rm -rf node_modules/.cache && npm start",

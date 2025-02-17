@@ -5,6 +5,16 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Major features and improvements
+
+## Bug fixes and other changes
+
+- Add ESM bundle for Kedro-Viz. (#2268)
+- Fix `%run_viz` using old process in jupyter notebook. (#2267)
+
+## Community contributions
 
 # Release 10.2.0
 
