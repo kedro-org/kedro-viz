@@ -5,6 +5,13 @@ import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
+
+try:
+    from kedro.io import KedroDataCatalog
+    IS_DATACATALOG_2 = True
+except ImportError:
+    IS_DATACATALOG_2 = False
+
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
@@ -78,11 +85,14 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
-        # Temporary try/except block so the Kedro develop branch can work with Viz.
-        try:
-            datasets = self._catalog._data_sets
-        except Exception:  # noqa: BLE001 # pragma: no cover
-            datasets = self._catalog._datasets
+        if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+            datasets = self._catalog.list()
+        else:
+            # Temporary try/except block so the Kedro develop branch can work with Viz.
+            try:
+                datasets = self._catalog._data_sets
+            except Exception:  # noqa: BLE001 # pragma: no cover
+                datasets = self._catalog._datasets
 
         # Support for Kedro 0.18.x
         if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
@@ -99,8 +109,11 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         for dataset_name in datasets:
-            dataset = self._catalog._get_dataset(dataset_name)
-            metadata = getattr(dataset, "metadata", None)
+            if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+                dataset = self._catalog.get(dataset_name)
+            else:
+                dataset = self._catalog._get_dataset(dataset_name)
+                metadata = getattr(dataset, "metadata", None)
             if not metadata:
                 continue
             try:
@@ -121,12 +134,13 @@ class CatalogRepository:
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
         dataset_obj: Optional["AbstractDataset"]
         try:
-            # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
-            # fuzzy-matching process.
-            if KEDRO_VERSION >= parse("0.18.1"):
-                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
-            else:  # pragma: no cover
-                dataset_obj = self._catalog._get_dataset(dataset_name)
+            if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+                dataset_obj = self._catalog.get(dataset_name)
+            else:
+                if KEDRO_VERSION >= parse("0.18.1"):
+                    dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
+                else:
+                    dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
             dataset_obj = MemoryDataset()
 

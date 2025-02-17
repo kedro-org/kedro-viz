@@ -7,6 +7,13 @@ from typing import Dict, List, Set, Union
 from kedro.io import DataCatalog
 
 try:
+    from kedro.io import KedroDataCatalog
+
+    IS_DATACATALOG_2 = True
+except ImportError:
+    IS_DATACATALOG_2 = False
+
+try:
     # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
@@ -91,7 +98,10 @@ class DataAccessManager:
 
             for dataset_name in datasets:
                 try:
-                    catalog._get_dataset(dataset_name, suggest=False)
+                    if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
+                        catalog.get(dataset_name)
+                    else:
+                        catalog._get_dataset(dataset_name, suggest=False)
                 except Exception:  # noqa: BLE001 # pragma: no cover
                     continue
 
