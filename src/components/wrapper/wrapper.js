@@ -15,6 +15,7 @@ import ExperimentWrapper from '../experiment-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
+import { DeprecationBanner } from '../deprecation-banner/deprecation-banner';
 
 import './wrapper.scss';
 
@@ -53,6 +54,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               latestVersion={latestVersion}
             />
             {isRunningLocally() ? <ShareableUrlModal /> : null}
+            <DeprecationBanner />
             {versionData && (
               <UpdateReminder
                 isOutdated={isOutdated}

@@ -44,10 +44,10 @@ kedro viz run [OPTIONS]
   - Whether to open the Kedro Viz interface in the default browser. The browser will open if the host is `localhost`. Defaults to `True`.
 
 - `--load-file <path>`
-  - Path to load Kedro Viz data from a directory. If provided, Kedro Viz will load the visualisation data from this path instead of generating it from the pipeline.
+  - Path to load Kedro Viz data from a [directory](#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, Kedro Viz will load the visualisation data from this path instead of generating it from the pipeline
 
 - `--save-file <path>`
-  - Path to save Kedro Viz data to a directory. If provided, the visualisation data will be saved to this path for later use.
+  - Path to save Kedro Viz data to a [directory](#kedro-viz-directory-structure-when-you-save-it-as-a-file). If provided, the visualisation data will be saved to this path for later use.
 
 - `--pipeline, -p <pipeline>`
   - Name of the registered pipeline to visualise. If not set, the default pipeline is visualised.
@@ -161,5 +161,24 @@ To create a build directory with the visualisation data:
 kedro viz build --include-previews
 ```
 
+
+### Kedro-viz directory structure when you save it as a file 
+
+When you use the `--save-file` option, Kedro Viz generates a directory structure to save the visualization data. This directory can later be used with the `--load-file`  to reload the visualization.
+
+The generated directory structure looks like this:
+
+```bash
+api/
+├── main       # Main file containing pipeline structure
+├── nodes/
+│   ├── node1           # JSON files for individual nodes
+│   ├── node2
+│   └── ...
+├── pipelines/
+│   ├── pipeline1      # JSON files for individual pipelines
+│   ├── pipeline2
+│   └── ...
+```
 
 

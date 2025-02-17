@@ -121,32 +121,15 @@ class TestServer:
             {"data_science": example_pipelines["data_science"]}
         )
 
-    @pytest.mark.parametrize(
-        "file_path, expected_exception",
-        [
-            ("test.json", ValueError),  # File does not exist, expect ValueError
-            ("test.json", None),  # File exists, expect no ValueError
-        ],
-    )
-    def test_load_file(
-        self, file_path, expected_exception, patched_create_api_app_from_file, tmp_path
-    ):
-        if expected_exception is not None:
-            with pytest.raises(expected_exception) as exc_info:
-                run_server(load_file=file_path)
+    def test_load_file(self, patched_create_api_app_from_file, tmp_path):
+        file_path = "test.json"
+        json_file_path = tmp_path / file_path
 
-            # Check if the error message contains the expected message
-            assert "The provided filepath" in str(exc_info.value)
-            assert "does not exist." in str(exc_info.value)
-        else:
-            json_file_path = tmp_path / file_path
+        with json_file_path.open("w") as file:
+            json.dump({"name": "John", "age": 30}, file)
 
-            # File exists, no exception expected
-            with json_file_path.open("w") as file:
-                json.dump({"name": "John", "age": 30}, file)
-
-            run_server(load_file=json_file_path)
-            patched_create_api_app_from_file.assert_called_once()
+        run_server(load_file=json_file_path)
+        patched_create_api_app_from_file.assert_called_once()
 
     def test_save_file(self, tmp_path, mocker):
         mock_filesystem = mocker.patch("fsspec.filesystem")

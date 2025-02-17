@@ -84,7 +84,7 @@ _VIZ_PROCESSES: Dict[str, int] = {}
     is_flag=True,
     help="An experimental flag to open Kedro-Viz without Kedro project dependencies",
 )
-def run(
+def run(  # noqa: PLR0915
     host,
     port,
     browser,
@@ -123,16 +123,27 @@ def run(
     )
     from kedro_viz.server import run_server
 
-    kedro_project_path = _find_kedro_project(Path.cwd())
+    kedro_project_path = None
 
-    if kedro_project_path is None:
-        display_cli_message(
-            "ERROR: Failed to start Kedro-Viz : "
-            "Could not find the project configuration "
-            f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
-            "red",
-        )
-        return
+    if load_file:
+        if not Path(load_file).exists():
+            raise ValueError(f"The provided filepath '{load_file}' does not exist.")
+    else:
+        kedro_project_path = _find_kedro_project(Path.cwd())
+        if kedro_project_path is None:
+            display_cli_message(
+                "ERROR: Failed to start Kedro-Viz : "
+                "Could not find the project configuration "
+                f"file '{_PYPROJECT}' at '{Path.cwd()}'. ",
+                "red",
+            )
+            return
+
+    display_cli_message(
+        "WARNING: Experiment Tracking on Kedro-viz will be deprecated in Kedro-Viz 11.0.0. "
+        "Please refer to the Kedro documentation for migration guidance.",
+        "yellow",
+    )
 
     installed_version = parse(__version__)
     latest_version = get_latest_version()
@@ -150,6 +161,16 @@ def run(
     port = _find_available_port(host, port)
 
     try:
+        if include_hooks:
+            hooks_message = "INFO: Running Kedro-Viz with hooks."
+        else:
+            hooks_message = (
+                "INFO: Running Kedro-Viz without hooks. "
+                "Try `kedro viz run --include-hooks` to include hook functionality."
+            )
+
+        display_cli_message(hooks_message, "yellow")
+
         if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():
             _VIZ_PROCESSES[port].terminate()
 

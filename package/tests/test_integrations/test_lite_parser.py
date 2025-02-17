@@ -179,6 +179,25 @@ class TestLiteParser:
 
         assert unresolved_imports == {str(file_path): {"nonexistentmodule"}}
 
+    def test_parse_logs_error_on_exception(self, lite_parser, tmp_path, caplog):
+        file_path = Path(tmp_path / "mock_spaceflights/data_processing_non_utf.py")
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Write non-UTF characters (e.g., using ISO-8859-1 encoding)
+        non_utf_content = "This is a test with non-UTF characters: é, ñ, ü"
+
+        # Write the file in ISO-8859-1 encoding
+        with open(file_path, "w", encoding="ISO-8859-1") as f:
+            f.write(non_utf_content)
+
+        assert file_path.exists()
+
+        lite_parser.parse(file_path)
+        assert (
+            f"An error occurred in LiteParser while mocking dependencies in {str(file_path)}"
+            in caplog.text
+        )
+
     def test_directory_parse(self, lite_parser, sample_project_path):
         unresolved_imports = lite_parser.parse(sample_project_path)
         expected_file_path = Path(

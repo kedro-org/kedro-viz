@@ -1,5 +1,6 @@
 // Add any reusable custom commands here
 import { join } from 'path';
+import { localStorageETDeprecationBannerSeen } from '../../src/config';
 
 /**
  * Custom command for intercepting network requests using fixtures for GraphQL
@@ -167,11 +168,19 @@ Cypress.Commands.add('__conditionalVisit__', () => {
     cy.__interceptGql__('getRunData');
     cy.__interceptGql__('getMetricPlotData');
 
-    cy.visit('/experiment-tracking');
+    cy.visit('/experiment-tracking', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+      }
+    });
 
     cy.wait(['@getRunsList', '@getRunData', '@getMetricPlotData']);
   } else {
-    cy.visit('/');
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+      }
+    });
   }
 });
 

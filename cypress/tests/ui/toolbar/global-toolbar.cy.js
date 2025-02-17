@@ -1,10 +1,15 @@
 // All E2E Tests Related to global-toolbar goes here.
 
 import { prettifyName, stripNamespace } from '../../../../src/utils';
+import { localStorageETDeprecationBannerSeen } from '../../../../src/config';
 
 describe('Global Toolbar', () => {
   before(() => {
-    cy.visit('/'); // Visit the application
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
+      }
+    });
     cy.enablePrettyNames(); // Enable pretty names using the custom command
   });
 

@@ -3,6 +3,7 @@ import {
   TOGGLE_MODULAR_PIPELINES_EXPANDED,
   TOGGLE_SINGLE_MODULAR_PIPELINE_EXPANDED,
   TOGGLE_MODULAR_PIPELINE_DISABLED,
+  TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE,
 } from '../actions/modular-pipelines';
 
 function modularPipelineReducer(modularPipelineState = {}, action) {
@@ -103,6 +104,37 @@ function modularPipelineReducer(modularPipelineState = {}, action) {
             (id) => !id.startsWith(collapsedModularPipeline)
           );
         });
+      }
+
+      return updateState({
+        expanded: expandedIDs,
+        visible: newVisibleState,
+      });
+    }
+    case TOGGLE_MODULAR_PIPELINES_VISIBILITY_STATE: {
+      let newVisibleState = {};
+
+      // Determine which IDs should be expanded based on the action
+      const expandedIDs = action.expandAllPipelines
+        ? modularPipelineState.ids
+        : [];
+
+      if (action.expandAllPipelines) {
+        // If expanding all pipelines, set visibility for each pipeline and its children
+        modularPipelineState.ids.forEach((modularPipelineID) => {
+          newVisibleState[modularPipelineID] = false;
+          modularPipelineState.tree[modularPipelineID].children.forEach(
+            (child) => (newVisibleState[child.id] = true)
+          );
+        });
+      } else {
+        // If not expanding all, only set visibility for the children of the root pipeline
+        if (modularPipelineState.tree['__root__']) {
+          for (const child of modularPipelineState.tree['__root__'].children ||
+            []) {
+            newVisibleState[child.id] = true;
+          }
+        }
       }
 
       return updateState({

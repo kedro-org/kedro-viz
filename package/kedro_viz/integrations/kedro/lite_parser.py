@@ -240,9 +240,17 @@ class LiteParser:
         unresolved_imports: Dict[str, Set[str]] = {}
 
         if target_path.is_file():
-            missing_dependencies = self._get_unresolved_imports(target_path)
-            if len(missing_dependencies) > 0:
-                unresolved_imports[str(target_path)] = missing_dependencies
+            try:
+                missing_dependencies = self._get_unresolved_imports(target_path)
+                if len(missing_dependencies) > 0:
+                    unresolved_imports[str(target_path)] = missing_dependencies
+            except Exception as exc:  # noqa: BLE001
+                logger.error(
+                    "An error occurred in LiteParser while mocking dependencies in %s : %s",
+                    target_path,
+                    exc,
+                )
+
             return unresolved_imports
 
         # handling directories
@@ -263,7 +271,8 @@ class LiteParser:
                     unresolved_imports[str(file_path)] = missing_dependencies
             except Exception as exc:  # noqa: BLE001 # pragma: no cover
                 logger.error(
-                    "An error occurred in LiteParser while mocking dependencies : %s",
+                    "An error occurred in LiteParser while mocking dependencies in %s : %s",
+                    file_path,
                     exc,
                 )
                 continue

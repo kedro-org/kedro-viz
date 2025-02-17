@@ -27,7 +27,7 @@ export function toggleLayers(visible) {
 export const TOGGLE_EXPAND_ALL_PIPELINES = 'TOGGLE_EXPAND_ALL_PIPELINES';
 
 /**
- * Toggle whether to expand all modular pipelines or collapse
+ * Toggle whether to expand all modular pipelines or collapse with boolean.
  * @param {Boolean} shouldExpandAllPipelines
  */
 export function toggleExpandAllPipelines(shouldExpandAllPipelines) {

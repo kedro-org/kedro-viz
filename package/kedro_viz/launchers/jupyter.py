@@ -7,8 +7,6 @@ import logging
 import multiprocessing
 import os
 import shlex
-import socket
-from contextlib import closing
 from typing import Any, Dict
 
 import IPython
@@ -17,32 +15,13 @@ from kedro.framework.project import PACKAGE_NAME
 from watchfiles import run_process
 
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
-from kedro_viz.launchers.utils import _check_viz_up, _wait_for
+from kedro_viz.launchers.utils import _check_viz_up, _find_available_port, _wait_for
 from kedro_viz.server import DEFAULT_HOST, DEFAULT_PORT, run_server
 
 _VIZ_PROCESSES: Dict[str, int] = {}
 _DATABRICKS_HOST = "0.0.0.0"
 
 logger = logging.getLogger(__name__)
-
-
-def _allocate_port(host: str, start_at: int, end_at: int = 65535) -> int:
-    acceptable_ports = range(start_at, end_at + 1)
-
-    viz_ports = _VIZ_PROCESSES.keys() & set(acceptable_ports)
-    if viz_ports:  # reuse one of already allocated ports
-        return sorted(viz_ports)[0]
-
-    socket.setdefaulttimeout(2.0)  # seconds
-    for port in acceptable_ports:  # iterate through all acceptable ports
-        with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-            if sock.connect_ex((host, port)) != 0:  # port is available
-                return port
-
-    raise ValueError(
-        "Cannot allocate an open TCP port for Kedro-Viz in a range "
-        f"from {start_at} to {end_at}"
-    )
 
 
 def _is_databricks() -> bool:
@@ -120,7 +99,7 @@ def run_viz(args: str = "", local_ns: Dict[str, Any] = None) -> None:
     params = arg_dict.get("params", "")
 
     # Allocate port
-    port = _allocate_port(host, start_at=port)
+    port = _find_available_port(host, port, max_attempts=10)
 
     # Terminate existing process if needed
     if port in _VIZ_PROCESSES and _VIZ_PROCESSES[port].is_alive():

@@ -29,7 +29,7 @@ See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) f
 
 **Extend Preview to custom catasets**
 
-See [Extend Preview to custom catasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
+See [Extend Preview to custom datasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
 
 ```{toctree}
 :maxdepth: 1

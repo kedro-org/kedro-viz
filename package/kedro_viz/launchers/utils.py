@@ -90,6 +90,14 @@ def _is_port_in_use(host: str, port: int):
 def _find_available_port(host: str, start_port: int, max_attempts: int = 5) -> int:
     max_port = start_port + max_attempts - 1
     port = start_port
+
+    # Sanity check to not collide with system ports
+    if port > 49151:
+        raise ValueError(
+            "Cannot allocate an open TCP port for Kedro-Viz in a range "
+            f"from {start_port} to {max_port}"
+        )
+
     while port <= max_port:
         if not _is_port_in_use(host, port):
             return port
