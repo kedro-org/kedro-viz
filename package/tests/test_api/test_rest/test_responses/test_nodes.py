@@ -8,6 +8,7 @@ from tests.test_api.test_rest.test_responses.assert_helpers import (
     assert_example_transcoded_data,
 )
 
+
 class TestTranscodedDataset:
     """Test a viz API created from a Kedro project."""
 
@@ -16,6 +17,7 @@ class TestTranscodedDataset:
         response = client.get("/api/main")
         assert response.status_code == 200
         assert_example_transcoded_data(response.json())
+
 
 class TestNodeMetadataEndpoint:
     def test_node_not_exist(self, client):
