@@ -8,6 +8,7 @@ from kedro.io import DataCatalog
 
 try:
     from kedro.io import KedroDataCatalog
+
     IS_DATACATALOG_2 = True
 except ImportError:
     IS_DATACATALOG_2 = False
@@ -136,11 +137,10 @@ class CatalogRepository:
         try:
             if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
                 dataset_obj = self._catalog.get(dataset_name)
+            elif KEDRO_VERSION >= parse("0.18.1"):
+                dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:
-                if KEDRO_VERSION >= parse("0.18.1"):
-                    dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
-                else:
-                    dataset_obj = self._catalog._get_dataset(dataset_name)
+                dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
             dataset_obj = MemoryDataset()
 
