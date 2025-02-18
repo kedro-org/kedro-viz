@@ -49,6 +49,7 @@ class App extends React.Component {
     if (!isEqual(prevProps.options, this.props.options)) {
       this.store.dispatch(updateStateFromOptions(this.props.options));
     }
+
     // If the selected pipeline has changed, load the new pipeline data
     if (
       this.props.data &&
