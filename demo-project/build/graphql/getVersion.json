@@ -1,9 +1,9 @@
 {
     "version": {
       "__typename": "Version",
-      "installed": "10.1.0",
+      "installed": "10.2.0",
       "isOutdated": false,
-      "latest": "10.1.0"
+      "latest": "10.2.0"
     }
   }
   
