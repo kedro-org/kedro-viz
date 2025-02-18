@@ -6,12 +6,14 @@ import {
   toggleSidebar,
   toggleTextLabels,
   toggleExpandAllPipelines,
+  togglePipelineFilter,
 } from '../../actions';
 import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
+import FilterIcon from '../icons/filter';
 import PrimaryToolbar from '../primary-toolbar';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
@@ -29,6 +31,7 @@ export const FlowchartPrimaryToolbar = ({
   onToggleLayers,
   onToggleSidebar,
   onToggleTextLabels,
+  onTogglePipelineFilter,
   textLabels,
   visible,
   display,
@@ -49,8 +52,19 @@ export const FlowchartPrimaryToolbar = ({
       <PrimaryToolbar
         onToggleSidebar={onToggleSidebar}
         visible={visible}
+        display={display}
         dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
       >
+        <IconButton
+          active={display.filterBtn}
+          ariaLabel={`Open pipeline filter`}
+          className={'pipeline-menu-button--labels'}
+          dataTest={`sidebar-flowchart-labels-btn-${display.filterBtn}`}
+          icon={FilterIcon}
+          labelText={`Open pipeline filter`}
+          onClick={() => onTogglePipelineFilter()}
+          visible={display.filterBtn}
+        />
         <IconButton
           active={textLabels}
           ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
@@ -120,6 +134,9 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleSidebar: (visible) => {
     dispatch(toggleSidebar(visible));
+  },
+  onTogglePipelineFilter: () => {
+    dispatch(togglePipelineFilter());
   },
   onToggleTextLabels: (value) => {
     dispatch(toggleTextLabels(Boolean(value)));

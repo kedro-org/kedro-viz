@@ -16,6 +16,7 @@ export const PrimaryToolbar = ({
   onToggleSidebar,
   dataTest,
   visible = { sidebar: true },
+  display = { filterBtn: false },
 }) => (
   <>
     <ul className="pipeline-primary-toolbar kedro">
@@ -31,6 +32,7 @@ export const PrimaryToolbar = ({
         icon={MenuIcon}
         labelText={`${visible.sidebar ? 'Hide' : 'Show'} menu`}
         onClick={() => onToggleSidebar(!visible.sidebar)}
+        visible={!display.filterBtn}
       />
       {children}
     </ul>
