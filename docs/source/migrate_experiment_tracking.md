@@ -1,6 +1,6 @@
 # Migration from Kedro-Viz native experiment tracking to `kedro-mlflow`
 
-With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
+With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/0.14.3/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
 1. **Remove deprecated Kedro-Viz experiment tracking configurations.**
 2. **Update existing dataset configurations in the catalog to use `kedro-mlflow`.**
@@ -41,14 +41,14 @@ Update the dataset configurations in your `catalog.yml` to transition to `kedro-
 
 | Kedro-Viz Dataset Type         | MLflow Dataset Type        | Update Instructions                                      |
 |---------------------------------|----------------------------|---------------------------------------------------------|
-| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.metrics.mlflow_metric_dataset.MlflowMetricDataset).                  |
-| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `json.JSONDataset`. |
-| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `plotly.HTMLDataset`. |
-| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) as `plotly.HTMLDataset`. |
-| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset).                   |
+| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/03_experiment_tracking/01_experiment_tracking/05_version_metrics.html#saving-a-single-float-as-a-metric-with-mlflowmetricdataset)                  |
+| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `json.JSONDataset`. |
+| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
+| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
+| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset).                   |
 
 ### Metrics dataset
-For `tracking.MetricsDataset`, update its type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.metrics.mlflow_metric_dataset.MlflowMetricDataset):
+For `tracking.MetricsDataset`, update its type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/03_experiment_tracking/01_experiment_tracking/05_version_metrics.html#saving-a-single-float-as-a-metric-with-mlflowmetricdataset):
 
 Before:
 ```yaml
@@ -65,7 +65,7 @@ metrics:
 ```
 
 ### JSON dataset
-For `tracking.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) and configure it as `json.JSONDataset`:
+For `tracking.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `json.JSONDataset`:
 
 Before:
 ```yaml
@@ -85,7 +85,7 @@ companies_columns:
 ```
 
 ### Plotly dataset
-For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset) and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
+For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
 
 Before:
 ```yaml
@@ -104,7 +104,7 @@ plotly_json_data:
 ```
 
 ### Matplotlib writer
-For `matplotlib.MatplotlibWriter`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/31_API/kedro_mlflow.io.html#kedro_mlflow.io.artifacts.mlflow_artifact_dataset.MlflowArtifactDataset):
+For `matplotlib.MatplotlibWriter`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset):
 
 Before:
 ```yaml
@@ -136,4 +136,4 @@ rm -rf data/09_tracking/
 After completing these steps, follow the below MLflow documentation to complete your experiment tracking setup with MLflow.
 
 - [The official Kedro + MLflow guide in the Kedro documentation](https://docs.kedro.org/en/stable/integrations/mlflow.html)
-- The documentation of [`kedro-mlflow`](https://docs.kedro.org/en/latest/integrations/mlflow.html) plugin 
+- The documentation of [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/0.14.3/) plugin 
