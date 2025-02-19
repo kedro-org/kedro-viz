@@ -36,7 +36,6 @@ const createCallbackMiddleware =
       case SHOW_PIPELINE_FILTER:
         const showPipelineFilterAction = {
           type: SHOW_PIPELINE_FILTER,
-          payload: true,
         };
         callback(showPipelineFilterAction);
         break;

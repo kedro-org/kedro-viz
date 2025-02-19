@@ -119,12 +119,10 @@ export const SHOW_PIPELINE_FILTER = 'SHOW_PIPELINE_FILTER';
 
 /**
  * Toggle to show pipeline filter
- * @param {Boolean} pipelineFilter True if filter are to be shown
  */
 export function togglePipelineFilter() {
   return {
     type: SHOW_PIPELINE_FILTER,
-    pipelineFilter: true,
   };
 }
 
