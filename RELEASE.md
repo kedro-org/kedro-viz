@@ -5,15 +5,27 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-
-# Release 10.2.0 
-
+# Upcoming Release
 
 ## Major features and improvements
 
 ## Bug fixes and other changes
 
+- Add ESM bundle for Kedro-Viz. (#2268)
+- Fix `%run_viz` using old process in jupyter notebook. (#2267)
+
+## Community contributions
+
+# Release 10.2.0
+
+## Deprecations
+- Added a deprecation warning for the removal of the Experiment Tracking feature, which will be deprecated in Kedro-Viz version 11.0.0. For more details, please refer to our [blog post](https://kedro.org/blog/deprecate-experiment-tracking-kedro-viz). (#2248, #2263)
+
+## Bug fixes and other changes
+
 - Fix kedro viz `--load-file` to run from any directory without requiring a Kedro project. (#2206)
+- Improved modular pipeline expand/collapse logic for better state synchronisation. (#2225)
+- Fix inconsistent function inspection for decorated functions. (#2246)
 
 # Release 10.1.0
 

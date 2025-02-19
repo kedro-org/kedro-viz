@@ -1,0 +1,84 @@
+@use '../../styles/variables' as variables;
+
+$modal-height: 416px;
+$modal-margin: 48px;
+$modal-width: 446px;
+$text-margin: 24px;
+
+.kui-theme--light {
+  --secondary-text-color: #{variables.$black-500};
+  --primary-button-background: #{variables.$black-900};
+  --primary-button-text-color: #{variables.$white-0};
+}
+
+.kui-theme--dark {
+  --secondary-text-color: #{variables.$white-900};
+  --primary-button-background: #{variables.$white-0};
+  --primary-button-text-color: #{variables.$black-900};
+}
+
+.deprecation-banner-modal {
+  .modal__content {
+    max-width: calc(#{$modal-width} + 2 * #{$modal-margin});
+  }
+
+  .modal__wrapper {
+    width: $modal-width;
+    padding: 0;
+    margin: $modal-margin;
+  }
+
+  .modal__title {
+    text-align: left;
+    margin-bottom: 0;
+  }
+
+  .deprecation-banner-modal__message-wrapper {
+    p {
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+      margin-bottom: 0;
+      margin-top: $text-margin;
+      text-align: left;
+    }
+
+    .deprecation-banner-modal__secondary-text {
+      color: var(--secondary-text-color);
+    }
+  }
+
+  .deprecation-banner-modal__button-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: $modal-margin;
+    width: 100%;
+
+    .button__btn--secondary {
+      padding-left: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      &:hover::after {
+        background-color: transparent;
+      }
+    }
+
+    .button__btn--primary {
+      border-color: var(--primary-button-background);
+
+      &:hover {
+        background-color: var(--primary-button-background);
+        color: var(--primary-button-text-color);
+      }
+    }
+  }
+
+  .deprecation-banner-modal__link {
+    color: var(--secondary-text-color);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}

@@ -1,8 +1,4 @@
 describe('Banners in Kedro-Viz', () => {
-  beforeEach(() => {
-    // Clears localStorage before each test
-    cy.clearLocalStorage();
-  });
 
   it("shows a missing dependencies banner in viz lite mode if the kedro project dependencies are not installed.", () => {
     // Intercept the network request to mock with a fixture

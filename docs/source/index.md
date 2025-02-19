@@ -29,6 +29,7 @@ kedro-viz_visualisation
 share_kedro_viz
 preview_datasets
 slice_a_pipeline
+migrate_experiment_tracking
 ```
 
 ```{toctree}
