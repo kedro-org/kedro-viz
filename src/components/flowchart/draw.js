@@ -88,7 +88,7 @@ export const drawLayerNames = function () {
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
-    .duration(this.DURATION)
+    .duration(this.LAYER_NAME_DURATION)
     .style('transform', transformValue);
 
   this.el.layerNames = this.el.layerNameGroup
@@ -104,14 +104,14 @@ export const drawLayerNames = function () {
   enterLayerNames
     .style('opacity', 0)
     .transition('enter-layer-names')
-    .duration(this.DURATION)
+    .duration(this.LAYER_NAME_DURATION)
     .style('opacity', 0.55);
 
   this.el.layerNames
     .exit()
     .style('opacity', 0.55)
     .transition('exit-layer-names')
-    .duration(this.DURATION)
+    .duration(this.LAYER_NAME_DURATION)
     .style('opacity', 0)
     .remove();
 
