@@ -159,14 +159,14 @@ def load_data(
         unresolved_imports = lite_parser.parse(project_path)
         sys_modules_patch = sys.modules.copy()
 
-        if unresolved_imports:
+        if unresolved_imports and len(unresolved_imports) > 0:
             modules_to_mock: Set[str] = set()
 
             # for the viz lite banner
             Metadata.set_has_missing_dependencies(True)
 
             for unresolved_module_set in unresolved_imports.values():
-                modules_to_mock.update(unresolved_module_set)
+                modules_to_mock = modules_to_mock.union(unresolved_module_set)
 
             mocked_modules = lite_parser.create_mock_modules(modules_to_mock)
             sys_modules_patch.update(mocked_modules)
