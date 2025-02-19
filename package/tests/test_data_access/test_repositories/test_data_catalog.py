@@ -1,5 +1,6 @@
 import pytest
-from kedro.io.data_catalog import DataCatalog
+from kedro.io import DataCatalog, MemoryDataset
+from packaging.version import parse
 
 from kedro_viz.data_access.repositories import CatalogRepository
 
@@ -67,3 +68,65 @@ class TestDataCatalogRepository:
         catalog = DataCatalog.from_config(catalog_config)
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("car") == "raw"
+
+
+class TestDataCatalogRepositoryExtended:
+    def test_dataset_no_metadata(self):
+        """
+        Covers lines where dataset has no 'metadata' attribute,
+        so the code in layers_mapping sees 'metadata' is None and skips logic.
+        """
+        repo = CatalogRepository()
+        catalog_config = {
+            "cars@pandas": {
+                "type": "pandas.CSVDataset",
+                "filepath": "cars.csv",
+                # No 'metadata' here
+            }
+        }
+        catalog = DataCatalog.from_config(catalog_config)
+        repo.set_catalog(catalog)
+        # Should return None since no layer is found
+        assert repo.get_layer_for_dataset("cars") is None
+
+    @pytest.mark.parametrize(
+        "kedro_version_str, expected_layer, add_layers_attr, metadata_layer",
+        [
+            # Simulate old Kedro (< 0.19.0)
+            ("0.18.9", None, True, None),
+            # Simulate new Kedro (>= 0.19.0)
+            ("0.19.1", "my_layer", False, "my_layer"),
+        ],
+    )
+    def test_layers_mapping_various_versions(
+        self, kedro_version_str, expected_layer, add_layers_attr, metadata_layer, mocker
+    ):
+        mocker.patch(
+            "kedro_viz.data_access.repositories.catalog.KEDRO_VERSION",
+            parse(kedro_version_str),
+        )
+
+        repo = CatalogRepository()
+        if metadata_layer:
+            # For new Kedro: rely on metadata
+            catalog_config = {
+                "my_dataset": {
+                    "type": "pandas.CSVDataset",
+                    "filepath": "my.csv",
+                    "metadata": {"kedro-viz": {"layer": metadata_layer}},
+                }
+            }
+            catalog = DataCatalog.from_config(catalog_config)
+        else:
+            # For old Kedro: no metadata
+            catalog = DataCatalog({"my_dataset": MemoryDataset()})
+
+        # Simulating old Kedro
+        if add_layers_attr:
+            catalog.layers = None
+
+        repo.set_catalog(catalog)
+        layers_map = repo.layers_mapping
+
+        # Now "my_dataset" should map to expected_layer
+        assert layers_map["my_dataset"] == expected_layer
