@@ -7,6 +7,13 @@ from typing import Dict, List, Set, Union
 from kedro.io import DataCatalog
 
 try:
+    from kedro.io.kedro_data_catalog import KedroDataCatalog
+
+    IS_DATACATALOG_2 = True
+except ImportError:
+    IS_DATACATALOG_2 = False
+
+try:
     # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
 except ImportError:  # pragma: no cover
@@ -72,6 +79,8 @@ class DataAccessManager:
         self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
 
+        self._is_new_catalog = False
+
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
         self.runs.set_db_session(db_session_class)
@@ -104,7 +113,12 @@ class DataAccessManager:
             pipelines: A dictionary which holds project pipelines
         """
 
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
+        self._is_new_catalog = IS_DATACATALOG_2 and isinstance(
+            catalog, KedroDataCatalog
+        )
+
+        if not self._is_new_catalog:
+            self.resolve_dataset_factory_patterns(catalog, pipelines)
 
         self.catalog.set_catalog(catalog)
 
@@ -187,7 +201,12 @@ class DataAccessManager:
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, input_node.id
                 )
-                if isinstance(input_node, TranscodedDataNode):
+
+                # For older catalog
+                if (
+                    isinstance(input_node, TranscodedDataNode)
+                    and not self._is_new_catalog
+                ):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
             # Add node outputs as DataNode to the graph.
@@ -202,9 +221,15 @@ class DataAccessManager:
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, output_node.id
                 )
-                if isinstance(output_node, TranscodedDataNode):
-                    output_node.original_name = output
-                    output_node.original_version = self.catalog.get_dataset(output)
+
+                # For older catalog
+                if (
+                    isinstance(output_node, TranscodedDataNode)
+                    and not self._is_new_catalog
+                ):
+                    output_node.transcoded_versions.add(
+                        self.catalog.get_dataset(output)
+                    )
 
     def add_node(
         self,
@@ -322,17 +347,15 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        try:
-            obj = self.catalog.get_dataset(dataset_name)
-        except DatasetError:
-            # This is to handle dataset factory patterns when running
-            # Kedro Viz in lite mode. The `get_dataset` function
-            # of DataCatalog calls AbstractDataset.from_config
-            # which tries to create a Dataset instance from the pattern
-            obj = UnavailableDataset()
+        if self._is_new_catalog:
+            dataset_obj = None
+        else:
+            try:
+                dataset_obj = self.catalog.get_dataset(dataset_name)
+            except DatasetError:
+                dataset_obj = UnavailableDataset()
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
-        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
         (
             dataset_id,
             modular_pipeline_ids,
@@ -351,12 +374,13 @@ class DataAccessManager:
             root_modular_pipeline_node.children.add(
                 ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
             )
-
             # update the node_mod_pipeline_map
             if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
                 modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
                     ROOT_MODULAR_PIPELINE_ID
                 }
+
+        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
 
         if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
@@ -364,7 +388,7 @@ class DataAccessManager:
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
-                parameters=obj,
+                parameters=dataset_obj,
                 modular_pipelines=None,
             )
         else:
@@ -373,7 +397,7 @@ class DataAccessManager:
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
-                dataset=obj,
+                dataset=dataset_obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,
