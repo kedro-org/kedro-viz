@@ -91,12 +91,6 @@ class DataAccessManager:
         """Resolve dataset factory patterns in data catalog by matching
         them against the datasets in the pipelines.
         """
-        if self._is_new_catalog:
-            logger.debug(
-                "Skipping dataset factory pattern resolution for KedroDataCatalog (lazy loading)."
-            )
-            return
-
         for pipeline in pipelines.values():
             if hasattr(pipeline, "data_sets"):
                 # Support for Kedro 0.18.x
@@ -123,7 +117,8 @@ class DataAccessManager:
             catalog, KedroDataCatalog
         )
 
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
+        if not self._is_new_catalog:
+            self.resolve_dataset_factory_patterns(catalog, pipelines)
 
         self.catalog.set_catalog(catalog)
 
