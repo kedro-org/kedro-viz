@@ -369,8 +369,8 @@ export class FlowChart extends Component {
           return `translateY(${updateY}px)`; // Use translateY for vertical layout
         } else {
           // Horizontal orientation
-          const updateX = x + (d.x + d.width / 4) * scale;
-          return `translateX(${updateX}px)`; // Use translateX for horizontal layout
+          const updateX = x + (d.x + d.width / 2) * scale;
+          return `translateX(${updateX}px) translateX(-50%) `; // Use translateX for horizontal layout
         }
       });
     }

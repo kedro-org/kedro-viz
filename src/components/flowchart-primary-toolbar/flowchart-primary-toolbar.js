@@ -78,6 +78,19 @@ export const FlowchartPrimaryToolbar = ({
           visible={display.layerBtn}
         />
         <IconButton
+          ariaLabel="Change flowchart orientation"
+          className={'pipeline-menu-button--orientation'}
+          dataTest={'sidebar-flowchart-orientation-btn'}
+          icon={orientation === 'vertical' ? TopBottomIcon : LeftRightIcon}
+          labelText="Change orientation"
+          onClick={() =>
+            onToggleOrientation(
+              orientation === 'vertical' ? 'horizontal' : 'vertical'
+            )
+          }
+          visible={display.orientationBtn}
+        />
+        <IconButton
           active={expandedPipelines}
           ariaLabel={
             expandedPipelines
@@ -101,19 +114,6 @@ export const FlowchartPrimaryToolbar = ({
           labelText="Export visualisation"
           onClick={() => onToggleExportModal(true)}
           visible={display.exportBtn}
-        />
-        <IconButton
-          ariaLabel="Change flowchart orientation"
-          className={'pipeline-menu-button--orientation'}
-          dataTest={'sidebar-flowchart-orientation-btn'}
-          icon={orientation === 'vertical' ? TopBottomIcon : LeftRightIcon}
-          labelText="Change Orientation"
-          onClick={() =>
-            onToggleOrientation(
-              orientation === 'vertical' ? 'horizontal' : 'vertical'
-            )
-          }
-          visible={display.orientationBtn}
         />
       </PrimaryToolbar>
     </>

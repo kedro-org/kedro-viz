@@ -72,8 +72,12 @@ export const drawLayers = function () {
 export const drawLayerNames = function () {
   const { chartSize, layers, orientation } = this.props;
 
+  const layerPaddingVerticalMode = 20;
+
   const layerNamePosition =
-    orientation === 'vertical' ? chartSize.sidebarWidth || 0 : 100 || 0;
+    orientation === 'vertical'
+      ? chartSize.sidebarWidth + layerPaddingVerticalMode || 0
+      : 100 || 0;
 
   const transformValue =
     orientation === 'vertical'
