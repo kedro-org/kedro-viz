@@ -9,6 +9,8 @@ Please follow the established format:
 
 ## Major features and improvements
 
+- Enable Kedro-Viz in VSCode to list pipelines using the filter icon.  (#2269)
+
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)
