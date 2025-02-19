@@ -56,10 +56,9 @@ export const FlowchartPrimaryToolbar = ({
         dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
       >
         <IconButton
-          active={display.filterBtn}
           ariaLabel={`Open pipeline filter`}
           className={'pipeline-menu-button--labels'}
-          dataTest={`sidebar-flowchart-labels-btn-${display.filterBtn}`}
+          dataTest={`sidebar-flowchart-filter-btn-${display.filterBtn}`}
           icon={FilterIcon}
           labelText={`Open pipeline filter`}
           onClick={() => onTogglePipelineFilter()}
