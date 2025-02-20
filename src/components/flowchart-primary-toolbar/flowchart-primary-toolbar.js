@@ -6,12 +6,15 @@ import {
   toggleSidebar,
   toggleTextLabels,
   toggleExpandAllPipelines,
+  toggleOrientation,
 } from '../../actions';
 import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 import IconButton from '../ui/icon-button';
 import LabelIcon from '../icons/label';
 import ExportIcon from '../icons/export';
 import LayersIcon from '../icons/layers';
+import LeftRightIcon from '../icons/left-right';
+import TopBottomIcon from '../icons/top-bottom';
 import PrimaryToolbar from '../primary-toolbar';
 import { getVisibleLayerIDs } from '../../selectors/disabled';
 import ExpandPipelinesIcon from '../icons/expand-pipelines';
@@ -35,6 +38,8 @@ export const FlowchartPrimaryToolbar = ({
   visibleLayers,
   expandedPipelines,
   onToggleExpandAllPipelines,
+  orientation,
+  onToggleOrientation,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
 
@@ -73,6 +78,19 @@ export const FlowchartPrimaryToolbar = ({
           visible={display.layerBtn}
         />
         <IconButton
+          ariaLabel="Change flowchart orientation"
+          className={'pipeline-menu-button--orientation'}
+          dataTest={'sidebar-flowchart-orientation-btn'}
+          icon={orientation === 'vertical' ? TopBottomIcon : LeftRightIcon}
+          labelText="Change orientation"
+          onClick={() =>
+            onToggleOrientation(
+              orientation === 'vertical' ? 'horizontal' : 'vertical'
+            )
+          }
+          visible={display.orientationBtn}
+        />
+        <IconButton
           active={expandedPipelines}
           ariaLabel={
             expandedPipelines
@@ -108,6 +126,7 @@ export const mapStateToProps = (state) => ({
   visible: state.visible,
   display: state.display,
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
+  orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
 });
 
@@ -127,6 +146,9 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleExpandAllPipelines: (isExpanded) => {
     dispatch(toggleExpandAllPipelines(isExpanded));
     dispatch(toggleModularPipelinesVisibilityState(isExpanded));
+  },
+  onToggleOrientation: (value) => {
+    dispatch(toggleOrientation(value));
   },
 });
 

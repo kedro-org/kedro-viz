@@ -15,7 +15,7 @@ jest.mock('../../utils/hooks/use-generate-pathname', () => ({
 describe('PrimaryToolbar', () => {
   it('renders without crashing', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(6);
   });
 
   it('hides all buttons (except menu button) when display prop is false for each of them', () => {
@@ -24,6 +24,7 @@ describe('PrimaryToolbar', () => {
       layerBtn: false,
       exportBtn: false,
       expandPipelinesBtn: false,
+      orientationBtn: false,
     };
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       options: { display },
@@ -38,7 +39,7 @@ describe('PrimaryToolbar', () => {
     const wrapper = setup.mount(<ConnectedFlowchartPrimaryToolbar />, {
       options: { display },
     });
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(4);
+    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(5);
   });
 
   const functionCalls = [
@@ -74,6 +75,7 @@ describe('PrimaryToolbar', () => {
       disableLayerBtn: expect.any(Boolean),
       textLabels: expect.any(Boolean),
       expandedPipelines: expect.any(Boolean),
+      orientation: expect.any(String),
       visible: expect.objectContaining({
         exportModal: expect.any(Boolean),
         metadataModal: expect.any(Boolean),
@@ -84,6 +86,7 @@ describe('PrimaryToolbar', () => {
         exportBtn: expect.any(Boolean),
         labelBtn: expect.any(Boolean),
         layerBtn: expect.any(Boolean),
+        orientationBtn: expect.any(Boolean),
         expandPipelinesBtn: expect.any(Boolean),
       }),
       visibleLayers: expect.any(Boolean),

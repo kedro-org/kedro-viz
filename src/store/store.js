@@ -61,6 +61,7 @@ const saveStateToLocalStorage = (state) => {
     showDatasetPreviews: state.showDatasetPreviews,
     flags: state.flags,
     expandAllPipelines: state.expandAllPipelines,
+    orientation: state.orientation,
   });
 
   // Store Run's metadata to localstorage
