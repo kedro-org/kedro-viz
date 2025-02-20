@@ -19,6 +19,10 @@ from kedro_viz.api.rest.responses.pipelines import (
     GraphAPIResponse,
     get_pipeline_response,
 )
+from kedro_viz.api.rest.responses.version import (
+    VersionAPIResponse,
+    get_version_response,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +52,14 @@ async def get_single_node_metadata(node_id: str):
 )
 async def get_single_pipeline_data(registered_pipeline_id: str):
     return get_pipeline_response(registered_pipeline_id)
+
+
+@router.get(
+    "/version",
+    response_model=VersionAPIResponse,
+)
+async def get_version():
+    return get_version_response()
 
 
 @router.post("/deploy")

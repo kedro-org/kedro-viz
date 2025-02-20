@@ -223,22 +223,6 @@ export const isRunningLocally = () => {
 };
 
 /**
- * Sanitized pathname with experiment-tracking string and check if path containing trailing slash
- * @returns {string} Sanitized pathname
- */
-export const sanitizedPathname = () => {
-  const { pathname } = window.location;
-  const sanitizedPathname = replaceMatches(pathname, {
-    'experiment-tracking': '',
-  });
-  const pathnameWithTrailingSlash = sanitizedPathname.endsWith('/')
-    ? sanitizedPathname
-    : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
-
-  return pathnameWithTrailingSlash;
-};
-
-/**
  * Fetches viz metadata from the server.
  * @returns {Promise<Object>} A promise that resolves the fetched viz metadata.
  */
@@ -261,6 +245,16 @@ export async function deployViz(inputValues) {
     body: JSON.stringify(inputValues),
   });
 
+  return request;
+}
+
+export async function getVersion() {
+  const request = await fetch(`${pathRoot}/version`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  });
   return request;
 }
 

@@ -13,7 +13,6 @@ from unittest.mock import patch
 from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
-from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -73,8 +72,7 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
 
     with KedroSession.create(
@@ -88,7 +86,6 @@ def _load_data_helper(
             session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()
-        session_store = session._store
 
         # patch the AbstractDataset class for a custom
         # implementation to handle kedro.io.core.DatasetError
@@ -110,7 +107,7 @@ def _load_data_helper(
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
         stats_dict = _get_dataset_stats(project_path)
-    return catalog, pipelines_dict, session_store, stats_dict
+    return catalog, pipelines_dict, stats_dict
 
 
 def load_data(
@@ -120,7 +117,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
@@ -134,8 +131,7 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary,and dataset stats dictionary.
     """
     if package_name:
         configure_project(package_name)

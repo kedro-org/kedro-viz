@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -24,13 +24,9 @@ import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 import Sidebar from '../sidebar';
-import Button from '../ui/button';
-import CircleProgressBar from '../ui/circle-progress-bar';
 import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
 import {
   errorMessages,
-  linkToFlowchartInitialVal,
-  localStorageFlowchartLink,
   localStorageName,
   localStorageBannerStatus,
   params,
@@ -54,7 +50,6 @@ export const FlowChartWrapper = ({
   displaySidebar,
   graph,
   loading,
-  metadataVisible,
   modularPipelinesTree,
   nodes,
   onToggleFocusMode,
@@ -72,7 +67,6 @@ export const FlowChartWrapper = ({
   displayExportBtn,
   displayBanner,
 }) => {
-  const history = useHistory();
   const { pathname, search } = useLocation();
   const searchParams = new URLSearchParams(search);
   const { toSetQueryParam } = useGeneratePathname();
@@ -80,10 +74,6 @@ export const FlowChartWrapper = ({
   const [errorMessage, setErrorMessage] = useState({});
   const [isInvalidUrl, setIsInvalidUrl] = useState(false);
   const [usedNavigationBtn, setUsedNavigationBtn] = useState(false);
-
-  const [counter, setCounter] = useState(60);
-  const [goBackToExperimentTracking, setGoBackToExperimentTracking] =
-    useState(false);
 
   const graphRef = useRef(null);
 
@@ -232,10 +222,6 @@ export const FlowChartWrapper = ({
     };
   }, [handlePopState]);
 
-  useEffect(() => {
-    setGoBackToExperimentTracking(loadLocalStorage(localStorageFlowchartLink));
-  }, []);
-
   /**
    * To handle redirecting to a different location via the URL (e.g. selectedNode,
    * focusNode, etc.) we only need to call the matchPath actions when:
@@ -279,37 +265,6 @@ export const FlowChartWrapper = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, usedNavigationBtn, isInvalidUrl]);
-
-  const resetLinkingToFlowchartLocalStorage = useCallback(() => {
-    saveLocalStorage(localStorageFlowchartLink, linkToFlowchartInitialVal);
-
-    setGoBackToExperimentTracking(linkToFlowchartInitialVal);
-  }, []);
-
-  useEffect(() => {
-    if (goBackToExperimentTracking?.showGoBackBtn) {
-      const timer =
-        counter > 0 && setInterval(() => setCounter(counter - 1), 1000);
-
-      if (counter === 0) {
-        resetLinkingToFlowchartLocalStorage();
-      }
-
-      return () => clearInterval(timer);
-    }
-  }, [
-    counter,
-    goBackToExperimentTracking?.showGoBackBtn,
-    resetLinkingToFlowchartLocalStorage,
-  ]);
-
-  const onGoBackToExperimentTrackingHandler = () => {
-    const url = goBackToExperimentTracking.fromURL;
-
-    history.push(url);
-
-    resetLinkingToFlowchartLocalStorage();
-  };
 
   const handleBannerClose = (bannerKey) => {
     saveLocalStorage(localStorageBannerStatus, { [bannerKey]: false });
@@ -355,21 +310,6 @@ export const FlowChartWrapper = ({
         <div className="pipeline-wrapper">
           <PipelineWarning />
           <FlowChart />
-          <div
-            className={classnames('pipeline-wrapper__go-back-btn', {
-              'pipeline-wrapper__go-back-btn--show':
-                goBackToExperimentTracking?.showGoBackBtn,
-              'pipeline-wrapper__go-back-btn--show-sidebar-visible':
-                sidebarVisible,
-              'pipeline-wrapper__go-back-btn--show-metadata-visible':
-                metadataVisible,
-            })}
-          >
-            <Button onClick={onGoBackToExperimentTrackingHandler}>
-              <CircleProgressBar>{counter}</CircleProgressBar>
-              Return to Experiment Tracking
-            </Button>
-          </div>
           <div
             className={classnames('pipeline-wrapper__loading', {
               'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,

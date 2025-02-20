@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import ExperimentPrimaryToolbar from '../experiment-tracking/experiment-primary-toolbar';
 import FlowchartPrimaryToolbar from '../flowchart-primary-toolbar';
 import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
 import NodesPanel from '../nodes-panel';
 import PipelineList from '../pipeline-list';
-import RunsList from '../experiment-tracking/runs-list';
 
 import './sidebar.scss';
 
@@ -15,90 +13,29 @@ import './sidebar.scss';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({
-  disableRunSelection,
-  displayGlobalNavigation,
-  displaySidebar,
-  enableComparisonView,
-  enableShowChanges,
-  isDisplayingMetrics = false,
-  isExperimentView = false,
-  onRunSelection,
-  onToggleComparisonView,
-  runMetadata,
-  runsListData,
-  runTrackingData,
-  selectedRunData,
-  selectedRunIds,
-  setEnableShowChanges,
-  setSidebarVisible,
-  showRunDetailsModal,
-  sidebarVisible,
-  visible,
-  setShowRunExportModal,
-}) => {
+export const Sidebar = ({ displayGlobalNavigation, visible }) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
-  if (isExperimentView) {
-    return (
-      <>
-        <div
-          className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': sidebarVisible,
-          })}
-        >
-          <div className="pipeline-ui pipeline-ui--experiment-tracking">
-            <RunsList
-              disableRunSelection={disableRunSelection}
-              enableComparisonView={enableComparisonView}
-              isDisplayingMetrics={isDisplayingMetrics}
-              onRunSelection={onRunSelection}
-              onToggleComparisonView={onToggleComparisonView}
-              runData={runsListData}
-              selectedRunIds={selectedRunIds}
-            />
-          </div>
-          <nav className="pipeline-toolbar">
-            <ExperimentPrimaryToolbar
-              displaySidebar={displaySidebar}
-              enableComparisonView={enableComparisonView}
-              enableShowChanges={enableShowChanges}
-              runMetadata={runMetadata}
-              runTrackingData={runTrackingData}
-              selectedRunData={selectedRunData}
-              setEnableShowChanges={setEnableShowChanges}
-              setSidebarVisible={setSidebarVisible}
-              showChangesIconDisabled={!(selectedRunIds.length > 1)}
-              showRunDetailsModal={showRunDetailsModal}
-              sidebarVisible={sidebarVisible}
-              setShowRunExportModal={setShowRunExportModal}
-            />
-          </nav>
+  return (
+    <>
+      <div
+        className={classnames('pipeline-sidebar', {
+          'pipeline-sidebar--visible': visible,
+          'pipeline-sidebar--no-global-toolbar': !displayGlobalNavigation,
+        })}
+      >
+        <div className="pipeline-ui">
+          <PipelineList onToggleOpen={togglePipeline} />
+          <NodesPanel faded={pipelineIsOpen} />
         </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div
-          className={classnames('pipeline-sidebar', {
-            'pipeline-sidebar--visible': visible,
-            'pipeline-sidebar--no-global-toolbar': !displayGlobalNavigation,
-          })}
-        >
-          <div className="pipeline-ui">
-            <PipelineList onToggleOpen={togglePipeline} />
-            <NodesPanel faded={pipelineIsOpen} />
-          </div>
-          <nav className="pipeline-toolbar">
-            <FlowchartPrimaryToolbar />
-            <MiniMapToolbar />
-          </nav>
-          <MiniMap />
-        </div>
-      </>
-    );
-  }
+        <nav className="pipeline-toolbar">
+          <FlowchartPrimaryToolbar />
+          <MiniMapToolbar />
+        </nav>
+        <MiniMap />
+      </div>
+    </>
+  );
 };
 
 const mapStateToProps = (state) => ({

@@ -425,13 +425,6 @@ describe('MetaData', () => {
           expect.stringContaining('3 items')
         );
       });
-      it('shows the experiment link', () => {
-        const wrapper = mount({
-          nodeId: modelInputDatasetNodeId,
-          mockMetadata: nodeMetricsData,
-        });
-        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
-      });
     });
 
     describe('JSON dataset nodes', () => {
@@ -444,13 +437,6 @@ describe('MetaData', () => {
         expect(textOf(rowObject(row))[0]).toEqual(
           expect.stringContaining('3 items')
         );
-      });
-      it('shows the experiment link', () => {
-        const wrapper = mount({
-          nodeId: modelInputDatasetNodeId,
-          mockMetadata: nodeJSONData,
-        });
-        expect(wrapper.find('.pipeline-metadata__link').length).toBe(1);
       });
     });
 
