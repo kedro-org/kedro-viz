@@ -11,10 +11,26 @@ def sample_project_path(tmp_path):
     # Create a sample directory structure
     package_dir = tmp_path / "mock_spaceflights"
     package_dir.mkdir()
+
+    venv_dir = package_dir / ".venv"
+    venv_dir.mkdir()
+
     (package_dir / "__init__.py").touch()
     (package_dir / "__init__.py").write_text(
         "from mock_spaceflights import data_processing\n"
         "from mock_spaceflights.data_processing import create_metrics"
+    )
+    (package_dir / ".test_hidden.py").write_text(
+        "import os\n"
+        "import nonexistentmodule\n"
+        "from . import test\n"
+        "from typing import Dict"
+    )
+    (venv_dir / "test_venv.py").write_text(
+        "import os\n"
+        "import nonexistentmodule\n"
+        "from . import test\n"
+        "from typing import Dict"
     )
     (package_dir / "data_processing.py").write_text(
         "import os\n"
@@ -22,6 +38,7 @@ def sample_project_path(tmp_path):
         "from . import test\n"
         "from typing import Dict"
     )
+    (package_dir / ".gitignore").write_text("venv\n" ".venv")
     return tmp_path
 
 
@@ -173,6 +190,12 @@ class TestLiteParser:
         assert not lite_parser.parse(Path("non/existent/path"))
         assert not lite_parser.parse(Path("non/existent/path/file.py"))
 
+    def test_parse_hidden_file_path(self, lite_parser, sample_project_path):
+        file_path = Path(sample_project_path / "mock_spaceflights/.test_hidden.py")
+
+        unresolved_imports = lite_parser.parse(file_path)
+        assert unresolved_imports == {}
+
     def test_file_parse(self, lite_parser, sample_project_path):
         file_path = Path(sample_project_path / "mock_spaceflights/data_processing.py")
         unresolved_imports = lite_parser.parse(file_path)
@@ -199,7 +222,9 @@ class TestLiteParser:
         )
 
     def test_directory_parse(self, lite_parser, sample_project_path):
-        unresolved_imports = lite_parser.parse(sample_project_path)
+        unresolved_imports = lite_parser.parse(
+            sample_project_path / "mock_spaceflights"
+        )
         expected_file_path = Path(
             sample_project_path / "mock_spaceflights/data_processing.py"
         )

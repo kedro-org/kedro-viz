@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Dict, List, Set, Union
 from unittest.mock import MagicMock
 
+from kedro_viz.utils import Spinner, is_file_ignored, load_gitignore_patterns
+
 logger = logging.getLogger(__name__)
 
 
@@ -232,6 +234,8 @@ class LiteParser:
         Returns:
             A dictionary of file(s) in the target path and a set of module names
         """
+        spinner = Spinner("Processing your project files...")
+        spinner.start()
 
         if not target_path.exists():
             logger.warning("Path `%s` does not exist", str(target_path))
@@ -239,7 +243,13 @@ class LiteParser:
 
         unresolved_imports: Dict[str, Set[str]] = {}
 
+        # Load .gitignore patterns
+        gitignore_spec = load_gitignore_patterns(target_path)
+
         if target_path.is_file():
+            if is_file_ignored(target_path):
+                return unresolved_imports
+
             try:
                 missing_dependencies = self._get_unresolved_imports(target_path)
                 if len(missing_dependencies) > 0:
@@ -254,7 +264,11 @@ class LiteParser:
             return unresolved_imports
 
         # handling directories
-        _project_file_paths = set(target_path.rglob("*.py"))
+        _project_file_paths = set(
+            file_path
+            for file_path in target_path.rglob("*.py")
+            if not is_file_ignored(file_path, target_path, gitignore_spec)
+        )
 
         for file_path in _project_file_paths:
             try:
@@ -270,11 +284,12 @@ class LiteParser:
                 if len(missing_dependencies) > 0:
                     unresolved_imports[str(file_path)] = missing_dependencies
             except Exception as exc:  # noqa: BLE001 # pragma: no cover
-                logger.error(
-                    "An error occurred in LiteParser while mocking dependencies in %s : %s",
+                logger.warning(
+                    "An issue occurred in LiteParser while mocking dependencies in %s : %s",
                     file_path,
                     exc,
                 )
                 continue
 
+        spinner.stop()
         return unresolved_imports
