@@ -1,6 +1,5 @@
 // Add any reusable custom commands here
 import { join } from 'path';
-import { localStorageETDeprecationBannerSeen } from '../../src/config';
 
 /**
  * Custom command for intercepting network requests for REST
@@ -102,16 +101,6 @@ Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
   });
 });
 
-/**
- * Custom command to conditionally visit a page based on spec file path
- */
-Cypress.Commands.add('__conditionalVisit__', () => {
-  cy.visit('/', {
-    onBeforeLoad(win) {
-      win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
-    }
-  });
-});
 
 /**
  * Custom command to fill out and submit the hosting shareable URL form
