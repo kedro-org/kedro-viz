@@ -1,6 +1,6 @@
 # Migration from Kedro-Viz native experiment tracking to `kedro-mlflow`
 
-With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/stable/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
+With the deprecation of Kedro-Viz experiment tracking from version 11.0.0, transitioning to [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/0.14.3/) offers enhanced experiment tracking and artifact management. This guide outlines the steps to:
 
 1. **Remove deprecated Kedro-Viz experiment tracking configurations.**
 2. **Update existing dataset configurations in the catalog to use `kedro-mlflow`.**
@@ -136,4 +136,4 @@ rm -rf data/09_tracking/
 After completing these steps, follow the below MLflow documentation to complete your experiment tracking setup with MLflow.
 
 - [The official Kedro + MLflow guide in the Kedro documentation](https://docs.kedro.org/en/stable/integrations/mlflow.html)
-- The documentation of [`kedro-mlflow`](https://docs.kedro.org/en/latest/integrations/mlflow.html) plugin 
+- The documentation of [`kedro-mlflow`](https://kedro-mlflow.readthedocs.io/en/0.14.3/) plugin 
