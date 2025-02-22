@@ -4,20 +4,8 @@ import Plotly from 'plotly.js-dist-min';
 import deepmerge from 'deepmerge';
 import { connect } from 'react-redux';
 import './plotly-chart.scss';
-import {
-  darkPreviewTemplate,
-  darkExpPreviewTemplate,
-  darkOneChartTemplate,
-  darkTwoChartsTemplate,
-  darkThreeChartsTemplate,
-} from '../../utils/plot-templates/dark';
-import {
-  lightPreviewTemplate,
-  lightExpPreviewTemplate,
-  lightOneChartTemplate,
-  lightTwoChartsTemplate,
-  lightThreeChartsTemplate,
-} from '../../utils/plot-templates/light';
+import { darkPreviewTemplate } from '../../utils/plot-templates/dark';
+import { lightPreviewTemplate } from '../../utils/plot-templates/light';
 import classNames from 'classnames';
 
 /**
@@ -55,29 +43,9 @@ const PlotlyChart = ({ theme, view = '', data = [], layout = {} }) => {
 
 const updateLayout = (theme, view, layout) => {
   if (theme === 'dark') {
-    if (view === 'experiment_preview') {
-      return deepmerge(layout, darkExpPreviewTemplate);
-    } else if (view === 'preview') {
-      return deepmerge(layout, darkPreviewTemplate);
-    } else if (view === 'twoCharts') {
-      return deepmerge(layout, darkTwoChartsTemplate);
-    } else if (view === 'threeCharts') {
-      return deepmerge(layout, darkThreeChartsTemplate);
-    } else {
-      return deepmerge(layout, darkOneChartTemplate);
-    }
+    return deepmerge(layout, darkPreviewTemplate);
   } else {
-    if (view === 'experiment_preview') {
-      return deepmerge(layout, lightExpPreviewTemplate);
-    } else if (view === 'preview') {
-      return deepmerge(layout, lightPreviewTemplate);
-    } else if (view === 'twoCharts') {
-      return deepmerge(layout, lightTwoChartsTemplate);
-    } else if (view === 'threeCharts') {
-      return deepmerge(layout, lightThreeChartsTemplate);
-    } else {
-      return deepmerge(layout, lightOneChartTemplate);
-    }
+    return deepmerge(layout, lightPreviewTemplate);
   }
 };
 

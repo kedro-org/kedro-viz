@@ -616,23 +616,3 @@ class TestAddPipelines:
             nx.find_cycle(digraph)
 
 
-class TestResolveDatasetFactoryPatterns:
-    def test_resolve_dataset_factory_patterns(
-        self,
-        example_catalog,
-        pipeline_with_datasets_mock,
-        pipeline_with_data_sets_mock,
-        data_access_manager: DataAccessManager,
-    ):
-        pipelines = {
-            "pipeline1": pipeline_with_datasets_mock,
-            "pipeline2": pipeline_with_data_sets_mock,
-        }
-        new_catalog = CatalogRepository()
-        new_catalog.set_catalog(example_catalog)
-
-        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
-
-        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
-
-        assert "model_inputs#csv" in new_catalog.as_dict().keys()

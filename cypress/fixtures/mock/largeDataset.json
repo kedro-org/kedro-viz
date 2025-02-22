@@ -29739,22 +29739,6 @@
         "dataset_type": "pickle.pickle_dataset.PickleDataset"
       },
       {
-        "id": "b701864d",
-        "name": "train_evaluation.linear_regression.experiment_params",
-        "tags": [],
-        "pipelines": [
-          "Modelling stage",
-          "__default__"
-        ],
-        "type": "data",
-        "modular_pipelines": [
-          "train_evaluation",
-          "train_evaluation.linear_regression"
-        ],
-        "layer": null,
-        "dataset_type": "tracking.json_dataset.JSONDataset"
-      },
-      {
         "id": "1c0614b4",
         "name": "train_model",
         "tags": [],
@@ -29821,22 +29805,6 @@
         "dataset_type": "pickle.pickle_dataset.PickleDataset"
       },
       {
-        "id": "4f79de77",
-        "name": "train_evaluation.random_forest.experiment_params",
-        "tags": [],
-        "pipelines": [
-          "Modelling stage",
-          "__default__"
-        ],
-        "type": "data",
-        "modular_pipelines": [
-          "train_evaluation",
-          "train_evaluation.random_forest"
-        ],
-        "layer": null,
-        "dataset_type": "tracking.json_dataset.JSONDataset"
-      },
-      {
         "id": "d6a09df8",
         "name": "evaluate_model",
         "tags": [],
@@ -29852,22 +29820,6 @@
         "parameters": {}
       },
       {
-        "id": "495a0bbc",
-        "name": "train_evaluation.linear_regression.r2_score",
-        "tags": [],
-        "pipelines": [
-          "Modelling stage",
-          "__default__"
-        ],
-        "type": "data",
-        "modular_pipelines": [
-          "train_evaluation",
-          "train_evaluation.linear_regression"
-        ],
-        "layer": null,
-        "dataset_type": "tracking.metrics_dataset.MetricsDataset"
-      },
-      {
         "id": "0b70ae9d",
         "name": "evaluate_model",
         "tags": [],
@@ -29881,22 +29833,6 @@
           "train_evaluation.random_forest"
         ],
         "parameters": {}
-      },
-      {
-        "id": "b16095d0",
-        "name": "train_evaluation.random_forest.r2_score",
-        "tags": [],
-        "pipelines": [
-          "Modelling stage",
-          "__default__"
-        ],
-        "type": "data",
-        "modular_pipelines": [
-          "train_evaluation",
-          "train_evaluation.random_forest"
-        ],
-        "layer": null,
-        "dataset_type": "tracking.metrics_dataset.MetricsDataset"
       },
       {
         "id": "feature_engineering",
