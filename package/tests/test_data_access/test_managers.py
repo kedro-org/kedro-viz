@@ -502,7 +502,7 @@ class TestAddPipelines:
         example_transcoded_catalog: DataCatalog,
     ):
         data_access_manager.add_catalog(
-            example_transcoded_catalog, example_transcoded_pipelines
+            example_transcoded_catalog
         )
         data_access_manager.add_pipelines(example_transcoded_pipelines)
         assert any(
