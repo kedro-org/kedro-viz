@@ -188,6 +188,16 @@
       "parameters": {}
     },
     {
+      "id": "966b9734",
+      "name": "metrics",
+      "tags": [],
+      "pipelines": ["__default__", "ds"],
+      "type": "data",
+      "modular_pipelines": [],
+      "layer": null,
+      "dataset_type": null
+    },
+    {
       "id": "data_processing",
       "name": "data_processing",
       "tags": [],

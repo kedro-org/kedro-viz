@@ -177,6 +177,10 @@ const lightTemplate = {
   },
 };
 
+export const lightModalTemplate = {
+  ...lightTemplate,
+};
+
 export const lightPreviewTemplate = {
   ...lightTemplate,
   height: 300,

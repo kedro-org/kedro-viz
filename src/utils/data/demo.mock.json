@@ -2443,6 +2443,16 @@
       "dataset_type": null
     },
     {
+      "id": "d407a8cf",
+      "name": "test_metrics",
+      "tags": ["visualisation", "reporting"],
+      "pipelines": ["recommend", "__default__"],
+      "type": "data",
+      "modular_pipelines": [],
+      "layer": null,
+      "dataset_type": null
+    },
+    {
       "id": "d1733133",
       "name": "create_bulk_result_tables",
       "tags": ["data-science", "optimisation"],

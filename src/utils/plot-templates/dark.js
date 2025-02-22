@@ -177,6 +177,10 @@ const darkTemplate = {
   },
 };
 
+export const darkModalTemplate = {
+  ...darkTemplate,
+};
+
 export const darkPreviewTemplate = {
   ...darkTemplate,
   height: 300,
