@@ -2,7 +2,7 @@
 centralise access to Kedro data catalog."""
 
 import logging
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 
 from kedro.io import DataCatalog
 from packaging.version import parse
