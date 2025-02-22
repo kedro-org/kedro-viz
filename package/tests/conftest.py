@@ -616,9 +616,6 @@ def example_run_ids():
     yield ["2021-11-03T18.24.24.379Z", "2021-11-02T18.24.24.379Z"]
 
 
-
-
-
 @pytest.fixture
 def client(example_api):
     yield TestClient(example_api)

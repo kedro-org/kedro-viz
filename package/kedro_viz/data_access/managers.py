@@ -15,7 +15,6 @@ except ImportError:  # pragma: no cover
 
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
@@ -68,7 +67,7 @@ class DataAccessManager:
         )
         self.dataset_stats = {}
 
-    def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
+    def add_catalog(self, catalog: DataCatalog):
         """Add the catalog to the CatalogRepository
 
         Args:

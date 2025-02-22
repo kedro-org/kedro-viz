@@ -614,5 +614,3 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
-
-
