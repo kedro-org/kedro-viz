@@ -46,7 +46,6 @@ ignore = [
 "package/kedro_viz/models/flowchart/nodes.py" = ["SLF"]
 "package/kedro_viz/models/flowchart/node_metadata.py" = ["SLF"]
 "package/kedro_viz/integrations/kedro/hooks.py" = ["SLF", "BLE"]
-"package/kedro_viz/integrations/kedro/sqlite_store.py" = ["BLE"]
 "package/kedro_viz/integrations/kedro/data_loader.py" = ["SLF"]
 "package/kedro_viz/data_access/managers.py" = ["SLF"]
 "package/kedro_viz/launchers/cli/main.py" = ["D"]
