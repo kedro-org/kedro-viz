@@ -156,22 +156,6 @@ describe('Flowchart DAG', () => {
     cy.get('.pipeline-plotly-chart.pipeline-plotly__modal').should('exist');
   });
 
-  it('verifies that users can open the metadata panel showing tracking data from last run. #TC-31', () => {
-    const nodeToClickText = 'R2 Score';
-
-    // Assert before action
-    cy.get('.pipeline-metadata--visible').should('not.exist');
-
-    // Action
-    cy.contains('text', nodeToClickText).click({ force: true });
-
-    // Assert after action
-    cy.get('.pipeline-metadata--visible').should('exist');
-    cy.contains('.pipeline-metadata__title', nodeToClickText);
-    cy.get(
-      '[data-label="Tracking data from last run:"] > .pipeline-json__object'
-    ).should('exist');
-  });
 
   it('verifies that users see an error message when there are no nodes/pipelines. #TC-33', () => {
     // Intercept the network request to mock with a fixture

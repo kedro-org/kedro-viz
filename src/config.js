@@ -88,8 +88,6 @@ export const shortTypeMapping = {
   'plotly.json_dataset.JSONDataSet': 'plotly',
 };
 
-export const tabLabels = ['Overview', 'Metrics', 'Plots'];
-
 // URL parameters for each element/section
 export const params = {
   focused: 'fid',
@@ -152,7 +150,6 @@ export const inputKeyToStateKeyMap = {
 };
 
 export const PACKAGE_FSSPEC = 'fsspec';
-export const PACKAGE_KEDRO_DATASETS = 'kedro-datasets';
 
 export const KEDRO_VIZ_DOCS_URL =
   'https://docs.kedro.org/projects/kedro-viz/en/latest/';
