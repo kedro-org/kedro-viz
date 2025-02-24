@@ -592,12 +592,7 @@ describe('solver', () => {
     const testC = { id: 2, x: 0, y: 0 };
 
     const solveEqConstraint = (constraint) => {
-      const {
-        a,
-        b,
-        target,
-        base: { property },
-      } = constraint;
+      const { a, b, target, property } = constraint;
       const difference = a[property] - b[property];
 
       if (difference === target) {
@@ -610,12 +605,7 @@ describe('solver', () => {
     };
 
     const solveGeConstraint = (constraint) => {
-      const {
-        a,
-        b,
-        target,
-        base: { property },
-      } = constraint;
+      const { a, b, target, property } = constraint;
       const difference = a[property] - b[property];
 
       if (difference >= target) {
@@ -631,9 +621,9 @@ describe('solver', () => {
       a: testA,
       b: testB,
       target: 5,
+      property: 'x',
       base: {
         solve: solveEqConstraint,
-        property: 'x',
       },
     };
 
@@ -641,9 +631,9 @@ describe('solver', () => {
       a: testB,
       b: testC,
       target: 8,
+      property: 'x',
       base: {
         solve: solveGeConstraint,
-        property: 'x',
       },
     };
 
@@ -651,9 +641,9 @@ describe('solver', () => {
       a: testA,
       b: testC,
       target: 20,
+      property: 'x',
       base: {
         solve: solveGeConstraint,
-        property: 'x',
       },
     };
 
@@ -661,9 +651,9 @@ describe('solver', () => {
       a: testA,
       b: testC,
       target: 5,
+      property: 'y',
       base: {
         solve: solveEqConstraint,
-        property: 'y',
       },
     };
 
@@ -671,9 +661,9 @@ describe('solver', () => {
       a: testB,
       b: testC,
       target: 1,
+      property: 'y',
       base: {
         solve: solveGeConstraint,
-        property: 'y',
       },
     };
 
@@ -681,9 +671,9 @@ describe('solver', () => {
       a: testB,
       b: testA,
       target: 100,
+      property: 'y',
       base: {
         solve: solveEqConstraint,
-        property: 'y',
       },
     };
 
@@ -745,9 +735,9 @@ describe('solver', () => {
       a: testA,
       b: testB,
       target: 5,
+      property: 'x',
       base: {
         strict: strictEqConstraint,
-        property: 'x',
       },
     };
 
@@ -755,9 +745,9 @@ describe('solver', () => {
       a: testB,
       b: testC,
       target: 8,
+      property: 'x',
       base: {
         strict: strictGeConstraint,
-        property: 'x',
       },
     };
 
@@ -765,9 +755,9 @@ describe('solver', () => {
       a: testA,
       b: testC,
       target: 20,
+      property: 'x',
       base: {
         strict: strictGeConstraint,
-        property: 'x',
       },
     };
 
@@ -775,9 +765,9 @@ describe('solver', () => {
       a: testA,
       b: testC,
       target: 5,
+      property: 'y',
       base: {
         strict: strictEqConstraint,
-        property: 'y',
       },
     };
 
@@ -785,9 +775,9 @@ describe('solver', () => {
       a: testB,
       b: testC,
       target: 1,
+      property: 'y',
       base: {
         strict: strictGeConstraint,
-        property: 'y',
       },
     };
 
@@ -795,9 +785,9 @@ describe('solver', () => {
       a: testB,
       b: testA,
       target: 100,
+      property: 'y',
       base: {
         strict: strictEqConstraint,
-        property: 'y',
       },
     };
 

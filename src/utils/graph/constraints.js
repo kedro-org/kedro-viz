@@ -9,10 +9,10 @@
 import { Constraint, Operator, Strength } from 'kiwi.js';
 
 /**
- * Layout constraint in  for separating rows
+ * Layout constraint for separating rows
  */
 export const rowConstraint = {
-  strict: (constraint, constants, variableA, variableB) =>
+  strict: (constraint, layoutConfig, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
@@ -22,23 +22,23 @@ export const rowConstraint = {
 };
 
 /**
- * Layout constraint in for separating layers
+ * Layout constraint for separating layers
  */
 export const layerConstraint = {
-  strict: (constraint, constants, variableA, variableB) =>
+  strict: (constraint, layoutConfig, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
       Operator.Ge,
-      constants.layerSpace,
+      layoutConfig.layerSpace,
       Strength.required
     ),
 };
 
 /**
- * Layout constraint in for minimising distance from source to target for straight edges
+ * Layout constraint for minimising distance from source to target for straight edges
  */
 export const parallelConstraint = {
-  solve: (constraint, constants) => {
+  solve: (constraint, layoutConfig) => {
     const { a, b, strength } = constraint;
     const resolve =
       strength * (a[constraint.property] - b[constraint.property]);
@@ -46,7 +46,7 @@ export const parallelConstraint = {
     b[constraint.property] += resolve;
   },
 
-  strict: (constraint, constants, variableA, variableB) =>
+  strict: (constraint, layoutConfig, variableA, variableB) =>
     new Constraint(
       variableA.minus(variableB),
       Operator.Eq,
@@ -56,10 +56,10 @@ export const parallelConstraint = {
 };
 
 /**
- * Crossing constraint in for minimising edge crossings
+ * Crossing constraint for minimising edge crossings
  */
 export const crossingConstraint = {
-  solve: (constraint, constants) => {
+  solve: (constraint, layoutConfig) => {
     const { edgeA, edgeB, separationA, separationB, strength } = constraint;
 
     // Amount to move each node towards required separation
@@ -86,10 +86,10 @@ export const crossingConstraint = {
 };
 
 /**
- * Layout constraint in for minimum node separation
+ * Layout constraint for minimum node separation
  */
 export const separationConstraint = {
-  strict: (constraint, constants, variableA, variableB) =>
+  strict: (constraint, layoutConfig, variableA, variableB) =>
     new Constraint(
       variableB.minus(variableA),
       Operator.Ge,

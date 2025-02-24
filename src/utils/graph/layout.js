@@ -47,8 +47,8 @@ export const layout = ({
     node[coordSecondary] = 0;
   }
 
-  // Constants used by constraints
-  const constants = {
+  // layoutConfig used by constraints
+  const layoutConfig = {
     orientation,
     spaceX,
     spaceY,
@@ -59,30 +59,34 @@ export const layout = ({
   };
 
   // Constraints to separate nodes into rows and layers
-  const rowConstraints = createRowConstraints(edges, constants);
-  const layerConstraints = createLayerConstraints(nodes, layers, constants);
+  const rowConstraints = createRowConstraints(edges, layoutConfig);
+  const layerConstraints = createLayerConstraints(nodes, layers, layoutConfig);
 
   // Find the node positions given these constraints
-  solveStrict([...rowConstraints, ...layerConstraints], constants, 1);
+  solveStrict([...rowConstraints, ...layerConstraints], layoutConfig, 1);
 
   // Find the solved rows using the node positions after solving
   const rows = groupByRow(nodes, orientation);
 
   // Constraints to avoid edges crossing and maintain parallel vertical edges
-  const crossingConstraints = createCrossingConstraints(edges, constants);
-  const parallelConstraints = createParallelConstraints(edges, constants);
+  const crossingConstraints = createCrossingConstraints(edges, layoutConfig);
+  const parallelConstraints = createParallelConstraints(edges, layoutConfig);
 
   // Solve these constraints iteratively
   for (let i = 0; i < iterations; i += 1) {
-    solveLoose(crossingConstraints, 1, constants);
-    solveLoose(parallelConstraints, 50, constants);
+    solveLoose(crossingConstraints, 1, layoutConfig);
+    solveLoose(parallelConstraints, 50, layoutConfig);
   }
 
   // Constraints to maintain a minimum horizontal node spacing
-  const separationConstraints = createSeparationConstraints(rows, constants);
+  const separationConstraints = createSeparationConstraints(rows, layoutConfig);
 
   // Find the final node positions given these strict constraints
-  solveStrict([...separationConstraints, ...parallelConstraints], constants, 1);
+  solveStrict(
+    [...separationConstraints, ...parallelConstraints],
+    layoutConfig,
+    1
+  );
 
   // Adjust vertical spacing between rows for legibility
   expandDenseRows(edges, rows, coordSecondary, spaceY, orientation);
@@ -93,13 +97,13 @@ export const layout = ({
  * @param {Array} edges The input edges
  * @returns {Array} The constraints
  */
-const createRowConstraints = (edges, constants) =>
+const createRowConstraints = (edges, layoutConfig) =>
   edges.map((edge) => ({
     base: rowConstraint,
-    property: constants.coordSecondary,
+    property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
-    separation: constants.spaceY,
+    separation: layoutConfig.spaceY,
   }));
 
 /**
@@ -108,7 +112,7 @@ const createRowConstraints = (edges, constants) =>
  * @param {Array=} layers The input layers if any
  * @returns {Array} The constraints
  */
-const createLayerConstraints = (nodes, layers, constants) => {
+const createLayerConstraints = (nodes, layers, layoutConfig) => {
   const layerConstraints = [];
 
   // Early out if no layers defined
@@ -133,7 +137,7 @@ const createLayerConstraints = (nodes, layers, constants) => {
     for (const node of layerNodes) {
       layerConstraints.push({
         base: layerConstraint,
-        property: constants.coordSecondary,
+        property: layoutConfig.coordSecondary,
         a: intermediary,
         b: node,
       });
@@ -143,7 +147,7 @@ const createLayerConstraints = (nodes, layers, constants) => {
     for (const node of nextLayerNodes) {
       layerConstraints.push({
         base: layerConstraint,
-        property: constants.coordSecondary,
+        property: layoutConfig.coordSecondary,
         a: node,
         b: intermediary,
       });
@@ -156,12 +160,12 @@ const createLayerConstraints = (nodes, layers, constants) => {
 /**
  * Creates crossing constraints for the given edges.
  * @param {Array} edges The input edges
- * @param {Object} constants The constraint constants
- * @param {Number} constants.spaceX The minimum gap between nodes in X
+ * @param {Object} layoutConfig The constraint layoutConfig
+ * @param {Number} layoutConfig.spaceX The minimum gap between nodes in X
  * @returns {Array} The constraints
  */
-const createCrossingConstraints = (edges, constants) => {
-  const { spaceX, coordPrimary } = constants;
+const createCrossingConstraints = (edges, layoutConfig) => {
+  const { spaceX, coordPrimary } = layoutConfig;
   const crossingConstraints = [];
 
   // For every pair of edges
@@ -217,10 +221,10 @@ const createCrossingConstraints = (edges, constants) => {
  * @param {Array} edges The input edges
  * @returns {Object} An object containing the constraints
  */
-const createParallelConstraints = (edges, constants) =>
+const createParallelConstraints = (edges, layoutConfig) =>
   edges.map(({ sourceNode, targetNode }) => ({
     base: parallelConstraint,
-    property: constants.coordPrimary,
+    property: layoutConfig.coordPrimary,
     a: sourceNode,
     b: targetNode,
     // Evenly distribute the constraint
@@ -234,8 +238,8 @@ const createParallelConstraints = (edges, constants) =>
  * @param {Array} rows The rows containing nodes
  * @returns {Array} The constraints
  */
-const createSeparationConstraints = (rows, constants) => {
-  const { spaceX, coordPrimary, spreadX, orientation } = constants;
+const createSeparationConstraints = (rows, layoutConfig) => {
+  const { spaceX, coordPrimary, spreadX, orientation } = layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
