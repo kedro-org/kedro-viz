@@ -20,9 +20,9 @@ from kedro.io import DataCatalog  # Old version
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
 
-    IS_DATACATALOG_2 = True
+    IS_KEDRODATACATALOG = True
 except ImportError:
-    IS_DATACATALOG_2 = False
+    IS_KEDRODATACATALOG = False
 
 from kedro.pipeline import Pipeline
 
@@ -100,7 +100,7 @@ def _load_data_helper(
 
         catalog = context.catalog
 
-        if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
+        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
             logger.info("Using DataCatalog 2.0 (lazy loading by default).")
 
         # patch the AbstractDataset class for a custom

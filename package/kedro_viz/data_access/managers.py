@@ -9,9 +9,9 @@ from kedro.io import DataCatalog
 try:
     from kedro.io.kedro_data_catalog import KedroDataCatalog
 
-    IS_DATACATALOG_2 = True
+    IS_KEDRODATACATALOG = True
 except ImportError:
-    IS_DATACATALOG_2 = False
+    IS_KEDRODATACATALOG = False
 
 try:
     # kedro 0.18.11 onwards
@@ -79,7 +79,7 @@ class DataAccessManager:
         self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
 
-        self._is_new_catalog = False
+        self._kedro_datacatalog = False
 
     def set_db_session(self, db_session_class: sessionmaker):
         """Set db session on repositories that need it."""
@@ -113,11 +113,11 @@ class DataAccessManager:
             pipelines: A dictionary which holds project pipelines
         """
 
-        self._is_new_catalog = IS_DATACATALOG_2 and isinstance(
+        self._kedro_datacatalog = IS_KEDRODATACATALOG and isinstance(
             catalog, KedroDataCatalog
         )
 
-        if not self._is_new_catalog:
+        if not self._kedro_datacatalog:
             self.resolve_dataset_factory_patterns(catalog, pipelines)
 
         self.catalog.set_catalog(catalog)
@@ -205,7 +205,7 @@ class DataAccessManager:
                 # For older catalog
                 if (
                     isinstance(input_node, TranscodedDataNode)
-                    and not self._is_new_catalog
+                    and not self._kedro_datacatalog
                 ):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
@@ -225,7 +225,7 @@ class DataAccessManager:
                 # For older catalog
                 if (
                     isinstance(output_node, TranscodedDataNode)
-                    and not self._is_new_catalog
+                    and not self._kedro_datacatalog
                 ):
                     output_node.transcoded_versions.add(
                         self.catalog.get_dataset(output)
@@ -347,7 +347,7 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        if self._is_new_catalog:
+        if self._kedro_datacatalog:
             dataset_obj = None
         else:
             try:
