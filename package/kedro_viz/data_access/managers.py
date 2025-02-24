@@ -9,9 +9,9 @@ from kedro.io import DataCatalog
 try:
     from kedro.io import KedroDataCatalog
 
-    IS_DATACATALOG_2 = True
+    IS_KEDRODATACATALOG = True
 except ImportError:
-    IS_DATACATALOG_2 = False
+    IS_KEDRODATACATALOG = False
 
 try:
     # kedro 0.18.11 onwards
@@ -98,7 +98,7 @@ class DataAccessManager:
 
             for dataset_name in datasets:
                 try:
-                    if IS_DATACATALOG_2 and isinstance(catalog, KedroDataCatalog):
+                    if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
                         catalog.get(dataset_name)
                     else:
                         catalog._get_dataset(dataset_name, suggest=False)

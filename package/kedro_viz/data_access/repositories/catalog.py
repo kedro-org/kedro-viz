@@ -9,9 +9,9 @@ from kedro.io import DataCatalog
 try:
     from kedro.io import KedroDataCatalog
 
-    IS_DATACATALOG_2 = True
+    IS_KEDRODATACATALOG = True
 except ImportError:
-    IS_DATACATALOG_2 = False
+    IS_KEDRODATACATALOG = False
 
 from packaging.version import parse
 
@@ -86,7 +86,7 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
-        if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+        if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
             datasets = self._catalog.list()
         else:
             # Temporary try/except block so the Kedro develop branch can work with Viz.
@@ -110,7 +110,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         for dataset_name in datasets:
-            if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
                 dataset = self._catalog.get(dataset_name)
             else:
                 dataset = self._catalog._get_dataset(dataset_name)
@@ -135,7 +135,7 @@ class CatalogRepository:
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
         dataset_obj: Optional["AbstractDataset"]
         try:
-            if IS_DATACATALOG_2 and isinstance(self._catalog, KedroDataCatalog):
+            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)

@@ -639,17 +639,17 @@ class TestResolveDatasetFactoryPatterns:
         assert "model_inputs#csv" in new_catalog.as_dict().keys()
 
     @pytest.mark.parametrize(
-        "is_data_catalog_2, use_kedro_data_catalog_cls",
+        "kedro_datacatalog, use_kedro_data_catalog_cls",
         [
             (False, False),
             (True, False),
         ],
     )
     def test_resolve_dataset_factory_patterns_fallback_private_api(
-        self, is_data_catalog_2, use_kedro_data_catalog_cls, mocker
+        self, kedro_datacatalog, use_kedro_data_catalog_cls, mocker
     ):
         mocker.patch(
-            "kedro_viz.data_access.managers.IS_DATACATALOG_2", is_data_catalog_2
+            "kedro_viz.data_access.managers.IS_KEDRODATACATALOG", kedro_datacatalog
         )
 
         # Create a plain DataCatalog
@@ -679,7 +679,7 @@ class TestResolveDatasetFactoryPatterns:
         assert spy_get_dataset.call_count == 2
 
     def test_resolve_dataset_factory_patterns_kedro_data_catalog(self, mocker):
-        mocker.patch("kedro_viz.data_access.managers.IS_DATACATALOG_2", True)
+        mocker.patch("kedro_viz.data_access.managers.IS_KEDRODATACATALOG", True)
 
         catalog = KedroDataCatalog({"my_ds": MemoryDataset()})
         spy_public_get = mocker.spy(catalog, "get")
