@@ -26,7 +26,7 @@ def populate_data(
     if creating an api app from project.
     """
 
-    data_access_manager.add_catalog(catalog, pipelines)
+    data_access_manager.add_catalog(catalog)
 
     # add dataset stats before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines

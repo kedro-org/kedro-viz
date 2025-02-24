@@ -11,8 +11,6 @@ import nodeTask from '../../utils/data/node_task.mock.json';
 import nodeData from '../../utils/data/node_data.mock.json';
 import nodeDataStats from '../../utils/data/node_data_stats.mock.json';
 import nodeTranscodedData from '../../utils/data/node_transcoded_data.mock.json';
-import nodeMetricsData from '../../utils/data/node_metrics_data.mock.json';
-import nodeJSONData from '../../utils/data/node_json_data.mock.json';
 import { formatFileSize } from '../../utils';
 
 const modelInputDatasetNodeId = '23c94afb';
@@ -412,31 +410,6 @@ describe('MetaData', () => {
         });
         const row = rowByLabel(wrapper, 'Transcoded Types:');
         expect(textOf(rowValue(row))).toEqual(['pandas.ParquetDataset']);
-      });
-    });
-    describe('Metrics dataset nodes', () => {
-      it('shows the node metrics', () => {
-        const wrapper = mount({
-          nodeId: modelInputDatasetNodeId,
-          mockMetadata: nodeMetricsData,
-        });
-        const row = rowByLabel(wrapper, 'Tracking data from last run:');
-        expect(textOf(rowObject(row))[0]).toEqual(
-          expect.stringContaining('3 items')
-        );
-      });
-    });
-
-    describe('JSON dataset nodes', () => {
-      it('shows the json data', () => {
-        const wrapper = mount({
-          nodeId: modelInputDatasetNodeId,
-          mockMetadata: nodeJSONData,
-        });
-        const row = rowByLabel(wrapper, 'Tracking data from last run:');
-        expect(textOf(rowObject(row))[0]).toEqual(
-          expect.stringContaining('3 items')
-        );
       });
     });
 

@@ -55,28 +55,13 @@ const MetaData = ({
   const hasPreview = showDatasetPreviews && metadata?.preview;
   const hasPlot = hasPreview && metadata?.previewType === 'PlotlyPreview';
   const hasImage = hasPreview && metadata?.previewType === 'ImagePreview';
-  const hasTrackingData =
-    hasPreview &&
-    (metadata?.previewType === 'MetricsTrackingPreview' ||
-      metadata?.previewType === 'JSONTrackingPreview');
   const hasTablePreview =
     hasPreview && metadata?.previewType === 'TablePreview';
-  const isMetricsTrackingDataset =
-    hasPreview && metadata?.previewType === 'MetricsTrackingPreview';
   const hasJSONPreview = hasPreview && metadata?.previewType === 'JSONPreview';
   const hasCode = Boolean(metadata?.code);
   const isTranscoded = Boolean(metadata?.originalType);
   const showCodePanel = visible && visibleCode && hasCode;
   const showCodeSwitch = hasCode;
-
-  if (isMetricsTrackingDataset) {
-    //rounding of tracking data
-    Object.entries(metadata?.preview).forEach(([key, value]) => {
-      if (typeof value === 'number') {
-        metadata.preview[key] = Math.round(value * 100) / 100;
-      }
-    });
-  }
 
   let runCommand = metadata?.runCommand;
   if (!runCommand) {
@@ -210,17 +195,6 @@ const MetaData = ({
                   empty="N/A"
                   value={removeInitialSlash(metadata.filepath)}
                 />
-                {hasTrackingData && (
-                  <MetaDataRow
-                    label="Tracking data from last run:"
-                    theme={theme}
-                    visible={isDataNode}
-                    kind="trackingData"
-                    commas={false}
-                    inline={false}
-                    value={metadata?.preview}
-                  />
-                )}
                 <MetaDataRow
                   label="Parameters:"
                   theme={theme}

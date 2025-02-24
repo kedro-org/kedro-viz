@@ -6,10 +6,10 @@ from unittest import mock
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
-from kedro.io import DataCatalog, MemoryDataset, Version
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
-from kedro_datasets import pandas, tracking
+from kedro_datasets import pandas
 from kedro_datasets.pandas import CSVDataset
 from pydantic import BaseModel
 
@@ -614,23 +614,6 @@ def example_transcoded_api(
 @pytest.fixture
 def example_run_ids():
     yield ["2021-11-03T18.24.24.379Z", "2021-11-02T18.24.24.379Z"]
-
-
-@pytest.fixture
-def example_multiple_run_tracking_dataset(example_run_ids, tmp_path):
-    new_metrics_dataset = tracking.MetricsDataset(
-        filepath=Path(tmp_path / "test.json").as_posix(),
-        version=Version(None, example_run_ids[1]),
-    )
-    new_metrics_dataset.save({"col1": 1, "col3": 3})
-    new_metrics_dataset = tracking.MetricsDataset(
-        filepath=Path(tmp_path / "test.json").as_posix(),
-        version=Version(None, example_run_ids[0]),
-    )
-    new_data = {"col1": 3, "col2": 3.23}
-    new_metrics_dataset.save(new_data)
-
-    yield new_metrics_dataset
 
 
 @pytest.fixture
