@@ -4,13 +4,11 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import TYPE_CHECKING, Dict, Optional
 
-from kedro.io import DataCatalog
-
 try:
     from kedro.io import KedroDataCatalog
-
     IS_KEDRODATACATALOG = True
 except ImportError:
+    from kedro.io import DataCatalog
     IS_KEDRODATACATALOG = False
 
 from packaging.version import parse

@@ -4,13 +4,11 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
-from kedro.io import DataCatalog
-
 try:
     from kedro.io import KedroDataCatalog
-
     IS_KEDRODATACATALOG = True
 except ImportError:
+    from kedro.io import DataCatalog
     IS_KEDRODATACATALOG = False
 
 try:
