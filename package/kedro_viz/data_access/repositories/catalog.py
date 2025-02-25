@@ -110,6 +110,7 @@ class CatalogRepository:
         for dataset_name in datasets:
             if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
                 dataset = self._catalog.get(dataset_name)
+                metadata = getattr(dataset, "metadata", None)
             else:
                 dataset = self._catalog._get_dataset(dataset_name)
                 metadata = getattr(dataset, "metadata", None)
