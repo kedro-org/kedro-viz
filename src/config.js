@@ -1,14 +1,8 @@
-import { sanitizedPathname } from './utils';
-
 export const localStorageName = 'KedroViz';
 export const localStorageFlowchartLink = 'KedroViz-link-to-flowchart';
-export const localStorageMetricsSelect = 'KedroViz-metrics-chart-select';
-export const localStorageRunsMetadata = 'KedroViz-runs-metadata';
 export const localStorageShareableUrl = 'KedroViz-shareable-url';
 export const localStorageFeedbackSeen = 'KedroViz-feedback-seen';
 export const localStorageBannerStatus = 'KedroViz-banners';
-export const localStorageETDeprecationBannerSeen =
-  'KedroViz-ET-deprecation-banner-seen';
 
 export const linkToFlowchartInitialVal = {
   fromURL: null,
@@ -39,24 +33,6 @@ export const codeSidebarWidth = {
 
 // The exact fixed height of a row as measured by getBoundingClientRect()
 export const nodeListRowHeight = 32;
-
-// These colours variables come from styles/variables
-const slate600 = '#0e222d';
-const slate200 = '#21333e';
-
-const grey200 = '#d5d8da';
-const grey100 = '#eaebed';
-
-export const experimentTrackingLazyLoadingColours = {
-  backgroundLightTheme: grey200,
-  foregroundLightTheme: grey100,
-  backgroundDarkTheme: slate600,
-  foregroundDarkTheme: slate200,
-};
-
-export const metricLimit = 50;
-
-export const experimentTrackingLazyLoadingGap = 38;
 
 export const chartMinWidthScale = 0.25;
 
@@ -108,15 +84,9 @@ export const shortTypeMapping = {
   'plotly.plotly_dataset.PlotlyDataset': 'plotly',
   'plotly.json_dataset.JSONDataset': 'plotly',
   'matplotlib.matplotlib_writer.MatplotlibWriter': 'image',
-  'tracking.json_dataset.JSONDataset': 'JSONTracking',
-  'tracking.metrics_dataset.MetricsDataset': 'metricsTracking',
   'plotly.plotly_dataset.PlotlyDataSet': 'plotly',
   'plotly.json_dataset.JSONDataSet': 'plotly',
-  'tracking.json_dataset.JSONDataSet': 'JSONTracking',
-  'tracking.metrics_dataset.MetricsDataSet': 'metricsTracking',
 };
-
-export const tabLabels = ['Overview', 'Metrics', 'Plots'];
 
 // URL parameters for each element/section
 export const params = {
@@ -133,20 +103,14 @@ export const params = {
 };
 
 const activePipeline = `${params.pipeline}=:pipelineId`;
-const pathname = sanitizedPathname();
 
 export const routes = {
   flowchart: {
-    main: pathname,
-    focusedNode: `${pathname}?${activePipeline}&${params.focused}=:id`,
-    selectedNode: `${pathname}?${activePipeline}&${params.selected}=:id`,
-    selectedName: `${pathname}?${activePipeline}&${params.selectedName}=:fullName`,
-    selectedPipeline: `${pathname}?${activePipeline}`,
-  },
-  experimentTracking: {
-    main: `${pathname}experiment-tracking`,
-    selectedView: `${pathname}experiment-tracking?${params.view}=:view`,
-    selectedRuns: `${pathname}experiment-tracking?${params.run}=:ids&${params.view}=:view&${params.comparisonMode}=:isComparison`,
+    main: '/',
+    focusedNode: `/?${activePipeline}&${params.focused}=:id`,
+    selectedNode: `/?${activePipeline}&${params.selected}=:id`,
+    selectedName: `/?${activePipeline}&${params.selectedName}=:fullName`,
+    selectedPipeline: `/?${activePipeline}`,
   },
 };
 
@@ -154,8 +118,6 @@ export const errorMessages = {
   node: 'Please check the value of "selected_id"/"sid" or "selected_name"/"sn" in the URL',
   modularPipeline: 'Please check the value of "focused_id"/"fid" in the URL',
   pipeline: 'Please check the value of "pipeline_id"/"pid" in the URL',
-  experimentTracking: `Please check the spelling of "run_ids" or "view" or "comparison" in the URL. It may be a typo 😇`,
-  runIds: `Please check the value of "run_ids" in the URL. Perhaps you've deleted the entity 🙈 or it may be a typo 😇`,
 };
 
 export const datasetStatLabels = ['rows', 'columns', 'file_size'];
@@ -187,11 +149,7 @@ export const inputKeyToStateKeyMap = {
   endpoint: 'hasEndpoint',
 };
 
-export const RUN_TITLE = 'title';
-export const RUN_NOTES = 'notes';
-
 export const PACKAGE_FSSPEC = 'fsspec';
-export const PACKAGE_KEDRO_DATASETS = 'kedro-datasets';
 
 export const KEDRO_VIZ_DOCS_URL =
   'https://docs.kedro.org/projects/kedro-viz/en/latest/';
