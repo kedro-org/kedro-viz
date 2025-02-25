@@ -41,14 +41,14 @@ Update the dataset configurations in your `catalog.yml` to transition to `kedro-
 
 | Kedro-Viz Dataset Type         | MLflow Dataset Type        | Update Instructions                                      |
 |---------------------------------|----------------------------|---------------------------------------------------------|
-| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/03_experiment_tracking/01_experiment_tracking/05_version_metrics.html#saving-a-single-float-as-a-metric-with-mlflowmetricdataset)                  |
-| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `json.JSONDataset`. |
-| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
-| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
-| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset).                   |
+| `tracking.MetricsDataset`      | `MlflowMetricDataset`      | Update type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowmetricdataset).                  |
+| `tracking.JSONDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `json.JSONDataset`. |
+| `plotly.plotlyDataset`         | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
+| `plotly.JSONDataset`           | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) as `plotly.HTMLDataset`. |
+| `matplotlib.MatplotlibWriter`  | `MlflowArtifactDataset`    | Wrap within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset).                   |
 
 ### Metrics dataset
-For `tracking.MetricsDataset`, update its type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/03_experiment_tracking/01_experiment_tracking/05_version_metrics.html#saving-a-single-float-as-a-metric-with-mlflowmetricdataset):
+For `tracking.MetricsDataset`, update its type to [`MlflowMetricDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowmetricdataset):
 
 Before:
 ```yaml
@@ -65,7 +65,7 @@ metrics:
 ```
 
 ### JSON dataset
-For `tracking.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `json.JSONDataset`:
+For `tracking.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `json.JSONDataset`:
 
 Before:
 ```yaml
@@ -85,7 +85,7 @@ companies_columns:
 ```
 
 ### Plotly dataset
-For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
+For `plotly.plotlyDataset` and `plotly.JSONDataset`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset) and configure it as `plotly.HTMLDataset` to render interactive plots in the MLflow UI:
 
 Before:
 ```yaml
@@ -104,7 +104,7 @@ plotly_json_data:
 ```
 
 ### Matplotlib writer
-For `matplotlib.MatplotlibWriter`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/0.14.3/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset):
+For `matplotlib.MatplotlibWriter`, wrap it within [`MlflowArtifactDataset`](https://kedro-mlflow.readthedocs.io/en/stable/source/05_API/01_python_objects/01_Datasets.html#mlflowartifactdataset):
 
 Before:
 ```yaml

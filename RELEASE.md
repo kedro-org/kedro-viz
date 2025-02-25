@@ -10,6 +10,8 @@ Please follow the established format:
 ## Major features and improvements
 - Remove experiment tracking. (#2237)
 
+- Visualise pipeline objects in notebook. (#2241)
+
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)
