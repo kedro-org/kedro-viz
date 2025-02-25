@@ -5,7 +5,6 @@ load data from pipelines created in a range of Kedro versions.
 
 from typing import Dict, Optional, Tuple, Union, cast
 
-from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
@@ -16,11 +15,10 @@ from kedro_viz.server import populate_data
 def load_data_for_notebook_users(
     notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
     notebook_catalog: Optional[DataCatalog],
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
     """Load data from a notebook user's pipeline"""
     # Create a dummy data catalog with all datasets as memory datasets
     catalog = DataCatalog() if notebook_catalog is None else notebook_catalog
-    session_store = None
     stats_dict: Dict = {}
 
     notebook_user_pipeline = notebook_pipeline
@@ -35,7 +33,7 @@ def load_data_for_notebook_users(
     else:
         notebook_user_pipeline = {"__default__": notebook_user_pipeline}
 
-    return catalog, notebook_user_pipeline, session_store, stats_dict  # type: ignore[return-value]
+    return catalog, notebook_user_pipeline, stats_dict
 
 
 def load_and_populate_data_for_notebook_users(
@@ -43,7 +41,7 @@ def load_and_populate_data_for_notebook_users(
     notebook_catalog: Optional[DataCatalog],
 ):
     """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
-    catalog, pipelines, session_store, stats_dict = load_data_for_notebook_users(
+    catalog, pipelines, stats_dict = load_data_for_notebook_users(
         notebook_pipeline, notebook_catalog
     )
 
@@ -51,4 +49,4 @@ def load_and_populate_data_for_notebook_users(
     data_access_manager.reset_fields()
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
+    populate_data(data_access_manager, catalog, pipelines, stats_dict)

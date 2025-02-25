@@ -104,27 +104,23 @@ class TestNotebookVisualizer:
 
 class TestLoadAndPopulateData:
     def test_load_data_for_notebook_users(self, example_pipelines, example_catalog):
-        catalog, notebook_user_pipeline, session_store, stats_dict = (
-            load_data_for_notebook_users(example_pipelines, example_catalog)
+        catalog, notebook_user_pipeline, stats_dict = load_data_for_notebook_users(
+            example_pipelines, example_catalog
         )
 
         assert catalog == example_catalog
         assert notebook_user_pipeline["__default__"] == example_pipelines["__default__"]
-        assert session_store is None
         assert stats_dict == {}
 
     def test_load_pipe_data_for_notebook_users(
         self, example_pipelines, example_catalog
     ):
-        catalog, notebook_user_pipeline, session_store, stats_dict = (
-            load_data_for_notebook_users(
-                example_pipelines["__default__"], example_catalog
-            )
+        catalog, notebook_user_pipeline, stats_dict = load_data_for_notebook_users(
+            example_pipelines["__default__"], example_catalog
         )
 
         assert catalog == example_catalog
         assert notebook_user_pipeline["__default__"] == example_pipelines["__default__"]
-        assert session_store is None
         assert stats_dict == {}
 
     def test_load_and_populate_data_for_notebook_users(
@@ -139,7 +135,6 @@ class TestLoadAndPopulateData:
             return_value=(
                 example_catalog,
                 example_pipelines,
-                None,
                 {},
             ),
         )

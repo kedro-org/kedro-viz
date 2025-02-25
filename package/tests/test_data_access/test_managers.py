@@ -19,11 +19,7 @@ from kedro_viz.data_access.repositories.modular_pipelines import (
 from kedro_viz.data_access.repositories.registered_pipelines import (
     RegisteredPipelinesRepository,
 )
-from kedro_viz.data_access.repositories.runs import RunsRepository
 from kedro_viz.data_access.repositories.tags import TagsRepository
-from kedro_viz.data_access.repositories.tracking_datasets import (
-    TrackingDatasetsRepository,
-)
 from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.named_entities import Tag
@@ -51,10 +47,6 @@ class TestDataAccessManager:
         assert isinstance(data_access_manager.modular_pipelines, defaultdict)
         assert isinstance(data_access_manager.edges, defaultdict)
         assert isinstance(data_access_manager.node_dependencies, defaultdict)
-        assert isinstance(data_access_manager.runs, RunsRepository)
-        assert isinstance(
-            data_access_manager.tracking_datasets, TrackingDatasetsRepository
-        )
         assert data_access_manager.dataset_stats == {}
 
     def test_manager_reset_fields(self, data_access_manager: DataAccessManager):
