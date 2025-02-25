@@ -10,7 +10,7 @@ try:  # pragma: no cover
     from kedro.io import KedroDataCatalog
 
     IS_KEDRODATACATALOG = True
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     IS_KEDRODATACATALOG = False
 
 try:
