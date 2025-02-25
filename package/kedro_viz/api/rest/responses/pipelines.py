@@ -238,10 +238,16 @@ def get_pipeline_response(
     )
 
 
-def get_kedro_project_json_data():
+def get_kedro_project_json_data(pipeline_name: Optional[str] = None):
     """Decodes the default response and returns the Kedro project JSON data.
     This will be used in VSCode extension to get current Kedro project data."""
-    encoded_response = get_encoded_response(get_pipeline_response())
+    pipeline_response = (
+        get_pipeline_response()
+        if pipeline_name is None
+        else get_pipeline_response(pipeline_name)
+    )
+
+    encoded_response = get_encoded_response(pipeline_response)
 
     try:
         response_str = encoded_response.decode("utf-8")
