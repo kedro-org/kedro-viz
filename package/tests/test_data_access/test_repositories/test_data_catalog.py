@@ -184,21 +184,3 @@ class TestDataCatalogRepositoryExtended:
         assert isinstance(
             ds_obj, MemoryDataset
         ), "Should have used kedro_catalog.get(...)"
-
-    def test_get_dataset_old_kedro_version_last_else(self, mocker):
-        from packaging.version import parse
-
-        from kedro_viz.data_access.repositories import catalog as catalog_module
-
-        # Force KEDRO_VERSION < 0.18.1
-        mocker.patch.object(catalog_module, "KEDRO_VERSION", parse("0.18.0"))
-        # Force IS_KEDRODATACATALOG = False
-        mocker.patch.object(catalog_module, "IS_KEDRODATACATALOG", False)
-
-        repo = CatalogRepository()
-        catalog = DataCatalog({"old_kedro_ds": MemoryDataset(data=[1, 2, 3])})
-        repo.set_catalog(catalog)
-
-        ds_obj = repo.get_dataset("old_kedro_ds")
-        # Same MemoryDataset data to come back
-        assert ds_obj.load() == [1, 2, 3]

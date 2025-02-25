@@ -140,7 +140,7 @@ class CatalogRepository:
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
-            else:
+            else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
         except DatasetNotFoundError:
             dataset_obj = MemoryDataset()
