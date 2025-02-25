@@ -86,9 +86,6 @@ class DataAccessManager:
         self._kedro_datacatalog = IS_KEDRODATACATALOG and isinstance(
             catalog, KedroDataCatalog
         )
-
-        if not self._kedro_datacatalog:
-            self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
