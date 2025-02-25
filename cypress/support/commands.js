@@ -1,32 +1,5 @@
 // Add any reusable custom commands here
 import { join } from 'path';
-import { localStorageETDeprecationBannerSeen } from '../../src/config';
-
-/**
- * Custom command for intercepting network requests using fixtures for GraphQL
- * @param {String} operationName
- * @returns {Object} The mock/fixtured json response
- */
-Cypress.Commands.add('__interceptGql__', (operationName, mutationFor) => {
-  // Assign an alias to the intercept based on the graphql request (mutation or query).
-  const interceptAlias = mutationFor ? mutationFor : operationName;
-
-  cy.intercept('POST', '/graphql', (req) => {
-    const requestBody = req.body;
-
-    // check for the operation name match in the graphql request body
-    if (requestBody?.operationName === operationName) {
-      // Assign a fixture path based on the graphql request (mutation or query).
-      const fixturePath = mutationFor
-        ? `graphql/${mutationFor}.json`
-        : `graphql/${operationName}.json`;
-
-      // Stub the server response (request will never reach the origin server, instead the response is
-      // served from the fixture)
-      req.reply({ fixture: fixturePath });
-    }
-  }).as(interceptAlias);
-});
 
 /**
  * Custom command for intercepting network requests for REST
@@ -128,89 +101,9 @@ Cypress.Commands.add('__validateImage__', (downloadedFilename) => {
   });
 });
 
-/**
- * Custom command to validate the downloaded csv
- * @param {String} downloadedFilename
- * @param {Array} recordToCompare
- */
-Cypress.Commands.add(
-  '__validateCsv__',
-  (downloadedFilename, recordToCompare) => {
-    const downloadsFolder = Cypress.config('downloadsFolder');
-
-    if (!downloadedFilename) {
-      downloadedFilename = join(downloadsFolder, 'data.csv');
-    }
-
-    cy.readFile(`${downloadsFolder}/${downloadedFilename}`, {
-      timeout: 5000,
-    }).then((csvContent) => {
-      const modifiedCsvContent = csvContent.replace(/\\|"/g, '');
-
-      expect(modifiedCsvContent).to.have.length.gt(50);
-
-      const records = modifiedCsvContent.split('\n');
-
-      cy.wrap(records[0].trim()).should('eq', recordToCompare.join(',').trim());
-    });
-  }
-);
 
 /**
- * Custom command to conditionally visit a page based on spec file path
- */
-Cypress.Commands.add('__conditionalVisit__', () => {
-  const specPath = Cypress.spec.relative;
-
-  if (specPath.includes('experiment-tracking')) {
-    // Queries
-    cy.__interceptGql__('getRunsList');
-    cy.__interceptGql__('getRunData');
-    cy.__interceptGql__('getMetricPlotData');
-
-    cy.visit('/experiment-tracking', {
-      onBeforeLoad(win) {
-        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
-      }
-    });
-
-    cy.wait(['@getRunsList', '@getRunData', '@getMetricPlotData']);
-  } else {
-    cy.visit('/', {
-      onBeforeLoad(win) {
-        win.localStorage.setItem(localStorageETDeprecationBannerSeen, JSON.stringify(true));
-      }
-    });
-  }
-});
-
-/**
- * Custom command to go into comparison mode and select three runs
- */
-Cypress.Commands.add('__comparisonMode__', () => {
-  // Alias
-  cy.get('.switch__input').as('compareRunsToggle');
-
-  // Action
-  cy.get('@compareRunsToggle').check({ force: true });
-
-  // Mutation for two run comparison
-  cy.__interceptGql__('getRunData', 'compareTwoRuns');
-
-  // Action and wait
-  cy.get(':nth-child(2) > .runs-list-card__checked').click();
-  cy.wait('@compareTwoRuns').its('response.statusCode').should('eq', 200);
-
-  // Mutations for three run comparison
-  cy.__interceptGql__('getRunData', 'compareThreeRuns');
-
-  // Action and wait
-  cy.get(':nth-child(3) > .runs-list-card__checked').click();
-  cy.wait('@compareThreeRuns').its('response.statusCode').should('eq', 200);
-});
-
-/**
- * Custom command to fillout and submit the hosting shareable URL form
+ * Custom command to fill out and submit the hosting shareable URL form
  */
 Cypress.Commands.add(
   '__setupAndSubmitShareableUrlForm__',
@@ -229,14 +122,18 @@ Cypress.Commands.add(
     cy.get('.pipeline-menu-button--deploy').click();
 
     // Select the first hosting platform from the dropdown
-    cy.get('.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]').click();
+    cy.get(
+      '.shareable-url-modal [data-test=shareable-url-modal-dropdown-hosting-platform]'
+    ).click();
     cy.get('.shareable-url-modal .dropdown__options section div').eq(1).click();
 
     // Fill in the form
-    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]').type(bucketName);
-    cy.get('.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]').type(
-      endpointName
-    );
+    cy.get(
+      '.shareable-url-modal [data-test="shareable-url-modal-input-bucket-name"]'
+    ).type(bucketName);
+    cy.get(
+      '.shareable-url-modal [data-test="shareable-url-modal-input-endpoint"]'
+    ).type(endpointName);
 
     // Submit the form
     cy.get('.shareable-url-modal__button-wrapper button')
@@ -249,14 +146,15 @@ Cypress.Commands.add(
  * Custom command to wait for page load before enabling pretty names
  */
 Cypress.Commands.add('__waitForSettingsButton__', () => {
-  cy.get('[data-test="global-toolbar-settings-btn"]', { timeout: 20000 }).should('be.visible');
+  cy.get('[data-test="global-toolbar-settings-btn"]', {
+    timeout: 20000,
+  }).should('be.visible');
 });
 
 /**
  * Custom command to enable pretty name
  */
 Cypress.Commands.add('enablePrettyNames', () => {
-
   // Wait for the settings button to be visible
   cy.__waitForSettingsButton__();
 
@@ -264,10 +162,12 @@ Cypress.Commands.add('enablePrettyNames', () => {
   cy.get('[data-test="global-toolbar-settings-btn"]').click();
 
   // Enable the pretty names setting
-  cy.get('[data-test*="settings-modal-toggle-isPrettyName-"]').check({ force: true });
+  cy.get('[data-test*="settings-modal-toggle-isPrettyName-"]').check({
+    force: true,
+  });
 
   // Apply changes and close the settings panel
   cy.get('[data-test="settings-modal-apply-btn"]').click({
-        force: true,
-      });
+    force: true,
+  });
 });

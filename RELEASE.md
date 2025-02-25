@@ -8,6 +8,7 @@ Please follow the established format:
 # Upcoming Release
 
 ## Major features and improvements
+- Remove experiment tracking. (#2237)
 
 - Enable Kedro-Viz in VSCode to list pipelines using the filter icon.  (#2269)
 
