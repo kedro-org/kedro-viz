@@ -10,7 +10,7 @@ Please follow the established format:
 ## Major features and improvements
 - Remove experiment tracking. (#2237)
 
--  Visualize pipeline objects in notebook. (#2241)
+- Visualise pipeline objects in notebook. (#2241)
 
 ## Bug fixes and other changes
 
