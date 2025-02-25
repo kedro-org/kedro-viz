@@ -1,9 +1,8 @@
 from typing import Dict
-from unittest.mock import call
 
 import networkx as nx
 import pytest
-from kedro.io import DataCatalog, KedroDataCatalog, MemoryDataset
+from kedro.io import DataCatalog, MemoryDataset
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -613,84 +612,3 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
-
-
-class TestResolveDatasetFactoryPatterns:
-    def test_resolve_dataset_factory_patterns(
-        self,
-        example_catalog,
-        pipeline_with_datasets_mock,
-        pipeline_with_data_sets_mock,
-        data_access_manager: DataAccessManager,
-    ):
-        pipelines = {
-            "pipeline1": pipeline_with_datasets_mock,
-            "pipeline2": pipeline_with_data_sets_mock,
-        }
-        new_catalog = CatalogRepository()
-        new_catalog.set_catalog(example_catalog)
-
-        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
-
-        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
-
-        assert "model_inputs#csv" in new_catalog.as_dict().keys()
-
-    @pytest.mark.parametrize(
-        "kedro_datacatalog, use_kedro_data_catalog_cls",
-        [
-            (False, False),
-            (True, False),
-        ],
-    )
-    def test_resolve_dataset_factory_patterns_fallback_private_api(
-        self, kedro_datacatalog, use_kedro_data_catalog_cls, mocker
-    ):
-        mocker.patch(
-            "kedro_viz.data_access.managers.IS_KEDRODATACATALOG", kedro_datacatalog
-        )
-
-        # Create a plain DataCatalog
-        if use_kedro_data_catalog_cls:
-            from kedro.io import KedroDataCatalog
-
-            catalog = KedroDataCatalog({"test_dataset": MemoryDataset()})
-        else:
-            catalog = DataCatalog({"test_dataset": MemoryDataset()})
-
-        # Spy on the private method
-        spy_get_dataset = mocker.spy(catalog, "_get_dataset")
-
-        # pipeline has both "test_dataset" (input) and "test_output" (output)
-        pipelines = {
-            "test_pipeline": Pipeline([node(identity, "test_dataset", "test_output")])
-        }
-
-        manager = DataAccessManager()
-        manager.resolve_dataset_factory_patterns(catalog, pipelines)
-
-        # Expect exactly two calls: "test_dataset" and "test_output"
-        spy_get_dataset.assert_has_calls(
-            [call("test_dataset", suggest=False), call("test_output", suggest=False)],
-            any_order=True,
-        )
-        assert spy_get_dataset.call_count == 2
-
-    def test_resolve_dataset_factory_patterns_kedro_data_catalog(self, mocker):
-        mocker.patch("kedro_viz.data_access.managers.IS_KEDRODATACATALOG", True)
-
-        catalog = KedroDataCatalog({"my_ds": MemoryDataset()})
-        spy_public_get = mocker.spy(catalog, "get")
-
-        pipelines = {
-            "test_pipeline": Pipeline([node(identity, "my_ds", "test_output")])
-        }
-
-        manager = DataAccessManager()
-        manager.resolve_dataset_factory_patterns(catalog, pipelines)
-
-        # Expect calls for both input "my_ds" and output "test_output"
-        spy_public_get.assert_has_calls(
-            [call("my_ds"), call("test_output")], any_order=True
-        )
-        assert spy_public_get.call_count == 2

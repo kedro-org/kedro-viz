@@ -76,7 +76,7 @@ class DataAccessManager:
 
     def add_catalog(self, catalog: DataCatalog):
         """Add the catalog to the CatalogRepository
-        
+
         Args:
             catalog: The DataCatalog instance to add.
             pipelines: A dictionary which holds project pipelines
