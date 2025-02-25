@@ -83,7 +83,7 @@ The `App` component contains the [Redux store Provider](https://react-redux.js.o
 
 ## State management
 
-The following sections outline the Redux state management used to manage the data and app state for the flowchart view. The data for the runs view (experiment tracking features) are managed by React hooks and the Apollo GraphQL client.
+The following sections outline the Redux state management used to manage the data and app state for the flowchart view.
 
 ![Kedro-Viz app architecture](.github/img/app-architecture.png)
 

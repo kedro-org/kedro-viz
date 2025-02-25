@@ -42,7 +42,6 @@ export const createInitialPipelineState = () => ({
     outputs: {},
     plot: {},
     image: {},
-    trackingData: {},
     datasetType: {},
     originalType: {},
     transcodedTypes: {},
