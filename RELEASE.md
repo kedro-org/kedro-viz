@@ -13,6 +13,7 @@ Please follow the established format:
 
 - Add ESM bundle for Kedro-Viz. (#2268)
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
+- Replace `DataCatalog` private methods with public `KedroDataCatalog` methods. (#2274)
 
 ## Community contributions
 

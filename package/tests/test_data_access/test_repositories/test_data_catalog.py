@@ -1,5 +1,13 @@
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
+
+try:
+    from kedro.io import KedroDataCatalog
+
+    HAS_KEDRO_DATA_CATALOG = True
+except ImportError:
+    HAS_KEDRO_DATA_CATALOG = False
+
 from packaging.version import parse
 
 from kedro_viz.data_access.repositories import CatalogRepository
@@ -130,3 +138,64 @@ class TestDataCatalogRepositoryExtended:
 
         # Now "my_dataset" should map to expected_layer
         assert layers_map["my_dataset"] == expected_layer
+
+    @pytest.mark.skipif(
+        not HAS_KEDRO_DATA_CATALOG, reason="KedroDataCatalog not available"
+    )
+    def test_layers_mapping_kedro_data_catalog(self, mocker):
+        from kedro.io import KedroDataCatalog
+
+        from kedro_viz.data_access.repositories import catalog as catalog_module
+
+        # Patch IS_KEDRODATACATALOG to True
+        mocker.patch.object(catalog_module, "IS_KEDRODATACATALOG", True)
+
+        # Create a KedroDataCatalog
+        ds_config = {
+            "my_kdc_dataset": {
+                "type": "pandas.CSVDataset",
+                "filepath": "some.csv",
+                "metadata": {"kedro-viz": {"layer": "kedro_data_catalog_layer"}},
+            }
+        }
+        kedro_catalog = KedroDataCatalog.from_config(ds_config)
+        repo = CatalogRepository()
+        repo.set_catalog(kedro_catalog)
+        layers_map = repo.layers_mapping
+
+        assert layers_map["my_kdc_dataset"] == "kedro_data_catalog_layer"
+
+    @pytest.mark.skipif(
+        not HAS_KEDRO_DATA_CATALOG, reason="KedroDataCatalog not available"
+    )
+    def test_get_dataset_kedro_data_catalog(self, mocker):
+        from kedro.io import KedroDataCatalog
+
+        from kedro_viz.data_access.repositories import catalog as catalog_module
+
+        mocker.patch.object(catalog_module, "IS_KEDRODATACATALOG", True)
+
+        kedro_catalog = KedroDataCatalog({"another_ds": MemoryDataset()})
+
+        repo = CatalogRepository()
+        repo.set_catalog(kedro_catalog)
+
+        ds_obj = repo.get_dataset("another_ds")
+        assert isinstance(
+            ds_obj, MemoryDataset
+        ), "Should have used kedro_catalog.get(...)"
+
+    def test_import_error_for_kedro_data_catalog(self):
+        import kedro.io
+
+        if hasattr(kedro.io, "KedroDataCatalog"):
+            del kedro.io.KedroDataCatalog
+
+        import importlib
+
+        import kedro_viz.data_access.managers
+
+        importlib.reload(kedro_viz.data_access.managers)
+
+        # Make sure IS_KEDRODATACATALOG = False
+        assert not kedro_viz.data_access.managers.IS_KEDRODATACATALOG

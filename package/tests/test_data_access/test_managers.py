@@ -696,3 +696,18 @@ class TestResolveDatasetFactoryPatterns:
             [call("my_ds"), call("test_output")], any_order=True
         )
         assert spy_public_get.call_count == 2
+
+    def test_import_error_for_kedro_data_catalog(self):
+        import kedro.io
+
+        if hasattr(kedro.io, "KedroDataCatalog"):
+            del kedro.io.KedroDataCatalog
+
+        import importlib
+
+        import kedro_viz.data_access.managers
+
+        importlib.reload(kedro_viz.data_access.managers)
+
+        # Now that KedroDataCatalog doesn't exist make sure IS_KEDRODATACATALOG = False
+        assert not kedro_viz.data_access.managers.IS_KEDRODATACATALOG
