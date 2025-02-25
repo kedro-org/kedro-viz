@@ -22,7 +22,6 @@ except ImportError:  # pragma: no cover
 
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
@@ -47,9 +46,7 @@ from .repositories import (
     GraphNodesRepository,
     ModularPipelinesRepository,
     RegisteredPipelinesRepository,
-    RunsRepository,
     TagsRepository,
-    TrackingDatasetsRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -75,52 +72,16 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.runs = RunsRepository()
-        self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
 
-    def set_db_session(self, db_session_class: sessionmaker):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
-
-    def resolve_dataset_factory_patterns(
-        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
-    ):
-        """Resolve dataset factory patterns in data catalog by matching
-        them against the datasets in the pipelines.
-        """
-        for pipeline in pipelines.values():
-            if hasattr(pipeline, "data_sets"):
-                # Support for Kedro 0.18.x
-                datasets = pipeline.data_sets()
-            else:
-                datasets = pipeline.datasets()
-
-            for dataset_name in datasets:
-                try:
-                    if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-                        catalog.get(dataset_name)
-                    else:
-                        catalog._get_dataset(dataset_name, suggest=False)
-                except Exception:  # noqa: BLE001 # pragma: no cover
-                    continue
-
-    def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
-        """Resolve dataset factory patterns, add the catalog to the CatalogRepository
-        and relevant tracking datasets to TrackingDatasetRepository.
-
+    def add_catalog(self, catalog: DataCatalog):
+        """Add the catalog to the CatalogRepository
+        
         Args:
             catalog: The DataCatalog instance to add.
             pipelines: A dictionary which holds project pipelines
         """
-
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
-
         self.catalog.set_catalog(catalog)
-
-        for dataset_name, dataset in self.catalog.as_dict().items():
-            if self.tracking_datasets.is_tracking_dataset(dataset):
-                self.tracking_datasets.add_tracking_dataset(dataset_name, dataset)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project

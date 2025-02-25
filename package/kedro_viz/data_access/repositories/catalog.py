@@ -2,7 +2,7 @@
 centralise access to Kedro data catalog."""
 
 import logging
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 
 from kedro.io import DataCatalog
 
@@ -149,10 +149,3 @@ class CatalogRepository:
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))
-
-    def as_dict(self) -> Dict[str, Optional["AbstractDataset"]]:
-        return {
-            dataset_name: self.get_dataset(dataset_name)
-            for dataset_name in self._catalog.list()
-            if self.get_dataset(dataset_name) is not None
-        }

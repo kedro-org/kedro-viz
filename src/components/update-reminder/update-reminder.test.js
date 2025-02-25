@@ -21,7 +21,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     expect(wrapper.find('.update-reminder-unexpanded').length).toBe(1);
@@ -31,7 +31,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
@@ -44,7 +44,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
@@ -56,7 +56,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     wrapper.find('.buttons-container').find('button').at(1).simulate('click');
@@ -69,7 +69,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionsUpToDate.isOutdated}
-        versions={versionsUpToDate}
+        version={versionsUpToDate}
       />
     );
     expect(
@@ -81,7 +81,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
@@ -96,7 +96,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionOutOfDate.isOutdated}
-        versions={versionOutOfDate}
+        version={versionOutOfDate}
       />
     );
     const container = wrapper.find('.update-reminder-unexpanded');
@@ -110,7 +110,7 @@ describe('Update Reminder', () => {
     const wrapper = setup.mount(
       <UpdateReminder
         isOutdated={versionsUpToDate.isOutdated}
-        versions={versionsUpToDate}
+        version={versionsUpToDate}
       />
     );
     const container = wrapper.find('.update-reminder-version-tag--up-to-date');
