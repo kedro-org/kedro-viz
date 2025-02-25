@@ -8,6 +8,9 @@ Please follow the established format:
 # Upcoming Release
 
 ## Major features and improvements
+- Remove experiment tracking. (#2237)
+
+- Visualise pipeline objects in notebook. (#2241)
 
 ## Bug fixes and other changes
 

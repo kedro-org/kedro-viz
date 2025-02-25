@@ -23,29 +23,11 @@ export const findMatchedPath = (pathname, search) => {
   const matchedSelectedNodeName = () => hasQueryParam(params.selectedName);
   const matchedFocusedNode = () => hasQueryParam(params.focused);
 
-  const matchedExperimentTrackingMainPage = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.experimentTracking.main],
-  });
-
-  const matchedSelectedView = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.experimentTracking.selectedView],
-  });
-
-  const matchedSelectedRuns = matchPath(pathname + search, {
-    exact: true,
-    path: [routes.experimentTracking.selectedRuns],
-  });
-
   return {
     matchedFlowchartMainPage,
     matchedSelectedPipeline,
     matchedSelectedNodeId,
     matchedSelectedNodeName,
     matchedFocusedNode,
-    matchedExperimentTrackingMainPage,
-    matchedSelectedView,
-    matchedSelectedRuns,
   };
 };

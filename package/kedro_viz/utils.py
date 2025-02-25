@@ -6,9 +6,9 @@ import threading
 import time
 from itertools import cycle
 from pathlib import Path
-from typing import Optional, Tuple
-
+from typing import Any, Optional, Tuple
 from pathspec import GitIgnoreSpec
+
 
 TRANSCODING_SEPARATOR = "@"
 
@@ -94,6 +94,19 @@ def is_file_ignored(
     ):
         return True
     return False
+
+def merge_dicts(dict_one: dict[str, Any], dict_two: dict[str, Any]) -> dict[str, Any]:
+    """Utility to merge two dictionaries"""
+    import copy
+
+    merged = copy.deepcopy(dict_one)
+
+    for key, value in dict_two.items():
+        if isinstance(value, dict) and key in merged:
+            merged[key] = merge_dicts(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
 
 
 class Spinner:
