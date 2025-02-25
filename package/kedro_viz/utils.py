@@ -7,8 +7,8 @@ import time
 from itertools import cycle
 from pathlib import Path
 from typing import Any, Optional, Tuple
-from pathspec import GitIgnoreSpec
 
+from pathspec import GitIgnoreSpec
 
 TRANSCODING_SEPARATOR = "@"
 
@@ -94,6 +94,7 @@ def is_file_ignored(
     ):
         return True
     return False
+
 
 def merge_dicts(dict_one: dict[str, Any], dict_two: dict[str, Any]) -> dict[str, Any]:
     """Utility to merge two dictionaries"""
