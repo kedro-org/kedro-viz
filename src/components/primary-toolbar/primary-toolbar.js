@@ -6,7 +6,7 @@ import MenuIcon from '../icons/menu';
 import './primary-toolbar.scss';
 
 /**
- * Toolbar to house buttons that controls display options for the main panel (flowchart, experiment details, etc)
+ * Toolbar to house buttons that controls display options for the main panel (flowchart, etc)
  * @param {JSX} children The content to be rendered within the toolbar
  * @param {Function} onToggleSidebar Handle toggling of sidebar collapsable view
  * @param {Boolean} visible Handle display of tooltip text in relation to collapsable view

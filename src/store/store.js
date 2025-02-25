@@ -5,7 +5,7 @@ import reducer from '../reducers';
 import { getGraphInput } from '../selectors/layout';
 import { calculateGraph } from '../actions/graph';
 import { saveLocalStorage, pruneFalseyKeys } from './helpers';
-import { localStorageName, localStorageRunsMetadata } from '../config';
+import { localStorageName } from '../config';
 import createCallbackMiddleware from './middleware';
 
 /**
@@ -62,9 +62,6 @@ const saveStateToLocalStorage = (state) => {
     flags: state.flags,
     expandAllPipelines: state.expandAllPipelines,
   });
-
-  // Store Run's metadata to localstorage
-  saveLocalStorage(localStorageRunsMetadata, state.runsMetadata);
 };
 
 /**

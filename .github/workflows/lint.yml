@@ -37,6 +37,6 @@ jobs:
 
           - name: Run security scan
             run: make security-scan
-            
+
           - name: Run Python formatters and linters
             run: make format-check lint-check          
