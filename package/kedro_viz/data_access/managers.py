@@ -6,13 +6,6 @@ from typing import Dict, List, Set, Union
 
 from kedro.io import DataCatalog
 
-try:  # pragma: no cover
-    from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
-except ImportError:  # pragma: no cover
-    IS_KEDRODATACATALOG = False
-
 try:
     # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
