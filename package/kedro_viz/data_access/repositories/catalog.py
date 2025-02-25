@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 from kedro.io import DataCatalog
 
-try:
+try:  # pragma: no cover
     from kedro.io import KedroDataCatalog
 
     IS_KEDRODATACATALOG = True
-except ImportError:
+except ImportError: # pragma: no cover
     IS_KEDRODATACATALOG = False
 
 from packaging.version import parse

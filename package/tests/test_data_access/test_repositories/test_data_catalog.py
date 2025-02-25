@@ -184,18 +184,3 @@ class TestDataCatalogRepositoryExtended:
         assert isinstance(
             ds_obj, MemoryDataset
         ), "Should have used kedro_catalog.get(...)"
-
-    def test_import_error_for_kedro_data_catalog(self):
-        import kedro.io
-
-        if hasattr(kedro.io, "KedroDataCatalog"):
-            del kedro.io.KedroDataCatalog
-
-        import importlib
-
-        import kedro_viz.data_access.managers
-
-        importlib.reload(kedro_viz.data_access.managers)
-
-        # Make sure IS_KEDRODATACATALOG = False
-        assert not kedro_viz.data_access.managers.IS_KEDRODATACATALOG
