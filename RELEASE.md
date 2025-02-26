@@ -16,6 +16,7 @@ Please follow the established format:
 
 - Add ESM bundle for Kedro-Viz. (#2268)
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
+- Make Kedro-Viz compatible with the new `KedroDataCatalog`. (#2274)
 
 ## Community contributions
 
