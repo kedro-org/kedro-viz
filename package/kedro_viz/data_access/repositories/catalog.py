@@ -89,11 +89,7 @@ class CatalogRepository:
         if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
             datasets = self._catalog.list()
         else:
-            # Temporary try/except block so the Kedro develop branch can work with Viz.
-            try:
-                datasets = self._catalog._data_sets
-            except Exception:  # noqa: BLE001 # pragma: no cover
-                datasets = self._catalog._datasets
+            datasets = self._catalog._datasets
 
         # Support for Kedro 0.18.x
         if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
