@@ -89,7 +89,11 @@ class CatalogRepository:
         if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
             datasets = self._catalog.list()
         else:
-            datasets = self._catalog._datasets
+            # try/except block so Viz is backwards compatible with older kedro versions.
+            try:
+                datasets = self._catalog._data_sets
+            except Exception:  # noqa: BLE001 # pragma: no cover
+                datasets = self._catalog._datasets
 
         # Support for Kedro 0.18.x
         if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
