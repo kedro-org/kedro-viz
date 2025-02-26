@@ -339,36 +339,6 @@ export function toggleBookmark(bookmark, runId) {
   };
 }
 
-export const UPDATE_RUN_TITLE = 'UPDATE_RUN_TITLE';
-
-/**
- * Update Run title
- * @param {String} title
- * @param {string} runId
- */
-export function updateRunTitle(title, runId) {
-  return {
-    type: UPDATE_RUN_TITLE,
-    title,
-    runId,
-  };
-}
-
-export const UPDATE_RUN_NOTES = 'UPDATE_RUN_NOTES';
-
-/**
- * Update Run Notes
- * @param {String} notes
- * @param {string} runId
- */
-export function updateRunNotes(notes, runId) {
-  return {
-    type: UPDATE_RUN_NOTES,
-    notes,
-    runId,
-  };
-}
-
 export const UPDATE_STATE_FROM_OPTIONS = 'UPDATE_STATE_FROM_OPTIONS';
 
 /**

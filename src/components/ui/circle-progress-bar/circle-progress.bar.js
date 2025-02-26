@@ -15,9 +15,9 @@ const CircleProgressBar = ({ children: counter }) => {
       calculateTimeFraction() * FULL_DASH_ARRAY
     ).toFixed(0)} 283`;
 
-    document
-      .getElementById('base-timer-path-remaining')
-      .setAttribute('stroke-dasharray', circleDasharray);
+    let baseTimerElement = document.getElementById('base-timer-path-remaining');
+    baseTimerElement &&
+      baseTimerElement.setAttribute('stroke-dasharray', circleDasharray);
   }, [calculateTimeFraction]);
 
   const startTimer = useCallback(() => {

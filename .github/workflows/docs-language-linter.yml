@@ -14,4 +14,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: errata-ai/vale-action@reviewdog
         with:
-          reporter: github-pr-check
+          reporter: github-pr-review

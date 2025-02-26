@@ -13,8 +13,7 @@ data/**
 logs/**
 !data/01_raw/*
 !data/08_reporting/**
-!data/09_tracking/**
-!data/session_store.db
+
 
 # except their sub-folders
 !data/**/

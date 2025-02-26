@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Dict
 
 import networkx as nx
@@ -11,9 +12,14 @@ from kedro_datasets.pandas import CSVDataset
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.data_access.repositories.catalog import CatalogRepository
+from kedro_viz.data_access.repositories.graph import GraphNodesRepository
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
+from kedro_viz.data_access.repositories.registered_pipelines import (
+    RegisteredPipelinesRepository,
+)
+from kedro_viz.data_access.repositories.tags import TagsRepository
 from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.named_entities import Tag
@@ -29,6 +35,34 @@ def identity(x):
     return x
 
 
+class TestDataAccessManager:
+    def test_manager_initialize_fields(self, data_access_manager: DataAccessManager):
+        """Test that all instance variables are correctly initialized."""
+        assert isinstance(data_access_manager.catalog, CatalogRepository)
+        assert isinstance(data_access_manager.nodes, GraphNodesRepository)
+        assert isinstance(
+            data_access_manager.registered_pipelines, RegisteredPipelinesRepository
+        )
+        assert isinstance(data_access_manager.tags, TagsRepository)
+        assert isinstance(data_access_manager.modular_pipelines, defaultdict)
+        assert isinstance(data_access_manager.edges, defaultdict)
+        assert isinstance(data_access_manager.node_dependencies, defaultdict)
+        assert data_access_manager.dataset_stats == {}
+
+    def test_manager_reset_fields(self, data_access_manager: DataAccessManager):
+        """Test that reset_fields correctly reinitializes the instance variables."""
+        # Modify fields to non-default values
+        data_access_manager.catalog = None
+        data_access_manager.dataset_stats = {"test_key": "test_value"}
+
+        data_access_manager.reset_fields()
+
+        # Assert fields are reset to default
+        assert isinstance(data_access_manager.catalog, CatalogRepository)
+        assert isinstance(data_access_manager.dataset_stats, dict)
+        assert data_access_manager.dataset_stats == {}
+
+
 class TestAddCatalog:
     def test_add_catalog(
         self,
@@ -37,7 +71,7 @@ class TestAddCatalog:
     ):
         dataset = CSVDataset(filepath="dataset.csv")
         catalog = DataCatalog(datasets={"dataset": dataset})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         assert data_access_manager.catalog.get_catalog() is catalog
 
 
@@ -115,7 +149,7 @@ class TestAddNode:
         catalog = DataCatalog(
             datasets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             registered_pipeline_id, dataset_name, example_modular_pipelines_repo_obj
         )
@@ -153,7 +187,7 @@ class TestAddNode:
         parameters = {"train_test_split": 0.1, "num_epochs": 1000}
         catalog = DataCatalog()
         catalog.add_feed_dict({"parameters": parameters})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="parameters", outputs="output")
         task_node = data_access_manager.add_node(
@@ -178,7 +212,7 @@ class TestAddNode:
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params:train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(identity, inputs="params:train_test_split", outputs="output")
         task_node = data_access_manager.add_node(
@@ -205,7 +239,7 @@ class TestAddNode:
         parameter_name = "params:uk.data_science.train_test_split.ratio"
         catalog = DataCatalog()
         catalog.add_feed_dict({parameter_name: 0.1})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         registered_pipeline_id = "my_pipeline"
         kedro_node = node(
             identity,
@@ -259,7 +293,7 @@ class TestAddNode:
         catalog = DataCatalog(
             datasets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             registered_pipeline_id, dataset_name, example_modular_pipelines_repo_obj
         )
@@ -298,7 +332,7 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "x"
         catalog = DataCatalog(datasets={dataset_name: dataset})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             "my_pipeline", dataset_name, example_modular_pipelines_repo_obj
         )
@@ -319,7 +353,7 @@ class TestAddDataset:
         example_modular_pipelines_repo_obj,
     ):
         catalog = DataCatalog()
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             "my_pipeline", "memory_dataset", example_modular_pipelines_repo_obj
         )
@@ -342,7 +376,7 @@ class TestAddDataset:
         catalog = DataCatalog(
             datasets={dataset_name: dataset},
         )
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         mocker.patch.object(
             example_modular_pipelines_repo_obj,
             "get_node_and_modular_pipeline_mapping",
@@ -371,7 +405,7 @@ class TestAddDataset:
         dataset = CSVDataset(filepath="dataset.csv")
         dataset_name = "companies#csv"
         catalog = DataCatalog(datasets={dataset_name: dataset})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
 
         with mocker.patch.object(
             data_access_manager.catalog,
@@ -394,7 +428,7 @@ class TestAddDataset:
         catalog.add_feed_dict(
             {"parameters": {"train_test_split": 0.1, "num_epochs": 1000}}
         )
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             "my_pipeline", "parameters", example_modular_pipelines_repo_obj
         )
@@ -417,7 +451,7 @@ class TestAddDataset:
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params:train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             "my_pipeline", "params:train_test_split", example_modular_pipelines_repo_obj
         )
@@ -436,7 +470,7 @@ class TestAddDataset:
     ):
         catalog = DataCatalog()
         catalog.add_feed_dict({"params_train_test_split": 0.1})
-        data_access_manager.add_catalog(catalog, example_pipelines)
+        data_access_manager.add_catalog(catalog)
         data_access_manager.add_dataset(
             "my_pipeline", "params_train_test_split", example_modular_pipelines_repo_obj
         )
@@ -454,7 +488,7 @@ class TestAddPipelines:
         example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_catalog, example_pipelines)
+        data_access_manager.add_catalog(example_catalog)
         data_access_manager.add_pipelines(example_pipelines)
 
         assert [p.id for p in data_access_manager.registered_pipelines.as_list()] == [
@@ -501,9 +535,7 @@ class TestAddPipelines:
         example_transcoded_pipelines: Dict[str, Pipeline],
         example_transcoded_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(
-            example_transcoded_catalog, example_transcoded_pipelines
-        )
+        data_access_manager.add_catalog(example_transcoded_catalog)
         data_access_manager.add_pipelines(example_transcoded_pipelines)
         assert any(
             isinstance(node, TranscodedDataNode)
@@ -525,7 +557,7 @@ class TestAddPipelines:
             ),
         }
 
-        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
+        data_access_manager.add_catalog(DataCatalog())
         data_access_manager.add_pipelines(registered_pipelines)
         modular_pipeline_tree = (
             data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
@@ -540,7 +572,7 @@ class TestAddPipelines:
         example_pipelines: Dict[str, Pipeline],
         example_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_catalog, example_pipelines)
+        data_access_manager.add_catalog(example_catalog)
         del example_pipelines[DEFAULT_REGISTERED_PIPELINE_ID]
         data_access_manager.add_pipelines(example_pipelines)
         assert not data_access_manager.registered_pipelines.get_pipeline_by_id(
@@ -595,7 +627,7 @@ class TestAddPipelines:
         registered_pipelines = {
             "__default__": internal + external,
         }
-        data_access_manager.add_catalog(DataCatalog(), registered_pipelines)
+        data_access_manager.add_catalog(DataCatalog())
         data_access_manager.add_pipelines(registered_pipelines)
         data_access_manager.create_modular_pipelines_tree_for_registered_pipeline(
             DEFAULT_REGISTERED_PIPELINE_ID
@@ -614,25 +646,3 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
-
-
-class TestResolveDatasetFactoryPatterns:
-    def test_resolve_dataset_factory_patterns(
-        self,
-        example_catalog,
-        pipeline_with_datasets_mock,
-        pipeline_with_data_sets_mock,
-        data_access_manager: DataAccessManager,
-    ):
-        pipelines = {
-            "pipeline1": pipeline_with_datasets_mock,
-            "pipeline2": pipeline_with_data_sets_mock,
-        }
-        new_catalog = CatalogRepository()
-        new_catalog.set_catalog(example_catalog)
-
-        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
-
-        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
-
-        assert "model_inputs#csv" in new_catalog.as_dict().keys()

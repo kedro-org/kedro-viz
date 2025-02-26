@@ -8,11 +8,15 @@ Please follow the established format:
 # Upcoming Release
 
 ## Major features and improvements
+- Remove experiment tracking. (#2237)
+
+- Visualise pipeline objects in notebook. (#2241)
 
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
+- Make Kedro-Viz compatible with the new `KedroDataCatalog`. (#2274)
 
 ## Community contributions
 
