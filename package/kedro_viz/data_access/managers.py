@@ -49,6 +49,10 @@ class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
 
     def __init__(self):
+        self._initialize_fields()
+
+    def _initialize_fields(self):
+        """Initialize or reset all instance variables."""
         self.catalog = CatalogRepository()
         self.nodes = GraphNodesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
@@ -67,12 +71,15 @@ class DataAccessManager:
         )
         self.dataset_stats = {}
 
+    def reset_fields(self):
+        """Reset all instance variables."""
+        self._initialize_fields()
+
     def add_catalog(self, catalog: DataCatalog):
         """Add the catalog to the CatalogRepository
 
         Args:
             catalog: The DataCatalog instance to add.
-            pipelines: A dictionary which holds project pipelines
         """
         self.catalog.set_catalog(catalog)
 

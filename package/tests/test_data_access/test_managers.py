@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Dict
 
 import networkx as nx
@@ -11,9 +12,14 @@ from kedro_datasets.pandas import CSVDataset
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.data_access.managers import DataAccessManager
 from kedro_viz.data_access.repositories.catalog import CatalogRepository
+from kedro_viz.data_access.repositories.graph import GraphNodesRepository
 from kedro_viz.data_access.repositories.modular_pipelines import (
     ModularPipelinesRepository,
 )
+from kedro_viz.data_access.repositories.registered_pipelines import (
+    RegisteredPipelinesRepository,
+)
+from kedro_viz.data_access.repositories.tags import TagsRepository
 from kedro_viz.integrations.utils import UnavailableDataset
 from kedro_viz.models.flowchart.edge import GraphEdge
 from kedro_viz.models.flowchart.named_entities import Tag
@@ -27,6 +33,34 @@ from kedro_viz.models.flowchart.nodes import (
 
 def identity(x):
     return x
+
+
+class TestDataAccessManager:
+    def test_manager_initialize_fields(self, data_access_manager: DataAccessManager):
+        """Test that all instance variables are correctly initialized."""
+        assert isinstance(data_access_manager.catalog, CatalogRepository)
+        assert isinstance(data_access_manager.nodes, GraphNodesRepository)
+        assert isinstance(
+            data_access_manager.registered_pipelines, RegisteredPipelinesRepository
+        )
+        assert isinstance(data_access_manager.tags, TagsRepository)
+        assert isinstance(data_access_manager.modular_pipelines, defaultdict)
+        assert isinstance(data_access_manager.edges, defaultdict)
+        assert isinstance(data_access_manager.node_dependencies, defaultdict)
+        assert data_access_manager.dataset_stats == {}
+
+    def test_manager_reset_fields(self, data_access_manager: DataAccessManager):
+        """Test that reset_fields correctly reinitializes the instance variables."""
+        # Modify fields to non-default values
+        data_access_manager.catalog = None
+        data_access_manager.dataset_stats = {"test_key": "test_value"}
+
+        data_access_manager.reset_fields()
+
+        # Assert fields are reset to default
+        assert isinstance(data_access_manager.catalog, CatalogRepository)
+        assert isinstance(data_access_manager.dataset_stats, dict)
+        assert data_access_manager.dataset_stats == {}
 
 
 class TestAddCatalog:
