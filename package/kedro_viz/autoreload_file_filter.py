@@ -10,6 +10,8 @@ from typing import Optional, Set
 from pathspec import GitIgnoreSpec
 from watchfiles import Change, DefaultFilter
 
+from kedro_viz.utils import load_gitignore_patterns
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,15 +37,7 @@ class AutoreloadFileFilter(DefaultFilter):
         super().__init__()
 
         # Load .gitignore patterns
-        gitignore_path = self.cwd / ".gitignore"
-        try:
-            with open(gitignore_path, "r", encoding="utf-8") as gitignore_file:
-                ignore_patterns = gitignore_file.read().splitlines()
-            self.gitignore_spec: Optional[GitIgnoreSpec] = GitIgnoreSpec.from_lines(
-                "gitwildmatch", ignore_patterns
-            )
-        except FileNotFoundError:
-            self.gitignore_spec = None
+        self.gitignore_spec = load_gitignore_patterns(self.cwd)
 
     def __call__(self, change: Change, path: str) -> bool:
         """
