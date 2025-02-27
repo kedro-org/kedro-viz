@@ -4,6 +4,7 @@ from typing import Dict
 import networkx as nx
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
+
 try:
     from kedro.io import KedroDataCatalog
 
@@ -654,9 +655,9 @@ class TestAddPipelines:
             nx.find_cycle(digraph)
 
     def test_add_dataset_with_new_catalog_no_instantiate(
-            self,
-            data_access_manager: DataAccessManager,
-            example_modular_pipelines_repo_obj,
+        self,
+        data_access_manager: DataAccessManager,
+        example_modular_pipelines_repo_obj,
     ):
         empty_kedro_data_catalog = KedroDataCatalog()
         data_access_manager.add_catalog(empty_kedro_data_catalog)
