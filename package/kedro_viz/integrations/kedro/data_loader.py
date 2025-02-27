@@ -16,11 +16,11 @@ from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog  # Old version
 
-try:
+try:  # pragma: no cover
     from kedro.io.kedro_data_catalog import KedroDataCatalog
 
     IS_KEDRODATACATALOG = True
-except ImportError:
+except ImportError:  # pragma: no cover
     IS_KEDRODATACATALOG = False
 
 from kedro.pipeline import Pipeline
