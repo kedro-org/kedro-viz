@@ -246,3 +246,31 @@ class TestGraphNodeCreation:
         patched_warning.assert_has_calls(
             [call("Cannot find parameter `%s` in the catalog.", "non_existing")]
         )
+
+    def test_task_node_namespace_is_set(self):
+        kedro_node = node(
+            func=identity,
+            inputs="x",
+            outputs="y",
+            name="my_task",
+            namespace="foo.bar",
+            tags={"tag"},
+        )
+
+        task_node = GraphNode.create_task_node(kedro_node, "my_task_id", set())
+
+        assert task_node.namespace == "foo.bar"
+
+    def test_task_node_namespace_is_none(self):
+        kedro_node = node(
+            func=identity,
+            inputs="x",
+            outputs="y",
+            name="my_task",
+            namespace=None,
+            tags={"tag"},
+        )
+
+        task_node = GraphNode.create_task_node(kedro_node, "my_task_id", set())
+
+        assert task_node.namespace is None
