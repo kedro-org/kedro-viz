@@ -9,14 +9,13 @@ Please follow the established format:
 
 ## Major features and improvements
 - Remove experiment tracking. (#2237)
-
+- Implement horizontal flowchart orientation in Kedro-Viz. (#2159)
 - Visualise pipeline objects in notebook. (#2241)
 
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
-- Ignore parsing hidden files on `kedro viz --lite`. (#2271)
 - Make Kedro-Viz compatible with the new `KedroDataCatalog`. (#2274)
 
 ## Community contributions
