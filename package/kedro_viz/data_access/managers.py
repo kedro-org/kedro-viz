@@ -11,6 +11,7 @@ try:  # pragma: no cover
 
     IS_KEDRODATACATALOG = True
 except ImportError:  # pragma: no cover
+    KedroDataCatalog = None
     IS_KEDRODATACATALOG = False
 
 try:
