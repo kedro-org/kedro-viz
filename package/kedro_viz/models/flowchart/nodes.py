@@ -246,11 +246,9 @@ class TaskNode(GraphNode):
         description="The original namespace on this node",
     )
 
-    # Remove forced assertion that kedro_obj is not None
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_exists(cls, values):
-        # assert "kedro_obj" in values
         return values
 
     @field_validator("namespace")
@@ -299,11 +297,9 @@ class DataNode(GraphNode):
     # The type for data node
     type: str = GraphNodeType.DATA.value
 
-    # Remove forced assertion that kedro_obj is in values
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_exists(cls, values):
-        # assert "kedro_obj" in values
         return values
 
     @field_validator("dataset_type")
@@ -356,8 +352,6 @@ class TranscodedDataNode(GraphNode):
         False, description="Determines whether the transcoded data node is a free input"
     )
     stats: Optional[Dict] = Field(None, description="The statistics for the data node.")
-
-    # Used by the old approach that sets them
     original_version: Optional[AbstractDataset] = Field(
         None,
         description="The original Kedro's AbstractDataset for this transcoded data node",
@@ -397,12 +391,9 @@ class ParametersNode(GraphNode):
     # The type for Parameters Node
     type: str = GraphNodeType.PARAMETERS.value
 
-    # Remove forced assertion that kedro_obj, name are in values
     @model_validator(mode="before")
     @classmethod
     def check_kedro_obj_and_name_exists(cls, values):
-        # assert "kedro_obj" in values
-        # assert "name" in values
         return values
 
     def is_all_parameters(self) -> bool:
