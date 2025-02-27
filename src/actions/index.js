@@ -24,6 +24,19 @@ export function toggleLayers(visible) {
   };
 }
 
+export const TOGGLE_ORIENTATION = 'TOGGLE_ORIENTATION';
+
+/**
+ * Toggle whether to show horizontal or vertical orientation
+ * @param {string} orientation The orientation to set to vertical by default
+ */
+export function toggleOrientation(orientation) {
+  return {
+    type: TOGGLE_ORIENTATION,
+    orientation,
+  };
+}
+
 export const TOGGLE_EXPAND_ALL_PIPELINES = 'TOGGLE_EXPAND_ALL_PIPELINES';
 
 /**
