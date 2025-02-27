@@ -1,15 +1,7 @@
 from pathlib import Path
 from unittest import mock
 
-import pytest
 from fastapi.testclient import TestClient
-
-try:
-    from kedro.io import KedroDataCatalog
-
-    HAVE_KEDRO_DATA_CATALOG = True
-except ImportError:
-    HAVE_KEDRO_DATA_CATALOG = False
 
 from kedro_viz.models.flowchart.nodes import TaskNode
 from tests.test_api.test_rest.test_responses.assert_helpers import (
@@ -26,10 +18,6 @@ class TestTranscodedDataset:
         assert response.status_code == 200
         assert_example_transcoded_data(response.json())
 
-    @pytest.mark.skipif(
-        HAVE_KEDRO_DATA_CATALOG,
-        reason="No forced `original_version` in DataCatalog 2.0 (lazy loading)",
-    )
     def test_transcoded_data_node_metadata(self, example_transcoded_api):
         client = TestClient(example_transcoded_api)
         response = client.get("/api/nodes/0ecea0de")

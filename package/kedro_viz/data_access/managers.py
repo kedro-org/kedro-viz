@@ -84,7 +84,7 @@ class DataAccessManager:
         """Reset all instance variables."""
         self._initialize_fields()
 
-    def add_catalog(self, catalog: DataCatalog):
+    def add_catalog(self, catalog: Union[DataCatalog, KedroDataCatalog]):
         """Add the catalog to the CatalogRepository
 
         Args:
@@ -171,11 +171,7 @@ class DataAccessManager:
                     registered_pipeline_id, input_node.id
                 )
 
-                # For older catalog
-                if (
-                    isinstance(input_node, TranscodedDataNode)
-                    and not self._kedro_datacatalog
-                ):
+                if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
             # Add node outputs as DataNode to the graph.
@@ -191,14 +187,9 @@ class DataAccessManager:
                     registered_pipeline_id, output_node.id
                 )
 
-                # For older catalog
-                if (
-                    isinstance(output_node, TranscodedDataNode)
-                    and not self._kedro_datacatalog
-                ):
-                    output_node.transcoded_versions.add(
-                        self.catalog.get_dataset(output)
-                    )
+                if isinstance(output_node, TranscodedDataNode):
+                    output_node.original_name = output
+                    output_node.original_version = self.catalog.get_dataset(output)
 
     def add_node(
         self,
