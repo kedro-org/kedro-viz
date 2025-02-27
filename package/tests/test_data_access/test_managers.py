@@ -4,6 +4,12 @@ from typing import Dict
 import networkx as nx
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
+try:
+    from kedro.io import KedroDataCatalog
+
+    HAS_KEDRO_DATA_CATALOG = True
+except ImportError:
+    HAS_KEDRO_DATA_CATALOG = False
 from kedro.io.core import DatasetError
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.modular_pipeline import pipeline
@@ -646,3 +652,23 @@ class TestAddPipelines:
             digraph.add_edge(edge.source, edge.target)
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
+
+    def test_add_dataset_with_new_catalog_no_instantiate(
+            self,
+            data_access_manager: DataAccessManager,
+            example_modular_pipelines_repo_obj,
+    ):
+        empty_kedro_data_catalog = KedroDataCatalog()
+        data_access_manager.add_catalog(empty_kedro_data_catalog)
+        data_access_manager._kedro_datacatalog = True
+
+        result_node = data_access_manager.add_dataset(
+            "my_pipeline", "test_dataset", example_modular_pipelines_repo_obj
+        )
+
+        nodes_list = data_access_manager.nodes.as_list()
+        assert len(nodes_list) == 1
+        graph_node = nodes_list[0]
+        assert graph_node is result_node
+
+        assert graph_node.kedro_obj is None
