@@ -274,3 +274,14 @@ class TestGraphNodeCreation:
         task_node = GraphNode.create_task_node(kedro_node, "my_task_id", set())
 
         assert task_node.namespace is None
+
+    def test_task_node_namespace_with_no_kedro_obj(self):
+        task_node = TaskNode(
+            id="my_task_id",
+            name="my_task",
+            tags=set(),
+            kedro_obj=None,
+            modular_pipelines=set(),
+        )
+
+        assert task_node.namespace is None

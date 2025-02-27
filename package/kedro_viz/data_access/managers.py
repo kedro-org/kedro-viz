@@ -170,7 +170,6 @@ class DataAccessManager:
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, input_node.id
                 )
-
                 if isinstance(input_node, TranscodedDataNode):
                     input_node.transcoded_versions.add(self.catalog.get_dataset(input_))
 
@@ -186,7 +185,6 @@ class DataAccessManager:
                 self.registered_pipelines.add_node(
                     registered_pipeline_id, output_node.id
                 )
-
                 if isinstance(output_node, TranscodedDataNode):
                     output_node.original_name = output
                     output_node.original_version = self.catalog.get_dataset(output)
@@ -334,6 +332,7 @@ class DataAccessManager:
             root_modular_pipeline_node.children.add(
                 ModularPipelineChild(id=dataset_id, type=GraphNodeType.DATA)
             )
+
             # update the node_mod_pipeline_map
             if dataset_id not in modular_pipelines_repo_obj.node_mod_pipeline_map:
                 modular_pipelines_repo_obj.node_mod_pipeline_map[dataset_id] = {
