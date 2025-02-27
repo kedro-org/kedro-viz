@@ -95,14 +95,8 @@ def _load_data_helper(
 
         context = session.load_context()
 
-        catalog = context.catalog
-
-        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
-
-        # patch the AbstractDataset class for a custom
-        # implementation to handle kedro.io.core.DatasetError
-        elif is_lite:
+        # If user wants lite, we patch AbstractDatasetLite no matter what
+        if is_lite:
             # kedro 0.18.12 onwards
             if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
                 abstract_ds_patch_target = "kedro.io.data_catalog.AbstractDataset"
@@ -112,6 +106,11 @@ def _load_data_helper(
 
             with patch(abstract_ds_patch_target, AbstractDatasetLite):
                 catalog = context.catalog
+        else:
+            catalog = context.catalog
+
+        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
+            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.

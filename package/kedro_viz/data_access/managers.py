@@ -84,7 +84,6 @@ class DataAccessManager:
         """Reset all instance variables."""
         self._initialize_fields()
 
-
     def add_catalog(self, catalog: DataCatalog):
         """Add the catalog to the CatalogRepository
 
