@@ -9,7 +9,7 @@ Please follow the established format:
 
 ## Major features and improvements
 - Remove experiment tracking. (#2237)
-- Implement horizontal flowchart orientation in Kedro-Viz. (#2159)
+- Add horizontal flowchart orientation in Kedro-Viz. (#2159)
 - Visualise pipeline objects in notebook. (#2241)
 
 ## Bug fixes and other changes
