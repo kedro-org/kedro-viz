@@ -70,15 +70,26 @@ export const drawLayers = function () {
  * Render layer name labels
  */
 export const drawLayerNames = function () {
-  const {
-    chartSize: { sidebarWidth = 0 },
-    layers,
-  } = this.props;
+  const { chartSize, layers, orientation } = this.props;
+
+  const layerPaddingVerticalMode = 20;
+
+  const layerNamePosition =
+    orientation === 'vertical'
+      ? chartSize.sidebarWidth + layerPaddingVerticalMode || 0
+      : 100 || 0;
+
+  const transformValue =
+    orientation === 'vertical'
+      ? // In vertical mode, layer names are positioned along the X-axis at sidebarWidth
+        `translateX(${layerNamePosition}px)`
+      : // In horizontal mode, layer names are positioned at a fixed Y = 100px
+        `translateY(${layerNamePosition}px)`;
 
   this.el.layerNameGroup
     .transition('layer-names-sidebar-width')
-    .duration(this.DURATION)
-    .style('transform', `translateX(${sidebarWidth}px)`);
+    .duration(this.LAYER_NAME_DURATION)
+    .style('transform', transformValue);
 
   this.el.layerNames = this.el.layerNameGroup
     .selectAll('.pipeline-layer-name')
@@ -93,14 +104,14 @@ export const drawLayerNames = function () {
   enterLayerNames
     .style('opacity', 0)
     .transition('enter-layer-names')
-    .duration(this.DURATION)
+    .duration(this.LAYER_NAME_DURATION)
     .style('opacity', 0.55);
 
   this.el.layerNames
     .exit()
     .style('opacity', 0.55)
     .transition('exit-layer-names')
-    .duration(this.DURATION)
+    .duration(this.LAYER_NAME_DURATION)
     .style('opacity', 0)
     .remove();
 
@@ -126,12 +137,20 @@ const updateNodeRects = (nodeRects) =>
       return node.height / 2;
     });
 
-const updateParameterRect = (nodeRects) =>
+const updateParameterRect = (nodeRects, orientation) =>
   nodeRects
     .attr('width', 12)
     .attr('height', 12)
-    .attr('x', (node) => (node.width + 20) / -2)
-    .attr('y', -6);
+    .attr('x', (node) =>
+      // Position parameter icon on the left side of the node in vertical mode
+      // Position it slightly inside the node in horizontal mode
+      orientation === 'vertical'
+        ? (node.width + 20) / -2
+        : -(node.width / 2) + 10
+    )
+    // Center parameter icon vertically on the left side of the node (12px parameter icon height, so -6 for centering)
+    // Place parameter icon on top of the node (12px parameter icon height)
+    .attr('y', (node) => (orientation === 'vertical' ? -6 : -node.height + 12));
 
 /**
  * Render node icons and name labels
@@ -150,6 +169,7 @@ export const drawNodes = function (changed) {
     focusMode,
     hoveredFocusMode,
     isSlicingPipelineApplied,
+    orientation,
   } = this.props;
   const {
     from: slicedPipelineFromId,
@@ -223,7 +243,7 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
       .on('mouseover', this.handleParamsIndicatorMouseOver)
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: use a single path per icon
     enterNodes
@@ -344,7 +364,7 @@ export const drawNodes = function (changed) {
       )
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateParameterRect);
+      .call(updateParameterRect, orientation);
 
     // Performance: icon transitions with CSS on GPU
     allNodes
