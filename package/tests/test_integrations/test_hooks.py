@@ -12,6 +12,14 @@ def test_dataset_stats_hook_create(example_dataset_stats_hook_obj):
     assert isinstance(example_dataset_stats_hook_obj._stats, defaultdict)
 
 
+def test_after_catalog_created(example_dataset_stats_hook_obj, example_catalog):
+    example_dataset_stats_hook_obj.after_catalog_created(example_catalog)
+
+    # Assert for catalog creation
+    assert hasattr(example_dataset_stats_hook_obj, "datasets")
+    assert example_dataset_stats_hook_obj.datasets == example_catalog._datasets
+
+
 @pytest.mark.parametrize(
     "dataset_name", ["companies", "companies@pandas1", "model_inputs"]
 )
