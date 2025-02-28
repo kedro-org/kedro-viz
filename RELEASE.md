@@ -11,6 +11,7 @@ Please follow the established format:
 - Remove experiment tracking. (#2237)
 - Introduce horizontal flowchart orientation in Kedro-Viz. (#2159)
 - Visualise pipeline objects in notebook. (#2241)
+- Add support for Kedro's DataCatalog 2.0 with lazy loading. (#2272)
 
 ## Bug fixes and other changes
 
