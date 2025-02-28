@@ -7,11 +7,11 @@ from typing import Dict, List, Set, Union
 from kedro.io import DataCatalog
 
 try:  # pragma: no cover
-    from kedro.io.kedro_data_catalog import KedroDataCatalog
+    from kedro.io import KedroDataCatalog
 
     IS_KEDRODATACATALOG = True
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None
+    KedroDataCatalog = None  # type: ignore
     IS_KEDRODATACATALOG = False
 
 try:
@@ -79,8 +79,6 @@ class DataAccessManager:
         )
         self.dataset_stats = {}
 
-        self._kedro_datacatalog = False
-
     def reset_fields(self):
         """Reset all instance variables."""
         self._initialize_fields()
@@ -89,11 +87,8 @@ class DataAccessManager:
         """Add the catalog to the CatalogRepository
 
         Args:
-            catalog: The DataCatalog instance to add.
+            catalog: The DataCatalog or KedroDataCatalog instance to add.
         """
-        self._kedro_datacatalog = IS_KEDRODATACATALOG and isinstance(
-            catalog, KedroDataCatalog
-        )
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
@@ -306,13 +301,10 @@ class DataAccessManager:
         Returns:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
-        if self._kedro_datacatalog:
-            dataset_obj = None
-        else:
-            try:
-                dataset_obj = self.catalog.get_dataset(dataset_name)
-            except DatasetError:
-                dataset_obj = UnavailableDataset()
+        try:
+            dataset_obj = self.catalog.get_dataset(dataset_name)
+        except DatasetError:
+            dataset_obj = UnavailableDataset()
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
         (

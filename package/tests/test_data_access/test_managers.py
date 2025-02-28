@@ -654,15 +654,22 @@ class TestAddPipelines:
         with pytest.raises(nx.NetworkXNoCycle):
             nx.find_cycle(digraph)
 
-    def test_add_dataset_with_new_catalog_no_instantiate(
+    @pytest.mark.skipif(
+        not HAS_KEDRO_DATA_CATALOG, reason="KedroDataCatalog not available"
+    )
+    def test_add_dataset_with_kedro_data_catalog(
         self,
         data_access_manager: DataAccessManager,
         example_modular_pipelines_repo_obj,
     ):
-        empty_kedro_data_catalog = KedroDataCatalog()
-        data_access_manager.add_catalog(empty_kedro_data_catalog)
-        data_access_manager._kedro_datacatalog = True
+        from kedro.io import KedroDataCatalog, MemoryDataset
 
+        kedro_catalog = KedroDataCatalog()
+        kedro_catalog["test_dataset"] = {"data": "value"}
+
+        data_access_manager.add_catalog(kedro_catalog)
+
+        # Test that adding the dataset works properly
         result_node = data_access_manager.add_dataset(
             "my_pipeline", "test_dataset", example_modular_pipelines_repo_obj
         )
@@ -672,4 +679,4 @@ class TestAddPipelines:
         graph_node = nodes_list[0]
         assert graph_node is result_node
 
-        assert graph_node.kedro_obj is None
+        assert isinstance(graph_node.kedro_obj, MemoryDataset)

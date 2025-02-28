@@ -17,7 +17,7 @@ from kedro.framework.startup import bootstrap_project
 from kedro.io import DataCatalog  # Old version
 
 try:  # pragma: no cover
-    from kedro.io.kedro_data_catalog import KedroDataCatalog
+    from kedro.io import KedroDataCatalog
 
     IS_KEDRODATACATALOG = True
 except ImportError:  # pragma: no cover
