@@ -6,7 +6,7 @@ kedro-telemetry>=0.1.1  # for testing telemetry integration
 bandit~=1.8
 behave~=1.2
 boto3~=1.35
-matplotlib~=3.9
+matplotlib~=3.10
 mypy~=1.11
 moto~=5.0.21
 psutil==6.1.1 # same as Kedro for now
