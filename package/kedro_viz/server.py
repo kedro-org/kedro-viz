@@ -2,9 +2,18 @@
 for Kedro pipeline visualisation."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from kedro.io import DataCatalog
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    KedroDataCatalog = None  # type: ignore
+    IS_KEDRODATACATALOG = False
+
 from kedro.pipeline import Pipeline
 
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
@@ -18,7 +27,7 @@ DEV_PORT = 4142
 
 def populate_data(
     data_access_manager: DataAccessManager,
-    catalog: DataCatalog,
+    catalog: Union[DataCatalog, "KedroDataCatalog"],
     pipelines: Dict[str, Pipeline],
     stats_dict: Dict,
 ):

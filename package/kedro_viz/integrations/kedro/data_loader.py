@@ -14,7 +14,15 @@ from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog  # Old version
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    IS_KEDRODATACATALOG = False
+
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -87,8 +95,7 @@ def _load_data_helper(
 
         context = session.load_context()
 
-        # patch the AbstractDataset class for a custom
-        # implementation to handle kedro.io.core.DatasetError
+        # If user wants lite, we patch AbstractDatasetLite no matter what
         if is_lite:
             # kedro 0.18.12 onwards
             if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
@@ -101,6 +108,9 @@ def _load_data_helper(
                 catalog = context.catalog
         else:
             catalog = context.catalog
+
+        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
+            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
