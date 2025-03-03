@@ -181,6 +181,6 @@ class TestDataCatalogRepositoryExtended:
         repo.set_catalog(kedro_catalog)
 
         ds_obj = repo.get_dataset("another_ds")
-        assert isinstance(
-            ds_obj, MemoryDataset
-        ), "Should have used kedro_catalog.get(...)"
+        assert isinstance(ds_obj, MemoryDataset), (
+            "Should have used kedro_catalog.get(...)"
+        )
