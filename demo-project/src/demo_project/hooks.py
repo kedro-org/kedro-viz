@@ -60,5 +60,5 @@ class TimingHooks:
         elif duration > 1 and duration < 60:
             message = f"{duration} seconds"
         else:
-            message = f"{round(duration/60)} seconds"
+            message = f"{round(duration / 60)} seconds"
         return message
