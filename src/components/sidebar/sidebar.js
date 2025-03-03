@@ -6,6 +6,7 @@ import MiniMap from '../minimap';
 import MiniMapToolbar from '../minimap-toolbar';
 import NodesPanel from '../nodes-panel';
 import PipelineList from '../pipeline-list';
+import ToolbarFilterButton from '../toolbar-filter-button';
 
 import './sidebar.scss';
 
@@ -13,7 +14,11 @@ import './sidebar.scss';
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  * @param {Boolean} props.visible Whether the sidebar is open/closed
  */
-export const Sidebar = ({ displayGlobalNavigation, visible }) => {
+export const Sidebar = ({
+  displayGlobalNavigation,
+  visible,
+  displayFilterBtn,
+}) => {
   const [pipelineIsOpen, togglePipeline] = useState(false);
 
   return (
@@ -29,6 +34,7 @@ export const Sidebar = ({ displayGlobalNavigation, visible }) => {
           <NodesPanel faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
+          {displayFilterBtn && <ToolbarFilterButton />}
           <FlowchartPrimaryToolbar />
           <MiniMapToolbar />
         </nav>
@@ -41,6 +47,7 @@ export const Sidebar = ({ displayGlobalNavigation, visible }) => {
 const mapStateToProps = (state) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   displaySidebar: state.display.sidebar,
+  displayFilterBtn: state.display.filterBtn,
   visible: state.visible.sidebar,
 });
 
