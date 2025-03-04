@@ -27,15 +27,14 @@ uv venv $VIRTUAL_ENV
 # Install Python dependencies
 uv pip install kedro
 uv pip install -r package/test_requirements.txt -r demo-project/src/docker_requirements.txt
-make build
-uv pip install -e package/
 
 # Install Node.js dependencies
 sudo chown vscode:vscode node_modules
 npm install
 
-# Build the frontend
-
+# Build the frontend and pip install editable kedro-viz
+make build
+uv pip install -e package/
 
 # Generate the Kedro-Viz static build inside demo-project
 cd demo-project
