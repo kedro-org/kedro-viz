@@ -18,11 +18,11 @@ export const ToolbarFilterButton = ({
   return (
     <div className="pipeline-toolbar--filter-container">
       <IconButton
-        ariaLabel={`Open pipeline filter`}
+        ariaLabel={`Select pipeline view`}
         className={'pipeline-menu-button--labels'}
         dataTest={`sidebar-flowchart-filter-btn-${displayFilterBtn}`}
         icon={FilterIcon}
-        labelText={`Open pipeline filter`}
+        labelText={`Select pipeline view`}
         onClick={() => onTogglePipelineFilter()}
         visible={displayFilterBtn}
         container={'div'}
