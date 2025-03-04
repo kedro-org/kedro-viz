@@ -58,6 +58,7 @@ export const createInitialState = () => ({
     orientationBtn: true,
     zoomToolbar: true,
     metadataPanel: true,
+    filterBtn: false,
   },
   behaviour: {
     reFocus: true,

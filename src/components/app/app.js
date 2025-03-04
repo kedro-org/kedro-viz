@@ -5,7 +5,10 @@ import 'what-input';
 import configureStore from '../../store';
 import { isEqual } from 'lodash/fp';
 import { resetData, updateStateFromOptions } from '../../actions';
-import { loadInitialPipelineData } from '../../actions/pipelines';
+import {
+  loadInitialPipelineData,
+  loadPipelineData,
+} from '../../actions/pipelines';
 import Wrapper from '../wrapper';
 import getInitialState, {
   preparePipelineState,
@@ -45,6 +48,14 @@ class App extends React.Component {
     }
     if (!isEqual(prevProps.options, this.props.options)) {
       this.store.dispatch(updateStateFromOptions(this.props.options));
+    }
+
+    // If the selected pipeline has changed, load the new pipeline data
+    if (
+      this.props.data &&
+      this.props.data.selected_pipeline !== prevProps.data.selected_pipeline
+    ) {
+      this.store.dispatch(loadPipelineData(this.props.data.selected_pipeline));
     }
   }
 
@@ -112,6 +123,7 @@ App.propTypes = {
       layerBtn: PropTypes.bool,
       zoomToolBar: PropTypes.bool,
       metadataPanel: PropTypes.bool,
+      filterBtn: PropTypes.bool,
     }),
     /**
      * Override the default enabled/disabled tags

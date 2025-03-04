@@ -54,6 +54,7 @@ export const FlowchartPrimaryToolbar = ({
       <PrimaryToolbar
         onToggleSidebar={onToggleSidebar}
         visible={visible}
+        display={display}
         dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
       >
         <IconButton
