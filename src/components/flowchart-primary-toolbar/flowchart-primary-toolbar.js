@@ -58,7 +58,7 @@ export const FlowchartPrimaryToolbar = ({
       >
         <IconButton
           active={textLabels}
-          ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
+          ariaLabel={`${textLabels ? 'Hide' : 'Show'} text blahhhh`}
           className={'pipeline-menu-button--labels'}
           dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
           icon={LabelIcon}
