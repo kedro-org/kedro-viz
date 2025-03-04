@@ -66,4 +66,6 @@ coverage.xml
 # Kedro
 *.log
 
+# Python
 .venv/
+mise.toml

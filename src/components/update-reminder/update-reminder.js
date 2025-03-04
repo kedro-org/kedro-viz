@@ -16,10 +16,10 @@ function replaceBackticksWithCodeBlocks(text) {
   return text.replace(regex, '<code>$1</code>');
 }
 
-const UpdateReminder = ({ isOutdated, versions, visibleMetaSidebar }) => {
+const UpdateReminder = ({ isOutdated, version, visibleMetaSidebar }) => {
   const [dismissed, setDismissed] = useState(false);
   const [expand, setExpand] = useState(false);
-  const { latest, installed } = versions;
+  const { latest, installed } = version;
 
   const command = 'pip install -U kedro-viz';
 

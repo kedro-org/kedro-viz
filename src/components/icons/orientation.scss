@@ -1,0 +1,40 @@
+@use '../../styles/variables' as variables;
+
+.icon-orientation {
+  transition: fill 300ms ease, opacity 300ms ease;
+  opacity: 0.7; /* Default opacity */
+}
+
+/* Vertical orientation */
+.icon-orientation.vertical .icon-orientation-arrow__vertical {
+  fill: var(--color-arrow-primary);
+}
+
+.icon-orientation.vertical .icon-orientation-arrow__horizontal {
+  fill: var(--color-arrow-secondary);
+}
+
+/* Horizontal orientation */
+.icon-orientation.horizontal .icon-orientation-arrow__vertical {
+  fill: var(--color-arrow-secondary);
+}
+
+.icon-orientation.horizontal .icon-orientation-arrow__horizontal {
+  fill: var(--color-arrow-primary);
+}
+
+/* Hover state */
+.icon-orientation:hover {
+  opacity: 1; /* Full visibility */
+}
+
+/* Click (active) state */
+.icon-orientation:active {
+  opacity: 0.85; /* Slight dimming to show click feedback */
+}
+
+/* Disabled state */
+.icon-orientation[disabled] {
+  opacity: 0.2;
+  pointer-events: none; /* Prevent interaction */
+}

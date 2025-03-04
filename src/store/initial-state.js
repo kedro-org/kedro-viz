@@ -7,7 +7,6 @@ import {
   settings,
   sidebarWidth,
   localStorageName,
-  localStorageRunsMetadata,
   params,
   BANNER_KEYS,
 } from '../config';
@@ -23,6 +22,7 @@ export const createInitialState = () => ({
   textLabels: true,
   theme: 'dark',
   expandAllPipelines: false,
+  orientation: 'vertical',
   isPrettyName: settings.isPrettyName.default,
   showFeatureHints: settings.showFeatureHints.default,
   showDatasetPreviews: settings.showDatasetPreviews.default,
@@ -55,6 +55,7 @@ export const createInitialState = () => ({
     exportBtn: true,
     labelBtn: true,
     layerBtn: true,
+    orientationBtn: true,
     zoomToolbar: true,
     metadataPanel: true,
   },
@@ -62,7 +63,6 @@ export const createInitialState = () => ({
     reFocus: true,
   },
   zoom: {},
-  runsMetadata: {},
 });
 
 export const parseUrlParameters = () => {
@@ -167,19 +167,14 @@ const applyUrlParametersToNonPipelineState = (state, urlParams) => {
  */
 export const mergeLocalStorage = (state) => {
   const localStorageState = loadLocalStorage(localStorageName);
-  const localStorageRunsMetadataState = loadLocalStorage(
-    localStorageRunsMetadata
-  );
+
   Object.keys(localStorageState).forEach((key) => {
     if (!(key in state)) {
       delete localStorageState[key];
     }
   });
-  const allLocalStorageState = {
-    ...localStorageState,
-    ...{ runsMetadata: localStorageRunsMetadataState },
-  };
-  return deepmerge(state, allLocalStorageState);
+
+  return deepmerge(state, localStorageState);
 };
 
 /**

@@ -24,6 +24,19 @@ export function toggleLayers(visible) {
   };
 }
 
+export const TOGGLE_ORIENTATION = 'TOGGLE_ORIENTATION';
+
+/**
+ * Toggle whether to show horizontal or vertical orientation
+ * @param {string} orientation The orientation to set to vertical by default
+ */
+export function toggleOrientation(orientation) {
+  return {
+    type: TOGGLE_ORIENTATION,
+    orientation,
+  };
+}
+
 export const TOGGLE_EXPAND_ALL_PIPELINES = 'TOGGLE_EXPAND_ALL_PIPELINES';
 
 /**
@@ -322,36 +335,6 @@ export function toggleBookmark(bookmark, runId) {
   return {
     type: TOGGLE_BOOKMARK,
     bookmark,
-    runId,
-  };
-}
-
-export const UPDATE_RUN_TITLE = 'UPDATE_RUN_TITLE';
-
-/**
- * Update Run title
- * @param {String} title
- * @param {string} runId
- */
-export function updateRunTitle(title, runId) {
-  return {
-    type: UPDATE_RUN_TITLE,
-    title,
-    runId,
-  };
-}
-
-export const UPDATE_RUN_NOTES = 'UPDATE_RUN_NOTES';
-
-/**
- * Update Run Notes
- * @param {String} notes
- * @param {string} runId
- */
-export function updateRunNotes(notes, runId) {
-  return {
-    type: UPDATE_RUN_NOTES,
-    notes,
     runId,
   };
 }

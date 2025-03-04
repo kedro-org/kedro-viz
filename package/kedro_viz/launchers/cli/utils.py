@@ -72,8 +72,7 @@ def create_shareableviz_process(
 
     except KeyboardInterrupt:  # pragma: no cover
         display_cli_message(
-            "\nCreating your build/deploy Kedro-Viz process "
-            "is interrupted. Exiting...",
+            "\nCreating your build/deploy Kedro-Viz process is interrupted. Exiting...",
             "red",
         )
 
