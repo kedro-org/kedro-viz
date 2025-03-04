@@ -38,7 +38,7 @@ def sample_project_path(tmp_path):
         "from . import test\n"
         "from typing import Dict"
     )
-    (package_dir / ".gitignore").write_text("venv\n" ".venv")
+    (package_dir / ".gitignore").write_text("venv\n.venv")
     return tmp_path
 
 

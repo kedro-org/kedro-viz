@@ -151,7 +151,7 @@ class TestCliDeployViz:
         mock_click_echo_calls = [
             call(
                 "\x1b[31mERROR: Invalid platform specified. Kedro-Viz supports \n"
-                f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}\x1b[0m"
+                f"the following platforms - {(*SHAREABLEVIZ_SUPPORTED_PLATFORMS,)}\x1b[0m"
             )
         ]
 

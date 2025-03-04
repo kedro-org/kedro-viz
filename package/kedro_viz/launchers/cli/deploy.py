@@ -13,7 +13,7 @@ from kedro_viz.launchers.utils import display_cli_message
     "--platform",
     type=str,
     required=True,
-    help=f"Supported Cloud Platforms like {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,} to host Kedro Viz",
+    help=f"Supported Cloud Platforms like {(*SHAREABLEVIZ_SUPPORTED_PLATFORMS,)} to host Kedro Viz",
 )
 @click.option(
     "--endpoint",
@@ -45,7 +45,7 @@ def deploy(platform, endpoint, bucket_name, include_hooks, include_previews):
     if not platform or platform.lower() not in SHAREABLEVIZ_SUPPORTED_PLATFORMS:
         display_cli_message(
             "ERROR: Invalid platform specified. Kedro-Viz supports \n"
-            f"the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}",
+            f"the following platforms - {(*SHAREABLEVIZ_SUPPORTED_PLATFORMS,)}",
             "red",
         )
         return
