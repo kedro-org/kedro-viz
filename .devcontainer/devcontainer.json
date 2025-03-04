@@ -1,11 +1,7 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
 	"name": "Kedro Viz Dev Container",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "18",
@@ -13,15 +9,11 @@
 		}
 	},
 
-	"forwardPorts": [4141, 4142],
+	"forwardPorts": [8000],
 
 	"portsAttributes": {
-		"4142": {
-			"label": "Backend",
-			"onAutoForward": "notify"
-		},
-		"4141": {
-			"label": "Frontend",
+		"8000": {
+			"label": "Static Server",
 			"onAutoForward": "openBrowser"
 		}
 	},
@@ -33,7 +25,6 @@
 		"VIRTUAL_ENV": "/home/vscode/venv"
 	},
 
-	// https://code.visualstudio.com/remote/advancedcontainers/improve-performance#_use-a-targeted-named-volume
 	"mounts": [
 		{"source": "${localWorkspaceFolderBasename}-node_modules", "target": "${containerWorkspaceFolder}/node_modules", "type": "volume"},
 		{"source": "${localWorkspaceFolderBasename}-venv", "target": "${containerWorkspaceFolder}/.venv", "type": "volume"}
@@ -41,10 +32,7 @@
 
 	"onCreateCommand": "./.devcontainer/onCreateCommand.sh",
 
-	"postStartCommand": {
-		"backend": "nohup bash -c 'uv run python package/kedro_viz/server.py demo-project &' > backend.out 2> backend.err < /dev/null",
-		"frontend": "nohup bash -c 'BROWSER=none npm run start:app &' > frontend.out 2> frontend.err < /dev/null"
-	},
+	"postStartCommand": "nohup bash -c 'python -m http.server --directory demo-project/build 8000 &' > server.out 2> server.err < /dev/null",
 
 	"customizations": {
 		"vscode": {
