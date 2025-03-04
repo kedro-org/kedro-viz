@@ -62,7 +62,7 @@ export const FlowchartPrimaryToolbar = ({
           className={'pipeline-menu-button--labels'}
           dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
           icon={LabelIcon}
-          labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+          labelText={`${textLabels ? 'Hide' : 'Show'} text labelssss`}
           onClick={() => onToggleTextLabels(!textLabels)}
           visible={display.labelBtn}
         />
