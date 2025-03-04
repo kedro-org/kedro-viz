@@ -13,7 +13,7 @@
 
 	"portsAttributes": {
 		"8000": {
-			"label": "Static Server",
+			"label": "Kedro Viz",
 			"onAutoForward": "openBrowser"
 		}
 	},
