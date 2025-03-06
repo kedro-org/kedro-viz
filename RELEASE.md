@@ -13,6 +13,8 @@ Please follow the established format:
 - Visualise pipeline objects in notebook. (#2241)
 - Add support for Kedro's DataCatalog 2.0 with lazy loading. (#2272)
 
+- Enable Kedro-Viz in VSCode to list pipelines using the filter icon.  (#2269)
+
 ## Bug fixes and other changes
 
 - Add ESM bundle for Kedro-Viz. (#2268)

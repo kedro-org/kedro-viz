@@ -128,6 +128,17 @@ export function toggleTextLabels(textLabels) {
   };
 }
 
+export const SHOW_PIPELINE_FILTER = 'SHOW_PIPELINE_FILTER';
+
+/**
+ * Toggle to show pipeline filter
+ */
+export function togglePipelineFilter() {
+  return {
+    type: SHOW_PIPELINE_FILTER,
+  };
+}
+
 export const TOGGLE_IS_PRETTY_NAME = 'TOGGLE_IS_PRETTY_NAME';
 
 /**

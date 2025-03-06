@@ -1,0 +1,17 @@
+@use '../../styles/variables' as variables;
+
+.kui-theme--light {
+  --pipeline-toolbar-divider: #{variables.$grey-300};
+}
+
+.kui-theme--dark {
+  --pipeline-toolbar-divider: #{variables.$black-600};
+}
+
+.pipeline-toolbar--divider {
+  border: none;
+  margin: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--pipeline-toolbar-divider);
+}
