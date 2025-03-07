@@ -297,7 +297,7 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ### `NotebookVisualizer`
 
-From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not need a full blown kedro project to visualise your pipelines. This can help during the pipeline exploration journey. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
+From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not need a full blown kedro project to visualise your pipelines which can help your pipeline exploration journey. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
 
 #### Usage
 
@@ -347,7 +347,7 @@ To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro
 ```
 
 ```{note}
-By default, NotebookVisualizer shows all dataset types as `MemoryDataset`. To get a complete Kedro-Viz experience on your notebook, use :ref:``%run_viz` line magic`
+By default, NotebookVisualizer shows all dataset types as `MemoryDataset`. To get a complete Kedro-Viz experience on your notebook, try [line magic](#run_viz-line-magic)
 ``` 
 
 ## As a standalone React component
