@@ -297,7 +297,7 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ### `NotebookVisualizer`
 
-From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. `NotebookVisualizer` does not need a full blown kedro project to visualise your pipelines. This can help during the pipeline exploration journey. `NotebookVisualizer` has been tested across `Jupyter lab`, `Databricks`, `Marimo` and `VS Code`.
+From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not need a full blown kedro project to visualise your pipelines. This can help during the pipeline exploration journey. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
 
 #### Usage
 
@@ -321,7 +321,7 @@ NotebookVisualizer(dummy_pipe).show()
 The example below demonstrates how to instantiate [NotebookVisualizer](https://github.com/kedro-org/kedro-viz/blob/main/package/kedro_viz/integrations/notebook/visualizer.py) using different `options`.
 
 ```ipython
-NotebookVisualizer(pipeline=your_pipeline_instance, catalog=your_data_catalog_instance, options={"display": {
+NotebookVisualizer(pipeline=your_pipeline_instance, catalog=optional_data_catalog_instance, options={"display": {
                 "expandPipelinesBtn": False,
                 "exportBtn": False,
                 "labelBtn": False,
@@ -338,11 +338,16 @@ NotebookVisualizer(pipeline=your_pipeline_instance, catalog=your_data_catalog_in
             "theme": "dark",
             "width": "100%",
             "height": "600px",   
-            }).show()
+            },
+            js_url="optional_url_for_viz_bundle")
+```
+
+```{important}
+To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro.org/en/stable/api/kedro.pipeline.Pipeline.html#kedro-pipeline-pipeline) instance. More information on display options can be found [here](https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md#configure-kedro-viz-with-options)
 ```
 
 ```{note}
-By default, NotebookVisualizer shows all dataset types as `MemoryDataset` and all display options as `False`
+By default, NotebookVisualizer shows all dataset types as `MemoryDataset`.
 ``` 
 
 ## As a standalone React component
