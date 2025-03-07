@@ -295,6 +295,56 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 ![Open your project's Kedro Viz inside a new tab](./images/run_viz_with_args.png)
 ![Kedro Viz inside a new tab](./images/viz_running_in_new_tab.png)
 
+### `NotebookVisualizer`
+
+From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. `NotebookVisualizer` does not need a full blown kedro project to visualise your pipelines. This can help during the pipeline exploration journey. `NotebookVisualizer` has been tested across `Jupyter lab`, `Databricks`, `Marimo` and `VS Code`.
+
+#### Usage
+
+```ipython
+from kedro.pipeline import pipeline, node
+
+def dummy(ds1):
+   return ds1
+    
+n0 = node(dummy, 'flights', 'processed_flights')
+dummy_pipe = pipeline([n0])
+
+from kedro_viz.integrations.notebook import NotebookVisualizer
+NotebookVisualizer(dummy_pipe).show()
+```
+
+![Notebook Visualizer Usage](./images/notebook_visualizer.png)
+
+#### Visualisation options
+
+The example below demonstrates how to instantiate [NotebookVisualizer](https://github.com/kedro-org/kedro-viz/blob/main/package/kedro_viz/integrations/notebook/visualizer.py) using different `options`.
+
+```ipython
+NotebookVisualizer(pipeline=your_pipeline_instance, catalog=your_data_catalog_instance, options={"display": {
+                "expandPipelinesBtn": False,
+                "exportBtn": False,
+                "labelBtn": False,
+                "layerBtn": False,
+                "metadataPanel": False,
+                "miniMap": False,
+                "sidebar": False,
+                "zoomToolbar": False,
+            },
+            "expandAllPipelines": False,
+            "behaviour": { 
+                "reFocus": False,
+            },
+            "theme": "dark",
+            "width": "100%",
+            "height": "600px",   
+            }).show()
+```
+
+```{note}
+By default, NotebookVisualizer shows all dataset types as `MemoryDataset` and all display options as `False`
+``` 
+
 ## As a standalone React component
 
 To use Kedro-Viz as a standalone React component (for embedding Kedro-Viz in your web application), you can follow the example below:
