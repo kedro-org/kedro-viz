@@ -308,10 +308,13 @@ If the lower-bound e2e test fails, it indicates that some dependencies may not w
 
 ### Testing UI using Gitpod
 
-1. Open a GitHub Codespace
+1. Open a GitHub Codespaces
   - Navigate to your branch and click on the Code button.
   - Select the Codespaces tab.
   - Create a new Codespace or open an existing one.
+
+<img width="1443" alt="Screenshot 2025-03-07 at 09 57 50" src="https://github.com/user-attachments/assets/bceb9e42-902f-4f32-a96b-8f618ab0ddf2" />
+
 
 2. Codespace Initialization
   - If this is your first time opening the Codespace, it will start rebuilding your development container.
@@ -322,15 +325,23 @@ If the lower-bound e2e test fails, it indicates that some dependencies may not w
   - Ensure you are on the correct branch by checking the branch name at the bottom left.
   - Click on Pull to fetch the latest changes.
 
+<img width="981" alt="Screenshot 2025-03-07 at 10 00 33" src="https://github.com/user-attachments/assets/a2fe63e7-9494-446a-a2f1-deae3815a50a" />
+
+
 4. Rebuilding the Dev Container
   - Press `Ctrl + Shift + P` to open the Command Palette.
   - Type `Rebuild Container` and select the option.
   Note - A full rebuild is generally not needed unless something is not working as expected.
 
+<img width="1397" alt="Screenshot 2025-03-07 at 10 01 34" src="https://github.com/user-attachments/assets/6d54d46d-5f21-4a32-b1f1-0d19455d1630" />
+
 5. Verifying Ports
   - Once the rebuild is complete, your port will show a (1) indicator.
   - Navigate to the Ports tab.
   - Click on the relevant port to access the running UI.
+
+<img width="855" alt="Screenshot 2025-03-07 at 10 03 44" src="https://github.com/user-attachments/assets/6459c095-49a5-45b3-b25c-479b201598a8" />
+
 
 Your UI should now be running in GitHub Codespaces, ready for testing!
 
