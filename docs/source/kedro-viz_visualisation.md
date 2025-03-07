@@ -347,7 +347,7 @@ To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro
 ```
 
 ```{note}
-By default, NotebookVisualizer shows all dataset types as `MemoryDataset`.
+By default, NotebookVisualizer shows all dataset types as `MemoryDataset`. To get a complete Kedro-Viz experience on your notebook, use :ref:``%run_viz` line magic`
 ``` 
 
 ## As a standalone React component
