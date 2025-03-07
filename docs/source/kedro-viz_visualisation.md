@@ -343,7 +343,7 @@ NotebookVisualizer(pipeline=your_pipeline_instance, catalog=optional_data_catalo
 ```
 
 ```{important}
-To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro.org/en/stable/api/kedro.pipeline.Pipeline.html#kedro-pipeline-pipeline) instance. More information on display options can be found [here](https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md#configure-kedro-viz-with-options)
+To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro.org/en/stable/api/kedro.pipeline.Pipeline.html#kedro-pipeline-pipeline) instance. For more information on display options, see [here](https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md).
 ```
 
 ```{note}
