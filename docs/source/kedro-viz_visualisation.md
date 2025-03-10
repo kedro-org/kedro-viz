@@ -297,7 +297,7 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ### `NotebookVisualizer`
 
-From Kedro-Viz 11.0.0, you can visualise Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not need a full blown kedro project to visualise your pipelines which can help your pipeline exploration journey. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
+From Kedro-Viz 11.0.0, you can visualize Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not require a full Kedro project to visualize your pipelines, making it useful for pipeline exploration. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
 
 #### Usage
 
@@ -321,25 +321,30 @@ NotebookVisualizer(dummy_pipe).show()
 The example below demonstrates how to instantiate [NotebookVisualizer](https://github.com/kedro-org/kedro-viz/blob/main/package/kedro_viz/integrations/notebook/visualizer.py) using different `options`.
 
 ```ipython
-NotebookVisualizer(pipeline=your_pipeline_instance, catalog=optional_data_catalog_instance, options={"display": {
-                "expandPipelinesBtn": False,
-                "exportBtn": False,
-                "labelBtn": False,
-                "layerBtn": False,
-                "metadataPanel": False,
-                "miniMap": False,
-                "sidebar": False,
-                "zoomToolbar": False,
-            },
-            "expandAllPipelines": False,
-            "behaviour": { 
-                "reFocus": False,
-            },
-            "theme": "dark",
-            "width": "100%",
-            "height": "600px",   
-            },
-            js_url="optional_url_for_viz_bundle")
+NotebookVisualizer(
+    pipeline=your_pipeline_instance, 
+    catalog=optional_data_catalog_instance, 
+    options={
+        "display": {
+            "expandPipelinesBtn": False,
+            "exportBtn": False,
+            "labelBtn": False,
+            "layerBtn": False,
+            "metadataPanel": False,
+            "miniMap": False,
+            "sidebar": False,
+            "zoomToolbar": False,
+        },
+        "expandAllPipelines": False,
+        "behaviour": { 
+            "reFocus": False,
+        },
+        "theme": "dark",
+        "width": "100%",
+        "height": "600px",   
+    },
+    js_url="optional_url_for_viz_bundle"
+)
 ```
 
 ```{important}

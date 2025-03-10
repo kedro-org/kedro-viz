@@ -7,6 +7,3 @@ kedro_init_version = "0.19.0"
 addopts = """
 --cov-report term-missing \
 --cov src/demo_project -ra"""
-
-[tool.kedro_telemetry]
-project_id = "7534922e42844faebbb810ac91405089"
