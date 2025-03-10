@@ -23,6 +23,7 @@ export const updateContent = {
       copy: 'Explore your Kedro pipelines visualisation directly in Jupyter notebooks.',
       buttonLink:
         'https://github.com/kedro-org/kedro-viz/blob/main/docs/source/kedro-viz_visualisation.md#running-kedro-viz-in-a-notebook',
+      buttonText: 'View the docs',
     },
     {
       title: 'Filter pipelines with Kedro-Viz in VSCode',
