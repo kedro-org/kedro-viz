@@ -5,7 +5,7 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Upcoming Release
+# Release 11.0.0 
 
 ## Community contributions
 
@@ -23,6 +23,7 @@ Please follow the established format:
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
 - Ignore parsing hidden files on `kedro viz --lite`. (#2271)
 - Make Kedro-Viz compatible with the new `KedroDataCatalog`. (#2274)
+- Add Dev Containers to QA Kedro-Viz on Github Codespaces. (#2292)
 
 # Release 10.2.0
 

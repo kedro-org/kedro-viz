@@ -307,21 +307,43 @@ Python dependencies in Kedro-Viz are usually updated automatically through tools
 If the lower-bound e2e test fails, it indicates that some dependencies may not work correctly with Kedro-Viz. To resolve this, update the problematic dependency in both `requirements.txt` and `lower-requirements.txt`.
 
 ### Testing UI using Gitpod
-**Please ensure you have installed Gitpod on your browser extensions - [Gitpod browser extension](https://www.gitpod.io/docs/configure/user-settings/browser-extension)**
 
-**1. Once you open a pull request, click on the `Open` icon on the right**
-<img width="1510" alt="Screenshot 2024-04-17 at 15 54 36" src="https://github.com/kedro-org/kedro-viz/assets/32060364/4295e00f-f80d-46e5-bb19-336e393f00a5">
+1. Open a GitHub Codespaces
+  - Navigate to your branch and click on the Code button.
+  - Select the Codespaces tab.
+  - Create a new Codespace or open an existing one.
+
+<img width="1443" alt="Screenshot 2025-03-07 at 09 57 50" src="https://github.com/user-attachments/assets/bceb9e42-902f-4f32-a96b-8f618ab0ddf2" />
 
 
-**2. It will open the gitpod workspace automatically**
-<img width="1792" alt="Screenshot 2024-04-17 at 15 57 41" src="https://github.com/kedro-org/kedro-viz/assets/32060364/9aea0174-858a-4ebc-9c62-ee90b28c921f">
+2. Codespace Initialization
+  - If this is your first time opening the Codespace, it will start rebuilding your development container.
+  - If you have used it before, the dev container setup will already be available.
 
-**3. Please wait until the frontend and backend builds are successful. You can check it by clicking on `frontend` and `backend` tabs in the terminal. (Estimated build time : 5 minutes)**
-<img width="1455" alt="Screenshot 2024-04-17 at 15 59 46" src="https://github.com/kedro-org/kedro-viz/assets/32060364/ae080672-4a48-4178-b83e-70274071497f">
-<img width="1456" alt="Screenshot 2024-04-17 at 16 04 38" src="https://github.com/kedro-org/kedro-viz/assets/32060364/af60ea0a-6148-4354-938e-3a0ef7b9e711">
+3. Ensure You Are on the Latest Commit and Branch
+  - Open Source Control from the left sidebar.
+  - Ensure you are on the correct branch by checking the branch name at the bottom left.
+  - Click on Pull to fetch the latest changes.
 
-**4. Unblock pop-up ads and refresh your browser. Kedro-Viz should be running on your gitpod workspace**
-<img width="1432" alt="Screenshot 2024-04-17 at 16 06 05" src="https://github.com/kedro-org/kedro-viz/assets/32060364/53dd56c2-df5e-49a6-ba06-9846af7bab52">
+<img width="981" alt="Screenshot 2025-03-07 at 10 00 33" src="https://github.com/user-attachments/assets/a2fe63e7-9494-446a-a2f1-deae3815a50a" />
+
+
+4. Rebuilding the Dev Container
+  - Press `Ctrl + Shift + P` to open the Command Palette.
+  - Type `Rebuild Container` and select the option.
+  Note - A full rebuild is generally not needed unless something is not working as expected.
+
+<img width="1397" alt="Screenshot 2025-03-07 at 10 01 34" src="https://github.com/user-attachments/assets/6d54d46d-5f21-4a32-b1f1-0d19455d1630" />
+
+5. Verifying Ports
+  - Once the rebuild is complete, your port will show a (1) indicator.
+  - Navigate to the Ports tab.
+  - Click on the relevant port to access the running UI.
+
+<img width="855" alt="Screenshot 2025-03-07 at 10 03 44" src="https://github.com/user-attachments/assets/6459c095-49a5-45b3-b25c-479b201598a8" />
+
+
+Your UI should now be running in GitHub Codespaces, ready for testing!
 
 # Release guidelines
 
