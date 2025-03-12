@@ -1,5 +1,5 @@
 export const updateContent = {
-  date: 'XX March 2025',
+  date: '12 March 2025',
   features: [
     {
       title: 'Remove experiment tracking',
