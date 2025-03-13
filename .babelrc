@@ -19,6 +19,10 @@
         ["babel-plugin-transform-remove-imports", { "test": "\\.(scss)$" }]
       ],
       "presets": ["@babel/preset-env", "@babel/preset-react"]
+    },
+    "test": {
+      "plugins": ["babel-plugin-transform-import-meta"]
     }
+
   }
 }

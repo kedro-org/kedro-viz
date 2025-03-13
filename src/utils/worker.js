@@ -9,55 +9,53 @@
 // Check for test environment
 const isTest = typeof jest !== 'undefined';
 
-// Conditionally load task via web worker only in non-test env
-const graphWorker = isTest
-  ? require('./graph')
-  : require('workerize-loader?inline!./graph');
+const createWorker = () => {
+  return new Worker(new URL('./graph-worker.js', import.meta.url), { type: 'module' });
+};
 
 /**
- * Emulate a web worker for testing purposes
+ * Emulate a worker for tests
  */
-const createMockWorker = (worker) => {
+const createMockWorker = worker => {
   if (!isTest) {
     return worker;
   }
   return () => {
     const mockWorker = {
-      terminate: () => {},
+      terminate: () => {}
     };
-    Object.keys(worker).forEach((name) => {
-      mockWorker[name] = (payload) =>
-        new Promise((resolve) => resolve(worker[name](payload)));
+    Object.keys(worker).forEach(name => {
+      mockWorker[name] = payload =>
+        new Promise(resolve => resolve(worker[name](payload)));
     });
     return mockWorker;
   };
 };
 
-export const graph = createMockWorker(graphWorker);
+// Export the worker
+export const graph = createMockWorker(createWorker);
 
 /**
- * Manage the worker, avoiding race conditions by terminating running
- * processes when a new request is made, and reinitialising the instance.
- * Example getJob: (instance, payload) => instance.job(payload)
- * @param {Function} worker Init worker and return job functions
- * @param {Function} getJob Callback to select correct job function
- * @return {Function} Function which returns a promise
+ * Prevent worker queue conflicts by ensuring only one worker runs at a time
  */
 export function preventWorkerQueues(worker, getJob) {
   let instance = worker();
   let running = false;
 
-  return (payload) => {
+  return async (payload) => {
     if (running) {
-      // If worker is already processing a job, cancel it and restart
-      instance.terminate();
-      instance = worker();
+      instance.terminate(); // Kill the previous worker
+      instance = worker();  // Create a new worker
     }
     running = true;
 
-    return getJob(instance, payload).then((response) => {
-      running = false;
-      return response;
+    return new Promise((resolve) => {
+      instance.onmessage = (event) => {
+        running = false;
+        resolve(event.data);
+      };
+      instance.postMessage(payload);
     });
   };
 }
+

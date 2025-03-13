@@ -13,12 +13,12 @@
   },
   "proxy": "http://localhost:4142/",
   "scripts": {
-    "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build && cp ./build/index.html ./build/404.html",
+    "build": "cross-env GENERATE_SOURCEMAP=false vite build && cp ./dist/index.html ./dist/404.html",
     "build:esm": "rm -rf esm && webpack --config webpack.config.js",
-    "postbuild": "rm -rf build/api",
+    "postbuild": "rm -rf dist/api",
     "start": "REACT_APP_DATA_SOURCE=$DATA NODE_OPTIONS=\"--dns-result-order=ipv4first\" npm-run-all -p start:app start:lib",
     "start:dev": "rm -rf node_modules/.cache && npm start",
-    "start:app": "PORT=4141 react-scripts start",
+    "start:app": "PORT=4141 vite",
     "start:lib": "rm -rf lib && babel src --out-dir lib --copy-files --watch",
     "lib": "npm-run-all -s lib:clean lib:copy lib:webpack lib:babel lib:prune",
     "lib:clean": "rm -rf lib",
@@ -34,14 +34,14 @@
     "lint:js": "eslint src/ --fix",
     "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "prepublishOnly": "npm-run-all -s test:ci lint build lib",
-    "test": "react-scripts test --env=jsdom",
-    "test:coverage": "npm test -- --coverage --watchAll=false",
-    "test:ci": "npm test -- --watchAll=false --maxWorkers=2",
-    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
+    "test": "jest --maxWorkers=1 --verbose=false --noStackTrace",
+    "test:coverage": "jest --coverage --watchAll=false",
+    "test:ci": "jest --watchAll=false --maxWorkers=2",
+    "test:debug": "jest --inspect-brk --runInBand --no-cache",
     "cy:dev": "cypress open",
     "cy:test": "./cypress/support/cy.start.sh local",
     "cy:ci": "./cypress/support/cy.start.sh ci",
-    "eject": "react-scripts eject",
+    "eject": "echo 'Eject is not needed with Vite' && exit 1",
     "snyk-protect": "snyk protect",
     "snyk-test": "snyk test -prune-repeated-subdependencies"
   },
@@ -54,6 +54,7 @@
     "@mui/material": "^5.11.10",
     "@mui/system": "^5.14.18",
     "@mui/x-tree-view": "^6.17.0",
+    "@vitejs/plugin-react-swc": "^3.8.0",
     "batching-toposort": "^1.2.0",
     "classnames": "^2.3.1",
     "d3": "^7.6.1",
@@ -92,6 +93,9 @@
     "sinon": "^12.0.1",
     "svg-crowbar": "^0.6.5",
     "uuid": "^9.0.0",
+    "vite": "^6.2.1",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "what-input": "^5.2.10"
   },
   "overrides": {
@@ -109,12 +113,17 @@
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-runtime": "^7.26.9",
+    "@babel/preset-env": "^7.14.6",
+    "@babel/preset-react": "^7.14.6",
     "@cfaester/enzyme-adapter-react-18": "^0.7.1",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
-    "babel-plugin-transform-remove-imports": "^1.7.0",
+    "babel-jest": "^29.6.3",
+    "babel-plugin-transform-import-meta": "^2.3.2",
     "canvas": "^2.7.0",
     "cross-env": "7.0.3",
     "css-loader": "^6.4.0",
@@ -123,15 +132,17 @@
     "eslint-plugin-cypress": "^2.13.3",
     "graphqlviz": "^4.0.1",
     "husky": "^4.3.8",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.6.3",
+    "jest-environment-jsdom": "^29.6.3",
+    "jest-fetch-mock": "^3.0.3",
     "lint-staged": "^10.5.4",
-    "mini-css-extract-plugin": "^1.6.2",
     "npm-run-all": "^4.1.5",
     "postcss-loader": "^8.1.1",
     "prettier": "^2.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-overlay": "^6.0.9",
-    "react-scripts": "^5.0.1",
     "sass": "^1.54.4",
     "sass-loader": "^14.1.1",
     "snyk": "^1.639.0",
@@ -140,9 +151,7 @@
     "stylelint-config-standard": "^34.0.0",
     "stylelint-config-standard-scss": "^10.0.0",
     "stylelint-order": "^6.0.3",
-    "stylelint-prettier": "^1.2.0",
-    "webpack-cli": "^4.7.2",
-    "workerize-loader": "^2.0.2"
+    "stylelint-prettier": "^1.2.0"
   },
   "husky": {
     "hooks": {
@@ -159,11 +168,6 @@
     ],
     "src/**/*.{js,jsx,ts,tsx}": [
       "eslint src/ --fix"
-    ]
-  },
-  "jest": {
-    "transformIgnorePatterns": [
-      "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
     ]
   },
   "browserslist": [
