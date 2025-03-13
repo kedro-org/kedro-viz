@@ -15,15 +15,15 @@ jobs:
 
         # below condition checks if the operating system is Ubuntu, or 
         # if the operating system is Windows and the branch is main/demo
-        if: >
-          inputs.os == 'ubuntu-latest' || 
-          (
-            (
-              github.ref == 'refs/heads/main' || 
-              github.ref == 'refs/heads/demo'
-            ) && 
-            inputs.os == 'windows-latest'
-          )
+        # if: >
+        #   inputs.os == 'ubuntu-latest' || 
+        #   (
+        #     (
+        #       github.ref == 'refs/heads/main' || 
+        #       github.ref == 'refs/heads/demo'
+        #     ) && 
+        #     inputs.os == 'windows-latest'
+        #   )
           
         steps:
         - name: Checkout code
