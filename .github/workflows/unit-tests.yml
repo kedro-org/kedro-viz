@@ -1,5 +1,5 @@
 name: Run unit-tests on Kedro-Viz
-# Runs unit tests on Kedro-Viz only on Windows and skips Python 3.9.
+# Runs unit tests only on Windows with Python 3.9.
 
 on:
   workflow_call:
@@ -13,12 +13,10 @@ jobs:
   unit_tests:
     runs-on: ${{ inputs.os }}
 
-    # Run only on Windows (skip Ubuntu) & skip Python 3.9 on Windows
+    # Run only on Windows with Python 3.9
     if: >
-      (
-        inputs.os == 'windows-latest' &&
-        inputs.python-version != '3.9'
-      )
+      inputs.os == 'windows-latest' &&
+      inputs.python-version == '3.9'
 
     steps:
       - name: Checkout code
