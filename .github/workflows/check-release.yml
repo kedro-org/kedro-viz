@@ -1,4 +1,4 @@
-name: Check version and prepare release
+name: Check version and prepare releases
 
 on:
   push:
