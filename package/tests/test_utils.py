@@ -1,4 +1,7 @@
-from kedro_viz.utils import merge_dicts
+import time
+from unittest.mock import patch
+
+from kedro_viz.utils import Spinner, merge_dicts
 
 
 class TestUtils:
@@ -40,3 +43,42 @@ class TestUtils:
 
         result = merge_dicts(dict_two, dict_one)
         assert result == expected
+
+    def test_spinner_initialization(self):
+        """Test that Spinner initializes with default values."""
+        spinner = Spinner()
+        assert spinner.message == "Processing"
+        assert not spinner.stop_running
+
+    def test_spinner_start_and_stop(self):
+        """Test that the spinner starts and stops without errors."""
+        spinner = Spinner("Testing")
+
+        with patch("sys.stdout.write"):
+            spinner.start()
+            time.sleep(0.3)
+            spinner.stop()
+
+        assert spinner.stop_running is True
+        assert not spinner._spinner_thread.is_alive()  # Ensure the thread stops
+
+    def test_spinner_output(self):
+        """Test that Spinner writes output while running."""
+        spinner = Spinner("Loading")
+
+        with patch("sys.stdout.write") as mock_write:
+            spinner.start()
+            time.sleep(0.2)
+            spinner.stop()
+
+        assert mock_write.call_count > 0
+
+    def test_spinner_thread_cleanup(self):
+        """Ensure that after stopping, the thread is properly cleaned up."""
+        spinner = Spinner()
+        spinner.start()
+        time.sleep(0.2)
+        spinner.stop()
+
+        assert spinner._spinner_thread is not None
+        assert not spinner._spinner_thread.is_alive()

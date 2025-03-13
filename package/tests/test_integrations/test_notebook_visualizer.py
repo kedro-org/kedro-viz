@@ -1,6 +1,7 @@
 import json
 from unittest.mock import patch
 
+import pytest
 from IPython.display import HTML
 
 from kedro_viz.integrations.notebook.data_loader import (
@@ -12,6 +13,13 @@ from kedro_viz.integrations.notebook.visualizer import (
     DEFAULT_VIZ_OPTIONS,
     NotebookVisualizer,
 )
+
+
+@pytest.fixture
+def mock_spinner():
+    with patch("kedro_viz.integrations.notebook.visualizer.Spinner") as mock:
+        mock.return_value.__enter__.return_value = mock
+        yield mock
 
 
 class TestNotebookVisualizer:
@@ -58,7 +66,7 @@ class TestNotebookVisualizer:
         iframed_html = NotebookVisualizer._wrap_in_iframe(mock_html_content)
         assert """<iframe""" in iframed_html
 
-    def test_show(self, example_pipelines, mocker):
+    def test_show(self, example_pipelines, mocker, mock_spinner):
         visualizer = NotebookVisualizer(
             pipeline=example_pipelines, options={"theme": "light"}
         )
@@ -84,7 +92,7 @@ class TestNotebookVisualizer:
         )
         assert mock_display.called
 
-    def test_show_exception_handling(self, example_pipelines):
+    def test_show_exception_handling(self, example_pipelines, mock_spinner):
         visualizer = NotebookVisualizer(pipeline=example_pipelines)
 
         with patch.object(
