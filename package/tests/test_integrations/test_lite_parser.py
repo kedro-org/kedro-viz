@@ -7,6 +7,13 @@ from kedro_viz.integrations.kedro.lite_parser import LiteParser
 
 
 @pytest.fixture
+def mock_spinner():
+    with patch("kedro_viz.integrations.kedro.lite_parser.Spinner") as mock:
+        mock.return_value.__enter__.return_value = mock
+        yield mock
+
+
+@pytest.fixture
 def sample_project_path(tmp_path):
     # Create a sample directory structure
     package_dir = tmp_path / "mock_spaceflights"
@@ -186,23 +193,27 @@ class TestLiteParser:
         assert "pyspark.pandas" in mocked_modules
         assert isinstance(mocked_modules["sklearn"], MagicMock)
 
-    def test_parse_non_existent_path(self, lite_parser):
+    def test_parse_non_existent_path(self, lite_parser, mock_spinner):
         assert not lite_parser.parse(Path("non/existent/path"))
         assert not lite_parser.parse(Path("non/existent/path/file.py"))
 
-    def test_parse_hidden_file_path(self, lite_parser, sample_project_path):
+    def test_parse_hidden_file_path(
+        self, lite_parser, sample_project_path, mock_spinner
+    ):
         file_path = Path(sample_project_path / "mock_spaceflights/.test_hidden.py")
 
         unresolved_imports = lite_parser.parse(file_path)
         assert unresolved_imports == {}
 
-    def test_file_parse(self, lite_parser, sample_project_path):
+    def test_file_parse(self, lite_parser, sample_project_path, mock_spinner):
         file_path = Path(sample_project_path / "mock_spaceflights/data_processing.py")
         unresolved_imports = lite_parser.parse(file_path)
 
         assert unresolved_imports == {str(file_path): {"nonexistentmodule"}}
 
-    def test_parse_logs_error_on_exception(self, lite_parser, tmp_path, caplog):
+    def test_parse_logs_error_on_exception(
+        self, lite_parser, tmp_path, caplog, mock_spinner
+    ):
         file_path = Path(tmp_path / "mock_spaceflights/data_processing_non_utf.py")
         file_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -221,7 +232,7 @@ class TestLiteParser:
             in caplog.text
         )
 
-    def test_directory_parse(self, lite_parser, sample_project_path):
+    def test_directory_parse(self, lite_parser, sample_project_path, mock_spinner):
         unresolved_imports = lite_parser.parse(
             sample_project_path / "mock_spaceflights"
         )
@@ -230,7 +241,7 @@ class TestLiteParser:
         )
         assert unresolved_imports == {str(expected_file_path): {"nonexistentmodule"}}
 
-    def test_directory_parse_non_package_path(self, sample_project_path):
+    def test_directory_parse_non_package_path(self, sample_project_path, mock_spinner):
         lite_parser_obj = LiteParser("mock_pyspark")
         unresolvable_imports = lite_parser_obj.parse(sample_project_path)
 
