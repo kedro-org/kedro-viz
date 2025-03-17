@@ -156,40 +156,6 @@ describe('Flowchart DAG', () => {
     cy.get('.pipeline-plotly-chart.pipeline-plotly__modal').should('exist');
   });
 
-  it('verifies that users can open the metadata panel showing tracking data from last run. #TC-31', () => {
-    const nodeToClickText = 'R2 Score';
-
-    // Assert before action
-    cy.get('.pipeline-metadata--visible').should('not.exist');
-
-    // Action
-    cy.contains('text', nodeToClickText).click({ force: true });
-
-    // Assert after action
-    cy.get('.pipeline-metadata--visible').should('exist');
-    cy.contains('.pipeline-metadata__title', nodeToClickText);
-    cy.get(
-      '[data-label="Tracking data from last run:"] > .pipeline-json__object'
-    ).should('exist');
-  });
-
-  it('verifies that users can navigate to experiment tracking by clicking on Open in Experiment Tracking button on the metadata panel. #TC-32', () => {
-    const nodeToClickText = 'R2 Score';
-
-    // Assert before action
-    cy.location('pathname').should('not.eq', '/experiment-tracking');
-    cy.location('search').should('not.eq', '?view=Metrics');
-
-    // Action
-    cy.contains('text', nodeToClickText).click({ force: true });
-    cy.get('.pipeline-metadata__link').click();
-
-    // Assert after action
-    cy.location('pathname').should('eq', '/experiment-tracking');
-    cy.location('search').should('eq', '?view=Metrics');
-    cy.get('.details-mainframe').should('exist');
-    cy.get('.details__tabs').should('exist');
-  });
 
   it('verifies that users see an error message when there are no nodes/pipelines. #TC-33', () => {
     // Intercept the network request to mock with a fixture

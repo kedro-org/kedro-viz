@@ -1,4 +1,5 @@
 import { TOGGLE_NODE_CLICKED } from '../actions/nodes';
+import { SHOW_PIPELINE_FILTER } from '../actions';
 
 /**
  * Middleware to handle custom callback actions in the Redux store.
@@ -31,6 +32,12 @@ const createCallbackMiddleware =
             callback(nodeClickAction);
           }
         }
+        break;
+      case SHOW_PIPELINE_FILTER:
+        const showPipelineFilterAction = {
+          type: SHOW_PIPELINE_FILTER,
+        };
+        callback(showPipelineFilterAction);
         break;
       /** 
       * Add additional cases here to handle other action types.

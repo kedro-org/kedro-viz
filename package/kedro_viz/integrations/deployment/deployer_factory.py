@@ -25,5 +25,5 @@ class DeployerFactory:
             return LocalDeployer()
         raise ValueError(
             f"Invalid platform '{platform}' specified. \n"
-            f"Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}"
+            f"Kedro-Viz supports the following platforms - {(*SHAREABLEVIZ_SUPPORTED_PLATFORMS,)}"
         )

@@ -6,10 +6,9 @@ import {
   toggleShareableUrlModal,
   toggleTheme,
 } from '../../actions';
-import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { isRunningLocally } from '../../utils';
 
 import DownloadIcon from '../icons/download';
-import ExperimentsIcon from '../icons/experiments';
 import IconButton from '../ui/icon-button';
 import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
@@ -41,7 +40,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: sanitizedPathname() }}>
+          <NavLink exact to="/">
             <IconButton
               ariaLabel={'View your pipeline'}
               dataTest={'global-toolbar-flowchart-btn'}
@@ -53,24 +52,6 @@ export const GlobalToolbar = ({
               labelText="Flowchart"
             />
           </NavLink>
-          {isRunningLocally() ? (
-            <NavLink
-              exact
-              id="experiment-tracking-nav-button"
-              to={{ pathname: `${sanitizedPathname()}experiment-tracking` }}
-            >
-              <IconButton
-                ariaLabel={'View your experiments'}
-                className={
-                  'pipeline-menu-button--large pipeline-menu-button--link'
-                }
-                dataTest={'global-toolbar-experiments-btn'}
-                disabled={false}
-                icon={ExperimentsIcon}
-                labelText="Experiment tracking"
-              />
-            </NavLink>
-          ) : null}
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
           <IconButton

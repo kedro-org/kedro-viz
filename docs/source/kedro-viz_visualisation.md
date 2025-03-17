@@ -89,7 +89,6 @@ Some of the known limitations while using `--lite` flag:
 
 * If the datasets are not resolved, they will be defaulted to a custom dataset `UnavailableDataset`. 
 * The flowchart will not show the layers information for the datasets.
-* Experiment Tracking will not work if the pre-requisite of having kedro-datasets version 2.1.0 and above is not met.
 
 ## Automatic visualisation updates
 
@@ -295,6 +294,66 @@ For example, to launch Kedro Viz on a specific host and port with autoreload ena
 
 ![Open your project's Kedro Viz inside a new tab](./images/run_viz_with_args.png)
 ![Kedro Viz inside a new tab](./images/viz_running_in_new_tab.png)
+
+### `NotebookVisualizer`
+
+From Kedro-Viz 11.0.0, you can visualize Kedro pipelines using `NotebookVisualizer` instance. NotebookVisualizer does not require a full Kedro project to visualize your pipelines, making it useful for pipeline exploration. NotebookVisualizer has been tested across `JupyterLab`, `Databricks`, `Marimo` and `VS Code`.
+
+#### Usage
+
+```ipython
+from kedro.pipeline import pipeline, node
+
+def dummy(ds1):
+   return ds1
+    
+n0 = node(dummy, 'flights', 'processed_flights')
+dummy_pipe = pipeline([n0])
+
+from kedro_viz.integrations.notebook import NotebookVisualizer
+NotebookVisualizer(dummy_pipe).show()
+```
+
+![Notebook Visualizer Usage](./images/notebook_visualizer.png)
+
+#### Visualisation options
+
+The example below demonstrates how to instantiate [NotebookVisualizer](https://github.com/kedro-org/kedro-viz/blob/main/package/kedro_viz/integrations/notebook/visualizer.py) using different `options`.
+
+```ipython
+NotebookVisualizer(
+    pipeline=your_pipeline_instance, 
+    catalog=optional_data_catalog_instance, 
+    options={
+        "display": {
+            "expandPipelinesBtn": False,
+            "exportBtn": False,
+            "labelBtn": False,
+            "layerBtn": False,
+            "metadataPanel": False,
+            "miniMap": False,
+            "sidebar": False,
+            "zoomToolbar": False,
+        },
+        "expandAllPipelines": False,
+        "behaviour": { 
+            "reFocus": False,
+        },
+        "theme": "dark",
+        "width": "100%",
+        "height": "600px",   
+    },
+    js_url="optional_url_for_viz_bundle"
+)
+```
+
+```{important}
+To instantiate NotebookVisualizer, you only need a [Pipeline](https://docs.kedro.org/en/stable/api/kedro.pipeline.Pipeline.html#kedro-pipeline-pipeline) instance. For more information on display options, see [here](https://github.com/kedro-org/kedro-viz/blob/main/README.npm.md).
+```
+
+```{note}
+By default, NotebookVisualizer shows all dataset types as `MemoryDataset`. To get a complete Kedro-Viz experience on your notebook, try [line magic](#run_viz-line-magic) instead.
+``` 
 
 ## As a standalone React component
 

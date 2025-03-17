@@ -10,6 +10,15 @@ from typing import Any, Union
 import fsspec
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    KedroDataCatalog = None  # type: ignore
+    IS_KEDRODATACATALOG = False
+
 from kedro.io.core import get_filepath_str
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -28,18 +37,28 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_catalog_created(self, catalog: DataCatalog):
+    def after_catalog_created(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
         """Hooks to be invoked after a data catalog is created.
 
         Args:
             catalog: The catalog that was created.
         """
-        # Temporary try/except block so the Kedro develop branch can work with Viz.
+        # Check for KedroDataCatalog first (DataCatalog 2.0)
         try:
-            self.datasets = catalog._datasets
-        except Exception:  # pragma: no cover
-            # Support for Kedro 0.18.x
-            self.datasets = catalog._data_sets  # type: ignore[attr-defined]
+            if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
+                self.datasets = (
+                    catalog.datasets
+                )  # This gives access to both lazy normal datasets
+                logger.debug("Using KedroDataCatalog for dataset statistics collection")
+            # For original DataCatalog
+            elif hasattr(catalog, "_datasets"):
+                self.datasets = catalog._datasets
+            else:
+                # Support for older Kedro versions
+                self.datasets = catalog._data_sets  # type: ignore
+        except Exception as exc:  # pragma: no cover
+            logger.warning("Unable to access datasets in catalog: %s", exc)
+            self.datasets = {}
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):

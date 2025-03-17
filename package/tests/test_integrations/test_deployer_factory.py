@@ -36,7 +36,7 @@ def test_create_deployer_invalid_platform():
         ValueError,
         match=re.escape(
             f"Invalid platform 'invalid_platform' specified. \n"
-            f"Kedro-Viz supports the following platforms - {*SHAREABLEVIZ_SUPPORTED_PLATFORMS,}"
+            f"Kedro-Viz supports the following platforms - {(*SHAREABLEVIZ_SUPPORTED_PLATFORMS,)}"
         ),
     ):
         DeployerFactory.create_deployer("invalid_platform")

@@ -32,49 +32,64 @@ export const layout = ({
   spreadX,
   layerSpaceY,
   iterations,
+  orientation,
 }) => {
+  let coordPrimary = 'x';
+  let coordSecondary = 'y';
+
+  if (orientation === 'horizontal') {
+    coordPrimary = 'y';
+    coordSecondary = 'x';
+  }
   // Set initial positions for nodes
   for (const node of nodes) {
-    node.x = 0;
-    node.y = 0;
+    node[coordPrimary] = 0;
+    node[coordSecondary] = 0;
   }
 
-  // Constants used by constraints
-  const constants = {
+  // layoutConfig used by constraints
+  const layoutConfig = {
+    orientation,
     spaceX,
     spaceY,
     spreadX,
     layerSpace: (spaceY + layerSpaceY) * 0.5,
+    coordPrimary,
+    coordSecondary,
   };
 
   // Constraints to separate nodes into rows and layers
-  const rowConstraints = createRowConstraints(edges);
-  const layerConstraints = createLayerConstraints(nodes, layers);
+  const rowConstraints = createRowConstraints(edges, layoutConfig);
+  const layerConstraints = createLayerConstraints(nodes, layers, layoutConfig);
 
   // Find the node positions given these constraints
-  solveStrict([...rowConstraints, ...layerConstraints], constants, 1);
+  solveStrict([...rowConstraints, ...layerConstraints], layoutConfig, 1);
 
   // Find the solved rows using the node positions after solving
-  const rows = groupByRow(nodes);
+  const rows = groupByRow(nodes, orientation);
 
   // Constraints to avoid edges crossing and maintain parallel vertical edges
-  const crossingConstraints = createCrossingConstraints(edges, constants);
-  const parallelConstraints = createParallelConstraints(edges, constants);
+  const crossingConstraints = createCrossingConstraints(edges, layoutConfig);
+  const parallelConstraints = createParallelConstraints(edges, layoutConfig);
 
   // Solve these constraints iteratively
   for (let i = 0; i < iterations; i += 1) {
-    solveLoose(crossingConstraints, 1, constants);
-    solveLoose(parallelConstraints, 50, constants);
+    solveLoose(crossingConstraints, 1, layoutConfig);
+    solveLoose(parallelConstraints, 50, layoutConfig);
   }
 
   // Constraints to maintain a minimum horizontal node spacing
-  const separationConstraints = createSeparationConstraints(rows, constants);
+  const separationConstraints = createSeparationConstraints(rows, layoutConfig);
 
   // Find the final node positions given these strict constraints
-  solveStrict([...separationConstraints, ...parallelConstraints], constants, 1);
+  solveStrict(
+    [...separationConstraints, ...parallelConstraints],
+    layoutConfig,
+    1
+  );
 
   // Adjust vertical spacing between rows for legibility
-  expandDenseRows(edges, rows, spaceY);
+  expandDenseRows(edges, rows, coordSecondary, spaceY, orientation);
 };
 
 /**
@@ -82,11 +97,13 @@ export const layout = ({
  * @param {Array} edges The input edges
  * @returns {Array} The constraints
  */
-const createRowConstraints = (edges) =>
+const createRowConstraints = (edges, layoutConfig) =>
   edges.map((edge) => ({
     base: rowConstraint,
+    property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
+    separation: layoutConfig.spaceY,
   }));
 
 /**
@@ -95,7 +112,7 @@ const createRowConstraints = (edges) =>
  * @param {Array=} layers The input layers if any
  * @returns {Array} The constraints
  */
-const createLayerConstraints = (nodes, layers) => {
+const createLayerConstraints = (nodes, layers, layoutConfig) => {
   const layerConstraints = [];
 
   // Early out if no layers defined
@@ -120,6 +137,7 @@ const createLayerConstraints = (nodes, layers) => {
     for (const node of layerNodes) {
       layerConstraints.push({
         base: layerConstraint,
+        property: layoutConfig.coordSecondary,
         a: intermediary,
         b: node,
       });
@@ -129,6 +147,7 @@ const createLayerConstraints = (nodes, layers) => {
     for (const node of nextLayerNodes) {
       layerConstraints.push({
         base: layerConstraint,
+        property: layoutConfig.coordSecondary,
         a: node,
         b: intermediary,
       });
@@ -141,12 +160,12 @@ const createLayerConstraints = (nodes, layers) => {
 /**
  * Creates crossing constraints for the given edges.
  * @param {Array} edges The input edges
- * @param {Object} constants The constraint constants
- * @param {Number} constants.spaceX The minimum gap between nodes in X
+ * @param {Object} layoutConfig The constraint layoutConfig
+ * @param {Number} layoutConfig.spaceX The minimum gap between nodes in X
  * @returns {Array} The constraints
  */
-const createCrossingConstraints = (edges, constants) => {
-  const { spaceX } = constants;
+const createCrossingConstraints = (edges, layoutConfig) => {
+  const { spaceX, coordPrimary } = layoutConfig;
   const crossingConstraints = [];
 
   // For every pair of edges
@@ -179,6 +198,7 @@ const createCrossingConstraints = (edges, constants) => {
 
       crossingConstraints.push({
         base: crossingConstraint,
+        property: coordPrimary,
         edgeA: edgeA,
         edgeB: edgeB,
         // The required horizontal spacing between connected nodes
@@ -201,9 +221,10 @@ const createCrossingConstraints = (edges, constants) => {
  * @param {Array} edges The input edges
  * @returns {Object} An object containing the constraints
  */
-const createParallelConstraints = (edges) =>
+const createParallelConstraints = (edges, layoutConfig) =>
   edges.map(({ sourceNode, targetNode }) => ({
     base: parallelConstraint,
+    property: layoutConfig.coordPrimary,
     a: sourceNode,
     b: targetNode,
     // Evenly distribute the constraint
@@ -217,8 +238,8 @@ const createParallelConstraints = (edges) =>
  * @param {Array} rows The rows containing nodes
  * @returns {Array} The constraints
  */
-const createSeparationConstraints = (rows, constants) => {
-  const { spaceX } = constants;
+const createSeparationConstraints = (rows, layoutConfig) => {
+  const { spaceX, coordPrimary, spreadX, orientation } = layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
@@ -226,9 +247,11 @@ const createSeparationConstraints = (rows, constants) => {
     const rowNodes = rows[i];
 
     // Stable sort row nodes horizontally, breaks ties with ids
-    rowNodes.sort((a, b) => compare(a.x, b.x, a.id, b.id));
+    rowNodes.sort((a, b) =>
+      compare(a[coordPrimary], b[coordPrimary], a.id, b.id)
+    );
 
-    // Update constraints given updated row node order
+    // Update constraints given sorted row node order
     for (let j = 0; j < rowNodes.length - 1; j += 1) {
       const nodeA = rowNodes[j];
       const nodeB = rowNodes[j + 1];
@@ -244,14 +267,21 @@ const createSeparationConstraints = (rows, constants) => {
       );
 
       // Allow more spacing for nodes with more edges
-      const spread = Math.min(10, degreeA * degreeB * constants.spreadX);
+      const spread = Math.min(10, degreeA * degreeB * spreadX);
       const space = snap(spread * spaceX, spaceX);
+
+      let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
+
+      if (orientation === 'horizontal') {
+        separation = nodeA.height + nodeB.height;
+      }
 
       separationConstraints.push({
         base: separationConstraint,
+        property: coordPrimary,
         a: nodeA,
         b: nodeB,
-        separation: nodeA.width * 0.5 + space + nodeB.width * 0.5,
+        separation,
       });
     }
   }
@@ -268,22 +298,42 @@ const createSeparationConstraints = (rows, constants) => {
  * @param {Number} [scale=1.25] The amount of expansion to apply relative to row density
  * @param {Number} [unit=0.25] The unit size for rounding expansion relative to spaceY
  */
-const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
-  const densities = rowDensity(edges);
+const expandDenseRows = (
+  edges,
+  rows,
+  coordSecondary,
+  spaceY,
+  orientation,
+  scale = 1.25,
+  unit = 0.25
+) => {
+  const densities = rowDensity(edges, orientation);
   const spaceYUnit = Math.round(spaceY * unit);
-  let currentOffsetY = 0;
+  let currentOffset = 0;
 
   // Add spacing based relative to row density
   for (let i = 0; i < rows.length - 1; i += 1) {
     const density = densities[i] || 0;
 
     // Round offset to a common unit amount to improve vertical rhythm
-    const offsetY = snap(density * scale * spaceY, spaceYUnit);
-    currentOffsetY += offsetY;
+    const offset = snap(density * scale * spaceY, spaceYUnit);
+
+    if (orientation === 'horizontal') {
+      const maxWidthInCurrentRow = Math.max(
+        ...rows[i].map((node) => node.width)
+      );
+      const maxWidthInNextRow = Math.max(
+        ...rows[i + 1].map((node) => node.width)
+      );
+      currentOffset +=
+        offset + maxWidthInCurrentRow * 0.5 + maxWidthInNextRow * 0.5;
+    } else {
+      currentOffset += offset;
+    }
 
     // Apply offset to all nodes following the current node
     for (const node of rows[i + 1]) {
-      node.y += currentOffsetY;
+      node[coordSecondary] += currentOffset;
     }
   }
 };
@@ -297,13 +347,14 @@ const expandDenseRows = (edges, rows, spaceY, scale = 1.25, unit = 0.25) => {
  * @param {Array} edges The input edges
  * @returns {Array} The density of each row
  */
-const rowDensity = (edges) => {
+const rowDensity = (edges, orientation) => {
   const rows = {};
 
   for (const edge of edges) {
     // Find the normalized angle of the edge source and target nodes, relative to the X axis
     const edgeAngle =
-      Math.abs(angle(edge.targetNode, edge.sourceNode) - HALF_PI) / HALF_PI;
+      Math.abs(angle(edge.targetNode, edge.sourceNode, orientation) - HALF_PI) /
+      HALF_PI;
 
     const sourceRow = edge.sourceNode.row;
     const targetRow = edge.targetNode.row - 1;

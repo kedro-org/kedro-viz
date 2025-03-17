@@ -2,9 +2,17 @@
 centralise access to Kedro data catalog."""
 
 import logging
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 
 from kedro.io import DataCatalog
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    IS_KEDRODATACATALOG = False
+
 from packaging.version import parse
 
 from kedro_viz.constants import KEDRO_VERSION
@@ -78,11 +86,14 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
-        # Temporary try/except block so the Kedro develop branch can work with Viz.
-        try:
-            datasets = self._catalog._data_sets
-        except Exception:  # noqa: BLE001 # pragma: no cover
-            datasets = self._catalog._datasets
+        if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+            datasets = self._catalog.list()
+        else:
+            # try/except block so Viz is backwards compatible with older kedro versions.
+            try:
+                datasets = self._catalog._data_sets
+            except Exception:  # noqa: BLE001 # pragma: no cover
+                datasets = self._catalog._datasets
 
         # Support for Kedro 0.18.x
         if KEDRO_VERSION < parse("0.19.0"):  # pragma: no cover
@@ -99,7 +110,11 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
 
         for dataset_name in datasets:
-            dataset = self._catalog._get_dataset(dataset_name)
+            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                dataset = self._catalog.get(dataset_name)
+            else:
+                dataset = self._catalog._get_dataset(dataset_name)
+
             metadata = getattr(dataset, "metadata", None)
             if not metadata:
                 continue
@@ -121,9 +136,9 @@ class CatalogRepository:
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
         dataset_obj: Optional["AbstractDataset"]
         try:
-            # Kedro 0.18.1 introduced the `suggest` argument to disable the expensive
-            # fuzzy-matching process.
-            if KEDRO_VERSION >= parse("0.18.1"):
+            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                dataset_obj = self._catalog.get(dataset_name)
+            elif KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)
             else:  # pragma: no cover
                 dataset_obj = self._catalog._get_dataset(dataset_name)
@@ -134,10 +149,3 @@ class CatalogRepository:
 
     def get_layer_for_dataset(self, dataset_name: str) -> Optional[str]:
         return self.layers_mapping.get(_strip_transcoding(dataset_name))
-
-    def as_dict(self) -> Dict[str, Optional["AbstractDataset"]]:
-        return {
-            dataset_name: self.get_dataset(dataset_name)
-            for dataset_name in self._catalog.list()
-            if self.get_dataset(dataset_name) is not None
-        }

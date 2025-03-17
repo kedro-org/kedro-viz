@@ -2450,7 +2450,7 @@
       "type": "data",
       "modular_pipelines": [],
       "layer": null,
-      "dataset_type": "tracking.metrics_dataset.MetricsDataset"
+      "dataset_type": null
     },
     {
       "id": "d1733133",

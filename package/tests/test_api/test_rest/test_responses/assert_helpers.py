@@ -14,15 +14,15 @@ def assert_modular_pipelines_tree_equal(response: Dict, expected: Dict):
     assert sorted(response.keys()) == sorted(expected.keys())
 
     # then compare the dictionary at each key recursively
-    for key in response:
-        if isinstance(response[key], dict):
-            assert_modular_pipelines_tree_equal(response[key], expected[key])
-        elif _is_dict_list(response[key]):
-            assert_dict_list_equal(response[key], expected[key], sort_keys=("id",))
-        elif isinstance(response[key], list):
-            assert sorted(response[key]) == sorted(expected[key])
+    for key, value in response.items():
+        if isinstance(value, dict):
+            assert_modular_pipelines_tree_equal(value, expected[key])
+        elif _is_dict_list(value):
+            assert_dict_list_equal(value, expected[key], sort_keys=("id",))
+        elif isinstance(value, list):
+            assert sorted(value) == sorted(expected[key])
         else:
-            assert response[key] == expected[key]
+            assert value == expected[key]
 
 
 def assert_nodes_equal(response_nodes, expected_nodes):

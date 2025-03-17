@@ -6,6 +6,14 @@ from typing import Dict, List, Set, Union
 
 from kedro.io import DataCatalog
 
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    KedroDataCatalog = None  # type: ignore
+    IS_KEDRODATACATALOG = False
+
 try:
     # kedro 0.18.11 onwards
     from kedro.io.core import DatasetError
@@ -15,7 +23,6 @@ except ImportError:  # pragma: no cover
 
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
-from sqlalchemy.orm import sessionmaker
 
 from kedro_viz.constants import DEFAULT_REGISTERED_PIPELINE_ID, ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.integrations.utils import UnavailableDataset
@@ -40,9 +47,7 @@ from .repositories import (
     GraphNodesRepository,
     ModularPipelinesRepository,
     RegisteredPipelinesRepository,
-    RunsRepository,
     TagsRepository,
-    TrackingDatasetsRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,6 +57,10 @@ class DataAccessManager:
     """Centralised interface for the rest of the application to interact with data repositories."""
 
     def __init__(self):
+        self._initialize_fields()
+
+    def _initialize_fields(self):
+        """Initialize or reset all instance variables."""
         self.catalog = CatalogRepository()
         self.nodes = GraphNodesRepository()
         self.registered_pipelines = RegisteredPipelinesRepository()
@@ -68,49 +77,19 @@ class DataAccessManager:
         self.node_dependencies: Dict[str, Dict[str, Set]] = defaultdict(
             lambda: defaultdict(set)
         )
-        self.runs = RunsRepository()
-        self.tracking_datasets = TrackingDatasetsRepository()
         self.dataset_stats = {}
 
-    def set_db_session(self, db_session_class: sessionmaker):
-        """Set db session on repositories that need it."""
-        self.runs.set_db_session(db_session_class)
+    def reset_fields(self):
+        """Reset all instance variables."""
+        self._initialize_fields()
 
-    def resolve_dataset_factory_patterns(
-        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
-    ):
-        """Resolve dataset factory patterns in data catalog by matching
-        them against the datasets in the pipelines.
-        """
-        for pipeline in pipelines.values():
-            if hasattr(pipeline, "data_sets"):
-                # Support for Kedro 0.18.x
-                datasets = pipeline.data_sets()
-            else:
-                datasets = pipeline.datasets()
-
-            for dataset_name in datasets:
-                try:
-                    catalog._get_dataset(dataset_name, suggest=False)
-                except Exception:  # noqa: BLE001 # pragma: no cover
-                    continue
-
-    def add_catalog(self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]):
-        """Resolve dataset factory patterns, add the catalog to the CatalogRepository
-        and relevant tracking datasets to TrackingDatasetRepository.
+    def add_catalog(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
+        """Add the catalog to the CatalogRepository
 
         Args:
-            catalog: The DataCatalog instance to add.
-            pipelines: A dictionary which holds project pipelines
+            catalog: The DataCatalog or KedroDataCatalog instance to add.
         """
-
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
-
         self.catalog.set_catalog(catalog)
-
-        for dataset_name, dataset in self.catalog.as_dict().items():
-            if self.tracking_datasets.is_tracking_dataset(dataset):
-                self.tracking_datasets.add_tracking_dataset(dataset_name, dataset)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
         """Extract objects from all registered pipelines from a Kedro project
@@ -323,16 +302,11 @@ class DataAccessManager:
             The GraphNode instance representing the dataset that was added to the NodesRepository.
         """
         try:
-            obj = self.catalog.get_dataset(dataset_name)
+            dataset_obj = self.catalog.get_dataset(dataset_name)
         except DatasetError:
-            # This is to handle dataset factory patterns when running
-            # Kedro Viz in lite mode. The `get_dataset` function
-            # of DataCatalog calls AbstractDataset.from_config
-            # which tries to create a Dataset instance from the pattern
-            obj = UnavailableDataset()
+            dataset_obj = UnavailableDataset()
 
         layer = self.catalog.get_layer_for_dataset(dataset_name)
-        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
         (
             dataset_id,
             modular_pipeline_ids,
@@ -358,13 +332,15 @@ class DataAccessManager:
                     ROOT_MODULAR_PIPELINE_ID
                 }
 
+        graph_node: Union[DataNode, TranscodedDataNode, ParametersNode]
+
         if is_dataset_param(dataset_name):
             graph_node = GraphNode.create_parameters_node(
                 dataset_id=dataset_id,
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
-                parameters=obj,
+                parameters=dataset_obj,
                 modular_pipelines=None,
             )
         else:
@@ -373,7 +349,7 @@ class DataAccessManager:
                 dataset_name=dataset_name,
                 layer=layer,
                 tags=set(),
-                dataset=obj,
+                dataset=dataset_obj,
                 stats=self.get_stats_for_data_node(_strip_transcoding(dataset_name)),
                 modular_pipelines=modular_pipeline_ids,
                 is_free_input=is_free_input,

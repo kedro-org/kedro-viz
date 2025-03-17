@@ -177,6 +177,10 @@ const darkTemplate = {
   },
 };
 
+export const darkModalTemplate = {
+  ...darkTemplate,
+};
+
 export const darkPreviewTemplate = {
   ...darkTemplate,
   height: 300,
@@ -224,44 +228,4 @@ export const darkPreviewTemplate = {
     },
     nticks: 5,
   },
-};
-
-export const darkOneChartTemplate = {
-  ...darkTemplate,
-};
-
-export const darkTwoChartsTemplate = {
-  ...darkTemplate,
-  height: 375,
-  margin: {
-    l: 30,
-    r: 10,
-    t: 10,
-    b: 10,
-  },
-  width: null,
-};
-
-export const darkThreeChartsTemplate = {
-  ...darkTemplate,
-  height: 250,
-  margin: {
-    l: 30,
-    r: 10,
-    t: 10,
-    b: 10,
-  },
-  width: null,
-};
-
-export const darkExpPreviewTemplate = {
-  ...darkPreviewTemplate,
-  height: 188,
-  margin: {
-    l: 30,
-    r: 10,
-    t: 10,
-    b: 10,
-  },
-  width: 250,
 };

@@ -2,18 +2,24 @@
 for Kedro pipeline visualisation."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
-from kedro.framework.session.store import BaseSessionStore
 from kedro.io import DataCatalog
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    KedroDataCatalog = None  # type: ignore
+    IS_KEDRODATACATALOG = False
+
 from kedro.pipeline import Pipeline
 
 from kedro_viz.autoreload_file_filter import AutoreloadFileFilter
 from kedro_viz.constants import DEFAULT_HOST, DEFAULT_PORT
 from kedro_viz.data_access import DataAccessManager, data_access_manager
-from kedro_viz.database import make_db_session_factory
 from kedro_viz.integrations.kedro import data_loader as kedro_data_loader
-from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
 from kedro_viz.launchers.utils import _check_viz_up, _wait_for, display_cli_message
 
 DEV_PORT = 4142
@@ -21,21 +27,15 @@ DEV_PORT = 4142
 
 def populate_data(
     data_access_manager: DataAccessManager,
-    catalog: DataCatalog,
+    catalog: Union[DataCatalog, "KedroDataCatalog"],
     pipelines: Dict[str, Pipeline],
-    session_store: BaseSessionStore,
     stats_dict: Dict,
 ):
     """Populate data repositories. Should be called once on application start
     if creating an api app from project.
     """
 
-    if isinstance(session_store, SQLiteStore):
-        session_store.sync()
-        session_class = make_db_session_factory(session_store.location)
-        data_access_manager.set_db_session(session_class)
-
-    data_access_manager.add_catalog(catalog, pipelines)
+    data_access_manager.add_catalog(catalog)
 
     # add dataset stats before adding pipelines as the data nodes
     # need stats information and they are created during add_pipelines
@@ -56,7 +56,7 @@ def load_and_populate_data(
     """Loads underlying Kedro project data and populates Kedro Viz Repositories"""
 
     # Loads data from underlying Kedro Project
-    catalog, pipelines, session_store, stats_dict = kedro_data_loader.load_data(
+    catalog, pipelines, stats_dict = kedro_data_loader.load_data(
         path, env, include_hooks, package_name, extra_params, is_lite
     )
 
@@ -67,7 +67,7 @@ def load_and_populate_data(
     )
 
     # Creates data repositories which are used by Kedro Viz Backend APIs
-    populate_data(data_access_manager, catalog, pipelines, session_store, stats_dict)
+    populate_data(data_access_manager, catalog, pipelines, stats_dict)
 
 
 def run_server(

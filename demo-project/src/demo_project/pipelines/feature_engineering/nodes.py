@@ -39,7 +39,7 @@ def _create_metric_column(
     conjunction: str,
 ) -> pd.DataFrame:
     """This method will retrieve a numpy function, combine two columns and make
-    a new column. it then retruns a new DataFrame which is the available ID
+    a new column. it then returns a new DataFrame which is the available ID
     columns plus the new column.
 
     Args:

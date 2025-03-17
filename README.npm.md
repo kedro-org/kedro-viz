@@ -27,7 +27,7 @@ Live Demo: <a href="https://demo.kedro.org/" target="_blank">https://demo.kedro.
 
 ## Introduction
 
-Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro). Kedro-Viz also allows users to view and compare different runs in the Kedro project.
+Kedro-Viz is an interactive development tool for building data science pipelines with [Kedro](https://github.com/kedro-org/kedro).
 
 ## Features
 
@@ -39,7 +39,6 @@ Kedro-Viz is an interactive development tool for building data science pipelines
 - 📊 Rich metadata side panel to display parameters, plots, and more.
 - 📊 Supports all types of [Plotly charts](https://plotly.com/javascript/)
 - ♻️ Autoreload on code change
-- 🧪 Supports tracking and comparing runs in a Kedro project
 - 🎩 Many more to come
 
 ## Installation
@@ -163,6 +162,7 @@ The example below demonstrates how to configure your kedro-viz using different `
 | `miniMap`                  | boolean                                                                            | true                                                     | Show/Hide Mini map and mini map button                                                                                                                        |
 | `sidebar`                  | boolean                                                                            | true                                                     | Show/Hide Sidebar and action toolbar                                                                                                                          |
 | `zoomToolbar`              | boolean                                                                            | true                                                     | Show/Hide zoom-in, zoom-out and zoom reset buttons together                                                                                                   |
+| `filterBtn`              | boolean                                                                            | false                                                     | Show/Hide filter button and sidebar toggle icon                                                                                                   |
 | options.expandAllPipelines | boolean                                                                            | false                                                    | Expand/Collapse Modular pipelines on first load                                                                                                               |
 | options.behaviour            |                                                                                    |                                                          |                                                                                                                                                               |
 | `reFocus`       | boolean                                                                            | true                                                     | In the flowchart, enable or disable the node re-focus behavior when clicking on nodes.

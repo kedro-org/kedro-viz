@@ -13,9 +13,16 @@ from unittest.mock import patch
 from kedro import __version__
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
-from kedro.framework.session.store import BaseSessionStore
 from kedro.framework.startup import bootstrap_project
-from kedro.io import DataCatalog
+from kedro.io import DataCatalog  # Old version
+
+try:  # pragma: no cover
+    from kedro.io import KedroDataCatalog
+
+    IS_KEDRODATACATALOG = True
+except ImportError:  # pragma: no cover
+    IS_KEDRODATACATALOG = False
+
 from kedro.pipeline import Pipeline
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
@@ -73,8 +80,7 @@ def _load_data_helper(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
 
     with KedroSession.create(
@@ -88,10 +94,8 @@ def _load_data_helper(
             session._hook_manager = _VizNullPluginManager()  # type: ignore
 
         context = session.load_context()
-        session_store = session._store
 
-        # patch the AbstractDataset class for a custom
-        # implementation to handle kedro.io.core.DatasetError
+        # If user wants lite, we patch AbstractDatasetLite no matter what
         if is_lite:
             # kedro 0.18.12 onwards
             if hasattr(sys.modules["kedro.io.data_catalog"], "AbstractDataset"):
@@ -105,12 +109,15 @@ def _load_data_helper(
         else:
             catalog = context.catalog
 
+        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
+            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
+
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
         # Useful for users who have `get_current_session` in their `register_pipelines()`.
         pipelines_dict = dict(pipelines)
         stats_dict = _get_dataset_stats(project_path)
-    return catalog, pipelines_dict, session_store, stats_dict
+    return catalog, pipelines_dict, stats_dict
 
 
 def load_data(
@@ -120,7 +127,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], BaseSessionStore, Dict]:
+) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.
@@ -134,8 +141,7 @@ def load_data(
             configuration.
         is_lite: A flag to run Kedro-Viz in lite mode.
     Returns:
-        A tuple containing the data catalog, pipeline dictionary, session store
-        and dataset stats dictionary.
+        A tuple containing the data catalog, pipeline dictionary,and dataset stats dictionary.
     """
     if package_name:
         configure_project(package_name)
