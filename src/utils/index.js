@@ -228,12 +228,9 @@ export const isRunningLocally = () => {
  */
 export const sanitizedPathname = () => {
   const { pathname } = window.location;
-  const sanitizedPathname = replaceMatches(pathname, {
-    'experiment-tracking': '',
-  });
-  const pathnameWithTrailingSlash = sanitizedPathname.endsWith('/')
-    ? sanitizedPathname
-    : `${sanitizedPathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+  const pathnameWithTrailingSlash = pathname.endsWith('/')
+    ? pathname
+    : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
 
   return pathnameWithTrailingSlash;
 };
