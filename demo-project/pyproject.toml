@@ -1,3 +1,36 @@
+[project]
+name = "modular-spaceflights"
+version = "0.1.0"
+description = "A modular spaceflights demo project"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "ipython>=8.10",
+  "jupyter~=1.0",
+  "jupyter_client>=5.1,<7.0",
+  "jupyterlab>=3.0",
+  "kedro>=0.19",
+  "kedro-datasets[pandas.CSVDataset,pandas.ExcelDataset,pandas.ParquetDataset,plotly.PlotlyDataset]>=2.1.0",
+  "nbstripout~=0.4",
+  "pytest-cov~=2.5",
+  "pytest-mock>=1.7.1,<2.0",
+  "pytest~=6.2",
+  "scikit-learn~=1.0",
+  "wheel>=0.35,<0.37",
+  "pillow>=9.0",
+  "matplotlib==3.5.0",
+  "pre-commit~=1.17",
+  "ruff==0.7.0",
+  "seaborn>=0.13.0",
+  "notebook",
+  "kedro[jupyter]~=0.19.11"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
 [tool.kedro]
 package_name = "demo_project"
 project_name = "modular-spaceflights"

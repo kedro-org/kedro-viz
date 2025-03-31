@@ -1,6 +1,0 @@
-model_input_table:
-  type: pandas.ParquetDataset
-  filepath: ${_base_location}/05_model_input/model_input_table.pq
-  metadata:
-    kedro-viz:
-      layer: model_input

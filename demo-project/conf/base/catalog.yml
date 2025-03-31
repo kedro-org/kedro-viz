@@ -1,0 +1,147 @@
+companies:
+  type: pandas.CSVDataset
+  filepath: ${_base_location}/01_raw/companies.csv
+  metadata:
+    kedro-viz:
+      layer: raw
+      preview_args:
+        nrows: 5
+
+reviews:
+  type: pandas.CSVDataset
+  filepath: ${_base_location}/01_raw/reviews.csv
+  metadata:
+    kedro-viz:
+      layer: raw
+      preview_args:
+        nrows: 10
+
+
+shuttles:
+  type: pandas.ExcelDataset
+  filepath: ${_base_location}/01_raw/shuttles.xlsx
+  metadata:
+    kedro-viz:
+      layer: raw
+      preview_args:
+        nrows: 15
+
+ingestion.int_typed_companies:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/02_intermediate/typed_companies.pq
+  metadata:
+    kedro-viz:
+      layer: intermediate
+
+ingestion.int_typed_shuttles@pandas1:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/02_intermediate/typed_shuttles.pq
+  metadata:
+    kedro-viz:
+      layer: intermediate
+
+ingestion.int_typed_shuttles@pandas2:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/02_intermediate/typed_shuttles.pq
+  metadata:
+    kedro-viz:
+      layer: intermediate
+
+ingestion.int_typed_reviews:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/02_intermediate/typed_reviews.pq
+  metadata:
+    kedro-viz:
+      layer: intermediate
+
+prm_shuttle_company_reviews:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/03_primary/prm_shuttle_company_reviews.pq
+  metadata:
+    kedro-viz:
+      layer: primary
+
+prm_spine_table:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/03_primary/prm_spine_table.pq
+  metadata:
+    kedro-viz:
+      layer: primary
+
+# Use dataset factories to reduce duplication
+"feature_engineering.feat_{metric_type}_metrics":
+ type: pandas.ParquetDataset
+ filepath: ${_base_location}/04_feature/feat_{metric_type}_metrics.pq
+ layer: feature
+
+feature_importance_output:
+  type: pandas.CSVDataset
+  filepath: ${_base_location}/04_feature/feature_importance_output.csv
+  metadata:
+    kedro-viz:
+      layer: feature
+
+model_input_table:
+  type: pandas.ParquetDataset
+  filepath: ${_base_location}/05_model_input/model_input_table.pq
+  metadata:
+    kedro-viz:
+      layer: model_input
+
+train_evaluation.linear_regression.regressor:
+  type: pickle.PickleDataset
+  filepath: ${_base_location}/06_models/linear_regression.pkl
+  versioned: True
+
+train_evaluation.random_forest.regressor:
+  type: pickle.PickleDataset
+  filepath: ${_base_location}/06_models/random_forest.pkl
+  versioned: True
+
+reporting.cancellation_policy_breakdown:
+  type: plotly.PlotlyDataset # Constructed via plotly_args below
+  filepath: ${_base_location}/08_reporting/cancellation_breakdown.json
+  metadata:
+    kedro-viz:
+      layer: reporting
+  plotly_args:
+    type: bar
+    fig:
+      x: company_location
+      y: price
+      color: cancellation_policy
+      log_y: true
+      labels:
+        price: 'fleet_price'
+
+reporting.price_histogram:
+  type: plotly.JSONDataset # Constructed via Python API
+  filepath: ${_base_location}/08_reporting/price_histogram.json
+  metadata:
+    kedro-viz:
+      layer: reporting
+  versioned: true
+
+reporting.feature_importance:
+  type: plotly.JSONDataset # Constructed via Python API
+  filepath: ${_base_location}/08_reporting/feature_importance_plot.json
+  metadata:
+    kedro-viz:
+      layer: reporting
+  versioned: true
+
+reporting.cancellation_policy_grid:
+  type: demo_project.extras.datasets.image_dataset.ImageDataset
+  filepath: ${_base_location}/08_reporting/cancellation_policy_grid.png
+
+reporting.confusion_matrix:
+  type: matplotlib.MatplotlibWriter
+  filepath: ${_base_location}/08_reporting/confusion_matrix.png
+  versioned: true
+
+reporting.top_shuttle_data:
+  type: json.JSONDataset
+  filepath: ${_base_location}/08_reporting/top_shuttle_data.json
+  metadata:
+    kedro-viz:
+      layer: reporting
