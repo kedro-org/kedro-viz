@@ -1,5 +1,5 @@
 [project]
-name = "modular-spaceflights"
+name = "demo_project"
 version = "0.1.0"
 description = "A modular spaceflights demo project"
 readme = "README.md"
@@ -33,7 +33,7 @@ build-backend = "hatchling.build"
 
 [tool.kedro]
 package_name = "demo_project"
-project_name = "modular-spaceflights"
+project_name = "demo_project"
 kedro_init_version = "0.19.0"
 
 [tool.pytest.ini_options]
