@@ -31,6 +31,7 @@ def create_pipeline() -> Pipeline:
                 func=create_static_features,
                 inputs=["prm_shuttle_company_reviews", "params:feature.static"],
                 outputs="feat_static_features",
+                name="static_features",
             ),
             node(
                 func=create_derived_features,
@@ -40,6 +41,7 @@ def create_pipeline() -> Pipeline:
                     "params:feature.derived",
                 ],
                 outputs="feat_derived_features",
+                name="derived_features",
             ),
             node(
                 func=joiner,
@@ -49,11 +51,13 @@ def create_pipeline() -> Pipeline:
                     "feat_derived_features",
                 ],
                 outputs="model_input_table",
+                name="joiner",
             ),
             node(
                 func=create_feature_importance,
                 inputs="prm_spine_table",
                 outputs="feature_importance_output",
+                name="feature_importance",
             ),
         ],
         inputs=["prm_shuttle_company_reviews", "prm_spine_table"],

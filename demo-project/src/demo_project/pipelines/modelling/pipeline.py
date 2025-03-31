@@ -23,12 +23,14 @@ def new_train_eval_template() -> Pipeline:
                 inputs=["X_train", "y_train", "params:dummy_model_options"],
                 outputs=["regressor", "experiment_params"],
                 tags="train",
+                name="train_model",
             ),
             node(
                 func=evaluate_model,
                 inputs=["regressor", "X_test", "y_test"],
                 outputs="r2_score",
                 tags="evaluate",
+                name="evaluate_model",
             ),
         ]
     )
@@ -74,6 +76,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
                 func=split_data,
                 inputs=["model_input_table", "params:split_options"],
                 outputs=test_train_refs,
+                name="split_data",
             )
         ]
     )
