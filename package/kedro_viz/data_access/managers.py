@@ -87,7 +87,8 @@ class DataAccessManager:
         self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
     ):
         """Resolve dataset factory patterns in data catalog by matching
-        them against the datasets in the pipelines.
+        them against the datasets in the pipelines. This is also required
+        to populate layers information for dataset factories.
         """
         for pipeline in pipelines.values():
             if hasattr(pipeline, "data_sets"):
