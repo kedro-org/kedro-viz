@@ -9,6 +9,7 @@ Please follow the established format:
 
 ## Bug fixes and other changes
 - Fix shareable viz for git pages. (#2302)
+- Fix missing layer information for dataset factories. (#2308)
 
 # Release 11.0.0 
 
