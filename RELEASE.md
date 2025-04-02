@@ -5,6 +5,11 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+- Fix shareable viz. (#2302)
+
 # Release 11.0.0 
 
 ## Community contributions
