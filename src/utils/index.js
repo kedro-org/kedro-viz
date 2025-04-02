@@ -223,7 +223,7 @@ export const isRunningLocally = () => {
 };
 
 /**
- * Sanitized pathname with experiment-tracking string and check if path containing trailing slash
+ * Append trailing slash to the pathname for shareable viz
  * @returns {string} Sanitized pathname
  */
 export const sanitizedPathname = () => {
