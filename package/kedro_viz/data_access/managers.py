@@ -102,13 +102,19 @@ class DataAccessManager:
                 except Exception:  # noqa: BLE001 # pragma: no cover
                     continue
 
-    def add_catalog(self, catalog: Union[DataCatalog, "KedroDataCatalog"], pipelines: Dict[str, KedroPipeline]):
+    def add_catalog(
+        self,
+        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        pipelines: Dict[str, KedroPipeline],
+    ):
         """Add the catalog to the CatalogRepository
 
         Args:
             catalog: The DataCatalog or KedroDataCatalog instance to add.
         """
-        self.resolve_dataset_factory_patterns(catalog, pipelines)
+        if isinstance(catalog, DataCatalog):
+            self.resolve_dataset_factory_patterns(catalog, pipelines)
+
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):

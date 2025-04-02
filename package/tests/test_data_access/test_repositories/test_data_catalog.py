@@ -1,5 +1,9 @@
 import pytest
 from kedro.io import DataCatalog, MemoryDataset
+from kedro.pipeline import node
+from kedro.pipeline.modular_pipeline import pipeline
+
+from kedro_viz.data_access.managers import DataAccessManager
 
 try:
     from kedro.io import KedroDataCatalog
@@ -27,6 +31,50 @@ class TestDataCatalogRepository:
         repo.set_catalog(catalog)
         assert repo.get_layer_for_dataset("cars") == "raw"
         assert repo.get_layer_for_dataset("cars@pandas") == "raw"
+
+    def test_layers_mapping_for_dataset_factories(
+        self, data_access_manager: DataAccessManager
+    ):
+        catalog_repo = CatalogRepository()
+        catalog_config = {
+            "{namespace}.int_{name}": {
+                "type": "pandas.CSVDataset",
+                "filepath": "{name}.csv",
+                "metadata": {"kedro-viz": {"layer": "factory_test"}},
+            },
+            "cars": {
+                "type": "pandas.CSVDataset",
+                "filepath": "cars.csv",
+                "metadata": {"kedro-viz": {"layer": "raw"}},
+            },
+        }
+        processing_pipeline = pipeline(
+            [
+                node(
+                    lambda x: x,
+                    inputs=["int_companies"],
+                    outputs="prm_agg_companies",
+                    name="process_data",
+                )
+            ],
+            namespace="processing",
+            outputs="prm_agg_companies",
+        )
+        catalog = DataCatalog.from_config(catalog_config)
+        catalog_repo.set_catalog(catalog)
+
+        assert "raw" in catalog_repo.layers_mapping.values()
+        assert "factory_test" not in catalog_repo.layers_mapping.values()
+
+        # clear mapping
+        catalog_repo._layers_mapping = None
+
+        data_access_manager.resolve_dataset_factory_patterns(
+            catalog, {"__default__": processing_pipeline}
+        )
+
+        assert "raw" in catalog_repo.layers_mapping.values()
+        assert "factory_test" in catalog_repo.layers_mapping.values()
 
     def test_validate_layers_error(self):
         repo = CatalogRepository()
@@ -181,6 +229,6 @@ class TestDataCatalogRepositoryExtended:
         repo.set_catalog(kedro_catalog)
 
         ds_obj = repo.get_dataset("another_ds")
-        assert isinstance(ds_obj, MemoryDataset), (
-            "Should have used kedro_catalog.get(...)"
-        )
+        assert isinstance(
+            ds_obj, MemoryDataset
+        ), "Should have used kedro_catalog.get(...)"

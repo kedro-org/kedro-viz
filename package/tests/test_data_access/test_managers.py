@@ -542,7 +542,9 @@ class TestAddPipelines:
         example_transcoded_pipelines: Dict[str, Pipeline],
         example_transcoded_catalog: DataCatalog,
     ):
-        data_access_manager.add_catalog(example_transcoded_catalog, example_transcoded_pipelines)
+        data_access_manager.add_catalog(
+            example_transcoded_catalog, example_transcoded_pipelines
+        )
         data_access_manager.add_pipelines(example_transcoded_pipelines)
         assert any(
             isinstance(node, TranscodedDataNode)
@@ -681,23 +683,55 @@ class TestAddPipelines:
 
         assert isinstance(graph_node.kedro_obj, MemoryDataset)
 
+
 class TestResolveDatasetFactoryPatterns:
     def test_resolve_dataset_factory_patterns(
         self,
-        example_catalog,
         pipeline_with_datasets_mock,
         pipeline_with_data_sets_mock,
         data_access_manager: DataAccessManager,
     ):
+        catalog_repo = CatalogRepository()
+        catalog_config = {
+            "{namespace}.int_{name}": {
+                "type": "pandas.CSVDataset",
+                "filepath": "{name}.csv",
+                "metadata": {"kedro-viz": {"layer": "factory_test"}},
+            },
+            "cars": {
+                "type": "pandas.CSVDataset",
+                "filepath": "cars.csv",
+                "metadata": {"kedro-viz": {"layer": "raw"}},
+            },
+        }
+        processing_pipeline = pipeline(
+            [
+                node(
+                    lambda x: x,
+                    inputs=["int_companies"],
+                    outputs="prm_agg_companies",
+                    name="process_data",
+                )
+            ],
+            namespace="processing",
+            outputs="prm_agg_companies",
+        )
+        catalog = DataCatalog.from_config(catalog_config)
+        catalog_repo.set_catalog(catalog)
         pipelines = {
             "pipeline1": pipeline_with_datasets_mock,
             "pipeline2": pipeline_with_data_sets_mock,
+            "pipeline3": processing_pipeline,
         }
-        new_catalog = CatalogRepository()
-        new_catalog.set_catalog(example_catalog)
 
-        assert "model_inputs#csv" not in new_catalog.as_dict().keys()
+        assert catalog_repo.get_layer_for_dataset("processing.int_companies") is None
+        assert catalog_repo.get_dataset("model_inputs#csv") is not None
 
-        data_access_manager.resolve_dataset_factory_patterns(example_catalog, pipelines)
+        # clear mapping
+        catalog_repo._layers_mapping = None
 
-        assert "model_inputs#csv" in new_catalog.as_dict().keys()
+        data_access_manager.resolve_dataset_factory_patterns(catalog, pipelines)
+        assert (
+            catalog_repo.get_layer_for_dataset("processing.int_companies")
+            == "factory_test"
+        )
