@@ -223,6 +223,19 @@ export const isRunningLocally = () => {
 };
 
 /**
+ * Append trailing slash to the pathname for shareable viz
+ * @returns {string} Sanitized pathname
+ */
+export const sanitizedPathname = () => {
+  const { pathname } = window.location;
+  const pathnameWithTrailingSlash = pathname.endsWith('/')
+    ? pathname
+    : `${pathname}/`; // the `pathname` will have a trailing slash if it didn't initially
+
+  return pathnameWithTrailingSlash;
+};
+
+/**
  * Fetches viz metadata from the server.
  * @returns {Promise<Object>} A promise that resolves the fetched viz metadata.
  */
