@@ -8,7 +8,7 @@ Please follow the established format:
 # Upcoming Release
 
 ## Bug fixes and other changes
-- Fix shareable viz. (#2302)
+- Fix shareable viz for git pages. (#2302)
 
 # Release 11.0.0 
 
