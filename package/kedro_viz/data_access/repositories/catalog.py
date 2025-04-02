@@ -112,14 +112,15 @@ class CatalogRepository:
         for dataset_name in datasets:
             if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
                 dataset = self._catalog.get(dataset_name)
+                metadata = dataset.config.metadata
             else:
                 dataset = self._catalog._get_dataset(dataset_name)
+                metadata = getattr(dataset, "metadata", None)
 
-            metadata = getattr(dataset, "metadata", None)
             if not metadata:
                 continue
             try:
-                layer = dataset.metadata["kedro-viz"]["layer"]
+                layer = metadata["kedro-viz"]["layer"]
             except (AttributeError, KeyError):  # pragma: no cover
                 logger.debug(
                     "No layer info provided under metadata in the catalog for %s",
