@@ -113,9 +113,7 @@ class DataAccessManager:
         Args:
             catalog: The DataCatalog or KedroDataCatalog instance to add.
         """
-        if isinstance(catalog, DataCatalog):
-            self.resolve_dataset_factory_patterns(catalog, pipelines)
-
+        self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
