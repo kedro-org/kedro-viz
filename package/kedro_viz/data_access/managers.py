@@ -92,6 +92,7 @@ class DataAccessManager:
         them against the datasets in the pipelines. This is also required
         to populate layers information for dataset factories.
         """
+        all_datasets = set()
         for pipeline in pipelines.values():
             if hasattr(pipeline, "data_sets"):
                 # Support for Kedro 0.18.x
@@ -99,11 +100,13 @@ class DataAccessManager:
             else:
                 datasets = pipeline.datasets()
 
-            for dataset_name in datasets:
-                try:
-                    catalog._get_dataset(dataset_name, suggest=False)
-                except Exception:  # noqa: BLE001 # pragma: no cover
-                    continue
+            all_datasets.update(datasets)
+
+        for dataset_name in all_datasets:
+            try:
+                catalog._get_dataset(dataset_name, suggest=False)
+            except Exception:  # noqa: BLE001 # pragma: no cover
+                continue
 
     def add_catalog(
         self,

@@ -86,11 +86,15 @@ class CatalogRepository:
 
         self._layers_mapping = {}
 
+        # Get datasets available in catalog
         if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+            # Returns dataset names
             datasets = self._catalog.list()
         else:
             # try/except block so Viz is backwards compatible with older kedro versions.
             try:
+                # Returns a dictionary where key is dataset name and value
+                # is an instance of AbstractDataset
                 datasets = self._catalog._data_sets
             except Exception:  # noqa: BLE001 # pragma: no cover
                 datasets = self._catalog._datasets
@@ -108,29 +112,29 @@ class CatalogRepository:
                             dataset_name = _strip_transcoding(dataset_name)
                             self._validate_layers_for_transcoding(dataset_name, layer)
                         self._layers_mapping[dataset_name] = layer
+        else:
+            for dataset_name in datasets:
+                if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                    dataset = self._catalog.get(dataset_name)
+                else:
+                    dataset = self._catalog._get_dataset(dataset_name)
 
-        for dataset_name in datasets:
-            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
-                dataset = self._catalog.get(dataset_name)
-            else:
-                dataset = self._catalog._get_dataset(dataset_name)
+                metadata = getattr(dataset, "metadata", None)
 
-            metadata = getattr(dataset, "metadata", None)
-
-            if not metadata:
-                continue
-            try:
-                layer = metadata["kedro-viz"]["layer"]
-            except (AttributeError, KeyError):  # pragma: no cover
-                logger.debug(
-                    "No layer info provided under metadata in the catalog for %s",
-                    dataset_name,
-                )
-            else:
-                if TRANSCODING_SEPARATOR in dataset_name:
-                    dataset_name = _strip_transcoding(dataset_name)
-                    self._validate_layers_for_transcoding(dataset_name, layer)
-                self._layers_mapping[dataset_name] = layer
+                if not metadata:
+                    continue
+                try:
+                    layer = metadata["kedro-viz"]["layer"]
+                except (AttributeError, KeyError):  # pragma: no cover
+                    logger.debug(
+                        "No layer info provided under metadata in the catalog for %s",
+                        dataset_name,
+                    )
+                else:
+                    if TRANSCODING_SEPARATOR in dataset_name:
+                        dataset_name = _strip_transcoding(dataset_name)
+                        self._validate_layers_for_transcoding(dataset_name, layer)
+                    self._layers_mapping[dataset_name] = layer
 
         return self._layers_mapping
 
