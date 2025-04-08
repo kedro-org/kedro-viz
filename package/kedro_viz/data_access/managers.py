@@ -84,7 +84,9 @@ class DataAccessManager:
         self._initialize_fields()
 
     def resolve_dataset_factory_patterns(
-        self, catalog: DataCatalog, pipelines: Dict[str, KedroPipeline]
+        self,
+        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        pipelines: Dict[str, KedroPipeline],
     ):
         """Resolve dataset factory patterns in data catalog by matching
         them against the datasets in the pipelines. This is also required
