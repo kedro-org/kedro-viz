@@ -5,6 +5,12 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+# Upcoming Release
+
+## Bug fixes and other changes
+- Fix shareable viz for git pages. (#2302)
+- Fix missing layer information for dataset factories. (#2308)
+
 # Release 11.0.0 
 
 ## Community contributions
