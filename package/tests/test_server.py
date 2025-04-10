@@ -52,7 +52,9 @@ class TestServer:
         example_pipelines,
     ):
         run_server()
-        patched_data_access_manager.add_catalog.assert_called_once_with(example_catalog)
+        patched_data_access_manager.add_catalog.assert_called_once_with(
+            example_catalog, example_pipelines
+        )
         patched_data_access_manager.add_pipelines.assert_called_once_with(
             example_pipelines
         )

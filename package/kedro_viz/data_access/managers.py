@@ -83,12 +83,42 @@ class DataAccessManager:
         """Reset all instance variables."""
         self._initialize_fields()
 
-    def add_catalog(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
+    def resolve_dataset_factory_patterns(
+        self,
+        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        pipelines: Dict[str, KedroPipeline],
+    ):
+        """Resolve dataset factory patterns in data catalog by matching
+        them against the datasets in the pipelines. This is also required
+        to populate layers information for dataset factories.
+        """
+        all_datasets = set()
+        for pipeline in pipelines.values():
+            if hasattr(pipeline, "data_sets"):
+                # Support for Kedro 0.18.x
+                datasets = pipeline.data_sets()
+            else:
+                datasets = pipeline.datasets()
+
+            all_datasets.update(datasets)
+
+        for dataset_name in all_datasets:
+            try:
+                catalog._get_dataset(dataset_name, suggest=False)
+            except Exception:  # noqa: BLE001 # pragma: no cover
+                continue
+
+    def add_catalog(
+        self,
+        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        pipelines: Dict[str, KedroPipeline],
+    ):
         """Add the catalog to the CatalogRepository
 
         Args:
             catalog: The DataCatalog or KedroDataCatalog instance to add.
         """
+        self.resolve_dataset_factory_patterns(catalog, pipelines)
         self.catalog.set_catalog(catalog)
 
     def add_pipelines(self, pipelines: Dict[str, KedroPipeline]):
