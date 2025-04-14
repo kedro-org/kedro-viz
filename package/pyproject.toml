@@ -43,6 +43,7 @@ line_magic = "kedro_viz.launchers.jupyter:run_viz"
 
 [project.entry-points."kedro.hooks"]
 kedro-dataset-stats = "kedro_viz.integrations.kedro.hooks:dataset_stats_hook"
+kedro-pipeline-monitor = "kedro_viz.integrations.kedro.custom_hooks.pipeline_monitor_hook:pipeline_monitor_hook"
 
 [tool.hatch.version]
 path = "kedro_viz/__init__.py"
