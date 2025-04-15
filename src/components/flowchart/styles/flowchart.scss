@@ -38,3 +38,25 @@
   shape-rendering: optimizespeed;
   text-rendering: optimizespeed;
 }
+
+.pipeline-node--running .pipeline-node__bg {
+  stroke: yellow;
+  fill: yellow;
+  opacity: 0.8;
+}
+
+.pipeline-node--running .pipeline-node__text {
+  fill: black;
+}
+
+.pipeline-node--success .pipeline-node__bg {
+  stroke: green;
+  fill: green;
+  opacity: 0.8;
+}
+
+.pipeline-node--failed .pipeline-node__bg {
+  stroke: red;
+  fill: red;
+  opacity: 0.8;
+}
