@@ -85,6 +85,7 @@ export class FlowChart extends Component {
       resetSlicingPipelineBtnClicked: false,
       showFeedbackForm: false,
       nodeStatuses: {}, // Track the status of each node
+      modularPipelineChildren: {}, // Mapping of modular pipeline children
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -155,6 +156,9 @@ export class FlowChart extends Component {
     websocket.addEventListener('onNodeError', (data) => {
       this.updateNodeStatus(data.node_id, 'failed');
     });
+
+    // Compute modular pipeline children mapping
+    this.computeModularPipelineChildren();
   }
 
   componentDidUpdate(prevProps) {
@@ -183,6 +187,11 @@ export class FlowChart extends Component {
       !this.props.clickedNode
     ) {
       this.setState({ showSlicingNotification: false });
+    }
+
+    // Recompute modular pipeline children mapping if modularPipeline tree changes
+    if (prevProps.modularPipelineTree !== this.props.modularPipelineTree) {
+      this.computeModularPipelineChildren();
     }
   }
 
@@ -871,31 +880,89 @@ export class FlowChart extends Component {
   }
 
   /**
+   * Recursively collect all descendant node IDs for a modular pipeline
+   */
+  getAllDescendantNodeIds = (modularPipelineId, modularPipelineChildren) => {
+    const result = [];
+    const stack = [...(modularPipelineChildren[modularPipelineId] || [])];
+    while (stack.length) {
+      const childId = stack.pop();
+      result.push(childId);
+      if (modularPipelineChildren[childId]) {
+        stack.push(...modularPipelineChildren[childId]);
+      }
+    }
+    return result;
+  };
+
+  /**
    * Update the styles of nodes based on their statuses
    */
   updateNodeStyles() {
-    const { nodeStatuses } = this.state;
+    const { nodeStatuses, modularPipelineChildren } = this.state;
 
-    // Use D3 to update node styles dynamically
     this.el.nodeGroup.selectAll('.pipeline-node').attr('class', (node) => {
       let baseClass = `pipeline-node pipeline-node--${node.type}`;
-      for (const id of Object.keys(nodeStatuses)) {
-        if (node.id === id) {
-          const status = nodeStatuses[id];
-          if (status === 'running') {
-            baseClass += ' pipeline-node--running';
-            return baseClass;
-          } else if (status === 'success') {
-            baseClass += ' pipeline-node--success';
-            return baseClass;
-          } else if (status === 'failed') {
-            baseClass += ' pipeline-node--failed';
-            return baseClass;
-          }
+
+      if (node.type === 'modularPipeline') {
+        // Get all descendant node IDs
+        const descendantIds = this.getAllDescendantNodeIds(
+          node.id,
+          modularPipelineChildren
+        );
+        // Get their statuses
+        const childStatuses = descendantIds.map((id) => nodeStatuses[id]);
+        // Determine modular pipeline status
+        if (childStatuses.includes('running')) {
+          baseClass += ' pipeline-node--running';
+        } else if (
+          childStatuses.length &&
+          childStatuses.every((status) => status === 'success')
+        ) {
+          baseClass += ' pipeline-node--success';
+        } else if (childStatuses.includes('failed')) {
+          baseClass += ' pipeline-node--failed';
+        }
+      } else {
+        const status = nodeStatuses[node.id];
+        if (status === 'running') {
+          baseClass += ' pipeline-node--running';
+        } else if (status === 'success') {
+          baseClass += ' pipeline-node--success';
+        } else if (status === 'failed') {
+          baseClass += ' pipeline-node--failed';
         }
       }
       return baseClass;
     });
+  }
+
+  /**
+   * Compute modular pipeline children mapping
+   */
+  computeModularPipelineChildren() {
+    const { modularPipelineTree } = this.props;
+    const modularPipelineChildren = {};
+
+    const traverseTree = (node) => {
+      if (node.children) {
+        modularPipelineChildren[node.id] =
+          modularPipelineChildren[node.id] || [];
+        node.children.forEach((child) => {
+          modularPipelineChildren[node.id].push(child.id);
+          // If the child is a modular pipeline, recursively process it
+          if (child.type === 'modularPipeline') {
+            traverseTree(child, child.id);
+          }
+        });
+      }
+    };
+
+    Object.values(modularPipelineTree).forEach((modularPipeline) => {
+      traverseTree(modularPipeline);
+    });
+
+    this.setState({ modularPipelineChildren });
   }
 
   /**
@@ -1086,6 +1153,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
   modularPipelineIds: state.modularPipeline.ids,
+  modularPipelineTree: state.modularPipeline.tree,
   orientation: state.orientation,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),
