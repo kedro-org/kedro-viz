@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
-import { isRunningLocally } from '../../utils';
+import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
@@ -61,7 +61,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
-              <Route exact path="/">
+              <Route exact path={sanitizedPathname()}>
                 <FlowChartWrapper />
                 <FeatureHints />
               </Route>

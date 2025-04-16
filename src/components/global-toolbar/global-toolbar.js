@@ -6,7 +6,7 @@ import {
   toggleShareableUrlModal,
   toggleTheme,
 } from '../../actions';
-import { isRunningLocally } from '../../utils';
+import { isRunningLocally, sanitizedPathname } from '../../utils';
 
 import DownloadIcon from '../icons/download';
 import IconButton from '../ui/icon-button';
@@ -40,7 +40,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to="/">
+          <NavLink exact to={{ pathname: sanitizedPathname() }}>
             <IconButton
               ariaLabel={'View your pipeline'}
               dataTest={'global-toolbar-flowchart-btn'}
