@@ -132,12 +132,16 @@ export class FlowChart extends Component {
     websocket.connect();
 
     // Set up event listeners
-    websocket.addEventListener('afterDatasetLoaded', (data) => {
-      this.updateNodeStatus(data.node_id, 'success');
+    websocket.addEventListener('beforeDatasetLoaded', (data) => {
+      this.updateNodeStatus(data.node_id, 'running');
     });
 
     websocket.addEventListener('beforeNodeRun', (data) => {
       this.updateNodeStatus(data.node_id, 'running');
+    });
+
+    websocket.addEventListener('afterDatasetLoaded', (data) => {
+      this.updateNodeStatus(data.node_id, 'success');
     });
 
     websocket.addEventListener('afterNodeRun', (data) => {

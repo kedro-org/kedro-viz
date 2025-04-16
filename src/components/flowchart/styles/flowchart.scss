@@ -45,7 +45,8 @@
   opacity: 0.8;
 }
 
-.pipeline-node--running .pipeline-node__text {
+.pipeline-node--running .pipeline-node__text,
+.pipeline-node--running .pipeline-node__icon {
   fill: black;
 }
 
