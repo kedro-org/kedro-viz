@@ -43,6 +43,7 @@ import {
 } from '../../utils/view';
 import { getHeap } from '../../tracking/index';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
+import websocket from '../../utils/websocket';
 import Tooltip from '../ui/tooltip';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
@@ -83,6 +84,8 @@ export class FlowChart extends Component {
       showSlicingNotification: false,
       resetSlicingPipelineBtnClicked: false,
       showFeedbackForm: false,
+      nodeStatuses: {}, // Track the status of each node
+      modularPipelineChildren: {}, // Mapping of modular pipeline children
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -123,24 +126,39 @@ export class FlowChart extends Component {
     } else {
       this.hideTooltip();
     }
-  }
 
-  /**
-   *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
-   */
-  updateSlicedPipelineState(from, to, range) {
-    this.setState({
-      slicedPipelineState: {
-        ...this.state.slicedPipelineState,
-        from,
-        to,
-        range,
-      },
+    console.log('Flowchart component mounted websocket', websocket);
+
+    // Connect WebSocket when component mounts
+    websocket.connect();
+
+    // Set up event listeners
+    websocket.addEventListener('beforeDatasetLoaded', (data) => {
+      this.updateNodeStatus(data.node_id, 'running');
     });
-  }
 
-  componentWillUnmount() {
-    this.removeGlobalEventListeners();
+    websocket.addEventListener('beforeNodeRun', (data) => {
+      this.updateNodeStatus(data.node_id, 'running');
+    });
+
+    websocket.addEventListener('afterDatasetLoaded', (data) => {
+      this.updateNodeStatus(data.node_id, 'success');
+    });
+
+    websocket.addEventListener('afterNodeRun', (data) => {
+      this.updateNodeStatus(data.node_id, 'success');
+    });
+
+    websocket.addEventListener('afterDatasetSaved', (data) => {
+      this.updateNodeStatus(data.node_id, 'success');
+    });
+
+    websocket.addEventListener('onNodeError', (data) => {
+      this.updateNodeStatus(data.node_id, 'failed');
+    });
+
+    // Compute modular pipeline children mapping
+    this.computeModularPipelineChildren();
   }
 
   componentDidUpdate(prevProps) {
@@ -170,6 +188,30 @@ export class FlowChart extends Component {
     ) {
       this.setState({ showSlicingNotification: false });
     }
+
+    // Recompute modular pipeline children mapping if modularPipeline tree changes
+    if (prevProps.modularPipelineTree !== this.props.modularPipelineTree) {
+      this.computeModularPipelineChildren();
+    }
+  }
+
+  componentWillUnmount() {
+    this.removeGlobalEventListeners();
+    websocket.disconnect(); // Disconnect WebSocket when component unmounts
+  }
+
+  /**
+   *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
+   */
+  updateSlicedPipelineState(from, to, range) {
+    this.setState({
+      slicedPipelineState: {
+        ...this.state.slicedPipelineState,
+        from,
+        to,
+        range,
+      },
+    });
   }
 
   /**
@@ -821,6 +863,109 @@ export class FlowChart extends Component {
   }
 
   /**
+   * Update the status of a node and refresh its styles
+   * @param {string} nodeId Id of the node
+   * @param {string} status Status of the node
+   */
+  updateNodeStatus(nodeId, status) {
+    this.setState(
+      (prevState) => ({
+        nodeStatuses: {
+          ...prevState.nodeStatuses,
+          [nodeId]: status,
+        },
+      }),
+      this.updateNodeStyles
+    );
+  }
+
+  /**
+   * Recursively collect all descendant node IDs for a modular pipeline
+   */
+  getAllDescendantNodeIds = (modularPipelineId, modularPipelineChildren) => {
+    const result = [];
+    const stack = [...(modularPipelineChildren[modularPipelineId] || [])];
+    while (stack.length) {
+      const childId = stack.pop();
+      result.push(childId);
+      if (modularPipelineChildren[childId]) {
+        stack.push(...modularPipelineChildren[childId]);
+      }
+    }
+    return result;
+  };
+
+  /**
+   * Update the styles of nodes based on their statuses
+   */
+  updateNodeStyles() {
+    const { nodeStatuses, modularPipelineChildren } = this.state;
+
+    this.el.nodeGroup.selectAll('.pipeline-node').attr('class', (node) => {
+      let baseClass = `pipeline-node pipeline-node--${node.type}`;
+
+      if (node.type === 'modularPipeline') {
+        // Get all descendant node IDs
+        const descendantIds = this.getAllDescendantNodeIds(
+          node.id,
+          modularPipelineChildren
+        );
+        // Get their statuses
+        const childStatuses = descendantIds.map((id) => nodeStatuses[id]);
+        // Determine modular pipeline status
+        if (childStatuses.includes('running')) {
+          baseClass += ' pipeline-node--running';
+        } else if (
+          childStatuses.length &&
+          childStatuses.every((status) => status === 'success')
+        ) {
+          baseClass += ' pipeline-node--success';
+        } else if (childStatuses.includes('failed')) {
+          baseClass += ' pipeline-node--failed';
+        }
+      } else {
+        const status = nodeStatuses[node.id];
+        if (status === 'running') {
+          baseClass += ' pipeline-node--running';
+        } else if (status === 'success') {
+          baseClass += ' pipeline-node--success';
+        } else if (status === 'failed') {
+          baseClass += ' pipeline-node--failed';
+        }
+      }
+      return baseClass;
+    });
+  }
+
+  /**
+   * Compute modular pipeline children mapping
+   */
+  computeModularPipelineChildren() {
+    const { modularPipelineTree } = this.props;
+    const modularPipelineChildren = {};
+
+    const traverseTree = (node) => {
+      if (node.children) {
+        modularPipelineChildren[node.id] =
+          modularPipelineChildren[node.id] || [];
+        node.children.forEach((child) => {
+          modularPipelineChildren[node.id].push(child.id);
+          // If the child is a modular pipeline, recursively process it
+          if (child.type === 'modularPipeline') {
+            traverseTree(child, child.id);
+          }
+        });
+      }
+    };
+
+    Object.values(modularPipelineTree).forEach((modularPipeline) => {
+      traverseTree(modularPipeline);
+    });
+
+    this.setState({ modularPipelineChildren });
+  }
+
+  /**
    * Render React elements
    */
   render() {
@@ -1008,6 +1153,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeSelected: getNodeSelected(state),
   nodesWithInputParams: getNodesWithInputParams(state),
   modularPipelineIds: state.modularPipeline.ids,
+  modularPipelineTree: state.modularPipeline.tree,
   orientation: state.orientation,
   inputOutputDataNodes: getInputOutputNodesForFocusedModularPipeline(state),
   inputOutputDataEdges: getInputOutputDataEdges(state),

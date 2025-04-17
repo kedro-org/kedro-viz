@@ -114,6 +114,8 @@ def run_server(
     import uvicorn
 
     from kedro_viz.api import apps
+    from fastapi import WebSocket, WebSocketDisconnect
+    from kedro_viz.api.websockets import manager
 
     path = Path(project_path) if project_path else Path.cwd()
 
@@ -133,6 +135,23 @@ def run_server(
         app = apps.create_api_app_from_project(path, autoreload)
     else:
         app = apps.create_api_app_from_file(f"{path}/{load_file}/api")
+
+    # Add a WebSocket endpoint
+    @app.websocket("/api/ws")
+    async def websocket_endpoint(websocket: WebSocket):
+        await manager.connect(websocket)
+        try:
+            while True:
+                # Keep the connection alive and listen for messages
+                await websocket.receive_text()
+        except WebSocketDisconnect:
+            manager.disconnect(websocket)
+
+    # Add an endpoint to receive events from hooks
+    @app.post("/api/run-events")
+    async def receive_run_events(event: dict):
+        await manager.broadcast(event)
+        return {"status": "success"}
 
     uvicorn.run(app, host=host, port=port, log_config=None)
 
