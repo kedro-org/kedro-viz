@@ -5,7 +5,12 @@ from contextlib import contextmanager
 from typing import Any, Dict, Optional, Union
 
 from IPython.display import HTML, display
-from kedro.io.data_catalog import DataCatalog
+try:
+    from kedro.io import KedroDataCatalog
+    CatalogType = KedroDataCatalog
+except ImportError:  # pragma: no cover
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.api.rest.responses.pipelines import get_kedro_project_json_data
@@ -46,7 +51,7 @@ class NotebookVisualizer:
     def __init__(
         self,
         pipeline: Union[Pipeline, Dict[str, Pipeline]],
-        catalog: Optional[DataCatalog] = None,
+        catalog: Optional[CatalogType] = None,
         options: Optional[Dict[str, Any]] = None,
         js_url: Optional[str] = None,
     ):

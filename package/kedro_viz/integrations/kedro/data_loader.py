@@ -9,19 +9,18 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Set, Tuple
 from unittest.mock import patch
+from kedro_viz.constants import KEDRO_VERSION
 
-from kedro import __version__
+from packaging.version import parse
 from kedro.framework.project import configure_project, pipelines
 from kedro.framework.session import KedroSession
 from kedro.framework.startup import bootstrap_project
-from kedro.io import DataCatalog  # Old version
-
-try:  # pragma: no cover
+try:
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    CatalogType = KedroDataCatalog
 except ImportError:  # pragma: no cover
-    IS_KEDRODATACATALOG = False
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 
 from kedro.pipeline import Pipeline
 
@@ -82,13 +81,22 @@ def _load_data_helper(
     Returns:
         A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
-
-    with KedroSession.create(
+    
+    if KEDRO_VERSION >= parse("1.0.0"):
+        kedro_session = KedroSession.create(
+        project_path=project_path,
+        env=env,
+        save_on_close=False,
+        runtime_params=extra_params)
+    else:
+        kedro_session = KedroSession.create(
         project_path=project_path,
         env=env,
         save_on_close=False,
         extra_params=extra_params,
-    ) as session:
+    )
+
+    with kedro_session as session:
         # check for --include-hooks option
         if not include_hooks:
             session._hook_manager = _VizNullPluginManager()  # type: ignore
@@ -109,8 +117,8 @@ def _load_data_helper(
         else:
             catalog = context.catalog
 
-        if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-            logger.info("Using DataCatalog 2.0 (lazy loading by default).")
+        if KEDRO_VERSION >= parse("1.0.0"):
+            logger.info("Using KedroDataCatalog (lazy loading by default).")
 
         # Pipelines is a lazy dict-like object, so we force it to populate here
         # in case user doesn't have an active session down the line when it's first accessed.
@@ -127,7 +135,7 @@ def load_data(
     package_name: Optional[str] = None,
     extra_params: Optional[Dict[str, Any]] = None,
     is_lite: bool = False,
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
+) -> Tuple[CatalogType, Dict[str, Pipeline], Dict]:
     """Load data from a Kedro project.
     Args:
         project_path: the path where the Kedro project is located.

@@ -6,7 +6,9 @@ from typing import Dict, List, Set, Tuple, Union
 
 from kedro.pipeline import Pipeline as KedroPipeline
 from kedro.pipeline.node import Node as KedroNode
+from packaging.version import parse
 
+from kedro_viz.constants import KEDRO_VERSION
 from kedro_viz.constants import ROOT_MODULAR_PIPELINE_ID
 from kedro_viz.models.flowchart.model_utils import GraphNodeType
 from kedro_viz.models.flowchart.nodes import (
@@ -56,8 +58,11 @@ class ModularPipelinesRepository:
 
         for modular_pipeline_id in sorted(modular_pipeline_ids):
             self.get_or_create_modular_pipeline(modular_pipeline_id)
+            if KEDRO_VERSION >= parse("1.0.0"):
+                sub_pipeline = pipeline.only_nodes_with_namespaces([modular_pipeline_id])
+            else:
+                sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
 
-            sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
             rest_of_the_pipeline = pipeline - sub_pipeline
 
             free_inputs = sub_pipeline.inputs()

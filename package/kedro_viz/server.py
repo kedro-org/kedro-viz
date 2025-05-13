@@ -4,15 +4,12 @@ for Kedro pipeline visualisation."""
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from kedro.io import DataCatalog
-
-try:  # pragma: no cover
+try:
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    CatalogType = KedroDataCatalog
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 
 from kedro.pipeline import Pipeline
 
@@ -27,7 +24,7 @@ DEV_PORT = 4142
 
 def populate_data(
     data_access_manager: DataAccessManager,
-    catalog: Union[DataCatalog, "KedroDataCatalog"],
+    catalog: CatalogType,
     pipelines: Dict[str, Pipeline],
     stats_dict: Dict,
 ):

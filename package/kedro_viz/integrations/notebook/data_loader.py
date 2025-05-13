@@ -5,7 +5,12 @@ load data from pipelines created in a range of Kedro versions.
 
 from typing import Dict, Optional, Tuple, Union, cast
 
-from kedro.io import DataCatalog
+try:
+    from kedro.io import KedroDataCatalog
+    CatalogType = KedroDataCatalog
+except ImportError:  # pragma: no cover
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 from kedro.pipeline import Pipeline
 
 from kedro_viz.data_access import data_access_manager
@@ -14,11 +19,11 @@ from kedro_viz.server import populate_data
 
 def load_data_for_notebook_users(
     notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
-    notebook_catalog: Optional[DataCatalog],
-) -> Tuple[DataCatalog, Dict[str, Pipeline], Dict]:
+    notebook_catalog: Optional[CatalogType],
+) -> Tuple[CatalogType, Dict[str, Pipeline], Dict]:
     """Load data from a notebook user's pipeline"""
     # Create a dummy data catalog with all datasets as memory datasets
-    catalog = DataCatalog() if notebook_catalog is None else notebook_catalog
+    catalog = CatalogType() if notebook_catalog is None else notebook_catalog
     stats_dict: Dict = {}
 
     notebook_user_pipeline = notebook_pipeline
@@ -38,7 +43,7 @@ def load_data_for_notebook_users(
 
 def load_and_populate_data_for_notebook_users(
     notebook_pipeline: Union[Pipeline, Dict[str, Pipeline]],
-    notebook_catalog: Optional[DataCatalog],
+    notebook_catalog: Optional[CatalogType],
 ):
     """Loads pipeline data and populates Kedro Viz Repositories for a notebook user"""
     catalog, pipelines, stats_dict = load_data_for_notebook_users(

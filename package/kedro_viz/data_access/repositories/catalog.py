@@ -4,14 +4,12 @@ centralise access to Kedro data catalog."""
 import logging
 from typing import TYPE_CHECKING, Optional
 
-from kedro.io import DataCatalog
-
-try:  # pragma: no cover
+try:
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    CatalogType = KedroDataCatalog
 except ImportError:  # pragma: no cover
-    IS_KEDRODATACATALOG = False
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 
 from packaging.version import parse
 
@@ -38,15 +36,15 @@ logger = logging.getLogger(__name__)
 
 
 class CatalogRepository:
-    _catalog: DataCatalog
+    _catalog: CatalogType
 
     def __init__(self):
         self._layers_mapping = None
 
-    def get_catalog(self) -> DataCatalog:
+    def get_catalog(self) -> CatalogType:
         return self._catalog
 
-    def set_catalog(self, value: DataCatalog):
+    def set_catalog(self, value: CatalogType):
         self._catalog = value
 
     def _validate_layers_for_transcoding(self, dataset_name, layer):
@@ -87,9 +85,9 @@ class CatalogRepository:
         self._layers_mapping = {}
 
         # Get datasets available in catalog
-        if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+        if KEDRO_VERSION >= parse("1.0.0"):
             # Returns dataset names
-            datasets = self._catalog.list()
+            datasets = self._catalog.keys()
         else:
             # try/except block so Viz is backwards compatible with older kedro versions.
             try:
@@ -114,7 +112,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
         else:
             for dataset_name in datasets:
-                if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                if KEDRO_VERSION >= parse("1.0.0"):
                     dataset = self._catalog.get(dataset_name)
                 else:
                     dataset = self._catalog._get_dataset(dataset_name)
@@ -141,7 +139,7 @@ class CatalogRepository:
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
         dataset_obj: Optional["AbstractDataset"]
         try:
-            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+            if KEDRO_VERSION >= parse("1.0.0"):
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)

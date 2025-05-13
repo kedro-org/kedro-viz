@@ -6,18 +6,17 @@ import logging
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 from typing import Any, Union
+from kedro_viz.constants import KEDRO_VERSION
 
+from packaging.version import parse
 import fsspec
 from kedro.framework.hooks import hook_impl
-from kedro.io import DataCatalog
-
-try:  # pragma: no cover
+try:
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    CatalogType = KedroDataCatalog
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 
 from kedro.io.core import get_filepath_str
 
@@ -37,7 +36,7 @@ class DatasetStatsHook:
         self._stats = defaultdict(dict)
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
+    def after_catalog_created(self, catalog: CatalogType):
         """Hooks to be invoked after a data catalog is created.
 
         Args:
@@ -45,10 +44,8 @@ class DatasetStatsHook:
         """
         # Check for KedroDataCatalog first (DataCatalog 2.0)
         try:
-            if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-                self.datasets = (
-                    catalog.datasets
-                )  # This gives access to both lazy normal datasets
+            if KEDRO_VERSION >= parse("1.0.0"):
+                self._catalog = catalog
                 logger.debug("Using KedroDataCatalog for dataset statistics collection")
             # For original DataCatalog
             elif hasattr(catalog, "_datasets"):
@@ -135,7 +132,10 @@ class DatasetStatsHook:
                 self._stats[stats_dataset_name]["rows"] = int(data.shape[0])
                 self._stats[stats_dataset_name]["columns"] = int(data.shape[1])
 
-                current_dataset = self.datasets.get(dataset_name, None)
+                if KEDRO_VERSION >= parse("1.0.0"):
+                    current_dataset = self._catalog.get(dataset_name)
+                else:
+                    current_dataset = self.datasets.get(dataset_name, None)
 
                 if current_dataset:
                     self._stats[stats_dataset_name]["file_size"] = self.get_file_size(

@@ -4,15 +4,12 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Set, Union
 
-from kedro.io import DataCatalog
-
-try:  # pragma: no cover
+try:
     from kedro.io import KedroDataCatalog
-
-    IS_KEDRODATACATALOG = True
+    CatalogType = KedroDataCatalog
 except ImportError:  # pragma: no cover
-    KedroDataCatalog = None  # type: ignore
-    IS_KEDRODATACATALOG = False
+    from kedro.io import DataCatalog
+    CatalogType = DataCatalog
 
 try:
     # kedro 0.18.11 onwards
@@ -85,7 +82,7 @@ class DataAccessManager:
 
     def resolve_dataset_factory_patterns(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: CatalogType,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Resolve dataset factory patterns in data catalog by matching
@@ -110,7 +107,7 @@ class DataAccessManager:
 
     def add_catalog(
         self,
-        catalog: Union[DataCatalog, "KedroDataCatalog"],
+        catalog: CatalogType,
         pipelines: Dict[str, KedroPipeline],
     ):
         """Add the catalog to the CatalogRepository
