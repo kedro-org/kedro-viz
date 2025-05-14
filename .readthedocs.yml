@@ -12,6 +12,7 @@ build:
     post_create_environment:
       - pip install uv
     post_install:
+      - cd package
       - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv pip install .[docs]
       # Build the MkDocs documentation
       - mkdocs build
