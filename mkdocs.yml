@@ -105,6 +105,7 @@ nav:
   - Home: index.md
   - Kedro: https://docs.kedro.org
   - Kedro-Viz: 
+    - Kedro-Viz Overview: pages/index.md
     - Learn about Kedro-Viz:
         - How to visualise a Kedro project: pages/kedro-viz_visualisation.md
         - Sharing Kedro-Viz:
