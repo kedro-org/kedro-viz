@@ -23,6 +23,10 @@ from kedro_viz.api.rest.responses.version import (
     VersionAPIResponse,
     get_version_response,
 )
+from kedro_viz.api.rest.responses.run_events import (
+    RunEventAPIResponse,
+    get_run_events_response,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +64,21 @@ async def get_single_pipeline_data(registered_pipeline_id: str):
 )
 async def get_version():
     return get_version_response()
+
+
+@router.get(
+    "/run-events",
+    response_model=RunEventAPIResponse,
+)
+async def get_run_events():
+    try:
+        return get_run_events_response()
+    except Exception as exc:
+        logger.exception("An exception occurred while getting run events: %s", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Failed to get run events data"},
+        )
 
 
 @router.post("/deploy")
