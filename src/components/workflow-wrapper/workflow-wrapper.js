@@ -16,7 +16,7 @@ import { toggleFocusMode } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
-import FlowChart from '../flowchart';
+import FlowChart from '../flowchart-copy';
 import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
 import InfoBannerIcon from '../icons/info-banner';
