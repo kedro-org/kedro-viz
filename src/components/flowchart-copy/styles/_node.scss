@@ -16,6 +16,17 @@
     stroke: var(--node-stroke-default);
   }
 
+ .pipeline-node__bg--status-failed {
+    stroke: red;
+    fill: red;
+  }
+
+  .pipeline-node__bg--status-success {
+    stroke: green;
+    fill: green;
+  }
+
+
   &:focus {
     outline: none;
 

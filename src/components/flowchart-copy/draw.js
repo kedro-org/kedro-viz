@@ -123,7 +123,7 @@ export const drawLayerNames = function () {
 /**
  * Sets the size and position of the given node rects
  */
-const updateNodeRects = (nodeRects) =>
+const updateNodeRects = (nodeRects) => {
   nodeRects
     .attr('width', (node) => node.width - 5)
     .attr('height', (node) => node.height - 5)
@@ -136,6 +136,132 @@ const updateNodeRects = (nodeRects) =>
       }
       return node.height / 2;
     });
+
+  // Now add the details box for each node
+      nodeRects.each(function (node) {
+        // Get the parent group (the .pipeline-node element)
+        const parentGroup = select(this.parentNode)
+        const nodeWidth = node.width - 5
+        const nodeHeight = node.height - 5
+        const detailsHeight = 60
+
+        // Create a container for the details section
+        const detailsContainer = parentGroup.append("g").attr("class", "pipeline-node__details-container")
+
+        // Add the details background
+        detailsContainer
+          .append("rect")
+          .attr("class", "pipeline-node__details-bg")
+          .attr("width", nodeWidth)
+          .attr("height", detailsHeight)
+          .attr("x", nodeWidth / -2)
+          .attr("y", nodeHeight / 2)
+          .attr("rx", 0)
+          .style("fill", "#1a1a1a")
+          .style("stroke", "none")
+
+        // Find the node status
+        // const nodeStatus = Object.keys(nodesStatus).find((statusKey) => nodesStatus[statusKey][node.id])
+
+        // Create the continuous outline that wraps around both the main node and details
+        detailsContainer
+          .append("path")
+          .attr("class", "pipeline-node__outline")
+          .attr("d", () => {
+            // For task and modularPipeline nodes (rectangular top)
+            if (node.type === "task" || node.type === "modularPipeline") {
+              return `
+                M ${nodeWidth / -2} ${nodeHeight / -2}
+                H ${nodeWidth / 2}
+                V ${nodeHeight / 2 + detailsHeight - 10}
+                Q ${nodeWidth / 2} ${nodeHeight / 2 + detailsHeight} ${nodeWidth / 2 - 10} ${nodeHeight / 2 + detailsHeight}
+                H ${nodeWidth / -2 + 10}
+                Q ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight} ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight - 10}
+                V ${nodeHeight / -2}
+                Z
+              `
+            }
+            // For other nodes (circular top)
+            else {
+              const radius = nodeHeight / 2
+              return `
+                M ${nodeWidth / -2 + radius} ${nodeHeight / -2}
+                H ${nodeWidth / 2 - radius}
+                Q ${nodeWidth / 2} ${nodeHeight / -2} ${nodeWidth / 2} ${nodeHeight / -2 + radius}
+                V ${nodeHeight / 2 + detailsHeight - 10}
+                Q ${nodeWidth / 2} ${nodeHeight / 2 + detailsHeight} ${nodeWidth / 2 - 10} ${nodeHeight / 2 + detailsHeight}
+                H ${nodeWidth / -2 + 10}
+                Q ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight} ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight - 10}
+                V ${nodeHeight / -2 + radius}
+                Q ${nodeWidth / -2} ${nodeHeight / -2} ${nodeWidth / -2 + radius} ${nodeHeight / -2}
+                Z
+              `
+            }
+          })
+          .style("fill", "none")
+          // .style("stroke", () => {
+          //   if (nodeStatus === "failed") {return "#e74c3c"}
+          //   if (nodeStatus === "completed") {return "#2ecc71"}
+          //   return "#666"
+          // })
+          .style("stroke-width", 2)
+
+        // Add status label
+        detailsContainer
+          .append("text")
+          .attr("class", "pipeline-node__details-label")
+          .text("Status")
+          .attr("text-anchor", "start")
+          .attr("x", nodeWidth / -2 + 15)
+          .attr("y", nodeHeight / 2 + 20)
+          .style("fill", "#999")
+          .style("font-size", "14px")
+
+        // Add status value
+        detailsContainer
+          .append("text")
+          .attr("class", "pipeline-node__details-value")
+          // .text(() => {
+          //   return nodeStatus ? nodeStatus.charAt(0).toUpperCase() + nodeStatus.slice(1) : ""
+          // })
+          .attr("text-anchor", "end")
+          .attr("x", nodeWidth / 2 - 15)
+          .attr("y", nodeHeight / 2 + 20)
+          // .style("fill", () => {
+          //   if (nodeStatus === "failed") {return "#e74c3c"}
+          //   if (nodeStatus === "completed") {return "#2ecc71"}
+          //   return "white"
+          // })
+          .style("font-size", "14px")
+
+        // Add duration label
+        detailsContainer
+          .append("text")
+          .attr("class", "pipeline-node__details-label")
+          .text("Duration")
+          .attr("text-anchor", "start")
+          .attr("x", nodeWidth / -2 + 15)
+          .attr("y", nodeHeight / 2 + 45)
+          .style("fill", "#999")
+          .style("font-size", "14px")
+
+        // Add duration value
+        detailsContainer
+          .append("text")
+          .attr("class", "pipeline-node__details-value")
+          // .text(() => {
+          //   return (nodeStatus && nodesStatus[nodeStatus][node.id]?.duration) || ""
+          // })
+          .attr("text-anchor", "end")
+          .attr("x", nodeWidth / 2 - 15)
+          .attr("y", nodeHeight / 2 + 45)
+          .style("fill", "white")
+          .style("font-size", "14px")
+      })
+
+      return nodeRects
+}
+  
 
 const updateParameterRect = (nodeRects, orientation) =>
   nodeRects
@@ -168,21 +294,9 @@ export const drawNodes = function (changed) {
     nodes,
     focusMode,
     hoveredFocusMode,
-    isSlicingPipelineApplied,
     orientation,
+    nodesStatus,
   } = this.props;
-  const {
-    from: slicedPipelineFromId,
-    to: slicedPipelineToId,
-    range,
-  } = this.state.slicedPipelineState;
-
-  const slicedPipelineFromTo =
-    slicedPipelineFromId &&
-    slicedPipelineToId &&
-    createNodeStateMap(nodes, [slicedPipelineFromId, slicedPipelineToId]);
-
-  const slicedPipelineRange = createNodeStateMap(nodes, range);
 
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
@@ -200,6 +314,14 @@ export const drawNodes = function (changed) {
   const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
+    // Filter enterNodes to only those with success or failed status
+  const statusNodes = enterNodes.filter((d) => {
+    const nodeStatus = Object.keys(nodesStatus).find(
+      (statusKey) => nodesStatus[statusKey][d.id]
+    );
+    return nodeStatus === 'success' || nodeStatus === 'failed';
+  });
+
   // Filter out undefined nodes on Safari
   const allNodes = this.el.nodes
     .merge(enterNodes)
@@ -235,8 +357,22 @@ export const drawNodes = function (changed) {
       .append('rect')
       .attr(
         'class',
-        (node) =>
-          `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
+        (node) => {
+          let baseClass = `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`;
+
+          // Find the status key that contains this node.id
+          let nodeStatus = null;
+          if (nodesStatus) {
+            nodeStatus = Object.keys(nodesStatus).find(
+              (statusKey) => nodesStatus[statusKey][node.id]
+            );
+          }
+
+          if (nodeStatus) {
+            baseClass += ` pipeline-node__bg--status-${nodeStatus}`;
+          }
+          return baseClass;
+        }
       );
 
     enterNodes
@@ -288,17 +424,6 @@ export const drawNodes = function (changed) {
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
-      .classed(
-        'pipeline-node--sliced-pipeline',
-        (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
-      )
-      .classed(
-        'pipeline-node--from-to-sliced-pipeline',
-        (node) =>
-          !isSlicingPipelineApplied &&
-          slicedPipelineFromTo &&
-          slicedPipelineFromTo[node.id]
-      )
       .classed(
         'pipeline-node--collapsed-hint',
         (node) =>
