@@ -87,7 +87,11 @@ class CatalogRepository:
         self._layers_mapping = {}
 
         # Get datasets available in catalog
-        if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+        if hasattr(self._catalog, "keys") and callable(self._catalog.keys):
+            datasets = self._catalog.keys()
+        elif IS_KEDRODATACATALOG and isinstance(
+            self._catalog, KedroDataCatalog
+        ):  # pragma: no cover
             # Returns dataset names
             datasets = self._catalog.list()
         else:
