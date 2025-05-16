@@ -339,8 +339,9 @@ export const drawNodes = function (changed) {
     hoveredFocusMode,
     orientation,
     nodesStatus,
+    dataSetsStatus,
   } = this.props;
-
+  
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
 
@@ -357,13 +358,6 @@ export const drawNodes = function (changed) {
   const updateNodes = this.el.nodes;
   const enterNodes = this.el.nodes.enter().append('g');
   const exitNodes = this.el.nodes.exit();
-  // Filter enterNodes to only those with success or failed status
-  const statusNodes = enterNodes.filter((d) => {
-    const nodeStatus = Object.keys(nodesStatus).find(
-      (statusKey) => nodesStatus[statusKey][d.id]
-    );
-    return nodeStatus === 'success' || nodeStatus === 'failed';
-  });
 
   // Filter out undefined nodes on Safari
   const allNodes = this.el.nodes
@@ -408,8 +402,18 @@ export const drawNodes = function (changed) {
         );
       }
 
-      if (nodeStatus) {
-        baseClass += ` pipeline-node__bg--status-${nodeStatus}`;
+      // Also check in dataSetsStatus if node is a data node
+      let dataSetStatus = null;
+      if (node.type === 'data' && typeof dataSetsStatus === 'object') {
+        dataSetStatus = Object.keys(dataSetsStatus).find(
+          (statusKey) => dataSetsStatus[statusKey][node.id]
+        );
+      }
+
+      // Prefer nodeStatus, but if not found and dataSetStatus exists, use it
+      const finalStatus = nodeStatus || dataSetStatus;
+      if (finalStatus) {
+        baseClass += ` pipeline-node__bg--status-${finalStatus}`;
       }
       return baseClass;
     });
