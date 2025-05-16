@@ -85,18 +85,18 @@ def _load_data_helper(
 
     try:
         kedro_session = KedroSession.create(
-        project_path=project_path,
-        env=env,
-        save_on_close=False,
-        runtime_params=extra_params,
-    )
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            runtime_params=extra_params,  # type: ignore[call-arg]
+        )
     except TypeError:
         kedro_session = KedroSession.create(
-        project_path=project_path,
-        env=env,
-        save_on_close=False,
-        extra_params=extra_params,
-    )
+            project_path=project_path,
+            env=env,
+            save_on_close=False,
+            extra_params=extra_params,
+        )
 
     with kedro_session as session:
         # check for --include-hooks option

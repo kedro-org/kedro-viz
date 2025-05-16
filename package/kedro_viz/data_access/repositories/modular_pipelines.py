@@ -60,8 +60,10 @@ class ModularPipelinesRepository:
             try:
                 sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
             except AttributeError:
-                sub_pipeline = pipeline.only_nodes_with_namespaces([modular_pipeline_id])
-            
+                sub_pipeline = pipeline.only_nodes_with_namespaces(  # type: ignore[attr-defined]
+                    [modular_pipeline_id]
+                )
+
             rest_of_the_pipeline = pipeline - sub_pipeline
 
             free_inputs = sub_pipeline.inputs()
