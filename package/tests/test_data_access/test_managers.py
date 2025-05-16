@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import Dict
+from unittest.mock import MagicMock
 
 import networkx as nx
 import pytest
@@ -735,3 +736,21 @@ class TestResolveDatasetFactoryPatterns:
             catalog_repo.get_layer_for_dataset("processing.int_companies")
             == "factory_test"
         )
+
+        # Testing for DataCatalog 2.0
+        # Mock the `get` method on the catalog
+        catalog.get = MagicMock(return_value="mocked_dataset")  # type: ignore[attr-defined]
+        # Set the catalog in the repository
+        catalog_repo.set_catalog(catalog)
+
+        # Call the method under test
+        data_access_manager.resolve_dataset_factory_patterns(catalog, pipelines)
+
+        # Assert that the layer for the dataset is resolved correctly
+        assert (
+            catalog_repo.get_layer_for_dataset("processing.int_companies")
+            == "factory_test"
+        )
+
+        # Assert that the `get` method was called
+        assert catalog.get.call_count == 3  # type: ignore[attr-defined]
