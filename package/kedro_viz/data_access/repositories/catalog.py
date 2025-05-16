@@ -114,7 +114,7 @@ class CatalogRepository:
                         self._layers_mapping[dataset_name] = layer
         else:
             for dataset_name in datasets:
-                if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+                if (IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog)) or (hasattr(self._catalog, "get") and callable(self._catalog.get)):
                     dataset = self._catalog.get(dataset_name)
                 else:
                     dataset = self._catalog._get_dataset(dataset_name)
@@ -141,7 +141,7 @@ class CatalogRepository:
     def get_dataset(self, dataset_name: str) -> Optional["AbstractDataset"]:
         dataset_obj: Optional["AbstractDataset"]
         try:
-            if IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog):
+            if ((IS_KEDRODATACATALOG and isinstance(self._catalog, KedroDataCatalog))) or (hasattr(self._catalog, "get") and callable(self._catalog.get)):
                 dataset_obj = self._catalog.get(dataset_name)
             elif KEDRO_VERSION >= parse("0.18.1"):
                 dataset_obj = self._catalog._get_dataset(dataset_name, suggest=False)

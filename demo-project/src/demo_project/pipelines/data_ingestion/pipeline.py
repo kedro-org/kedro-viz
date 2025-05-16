@@ -1,5 +1,10 @@
 from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
+try:
+    from kedro.pipeline.modular_pipeline import pipeline
+except ModuleNotFoundError:
+    from kedro.pipeline import pipeline
+    
+    
 
 from .nodes import (
     aggregate_company_data,

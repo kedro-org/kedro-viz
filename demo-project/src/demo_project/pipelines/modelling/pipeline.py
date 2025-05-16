@@ -1,7 +1,10 @@
 from typing import List
 
 from kedro.pipeline import Pipeline, node
-from kedro.pipeline.modular_pipeline import pipeline
+try:
+    from kedro.pipeline.modular_pipeline import pipeline
+except ModuleNotFoundError:
+    from kedro.pipeline import pipeline
 
 from .nodes import evaluate_model, split_data, train_model
 
@@ -81,7 +84,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
     # Instantiate a new modeling pipeline for every model type
     model_pipelines = [
         pipeline(
-            pipe=new_train_eval_template(),
+            new_train_eval_template(),
             parameters={"dummy_model_options": f"model_options.{model_type}"},
             inputs={k: k for k in test_train_refs},
             namespace=model_type,
@@ -94,7 +97,7 @@ def create_pipeline(model_types: List[str]) -> Pipeline:
 
     # Namespace consolidated modeling pipelines
     consolidated_model_pipelines = pipeline(
-        pipe=all_modeling_pipelines,
+        all_modeling_pipelines,
         namespace="train_evaluation",
         inputs=test_train_refs,
     )

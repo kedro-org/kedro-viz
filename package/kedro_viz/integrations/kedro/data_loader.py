@@ -83,12 +83,22 @@ def _load_data_helper(
         A tuple containing the data catalog, pipeline dictionary and dataset stats dictionary.
     """
 
-    with KedroSession.create(
+    try:
+        kedro_session = KedroSession.create(
+        project_path=project_path,
+        env=env,
+        save_on_close=False,
+        runtime_params=extra_params,
+    )
+    except TypeError:
+        kedro_session = KedroSession.create(
         project_path=project_path,
         env=env,
         save_on_close=False,
         extra_params=extra_params,
-    ) as session:
+    )
+
+    with kedro_session as session:
         # check for --include-hooks option
         if not include_hooks:
             session._hook_manager = _VizNullPluginManager()  # type: ignore

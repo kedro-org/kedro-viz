@@ -104,7 +104,11 @@ class DataAccessManager:
 
         for dataset_name in all_datasets:
             try:
-                catalog._get_dataset(dataset_name, suggest=False)
+                if hasattr(catalog, "get") and callable(catalog.get):
+                    # [TODO] Not sure of version
+                    catalog.get(dataset_name)
+                else:
+                    catalog._get_dataset(dataset_name, suggest=False)
             except Exception:  # noqa: BLE001 # pragma: no cover
                 continue
 
