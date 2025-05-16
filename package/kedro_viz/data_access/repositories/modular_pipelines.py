@@ -59,7 +59,7 @@ class ModularPipelinesRepository:
 
             try:
                 sub_pipeline = pipeline.only_nodes_with_namespace(modular_pipeline_id)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 sub_pipeline = pipeline.only_nodes_with_namespaces(  # type: ignore[attr-defined]
                     [modular_pipeline_id]
                 )
