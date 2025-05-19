@@ -3,6 +3,7 @@ import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
+import { updateNodeRects } from './updateNodeRects';
 
 const lineShape = line()
   .x((d) => d.x)
@@ -120,192 +121,6 @@ export const drawLayerNames = function () {
   this.el.layerNames.text((d) => d.name).attr('dy', 5);
 };
 
-/**
- * Sets the size and position of the given node rects
- */
-const updateNodeRects = (nodeRects, nodesStatus) => {
-  // Update the main node rectangles
-  nodeRects
-    .attr('width', (node) => node.width - 5)
-    .attr('height', (node) => node.height - 5)
-    .attr('x', (node) => (node.width - 5) / -2)
-    .attr('y', (node) => (node.height - 5) / -2)
-    .attr('rx', (node) => {
-      // Task and Pipeline nodes are rectangle so radius on x-axis is 0
-      if (node.type === 'task' || node.type === 'modularPipeline') {
-        return 0;
-      }
-      return node.height / 2;
-    });
-
-  // Create the details containers FIRST so they are below the node background
-  nodeRects.each(function (node) {
-    // Get the parent group (the .pipeline-node element)
-    const parentGroup = select(this.parentNode);
-    const nodeWidth = node.width - 5;
-    const nodeHeight = node.height - 5;
-    const detailsHeight = 60;
-
-    // Create a container for the details section
-    const detailsContainer = parentGroup
-      .insert('g', ':first-child')
-      .attr('class', 'pipeline-node__details-container');
-
-    // Find the node status
-    let nodeStatus = null;
-    if (nodesStatus) {
-      nodeStatus = Object.keys(nodesStatus).find(
-        (statusKey) => nodesStatus[statusKey][node.id]
-      );
-    }
-
-    // 1. First, create the main node outline (top part only)
-    parentGroup
-      .append('path')
-      .attr('class', 'pipeline-node__main-outline')
-      .attr('d', () => {
-        // For task and modularPipeline nodes (rectangular top)
-        if (node.type === 'task' || node.type === 'modularPipeline') {
-          return `
-            M ${nodeWidth / -2} ${nodeHeight / -2}
-            H ${nodeWidth / 2}
-            V ${nodeHeight / 2}
-            H ${nodeWidth / -2}
-            V ${nodeHeight / -2}
-            Z
-          `;
-        }
-        // For other nodes (circular top)
-        else {
-          const radius = nodeHeight / 2;
-          return `
-            M ${nodeWidth / -2 + radius} ${nodeHeight / -2}
-            H ${nodeWidth / 2 - radius}
-            Q ${nodeWidth / 2} ${nodeHeight / -2} ${nodeWidth / 2} ${
-            nodeHeight / -2 + radius
-          }
-            V ${nodeHeight / 2 - radius}
-            Q ${nodeWidth / 2} ${nodeHeight / 2} ${nodeWidth / 2 - radius} ${
-            nodeHeight / 2
-          }
-            H ${nodeWidth / -2 + radius}
-            Q ${nodeWidth / -2} ${nodeHeight / 2} ${nodeWidth / -2} ${
-            nodeHeight / 2 - radius
-          }
-            V ${nodeHeight / -2 + radius}
-            Q ${nodeWidth / -2} ${nodeHeight / -2} ${nodeWidth / -2 + radius} ${
-            nodeHeight / -2
-          }
-            Z
-          `;
-        }
-      })
-      .style('fill', 'none');
-
-    // 2. Add the details background
-    detailsContainer
-      .append('rect')
-      .attr('class', 'pipeline-node__details-bg')
-      .attr('width', nodeWidth)
-      .attr('height', (node) =>
-        node.type === 'task' || node.type === 'modularPipeline'
-          ? detailsHeight
-          : detailsHeight + 20
-      )
-      .attr('x', nodeWidth / -2)
-      .attr('y', (node) =>
-        node.type === 'task' || node.type === 'modularPipeline'
-          ? nodeHeight / 2 + 1
-          : 0
-      )
-      .attr('rx', 0)
-      .style('fill', '#1a1a1a')
-      .style('stroke', 'none');
-
-    // 3. Add the details outline (bottom part only)
-    detailsContainer
-      .append('path')
-      .attr('class', 'pipeline-node__details-outline')
-      .attr('d', () => {
-        if (node.type === 'task' || node.type === 'modularPipeline') {
-          // Straight line (rectangle bottom)
-          return `
-            M ${nodeWidth / -2} ${nodeHeight / 2}
-            V ${nodeHeight / 2 + detailsHeight}
-            H ${nodeWidth / 2}
-            V ${nodeHeight / 2}
-          `;
-        } else {
-          // Curved bottom
-          return `
-            M ${nodeWidth / -2} 0
-            V ${nodeHeight / 2 + detailsHeight - 10}
-            Q ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight} ${
-            nodeWidth / -2 + 10
-          } ${nodeHeight / 2 + detailsHeight}
-            H ${nodeWidth / 2 - 10}
-            Q ${nodeWidth / 2} ${nodeHeight / 2 + detailsHeight} ${
-            nodeWidth / 2
-          } ${nodeHeight / 2 + detailsHeight - 10}
-            V 0
-          `;
-        }
-      })
-      .style('fill', 'none')
-      .style('stroke', '#525252')
-      .style('stroke-width', 2);
-
-    // Add status label
-    detailsContainer
-      .append('text')
-      .attr('class', 'pipeline-node__details-label')
-      .text('Status')
-      .attr('text-anchor', 'start')
-      .attr('x', nodeWidth / -2 + 15)
-      .attr('y', nodeHeight / 2 + 20)
-      .style('fill', '#999')
-      .style('font-size', '14px');
-
-    // Add status value
-    detailsContainer
-      .append('text')
-      .attr('class', 'pipeline-node__details-value')
-      .text(() => {
-        return nodeStatus
-          ? nodeStatus.charAt(0).toUpperCase() + nodeStatus.slice(1)
-          : '';
-      })
-      .attr('text-anchor', 'end')
-      .attr('x', nodeWidth / 2 - 15)
-      .attr('y', nodeHeight / 2 + 20)
-      .style('font-size', '14px');
-
-    // Add duration label
-    detailsContainer
-      .append('text')
-      .attr('class', 'pipeline-node__details-label')
-      .text('Duration')
-      .attr('text-anchor', 'start')
-      .attr('x', nodeWidth / -2 + 15)
-      .attr('y', nodeHeight / 2 + 45)
-      .style('fill', '#999')
-      .style('font-size', '14px');
-
-    // Add duration value
-    detailsContainer
-      .append('text')
-      .attr('class', 'pipeline-node__details-value')
-      .text(() => {
-        return (nodeStatus && nodesStatus[nodeStatus][node.id]?.duration) || '';
-      })
-      .attr('text-anchor', 'end')
-      .attr('x', nodeWidth / 2 - 15)
-      .attr('y', nodeHeight / 2 + 45)
-      .style('fill', 'white')
-      .style('font-size', '14px');
-  });
-};
-
 const updateParameterRect = (nodeRects, orientation) =>
   nodeRects
     .attr('width', 12)
@@ -341,7 +156,7 @@ export const drawNodes = function (changed) {
     nodesStatus,
     dataSetsStatus,
   } = this.props;
-  
+
   const isInputOutputNode = (nodeID) =>
     focusMode !== null && inputOutputDataNodes[nodeID];
 
