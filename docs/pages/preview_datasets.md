@@ -11,9 +11,8 @@ Currently, Kedro-Viz supports four types of previews:
 
 While we currently support the above mentioned datasets, we are soon going to extend this functionality to include other datasets. Users with custom datasets can also expand the preview functionality, which is covered in the section [Extend Preview to Custom Datasets](./preview_custom_datasets.md).
 
-```{note}
-Starting from Kedro-Viz 8.0.0, previews are now enabled by default. If you wish to disable it for a specific dataset, refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
-```
+!!! info
+    Starting from Kedro-Viz 8.0.0, previews are now enabled by default. If you wish to disable it for a specific dataset, refer to the [Disable Preview section](./preview_datasets.md#disabling-previews) for instructions.
 
 **Preview tabular data**
 
@@ -30,15 +29,6 @@ See [Preview Matplotlib charts in Kedro-Viz](./preview_matplotlib_datasets.md) f
 **Extend Preview to custom catasets**
 
 See [Extend Preview to custom datasets](./preview_custom_datasets.md) for a guide on how to set up previews for custom datasets and which types are supported by Kedro-Viz.
-
-```{toctree}
-:maxdepth: 1
-:hidden:
-preview_matplotlib_datasets
-preview_plotly_datasets
-preview_pandas_datasets
-preview_custom_datasets
-```
 
 
 
@@ -59,6 +49,5 @@ companies:
 
 You can also disable previews globally through the settings menu on Kedro-Viz.
 
-```{note}
-Starting from Kedro-Viz 9.2.0, previews are disabled by default for the CLI commands `kedro viz deploy` and `kedro viz build`. You can control this behavior using the `--include-previews` flag with these commands. For `kedro viz run`, previews are enabled by default and can be controlled from the publish modal dialog, refer to the [Publish and share](./share_kedro_viz) for more instructions.
-```
+!!! info
+    Starting from Kedro-Viz 9.2.0, previews are disabled by default for the CLI commands `kedro viz deploy` and `kedro viz build`. You can control this behavior using the `--include-previews` flag with these commands. For `kedro viz run`, previews are enabled by default and can be controlled from the publish modal dialog, refer to the [Publish and share](./share_kedro_viz) for more instructions.

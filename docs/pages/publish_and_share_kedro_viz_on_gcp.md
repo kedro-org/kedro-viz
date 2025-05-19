@@ -4,11 +4,10 @@ This page describes how to publish Kedro-Viz on GCP to share it with others. It 
 
 ## Setup your kedro project 
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html). 
 
-```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.1). To check the version installed, type `kedro -V` in your terminal window.
-```
+!!! tip
+    We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
 
 In your terminal window, navigate to the folder you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
@@ -44,9 +43,8 @@ You can host your Kedro-Viz project on Google Cloud Storage (GCS) bucket.
 
 1. Enable static website hosting: Follow the [GCP tutorial](https://cloud.google.com/storage/docs/hosting-static-website) to configure static website hosting on GCS.
 
-```{note}
-The process of uploading your site's files will be done through Kedro-Viz.
-```
+!!! info
+    The process of uploading your site's files will be done through Kedro-Viz.
 
 2. Ensure the `Compute Engine API` is enabled for your project as mentioned in the tutorial.
 
@@ -84,10 +82,9 @@ Navigate to the **Publish and share** icon located in the lower-left corner of t
 Set up endpoint
 ---------------
 
-```{important}
-The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port**  if you are using `HTTP`. 
-If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
-```
+!!! info
+    The endpoint link can be found under your **Application Load Balancer -> Frontend -> IP:Port**  if you are using `HTTP`. 
+    If you have set up SSL certificate and serve your site using `HTTPS` then provide your root domain.
 
 Before publishing, you can enable or disable the preview for all datasets by toggling the "All dataset previews" button in the modal dialog.
 Once those details are complete, click **Publish**. A hosted, shareable URL will be returned to you after the process completes.
@@ -102,9 +99,8 @@ Use the `kedro viz deploy` command to publish Kedro-Viz on GCP. You can execute 
 kedro viz deploy --platform=gcp --endpoint=[gcp-endpoint] --bucket-name=[gcp-bucket-name]
 ```
 
-```{note}
-Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
-```
+!!! info
+    Starting from Kedro-Viz 9.2.0, `kedro viz deploy` will not include dataset previews by default. To enable previews for all the datasets, use the `--include-previews` flag.
 
 ## Permissions and access control
 

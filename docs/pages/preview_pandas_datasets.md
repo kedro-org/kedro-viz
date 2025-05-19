@@ -1,12 +1,11 @@
 # Preview tabular data in Kedro-Viz
 
-We use the {doc}`spaceflights tutorial<kedro:tutorial/spaceflights_tutorial>` to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
+We use the [spaceflights tutorial](https://docs.kedro.org/en/stable/tutorial/spaceflights_tutorial.html) to demonstrate how to add data preview for the `customer`, `shuttle` and `reviews` datasets. Even if you have not yet worked through the tutorial, you can still follow this example; you'll need to use the Kedro starter for the spaceflights tutorial to generate a copy of the project with working code in place.
 
-If you haven't installed Kedro {doc}`follow the documentation to get set up<kedro:get_started/install>`. 
+If you haven't installed Kedro [follow the documentation to get set up](https://docs.kedro.org/en/stable/get_started/install.html). 
 
-```{important}
-We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
-```
+!!! tip
+    We recommend that you use the same version of Kedro that was most recently used to test this tutorial (0.19.0). To check the version installed, type `kedro -V` in your terminal window.
 
 In your terminal window, navigate to the folder where you want to store the project. Generate the spaceflights tutorial project with all the code in place by using the [Kedro starter for the spaceflights tutorial](https://github.com/kedro-org/kedro-starters/tree/main/spaceflights-pandas):
 
