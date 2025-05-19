@@ -9,7 +9,7 @@ import './container.scss';
  */
 const Container = () => (
   <>
-    <App data={getPipelineData()} />
+    <App data={getPipelineData()} runData={'json'} />
   </>
 );
 

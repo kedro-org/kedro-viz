@@ -15,7 +15,6 @@ import {
 import { toggleFocusMode } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
-import { loadRunStatusData } from '../../actions/run-status';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart';
 import PipelineWarning from '../pipeline-warning';
@@ -58,7 +57,6 @@ export const FlowChartWrapper = ({
   onToggleModularPipelineExpanded,
   onToggleNodeSelected,
   onUpdateActivePipeline,
-  onLoadRunStatusData,
   pipelines,
   sidebarVisible,
   activePipeline,
@@ -268,10 +266,6 @@ export const FlowChartWrapper = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph, usedNavigationBtn, isInvalidUrl]);
 
-  useEffect(() => {
-    onLoadRunStatusData();
-  }, []);
-
   const handleBannerClose = (bannerKey) => {
     saveLocalStorage(localStorageBannerStatus, { [bannerKey]: false });
   };
@@ -366,9 +360,6 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
-  },
-  onLoadRunStatusData: () => {
-    dispatch(loadRunStatusData());
   },
 });
 
