@@ -10,6 +10,7 @@ import sys
 from time import perf_counter
 from pathlib import Path
 from typing import Any
+from datetime import datetime
 
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
@@ -25,8 +26,6 @@ pipeline_events = []
 class PipelineRunHooks:
     def __init__(self):
         self._node_start_times = {}
-        self._dataset_load_times = {}
-        self._dataset_save_times = {}
         self._dataset_sizes = {}
 
     def _estimate_size(self, data: Any) -> int:
@@ -56,15 +55,23 @@ class PipelineRunHooks:
             logger.warning(
                 "Unable to write pipeline run events to file: %s", exc
             )            
-
     @hook_impl
-    def before_dataset_loaded(self, dataset_name: str):
-        # Just keep track of the time, but don't add to pipeline_events
-        self._dataset_load_times[dataset_name] = perf_counter()
+    def before_pipeline_run(self, run_params, pipeline, catalog):
+        """At the start of the run"""
+        if run_params.get("pipeline_name") is not None:
+            return
+
+        event = {
+            "event": "before_pipeline_run",
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        
+        pipeline_events.append(event)
+        self._write_events_to_file()
+
 
     @hook_impl
     def after_dataset_loaded(self, dataset_name: str, data: Any):
-        duration = perf_counter() - self._dataset_load_times.get(dataset_name, 0)
         size = self._estimate_size(data)
         self._dataset_sizes[dataset_name] = size
 
@@ -73,7 +80,6 @@ class PipelineRunHooks:
             "event": "after_dataset_loaded",
             "dataset": dataset_name,
             "node_id": node_id,
-            "load_time_sec": duration,
             "size_bytes": size,
         }
 
@@ -107,21 +113,17 @@ class PipelineRunHooks:
 
     @hook_impl
     def before_dataset_saved(self, dataset_name: str, data: Any):
-        # Just keep timing data without storing the event
-        self._dataset_save_times[dataset_name] = perf_counter()
         size = self._estimate_size(data)
         self._dataset_sizes[dataset_name] = size
 
     @hook_impl
     def after_dataset_saved(self, dataset_name: str):
-        duration = perf_counter() - self._dataset_save_times.get(dataset_name, 0)
         size = self._dataset_sizes.get(dataset_name, -1)
         node_id = _hash_input_output(dataset_name)
         
         event = {
             "event": "after_dataset_saved",
             "dataset": dataset_name,
-            "save_time_sec": duration,
             "node_id": node_id,
             "size_bytes": size,
         }
@@ -136,7 +138,7 @@ class PipelineRunHooks:
 
         event = {
             "event": "after_pipeline_run",
-            "timestamp": perf_counter(),
+            "timestamp": datetime.utcnow().isoformat(),
         }
         
         pipeline_events.append(event)
@@ -154,7 +156,7 @@ class PipelineRunHooks:
             "node": node.name,
             "node_id": node_id,
             "error": str(error),
-            "timestamp": perf_counter(),
+            "timestamp": datetime.utcnow().isoformat(),
         }
 
         pipeline_events.append(event)
@@ -165,7 +167,7 @@ class PipelineRunHooks:
         event = {
             "event": "on_pipeline_error",
             "error": str(error),
-            "timestamp": perf_counter(),
+            "timestamp": datetime.utcnow().isoformat(),
         }
 
         pipeline_events.append(event)

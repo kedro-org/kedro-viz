@@ -5,8 +5,12 @@ import {
 } from '../actions/run-status';
 
 const initialState = {
-  nodeStatus: {},
-  datasetStatus: {},
+  // Structured format node-ID based data
+  groupedData: {
+    nodes: {},
+    datasets: {},
+    pipeline: {},
+  },
   loading: false,
   error: null,
 };
@@ -28,6 +32,7 @@ function runStatusReducer(state = initialState, action) {
       return {
         ...state,
         error: action.error,
+        loading: false,
       };
     default:
       return state;

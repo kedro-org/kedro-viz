@@ -1,22 +1,24 @@
 [
   {
+    "event": "before_pipeline_run",
+    "timestamp": "2025-05-19T08:17:43.017855"
+  },
+  {
     "event": "after_dataset_loaded",
     "dataset": "companies",
     "node_id": "aed46479",
-    "load_time_sec": 0.03810400003567338,
     "size_bytes": 13998272
   },
   {
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_companies",
     "node_id": "69c523b6",
-    "duration_sec": 0.019259124994277954,
+    "duration_sec": 0.019322707783430815,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.int_typed_companies",
-    "save_time_sec": 0.15067720785737038,
     "node_id": "f23ad217",
     "size_bytes": 6399158
   },
@@ -24,27 +26,24 @@
     "event": "after_dataset_loaded",
     "dataset": "reviews",
     "node_id": "7b2c6e04",
-    "load_time_sec": 0.037918708054348826,
     "size_bytes": 6167824
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:ingestion.typing.reviews.columns_as_floats",
     "node_id": "b5609df0",
-    "load_time_sec": 0.0009360839612782001,
     "size_bytes": 88
   },
   {
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_reviews",
     "node_id": "ea604da4",
-    "duration_sec": 0.013807584065943956,
+    "duration_sec": 0.01525658299215138,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.int_typed_reviews",
-    "save_time_sec": 0.02187287504784763,
     "node_id": "4f7ffa1b",
     "size_bytes": 5355856
   },
@@ -52,20 +51,18 @@
     "event": "after_dataset_loaded",
     "dataset": "shuttles",
     "node_id": "f1d596c2",
-    "load_time_sec": 5.347216499969363,
     "size_bytes": 42831629
   },
   {
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_shuttles",
     "node_id": "f33b9291",
-    "duration_sec": 0.04458345798775554,
+    "duration_sec": 0.043249875074252486,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.int_typed_shuttles@pandas1",
-    "save_time_sec": 0.07294145785272121,
     "node_id": "c0ddbcbf",
     "size_bytes": 29647753
   },
@@ -73,20 +70,18 @@
     "event": "after_dataset_loaded",
     "dataset": "ingestion.int_typed_companies",
     "node_id": "f23ad217",
-    "load_time_sec": 0.22107366705313325,
     "size_bytes": 6246118
   },
   {
     "event": "after_node_run",
     "node": "ingestion.company_agg",
     "node_id": "8de402c1",
-    "duration_sec": 0.6255464998539537,
+    "duration_sec": 0.6165553750470281,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.prm_agg_companies",
-    "save_time_sec": 0.007949833991006017,
     "node_id": "8f20d98e",
     "size_bytes": 3920426
   },
@@ -94,41 +89,36 @@
     "event": "after_dataset_loaded",
     "dataset": "ingestion.int_typed_shuttles@pandas2",
     "node_id": "c0ddbcbf",
-    "load_time_sec": 0.013491166988387704,
     "size_bytes": 29647753
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "ingestion.prm_agg_companies",
     "node_id": "8f20d98e",
-    "load_time_sec": 0.0038644580636173487,
     "size_bytes": 3920426
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "ingestion.int_typed_reviews",
     "node_id": "4f7ffa1b",
-    "load_time_sec": 0.007105833850800991,
     "size_bytes": 5355856
   },
   {
     "event": "after_node_run",
     "node": "ingestion.combine_step",
     "node_id": "cb5166f3",
-    "duration_sec": 0.05565066612325609,
+    "duration_sec": 0.06097454181872308,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "prm_shuttle_company_reviews",
-    "save_time_sec": 0.054936332860961556,
     "node_id": "9f266f06",
     "size_bytes": 16531446
   },
   {
     "event": "after_dataset_saved",
     "dataset": "prm_spine_table",
-    "save_time_sec": 0.014652333222329617,
     "node_id": "f063cc82",
     "size_bytes": 952592
   },
@@ -136,34 +126,30 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
-    "load_time_sec": 0.012671625008806586,
     "size_bytes": 952592
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.02148387487977743,
     "size_bytes": 16531446
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:feature_engineering.feature.derived",
     "node_id": "abed6a4d",
-    "load_time_sec": 0.0012102499604225159,
     "size_bytes": 88
   },
   {
     "event": "after_node_run",
     "node": "feature_engineering.create_derived_features([prm_spine_table;prm_shuttle_company_reviews;params:feature_engineering.feature.derived]) -> [feature_engineering.feat_derived_features]",
     "node_id": "04ba733a",
-    "duration_sec": 0.018446375150233507,
+    "duration_sec": 0.02176725002937019,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "feature_engineering.feat_derived_features",
-    "save_time_sec": 0.0023998329415917397,
     "node_id": "7c92a703",
     "size_bytes": 714576
   },
@@ -171,20 +157,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
-    "load_time_sec": 0.003743582870811224,
     "size_bytes": 952592
   },
   {
     "event": "after_node_run",
     "node": "feature_engineering.create_feature_importance([prm_spine_table]) -> [feature_importance_output]",
     "node_id": "7932e672",
-    "duration_sec": 0.0057149159256368876,
+    "duration_sec": 0.003584083868190646,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "feature_importance_output",
-    "save_time_sec": 0.021344457985833287,
     "node_id": "1e3cc50a",
     "size_bytes": 1259
   },
@@ -192,27 +176,24 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.013648375170305371,
     "size_bytes": 16531446
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:feature_engineering.feature.static",
     "node_id": "a3627e31",
-    "load_time_sec": 0.0010364169720560312,
     "size_bytes": 184
   },
   {
     "event": "after_node_run",
     "node": "feature_engineering.create_static_features([prm_shuttle_company_reviews;params:feature_engineering.feature.static]) -> [feature_engineering.feat_static_features]",
     "node_id": "e50f81b8",
-    "duration_sec": 0.014500583056360483,
+    "duration_sec": 0.013727750163525343,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "feature_engineering.feat_static_features",
-    "save_time_sec": 0.005574292037636042,
     "node_id": "8e4f1015",
     "size_bytes": 2470760
   },
@@ -220,20 +201,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
-    "load_time_sec": 0.003906042082235217,
     "size_bytes": 952592
   },
   {
     "event": "after_node_run",
     "node": "ingestion.<lambda>([prm_spine_table]) -> [ingestion.prm_spine_table_clone]",
     "node_id": "9a6ef457",
-    "duration_sec": 0.003747458104044199,
+    "duration_sec": 0.0036455830559134483,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.prm_spine_table_clone",
-    "save_time_sec": 0.0025321668945252895,
     "node_id": "c08c7708",
     "size_bytes": 952592
   },
@@ -241,20 +220,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.013243249850347638,
     "size_bytes": 16531446
   },
   {
     "event": "after_node_run",
     "node": "reporting.create_matplotlib_chart([prm_shuttle_company_reviews]) -> [reporting.confusion_matrix]",
     "node_id": "be6b7919",
-    "duration_sec": 0.2613346658181399,
+    "duration_sec": 0.22988108289428055,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.confusion_matrix",
-    "save_time_sec": 0.11260966607369483,
     "node_id": "3b199c6b",
     "size_bytes": 72
   },
@@ -262,20 +239,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.01415120786987245,
     "size_bytes": 16531446
   },
   {
     "event": "after_node_run",
     "node": "reporting.get_top_shuttles_data([prm_shuttle_company_reviews]) -> [reporting.top_shuttle_data]",
     "node_id": "44ef9b48",
-    "duration_sec": 0.01980283297598362,
+    "duration_sec": 0.016686041839420795,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.top_shuttle_data",
-    "save_time_sec": 0.01234729215502739,
     "node_id": "c0be8342",
     "size_bytes": 120
   },
@@ -283,20 +258,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.014168624999001622,
     "size_bytes": 16531446
   },
   {
     "event": "after_node_run",
     "node": "reporting.make_cancel_policy_bar_chart([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_breakdown]",
     "node_id": "c7646ea1",
-    "duration_sec": 0.017396959010511637,
+    "duration_sec": 0.016306875040754676,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.cancellation_policy_breakdown",
-    "save_time_sec": 2.465412790887058,
     "node_id": "d0e9b00f",
     "size_bytes": 3151
   },
@@ -304,20 +277,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.02090154099278152,
     "size_bytes": 16531446
   },
   {
     "event": "after_node_run",
     "node": "reporting.make_price_analysis_image([prm_shuttle_company_reviews]) -> [reporting.cancellation_policy_grid]",
     "node_id": "3fb71518",
-    "duration_sec": 0.01369445794261992,
+    "duration_sec": 0.013523624977096915,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.cancellation_policy_grid",
-    "save_time_sec": 0.013054291950538754,
     "node_id": "8838ca1f",
     "size_bytes": 48
   },
@@ -325,20 +296,18 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_shuttle_company_reviews",
     "node_id": "9f266f06",
-    "load_time_sec": 0.01596683287061751,
     "size_bytes": 16531446
   },
   {
     "event": "after_node_run",
     "node": "reporting.make_price_histogram([prm_shuttle_company_reviews]) -> [reporting.price_histogram]",
     "node_id": "40886786",
-    "duration_sec": 0.09546949993818998,
+    "duration_sec": 0.13598520797677338,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.price_histogram",
-    "save_time_sec": 0.05006541684269905,
     "node_id": "c6992660",
     "size_bytes": 48
   },
@@ -346,34 +315,30 @@
     "event": "after_dataset_loaded",
     "dataset": "prm_spine_table",
     "node_id": "f063cc82",
-    "load_time_sec": 0.004302625078707933,
     "size_bytes": 952592
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "feature_engineering.feat_static_features",
     "node_id": "8e4f1015",
-    "load_time_sec": 0.005634374916553497,
     "size_bytes": 2470760
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "feature_engineering.feat_derived_features",
     "node_id": "7c92a703",
-    "load_time_sec": 0.0027751659508794546,
     "size_bytes": 714576
   },
   {
     "event": "after_node_run",
     "node": "feature_engineering.joiner([prm_spine_table;feature_engineering.feat_static_features;feature_engineering.feat_derived_features]) -> [model_input_table]",
     "node_id": "6ea2ec2c",
-    "duration_sec": 0.019555332837626338,
+    "duration_sec": 0.017654542112722993,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "model_input_table",
-    "save_time_sec": 0.017575958045199513,
     "node_id": "23c94afb",
     "size_bytes": 2232744
   },
@@ -381,20 +346,18 @@
     "event": "after_dataset_loaded",
     "dataset": "feature_importance_output",
     "node_id": "1e3cc50a",
-    "load_time_sec": 0.004724500002339482,
     "size_bytes": 1259
   },
   {
     "event": "after_node_run",
     "node": "reporting.create_feature_importance_plot([feature_importance_output]) -> [reporting.feature_importance]",
     "node_id": "4adb5c8b",
-    "duration_sec": 0.04741958295926452,
+    "duration_sec": 0.04443137510679662,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "reporting.feature_importance",
-    "save_time_sec": 0.07429479202255607,
     "node_id": "eb7d6d28",
     "size_bytes": 48
   },
@@ -402,48 +365,42 @@
     "event": "after_dataset_loaded",
     "dataset": "model_input_table",
     "node_id": "23c94afb",
-    "load_time_sec": 0.018298499984666705,
     "size_bytes": 2232744
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:split_options",
     "node_id": "22eec376",
-    "load_time_sec": 0.0008834588807076216,
     "size_bytes": 232
   },
   {
     "event": "after_node_run",
     "node": "split_data([model_input_table;params:split_options]) -> [X_train;X_test;y_train;y_test]",
     "node_id": "2816ba38",
-    "duration_sec": 0.01708008418790996,
+    "duration_sec": 0.016325750155374408,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "X_train",
-    "save_time_sec": 0.0057916659861803055,
     "node_id": "cae2d1c7",
     "size_bytes": 1786066
   },
   {
     "event": "after_dataset_saved",
     "dataset": "X_test",
-    "save_time_sec": 0.004756917012855411,
     "node_id": "872981f9",
     "size_bytes": 446566
   },
   {
     "event": "after_dataset_saved",
     "dataset": "y_train",
-    "save_time_sec": 0.0011217501014471054,
     "node_id": "9ca016a8",
     "size_bytes": 381040
   },
   {
     "event": "after_dataset_saved",
     "dataset": "y_test",
-    "save_time_sec": 0.0010025829542428255,
     "node_id": "f6d9538c",
     "size_bytes": 95280
   },
@@ -451,41 +408,36 @@
     "event": "after_dataset_loaded",
     "dataset": "X_train",
     "node_id": "cae2d1c7",
-    "load_time_sec": 0.004573665792122483,
     "size_bytes": 1786066
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "y_train",
     "node_id": "9ca016a8",
-    "load_time_sec": 0.00144829205237329,
     "size_bytes": 381040
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:train_evaluation.model_options.linear_regression",
     "node_id": "98eb115e",
-    "load_time_sec": 0.0018671660218387842,
     "size_bytes": 232
   },
   {
     "event": "after_node_run",
     "node": "train_evaluation.linear_regression.train_model([X_train;y_train;params:train_evaluation.model_options.linear_regression]) -> [train_evaluation.linear_regression.regressor;train_evaluation.linear_regression.experiment_params]",
     "node_id": "af9a43c8",
-    "duration_sec": 0.5698238329496235,
+    "duration_sec": 0.1745574998203665,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.linear_regression.regressor",
-    "save_time_sec": 0.0797927500680089,
     "node_id": "10e51dea",
     "size_bytes": 48
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.linear_regression.experiment_params",
-    "save_time_sec": 0.0010149169247597456,
     "node_id": "b701864d",
     "size_bytes": 232
   },
@@ -493,41 +445,36 @@
     "event": "after_dataset_loaded",
     "dataset": "X_train",
     "node_id": "cae2d1c7",
-    "load_time_sec": 0.004614207893610001,
     "size_bytes": 1786066
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "y_train",
     "node_id": "9ca016a8",
-    "load_time_sec": 0.001225207932293415,
     "size_bytes": 381040
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:train_evaluation.model_options.random_forest",
     "node_id": "72baf5c6",
-    "load_time_sec": 0.000806041993200779,
     "size_bytes": 232
   },
   {
     "event": "after_node_run",
     "node": "train_evaluation.random_forest.train_model([X_train;y_train;params:train_evaluation.model_options.random_forest]) -> [train_evaluation.random_forest.regressor;train_evaluation.random_forest.experiment_params]",
     "node_id": "038647c7",
-    "duration_sec": 9.849813250126317,
+    "duration_sec": 9.297092540888116,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.random_forest.regressor",
-    "save_time_sec": 0.2531508330721408,
     "node_id": "01675921",
     "size_bytes": 48
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.random_forest.experiment_params",
-    "save_time_sec": 0.0010425001382827759,
     "node_id": "4f79de77",
     "size_bytes": 640
   },
@@ -535,34 +482,30 @@
     "event": "after_dataset_loaded",
     "dataset": "train_evaluation.linear_regression.regressor",
     "node_id": "10e51dea",
-    "load_time_sec": 0.0014773339498788118,
     "size_bytes": 48
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "X_test",
     "node_id": "872981f9",
-    "load_time_sec": 0.005114792147651315,
     "size_bytes": 446566
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "y_test",
     "node_id": "f6d9538c",
-    "load_time_sec": 0.0011840001679956913,
     "size_bytes": 95280
   },
   {
     "event": "after_node_run",
     "node": "train_evaluation.linear_regression.evaluate_model([train_evaluation.linear_regression.regressor;X_test;y_test]) -> [train_evaluation.linear_regression.r2_score]",
     "node_id": "d2885635",
-    "duration_sec": 0.009348916122689843,
+    "duration_sec": 0.008767124963924289,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.linear_regression.r2_score",
-    "save_time_sec": 0.00107216602191329,
     "node_id": "495a0bbc",
     "size_bytes": 232
   },
@@ -570,39 +513,35 @@
     "event": "after_dataset_loaded",
     "dataset": "train_evaluation.random_forest.regressor",
     "node_id": "01675921",
-    "load_time_sec": 0.06309191579930484,
     "size_bytes": 48
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "X_test",
     "node_id": "872981f9",
-    "load_time_sec": 0.0046941249165683985,
     "size_bytes": 446566
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "y_test",
     "node_id": "f6d9538c",
-    "load_time_sec": 0.00104975001886487,
     "size_bytes": 95280
   },
   {
     "event": "after_node_run",
     "node": "train_evaluation.random_forest.evaluate_model([train_evaluation.random_forest.regressor;X_test;y_test]) -> [train_evaluation.random_forest.r2_score]",
     "node_id": "bf8530bc",
-    "duration_sec": 0.13455487485043705,
+    "duration_sec": 0.15238516707904637,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "train_evaluation.random_forest.r2_score",
-    "save_time_sec": 0.0010704160667955875,
     "node_id": "b16095d0",
     "size_bytes": 232
   },
   {
     "event": "after_pipeline_run",
-    "timestamp": 1509513.941495708
+    "timestamp": "2025-05-19T08:18:04.456104"
   }
 ]

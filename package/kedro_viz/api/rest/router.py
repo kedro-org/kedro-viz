@@ -24,7 +24,7 @@ from kedro_viz.api.rest.responses.version import (
     get_version_response,
 )
 from kedro_viz.api.rest.responses.run_events import (
-    RunEventAPIResponse,
+    StructuredRunEventAPIResponse,
     get_run_events_response,
 )
 
@@ -68,9 +68,43 @@ async def get_version():
 
 @router.get(
     "/run-events",
-    response_model=RunEventAPIResponse,
+    response_model=StructuredRunEventAPIResponse
 )
 async def get_run_events():
+    """Get run events data for pipeline visualization.
+    
+    This endpoint provides access to Kedro pipeline run events in structured format.
+    
+    Returns:
+        JSON response containing run events data in structured format
+        
+    Example structured format:
+    ```
+    {
+        "nodes": {
+            "node_id": {
+                "status": "success",
+                "duration_sec": 0.123,
+                "error": null
+            }
+        },
+        "datasets": {
+            "dataset_id": {
+                "name": "dataset.name",
+                "size_bytes": 1024,
+            }
+        },
+        "pipeline": {
+            "run_id": "unique-id",
+            "start_time": "2023-05-14T10:15:30Z",
+            "end_time": "2023-05-14T10:20:45Z",
+            "total_duration_sec": 315.25,
+            "status": "completed"
+            "error": null
+        }
+    }
+    ```
+    """
     try:
         return get_run_events_response()
     except Exception as exc:
