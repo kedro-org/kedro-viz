@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 
-
 export const getDatSetsStatus = createSelector(
   [(state) => state.status.datasets],
   (datasetsStatus) => {
@@ -31,4 +30,3 @@ export const getNodesStatus = createSelector(
     return status;
   }
 );
-
