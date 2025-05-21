@@ -3,40 +3,17 @@ import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
+import {
+  matchFloats,
+  toSinglePoint,
+  limitPrecision,
+  createNodeStateMap,
+} from './draw-utils';
 
 const lineShape = line()
   .x((d) => d.x)
   .y((d) => d.y)
   .curve(curveBasis);
-
-/**
- * Matches all floating point numbers in a string
- */
-const matchFloats = /\d+\.\d+/g;
-
-/**
- * Limits the precision of a float value to one decimal point
- */
-const toSinglePoint = (value) => parseFloat(value).toFixed(1);
-
-/**
- * Limits the precision of a path string to one decimal point
- */
-const limitPrecision = (path) => path.replace(matchFloats, toSinglePoint);
-
-/**
- * Creates a mapping of node IDs to a boolean indicating if the node ID is included in the given values.
- * @param {Array} nodes - Array of nodes to process.
- * @param {Array} values - Array of values to check against node IDs.
- * @returns {Object} An object mapping node IDs to booleans.
- */
-function createNodeStateMap(nodes, values) {
-  const valueSet = new Set(values); // Convert to Set for efficient lookup
-  return nodes.reduce((acc, { id }) => {
-    acc[id] = valueSet.has(id);
-    return acc;
-  }, {});
-}
 
 /**
  * Render layer bands
