@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
+from enum import Enum
 
 from pydantic import BaseModel, Field
 
@@ -13,9 +14,19 @@ from kedro_viz.launchers.utils import _find_kedro_project
 
 logger = logging.getLogger(__name__)
 
+class NodeStatus(str, Enum):
+    """Enum representing the possible statuses of a node."""
+    SUCCESS = "Success"
+    FAIL = "Fail"
+
+class DatasetStatus(str, Enum):
+    """Enum representing the possible statuses of a dataset."""
+    AVAILABLE = "Available"
+    MISSING = "Missing"
+
 class NodeInfo(BaseModel):
     """Information about a node."""
-    status: str = "success"
+    status: NodeStatus = NodeStatus.SUCCESS
     duration_sec: float = 0.0
     error: Optional[str] = None
 
@@ -23,7 +34,7 @@ class DatasetInfo(BaseModel):
     """Information about a dataset."""
     name: str
     size_bytes: int = 0
-    status: str = "Available"
+    status: DatasetStatus = DatasetStatus.AVAILABLE
 
 class PipelineInfo(BaseModel):
     """Information about the pipeline run."""
@@ -43,11 +54,20 @@ class StructuredRunEventAPIResponse(BaseModel):
 
 def _update_dataset_info(datasets: Dict[str, DatasetInfo], node_id: str, dataset_name: str, size_bytes: Optional[int], status: str, overwrite_size: bool = False):
     """Helper to update or create DatasetInfo in the datasets dict."""
+    # Convert status string to DatasetStatus enum
+    if status:
+        try:
+            status_enum = DatasetStatus(status.capitalize())
+        except ValueError:
+            # Default to AVAILABLE if status is not a valid enum value
+            status_enum = DatasetStatus.AVAILABLE
+    else:
+        status_enum = DatasetStatus.AVAILABLE
     if node_id not in datasets:
         datasets[node_id] = DatasetInfo(
             name=dataset_name,
             size_bytes=size_bytes or 0,
-            status=status
+            status=status_enum
         )
     else:
         if not datasets[node_id].name and dataset_name:
@@ -55,7 +75,7 @@ def _update_dataset_info(datasets: Dict[str, DatasetInfo], node_id: str, dataset
         if size_bytes is not None:
             if overwrite_size or datasets[node_id].size_bytes == 0:
                 datasets[node_id].size_bytes = size_bytes
-        datasets[node_id].status = status
+        datasets[node_id].status = status_enum
 
 
 def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> StructuredRunEventAPIResponse:
@@ -87,8 +107,15 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
         if event_type == "after_node_run":
             if not node_id:
                 continue
+            status = event.get("status", "Success").capitalize()
+            try:
+                node_status = NodeStatus(status)
+            except ValueError:
+                # Default to SUCCESS if status is not a valid enum value
+                node_status = NodeStatus.SUCCESS
+                
             nodes[node_id] = NodeInfo(
-                status=event.get("status", "success"),
+                status=node_status,
                 duration_sec=float(event.get("duration_sec", 0.0)),
                 error=None
             )
@@ -97,10 +124,10 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
                 continue
             error = event.get("error", "Unknown error")
             if node_id in nodes:
-                nodes[node_id].status = "failed"
+                nodes[node_id].status = NodeStatus.FAIL
                 nodes[node_id].error = error
             else:
-                nodes[node_id] = NodeInfo(status="failed", error=error)
+                nodes[node_id] = NodeInfo(status=NodeStatus.FAIL, error=error)
         elif event_type in {"before_dataset_loaded", "before_dataset_saved"}:
             if not node_id:
                 continue
