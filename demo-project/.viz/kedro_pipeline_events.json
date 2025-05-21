@@ -1,172 +1,65 @@
 [
   {
     "event": "before_pipeline_run",
-    "timestamp": "2025-05-21T09:29:52.398876"
+    "timestamp": "2025-05-21T09:54:54.513114"
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "companies",
     "node_id": "aed46479",
-    "size_bytes": 1810602,
-    "status": "Available"
+    "status": "Available",
+    "size_bytes": 1810602
   },
   {
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_companies",
     "node_id": "69c523b6",
-    "duration_sec": 0.01919762510806322,
+    "duration_sec": 0.018740582978352904,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.int_typed_companies",
     "node_id": "f23ad217",
-    "size_bytes": 550104,
-    "status": "Available"
+    "status": "Available",
+    "size_bytes": 550104
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "reviews",
     "node_id": "7b2c6e04",
-    "size_bytes": 2937144,
-    "status": "Available"
+    "status": "Available",
+    "size_bytes": 2937144
   },
   {
     "event": "after_dataset_loaded",
     "dataset": "params:ingestion.typing.reviews.columns_as_floats",
     "node_id": "b5609df0",
-    "size_bytes": null,
     "status": "Available"
   },
   {
     "event": "after_node_run",
     "node": "ingestion.apply_types_to_reviews",
     "node_id": "ea604da4",
-    "duration_sec": 0.01983333402313292,
+    "duration_sec": 0.015999750001356006,
     "status": "success"
   },
   {
     "event": "after_dataset_saved",
     "dataset": "ingestion.int_typed_reviews",
     "node_id": "4f7ffa1b",
-    "size_bytes": 1334176,
-    "status": "Available"
+    "status": "Available",
+    "size_bytes": 1334176
   },
   {
-    "event": "after_dataset_loaded",
+    "event": "before_dataset_loaded",
     "dataset": "shuttles",
     "node_id": "f1d596c2",
-    "size_bytes": 4195290,
-    "status": "Available"
-  },
-  {
-    "event": "after_node_run",
-    "node": "ingestion.apply_types_to_shuttles",
-    "node_id": "f33b9291",
-    "duration_sec": 0.04313675011508167,
-    "status": "success"
-  },
-  {
-    "event": "after_dataset_saved",
-    "dataset": "ingestion.int_typed_shuttles@pandas1",
-    "node_id": "c0ddbcbf",
-    "size_bytes": 1234354,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "ingestion.int_typed_companies",
-    "node_id": "f23ad217",
-    "size_bytes": 550104,
-    "status": "Available"
-  },
-  {
-    "event": "after_node_run",
-    "node": "ingestion.company_agg",
-    "node_id": "8de402c1",
-    "duration_sec": 0.6078565830830485,
-    "status": "success"
-  },
-  {
-    "event": "after_dataset_saved",
-    "dataset": "ingestion.prm_agg_companies",
-    "node_id": "8f20d98e",
-    "size_bytes": null,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "ingestion.int_typed_shuttles@pandas2",
-    "node_id": "c0ddbcbf",
-    "size_bytes": 1234354,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "ingestion.prm_agg_companies",
-    "node_id": "8f20d98e",
-    "size_bytes": null,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "ingestion.int_typed_reviews",
-    "node_id": "4f7ffa1b",
-    "size_bytes": 1334176,
-    "status": "Available"
-  },
-  {
-    "event": "after_node_run",
-    "node": "ingestion.combine_step",
-    "node_id": "cb5166f3",
-    "duration_sec": 0.06294258404523134,
-    "status": "success"
-  },
-  {
-    "event": "after_dataset_saved",
-    "dataset": "prm_shuttle_company_reviews",
-    "node_id": "9f266f06",
-    "size_bytes": 1053909,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_saved",
-    "dataset": "prm_spine_table",
-    "node_id": "f063cc82",
-    "size_bytes": 659388,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "prm_spine_table",
-    "node_id": "f063cc82",
-    "size_bytes": 659388,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "prm_shuttle_company_reviews",
-    "node_id": "9f266f06",
-    "size_bytes": 1053909,
-    "status": "Available"
-  },
-  {
-    "event": "after_dataset_loaded",
-    "dataset": "params:feature_engineering.feature.derived",
-    "node_id": "abed6a4d",
-    "size_bytes": null,
-    "status": "Available"
-  },
-  {
-    "event": "on_node_error",
-    "node": "feature_engineering.create_derived_features([prm_spine_table;prm_shuttle_company_reviews;params:feature_engineering.feature.derived]) -> [feature_engineering.feat_derived_features]",
-    "node_id": "04ba733a",
-    "error": "_get_id_columns() missing 1 required positional argument: 'data'",
-    "timestamp": "2025-05-21T09:29:58.590918"
+    "status": "Missing"
   },
   {
     "event": "on_pipeline_error",
-    "error": "_get_id_columns() missing 1 required positional argument: 'data'",
-    "timestamp": "2025-05-21T09:29:58.599475"
+    "error": "Failed while loading data from dataset ExcelDataset(filepath=/Users/Jitendra_Gundaniya/QB/kedro-viz-run-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx, load_args={'engine': openpyxl}, protocol=file, save_args={'index': False}, writer_args={'engine': openpyxl}).\n[Errno 2] No such file or directory: '/Users/Jitendra_Gundaniya/QB/kedro-viz-run-ws/kedro-viz/demo-project/data/01_raw/shuttles.xlsx'",
+    "timestamp": "2025-05-21T09:54:54.832939"
   }
 ]
