@@ -68,18 +68,17 @@ kedro viz run [OPTIONS]
   - An experimental flag to open Kedro-Viz without Kedro project dependencies.
 
 
-```{note}
-When running Kedro Viz locally with the `--autoreload` option, the server will automatically restart whenever there are changes to Python, YAML, or JSON files in the Kedro project. This is particularly useful during development.
-```
+!!! info
+    When running Kedro Viz locally with the `--autoreload` option, the server will automatically restart whenever there are changes to Python, YAML, or JSON files in the Kedro project. This is particularly useful during development.
 
 
 ### `kedro viz deploy`
 
 Deploy and host Kedro Viz on a specified cloud platform.
 
-```{note}
-The `deploy` command supports deployment to AWS, Azure and GCP. Ensure that your cloud credentials and configurations are correctly set up before deploying.
-```
+!!! info
+    The `deploy` command supports deployment to AWS, Azure and GCP. Ensure that your cloud credentials and configurations are correctly set up before deploying.
+
 
 **Usage:**
 

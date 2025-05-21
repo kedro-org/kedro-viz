@@ -2,7 +2,7 @@
 
 <p align="center">
 
-![Kedro-Viz Pipeline Visualisation](https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.png)
+ <img src="https://raw.githubusercontent.com/kedro-org/kedro-viz/main/.github/img/banner.png" alt="Kedro-Viz Pipeline Visualisation">
 
 </p>
 
@@ -21,20 +21,3 @@ Kedro-Viz features include:
 
 Take a look at the <a href="https://demo.kedro.org/" target="_blank" rel="noopener noreferrer">live demo</a> for a preview of Kedro-Viz.
 
-```{toctree}
-:caption: Learn about Kedro-Viz
-:maxdepth: 2
-
-kedro-viz_visualisation
-share_kedro_viz
-preview_datasets
-slice_a_pipeline
-migrate_experiment_tracking
-```
-
-```{toctree}
-:caption: Other Documentation
-:maxdepth: 1
-
-cli-docs
-```
