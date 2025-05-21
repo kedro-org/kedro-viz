@@ -9,6 +9,8 @@ import {
   limitPrecision,
   createNodeStateMap,
 } from './draw-utils';
+import { updateNodeRects } from './updateNodeRect';
+import { updateParameterRect } from './updateParameterRect';
 
 const lineShape = line()
   .x((d) => d.x)
@@ -96,38 +98,6 @@ export const drawLayerNames = function () {
 
   this.el.layerNames.text((d) => d.name).attr('dy', 5);
 };
-
-/**
- * Sets the size and position of the given node rects
- */
-const updateNodeRects = (nodeRects) =>
-  nodeRects
-    .attr('width', (node) => node.width - 5)
-    .attr('height', (node) => node.height - 5)
-    .attr('x', (node) => (node.width - 5) / -2)
-    .attr('y', (node) => (node.height - 5) / -2)
-    .attr('rx', (node) => {
-      // Task and Pipeline nodes are rectangle so radius on x-axis is 0
-      if (node.type === 'task' || node.type === 'modularPipeline') {
-        return 0;
-      }
-      return node.height / 2;
-    });
-
-const updateParameterRect = (nodeRects, orientation) =>
-  nodeRects
-    .attr('width', 12)
-    .attr('height', 12)
-    .attr('x', (node) =>
-      // Position parameter icon on the left side of the node in vertical mode
-      // Position it slightly inside the node in horizontal mode
-      orientation === 'vertical'
-        ? (node.width + 20) / -2
-        : -(node.width / 2) + 10
-    )
-    // Center parameter icon vertically on the left side of the node (12px parameter icon height, so -6 for centering)
-    // Place parameter icon on top of the node (12px parameter icon height)
-    .attr('y', (node) => (orientation === 'vertical' ? -6 : -node.height + 12));
 
 /**
  * Render node icons and name labels
