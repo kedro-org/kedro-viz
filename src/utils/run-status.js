@@ -43,6 +43,8 @@ export const processRunEvents = (response) => {
       groupedData.datasets[datasetId] = {
         name: datasetInfo.name,
         sizeBytes: datasetInfo.size_bytes,
+        status: datasetInfo.status,
+        error: datasetInfo.error,
       };
     }
   );

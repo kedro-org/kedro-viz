@@ -68,134 +68,132 @@ class StructuredRunEventAPIResponse(BaseModel):
     pipeline: PipelineInfo = Field(default_factory=PipelineInfo)
 
 
-def _convert_status_to_enum(status: Optional[str], default_enum: Union[NodeStatus, DatasetStatus]) -> Union[NodeStatus, DatasetStatus]:
-    """Convert a status string to the appropriate enum value.
-    
-    Args:
-        status: The string status to convert
-        default_enum: The default enum value to return if conversion fails
-        
-    Returns:
-        The corresponding enum value
-    """
+def _convert_status_to_enum(status: Optional[str], default: Enum) -> Enum:
+    """Convert string status to enum member; case-insensitive match on values."""
     if not status:
-        return default_enum
-        
-    try:
-        if isinstance(default_enum, NodeStatus):
-            return NodeStatus(status.capitalize())
-        else:
-            return DatasetStatus(status.capitalize())
-    except ValueError:
-        return default_enum
+        return default
+    enum_cls = type(default)
+    for member in enum_cls:
+        if member.value.lower() == status.lower():
+            return member
+    logger.debug("Unknown status '%s', returning default %s", status, default)
+    return default
 
 
 def _update_dataset_info(
-    datasets: Dict[str, DatasetInfo], 
-    node_id: str, 
-    dataset_name: str, 
-    size_bytes: Optional[int], 
-    status: str, 
-    overwrite_size: bool = False
+    datasets: Dict[str, DatasetInfo],
+    node_id: str,
+    dataset_name: str,
+    size_bytes: Optional[int],
+    status: str,
+    overwrite: bool = False
 ) -> None:
-    """Helper to update or create DatasetInfo in the datasets dict.
-    
-    Args:
-        datasets: Dictionary of dataset info objects
-        node_id: ID of the node to update
-        dataset_name: Name of the dataset
-        size_bytes: Size of the dataset in bytes
-        status: Status of the dataset
-        overwrite_size: Whether to overwrite existing size
-    """
+    """Create or update DatasetInfo, controlling size overwrite."""
     status_enum = _convert_status_to_enum(status, DatasetStatus.AVAILABLE)
-    
-    if node_id not in datasets:
+    info = datasets.get(node_id)
+    if not info:
+        # Create new entry if missing
         datasets[node_id] = DatasetInfo(
             name=dataset_name,
             size_bytes=size_bytes or 0,
             status=status_enum
         )
     else:
-        if not datasets[node_id].name and dataset_name:
-            datasets[node_id].name = dataset_name
-        if size_bytes is not None:
-            if overwrite_size or datasets[node_id].size_bytes == 0:
-                datasets[node_id].size_bytes = size_bytes
-        datasets[node_id].status = status_enum
+        # Update name if empty
+        if not info.name and dataset_name:
+            info.name = dataset_name
+        # Overwrite size if flagged or not set
+        if size_bytes is not None and (overwrite or info.size_bytes == 0):
+            info.size_bytes = size_bytes
+        info.status = status_enum
 
 
-def _process_node_run_event(
-    nodes: Dict[str, NodeInfo], 
-    node_id: str, 
-    event: Dict[str, Any]
-) -> None:
-    """Process after_node_run event.
-    
-    Args:
-        nodes: Dictionary of node info objects
-        node_id: ID of the node
-        event: Event data
-    """
-    status = event.get("status", "Success")
-    node_status = _convert_status_to_enum(status, NodeStatus.SUCCESS)
-    
-    nodes[node_id] = NodeInfo(
-        status=node_status,
-        duration_sec=float(event.get("duration_sec", 0.0)),
-        error=None
+def _extract_pipeline_metadata(events: List[Dict[str, Any]], info: PipelineInfo) -> None:
+    """Populate PipelineInfo.start_time, end_time, status, and error."""
+    # Find start
+    start = next(
+        (e for e in events if e.get("event") == "before_pipeline_run" and e.get("timestamp")),
+        None
     )
-
-
-def _process_node_error_event(
-    nodes: Dict[str, NodeInfo], 
-    node_id: str, 
-    event: Dict[str, Any]
-) -> None:
-    """Process on_node_error event.
-    
-    Args:
-        nodes: Dictionary of node info objects
-        node_id: ID of the node
-        event: Event data
-    """
-    error = event.get("error", "Unknown error")
-    if node_id in nodes:
-        nodes[node_id].status = NodeStatus.FAIL
-        nodes[node_id].error = error
+    if start:
+        info.start_time = start["timestamp"]
+    # Find last pipeline event
+    final = next(
+        (e for e in reversed(events) if e.get("event") in {"after_pipeline_run", "on_pipeline_error"}),
+        None
+    )
+    if final and "timestamp" in final:
+        info.end_time = final["timestamp"]
+    if final and final.get("event") == "on_pipeline_error":
+        info.status = "failed"
+        info.error = final.get("error")
     else:
-        nodes[node_id] = NodeInfo(status=NodeStatus.FAIL, error=error)
+        info.status = "completed"
 
 
-def _process_dataset_event(
-    datasets: Dict[str, DatasetInfo], 
-    node_id: str, 
-    event: Dict[str, Any], 
-    event_type: str
-) -> None:
-    """Process dataset events.
-    
-    Args:
-        datasets: Dictionary of dataset info objects
-        node_id: ID of the node
-        event: Event data
-        event_type: Type of the event
-    """
-    if event_type in {"after_dataset_loaded", "after_dataset_saved"}:
-        try:
-            size_bytes = int(event.get("size_bytes", 0))
-        except (TypeError, ValueError):
-            size_bytes = 0
-        
-        overwrite_size = event_type == "after_dataset_saved"
-        _update_dataset_info(
-            datasets,
-            node_id,
-            event.get("dataset", ""),
-            size_bytes=size_bytes,
-            status=event.get("status", "Available"),
-            overwrite_size=overwrite_size
-        )
+def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> StructuredRunEventAPIResponse:
+    """Convert raw run events into structured API response."""
+    nodes: Dict[str, NodeInfo] = {}
+    datasets: Dict[str, DatasetInfo] = {}
+    pipeline = PipelineInfo()
+
+    _extract_pipeline_metadata(events, pipeline)
+
+    # Process each event by type
+    for event in events:
+        event_type = event.get("event")
+        node_id = event.get("node_id")
+        if event_type == "after_node_run" and node_id:
+            status = event.get("status", "Success")
+            nodes[node_id] = NodeInfo(
+                status=_convert_status_to_enum(status, NodeStatus.SUCCESS),
+                duration_sec=float(event.get("duration_sec", 0.0))
+            )
+        elif event_type == "on_node_error" and node_id:
+            error_msg = event.get("error", "Unknown error")
+            node = nodes.get(node_id)
+            if node:
+                node.status = NodeStatus.FAIL
+                node.error = error_msg
+            else:
+                nodes[node_id] = NodeInfo(status=NodeStatus.FAIL, error=error_msg)
+        elif event_type in {"after_dataset_loaded", "after_dataset_saved"} and node_id:
+            size = _safe_int(event.get("size_bytes", 0))
+            _update_dataset_info(
+                datasets,
+                node_id,
+                event.get("dataset", ""),
+                size,
+                event.get("status", "Available"),
+                overwrite=(event_type == "after_dataset_saved")
+            )
+        elif event_type == "on_dataset_error":
+            _process_dataset_error_event(datasets, nodes, event, pipeline)
+        elif event_type == "on_pipeline_error":
+            # Also process pipeline errors that contain dataset information as dataset errors
+            if "dataset" in event:
+                _process_dataset_error_event(datasets, nodes, event, pipeline)
+            # If not already handled in metadata, mark failure
+            elif not pipeline.error:
+                pipeline.status = "failed"
+                pipeline.error = event.get("error")
+
+    # Assign unique run_id if default
+    if pipeline.run_id == "default-run-id":
+        pipeline.run_id = str(uuid.uuid4())
+    # Compute total duration
+    pipeline.total_duration_sec = _calculate_pipeline_duration(pipeline, nodes)
+
+    return StructuredRunEventAPIResponse(nodes=nodes, datasets=datasets, pipeline=pipeline)
+
+
+def _safe_int(value: Any) -> int:
+    """Safely parse an integer value."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
 
 def _process_dataset_error_event(
     datasets: Dict[str, DatasetInfo], 
@@ -281,119 +279,6 @@ def _calculate_pipeline_duration(
     return sum(node.duration_sec for node in nodes.values())
 
 
-def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> StructuredRunEventAPIResponse:
-    """Transform raw events list to structured node-ID grouped format.
-    
-    Args:
-        events: List of event dictionaries
-        
-    Returns:
-        Structured API response object
-    """
-    nodes: Dict[str, NodeInfo] = {}
-    datasets: Dict[str, DatasetInfo] = {}
-    pipeline_info = PipelineInfo()
-
-    # Extract pipeline metadata first
-    start_event = next((e for e in events if e.get("event") == "before_pipeline_run" and "timestamp" in e), None)
-    if start_event:
-        pipeline_info.start_time = start_event["timestamp"]
-
-    pipeline_events = [e for e in events if e.get("event") in ["after_pipeline_run", "on_pipeline_error"]]
-    if pipeline_events:
-        last_event = pipeline_events[-1]
-        if "timestamp" in last_event:
-            pipeline_info.end_time = last_event["timestamp"]
-        if last_event.get("event") == "on_pipeline_error":
-            pipeline_info.status = "failed"
-            pipeline_info.error = last_event.get("error")
-        else:
-            pipeline_info.status = "completed"
-
-    # Process all node and dataset events
-    for event in events:
-        event_type = event.get("event")
-        node_id = event.get("node_id")
-        
-        if not node_id and event_type not in ["on_pipeline_error", "on_dataset_error"]:
-            continue
-            
-        if event_type == "after_node_run":
-            _process_node_run_event(nodes, node_id, event)
-        elif event_type == "on_node_error":
-            _process_node_error_event(nodes, node_id, event)
-        elif event_type in {"before_dataset_loaded", "before_dataset_saved", 
-                           "after_dataset_loaded", "after_dataset_saved"}:
-            _process_dataset_event(datasets, node_id, event, event_type)
-        elif event_type == "on_pipeline_error":
-            # Extract error details for the pipeline info
-            pipeline_info.status = "failed"
-            pipeline_info.error = event.get("error")
-            
-            # Process dataset error if the pipeline error is dataset-related
-            if "dataset" in event:
-                dataset_name = event.get("dataset", "")
-                node_id_from = event.get("node_id_from", "")
-                
-                if dataset_name:
-                    # First, try to find if we already have this dataset in our collection
-                    existing_dataset_id = None
-                    for dataset_id, dataset in datasets.items():
-                        if dataset.name == dataset_name:
-                            existing_dataset_id = dataset_id
-                            break
-                    
-                    # If not found or node_id is provided in the event, use that
-                    dataset_id = existing_dataset_id or event.get("node_id") or _hash_input_output(dataset_name)
-                    
-                    error_message = event.get("error", "Dataset error")
-                    error_info = DatasetErrorInfo(
-                        message=error_message,
-                        error_node=event.get("node", ""),
-                        error_operation=event.get("operation", "")
-                    )
-                    
-                    if dataset_id in datasets:
-                        datasets[dataset_id].status = DatasetStatus.MISSING
-                        datasets[dataset_id].error = error_info
-                    else:
-                        # Create a new dataset entry if it doesn't exist
-                        datasets[dataset_id] = DatasetInfo(
-                            name=dataset_name,
-                            status=DatasetStatus.MISSING,
-                            error=error_info
-                        )
-                
-                # Also update node status if node is provided
-                node_id = event.get("node_id")
-                node_name = event.get("node", "")
-                if node_id and node_id in nodes:
-                    nodes[node_id].status = NodeStatus.FAIL
-                    nodes[node_id].error = event.get("error")
-                elif node_name:
-                    # Try to find the node by name if node_id is not provided or not found
-                    for nid, node in nodes.items():
-                        if hasattr(node, 'name') and node.name == node_name:
-                            node.status = NodeStatus.FAIL
-                            node.error = event.get("error")
-                            break
-        elif event_type == "on_dataset_error":
-            _process_dataset_error_event(datasets, nodes, event, pipeline_info)
-
-    # Generate a unique run ID if not already set
-    if not pipeline_info.run_id or pipeline_info.run_id == "default-run-id":
-        pipeline_info.run_id = str(uuid.uuid4())
-
-    # Calculate pipeline duration
-    pipeline_info.total_duration_sec = _calculate_pipeline_duration(pipeline_info, nodes)
-
-    return StructuredRunEventAPIResponse(
-        nodes=nodes,
-        datasets=datasets,
-        pipeline=pipeline_info
-    )
-
-
 def get_run_events_response() -> StructuredRunEventAPIResponse:
     """Get run events data for API endpoint in structured format.
     
@@ -420,4 +305,3 @@ def get_run_events_response() -> StructuredRunEventAPIResponse:
     except Exception as exc:  # pragma: no cover
         logger.exception(f"Error loading run events: {exc}")
         return StructuredRunEventAPIResponse()
-
