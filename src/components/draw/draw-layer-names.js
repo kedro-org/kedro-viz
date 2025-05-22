@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import * as d3 from 'd3';
 
 /**
@@ -10,56 +10,64 @@ export function DrawLayerNames({
   chartSize = {},
   orientation = 'vertical',
   layerNameDuration = 400,
+  layerNamesRef,
 }) {
-  const groupRef = useRef();
-
   useEffect(() => {
-    if (!layers.length) {
+    if (!layerNamesRef?.current || !layers.length) {
       return;
     }
-    const svg = d3.select(groupRef.current);
+    const svg = d3.select(layerNamesRef.current);
     const layerPaddingVerticalMode = 20;
     const layerNamePosition =
       orientation === 'vertical'
         ? (chartSize.sidebarWidth || 0) + layerPaddingVerticalMode
         : 100;
+
     const transformValue =
       orientation === 'vertical'
-        ? `translateX(${layerNamePosition}px)`
-        : `translateY(${layerNamePosition}px)`;
+        ? // In vertical mode, layer names are positioned along the X-axis at sidebarWidth
+          `translateX(${layerNamePosition}px)`
+        : // In horizontal mode, layer names are positioned at a fixed Y = 100px
+          `translateY(${layerNamePosition}px)`;
+
     svg
       .transition('layer-names-sidebar-width')
       .duration(layerNameDuration)
       .style('transform', transformValue);
+
     // DATA JOIN
-    const nameSel = svg
+    const layerNameElement = svg
       .selectAll('.pipeline-layer-name')
       .data(layers, (d) => d.id);
+
     // ENTER
-    const enterNames = nameSel
+    const enterLayerNames = layerNameElement
       .enter()
       .append('li')
       .attr('class', 'pipeline-layer-name')
       .attr('data-id', (d) => `layer-label--${d.name}`);
-    enterNames
+
+    enterLayerNames
       .style('opacity', 0)
       .transition('enter-layer-names')
       .duration(layerNameDuration)
       .style('opacity', 0.55);
+
     // EXIT
-    nameSel
+    layerNameElement
       .exit()
       .style('opacity', 0.55)
       .transition('exit-layer-names')
       .duration(layerNameDuration)
       .style('opacity', 0)
       .remove();
-    // UPDATE
-    const allNames = nameSel.merge(enterNames);
-    allNames.text((d) => d.name).attr('dy', 5);
-  }, [layers, chartSize, orientation, layerNameDuration]);
 
-  return <ul ref={groupRef} className="pipeline-layer-names" />;
+    // UPDATE
+    const allNames = layerNameElement.merge(enterLayerNames);
+    allNames.text((d) => d.name).style('opacity', 0.55);
+  }, [layers, chartSize, orientation, layerNameDuration, layerNamesRef]);
+
+  return null;
 }
 
 export default DrawLayerNames;

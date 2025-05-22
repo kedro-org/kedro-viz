@@ -89,6 +89,8 @@ export class FlowChart extends Component {
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
     this.slicedPipelineActionBarRef = React.createRef();
+    this.layersRef = React.createRef();
+    this.layerNamesRef = React.createRef();
 
     this.DURATION = 700;
     this.LAYER_NAME_DURATION = 0.05;
@@ -303,6 +305,26 @@ export class FlowChart extends Component {
       'pipeline-flowchart__zoom-wrapper--animating',
       true
     );
+
+    // Update layer label y positions
+    if (this.layerNamesRef?.current) {
+      const layerNames = this.layerNamesRef.current.querySelectorAll(
+        '.pipeline-layer-name'
+      );
+      this.props.layers.forEach((layer, i) => {
+        const el = layerNames[i];
+        if (!el) {
+          return;
+        }
+        if (this.props.orientation === 'vertical') {
+          const updateY = y + (layer.y + (layer.height || 0) / 2) * scale;
+          el.style.transform = `translateY(${updateY}px)`;
+        } else {
+          const updateX = x + (layer.x + (layer.width || 0) / 2) * scale;
+          el.style.transform = `translateX(${updateX}px) translateX(-50%)`;
+        }
+      });
+    }
 
     // Update extents
     this.updateViewExtents(transform);
@@ -841,7 +863,9 @@ export class FlowChart extends Component {
                 </marker>
               ))}
             </defs>
-            <DrawLayers layers={layers} />
+            <g className="pipeline-flowchart__layers" ref={this.layersRef}>
+              <DrawLayers layers={layers} layersRef={this.layersRef} />
+            </g>
             <DrawEdges
               edges={edges}
               clickedNode={clickedNode}
@@ -862,11 +886,18 @@ export class FlowChart extends Component {
             />
           </g>
         </svg>
+
+        <ul
+          className="pipeline-flowchart__layer-names"
+          ref={this.layerNamesRef}
+        />
         <DrawLayerNames
           layers={layers}
           chartSize={chartSize}
           orientation={orientation}
+          layerNamesRef={this.layerNamesRef}
         />
+
         <FeedbackButton
           onClick={() => this.setState({ showFeedbackForm: true })}
           title={feedbacks.slicingPipeline.buttonTittle}

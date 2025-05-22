@@ -1,18 +1,23 @@
-import React, { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import * as d3 from 'd3';
+
+import './styles/_layers.scss';
 
 /**
  * Functional React component for drawing layer bands using D3
- * Props: layers (array), onLayerMouseOver, onLayerMouseOut
+ * Props: layers (array), onLayerMouseOver, onLayerMouseOut, layersRef
  */
-export function DrawLayers({ layers = [], onLayerMouseOver, onLayerMouseOut }) {
-  const groupRef = useRef();
-
+export function DrawLayers({
+  layers = [],
+  onLayerMouseOver,
+  onLayerMouseOut,
+  layersRef,
+}) {
   useEffect(() => {
-    if (!layers.length) {
+    if (!layersRef?.current || !layers.length) {
       return;
     }
-    const svg = d3.select(groupRef.current);
+    const svg = d3.select(layersRef.current);
     // DATA JOIN
     const layerSel = svg.selectAll('.pipeline-layer').data(layers, (d) => d.id);
     // ENTER
@@ -35,9 +40,9 @@ export function DrawLayers({ layers = [], onLayerMouseOver, onLayerMouseOut }) {
       .attr('y', (d) => d.y)
       .attr('height', (d) => d.height)
       .attr('width', (d) => d.width);
-  }, [layers, onLayerMouseOver, onLayerMouseOut]);
+  }, [layers, onLayerMouseOver, onLayerMouseOut, layersRef]);
 
-  return <g ref={groupRef} />;
+  return null;
 }
 
 export default DrawLayers;
