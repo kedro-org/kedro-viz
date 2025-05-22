@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.launchers.utils import _find_kedro_project
+from kedro_viz.utils import _hash_input_output
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +36,19 @@ class NodeInfo(BaseModel):
     error: Optional[str] = None
 
 
+class DatasetErrorInfo(BaseModel):
+    """Information about a dataset error."""
+    message: str
+    error_node: Optional[str] = None
+    error_operation: Optional[str] = None
+
+
 class DatasetInfo(BaseModel):
     """Information about a dataset."""
     name: str
     size_bytes: int = 0
     status: DatasetStatus = DatasetStatus.AVAILABLE
+    error: Optional[Union[str, DatasetErrorInfo]] = None
 
 
 class PipelineInfo(BaseModel):
@@ -172,15 +181,7 @@ def _process_dataset_event(
         event: Event data
         event_type: Type of the event
     """
-    if event_type in {"before_dataset_loaded", "before_dataset_saved"}:
-        _update_dataset_info(
-            datasets,
-            node_id,
-            event.get("dataset", ""),
-            size_bytes=None,
-            status=event.get("status", "Available")
-        )
-    elif event_type in {"after_dataset_loaded", "after_dataset_saved"}:
+    if event_type in {"after_dataset_loaded", "after_dataset_saved"}:
         try:
             size_bytes = int(event.get("size_bytes", 0))
         except (TypeError, ValueError):
@@ -195,6 +196,62 @@ def _process_dataset_event(
             status=event.get("status", "Available"),
             overwrite_size=overwrite_size
         )
+
+def _process_dataset_error_event(
+    datasets: Dict[str, DatasetInfo], 
+    nodes: Dict[str, NodeInfo],
+    event: Dict[str, Any], 
+    pipeline_info: PipelineInfo
+) -> None:
+    """Process on_dataset_error event.
+    
+    Args:
+        datasets: Dictionary of dataset info objects
+        nodes: Dictionary of node info objects
+        event: Event data
+        pipeline_info: Pipeline info object
+    """
+    dataset_name = event.get("dataset", "")
+    node_id = event.get("node_id", "")
+    node_name = event.get("node", "")
+    
+    # Update dataset status
+    if dataset_name:
+        dataset_id = _hash_input_output(dataset_name)
+        error_message = event.get("error", "Dataset error")
+        error_info = DatasetErrorInfo(
+            message=error_message,
+            error_node=node_name,
+            error_operation=event.get("operation", "")
+        )
+        
+        if dataset_id in datasets:
+            datasets[dataset_id].status = DatasetStatus.MISSING
+            datasets[dataset_id].error = error_info
+        else:
+            # Create a new dataset entry if it doesn't exist
+            datasets[dataset_id] = DatasetInfo(
+                name=dataset_name,
+                status=DatasetStatus.MISSING,
+                error=error_info
+            )
+    
+    # Update node status if provided and found
+    if node_id and node_id in nodes:
+        nodes[node_id].status = NodeStatus.FAIL
+        nodes[node_id].error = event.get("error", "Dataset error")
+    elif node_name:
+        # Try to find the node by name if node_id is not provided or not found
+        for nid, node in nodes.items():
+            if nid.endswith(node_name):
+                node.status = NodeStatus.FAIL
+                node.error = event.get("error", "Dataset error")
+                break
+    
+    # Only set the main error information in pipeline info if not already set
+    if not pipeline_info.error:
+        pipeline_info.status = "failed"
+        pipeline_info.error = event.get("error", "Dataset error")
 
 
 def _calculate_pipeline_duration(
@@ -258,7 +315,7 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
         event_type = event.get("event")
         node_id = event.get("node_id")
         
-        if not node_id:
+        if not node_id and event_type not in ["on_pipeline_error", "on_dataset_error"]:
             continue
             
         if event_type == "after_node_run":
@@ -268,6 +325,60 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
         elif event_type in {"before_dataset_loaded", "before_dataset_saved", 
                            "after_dataset_loaded", "after_dataset_saved"}:
             _process_dataset_event(datasets, node_id, event, event_type)
+        elif event_type == "on_pipeline_error":
+            # Extract error details for the pipeline info
+            pipeline_info.status = "failed"
+            pipeline_info.error = event.get("error")
+            
+            # Process dataset error if the pipeline error is dataset-related
+            if "dataset" in event:
+                dataset_name = event.get("dataset", "")
+                node_id_from = event.get("node_id_from", "")
+                
+                if dataset_name:
+                    # First, try to find if we already have this dataset in our collection
+                    existing_dataset_id = None
+                    for dataset_id, dataset in datasets.items():
+                        if dataset.name == dataset_name:
+                            existing_dataset_id = dataset_id
+                            break
+                    
+                    # If not found or node_id is provided in the event, use that
+                    dataset_id = existing_dataset_id or event.get("node_id") or _hash_input_output(dataset_name)
+                    
+                    error_message = event.get("error", "Dataset error")
+                    error_info = DatasetErrorInfo(
+                        message=error_message,
+                        error_node=event.get("node", ""),
+                        error_operation=event.get("operation", "")
+                    )
+                    
+                    if dataset_id in datasets:
+                        datasets[dataset_id].status = DatasetStatus.MISSING
+                        datasets[dataset_id].error = error_info
+                    else:
+                        # Create a new dataset entry if it doesn't exist
+                        datasets[dataset_id] = DatasetInfo(
+                            name=dataset_name,
+                            status=DatasetStatus.MISSING,
+                            error=error_info
+                        )
+                
+                # Also update node status if node is provided
+                node_id = event.get("node_id")
+                node_name = event.get("node", "")
+                if node_id and node_id in nodes:
+                    nodes[node_id].status = NodeStatus.FAIL
+                    nodes[node_id].error = event.get("error")
+                elif node_name:
+                    # Try to find the node by name if node_id is not provided or not found
+                    for nid, node in nodes.items():
+                        if hasattr(node, 'name') and node.name == node_name:
+                            node.status = NodeStatus.FAIL
+                            node.error = event.get("error")
+                            break
+        elif event_type == "on_dataset_error":
+            _process_dataset_error_event(datasets, nodes, event, pipeline_info)
 
     # Generate a unique run ID if not already set
     if not pipeline_info.run_id or pipeline_info.run_id == "default-run-id":

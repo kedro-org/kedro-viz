@@ -15,11 +15,12 @@ from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.launchers.utils import _find_kedro_project
 from kedro_viz.utils import _hash, _hash_input_output
 
-# Try to import KedroDataCatalog (version dependent)
+# Try to import DataCatalog and KedroDataCatalog (version dependent)
 try:
-    from kedro.io import KedroDataCatalog
+    from kedro.io import DataCatalog, KedroDataCatalog
     IS_KEDRODATACATALOG = True
 except ImportError:
+    DataCatalog = None  # type: ignore
     KedroDataCatalog = None  # type: ignore
     IS_KEDRODATACATALOG = False
 
@@ -37,9 +38,14 @@ class PipelineRunHooks:
         """Initialize the hooks with empty collections for tracking data."""
         self._node_start_times: Dict[str, float] = {}
         self._dataset_sizes: Dict[str, Optional[int]] = {}
-        self._missing_datasets: Set[str] = set()
         self._events: list = []
         self.datasets: Dict[str, Any] = {}
+        # Added tracking variables for error detection
+        self._current_node: Optional[Any] = None
+        self._current_dataset: Optional[str] = None
+        self._current_operation: Optional[str] = None
+        self._pipeline_nodes: list = []
+        self._started_nodes: Set[str] = set()
 
     def _get_dataset_file_size(self, dataset_name: str, data: Any) -> Optional[int]:
         """Get the file size of a dataset.
@@ -145,10 +151,11 @@ class PipelineRunHooks:
         return _hash_input_output(node)
 
     def _create_dataset_event(self, 
-                             event_type: str, 
-                             dataset_name: str, 
-                             data: Any = None, 
-                             status: str = "Available") -> Dict[str, Any]:
+                              event_type: str, 
+                              dataset_name: str, 
+                              data: Any = None, 
+                              status: str = "Available",
+                              node: KedroNode = None) -> Dict[str, Any]:
         """Create a standardized dataset event.
         
         Args:
@@ -156,6 +163,7 @@ class PipelineRunHooks:
             dataset_name: Name of the dataset
             data: Dataset data (used for size calculation)
             status: Status of the dataset
+            node: The node related to this dataset operation
             
         Returns:
             Dictionary with the event data
@@ -167,6 +175,11 @@ class PipelineRunHooks:
             "status": status,
         }
         
+        # Add node information if available
+        if node:
+            event["node"] = getattr(node, 'name', str(node))
+            event["node_id_from"] = self._get_node_id(node)
+        
         if data is not None and status == "Available":
             size = self._get_dataset_file_size(dataset_name, data)
             if size is not None:  # Only include size if available
@@ -175,35 +188,26 @@ class PipelineRunHooks:
         return event
 
     @hook_impl
-    def after_catalog_created(self, catalog) -> None:
-        """Extract datasets from catalog for later use in hooks.
-        
+    def after_catalog_created(self, catalog: Union[DataCatalog, "KedroDataCatalog"]):
+        """Hooks to be invoked after a data catalog is created.
+
         Args:
-            catalog: The Kedro catalog object
+            catalog: The catalog that was created.
         """
+        # Check for KedroDataCatalog first (DataCatalog 2.0)
         try:
-            # Handle different catalog implementations
             if IS_KEDRODATACATALOG and isinstance(catalog, KedroDataCatalog):
-                self.datasets = catalog.datasets
-                logger.debug("Using KedroDataCatalog for dataset access")
+                self.datasets = (
+                    catalog.datasets
+                )  # This gives access to both lazy normal datasets
+                logger.debug("Using KedroDataCatalog for dataset statistics collection")
+            # For original DataCatalog
             elif hasattr(catalog, "_datasets"):
                 self.datasets = catalog._datasets
             else:
-                self.datasets = getattr(catalog, "_data_sets", {})
-                
-            if not self.datasets:
-                logger.debug("No datasets found in catalog")
-                return
-                
-            # Find datasets that don't exist (missing)
-            for dataset_name, dataset in self.datasets.items():
-                try:
-                    if hasattr(dataset, "exists") and not dataset.exists():
-                        self._missing_datasets.add(dataset_name)
-                except Exception as exc:
-                    logger.debug("Unable to check existence for dataset %s: %s", dataset_name, exc)
-                    
-        except Exception as exc:
+                # Support for older Kedro versions
+                self.datasets = catalog._data_sets  # type: ignore
+        except Exception as exc:  # pragma: no cover
             logger.warning("Unable to access datasets in catalog: %s", exc)
             self.datasets = {}
 
@@ -220,38 +224,50 @@ class PipelineRunHooks:
         if run_params.get("pipeline_name") is not None:
             return
             
+        # Initialize tracking variables for this pipeline run
+        self._pipeline_nodes = list(pipeline.nodes)
+        self._started_nodes = set()
+        self._current_node = None
+        self._current_dataset = None
+        self._current_operation = None
+            
         self._add_event({
             "event": "before_pipeline_run",
             "timestamp": datetime.utcnow().isoformat()
         }, write=True)
 
     @hook_impl
-    def before_dataset_loaded(self, dataset_name: str) -> None:
+    def before_dataset_loaded(self, dataset_name: str, node: KedroNode) -> None:
         """Record attempt to load a dataset, especially for missing ones.
         
         Args:
             dataset_name: Name of the dataset
+            node: The node that's requesting this dataset
         """
-        if dataset_name in self._missing_datasets:
-            self._add_event(self._create_dataset_event(
-                "before_dataset_loaded", 
-                dataset_name, 
-                status="Missing"
-            ))
+        # Track the current dataset being loaded and the node requesting it
+        self._current_dataset = dataset_name
+        self._current_operation = "loading"
+        self._current_node = node
 
     @hook_impl
-    def after_dataset_loaded(self, dataset_name: str, data: Any) -> None:
+    def after_dataset_loaded(self, dataset_name: str, data: Any, node: KedroNode = None) -> None:
         """Record successful dataset load with size information.
         
         Args:
             dataset_name: Name of the dataset
             data: The loaded data
+            node: The node that's requesting this dataset
         """
         self._add_event(self._create_dataset_event(
             "after_dataset_loaded", 
             dataset_name, 
             data=data
         ))
+        
+        # Reset tracking variables after operation completes
+        # Don't reset _current_node as it might be needed for error context
+        self._current_dataset = None
+        self._current_operation = None
 
     @hook_impl
     def before_node_run(self, node, inputs) -> None:
@@ -262,6 +278,10 @@ class PipelineRunHooks:
             inputs: Input data for the node
         """
         self._node_start_times[node.name] = perf_counter()
+        
+        # Track the current node and mark it as started
+        self._current_node = node
+        self._started_nodes.add(node.name)
 
     @hook_impl
     def after_node_run(self, node, inputs, outputs) -> None:
@@ -282,34 +302,43 @@ class PipelineRunHooks:
             "duration_sec": duration,
             "status": "success"
         })
+        
+        # Reset the current node since it completed successfully
+        if self._current_node == node:
+            self._current_node = None
 
     @hook_impl
-    def before_dataset_saved(self, dataset_name: str) -> None:
+    def before_dataset_saved(self, dataset_name: str, node: KedroNode) -> None:
         """Record attempt to save a dataset, especially for missing ones.
         
         Args:
             dataset_name: Name of the dataset
+            node: The node that's saving this dataset
         """
-        if dataset_name in self._missing_datasets:
-            self._add_event(self._create_dataset_event(
-                "before_dataset_saved", 
-                dataset_name, 
-                status="Missing"
-            ))
+        # Track the current dataset being saved and the node saving it
+        self._current_dataset = dataset_name
+        self._current_operation = "saving"
+        self._current_node = node
 
     @hook_impl
-    def after_dataset_saved(self, dataset_name: str, data: Any) -> None:
+    def after_dataset_saved(self, dataset_name: str, data: Any, node: KedroNode = None) -> None:
         """Record successful dataset save with size information.
         
         Args:
             dataset_name: Name of the dataset
             data: The saved data
+            node: The node that saved this dataset
         """
         self._add_event(self._create_dataset_event(
             "after_dataset_saved", 
             dataset_name, 
             data=data
         ))
+        
+        # Reset tracking variables after operation completes
+        # Don't reset _current_node as it might be needed for error context
+        self._current_dataset = None
+        self._current_operation = None
 
     @hook_impl
     def after_pipeline_run(self, run_params, pipeline, catalog) -> None:
@@ -353,11 +382,36 @@ class PipelineRunHooks:
             error: The exception that occurred
             run_params: Parameters of the run
         """
-        self._add_event({
+        # Create a more detailed error event with context about the dataset if applicable
+        event = {
             "event": "on_pipeline_error",
             "error": str(error),
             "timestamp": datetime.utcnow().isoformat()
-        }, write=True)
+        }
+        
+        # Add dataset context if we were in the middle of a dataset operation
+        if self._current_dataset:
+            event["dataset"] = self._current_dataset
+            event["operation"] = self._current_operation
+            if self._current_node:
+                node_name = getattr(self._current_node, 'name', str(self._current_node))
+                event["node"] = node_name
+                event["node_id"] = self._get_node_id(self._current_node)
+        # If no dataset context but we have a current node, add node info
+        elif self._current_node:
+            node_name = getattr(self._current_node, 'name', str(self._current_node))
+            event["node"] = node_name
+            event["node_id"] = self._get_node_id(self._current_node)
+        # If no current node is set, try to deduce which node was about to run
+        else:
+            for node in self._pipeline_nodes:
+                if node.name not in self._started_nodes:
+                    event["node"] = node.name
+                    event["node_id"] = self._get_node_id(node)
+                    event["status"] = "not_started"
+                    break
+                    
+        self._add_event(event, write=True)
 
 
 pipeline_run_hook = PipelineRunHooks()
