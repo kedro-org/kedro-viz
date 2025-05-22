@@ -659,7 +659,7 @@ export class FlowChart extends Component {
     const layerName = document.querySelector(
       `[data-id="layer-label--${node.name}"]`
     );
-    debugger;
+
     if (layerName) {
       layerName.classList.add('pipeline-layer-name--active');
     }
@@ -791,8 +791,6 @@ export class FlowChart extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      chartZoom,
-      ...rest
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     const {

@@ -25,9 +25,6 @@ export function DrawEdges({
   const groupRef = useRef();
 
   useEffect(() => {
-    if (!edges.length) {
-      return;
-    }
     const svg = d3.select(groupRef.current);
     // DATA JOIN
     const edgeSel = svg.selectAll('.pipeline-edge').data(edges, (d) => d.id);
@@ -35,12 +32,18 @@ export function DrawEdges({
     const enterEdges = edgeSel
       .enter()
       .append('g')
-      .attr('class', 'pipeline-edge');
+      .attr('class', 'pipeline-edge')
+      .attr('data-id', (edge) => `${edge.source}|${edge.target}`)
+      .attr('opacity', 1);
     enterEdges.append('path');
     // EXIT
     edgeSel.exit().remove();
     // UPDATE
     const allEdges = edgeSel.merge(enterEdges);
+    allEdges
+      .attr('class', 'pipeline-edge')
+      .attr('data-id', (edge) => `${edge.source}|${edge.target}`)
+      .attr('opacity', 1);
     allEdges
       .select('path')
       .transition('update-edges')
@@ -49,13 +52,9 @@ export function DrawEdges({
         let current = edge.points && limitPrecision(lineShape(edge.points));
         const previous = select(this).attr('d') || current;
         return interpolatePath(previous, current);
-      });
-    // Example: marker-end logic (customize as needed)
-    allEdges.select('path').attr('marker-end', (edge) => {
-      // You may want to pass marker logic as a prop for full flexibility
-      return 'url(#pipeline-arrowhead)';
-    });
-    // Example: class logic (customize as needed)
+      })
+      .attr('marker-end', 'url(#pipeline-arrowhead)');
+    // Faded class logic
     allEdges.classed(
       'pipeline-edge--faded',
       (edge) =>
@@ -72,7 +71,8 @@ export function DrawEdges({
     duration,
   ]);
 
-  return <g ref={groupRef} />;
+  // Parent group for all edges
+  return <g className="pipeline-flowchart__edges" ref={groupRef} />;
 }
 
 export default DrawEdges;
