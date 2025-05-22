@@ -209,24 +209,19 @@ export const drawNodes = function (changed) {
     enterNodes.append('rect').attr('class', (node) => {
       let baseClass = `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`;
 
-      // Find the status key that contains this node.id
-      let nodeStatus = null;
-      if (nodesStatus) {
-        nodeStatus = Object.keys(nodesStatus).find(
+      // Find the status key that contains this node.id (works for both nodes and datasets)
+      let finalStatus = null;
+      if (node.type === 'data' && typeof dataSetsStatus === 'object') {
+        finalStatus = Object.keys(dataSetsStatus).find(
+          (statusKey) => dataSetsStatus[statusKey][node.id]
+        );
+      }
+      if (!finalStatus && nodesStatus) {
+        finalStatus = Object.keys(nodesStatus).find(
           (statusKey) => nodesStatus[statusKey][node.id]
         );
       }
 
-      // Also check in dataSetsStatus if node is a data node
-      let dataSetStatus = null;
-      if (node.type === 'data' && typeof dataSetsStatus === 'object') {
-        dataSetStatus = Object.keys(dataSetsStatus).find(
-          (statusKey) => dataSetsStatus[statusKey][node.id]
-        );
-      }
-
-      // Prefer nodeStatus, but if not found and dataSetStatus exists, use it
-      const finalStatus = nodeStatus || dataSetStatus;
       if (finalStatus) {
         baseClass += ` pipeline-node__bg--status-${finalStatus}`;
       }
@@ -332,13 +327,15 @@ export const drawNodes = function (changed) {
         }
       });
 
-    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__bg')
+      .call(updateNodeRects, nodesStatus, dataSetsStatus);
 
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
-      .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects);
+      .duration((node) => (node.showText ? 200 : 600));
+
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(

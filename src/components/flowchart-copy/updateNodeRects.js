@@ -3,7 +3,12 @@ import { select } from 'd3-selection';
 /**
  * Render the details container for a node (status, duration, outline, etc)
  */
-function renderNodeDetailsContainer(parentGroup, node, nodesStatus) {
+function renderNodeDetailsContainer(
+  parentGroup,
+  node,
+  nodesStatus,
+  dataSetsStatus
+) {
   const nodeWidth = node.width - 5;
   const nodeHeight = node.height - 5;
   const detailsHeight = 60;
@@ -15,10 +20,31 @@ function renderNodeDetailsContainer(parentGroup, node, nodesStatus) {
 
   // Find the node status
   let nodeStatus = null;
+  let nodeDuration = null;
   if (nodesStatus) {
     nodeStatus = Object.keys(nodesStatus).find(
       (statusKey) => nodesStatus[statusKey][node.id]
     );
+    if (nodeStatus) {
+      const status = nodesStatus[nodeStatus][node.id];
+      nodeStatus = status && status.status;
+      nodeDuration = status && status.duration_sec;
+    }
+  }
+
+  // Find dataset status and size_bytes for data nodes
+  let datasetStatus = null;
+  let datasetSize = null;
+  if (dataSetsStatus && node.type === 'data') {
+    // Find the status group (e.g., 'success', 'failed') that contains this node.id
+    const statusKey = Object.keys(dataSetsStatus).find(
+      (key) => dataSetsStatus[key][node.id]
+    );
+    if (statusKey) {
+      const dataset = dataSetsStatus[statusKey][node.id];
+      datasetStatus = dataset && dataset.status;
+      datasetSize = dataset && dataset.size_bytes;
+    }
   }
 
   // Main node outline (top part only)
@@ -114,58 +140,83 @@ function renderNodeDetailsContainer(parentGroup, node, nodesStatus) {
     .style('stroke', '#525252')
     .style('stroke-width', 2);
 
-  // Status label
-  detailsContainer
+  // Status group (label + value)
+  const statusGroup = detailsContainer
+    .append('g')
+    .attr('class', 'pipeline-node__details-status-group');
+
+  // Status label (key)
+  statusGroup
     .append('text')
     .attr('class', 'pipeline-node__details-label')
-    .text('Status')
+    .text('Status:')
     .attr('text-anchor', 'start')
     .attr('x', nodeWidth / -2 + 15)
     .attr('y', nodeHeight / 2 + 20)
     .style('fill', '#999')
     .style('font-size', '14px');
 
-  // Status value
-  detailsContainer
-    .append('text')
-    .attr('class', 'pipeline-node__details-value')
-    .text(() =>
-      nodeStatus ? nodeStatus.charAt(0).toUpperCase() + nodeStatus.slice(1) : ''
-    )
-    .attr('text-anchor', 'end')
-    .attr('x', nodeWidth / 2 - 15)
-    .attr('y', nodeHeight / 2 + 20)
-    .style('font-size', '14px');
-
-  // Duration label
-  detailsContainer
-    .append('text')
-    .attr('class', 'pipeline-node__details-label')
-    .text('Duration')
-    .attr('text-anchor', 'start')
-    .attr('x', nodeWidth / -2 + 15)
-    .attr('y', nodeHeight / 2 + 45)
-    .style('fill', '#999')
-    .style('font-size', '14px');
-
-  // Duration value
-  detailsContainer
+  // Status value (nodeStatus + datasetStatus)
+  const statusValue = statusGroup
     .append('text')
     .attr('class', 'pipeline-node__details-value')
     .text(
-      () => (nodeStatus && nodesStatus[nodeStatus][node.id]?.duration) || ''
+      datasetStatus
+        ? `${nodeStatus ?? ''} (${datasetStatus})`
+        : nodeStatus ?? 'Skipped'
     )
-    .attr('text-anchor', 'end')
-    .attr('x', nodeWidth / 2 - 15)
+    .attr('text-anchor', 'start')
+    .attr('x', nodeWidth / 2 - 80)
+    .attr('y', nodeHeight / 2 + 20)
+    .style('font-size', '14px');
+
+  // Set fill color based on status
+  if (nodeStatus === 'Failed' || datasetStatus === 'Missing') {
+    statusValue.style('fill', '#ff4d4d');
+  } else {
+    statusValue.style('fill', '#FFF');
+  }
+
+  // Duration/Size group (label + value)
+  const sizeGroup = detailsContainer
+    .append('g')
+    .attr('class', 'pipeline-node__details-size-group');
+
+  // Duration/Size label
+  sizeGroup
+    .append('text')
+    .attr('class', 'pipeline-node__details-label')
+    .text(
+      node.type === 'task' || node.type === 'modularPipeline'
+        ? 'Duration:'
+        : 'Size:'
+    )
+    .attr('text-anchor', 'start')
+    .attr('x', nodeWidth / -2 + 15)
     .attr('y', nodeHeight / 2 + 45)
-    .style('fill', 'white')
+    .style('fill', '#999')
+    .style('font-size', '14px');
+
+  // Duration/Size value
+  sizeGroup
+    .append('text')
+    .attr('class', 'pipeline-node__details-value')
+    .text(
+      node.type === 'task' || node.type === 'modularPipeline'
+        ? nodeDuration ?? ''
+        : datasetSize ?? 'N/A'
+    )
+    .attr('text-anchor', 'start')
+    .attr('x', nodeWidth / 2 - 80)
+    .attr('y', nodeHeight / 2 + 45)
+    .style('fill', '#fff')
     .style('font-size', '14px');
 }
 
 /**
  * Sets the size and position of the given node rects
  */
-export const updateNodeRects = (nodeRects, nodesStatus) => {
+export const updateNodeRects = (nodeRects, nodesStatus, dataSetsStatus) => {
   nodeRects
     .attr('width', (node) => node.width - 5)
     .attr('height', (node) => node.height - 5)
@@ -180,6 +231,6 @@ export const updateNodeRects = (nodeRects, nodesStatus) => {
 
   nodeRects.each(function (node) {
     const parentGroup = select(this.parentNode);
-    renderNodeDetailsContainer(parentGroup, node, nodesStatus);
+    renderNodeDetailsContainer(parentGroup, node, nodesStatus, dataSetsStatus);
   });
 };
