@@ -38,22 +38,24 @@ export function DrawNodes({
     }
     const svg = d3.select(groupRef.current);
     // DATA JOIN
-    const nodeSel = svg.selectAll('.pipeline-node').data(nodes, (d) => d.id);
+    const nodeSel = svg
+      .selectAll('.pipeline-node')
+      .data(nodes, (node) => node.id);
     // EXIT
     nodeSel.exit().remove();
     // ENTER
     const enterNodes = nodeSel
       .enter()
       .append('g')
-      .attr('class', (d) => {
+      .attr('class', (node) => {
         let base = 'pipeline-node';
-        if (d.type) {
-          base += ` pipeline-node--${d.type}`;
+        if (node.type) {
+          base += ` pipeline-node--${node.type}`;
         }
         return base;
       })
       .attr('tabindex', 0)
-      .attr('data-id', (d) => d.id)
+      .attr('data-id', (node) => node.id)
       .attr('opacity', 1)
       .on('click', onNodeClick)
       .on('mouseover', onNodeMouseOver)
@@ -65,8 +67,8 @@ export function DrawNodes({
       .append('rect')
       .attr(
         'class',
-        (d) =>
-          `pipeline-node__bg pipeline-node__bg--${d.type} pipeline-node__bg--${d.icon}`
+        (node) =>
+          `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
       );
     enterNodes
       .append('rect')
@@ -76,71 +78,77 @@ export function DrawNodes({
     enterNodes
       .append('path')
       .attr('class', 'pipeline-node__icon')
-      .attr('d', (d) => nodeIcons[d.icon] || '')
-      .attr('style', (d) => {
+      .attr('d', (node) => nodeIcons[node.icon] || '')
+      .attr('style', (node) => {
         const iconOffset =
-          d.iconOffset !== undefined
-            ? d.iconOffset
-            : d.textOffset !== undefined
-            ? d.textOffset - 57
+          node.iconOffset !== undefined
+            ? node.iconOffset
+            : node.textOffset !== undefined
+            ? node.textOffset - 57
             : 0;
         return `transition-delay: 0ms; transform: translate(${iconOffset}px, -12px) scale(1);`;
       });
     enterNodes
       .append('text')
       .attr('class', 'pipeline-node__text')
-      .text((d) => d.name)
+      .text((node) => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
-      .attr('dx', (d) => d.textOffset)
+      .attr('dx', (node) => node.textOffset)
       .attr('style', 'transition-delay: 200ms; opacity: 1;');
     // UPDATE
     const allNodes = nodeSel.merge(enterNodes);
     allNodes
       .attr('tabindex', 0)
-      .attr('data-id', (d) => d.id)
+      .attr('data-id', (node) => node.id)
       .attr('opacity', 1)
-      .attr('class', (d) => {
+      .attr('class', (node) => {
         let base = 'pipeline-node';
-        if (d.type) {
-          base += ` pipeline-node--${d.type}`;
+        if (node.type) {
+          base += ` pipeline-node--${node.type}`;
         }
         return base;
       })
-      .attr('transform', (d) => `translate(${d.x}, ${d.y})`);
+      .attr('transform', (node) => `translate(${node.x}, ${node.y})`);
     allNodes.select('.pipeline-node__bg').call(updateNodeRects);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .call(updateParameterRect, orientation);
     allNodes
       .select('.pipeline-node__icon')
-      .attr('d', (d) => nodeIcons[d.icon] || '')
-      .attr('style', (d) => {
+      .attr('d', (node) => nodeIcons[node.icon] || '')
+      .attr('style', (node) => {
         const iconOffset =
-          d.iconOffset !== undefined
-            ? d.iconOffset
-            : d.textOffset !== undefined
-            ? d.textOffset - 57
+          node.iconOffset !== undefined
+            ? node.iconOffset
+            : node.textOffset !== undefined
+            ? node.textOffset - 57
             : 0;
         return `transition-delay: 0ms; transform: translate(${iconOffset}px, -12px) scale(1);`;
       });
     allNodes
       .select('.pipeline-node__text')
-      .text((d) => d.name)
-      .attr('style', 'transition-delay: 200ms; opacity: 1;');
+      .text((node) => node.name)
+      .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
+      .style('opacity', (node) => (node.showText ? 1 : 0));
+
     renderNodeDetails(allNodes, {
       statusMap: nodeStatusMap,
       durationMap: nodeDurationMap,
       outlineMap: nodeOutlineMap,
     });
-    allNodes.classed('pipeline-node--active', (d) => nodeActive[d.id]);
-    allNodes.classed('pipeline-node--selected', (d) => nodeSelected[d.id]);
+
+    allNodes.classed('pipeline-node--active', (node) => nodeActive[node.id]);
+    allNodes.classed(
+      'pipeline-node--selected',
+      (node) => nodeSelected[node.id]
+    );
     allNodes.classed(
       'pipeline-node--parameters',
-      (d) => d.type === 'parameters'
+      (node) => node.type === 'parameters'
     );
-    allNodes.classed('pipeline-node--data', (d) => d.type === 'data');
-    allNodes.classed('pipeline-node--task', (d) => d.type === 'task');
+    allNodes.classed('pipeline-node--data', (node) => node.type === 'data');
+    allNodes.classed('pipeline-node--task', (node) => node.type === 'task');
   }, [
     nodes,
     nodeActive,
