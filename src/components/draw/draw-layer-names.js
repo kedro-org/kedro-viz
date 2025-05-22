@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import * as d3 from 'd3';
+import classnames from 'classnames';
 
 /**
  * Functional React component for drawing layer name labels using D3
@@ -70,4 +71,30 @@ export function DrawLayerNames({
   return null;
 }
 
-export default DrawLayerNames;
+export function DrawLayerNamesGroup({
+  layers,
+  chartSize,
+  orientation,
+  displayGlobalNavigation,
+  displaySidebar,
+  layerNamesRef,
+}) {
+  return (
+    <ul
+      className={classnames('pipeline-flowchart__layer-names', {
+        'pipeline-flowchart__layer-names--visible': layers.length,
+        'pipeline-flowchart__layer-names--no-global-toolbar':
+          !displayGlobalNavigation,
+        'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
+      })}
+      ref={layerNamesRef}
+    >
+      <DrawLayerNames
+        layers={layers}
+        chartSize={chartSize}
+        orientation={orientation}
+        layerNamesRef={layerNamesRef}
+      />
+    </ul>
+  );
+}

@@ -45,4 +45,24 @@ export function DrawLayers({
   return null;
 }
 
-export default DrawLayers;
+/**
+ * Wrapper component for the layers group and DrawLayers.
+ * Allows usage as <PipelineLayersGroup ... /> in flowchart.
+ */
+export function DrawLayersGroup({
+  layers,
+  layersRef,
+  onLayerMouseOver,
+  onLayerMouseOut,
+}) {
+  return (
+    <g className="pipeline-flowchart__layers" ref={layersRef}>
+      <DrawLayers
+        layers={layers}
+        layersRef={layersRef}
+        onLayerMouseOver={onLayerMouseOver}
+        onLayerMouseOut={onLayerMouseOut}
+      />
+    </g>
+  );
+}

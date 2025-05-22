@@ -47,7 +47,12 @@ import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
 import { loadLocalStorage } from '../../store/helpers';
 import { localStorageFeedbackSeen } from '../../config';
-import { DrawNodes, DrawEdges, DrawLayers, DrawLayerNames } from '../draw';
+import {
+  DrawNodes,
+  DrawEdges,
+  DrawLayerNamesGroup,
+  DrawLayersGroup,
+} from '../draw';
 
 import './styles/flowchart.scss';
 
@@ -855,14 +860,12 @@ export class FlowChart extends Component {
                 </marker>
               ))}
             </defs>
-            <g className="pipeline-flowchart__layers" ref={this.layersRef}>
-              <DrawLayers
-                layers={layers}
-                layersRef={this.layersRef}
-                onLayerMouseOver={this.handleLayerMouseOver}
-                onLayerMouseOut={this.handleLayerMouseOut}
-              />
-            </g>
+            <DrawLayersGroup
+              layers={layers}
+              layersRef={this.layersRef}
+              onLayerMouseOver={this.handleLayerMouseOver}
+              onLayerMouseOut={this.handleLayerMouseOut}
+            />
             <DrawEdges
               edges={edges}
               clickedNode={clickedNode}
@@ -891,17 +894,10 @@ export class FlowChart extends Component {
           </g>
         </svg>
 
-        <ul
-          className={classnames('pipeline-flowchart__layer-names', {
-            'pipeline-flowchart__layer-names--visible': layers.length,
-            'pipeline-flowchart__layer-names--no-global-toolbar':
-              !displayGlobalNavigation,
-            'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
-          })}
-          ref={this.layerNamesRef}
-        />
-        <DrawLayerNames
+        <DrawLayerNamesGroup
           layers={layers}
+          displayGlobalNavigation={displayGlobalNavigation}
+          displaySidebar={displaySidebar}
           chartSize={chartSize}
           orientation={orientation}
           layerNamesRef={this.layerNamesRef}
