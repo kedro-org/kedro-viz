@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
@@ -52,6 +51,7 @@ import {
   DrawEdges,
   DrawLayerNamesGroup,
   DrawLayersGroup,
+  GraphSVG,
 } from '../draw';
 
 import './styles/flowchart.scss';
@@ -823,77 +823,45 @@ export class FlowChart extends Component {
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        <svg
-          id="pipeline-graph"
-          className="pipeline-flowchart__graph"
+        <GraphSVG
           width={outerWidth}
           height={outerHeight}
-          ref={this.svgRef}
+          svgRef={this.svgRef}
+          wrapperRef={this.wrapperRef}
+          visibleGraph={visibleGraph}
         >
-          <g
-            id="zoom-wrapper"
-            className={classnames('pipeline-zoom-wrapper', {
-              'pipeline-zoom-wrapper--hidden': !visibleGraph,
-            })}
-            ref={this.wrapperRef}
-          >
-            <defs>
-              {[
-                'arrowhead',
-                'arrowhead--input',
-                'arrowhead--accent--input',
-                'arrowhead--accent',
-              ].map((id) => (
-                <marker
-                  id={`pipeline-${id}`}
-                  key={id}
-                  className={`pipeline-flowchart__${id}`}
-                  viewBox="0 0 10 10"
-                  refX="7"
-                  refY="5"
-                  markerUnits="strokeWidth"
-                  markerWidth="8"
-                  markerHeight="6"
-                  orient="auto"
-                >
-                  <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-                </marker>
-              ))}
-            </defs>
-            <DrawLayersGroup
-              layers={layers}
-              layersRef={this.layersRef}
-              onLayerMouseOver={this.handleLayerMouseOver}
-              onLayerMouseOut={this.handleLayerMouseOut}
-            />
-            <DrawEdges
-              edges={edges}
-              clickedNode={clickedNode}
-              linkedNodes={linkedNodes}
-              focusMode={focusMode}
-              inputOutputDataEdges={inputOutputDataEdges}
-            />
-            <DrawNodes
-              nodes={nodes}
-              nodeActive={nodeActive}
-              nodeSelected={nodeSelected}
-              nodeTypeDisabled={nodeTypeDisabled}
-              hoveredParameters={hoveredParameters}
-              nodesWithInputParams={nodesWithInputParams}
-              inputOutputDataNodes={inputOutputDataNodes}
-              focusMode={focusMode}
-              orientation={orientation}
-              onNodeClick={this.handleNodeClick}
-              onNodeMouseOver={this.handleNodeMouseOver}
-              onNodeMouseOut={this.handleNodeMouseOut}
-              onNodeFocus={this.handleNodeMouseOver}
-              onNodeBlur={this.handleNodeMouseOut}
-              onNodeKeyDown={this.handleNodeKeyDown}
-              onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
-            />
-          </g>
-        </svg>
-
+          <DrawLayersGroup
+            layers={layers}
+            layersRef={this.layersRef}
+            onLayerMouseOver={this.handleLayerMouseOver}
+            onLayerMouseOut={this.handleLayerMouseOut}
+          />
+          <DrawEdges
+            edges={edges}
+            clickedNode={clickedNode}
+            linkedNodes={linkedNodes}
+            focusMode={focusMode}
+            inputOutputDataEdges={inputOutputDataEdges}
+          />
+          <DrawNodes
+            nodes={nodes}
+            nodeActive={nodeActive}
+            nodeSelected={nodeSelected}
+            nodeTypeDisabled={nodeTypeDisabled}
+            hoveredParameters={hoveredParameters}
+            nodesWithInputParams={nodesWithInputParams}
+            inputOutputDataNodes={inputOutputDataNodes}
+            focusMode={focusMode}
+            orientation={orientation}
+            onNodeClick={this.handleNodeClick}
+            onNodeMouseOver={this.handleNodeMouseOver}
+            onNodeMouseOut={this.handleNodeMouseOut}
+            onNodeFocus={this.handleNodeMouseOver}
+            onNodeBlur={this.handleNodeMouseOut}
+            onNodeKeyDown={this.handleNodeKeyDown}
+            onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
+          />
+        </GraphSVG>
         <DrawLayerNamesGroup
           layers={layers}
           displayGlobalNavigation={displayGlobalNavigation}
