@@ -283,7 +283,7 @@ The `%run_viz` command supports various optional arguments found in `kedro viz r
 * `--pipeline=<name>`: Visualise a specific pipeline.
 * `--env=<name>`: Set the environment for the visualisation.
 * `--autoreload`: Enable automatic reloading of the visualisation when source code changes.
-* `--ignore-plugins`: Ignore Kedro plugins when running the visualisation.
+* `--include-hooks`: Include all registered hooks in the Kedro project for visualisation.
 * `--params=<params>`: Pass additional parameters to the visualisation.
 
 For example, to launch Kedro Viz on a specific host and port with autoreload enabled you can run:

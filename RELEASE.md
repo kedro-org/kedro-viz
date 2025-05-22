@@ -5,6 +5,13 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
+
+# Release 11.0.2
+
+## Bug fixes and other changes
+- Removed unused npm dependencies from Kedro-Viz. (#2339)
+- Updated documentation for `run_viz` magic command to reflect latest CLI options. (#2325)
+
 # Release 11.0.1
 
 ## Bug fixes and other changes
