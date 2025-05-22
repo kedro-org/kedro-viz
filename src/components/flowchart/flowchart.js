@@ -653,18 +653,14 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleLayerMouseOver = (event, node) => {
-    if (node) {
-      this.setState({
-        activeLayer: node.name,
-      });
+    if (!node) {
+      return;
     }
-
-    const { activeLayer } = this.state;
     const layerName = document.querySelector(
       `[data-id="layer-label--${node.name}"]`
     );
-
-    if (activeLayer && layerName) {
+    debugger;
+    if (layerName) {
       layerName.classList.add('pipeline-layer-name--active');
     }
   };
@@ -675,20 +671,18 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleLayerMouseOut = (event, node) => {
-    const { activeLayer } = this.state;
+    if (!node) {
+      return;
+    }
     const layerName = document.querySelector(
       `[data-id="layer-label--${node.name}"]`
     );
-
-    if (activeLayer && layerName) {
+    if (layerName) {
       layerName.classList.remove('pipeline-layer-name--active');
     }
-
-    if (node) {
-      this.setState({
-        activeLayer: undefined,
-      });
-    }
+    this.setState({
+      activeLayer: undefined,
+    });
   };
 
   /**
@@ -864,7 +858,12 @@ export class FlowChart extends Component {
               ))}
             </defs>
             <g className="pipeline-flowchart__layers" ref={this.layersRef}>
-              <DrawLayers layers={layers} layersRef={this.layersRef} />
+              <DrawLayers
+                layers={layers}
+                layersRef={this.layersRef}
+                onLayerMouseOver={this.handleLayerMouseOver}
+                onLayerMouseOut={this.handleLayerMouseOut}
+              />
             </g>
             <DrawEdges
               edges={edges}
@@ -888,7 +887,12 @@ export class FlowChart extends Component {
         </svg>
 
         <ul
-          className="pipeline-flowchart__layer-names"
+          className={classnames('pipeline-flowchart__layer-names', {
+            'pipeline-flowchart__layer-names--visible': layers.length,
+            'pipeline-flowchart__layer-names--no-global-toolbar':
+              !displayGlobalNavigation,
+            'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
+          })}
           ref={this.layerNamesRef}
         />
         <DrawLayerNames
