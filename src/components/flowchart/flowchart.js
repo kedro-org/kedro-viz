@@ -880,6 +880,13 @@ export class FlowChart extends Component {
               inputOutputDataNodes={inputOutputDataNodes}
               focusMode={focusMode}
               orientation={orientation}
+              onNodeClick={this.handleNodeClick}
+              onNodeMouseOver={this.handleNodeMouseOver}
+              onNodeMouseOut={this.handleNodeMouseOut}
+              onNodeFocus={this.handleNodeMouseOver}
+              onNodeBlur={this.handleNodeMouseOut}
+              onNodeKeyDown={this.handleNodeKeyDown}
+              onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
             />
           </g>
         </svg>

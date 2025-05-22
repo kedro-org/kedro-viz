@@ -6,8 +6,7 @@ import { updateParameterRect } from '../flowchart/updateParameterRect';
 import { renderNodeDetails } from '../flowchart/renderNodeDetails';
 
 /**
- * Functional React component for drawing nodes using D3
- * Props should include all data and config needed for node rendering
+ * Functional React component for drawing nodes using D3r
  */
 export function DrawNodes({
   nodes = [],
@@ -22,6 +21,13 @@ export function DrawNodes({
   nodeStatusMap = {},
   nodeDurationMap = {},
   nodeOutlineMap = {},
+  onNodeClick,
+  onNodeMouseOver,
+  onNodeMouseOut,
+  onNodeFocus,
+  onNodeBlur,
+  onNodeKeyDown,
+  onParamsIndicatorMouseOver,
   ...rest
 }) {
   const groupRef = useRef();
@@ -48,7 +54,13 @@ export function DrawNodes({
       })
       .attr('tabindex', 0)
       .attr('data-id', (d) => d.id)
-      .attr('opacity', 1);
+      .attr('opacity', 1)
+      .on('click', onNodeClick)
+      .on('mouseover', onNodeMouseOver)
+      .on('mouseout', onNodeMouseOut)
+      .on('focus', onNodeFocus || onNodeMouseOver)
+      .on('blur', onNodeBlur || onNodeMouseOut)
+      .on('keydown', onNodeKeyDown);
     enterNodes
       .append('rect')
       .attr(
@@ -58,13 +70,14 @@ export function DrawNodes({
       );
     enterNodes
       .append('rect')
-      .attr('class', 'pipeline-node__parameter-indicator');
+      .attr('class', 'pipeline-node__parameter-indicator')
+      .on('mouseover', onParamsIndicatorMouseOver)
+      .call(updateParameterRect, orientation);
     enterNodes
       .append('path')
       .attr('class', 'pipeline-node__icon')
       .attr('d', (d) => nodeIcons[d.icon] || '')
       .attr('style', (d) => {
-        // Use d.iconOffset if available, else fallback to 0
         const iconOffset =
           d.iconOffset !== undefined
             ? d.iconOffset
@@ -115,13 +128,11 @@ export function DrawNodes({
       .select('.pipeline-node__text')
       .text((d) => d.name)
       .attr('style', 'transition-delay: 200ms; opacity: 1;');
-    // Render node details (status, duration, outlines)
     renderNodeDetails(allNodes, {
       statusMap: nodeStatusMap,
       durationMap: nodeDurationMap,
       outlineMap: nodeOutlineMap,
     });
-    // Class updates (example, can be extended)
     allNodes.classed('pipeline-node--active', (d) => nodeActive[d.id]);
     allNodes.classed('pipeline-node--selected', (d) => nodeSelected[d.id]);
     allNodes.classed(
@@ -143,9 +154,15 @@ export function DrawNodes({
     nodeStatusMap,
     nodeDurationMap,
     nodeOutlineMap,
+    onNodeClick,
+    onNodeMouseOver,
+    onNodeMouseOut,
+    onNodeFocus,
+    onNodeBlur,
+    onNodeKeyDown,
+    onParamsIndicatorMouseOver,
   ]);
 
-  // Parent group for all nodes
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
 
