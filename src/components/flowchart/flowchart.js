@@ -47,10 +47,10 @@ import { FeedbackButton } from '../feedback-button/feedback-button';
 import { FeedbackForm } from '../feedback-form/feedback-form';
 import { loadLocalStorage } from '../../store/helpers';
 import { localStorageFeedbackSeen } from '../../config';
-import DrawNodes from './DrawNodes';
-import DrawEdges from './DrawEdges';
-import DrawLayers from './DrawLayers';
-import DrawLayerNames from './DrawLayerNames';
+import DrawNodes from '../draw/draw-nodes';
+import DrawEdges from '../draw/draw-edges';
+import DrawLayers from '../draw/draw-layers';
+import DrawLayerNames from '../draw/draw-layer-names';
 
 import './styles/flowchart.scss';
 

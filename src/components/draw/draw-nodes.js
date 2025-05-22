@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import { paths as nodeIcons } from '../icons/node-icon';
-import { updateNodeRects } from './updateNodeRect';
-import { updateParameterRect } from './updateParameterRect';
-import { renderNodeDetails } from './renderNodeDetails';
+import { updateNodeRects } from '../flowchart/updateNodeRect';
+import { updateParameterRect } from '../flowchart/updateParameterRect';
+import { renderNodeDetails } from '../flowchart/renderNodeDetails';
 
 /**
  * Functional React component for drawing nodes using D3
