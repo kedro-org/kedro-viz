@@ -3,7 +3,7 @@
 import sys
 import warnings
 
-__version__ = "11.0.1"
+__version__ = "11.0.2"
 
 
 class KedroVizPythonVersionWarning(UserWarning):
