@@ -92,6 +92,7 @@ async def get_run_events():
             "dataset_id": {
                 "name": "dataset.name",
                 "size_bytes": 1024,
+                "error": null
             }
         },
         "pipeline": {
