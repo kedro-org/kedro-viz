@@ -26,7 +26,7 @@ export const funNodeError = {
             "error": null
         },
         "04ba733a": {
-            "status": "Fail",
+            "status": "Failed",
             "duration_sec": 0.0,
             "error": "_get_id_columns() missing 1 required positional argument: 'data'"
         }

@@ -203,7 +203,7 @@ function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-value')
     .text(
       node.type === 'task' || node.type === 'modularPipeline'
-        ? nodeDuration ?? ''
+        ? nodeDuration ?? 'N/A'
         : datasetSize ?? 'N/A'
     )
     .attr('text-anchor', 'start')
