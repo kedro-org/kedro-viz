@@ -1,19 +1,17 @@
 """`kedro_viz.integrations.kedro.run_hooks` defines hooks to add additional functionalities for a kedro run."""
 
-import json
 import logging
 from datetime import datetime
 from pathlib import Path
 from time import perf_counter
 from typing import Any, Dict, Optional, Set, Union
 
-import fsspec
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.integrations.kedro.hooks_utils import compute_size, hash_node, make_dataset_event, write_events
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash, _hash_input_output
 
 logger = logging.getLogger(__name__)
 
@@ -38,16 +36,7 @@ class PipelineRunHooks:
 
     def _write_events(self) -> None:
         """Persist events list to the project's .viz JSON file."""
-        try:
-            project = _find_kedro_project(Path.cwd())
-            if not project:
-                logger.warning("No Kedro project found; skipping write.")
-                return
-            path = project / self.EVENTS_DIR / self.EVENTS_FILE
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(self._events, indent=2), encoding="utf8")
-        except Exception as exc:
-            logger.warning("Failed writing events: %s", exc)
+        write_events(self._events, self.EVENTS_DIR, self.EVENTS_FILE)
 
     def _add_event(self, event: Dict[str, Any], flush: bool = False) -> None:
         """Append one event; flush to disk when requested."""
@@ -57,7 +46,7 @@ class PipelineRunHooks:
 
     def _hash_node(self, node: Any) -> str:
         """Stable ID for KedroNode or I/O reference."""
-        return _hash(str(node)) if isinstance(node, KedroNode) else _hash_input_output(node)
+        return hash_node(node)
 
     def _make_dataset_event(
         self,
@@ -68,39 +57,11 @@ class PipelineRunHooks:
         node: Optional[KedroNode] = None,
     ) -> Dict[str, Any]:
         """Generic builder for dataset load/save events."""
-        ev = {"event": when, "dataset": name, "node_id": _hash_input_output(name), "status": status}
-        if node:
-            ev.update({
-                "node": node.name,
-                "node_id_from": self._hash_node(node)
-            })  # include node context
-        if data is not None and status == "Available":
-            size = self._compute_size(name, data)
-            if size is not None:
-                ev["size_bytes"] = size  # only attach size when available
-        return ev
+        return make_dataset_event(when, name, data, status, node, self.datasets)
 
     def _compute_size(self, name: str, data: Any) -> Optional[int]:
         """Determine file size for DataFrame or dataset with filepath attribute."""
-        ds = self.datasets.get(name)
-        # pandas DataFrame may store filepath metadata
-        try:
-            import pandas as pd
-            if isinstance(data, pd.DataFrame):
-                fp = getattr(ds, "filepath", None) or getattr(ds, "_filepath", None)
-                if fp:
-                    fs, p = fsspec.core.url_to_fs(fp)
-                    return fs.size(p) if fs.exists(p) else None
-        except ImportError:
-            pass  # pandas optional
-        # generic filepath lookup
-        for attr in ("filepath", "_filepath"):
-            fp = getattr(ds, attr, None)
-            if fp:
-                fs, p = fsspec.core.url_to_fs(fp)
-                if fs.exists(p):
-                    return fs.size(p)
-        return None
+        return compute_size(name, data, self.datasets)
 
     def _set_context(self, ds: str, op: str, node: KedroNode) -> None:
         """Save dataset I/O and node context for error handling."""
