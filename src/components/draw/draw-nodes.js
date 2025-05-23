@@ -28,7 +28,12 @@ export function DrawNodes({
   onNodeBlur,
   onNodeKeyDown,
   onParamsIndicatorMouseOver,
-  ...rest
+  isSlicingPipelineApplied = false,
+  slicedPipelineFromTo = {},
+  slicedPipelineRange = {},
+  isInputOutputNode = () => false,
+  clickedNode = null,
+  linkedNodes = {},
 }) {
   const groupRef = useRef();
 
@@ -149,6 +154,46 @@ export function DrawNodes({
     );
     allNodes.classed('pipeline-node--data', (node) => node.type === 'data');
     allNodes.classed('pipeline-node--task', (node) => node.type === 'task');
+    // More other classes for styling
+    allNodes
+      .classed(
+        'pipeline-node--sliced-pipeline',
+        (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
+      )
+      .classed(
+        'pipeline-node--from-to-sliced-pipeline',
+        (node) =>
+          !isSlicingPipelineApplied &&
+          slicedPipelineFromTo &&
+          slicedPipelineFromTo[node.id]
+      )
+      .classed(
+        'pipeline-node--collapsed-hint',
+        (node) =>
+          hoveredParameters &&
+          nodesWithInputParams[node.id] &&
+          nodeTypeDisabled.parameters
+      )
+      .classed(
+        'pipeline-node--dataset-input',
+        (node) => isInputOutputNode(node.id) && node.type === 'data'
+      )
+      .classed(
+        'pipeline-node--parameter-input',
+        (node) => isInputOutputNode(node.id) && node.type === 'parameters'
+      )
+      .classed(
+        'pipeline-node-input--active',
+        (node) => isInputOutputNode(node.id) && nodeActive[node.id]
+      )
+      .classed(
+        'pipeline-node-input--selected',
+        (node) => isInputOutputNode(node.id) && nodeSelected[node.id]
+      )
+      .classed(
+        'pipeline-node--faded',
+        (node) => clickedNode && !linkedNodes[node.id]
+      );
   }, [
     nodes,
     nodeActive,
@@ -169,6 +214,12 @@ export function DrawNodes({
     onNodeBlur,
     onNodeKeyDown,
     onParamsIndicatorMouseOver,
+    clickedNode,
+    linkedNodes,
+    isSlicingPipelineApplied,
+    slicedPipelineFromTo,
+    slicedPipelineRange,
+    isInputOutputNode,
   ]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;

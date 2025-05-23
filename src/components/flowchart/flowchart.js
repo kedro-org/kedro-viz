@@ -53,6 +53,7 @@ import {
   DrawLayersGroup,
   GraphSVG,
 } from '../draw';
+import { createNodeStateMap } from '../flowchart/draw-utils';
 
 import './styles/flowchart.scss';
 
@@ -802,7 +803,22 @@ export class FlowChart extends Component {
       showSlicingNotification,
       resetSlicingPipelineBtnClicked,
       showFeedbackForm,
+      slicedPipelineState,
     } = this.state;
+
+    // Compute slicedPipelineFromTo and slicedPipelineRange here
+    const {
+      from: slicedPipelineFromId,
+      to: slicedPipelineToId,
+      range,
+    } = slicedPipelineState;
+    const slicedPipelineFromTo =
+      slicedPipelineFromId &&
+      slicedPipelineToId &&
+      createNodeStateMap(nodes, [slicedPipelineFromId, slicedPipelineToId]);
+    const slicedPipelineRange = createNodeStateMap(nodes, range);
+    const isInputOutputNode = (nodeID) =>
+      focusMode !== null && inputOutputDataNodes[nodeID];
 
     // Counts the nodes in the slicedPipeline array, excludes any modularPipeline Id
     const numberOfNodesInSlicedPipeline = slicedPipeline.filter(
@@ -860,6 +876,12 @@ export class FlowChart extends Component {
             onNodeBlur={this.handleNodeMouseOut}
             onNodeKeyDown={this.handleNodeKeyDown}
             onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
+            isSlicingPipelineApplied={isSlicingPipelineApplied}
+            slicedPipelineFromTo={slicedPipelineFromTo}
+            slicedPipelineRange={slicedPipelineRange}
+            isInputOutputNode={isInputOutputNode}
+            clickedNode={clickedNode}
+            linkedNodes={linkedNodes}
           />
         </GraphSVG>
         <DrawLayerNamesGroup
