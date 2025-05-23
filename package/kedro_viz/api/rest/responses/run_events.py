@@ -3,7 +3,6 @@
 import json
 import logging
 import uuid
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -12,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from kedro_viz.constants import VIZ_METADATA_ARGS
 from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import _hash_input_output
+from kedro_viz.utils import _hash_input_output, safe_int, convert_status_to_enum, calculate_pipeline_duration
 
 logger = logging.getLogger(__name__)
 
@@ -68,18 +67,6 @@ class StructuredRunEventAPIResponse(BaseModel):
     pipeline: PipelineInfo = Field(default_factory=PipelineInfo)
 
 
-def _convert_status_to_enum(status: Optional[str], default: Enum) -> Enum:
-    """Convert string status to enum member; case-insensitive match on values."""
-    if not status:
-        return default
-    enum_cls = type(default)
-    for member in enum_cls:
-        if member.value.lower() == status.lower():
-            return member
-    logger.debug("Unknown status '%s', returning default %s", status, default)
-    return default
-
-
 def _update_dataset_info(
     datasets: Dict[str, DatasetInfo],
     node_id: str,
@@ -89,7 +76,7 @@ def _update_dataset_info(
     overwrite: bool = False
 ) -> None:
     """Create or update DatasetInfo, controlling size overwrite."""
-    status_enum = _convert_status_to_enum(status, DatasetStatus.AVAILABLE)
+    status_enum = convert_status_to_enum(status, DatasetStatus.AVAILABLE)
     info = datasets.get(node_id)
     if not info:
         # Create new entry if missing
@@ -146,7 +133,7 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
         if event_type == "after_node_run" and node_id:
             status = event.get("status", "Success")
             nodes[node_id] = NodeInfo(
-                status=_convert_status_to_enum(status, NodeStatus.SUCCESS),
+                status=convert_status_to_enum(status, NodeStatus.SUCCESS),
                 duration_sec=float(event.get("duration_sec", 0.0))
             )
         elif event_type == "on_node_error" and node_id:
@@ -158,7 +145,7 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
             else:
                 nodes[node_id] = NodeInfo(status=NodeStatus.FAIL, error=error_msg)
         elif event_type in {"after_dataset_loaded", "after_dataset_saved"} and node_id:
-            size = _safe_int(event.get("size_bytes", 0))
+            size = safe_int(event.get("size_bytes", 0))
             _update_dataset_info(
                 datasets,
                 node_id,
@@ -182,17 +169,14 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
     if pipeline.run_id == "default-run-id":
         pipeline.run_id = str(uuid.uuid4())
     # Compute total duration
-    pipeline.total_duration_sec = _calculate_pipeline_duration(pipeline, nodes)
+    nodes_durations = {node_id: node.duration_sec for node_id, node in nodes.items()}
+    pipeline.total_duration_sec = calculate_pipeline_duration(
+        pipeline.start_time, 
+        pipeline.end_time, 
+        nodes_durations
+    )
 
     return StructuredRunEventAPIResponse(nodes=nodes, datasets=datasets, pipeline=pipeline)
-
-
-def _safe_int(value: Any) -> int:
-    """Safely parse an integer value."""
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return 0
 
 
 def _process_dataset_error_event(
@@ -250,33 +234,6 @@ def _process_dataset_error_event(
     if not pipeline_info.error:
         pipeline_info.status = "failed"
         pipeline_info.error = event.get("error", "Dataset error")
-
-
-def _calculate_pipeline_duration(
-    pipeline_info: PipelineInfo,
-    nodes: Dict[str, NodeInfo]
-) -> float:
-    """Calculate pipeline duration from timestamps or node durations.
-    
-    Args:
-        pipeline_info: Pipeline information object
-        nodes: Dictionary of node info objects
-        
-    Returns:
-        Total duration in seconds
-    """
-    if pipeline_info.start_time and pipeline_info.end_time:
-        try:
-            start_dt = datetime.fromisoformat(pipeline_info.start_time)
-            end_dt = datetime.fromisoformat(pipeline_info.end_time)
-            duration = (end_dt - start_dt).total_seconds()
-            logger.info(f"Duration calculated from timestamps: {duration} seconds")
-            return duration
-        except (ValueError, TypeError) as e:
-            logger.warning(f"Error calculating pipeline duration: {e}")
-    
-    # Fallback to summing up node durations
-    return sum(node.duration_sec for node in nodes.values())
 
 
 def get_run_events_response() -> StructuredRunEventAPIResponse:
