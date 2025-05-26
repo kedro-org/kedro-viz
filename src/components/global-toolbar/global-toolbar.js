@@ -14,6 +14,7 @@ import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
+import WorkflowIcon from '../icons/workflow';
 
 import './global-toolbar.scss';
 
@@ -40,7 +41,7 @@ export const GlobalToolbar = ({
             disabled={false}
             icon={LogoIcon}
           />
-          <NavLink exact to={{ pathname: sanitizedPathname() }}>
+          <NavLink exact to="/">
             <IconButton
               ariaLabel={'View your pipeline'}
               dataTest={'global-toolbar-flowchart-btn'}
@@ -50,6 +51,18 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
+            />
+          </NavLink>
+          <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
+            <IconButton
+              ariaLabel={'View your workflow'}
+              dataTest={'global-toolbar-workflow-btn'}
+              className={
+                'pipeline-menu-button--large pipeline-menu-button--link'
+              }
+              disabled={false}
+              icon={WorkflowIcon}
+              labelText="Workflow"
             />
           </NavLink>
         </ul>

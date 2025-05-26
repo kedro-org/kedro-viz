@@ -30,7 +30,7 @@ export const Sidebar = ({
         })}
       >
         <div className="pipeline-ui">
-          <PipelineList onToggleOpen={togglePipeline} />
+          {/* <PipelineList onToggleOpen={togglePipeline} /> */}
           <NodesPanel faded={pipelineIsOpen} />
         </div>
         <nav className="pipeline-toolbar">
