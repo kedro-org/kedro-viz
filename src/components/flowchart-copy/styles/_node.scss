@@ -16,22 +16,6 @@
     stroke: var(--node-stroke-default);
   }
 
-  .pipeline-node__bg--status-failed {
-    stroke: #f56565;
-    fill: #412526;
-  }
-
-  .pipeline-node__bg--status-success {
-    stroke: #40d86e;
-    fill: #1d3c28;
-  }
-
-  .pipeline-node__bg--status-skipped {
-    stroke: #525252;
-    fill: #2B2D2F;
-
-  }
-
   &:focus {
     outline: none;
 
@@ -42,7 +26,27 @@
   }
 }
 
+.pipeline-node--status-success {
+  .pipeline-node__bg {
+    stroke: #40d86e;
+    fill: #1d3c28;
+  }
+}
+
+.pipeline-node--status-failed {
+  .pipeline-node__bg {
+    stroke: #f56565;
+    fill: #412526;
+  }
+}
+
 .pipeline-node--status-skipped {
+  .pipeline-node__bg {
+    stroke: colors.$black-400;
+    fill: colors.$slate-0;
+
+  }
+  
   .pipeline-node__icon,
   .pipeline-node__text {
     fill: colors.$black-400;;

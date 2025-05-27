@@ -223,30 +223,13 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    // Append the .pipeline-node__bg rect AFTER details container is created
-    enterNodes.append('rect').attr('class', (node) => {
-      let baseClass = `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`;
-
-      // Find the status key that contains this node.id (works for both nodes and datasets)
-      let finalStatus = null;
-      if (node.type === 'data' && typeof dataSetsStatus === 'object') {
-        finalStatus = Object.keys(dataSetsStatus).find(
-          (statusKey) => dataSetsStatus[statusKey][node.id]
-        );
-      }
-      if (!finalStatus && nodesStatus) {
-        finalStatus = Object.keys(nodesStatus).find(
-          (statusKey) => nodesStatus[statusKey][node.id]
-        );
-      }
-      if (!finalStatus) {
-        finalStatus = 'skipped';
-      }
-      if (finalStatus) {
-        baseClass += ` pipeline-node__bg--status-${finalStatus}`;
-      }
-      return baseClass;
-    });
+    enterNodes
+      .append('rect')
+      .attr(
+        'class',
+        (node) =>
+          `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
+      );
 
     enterNodes
       .append('rect')
