@@ -3,6 +3,7 @@
 @use './layers';
 @use './node';
 @use './variables';
+@use './workflow_node';
 
 .pipeline-flowchart {
   height: 100%;
