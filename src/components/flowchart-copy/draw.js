@@ -183,15 +183,33 @@ export const drawNodes = function (changed) {
   if (changed('nodes')) {
     enterNodes
       .attr('tabindex', '0')
-      .attr('class', 'pipeline-node')
+      .attr('class', (node) => {
+        let baseClass = 'pipeline-node';
+        if (node.type) {
+          baseClass += ` pipeline-node--${node.type}`;
+        }
+        // Status logic
+        let finalStatus = null;
+        if (node.type === 'data' && typeof dataSetsStatus === 'object') {
+          finalStatus = Object.keys(dataSetsStatus).find(
+            (statusKey) => dataSetsStatus[statusKey][node.id]
+          );
+        }
+        if (!finalStatus && nodesStatus) {
+          finalStatus = Object.keys(nodesStatus).find(
+            (statusKey) => nodesStatus[statusKey][node.id]
+          );
+        }
+        if (!finalStatus) {
+          finalStatus = 'skipped';
+        }
+        if (finalStatus) {
+          baseClass += ` pipeline-node--status-${finalStatus}`;
+        }
+        return baseClass;
+      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .classed(
-        'pipeline-node--parameters',
-        (node) => node.type === 'parameters'
-      )
-      .classed('pipeline-node--data', (node) => node.type === 'data')
-      .classed('pipeline-node--task', (node) => node.type === 'task')
       .on('click', this.handleNodeClick)
       .on('mouseover', this.handleNodeMouseOver)
       .on('mouseout', this.handleNodeMouseOut)
@@ -221,7 +239,9 @@ export const drawNodes = function (changed) {
           (statusKey) => nodesStatus[statusKey][node.id]
         );
       }
-
+      if (!finalStatus) {
+        finalStatus = 'skipped';
+      }
       if (finalStatus) {
         baseClass += ` pipeline-node__bg--status-${finalStatus}`;
       }

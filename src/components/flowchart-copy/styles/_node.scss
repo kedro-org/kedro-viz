@@ -26,6 +26,12 @@
     fill: #1d3c28;
   }
 
+  .pipeline-node__bg--status-skipped {
+    stroke: #525252;
+    fill: #2B2D2F;
+
+  }
+
   &:focus {
     outline: none;
 
@@ -33,6 +39,13 @@
       stroke: colors.$blue-300;
       stroke-width: 3.5px;
     }
+  }
+}
+
+.pipeline-node--status-skipped {
+  .pipeline-node__icon,
+  .pipeline-node__text {
+    fill: colors.$black-400;;
   }
 }
 
