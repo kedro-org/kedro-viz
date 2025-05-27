@@ -4,6 +4,8 @@ import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './updateNodeRects';
+import { getNodeStatusKey } from './workflow-utils/getNodeStatusKey';
+import { workFlowStatuses } from '../../config';
 
 const lineShape = line()
   .x((d) => d.x)
@@ -188,24 +190,13 @@ export const drawNodes = function (changed) {
         if (node.type) {
           baseClass += ` pipeline-node--${node.type}`;
         }
-        // Status logic
-        let finalStatus = null;
-        if (node.type === 'data' && typeof dataSetsStatus === 'object') {
-          finalStatus = Object.keys(dataSetsStatus).find(
-            (statusKey) => dataSetsStatus[statusKey][node.id]
-          );
-        }
-        if (!finalStatus && nodesStatus) {
-          finalStatus = Object.keys(nodesStatus).find(
-            (statusKey) => nodesStatus[statusKey][node.id]
-          );
-        }
-        if (!finalStatus) {
-          finalStatus = 'skipped';
-        }
-        if (finalStatus) {
-          baseClass += ` pipeline-node--status-${finalStatus}`;
-        }
+        // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+        const statusSource =
+          node.type === 'data' ? dataSetsStatus : nodesStatus;
+        // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+        let finalStatus =
+          getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
+        baseClass += ` pipeline-node--status-${finalStatus}`;
         return baseClass;
       })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
