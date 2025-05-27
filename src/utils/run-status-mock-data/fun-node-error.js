@@ -2,7 +2,7 @@ export const funNodeError = {
     "nodes": {
         "69c523b6": {
             "status": "Success",
-            "duration_sec": 0.01957150036469102,
+            "duration_sec": 102,
             "error": null
         },
         "ea604da4": {
