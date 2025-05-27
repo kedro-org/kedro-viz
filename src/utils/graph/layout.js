@@ -33,7 +33,11 @@ export const layout = ({
   layerSpaceY,
   iterations,
   orientation,
+  view,
 }) => {
+  //60 is height of the run status details rectangle in workflow view
+  const extraVerticalGap = view === 'workflow' ? 60 : 0;
+
   let coordPrimary = 'x';
   let coordSecondary = 'y';
 
@@ -56,6 +60,7 @@ export const layout = ({
     layerSpace: (spaceY + layerSpaceY) * 0.5,
     coordPrimary,
     coordSecondary,
+    extraVerticalGap,
   };
 
   // Constraints to separate nodes into rows and layers
@@ -103,7 +108,7 @@ const createRowConstraints = (edges, layoutConfig) =>
     property: layoutConfig.coordSecondary,
     a: edge.targetNode,
     b: edge.sourceNode,
-    separation: layoutConfig.spaceY,
+    separation: layoutConfig.spaceY + layoutConfig.extraVerticalGap,
   }));
 
 /**
@@ -239,7 +244,8 @@ const createParallelConstraints = (edges, layoutConfig) =>
  * @returns {Array} The constraints
  */
 const createSeparationConstraints = (rows, layoutConfig) => {
-  const { spaceX, coordPrimary, spreadX, orientation } = layoutConfig;
+  const { spaceX, coordPrimary, spreadX, orientation, extraVerticalGap } =
+    layoutConfig;
   const separationConstraints = [];
 
   // For each row of nodes
@@ -273,7 +279,7 @@ const createSeparationConstraints = (rows, layoutConfig) => {
       let separation = nodeA.width * 0.5 + space + nodeB.width * 0.5;
 
       if (orientation === 'horizontal') {
-        separation = nodeA.height + nodeB.height;
+        separation = nodeA.height + nodeB.height + extraVerticalGap;
       }
 
       separationConstraints.push({
