@@ -67,7 +67,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
                 <FeatureHints />
               </Route>
               <Route
-                to={{ pathname: `${sanitizedPathname()}experiment-tracking` }}
+                to={{ pathname: `${sanitizedPathname()}workflow` }}
               >
                 <WorkflowWrapper />
               </Route>
