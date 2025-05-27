@@ -362,3 +362,16 @@ export const updateStateFromOptions = (updatedOptions) => {
     payload: updatedOptions,
   };
 };
+
+export const SET_VIEW = 'SET_VIEW';
+
+/**
+ * Set the current view mode for pipeline layout
+ * @param {string} view - 'flowchart' or 'workflow'
+ */
+export function setView(view) {
+  return {
+    type: SET_VIEW,
+    view,
+  };
+}
