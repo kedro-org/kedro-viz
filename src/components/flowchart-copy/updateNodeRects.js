@@ -1,6 +1,12 @@
 import { select } from 'd3-selection';
 import { formatDuration, formatSize } from './formatUtils';
 
+export const MINIMUM_WIDTH = 180;
+
+export function getNodeWidth(node) {
+  return Math.max(node.width - 5, MINIMUM_WIDTH);
+}
+
 /**
  * Render the details container for a node (status, duration, outline, etc)
  */
@@ -10,7 +16,7 @@ function renderNodeDetailsContainer(
   nodesStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = node.width - 5;
+  const nodeWidth = getNodeWidth(node);
   const nodeHeight = node.height - 5;
   const detailsHeight = 60;
 
@@ -221,9 +227,9 @@ function renderNodeDetailsContainer(
  */
 export const updateNodeRects = (nodeRects, nodesStatus, dataSetsStatus) => {
   nodeRects
-    .attr('width', (node) => node.width - 5)
+    .attr('width', (node) => getNodeWidth(node))
     .attr('height', (node) => node.height - 5)
-    .attr('x', (node) => (node.width - 5) / -2)
+    .attr('x', (node) => -getNodeWidth(node) / 2)
     .attr('y', (node) => (node.height - 5) / -2)
     .attr('rx', (node) => {
       if (node.type === 'task' || node.type === 'modularPipeline') {
