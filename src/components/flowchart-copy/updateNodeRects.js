@@ -1,4 +1,5 @@
 import { select } from 'd3-selection';
+import { formatDuration, formatSize } from './formatUtils';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -162,7 +163,7 @@ function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-value')
     .text(
       datasetStatus
-        ? `${nodeStatus ?? ''} (${datasetStatus})`
+        ? `${nodeStatus ?? ''} ${datasetStatus}`
         : nodeStatus ?? 'Skipped'
     )
     .attr('text-anchor', 'start')
@@ -173,8 +174,10 @@ function renderNodeDetailsContainer(
   // Set fill color based on status
   if (nodeStatus === 'Failed' || datasetStatus === 'Missing') {
     statusValue.style('fill', '#ff4d4d');
-  } else {
+  } else if (nodeStatus === 'Success' || datasetStatus === 'Available'){
     statusValue.style('fill', '#FFF');
+  } else {
+    statusValue.style('fill', '#525252');
   }
 
   // Duration/Size group (label + value)
@@ -203,13 +206,13 @@ function renderNodeDetailsContainer(
     .attr('class', 'pipeline-node__details-value')
     .text(
       node.type === 'task' || node.type === 'modularPipeline'
-        ? nodeDuration ?? 'N/A'
-        : datasetSize ?? 'N/A'
+        ? (nodeDuration != null ? formatDuration(nodeDuration) : 'N/A')
+        : (datasetSize != null ? formatSize(datasetSize) : 'N/A')
     )
     .attr('text-anchor', 'start')
     .attr('x', nodeWidth / 2 - 80)
     .attr('y', nodeHeight / 2 + 45)
-    .style('fill', '#fff')
+    .style('fill', (nodeStatus || datasetStatus) ? '#FFF' : '#525252')
     .style('font-size', '14px');
 }
 
