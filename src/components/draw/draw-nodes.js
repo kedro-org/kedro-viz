@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import classNames from 'classnames';
 import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from '../flowchart/updateNodeRect';
 import { updateParameterRect } from '../flowchart/updateParameterRect';
@@ -52,13 +53,11 @@ export function DrawNodes({
     const enterNodes = nodeSel
       .enter()
       .append('g')
-      .attr('class', (node) => {
-        let base = 'pipeline-node';
-        if (node.type) {
-          base += ` pipeline-node--${node.type}`;
-        }
-        return base;
-      })
+      .attr('class', (node) =>
+        classNames('pipeline-node', {
+          [`pipeline-node--${node.type}`]: !!node.type,
+        })
+      )
       .attr('tabindex', 0)
       .attr('data-id', (node) => node.id)
       .attr('opacity', 1)
@@ -107,13 +106,6 @@ export function DrawNodes({
       .attr('tabindex', 0)
       .attr('data-id', (node) => node.id)
       .attr('opacity', 1)
-      .attr('class', (node) => {
-        let base = 'pipeline-node';
-        if (node.type) {
-          base += ` pipeline-node--${node.type}`;
-        }
-        return base;
-      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`);
     allNodes.select('.pipeline-node__bg').call(updateNodeRects);
     allNodes
@@ -148,12 +140,6 @@ export function DrawNodes({
       'pipeline-node--selected',
       (node) => nodeSelected[node.id]
     );
-    allNodes.classed(
-      'pipeline-node--parameters',
-      (node) => node.type === 'parameters'
-    );
-    allNodes.classed('pipeline-node--data', (node) => node.type === 'data');
-    allNodes.classed('pipeline-node--task', (node) => node.type === 'task');
     // More other classes for styling
     allNodes
       .classed(
