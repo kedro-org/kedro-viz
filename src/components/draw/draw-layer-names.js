@@ -26,10 +26,8 @@ export function DrawLayerNames({
 
     const transformValue =
       orientation === 'vertical'
-        ? // In vertical mode, layer names are positioned along the X-axis at sidebarWidth
-          `translateX(${layerNamePosition}px)`
-        : // In horizontal mode, layer names are positioned at a fixed Y = 100px
-          `translateY(${layerNamePosition}px)`;
+        ? `translateX(${layerNamePosition}px)`
+        : `translateY(${layerNamePosition}px)`;
 
     svg
       .transition('layer-names-sidebar-width')
@@ -37,12 +35,12 @@ export function DrawLayerNames({
       .style('transform', transformValue);
 
     // DATA JOIN
-    const layerNameElement = svg
+    let layerNames = svg
       .selectAll('.pipeline-layer-name')
       .data(layers, (d) => d.id);
 
     // ENTER
-    const enterLayerNames = layerNameElement
+    const enterLayerNames = layerNames
       .enter()
       .append('li')
       .attr('class', 'pipeline-layer-name')
@@ -55,7 +53,7 @@ export function DrawLayerNames({
       .style('opacity', 0.55);
 
     // EXIT
-    layerNameElement
+    layerNames
       .exit()
       .style('opacity', 0.55)
       .transition('exit-layer-names')
@@ -63,9 +61,9 @@ export function DrawLayerNames({
       .style('opacity', 0)
       .remove();
 
-    // UPDATE
-    const allNames = layerNameElement.merge(enterLayerNames);
-    allNames.text((d) => d.name).style('opacity', 0.55);
+    // MERGE
+    layerNames = layerNames.merge(enterLayerNames);
+    layerNames.text((d) => d.name).attr('dy', 5);
   }, [layers, chartSize, orientation, layerNameDuration, layerNamesRef]);
 
   return null;
