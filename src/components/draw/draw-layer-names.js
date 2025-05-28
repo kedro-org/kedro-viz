@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import * as d3 from 'd3';
 import classnames from 'classnames';
+import { LAYER_NAME_DURATION } from './config';
 
 /**
  * Functional React component for drawing layer name labels using D3
- * Props: layers (array), chartSize (object), orientation (string), layerNameDuration (number)
+ * Props: layers (array), chartSize (object), orientation (string), LAYER_NAME_DURATION (number)
  */
 export function DrawLayerNames({
   layers = [],
   chartSize = {},
   orientation = 'vertical',
-  layerNameDuration = 400,
   layerNamesRef,
 }) {
   useEffect(() => {
@@ -31,7 +31,7 @@ export function DrawLayerNames({
 
     svg
       .transition('layer-names-sidebar-width')
-      .duration(layerNameDuration)
+      .duration(LAYER_NAME_DURATION)
       .style('transform', transformValue);
 
     // DATA JOIN
@@ -49,7 +49,7 @@ export function DrawLayerNames({
     enterLayerNames
       .style('opacity', 0)
       .transition('enter-layer-names')
-      .duration(layerNameDuration)
+      .duration(LAYER_NAME_DURATION)
       .style('opacity', 0.55);
 
     // EXIT
@@ -57,14 +57,14 @@ export function DrawLayerNames({
       .exit()
       .style('opacity', 0.55)
       .transition('exit-layer-names')
-      .duration(layerNameDuration)
+      .duration(LAYER_NAME_DURATION)
       .style('opacity', 0)
       .remove();
 
     // MERGE
     layerNames = layerNames.merge(enterLayerNames);
     layerNames.text((d) => d.name).attr('dy', 5);
-  }, [layers, chartSize, orientation, layerNameDuration, layerNamesRef]);
+  }, [layers, chartSize, orientation, layerNamesRef]);
 
   return null;
 }

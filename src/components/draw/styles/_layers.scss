@@ -6,7 +6,7 @@
   transition: opacity ease 0.5s;
   fill: var(--layer-fill);
 
-  &:hover {
+  &--visible {
     opacity: 1;
   }
 

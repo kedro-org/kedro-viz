@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import * as d3 from 'd3';
+import classnames from 'classnames';
 
 import './styles/_layers.scss';
 
@@ -19,23 +20,24 @@ export function DrawLayers({
     }
     const svg = d3.select(layersRef.current);
     // DATA JOIN
-    const layerSel = svg.selectAll('.pipeline-layer').data(layers, (d) => d.id);
+    let layerSel = svg.selectAll('.pipeline-layer').data(layers, (d) => d.id);
+
     // ENTER
     const enterLayers = layerSel
       .enter()
       .append('rect')
-      .attr('class', 'pipeline-layer');
-    if (onLayerMouseOver) {
-      enterLayers.on('mouseover', onLayerMouseOver);
-    }
-    if (onLayerMouseOut) {
-      enterLayers.on('mouseout', onLayerMouseOut);
-    }
+      .attr('class', 'pipeline-layer')
+      .on('mouseover', onLayerMouseOver)
+      .on('mouseout', onLayerMouseOut);
+
     // EXIT
     layerSel.exit().remove();
+
+    // MERGE
+    layerSel = layerSel.merge(enterLayers);
+
     // UPDATE
-    const allLayers = layerSel.merge(enterLayers);
-    allLayers
+    layerSel
       .attr('x', (d) => d.x)
       .attr('y', (d) => d.y)
       .attr('height', (d) => d.height)
@@ -56,7 +58,12 @@ export function DrawLayersGroup({
   onLayerMouseOut,
 }) {
   return (
-    <g className="pipeline-flowchart__layers" ref={layersRef}>
+    <g
+      className={classnames('pipeline-flowchart__layers', {
+        'pipeline-flowchart__layers--visible': layers.length,
+      })}
+      ref={layersRef}
+    >
       <DrawLayers
         layers={layers}
         layersRef={layersRef}
