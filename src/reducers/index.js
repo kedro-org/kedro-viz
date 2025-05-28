@@ -27,6 +27,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
+  TOGGLE_PAGE,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 
@@ -129,6 +130,7 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
   ),
+  page: createReducer('flowchart', TOGGLE_PAGE, 'page'),
 });
 
 const rootReducer = (state, action) => {

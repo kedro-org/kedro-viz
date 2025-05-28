@@ -5,8 +5,12 @@ import {
   toggleSettingsModal,
   toggleShareableUrlModal,
   toggleTheme,
+  togglePage,
 } from '../../actions';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { loadPipelineData } from '../../actions/pipelines';
+import { toggleFocusMode, toggleExpandAllPipelines } from '../../actions';
+import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 
 import DownloadIcon from '../icons/download';
 import IconButton from '../ui/icon-button';
@@ -28,7 +32,10 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleShareableUrlModal,
   onToggleTheme,
+  onTogglePage,
   theme,
+  onUpdateActivePipeline,
+  onToggleExpandAllPipelines,
 }) => {
   return (
     <>
@@ -51,6 +58,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
+              onClick={() => onTogglePage('flowchart')}
             />
           </NavLink>
           <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
@@ -63,6 +71,11 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={WorkflowIcon}
               labelText="Workflow"
+              onClick={() => {
+                onTogglePage('workflow');
+                onUpdateActivePipeline('__default__');
+                onToggleExpandAllPipelines(true);
+              }}
             />
           </NavLink>
         </ul>
@@ -126,6 +139,17 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
+  },
+  onTogglePage: (page) => {
+    dispatch(togglePage(page));
+  },
+  onUpdateActivePipeline: (pipelineID) => {
+    dispatch(loadPipelineData(pipelineID));
+    dispatch(toggleFocusMode(null));
+  },
+  onToggleExpandAllPipelines: (isExpanded) => {
+    dispatch(toggleExpandAllPipelines(isExpanded));
+    dispatch(toggleModularPipelinesVisibilityState(isExpanded));
   },
 });
 

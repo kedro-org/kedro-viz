@@ -362,3 +362,16 @@ export const updateStateFromOptions = (updatedOptions) => {
     payload: updatedOptions,
   };
 };
+
+export const TOGGLE_PAGE = 'TOGGLE_PAGE';
+
+/**
+ * Toggle the current page view between flowchart and workflow
+ * @param {String} page The page to set ('flowchart' or 'workflow')
+ */
+export function togglePage(page) {
+  return {
+    type: TOGGLE_PAGE,
+    page,
+  };
+}

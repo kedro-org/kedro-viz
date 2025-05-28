@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
+import { togglePage } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -17,7 +18,7 @@ import './wrapper.scss';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme }) => {
+export const Wrapper = ({ displayGlobalNavigation, theme, onTogglePage }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -62,15 +63,26 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
               <UpdateReminder isOutdated={isOutdated} version={version} />
             )}
             <Switch>
-              <Route exact path="/">
-                <FlowChartWrapper />
-                <FeatureHints />
-              </Route>
               <Route
-                to={{ pathname: `${sanitizedPathname()}experiment-tracking` }}
-              >
-                <WorkflowWrapper />
-              </Route>
+                exact
+                path="/"
+                render={() => {
+                  onTogglePage('flowchart');
+                  return (
+                    <>
+                      <FlowChartWrapper />
+                      <FeatureHints />
+                    </>
+                  );
+                }}
+              />
+              <Route
+                path={`${sanitizedPathname()}workflow`}
+                render={() => {
+                  onTogglePage('workflow');
+                  return <WorkflowWrapper />;
+                }}
+              />
             </Switch>
           </>
         ) : (
@@ -86,4 +98,10 @@ export const mapStateToProps = (state) => ({
   theme: state.theme,
 });
 
-export default connect(mapStateToProps)(Wrapper);
+export const mapDispatchToProps = (dispatch) => ({
+  onTogglePage: (page) => {
+    dispatch(togglePage(page));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wrapper);

@@ -209,6 +209,11 @@ export const preparePipelineState = (
     state = applyUrlParametersToPipelineState(state, urlParams);
   }
 
+  // If user is on the workflow page, set the active pipeline to default
+  if (state.page === 'workflow') {
+    state.pipeline.active = '__default__';
+  }
+
   return state;
 };
 
