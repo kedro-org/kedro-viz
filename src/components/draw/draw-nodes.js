@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from '../flowchart/updateNodeRect';
 import { updateParameterRect } from '../flowchart/updateParameterRect';
-import { renderNodeDetails } from '../flowchart/renderNodeDetails';
+import { DURATION } from './config';
 
 /**
  * Functional React component for drawing nodes using D3r
@@ -47,8 +47,7 @@ export function DrawNodes({
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
-    // EXIT
-    nodeSel.exit().remove();
+
     // ENTER
     const enterNodes = nodeSel
       .enter()
@@ -67,6 +66,13 @@ export function DrawNodes({
       .on('focus', onNodeFocus || onNodeMouseOver)
       .on('blur', onNodeBlur || onNodeMouseOut)
       .on('keydown', onNodeKeyDown);
+
+    enterNodes
+      .attr('opacity', 0)
+      .transition('show-nodes')
+      .duration(DURATION)
+      .attr('opacity', 1);
+
     enterNodes
       .append('rect')
       .attr(
@@ -79,68 +85,74 @@ export function DrawNodes({
       .attr('class', 'pipeline-node__parameter-indicator')
       .on('mouseover', onParamsIndicatorMouseOver)
       .call(updateParameterRect, orientation);
+
+    // EXIT
+    nodeSel
+      .exit()
+      .transition('exit-nodes')
+      .duration(DURATION)
+      .style('opacity', 0)
+      .remove();
+    // Cancel exit transitions if re-entered
+    nodeSel.transition('exit-nodes').style('opacity', null);
+
+    // Performance: use a single path per icon
     enterNodes
       .append('path')
       .attr('class', 'pipeline-node__icon')
-      .attr('d', (node) => nodeIcons[node.icon] || '')
-      .attr('style', (node) => {
-        const iconOffset =
-          node.iconOffset !== undefined
-            ? node.iconOffset
-            : node.textOffset !== undefined
-            ? node.textOffset - 57
-            : 0;
-        return `transition-delay: 0ms; transform: translate(${iconOffset}px, -12px) scale(1);`;
-      });
+      .attr('d', (node) => nodeIcons[node.icon]);
+
     enterNodes
       .append('text')
       .attr('class', 'pipeline-node__text')
       .text((node) => node.name)
       .attr('text-anchor', 'middle')
       .attr('dy', 5)
-      .attr('dx', (node) => node.textOffset)
-      .attr('style', 'transition-delay: 200ms; opacity: 1;');
-    // UPDATE
+      .attr('dx', (node) => node.textOffset);
+
+    // UPDATE ON CHANGING THE LAYOUT
     const allNodes = nodeSel.merge(enterNodes);
     allNodes
-      .attr('tabindex', 0)
-      .attr('data-id', (node) => node.id)
-      .attr('opacity', 1)
-      .attr('transform', (node) => `translate(${node.x}, ${node.y})`);
+      .transition('update-nodes')
+      .duration(DURATION)
+      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
+      .on('end', () => {
+        try {
+          // Sort nodes so tab focus order follows X/Y position
+          allNodes.sort((a, b) => a.order - b.order);
+        } catch (err) {
+          // Avoid rare DOM errors thrown due to timing issues
+        }
+      });
+
     allNodes.select('.pipeline-node__bg').call(updateNodeRects);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .call(updateParameterRect, orientation);
+
+    // Performance: icon transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__icon')
-      .attr('d', (node) => nodeIcons[node.icon] || '')
-      .attr('style', (node) => {
-        const iconOffset =
-          node.iconOffset !== undefined
-            ? node.iconOffset
-            : node.textOffset !== undefined
-            ? node.textOffset - 57
-            : 0;
-        return `transition-delay: 0ms; transform: translate(${iconOffset}px, -12px) scale(1);`;
-      });
+      .style('transition-delay', (node) => (node.showText ? '0ms' : '200ms'))
+      .style(
+        'transform',
+        (node) =>
+          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
+          `scale(${node.iconSize / 24})`
+      );
+    // Performance: text transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__text')
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
 
-    renderNodeDetails(allNodes, {
-      statusMap: nodeStatusMap,
-      durationMap: nodeDurationMap,
-      outlineMap: nodeOutlineMap,
-    });
-
+    // More other classes for styling
     allNodes.classed('pipeline-node--active', (node) => nodeActive[node.id]);
     allNodes.classed(
       'pipeline-node--selected',
       (node) => nodeSelected[node.id]
     );
-    // More other classes for styling
     allNodes
       .classed(
         'pipeline-node--sliced-pipeline',
