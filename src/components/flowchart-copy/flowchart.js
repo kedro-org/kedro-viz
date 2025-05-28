@@ -30,7 +30,7 @@ import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { getRunCommand } from '../../selectors/run-command';
-import { getNodesStatus, getDatSetsStatus } from '../../selectors/status';
+import { getNodesStatus, getDatasetsStatus } from '../../selectors/status';
 import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
@@ -953,7 +953,7 @@ export const mapStateToProps = (state, ownProps) => ({
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
   nodesStatus: getNodesStatus(state),
-  dataSetsStatus: getDatSetsStatus(state),
+  dataSetsStatus: getDatasetsStatus(state),
   ...ownProps,
 });
 

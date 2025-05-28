@@ -4,6 +4,8 @@ import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
 import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './updateNodeRects';
+import { getNodeStatusKey } from './workflow-utils/getNodeStatusKey';
+import { workFlowStatuses } from '../../config';
 
 const lineShape = line()
   .x((d) => d.x)
@@ -183,15 +185,22 @@ export const drawNodes = function (changed) {
   if (changed('nodes')) {
     enterNodes
       .attr('tabindex', '0')
-      .attr('class', 'pipeline-node')
+      .attr('class', (node) => {
+        let baseClass = 'pipeline-node';
+        if (node.type) {
+          baseClass += ` pipeline-node--${node.type}`;
+        }
+        // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+        const statusSource =
+          node.type === 'data' ? dataSetsStatus : nodesStatus;
+        // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+        let finalStatus =
+          getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
+        baseClass += ` pipeline-node--status-${finalStatus}`;
+        return baseClass;
+      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .classed(
-        'pipeline-node--parameters',
-        (node) => node.type === 'parameters'
-      )
-      .classed('pipeline-node--data', (node) => node.type === 'data')
-      .classed('pipeline-node--task', (node) => node.type === 'task')
       .on('click', this.handleNodeClick)
       .on('mouseover', this.handleNodeMouseOver)
       .on('mouseout', this.handleNodeMouseOut)
@@ -205,33 +214,13 @@ export const drawNodes = function (changed) {
       .duration(this.DURATION)
       .attr('opacity', 1);
 
-    // Append the .pipeline-node__bg rect AFTER details container is created
-    enterNodes.append('rect').attr('class', (node) => {
-      let baseClass = `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`;
-
-      // Find the status key that contains this node.id
-      let nodeStatus = null;
-      if (nodesStatus) {
-        nodeStatus = Object.keys(nodesStatus).find(
-          (statusKey) => nodesStatus[statusKey][node.id]
-        );
-      }
-
-      // Also check in dataSetsStatus if node is a data node
-      let dataSetStatus = null;
-      if (node.type === 'data' && typeof dataSetsStatus === 'object') {
-        dataSetStatus = Object.keys(dataSetsStatus).find(
-          (statusKey) => dataSetsStatus[statusKey][node.id]
-        );
-      }
-
-      // Prefer nodeStatus, but if not found and dataSetStatus exists, use it
-      const finalStatus = nodeStatus || dataSetStatus;
-      if (finalStatus) {
-        baseClass += ` pipeline-node__bg--status-${finalStatus}`;
-      }
-      return baseClass;
-    });
+    enterNodes
+      .append('rect')
+      .attr(
+        'class',
+        (node) =>
+          `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
+      );
 
     enterNodes
       .append('rect')
@@ -332,13 +321,15 @@ export const drawNodes = function (changed) {
         }
       });
 
-    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__bg')
+      .call(updateNodeRects, nodesStatus, dataSetsStatus);
 
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
-      .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects);
+      .duration((node) => (node.showText ? 200 : 600));
+
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
