@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
@@ -17,29 +16,10 @@ import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
 import FlowChart from '../flowchart-copy';
-import PipelineWarning from '../pipeline-warning';
 import LoadingIcon from '../icons/loading';
-import InfoBannerIcon from '../icons/info-banner';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
-import ShareableUrlMetadata from '../shareable-url-modal/shareable-url-metadata';
 import Sidebar from '../sidebar';
-import { loadLocalStorage, saveLocalStorage } from '../../store/helpers';
-import {
-  errorMessages,
-  localStorageName,
-  localStorageBannerStatus,
-  params,
-  BANNER_METADATA,
-  BANNER_KEYS,
-} from '../../config';
-import { findMatchedPath } from '../../utils/match-path';
-import { getKeyByValue, getKeysByValue } from '../../utils/object-utils';
-import { isRunningLocally, mapNodeTypes } from '../../utils';
-import { useGeneratePathname } from '../../utils/hooks/use-generate-pathname';
-// import './flowchart-wrapper.scss';
-import Banner from '../ui/banner';
-import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 
 /**
  * Main flowchart container. Handles showing/hiding the sidebar nav for flowchart view,
