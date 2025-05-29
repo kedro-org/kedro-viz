@@ -11,7 +11,7 @@ import {
   toggleModularPipelineActive,
   toggleModularPipelinesExpanded,
 } from '../../actions/modular-pipelines';
-import { toggleFocusMode, setView } from '../../actions';
+import { toggleFocusMode } from '../../actions';
 import { loadNodeData } from '../../actions/nodes';
 import { loadPipelineData } from '../../actions/pipelines';
 import ExportModal from '../export-modal';
@@ -46,12 +46,7 @@ export const WorkflowWrapper = ({
   displayMetadataPanel,
   displayExportBtn,
   displayBanner,
-  setView,
 }) => {
-  useEffect(() => {
-    setView('workflow');
-  }, [setView]);
-
   return (
     <div className="kedro-pipeline">
       {displaySidebar && <Sidebar />}
@@ -108,7 +103,6 @@ export const mapDispatchToProps = (dispatch) => ({
   onUpdateActivePipeline: (pipelineId) => {
     dispatch(loadPipelineData(pipelineId));
   },
-  setView: (view) => dispatch(setView(view)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WorkflowWrapper);

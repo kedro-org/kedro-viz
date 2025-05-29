@@ -45,6 +45,7 @@ import {
 import { getHeap } from '../../tracking/index';
 import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import Tooltip from '../ui/tooltip';
+import { RunStatusNotification } from '../run-status-notification/run-status-notification';
 import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
 import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
 import { FeedbackButton } from '../feedback-button/feedback-button';
@@ -832,6 +833,7 @@ export class FlowChart extends Component {
       displaySidebar,
       layers,
       visibleGraph,
+      visibleSidebar,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
     return (
@@ -894,6 +896,11 @@ export class FlowChart extends Component {
             'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
           })}
           ref={this.layerNamesRef}
+        />
+        <RunStatusNotification
+          status="success"
+          timestamp="23.08.2023 03:05:15 UTC"
+          visibleSidebar={visibleSidebar}
         />
         <Tooltip
           chartSize={chartSize}
