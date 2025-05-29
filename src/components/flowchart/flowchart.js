@@ -53,7 +53,7 @@ import {
   DrawLayersGroup,
   GraphSVG,
 } from '../draw';
-import { createNodeStateMap } from '../flowchart/draw-utils';
+import { createNodeStateMap } from '../draw/utils/draw-utils';
 
 import './styles/flowchart.scss';
 
