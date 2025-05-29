@@ -97,12 +97,6 @@ export class FlowChart extends Component {
     this.slicedPipelineActionBarRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
-
-    this.DURATION = 700;
-    this.LAYER_NAME_DURATION = 0.05;
-    this.MARGIN = 500;
-    this.MIN_SCALE = 0.8;
-    this.MAX_SCALE = 2;
   }
 
   componentDidMount() {
