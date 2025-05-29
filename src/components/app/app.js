@@ -9,7 +9,6 @@ import {
   loadInitialPipelineData,
   loadPipelineData,
 } from '../../actions/pipelines';
-import { loadRunStatusData } from '../../actions/run-status';
 import Wrapper from '../wrapper';
 import getInitialState, {
   preparePipelineState,
@@ -40,20 +39,12 @@ class App extends React.Component {
     if (this.props.data === 'json') {
       this.store.dispatch(loadInitialPipelineData());
     }
-    if (this.props.runData === 'json') {
-      this.store.dispatch(loadRunStatusData());
-    } else if (this.props.runData) {
-      this.updateRunData(this.props.runData);
-    }
     this.announceFlags(this.store.getState().flags);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
-    }
-    if (prevProps.runData !== this.props.runData) {
-      this.updateRunData();
     }
     if (!isEqual(prevProps.options, this.props.options)) {
       this.store.dispatch(updateStateFromOptions(this.props.options));
@@ -87,20 +78,6 @@ class App extends React.Component {
     this.store.dispatch(resetData(newState));
   }
 
-  /**
-   * Dispatch an action to update the store with new run data
-   */
-  updateRunData() {
-    if (this.props.runData && this.props.runData !== 'json') {
-      const processedData = { groupedData: this.props.runData };
-
-      this.store.dispatch({
-        type: 'UPDATE_RUN_STATUS_DATA',
-        data: processedData,
-      });
-    }
-  }
-
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
@@ -127,13 +104,6 @@ App.propTypes = {
       tags: PropTypes.array,
     }),
   ]),
-  /**
-   * Determines what run status data will be displayed on the chart.
-   * You can supply an object with run status information -
-   * Alternatively, the string 'json' indicates that data is being
-   * loaded asynchronously from /api/run-events
-   */
-  runData: PropTypes.oneOfType([PropTypes.oneOf(['json']), PropTypes.object]),
   options: PropTypes.shape({
     /**
      * Specify the theme: Either 'light' or 'dark'.
