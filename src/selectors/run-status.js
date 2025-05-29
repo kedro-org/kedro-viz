@@ -11,7 +11,7 @@
  * @returns {Object} Nodes data grouped by node ID
  */
 export const getNodesById = (state) => {
-  return state.runStatus.runStatus?.nodes || {};
+  return state.runStatus?.nodes || {};
 };
 
 /**
@@ -20,7 +20,7 @@ export const getNodesById = (state) => {
  * @returns {Object} Datasets data grouped by node ID
  */
 export const getDatasetsById = (state) => {
-  return state.runStatus.runStatus?.datasets || {};
+  return state.runStatus?.datasets || {};
 };
 
 /**
@@ -29,7 +29,7 @@ export const getDatasetsById = (state) => {
  * @returns {Object} Pipeline run metadata
  */
 export const getPipelineRunData = (state) => {
-  return state.runStatus.runStatus?.pipeline || {};
+  return state.runStatus?.pipeline || {};
 };
 
 /**
@@ -39,7 +39,7 @@ export const getPipelineRunData = (state) => {
  * @returns {Object} Node status data
  */
 export const getNodeStatusById = (state, nodeId) => {
-  return state.runStatus.runStatus?.nodes?.[nodeId];
+  return state.runStatus?.nodes?.[nodeId];
 };
 
 /**
@@ -49,7 +49,7 @@ export const getNodeStatusById = (state, nodeId) => {
  * @returns {Object} Dataset status data
  */
 export const getDatasetStatusById = (state, datasetId) => {
-  return state.runStatus.runStatus?.datasets?.[datasetId];
+  return state.runStatus?.datasets?.[datasetId];
 };
 
 /**
@@ -59,7 +59,7 @@ export const getDatasetStatusById = (state, datasetId) => {
  * @returns {Number} Node duration in seconds
  */
 export const getNodeDurationById = (state, nodeId) => {
-  return state.runStatus.runStatus?.nodes?.[nodeId]?.durationSec || 0;
+  return state.runStatus?.nodes?.[nodeId]?.durationSec || 0;
 };
 
 /**
@@ -69,7 +69,7 @@ export const getNodeDurationById = (state, nodeId) => {
  * @returns {Boolean} Whether the node has failed
  */
 export const hasNodeFailed = (state, nodeId) => {
-  const node = state.runStatus.runStatus?.nodes?.[nodeId];
+  const node = state.runStatus?.nodes?.[nodeId];
   return node?.status === 'error' || node?.status === 'failed';
 };
 
@@ -80,7 +80,7 @@ export const hasNodeFailed = (state, nodeId) => {
  * @returns {String|null} Error message or null if the node hasn't failed
  */
 export const getNodeError = (state, nodeId) => {
-  const node = state.runStatus.runStatus?.nodes?.[nodeId];
+  const node = state.runStatus?.nodes?.[nodeId];
   return node?.status === 'error' || node?.status === 'failed'
     ? node?.error
     : null;
