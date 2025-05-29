@@ -5,17 +5,18 @@ use_directory_urls: true
 
 theme:
   name: material
+  custom_dir: docs/overrides/
   palette:
      # Palette toggle for light mode
     - scheme: light
       toggle:
-        icon: material/brightness-7
+        icon: material/white-balance-sunny
         name: Switch to dark mode
 
     # Palette toggle for dark mode
     - scheme: dark
       toggle:
-        icon: material/brightness-4
+        icon: material/white-balance-sunny
         name: Switch to light mode
 
   language: en
@@ -23,8 +24,14 @@ theme:
     text: Inter
     code: Inter Regular
   favicon: "https://kedro.org/images/favicon.ico"
-  logo: assets/kedro-horizontal-color-on-light.svg
-
+  logo: assets/kedro_logo_black.svg
+  icon:
+    repo: fontawesome/brands/github
+    admonition:
+      note: octicons/note-16
+      tip: octicons/info-16
+      warning: octicons/alert-16
+      example: octicons/code-16
 
   features:
     - navigation.instant
@@ -32,6 +39,7 @@ theme:
     - navigation.tabs.sticky
     - navigation.sections
     - navigation.tracking
+    - navigation.footer
     - search.suggest
     - search.highlight
     - content.tabs.link
@@ -45,12 +53,11 @@ plugins:
   - autorefs
   - mermaid2
   - mkdocstrings:
-      default_handler: python
       handlers:
         python:
           options:
             show_root_toc_entry: true
-            show_source: false
+            show_source: false #currently doesn't show source at correct level, and not for pydantic models
             docstring_style: google
             merge_init_into_class: true
             docstring_section_style: list
@@ -81,6 +88,7 @@ markdown_extensions:
       custom_checkbox: true
   - toc:
       permalink: true
+      title: Contents
   - pymdownx.arithmatex:
       generic: true
   - attr_list
@@ -94,7 +102,10 @@ markdown_extensions:
 extra_css:
   - stylesheets/colors.css
   - stylesheets/globals.css
+  - stylesheets/typography.css
   - stylesheets/themes.css
+  - stylesheets/footer.css
+  - stylesheets/welcome.css
 
 extra_javascript:
   - javascript/readthedocs.js
