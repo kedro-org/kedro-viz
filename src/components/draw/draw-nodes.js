@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import classNames from 'classnames';
 import { paths as nodeIcons } from '../icons/node-icon';
-import { updateNodeRects } from '../flowchart/updateNodeRect';
-import { updateParameterRect } from '../flowchart/updateParameterRect';
+import { updateNodeRects } from './utils/updateNodeRect';
+import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './config';
 
 import './styles/_node.scss';

@@ -9,8 +9,8 @@ import {
   limitPrecision,
   createNodeStateMap,
 } from './draw-utils';
-import { updateNodeRects } from './updateNodeRect';
-import { updateParameterRect } from './updateParameterRect';
+import { updateNodeRects } from '../draw/utils/updateNodeRect';
+import { updateParameterRect } from '../draw/utils/updateParameterRect';
 
 const lineShape = line()
   .x((d) => d.x)
