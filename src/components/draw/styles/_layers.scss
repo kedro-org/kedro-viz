@@ -6,10 +6,6 @@
   transition: opacity ease 0.5s;
   fill: var(--layer-fill);
 
-  &--visible {
-    opacity: 1;
-  }
-
   .pipeline-graph--export & {
     display: none;
   }
@@ -17,6 +13,10 @@
   @media print {
     display: none;
   }
+}
+
+.pipeline-layer--visible:hover {
+  opacity: 1;
 }
 
 @include mixins.transparentColour(

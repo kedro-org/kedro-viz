@@ -15,7 +15,7 @@ export function DrawLayers({
   layersRef,
 }) {
   useEffect(() => {
-    if (!layersRef?.current || !layers.length) {
+    if (!layersRef?.current) {
       return;
     }
     const svg = d3.select(layersRef.current);
@@ -26,7 +26,11 @@ export function DrawLayers({
     const enterLayers = layerSel
       .enter()
       .append('rect')
-      .attr('class', 'pipeline-layer')
+      .attr('class', () =>
+        classnames('pipeline-layer', {
+          'pipeline-layer--visible': layers.length,
+        })
+      )
       .on('mouseover', onLayerMouseOver)
       .on('mouseout', onLayerMouseOut);
 
@@ -58,12 +62,7 @@ export function DrawLayersGroup({
   onLayerMouseOut,
 }) {
   return (
-    <g
-      className={classnames('pipeline-flowchart__layers', {
-        'pipeline-flowchart__layers--visible': layers.length,
-      })}
-      ref={layersRef}
-    >
+    <g className="pipeline-flowchart__layers" ref={layersRef}>
       <DrawLayers
         layers={layers}
         layersRef={layersRef}
