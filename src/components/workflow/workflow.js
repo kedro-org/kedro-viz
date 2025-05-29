@@ -6,6 +6,7 @@ import {
   toggleSingleModularPipelineExpanded,
   toggleModularPipelineActive,
 } from '../../actions/modular-pipelines';
+import { RunStatusNotification } from '../run-status-notification/run-status-notification';
 import {
   loadNodeData,
   toggleNodeHovered,
@@ -248,7 +249,7 @@ export class Workflow extends Component {
         '.pipeline-layer-name'
       );
       if (layerNames.length !== this.props.layers.length) {
-        // If all layer labels are rendered yet; defer the update
+        // If ot all layer labels are rendered yet; defer the update
         setTimeout(() => this.onViewChange(transform), 0);
         return;
       }
@@ -641,6 +642,7 @@ export class Workflow extends Component {
       displayExportBtn,
       layers,
       visibleGraph,
+      visibleSidebar,
       clickedNode,
       nodes,
       nodeActive,
@@ -655,8 +657,9 @@ export class Workflow extends Component {
       edges,
       linkedNodes,
       inputOutputDataEdges,
-      tasksStatus,
-      dataSetsStatus,
+      nodesStatus,
+      datasetsStatus,
+      pipelineStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
@@ -712,8 +715,8 @@ export class Workflow extends Component {
                 clickedNode={clickedNode}
                 linkedNodes={linkedNodes}
                 showRunStatus={true}
-                tasksStatus={tasksStatus}
-                dataSetsStatus={dataSetsStatus}
+                nodesStatus={nodesStatus}
+                datasetsStatus={datasetsStatus}
               />
             </GraphSVG>
             <DrawLayerNamesGroup
@@ -723,6 +726,12 @@ export class Workflow extends Component {
               chartSize={chartSize}
               orientation={orientation}
               layerNamesRef={this.layerNamesRef}
+            />
+            <RunStatusNotification
+              status={pipelineStatus.status}
+              timestamp={pipelineStatus.endTime}
+              duration={0}
+              visibleSidebar={visibleSidebar}
             />
             <Tooltip
               chartSize={chartSize}
@@ -786,8 +795,9 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleMetaSidebar: getVisibleMetaSidebar(state),
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
-  tasksStatus: getNodesStatus(state),
-  dataSetsStatus: getDatasetsStatus(state),
+  nodesStatus: getNodesStatus(state),
+  datasetsStatus: getDatasetsStatus(state),
+  pipelineStatus: state.runStatus.pipeline,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
