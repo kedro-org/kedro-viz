@@ -376,8 +376,13 @@ pre:hover .md-clipboard {
     margin-left: 0 !important;
   }
 
-  /** Hide the nav label specifically on desktop version only */
-  #__nav_2_label {
+   /** Hide the nav label specifically on desktop version only
+  #__nav_2_label is kedro
+  #__nav_3_label is kedro-viz
+  #__nav_4_label is kedro-datasets*/
+  #__nav_2_label,
+  #__nav_3_label,
+  #__nav_4_label {
     display: none;
   }
 

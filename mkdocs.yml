@@ -1,7 +1,8 @@
 site_name: ""
-site_url: https://docs.kedro.org/kedro-viz
-site_description: "Kedro-Viz documentation"
-use_directory_urls: true
+site_url: https://docs.kedro.org/projects/kedro-viz
+repo_name: kedro-org/kedro-viz
+repo_url: https://github.com/kedro-org/kedro-viz
+
 
 theme:
   name: material
@@ -116,7 +117,7 @@ nav:
   - Home: index.md
   - Kedro: https://docs.kedro.org
   - Kedro-Viz: 
-    - Kedro-Viz Overview: pages/index.md
+    - Overview: pages/index.md
     - Learn about Kedro-Viz:
         - How to visualise a Kedro project: pages/kedro-viz_visualisation.md
         - Sharing Kedro-Viz:
