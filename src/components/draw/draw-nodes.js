@@ -6,6 +6,8 @@ import { updateNodeRects } from '../flowchart/updateNodeRect';
 import { updateParameterRect } from '../flowchart/updateParameterRect';
 import { DURATION } from './config';
 
+import './styles/_node.scss';
+
 /**
  * Functional React component for drawing nodes using D3r
  */

@@ -6,6 +6,8 @@ import { curveBasis, line } from 'd3-shape';
 import { limitPrecision } from '../flowchart/draw-utils';
 import { DURATION } from './config';
 
+import './styles/_edges.scss';
+
 const lineShape = line()
   .x((d) => d.x)
   .y((d) => d.y)

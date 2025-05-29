@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 import classnames from 'classnames';
 import { LAYER_NAME_DURATION } from './config';
 
+import './styles/_layers.scss';
+
 /**
  * Functional React component for drawing layer name labels using D3
  * Props: layers (array), chartSize (object), orientation (string), LAYER_NAME_DURATION (number)
