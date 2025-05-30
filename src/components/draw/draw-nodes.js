@@ -168,6 +168,52 @@ export function DrawNodes({
       'pipeline-node--faded',
       (node) => hoveredFocusMode && !nodeActive[node.id]
     );
+  }, [
+    nodes,
+    nodeActive,
+    nodeSelected,
+    nodeTypeDisabled,
+    hoveredParameters,
+    nodesWithInputParams,
+    inputOutputDataNodes,
+    focusMode,
+    orientation,
+    nodeStatusMap,
+    nodeDurationMap,
+    nodeOutlineMap,
+    onNodeClick,
+    onNodeMouseOver,
+    onNodeMouseOut,
+    onNodeFocus,
+    onNodeBlur,
+    onNodeKeyDown,
+    onParamsIndicatorMouseOver,
+    clickedNode,
+    linkedNodes,
+    isSlicingPipelineApplied,
+    slicedPipelineFromTo,
+    slicedPipelineRange,
+    isInputOutputNode,
+    hoveredFocusMode,
+  ]);
+
+  useEffect(() => {
+    if (!nodes.length) {
+      return;
+    }
+    const svg = d3.select(groupRef.current);
+    // DATA JOIN
+    const nodeSel = svg
+      .selectAll('.pipeline-node')
+      .data(nodes, (node) => node.id);
+    const updateNodes = nodeSel;
+    const enterNodes = nodeSel.enter().append('g');
+    const exitNodes = nodeSel.exit();
+    // Filter out undefined nodes on Safari
+    const allNodes = updateNodes
+      .merge(enterNodes)
+      .merge(exitNodes)
+      .filter((node) => typeof node !== 'undefined');
 
     allNodes
       .transition('update-nodes')
@@ -216,34 +262,7 @@ export function DrawNodes({
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
-  }, [
-    nodes,
-    nodeActive,
-    nodeSelected,
-    nodeTypeDisabled,
-    hoveredParameters,
-    nodesWithInputParams,
-    inputOutputDataNodes,
-    focusMode,
-    orientation,
-    nodeStatusMap,
-    nodeDurationMap,
-    nodeOutlineMap,
-    onNodeClick,
-    onNodeMouseOver,
-    onNodeMouseOut,
-    onNodeFocus,
-    onNodeBlur,
-    onNodeKeyDown,
-    onParamsIndicatorMouseOver,
-    clickedNode,
-    linkedNodes,
-    isSlicingPipelineApplied,
-    slicedPipelineFromTo,
-    slicedPipelineRange,
-    isInputOutputNode,
-    hoveredFocusMode,
-  ]);
+  }, [nodes]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
