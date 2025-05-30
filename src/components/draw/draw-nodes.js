@@ -39,7 +39,7 @@ export function DrawNodes({
   linkedNodes = {},
 }) {
   const groupRef = useRef();
-
+  // FIRST
   useEffect(() => {
     if (!nodes.length) {
       return;
@@ -119,7 +119,28 @@ export function DrawNodes({
     // Cancel exit transitions if re-entered
     updateNodes.transition('exit-nodes').style('opacity', null);
 
-    // ON CHANGED
+    // this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
+  }, [nodes]);
+
+  // SECOND EFFECT
+  useEffect(() => {
+    if (!nodes.length) {
+      return;
+    }
+    const svg = d3.select(groupRef.current);
+    // DATA JOIN
+    const nodeSel = svg
+      .selectAll('.pipeline-node')
+      .data(nodes, (node) => node.id);
+    const updateNodes = nodeSel;
+    const enterNodes = nodeSel.enter().append('g');
+    const exitNodes = nodeSel.exit();
+    // Filter out undefined nodes on Safari
+    const allNodes = updateNodes
+      .merge(enterNodes)
+      .merge(exitNodes)
+      .filter((node) => typeof node !== 'undefined');
+
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
@@ -161,42 +182,45 @@ export function DrawNodes({
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
       );
+  }, [
+    nodes,
+    nodeTypeDisabled,
+    nodeActive,
+    nodeSelected,
+    hoveredParameters,
+    nodesWithInputParams,
+    clickedNode,
+    linkedNodes,
+    focusMode,
+    inputOutputDataNodes,
+  ]);
 
-    // ON HOVER FOCUS MODE
+  // UPDATE WHEN HOVERED/ACTIVE NODES
+  useEffect(() => {
+    if (!nodes.length) {
+      return;
+    }
+    const svg = d3.select(groupRef.current);
+    // DATA JOIN
+    const nodeSel = svg
+      .selectAll('.pipeline-node')
+      .data(nodes, (node) => node.id);
+    const updateNodes = nodeSel;
+    const enterNodes = nodeSel.enter().append('g');
+    const exitNodes = nodeSel.exit();
+    // Filter out undefined nodes on Safari
+    const allNodes = updateNodes
+      .merge(enterNodes)
+      .merge(exitNodes)
+      .filter((node) => typeof node !== 'undefined');
 
     allNodes.classed(
       'pipeline-node--faded',
       (node) => hoveredFocusMode && !nodeActive[node.id]
     );
-  }, [
-    nodes,
-    nodeActive,
-    nodeSelected,
-    nodeTypeDisabled,
-    hoveredParameters,
-    nodesWithInputParams,
-    inputOutputDataNodes,
-    focusMode,
-    orientation,
-    nodeStatusMap,
-    nodeDurationMap,
-    nodeOutlineMap,
-    onNodeClick,
-    onNodeMouseOver,
-    onNodeMouseOut,
-    onNodeFocus,
-    onNodeBlur,
-    onNodeKeyDown,
-    onParamsIndicatorMouseOver,
-    clickedNode,
-    linkedNodes,
-    isSlicingPipelineApplied,
-    slicedPipelineFromTo,
-    slicedPipelineRange,
-    isInputOutputNode,
-    hoveredFocusMode,
-  ]);
+  }, [hoveredFocusMode, nodeActive, nodes]);
 
+  // UPDATE WHEN NODES CHANGED, eg: LAYOUT ETC
   useEffect(() => {
     if (!nodes.length) {
       return;
