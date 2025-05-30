@@ -1,10 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import classNames from 'classnames';
 import { paths as nodeIcons } from '../icons/node-icon';
-import { updateNodeRects } from '../flowchart/updateNodeRect';
-import { updateParameterRect } from '../flowchart/updateParameterRect';
+import { updateNodeRects } from './updateNodeRect';
+import { updateParameterRect } from './updateParameterRect';
 import { DURATION } from './config';
+
+import './styles/_node.scss';
 
 /**
  * Functional React component for drawing nodes using D3r
@@ -15,6 +16,7 @@ export function DrawNodes({
   nodeSelected = {},
   nodeTypeDisabled = {},
   hoveredParameters = null,
+  hoveredFocusMode = null,
   nodesWithInputParams = {},
   inputOutputDataNodes = {},
   focusMode = null,
@@ -47,19 +49,26 @@ export function DrawNodes({
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
+    const updateNodes = nodeSel;
+    const enterNodes = nodeSel.enter().append('g');
+    const exitNodes = nodeSel.exit();
+    // Filter out undefined nodes on Safari
+    const allNodes = updateNodes
+      .merge(enterNodes)
+      .merge(exitNodes)
+      .filter((node) => typeof node !== 'undefined');
 
-    // ENTER
-    const enterNodes = nodeSel
-      .enter()
-      .append('g')
-      .attr('class', (node) =>
-        classNames('pipeline-node', {
-          [`pipeline-node--${node.type}`]: !!node.type,
-        })
-      )
-      .attr('tabindex', 0)
+    enterNodes
+      .attr('tabindex', '0')
+      .attr('class', 'pipeline-node')
+      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
-      .attr('opacity', 1)
+      .classed(
+        'pipeline-node--parameters',
+        (node) => node.type === 'parameters'
+      )
+      .classed('pipeline-node--data', (node) => node.type === 'data')
+      .classed('pipeline-node--task', (node) => node.type === 'task')
       .on('click', onNodeClick)
       .on('mouseover', onNodeMouseOver)
       .on('mouseout', onNodeMouseOut)
@@ -80,21 +89,12 @@ export function DrawNodes({
         (node) =>
           `pipeline-node__bg pipeline-node__bg--${node.type} pipeline-node__bg--${node.icon}`
       );
+
     enterNodes
       .append('rect')
       .attr('class', 'pipeline-node__parameter-indicator')
       .on('mouseover', onParamsIndicatorMouseOver)
       .call(updateParameterRect, orientation);
-
-    // EXIT
-    nodeSel
-      .exit()
-      .transition('exit-nodes')
-      .duration(DURATION)
-      .style('opacity', 0)
-      .remove();
-    // Cancel exit transitions if re-entered
-    nodeSel.transition('exit-nodes').style('opacity', null);
 
     // Performance: use a single path per icon
     enterNodes
@@ -110,50 +110,19 @@ export function DrawNodes({
       .attr('dy', 5)
       .attr('dx', (node) => node.textOffset);
 
-    // UPDATE ON CHANGING THE LAYOUT
-    const allNodes = nodeSel.merge(enterNodes);
-    allNodes
-      .transition('update-nodes')
+    exitNodes
+      .transition('exit-nodes')
       .duration(DURATION)
-      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
-      .on('end', () => {
-        try {
-          // Sort nodes so tab focus order follows X/Y position
-          allNodes.sort((a, b) => a.order - b.order);
-        } catch (err) {
-          // Avoid rare DOM errors thrown due to timing issues
-        }
-      });
+      .style('opacity', 0)
+      .remove();
 
-    allNodes.select('.pipeline-node__bg').call(updateNodeRects);
-    allNodes
-      .select('.pipeline-node__parameter-indicator')
-      .call(updateParameterRect, orientation);
+    // Cancel exit transitions if re-entered
+    updateNodes.transition('exit-nodes').style('opacity', null);
 
-    // Performance: icon transitions with CSS on GPU
+    // ON CHANGED
     allNodes
-      .select('.pipeline-node__icon')
-      .style('transition-delay', (node) => (node.showText ? '0ms' : '200ms'))
-      .style(
-        'transform',
-        (node) =>
-          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
-          `scale(${node.iconSize / 24})`
-      );
-    // Performance: text transitions with CSS on GPU
-    allNodes
-      .select('.pipeline-node__text')
-      .text((node) => node.name)
-      .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
-      .style('opacity', (node) => (node.showText ? 1 : 0));
-
-    // More other classes for styling
-    allNodes.classed('pipeline-node--active', (node) => nodeActive[node.id]);
-    allNodes.classed(
-      'pipeline-node--selected',
-      (node) => nodeSelected[node.id]
-    );
-    allNodes
+      .classed('pipeline-node--active', (node) => nodeActive[node.id])
+      .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
       .classed(
         'pipeline-node--sliced-pipeline',
         (node) => !isSlicingPipelineApplied && slicedPipelineRange[node.id]
@@ -192,6 +161,61 @@ export function DrawNodes({
         'pipeline-node--faded',
         (node) => clickedNode && !linkedNodes[node.id]
       );
+
+    // ON HOVER FOCUS MODE
+
+    allNodes.classed(
+      'pipeline-node--faded',
+      (node) => hoveredFocusMode && !nodeActive[node.id]
+    );
+
+    allNodes
+      .transition('update-nodes')
+      .duration(DURATION)
+      .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
+      .on('end', () => {
+        try {
+          // Sort nodes so tab focus order follows X/Y position
+          allNodes.sort((a, b) => a.order - b.order);
+        } catch (err) {
+          // Avoid rare DOM errors thrown due to timing issues
+        }
+      });
+
+    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+
+    updateNodes
+      .select('.pipeline-node__bg')
+      .transition('node-rect')
+      .duration((node) => (node.showText ? 200 : 600))
+      .call(updateNodeRects);
+    allNodes
+      .select('.pipeline-node__parameter-indicator')
+      .classed(
+        'pipeline-node__parameter-indicator--visible',
+        (node) => nodeTypeDisabled.parameters && nodesWithInputParams[node.id]
+      )
+      .transition('node-rect')
+      .duration((node) => (node.showText ? 200 : 600))
+      .call(updateParameterRect, orientation);
+
+    // Performance: icon transitions with CSS on GPU
+    allNodes
+      .select('.pipeline-node__icon')
+      .style('transition-delay', (node) => (node.showText ? '0ms' : '200ms'))
+      .style(
+        'transform',
+        (node) =>
+          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
+          `scale(${node.iconSize / 24})`
+      );
+
+    // Performance: text transitions with CSS on GPU
+    allNodes
+      .select('.pipeline-node__text')
+      .text((node) => node.name)
+      .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
+      .style('opacity', (node) => (node.showText ? 1 : 0));
   }, [
     nodes,
     nodeActive,
@@ -218,6 +242,7 @@ export function DrawNodes({
     slicedPipelineFromTo,
     slicedPipelineRange,
     isInputOutputNode,
+    hoveredFocusMode,
   ]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
