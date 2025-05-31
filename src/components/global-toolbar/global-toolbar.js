@@ -5,8 +5,12 @@ import {
   toggleSettingsModal,
   toggleShareableUrlModal,
   toggleTheme,
+  toggleView,
 } from '../../actions';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
+import { loadPipelineData } from '../../actions/pipelines';
+import { toggleFocusMode, toggleExpandAllPipelines } from '../../actions';
+import { toggleModularPipelinesVisibilityState } from '../../actions/modular-pipelines';
 
 import DownloadIcon from '../icons/download';
 import IconButton from '../ui/icon-button';
@@ -14,6 +18,7 @@ import LogoIcon from '../icons/logo';
 import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
+import WorkflowIcon from '../icons/workflow';
 
 import './global-toolbar.scss';
 
@@ -27,7 +32,10 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleShareableUrlModal,
   onToggleTheme,
+  onToggleView,
   theme,
+  onUpdateActivePipeline,
+  onToggleExpandAllPipelines,
 }) => {
   return (
     <>
@@ -50,6 +58,24 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
+              onClick={() => onToggleView('flowchart')}
+            />
+          </NavLink>
+          <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
+            <IconButton
+              ariaLabel={'View your workflow'}
+              dataTest={'global-toolbar-workflow-btn'}
+              className={
+                'pipeline-menu-button--large pipeline-menu-button--link'
+              }
+              disabled={false}
+              icon={WorkflowIcon}
+              labelText="Workflow"
+              onClick={() => {
+                onToggleView('workflow');
+                onUpdateActivePipeline('__default__');
+                onToggleExpandAllPipelines(true);
+              }}
             />
           </NavLink>
         </ul>
@@ -113,6 +139,17 @@ export const mapDispatchToProps = (dispatch) => ({
   },
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
+  },
+  onToggleView: (view) => {
+    dispatch(toggleView(view));
+  },
+  onUpdateActivePipeline: (pipelineID) => {
+    dispatch(loadPipelineData(pipelineID));
+    dispatch(toggleFocusMode(null));
+  },
+  onToggleExpandAllPipelines: (isExpanded) => {
+    dispatch(toggleExpandAllPipelines(isExpanded));
+    dispatch(toggleModularPipelinesVisibilityState(isExpanded));
   },
 });
 
