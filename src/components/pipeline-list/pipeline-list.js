@@ -20,6 +20,7 @@ export const PipelineList = ({
   pipeline,
   isPrettyName,
   onToggleOpen,
+  view,
 }) => {
   const { toSelectedPipeline } = useGeneratePathname();
 
@@ -29,7 +30,7 @@ export const PipelineList = ({
   return (
     <div className="pipeline-list">
       <Dropdown
-        disabled={!pipeline.ids.length}
+        disabled={view === 'workflow' || !pipeline.ids.length}
         onOpened={() => onToggleOpen(true)}
         onClosed={() => onToggleOpen(false)}
         width={null}
@@ -64,6 +65,7 @@ export const mapStateToProps = (state) => ({
   asyncDataSource: state.dataSource === 'json',
   pipeline: state.pipeline,
   isPrettyName: state.isPrettyName,
+  view: state.view,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
