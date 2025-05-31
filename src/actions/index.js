@@ -362,3 +362,16 @@ export const updateStateFromOptions = (updatedOptions) => {
     payload: updatedOptions,
   };
 };
+
+export const TOGGLE_VIEW = 'TOGGLE_VIEW';
+
+/**
+ * Toggle the current view between flowchart and workflow
+ * @param {String} view The view to set ('flowchart' or 'workflow')
+ */
+export function toggleView(view) {
+  return {
+    type: TOGGLE_VIEW,
+    view,
+  };
+}
