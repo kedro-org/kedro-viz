@@ -184,7 +184,9 @@ export function DrawNodes({
       )
       .classed(
         'pipeline-node--faded',
-        (node) => clickedNode && !linkedNodes[node.id]
+        (node) =>
+          (hoveredFocusMode && !nodeActive[node.id]) ||
+          (clickedNode && !linkedNodes[node.id])
       );
   }, [
     nodes,
@@ -192,6 +194,7 @@ export function DrawNodes({
     nodeActive,
     nodeSelected,
     hoveredParameters,
+    hoveredFocusMode,
     nodesWithInputParams,
     clickedNode,
     linkedNodes,
@@ -202,20 +205,6 @@ export function DrawNodes({
     slicedPipelineFromTo,
     isInputOutputNode,
   ]);
-
-  // --- Update faded class for focus mode hover ---
-  useEffect(() => {
-    const selections = getNodeSelections(groupRef, nodes);
-    if (!selections) {
-      return;
-    }
-
-    const { allNodes } = selections;
-    allNodes.classed(
-      'pipeline-node--faded',
-      (node) => hoveredFocusMode && !nodeActive[node.id]
-    );
-  }, [hoveredFocusMode, nodeActive, nodes]);
 
   // --- Animate node position and update rects on layout/orientation change ---
   useEffect(() => {

@@ -790,6 +790,7 @@ export class FlowChart extends Component {
       nodeSelected,
       nodeTypeDisabled,
       hoveredParameters,
+      hoveredFocusMode,
       nodesWithInputParams,
       inputOutputDataNodes,
       focusMode,
@@ -865,6 +866,7 @@ export class FlowChart extends Component {
             nodeSelected={nodeSelected}
             nodeTypeDisabled={nodeTypeDisabled}
             hoveredParameters={hoveredParameters}
+            hoveredFocusMode={hoveredFocusMode}
             nodesWithInputParams={nodesWithInputParams}
             inputOutputDataNodes={inputOutputDataNodes}
             focusMode={focusMode}
