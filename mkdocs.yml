@@ -115,7 +115,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Kedro: https://docs.kedro.org
+  - Kedro: https://docs.kedro.org/en/develop/pages/getting-started/course/
   - Kedro-Viz: 
     - Overview: pages/index.md
     - Learn about Kedro-Viz:

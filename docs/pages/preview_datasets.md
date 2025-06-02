@@ -50,4 +50,4 @@ companies:
 You can also disable previews globally through the settings menu on Kedro-Viz.
 
 !!! info
-    Starting from Kedro-Viz 9.2.0, previews are disabled by default for the CLI commands `kedro viz deploy` and `kedro viz build`. You can control this behavior using the `--include-previews` flag with these commands. For `kedro viz run`, previews are enabled by default and can be controlled from the publish modal dialog, refer to the [Publish and share](./share_kedro_viz) for more instructions.
+    Starting from Kedro-Viz 9.2.0, previews are disabled by default for the CLI commands `kedro viz deploy` and `kedro viz build`. You can control this behavior using the `--include-previews` flag with these commands. For `kedro viz run`, previews are enabled by default and can be controlled from the publish modal dialog, refer to the [Publish and share](./share_kedro_viz.md) for more instructions.
