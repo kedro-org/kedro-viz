@@ -36,10 +36,10 @@ export function DrawNodes({
 }) {
   const groupRef = useRef();
 
-  // --- Initial node creation and removal (enter/exit) ---
-  useEffect(() => {
+  // Utility function to get D3 node selection and data join
+  const getNodeSelections = (groupRef, nodes) => {
     if (!nodes.length) {
-      return;
+      return null;
     }
     const svg = d3.select(groupRef.current);
     const nodeSel = svg
@@ -48,6 +48,22 @@ export function DrawNodes({
     const updateNodes = nodeSel;
     const enterNodes = nodeSel.enter().append('g');
     const exitNodes = nodeSel.exit();
+    // Filter out undefined nodes on Safari
+    const allNodes = updateNodes
+      .merge(enterNodes)
+      .merge(exitNodes)
+      .filter((node) => typeof node !== 'undefined');
+    return { svg, nodeSel, updateNodes, enterNodes, exitNodes, allNodes };
+  };
+
+  // --- Initial node creation and removal (enter/exit) ---
+  useEffect(() => {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
+      return;
+    }
+
+    const { updateNodes, enterNodes, exitNodes } = selections;
 
     enterNodes
       .attr('tabindex', '0')
@@ -123,21 +139,12 @@ export function DrawNodes({
 
   // --- Update node classes based on state (active, selected, etc) ---
   useEffect(() => {
-    if (!nodes.length) {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
       return;
     }
-    const svg = d3.select(groupRef.current);
-    const nodeSel = svg
-      .selectAll('.pipeline-node')
-      .data(nodes, (node) => node.id);
-    const updateNodes = nodeSel;
-    const enterNodes = nodeSel.enter().append('g');
-    const exitNodes = nodeSel.exit();
-    const allNodes = updateNodes
-      .merge(enterNodes)
-      .merge(exitNodes)
-      .filter((node) => typeof node !== 'undefined');
 
+    const { allNodes } = selections;
     allNodes
       .classed('pipeline-node--active', (node) => nodeActive[node.id])
       .classed('pipeline-node--selected', (node) => nodeSelected[node.id])
@@ -198,21 +205,12 @@ export function DrawNodes({
 
   // --- Update faded class for focus mode hover ---
   useEffect(() => {
-    if (!nodes.length) {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
       return;
     }
-    const svg = d3.select(groupRef.current);
-    const nodeSel = svg
-      .selectAll('.pipeline-node')
-      .data(nodes, (node) => node.id);
-    const updateNodes = nodeSel;
-    const enterNodes = nodeSel.enter().append('g');
-    const exitNodes = nodeSel.exit();
-    const allNodes = updateNodes
-      .merge(enterNodes)
-      .merge(exitNodes)
-      .filter((node) => typeof node !== 'undefined');
 
+    const { allNodes } = selections;
     allNodes.classed(
       'pipeline-node--faded',
       (node) => hoveredFocusMode && !nodeActive[node.id]
@@ -221,28 +219,18 @@ export function DrawNodes({
 
   // --- Animate node position and update rects on layout/orientation change ---
   useEffect(() => {
-    if (!nodes.length) {
+    const selections = getNodeSelections(groupRef, nodes);
+    if (!selections) {
       return;
     }
-    const svg = d3.select(groupRef.current);
-    const nodeSel = svg
-      .selectAll('.pipeline-node')
-      .data(nodes, (node) => node.id);
-    const updateNodes = nodeSel;
-    const enterNodes = nodeSel.enter().append('g');
-    const exitNodes = nodeSel.exit();
-    const allNodes = updateNodes
-      .merge(enterNodes)
-      .merge(exitNodes)
-      .filter((node) => typeof node !== 'undefined');
 
+    const { updateNodes, enterNodes, allNodes } = selections;
     allNodes
       .transition('update-nodes')
       .duration(DURATION)
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .on('end', () => {
         try {
-          // Sort nodes so tab focus order follows X/Y position
           allNodes.sort((a, b) => a.order - b.order);
         } catch (err) {
           // Avoid rare DOM errors thrown due to timing issues
