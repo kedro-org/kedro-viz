@@ -23,7 +23,7 @@ d3.selection.prototype.merge = function () {
 d3.selection.prototype.filter = function () {
     return this;
 };
-d3.selection.prototype.on = function () {
+d3.selection.prototype.onEvent = function () {
     return this;
 };
 d3.selection.prototype.call = function () {

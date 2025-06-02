@@ -391,9 +391,6 @@ describe('FlowChart', () => {
     );
 
     // Find the corresponding pipeline node for `params1`
-    const nodeElement = wrapper.render().find(`.pipeline-node__bg`);
-    const nodeY = parseFloat(select(nodeElement).attr('y'));
-
     const nodeRects = wrapper
       .render()
       .find('.pipeline-node__parameter-indicator--visible');
