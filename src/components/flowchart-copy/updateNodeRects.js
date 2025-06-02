@@ -5,12 +5,6 @@ import {
   getDatasetStatusInfo,
 } from './workflow-utils/getStatus';
 
-export const MINIMUM_WIDTH = 180;
-
-export function getNodeWidth(node) {
-  return Math.max(node.width - 5, MINIMUM_WIDTH);
-}
-
 /**
  * Render the details container for a node (status, duration, outline, etc)
  */
@@ -20,7 +14,7 @@ function renderNodeDetailsContainer(
   nodesStatus,
   dataSetsStatus
 ) {
-  const nodeWidth = getNodeWidth(node);
+  const nodeWidth = node.width;
   const nodeHeight = node.height - 5;
   const detailsHeight = 60;
 
@@ -173,9 +167,9 @@ function renderNodeDetailsContainer(
  */
 export const updateNodeRects = (nodeRects, nodesStatus, dataSetsStatus) => {
   nodeRects
-    .attr('width', getNodeWidth)
+    .attr('width', (node) => node.width)
     .attr('height', (node) => node.height - 5)
-    .attr('x', (node) => -getNodeWidth(node) / 2)
+    .attr('x', (node) => -node.width / 2)
     .attr('y', (node) => (node.height - 5) / -2)
     .attr('rx', (node) =>
       node.type === 'task' || node.type === 'modularPipeline'
