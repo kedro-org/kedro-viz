@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import { paths as nodeIcons } from '../icons/node-icon';
-import { updateNodeRects } from './updateNodeRect';
-import { updateParameterRect } from './updateParameterRect';
+import { updateNodeRects } from './utils//updateNodeRect';
+import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
 import './styles/_node.scss';
 
