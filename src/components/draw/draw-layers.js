@@ -54,6 +54,9 @@ export function DrawLayersGroup({
   onLayerMouseOver,
   onLayerMouseOut,
 }) {
+  if (!layers.length) {
+    return null;
+  }
   return (
     <g className="pipeline-flowchart__layers" ref={layersRef}>
       <DrawLayers

@@ -78,6 +78,9 @@ export function DrawLayerNamesGroup({
   displaySidebar,
   layerNamesRef,
 }) {
+  if (!layers.length) {
+    return null;
+  }
   return (
     <ul
       className={classnames('pipeline-flowchart__layer-names', {
