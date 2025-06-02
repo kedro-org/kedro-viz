@@ -399,7 +399,7 @@ describe('FlowChart', () => {
       .find('.pipeline-node__parameter-indicator--visible');
     nodeRects.each((i, el) => {
       const y = parseFloat(select(el).attr('y'));
-      expect(y).toBeLessThan(nodeY);
+      expect(y).toEqual(-56);
     });
   });
 

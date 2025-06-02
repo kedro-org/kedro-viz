@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
 import './styles/_layers.scss';
@@ -54,6 +54,9 @@ export function DrawLayersGroup({
   onLayerMouseOver,
   onLayerMouseOut,
 }) {
+  if (!layers.length) {
+    return null;
+  }
   return (
     <g className="pipeline-flowchart__layers" ref={layersRef}>
       <DrawLayers

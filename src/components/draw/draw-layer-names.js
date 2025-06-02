@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import classnames from 'classnames';
 
@@ -78,6 +78,9 @@ export function DrawLayerNamesGroup({
   displaySidebar,
   layerNamesRef,
 }) {
+  if (!layers.length) {
+    return null;
+  }
   return (
     <ul
       className={classnames('pipeline-flowchart__layer-names', {
