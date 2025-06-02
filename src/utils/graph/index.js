@@ -4,7 +4,7 @@ import { graph } from './graph';
  * Calculate chart layout with experimental new graphing algorithm
  * This is an extremely expensive operation so we want it to run as infrequently
  * as possible, and keep it separate from other properties (like node.active)
- * which don't affect layout.
+ * which don't affect layout. Test
  */
 export const graphNew = ({ nodes, edges, layers, orientation }) => {
   for (const node of nodes) {
