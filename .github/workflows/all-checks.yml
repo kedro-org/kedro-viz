@@ -15,12 +15,14 @@ on:
     paths-ignore:
       - "docs/**"
       - '**.md'
+      - "Makefile"
   pull_request:
     branches:
       - main
     paths-ignore:
       - "docs/**"
       - '**.md'
+      - "Makefile"
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 AM(UTC time)

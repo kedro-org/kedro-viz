@@ -72,5 +72,5 @@ fix-markdownlint:
 	markdownlint-cli2 --config .markdownlint.yaml --fix "/docs/**/*.md"
 
 check-docs:
-	cd package && uv pip install --system -e ".[docs]"
+	cd package && uv pip install -e ".[docs]"
 	mkdocs build --strict
