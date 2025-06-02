@@ -64,4 +64,9 @@ serve-docs:
 
 build-docs:
 	cd package && uv pip install -e ".[docs]"
-	mkdocs build
+	mkdocs build --strict
+
+fix-markdownlint:
+	npm install -g markdownlint-cli2
+	# markdownlint rules are defined in .markdownlint.yaml
+	markdownlint-cli2 --config .markdownlint.yaml --fix "/docs/**/*.md"
