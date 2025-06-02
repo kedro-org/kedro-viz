@@ -4,11 +4,10 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './updateNodeRect';
 import { updateParameterRect } from './updateParameterRect';
 import { DURATION } from './config';
-
 import './styles/_node.scss';
 
 /**
- * Functional React component for drawing nodes using D3r
+ * Functional React component for drawing nodes using D3
  */
 export function DrawNodes({
   nodes = [],
@@ -21,9 +20,6 @@ export function DrawNodes({
   inputOutputDataNodes = {},
   focusMode = null,
   orientation = 'vertical',
-  nodeStatusMap = {},
-  nodeDurationMap = {},
-  nodeOutlineMap = {},
   onNodeClick,
   onNodeMouseOver,
   onNodeMouseOut,
@@ -39,24 +35,19 @@ export function DrawNodes({
   linkedNodes = {},
 }) {
   const groupRef = useRef();
-  // FIRST
+
+  // --- Initial node creation and removal (enter/exit) ---
   useEffect(() => {
     if (!nodes.length) {
       return;
     }
     const svg = d3.select(groupRef.current);
-    // DATA JOIN
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
     const updateNodes = nodeSel;
     const enterNodes = nodeSel.enter().append('g');
     const exitNodes = nodeSel.exit();
-    // Filter out undefined nodes on Safari
-    const allNodes = updateNodes
-      .merge(enterNodes)
-      .merge(exitNodes)
-      .filter((node) => typeof node !== 'undefined');
 
     enterNodes
       .attr('tabindex', '0')
@@ -118,24 +109,30 @@ export function DrawNodes({
 
     // Cancel exit transitions if re-entered
     updateNodes.transition('exit-nodes').style('opacity', null);
+  }, [
+    nodes,
+    onNodeClick,
+    onNodeMouseOver,
+    onNodeMouseOut,
+    onNodeFocus,
+    onNodeBlur,
+    onNodeKeyDown,
+    onParamsIndicatorMouseOver,
+    orientation,
+  ]);
 
-    // this.el.nodes = this.el.nodeGroup.selectAll('.pipeline-node');
-  }, [nodes]);
-
-  // SECOND EFFECT
+  // --- Update node classes based on state (active, selected, etc) ---
   useEffect(() => {
     if (!nodes.length) {
       return;
     }
     const svg = d3.select(groupRef.current);
-    // DATA JOIN
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
     const updateNodes = nodeSel;
     const enterNodes = nodeSel.enter().append('g');
     const exitNodes = nodeSel.exit();
-    // Filter out undefined nodes on Safari
     const allNodes = updateNodes
       .merge(enterNodes)
       .merge(exitNodes)
@@ -193,22 +190,24 @@ export function DrawNodes({
     linkedNodes,
     focusMode,
     inputOutputDataNodes,
+    isSlicingPipelineApplied,
+    slicedPipelineRange,
+    slicedPipelineFromTo,
+    isInputOutputNode,
   ]);
 
-  // UPDATE WHEN HOVERED/ACTIVE NODES
+  // --- Update faded class for focus mode hover ---
   useEffect(() => {
     if (!nodes.length) {
       return;
     }
     const svg = d3.select(groupRef.current);
-    // DATA JOIN
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
     const updateNodes = nodeSel;
     const enterNodes = nodeSel.enter().append('g');
     const exitNodes = nodeSel.exit();
-    // Filter out undefined nodes on Safari
     const allNodes = updateNodes
       .merge(enterNodes)
       .merge(exitNodes)
@@ -220,20 +219,18 @@ export function DrawNodes({
     );
   }, [hoveredFocusMode, nodeActive, nodes]);
 
-  // UPDATE WHEN NODES CHANGED, eg: LAYOUT ETC
+  // --- Animate node position and update rects on layout/orientation change ---
   useEffect(() => {
     if (!nodes.length) {
       return;
     }
     const svg = d3.select(groupRef.current);
-    // DATA JOIN
     const nodeSel = svg
       .selectAll('.pipeline-node')
       .data(nodes, (node) => node.id);
     const updateNodes = nodeSel;
     const enterNodes = nodeSel.enter().append('g');
     const exitNodes = nodeSel.exit();
-    // Filter out undefined nodes on Safari
     const allNodes = updateNodes
       .merge(enterNodes)
       .merge(exitNodes)
@@ -253,7 +250,6 @@ export function DrawNodes({
       });
 
     enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
-
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
@@ -268,25 +264,28 @@ export function DrawNodes({
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
       .call(updateParameterRect, orientation);
-
-    // Performance: icon transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__icon')
       .style('transition-delay', (node) => (node.showText ? '0ms' : '200ms'))
       .style(
         'transform',
         (node) =>
-          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) ` +
-          `scale(${node.iconSize / 24})`
+          `translate(${node.iconOffset}px, ${-node.iconSize / 2}px) scale(${
+            node.iconSize / 24
+          })`
       );
-
-    // Performance: text transitions with CSS on GPU
     allNodes
       .select('.pipeline-node__text')
       .text((node) => node.name)
       .style('transition-delay', (node) => (node.showText ? '200ms' : '0ms'))
       .style('opacity', (node) => (node.showText ? 1 : 0));
-  }, [nodes, nodeTypeDisabled.parameters, nodesWithInputParams, orientation]);
+  }, [
+    nodes,
+    nodeTypeDisabled.parameters,
+    nodesWithInputParams,
+    orientation,
+    nodeActive,
+  ]);
 
   return <g id="nodes" className="pipeline-flowchart__nodes" ref={groupRef} />;
 }
