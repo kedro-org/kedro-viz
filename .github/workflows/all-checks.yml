@@ -5,24 +5,6 @@ name: Run all checks on Kedro-Viz
 
 on:
   workflow_call:
-    inputs:
-      branch:
-        type: string
-        default: ''
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - "docs/**"
-      - '**.md'
-      - "Makefile"
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "docs/**"
-      - '**.md'
-      - "Makefile"
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 AM(UTC time)
