@@ -4,7 +4,6 @@ import classnames from 'classnames';
 
 /**
  * Functional React component for drawing layer name labels using D3
- * Props: layers (array), chartSize (object), orientation (string), layerNameDuration (number)
  */
 export function DrawLayerNames({
   layers = [],

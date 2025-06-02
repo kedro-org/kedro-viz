@@ -3,8 +3,8 @@ import * as d3 from 'd3';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
-import { limitPrecision } from '../flowchart/draw-utils';
-import { DURATION } from './config';
+import { limitPrecision } from './utils/draw-utils';
+import { DURATION } from './utils/config';
 
 const lineShape = line()
   .x((d) => d.x)

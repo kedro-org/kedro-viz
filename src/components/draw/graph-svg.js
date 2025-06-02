@@ -3,7 +3,6 @@ import classnames from 'classnames';
 
 /**
  * GraphSVG wraps the SVG root, zoom wrapper, and marker definitions for the graph.
- * It accepts width, height, refs, visibleGraph, and children for graph content.
  */
 const markerIds = [
   'arrowhead',

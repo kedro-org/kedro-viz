@@ -5,7 +5,6 @@ import './styles/_layers.scss';
 
 /**
  * Functional React component for drawing layer bands using D3
- * Props: layers (array), onLayerMouseOver, onLayerMouseOut, layersRef
  */
 export function DrawLayers({
   layers = [],
