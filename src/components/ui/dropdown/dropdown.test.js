@@ -1,21 +1,20 @@
 import React from 'react';
-import sinon from 'sinon';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import Dropdown from './dropdown';
 import MenuOption from '../menu-option';
 
 const mockData = [
   {
     defaultText: 'Test 123',
-    onOpened: sinon.spy(() => {}),
-    onClosed: sinon.spy(() => {}),
-    onChanged: sinon.spy(() => {}),
+    onOpened: jest.fn(),
+    onClosed: jest.fn(),
+    onChanged: jest.fn(),
   },
   {
     defaultText: 'Test 456',
-    onOpened: sinon.spy(() => {}),
-    onClosed: sinon.spy(() => {}),
-    onChanged: sinon.spy(() => {}),
+    onOpened: jest.fn(),
+    onClosed: jest.fn(),
+    onChanged: jest.fn(),
   },
 ];
 
@@ -27,14 +26,17 @@ mockData.forEach((dataSet, i) => {
       <MenuOption key={3} primaryText="Menu Item Three" value={3} />
     </Dropdown>
   );
+
   describe(`Dropdown - Test ${i}`, () => {
     it('should be a function', () => {
       expect(typeof Dropdown).toBe('function');
     });
 
-    it('should create a valid React Component when called with required props', () => {
-      const wrapper = shallow(jsx);
-      expect(wrapper.children().length === 3).toBeTruthy();
+    it('should create a valid React component when called with required props', () => {
+      const { container } = render(jsx);
+      // Assert 3 children inside the dropdown menu
+      const menuItems = container.querySelectorAll('.menu-option');
+      expect(menuItems.length).toBe(3);
     });
   });
 });
