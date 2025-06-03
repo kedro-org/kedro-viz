@@ -5,23 +5,34 @@ Please follow the established format:
 - Use present tense (e.g. 'Add new feature')
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
-# Release 11.0.0 
+
+# Release 11.0.2
+
+## Bug fixes and other changes
+- Removed unused npm dependencies from Kedro-Viz. (#2339)
+- Updated documentation for `run_viz` magic command to reflect latest CLI options. (#2325)
+
+# Release 11.0.1
+
+## Bug fixes and other changes
+- Fix shareable viz for git pages. (#2302)
+- Fix missing layer information for dataset factories. (#2308)
+
+# Release 11.0.0
 
 ## Major features and improvements
 - Remove experiment tracking. (#2237)
 - Introduce horizontal flowchart orientation in Kedro-Viz. (#2159)
 - Visualise pipeline objects in notebook. (#2241)
-- Add support for Kedro's DataCatalog 2.0 with lazy loading. (#2272)
 - Enable Kedro-Viz in VSCode to list pipelines using the filter icon.  (#2269)
 
 ## Bug fixes and other changes
-
 - Add ESM bundle for Kedro-Viz. (#2268)
+- Add support for Kedro's DataCatalog 2.0 with lazy loading. (#2272)
 - Fix `%run_viz` using old process in jupyter notebook. (#2267)
+- Ignore parsing hidden files on `kedro viz --lite`. (#2271)
 - Make Kedro-Viz compatible with the new `KedroDataCatalog`. (#2274)
 - Add Dev Containers to QA Kedro-Viz on Github Codespaces. (#2292)
-
-## Community contributions
 
 # Release 10.2.0
 
