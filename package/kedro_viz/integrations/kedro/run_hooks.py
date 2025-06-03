@@ -2,6 +2,7 @@
 
 import logging
 from time import perf_counter
+import traceback
 from typing import Any, Dict, List, Optional, Set, Union
 
 from kedro.framework.hooks import hook_impl
@@ -145,6 +146,7 @@ class PipelineRunHooks:
                 "node_id": hash_node(node),
                 "error": str(error),
                 "timestamp": generate_timestamp(),
+                "traceback": traceback.format_exc(),
             },
             True,
         )
@@ -157,6 +159,7 @@ class PipelineRunHooks:
             "event": "on_pipeline_error",
             "error": str(error),
             "timestamp": generate_timestamp(),
+            "traceback": traceback.format_exc()
         }
 
         if self._current_dataset:
