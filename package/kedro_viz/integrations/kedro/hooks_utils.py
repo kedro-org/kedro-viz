@@ -84,7 +84,7 @@ def compute_size(
             if file_path:
                 filesystem, path = fsspec.core.url_to_fs(file_path)
                 return filesystem.size(path) if filesystem.exists(path) else None
-    except ImportError:
+    except ImportError: # pragma: no cover
         pass  # pandas optional
 
     # generic filepath lookup
@@ -117,7 +117,7 @@ def write_events(
         path = project / events_dir / events_file
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(events, indent=2), encoding="utf8")
-    except Exception as exc:  # pragma: no cover
+    except (OSError, TypeError, ValueError) as exc:  # pragma: no cover
         logger.warning("Failed writing events: %s", exc)
 
 
