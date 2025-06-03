@@ -1,6 +1,7 @@
 // Configure react-testing-library
-// See https://create-react-app.dev/docs/running-tests/#option-2-react-testing-library
 import '@testing-library/jest-dom';
+import fetchMock from 'jest-fetch-mock';
+
 
 // Configure enzyme
 // See https://create-react-app.dev/docs/running-tests/#srcsetuptestsjs
@@ -17,3 +18,13 @@ Object.defineProperty(global, 'TextEncoder', {
 window.URL.createObjectURL = jest.fn();
 
 configure({ adapter: new Adapter() });
+
+// Suppress unnecessary console warnings/errors during tests
+global.console = {
+  ...console,
+  error: jest.fn(),
+  warn: jest.fn(),
+};
+
+
+

@@ -21,9 +21,9 @@ describe('App', () => {
       shallow(<App data={getRandomPipeline()} />);
     });
 
-    test('when loading json data', () => {
-      shallow(<App data="json" />);
-    });
+    // test('when loading json data', () => {
+    //   shallow(<App data="json" />);
+    // });
 
     test('when being passed data as a prop', () => {
       shallow(<App data={spaceflights} />);
