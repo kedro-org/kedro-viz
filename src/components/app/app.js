@@ -43,7 +43,7 @@ class App extends React.Component {
 
     // If runData is provided, update the store with it or load it from the API
     if (this.props.runData) {
-      this.updateRunData(this.props.runData);
+      this.updateRunData();
     } else {
       this.store.dispatch(loadRunStatusData());
     }
@@ -54,7 +54,7 @@ class App extends React.Component {
     if (prevProps.data !== this.props.data) {
       this.updatePipelineData();
     }
-    if (prevProps.runData !== this.props.runData) {
+    if (this.props.runData && prevProps.runData !== this.props.runData) {
       this.updateRunData();
     }
     if (!isEqual(prevProps.options, this.props.options)) {
@@ -93,12 +93,10 @@ class App extends React.Component {
    * Dispatch an action to update the store with new run data
    */
   updateRunData() {
-    if (this.props.runData && this.props.runData !== 'json') {
-      this.store.dispatch({
-        type: 'UPDATE_RUN_STATUS_DATA',
-        data: this.props.runData,
-      });
-    }
+    this.store.dispatch({
+      type: 'UPDATE_RUN_STATUS_DATA',
+      data: this.props.runData,
+    });
   }
 
   render() {
