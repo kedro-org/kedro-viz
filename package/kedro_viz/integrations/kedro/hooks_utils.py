@@ -1,8 +1,8 @@
 """Utility functions for Kedro hooks implementation."""
 
-from datetime import datetime, timezone
 import json
 import logging
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -32,23 +32,23 @@ def create_dataset_event(
     datasets: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     """Generic builder for dataset load/save events.
-    
+
     Args:
         event_type: Event type/name
         dataset_name: Dataset name
         dataset_value: Dataset data
         datasets: Dictionary of available datasets
-        
+
     Returns:
         Dictionary with event data
     """
     event = {
-        "event": event_type, 
-        "dataset": dataset_name, 
-        "node_id": _hash_input_output(dataset_name), 
-        "status": "Available"
-        }
-    
+        "event": event_type,
+        "dataset": dataset_name,
+        "node_id": _hash_input_output(dataset_name),
+        "status": "Available",
+    }
+
     if dataset_value is not None and datasets:
         size = compute_size(dataset_name, dataset_value, datasets)
         if size is not None:
@@ -56,32 +56,37 @@ def create_dataset_event(
     return event
 
 
-def compute_size(dataset_name: str, dataset_value: Any, datasets: Dict[str, Any]) -> Optional[int]:
+def compute_size(
+    dataset_name: str, dataset_value: Any, datasets: Dict[str, Any]
+) -> Optional[int]:
     """Determine file size for DataFrame or dataset with filepath attribute.
-    
+
     Args:
         dataset_name: Dataset name
         dataset_value: Dataset data
         datasets: Dictionary of available datasets
-        
+
     Returns:
         File size in bytes, if available
     """
     dataset = datasets.get(dataset_name)
     if not dataset:
         return None
-        
+
     # pandas DataFrame may store filepath metadata
     try:
         import pandas as pd
+
         if isinstance(dataset_value, pd.DataFrame):
-            file_path = getattr(dataset, "filepath", None) or getattr(dataset, "_filepath", None)
+            file_path = getattr(dataset, "filepath", None) or getattr(
+                dataset, "_filepath", None
+            )
             if file_path:
                 filesystem, path = fsspec.core.url_to_fs(file_path)
                 return filesystem.size(path) if filesystem.exists(path) else None
     except ImportError:
         pass  # pandas optional
-    
+
     # generic filepath lookup
     for attr in ("filepath", "_filepath"):
         file_path = getattr(dataset, attr, None)
@@ -92,9 +97,13 @@ def compute_size(dataset_name: str, dataset_value: Any, datasets: Dict[str, Any]
     return None
 
 
-def write_events(events: List[Dict[str, Any]], events_dir: str = EVENTS_DIR, events_file: str = EVENTS_FILE) -> None:
+def write_events(
+    events: List[Dict[str, Any]],
+    events_dir: str = EVENTS_DIR,
+    events_file: str = EVENTS_FILE,
+) -> None:
     """Persist events list to the project's .viz JSON file.
-    
+
     Args:
         events: List of events to write
         events_dir: Directory to write events to
@@ -108,7 +117,7 @@ def write_events(events: List[Dict[str, Any]], events_dir: str = EVENTS_DIR, eve
         path = project / events_dir / events_file
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(events, indent=2), encoding="utf8")
-    except Exception as exc:
+    except Exception as exc:  # pragma: no cover
         logger.warning("Failed writing events: %s", exc)
 
 
@@ -119,5 +128,5 @@ def generate_timestamp() -> str:
         String representation of the current timestamp.
 
     """
-    current_ts = datetime.now(tz=timezone.utc).strftime(TIME_FORMAT)    
+    current_ts = datetime.now(tz=timezone.utc).strftime(TIME_FORMAT)
     return current_ts
