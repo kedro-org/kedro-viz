@@ -20,14 +20,12 @@ def hooks():
 @pytest.fixture
 def sample_node():
     """Create a simple Kedro node for testing."""
+
     def dummy_func(x):
         return x
 
     return node(
-        func=dummy_func,
-        inputs="input_data",
-        outputs="output_data",
-        name="test_node"
+        func=dummy_func, inputs="input_data", outputs="output_data", name="test_node"
     )
 
 
@@ -51,11 +49,35 @@ class TestPipelineRunHooks:
         hooks.after_catalog_created(sample_catalog)
         assert hooks.datasets == sample_catalog._datasets
 
+    def test_after_catalog_created_import_error(self, hooks, mocker):
+        """Test after_catalog_created hook when KedroDataCatalog import fails (covers lines 65-66)."""
+        # Create a mock catalog with _datasets attribute
+        mock_catalog = Mock()
+        mock_catalog._datasets = {"fallback_dataset": "fallback_data"}
+
+        # Store the original import function
+        original_import = __import__
+
+        # Mock the local import within the function to raise ImportError
+        def mock_import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
+            if name == "kedro.io" and "KedroDataCatalog" in fromlist:
+                raise ImportError("No module named 'kedro.io'")
+            # For any other imports, use the original import
+            return original_import(name, globals, locals, fromlist, level)
+
+        mocker.patch("builtins.__import__", side_effect=mock_import_side_effect)
+        hooks.after_catalog_created(mock_catalog)
+
+        # Should fall back to _datasets attribute
+        assert hooks.datasets == {"fallback_dataset": "fallback_data"}
+
     def test_after_catalog_created_kedro_data_catalog(self, hooks, mocker):
         """Test after_catalog_created hook with KedroDataCatalog to cover lines 62-64."""
+
         # Create a real class to simulate KedroDataCatalog
         class MockKedroDataCatalog:
             """Mock class to simulate KedroDataCatalog behavior."""
+
             pass
 
         # Create a catalog instance that inherits from our mock class
@@ -68,10 +90,11 @@ class TestPipelineRunHooks:
         # Patch the import to use our mock class
         import sys
         from unittest.mock import patch
+
         mock_module = Mock()
         mock_module.KedroDataCatalog = MockKedroDataCatalog
 
-        with patch.dict(sys.modules, {'kedro.io': mock_module}):
+        with patch.dict(sys.modules, {"kedro.io": mock_module}):
             # Now call the method - isinstance should work naturally
             hooks.after_catalog_created(catalog)
 
@@ -83,7 +106,7 @@ class TestPipelineRunHooks:
         mock_write_events = mocker.patch.object(hooks, "_write_events")
         mock_generate_timestamp = mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
-            return_value="2021-01-01T00:00:00.000Z"
+            return_value="2021-01-01T00:00:00.000Z",
         )
 
         hooks.before_pipeline_run({"pipeline_name": None}, sample_pipeline)
@@ -111,7 +134,7 @@ class TestPipelineRunHooks:
         """Test complete dataset loading workflow."""
         mock_create_dataset_event = mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
-            return_value={"event": "after_dataset_loaded", "dataset": "test_dataset"}
+            return_value={"event": "after_dataset_loaded", "dataset": "test_dataset"},
         )
 
         # Test before_dataset_loaded
@@ -137,7 +160,7 @@ class TestPipelineRunHooks:
         """Test complete dataset saving workflow."""
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.create_dataset_event",
-            return_value={"event": "after_dataset_saved", "dataset": "test_dataset"}
+            return_value={"event": "after_dataset_saved", "dataset": "test_dataset"},
         )
 
         # Test before_dataset_saved
@@ -159,7 +182,7 @@ class TestPipelineRunHooks:
         """Test complete node execution workflow."""
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
-            return_value="test_node_hash"
+            return_value="test_node_hash",
         )
 
         # Test before_node_run
@@ -187,7 +210,7 @@ class TestPipelineRunHooks:
         mock_write_events = mocker.patch.object(hooks, "_write_events")
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
-            return_value="2021-01-01T00:00:00.000Z"
+            return_value="2021-01-01T00:00:00.000Z",
         )
 
         hooks.after_pipeline_run({"pipeline_name": None})
@@ -208,11 +231,11 @@ class TestPipelineRunHooks:
         """Test on_node_error hook."""
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
-            return_value="test_node_hash"
+            return_value="test_node_hash",
         )
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
-            return_value="2021-01-01T00:00:00.000Z"
+            return_value="2021-01-01T00:00:00.000Z",
         )
         mock_write_events = mocker.patch.object(hooks, "_write_events")
 
@@ -233,11 +256,11 @@ class TestPipelineRunHooks:
         """Test on_pipeline_error hook with dataset and node context."""
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
-            return_value="test_node_hash"
+            return_value="test_node_hash",
         )
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
-            return_value="2021-01-01T00:00:00.000Z"
+            return_value="2021-01-01T00:00:00.000Z",
         )
         mocker.patch.object(hooks, "_write_events")
 
@@ -262,11 +285,11 @@ class TestPipelineRunHooks:
         """Test on_pipeline_error hook identifies unstarted nodes."""
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.hash_node",
-            return_value="test_node_hash"
+            return_value="test_node_hash",
         )
         mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
-            return_value="2021-01-01T00:00:00.000Z"
+            return_value="2021-01-01T00:00:00.000Z",
         )
         mocker.patch.object(hooks, "_write_events")
 
@@ -286,7 +309,7 @@ class TestPipelineRunHooks:
         """Test _write_events method when no Kedro project is found."""
         mock_find_kedro_project = mocker.patch(
             "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
-            return_value=None
+            return_value=None,
         )
 
         hooks._events = [{"event": "test_event"}]

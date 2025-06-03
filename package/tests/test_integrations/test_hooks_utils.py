@@ -19,21 +19,21 @@ from kedro_viz.integrations.kedro.hooks_utils import (
 @pytest.fixture
 def example_kedro_node():
     """Create a simple Kedro node for testing."""
+
     def dummy_func(x):
         return x
 
     from kedro.pipeline import node
+
     return node(
-        func=dummy_func,
-        inputs="input_data",
-        outputs="output_data",
-        name="test_node"
+        func=dummy_func, inputs="input_data", outputs="output_data", name="test_node"
     )
 
 
 @pytest.fixture
 def mock_datasets():
     """Mock datasets dictionary with different dataset types."""
+
     class MockDataset:
         def __init__(self, filepath=None, _filepath=None):
             if filepath:
@@ -43,7 +43,9 @@ def mock_datasets():
 
     return {
         "dataset_with_filepath": MockDataset(filepath="/path/to/file.csv"),
-        "dataset_with_private_filepath": MockDataset(_filepath="/private/path/file.csv"),
+        "dataset_with_private_filepath": MockDataset(
+            _filepath="/private/path/file.csv"
+        ),
         "dataset_without_filepath": MockDataset(),
     }
 
@@ -54,8 +56,7 @@ class TestHashNode:
     def test_hash_node_with_kedro_node(self, example_kedro_node, mocker):
         """Test hash_node function with KedroNode."""
         mock_hash = mocker.patch(
-            "kedro_viz.integrations.kedro.hooks_utils._hash",
-            return_value="test_hash"
+            "kedro_viz.integrations.kedro.hooks_utils._hash", return_value="test_hash"
         )
 
         result = hash_node(example_kedro_node)
@@ -67,7 +68,7 @@ class TestHashNode:
         """Test hash_node function with string input."""
         mock_hash_input_output = mocker.patch(
             "kedro_viz.integrations.kedro.hooks_utils._hash_input_output",
-            return_value="test_io_hash"
+            return_value="test_io_hash",
         )
 
         test_input = "test_dataset"
@@ -91,7 +92,7 @@ class TestCreateDatasetEvent:
             "event": event_type,
             "dataset": dataset_name,
             "node_id": hash_node(dataset_name),
-            "status": "Available"
+            "status": "Available",
         }
 
         assert result == expected
@@ -99,26 +100,29 @@ class TestCreateDatasetEvent:
     def test_create_dataset_event_with_size(self, mock_datasets, mocker):
         """Test create_dataset_event function with size calculation."""
         mock_compute_size = mocker.patch(
-            "kedro_viz.integrations.kedro.hooks_utils.compute_size",
-            return_value=1024
+            "kedro_viz.integrations.kedro.hooks_utils.compute_size", return_value=1024
         )
 
         event_type = "after_dataset_saved"
         dataset_name = "test_dataset"
         dataset_value = "test_data"
 
-        result = create_dataset_event(event_type, dataset_name, dataset_value, mock_datasets)
+        result = create_dataset_event(
+            event_type, dataset_name, dataset_value, mock_datasets
+        )
 
         expected = {
             "event": event_type,
             "dataset": dataset_name,
             "node_id": hash_node(dataset_name),
             "status": "Available",
-            "size_bytes": 1024
+            "size_bytes": 1024,
         }
 
         assert result == expected
-        mock_compute_size.assert_called_once_with(dataset_name, dataset_value, mock_datasets)
+        mock_compute_size.assert_called_once_with(
+            dataset_name, dataset_value, mock_datasets
+        )
 
 
 class TestComputeSize:
@@ -163,7 +167,7 @@ class TestComputeSize:
             def __init__(self):
                 self.filepath = "/dataframe.csv"
 
-        dataset_value = pd.DataFrame({'a': [1, 2, 3]})
+        dataset_value = pd.DataFrame({"a": [1, 2, 3]})
         datasets = {"dataframe_dataset": MockDataset()}
 
         result = compute_size("dataframe_dataset", dataset_value, datasets)
@@ -194,18 +198,20 @@ class TestWriteEvents:
         """Test write_events function successfully writes events."""
         mock_find_kedro_project = mocker.patch(
             "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
-            return_value=setup_kedro_project
+            return_value=setup_kedro_project,
         )
 
         test_events = [
             {"event": "test_event_1", "timestamp": "2021-01-01T00:00:00.000Z"},
-            {"event": "test_event_2", "timestamp": "2021-01-01T00:01:00.000Z"}
+            {"event": "test_event_2", "timestamp": "2021-01-01T00:01:00.000Z"},
         ]
 
         write_events(test_events)
 
         # Check if events file is created
-        expected_events_file_path = setup_kedro_project / ".viz/kedro_pipeline_events.json"
+        expected_events_file_path = (
+            setup_kedro_project / ".viz/kedro_pipeline_events.json"
+        )
         assert expected_events_file_path.exists()
 
         # Verify the contents of the events file
@@ -219,7 +225,7 @@ class TestWriteEvents:
         """Test write_events function when no Kedro project is found."""
         mock_find_kedro_project = mocker.patch(
             "kedro_viz.integrations.kedro.hooks_utils._find_kedro_project",
-            return_value=None
+            return_value=None,
         )
 
         test_events = [{"event": "test_event"}]
@@ -244,4 +250,6 @@ class TestGenerateTimestamp:
             parsed_time = datetime.strptime(result, TIME_FORMAT)
             assert parsed_time is not None
         except ValueError:
-            pytest.fail(f"Generated timestamp '{result}' does not match expected format '{TIME_FORMAT}'")
+            pytest.fail(
+                f"Generated timestamp '{result}' does not match expected format '{TIME_FORMAT}'"
+            )

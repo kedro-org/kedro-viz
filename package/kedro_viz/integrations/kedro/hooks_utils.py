@@ -84,7 +84,7 @@ def compute_size(
             if file_path:
                 filesystem, path = fsspec.core.url_to_fs(file_path)
                 return filesystem.size(path) if filesystem.exists(path) else None
-    except ImportError: # pragma: no cover
+    except ImportError:  # pragma: no cover
         pass  # pandas optional
 
     # generic filepath lookup
