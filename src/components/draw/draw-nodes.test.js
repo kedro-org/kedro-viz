@@ -25,9 +25,7 @@ describe('DrawNodes', () => {
   });
 
   it('renders the nodes group', () => {
-    const { container } = render(
-      <DrawNodes nodes={[{ id: 'test', x: 0, y: 0 }]} />
-    );
+    const { container } = render(<DrawNodes nodes={[baseNode]} />);
     expect(
       container.querySelector('.pipeline-flowchart__nodes')
     ).toBeInTheDocument();
