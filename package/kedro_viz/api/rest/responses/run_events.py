@@ -30,7 +30,6 @@ class EventType:
     ON_NODE_ERROR = "on_node_error"
     AFTER_DATASET_LOADED = "after_dataset_loaded"
     AFTER_DATASET_SAVED = "after_dataset_saved"
-    ON_DATASET_ERROR = "on_dataset_error"
 
 
 class PipelineStatus:
@@ -309,7 +308,7 @@ def _process_dataset_error_event(
         traceback=traceback_message,
     )
     
-    if node_id and node_id in nodes:
+    if node_id in nodes:
         nodes[node_id].status = NodeStatus.FAIL
         nodes[node_id].error = node_error_info
     elif node_name:
@@ -382,10 +381,6 @@ def transform_events_to_structured_format(
             # Handle pipeline errors that may contain dataset information
             if "dataset" in event:
                 _process_dataset_error_event(event, datasets, nodes, pipeline)
-            elif not pipeline.error:
-                # Handle general pipeline errors
-                pipeline.status = PipelineStatus.FAILED
-                pipeline.error = event.get("error", "Unknown pipeline error")
     
     # Finalize pipeline information
     _finalize_pipeline_info(pipeline, nodes)
@@ -435,6 +430,6 @@ def get_run_events_response() -> StructuredRunEventAPIResponse:
     except (OSError, IOError) as exc:
         logger.error(f"Error reading run events file: {exc}")
         return StructuredRunEventAPIResponse()
-    except Exception as exc:  # pragma: no cover
+    except Exception as exc:
         logger.exception(f"Unexpected error loading run events: {exc}")
         return StructuredRunEventAPIResponse()
