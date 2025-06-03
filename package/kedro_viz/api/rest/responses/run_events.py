@@ -28,11 +28,10 @@ class DatasetStatus(str, Enum):
     MISSING = "Missing"
 
 
-class NodeInfo(BaseModel):
-    """Information about a node."""
-    status: NodeStatus = NodeStatus.SUCCESS
-    duration_sec: float = 0.0
-    error: Optional[str] = None
+class NodeErrorInfo(BaseModel):
+    """Information about a node error."""
+    message: str
+    traceback: Optional[str] = None
 
 
 class DatasetErrorInfo(BaseModel):
@@ -40,6 +39,13 @@ class DatasetErrorInfo(BaseModel):
     message: str
     error_node: Optional[str] = None
     error_operation: Optional[str] = None
+    traceback: Optional[str] = None
+
+class NodeInfo(BaseModel):
+    """Information about a node."""
+    status: NodeStatus = NodeStatus.SUCCESS
+    duration_sec: float = 0.0
+    error: Optional[Union[str, NodeErrorInfo]] = None
 
 
 class DatasetInfo(BaseModel):
@@ -113,7 +119,8 @@ def _extract_pipeline_metadata(events: List[Dict[str, Any]], info: PipelineInfo)
         info.end_time = final["timestamp"]
     if final and final.get("event") == "on_pipeline_error":
         info.status = "failed"
-        info.error = final.get("error")
+        error_message = final.get("error", "Unknown pipeline error")
+        info.error = error_message
     else:
         info.status = "completed"
 
@@ -138,12 +145,20 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
             )
         elif event_type == "on_node_error" and node_id:
             error_msg = event.get("error", "Unknown error")
+            traceback_msg = event.get("traceback")
+            error_info = NodeErrorInfo(
+                message=error_msg,
+                traceback=traceback_msg
+            )
             node = nodes.get(node_id)
             if node:
                 node.status = NodeStatus.FAIL
-                node.error = error_msg
+                node.error = error_info
             else:
-                nodes[node_id] = NodeInfo(status=NodeStatus.FAIL, error=error_msg)
+                nodes[node_id] = NodeInfo(
+                    status=NodeStatus.FAIL, 
+                    error=error_info
+                )
         elif event_type in {"after_dataset_loaded", "after_dataset_saved"} and node_id:
             size = safe_int(event.get("size_bytes", 0))
             _update_dataset_info(
@@ -154,8 +169,6 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
                 event.get("status", "Available"),
                 overwrite=(event_type == "after_dataset_saved")
             )
-        elif event_type == "on_dataset_error":
-            _process_dataset_error_event(datasets, nodes, event, pipeline)
         elif event_type == "on_pipeline_error":
             # Also process pipeline errors that contain dataset information as dataset errors
             if "dataset" in event:
@@ -163,7 +176,9 @@ def transform_events_to_structured_format(events: List[Dict[str, Any]]) -> Struc
             # If not already handled in metadata, mark failure
             elif not pipeline.error:
                 pipeline.status = "failed"
-                pipeline.error = event.get("error")
+                error_msg = event.get("error", "Unknown pipeline error")
+                traceback_msg = event.get("traceback")
+                pipeline.error = error_msg
 
     # Assign unique run_id if default
     if pipeline.run_id == "default-run-id":
@@ -204,7 +219,8 @@ def _process_dataset_error_event(
         error_info = DatasetErrorInfo(
             message=error_message,
             error_node=node_name,
-            error_operation=event.get("operation", "")
+            error_operation=event.get("operation", ""),
+            traceback=event.get("traceback")
         )
         
         if dataset_id in datasets:
@@ -221,19 +237,31 @@ def _process_dataset_error_event(
     # Update node status if provided and found
     if node_id and node_id in nodes:
         nodes[node_id].status = NodeStatus.FAIL
-        nodes[node_id].error = event.get("error", "Dataset error")
+        error_msg = event.get("error", "Dataset error")
+        traceback_msg = event.get("traceback")
+        nodes[node_id].error = NodeErrorInfo(
+            message=error_msg,
+            traceback=traceback_msg
+        )
     elif node_name:
         # Try to find the node by name if node_id is not provided or not found
         for nid, node in nodes.items():
             if nid.endswith(node_name):
                 node.status = NodeStatus.FAIL
-                node.error = event.get("error", "Dataset error")
+                error_msg = event.get("error", "Dataset error")
+                traceback_msg = event.get("traceback")
+                node.error = NodeErrorInfo(
+                    message=error_msg,
+                    traceback=traceback_msg
+                )
                 break
     
     # Only set the main error information in pipeline info if not already set
     if not pipeline_info.error:
         pipeline_info.status = "failed"
-        pipeline_info.error = event.get("error", "Dataset error")
+        error_msg = event.get("error", "Dataset error")
+        traceback_msg = event.get("traceback")
+        pipeline_info.error = error_msg
 
 
 def get_run_events_response() -> StructuredRunEventAPIResponse:
