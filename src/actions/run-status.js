@@ -1,4 +1,4 @@
-import { fetchRunEvents, processRunEvents } from '../utils/run-status';
+import { fetchRunEvents, processRunEvents } from '../utils/normalizeRunStatus';
 
 export const UPDATE_RUN_STATUS_DATA = 'UPDATE_RUN_STATUS_DATA';
 
