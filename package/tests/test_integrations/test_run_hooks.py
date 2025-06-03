@@ -59,7 +59,9 @@ class TestPipelineRunHooks:
         original_import = __import__
 
         # Mock the local import within the function to raise ImportError
-        def mock_import_side_effect(name, globals=None, locals=None, fromlist=(), level=0):
+        def mock_import_side_effect(
+            name, globals=None, locals=None, fromlist=(), level=0
+        ):
             if name == "kedro.io" and "KedroDataCatalog" in fromlist:
                 raise ImportError("No module named 'kedro.io'")
             # For any other imports, use the original import
