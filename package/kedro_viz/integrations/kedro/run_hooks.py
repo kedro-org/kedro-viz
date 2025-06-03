@@ -53,7 +53,7 @@ class PipelineRunHooks:
         self._current_operation = None
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[Any, Any]):  # type: ignore
+    def after_catalog_created(self, catalog: Union[Any, Any]):
         """Grab catalog datasets for size lookups."""
         try:
             # prefer new KedroDataCatalog
@@ -74,7 +74,7 @@ class PipelineRunHooks:
         """Emit start event unless this is named pipeline."""
         if run_params.get("pipeline_name"):
             return
-        self._all_nodes: List[KedroNode] = list(pipeline.nodes)
+        self._all_nodes = list(pipeline.nodes)
         self._started_nodes.clear()
         self._add_event(
             {"event": "before_pipeline_run", "timestamp": generate_timestamp()}, True
@@ -160,9 +160,9 @@ class PipelineRunHooks:
         }
 
         if self._current_dataset:
-            event.update(
-                {"dataset": self._current_dataset, "operation": self._current_operation}
-            )
+            event.update({"dataset": self._current_dataset})
+            if self._current_operation:
+                event["operation"] = self._current_operation
         if self._current_node:
             event.update(
                 {

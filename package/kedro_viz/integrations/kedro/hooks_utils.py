@@ -29,7 +29,7 @@ def create_dataset_event(
     event_type: str,
     dataset_name: str,
     dataset_value: Any = None,
-    datasets: Dict[str, Any] = None,
+    datasets: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Generic builder for dataset load/save events.
 
@@ -42,7 +42,7 @@ def create_dataset_event(
     Returns:
         Dictionary with event data
     """
-    event = {
+    event: Dict[str, Any] = {
         "event": event_type,
         "dataset": dataset_name,
         "node_id": _hash_input_output(dataset_name),
