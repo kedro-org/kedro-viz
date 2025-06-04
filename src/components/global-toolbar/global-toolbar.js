@@ -61,7 +61,11 @@ export const GlobalToolbar = ({
               onClick={() => onToggleView('flowchart')}
             />
           </NavLink>
-          <NavLink exact to={{ pathname: `${sanitizedPathname()}workflow` }}>
+          <NavLink
+            className="run-status-nav-wrapper"
+            exact
+            to={{ pathname: `${sanitizedPathname()}workflow` }}
+          >
             <IconButton
               ariaLabel={'View your workflow'}
               dataTest={'global-toolbar-workflow-btn'}
@@ -77,6 +81,8 @@ export const GlobalToolbar = ({
                 onToggleExpandAllPipelines(true);
               }}
             />
+            {/* TODO: Remove this once we have a real run status indicator */}
+            {true && <span className="update-reminder-dot"></span>}
           </NavLink>
         </ul>
         <ul className="pipeline-global-control-toolbar kedro">
