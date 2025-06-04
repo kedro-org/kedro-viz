@@ -363,15 +363,15 @@ export const updateStateFromOptions = (updatedOptions) => {
   };
 };
 
-export const TOGGLE_VIEW = 'TOGGLE_VIEW';
+export const SET_VIEW = 'SET_VIEW';
 
 /**
- * Toggle the current view between flowchart and workflow
+ * Set the current view between flowchart and workflow
  * @param {String} view The view to set ('flowchart' or 'workflow')
  */
-export function toggleView(view) {
+export function setView(view) {
   return {
-    type: TOGGLE_VIEW,
+    type: SET_VIEW,
     view,
   };
 }
