@@ -29,6 +29,7 @@ import {
   TOGGLE_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
+import { VIEW } from '../config';
 
 /**
  * Create a generic reducer
@@ -128,7 +129,7 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
   ),
-  view: createReducer('flowchart', TOGGLE_VIEW, 'view'),
+  view: createReducer(VIEW.FLOWCHART, TOGGLE_VIEW, 'view'),
 });
 
 const rootReducer = (state, action) => {
