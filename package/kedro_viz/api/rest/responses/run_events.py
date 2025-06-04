@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from kedro_viz.constants import VIZ_METADATA_ARGS
+from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
 from kedro_viz.launchers.utils import _find_kedro_project
 from kedro_viz.utils import (
     _hash_input_output,
@@ -424,11 +424,7 @@ def get_run_status_response() -> StructuredRunStatusAPIResponse:
             )
             return StructuredRunStatusAPIResponse()
 
-        pipeline_events_file_path = Path(
-            kedro_project_path
-            / VIZ_METADATA_ARGS["path"]
-            / "kedro_pipeline_events.json"
-        )
+        pipeline_events_file_path = PIPELINE_EVENT_FULL_PATH
 
         if not pipeline_events_file_path.exists():
             logger.warning(f"Run events file {pipeline_events_file_path} not found")
