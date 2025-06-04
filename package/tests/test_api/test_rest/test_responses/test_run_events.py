@@ -15,7 +15,7 @@ from kedro_viz.api.rest.responses.run_events import (
     NodeStatus,
     PipelineInfo,
     PipelineStatus,
-    StructuredRunEventAPIResponse,
+    StructuredRunStatusAPIResponse,
     _create_or_update_dataset_info,
     _extract_pipeline_timing_and_status,
     _finalize_pipeline_info,
@@ -23,7 +23,7 @@ from kedro_viz.api.rest.responses.run_events import (
     _process_dataset_event,
     _process_node_completion_event,
     _process_node_error_event,
-    get_run_events_response,
+    get_run_status_response,
     transform_events_to_structured_format,
 )
 
@@ -51,7 +51,7 @@ class TestModels:
         pipeline_info = PipelineInfo()
         assert pipeline_info.status == PipelineStatus.COMPLETED
 
-        response = StructuredRunEventAPIResponse()
+        response = StructuredRunStatusAPIResponse()
         assert response.nodes == {}
         assert response.datasets == {}
 
@@ -361,7 +361,7 @@ class TestTransformEvents:
         """Test transforming empty events list."""
         result = transform_events_to_structured_format([])
 
-        assert isinstance(result, StructuredRunEventAPIResponse)
+        assert isinstance(result, StructuredRunStatusAPIResponse)
         assert result.nodes == {}
         assert result.datasets == {}
 
@@ -373,8 +373,8 @@ class TestAPIResponse:
     def test_no_kedro_project(self, mock_find_project):
         """Test when no Kedro project is found."""
         mock_find_project.return_value = None
-        result = get_run_events_response()
-        assert isinstance(result, StructuredRunEventAPIResponse)
+        result = get_run_status_response()
+        assert isinstance(result, StructuredRunStatusAPIResponse)
 
     @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project")
     @patch("pathlib.Path.exists")
@@ -382,7 +382,7 @@ class TestAPIResponse:
         """Test when events file doesn't exist."""
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = False
-        result = get_run_events_response()
+        result = get_run_status_response()
         assert result.nodes == {}
 
     @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project")
@@ -400,7 +400,7 @@ class TestAPIResponse:
         ]
         mock_file_open.return_value.__enter__.return_value = mock.MagicMock()
 
-        result = get_run_events_response()
+        result = get_run_status_response()
 
         assert len(result.nodes) == 1
         assert "node1" in result.nodes
@@ -417,7 +417,7 @@ class TestAPIResponse:
         mock_exists.return_value = True
         mock_file_open.return_value.__enter__.return_value = mock.MagicMock()
 
-        result = get_run_events_response()
+        result = get_run_status_response()
         assert result.nodes == {}
 
     @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project")
@@ -428,7 +428,7 @@ class TestAPIResponse:
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = True
 
-        result = get_run_events_response()
+        result = get_run_status_response()
         assert result.nodes == {}
 
     @patch(
@@ -437,7 +437,7 @@ class TestAPIResponse:
     )
     def test_general_exception(self, mock_find_project):
         """Test handling general exceptions."""
-        result = get_run_events_response()
+        result = get_run_status_response()
         assert result.nodes == {}
 
 
@@ -496,8 +496,8 @@ class TestIntegration:
         mock_json_load.return_value = sample_events
         mock_file_open.return_value.__enter__.return_value = mock.MagicMock()
 
-        result = get_run_events_response()
+        result = get_run_status_response()
 
-        assert isinstance(result, StructuredRunEventAPIResponse)
+        assert isinstance(result, StructuredRunStatusAPIResponse)
         assert len(result.nodes) == 2
         assert len(result.datasets) == 1
