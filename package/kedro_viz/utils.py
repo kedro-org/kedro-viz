@@ -9,11 +9,13 @@ from datetime import datetime
 from enum import Enum
 from itertools import cycle
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, TypeVar
 
 from pathspec import GitIgnoreSpec
 
 TRANSCODING_SEPARATOR = "@"
+
+T = TypeVar("T", bound=Enum)
 
 
 def _hash(value: str):
@@ -147,7 +149,7 @@ def safe_int(value: Any) -> int:
         return 0
 
 
-def convert_status_to_enum(status: Optional[str], default: Enum) -> Enum:
+def convert_status_to_enum(status: Optional[str], default: T) -> T:
     """Convert string status to enum member; case-insensitive match on values."""
     logger = logging.getLogger(__name__)
     if not status:
@@ -163,15 +165,15 @@ def convert_status_to_enum(status: Optional[str], default: Enum) -> Enum:
 def calculate_pipeline_duration(
     start_time: Optional[str],
     end_time: Optional[str],
-    nodes_durations: Dict[str, float]
+    nodes_durations: Dict[str, float],
 ) -> float:
     """Calculate pipeline duration from timestamps or node durations.
-    
+
     Args:
         start_time: ISO format timestamp string for pipeline start
-        end_time: ISO format timestamp string for pipeline end  
+        end_time: ISO format timestamp string for pipeline end
         nodes_durations: Dictionary mapping node IDs to their durations in seconds
-        
+
     Returns:
         Total duration in seconds
     """
@@ -185,6 +187,6 @@ def calculate_pipeline_duration(
             return duration
         except (ValueError, TypeError) as e:
             logger.warning(f"Error calculating pipeline duration: {e}")
-    
+
     # Fallback to summing up node durations
     return sum(nodes_durations.values())
