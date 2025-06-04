@@ -65,7 +65,7 @@ class TestDatasetInfoUpdates:
         _create_or_update_dataset_info(
             datasets, "dataset1", "test_dataset", 1024, "Available"
         )
-        
+
         assert "dataset1" in datasets
         assert datasets["dataset1"].name == "test_dataset"
         assert datasets["dataset1"].size_bytes == 1024
@@ -76,7 +76,7 @@ class TestDatasetInfoUpdates:
         _create_or_update_dataset_info(
             datasets, "dataset1", "updated", 2048, "Available", overwrite_size=True
         )
-        
+
         assert datasets["dataset1"].name == "updated"
         assert datasets["dataset1"].size_bytes == 2048
 
@@ -86,7 +86,7 @@ class TestDatasetInfoUpdates:
         _create_or_update_dataset_info(
             datasets, "dataset1", "test", 1024, "Available", overwrite_size=False
         )
-        
+
         assert datasets["dataset1"].size_bytes == 512  # Should not change
 
 
@@ -109,7 +109,11 @@ class TestPipelineTimingExtraction:
     def test_extract_failed_pipeline(self):
         """Test extracting failed pipeline timing."""
         events = [
-            {"event": "on_pipeline_error", "timestamp": "2023-01-01T10:05:00", "error": "Failed"},
+            {
+                "event": "on_pipeline_error",
+                "timestamp": "2023-01-01T10:05:00",
+                "error": "Failed",
+            },
         ]
         pipeline_info = PipelineInfo()
         _extract_pipeline_timing_and_status(events, pipeline_info)
@@ -177,10 +181,10 @@ class TestEventProcessing:
     def test_process_dataset_event(self):
         """Test processing dataset events."""
         event = {
-            "node_id": "node1", 
-            "dataset": "test_data", 
+            "node_id": "node1",
+            "dataset": "test_data",
             "size_bytes": "1024",
-            "event": "after_dataset_loaded"
+            "event": "after_dataset_loaded",
         }
         datasets = {}
         _process_dataset_event(event, datasets)
@@ -202,8 +206,8 @@ class TestEventProcessing:
         mock_hash.return_value = "dataset_hash"
         event = {
             "node_id": "node1",
-            "dataset": "test_dataset", 
-            "error": "Dataset error"
+            "dataset": "test_dataset",
+            "error": "Dataset error",
         }
         datasets = {}
         nodes = {"node1": NodeInfo()}
@@ -211,7 +215,7 @@ class TestEventProcessing:
 
         _process_dataset_error_event(event, datasets, nodes, pipeline_info)
 
-        # Should use node_id as dataset_id when available (consistent with normal dataset events)
+        # Should use node_id as dataset_id when available (consistent with normal)
         assert "node1" in datasets
         assert datasets["node1"].status == DatasetStatus.MISSING
         assert nodes["node1"].status == NodeStatus.FAIL
@@ -244,7 +248,9 @@ class TestEventProcessing:
         """Test updating existing dataset with error info."""
         mock_hash.return_value = "dataset_hash"
         event = {"dataset": "test_dataset", "error": "Dataset error"}
-        datasets = {"dataset_hash": DatasetInfo(name="existing", status=DatasetStatus.AVAILABLE)}
+        datasets = {
+            "dataset_hash": DatasetInfo(name="existing", status=DatasetStatus.AVAILABLE)
+        }
         nodes = {}
         pipeline_info = PipelineInfo()
 
@@ -273,7 +279,7 @@ class TestEventProcessing:
         """Test processing dataset error events when node_id is not available."""
         mock_hash.return_value = "dataset_hash"
         event = {
-            "dataset": "test_dataset", 
+            "dataset": "test_dataset",
             "error": "Dataset error"
             # No node_id provided
         }
@@ -296,8 +302,18 @@ class TestTransformEvents:
         """Test transforming complete pipeline events."""
         events = [
             {"event": "before_pipeline_run", "timestamp": "2023-01-01T10:00:00"},
-            {"event": "after_node_run", "node_id": "node1", "status": "Success", "duration_sec": 10.5},
-            {"event": "after_dataset_loaded", "node_id": "dataset1", "dataset": "test_data", "size_bytes": "1024"},
+            {
+                "event": "after_node_run",
+                "node_id": "node1",
+                "status": "Success",
+                "duration_sec": 10.5,
+            },
+            {
+                "event": "after_dataset_loaded",
+                "node_id": "dataset1",
+                "dataset": "test_data",
+                "size_bytes": "1024",
+            },
             {"event": "after_pipeline_run", "timestamp": "2023-01-01T10:15:00"},
         ]
 
@@ -313,7 +329,11 @@ class TestTransformEvents:
         """Test transforming failed pipeline events."""
         events = [
             {"event": "on_node_error", "node_id": "node1", "error": "Failed"},
-            {"event": "on_pipeline_error", "timestamp": "2023-01-01T10:05:00", "error": "Pipeline failed"},
+            {
+                "event": "on_pipeline_error",
+                "timestamp": "2023-01-01T10:05:00",
+                "error": "Pipeline failed",
+            },
         ]
 
         result = transform_events_to_structured_format(events)
@@ -323,16 +343,24 @@ class TestTransformEvents:
 
     def test_transform_pipeline_error_with_dataset(self):
         """Test pipeline error with dataset information."""
-        events = [{"event": "on_pipeline_error", "dataset": "test_dataset", "error": "Dataset error"}]
+        events = [
+            {
+                "event": "on_pipeline_error",
+                "dataset": "test_dataset",
+                "error": "Dataset error",
+            }
+        ]
 
-        with patch("kedro_viz.api.rest.responses.run_events._process_dataset_error_event") as mock_process:
+        with patch(
+            "kedro_viz.api.rest.responses.run_events._process_dataset_error_event"
+        ) as mock_process:
             transform_events_to_structured_format(events)
             mock_process.assert_called_once()
 
     def test_transform_empty_events(self):
         """Test transforming empty events list."""
         result = transform_events_to_structured_format([])
-        
+
         assert isinstance(result, StructuredRunEventAPIResponse)
         assert result.nodes == {}
         assert result.datasets == {}
@@ -361,15 +389,19 @@ class TestAPIResponse:
     @patch("pathlib.Path.exists")
     @patch("pathlib.Path.open")
     @patch("json.load")
-    def test_successful_loading(self, mock_json_load, mock_file_open, mock_exists, mock_find_project):
+    def test_successful_loading(
+        self, mock_json_load, mock_file_open, mock_exists, mock_find_project
+    ):
         """Test successful loading of run events."""
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = True
-        mock_json_load.return_value = [{"event": "after_node_run", "node_id": "node1", "status": "Success"}]
+        mock_json_load.return_value = [
+            {"event": "after_node_run", "node_id": "node1", "status": "Success"}
+        ]
         mock_file_open.return_value.__enter__.return_value = mock.MagicMock()
 
         result = get_run_events_response()
-        
+
         assert len(result.nodes) == 1
         assert "node1" in result.nodes
 
@@ -377,7 +409,9 @@ class TestAPIResponse:
     @patch("pathlib.Path.exists")
     @patch("pathlib.Path.open")
     @patch("json.load", side_effect=json.JSONDecodeError("Invalid JSON", "test", 0))
-    def test_invalid_json(self, mock_json_load, mock_file_open, mock_exists, mock_find_project):
+    def test_invalid_json(
+        self, mock_json_load, mock_file_open, mock_exists, mock_find_project
+    ):
         """Test handling invalid JSON."""
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = True
@@ -397,7 +431,10 @@ class TestAPIResponse:
         result = get_run_events_response()
         assert result.nodes == {}
 
-    @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project", side_effect=Exception("Unexpected"))
+    @patch(
+        "kedro_viz.api.rest.responses.run_events._find_kedro_project",
+        side_effect=Exception("Unexpected"),
+    )
     def test_general_exception(self, mock_find_project):
         """Test handling general exceptions."""
         result = get_run_events_response()
@@ -409,9 +446,19 @@ def sample_events():
     """Sample events for integration testing."""
     return [
         {"event": "before_pipeline_run", "timestamp": "2023-01-01T10:00:00"},
-        {"event": "after_node_run", "node_id": "node1", "status": "Success", "duration_sec": 10.5},
+        {
+            "event": "after_node_run",
+            "node_id": "node1",
+            "status": "Success",
+            "duration_sec": 10.5,
+        },
         {"event": "on_node_error", "node_id": "node2", "error": "Node failed"},
-        {"event": "after_dataset_loaded", "node_id": "dataset1", "dataset": "input_data", "size_bytes": "1024"},
+        {
+            "event": "after_dataset_loaded",
+            "node_id": "dataset1",
+            "dataset": "input_data",
+            "size_bytes": "1024",
+        },
         {"event": "after_pipeline_run", "timestamp": "2023-01-01T10:30:00"},
     ]
 
@@ -435,7 +482,14 @@ class TestIntegration:
     @patch("pathlib.Path.exists")
     @patch("pathlib.Path.open")
     @patch("json.load")
-    def test_end_to_end_api_call(self, mock_json_load, mock_file_open, mock_exists, mock_find_project, sample_events):
+    def test_end_to_end_api_call(
+        self,
+        mock_json_load,
+        mock_file_open,
+        mock_exists,
+        mock_find_project,
+        sample_events,
+    ):
         """Test end-to-end API call processing."""
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = True
@@ -446,4 +500,4 @@ class TestIntegration:
 
         assert isinstance(result, StructuredRunEventAPIResponse)
         assert len(result.nodes) == 2
-        assert len(result.datasets) == 1 
+        assert len(result.datasets) == 1
