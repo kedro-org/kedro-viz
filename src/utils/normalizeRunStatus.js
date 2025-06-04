@@ -1,27 +1,27 @@
 /**
- * Fetch pipeline run events from the API endpoint
- * @returns {Promise<Object>} Pipeline run events data in structured format
+ * Fetch pipeline run status from the API endpoint
+ * @returns {Promise<Object>} Pipeline run status in structured format
  */
-export const fetchRunEvents = async () => {
+export const fetchRunStatus = async () => {
   try {
-    const response = await fetch(`/api/run-events`);
+    const response = await fetch(`/api/run-status`);
     if (!response.ok) {
-      throw new Error(`Error fetching run events: ${response.statusText}`);
+      throw new Error(`Error fetching run status: ${response.statusText}`);
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to load run events:', error);
+    console.error('Failed to load run status:', error);
     return { nodes: {}, datasets: {}, pipeline: {} };
   }
 };
 
 /**
- * Process structured run events into a format usable by the flowchart
- * @param {Object} response API response containing structured run events data
+ * Process the run status data from the API response
+ * @param {Object} response API response containing run status data
  * @returns {Object} Processed run status data
  */
-export const processRunEvents = (response) => {
+export const processRunStatus = (response) => {
   const runStatusData = {
     nodes: {},
     datasets: {},
