@@ -9,6 +9,8 @@ import {
   localStorageName,
   params,
   BANNER_KEYS,
+  VIEW,
+  PIPELINE,
 } from '../config';
 
 /**
@@ -210,8 +212,8 @@ export const preparePipelineState = (
   }
 
   // If user is on the workflow view, set the active pipeline to default
-  if (state.view === 'workflow') {
-    state.pipeline.active = '__default__';
+  if (state.view === VIEW.WORKFLOW) {
+    state.pipeline.active = PIPELINE.DEFAULT;
   }
 
   return state;

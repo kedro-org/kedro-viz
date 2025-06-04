@@ -13,6 +13,7 @@ import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
 
 import './wrapper.scss';
+import { VIEW } from '../../config';
 
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
@@ -64,9 +65,9 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onToggleView }) => {
             <Switch>
               <Route
                 exact
-                path="/"
+                path={sanitizedPathname()}
                 render={() => {
-                  onToggleView('flowchart');
+                  onToggleView(VIEW.FLOWCHART);
                   return (
                     <>
                       <FlowChartWrapper />
@@ -78,7 +79,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onToggleView }) => {
               <Route
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
-                  onToggleView('workflow');
+                  onToggleView(VIEW.WORKFLOW);
                   return <div>WorkflowWrapper component will come here</div>;
                 }}
               />

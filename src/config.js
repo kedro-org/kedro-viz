@@ -187,3 +187,12 @@ export const BANNER_METADATA = {
 export const BANNER_KEYS = {
   LITE: 'lite',
 };
+
+export const VIEW = {
+  WORKFLOW: 'workflow',
+  FLOWCHART: 'flowchart',
+};
+
+export const PIPELINE = {
+  DEFAULT: '__default__',
+};
