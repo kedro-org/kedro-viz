@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import classnames from 'classnames';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { getVersion } from '../../utils';
-import { toggleView } from '../../actions';
+import { setView } from '../../actions';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
@@ -18,7 +18,7 @@ import { VIEW } from '../../config';
 /**
  * Main app container. Handles showing/hiding the sidebar nav, and theme classes.
  */
-export const Wrapper = ({ displayGlobalNavigation, theme, onToggleView }) => {
+export const Wrapper = ({ displayGlobalNavigation, theme, onSetView }) => {
   const [isOutdated, setIsOutdated] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
   const [version, setVersion] = useState(null);
@@ -67,7 +67,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onToggleView }) => {
                 exact
                 path={sanitizedPathname()}
                 render={() => {
-                  onToggleView(VIEW.FLOWCHART);
+                  onSetView(VIEW.FLOWCHART);
                   return (
                     <>
                       <FlowChartWrapper />
@@ -79,7 +79,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme, onToggleView }) => {
               <Route
                 path={`${sanitizedPathname()}workflow`}
                 render={() => {
-                  onToggleView(VIEW.WORKFLOW);
+                  onSetView(VIEW.WORKFLOW);
                   return <div>WorkflowWrapper component will come here</div>;
                 }}
               />
@@ -99,8 +99,8 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = (dispatch) => ({
-  onToggleView: (view) => {
-    dispatch(toggleView(view));
+  onSetView: (view) => {
+    dispatch(setView(view));
   },
 });
 

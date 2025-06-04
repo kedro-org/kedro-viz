@@ -27,7 +27,7 @@ import {
   TOGGLE_EXPAND_ALL_PIPELINES,
   UPDATE_STATE_FROM_OPTIONS,
   TOGGLE_SHOW_DATASET_PREVIEWS,
-  TOGGLE_VIEW,
+  SET_VIEW,
 } from '../actions';
 import { TOGGLE_PARAMETERS_HOVERED } from '../actions';
 import { VIEW } from '../config';
@@ -131,7 +131,7 @@ const combinedReducer = combineReducers({
     TOGGLE_SHOW_DATASET_PREVIEWS,
     'showDatasetPreviews'
   ),
-  view: createReducer(VIEW.FLOWCHART, TOGGLE_VIEW, 'view'),
+  view: createReducer(VIEW.FLOWCHART, SET_VIEW, 'view'),
 });
 
 const rootReducer = (state, action) => {

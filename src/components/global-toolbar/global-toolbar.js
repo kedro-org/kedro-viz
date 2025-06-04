@@ -5,7 +5,7 @@ import {
   toggleSettingsModal,
   toggleShareableUrlModal,
   toggleTheme,
-  toggleView,
+  setView,
 } from '../../actions';
 import { isRunningLocally, sanitizedPathname } from '../../utils';
 import { loadPipelineData } from '../../actions/pipelines';
@@ -33,7 +33,7 @@ export const GlobalToolbar = ({
   onToggleSettingsModal,
   onToggleShareableUrlModal,
   onToggleTheme,
-  onToggleView,
+  onSetView,
   theme,
   onUpdateActivePipeline,
   onToggleExpandAllPipelines,
@@ -59,7 +59,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
-              onClick={() => onToggleView(VIEW.WORKFLOW)}
+              onClick={() => onSetView(VIEW.WORKFLOW)}
             />
           </NavLink>
           <NavLink
@@ -77,7 +77,7 @@ export const GlobalToolbar = ({
               icon={WorkflowIcon}
               labelText="Workflow"
               onClick={() => {
-                onToggleView(VIEW.WORKFLOW);
+                onSetView(VIEW.WORKFLOW);
                 onUpdateActivePipeline(PIPELINE.DEFAULT);
                 onToggleExpandAllPipelines(true);
               }}
@@ -147,8 +147,8 @@ export const mapDispatchToProps = (dispatch) => ({
   onToggleTheme: (value) => {
     dispatch(toggleTheme(value));
   },
-  onToggleView: (view) => {
-    dispatch(toggleView(view));
+  onSetView: (view) => {
+    dispatch(setView(view));
   },
   onUpdateActivePipeline: (pipelineID) => {
     dispatch(loadPipelineData(pipelineID));
