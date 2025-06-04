@@ -2,6 +2,7 @@
 
 import kedro
 from packaging.version import parse
+from pathlib import Path
 
 DEFAULT_REGISTERED_PIPELINE_ID = "__default__"
 KEDRO_VERSION = parse(kedro.__version__)
@@ -23,3 +24,7 @@ PACKAGE_REQUIREMENTS = {
 
 VIZ_SESSION_STORE_ARGS = {"path": ".viz"}
 VIZ_METADATA_ARGS = {"path": ".viz"}
+
+VIZ_METADATA_DIR = Path(VIZ_METADATA_ARGS["path"])
+PIPELINE_EVENTS_FILENAME = "kedro_pipeline_events.json"
+PIPELINE_EVENT_FULL_PATH = VIZ_METADATA_DIR / PIPELINE_EVENTS_FILENAME
