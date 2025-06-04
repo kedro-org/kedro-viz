@@ -86,7 +86,7 @@ class PipelineRunHooks:
         self._set_context(dataset_name, "loading", node)
 
     @hook_impl
-    def after_dataset_loaded(self, dataset_name: str, data: Any, node: KedroNode) -> None:  # noqa: ARG002
+    def after_dataset_loaded(self, dataset_name: str, data: Any, **kwargs) -> None:  # noqa: ARG002
         self._add_event(
             create_dataset_event(
                 "after_dataset_loaded", dataset_name, data, self.datasets
@@ -99,7 +99,7 @@ class PipelineRunHooks:
         self._set_context(dataset_name, "saving", node)
 
     @hook_impl
-    def after_dataset_saved(self, dataset_name: str, data: Any, node: KedroNode) -> None:  # noqa: ARG002
+    def after_dataset_saved(self, dataset_name: str, data: Any, **kwargs) -> None:  # noqa: ARG002
         self._add_event(
             create_dataset_event(
                 "after_dataset_saved", dataset_name, data, self.datasets
