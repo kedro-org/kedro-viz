@@ -1,8 +1,8 @@
 """`kedro_viz.integrations.kedro.run_hooks` defines hooks to add additional functionalities for a kedro run."""
 
 import logging
-from time import perf_counter
 import traceback
+from time import perf_counter
 from typing import Any, Dict, List, Optional, Set, Union
 
 from kedro.framework.hooks import hook_impl
@@ -159,7 +159,7 @@ class PipelineRunHooks:
             "event": "on_pipeline_error",
             "error": str(error),
             "timestamp": generate_timestamp(),
-            "traceback": traceback.format_exc()
+            "traceback": traceback.format_exc(),
         }
 
         if self._current_dataset:
