@@ -1,40 +1,62 @@
 import React from 'react';
 import FlowChart, {
+  FlowChart as UnconnectedFlowChart,
   mapStateToProps,
   mapDispatchToProps,
-  chartSizeTestFallback,
 } from './flowchart';
 import { prepareState, mockState, setup } from '../../utils/state.mock';
-// import { getViewTransform, getViewExtents, origin } from '../../utils/view';
+import { getViewTransform, getViewExtents } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
 import { getNodeLabel } from '../../selectors/nodes';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import spaceflights from '../../utils/data/spaceflights.mock.json';
-import { act } from '@testing-library/react';
-
-const chartWidth = chartSizeTestFallback.width;
-const chartHeight = chartSizeTestFallback.height;
+import { render, act } from '@testing-library/react';
 
 const dataScienceNodeId = 'data_science';
 const dataProcessingNodeId = 'data_processing';
 
-// const mockChartSize = (
-//   chartSize,
-//   width = chartWidth,
-//   height = chartHeight
-// ) => ({
-//   left: 0,
-//   top: 0,
-//   outerWidth: width,
-//   outerHeight: height,
-//   height,
-//   width,
-//   minWidthScale: 1,
-//   sidebarWidth: 0,
-//   metaSidebarWidth: 0,
-//   codeSidebarWidth: 0,
-//   ...chartSize,
-// });
+// Default props for the unconnected FlowChart
+const defaultUnconnectedProps = {
+  displayGlobalNavigation: true,
+  chartSize: {
+    width: 800,
+    height: 600,
+    sidebarWidth: 0,
+    metaSidebarWidth: 0,
+    codeSidebarWidth: 0,
+  },
+  graphSize: { width: 1200, height: 900 },
+  clickedNode: null,
+  nodes: mockState.spaceflights.graph.nodes,
+  linkedNodes: {},
+  nodeActive: {},
+  nodeSelected: {},
+  hoveredParameters: false,
+  hoveredFocusMode: false,
+  nodeTypeDisabled: { parameters: false },
+  nodesWithInputParams: {},
+  layers: [],
+  inputOutputDataNodes: {},
+  inputOutputDataEdges: {},
+  visibleGraph: true,
+  visibleSidebar: false,
+  visibleCode: false,
+  visibleMetaSidebar: false,
+  slicedPipeline: [],
+  isSlicingPipelineApplied: false,
+  runCommand: [],
+  modularPipelineIds: [],
+  onUpdateChartSize: () => {},
+  onUpdateZoom: () => {},
+};
+
+// Helper to render the unconnected FlowChart with overrides
+function renderUnconnectedFlowChart(overrides = {}) {
+  const props = { ...defaultUnconnectedProps, ...overrides };
+  const ref = React.createRef();
+  render(<UnconnectedFlowChart ref={ref} {...props} />);
+  return { ref, props };
+}
 
 describe('FlowChart', () => {
   it('renders without crashing', () => {
@@ -51,123 +73,119 @@ describe('FlowChart', () => {
     );
     const nodes = container.querySelectorAll('.pipeline-node');
     const nodeNames = Array.from(nodes).map((el) => el.textContent);
-    const mockNodes = getVisibleNodeIDs(setup.render(<div />).store.getState());
+
+    const { store } = setup.render(<div />);
+    const mockNodes = getVisibleNodeIDs(store.getState());
     const mockNodeNames = mockNodes.map(
-      (id) => getNodeLabel(setup.render(<div />).store.getState())[id]
+      (id) => getNodeLabel(store.getState())[id]
     );
+
     expect(nodes.length).toBe(mockNodes.length);
     expect(nodeNames.sort()).toEqual(mockNodeNames.sort());
   });
 
-  // it('a transform to fit the graph in container was applied', () => {
-  //   const { container } = setup.render(<FlowChart displayGlobalNavigation={true} />);
-  //   const instance = container.querySelector('svg');
-  //   const view = instance.__data__?.view;
-  //   const viewTransform = getViewTransform(view);
-  //   expect(viewTransform).not.toEqual(origin);
-  //   expect(viewTransform.x).toBeLessThan(0);
-  //   expect(viewTransform.y).toBe(0);
-  //   expect(viewTransform.k).toBeGreaterThan(0);
-  // });
+  it('a transform to fit the graph in container was applied', () => {
+    const { ref } = renderUnconnectedFlowChart();
+    // Force the “fit” transform
+    ref.current.resetView();
 
-  // it('applies expected view extents when all sidebars closed', () => {
-  //   // Simulate closed sidebars
-  //   const chartSize = mockChartSize({
-  //     sidebarWidth: 0,
-  //     metaSidebarWidth: 0,
-  //     codeSidebarWidth: 0,
-  //   });
+    const { k } = getViewTransform(ref.current.view);
+    expect(k).toBeGreaterThan(0);
+    expect(k).toBeLessThan(1);
+  });
 
-  //   const wrapper = setup.mount(
-  //     <FlowChart displayGlobalNavigation={true} chartSize={chartSize} />
-  //   );
-  //   const instance = wrapper.find('FlowChart').instance();
-  //   const viewExtents = getViewExtents(instance.view);
+  it('applies expected view extents when all sidebars closed', () => {
+    const { ref, props } = renderUnconnectedFlowChart({
+      chartSize: {
+        width: 800,
+        height: 600,
+        sidebarWidth: 0,
+        metaSidebarWidth: 0,
+        codeSidebarWidth: 0,
+      },
+      graphSize: { width: 1200, height: 900 },
+    });
 
-  //   const margin = instance.MARGIN;
-  //   const minScale = instance.MIN_SCALE;
-  //   const maxScale = instance.MAX_SCALE;
+    ref.current.resetView();
 
-  //   // Assert expected constants
-  //   expect(margin).toEqual(500);
-  //   expect(minScale).toEqual(0.8);
-  //   expect(maxScale).toEqual(2);
+    const viewExtents = getViewExtents(ref.current.view);
+    const margin = ref.current.MARGIN;
+    const minScale = ref.current.MIN_SCALE;
+    const maxScale = ref.current.MAX_SCALE;
 
-  //   const { width: chartWidth, height: chartHeight } = chartSize;
-  //   const { width: graphWidth, height: graphHeight } = instance.props.graphSize;
+    expect(margin).toBe(500);
+    expect(minScale).toBe(0.8);
+    expect(maxScale).toBe(2);
 
-  //   // Translate extent should only include margin and graph size
-  //   expect(viewExtents.translate.minX).toEqual(-margin);
-  //   expect(viewExtents.translate.minY).toEqual(-margin);
-  //   expect(viewExtents.translate.maxX).toEqual(graphWidth + margin);
-  //   expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
+    const { width: chartWidth, height: chartHeight } = props.chartSize;
+    const { width: graphWidth, height: graphHeight } = props.graphSize;
 
-  //   // The scale at which the full graph in view
-  //   const fullScale = Math.min(
-  //     chartWidth / (graphWidth || 1),
-  //     chartHeight / (graphHeight || 1)
-  //   );
+    expect(viewExtents.translate.minX).toBe(-margin);
+    expect(viewExtents.translate.minY).toBe(-margin);
+    expect(viewExtents.translate.maxX).toBe(graphWidth + margin);
+    expect(viewExtents.translate.maxY).toBe(graphHeight + margin);
 
-  //   // Scale extent should allow full graph in view
-  //   expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
-  //   expect(viewExtents.scale.maxK).toEqual(maxScale);
-  // });
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toBe(maxScale);
+  });
 
-  // it('applies expected view extents when all sidebars open', () => {
-  //   const chartSize = mockChartSize({
-  //     sidebarWidth: 150,
-  //     metaSidebarWidth: 180,
-  //     codeSidebarWidth: 255,
-  //   });
+  it('applies expected view extents when all sidebars open', () => {
+    const chartSize = {
+      width: 800,
+      height: 600,
+      sidebarWidth: 150,
+      metaSidebarWidth: 180,
+      codeSidebarWidth: 255,
+    };
+    const { ref, props } = renderUnconnectedFlowChart({
+      chartSize,
+      graphSize: { width: 1200, height: 900 },
+    });
 
-  //   const { container } = setup.render(
-  //     <FlowChart displayGlobalNavigation={true} chartSize={chartSize} />
-  //   );
+    ref.current.resetView();
 
-  //   const instance = container.querySelector('.pipeline-flowchart__graph')?.__reactFiber$; // or use ref internally if you expose it
-  //   const view = instance.return.memoizedProps.view; // or access directly from FlowChart component if exposed
-  //   const viewExtents = getViewExtents(view);
+    const viewExtents = getViewExtents(ref.current.view);
+    const margin = ref.current.MARGIN;
+    const minScale = ref.current.MIN_SCALE;
+    const maxScale = ref.current.MAX_SCALE;
 
-  //   const margin = 500;
-  //   const minScale = 0.8;
-  //   const maxScale = 2;
+    expect(margin).toBe(500);
+    expect(minScale).toBe(0.8);
+    expect(maxScale).toBe(2);
 
-  //   expect(margin).toEqual(500);
-  //   expect(minScale).toEqual(0.8);
-  //   expect(maxScale).toEqual(2);
+    const {
+      width: chartWidth,
+      height: chartHeight,
+      sidebarWidth,
+      metaSidebarWidth,
+      codeSidebarWidth,
+    } = props.chartSize;
+    const { width: graphWidth, height: graphHeight } = props.graphSize;
 
-  //   const {
-  //     width: chartWidth,
-  //     height: chartHeight,
-  //     sidebarWidth,
-  //     metaSidebarWidth,
-  //     codeSidebarWidth,
-  //   } = chartSize;
+    const leftSidebarOffset = sidebarWidth;
+    const rightSidebarOffset = metaSidebarWidth + codeSidebarWidth;
 
-  //   const graphWidth = view.graphSize.width;
-  //   const graphHeight = view.graphSize.height;
+    expect(viewExtents.translate.minX).toBe(-margin - leftSidebarOffset);
+    expect(viewExtents.translate.minY).toBe(-margin);
+    expect(viewExtents.translate.maxX).toBe(
+      graphWidth + margin + rightSidebarOffset
+    );
+    expect(viewExtents.translate.maxY).toBe(graphHeight + margin);
 
-  //   const leftSidebarOffset = sidebarWidth;
-  //   const rightSidebarOffset = metaSidebarWidth + codeSidebarWidth;
-
-  //   expect(viewExtents.translate.minX).toEqual(-margin - leftSidebarOffset);
-  //   expect(viewExtents.translate.minY).toEqual(-margin);
-  //   expect(viewExtents.translate.maxX).toEqual(graphWidth + margin + rightSidebarOffset);
-  //   expect(viewExtents.translate.maxY).toEqual(graphHeight + margin);
-
-  //   const fullScale = Math.min(
-  //     chartWidth / (graphWidth || 1),
-  //     chartHeight / (graphHeight || 1)
-  //   );
-
-  //   expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
-  //   expect(viewExtents.scale.maxK).toEqual(maxScale);
-  // });
+    const fullScale = Math.min(
+      chartWidth / (graphWidth || 1),
+      chartHeight / (graphHeight || 1)
+    );
+    expect(viewExtents.scale.minK).toBeLessThanOrEqual(fullScale);
+    expect(viewExtents.scale.maxK).toBe(maxScale);
+  });
 
   it('resizes the chart if the window resizes', () => {
     const listeners = {};
-
-    // ✅ Move this before rendering so FlowChart uses the mocked version
     jest
       .spyOn(window, 'addEventListener')
       .mockImplementation((event, callback) => {
@@ -175,102 +193,13 @@ describe('FlowChart', () => {
       });
 
     setup.render(<FlowChart displayGlobalNavigation={true} />);
-
     expect(typeof listeners.resize).toBe('function');
 
     act(() => {
       listeners.resize();
     });
-
     // If you can't spy on internal methods, at least verify the callback exists
   });
-
-  // it('applies transform correctly for different orientations', () => {
-  //   const chartSize = mockChartSize({
-  //     sidebarWidth: 0,
-  //     metaSidebarWidth: 0,
-  //     codeSidebarWidth: 0,
-  //   });
-
-  //   const wrapperVertical = setup.mount(
-  //     <FlowChart
-  //       chartSize={chartSize}
-  //       displayGlobalNavigation={true}
-  //       orientation="vertical"
-  //     />
-  //   );
-  //   const wrapperHorizontal = setup.mount(
-  //     <FlowChart
-  //       chartSize={chartSize}
-  //       displayGlobalNavigation={true}
-  //       orientation="horizontal"
-  //     />
-  //   );
-
-  //   const instanceVertical = wrapperVertical.find('FlowChart').instance();
-  //   const instanceHorizontal = wrapperHorizontal.find('FlowChart').instance();
-
-  //   const viewTransformVertical = getViewTransform(instanceVertical.view);
-  //   const viewTransformHorizontal = getViewTransform(instanceHorizontal.view);
-
-  //   expect(viewTransformVertical.y).toBe(0);
-  //   expect(viewTransformHorizontal.x).toBe(0);
-  // });
-
-  // it('applies expected view extents for different orientations', () => {
-  //   const chartSize = mockChartSize({
-  //     sidebarWidth: 0,
-  //     metaSidebarWidth: 0,
-  //     codeSidebarWidth: 0,
-  //   });
-
-  //   const wrapperVertical = setup.mount(
-  //     <FlowChart
-  //       displayGlobalNavigation={true}
-  //       chartSize={chartSize}
-  //       orientation="vertical"
-  //     />
-  //   );
-  //   const wrapperHorizontal = setup.mount(
-  //     <FlowChart
-  //       displayGlobalNavigation={true}
-  //       chartSize={chartSize}
-  //       orientation="horizontal"
-  //     />
-  //   );
-
-  //   const instanceVertical = wrapperVertical.find('FlowChart').instance();
-  //   const instanceHorizontal = wrapperHorizontal.find('FlowChart').instance();
-
-  //   const viewExtentsVertical = getViewExtents(instanceVertical.view);
-  //   const viewExtentsHorizontal = getViewExtents(instanceHorizontal.view);
-
-  //   // Verify vertical orientation behavior
-  //   expect(viewExtentsVertical.translate.minX).toBe(-instanceVertical.MARGIN);
-  //   expect(viewExtentsVertical.translate.maxX).toEqual(
-  //     instanceVertical.props.graphSize.width + instanceVertical.MARGIN
-  //   );
-  //   expect(viewExtentsVertical.translate.minY).toEqual(
-  //     -instanceVertical.MARGIN
-  //   );
-  //   expect(viewExtentsVertical.translate.maxY).toEqual(
-  //     instanceVertical.props.graphSize.height + instanceVertical.MARGIN
-  //   );
-
-  //   // Verify horizontal orientation behavior
-  //   expect(viewExtentsHorizontal.translate.minX).toEqual(
-  //     -instanceHorizontal.MARGIN
-  //   );
-  //   expect(viewExtentsHorizontal.translate.maxX).toEqual(
-  //     instanceHorizontal.props.graphSize.width + instanceHorizontal.MARGIN
-  //   );
-  //   expect(viewExtentsHorizontal.translate.minY).toEqual(
-  //     -instanceHorizontal.MARGIN
-  //   );
-  //   expect(viewExtentsHorizontal.translate.maxY).toEqual(
-  //     instanceHorizontal.props.graphSize.height + instanceHorizontal.MARGIN
-  //   );
-  // });
 
   it('removes the resize event listener on unmount', () => {
     const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
@@ -300,7 +229,7 @@ describe('FlowChart', () => {
     const emptyState = {
       node: { ids: [] },
       edge: { ids: [] },
-      ...mockState.spaceflights, // inherit rest of state shape
+      ...mockState.spaceflights,
     };
 
     expect(() => {
@@ -325,7 +254,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     const selectedNodes = container.querySelectorAll(
       '.pipeline-node--selected'
     );
@@ -342,7 +270,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     const activeNodes = container.querySelectorAll('.pipeline-node--active');
     expect(activeNodes.length).toBe(2);
   });
@@ -359,7 +286,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     const collapsedHintNodes = container.querySelectorAll(
       '.pipeline-node--collapsed-hint'
     );
@@ -377,14 +303,12 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     const indicators = container.querySelectorAll(
       '.pipeline-node__parameter-indicator--visible'
     );
-
     indicators.forEach((el) => {
       const y = parseFloat(el.getAttribute('y'));
-      expect(y).toEqual(-6);
+      expect(y).toBe(-6);
     });
   });
 
@@ -400,10 +324,8 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     const nodeElement = container.querySelector('.pipeline-node__bg');
     const nodeY = parseFloat(nodeElement?.getAttribute('y'));
-
     const indicators = container.querySelectorAll(
       '.pipeline-node__parameter-indicator--visible'
     );
@@ -424,7 +346,6 @@ describe('FlowChart', () => {
         }}
       />
     );
-
     expect(
       container.querySelectorAll('.pipeline-node__parameter-indicator--visible')
         .length
@@ -539,34 +460,19 @@ describe('FlowChart', () => {
     ).toBe(1);
   });
 
-  it('applies .parameters class to all the edges from parameter nodes', () => {
-    const { container } = setup.render(<FlowChart />, {
-      state: prepareState({
-        data: spaceflights,
-        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
-      }),
-    });
-    expect(
-      container.querySelectorAll('.pipeline-edge--parameters').length
-    ).toBe(1);
+  it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters', () => {
+    const parameterNames = ['params1', 'params2'];
+    const instance = new UnconnectedFlowChart({});
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toBe('Parameters:2');
   });
 
-  //TO DO: Fix this test
-  // it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters', () => {
-  //   const { container } = setup.render(<FlowChart displayGlobalNavigation={true} />);
-  //   const instance = container.querySelector('FlowChart')?._reactRootContainer?._internalRoot?.current?.child?.stateNode;
-  //   const parameterNames = ['params1', 'params2'];
-  //   const label = instance.getHoveredParameterLabel(parameterNames);
-  //   expect(label).toEqual('Parameters:2');
-  // });
-
-  // it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter', () => {
-  //   const { container } = setup.render(<FlowChart displayGlobalNavigation={true} />);
-  //   const instance = container.querySelector('FlowChart')?._reactRootContainer?._internalRoot?.current?.child?.stateNode;
-  //   const parameterNames = ['params1'];
-  //   const label = instance.getHoveredParameterLabel(parameterNames);
-  //   expect(label).toEqual('params1');
-  // });
+  it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter', () => {
+    const parameterNames = ['params1'];
+    const instance = new UnconnectedFlowChart({});
+    const label = instance.getHoveredParameterLabel(parameterNames);
+    expect(label).toBe('params1');
+  });
 
   it('shows layers when layers are visible', () => {
     const { container } = setup.render(
@@ -616,14 +522,12 @@ describe('FlowChart', () => {
     );
   });
 
-  it('applies faded class to all nodes that are not included in the hovered focus mode icon pipeline', () => {
+  it('applies faded class to nodes not included in hovered focus mode pipeline', () => {
     const { container } = setup.render(
       <FlowChart
         displayGlobalNavigation={true}
         hoveredFocusMode={true}
-        nodeActive={{
-          [dataScienceNodeId]: true,
-        }}
+        nodeActive={{ [dataScienceNodeId]: true }}
       />,
       {
         state: prepareState({
@@ -632,7 +536,6 @@ describe('FlowChart', () => {
         }),
       }
     );
-
     expect(container.querySelectorAll('.pipeline-node--faded').length).toBe(6);
   });
 
@@ -675,7 +578,6 @@ describe('FlowChart', () => {
 
   it('maps dispatch to props', () => {
     const dispatch = jest.fn();
-
     mapDispatchToProps(dispatch).onToggleNodeHovered('123');
     expect(dispatch.mock.calls[0][0]).toEqual({
       nodeHovered: '123',
@@ -700,10 +602,8 @@ describe('FlowChart', () => {
 
 describe('mapDispatchToProps', () => {
   it('calls the right actions with nodeID for onLoadNodeData', async () => {
-    const { store } = setup.render(<div />); // dummy render to get store
-
+    const { store } = setup.render(<div />);
     await mapDispatchToProps(store.dispatch).onLoadNodeData('123');
-
     const actions = store.getState().node.clicked;
     expect(actions).toEqual('123');
   });

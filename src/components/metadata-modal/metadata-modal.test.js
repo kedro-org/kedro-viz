@@ -5,7 +5,7 @@ import { togglePlotModal } from '../../actions';
 import { setup, prepareState } from '../../utils/state.mock';
 import nodePlot from '../../utils/data/node_plot.mock.json';
 import spaceflights from '../../utils/data/spaceflights.mock.json';
-
+import { fireEvent } from '@testing-library/react';
 const nodeID = '966b9734';
 
 describe('Plotly Modal', () => {
@@ -28,17 +28,25 @@ describe('Plotly Modal', () => {
     ).toBeInTheDocument();
   });
 
-  //TODO: FIX TEST
-  // it('modal closes when back button is clicked', async () => {
-  //   const { container, store } = renderWithState();
-  //   const backBtn = container.querySelector('.pipeline-metadata-modal__back');
-  //   expect(backBtn).toBeInTheDocument();
-  //   backBtn.click();
-  //   store.dispatch(togglePlotModal(false));
-  //   await waitFor(() => {
-  //     expect(container.querySelector('.pipeline-metadata-modal')).not.toBeInTheDocument();
-  //   });
-  // });
+  it('modal closes when back button is clicked', () => {
+    const { store, getByRole } = setup.render(<MetadataModal />, {
+      state: prepareState({
+        beforeLayoutActions: [
+          () => toggleNodeClicked(nodeID),
+          () => togglePlotModal(true),
+          () => addNodeMetadata({ id: nodeID, data: nodePlot }),
+        ],
+        data: spaceflights,
+      }),
+    });
+
+    expect(store.getState().visible.metadataModal).toBe(true);
+
+    const backBtn = getByRole('button', { name: /back/i });
+    fireEvent.click(backBtn);
+
+    expect(store.getState().visible.metadataModal).toBe(false);
+  });
 
   it('shows plot when a plot node is clicked', () => {
     const { container } = renderWithState();

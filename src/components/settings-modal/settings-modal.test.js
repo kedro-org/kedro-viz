@@ -3,8 +3,8 @@ import SettingsModal, {
   mapStateToProps,
   mapDispatchToProps,
 } from './settings-modal';
-// import { screen, fireEvent } from '@testing-library/react';
-import { setup } from '../../utils/state.mock';
+import { fireEvent } from '@testing-library/react';
+import { setup, mockState } from '../../utils/state.mock';
 import { toggleSettingsModal } from '../../actions';
 import { prepareState } from '../../utils/state.mock';
 import spaceflights from '../../utils/data/spaceflights.mock.json';
@@ -31,26 +31,24 @@ describe('SettingsModal', () => {
     expect(primaryButton).toBeInTheDocument();
   });
 
-  //TODO : FIX Tests
-  // it('modal closes when cancel button is clicked', () => {
-  //   const state = prepareState({
-  //     data: spaceflights,
-  //     afterLayoutActions: [() => toggleSettingsModal(true)],
-  //   });
+  it('clicking Cancel flips visible.settingsModal to false', () => {
+    const initialVisible = {
+      ...mockState.spaceflights.visible,
+      settingsModal: true,
+    };
 
-  //   const { container, store } = setup.render(<SettingsModal />, { state });
+    const { store, getByText } = setup.render(<SettingsModal />, {
+      state: { visible: initialVisible },
+    });
 
-  //   const dispatchSpy = jest.spyOn(store, 'dispatch');
+    // Sanity check:
+    expect(store.getState().visible.settingsModal).toBe(true);
 
-  //   expect(container.querySelector('.modal__content--visible')).toBeInTheDocument();
+    // Click “Cancel”:
+    fireEvent.click(getByText(/cancel/i));
 
-  //   const cancelButton = container.querySelector(
-  //     '.pipeline-settings-modal .button__btn.button__btn--secondary'
-  //   );
-  //   fireEvent.click(cancelButton);
-
-  //   expect(dispatchSpy).toHaveBeenCalledWith(toggleSettingsModal(false));
-  // });
+    expect(store.getState().visible.settingsModal).toBe(false);
+  });
 
   it('maps state to props', () => {
     const state = prepareState({ data: spaceflights });

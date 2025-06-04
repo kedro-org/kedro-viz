@@ -1,4 +1,3 @@
-//TODO FIX COMMENTED TESTS
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { toggleIsPrettyName } from '../../actions';
@@ -209,65 +208,25 @@ describe('NodesPanel', () => {
         row.querySelector('.toggle-control--icon--unchecked')
       ).toBeTruthy();
     });
-
-    // TODO THIS TEST NEEDS TO BE FIXED
-    // it('shows as partially selected when at least one but not all tags are selected', () => {
-    //   const { container } = setup.render(<NodesPanel />);
-
-    //   const preprocessing = container.querySelector('input[name="Preprocessing"]');
-    //   const otherTags = ['Features', 'Split', 'Train'].map((name) =>
-    //     container.querySelector(`input[name="${name}"]`)
-    //   );
-
-    //   // Uncheck all to start from a clean state
-    //   if (preprocessing.checked) fireEvent.click(preprocessing);
-    //   otherTags.forEach((cb) => {
-    //     if (cb.checked) fireEvent.click(cb);
-    //   });
-
-    //   // No visible partial icon at the beginning
-    //   expect(
-    //     screen.queryAllByTestId('partial-icon').filter((el) => el.offsetParent !== null)
-    //   ).toHaveLength(0);
-
-    //   // Select one tag → icon should now be visible
-    //   fireEvent.click(preprocessing);
-    //   expect(
-    //     screen.queryAllByTestId('partial-icon').filter((el) => el.offsetParent !== null)
-    //   ).toHaveLength(1);
-
-    //   // Select the rest
-    //   otherTags.forEach((cb) => fireEvent.click(cb));
-    //   expect(
-    //     screen.queryAllByTestId('partial-icon').filter((el) => el.offsetParent !== null)
-    //   ).toHaveLength(1);
-    // });
-
-    // TODO THIS TEST NEEDS TO BE FIXED
-    //   it('saves enabled tags in localStorage on selecting a tag on node-list', () => {
-    //     const { container } = setup.render(<NodesPanel />);
-    //     const preprocessing = container.querySelector('input[name="Preprocessing"]');
-    //     fireEvent.click(preprocessing);
-
-    //     const storage = JSON.parse(localStorage.getItem(localStorageName));
-    //     console.log(storage);
-    //     expect(storage.tag.enabled.preprocessing).toBe(true);
-    //   });
   });
 
   describe('node list', () => {
-    // it('renders the correct number of tags in the filter panel', () => {
-    //   setup.render(<NodesPanel />);
-    //   const tagCheckboxes = screen
-    //     .getAllByRole('checkbox')
-    //     .filter((checkbox) => {
-    //       const name = checkbox.getAttribute('name');
-    //       return name && !['Parameters', 'Datasets', 'Nodes'].includes(name);
-    //     });
-    //   const tags = getTagData(mockState.spaceflights);
-    //   const elementTypes = Object.keys(sidebarElementTypes);
-    //   expect(tagCheckboxes.length).toBe(tags.length + elementTypes.length);
-    // });
+    it('renders the correct number of tags + element types', () => {
+      setup.render(<NodesPanel />);
+
+      const allCheckboxes = screen.getAllByRole('checkbox');
+      const elementTypes = Object.values(sidebarElementTypes);
+      const tagNames = getTagData(mockState.spaceflights).map(
+        (tag) => tag.name
+      );
+
+      const filtered = allCheckboxes.filter((checkbox) => {
+        const name = checkbox.getAttribute('name');
+        return name && (elementTypes.includes(name) || tagNames.includes(name));
+      });
+
+      expect(filtered.length).toBe(elementTypes.length + tagNames.length);
+    });
 
     it('renders the correct number of modular pipelines and nodes in the tree sidepanel', () => {
       setup.render(<NodesPanel />);

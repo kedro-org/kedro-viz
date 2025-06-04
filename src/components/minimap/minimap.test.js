@@ -1,10 +1,13 @@
-//TODO : Fix tests
 import React from 'react';
-import MiniMap, { mapStateToProps, mapDispatchToProps } from './minimap';
+import MiniMap, {
+  MiniMap as UnconnectedMiniMap,
+  mapStateToProps,
+  mapDispatchToProps,
+} from './minimap';
 import { mockState, setup } from '../../utils/state.mock';
-// import { getViewTransform, origin } from '../../utils/view';
+import { getViewTransform } from '../../utils/view';
 import { getVisibleNodeIDs } from '../../selectors/disabled';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 describe('MiniMap', () => {
   it('renders without crashing', () => {
@@ -18,6 +21,36 @@ describe('MiniMap', () => {
     const nodes = document.querySelectorAll('.pipeline-minimap-node');
     const mockNodes = getVisibleNodeIDs(mockState.spaceflights);
     expect(nodes.length).toEqual(mockNodes.length);
+  });
+
+  it('a transform to fit the graph in container was applied', () => {
+    const ref = React.createRef();
+
+    render(
+      <UnconnectedMiniMap
+        ref={ref}
+        miniMapVisible={true}
+        displayMiniMap={true}
+        mapSize={{ width: 300, height: 200 }}
+        chartSize={{ width: 800, height: 600, sidebarWidth: 0 }}
+        chartZoom={{ x: 0, y: 0, scale: 1, applied: true }}
+        graphSize={{ width: 400, height: 300 }}
+        nodes={mockState.spaceflights.graph.nodes}
+        linkedNodes={{}}
+        nodeActive={{}}
+        nodeSelected={{}}
+        textLabels={false}
+        onUpdateChartZoom={() => {}}
+      />
+    );
+
+    ref.current.resetView();
+
+    const { x, y, k } = getViewTransform(ref.current.view);
+    expect(x).toBeLessThan(0);
+    expect(y).toBeLessThan(0);
+    expect(k).toBeGreaterThan(0);
+    expect(k).toBeLessThan(1);
   });
 
   it('does not update nodes when not visible', () => {
