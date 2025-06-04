@@ -2,7 +2,7 @@
  * Selectors for run status data
  *
  * This file provides selectors for accessing the new node-ID based structured format
- * for pipeline run events data.
+ * for pipeline run data.
  */
 
 /**

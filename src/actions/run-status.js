@@ -1,4 +1,4 @@
-import { fetchRunEvents, processRunEvents } from '../utils/normalizeRunStatus';
+import { fetchRunStatus, processRunStatus } from '../utils/normalizeRunStatus';
 
 export const UPDATE_RUN_STATUS_DATA = 'UPDATE_RUN_STATUS_DATA';
 
@@ -19,8 +19,8 @@ export function updateRunStatusData(data) {
  */
 export function loadRunStatusData() {
   return async function (dispatch) {
-    const events = await fetchRunEvents();
-    const processedData = processRunEvents(events);
+    const runData = await fetchRunStatus();
+    const processedData = processRunStatus(runData);
     dispatch(updateRunStatusData(processedData));
   };
 }
