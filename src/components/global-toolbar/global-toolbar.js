@@ -19,6 +19,7 @@ import SettingsIcon from '../icons/settings';
 import ThemeIcon from '../icons/theme';
 import TreeIcon from '../icons/tree';
 import WorkflowIcon from '../icons/workflow';
+import { PIPELINE, VIEW } from '../../config';
 
 import './global-toolbar.scss';
 
@@ -58,7 +59,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
-              onClick={() => onToggleView('flowchart')}
+              onClick={() => onToggleView(VIEW.WORKFLOW)}
             />
           </NavLink>
           <NavLink
@@ -76,8 +77,8 @@ export const GlobalToolbar = ({
               icon={WorkflowIcon}
               labelText="Workflow"
               onClick={() => {
-                onToggleView('workflow');
-                onUpdateActivePipeline('__default__');
+                onToggleView(VIEW.WORKFLOW);
+                onUpdateActivePipeline(PIPELINE.DEFAULT);
                 onToggleExpandAllPipelines(true);
               }}
             />
