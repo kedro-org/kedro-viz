@@ -1,4 +1,4 @@
-"""Response for run events API endpoint."""
+"""Response for run status API endpoint."""
 
 import json
 import logging
@@ -99,8 +99,8 @@ class PipelineInfo(BaseModel):
     error: Optional[str] = None
 
 
-class StructuredRunEventAPIResponse(BaseModel):
-    """Format for structured run event endpoint response."""
+class StructuredRunStatusAPIResponse(BaseModel):
+    """Format for structured run status endpoint response."""
 
     nodes: Dict[str, NodeInfo] = Field(default_factory=dict)
     datasets: Dict[str, DatasetInfo] = Field(default_factory=dict)
@@ -362,7 +362,7 @@ def _finalize_pipeline_info(
 
 def transform_events_to_structured_format(
     events: List[Dict[str, Any]]
-) -> StructuredRunEventAPIResponse:
+) -> StructuredRunStatusAPIResponse:
     """Convert raw run events into structured API response format.
 
     Args:
@@ -399,18 +399,18 @@ def transform_events_to_structured_format(
     # Finalize pipeline information
     _finalize_pipeline_info(pipeline, nodes)
 
-    return StructuredRunEventAPIResponse(
+    return StructuredRunStatusAPIResponse(
         nodes=nodes,
         datasets=datasets,
         pipeline=pipeline,
     )
 
 
-def get_run_events_response() -> StructuredRunEventAPIResponse:
-    """Get run events data for API endpoint in structured format.
+def get_run_status_response() -> StructuredRunStatusAPIResponse:
+    """Get run status data for API endpoint in structured format.
 
     Returns:
-        Structured API response object containing run events data
+        Structured API response object containing run status data
 
     Raises:
         FileNotFoundError: If the run events file cannot be found
@@ -422,7 +422,7 @@ def get_run_events_response() -> StructuredRunEventAPIResponse:
             logger.warning(
                 "Could not find a Kedro project to load pipeline events file"
             )
-            return StructuredRunEventAPIResponse()
+            return StructuredRunStatusAPIResponse()
 
         pipeline_events_file_path = Path(
             kedro_project_path
@@ -432,20 +432,20 @@ def get_run_events_response() -> StructuredRunEventAPIResponse:
 
         if not pipeline_events_file_path.exists():
             logger.warning(f"Run events file {pipeline_events_file_path} not found")
-            return StructuredRunEventAPIResponse()
+            return StructuredRunStatusAPIResponse()
 
         with pipeline_events_file_path.open("r", encoding="utf8") as file:
             try:
                 events = json.load(file)
             except json.JSONDecodeError as exc:
                 logger.error(f"Invalid JSON in run events file: {exc}")
-                return StructuredRunEventAPIResponse()
+                return StructuredRunStatusAPIResponse()
 
         return transform_events_to_structured_format(events)
 
     except (OSError, IOError) as exc:
         logger.error(f"Error reading run events file: {exc}")
-        return StructuredRunEventAPIResponse()
+        return StructuredRunStatusAPIResponse()
     except Exception as exc:
         logger.exception(f"Unexpected error loading run events: {exc}")
-        return StructuredRunEventAPIResponse()
+        return StructuredRunStatusAPIResponse()
