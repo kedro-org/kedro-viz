@@ -9,7 +9,10 @@ import {
   loadInitialPipelineData,
   loadPipelineData,
 } from '../../actions/pipelines';
-import { loadRunStatusData } from '../../actions/run-status';
+import {
+  loadRunStatusData,
+  updateRunStatusData,
+} from '../../actions/run-status';
 import Wrapper from '../wrapper';
 import getInitialState, {
   preparePipelineState,
@@ -43,7 +46,7 @@ class App extends React.Component {
 
     // If runData is provided, update the store with it or load it from the API
     if (this.props.runData) {
-      this.updateRunData();
+      this.store.dispatch(updateRunStatusData(this.props.runData));
     } else {
       this.store.dispatch(loadRunStatusData());
     }
@@ -55,7 +58,7 @@ class App extends React.Component {
       this.updatePipelineData();
     }
     if (this.props.runData && prevProps.runData !== this.props.runData) {
-      this.updateRunData();
+      this.store.dispatch(updateRunStatusData(this.props.runData));
     }
     if (!isEqual(prevProps.options, this.props.options)) {
       this.store.dispatch(updateStateFromOptions(this.props.options));
@@ -89,16 +92,6 @@ class App extends React.Component {
     this.store.dispatch(resetData(newState));
   }
 
-  /**
-   * Dispatch an action to update the store with new run data
-   */
-  updateRunData() {
-    this.store.dispatch({
-      type: 'UPDATE_RUN_STATUS_DATA',
-      data: this.props.runData,
-    });
-  }
-
   render() {
     return this.props.data ? (
       <Provider store={this.store}>
@@ -129,7 +122,7 @@ App.propTypes = {
    * Determines what run status data will be displayed on the chart.
    * You can supply an object with run status information -
    * Alternatively, the string 'json' indicates that data is being
-   * loaded asynchronously from /api/run-events
+   * loaded asynchronously from /api/run-status
    */
   runData: PropTypes.oneOfType([PropTypes.oneOf(['json']), PropTypes.object]),
   options: PropTypes.shape({
