@@ -19,13 +19,13 @@ from kedro_viz.api.rest.responses.pipelines import (
     GraphAPIResponse,
     get_pipeline_response,
 )
-from kedro_viz.api.rest.responses.version import (
-    VersionAPIResponse,
-    get_version_response,
-)
 from kedro_viz.api.rest.responses.run_events import (
     StructuredRunStatusAPIResponse,
     get_run_status_response,
+)
+from kedro_viz.api.rest.responses.version import (
+    VersionAPIResponse,
+    get_version_response,
 )
 
 logger = logging.getLogger(__name__)
@@ -66,18 +66,15 @@ async def get_version():
     return get_version_response()
 
 
-@router.get(
-    "/run-status",
-    response_model=StructuredRunStatusAPIResponse
-)
+@router.get("/run-status", response_model=StructuredRunStatusAPIResponse)
 async def get_run_status():
     """Get run status data for pipeline visualization.
-    
+
     This endpoint provides access to Kedro pipeline run status in structured format.
-    
+
     Returns:
         JSON response containing run status data in structured format
-        
+
     Example structured format:
     ```
     {

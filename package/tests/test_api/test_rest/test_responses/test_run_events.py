@@ -280,7 +280,7 @@ class TestEventProcessing:
         mock_hash.return_value = "dataset_hash"
         event = {
             "dataset": "test_dataset",
-            "error": "Dataset error"
+            "error": "Dataset error",
             # No node_id provided
         }
         datasets = {}

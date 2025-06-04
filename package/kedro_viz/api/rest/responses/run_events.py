@@ -361,7 +361,7 @@ def _finalize_pipeline_info(
 
 
 def transform_events_to_structured_format(
-    events: List[Dict[str, Any]]
+    events: List[Dict[str, Any]],
 ) -> StructuredRunStatusAPIResponse:
     """Convert raw run events into structured API response format.
 
