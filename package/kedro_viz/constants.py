@@ -1,8 +1,9 @@
 """`kedro_viz.constants` defines constants to be used throughout the application."""
 
+from pathlib import Path
+
 import kedro
 from packaging.version import parse
-from pathlib import Path
 
 DEFAULT_REGISTERED_PIPELINE_ID = "__default__"
 KEDRO_VERSION = parse(kedro.__version__)
