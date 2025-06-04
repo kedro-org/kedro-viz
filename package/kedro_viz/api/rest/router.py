@@ -24,8 +24,8 @@ from kedro_viz.api.rest.responses.version import (
     get_version_response,
 )
 from kedro_viz.api.rest.responses.run_events import (
-    StructuredRunEventAPIResponse,
-    get_run_events_response,
+    StructuredRunStatusAPIResponse,
+    get_run_status_response,
 )
 
 logger = logging.getLogger(__name__)
@@ -67,16 +67,16 @@ async def get_version():
 
 
 @router.get(
-    "/run-events",
-    response_model=StructuredRunEventAPIResponse
+    "/run-status",
+    response_model=StructuredRunStatusAPIResponse
 )
-async def get_run_events():
-    """Get run events data for pipeline visualization.
+async def get_run_status():
+    """Get run status data for pipeline visualization.
     
-    This endpoint provides access to Kedro pipeline run events in structured format.
+    This endpoint provides access to Kedro pipeline run status in structured format.
     
     Returns:
-        JSON response containing run events data in structured format
+        JSON response containing run status data in structured format
         
     Example structured format:
     ```
@@ -107,12 +107,12 @@ async def get_run_events():
     ```
     """
     try:
-        return get_run_events_response()
+        return get_run_status_response()
     except Exception as exc:
-        logger.exception("An exception occurred while getting run events: %s", exc)
+        logger.exception("An exception occurred while getting run status: %s", exc)
         return JSONResponse(
             status_code=500,
-            content={"message": "Failed to get run events data"},
+            content={"message": "Failed to get run status data"},
         )
 
 
