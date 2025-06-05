@@ -201,6 +201,95 @@ describe('FlowChart', () => {
     // If you can't spy on internal methods, at least verify the callback exists
   });
 
+  it('applies transform correctly for different orientations', () => {
+    const chartSize = {
+      width: 800,
+      height: 600,
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    };
+
+    const { ref: refVertical } = renderUnconnectedFlowChart({
+      chartSize,
+      graphSize: { width: 1200, height: 900 },
+      orientation: 'vertical',
+    });
+    const { ref: refHorizontal } = renderUnconnectedFlowChart({
+      chartSize,
+      graphSize: { width: 1200, height: 900 },
+      orientation: 'horizontal',
+    });
+
+    // Force both to fit
+    refVertical.current.resetView();
+    refHorizontal.current.resetView();
+
+    const viewTransformVertical = getViewTransform(refVertical.current.view);
+    const viewTransformHorizontal = getViewTransform(
+      refHorizontal.current.view
+    );
+
+    expect(viewTransformVertical.y).toBe(0);
+    expect(viewTransformHorizontal.x).toBe(0);
+  });
+
+  it('applies expected view extents for different orientations', () => {
+    const chartSize = {
+      width: 800,
+      height: 600,
+      sidebarWidth: 0,
+      metaSidebarWidth: 0,
+      codeSidebarWidth: 0,
+    };
+
+    const { ref: refVertical, props: propsV } = renderUnconnectedFlowChart({
+      chartSize,
+      graphSize: { width: 1200, height: 900 },
+      orientation: 'vertical',
+    });
+    const { ref: refHorizontal, props: propsH } = renderUnconnectedFlowChart({
+      chartSize,
+      graphSize: { width: 1200, height: 900 },
+      orientation: 'horizontal',
+    });
+
+    refVertical.current.resetView();
+    refHorizontal.current.resetView();
+
+    const viewExtentsVertical = getViewExtents(refVertical.current.view);
+    const viewExtentsHorizontal = getViewExtents(refHorizontal.current.view);
+
+    // Verify vertical orientation behavior
+    expect(viewExtentsVertical.translate.minX).toBe(
+      -refVertical.current.MARGIN
+    );
+    expect(viewExtentsVertical.translate.maxX).toEqual(
+      refVertical.current.props.graphSize.width + refVertical.current.MARGIN
+    );
+    expect(viewExtentsVertical.translate.minY).toEqual(
+      -refVertical.current.MARGIN
+    );
+    expect(viewExtentsVertical.translate.maxY).toEqual(
+      refVertical.current.props.graphSize.height + refVertical.current.MARGIN
+    );
+
+    // Verify horizontal orientation behavior
+    expect(viewExtentsHorizontal.translate.minX).toEqual(
+      -refHorizontal.current.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.maxX).toEqual(
+      refHorizontal.current.props.graphSize.width + refHorizontal.current.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.minY).toEqual(
+      -refHorizontal.current.MARGIN
+    );
+    expect(viewExtentsHorizontal.translate.maxY).toEqual(
+      refHorizontal.current.props.graphSize.height +
+        refHorizontal.current.MARGIN
+    );
+  });
+
   it('removes the resize event listener on unmount', () => {
     const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
     const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
@@ -274,7 +363,7 @@ describe('FlowChart', () => {
     expect(activeNodes.length).toBe(2);
   });
 
-  it('applies collapsed-hint class to nodes with input parameters hovered during collapsed state', () => {
+  it('applies collapsed-hint class to nodes with input parameters are hovered during collapsed state', () => {
     const { container } = setup.render(
       <FlowChart
         displayGlobalNavigation={true}
@@ -460,14 +549,26 @@ describe('FlowChart', () => {
     ).toBe(1);
   });
 
-  it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters', () => {
+  it('applies .parameters class to all the edges from parameter nodes', () => {
+    const { container } = setup.render(<FlowChart />, {
+      state: prepareState({
+        data: spaceflights,
+        beforeLayoutActions: [() => toggleTypeDisabled('parameters', false)],
+      }),
+    });
+    expect(
+      container.querySelectorAll('.pipeline-edge--parameters').length
+    ).toBe(1);
+  });
+
+  it('getHoveredParameterLabel returns parameter count when there are more than 1 hidden parameters ', () => {
     const parameterNames = ['params1', 'params2'];
     const instance = new UnconnectedFlowChart({});
     const label = instance.getHoveredParameterLabel(parameterNames);
     expect(label).toBe('Parameters:2');
   });
 
-  it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter', () => {
+  it('getHoveredParameterLabel returns parameter name when there is 1 hidden parameter ', () => {
     const parameterNames = ['params1'];
     const instance = new UnconnectedFlowChart({});
     const label = instance.getHoveredParameterLabel(parameterNames);
@@ -522,7 +623,7 @@ describe('FlowChart', () => {
     );
   });
 
-  it('applies faded class to nodes not included in hovered focus mode pipeline', () => {
+  it('applies faded class to all nodes that are not included in the hovered focus mode icon pipeline', () => {
     const { container } = setup.render(
       <FlowChart
         displayGlobalNavigation={true}
