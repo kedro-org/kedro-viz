@@ -54,6 +54,7 @@ import {
   GraphSVG,
 } from '../draw';
 import { createNodeStateMap } from './flowchart-utils';
+import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import './styles/flowchart.scss';
 
@@ -97,12 +98,6 @@ export class FlowChart extends Component {
     this.slicedPipelineActionBarRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
-
-    this.DURATION = 700;
-    this.LAYER_NAME_DURATION = 0.05;
-    this.MARGIN = 500;
-    this.MIN_SCALE = 0.8;
-    this.MAX_SCALE = 2;
   }
 
   componentDidMount() {
@@ -382,7 +377,7 @@ export class FlowChart extends Component {
 
     const leftSidebarOffset = sidebarWidth / scale;
     const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
-    const margin = this.MARGIN;
+    const margin = MARGIN;
 
     // Find the relative minimum scale to fit whole graph
     const minScale = Math.min(
@@ -398,8 +393,8 @@ export class FlowChart extends Component {
         maxY: graphHeight + margin,
       },
       scale: {
-        minK: this.MIN_SCALE * minScale,
-        maxK: this.MAX_SCALE,
+        minK: MIN_SCALE * minScale,
+        maxK: MAX_SCALE,
       },
     });
   }
@@ -424,7 +419,7 @@ export class FlowChart extends Component {
     setViewTransform(
       this.view,
       { x: chartZoom.x, y: chartZoom.y, k: chartZoom.scale },
-      chartZoom.transition ? this.DURATION * 0.3 : 0,
+      chartZoom.transition ? DURATION * 0.3 : 0,
       chartZoom.relative
     );
   }
@@ -477,7 +472,7 @@ export class FlowChart extends Component {
     setViewTransformExact(
       this.view,
       transform,
-      isFirstTransform ? 0 : this.DURATION,
+      isFirstTransform ? 0 : DURATION,
       false
     );
   }
