@@ -20,7 +20,7 @@ from kedro_viz.api.rest.responses.pipelines import (
     get_pipeline_response,
 )
 from kedro_viz.api.rest.responses.run_events import (
-    StructuredRunStatusAPIResponse,
+    RunStatusAPIResponse,
     get_run_status_response,
 )
 from kedro_viz.api.rest.responses.version import (
@@ -66,7 +66,7 @@ async def get_version():
     return get_version_response()
 
 
-@router.get("/run-status", response_model=StructuredRunStatusAPIResponse)
+@router.get("/run-status", response_model=RunStatusAPIResponse)
 async def get_run_status():
     """Get run status data for pipeline visualization.
 

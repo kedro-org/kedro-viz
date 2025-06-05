@@ -19,7 +19,7 @@ from kedro_viz.api.rest.responses.run_events import (
     PipelineErrorInfo,
     PipelineInfo,
     PipelineStatus,
-    StructuredRunStatusAPIResponse,
+    RunStatusAPIResponse,
     _create_or_update_dataset_info,
     _extract_pipeline_timing_and_status,
     _finalize_pipeline_info,
@@ -55,7 +55,7 @@ class TestModels:
         pipeline_info = PipelineInfo()
         assert pipeline_info.status == PipelineStatus.COMPLETED
 
-        response = StructuredRunStatusAPIResponse()
+        response = RunStatusAPIResponse()
         assert response.nodes == {}
         assert response.datasets == {}
 
@@ -366,7 +366,7 @@ class TestTransformEvents:
         """Test transforming empty events list."""
         result = transform_events_to_structured_format([])
 
-        assert isinstance(result, StructuredRunStatusAPIResponse)
+        assert isinstance(result, RunStatusAPIResponse)
         assert result.nodes == {}
         assert result.datasets == {}
 
@@ -379,7 +379,7 @@ class TestAPIResponse:
         """Test when no Kedro project is found."""
         mock_find_project.return_value = None
         result = get_run_status_response()
-        assert isinstance(result, StructuredRunStatusAPIResponse)
+        assert isinstance(result, RunStatusAPIResponse)
 
     @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project")
     @patch("pathlib.Path.exists")
@@ -503,6 +503,6 @@ class TestIntegration:
 
         result = get_run_status_response()
 
-        assert isinstance(result, StructuredRunStatusAPIResponse)
+        assert isinstance(result, RunStatusAPIResponse)
         assert len(result.nodes) == 2
         assert len(result.datasets) == 1

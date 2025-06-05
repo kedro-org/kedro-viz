@@ -109,7 +109,7 @@ class PipelineInfo(BaseModel):
     error: Optional[PipelineErrorInfo] = None
 
 
-class StructuredRunStatusAPIResponse(BaseModel):
+class RunStatusAPIResponse(BaseModel):
     """Format for structured run status endpoint response."""
 
     nodes: dict[str, NodeInfo] = Field(default_factory=dict)
@@ -380,7 +380,7 @@ def _finalize_pipeline_info(
 
 def transform_events_to_structured_format(
     events: list[dict[str, Any]],
-) -> StructuredRunStatusAPIResponse:
+) -> RunStatusAPIResponse:
     """Convert raw run events into structured API response format.
 
     Args:
@@ -417,14 +417,14 @@ def transform_events_to_structured_format(
     # Finalize pipeline information
     _finalize_pipeline_info(pipeline, nodes)
 
-    return StructuredRunStatusAPIResponse(
+    return RunStatusAPIResponse(
         nodes=nodes,
         datasets=datasets,
         pipeline=pipeline,
     )
 
 
-def get_run_status_response() -> StructuredRunStatusAPIResponse:
+def get_run_status_response() -> RunStatusAPIResponse:
     """Get run status data for API endpoint in structured format.
 
     Returns:
@@ -440,26 +440,26 @@ def get_run_status_response() -> StructuredRunStatusAPIResponse:
             logger.warning(
                 "Could not find a Kedro project to load pipeline events file"
             )
-            return StructuredRunStatusAPIResponse()
+            return RunStatusAPIResponse()
 
         pipeline_events_file_path = PIPELINE_EVENT_FULL_PATH
 
         if not pipeline_events_file_path.exists():
             logger.warning(f"Run events file {pipeline_events_file_path} not found")
-            return StructuredRunStatusAPIResponse()
+            return RunStatusAPIResponse()
 
         with pipeline_events_file_path.open("r", encoding="utf8") as file:
             try:
                 events = json.load(file)
             except json.JSONDecodeError as exc:
                 logger.error(f"Invalid JSON in run events file: {exc}")
-                return StructuredRunStatusAPIResponse()
+                return RunStatusAPIResponse()
 
         return transform_events_to_structured_format(events)
 
     except (OSError, IOError) as exc:
         logger.error(f"Error reading run events file: {exc}")
-        return StructuredRunStatusAPIResponse()
+        return RunStatusAPIResponse()
     except Exception as exc:
         logger.exception(f"Unexpected error loading run events: {exc}")
-        return StructuredRunStatusAPIResponse()
+        return RunStatusAPIResponse()
