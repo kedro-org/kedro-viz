@@ -1,9 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import LazyList from './lazy-list';
+import LazyList, {
+  range,
+  rangeUnion,
+  rangeEqual,
+  thresholds,
+} from './lazy-list';
 import '@testing-library/jest-dom';
 
-// Constants
+// Constants for rendering test
 const itemCount = 500;
 const itemHeight = 30;
 const visibleStart = 10;
@@ -51,19 +56,15 @@ const listRender = ({
   </div>
 );
 
-// DOM mocks
 beforeAll(() => {
   window.innerHeight = viewportHeight;
-
-  window.requestAnimationFrame = (frameCallback) => frameCallback(0);
-
+  window.requestAnimationFrame = (callback) => callback(0);
   window.IntersectionObserver = function (onIntersect) {
     return {
       observe: () => onIntersect(),
       disconnect: () => {},
     };
   };
-
   Element.prototype.getBoundingClientRect = function () {
     const width = parseInt(this.style?.width) || 0;
     const height = parseInt(this.style?.height) || 0;
@@ -82,7 +83,7 @@ beforeAll(() => {
 });
 
 describe('LazyList', () => {
-  it('renders expected visible items and applies correct padding and height', () => {
+  it('renders expected visible child items with padding for non-visible items', () => {
     render(
       <LazyList
         buffer={0}
@@ -113,5 +114,33 @@ describe('LazyList', () => {
 
     expect(parseInt(computedStyle.paddingTop)).toBe(visibleStart * itemHeight);
     expect(parseInt(computedStyle.height)).toBe(itemCount * itemHeight);
+  });
+
+  it('range(from, to, min, max) returns [max(from, min), min(to, max)]', () => {
+    expect(range(0, 1, 0, 1)).toEqual([0, 1]);
+    expect(range(-1, 1, 0, 1)).toEqual([0, 1]);
+    expect(range(-1, 2, 0, 1)).toEqual([0, 1]);
+  });
+
+  it('rangeUnion(a, b) returns [min(a[0], b[0]), max(a[1], b[1])]', () => {
+    expect(rangeUnion([3, 7], [2, 10])).toEqual([2, 10]);
+    expect(rangeUnion([2, 10], [3, 7])).toEqual([2, 10]);
+    expect(rangeUnion([1, 7], [2, 10])).toEqual([1, 10]);
+    expect(rangeUnion([3, 11], [2, 10])).toEqual([2, 11]);
+    expect(rangeUnion([1, 11], [2, 10])).toEqual([1, 11]);
+  });
+
+  it('rangeEqual(a, b) returns true if a[0] = b[0] && a[1] = b[1]', () => {
+    expect(rangeEqual([1, 2], [1, 2])).toBe(true);
+    expect(rangeEqual([1, 2], [1, 3])).toBe(false);
+    expect(rangeEqual([1, 2], [3, 1])).toBe(false);
+  });
+
+  it('thresholds(t) returns [0, ...n / t] except t = `0` returns `[0]`', () => {
+    expect(thresholds(0)).toEqual([0]);
+    expect(thresholds(1)).toEqual([0, 1]);
+    expect(thresholds(2)).toEqual([0, 1 / 2, 1]);
+    expect(thresholds(3)).toEqual([0, 1 / 3, 2 / 3, 1]);
+    expect(thresholds(4)).toEqual([0, 1 / 4, 2 / 4, 3 / 4, 1]);
   });
 });
