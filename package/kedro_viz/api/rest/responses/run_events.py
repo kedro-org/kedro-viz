@@ -12,7 +12,6 @@ from pydantic import BaseModel, Field
 from kedro_viz.api.rest.responses.utils import (
     calculate_pipeline_duration,
     convert_status_to_enum,
-    safe_int,
 )
 from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
 from kedro_viz.launchers.utils import _find_kedro_project
@@ -272,7 +271,11 @@ def _process_dataset_event(
         return
 
     dataset_name = event.get("dataset", "")
-    size_bytes = safe_int(event.get("size_bytes", 0))
+    # Convert size_bytes to int, defaulting to 0 if conversion fails
+    try:
+        size_bytes = int(event.get("size_bytes", 0))
+    except (TypeError, ValueError):
+        size_bytes = 0
     status = event.get("status", "Available")
     event_type = event.get("event")
 

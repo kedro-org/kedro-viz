@@ -48,14 +48,6 @@ def get_encoded_response(response: Any) -> bytes:
     return encoded_response
 
 
-def safe_int(value: Any) -> int:
-    """Safely parse an integer value."""
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return 0
-
-
 def convert_status_to_enum(status: Optional[str], default: T) -> T:
     """Convert string status to enum member; case-insensitive match on values."""
     logger = logging.getLogger(__name__)

@@ -8,7 +8,6 @@ from kedro_viz.api.rest.responses.utils import (
     calculate_pipeline_duration,
     convert_status_to_enum,
     get_encoded_response,
-    safe_int,
 )
 
 
@@ -47,21 +46,6 @@ def test_get_encoded_response(mocker):
     mock_jsonable_encoder.assert_called_once_with(mock_response)
     mock_encode_to_human_readable.assert_called_once_with(mock_response)
     assert result == mock_encoded_response
-
-
-def test_safe_int_valid_inputs():
-    """Test safe_int with valid inputs."""
-    assert safe_int(42) == 42
-    assert safe_int("123") == 123
-    assert safe_int(3.14) == 3
-    assert safe_int(True) == 1
-
-
-def test_safe_int_invalid_inputs():
-    """Test safe_int with invalid inputs returns 0."""
-    assert safe_int("abc") == 0
-    assert safe_int(None) == 0
-    assert safe_int([1, 2, 3]) == 0
 
 
 def test_convert_status_to_enum_valid():
@@ -107,7 +91,7 @@ def test_calculate_pipeline_duration_fallback():
 
 def test_convert_status_debug_logging():
     """Test debug logging for unknown status."""
-    with patch("kedro_viz.utils.logging.getLogger") as mock_logger:
+    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
         mock_logger_instance = mock_logger.return_value
         result = convert_status_to_enum("unknown_status", NodeStatus.SUCCESS)
         assert result == NodeStatus.SUCCESS
@@ -116,7 +100,7 @@ def test_convert_status_debug_logging():
 
 def test_calculate_duration_info_logging():
     """Test info logging for successful timestamp calculation."""
-    with patch("kedro_viz.utils.logging.getLogger") as mock_logger:
+    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
         mock_logger_instance = mock_logger.return_value
         start_time = "2023-01-01T10:00:00"
         end_time = "2023-01-01T10:01:00"
@@ -127,7 +111,7 @@ def test_calculate_duration_info_logging():
 
 def test_calculate_duration_warning_logging():
     """Test warning logging for invalid timestamps."""
-    with patch("kedro_viz.utils.logging.getLogger") as mock_logger:
+    with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
         mock_logger_instance = mock_logger.return_value
         result = calculate_pipeline_duration(
             "invalid", "2023-01-01T10:00:00", {"node1": 10.0}
