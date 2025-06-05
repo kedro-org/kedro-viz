@@ -5,7 +5,7 @@ import logging
 import uuid
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import BaseModel, Field
 
@@ -112,13 +112,13 @@ class PipelineInfo(BaseModel):
 class StructuredRunStatusAPIResponse(BaseModel):
     """Format for structured run status endpoint response."""
 
-    nodes: Dict[str, NodeInfo] = Field(default_factory=dict)
-    datasets: Dict[str, DatasetInfo] = Field(default_factory=dict)
+    nodes: dict[str, NodeInfo] = Field(default_factory=dict)
+    datasets: dict[str, DatasetInfo] = Field(default_factory=dict)
     pipeline: PipelineInfo = Field(default_factory=PipelineInfo)
 
 
 def _create_or_update_dataset_info(
-    datasets: Dict[str, DatasetInfo],
+    datasets: dict[str, DatasetInfo],
     dataset_id: str,
     dataset_name: str,
     size_bytes: Optional[int],
@@ -157,7 +157,7 @@ def _create_or_update_dataset_info(
 
 
 def _extract_pipeline_timing_and_status(
-    events: List[Dict[str, Any]], pipeline_info: PipelineInfo
+    events: list[dict[str, Any]], pipeline_info: PipelineInfo
 ) -> None:
     """Extract pipeline start time, end time, and status from events.
 
@@ -206,7 +206,7 @@ def _extract_pipeline_timing_and_status(
 
 
 def _process_node_completion_event(
-    event: Dict[str, Any], nodes: Dict[str, NodeInfo]
+    event: dict[str, Any], nodes: dict[str, NodeInfo]
 ) -> None:
     """Process after_node_run event to update node information.
 
@@ -228,7 +228,7 @@ def _process_node_completion_event(
 
 
 def _process_node_error_event(
-    event: Dict[str, Any], nodes: Dict[str, NodeInfo]
+    event: dict[str, Any], nodes: dict[str, NodeInfo]
 ) -> None:
     """Process on_node_error event to update node error information.
 
@@ -259,7 +259,7 @@ def _process_node_error_event(
 
 
 def _process_dataset_event(
-    event: Dict[str, Any], datasets: Dict[str, DatasetInfo]
+    event: dict[str, Any], datasets: dict[str, DatasetInfo]
 ) -> None:
     """Process dataset loaded/saved events to update dataset information.
 
@@ -290,9 +290,9 @@ def _process_dataset_event(
 
 
 def _process_dataset_error_event(
-    event: Dict[str, Any],
-    datasets: Dict[str, DatasetInfo],
-    nodes: Dict[str, NodeInfo],
+    event: dict[str, Any],
+    datasets: dict[str, DatasetInfo],
+    nodes: dict[str, NodeInfo],
     pipeline_info: PipelineInfo,
 ) -> None:
     """Process dataset error events to update dataset and node error information.
@@ -357,7 +357,7 @@ def _process_dataset_error_event(
 
 
 def _finalize_pipeline_info(
-    pipeline_info: PipelineInfo, nodes: Dict[str, NodeInfo]
+    pipeline_info: PipelineInfo, nodes: dict[str, NodeInfo]
 ) -> None:
     """Finalize pipeline information by setting run_id and calculating duration.
 
@@ -379,7 +379,7 @@ def _finalize_pipeline_info(
 
 
 def transform_events_to_structured_format(
-    events: List[Dict[str, Any]],
+    events: list[dict[str, Any]],
 ) -> StructuredRunStatusAPIResponse:
     """Convert raw run events into structured API response format.
 
@@ -389,8 +389,8 @@ def transform_events_to_structured_format(
     Returns:
         Structured API response object containing nodes, datasets, and pipeline info
     """
-    nodes: Dict[str, NodeInfo] = {}
-    datasets: Dict[str, DatasetInfo] = {}
+    nodes: dict[str, NodeInfo] = {}
+    datasets: dict[str, DatasetInfo] = {}
     pipeline = PipelineInfo()
 
     # Extract pipeline metadata first
