@@ -1,7 +1,7 @@
 /* eslint-disable id-length */
 
-import React from 'react';
-import { mount } from 'enzyme';
+import React, { createRef } from 'react';
+import { render } from '@testing-library/react';
 
 import {
   viewing,
@@ -20,15 +20,13 @@ import {
 
 describe('view', () => {
   const mockView = (width, height) => {
-    const container = React.createRef();
-    const wrapper = React.createRef();
+    const container = createRef();
+    const wrapper = createRef();
 
-    mount(
-      <>
-        <div ref={container}>
-          <div ref={wrapper} />
-        </div>
-      </>
+    render(
+      <div ref={container}>
+        <div ref={wrapper} />
+      </div>
     );
 
     const view = viewing({
