@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 # Constants for event types
-class EventType:
+class EventType(str, Enum):
     """Constants for event types."""
 
     BEFORE_PIPELINE_RUN = "before_pipeline_run"
@@ -34,7 +34,7 @@ class EventType:
     AFTER_DATASET_SAVED = "after_dataset_saved"
 
 
-class PipelineStatus:
+class PipelineStatus(str, Enum):
     """Constants for pipeline statuses."""
 
     COMPLETED = "completed"
@@ -105,7 +105,7 @@ class PipelineInfo(BaseModel):
     start_time: Optional[str] = None
     end_time: Optional[str] = None
     total_duration_sec: float = 0.0
-    status: str = PipelineStatus.COMPLETED
+    status: PipelineStatus = PipelineStatus.COMPLETED
     error: Optional[PipelineErrorInfo] = None
 
 
@@ -122,7 +122,7 @@ def _create_or_update_dataset_info(
     dataset_id: str,
     dataset_name: str,
     size_bytes: Optional[int],
-    status: str,
+    status: PipelineStatus,
     overwrite_size: bool = False,
 ) -> None:
     """Create or update DatasetInfo, with optional size overwrite control.
