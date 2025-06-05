@@ -8,11 +8,15 @@ from unittest.mock import patch
 import pytest
 
 from kedro_viz.api.rest.responses.run_events import (
+    BaseErrorInfo,
+    DatasetErrorInfo,
     DatasetInfo,
     DatasetStatus,
     EventType,
+    NodeErrorInfo,
     NodeInfo,
     NodeStatus,
+    PipelineErrorInfo,
     PipelineInfo,
     PipelineStatus,
     StructuredRunStatusAPIResponse,
@@ -120,7 +124,7 @@ class TestPipelineTimingExtraction:
 
         assert pipeline_info.end_time == "2023-01-01T10:05:00"
         assert pipeline_info.status == PipelineStatus.FAILED
-        assert pipeline_info.error == "Failed"
+        assert pipeline_info.error.message == "Failed"
 
     def test_no_timing_events(self):
         """Test handling when no timing events are present."""
@@ -237,11 +241,12 @@ class TestEventProcessing:
         event = {"error": "Dataset error"}
         datasets = {}
         nodes = {}
-        pipeline_info = PipelineInfo(error="Existing error")
+        existing_error = PipelineErrorInfo(message="Existing error")
+        pipeline_info = PipelineInfo(error=existing_error)
 
         _process_dataset_error_event(event, datasets, nodes, pipeline_info)
 
-        assert pipeline_info.error == "Existing error"  # Should not overwrite
+        assert pipeline_info.error.message == "Existing error"  # Should not overwrite
 
     @patch("kedro_viz.api.rest.responses.run_events._hash_input_output")
     def test_process_dataset_error_update_existing_dataset(self, mock_hash):
