@@ -94,6 +94,8 @@ def install_project_requirements(context):
         # numpy 2.0 breaks with old versions of pandas and this
         # could be removed when the lowest version supported is updated
         _add_package_pin(requirements_path, "numpy", "1.26.4")
+        # …then pin antlr4 so that OmegaConf can import correctly:
+        _add_package_pin(requirements_path, "antlr4-python3-runtime", "4.9.3")
     else:
         requirements_path = str(context.root_project_dir) + "/requirements.txt"
 
