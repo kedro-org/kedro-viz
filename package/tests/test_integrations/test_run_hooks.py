@@ -8,13 +8,13 @@ from kedro.io import DataCatalog, MemoryDataset
 from kedro.pipeline import Pipeline, node
 from kedro.pipeline.node import Node as KedroNode
 
-from kedro_viz.integrations.kedro.run_hooks import PipelineRunHooks
+from kedro_viz.integrations.kedro.run_hooks import PipelineRunStatusHook
 
 
 @pytest.fixture
 def hooks():
-    """Create an instance of PipelineRunHooks."""
-    return PipelineRunHooks()
+    """Create an instance of PipelineRunStatusHook."""
+    return PipelineRunStatusHook()
 
 
 @pytest.fixture
@@ -41,8 +41,8 @@ def sample_catalog():
     return DataCatalog({"test_dataset": MemoryDataset()})
 
 
-class TestPipelineRunHooks:
-    """Test class for PipelineRunHooks."""
+class TestPipelineRunStatusHook:
+    """Test class for PipelineRunStatusHook."""
 
     def test_after_catalog_created_standard(self, hooks, sample_catalog):
         """Test after_catalog_created hook with standard DataCatalog."""
@@ -105,7 +105,6 @@ class TestPipelineRunHooks:
 
     def test_before_pipeline_run_default(self, hooks, sample_pipeline, mocker):
         """Test before_pipeline_run hook with default pipeline."""
-        mock_write_events = mocker.patch.object(hooks, "_write_events")
         mock_generate_timestamp = mocker.patch(
             "kedro_viz.integrations.kedro.run_hooks.generate_timestamp",
             return_value="2021-01-01T00:00:00.000Z",
@@ -121,7 +120,6 @@ class TestPipelineRunHooks:
         assert event["event"] == "before_pipeline_run"
         assert event["timestamp"] == "2021-01-01T00:00:00.000Z"
 
-        mock_write_events.assert_called_once()
         mock_generate_timestamp.assert_called_once()
 
     def test_before_pipeline_run_named_pipeline_skips(self, hooks, sample_pipeline):

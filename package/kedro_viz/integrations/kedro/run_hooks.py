@@ -18,7 +18,7 @@ from kedro_viz.integrations.kedro.hooks_utils import (
 logger = logging.getLogger(__name__)
 
 
-class PipelineRunHooks:
+class PipelineRunStatusHook:
     """Collect and write pipeline and dataset events during Kedro runs."""
 
     def __init__(self):
@@ -78,7 +78,7 @@ class PipelineRunHooks:
         self._all_nodes = list(pipeline.nodes)
         self._started_nodes.clear()
         self._add_event(
-            {"event": "before_pipeline_run", "timestamp": generate_timestamp()}, True
+            {"event": "before_pipeline_run", "timestamp": generate_timestamp()}
         )
 
     @hook_impl
@@ -190,4 +190,4 @@ class PipelineRunHooks:
 
 
 # singleton hook instance
-pipeline_run_hook = PipelineRunHooks()
+pipeline_run_hook = PipelineRunStatusHook()
