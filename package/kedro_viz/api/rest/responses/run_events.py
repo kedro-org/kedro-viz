@@ -9,14 +9,14 @@ from typing import Any, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
-from kedro_viz.launchers.utils import _find_kedro_project
-from kedro_viz.utils import (
-    _hash_input_output,
+from kedro_viz.api.rest.responses.utils import (
     calculate_pipeline_duration,
     convert_status_to_enum,
     safe_int,
 )
+from kedro_viz.constants import PIPELINE_EVENT_FULL_PATH
+from kedro_viz.launchers.utils import _find_kedro_project
+from kedro_viz.utils import _hash_input_output
 
 logger = logging.getLogger(__name__)
 
