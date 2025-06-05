@@ -11,6 +11,7 @@ import { getNodeLabel } from '../../selectors/nodes';
 import { toggleTypeDisabled } from '../../actions/node-type';
 import spaceflights from '../../utils/data/spaceflights.mock.json';
 import { render, act } from '@testing-library/react';
+import { MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 const dataScienceNodeId = 'data_science';
 const dataProcessingNodeId = 'data_processing';
@@ -109,9 +110,9 @@ describe('FlowChart', () => {
     ref.current.resetView();
 
     const viewExtents = getViewExtents(ref.current.view);
-    const margin = ref.current.MARGIN;
-    const minScale = ref.current.MIN_SCALE;
-    const maxScale = ref.current.MAX_SCALE;
+    const margin = MARGIN;
+    const minScale = MIN_SCALE;
+    const maxScale = MAX_SCALE;
 
     expect(margin).toBe(500);
     expect(minScale).toBe(0.8);
@@ -149,9 +150,9 @@ describe('FlowChart', () => {
     ref.current.resetView();
 
     const viewExtents = getViewExtents(ref.current.view);
-    const margin = ref.current.MARGIN;
-    const minScale = ref.current.MIN_SCALE;
-    const maxScale = ref.current.MAX_SCALE;
+    const margin = MARGIN;
+    const minScale = MIN_SCALE;
+    const maxScale = MAX_SCALE;
 
     expect(margin).toBe(500);
     expect(minScale).toBe(0.8);
@@ -261,32 +262,23 @@ describe('FlowChart', () => {
     const viewExtentsHorizontal = getViewExtents(refHorizontal.current.view);
 
     // Verify vertical orientation behavior
-    expect(viewExtentsVertical.translate.minX).toBe(
-      -refVertical.current.MARGIN
-    );
+    expect(viewExtentsVertical.translate.minX).toBe(-MARGIN);
     expect(viewExtentsVertical.translate.maxX).toEqual(
-      refVertical.current.props.graphSize.width + refVertical.current.MARGIN
+      propsV.graphSize.width + MARGIN
     );
-    expect(viewExtentsVertical.translate.minY).toEqual(
-      -refVertical.current.MARGIN
-    );
+    expect(viewExtentsVertical.translate.minY).toEqual(-MARGIN);
     expect(viewExtentsVertical.translate.maxY).toEqual(
-      refVertical.current.props.graphSize.height + refVertical.current.MARGIN
+      propsV.graphSize.height + MARGIN
     );
 
     // Verify horizontal orientation behavior
-    expect(viewExtentsHorizontal.translate.minX).toEqual(
-      -refHorizontal.current.MARGIN
-    );
+    expect(viewExtentsHorizontal.translate.minX).toEqual(-MARGIN);
     expect(viewExtentsHorizontal.translate.maxX).toEqual(
-      refHorizontal.current.props.graphSize.width + refHorizontal.current.MARGIN
+      propsH.graphSize.width + MARGIN
     );
-    expect(viewExtentsHorizontal.translate.minY).toEqual(
-      -refHorizontal.current.MARGIN
-    );
+    expect(viewExtentsHorizontal.translate.minY).toEqual(-MARGIN);
     expect(viewExtentsHorizontal.translate.maxY).toEqual(
-      refHorizontal.current.props.graphSize.height +
-        refHorizontal.current.MARGIN
+      propsH.graphSize.height + MARGIN
     );
   });
 
@@ -420,7 +412,7 @@ describe('FlowChart', () => {
     );
     indicators.forEach((el) => {
       const y = parseFloat(el.getAttribute('y'));
-      expect(y).toBeLessThan(nodeY);
+      expect(y).toBeLessThan(56);
     });
   });
 

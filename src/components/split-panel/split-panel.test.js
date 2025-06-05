@@ -28,10 +28,12 @@ describe('SplitPanel', () => {
 
   const mockBoundingRects = () => {
     Element.prototype.getBoundingClientRect = function () {
-      if (this.className.includes('split-panel__container'))
-        {return mockRects.container;}
-      if (this.className.includes('split-panel__handle'))
-        {return mockRects.handle;}
+      if (this.className.includes('split-panel__container')) {
+        return mockRects.container;
+      }
+      if (this.className.includes('split-panel__handle')) {
+        return mockRects.handle;
+      }
       return { width: 0, height: 0 };
     };
   };

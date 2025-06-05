@@ -31,7 +31,9 @@ export const prepareState = ({
     ...beforeLayoutActions,
     (state) => {
       const graphState = getGraphInput(state);
-      if (!graphState) {return state;}
+      if (!graphState) {
+        return state;
+      }
       return updateGraph(graphNew(graphState));
     },
     ...afterLayoutActions,
