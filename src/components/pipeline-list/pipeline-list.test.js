@@ -1,9 +1,14 @@
 import React from 'react';
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 import PipelineList, {
   mapStateToProps,
   mapDispatchToProps,
 } from './pipeline-list';
 import { mockState, setup } from '../../utils/state.mock';
+import userEvent from '@testing-library/user-event';
+import configureStore from 'redux-mock-store';
 
 const mockHistoryPush = jest.fn();
 const mockLocationSearch = '?query=mockQuery';
@@ -27,54 +32,95 @@ describe('PipelineList', () => {
   ]);
 
   it('renders without crashing', () => {
-    const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
-    const container = wrapper.find('.pipeline-list');
-    expect(container.length).toBe(1);
+    const { container } = setup.render(
+      <PipelineList onToggleOpen={jest.fn()} />
+    );
+    const list = container.querySelector('.pipeline-list');
+    expect(list).toBeInTheDocument();
   });
 
-  it('should call onToggleOpen when opening/closing', () => {
+  it('should call onToggleOpen when opening/closing', async () => {
+    const user = userEvent.setup();
     const onToggleOpen = jest.fn();
-    const wrapper = setup.mount(<PipelineList onToggleOpen={onToggleOpen} />);
-    wrapper.find('.dropdown__label').simulate('click');
+    const { getByRole } = setup.render(
+      <PipelineList onToggleOpen={onToggleOpen} />
+    );
+    const dropdownButton = getByRole('button');
+
+    await user.click(dropdownButton);
     expect(onToggleOpen).toHaveBeenLastCalledWith(true);
-    wrapper.find('.dropdown__label').simulate('click');
+
+    await user.click(dropdownButton);
     expect(onToggleOpen).toHaveBeenLastCalledWith(false);
   });
 
-  it('should be disabled when there are no pipelines in the store', () => {
-    const wrapper = setup.mount(<PipelineList />, { data: 'json' });
-    expect(wrapper.find('.dropdown__label').prop('disabled')).toBe(true);
+  it('should disable the dropdown button when there are no pipelines', () => {
+    const emptyState = {
+      pipeline: {
+        ids: [],
+        name: {},
+        active: null,
+      },
+      dataSource: 'json',
+      isPrettyName: false,
+    };
+
+    const store = configureStore()(emptyState);
+    const { container } = render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <PipelineList />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    const button = container.querySelector('.dropdown__label');
+    expect(button).toBeDisabled();
+
+    const wrapper = container.querySelector('.dropdown');
+    expect(wrapper).toHaveClass('dropdown--disabled');
   });
 
   test.each(pipelineIDs)(
-    'should change the active pipeline to %s on clicking menu option %s, and the URL should be set to "/" ',
-    (id, i) => {
-      const wrapper = setup.mount(<PipelineList onToggleOpen={jest.fn()} />);
-      wrapper.find('MenuOption').at(i).simulate('click');
+    'should change the active pipeline to %s on clicking menu option %s, and set URL to "/?pid=%s"',
+    async (id, i) => {
+      const user = userEvent.setup();
+      const { getAllByRole, container } = setup.render(
+        <PipelineList onToggleOpen={jest.fn()} />
+      );
 
-      expect(wrapper.find('PipelineList').props().pipeline.active).toBe(id);
+      console.log('Dropdown HTML:', container.innerHTML);
+
+      const options = getAllByRole('option');
+      console.log(
+        'Found options:',
+        options.map((opt) => opt.textContent)
+      );
+
+      await user.click(options[i]);
+
+      console.log(`Clicked option ${i}:`, options[i].textContent);
+      console.log('History push calls:', mockHistoryPush.mock.calls);
+
       expect(mockHistoryPush).toHaveBeenCalledWith(`/?pid=${id}`);
     }
   );
 
-  it('should apply an active class to an active pipeline row', () => {
-    const wrapper = setup.mount(<PipelineList />);
-    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
-    const hasClass = wrapper
-      .find('MenuOption')
-      .at(ids.indexOf(active))
-      .hasClass('pipeline-list__option--active');
-    expect(hasClass).toBe(true);
+  it('should apply an active class to the active pipeline option', () => {
+    const { container } = setup.render(<PipelineList />);
+    const activeOption = container.querySelector(
+      '.pipeline-list__option--active'
+    );
+    expect(activeOption).toBeInTheDocument();
   });
 
-  it('should not apply an active class to an inactive pipeline row', () => {
-    const wrapper = setup.mount(<PipelineList />);
-    const { active, ids } = wrapper.find('PipelineList').props().pipeline;
-    const hasClass = wrapper
-      .find('MenuOption')
-      .at(ids.findIndex((id) => id !== active))
-      .hasClass('pipeline-list__option--active');
-    expect(hasClass).toBe(false);
+  it('should not apply active class to an inactive pipeline row', () => {
+    const { container } = setup.render(<PipelineList />);
+    const allOptions = Array.from(container.querySelectorAll('.menu-option'));
+    const inactiveOptions = allOptions.filter(
+      (el) => !el.classList.contains('pipeline-list__option--active')
+    );
+    expect(inactiveOptions.length).toBeGreaterThan(0);
   });
 
   it('maps state to props', () => {
@@ -90,12 +136,11 @@ describe('PipelineList', () => {
     });
   });
 
-  it('maps dispatch to props', async () => {
+  it('maps dispatch to props', () => {
     const dispatch = jest.fn();
     mapDispatchToProps(dispatch).onUpdateActivePipeline({ value: '123' });
-    // The calls would also include the action to reset focus mode
+
     expect(dispatch.mock.calls.length).toEqual(2);
-    // ensure that the action to reset focus mode is being called
     expect(dispatch.mock.calls[1][0]).toEqual({
       type: 'TOGGLE_MODULAR_PIPELINE_FOCUS_MODE',
       modularPipeline: null,

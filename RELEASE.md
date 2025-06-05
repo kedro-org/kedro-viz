@@ -6,6 +6,15 @@ Please follow the established format:
 - Include the ID number for the related PR (or PRs) in parentheses
 -->
 
+# Release 12.0.0
+
+## Major features and improvements
+
+
+## Bug fixes and other changes
+ - Migration from Enzyme to React Testing Library. (#2365)
+
+
 # Release 11.0.2
 
 ## Bug fixes and other changes
