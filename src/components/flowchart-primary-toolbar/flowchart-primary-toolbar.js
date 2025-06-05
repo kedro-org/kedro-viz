@@ -40,8 +40,10 @@ export const FlowchartPrimaryToolbar = ({
   onToggleExpandAllPipelines,
   orientation,
   onToggleOrientation,
+  view,
 }) => {
   const { toSetQueryParam } = useGeneratePathname();
+  const isFlowchartView = view === 'flowchart';
 
   const handleToggleExpandAllPipelines = () => {
     const isExpanded = !expandedPipelines;
@@ -57,16 +59,18 @@ export const FlowchartPrimaryToolbar = ({
         display={display}
         dataTest={`sidebar-flowchart-visible-btn-${visible.sidebar}`}
       >
-        <IconButton
-          active={textLabels}
-          ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
-          className={'pipeline-menu-button--labels'}
-          dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
-          icon={LabelIcon}
-          labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
-          onClick={() => onToggleTextLabels(!textLabels)}
-          visible={display.labelBtn}
-        />
+        {isFlowchartView && (
+          <IconButton
+            active={textLabels}
+            ariaLabel={`${textLabels ? 'Hide' : 'Show'} text labels`}
+            className={'pipeline-menu-button--labels'}
+            dataTest={`sidebar-flowchart-labels-btn-${textLabels}`}
+            icon={LabelIcon}
+            labelText={`${textLabels ? 'Hide' : 'Show'} text labels`}
+            onClick={() => onToggleTextLabels(!textLabels)}
+            visible={display.labelBtn}
+          />
+        )}
         <IconButton
           active={visibleLayers}
           ariaLabel={`Turn data layers ${visibleLayers ? 'off' : 'on'}`}
@@ -91,22 +95,26 @@ export const FlowchartPrimaryToolbar = ({
           }
           visible={display.orientationBtn}
         />
-        <IconButton
-          active={expandedPipelines}
-          ariaLabel={
-            expandedPipelines
-              ? 'Collapse all modular pipelines'
-              : 'Expand all modular pipelines'
-          }
-          className={'pipeline-menu-button--pipeline'}
-          dataTest={`sidebar-flowchart-expand-pipeline-btn-${expandedPipelines}`}
-          icon={expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon}
-          labelText={
-            expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
-          }
-          onClick={handleToggleExpandAllPipelines}
-          visible={display.expandPipelinesBtn}
-        />
+        {isFlowchartView && (
+          <IconButton
+            active={expandedPipelines}
+            ariaLabel={
+              expandedPipelines
+                ? 'Collapse all modular pipelines'
+                : 'Expand all modular pipelines'
+            }
+            className={'pipeline-menu-button--pipeline'}
+            dataTest={`sidebar-flowchart-expand-pipeline-btn-${expandedPipelines}`}
+            icon={
+              expandedPipelines ? CollapsePipelinesIcon : ExpandPipelinesIcon
+            }
+            labelText={
+              expandedPipelines ? 'Collapse pipelines' : 'Expand pipelines'
+            }
+            onClick={handleToggleExpandAllPipelines}
+            visible={display.expandPipelinesBtn}
+          />
+        )}
         <IconButton
           ariaLabel="Export graph as SVG or PNG"
           className={'pipeline-menu-button--export'}
@@ -129,6 +137,7 @@ export const mapStateToProps = (state) => ({
   visibleLayers: Boolean(getVisibleLayerIDs(state).length),
   orientation: state.orientation,
   expandedPipelines: state.expandAllPipelines,
+  view: state.view,
 });
 
 export const mapDispatchToProps = (dispatch) => ({
