@@ -55,20 +55,30 @@ class DatasetStatus(str, Enum):
     MISSING = "Missing"
 
 
-class NodeErrorInfo(BaseModel):
+class BaseErrorInfo(BaseModel):
+    """Base class for error information."""
+
+    message: str
+    traceback: Optional[str] = None
+
+
+class NodeErrorInfo(BaseErrorInfo):
     """Information about a node error."""
 
-    message: str
-    traceback: Optional[str] = None
+    pass
 
 
-class DatasetErrorInfo(BaseModel):
+class DatasetErrorInfo(BaseErrorInfo):
     """Information about a dataset error."""
 
-    message: str
     error_node: Optional[str] = None
     error_operation: Optional[str] = None
-    traceback: Optional[str] = None
+
+
+class PipelineErrorInfo(BaseErrorInfo):
+    """Information about a pipeline error."""
+
+    pass
 
 
 class NodeInfo(BaseModel):
@@ -76,7 +86,7 @@ class NodeInfo(BaseModel):
 
     status: NodeStatus = NodeStatus.SUCCESS
     duration_sec: float = 0.0
-    error: Optional[Union[str, NodeErrorInfo]] = None
+    error: Optional[NodeErrorInfo] = None
 
 
 class DatasetInfo(BaseModel):
@@ -85,7 +95,7 @@ class DatasetInfo(BaseModel):
     name: str
     size_bytes: int = 0
     status: DatasetStatus = DatasetStatus.AVAILABLE
-    error: Optional[Union[str, DatasetErrorInfo]] = None
+    error: Optional[DatasetErrorInfo] = None
 
 
 class PipelineInfo(BaseModel):
@@ -96,7 +106,7 @@ class PipelineInfo(BaseModel):
     end_time: Optional[str] = None
     total_duration_sec: float = 0.0
     status: str = PipelineStatus.COMPLETED
-    error: Optional[str] = None
+    error: Optional[PipelineErrorInfo] = None
 
 
 class StructuredRunStatusAPIResponse(BaseModel):
@@ -185,7 +195,12 @@ def _extract_pipeline_timing_and_status(
 
         if end_event.get("event") == EventType.ON_PIPELINE_ERROR:
             pipeline_info.status = PipelineStatus.FAILED
-            pipeline_info.error = end_event.get("error", "Unknown pipeline error")
+            error_message = end_event.get("error", "Unknown pipeline error")
+            traceback_message = end_event.get("traceback")
+            pipeline_info.error = PipelineErrorInfo(
+                message=error_message,
+                traceback=traceback_message,
+            )
         else:
             pipeline_info.status = PipelineStatus.COMPLETED
 
@@ -335,7 +350,10 @@ def _process_dataset_error_event(
     # Update pipeline error status if not already set
     if not pipeline_info.error:
         pipeline_info.status = PipelineStatus.FAILED
-        pipeline_info.error = error_message
+        pipeline_info.error = PipelineErrorInfo(
+            message=error_message,
+            traceback=traceback_message,
+        )
 
 
 def _finalize_pipeline_info(
