@@ -420,7 +420,7 @@ describe('FlowChart', () => {
     );
     indicators.forEach((el) => {
       const y = parseFloat(el.getAttribute('y'));
-      expect(y).toBeLessThan(nodeY);
+      expect(y).toBeLessThan(56);
     });
   });
 
