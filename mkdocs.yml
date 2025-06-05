@@ -136,4 +136,4 @@ nav:
         - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: migrate_experiment_tracking.md
     - Other Documentation:
         - Kedro-Viz CLI reference: cli-docs.md
-  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/api/kedro_datasets/
+  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/
