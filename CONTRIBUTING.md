@@ -217,7 +217,7 @@ make run PROJECT_PATH=<path-to-your-test-project>/new-kedro-project
 
 ### JavaScript unit and component tests
 
-Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, with [Enzyme](https://enzymejs.github.io/enzyme/) and [Testing-Library](https://testing-library.com/) to mount React components and mock the DOM. You can run tests as follows:
+Kedro-Viz uses [Jest](https://jestjs.io/) for running JavaScript tests, and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) to mount React components and mock the DOM. You can run tests as follows:
 
 ```bash
 npm test

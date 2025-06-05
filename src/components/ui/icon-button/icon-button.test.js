@@ -1,108 +1,121 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { act } from '@testing-library/react';
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import IconButton from '.';
-import { setup } from '../../../utils/state.mock';
 import MenuIcon from '../../icons/menu';
 
 describe('IconButton', () => {
   it('renders without crashing', () => {
-    const wrapper = setup.shallow(IconButton, {
-      ariaLive: 'polite',
-      ariaLabel: `Change theme`,
-      onClick: () => {},
-      icon: MenuIcon,
-      labelText: 'Toggle theme',
-      visible: true,
-    });
-    expect(wrapper.find('Wrapper').length).toBe(1);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(1);
+    render(
+      <IconButton
+        ariaLive="polite"
+        ariaLabel="Change theme"
+        onClick={() => {}}
+        icon={MenuIcon}
+        labelText="Toggle theme"
+        visible={true}
+      />
+    );
+
+    expect(
+      screen.getByRole('button', { name: /change theme/i })
+    ).toBeInTheDocument();
   });
 
   it('calls a function on click', () => {
     const onClick = jest.fn();
-    const wrapper = setup.shallow(IconButton, { onClick });
-    expect(onClick.mock.calls.length).toBe(0);
-    wrapper.find('button').simulate('click');
-    expect(onClick.mock.calls.length).toBe(1);
+    render(<IconButton onClick={onClick} visible={true} />);
+    fireEvent.click(screen.getByRole('button'));
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it('hides when visibility is false', () => {
-    const wrapper = setup.shallow(IconButton, { visible: false });
-    expect(wrapper.find('li').length).toBe(0);
-    expect(wrapper.find('.pipeline-icon-toolbar__button').length).toBe(0);
+    const { container } = render(<IconButton visible={false} />);
+    expect(container.querySelector('li')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('.pipeline-icon-toolbar__button')
+    ).not.toBeInTheDocument();
   });
 
-  it('when passing a value for labelText without specifically defined labelTextPosition, the default value for labelTextPosition should be "right"', () => {
-    const wrapper = setup.shallow(IconButton, {
-      labelText: 'Toggle theme',
-      visible: true,
-    });
-
-    expect(wrapper.find('.pipeline-toolbar__label-right').length).toBe(1);
+  it('defaults labelTextPosition to "right"', () => {
+    const { container } = render(
+      <IconButton labelText="Toggle theme" visible={true} />
+    );
+    expect(
+      container.querySelector('.pipeline-toolbar__label-right')
+    ).toBeInTheDocument();
   });
 
-  it('classnames of the tooltip should reflect the value of labelTextPosition', () => {
-    const wrapper = setup.shallow(IconButton, {
-      labelText: 'Toggle theme',
-      labelTextPosition: 'bottom',
-      visible: true,
-    });
-
-    expect(wrapper.find('.pipeline-toolbar__label-bottom').length).toBe(1);
+  it('respects custom labelTextPosition (bottom)', () => {
+    const { container } = render(
+      <IconButton
+        labelText="Toggle theme"
+        labelTextPosition="bottom"
+        visible={true}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-toolbar__label-bottom')
+    ).toBeInTheDocument();
   });
 
-  it('when passing the wrong value for labelTextPosition, it should return back to the default value "right"', () => {
-    const wrapper = setup.shallow(IconButton, {
-      labelText: 'Toggle theme',
-      labelTextPosition: 'random position',
-      visible: true,
-    });
-
-    expect(wrapper.find('.pipeline-toolbar__label-right').length).toBe(1);
+  it('falls back to default labelTextPosition when invalid value is passed', () => {
+    const { container } = render(
+      <IconButton
+        labelText="Toggle theme"
+        labelTextPosition="random position"
+        visible={true}
+      />
+    );
+    expect(
+      container.querySelector('.pipeline-toolbar__label-right')
+    ).toBeInTheDocument();
   });
 
-  it('show tooltip', () => {
+  it('shows tooltip on hover', async () => {
     jest.useFakeTimers();
-    const setIsTooltipVisible = jest.fn();
-    const wrapper = mount(
+    const { container } = render(
       <IconButton
         labelText="Toggle theme"
-        labelTextPosition="randon position"
-        visible
+        labelTextPosition="random position"
+        visible={true}
       />
     );
 
-    const onHover = jest.spyOn(React, 'useState');
-    const button = wrapper.find('.pipeline-icon-toolbar__button');
+    const button = container.querySelector('.pipeline-icon-toolbar__button');
+    expect(button).toBeInTheDocument();
 
-    onHover.mockImplementation((isTooltipVisible) => [
-      isTooltipVisible,
-      setIsTooltipVisible,
-    ]);
-    button.simulate('mouseenter');
-    act(() => jest.runOnlyPendingTimers());
-    wrapper.update();
-    expect(wrapper.find('.pipeline-toolbar__label__visible').length).toBe(1);
+    act(() => {
+      fireEvent.mouseEnter(button);
+      jest.runOnlyPendingTimers();
+    });
+
+    await waitFor(() =>
+      expect(
+        container.querySelector('.pipeline-toolbar__label__visible')
+      ).toBeInTheDocument()
+    );
   });
 
-  it('hide tooltip', () => {
-    const setIsTooltipVisible = jest.fn();
-    const wrapper = mount(
+  it('hides tooltip on mouse leave', () => {
+    const { container } = render(
       <IconButton
         labelText="Toggle theme"
-        labelTextPosition="randon position"
-        visible
+        labelTextPosition="random position"
+        visible={true}
       />
     );
-    const onHover = jest.spyOn(React, 'useState');
-    const button = wrapper.find('.pipeline-icon-toolbar__button');
 
-    onHover.mockImplementation((isTooltipVisible) => [
-      isTooltipVisible,
-      setIsTooltipVisible,
-    ]);
-    button.simulate('mouseleave');
-    expect(wrapper.find('.pipeline-toolbar__label__visible').length).toBe(0);
+    const button = container.querySelector('.pipeline-icon-toolbar__button');
+    fireEvent.mouseLeave(button);
+
+    expect(
+      container.querySelector('.pipeline-toolbar__label__visible')
+    ).not.toBeInTheDocument();
   });
 });
