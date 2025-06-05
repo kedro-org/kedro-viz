@@ -115,25 +115,25 @@ extra_javascript:
 
 nav:
   - Welcome: https://docs.kedro.org/en/develop
-  - Kedro: https://docs.kedro.org/en/develop/pages/getting-started/course/
+  - Kedro: https://docs.kedro.org/en/develop/getting-started/course/
   - Kedro-Viz: 
-    - Overview: pages/index.md
+    - Overview: index.md
     - Learn about Kedro-Viz:
-        - How to visualise a Kedro project: pages/kedro-viz_visualisation.md
+        - How to visualise a Kedro project: kedro-viz_visualisation.md
         - Sharing Kedro-Viz:
-          - Publish and share Kedro-Viz: pages/share_kedro_viz.md
-          - Platform-agnostic sharing with Kedro-Viz: pages/platform_agnostic_sharing_with_kedro_viz.md
-          - Publish and share on AWS: pages/publish_and_share_kedro_viz_on_aws.md
-          - Publish and share on Azure: pages/publish_and_share_kedro_viz_on_azure.md
-          - Publish and share on GCP: pages/publish_and_share_kedro_viz_on_gcp.md
+          - Publish and share Kedro-Viz: share_kedro_viz.md
+          - Platform-agnostic sharing with Kedro-Viz: platform_agnostic_sharing_with_kedro_viz.md
+          - Publish and share on AWS: publish_and_share_kedro_viz_on_aws.md
+          - Publish and share on Azure: publish_and_share_kedro_viz_on_azure.md
+          - Publish and share on GCP: publish_and_share_kedro_viz_on_gcp.md
         - Preview datasets in Kedro-Viz: 
-          - Preview datasets overview: pages/preview_datasets.md
-          - Preview Matplotlib charts in Kedro-Viz: pages/preview_matplotlib_datasets.md
-          - Preview Plotly charts in Kedro-Viz: pages/preview_plotly_datasets.md
-          - Preview tabular data in Kedro-Viz: pages/preview_pandas_datasets.md
-          - Extend preview to custom datasets: pages/preview_custom_datasets.md
-        - Slice a pipeline: pages/slice_a_pipeline.md
-        - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: pages/migrate_experiment_tracking.md
+          - Preview datasets overview: preview_datasets.md
+          - Preview Matplotlib charts in Kedro-Viz: preview_matplotlib_datasets.md
+          - Preview Plotly charts in Kedro-Viz: preview_plotly_datasets.md
+          - Preview tabular data in Kedro-Viz: preview_pandas_datasets.md
+          - Extend preview to custom datasets: preview_custom_datasets.md
+        - Slice a pipeline: slice_a_pipeline.md
+        - Migration from Kedro-Viz native experiment tracking to kedro-mlflow: migrate_experiment_tracking.md
     - Other Documentation:
-        - Kedro-Viz CLI reference: pages/cli-docs.md
-  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/pages/api/kedro_datasets/
+        - Kedro-Viz CLI reference: cli-docs.md
+  - Kedro-Datasets: https://docs.kedro.org/projects/kedro-datasets/en/feature-8.0/api/kedro_datasets/
