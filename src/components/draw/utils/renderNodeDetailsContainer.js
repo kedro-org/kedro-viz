@@ -6,7 +6,7 @@ import {
   getNodeStatusInfo,
   getDatasetStatusInfo,
 } from '../../flowchart-copy/workflow-utils/getStatus';
-import { getNodeWidth } from '../../flowchart-copy/updateNodeRects';
+import { getNodeWidth } from './updateNodeRect';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
