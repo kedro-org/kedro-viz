@@ -216,9 +216,6 @@ def _process_node_completion_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id")
-    if not node_id:
-        return
-
     status = event.get("status", "Success")
     duration = float(event.get("duration_sec", 0.0))
 
@@ -238,9 +235,6 @@ def _process_node_error_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id")
-    if not node_id:
-        return
-
     error_message = event.get("error", "Unknown error")
     traceback_message = event.get("traceback")
 
@@ -269,9 +263,6 @@ def _process_dataset_event(
         datasets: Dictionary of dataset info objects to update
     """
     node_id = event.get("node_id")
-    if not node_id:
-        return
-
     dataset_name = event.get("dataset", "")
     # Convert size_bytes to int, defaulting to 0 if conversion fails
     try:

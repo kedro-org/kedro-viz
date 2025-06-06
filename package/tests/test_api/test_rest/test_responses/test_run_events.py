@@ -149,13 +149,6 @@ class TestEventProcessing:
         assert nodes["node1"].status == NodeStatus.SUCCESS
         assert nodes["node1"].duration_sec == 10.5
 
-    def test_process_node_completion_missing_id(self):
-        """Test processing node completion without node_id."""
-        event = {"status": "Success"}
-        nodes = {}
-        _process_node_completion_event(event, nodes)
-        assert len(nodes) == 0
-
     def test_process_node_error(self):
         """Test processing node error events."""
         event = {"node_id": "node1", "error": "Node failed", "traceback": "trace"}
@@ -175,13 +168,6 @@ class TestEventProcessing:
         assert nodes["node1"].status == NodeStatus.FAIL
         assert nodes["node1"].duration_sec == 5.0  # Preserved
 
-    def test_process_node_error_missing_id(self):
-        """Test processing node error without node_id."""
-        event = {"error": "Node failed"}
-        nodes = {}
-        _process_node_error_event(event, nodes)
-        assert len(nodes) == 0
-
     def test_process_dataset_event(self):
         """Test processing dataset events."""
         event = {
@@ -196,13 +182,6 @@ class TestEventProcessing:
         assert "node1" in datasets
         assert datasets["node1"].name == "test_data"
         assert datasets["node1"].size_bytes == 1024
-
-    def test_process_dataset_event_missing_id(self):
-        """Test processing dataset event without node_id."""
-        event = {"dataset": "test_data"}
-        datasets = {}
-        _process_dataset_event(event, datasets)
-        assert len(datasets) == 0
 
     @patch("kedro_viz.api.rest.responses.run_events._hash_input_output")
     def test_process_dataset_error(self, mock_hash):
