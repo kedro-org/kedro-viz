@@ -96,8 +96,8 @@ def test_metadata(
 
 
 def test_get_run_status_exception_handling():
-    """Test exception handling in get_run_status function."""
-    from kedro_viz.api.rest.router import get_run_status
+    """Test exception handling in get_last_run_status function."""
+    from kedro_viz.api.rest.router import get_last_run_status
 
     # Mock get_run_status_response to raise an exception
     with patch(
@@ -107,7 +107,7 @@ def test_get_run_status_exception_handling():
             mock_get_run_status.side_effect = Exception("Test exception")
 
             # Call the function directly
-            result = asyncio.run(get_run_status())
+            result = asyncio.run(get_last_run_status())
 
             # Verify that the exception was logged
             mock_logger.exception.assert_called_once_with(
