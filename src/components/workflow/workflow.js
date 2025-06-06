@@ -241,7 +241,7 @@ export class Workflow extends Component {
 
     // Apply animating class to zoom wrapper
     select(this.wrapperRef.current).classed(
-      'pipeline-flowchart__zoom-wrapper--animating',
+      'pipeline-workflow-wrapper--animating',
       true
     );
 
@@ -665,7 +665,7 @@ export class Workflow extends Component {
 
         <div className="pipeline-wrapper">
           <div
-            className="pipeline-flowchart kedro"
+            className="pipeline-workflow kedro"
             ref={this.containerRef}
             onClick={this.handleChartClick}
           >
