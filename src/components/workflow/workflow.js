@@ -37,6 +37,8 @@ import {
   getViewExtents,
 } from '../../utils/view';
 import Tooltip from '../ui/tooltip';
+import PipelineLoading from '../pipeline-loading/pipeline-loading';
+
 import {
   DrawNodes,
   DrawEdges,
@@ -47,7 +49,6 @@ import {
 import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import ExportModal from '../export-modal';
-import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
 import Sidebar from '../sidebar';
@@ -728,13 +729,7 @@ export class Workflow extends Component {
               style={{ fontSize: '1.5em' }}
             />
           </div>
-          <div
-            className={classnames('pipeline-wrapper__loading', {
-              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
-            })}
-          >
-            <LoadingIcon visible={loading} />
-          </div>
+          <PipelineLoading loading={loading} sidebarVisibl={sidebarVisible} />
         </div>
         {displayExportBtn && <ExportModal />}
         <MetadataModal />
