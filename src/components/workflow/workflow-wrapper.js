@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { isLoading } from '../../selectors/loading';
 import ExportModal from '../export-modal';
-import FlowChart from '../flowchart-copy';
+import Workflow from './workflow';
 import LoadingIcon from '../icons/loading';
 import MetaData from '../metadata';
 import MetadataModal from '../metadata-modal';
@@ -26,7 +26,7 @@ export const WorkflowWrapper = ({
       {displayMetadataPanel && <MetaData />}
 
       <div className="pipeline-wrapper">
-        <FlowChart />
+        <Workflow />
         <div
           className={classnames('pipeline-wrapper__loading', {
             'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
