@@ -177,20 +177,22 @@ def _extract_pipeline_timing_and_status(
         None,
     )
     if start_event:
-        pipeline_info.start_time = start_event["timestamp"]
+        pipeline_info.start_time = start_event.get("timestamp", None)
 
-    # Find pipeline end event (last pipeline-related event)
-    end_events = [
-        event
-        for event in reversed(events)
-        if event.get("event")
-        in {EventType.AFTER_PIPELINE_RUN, EventType.ON_PIPELINE_ERROR}
-    ]
+    # Find most recent pipeline end event
+    end_event = next(
+        (
+            event
+            for event in reversed(events)
+            if event.get("event")
+            in {EventType.AFTER_PIPELINE_RUN, EventType.ON_PIPELINE_ERROR}
+        ),
+        None,
+    )
 
-    if end_events:
-        end_event = end_events[0]
+    if end_event:
         if "timestamp" in end_event:
-            pipeline_info.end_time = end_event["timestamp"]
+            pipeline_info.end_time = end_event.get("timestamp", None)
 
         if end_event.get("event") == EventType.ON_PIPELINE_ERROR:
             pipeline_info.status = PipelineStatus.FAILED
