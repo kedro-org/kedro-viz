@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { select } from 'd3-selection';
+import classnames from 'classnames';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
   toggleSingleModularPipelineExpanded,
@@ -17,6 +18,7 @@ import {
   getNodesWithInputParams,
   getInputOutputNodesForFocusedModularPipeline,
 } from '../../selectors/nodes';
+import { isLoading } from '../../selectors/loading';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
 import { getLayers } from '../../selectors/layers';
@@ -43,6 +45,12 @@ import {
   GraphSVG,
 } from '../draw';
 import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
+
+import ExportModal from '../export-modal';
+import LoadingIcon from '../icons/loading';
+import MetaData from '../metadata';
+import MetadataModal from '../metadata-modal';
+import Sidebar from '../sidebar';
 
 import './workflow.scss';
 
@@ -625,6 +633,10 @@ export class Workflow extends Component {
       chartSize,
       displayGlobalNavigation,
       displaySidebar,
+      loading,
+      sidebarVisible,
+      displayMetadataPanel,
+      displayExportBtn,
       layers,
       visibleGraph,
       clickedNode,
@@ -647,69 +659,85 @@ export class Workflow extends Component {
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
 
     return (
-      <div
-        className="pipeline-flowchart kedro"
-        ref={this.containerRef}
-        onClick={this.handleChartClick}
-      >
-        <GraphSVG
-          width={outerWidth}
-          height={outerHeight}
-          svgRef={this.svgRef}
-          wrapperRef={this.wrapperRef}
-          visibleGraph={visibleGraph}
-        >
-          <DrawLayersGroup
-            layers={layers}
-            layersRef={this.layersRef}
-            onLayerMouseOver={this.handleLayerMouseOver}
-            onLayerMouseOut={this.handleLayerMouseOut}
-          />
-          <DrawEdges
-            edges={edges}
-            clickedNode={clickedNode}
-            linkedNodes={linkedNodes}
-            focusMode={focusMode}
-            inputOutputDataEdges={inputOutputDataEdges}
-          />
-          <DrawNodes
-            nodes={nodes}
-            nodeActive={nodeActive}
-            nodeSelected={nodeSelected}
-            nodeTypeDisabled={nodeTypeDisabled}
-            hoveredParameters={hoveredParameters}
-            hoveredFocusMode={hoveredFocusMode}
-            nodesWithInputParams={nodesWithInputParams}
-            inputOutputDataNodes={inputOutputDataNodes}
-            focusMode={focusMode}
-            orientation={orientation}
-            onNodeClick={this.handleNodeClick}
-            onNodeMouseOver={this.handleNodeMouseOver}
-            onNodeMouseOut={this.handleNodeMouseOut}
-            onNodeFocus={this.handleNodeMouseOver}
-            onNodeBlur={this.handleNodeMouseOut}
-            onNodeKeyDown={this.handleNodeKeyDown}
-            onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
-            clickedNode={clickedNode}
-            linkedNodes={linkedNodes}
-            showRunStatus={true}
-            nodesStatus={nodesStatus}
-            dataSetsStatus={dataSetsStatus}
-          />
-        </GraphSVG>
-        <DrawLayerNamesGroup
-          layers={layers}
-          displayGlobalNavigation={displayGlobalNavigation}
-          displaySidebar={displaySidebar}
-          chartSize={chartSize}
-          orientation={orientation}
-          layerNamesRef={this.layerNamesRef}
-        />
-        <Tooltip
-          chartSize={chartSize}
-          {...this.state.tooltip}
-          style={{ fontSize: '1.5em' }}
-        />
+      <div className="kedro-pipeline">
+        {displaySidebar && <Sidebar />}
+        {displayMetadataPanel && <MetaData />}
+
+        <div className="pipeline-wrapper">
+          <div
+            className="pipeline-flowchart kedro"
+            ref={this.containerRef}
+            onClick={this.handleChartClick}
+          >
+            <GraphSVG
+              width={outerWidth}
+              height={outerHeight}
+              svgRef={this.svgRef}
+              wrapperRef={this.wrapperRef}
+              visibleGraph={visibleGraph}
+            >
+              <DrawLayersGroup
+                layers={layers}
+                layersRef={this.layersRef}
+                onLayerMouseOver={this.handleLayerMouseOver}
+                onLayerMouseOut={this.handleLayerMouseOut}
+              />
+              <DrawEdges
+                edges={edges}
+                clickedNode={clickedNode}
+                linkedNodes={linkedNodes}
+                focusMode={focusMode}
+                inputOutputDataEdges={inputOutputDataEdges}
+              />
+              <DrawNodes
+                nodes={nodes}
+                nodeActive={nodeActive}
+                nodeSelected={nodeSelected}
+                nodeTypeDisabled={nodeTypeDisabled}
+                hoveredParameters={hoveredParameters}
+                hoveredFocusMode={hoveredFocusMode}
+                nodesWithInputParams={nodesWithInputParams}
+                inputOutputDataNodes={inputOutputDataNodes}
+                focusMode={focusMode}
+                orientation={orientation}
+                onNodeClick={this.handleNodeClick}
+                onNodeMouseOver={this.handleNodeMouseOver}
+                onNodeMouseOut={this.handleNodeMouseOut}
+                onNodeFocus={this.handleNodeMouseOver}
+                onNodeBlur={this.handleNodeMouseOut}
+                onNodeKeyDown={this.handleNodeKeyDown}
+                onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
+                clickedNode={clickedNode}
+                linkedNodes={linkedNodes}
+                showRunStatus={true}
+                nodesStatus={nodesStatus}
+                dataSetsStatus={dataSetsStatus}
+              />
+            </GraphSVG>
+            <DrawLayerNamesGroup
+              layers={layers}
+              displayGlobalNavigation={displayGlobalNavigation}
+              displaySidebar={displaySidebar}
+              chartSize={chartSize}
+              orientation={orientation}
+              layerNamesRef={this.layerNamesRef}
+            />
+            <Tooltip
+              chartSize={chartSize}
+              {...this.state.tooltip}
+              style={{ fontSize: '1.5em' }}
+            />
+          </div>
+          <div
+            className={classnames('pipeline-wrapper__loading', {
+              'pipeline-wrapper__loading--sidebar-visible': sidebarVisible,
+            })}
+          >
+            <LoadingIcon visible={loading} />
+          </div>
+        </div>
+        {displayExportBtn && <ExportModal />}
+        <MetadataModal />
       </div>
     );
   }
@@ -737,6 +765,9 @@ export const mapStateToProps = (state, ownProps) => ({
   displayGlobalNavigation: state.display.globalNavigation,
   displaySidebar: state.display.sidebar,
   displayMetadataPanel: state.display.metadataPanel,
+  loading: isLoading(state),
+  sidebarVisible: state.visible.sidebar,
+  displayExportBtn: state.display.exportBtn,
   edges: state.graph.edges || emptyEdges,
   focusMode: state.visible.modularPipelineFocusMode,
   graphSize: state.graph.size || emptyGraphSize,
@@ -761,7 +792,6 @@ export const mapStateToProps = (state, ownProps) => ({
   runCommand: getRunCommand(state),
   nodesStatus: getNodesStatus(state),
   dataSetsStatus: getDatasetsStatus(state),
-  ...ownProps,
 });
 
 export const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -786,7 +816,6 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
   },
-  ...ownProps,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Workflow);
