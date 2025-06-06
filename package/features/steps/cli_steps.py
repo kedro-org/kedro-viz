@@ -34,7 +34,7 @@ def _add_package_pin(requirements_path: str, package_name: str, version: str) ->
     with open(requirements_path, "r") as req_file:
         requirements = req_file.readlines()
 
-    requirements.append(f"{package_name}=={version}\n")
+    requirements.append(f"{package_name}=={version}")
 
     with open(requirements_path, "w") as req_file:
         req_file.writelines(requirements)
@@ -88,14 +88,16 @@ def create_project_with_starter(context, starter):
 
 @given("I have installed the project's requirements")
 def install_project_requirements(context):
-    """Install project requirements for Kedro >=0.19 (requirements.txt at project root)."""
-    req_path = f"{context.root_project_dir}/requirements.txt"
-
+    """Run ``pip install -r requirements.txt``."""
     if context.kedro_version != "latest":
-        _add_package_pin(req_path, "numpy", "1.26.4")
-        _add_package_pin(req_path, "antlr4-python3-runtime", "4.9.3")
+        requirements_path = str(context.root_project_dir) + "/src/requirements.txt"
+        # numpy 2.0 breaks with old versions of pandas and this
+        # could be removed when the lowest version supported is updated
+        _add_package_pin(requirements_path, "numpy", "1.26.4")
+    else:
+        requirements_path = str(context.root_project_dir) + "/requirements.txt"
 
-    cmd = [context.pip, "install", "-r", req_path]
+    cmd = [context.pip, "install", "-r", requirements_path]
     res = run(cmd, env=context.env)
 
     if res.returncode != OK_EXIT_CODE:
@@ -135,21 +137,11 @@ def install_kedro(context, version):
         assert False
 
 
-def _build_viz_cmd(context, lite: bool = False):
-    """Construct `kedro viz` command (Kedro >=0.19)."""
-    cmd = [context.kedro, "viz"]
-    if lite:
-        cmd.append("--lite")
-    cmd.append("--no-browser")
-    return cmd
-
-
 @when("I execute the kedro viz run command")
 def exec_viz_command(context):
-    """Execute Kedro-Viz command in regular mode."""
-    cmd = _build_viz_cmd(context, lite=False)
+    """Execute Kedro-Viz command."""
     context.result = ChildTerminatingPopen(
-        cmd,
+        [context.kedro, "viz", "run", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
@@ -157,10 +149,9 @@ def exec_viz_command(context):
 
 @when("I execute the kedro viz run command with lite option")
 def exec_viz_lite_command(context):
-    """Execute Kedro-Viz command in lite mode."""
-    cmd = _build_viz_cmd(context, lite=True)
+    """Execute Kedro-Viz command."""
     context.result = ChildTerminatingPopen(
-        cmd,
+        [context.kedro, "viz", "run", "--lite", "--no-browser"],
         env=context.env,
         cwd=str(context.root_project_dir),
     )
@@ -169,7 +160,7 @@ def exec_viz_lite_command(context):
 @then("kedro-viz should start successfully")
 def check_kedroviz_up(context):
     """Check that Kedro-Viz is up and responding to requests."""
-    max_duration = 50  # 50 seconds
+    max_duration = 30  # 30 seconds
     end_by = time() + max_duration
 
     while time() < end_by:

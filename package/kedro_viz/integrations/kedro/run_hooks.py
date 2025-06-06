@@ -3,7 +3,7 @@
 import logging
 import traceback
 from time import perf_counter
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Optional, Union
 
 from kedro.framework.hooks import hook_impl
 from kedro.pipeline.node import Node as KedroNode
@@ -23,20 +23,20 @@ class PipelineRunStatusHook:
 
     def __init__(self):
         # Track times, events, and context for errors
-        self._node_start: Dict[str, float] = {}
-        self._events: List[Dict[str, Any]] = []
-        self.datasets: Dict[str, Any] = {}
+        self._node_start: dict[str, float] = {}
+        self._events: list[dict[str, Any]] = []
+        self.datasets: dict[str, Any] = {}
         self._current_node: Optional[Any] = None
         self._current_dataset: Optional[str] = None
         self._current_operation: Optional[str] = None
-        self._all_nodes: List[KedroNode] = []
-        self._started_nodes: Set[str] = set()
+        self._all_nodes: list[KedroNode] = []
+        self._started_nodes: set[str] = set()
 
     def _write_events(self) -> None:
         """Persist events list to the project's .viz JSON file."""
         write_events(self._events)
 
-    def _add_event(self, event: Dict[str, Any], flush: bool = False) -> None:
+    def _add_event(self, event: dict[str, Any], flush: bool = False) -> None:
         """Append one event; flush to disk when requested."""
         self._events.append(event)
         if flush:
