@@ -1,12 +1,7 @@
 import { select } from 'd3-selection';
 
 import { renderNodeDetailsContainer } from './renderNodeDetailsContainer';
-
-export const MINIMUM_WIDTH = 180;
-
-export function getNodeWidth(node) {
-  return Math.max(node.width - 5, MINIMUM_WIDTH);
-}
+import { getNodeWidth } from './getNodeRectWidth';
 
 /**
  * Sets the size and position of the given node rects
