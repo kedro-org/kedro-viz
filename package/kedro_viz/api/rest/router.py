@@ -67,7 +67,7 @@ async def get_version():
 
 
 @router.get("/run-status", response_model=RunStatusAPIResponse)
-async def get_run_status():
+async def get_last_run_status():
     """Get run status data for pipeline visualization.
 
     This endpoint provides access to Kedro pipeline run status in structured format.

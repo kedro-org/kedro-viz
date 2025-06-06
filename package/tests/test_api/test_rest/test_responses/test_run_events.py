@@ -183,6 +183,36 @@ class TestEventProcessing:
         assert datasets["node1"].name == "test_data"
         assert datasets["node1"].size_bytes == 1024
 
+    def test_process_dataset_event_invalid_size_bytes(self):
+        """Test processing dataset events with invalid size_bytes values."""
+        # Test with non-numeric string
+        event = {
+            "node_id": "node1",
+            "dataset": "test_data",
+            "size_bytes": "invalid",
+            "event": "after_dataset_loaded",
+        }
+        datasets = {}
+        _process_dataset_event(event, datasets)
+
+        assert "node1" in datasets
+        assert datasets["node1"].name == "test_data"
+        assert datasets["node1"].size_bytes == 0  # Should default to 0
+
+        # Test with None value
+        event = {
+            "node_id": "node2",
+            "dataset": "test_data2",
+            "size_bytes": None,
+            "event": "after_dataset_loaded",
+        }
+        datasets = {}
+        _process_dataset_event(event, datasets)
+
+        assert "node2" in datasets
+        assert datasets["node2"].name == "test_data2"
+        assert datasets["node2"].size_bytes == 0  # Should default to 0
+
     @patch("kedro_viz.api.rest.responses.run_events._hash_input_output")
     def test_process_dataset_error(self, mock_hash):
         """Test processing dataset error events."""
