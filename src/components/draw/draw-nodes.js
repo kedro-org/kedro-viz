@@ -4,6 +4,8 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
+import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
+import { workFlowStatuses } from '../workflow/workflow';
 import './styles/_node.scss';
 
 /**
@@ -70,7 +72,22 @@ export function DrawNodes({
 
     enterNodes
       .attr('tabindex', '0')
-      .attr('class', 'pipeline-node')
+      .attr('class', (node) => {
+        let baseClass = 'pipeline-node';
+        if (node.type) {
+          baseClass += ` pipeline-node--${node.type}`;
+        }
+
+        debugger
+        // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+        const statusSource =
+          node.type === 'data' ? dataSetsStatus : nodesStatus;
+        // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+        let finalStatus =
+          getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
+        baseClass += ` pipeline-node--status-${finalStatus}`;
+        return baseClass;
+      })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
       .attr('data-id', (node) => node.id)
       .classed(

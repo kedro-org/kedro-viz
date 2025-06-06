@@ -46,6 +46,8 @@ import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import './workflow.scss';
 
+export const workFlowStatuses = ['success', 'failed'];
+
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
