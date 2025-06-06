@@ -7,7 +7,7 @@ import { getVersion } from '../../utils';
 import FeatureHints from '../feature-hints';
 import GlobalToolbar from '../global-toolbar';
 import FlowChartWrapper from '../flowchart-wrapper';
-import WorkflowWrapper from '../workflow-wrapper/workflow-wrapper';
+import WorkflowWrapper from '../workflow/workflow-wrapper';
 import SettingsModal from '../settings-modal';
 import UpdateReminder from '../update-reminder';
 import ShareableUrlModal from '../shareable-url-modal';
@@ -66,9 +66,7 @@ export const Wrapper = ({ displayGlobalNavigation, theme }) => {
                 <FlowChartWrapper />
                 <FeatureHints />
               </Route>
-              <Route
-                to={{ pathname: `${sanitizedPathname()}workflow` }}
-              >
+              <Route to={{ pathname: `${sanitizedPathname()}workflow` }}>
                 <WorkflowWrapper />
               </Route>
             </Switch>
