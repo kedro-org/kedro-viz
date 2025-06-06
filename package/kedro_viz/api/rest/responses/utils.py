@@ -12,7 +12,7 @@ from fastapi.responses import ORJSONResponse
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound=Enum)
+EnumType = TypeVar("EnumType", bound=Enum)
 
 
 class EnhancedORJSONResponse(ORJSONResponse):
@@ -48,7 +48,7 @@ def get_encoded_response(response: Any) -> bytes:
     return encoded_response
 
 
-def convert_status_to_enum(status: Optional[str], default: T) -> T:
+def convert_status_to_enum(status: Optional[str], default: EnumType) -> EnumType:
     """Convert string status to enum member; case-insensitive match on values."""
     logger = logging.getLogger(__name__)
     if not status:

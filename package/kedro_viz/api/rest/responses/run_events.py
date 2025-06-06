@@ -215,7 +215,7 @@ def _process_node_completion_event(
         event: Event dictionary containing node completion data
         nodes: Dictionary of node info objects to update
     """
-    node_id = event.get("node_id")
+    node_id = event.get("node_id", "unknown_node")
     status = event.get("status", "Success")
     duration = float(event.get("duration_sec", 0.0))
 
@@ -234,7 +234,7 @@ def _process_node_error_event(
         event: Event dictionary containing node error data
         nodes: Dictionary of node info objects to update
     """
-    node_id = event.get("node_id")
+    node_id = event.get("node_id", "unknown_node")
     error_message = event.get("error", "Unknown error")
     traceback_message = event.get("traceback")
 
@@ -262,7 +262,7 @@ def _process_dataset_event(
         event: Event dictionary containing dataset data
         datasets: Dictionary of dataset info objects to update
     """
-    node_id = event.get("node_id")
+    node_id = event.get("node_id", "unknown_dataset")
     dataset_name = event.get("dataset", "")
     # Convert size_bytes to int, defaulting to 0 if conversion fails
     try:
