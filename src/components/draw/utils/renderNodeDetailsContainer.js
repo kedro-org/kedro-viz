@@ -1,11 +1,11 @@
 import {
   formatDuration,
   formatSize,
-} from '../../flowchart-copy/workflow-utils/format';
+} from '../../workflow/workflow-utils/format';
 import {
   getNodeStatusInfo,
   getDatasetStatusInfo,
-} from '../../flowchart-copy/workflow-utils/getStatus';
+} from '../../workflow/workflow-utils/getStatus';
 import { getNodeWidth } from './getNodeRectWidth';
 
 /**
