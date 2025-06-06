@@ -78,14 +78,16 @@ export function DrawNodes({
           baseClass += ` pipeline-node--${node.type}`;
         }
 
-        debugger
-        // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
-        const statusSource =
-          node.type === 'data' ? dataSetsStatus : nodesStatus;
-        // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
-        let finalStatus =
-          getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
-        baseClass += ` pipeline-node--status-${finalStatus}`;
+        if (showRunStatus) {
+          // Get the correct status source (dataSetsStatus for data nodes, nodesStatus otherwise),
+          const statusSource =
+            node.type === 'data' ? dataSetsStatus : nodesStatus;
+          // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
+          let finalStatus =
+            getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
+          baseClass += ` pipeline-node--status-${finalStatus}`;
+        }
+
         return baseClass;
       })
       .attr('transform', (node) => `translate(${node.x}, ${node.y})`)
@@ -155,6 +157,8 @@ export function DrawNodes({
     onNodeKeyDown,
     onParamsIndicatorMouseOver,
     orientation,
+    dataSetsStatus,
+    nodesStatus,
   ]);
 
   // --- Update node classes based on state (active, selected, etc) ---
