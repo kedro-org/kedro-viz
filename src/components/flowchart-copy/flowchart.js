@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import { select } from 'd3-selection';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
@@ -31,7 +30,6 @@ import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
 import { getRunCommand } from '../../selectors/run-command';
 import { getNodesStatus, getDatasetsStatus } from '../../selectors/status';
-import { drawNodes, drawEdges, drawLayers, drawLayerNames } from './draw';
 import {
   viewing,
   isOrigin,
@@ -42,15 +40,15 @@ import {
   setViewExtents,
   getViewExtents,
 } from '../../utils/view';
-import { getHeap } from '../../tracking/index';
-import { getDataTestAttribute } from '../../utils/get-data-test-attribute';
 import Tooltip from '../ui/tooltip';
-import { SlicedPipelineActionBar } from '../sliced-pipeline-action-bar/sliced-pipeline-action-bar';
-import { SlicedPipelineNotification } from '../sliced-pipeline-notification/sliced-pipeline-notification';
-import { FeedbackButton } from '../feedback-button/feedback-button';
-import { FeedbackForm } from '../feedback-form/feedback-form';
-import { loadLocalStorage } from '../../store/helpers';
-import { localStorageFeedbackSeen } from '../../config';
+import {
+  DrawNodes,
+  DrawEdges,
+  DrawLayerNamesGroup,
+  DrawLayersGroup,
+  GraphSVG,
+} from '../draw';
+import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import './styles/flowchart.scss';
 
@@ -91,21 +89,12 @@ export class FlowChart extends Component {
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
-    this.edgesRef = React.createRef();
-    this.nodesRef = React.createRef();
+    this.slicedPipelineActionBarRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
-    this.slicedPipelineActionBarRef = React.createRef();
-
-    this.DURATION = 700;
-    this.LAYER_NAME_DURATION = 0.05;
-    this.MARGIN = 500;
-    this.MIN_SCALE = 0.8;
-    this.MAX_SCALE = 2;
   }
 
   componentDidMount() {
-    this.selectD3Elements();
     this.updateChartSize();
 
     this.view = viewing({
@@ -185,42 +174,6 @@ export class FlowChart extends Component {
       this.updateChartSize();
     }
 
-    if (changed('layers', 'chartSize', 'orientation')) {
-      drawLayers.call(this);
-      drawLayerNames.call(this);
-    }
-
-    if (
-      changed(
-        'edges',
-        'clickedNode',
-        'linkedNodes',
-        'focusMode',
-        'inputOutputDataEdges'
-      )
-    ) {
-      drawEdges.call(this, changed);
-    }
-
-    if (
-      changed(
-        'nodes',
-        'clickedNode',
-        'linkedNodes',
-        'nodeTypeDisabled',
-        'nodeActive',
-        'nodeSelected',
-        'hoveredParameters',
-        'nodesWithInputParams',
-        'focusMode',
-        'inputOutputDataNodes',
-        'hoveredFocusMode',
-        'status'
-      )
-    ) {
-      drawNodes.call(this, changed);
-    }
-
     if (changed('edges', 'nodes', 'layers', 'chartSize', 'clickedNode')) {
       // Don't zoom out when the metadata or code panels are opened or closed
       const metaSidebarViewChanged =
@@ -240,8 +193,6 @@ export class FlowChart extends Component {
         codeViewChangedWithoutMetaSidebar ||
         clickedNodeChangedWithoutReFocus
       ) {
-        drawNodes.call(this, changed);
-        drawEdges.call(this, changed);
         return;
       }
 
@@ -261,20 +212,6 @@ export class FlowChart extends Component {
       objectB &&
       props.some((prop) => objectA[prop] !== objectB[prop])
     );
-  }
-
-  /**
-   * Create D3 element selectors
-   */
-  selectD3Elements() {
-    this.el = {
-      svg: select(this.svgRef.current),
-      wrapper: select(this.wrapperRef.current),
-      edgeGroup: select(this.edgesRef.current),
-      nodeGroup: select(this.nodesRef.current),
-      layerGroup: select(this.layersRef.current),
-      layerNameGroup: select(this.layerNamesRef.current),
-    };
   }
 
   /**
@@ -341,14 +278,14 @@ export class FlowChart extends Component {
     const graphSize = this.props.graphSize;
     const width = graphSize.width + graphSize.marginx * 2;
     const height = graphSize.height + graphSize.marginy * 2;
-    this.el.svg.attr('viewBox', `0 0 ${width} ${height}`);
+    select(this.svgRef.current).attr('viewBox', `0 0 ${width} ${height}`);
   };
 
   /**
    * Remove viewBox once printing is done
    */
   handleAfterPrint = () => {
-    this.el.svg.attr('viewBox', null);
+    select(this.svgRef.current).attr('viewBox', null);
   };
 
   /**
@@ -359,27 +296,30 @@ export class FlowChart extends Component {
     const { k: scale, x, y } = transform;
 
     // Apply animating class to zoom wrapper
-    this.el.wrapper.classed(
+    select(this.wrapperRef.current).classed(
       'pipeline-flowchart__zoom-wrapper--animating',
       true
     );
 
     // Update layer label y positions
-    if (this.el.layerNames) {
-      this.el.layerNames.style('transform', (d) => {
+    if (this.layerNamesRef?.current) {
+      const layerNames = this.layerNamesRef.current.querySelectorAll(
+        '.pipeline-layer-name'
+      );
+      this.props.layers.forEach((layer, i) => {
+        const el = layerNames[i];
+        if (!el) {
+          return;
+        }
         if (this.props.orientation === 'vertical') {
-          const updateY = y + (d.y + d.height / 2) * scale;
-          return `translateY(${updateY}px)`; // Use translateY for vertical layout
+          const updateY = y + (layer.y + (layer.height || 0) / 2) * scale;
+          el.style.transform = `translateY(${updateY}px)`;
         } else {
-          // Horizontal orientation
-          const updateX = x + (d.x + d.width / 2) * scale;
-          return `translateX(${updateX}px) translateX(-50%) `; // Use translateX for horizontal layout
+          const updateX = x + (layer.x + (layer.width || 0) / 2) * scale;
+          el.style.transform = `translateX(${updateX}px) translateX(-50%)`;
         }
       });
     }
-
-    // Hide the tooltip so it doesn't get misaligned to its node
-    this.hideTooltip();
 
     // Update extents
     this.updateViewExtents(transform);
@@ -402,7 +342,7 @@ export class FlowChart extends Component {
    * Called when the view changes have ended (i.e. after transition ends)
    */
   onViewChangeEnd() {
-    this.el.wrapper.classed(
+    select(this.wrapperRef.current).classed(
       'pipeline-flowchart__zoom-wrapper--animating',
       false
     );
@@ -431,7 +371,7 @@ export class FlowChart extends Component {
 
     const leftSidebarOffset = sidebarWidth / scale;
     const rightSidebarOffset = (metaSidebarWidth + codeSidebarWidth) / scale;
-    const margin = this.MARGIN;
+    const margin = MARGIN;
 
     // Find the relative minimum scale to fit whole graph
     const minScale = Math.min(
@@ -447,8 +387,8 @@ export class FlowChart extends Component {
         maxY: graphHeight + margin,
       },
       scale: {
-        minK: this.MIN_SCALE * minScale,
-        maxK: this.MAX_SCALE,
+        minK: MIN_SCALE * minScale,
+        maxK: MAX_SCALE,
       },
     });
   }
@@ -473,7 +413,7 @@ export class FlowChart extends Component {
     setViewTransform(
       this.view,
       { x: chartZoom.x, y: chartZoom.y, k: chartZoom.scale },
-      chartZoom.transition ? this.DURATION * 0.3 : 0,
+      chartZoom.transition ? DURATION * 0.3 : 0,
       chartZoom.relative
     );
   }
@@ -526,7 +466,7 @@ export class FlowChart extends Component {
     setViewTransformExact(
       this.view,
       transform,
-      isFirstTransform ? 0 : this.DURATION,
+      isFirstTransform ? 0 : DURATION,
       false
     );
   }
@@ -659,10 +599,10 @@ export class FlowChart extends Component {
     this.props.onApplySlice(false);
     this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
 
-    getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
-      fromNodeId,
-      toNodeId,
-    });
+    // getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
+    //   fromNodeId,
+    //   toNodeId,
+    // });
   };
 
   /**
@@ -708,18 +648,14 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleLayerMouseOver = (event, node) => {
-    if (node) {
-      this.setState({
-        activeLayer: node.name,
-      });
+    if (!node) {
+      return;
     }
-
-    const { activeLayer } = this.state;
     const layerName = document.querySelector(
       `[data-id="layer-label--${node.name}"]`
     );
 
-    if (activeLayer && layerName) {
+    if (layerName) {
       layerName.classList.add('pipeline-layer-name--active');
     }
   };
@@ -730,20 +666,18 @@ export class FlowChart extends Component {
    * @param {Object} node Datum for a single node
    */
   handleLayerMouseOut = (event, node) => {
-    const { activeLayer } = this.state;
+    if (!node) {
+      return;
+    }
     const layerName = document.querySelector(
       `[data-id="layer-label--${node.name}"]`
     );
-
-    if (activeLayer && layerName) {
+    if (layerName) {
       layerName.classList.remove('pipeline-layer-name--active');
     }
-
-    if (node) {
-      this.setState({
-        activeLayer: undefined,
-      });
-    }
+    this.setState({
+      activeLayer: undefined,
+    });
   };
 
   /**
@@ -832,68 +766,83 @@ export class FlowChart extends Component {
       displaySidebar,
       layers,
       visibleGraph,
+      clickedNode,
+      nodes,
+      nodeActive,
+      nodeSelected,
+      nodeTypeDisabled,
+      hoveredParameters,
+      hoveredFocusMode,
+      nodesWithInputParams,
+      inputOutputDataNodes,
+      focusMode,
+      orientation,
+      edges,
+      linkedNodes,
+      inputOutputDataEdges,
+      nodesStatus,
+      dataSetsStatus,
     } = this.props;
     const { outerWidth = 0, outerHeight = 0 } = chartSize;
+
     return (
       <div
         className="pipeline-flowchart kedro"
         ref={this.containerRef}
         onClick={this.handleChartClick}
       >
-        <svg
-          id="pipeline-graph"
-          className="pipeline-flowchart__graph"
+        <GraphSVG
           width={outerWidth}
           height={outerHeight}
-          ref={this.svgRef}
+          svgRef={this.svgRef}
+          wrapperRef={this.wrapperRef}
+          visibleGraph={visibleGraph}
         >
-          <g
-            id="zoom-wrapper"
-            className={classnames('pipeline-zoom-wrapper', {
-              'pipeline-zoom-wrapper--hidden': !visibleGraph,
-            })}
-            ref={this.wrapperRef}
-          >
-            <defs>
-              {[
-                'arrowhead',
-                'arrowhead--input',
-                'arrowhead--accent--input',
-                'arrowhead--accent',
-              ].map((id) => (
-                <marker
-                  id={`pipeline-${id}`}
-                  key={id}
-                  className={`pipeline-flowchart__${id}`}
-                  viewBox="0 0 10 10"
-                  refX="7"
-                  refY="5"
-                  markerUnits="strokeWidth"
-                  markerWidth="8"
-                  markerHeight="6"
-                  orient="auto"
-                >
-                  <path d="M 0 0 L 10 5 L 0 10 L 4 5 z" />
-                </marker>
-              ))}
-            </defs>
-            <g className="pipeline-flowchart__layers" ref={this.layersRef} />
-            <g className="pipeline-flowchart__edges" ref={this.edgesRef} />
-            <g
-              id="nodes"
-              className="pipeline-flowchart__nodes"
-              ref={this.nodesRef}
-            />
-          </g>
-        </svg>
-        <ul
-          className={classnames('pipeline-flowchart__layer-names', {
-            'pipeline-flowchart__layer-names--visible': layers.length,
-            'pipeline-flowchart__layer-names--no-global-toolbar':
-              !displayGlobalNavigation,
-            'pipeline-flowchart__layer-names--no-sidebar': !displaySidebar,
-          })}
-          ref={this.layerNamesRef}
+          <DrawLayersGroup
+            layers={layers}
+            layersRef={this.layersRef}
+            onLayerMouseOver={this.handleLayerMouseOver}
+            onLayerMouseOut={this.handleLayerMouseOut}
+          />
+          <DrawEdges
+            edges={edges}
+            clickedNode={clickedNode}
+            linkedNodes={linkedNodes}
+            focusMode={focusMode}
+            inputOutputDataEdges={inputOutputDataEdges}
+          />
+          <DrawNodes
+            nodes={nodes}
+            nodeActive={nodeActive}
+            nodeSelected={nodeSelected}
+            nodeTypeDisabled={nodeTypeDisabled}
+            hoveredParameters={hoveredParameters}
+            hoveredFocusMode={hoveredFocusMode}
+            nodesWithInputParams={nodesWithInputParams}
+            inputOutputDataNodes={inputOutputDataNodes}
+            focusMode={focusMode}
+            orientation={orientation}
+            onNodeClick={this.handleNodeClick}
+            onNodeMouseOver={this.handleNodeMouseOver}
+            onNodeMouseOut={this.handleNodeMouseOut}
+            onNodeFocus={this.handleNodeMouseOver}
+            onNodeBlur={this.handleNodeMouseOut}
+            onNodeKeyDown={this.handleNodeKeyDown}
+            onParamsIndicatorMouseOver={this.handleParamsIndicatorMouseOver}
+            clickedNode={clickedNode}
+            linkedNodes={linkedNodes}
+            showRunStatus={true}
+            nodesStatus={nodesStatus}
+            dataSetsStatus={dataSetsStatus}
+          />
+        </GraphSVG>
+        <DrawLayerNamesGroup
+          layers={layers}
+          displayGlobalNavigation={displayGlobalNavigation}
+          displaySidebar={displaySidebar}
+          chartSize={chartSize}
+          orientation={orientation}
+          layerNamesRef={this.layerNamesRef}
         />
         <Tooltip
           chartSize={chartSize}

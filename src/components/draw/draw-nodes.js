@@ -33,6 +33,9 @@ export function DrawNodes({
   isInputOutputNode = () => false,
   clickedNode = null,
   linkedNodes = {},
+  showRunStatus = false,
+  nodesStatus = {},
+  dataSetsStatus = {},
 }) {
   const groupRef = useRef();
 
@@ -226,12 +229,14 @@ export function DrawNodes({
         }
       });
 
-    enterNodes.select('.pipeline-node__bg').call(updateNodeRects);
+    enterNodes
+      .select('.pipeline-node__bg')
+      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
     updateNodes
       .select('.pipeline-node__bg')
       .transition('node-rect')
       .duration((node) => (node.showText ? 200 : 600))
-      .call(updateNodeRects);
+      .call(updateNodeRects, showRunStatus, nodesStatus, dataSetsStatus);
     allNodes
       .select('.pipeline-node__parameter-indicator')
       .classed(
