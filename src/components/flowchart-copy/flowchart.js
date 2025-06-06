@@ -12,11 +12,6 @@ import {
   toggleNodeClicked,
 } from '../../actions/nodes';
 import {
-  applySlicePipeline,
-  setSlicePipeline,
-  resetSlicePipeline,
-} from '../../actions/slice';
-import {
   getNodeActive,
   getNodeSelected,
   getNodesWithInputParams,
@@ -24,7 +19,6 @@ import {
 } from '../../selectors/nodes';
 import { getInputOutputDataEdges } from '../../selectors/edges';
 import { getChartSize, getChartZoom } from '../../selectors/layout';
-import { getSlicedPipeline } from '../../selectors/sliced-pipeline';
 import { getLayers } from '../../selectors/layers';
 import { getLinkedNodes } from '../../selectors/linked-nodes';
 import { getVisibleMetaSidebar } from '../../selectors/metadata';
@@ -52,18 +46,6 @@ import { DURATION, MARGIN, MIN_SCALE, MAX_SCALE } from '../draw/utils/config';
 
 import './styles/flowchart.scss';
 
-export const feedbacks = {
-  slicingPipeline: {
-    formTitle: [
-      'How satisfied are you with',
-      <br key="1" />,
-      'pipeline slicing?',
-    ],
-    buttonTittle: 'Feedback for pipeline slicing',
-    usageContext: 'slicing-pipeline',
-  },
-};
-
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */
@@ -74,14 +56,6 @@ export class FlowChart extends Component {
     this.state = {
       tooltip: { visible: false },
       activeLayer: undefined,
-      slicedPipelineState: {
-        from: null,
-        to: null,
-        range: [],
-      },
-      showSlicingNotification: false,
-      resetSlicingPipelineBtnClicked: false,
-      showFeedbackForm: false,
     };
     this.onViewChange = this.onViewChange.bind(this);
     this.onViewChangeEnd = this.onViewChangeEnd.bind(this);
@@ -89,7 +63,6 @@ export class FlowChart extends Component {
     this.containerRef = React.createRef();
     this.svgRef = React.createRef();
     this.wrapperRef = React.createRef();
-    this.slicedPipelineActionBarRef = React.createRef();
     this.layersRef = React.createRef();
     this.layerNamesRef = React.createRef();
   }
@@ -115,51 +88,12 @@ export class FlowChart extends Component {
     }
   }
 
-  /**
-   *  Updates the state of the sliced pipeline with new values for 'from', 'to', and 'range'.
-   */
-  updateSlicedPipelineState(from, to, range) {
-    this.setState({
-      slicedPipelineState: {
-        ...this.state.slicedPipelineState,
-        from,
-        to,
-        range,
-      },
-    });
-  }
-
   componentWillUnmount() {
     this.removeGlobalEventListeners();
   }
 
   componentDidUpdate(prevProps) {
     this.update(prevProps);
-
-    const { from, to } = this.state.slicedPipelineState;
-
-    const isSlicedPipelineChanged =
-      this.props.slicedPipeline !== prevProps.slicedPipeline;
-    const isSlicedPipelineEmpty = this.props.slicedPipeline.length === 0;
-    const isSlicedPipelineStateDefined = from !== null && to !== null;
-
-    if (isSlicedPipelineChanged) {
-      // Reset local state to null if the redux state's SlicedPipeline is empty,
-      // but the local state still has 'from' and 'to' values defined.
-      if (isSlicedPipelineEmpty && isSlicedPipelineStateDefined) {
-        this.updateSlicedPipelineState(null, null, []);
-      } else {
-        this.updateSlicedPipelineState(from, to, this.props.slicedPipeline);
-      }
-    }
-
-    // Hide slicing notification if metadata panel is closed using button
-    if (
-      this.props.clickedNode !== prevProps.clickedNode &&
-      !this.props.clickedNode
-    ) {
-      this.setState({ showSlicingNotification: false });
-    }
   }
 
   /**
@@ -495,21 +429,9 @@ export class FlowChart extends Component {
       onClickToExpandModularPipeline(id);
     } else {
       this.handleSingleNodeClick(node);
-
-      // the hold shift only happens on clicking a node first
-      // but only if no filters are currently applied.
-      if (event.shiftKey && !this.props.isSlicingPipelineApplied) {
-        this.handleMultipleNodesClick(node);
-      }
     }
 
     event.stopPropagation();
-  };
-
-  resetSlicedPipeline = () => {
-    this.props.onResetSlicePipeline();
-    this.updateSlicedPipelineState(null, null, []);
-    this.props.toSelectedPipeline();
   };
 
   handleSingleNodeClick = (node) => {
@@ -524,25 +446,6 @@ export class FlowChart extends Component {
     // Handle metadata panel display or node click toggle
     displayMetadataPanel ? onLoadNodeData(id) : onToggleNodeClicked(id);
     toSelectedNode(node);
-
-    const { from, to, range } = this.state.slicedPipelineState;
-
-    this.updateSlicedPipelineState(id, to, range);
-
-    if (!this.props.isSlicingPipelineApplied) {
-      // Show notification only when slicing is not applied
-      this.setState({ showSlicingNotification: true });
-    }
-
-    // Clicking on a single node should reset the sliced pipeline
-    // if both "from" and "to" are defined and slicing is not yet applied
-    if (from && to && !this.props.isSlicingPipelineApplied) {
-      this.props.onResetSlicePipeline();
-      // Also, prepare the "from" node for the next slicing action
-      this.updateSlicedPipelineState(id, null, []);
-      // Hide notification
-      this.setState({ showSlicingNotification: true });
-    }
   };
 
   /**
@@ -572,39 +475,6 @@ export class FlowChart extends Component {
       : { updatedFromNodeId: toNodeId, updatedToNodeId: fromNodeId };
   };
 
-  handleMultipleNodesClick = (node) => {
-    // Close meta data panel
-    this.props.onLoadNodeData(null);
-
-    const { from: fromNodeIdState, range } = this.state.slicedPipelineState;
-
-    const fromNodeId = fromNodeIdState || node.id;
-    const toNodeId = node.id;
-
-    this.updateSlicedPipelineState(fromNodeId, toNodeId, range);
-
-    const { updatedFromNodeId, updatedToNodeId } = this.determineNodesOrder(
-      fromNodeId,
-      toNodeId
-    );
-
-    // Slice the pipeline based on the determined node order
-    // If the order could not be determined, use the original selection
-    if (updatedFromNodeId && updatedToNodeId) {
-      this.props.onSlicePipeline(updatedFromNodeId, updatedToNodeId);
-    } else {
-      this.props.onSlicePipeline(fromNodeId, toNodeId);
-    }
-
-    this.props.onApplySlice(false);
-    this.setState({ showSlicingNotification: false }); // Hide notification after selecting the second node
-
-    // getHeap().track(getDataTestAttribute('flowchart', 'multiple-nodes-click'), {
-    //   fromNodeId,
-    //   toNodeId,
-    // });
-  };
-
   /**
    * Remove a node's focus state and dim linked nodes
    */
@@ -614,17 +484,6 @@ export class FlowChart extends Component {
       this.props.onLoadNodeData(null);
       // To reset URL to current active pipeline when click outside of a node on flowchart
       this.props.toSelectedPipeline();
-    }
-
-    // Determine if the click event occurred on the slice button.
-    const isSliceButtonClicked =
-      this.slicedPipelineActionBarRef.current &&
-      this.slicedPipelineActionBarRef.current.contains(event.target);
-
-    // Check if the pipeline is sliced, no slice button is clicked, and no filters are applied
-    if (!isSliceButtonClicked && !this.props.isSlicingPipelineApplied) {
-      this.resetSlicedPipeline();
-      this.setState({ showSlicingNotification: false });
     }
   };
 
@@ -896,9 +755,6 @@ export const mapStateToProps = (state, ownProps) => ({
   visibleSidebar: state.visible.sidebar,
   visibleCode: state.visible.code,
   visibleMetaSidebar: getVisibleMetaSidebar(state),
-  slicedPipeline: getSlicedPipeline(state),
-  isSlicingPipelineApplied: state.slice.apply,
-  visibleSlicing: state.visible.slicing,
   nodeReFocus: state.behaviour.reFocus,
   runCommand: getRunCommand(state),
   nodesStatus: getNodesStatus(state),
@@ -927,15 +783,6 @@ export const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onUpdateZoom: (transform) => {
     dispatch(updateZoom(transform));
-  },
-  onApplySlice: (apply) => {
-    dispatch(applySlicePipeline(apply));
-  },
-  onSlicePipeline: (fromID, toID) => {
-    dispatch(setSlicePipeline(fromID, toID));
-  },
-  onResetSlicePipeline: () => {
-    dispatch(resetSlicePipeline());
   },
   ...ownProps,
 });
