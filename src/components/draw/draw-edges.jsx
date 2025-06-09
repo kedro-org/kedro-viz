@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import * as d3 from 'd3';
 import { interpolatePath } from 'd3-interpolate-path';
 import { select } from 'd3-selection';
 import { curveBasis, line } from 'd3-shape';
@@ -29,7 +28,7 @@ export function DrawEdges({
   );
 
   useEffect(() => {
-    const svg = d3.select(groupRef.current);
+    const svg = select(groupRef.current);
     // DATA JOIN
     const edgeSel = svg.selectAll('.pipeline-edge').data(edges, (d) => d.id);
 

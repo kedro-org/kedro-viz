@@ -27,16 +27,18 @@ export function updateGraph(graph) {
   };
 }
 
-/**
- * Assign layout engine to use based on the newgraph
- * @param {Object} instance Worker parent instance
- * @param {Object} state A subset of main state
- * @return {Function} Promise function
- */
-const layout = async (instance, state) => instance.graphNew(state);
+// Ensure layoutWorker is assigned
+const layoutWorker = preventWorkerQueues(worker, async (instance, state) => {
+  return new Promise((resolve) => {
+    instance.onmessage = (event) => {
+      console.log("🎯 Received result from worker:", event.data);
+      resolve(event.data);
+    };
+    console.log("📩 Sending state to worker:", state);
+    instance.postMessage({ action: "graphNew", data: state });
+  });
+});
 
-// Prepare new layout worker
-const layoutWorker = preventWorkerQueues(worker, layout);
 
 /**
  * Async action to calculate graph layout in a web worker

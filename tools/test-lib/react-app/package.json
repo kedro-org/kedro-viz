@@ -10,7 +10,8 @@
   "jest": {
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js",
+      "^@quantumblack/kedro-viz$": "<rootDir>/__mocks__/kedroVizMock.js"
     },
     "transformIgnorePatterns": [
       "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
@@ -18,7 +19,7 @@
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"
     ],
-    "testEnvironment": "jest-environment-jsdom-global"
+    "testEnvironment": "jsdom"
   },
   "dependencies": {
     "@quantumblack/kedro-viz": "file:kedro-viz.tgz",

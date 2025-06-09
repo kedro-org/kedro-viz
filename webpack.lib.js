@@ -1,8 +1,8 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// Bundle and inline web-workers
 module.exports = [
+  // Web worker bundle
   {
     mode: 'production',
     entry: './lib/utils/worker.js',
@@ -13,9 +13,10 @@ module.exports = [
       path: path.resolve(__dirname, 'lib/utils'),
     },
   },
+  // Styles + container.js(x)
   {
     mode: 'production',
-    entry: './lib/components/container/container.js',
+    entry: './lib/components/container/container.jsx', // 🔁 updated from .js
     output: {
       path: path.resolve(__dirname, 'lib/styles'),
     },
@@ -27,7 +28,7 @@ module.exports = [
     module: {
       rules: [
         {
-          test: /\.(js)$/,
+          test: /\.(js|jsx)$/, // ✅ include jsx
           use: {
             loader: 'babel-loader',
             options: {
@@ -39,9 +40,7 @@ module.exports = [
         {
           test: /\.scss$/,
           use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-            },
+            MiniCssExtractPlugin.loader,
             {
               loader: require.resolve('css-loader'),
               options: { importLoaders: 3 },
@@ -56,6 +55,9 @@ module.exports = [
           sideEffects: true,
         },
       ],
+    },
+    resolve: {
+      extensions: ['.js', '.jsx'], // ✅ so you don’t have to specify .jsx in import
     },
   },
 ];

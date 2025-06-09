@@ -6,7 +6,6 @@
  *
  * The plan is to reintroduce meaningful integration tests here that validate App behavior with its child components.
  */
-
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './index';
