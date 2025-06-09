@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
-import './styles/_layers.scss';
+import './styles/index.scss';
 
 /**
  * Functional React component for drawing layer bands using D3

@@ -4,7 +4,8 @@ import { paths as nodeIcons } from '../icons/node-icon';
 import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
-import './styles/_node.scss';
+
+import './styles/index.scss';
 
 /**
  * Functional React component for drawing nodes using D3
