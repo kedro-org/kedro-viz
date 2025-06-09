@@ -13,11 +13,11 @@ function groupByErrorStatus(items) {
 }
 
 export const getDatasetsStatus = createSelector(
-  [(state) => state.status.datasets],
+  [(state) => state.runStatus.datasets],
   groupByErrorStatus
 );
 
 export const getNodesStatus = createSelector(
-  [(state) => state.status.nodes],
+  [(state) => state.runStatus.nodes],
   groupByErrorStatus
 );
