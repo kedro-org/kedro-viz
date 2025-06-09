@@ -22,12 +22,18 @@
 }
 
 .pipeline-node.pipeline-node--status-success .pipeline-node__details-value {
-  fill: var(--node-labeltext-fill);
+  fill: var(--node-details-text-success);
 }
 
 .pipeline-node.pipeline-node--status-failed .pipeline-node__bg {
   stroke: var(--node-stroke-failed);
   fill: var(--node-fill-failed);
+}
+
+.pipeline-node.pipeline-node--status-failed
+  .pipeline-node__details-status-group
+  .pipeline-node__details-value {
+  fill: #f03b3a;
 }
 
 .pipeline-node.pipeline-node--status-skipped .pipeline-node__bg {
@@ -46,7 +52,7 @@
 
 .pipeline-node {
   .pipeline-node__details-label {
-    fill: #b2b2b2;
+    fill: var(--node-details-text);
   }
 
   .pipeline-node__details-outline {
