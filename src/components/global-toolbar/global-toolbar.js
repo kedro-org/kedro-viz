@@ -78,6 +78,9 @@ export const GlobalToolbar = ({
               labelText="Workflow"
               onClick={() => {
                 onSetView(VIEW.WORKFLOW);
+
+                // When switching to workflow view, we're expanding all the pipeline
+                // and only show the default pipeline as a first MVP of run status
                 onUpdateActivePipeline(PIPELINE.DEFAULT);
                 onToggleExpandAllPipelines(true);
               }}
