@@ -96,7 +96,7 @@ async def get_last_run_status():
             "run_id": "unique-id",
             "start_time": "2023-05-14T10:15:30Z",
             "end_time": "2023-05-14T10:20:45Z",
-            "total_duration_sec": 315.25,
+            "duration_sec": 315.25,
             "status": "completed"
             "error": null
         }

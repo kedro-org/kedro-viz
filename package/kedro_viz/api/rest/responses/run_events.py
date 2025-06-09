@@ -103,7 +103,7 @@ class PipelineInfo(BaseModel):
     run_id: str = "default-run-id"
     start_time: Optional[str] = None
     end_time: Optional[str] = None
-    total_duration_sec: float = 0.0
+    duration_sec: float = 0.0
     status: PipelineStatus = PipelineStatus.SUCCESSFUL
     error: Optional[PipelineErrorInfo] = None
 
@@ -367,7 +367,7 @@ def _finalize_pipeline_info(
 
     # Calculate total pipeline duration
     node_durations = {node_id: node.duration_sec for node_id, node in nodes.items()}
-    pipeline_info.total_duration_sec = calculate_pipeline_duration(
+    pipeline_info.duration_sec = calculate_pipeline_duration(
         pipeline_info.start_time,
         pipeline_info.end_time,
         node_durations,

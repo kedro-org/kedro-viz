@@ -286,7 +286,7 @@ class TestEventProcessing:
         _finalize_pipeline_info(pipeline_info, nodes)
 
         assert pipeline_info.run_id == "test-uuid"
-        assert pipeline_info.total_duration_sec == 100.0
+        assert pipeline_info.duration_sec == 100.0
 
     @patch("kedro_viz.api.rest.responses.run_events._hash_input_output")
     def test_process_dataset_error_no_node_id(self, mock_hash):
