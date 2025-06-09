@@ -7,6 +7,7 @@ import {
   getDatasetStatusInfo,
 } from '../../workflow/workflow-utils/getStatus';
 import { getNodeWidth } from './getNodeRectWidth';
+import { NODE_DETAILS_HEIGHT } from './config';
 
 /**
  * Render the details container for a node (status, duration, outline, etc)
@@ -20,7 +21,6 @@ export function renderNodeDetailsContainer(
 ) {
   const nodeWidth = getNodeWidth(node);
   const nodeHeight = node.height - 5;
-  const detailsHeight = 60;
 
   const { nodeStatus, nodeDuration } = getNodeStatusInfo(nodesStatus, node);
   const { datasetStatus, datasetSize } = getDatasetStatusInfo(
@@ -69,8 +69,8 @@ export function renderNodeDetailsContainer(
     .attr(
       'height',
       node.type === 'task' || node.type === 'modularPipeline'
-        ? detailsHeight
-        : detailsHeight + 20
+        ? NODE_DETAILS_HEIGHT
+        : NODE_DETAILS_HEIGHT + 20
     )
     .attr('x', nodeWidth / -2)
     .attr(
@@ -88,17 +88,17 @@ export function renderNodeDetailsContainer(
     .attr('d', () => {
       if (node.type === 'task' || node.type === 'modularPipeline') {
         return `M ${nodeWidth / -2} ${nodeHeight / 2} V ${
-          nodeHeight / 2 + detailsHeight
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT
         } H ${nodeWidth / 2} V ${nodeHeight / 2}`;
       } else {
         return `M ${nodeWidth / -2} 0 V ${
-          nodeHeight / 2 + detailsHeight - 10
-        } Q ${nodeWidth / -2} ${nodeHeight / 2 + detailsHeight} ${
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
+        } Q ${nodeWidth / -2} ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${
           nodeWidth / -2 + 10
-        } ${nodeHeight / 2 + detailsHeight} H ${nodeWidth / 2 - 10} Q ${
+        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} H ${nodeWidth / 2 - 10} Q ${
           nodeWidth / 2
-        } ${nodeHeight / 2 + detailsHeight} ${nodeWidth / 2} ${
-          nodeHeight / 2 + detailsHeight - 10
+        } ${nodeHeight / 2 + NODE_DETAILS_HEIGHT} ${nodeWidth / 2} ${
+          nodeHeight / 2 + NODE_DETAILS_HEIGHT - 10
         } V 0`;
       }
     });
