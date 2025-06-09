@@ -32,6 +32,8 @@ export const updateNodeRects = (
     // Render node details for each node
     nodeRects.each(function (node) {
       const parentGroup = select(this.parentNode);
+      // Remove any existing details container for this node
+      parentGroup.selectAll('.pipeline-node__details-container').remove();
       renderNodeDetailsContainer(
         parentGroup,
         node,
