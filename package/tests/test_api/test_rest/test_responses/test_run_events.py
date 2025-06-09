@@ -125,6 +125,7 @@ class TestPipelineTimingExtraction:
         assert pipeline_info.end_time == "2023-01-01T10:05:00"
         assert pipeline_info.status == PipelineStatus.FAILED
         assert pipeline_info.error.message == "Failed"
+        assert pipeline_info.error.traceback == ""
 
     def test_no_timing_events(self):
         """Test handling when no timing events are present."""
@@ -167,6 +168,7 @@ class TestEventProcessing:
 
         assert nodes["node1"].status == NodeStatus.FAILED
         assert nodes["node1"].duration_sec == 5.0  # Preserved
+        assert nodes["node1"].error.traceback == ""
 
     def test_process_dataset_event(self):
         """Test processing dataset events."""
@@ -256,6 +258,7 @@ class TestEventProcessing:
         _process_dataset_error_event(event, datasets, nodes, pipeline_info)
 
         assert pipeline_info.error.message == "Existing error"  # Should not overwrite
+        assert pipeline_info.error.traceback == ""  # Should default to empty string
 
     @patch("kedro_viz.api.rest.responses.run_events._hash_input_output")
     def test_process_dataset_error_update_existing_dataset(self, mock_hash):

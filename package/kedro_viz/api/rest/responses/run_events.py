@@ -58,7 +58,7 @@ class BaseErrorInfo(BaseModel):
     """Base class for error information."""
 
     message: str
-    traceback: Optional[str] = None
+    traceback: str = ""
 
 
 class NodeErrorInfo(BaseErrorInfo):
@@ -177,7 +177,7 @@ def _extract_pipeline_timing_and_status(
         None,
     )
     if start_event:
-        pipeline_info.start_time = start_event.get("timestamp", None)
+        pipeline_info.start_time = start_event.get("timestamp")
 
     # Find most recent pipeline end event
     end_event = next(
@@ -192,12 +192,12 @@ def _extract_pipeline_timing_and_status(
 
     if end_event:
         if "timestamp" in end_event:
-            pipeline_info.end_time = end_event.get("timestamp", None)
+            pipeline_info.end_time = end_event.get("timestamp")
 
         if end_event.get("event") == EventType.ON_PIPELINE_ERROR:
             pipeline_info.status = PipelineStatus.FAILED
             error_message = end_event.get("error", "Unknown pipeline error")
-            traceback_message = end_event.get("traceback")
+            traceback_message = end_event.get("traceback", "")
             pipeline_info.error = PipelineErrorInfo(
                 message=error_message,
                 traceback=traceback_message,
@@ -236,7 +236,7 @@ def _process_node_error_event(
     """
     node_id = event.get("node_id", "unknown_node")
     error_message = event.get("error", "Unknown error")
-    traceback_message = event.get("traceback")
+    traceback_message = event.get("traceback", "")
 
     error_info = NodeErrorInfo(
         message=error_message,
@@ -303,7 +303,7 @@ def _process_dataset_error_event(
     node_id = event.get("node_id", "")
     node_name = event.get("node", "")
     error_message = event.get("error", "Dataset error")
-    traceback_message = event.get("traceback")
+    traceback_message = event.get("traceback", "")
 
     # Update dataset status if dataset name is provided
     if dataset_name:
