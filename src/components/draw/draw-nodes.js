@@ -6,7 +6,8 @@ import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
 import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
 import { workFlowStatuses } from '../../config';
-import './styles/_node.scss';
+
+import './styles/index.scss';
 
 /**
  * Functional React component for drawing nodes using D3

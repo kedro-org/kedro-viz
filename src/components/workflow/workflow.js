@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { select } from 'd3-selection';
-import classnames from 'classnames';
 import { updateChartSize, updateZoom } from '../../actions';
 import {
   toggleSingleModularPipelineExpanded,
