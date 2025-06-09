@@ -5,6 +5,8 @@
  */
 
 .kui-theme--light {
+  --node-details-fill: #{colors.$white-200};
+  --node-details-stroke: #{colors.$white-900};
   --node-fill-success: #d8e8e0;
   --node-stroke-success: #26bf56;
   --node-fill-failed: #ecdbdd;
@@ -14,6 +16,8 @@
 }
 
 .kui-theme--dark {
+  --node-details-fill: #{colors.$slate-700};
+  --node-details-stroke: #{colors.$black-400};
   --node-fill-success: #1d3c28;
   --node-stroke-success: #40d86e;
   --node-fill-failed: #412526;

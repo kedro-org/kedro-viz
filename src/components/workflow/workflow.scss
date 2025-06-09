@@ -12,10 +12,8 @@
   text-rendering: optimizespeed;
 }
 
-// Styling for Workflow chart only
 .pipeline-node__details-bg {
-  fill: #1a1a1a;
-  stroke: none;
+  fill: var(--node-details-fill);
 }
 
 .pipeline-node.pipeline-node--status-success .pipeline-node__bg {
@@ -39,11 +37,11 @@
 
 .pipeline-node.pipeline-node--status-skipped .pipeline-node__icon,
 .pipeline-node.pipeline-node--status-skipped .pipeline-node__text {
-  fill: colors.$black-400;
+  fill: var(--node-stroke-skipped);
 }
 
 .pipeline-node.pipeline-node--status-skipped .pipeline-node__details-value {
-  fill: colors.$black-400;
+  fill: var(--node-stroke-skipped);
 }
 
 .pipeline-node {
@@ -52,7 +50,7 @@
   }
 
   .pipeline-node__details-outline {
-    stroke: colors.$black-400;
+    stroke: var(--node-details-stroke);
     stroke-width: 2px;
     fill: none;
   }
