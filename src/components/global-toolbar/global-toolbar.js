@@ -59,7 +59,7 @@ export const GlobalToolbar = ({
               disabled={false}
               icon={TreeIcon}
               labelText="Flowchart"
-              onClick={() => onSetView(VIEW.WORKFLOW)}
+              onClick={() => onSetView(VIEW.FLOWCHART)}
             />
           </NavLink>
           <NavLink
