@@ -38,14 +38,14 @@ class TestModels:
     def test_constants(self):
         """Test key constants are defined correctly."""
         assert EventType.AFTER_NODE_RUN == "after_node_run"
-        assert PipelineStatus.COMPLETED == "completed"
-        assert NodeStatus.SUCCESS.value == "Success"
+        assert PipelineStatus.SUCCESSFUL == "Successful"
+        assert NodeStatus.SUCCESSFUL.value == "Successful"
         assert DatasetStatus.AVAILABLE.value == "Available"
 
     def test_model_creation(self):
         """Test basic model creation with defaults."""
         node_info = NodeInfo()
-        assert node_info.status == NodeStatus.SUCCESS
+        assert node_info.status == NodeStatus.SUCCESSFUL
         assert node_info.duration_sec == 0.0
 
         dataset_info = DatasetInfo(name="test")
@@ -53,7 +53,7 @@ class TestModels:
         assert dataset_info.status == DatasetStatus.AVAILABLE
 
         pipeline_info = PipelineInfo()
-        assert pipeline_info.status == PipelineStatus.COMPLETED
+        assert pipeline_info.status == PipelineStatus.SUCCESSFUL
 
         response = RunStatusAPIResponse()
         assert response.nodes == {}
@@ -108,7 +108,7 @@ class TestPipelineTimingExtraction:
 
         assert pipeline_info.start_time == "2023-01-01T10:00:00"
         assert pipeline_info.end_time == "2023-01-01T10:15:00"
-        assert pipeline_info.status == PipelineStatus.COMPLETED
+        assert pipeline_info.status == PipelineStatus.SUCCESSFUL
 
     def test_extract_failed_pipeline(self):
         """Test extracting failed pipeline timing."""
@@ -141,12 +141,12 @@ class TestEventProcessing:
 
     def test_process_node_completion(self):
         """Test processing node completion events."""
-        event = {"node_id": "node1", "status": "Success", "duration_sec": 10.5}
+        event = {"node_id": "node1", "status": "Successful", "duration_sec": 10.5}
         nodes = {}
         _process_node_completion_event(event, nodes)
 
         assert "node1" in nodes
-        assert nodes["node1"].status == NodeStatus.SUCCESS
+        assert nodes["node1"].status == NodeStatus.SUCCESSFUL
         assert nodes["node1"].duration_sec == 10.5
 
     def test_process_node_error(self):
@@ -156,7 +156,7 @@ class TestEventProcessing:
         _process_node_error_event(event, nodes)
 
         assert "node1" in nodes
-        assert nodes["node1"].status == NodeStatus.FAIL
+        assert nodes["node1"].status == NodeStatus.FAILED
         assert nodes["node1"].error.message == "Node failed"
 
     def test_process_node_error_existing_node(self):
@@ -165,7 +165,7 @@ class TestEventProcessing:
         event = {"node_id": "node1", "error": "Failed"}
         _process_node_error_event(event, nodes)
 
-        assert nodes["node1"].status == NodeStatus.FAIL
+        assert nodes["node1"].status == NodeStatus.FAILED
         assert nodes["node1"].duration_sec == 5.0  # Preserved
 
     def test_process_dataset_event(self):
@@ -231,7 +231,7 @@ class TestEventProcessing:
         # Should use node_id as dataset_id when available (consistent with normal)
         assert "node1" in datasets
         assert datasets["node1"].status == DatasetStatus.MISSING
-        assert nodes["node1"].status == NodeStatus.FAIL
+        assert nodes["node1"].status == NodeStatus.FAILED
         assert pipeline_info.status == PipelineStatus.FAILED
 
     def test_process_dataset_error_find_by_name(self):
@@ -243,7 +243,7 @@ class TestEventProcessing:
 
         _process_dataset_error_event(event, datasets, nodes, pipeline_info)
 
-        assert nodes["namespace.test_node"].status == NodeStatus.FAIL
+        assert nodes["namespace.test_node"].status == NodeStatus.FAILED
 
     def test_process_dataset_error_no_existing_error(self):
         """Test dataset error doesn't overwrite existing pipeline error."""
@@ -319,7 +319,7 @@ class TestTransformEvents:
             {
                 "event": "after_node_run",
                 "node_id": "node1",
-                "status": "Success",
+                "status": "Successful",
                 "duration_sec": 10.5,
             },
             {
@@ -337,7 +337,7 @@ class TestTransformEvents:
         assert result.nodes["node1"].duration_sec == 10.5
         assert "dataset1" in result.datasets
         assert result.datasets["dataset1"].name == "test_data"
-        assert result.pipeline.status == PipelineStatus.COMPLETED
+        assert result.pipeline.status == PipelineStatus.SUCCESSFUL
 
     def test_transform_failed_pipeline(self):
         """Test transforming failed pipeline events."""
@@ -352,7 +352,7 @@ class TestTransformEvents:
 
         result = transform_events_to_structured_format(events)
 
-        assert result.nodes["node1"].status == NodeStatus.FAIL
+        assert result.nodes["node1"].status == NodeStatus.FAILED
         assert result.pipeline.status == PipelineStatus.FAILED
 
     def test_transform_pipeline_error_with_dataset(self):
@@ -410,7 +410,7 @@ class TestAPIResponse:
         mock_find_project.return_value = Path("/test/project")
         mock_exists.return_value = True
         mock_json_load.return_value = [
-            {"event": "after_node_run", "node_id": "node1", "status": "Success"}
+            {"event": "after_node_run", "node_id": "node1", "status": "Successful"}
         ]
         mock_file_open.return_value.__enter__.return_value = mock.MagicMock()
 
@@ -463,7 +463,7 @@ def sample_events():
         {
             "event": "after_node_run",
             "node_id": "node1",
-            "status": "Success",
+            "status": "Successful",
             "duration_sec": 10.5,
         },
         {"event": "on_node_error", "node_id": "node2", "error": "Node failed"},
@@ -486,11 +486,11 @@ class TestIntegration:
 
         # Verify all components are processed
         assert len(result.nodes) == 2
-        assert result.nodes["node1"].status == NodeStatus.SUCCESS
-        assert result.nodes["node2"].status == NodeStatus.FAIL
+        assert result.nodes["node1"].status == NodeStatus.SUCCESSFUL
+        assert result.nodes["node2"].status == NodeStatus.FAILED
         assert len(result.datasets) == 1
         assert result.datasets["dataset1"].name == "input_data"
-        assert result.pipeline.status == PipelineStatus.COMPLETED
+        assert result.pipeline.status == PipelineStatus.SUCCESSFUL
 
     @patch("kedro_viz.api.rest.responses.run_events._find_kedro_project")
     @patch("pathlib.Path.exists")

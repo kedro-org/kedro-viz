@@ -50,17 +50,17 @@ def test_get_encoded_response(mocker):
 
 def test_convert_status_to_enum_valid():
     """Test convert_status_to_enum with valid status."""
-    result = convert_status_to_enum("success", NodeStatus.FAIL)
-    assert result == NodeStatus.SUCCESS
+    result = convert_status_to_enum("successful", NodeStatus.FAILED)
+    assert result == NodeStatus.SUCCESSFUL
 
-    result = convert_status_to_enum("SUCCESS", NodeStatus.FAIL)
-    assert result == NodeStatus.SUCCESS
+    result = convert_status_to_enum("SUCCESSFUL", NodeStatus.FAILED)
+    assert result == NodeStatus.SUCCESSFUL
 
 
 def test_convert_status_to_enum_invalid():
     """Test convert_status_to_enum with invalid status returns default."""
-    result = convert_status_to_enum("unknown", NodeStatus.SUCCESS)
-    assert result == NodeStatus.SUCCESS
+    result = convert_status_to_enum("unknown", NodeStatus.SUCCESSFUL)
+    assert result == NodeStatus.SUCCESSFUL
 
     result = convert_status_to_enum(None, DatasetStatus.AVAILABLE)
     assert result == DatasetStatus.AVAILABLE
@@ -93,8 +93,8 @@ def test_convert_status_debug_logging():
     """Test debug logging for unknown status."""
     with patch("kedro_viz.api.rest.responses.utils.logging.getLogger") as mock_logger:
         mock_logger_instance = mock_logger.return_value
-        result = convert_status_to_enum("unknown_status", NodeStatus.SUCCESS)
-        assert result == NodeStatus.SUCCESS
+        result = convert_status_to_enum("unknown_status", NodeStatus.SUCCESSFUL)
+        assert result == NodeStatus.SUCCESSFUL
         mock_logger_instance.debug.assert_called_once()
 
 

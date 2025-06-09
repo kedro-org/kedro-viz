@@ -36,15 +36,15 @@ class EventType(str, Enum):
 class PipelineStatus(str, Enum):
     """Constants for pipeline statuses."""
 
-    COMPLETED = "completed"
-    FAILED = "failed"
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
 
 
 class NodeStatus(str, Enum):
     """Enum representing the possible statuses of a node."""
 
-    SUCCESS = "Success"
-    FAIL = "Fail"
+    SUCCESSFUL = "Successful"
+    FAILED = "Failed"
 
 
 class DatasetStatus(str, Enum):
@@ -83,7 +83,7 @@ class PipelineErrorInfo(BaseErrorInfo):
 class NodeInfo(BaseModel):
     """Information about a node."""
 
-    status: NodeStatus = NodeStatus.SUCCESS
+    status: NodeStatus = NodeStatus.SUCCESSFUL
     duration_sec: float = 0.0
     error: Optional[NodeErrorInfo] = None
 
@@ -104,7 +104,7 @@ class PipelineInfo(BaseModel):
     start_time: Optional[str] = None
     end_time: Optional[str] = None
     total_duration_sec: float = 0.0
-    status: PipelineStatus = PipelineStatus.COMPLETED
+    status: PipelineStatus = PipelineStatus.SUCCESSFUL
     error: Optional[PipelineErrorInfo] = None
 
 
@@ -203,7 +203,7 @@ def _extract_pipeline_timing_and_status(
                 traceback=traceback_message,
             )
         else:
-            pipeline_info.status = PipelineStatus.COMPLETED
+            pipeline_info.status = PipelineStatus.SUCCESSFUL
 
 
 def _process_node_completion_event(
@@ -216,11 +216,11 @@ def _process_node_completion_event(
         nodes: Dictionary of node info objects to update
     """
     node_id = event.get("node_id", "unknown_node")
-    status = event.get("status", "Success")
+    status = event.get("status", "Successful")
     duration = float(event.get("duration_sec", 0.0))
 
     nodes[node_id] = NodeInfo(
-        status=convert_status_to_enum(status, NodeStatus.SUCCESS),
+        status=convert_status_to_enum(status, NodeStatus.SUCCESSFUL),
         duration_sec=duration,
     )
 
@@ -244,11 +244,11 @@ def _process_node_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = NodeStatus.FAIL
+        nodes[node_id].status = NodeStatus.FAILED
         nodes[node_id].error = error_info
     else:
         nodes[node_id] = NodeInfo(
-            status=NodeStatus.FAIL,
+            status=NodeStatus.FAILED,
             error=error_info,
         )
 
@@ -333,13 +333,13 @@ def _process_dataset_error_event(
     )
 
     if node_id in nodes:
-        nodes[node_id].status = NodeStatus.FAIL
+        nodes[node_id].status = NodeStatus.FAILED
         nodes[node_id].error = node_error_info
     elif node_name:
         # Try to find node by name if node_id is not available
         for nid, node in nodes.items():
             if nid.endswith(node_name):
-                node.status = NodeStatus.FAIL
+                node.status = NodeStatus.FAILED
                 node.error = node_error_info
                 break
 
