@@ -55,8 +55,6 @@ import Sidebar from '../sidebar';
 
 import './workflow.scss';
 
-export const workFlowStatuses = ['success', 'failed'];
-
 /**
  * Display a pipeline flowchart, mostly rendered with D3
  */

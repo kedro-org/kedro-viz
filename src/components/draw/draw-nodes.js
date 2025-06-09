@@ -5,7 +5,7 @@ import { updateNodeRects } from './utils//updateNodeRect';
 import { updateParameterRect } from './utils/updateParameterRect';
 import { DURATION } from './utils/config';
 import { getNodeStatusKey } from '../workflow/workflow-utils/getNodeStatusKey';
-import { workFlowStatuses } from '../workflow/workflow';
+import { workFlowStatuses } from '../../config';
 import './styles/_node.scss';
 
 /**
@@ -83,8 +83,11 @@ export function DrawNodes({
           const statusSource =
             node.type === 'data' ? dataSetsStatus : nodesStatus;
           // If no status is found, default to 'skipped'. This status is used for the node's CSS class.
-          let finalStatus =
-            getNodeStatusKey(statusSource, node, workFlowStatuses) || 'skipped';
+          let finalStatus = getNodeStatusKey(
+            statusSource,
+            node,
+            workFlowStatuses
+          );
           baseClass += ` pipeline-node--status-${finalStatus}`;
         }
 
