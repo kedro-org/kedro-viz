@@ -47,7 +47,7 @@ class TestPipelineRunStatusHook:
     def test_after_catalog_created_standard(self, hooks, sample_catalog):
         """Test after_catalog_created hook with standard DataCatalog."""
         hooks.after_catalog_created(sample_catalog)
-        assert hooks.datasets == sample_catalog._datasets
+        assert hooks._datasets == sample_catalog._datasets
 
     def test_after_catalog_created_import_error(self, hooks, mocker):
         """Test after_catalog_created hook when KedroDataCatalog import fails (covers lines 65-66)."""
@@ -71,7 +71,7 @@ class TestPipelineRunStatusHook:
         hooks.after_catalog_created(mock_catalog)
 
         # Should fall back to _datasets attribute
-        assert hooks.datasets == {"fallback_dataset": "fallback_data"}
+        assert hooks._datasets == {"fallback_dataset": "fallback_data"}
 
     def test_after_catalog_created_kedro_data_catalog(self, hooks, mocker):
         """Test after_catalog_created hook with KedroDataCatalog to cover lines 62-64."""
@@ -101,7 +101,7 @@ class TestPipelineRunStatusHook:
             hooks.after_catalog_created(catalog)
 
         # Verify the KedroDataCatalog path was taken
-        assert hooks.datasets == {"kedro_dataset": "kedro_data"}
+        assert hooks._datasets == {"kedro_dataset": "kedro_data"}
 
     def test_before_pipeline_run_default(self, hooks, sample_pipeline, mocker):
         """Test before_pipeline_run hook with default pipeline."""
@@ -153,7 +153,7 @@ class TestPipelineRunStatusHook:
         assert hooks._current_operation is None
 
         mock_create_dataset_event.assert_called_once_with(
-            "after_dataset_loaded", "test_dataset", test_data, hooks.datasets
+            "after_dataset_loaded", "test_dataset", test_data, hooks._datasets
         )
 
     def test_dataset_saving_workflow(self, hooks, sample_node, mocker):

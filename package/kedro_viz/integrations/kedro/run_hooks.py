@@ -25,7 +25,7 @@ class PipelineRunStatusHook:
         # Track times, events, and context for errors
         self._node_start: dict[str, float] = {}
         self._events: list[dict[str, Any]] = []
-        self.datasets: dict[str, Any] = {}
+        self._datasets: dict[str, Any] = {}
         self._current_node: Optional[Any] = None
         self._current_dataset: Optional[str] = None
         self._current_operation: Optional[str] = None
@@ -61,12 +61,12 @@ class PipelineRunStatusHook:
             from kedro.io import KedroDataCatalog
 
             if isinstance(catalog, KedroDataCatalog):
-                self.datasets = catalog.datasets
+                self._datasets = catalog.datasets
                 return
         except ImportError:
             pass
         # fallback older versions
-        self.datasets = getattr(
+        self._datasets = getattr(
             catalog, "_datasets", getattr(catalog, "_data_sets", {})
         )
 
@@ -89,7 +89,7 @@ class PipelineRunStatusHook:
     def after_dataset_loaded(self, dataset_name: str, data: Any) -> None:
         self._add_event(
             create_dataset_event(
-                "after_dataset_loaded", dataset_name, data, self.datasets
+                "after_dataset_loaded", dataset_name, data, self._datasets
             )
         )
         self._clear_context()
@@ -102,7 +102,7 @@ class PipelineRunStatusHook:
     def after_dataset_saved(self, dataset_name: str, data: Any) -> None:
         self._add_event(
             create_dataset_event(
-                "after_dataset_saved", dataset_name, data, self.datasets
+                "after_dataset_saved", dataset_name, data, self._datasets
             )
         )
         self._clear_context()
