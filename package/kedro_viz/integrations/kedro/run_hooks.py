@@ -89,7 +89,7 @@ class PipelineRunStatusHook:
         self._current_operation = None
 
     @hook_impl
-    def after_catalog_created(self, catalog: Union[Any, Any]):
+    def after_catalog_created(self, catalog: Union[Any, Any]) -> None:
         """Grab catalog datasets for size lookups and metadata access."""
         try:
             # prefer new KedroDataCatalog
@@ -106,7 +106,7 @@ class PipelineRunStatusHook:
         )
 
     @hook_impl
-    def before_pipeline_run(self, run_params: dict, pipeline) -> None:
+    def before_pipeline_run(self, run_params: dict[str, Any], pipeline: Any) -> None:
         """
         Emit start event based on run_params values.
 
@@ -162,7 +162,10 @@ class PipelineRunStatusHook:
     def after_node_run(self, node: KedroNode) -> None:
         """Record successful node completion with performance metrics."""
         start = self._node_start.get(node.name)
-        duration = perf_counter() - start
+        if start is None:
+            duration = 0.0
+        else:
+            duration = perf_counter() - start
         self._add_event(
             {
                 "event": "after_node_run",
